@@ -1,0 +1,6 @@
+<p class="byline"
+   tal:define="metadata model.metadata">
+  Created by: <strong tal:content="metadata.creator" />,
+  on <strong tal:content="context.format_date(metadata.created)" />.
+  Last modified: <strong tal:content="context.format_date(metadata.modified)" />
+</p>

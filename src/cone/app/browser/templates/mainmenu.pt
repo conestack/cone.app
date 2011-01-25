@@ -1,0 +1,25 @@
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+  <ul id="mainmenu"
+      class="contextsensitiv"
+      ajax:bind="contextchanged"
+      ajax:action="mainmenu:#mainmenu:replace">
+    <tal:item repeat="item context.menuitems">
+      <li tal:attributes="class 'node-%s' % item['id']">
+        <a href=""
+           ajax:bind="click"
+           ajax:target="${item['url']}"
+           ajax:event="contextchanged:.contextsensitiv
+                       contextchanged:#content"
+           tal:define="css item['first'] and 'first' or '';
+                       css item['selected']
+                           and ' '.join([css, 'current_page_item'])
+                           or css;
+                       css ' '.join([css, 'mainmenulink']);"
+           tal:attributes="class css;
+                           href item['url'];
+                           title item['description'];"
+           tal:content="item['title']">Title</a>
+      </li>
+    </tal:item>
+  </ul>
+</tal:ajax>

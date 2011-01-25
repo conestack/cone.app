@@ -1,0 +1,66 @@
+Batches
+=======
+
+We provide an abstract batch tile. A deriving class must implement the ``vocab``
+property, which promises to return a list of dict like objects, providing the
+following keys:
+
+    - ``page`` - the displayed page name, normally a number, or a character.
+    
+    - ``current`` - Flag wether page is current page or not.
+    
+    - ``visible`` - Flag wether page is visible or not.
+    
+    - ``url`` - Target url.
+
+Required imports.
+::
+
+    >>> from cone.tile import tile, render_tile
+    >>> from cone.app.browser.batch import Batch
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.utils import (
+    ...     nodepath, 
+    ...     make_query, 
+    ...     make_url,
+    ... )
+
+A simple batch implementation.
+::
+
+    >>> @tile('testbatch')
+    ... class TestBatch(Batch):
+    ... 
+    ...     @property
+    ...     def vocab(self):
+    ...         ret = list()
+    ...         path = nodepath(self.model)
+    ...         current = self.request.params.get('b_page', '0')
+    ...         for i in range(3):
+    ...             query = make_query(b_page=str(i))
+    ...             url = make_url(self.request, path=path, query=query)
+    ...             ret.append({
+    ...                 'page': '%i' % i,
+    ...                 'current': current == str(i),
+    ...                 'visible': True,
+    ...                 'url': url,
+    ...             })
+    ...         return ret
+
+Create dummy model and request.
+::
+
+    >>> from cone.app.model import BaseNode
+    >>> from repoze.bfg.testing import DummyRequest
+    >>> model = BaseNode()
+    >>> request = DummyRequest()
+
+Render batch.
+::
+    
+    >>> res = render_tile(model, request, 'testbatch')
+    >>> res.find('href="http://example.com/?b_page=1"') > -1
+    True
+    
+    >>> res.find('href="http://example.com/?b_page=2"') > -1
+    True

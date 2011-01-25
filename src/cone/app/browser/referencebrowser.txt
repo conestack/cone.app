@@ -1,0 +1,181 @@
+Referencebrowser
+================
+
+The referencebrowser consists out of some tiles for rendering a
+referencebrowser inside an overlay and a yafowil widget for rendering
+form fields bound to referencebrowser.
+
+Load requirements.
+::
+
+    >>> import yafowil.loader
+    >>> import cone.app.browser.referencebrowser
+    >>> from repoze.bfg.testing import DummyRequest
+
+Test widget.
+::
+
+    >>> from yafowil.base import factory
+
+
+Single valued
+-------------
+
+Render without any value.
+::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     props = {
+    ...         'label': 'Reference',
+    ...         'multivalued': False,
+    ...     })
+    >>> widget()
+    u'<input class="referencebrowser" id="input-ref" name="ref" 
+    type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
+
+Render required with empty value.
+::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     props = {
+    ...         'label': 'Reference',
+    ...         'multivalued': False,
+    ...         'required': 'Ref Required',
+    ...     })
+    
+    >>> request = DummyRequest()
+    >>> request.params['ref'] = ''
+    >>> request.params['ref.uid'] = ''
+    
+    >>> data = widget.extract(request)
+    >>> data.extracted
+    ''
+    
+    >>> data.errors
+    [ExtractionError('Ref Required',)]
+    
+    >>> widget(data=data)
+    u'<input class="referencebrowser required" id="input-ref" name="ref" 
+    type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
+
+Required with valid value.
+::
+
+    >>> request.params['ref'] = 'Title'
+    >>> request.params['ref.uid'] = '123'
+    >>> data = widget.extract(request)
+    >>> data.extracted
+    '123'
+    
+    >>> data.errors
+    []
+    
+    >>> widget(data=data)
+    u'<input class="referencebrowser required" id="input-ref" name="ref" 
+    type="text" value="Title" /><input name="ref.uid" type="hidden" 
+    value="123" />'
+
+Single valued expects 2-tuple as value with (uid, label).
+::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     value = ('uid', 'Label'),
+    ...     props = {
+    ...         'label': 'Reference',
+    ...         'multivalued': False,
+    ...         'required': 'Ref Required',
+    ...     })
+    >>> widget()
+    u'<input class="referencebrowser required" id="input-ref" name="ref" 
+    type="text" value="Label" /><input name="ref.uid" type="hidden" 
+    value="uid" />'
+
+Extract from request and render widget with data.
+::
+
+    >>> data = widget.extract(request)
+    >>> widget(data=data)
+    u'<input class="referencebrowser required" id="input-ref" name="ref" 
+    type="text" value="Title" /><input name="ref.uid" type="hidden" 
+    value="123" />'
+
+Render widget with request.
+::
+
+    >>> widget(request=request)
+    u'<input class="referencebrowser required" id="input-ref" name="ref" 
+    type="text" value="Title" /><input name="ref.uid" type="hidden" 
+    value="123" />'
+
+
+Multi valued
+------------
+
+Render without any value.
+::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     props = {
+    ...         'label': 'Reference',
+    ...         'multivalued': True,
+    ...     })
+    >>> widget()
+    u'<select class="referencebrowser" id="input-ref" multiple="multiple" 
+    name="ref" />'
+
+Render required with empty value.
+::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     props = {
+    ...         'label': 'Reference',
+    ...         'multivalued': True,
+    ...         'required': 'Ref Required',
+    ...         'vocabulary': [
+    ...             ('uid1', 'Title1'),
+    ...             ('uid2', 'Title2'),
+    ...         ],
+    ...     })
+    
+    >>> request = DummyRequest()
+    >>> request.params['ref'] = ''
+    
+    >>> data = widget.extract(request)
+    >>> data.extracted
+    ''
+    
+    >>> data.errors
+    [ExtractionError('Ref Required',)]
+    
+    >>> widget(data=data)
+    u'<select class="referencebrowser required" id="input-ref" 
+    multiple="multiple" name="ref"><option id="input-ref-uid1" 
+    value="uid1">Title1</option><option id="input-ref-uid2" 
+    value="uid2">Title2</option></select>'
+
+Required with valid value.
+::
+
+    >>> request.params['ref'] = ['uid1', 'uid2']
+    >>> data = widget.extract(request)
+    >>> data.extracted
+    ['uid1', 'uid2']
+    
+    >>> data.errors
+    []
+    
+    >>> widget(data=data)
+    u'<select class="referencebrowser required" id="input-ref" 
+    multiple="multiple" name="ref"><option id="input-ref-uid1" 
+    selected="selected" value="uid1">Title1</option><option id="input-ref-uid2" 
+    selected="selected" value="uid2">Title2</option></select>'

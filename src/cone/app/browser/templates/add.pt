@@ -1,0 +1,9 @@
+<div>
+  
+  <tal:xxx condition="False">
+    <h1>Add <tal:type condition="context.info" replace="context.info.title" /></h1>
+  </tal:xxx>
+  
+  <tal:addform replace="structure context.addform" />
+
+</div>

@@ -1,0 +1,243 @@
+Authoring
+=========
+
+The Application provides some widgets and entry hooks for authoring.
+
+There are two bfg views registered, ``add`` and ``edit``. These views render the
+main template with the ``add`` respective ``edit`` tile as content tiles which
+render the ``addform`` or ``editform`` tiles.
+
+
+Adding
+------
+
+Using the built-in adding mechanism.
+
+Create dummy node.
+::
+
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.model import getNodeInfo
+    >>> class MyNode(BaseNode):
+    ...     node_info_name = 'mynode'
+
+Now, if we want to use the build-in adding mechanism, we need to
+provide NodeInfo for our application nodes.
+::
+
+    >>> from cone.app.model import BaseNodeInfo, registerNodeInfo
+    >>> mynodeinfo = BaseNodeInfo()
+    >>> mynodeinfo.title = 'My Node'
+    >>> mynodeinfo.description = 'This is My node.'
+    >>> mynodeinfo.node = MyNode
+    >>> mynodeinfo.addables = ['mynode']
+    >>> registerNodeInfo('mynode', mynodeinfo)
+
+Create and register an addform tile for MyNode.
+::
+
+    >>> from yafowil import loader
+    >>> from yafowil.base import factory
+    >>> from cone.tile import tile
+    >>> from cone.app.browser.utils import make_url
+    >>> from cone.app.browser.form import AddForm
+    
+    >>> @tile('addform', interface=MyNode)
+    ... class MyAddForm(AddForm):
+    ...     
+    ...     @property
+    ...     def form(self):
+    ...         form = factory(u'form',
+    ...                        name='addform',
+    ...                        props={'action': self.nodeurl})
+    ...         form['id'] = factory(
+    ...             'field:label:text',
+    ...             props = {
+    ...                 'label': 'Id',
+    ...             })
+    ...         form['title'] = factory(
+    ...             'field:label:text',
+    ...             props = {
+    ...                 'label': 'Title',
+    ...             })
+    ...         form['add'] = factory(
+    ...             'submit',
+    ...             props = {
+    ...                 'action': 'add',
+    ...                 'expression': True,
+    ...                 'handler': self.add,
+    ...                 'next': self.next,
+    ...                 'label': 'Add',
+    ...             })
+    ...         return form
+    ...     
+    ...     def add(self, widget, data):
+    ...         fetch = self.request.params.get
+    ...         child = MyNode()
+    ...         child.attrs.title = fetch('addform.title')
+    ...         self.model.__parent__[fetch('addform.id')] = child
+    ...         
+    ...     def next(self, request):
+    ...         return '<div>Added</div>'
+
+A small patch to make tests work with test request.
+::
+
+    >>> def authenticated(request):
+    ...     return True
+    >>> import cone.app.browser.layout
+    >>> cone.app.browser.layout.authenticated = authenticated
+
+Now create dummy root and render ``add`` tile.
+::
+
+    >>> import cone.app.browser.authoring
+    >>> from repoze.bfg.testing import DummyRequest
+    >>> from cone.tile import render_tile
+    >>> request = DummyRequest()
+    >>> root = MyNode()
+
+Render without factory.
+::
+
+    >>> render_tile(root, request, 'add')
+    u'<div>\n  \n  \n  \n  Unknown factory\n\n</div>'
+
+Render with valid factory.
+::
+
+    >>> request.params['factory'] = 'mynode'
+
+    >>> render_tile(root, request, 'add')
+    u'<div>\n  \n  \n  \n  <form action="http://example.com" ...'
+
+Render with submitted data.
+::
+    
+    >>> request.params['action.addform.add'] = '1'
+    >>> request.params['addform.id'] = 'somechild'
+    >>> request.params['addform.title'] = 'Some Child'
+
+    >>> render_tile(root, request, 'add')
+    u'<div>\n  \n  \n  \n  <div>Added</div>\n\n</div>'
+
+Check the modified model.
+::
+
+    >>> root.keys()
+    ['somechild']
+    
+    >>> root['somechild'].attrs.title
+    'Some Child'
+
+
+Editing
+-------
+
+Providing edit forms is easy, just bind a form tile named 'editform' for your
+application node.
+::
+
+    >>> from cone.app.browser.form import EditForm
+
+    >>> @tile('editform', interface=MyNode)
+    ... class MyEditForm(EditForm):
+    ...     
+    ...     @property
+    ...     def form(self):
+    ...         form = factory(u'form',
+    ...                        name='editform',
+    ...                        props={'action': self.nodeurl})
+    ...         form['title'] = factory(
+    ...             'field:label:text',
+    ...             value = self.model.attrs.title,
+    ...             props = {
+    ...                 'label': 'Title',
+    ...             })
+    ...         form['update'] = factory(
+    ...             'submit',
+    ...             props = {
+    ...                 'action': 'update',
+    ...                 'expression': True,
+    ...                 'handler': self.update,
+    ...                 'next': self.next,
+    ...                 'label': 'Update',
+    ...             })
+    ...         return form
+    ...     
+    ...     def update(self, widget, data):
+    ...         fetch = self.request.params.get
+    ...         self.model.attrs.title = fetch('addform.title')
+    ...         
+    ...     def next(self, request):
+    ...         return '<div>Updated</div>'
+
+Render form with values from model.
+::
+
+    >>> request = DummyRequest()
+    >>> render_tile(root['somechild'], request, 'edit')
+    u'<div>\n  \n  \n  \n  <form action="http://example.com/somechild" ...'
+
+Trigger update action and provide new title.
+::
+
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['addform.title'] = 'Changed title'
+
+Check the results.
+::
+
+    >>> render_tile(root['somechild'], request, 'edit')
+    u'<div>\n  \n  \n  \n  <div>Updated</div>\n\n</div>'
+    
+    >>> root['somechild'].attrs.title
+    'Changed title'
+
+
+Add Items Dropdown Widget
+-------------------------
+
+You can render an item dropdown in your application which renders a dropdown
+menu containing links to the addforms of allowed child nodes.
+::
+
+    >>> request = DummyRequest()
+    >>> render_tile(root['somechild'], request, 'add_dropdown')
+    u'\n  <div class="dropdown">\n    <div class="icon">\n      
+    <a href="http://example.com/somechild/adding" 
+    class="add16_16" 
+    title="Add Item">&nbsp;</a>\n    </div>\n    
+    <ul class="dropdown_items" style="display:none;">\n      <li>\n        
+    <a href="http://example.com/somechild/add?factory=mynode" 
+    ajax:bind="click" 
+    ajax:target="http://example.com/somechild?factory=mynode" 
+    ajax:action="add:#content:inner">My Node</a>\n      
+    </li>\n    </ul>\n  </div>\n'
+
+Allow another node type as child.
+::
+
+    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo.title = 'Another Node'
+    >>> nodeinfo.description = 'This is another node.'
+    >>> nodeinfo.node = BaseNode
+    >>> nodeinfo.addables = []
+    >>> registerNodeInfo('anothernode', nodeinfo)
+    >>> getNodeInfo('mynode').addables = ['mynode', 'anothernode']
+    
+    >>> render_tile(root['somechild'], request, 'add_dropdown')
+    u'\n  <div class="dropdown">\n    <div class="icon">\n      
+    <a href="http://example.com/somechild/adding" 
+    class="add16_16" 
+    title="Add Item">&nbsp;</a>\n    </div>\n    
+    <ul class="dropdown_items" style="display:none;">\n      <li>\n        
+    <a href="http://example.com/somechild/add?factory=mynode" 
+    ajax:bind="click" 
+    ajax:target="http://example.com/somechild?factory=mynode" 
+    ajax:action="add:#content:inner">My Node</a>\n      </li> <li>\n        
+    <a href="http://example.com/somechild/add?factory=anothernode" 
+    ajax:bind="click" 
+    ajax:target="http://example.com/somechild?factory=anothernode" 
+    ajax:action="add:#content:inner">Another Node</a>\n      </li>\n    
+    </ul>\n  </div>\n'

@@ -1,0 +1,27 @@
+<configure xmlns="http://namespaces.repoze.org/bfg">
+
+  <include package="repoze.bfg.includes" />
+  <include package="bdajax" />
+  <include package="yafowil.widget.datetime" />
+  <include package="yafowil.widget.richtext" />
+  <include package="yafowil.widget.dict" />
+  
+  <scan package=".browser" />
+  
+  <view
+    for="*"
+    view=".browser.static_view"
+    name="static"
+  />
+  
+  <authtktauthenticationpolicy
+    secret="secret"
+    cookie_name="__ac__"
+    secure="false"
+    include_ip="false"
+    callback=".authentication.groupcallback"
+  />
+  
+  <aclauthorizationpolicy />
+
+</configure>

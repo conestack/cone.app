@@ -1,0 +1,122 @@
+Test shipped ``IIdentifier`` plugin
+===================================
+    
+Fake Request data.
+
+Succesful Request.
+::
+
+    >>> success_data = '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.__do_login"\r\n\r\ntrue\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.user"\r\n\r\nadmin\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.password"\r\n\r\nadmin\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="action.loginform.login"\r\n\r\nLogin\r\n' + \
+    ... '-----------------------------9528605381421065312397023749--\r\n'
+
+Request with invalid credentials.
+::
+
+    >>> invalid_credentials_data = '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.__do_login"\r\n\r\ntrue\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.user"\r\n\r\nadmi\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.password"\r\n\r\nadmi\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="action.loginform.login"\r\n\r\nLogin\r\n' + \
+    ... '-----------------------------9528605381421065312397023749--\r\n'
+
+Request which does not trigger plugin to perform.
+::
+    
+    >>> no_trigger_data = '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.user"\r\n\r\nadmi\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="loginform.password"\r\n\r\nadmi\r\n' + \
+    ... '-----------------------------' + \
+    ... '9528605381421065312397023749\r\nContent-Disposition: ' + \
+    ... 'form-data; name="action.loginform.login"\r\n\r\nLogin\r\n' + \
+    ... '-----------------------------9528605381421065312397023749--\r\n'
+
+Dummy authenticator.
+::
+
+    >>> from zope.interface import implements
+    >>> from repoze.who.interfaces import IAuthenticator
+    >>> class Auth(object):
+    ...     implements(IAuthenticator)
+    ...     def authenticate(self, environ, credentials):
+    ...         if credentials.get('login') == 'admin' \
+    ...           and credentials.get('password') == 'admin':
+    ...             return 'admin'
+    ...         return ''
+
+Dummy environ.
+::
+
+    >>> from StringIO import StringIO
+    >>> environ = {}
+    >>> environ['CONTENT_TYPE'] = 'multipart/form-data; ' +\
+    ...     'boundary=---------------------------9528605381421065312397023749'
+    >>> environ['REQUEST_METHOD'] = 'POST'
+    >>> environ['SERVER_NAME'] = '0.0.0.0'
+    >>> environ['SERVER_PORT'] = '8080'
+    >>> environ['wsgi.url_scheme'] = 'http'
+    >>> environ['repoze.who.plugins'] = {'dummy': Auth()}
+
+Create Plugin.
+::
+  
+    >>> from cone.app.authentication import FormPlugin
+    >>> plugin = FormPlugin('loginform.__do_login', 'auth_tkt')
+
+Test plugin with valid authentication credentials.
+::
+
+    >>> environ['CONTENT_LENGTH'] = str(len(success_data))
+    >>> environ['wsgi.input'] = StringIO(success_data)
+    >>> environ['repoze.who.application'] = 'unchanged'
+
+    >>> plugin.identify(environ)
+    {'login': 'admin', 'password': 'admin'}
+
+    >>> environ['repoze.who.application']
+    <HTTPFound Found; code=302>
+
+Test plugin with invalid authentication credentials.
+::
+
+    >>> environ['CONTENT_LENGTH'] = str(len(invalid_credentials_data))
+    >>> environ['wsgi.input'] = StringIO(invalid_credentials_data)
+    >>> environ['repoze.who.application'] = 'unchanged'
+    
+    >>> plugin.identify(environ)
+    {'login': 'admi', 'password': 'admi'}
+    
+    >>> environ['repoze.who.application']
+    'unchanged'
+
+Test plugin not performing.
+::
+
+    >>> environ['CONTENT_LENGTH'] = str(len(no_trigger_data))
+    >>> environ['wsgi.input'] = StringIO(no_trigger_data)
+    >>> environ['repoze.who.application'] = 'unchanged'
+    
+    >>> plugin.identify(environ)
+    
+    >>> environ['repoze.who.application']
+    'unchanged'

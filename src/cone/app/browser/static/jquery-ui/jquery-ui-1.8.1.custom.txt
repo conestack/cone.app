@@ -1,0 +1,7 @@
+jQuery UI custom compilation
+============================
+
+The jQuery UI custom compilation contained in ``cone.app`` contains the
+``autocomplete`` and  ``datepicker`` widgets and their dependencies.
+
+No effects are included at the moment.

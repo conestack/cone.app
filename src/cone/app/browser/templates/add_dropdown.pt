@@ -1,0 +1,20 @@
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+  <div class="dropdown">
+    <div class="icon">
+      <a href="${context.nodeurl}/adding"
+         class="add16_16"
+         title="Add Item">&nbsp;</a>
+    </div>
+    <ul class="dropdown_items" style="display:none;">
+      <li tal:repeat="item context.items">
+        <a href="${item.url}"
+           ajax:bind="click"
+           ajax:target="${item.target}"
+           ajax:action="add:#content:inner"
+           tal:content="item.title">
+          Item title
+        </a>
+      </li>
+    </ul>
+  </div>
+</tal:ajax>

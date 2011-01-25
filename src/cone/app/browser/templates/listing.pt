@@ -1,0 +1,12 @@
+<div>
+  <h1 tal:content="model.metadata.title">Title</h1>
+  
+  <tal:contextmenu replace="structure tile ('contextmenu')" />
+    
+  <p tal:condition="model.metadata.description"
+     tal:content="structure model.metadata.description">
+    Description
+  </p>
+    
+  <tal:listing replace="structure tile('contents')" />
+</div>

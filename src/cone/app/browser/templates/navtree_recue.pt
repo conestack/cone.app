@@ -1,0 +1,20 @@
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+  <ul>
+    <li tal:repeat="item children" class="navtreeitem">
+      <a href=""
+         ajax:bind="click"
+         ajax:target="${item['url']}"
+         ajax:event="contextchanged:.contextsensitiv
+                     contextchanged:#content"
+         tal:define="css item['selected'] and 'selected' or '';
+                     css ' '.join([css, 'navtreelevel_%i' % level])"
+         tal:attributes="href item['url'];
+                         class css"
+         tal:content="item['title']">Title</a>
+      <ul tal:condition="item['children']" class="childtree">
+        <tal:tree replace="structure context.rendertree(item['children'],
+                                                        level + 1)" />
+      </ul>
+    </li>
+  </ul>
+</tal:ajax>

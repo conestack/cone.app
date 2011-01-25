@@ -1,0 +1,252 @@
+Layout
+======
+
+This application strictly follows the concept of tiles. Each part of the
+application is represented by a tile, i.e. main menu, navigation tree, site
+content area, etc..
+
+Doing this gives us the following characteristics:
+
+    - Abstraction of the site to several 'subapplications' which could be
+      views, widgets and/or controllers.
+    
+    - The possibility to create generic tiles by the contract of
+      ``cone.app.interfaces.IApplicationNode``.
+    
+    - AJAX is easily integrateable.
+
+Reserved Tiles
+--------------
+
+The Application ships with a set of tiles. Some of them are abstract while
+others are already registered.
+
+Here are lists of currently reserved tile names.
+
+Behavioral:
+
+    - ``content`` - Used as default view for current model.
+    
+    - ``addform`` - Used as addform for model
+    
+    - ``editform`` - Used as editform for model
+
+Views and widgets:
+
+    - ``mainmenu`` - Render ``model.root.values``
+        - set ``mainmenu_empty_title`` on ``model.root.properties`` to ``True``
+          if you want to render empty links in mainmenu for setting
+          icons via css. Therefor 'node-nodeid' gets rendered as CSS class on
+          ``li`` DOM element.
+    
+    - ``pathbar`` - Render breadcrumbs for model
+   
+    - ``navtree`` - Render Navigation tree for model
+    
+    - ``personaltools`` - Render personal tools for model
+    
+    - ``contents`` - Render model contents as batched, sortable listing
+    
+    - ``byline`` - Render byline for model.metadata
+    
+    - ``contextmenu`` - Render contextmenu for model
+    
+    - ``add_dropdown`` - Adding dropdown menu for model
+
+
+Default Layout
+--------------
+
+The default layout contained in this package has the following grid:
+::
+
+    +--------------------------------------------------------------------+
+    | main menu                                                          |
+    +-----------------+--------------------------------------------------+
+    | navigation tree | content                                          |
+    +-----------------+                                                  |
+    | personal tools  |                                                  |
+    +-----------------+--------------------------------------------------+
+
+To change this, provide your own main template in your package and overwrite
+``cone.app.browser.MAIN_TEMPLATE`` on application startup.
+::
+
+    >>> import cone.app.browser
+    >>> cone.app.browser.MAIN_TEMPLATE
+    'cone.app.browser:templates/main.pt'
+    
+    >>> main = 'cone.app.tests:dummy_main.pt'
+    >>> cone.app.browser.MAIN_TEMPLATE = main
+
+Create mocks to test layout rendering.
+::
+
+A tile named as content. This is the default content tile.
+::
+
+    >>> from cone.tile import registerTile, Tile, render_tile
+    >>> class ContentTile(Tile):
+    ...     def render(self):
+    ...         return '<div>Content</div>'
+    >>> registerTile('content', class_=ContentTile)
+
+Request dummy.
+::
+
+    >>> from repoze.bfg import testing
+    >>> request = testing.DummyRequest()
+
+Model dummy.
+::
+
+    >>> from cone.app.model import BaseNode
+    >>> model = BaseNode()
+
+Render the main template. The function accepts an optional ``contenttilename``
+argument. if omitted, reserved name 'content' is used.
+::
+
+    >>> from cone.app.browser import render_main_template
+    >>> res = render_main_template(model, request)
+    >>> res.body
+    '<...
+    <body>\n    <div>Content</div>\n  
+    </body>\n</html>'
+
+    >>> registerTile('othername', class_=ContentTile)
+    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res.body
+    '<...
+    <body>\n    <div>Content</div>\n  
+    </body>\n</html>'
+
+Switch back to origin main template.
+::
+
+    >>> main =  'cone.app.browser:templates/main.pt'
+    >>> cone.app.browser.MAIN_TEMPLATE = main
+    
+    >>> import cone.app.browser.ajax
+    >>> import cone.app.browser.layout
+    
+    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res.body.find('id="mainmenu"') > -1
+    True
+    
+    >>> res.body.find('id="navtree"') > -1
+    True
+    
+    >>> res.body.find('id="personaltools"') > -1
+    True
+
+
+Protected content tile
+----------------------
+
+A login form should be rendered instead of the content for anonymous users.
+
+The class ``cone.app.browser.layout.ProtectedContentTile`` provides this
+behavior.
+::
+
+    >>> import cone.app.browser.authentication
+    >>> from cone.app.browser.layout import ProtectedContentTile
+    >>> class ProtectedContent(ProtectedContentTile):
+    ...     def render(self):
+    ...         return '<div>Content</div>'
+    
+    >>> class ProtectedModel(BaseNode): pass
+    
+    >>> registerTile('content',
+    ...              interface=ProtectedModel,
+    ...              class_=ProtectedContentTile)
+
+Render protected tile.
+::
+
+    >>> render_tile(ProtectedModel(), request, 'content')
+    u'<form action="http://example.com" enctype="multipart/form-data" 
+    id="form-loginform" method="post">...
+
+
+Main menu
+---------
+
+Test main menu tile.
+::
+
+    >>> root = BaseNode()
+    >>> root['1'] = BaseNode()
+    >>> root['2'] = BaseNode()
+
+Render main menu at root.
+::
+
+    >>> res = render_tile(root, request, 'mainmenu')
+    >>> res.find('href="http://example.com/1"') > -1
+    True
+    
+    >>> res.find('href="http://example.com/2"') > -1
+    True
+
+Render main menu at child. Child is marked selected.
+::
+
+    >>> res = render_tile(root['1'], request, 'mainmenu')
+    >>> res.find('class="first current_page_item mainmenulink"') > -1
+    True
+
+
+Navtree
+-------
+
+Test navigation tree tile.
+
+Empty navtree, no items are marked to be displayed.
+::
+
+    >>> res = render_tile(root, request, 'navtree')
+    >>> res
+    u'\n  <ul id="navtree" class="contextsensitiv" ajax:bind="contextchanged" 
+    ajax:action="navtree:#navtree:replace">\n    <li>\n      
+    <h2>Navigation</h2>\n      \n  <ul>\n    \n  </ul>\n\n    
+    </li>\n  </ul>\n'
+
+Node's which are in navtree.
+
+    >>> from cone.app.model import Properties
+    >>> class NavNode(BaseNode):
+    ...     @property
+    ...     def properties(self):
+    ...         return Properties({'in_navtree': True})
+    >>> root = NavNode()
+    >>> root['1'] = NavNode()
+    >>> root['2'] = NavNode()
+
+The property is read from ``BaseNode.properties`` and defines the contract with
+the navtree tile.
+::
+
+    >>> root['1'].attrs.in_navtree = True
+    >>> res = render_tile(root, request, 'navtree')
+    >>> res.find('href="http://example.com/1"') > -1
+    True
+
+Render navtree on ``root['1']``, must be selected.
+::
+
+    >>> res = render_tile(root['1'], request, 'navtree')
+    >>> res.find('class="selected navtreelevel_1">1</a>') > -1
+    True
+
+
+Personal Tools
+--------------
+
+    >>> res = render_tile(root, request, 'personaltools')
+    >>> res
+    u'<ul id="personaltools">\n  <li>\n    <h2>Personal tools</h2>\n    
+    <ul>\n      <li>\n        
+    <a href="http://example.com/logout">Logout</a>\n      </li>\n    </ul>\n  
+    </li>\n</ul>'

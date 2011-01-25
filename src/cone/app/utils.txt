@@ -1,0 +1,43 @@
+Utils
+=====
+
+Datetime Helper
+---------------
+
+Helper object for read/write operations with datetime values.
+::
+
+    >>> from datetime import datetime
+    >>> from cone.app.utils import DatetimeHelper
+    >>> helper = DatetimeHelper()
+    >>> dt = datetime(2010, 1, 1, 10, 15)
+    
+    >>> helper.dt_to_iso(dt)
+    '2010-01-01T10:15:00'
+    
+    >>> helper.dt_from_iso('2010-01-01T10:15:00')
+    datetime.datetime(2010, 1, 1, 10, 15)
+    
+    >>> helper.dt_from_iso(u'2010-01-01T10:15:00')
+    datetime.datetime(2010, 1, 1, 10, 15)
+
+    >>> helper.r_value(u'äöü')
+    u'\xc3\xa4\xc3\xb6\xc3\xbc'
+    
+    >>> helper.r_value('\xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc')
+    u'\xc3\xa4\xc3\xb6\xc3\xbc'
+    
+    >>> helper.r_value('2010-01-01T10:15:00')
+    datetime.datetime(2010, 1, 1, 10, 15)
+    
+    >>> helper.w_value('abc')
+    u'abc'
+    
+    >>> helper.w_value(u'abc')
+    u'abc'
+    
+    >>> helper.w_value(u'äöü')
+    u'\xc3\xa4\xc3\xb6\xc3\xbc'
+    
+    >>> helper.w_value(dt)
+    '2010-01-01T10:15:00'

@@ -1,0 +1,44 @@
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+  <div class="contextmenu">
+    <div tal:condition="model.properties.action_up">
+      <a href="${context.nodeurl[:context.nodeurl.rfind('/')]}"
+         class="up16_16"
+         title="One level up"
+         ajax:bind="click"
+         ajax:target="${context.nodeurl[:context.nodeurl.rfind('/')]}"
+         ajax:event="contextchanged:.contextsensitiv"
+         ajax:action="listing:#content:inner">&nbsp;</a>
+    </div>
+    <div tal:condition="model.properties.action_view">
+      <a href="${context.nodeurl}"
+         class="view16_16"
+         title="View"
+         ajax:bind="click"
+         ajax:target="${context.nodeurl}"
+         ajax:event="contextchanged:.contextsensitiv"
+         ajax:action="content:#content:inner">&nbsp;</a>
+    </div>
+    <div tal:condition="model.properties.action_list">
+      <a href="${context.nodeurl}/listing"
+         class="listing16_16"
+         title="Listing"
+         ajax:bind="click"
+         ajax:target="${context.nodeurl}"
+         ajax:action="listing:#content:inner">&nbsp;</a>
+    </div>
+    <tal:addables condition="model.nodeinfo.addables">
+      <tal:add_dropdown replace="structure tile('add_dropdown')" />
+    </tal:addables>
+    <div tal:condition="model.properties.editable">
+      <a href="${context.nodeurl}/edit"
+         class="edit16_16"
+         title="Edit"
+         ajax:bind="click"
+         ajax:target="${context.nodeurl}"
+         ajax:event="contextchanged:.contextsensitiv"
+         ajax:action="edit:#content:inner"
+         tal:condition="model.properties.editable">&nbsp;</a>
+    </div>
+  </div>
+  <div style="clear:both;"></div>
+</tal:ajax>

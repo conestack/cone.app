@@ -1,0 +1,575 @@
+Application Model
+=================
+
+The application model is used to describe the application hierarchy, fetch
+application specific information and access application data.
+
+The base application node inherits from ``zodict.node.LifecycleNode``. This
+has some advantages:
+
+    - ``repoze.bfg`` expects dict like objects for traversal, so we already
+      fulfill this contract by using Nodes.
+    
+    - It is ordered.
+    
+    - Nodes know about it's location so we can easily generate URL's out of
+      ``Node.path``.
+    
+    - The model is held in memory. ``LifecycleNode`` triggers object events
+      when it is modified, so we can subscribe to this events for data or tree
+      manipulation or trigger those events ourself, i.e. on cache timeouts.
+    
+    - Nodes have an index holding references to all contained Nodes in the tree
+      by uid. This makes it easy to access information from other Nodes.
+
+``cone.app.interfaces.IApplicationNode`` extend this interface by:
+
+    - An ``__acl__`` property defining security. See documentation of
+      ``repoze.bfg.security`` for details.
+    
+    - A ``properties`` property, containing IProperties implementing object.
+    
+    - A ``metadata`` property, containing IMetadata implementing object.
+    
+    - A ``nodeinfo`` property containing INodeInfo implementing object.
+
+
+BaseNode
+--------
+::
+
+    >>> from cone.app.model import BaseNode
+    >>> root = BaseNode()
+
+Default permissions.
+::
+
+    >>> root.__acl__
+    [('Allow', 'group:authenticated', 'view'), 
+    ('Allow', 'system.Everyone', 'login'), 
+    ('Deny', 'system.Everyone', 
+    <repoze.bfg.security.AllPermissionsList object at ...>)]
+
+Properties.
+::
+
+    >>> root.properties
+    <cone.app.model.Properties object at ...>
+
+``IProperties`` implementations do not raise AttributeErrors if requested
+attribute not exists.
+::
+
+    root.properties.inexistent
+
+Metadata.
+::
+
+    >>> root.metadata
+    <cone.app.model.BaseMetadata object at ...>
+    
+    >>> root.metadata.title
+    'No Title'
+
+    >>> root.metadata.inexistent
+
+Nodeinfo.
+::
+
+    >>> root.nodeinfo
+    <cone.app.model.BaseNodeInfo object at ...>
+    
+    >>> root.nodeinfo.node
+    <class 'cone.app.model.BaseNode'>
+    
+    >>> root.nodeinfo.title
+    "<class 'cone.app.model.BaseNode'>"
+    
+    >>> root.nodeinfo.inexistent
+
+
+FactoryNode
+-----------
+
+You can use the factory node to build static structures. It created the child
+Node for ``key`` on ``__getitem__`` if not existent yet.
+::
+
+    >>> from cone.app.model import FactoryNode
+    >>> class Root(FactoryNode):
+    ...     factories = {
+    ...         'foo': BaseNode,
+    ...         'bar': BaseNode,
+    ...     }
+    
+    >>> root = Root()
+    >>> root['foo']
+    <BaseNode object 'foo' at ...>
+    
+    >>> root['bar']
+    <BaseNode object 'bar' at ...>
+    
+    >>> root['baz']
+    Traceback (most recent call last):
+      ...
+    KeyError
+
+
+AdapterNode
+-----------
+
+An AdapterNode is intended to be used if you want to publish some kind of dict
+like object or other node implementations.
+
+Since other node implementations depend on their own internal hierarchy and
+do not provide the extensions described in
+``cone.app.interfaces.IApplicationNode``, we have to wrap it inside a
+adapter node in order to use it inside the application.
+
+The adapter node calls for common read operations the equivalent functions on
+it's adapted model.
+::
+
+    >>> from zodict.node import AttributedNode
+    >>> from cone.app.model import AdapterNode
+    
+    >>> toadapt = AttributedNode()
+    >>> toadapt['foo'] = AttributedNode()
+    >>> toadapt['bar'] = AttributedNode()
+    >>> toadapt.attrs.title = 'Some title'
+    >>> toadapt.attrs.description = 'Some description'
+
+Adapt created node structure.
+::
+
+    >>> adapter = AdapterNode(toadapt, 'name', None)
+
+Check ``AdapterNode``.
+
+    >>> adapter.model['foo']
+    <AttributedNode object 'foo' at ...>
+
+``attrs``
+::
+
+    >>> adapter.attrs.title
+    'Some title'
+    
+The adapter node is responsible to return other adapter node or application
+nodes on ``__getitem__`` if application hierarchy continues.
+
+You can do key aliasing as well at this place.
+::
+
+    >>> class MyAdapterNode(AdapterNode):
+    ...     def __getitem__(self, key):
+    ...         return AdapterNode(self.model['bar'], key, self)
+
+This dummy class does a static mapping on __getitem__.
+::
+
+    >>> node = MyAdapterNode(toadapt, 'adapter', None)
+    >>> child = node['aliased']
+    >>> child
+    <AdapterNode object 'aliased' at ...>
+    
+    >>> child.model
+    <AttributedNode object 'bar' at ...>
+
+The application node path differs from the adapted node path. This is essential
+to keep the application path sane while not violating the adapted node's
+structure.
+::
+
+    >>> child.path
+    ['adapter', 'aliased']
+    
+    >>> child.model.path
+    [None, 'bar']
+
+
+Metadata
+--------
+
+The ``IMetadata`` implementation returned by ``IApplicationNode.metadata`` is
+used by the application for displaying metadata information.
+
+The default implementation accepts a dict like object on ``__init__``.
+::
+
+    >>> from cone.app.model import BaseMetadata
+    >>> data = {
+    ...     'title': 'some title',
+    ...     'description': 'some description',
+    ...     'creator': 'john doe',
+    ... }
+
+Check ``INodeAdapter`` interface.
+::
+
+    >>> metadata = BaseMetadata(data)
+
+``__getattr__``. No AttributeError is raised if attribute is inexistent.
+::
+
+    >>> metadata.title
+    'some title'
+    
+    >>> metadata.description
+    'some description'
+    
+    >>> metadata.creator
+    'john doe'
+    
+    >>> metadata.inexistent
+
+``__getitem__``
+::
+
+    >>> metadata['title']
+    'some title'
+
+``__contains__``
+::
+
+    >>> 'description' in metadata
+    True
+
+``get``
+::
+
+    >>> metadata.get('creator')
+    'john doe'
+
+
+NodeInfo
+--------
+
+The ``INodeInfo`` providing object holds information about the application node.
+::
+
+    >>> from cone.app.model import BaseNodeInfo
+    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo.node = BaseNode
+    >>> nodeinfo.addables = ['basenode']
+    >>> nodeinfo.title = 'Base Node'
+
+Register node info.
+::
+
+    >>> from cone.app.model import registerNodeInfo, getNodeInfo
+    >>> registerNodeInfo('basenode', nodeinfo)
+
+Lookup Node info.
+::
+
+    >>> nodeinfo = getNodeInfo('basenode')
+    >>> nodeinfo.title
+    'Base Node'
+
+``__getattr__``. No AttributeError is raised if attribute is inexistent.
+::
+
+    >>> nodeinfo.addables
+    ['basenode']
+    
+    >>> nodeinfo.inexistent
+
+``__getitem__``
+::
+
+    >>> nodeinfo['addables']
+    ['basenode']
+
+``__contains__``
+::
+
+    >>> 'node' in nodeinfo
+    True
+
+``get``
+::
+
+    >>> nodeinfo.get('node')
+    <class 'cone.app.model.BaseNode'>
+
+
+Properties
+----------
+
+You can use the ``Properties`` object for any kind of mapping.
+::
+
+    >>> from cone.app.model import Properties
+    >>> p1 = Properties()
+    >>> p1.prop = 'Foo'
+    
+    >>> p2 = Properties()
+    >>> p2.prop = 'Bar'
+    
+    >>> p1.prop, p2.prop
+    ('Foo', 'Bar')
+
+
+XML Properties
+--------------
+
+There's a convenience object for XML input and output.
+
+Dummy environment.
+::
+
+    >>> import os
+    >>> import tempfile
+    >>> tempdir = tempfile.mkdtemp()
+    
+Create XML properties with path and optional data.
+::
+
+    >>> from cone.app.model import XMLProperties
+    >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'),
+    ...                       data={'foo': u'äöüß'})
+
+Testing helper functions.
+::
+    
+    >>> props._keys()
+    ['foo']
+    
+    >>> props._values()
+    [u'\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f']
+
+XML properties could be datetime objects.
+::
+
+    >>> from datetime import datetime
+    >>> props.effective = datetime(2010, 1, 1, 10, 15)
+
+XML properties could be multi valued...
+::
+
+    >>> props.keywords = ['a', datetime(2010, 1, 1, 10, 15)]
+
+...or dict/odict instance
+::
+
+    >>> from odict import odict
+    >>> props.dictlike = odict([('a', 'foo'), ('b', 'bar')])
+
+Nothing added yet.
+::
+
+    >>> os.listdir(tempdir)
+    []
+
+Call props, file is now written to disk.
+::
+
+    >>> props()
+    >>> os.listdir(tempdir)
+    ['props.xml']
+
+Check file contents.
+::
+
+    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
+    ...     file.read().split('\n')
+    ['<properties>', 
+    '  <foo>&#195;&#164;&#195;&#182;&#195;&#188;&#195;&#159;</foo>', 
+    '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <keywords>', 
+    '    <item>a</item>', 
+    '    <item>2010-01-01T10:15:00</item>', 
+    '  </keywords>', 
+    '  <dictlike>',
+     '    <elem>', 
+     '      <key>a</key>', 
+     '      <value>foo</value>', 
+     '    </elem>', 
+     '    <elem>', 
+     '      <key>b</key>', 
+     '      <value>bar</value>', 
+     '    </elem>', 
+     '  </dictlike>', 
+     '</properties>', 
+     '']
+
+Overwrite ``foo`` and add ``bar`` properties; Note that even markup can be 
+used safely.
+::
+
+    >>> props.foo = 'foo'
+    >>> props.bar = '<bar>äöü</bar>'
+    
+Call props and check result.
+::
+    
+    >>> props()
+    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
+    ...     file.read().split('\n')
+    ['<properties>', 
+    '  <foo>foo</foo>', 
+    '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <keywords>', 
+    '    <item>a</item>', 
+    '    <item>2010-01-01T10:15:00</item>', 
+    '  </keywords>', 
+    '  <dictlike>', 
+    '    <elem>', 
+    '      <key>a</key>', 
+    '      <value>foo</value>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>b</key>', 
+    '      <value>bar</value>', 
+    '    </elem>', '  </dictlike>', 
+    '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
+    '</properties>', 
+    '']
+
+Create XML properties from existing file.
+::
+
+    >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'))
+    >>> props._keys()
+    ['foo', 'effective', 'keywords', 'dictlike', 'bar']
+    
+    >>> props._values()
+    [u'foo', 
+    datetime.datetime(2010, 1, 1, 10, 15), 
+    [u'a', datetime.datetime(2010, 1, 1, 10, 15)], 
+    odict([('a', 'foo'), ('b', 'bar')]), 
+    u'<bar>\xe4\xf6\xfc</bar>']
+
+Delete property.
+::
+
+    >>> del props['foo']
+    >>> props._keys()
+    ['effective', 'keywords', 'dictlike', 'bar']
+
+Call and check results.
+::
+
+    >>> props()
+    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
+    ...     file.read().split('\n')
+    ['<properties>', 
+    '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <keywords>', 
+    '    <item>a</item>', 
+    '    <item>2010-01-01T10:15:00</item>', 
+    '  </keywords>', 
+    '  <dictlike>', 
+    '    <elem>', 
+    '      <key>a</key>', 
+    '      <value>foo</value>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>b</key>', 
+    '      <value>bar</value>', 
+    '    </elem>', 
+    '  </dictlike>', 
+    '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
+    '</properties>', 
+    '']
+
+Change order of odict and check results
+::
+
+    >>> props.dictlike = odict([('b', 'bar'), ('a', 'foo')])
+    >>> props()
+    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
+    ...     file.read().split('\n')
+    ['<properties>', 
+    '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <keywords>', 
+    '    <item>a</item>', 
+    '    <item>2010-01-01T10:15:00</item>', 
+    '  </keywords>', 
+    '  <dictlike>', 
+    '    <elem>', 
+    '      <key>b</key>', 
+    '      <value>bar</value>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>a</key>', 
+    '      <value>foo</value>', 
+    '    </elem>', 
+    '  </dictlike>', 
+    '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
+    '</properties>', 
+    '']
+    
+    >>> os.remove(os.path.join(tempdir, 'props.xml'))
+
+ConfigProperties
+----------------
+
+A Properties implementation exists for Config files used by python configparser.
+:: 
+
+    >>> from cone.app.model import ConfigProperties
+    >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'),
+    ...                          data={'foo': 1})
+
+Nothing added yet.
+::
+
+    >>> os.listdir(tempdir)
+    []
+
+Call props, file is now written to disk.
+::
+
+    >>> props()
+    >>> os.listdir(tempdir)
+    ['props.cfg']
+
+Check file contents.
+::
+
+    >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
+    ...     file.read()
+    '[properties]\nfoo = 1\n\n'
+
+Overwrite ``foo`` and add ``bar`` properties.
+::
+
+    >>> props.foo = 'foo'
+    >>> props.bar = 'bar'
+    
+Call props and check result.
+::
+    
+    >>> props()
+    >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
+    ...     file.read()
+    '[properties]\nfoo = foo\nbar = bar\n\n'
+
+Create config properties from existing file.
+::
+
+    >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
+    >>> props.foo
+    'foo'
+    
+    >>> props.bar
+    'bar'
+
+Delete property.
+::
+
+    >>> del props['foo']
+    >>> props.foo
+
+Call and check results.
+::
+
+    >>> props()
+    >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
+    ...     file.read()
+    '[properties]\nbar = bar\n\n'
+
+    >>> import shutil
+    >>> shutil.rmtree(tempdir)

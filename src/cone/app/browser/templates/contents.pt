@@ -1,0 +1,94 @@
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+  <div id="contentslisting"
+       class="contentsbatchsensitiv
+              sortingheadsensitiv"
+       ajax:bind="batchclicked sortclicked"
+       ajax:target="${context.nodeurl}"
+       ajax:action="contents:#contentslisting:replace">
+  
+    <tal:batch replace="structure context.batch" />
+  
+    <table class="contents">
+      <tr class="head">
+        <th>
+          Actions
+        </th>
+        <th tal:define="defs context.th_defs('title')"
+            tal:attributes="class defs[0] and defs[0] or None">
+          <a href="${defs[1]}"
+             title="Sort on title"
+             ajax:bind="click"
+             ajax:target="${defs[1]}"
+             ajax:event="sortclicked:.sortingheadsensitiv">
+              Title
+          </a>
+        </th>
+        <th tal:define="defs context.th_defs('creator')"
+            tal:attributes="class defs[0] and defs[0] or None">
+          <a href="${defs[1]}"
+             title="Sort on cretor"
+             ajax:bind="click"
+             ajax:target="${defs[1]}"
+             ajax:event="sortclicked:.sortingheadsensitiv">
+              Creator
+          </a>
+        </th>
+        <th tal:define="defs context.th_defs('created')"
+            tal:attributes="class defs[0] and defs[0] or None">
+          <a href="${defs[1]}"
+             title="Sort on created"
+             ajax:bind="click"
+             ajax:target="${defs[1]}"
+             ajax:event="sortclicked:.sortingheadsensitiv">
+              Created
+          </a>
+        </th>
+        <th tal:define="defs context.th_defs('modified')"
+            tal:attributes="class defs[0] and defs[0] or None">
+          <a href="${defs[1]}"
+             title="Sort on modified"
+             ajax:bind="click"
+             ajax:target="${defs[1]}"
+             ajax:event="sortclicked:.sortingheadsensitiv">
+              Modified
+          </a>
+        </th>
+      </tr>
+      <tal:row repeat="item context.contents.items">
+        <tr>
+          <td>
+            <a href="${context.nodeurl}/${item.__name__}"
+               class="view16_16"
+               title="View"
+               ajax:bind="click"
+               ajax:target="${context.nodeurl}/${item.__name__}"
+               ajax:event="contextchanged:.contextsensitiv"
+               ajax:action="content:#content:inner">&nbsp;</a>
+            <a href="${context.nodeurl}/${item.__name__}/edit?from=parent"
+               class="edit16_16"
+               title="Edit"
+               ajax:bind="click"
+               ajax:target="${context.nodeurl}/${item.__name__}?from=parent"
+               ajax:event="contextchanged:.contextsensitiv"
+               ajax:action="edit:#content:inner"
+               tal:condition="item.properties.editable">&nbsp;</a>
+          </td>
+          <td>
+            <a href="${context.nodeurl}/${item.__name__}"
+               ajax:bind="click"
+               ajax:target="${context.nodeurl}/${item.__name__}"
+               ajax:event="contextchanged:.contextsensitiv"
+               ajax:action="content:#content:inner"
+               tal:content="item.metadata.get('title', item.__name__)">
+                Title
+            </a>
+          </td>
+          <td tal:content="item.metadata.get('creator', 'unknown')">Creator</td>
+          <td tal:content="context.format_date(item.metadata.get('created'))">Created</td>
+          <td tal:content="context.format_date(item.metadata.get('modified'))">Modified</td>
+        </tr>
+      </tal:row>
+    </table>
+  
+  </div>
+</tal:ajax>

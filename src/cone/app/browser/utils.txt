@@ -1,0 +1,58 @@
+Browser Utils
+=============
+
+Common browser utils.
+::
+
+    >>> from cone.app.browser.utils import (
+    ...     authenticated,
+    ...     nodepath,
+    ...     make_query,
+    ...     make_url,
+    ... )
+
+``authenticated`` - Will be removed.
+::
+
+    >>> from repoze.bfg import testing
+    >>> request = testing.DummyRequest()
+    >>> authenticated(request)
+
+``nodepath`` - Propably will be implemented in ``BaseNode``. Just skips root in
+path.
+::
+
+    >>> from cone.app.model import BaseNode
+    >>> root = BaseNode()
+    >>> root['child'] = BaseNode()
+    >>> nodepath(root['child'])
+    ['child']
+
+``make_url`` - create URL's.
+::
+
+    >>> make_url(request)
+    'http://example.com/'
+    
+    >>> make_url(request, path=['1', '2', '3'])
+    'http://example.com/1/2/3'
+    
+    >>> make_url(request, node=root['child'])
+    'http://example.com/child'
+    
+    >>> make_url(request, node=root['child'], resource='foo')
+    'http://example.com/child/foo'
+    
+    >>> make_url(request, node=root['child'], resource='foo', query='&a=1')
+    'http://example.com/child/foo&a=1'
+
+``make_query`` - create query strings.
+::
+
+    >>> make_query(**{
+    ...     'foo': None,
+    ...     'bar': '123',
+    ...     'baz': [],
+    ...     'bam': ['456', '789'],
+    ... })
+    '?bar=123&bam=456&bam=789'

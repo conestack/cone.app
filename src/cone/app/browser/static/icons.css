@@ -1,0 +1,49 @@
+/* Icons */
+a.view16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('/static/icons/view16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.edit16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('/static/icons/edit16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.add16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('/static/icons/add16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.up16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('/static/icons/up16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.reference16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('/static/icons/reference16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.listing16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('/static/icons/listing16_16.png') top left no-repeat;
+    cursor:pointer;
+}

@@ -1,0 +1,100 @@
+Forms
+=====
+
+``cone.app`` uses ``yafowil`` as form engine. See Documentation of
+``yafowil`` for details how to use it.
+
+We provide an abstract form tile, which renders forms, does form processing
+and renders or redirects to a result. You have to provide the ``form`` property
+on a deriving object returning a yafowil widget tree.
+::
+
+    >>> from yafowil import loader
+    >>> from yafowil.base import factory
+    >>> from cone.tile import tile
+    >>> from cone.app.browser.utils import make_url
+    >>> from cone.app.browser.form import Form
+    
+    >>> @tile('subscriptionform')
+    ... class SubscriptionForm(Form):
+    ...     
+    ...     @property
+    ...     def form(self):
+    ...         form = factory(u'form',
+    ...                        name='subscriptionform',
+    ...                        props={'action': self.nodeurl})
+    ...         form['email'] = factory(
+    ...             'field:label:error:text',
+    ...             props = {
+    ...                 'required': 'No email given',
+    ...                 'label': 'E-Mail',
+    ...             })
+    ...         form['subscribe'] = factory(
+    ...             'submit',
+    ...             props = {
+    ...                 'action': 'subscribe',
+    ...                 'expression': True,
+    ...                 'handler': self.subscribe,
+    ...                 'next': self.next,
+    ...                 'label': 'Subscribe',
+    ...             })
+    ...         return form
+    ...     
+    ...     def subscribe(self, widget, data):
+    ...         """Do subscription here
+    ...         """
+    ...         print 'subscribe on "%s"' % self.model.__name__
+    ...         
+    ...     def next(self, request):
+    ...         return '<div>Result</div>'
+
+Create dummy model and request.
+::
+
+    >>> from cone.app.model import BaseNode
+    >>> from repoze.bfg.testing import DummyRequest
+    >>> model = BaseNode()
+    >>> model.__name__ = 'dummymodel'
+    >>> request = DummyRequest()
+
+Render form. no action is triggered and no input is given.
+::
+    
+    >>> from cone.tile import render_tile
+    >>> render_tile(model, request, 'subscriptionform')
+    u'<form action="http://example.com/dummymodel" 
+    enctype="multipart/form-data" id="form-subscriptionform" 
+    method="post"><div class="field" id="field-subscriptionform-email"><label 
+    for="input-subscriptionform-email">E-Mail</label><input class="required text" 
+    id="input-subscriptionform-email" name="subscriptionform.email" 
+    type="text" value="" /></div><input id="input-subscriptionform-subscribe" 
+    name="action.subscriptionform.subscribe" type="submit" 
+    value="Subscribe" /></form>'
+
+Trigger subscribe action and set empty email value. Results in a form with
+error message since email is required.
+::
+
+    >>> request.params['action.subscriptionform.subscribe'] = '1'
+    >>> request.params['subscriptionform.email'] = ''
+
+    >>> render_tile(model, request, 'subscriptionform')
+    u'<form action="http://example.com/dummymodel" 
+    enctype="multipart/form-data" id="form-subscriptionform" 
+    method="post"><div class="field" id="field-subscriptionform-email"><label 
+    for="input-subscriptionform-email">E-Mail</label><div class="error"><div 
+    class="errormessage">No email given</div><input class="required text" 
+    id="input-subscriptionform-email" name="subscriptionform.email" type="text" 
+    value="" /></div></div><input id="input-subscriptionform-subscribe" 
+    name="action.subscriptionform.subscribe" type="submit" 
+    value="Subscribe" /></form>'
+
+Trigger subscribe action and set valid email value. Now the action handler and
+next handler are triggered.
+::
+
+    >>> request.params['subscriptionform.email'] = 'john.doe@example.com'
+    
+    >>> render_tile(model, request, 'subscriptionform')
+    subscribe on "dummymodel"
+    '<div>Result</div>'
