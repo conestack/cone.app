@@ -4,14 +4,28 @@ import ConfigParser
 from lxml import etree
 from datetime import datetime
 from odict import odict
+from plumber import plumber
+from node.parts import (
+    NodeInit,
+    AsAttrAccess,
+    NodeChildValidate,
+    Adopt,
+    Nodespaces,
+    Attributes,
+    Nodify,
+    NodeRepr,
+    Lifecycle,
+    OdictStorage,
+)
 from zope.interface import implements
-from zodict.node import LifecycleNode, AttributedNode
 from repoze.bfg.threadlocal import get_current_request
-from repoze.bfg.security import Everyone
-from repoze.bfg.security import Allow
-from repoze.bfg.security import Deny
-from repoze.bfg.security import ALL_PERMISSIONS
-from repoze.bfg.security import authenticated_userid
+from repoze.bfg.security import (
+    Everyone,
+    Allow,
+    Deny,
+    ALL_PERMISSIONS,
+    authenticated_userid,
+)
 from cone.app.interfaces import (
     IApplicationNode,
     IFactoryNode,
@@ -31,8 +45,22 @@ def getNodeInfo(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
 
-class BaseNode(AttributedNode):
+#class BaseNode(AttributedNode):
 #class BaseNode(LifecycleNode):
+class BaseNode(object):
+    __metaclass__ = plumber
+    __plumbing__ = (
+        NodeInit,
+        AsAttrAccess,
+        NodeChildValidate,
+        Adopt,
+        Nodespaces,
+        Attributes,
+        Nodify,
+        NodeRepr,
+        Lifecycle,
+        OdictStorage,
+    )
     implements(IApplicationNode)
     
     __acl__ = [
@@ -78,8 +106,9 @@ class FactoryNode(BaseNode):
         keys = set()
         for key in self.factories.keys():
             keys.add(key)
-        for key in AttributedNode.__iter__(self):
-        #for key in LifecycleNode.__iter__(self):
+        # access from self.storage, defined by OdictStrorage,
+        # XXX: more general solution
+        for key in self.storage:
             keys.add(key)
         for key in keys:
             yield key
@@ -88,8 +117,9 @@ class FactoryNode(BaseNode):
     
     def __getitem__(self, key):
         try:
-            child = AttributedNode.__getitem__(self, key)
-            #child = LifecycleNode.__getitem__(self, key)
+            # access from self.storage, defined by OdictStrorage,
+            # XXX: more general solution
+            child = self.storage[key]
         except KeyError, e:
             if not key in self.iterkeys():
                 raise KeyError

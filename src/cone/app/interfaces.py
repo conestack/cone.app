@@ -1,8 +1,9 @@
 from zope.interface import Attribute
 from zope.interface.common.mapping import IReadMapping
-from zodict.interfaces import IAttributedNode
+from node.interfaces import INode
+from node.interfaces import IAttributes
 
-class IApplicationNode(IAttributedNode):
+class IApplicationNode(INode, IAttributes):
     """Application Node interface.
     """
     

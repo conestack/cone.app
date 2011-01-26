@@ -4,8 +4,8 @@ Application Model
 The application model is used to describe the application hierarchy, fetch
 application specific information and access application data.
 
-The base application node inherits from ``zodict.node.LifecycleNode``. This
-has some advantages:
+The base application node utilizes 
+`node <http://pypi.python.org/pypi/node>`_. This has some advantages:
 
     - ``repoze.bfg`` expects dict like objects for traversal, so we already
       fulfill this contract by using Nodes.
@@ -130,12 +130,12 @@ The adapter node calls for common read operations the equivalent functions on
 it's adapted model.
 ::
 
-    >>> from zodict.node import AttributedNode
+    >>> from cone.app.model import BaseNode
     >>> from cone.app.model import AdapterNode
     
-    >>> toadapt = AttributedNode()
-    >>> toadapt['foo'] = AttributedNode()
-    >>> toadapt['bar'] = AttributedNode()
+    >>> toadapt = BaseNode()
+    >>> toadapt['foo'] = BaseNode()
+    >>> toadapt['bar'] = BaseNode()
     >>> toadapt.attrs.title = 'Some title'
     >>> toadapt.attrs.description = 'Some description'
 
@@ -147,7 +147,7 @@ Adapt created node structure.
 Check ``AdapterNode``.
 
     >>> adapter.model['foo']
-    <AttributedNode object 'foo' at ...>
+    <BaseNode object 'foo' at ...>
 
 ``attrs``
 ::
@@ -174,7 +174,7 @@ This dummy class does a static mapping on __getitem__.
     <AdapterNode object 'aliased' at ...>
     
     >>> child.model
-    <AttributedNode object 'bar' at ...>
+    <BaseNode object 'bar' at ...>
 
 The application node path differs from the adapted node path. This is essential
 to keep the application path sane while not violating the adapted node's

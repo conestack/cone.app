@@ -203,7 +203,7 @@ model root node. Create a file ``model.py`` which looks like.
     >>> def get_root(environ):
     ...     return root
 
-See documentation of package ``zodict`` for more info about Nodes and section
+See documentation of package ``node`` for more info about Nodes and section
 "Application model" for how it is used in ``cone.app``. 
 
 

@@ -30,7 +30,7 @@ setup(name='cone.app',
       install_requires=[
           'setuptools',
           'lxml',
-          'zodict',
+          'node',
           'repoze.bfg',
           'repoze.bfg.xmlrpc',
           'repoze.what',
