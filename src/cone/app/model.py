@@ -11,6 +11,7 @@ from node.parts import (
     Adopt,
     Nodespaces,
     Attributes,
+    DefaultInit,
     Nodify,
     Lifecycle,
     OdictStorage,
@@ -53,6 +54,7 @@ class BaseNode(object):
         Adopt,
         Nodespaces,
         Attributes,
+        DefaultInit,
         Nodify,
         Lifecycle,
         OdictStorage,
@@ -67,10 +69,6 @@ class BaseNode(object):
     
     # set this to name of registered node info on deriving class
     node_info_name = ''
-    
-    def __init__(self, name=None, parent=None):
-        self.__name__ = name
-        self.__parent__ = parent
     
     @property
     def properties(self):
