@@ -6,14 +6,12 @@ from datetime import datetime
 from odict import odict
 from plumber import plumber
 from node.parts import (
-    NodeInit,
     AsAttrAccess,
     NodeChildValidate,
     Adopt,
     Nodespaces,
     Attributes,
     Nodify,
-    NodeRepr,
     Lifecycle,
     OdictStorage,
 )
@@ -41,23 +39,21 @@ _node_info_registry = dict()
 def registerNodeInfo(name, info):
     _node_info_registry[name] = info
 
+
 def getNodeInfo(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
 
-#class BaseNode(AttributedNode):
-#class BaseNode(LifecycleNode):
+
 class BaseNode(object):
     __metaclass__ = plumber
     __plumbing__ = (
-        NodeInit,
         AsAttrAccess,
         NodeChildValidate,
         Adopt,
         Nodespaces,
         Attributes,
         Nodify,
-        NodeRepr,
         Lifecycle,
         OdictStorage,
     )
@@ -71,6 +67,10 @@ class BaseNode(object):
     
     # set this to name of registered node info on deriving class
     node_info_name = ''
+    
+    def __init__(self, name=None, parent=None):
+        self.__name__ = name
+        self.__parent__ = parent
     
     @property
     def properties(self):
