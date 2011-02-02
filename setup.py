@@ -40,6 +40,9 @@ setup(name='cone.app',
           'cone.tile',
           'yafowil',
           'yafowil.webob',
+          'yafowil.widget.datetime',
+          'yafowil.widget.richtext',
+          'yafowil.widget.dict',
       ],
       # XXX: why should this be set here?
       #dependency_links = [
