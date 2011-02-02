@@ -1,4 +1,4 @@
-from repoze.bfg.view import bfg_view
+from pyramid.view import view_config
 from cone.tile import (
     registerTile,
     render_tile,
@@ -9,7 +9,7 @@ registerTile('bdajax',
              permission='login',
              strict=False)
 
-@bfg_view(name='ajaxaction', accept='application/json', renderer='json')
+@view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
     """Render an ajax action by name.
     
@@ -48,7 +48,7 @@ def dummy_livesearch_callback(model, request):
 # Overwrite this with your own implementation on application startup
 LIVESEARCH_CALLBACK = dummy_livesearch_callback
 
-@bfg_view(name='livesearch', accept='application/json', renderer='json')
+@view_config(name='livesearch', accept='application/json', renderer='json')
 def livesearch(model, request):
     """Call ``LIVESEARCH_CALLBACK`` and return its results.
     """

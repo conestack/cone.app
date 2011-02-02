@@ -1,4 +1,4 @@
-from repoze.bfg.security import has_permission
+from pyramid.security import has_permission
 from cone.tile import (
     tile,
     Tile,

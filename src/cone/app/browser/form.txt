@@ -52,7 +52,7 @@ Create dummy model and request.
 ::
 
     >>> from cone.app.model import BaseNode
-    >>> from repoze.bfg.testing import DummyRequest
+    >>> from pyramid.testing import DummyRequest
     >>> model = BaseNode()
     >>> model.__name__ = 'dummymodel'
     >>> request = DummyRequest()

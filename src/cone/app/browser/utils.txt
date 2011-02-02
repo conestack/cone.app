@@ -14,7 +14,7 @@ Common browser utils.
 ``authenticated`` - Will be removed.
 ::
 
-    >>> from repoze.bfg import testing
+    >>> from pyramid import testing
     >>> request = testing.DummyRequest()
     >>> authenticated(request)
 

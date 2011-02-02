@@ -1,5 +1,5 @@
 import datetime
-from repoze.bfg.security import authenticated_userid
+from pyramid.security import authenticated_userid
 
 def authenticated(request):
     return authenticated_userid(request)

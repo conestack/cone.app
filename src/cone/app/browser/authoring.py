@@ -1,4 +1,4 @@
-from repoze.bfg.view import bfg_view
+from pyramid.view import view_config
 from cone.tile import (
     Tile,
     tile,
@@ -18,7 +18,7 @@ from cone.app.browser.utils import (
     make_query,
 )
 
-@bfg_view('add', permission='login')
+@view_config('add', permission='login')
 def add(model, request):
     return render_main_template(model, request, contenttilename='add')
 
@@ -45,7 +45,7 @@ class AddTile(ProtectedContentTile):
             return None
         return getNodeInfo(factory)
 
-@bfg_view('edit', permission='login')
+@view_config('edit', permission='login')
 def edit(model, request):
     return render_main_template(model, request, contenttilename='edit')
 

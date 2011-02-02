@@ -4,9 +4,9 @@ import yafowil.widget.datetime
 import yafowil.widget.richtext
 import yafowil.widget.dict
 from webob.exc import HTTPUnauthorized
-from repoze.bfg.view import (
+from pyramid.view import (
     static,
-    bfg_view,
+    view_config,
 )
 from cone.tile import (
     render_template_to_response,
@@ -40,10 +40,10 @@ def render_main_template(model, request, contenttilename='content'):
                                        contenttilename=contenttilename,
                                        project='BDA DB Backend')
 
-@bfg_view(permission='login')
+@view_config(permission='login')
 def main(model, request):
     return render_main_template(model, request)
 
-@bfg_view('logout')
+@view_config('logout')
 def logout(context, request):
     return HTTPUnauthorized(headers=[('Location', request.application_url)])

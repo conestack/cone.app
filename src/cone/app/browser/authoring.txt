@@ -92,7 +92,7 @@ Now create dummy root and render ``add`` tile.
 ::
 
     >>> import cone.app.browser.authoring
-    >>> from repoze.bfg.testing import DummyRequest
+    >>> from pyramid.testing import DummyRequest
     >>> from cone.tile import render_tile
     >>> request = DummyRequest()
     >>> root = MyNode()

@@ -17,8 +17,8 @@ from node.parts import (
     OdictStorage,
 )
 from zope.interface import implements
-from repoze.bfg.threadlocal import get_current_request
-from repoze.bfg.security import (
+from pyramid.threadlocal import get_current_request
+from pyramid.security import (
     Everyone,
     Allow,
     Deny,

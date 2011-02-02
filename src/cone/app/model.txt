@@ -7,7 +7,7 @@ application specific information and access application data.
 The base application node utilizes 
 `node <http://pypi.python.org/pypi/node>`_. This has some advantages:
 
-    - ``repoze.bfg`` expects dict like objects for traversal, so we already
+    - ``pyramid`` expects dict like objects for traversal, so we already
       fulfill this contract by using Nodes.
     
     - It is ordered.
@@ -25,7 +25,7 @@ The base application node utilizes
 ``cone.app.interfaces.IApplicationNode`` extend this interface by:
 
     - An ``__acl__`` property defining security. See documentation of
-      ``repoze.bfg.security`` for details.
+      ``pyramid.security`` for details.
     
     - A ``properties`` property, containing IProperties implementing object.
     
@@ -48,7 +48,7 @@ Default permissions.
     [('Allow', 'group:authenticated', 'view'), 
     ('Allow', 'system.Everyone', 'login'), 
     ('Deny', 'system.Everyone', 
-    <repoze.bfg.security.AllPermissionsList object at ...>)]
+    <pyramid.security.AllPermissionsList object at ...>)]
 
 Properties.
 ::

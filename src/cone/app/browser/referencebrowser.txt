@@ -10,7 +10,7 @@ Load requirements.
 
     >>> import yafowil.loader
     >>> import cone.app.browser.referencebrowser
-    >>> from repoze.bfg.testing import DummyRequest
+    >>> from pyramid.testing import DummyRequest
 
 Test widget.
 ::

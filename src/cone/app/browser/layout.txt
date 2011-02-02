@@ -94,7 +94,7 @@ A tile named as content. This is the default content tile.
 Request dummy.
 ::
 
-    >>> from repoze.bfg import testing
+    >>> from pyramid import testing
     >>> request = testing.DummyRequest()
 
 Model dummy.
