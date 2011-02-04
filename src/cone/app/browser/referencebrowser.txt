@@ -159,9 +159,9 @@ Render required with empty value.
     
     >>> widget(data=data)
     u'<select class="referencebrowser required" id="input-ref" 
-    multiple="multiple" name="ref"><option id="input-ref-uid1" 
-    value="uid1">Title1</option><option id="input-ref-uid2" 
-    value="uid2">Title2</option></select>'
+    multiple="multiple" name="ref" required="required"><option 
+    id="input-ref-uid1" value="uid1">Title1</option><option 
+    id="input-ref-uid2" value="uid2">Title2</option></select>'
 
 Required with valid value.
 ::
@@ -176,6 +176,7 @@ Required with valid value.
     
     >>> widget(data=data)
     u'<select class="referencebrowser required" id="input-ref" 
-    multiple="multiple" name="ref"><option id="input-ref-uid1" 
-    selected="selected" value="uid1">Title1</option><option id="input-ref-uid2" 
-    selected="selected" value="uid2">Title2</option></select>'
+    multiple="multiple" name="ref" required="required"><option 
+    id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
+    id="input-ref-uid2" selected="selected" 
+    value="uid2">Title2</option></select>'
