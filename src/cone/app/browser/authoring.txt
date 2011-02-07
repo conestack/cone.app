@@ -36,17 +36,22 @@ provide NodeInfo for our application nodes.
 Create and register an addform tile for MyNode.
 ::
 
+    >>> from plumber import plumber
     >>> from yafowil import loader
     >>> from yafowil.base import factory
     >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.form import AddForm
+    >>> from cone.app.browser.form import (
+    ...     Form,
+    ...     AddPart,
+    ... )
     
     >>> @tile('addform', interface=MyNode)
-    ... class MyAddForm(AddForm):
+    ... class MyAddForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = AddPart
     ...     
-    ...     @property
-    ...     def form(self):
+    ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='addform',
     ...                        props={'action': self.nodeurl})
@@ -69,7 +74,7 @@ Create and register an addform tile for MyNode.
     ...                 'next': self.next,
     ...                 'label': 'Add',
     ...             })
-    ...         return form
+    ...         self.form = form
     ...     
     ...     def add(self, widget, data):
     ...         fetch = self.request.params.get
@@ -138,13 +143,14 @@ Providing edit forms is easy, just bind a form tile named 'editform' for your
 application node.
 ::
 
-    >>> from cone.app.browser.form import EditForm
+    >>> from cone.app.browser.form import EditPart
 
     >>> @tile('editform', interface=MyNode)
-    ... class MyEditForm(EditForm):
+    ... class MyEditForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = EditPart
     ...     
-    ...     @property
-    ...     def form(self):
+    ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='editform',
     ...                        props={'action': self.nodeurl})
@@ -163,7 +169,7 @@ application node.
     ...                 'next': self.next,
     ...                 'label': 'Update',
     ...             })
-    ...         return form
+    ...         self.form = form
     ...     
     ...     def update(self, widget, data):
     ...         fetch = self.request.params.get

@@ -9,8 +9,7 @@ from cone.app.browser.form import Form
 @tile('loginform', permission="login")
 class LoginForm(Form):
     
-    @property
-    def form(self):
+    def prepare(self):
         form = factory(u'form',
                        name='loginform',
                        props={'action': self.nodeurl})
@@ -39,7 +38,7 @@ class LoginForm(Form):
                 'next': None,
                 'label': 'Login',
             })
-        return form
+        self.form = form
     
     def authenticated(self, widget, data):
         if not authenticated(self.request):

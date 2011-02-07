@@ -18,8 +18,7 @@ on a deriving object returning a yafowil widget tree.
     >>> @tile('subscriptionform')
     ... class SubscriptionForm(Form):
     ...     
-    ...     @property
-    ...     def form(self):
+    ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='subscriptionform',
     ...                        props={'action': self.nodeurl})
@@ -38,7 +37,7 @@ on a deriving object returning a yafowil widget tree.
     ...                 'next': self.next,
     ...                 'label': 'Subscribe',
     ...             })
-    ...         return form
+    ...         self.form = form
     ...     
     ...     def subscribe(self, widget, data):
     ...         """Do subscription here
