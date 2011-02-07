@@ -1,9 +1,9 @@
 import urllib
 from paste.request import parse_formvars
 from paste.request import construct_url
-from paste.httpexceptions import HTTPFound
 from repoze.who.interfaces import IAuthenticator
 from repoze.who.plugins.form import FormPlugin as BasePlugin
+from webob.exc import HTTPFound
 
 class FormPlugin(BasePlugin):
     
@@ -40,7 +40,7 @@ class FormPlugin(BasePlugin):
                         already_authenticated = True
             if already_authenticated:
                 environ['QUERY_STRING'] = ''
-                downstream = HTTPFound(construct_url(environ))
+                downstream = HTTPFound(location=construct_url(environ))
                 environ['repoze.who.application'] = downstream
             # XXX: END HACK
             

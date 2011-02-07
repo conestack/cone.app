@@ -6,9 +6,9 @@ from plumber import (
 )
 from yafowil.base import factory
 from yafowil.controller import Controller
-from paste.httpexceptions import HTTPFound
 from cone.tile import Tile
 from cone.app.browser.utils import make_url
+from webob.exc import HTTPFound
 
 
 class Form(Tile):
@@ -36,7 +36,7 @@ class Form(Tile):
         if not controller.next:
             return controller.rendered
         if isinstance(controller.next, HTTPFound):
-            self.redirect(controller.next.location())
+            self.redirect(controller.next.location)
             return
         return controller.next
 
@@ -57,7 +57,8 @@ class AddPart(Part):
     
     @default
     def next(self, request):
-        return HTTPFound(make_url(request.request, node=self.model.__parent__))
+        url = make_url(request.request, node=self.model.__parent__)
+        return HTTPFound(location=url)
 
 
 class EditPart(Part):
@@ -80,7 +81,7 @@ class EditPart(Part):
             url = make_url(request.request, node=self.model.__parent__)
         else:
             url = make_url(request.request, node=self.model)
-        return HTTPFound(url)
+        return HTTPFound(location=url)
 
 
 ###############################################################################
@@ -100,7 +101,8 @@ class AddForm(Form):
         return self._process_form()
     
     def next(self, request):
-        return HTTPFound(make_url(request.request, node=self.model.__parent__))
+        url = make_url(request.request, node=self.model.__parent__)
+        return HTTPFound(location=url)
 
 
 class EditForm(Form):
@@ -119,4 +121,4 @@ class EditForm(Form):
             url = make_url(request.request, node=self.model.__parent__)
         else:
             url = make_url(request.request, node=self.model)
-        return HTTPFound(url)
+        return HTTPFound(location=url)
