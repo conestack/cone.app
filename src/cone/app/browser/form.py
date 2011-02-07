@@ -1,3 +1,9 @@
+from plumber import (
+    plumber,
+    Part,
+    default,
+    plumb,
+)
 from yafowil.base import factory
 from yafowil.controller import Controller
 from paste.httpexceptions import HTTPFound
@@ -6,14 +12,15 @@ from cone.app.browser.utils import make_url
 
 
 class Form(Tile):
+    """A form tile.
+    """
+
+    form = None # yafowil compound expected.
     
-    @property
-    def form(self):
-        """Return yafowil compound.
-        
-        Not implemented in base class.
+    def prepare(self):
+        """Responsible to prepare ``self.form``.
         """
-        raise NotImplementedError(u"``form`` property must be provided "
+        raise NotImplementedError(u"``prepare`` function must be provided "
                                   u"by deriving object.")
     
     def __call__(self, model, request):
@@ -32,6 +39,53 @@ class Form(Tile):
             self.redirect(controller.next.location())
             return
         return controller.next
+
+
+class AddPart(Part):
+    """form hooking the hidden value 'factory' to self.form on __call__
+    """
+    
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set factory as proxy field to ``self.form``
+        """
+        _next(self)
+        self.form['factory'] = factory(
+            'proxy',
+            value=self.request.params.get('factory'),
+        )
+    
+    @default
+    def next(self, request):
+        return HTTPFound(make_url(request.request, node=self.model.__parent__))
+
+
+class EditPart(Part):
+    """form hooking the hidden value 'from' to self.form on __call__
+    """
+    
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set factory as proxy field to ``self.form``
+        """
+        _next(self)
+        self.form['from'] = factory(
+            'proxy',
+            value=self.request.params.get('from'),
+        )
+    
+    @default
+    def next(self, request):
+        if request.get('from') == 'parent':
+            url = make_url(request.request, node=self.model.__parent__)
+        else:
+            url = make_url(request.request, node=self.model)
+        return HTTPFound(url)
+
+
+###############################################################################
+# deprecated, use Form with related parts
+###############################################################################
 
 
 class AddForm(Form):
@@ -66,4 +120,3 @@ class EditForm(Form):
         else:
             url = make_url(request.request, node=self.model)
         return HTTPFound(url)
-
