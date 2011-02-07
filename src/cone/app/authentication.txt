@@ -94,7 +94,7 @@ Test plugin with valid authentication credentials.
     {'login': 'admin', 'password': 'admin'}
 
     >>> environ['repoze.who.application']
-    <HTTPFound Found; code=302>
+    <HTTPFound at ... 302 Found>
 
 Test plugin with invalid authentication credentials.
 ::
