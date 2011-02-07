@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 import sys, os
 
 version = '1.0'
-shortdesc = 'Application framework for repoze.bfg.'
+shortdesc = 'Application framework for pyramid.'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 
@@ -44,10 +44,6 @@ setup(name='cone.app',
           'yafowil.widget.richtext',
           'yafowil.widget.dict',
       ],
-      # XXX: why should this be set here?
-      #dependency_links = [
-      #    "http://dist.repoze.org/bfg/1.3/",
-      #],
       extras_require = dict(
           test=[
                 'interlude',

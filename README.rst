@@ -23,7 +23,7 @@ application egg to make sure everything needed to run the framework is
 available.
 ::
 
-    <configure xmlns="http://namespaces.repoze.org/bfg">
+    <configure xmlns="http://pylonshq.com/pyramid">
         <include package="cone.app" />
         ...
     </configure>
@@ -39,8 +39,6 @@ your (self contained) buildout configuration might look like this.
     [buildout]
     parts = instance
     eggs-directory = ${buildout:directory}/eggs
-    find-links = 
-        http://dist.repoze.org/bfg/1.3/
     develop = .
         
     [instance]
@@ -170,14 +168,17 @@ above in your ``setup.py``. This entry point returns a WSGI app.
 ``yourapplication/run.py`` looks like this.
 ::
 
-    >>> from repoze.bfg.configuration import Configurator
+    >>> from pyramid.config import Configurator
     >>> from yourapplication.model import get_root
     
     >>> def app(global_config, **settings):
     ...     """ This function returns a WSGI application.
     ...     """
     ...     zcml_file = settings.get('configure_zcml', 'configure.zcml')
-    ...     config = Configurator(root_factory=get_root, settings=settings)
+    ...     config = Configurator(
+    ...         root_factory=get_root,
+    ...         settings=settings,
+    ...         autocommit=True)
     ...     config.begin()
     ...     config.load_zcml(zcml_file)
     ...     config.end()
