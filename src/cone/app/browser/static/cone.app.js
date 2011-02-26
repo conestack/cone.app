@@ -12,25 +12,27 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
     $(document).ready(function() {
         // initial binding
-        bdapp.livesearchbinder();
-        bdapp.tabsbinder();
-        bdapp.dropdownmenubinder();
+        cone.livesearchbinder();
+        cone.tabsbinder();
+        cone.dropdownmenubinder();
+		cone.ajaxformbinder();
         yafowil.referencebrowser.browser_binder();
         
         // add binders to bdajax binding callbacks
         $.extend(bdajax.binders, {
-            tabsbinder: bdapp.tabsbinder,
-            dropdownmenubinder: bdapp.dropdownmenubinder,
+            tabsbinder: cone.tabsbinder,
+            dropdownmenubinder: cone.dropdownmenubinder,
+			ajaxformbinder: cone.ajaxformbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder: 
                 yafowil.referencebrowser.add_reference_binder
         });
     });
     
-    bdapp = {
+    cone = {
         
         livesearchbinder: function(context) {
-            $('input#search-text').autocomplete({
+            $('input#search-text', context).autocomplete({
                 source: 'livesearch',
                 minLength: 3,
                 select: function(event, ui) {
@@ -53,12 +55,29 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         tabsbinder: function(context) {
             // XXX: make it possible to bind ajax tabs by indicating ajax via 
             //      css class.
-            $("ul.tabs").tabs("div.tabpanes > div");
+            $("ul.tabs", context).tabs("div.tabpanes > div");
         },
         
         dropdownmenubinder: function(context) {
-            $('.dropdown').dropdownmenu();
-        }
+            $('.dropdown', context).dropdownmenu();
+        },
+		
+		ajaxformbinder: function(context) {
+			var ajaxform = $('form.ajax', context);
+			ajaxform.append('<input type="hidden" name="ajax" value="1" />');
+			ajaxform.attr('target', 'ajaxformresponse');
+			ajaxform.unbind().bind('submit', function(event) {
+				cone._curajaxformid = $(this).attr('id');
+			});
+		},
+		
+		ajaxformfinalize: function(payload) {
+			alert(payload);
+			//elem = $('#' + cone._curajaxformid, document).get(0);
+			//$(elem).html(payload);
+		},
+		
+		_curajaxformid: null
     }
     
     /* 

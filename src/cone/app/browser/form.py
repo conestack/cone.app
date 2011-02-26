@@ -57,6 +57,8 @@ class AddPart(Part):
     
     @default
     def next(self, request):
+        #if request.get('ajax'):
+        #    return
         url = make_url(request.request, node=self.model.__parent__)
         return HTTPFound(location=url)
 
@@ -77,6 +79,8 @@ class EditPart(Part):
     
     @default
     def next(self, request):
+        #if request.get('ajax'):
+        #    return
         if request.get('from') == 'parent':
             url = make_url(request.request, node=self.model.__parent__)
         else:

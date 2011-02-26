@@ -1,3 +1,4 @@
+from pyramid.response import Response
 from pyramid.view import view_config
 from cone.tile import (
     Tile,
@@ -18,8 +19,19 @@ from cone.app.browser.utils import (
     make_query,
 )
 
-@view_config('add', permission='login')
+AJAX_RESPONSE = """\
+<script language="javascript" type="text/javascript">
+    window.top.window.cone.ajaxformfinalize(%(rendered)s);
+</script> 
+"""
+
+@view_config('add', request_method='POST', permission='login')
 def add(model, request):
+    if request.params.get('ajax'):
+        res = AJAX_RESPONSE % {
+            'rendered': render_tile(model, request, 'add')
+        }
+        return Response(res)
     return render_main_template(model, request, contenttilename='add')
 
 @tile('add', 'templates/add.pt', permission='login', strict=False)
@@ -45,8 +57,13 @@ class AddTile(ProtectedContentTile):
             return None
         return getNodeInfo(factory)
 
-@view_config('edit', permission='login')
+@view_config('edit', request_method='POST', permission='login')
 def edit(model, request):
+    if request.params.get('ajax'):
+        res = AJAX_RESPONSE % {
+            'rendered': render_tile(model, request, 'edit')
+        }
+        return Response(res)
     return render_main_template(model, request, contenttilename='edit')
 
 registerTile('edit',
