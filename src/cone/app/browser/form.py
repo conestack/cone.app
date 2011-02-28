@@ -40,6 +40,10 @@ class Form(Tile):
             self.redirect(controller.next.location)
             return
         if isinstance(controller.next, AjaxAction):
+            self.request['cone.app.continuation'] = [controller.next]
+            return ''
+        if isinstance(controller.next, list):
+            # we assume here a list of ajax actions
             self.request['cone.app.continuation'] = controller.next
             return ''
         return controller.next

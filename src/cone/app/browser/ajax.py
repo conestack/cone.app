@@ -55,15 +55,19 @@ def ajax_form(model, request, name):
     """Render ajax form.
     """
     result = render_tile(model, request, name)
-    action = request.get('cone.app.continuation')
-    if action:
-        call = AJAX_FORM_CONTINUE % {
-            'url': action.target,
-            'name': action.name,
-            'mode': action.mode,
-            'selector': action.selector,
-            'params': action.params,
-        }
+    actions = request.get('cone.app.continuation')
+    if actions:
+        if not isinstance(actions, list):
+            actions = [actions]
+        call = ''
+        for action in actions:
+            call += AJAX_FORM_CONTINUE % {
+                'url': action.target,
+                'name': action.name,
+                'mode': action.mode,
+                'selector': action.selector,
+                'params': action.params,
+            } + '\n'
     else:
         call = AJAX_FORM_RENDER % {
             'rendered': result,
