@@ -5,10 +5,12 @@ from cone.tile import (
     render_tile,
 )
 
+
 registerTile('bdajax',
              'bdajax:bdajax.pt',
              permission='login',
              strict=False)
+
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
@@ -27,6 +29,7 @@ def ajax_tile(model, request):
         'payload': rendered,
     }
 
+
 class AjaxAction(object):
     """Ajax action configuration. Used to define continuation actions for
     client side.
@@ -40,6 +43,7 @@ class AjaxAction(object):
         self.name = name
         self.mode = mode
         self.selector = selector
+
 
 AJAX_FORM_RESPONSE = """\
 <script language="javascript" type="text/javascript">
@@ -74,6 +78,7 @@ def ajax_form(model, request, name):
         }
     return Response(AJAX_FORM_RESPONSE % dict(call=call))
 
+
 def dummy_livesearch_callback(model, request):
     """Dummy callback for Livesearch. Set as default.
     
@@ -92,6 +97,7 @@ def dummy_livesearch_callback(model, request):
             'target': request.application_url,
         },
     ]
+
 
 # Overwrite this with your own implementation on application startup
 LIVESEARCH_CALLBACK = dummy_livesearch_callback

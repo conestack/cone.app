@@ -26,6 +26,7 @@ ADDITIONAL_CSS = []
 # static resources
 static_view = static('static')
 
+
 def render_main_template(model, request, contenttilename='content'):
     """Renders main template and return response object.
     
@@ -40,9 +41,11 @@ def render_main_template(model, request, contenttilename='content'):
                                        contenttilename=contenttilename,
                                        project='BDA DB Backend')
 
+
 @view_config(permission='login')
 def main(model, request):
     return render_main_template(model, request)
+
 
 @view_config('logout')
 def logout(context, request):

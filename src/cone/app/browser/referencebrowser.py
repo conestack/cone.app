@@ -24,16 +24,19 @@ from yafowil.utils import (
     cssclasses,
 )
 
+
 registerTile('referencebrowser',
              'cone.app:browser/templates/referencebrowser.pt',
              permission='view',
              strict=False)
+
 
 registerTile('referencebrowser_pathbar',
              'cone.app:browser/templates/referencebrowser_pathbar.pt',
              permission='view',
              class_=PathBar,
              strict=False)
+
 
 @tile('referencelisting', 'templates/referencelisting.pt', strict=False)
 class ReferenceListing(ContentsTile):
@@ -44,10 +47,12 @@ class ReferenceListing(ContentsTile):
         batch.name = 'referencebatch'
         return batch(self.model, self.request)
 
+
 def reference_extractor(widget, data):
     if widget.attrs.get('multivalued'):
         return select_extractor(widget, data)
     return data.request.get('%s.uid' % widget.dottedpath)
+
 
 def reference_renderer(widget, data):
     if widget.attrs.get('multivalued'):
@@ -75,6 +80,7 @@ def reference_renderer(widget, data):
         'name_': '%s.uid' % widget.dottedpath,
     }
     return tag('input', **text_attrs) + tag('input', **hidden_attrs)
+
 
 factory.defaults['reference.required_class'] = 'required'
 factory.defaults['reference.default'] = ''

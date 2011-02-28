@@ -13,6 +13,7 @@ from cone.app.browser.utils import (
     format_date,
 )
 
+
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.
@@ -23,10 +24,12 @@ class ProtectedContentTile(Tile):
             return render_tile(model, request, 'loginform')
         return Tile.__call__(self, model, request)
 
+
 @tile('personaltools', 'templates/personaltools.pt', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
     """
+
 
 @tile('mainmenu', 'templates/mainmenu.pt', strict=False)
 class MainMenu(Tile):
@@ -76,6 +79,7 @@ class MainMenu(Tile):
             count += 1
         return ret
 
+
 @tile('pathbar', 'templates/pathbar.pt', strict=False)
 class PathBar(Tile):
     
@@ -97,6 +101,7 @@ class PathBar(Tile):
         ret.pop()
         ret.reverse()
         return ret
+
 
 @tile('navtree', 'templates/navtree.pt', strict=False)
 class NavTree(Tile):
@@ -153,6 +158,7 @@ class NavTree(Tile):
                                children=children,
                                level=level)
 
+
 @tile('byline', 'templates/byline.pt', strict=False)
 class Byline(Tile):
     """Byline tile.
@@ -160,6 +166,7 @@ class Byline(Tile):
     
     def format_date(self, dt):
         return format_date(dt)
+
 
 registerTile('listing',
              'cone.app:browser/templates/listing.pt',

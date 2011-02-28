@@ -3,6 +3,7 @@ from zope.interface.common.mapping import IReadMapping
 from node.interfaces import INode
 from node.interfaces import IAttributes
 
+
 class IApplicationNode(INode, IAttributes):
     """Application Node interface.
     """
@@ -15,12 +16,14 @@ class IApplicationNode(INode, IAttributes):
     
     nodeinfo = Attribute(u"INodeInfo providing object")
 
+
 class IFactoryNode(IApplicationNode):
     """Application node for static children.
     """
     
     factories = Attribute(u"Dict containing available keys and the Node class "
                           u"used to create this child.")
+
 
 class IAdapterNode(IApplicationNode):
     """Interface to adapt any dict like object which should be hooked to
@@ -32,6 +35,7 @@ class IAdapterNode(IApplicationNode):
     def __init__(model, name, parent):
         """Name and parent are used to hook the correct application hierarchy.
         """
+
 
 class IProperties(IReadMapping):
     """Interface for providing any kind of properties.
@@ -48,9 +52,11 @@ class IProperties(IReadMapping):
         """Set metadata by attribute access.
         """
 
+
 class IMetadata(IProperties):
     """Interface for providing metadata for application nodes.
     """
+
 
 class INodeInfo(IProperties):
     """Interface for providing node information.

@@ -1,11 +1,14 @@
 import datetime
 from pyramid.security import authenticated_userid
 
+
 def authenticated(request):
     return authenticated_userid(request)
 
+
 def nodepath(node):
     return [p for p in node.path if p is not None]
+
 
 def make_query(**kw):
     query = list()
@@ -18,6 +21,7 @@ def make_query(**kw):
             query.append('%s=%s' % (name, p))
     return '?%s' % '&'.join(query)
 
+
 def make_url(request, path=[], node=None, resource=None, query=None):
     if node is not None:
         path = nodepath(node)
@@ -27,12 +31,14 @@ def make_url(request, path=[], node=None, resource=None, query=None):
         return '%s/%s' % (request.application_url, '/'.join(path))
     return '%s/%s%s' % (request.application_url, '/'.join(path), query)
 
+
 def format_date(dt, long=True):
     """XXX
     """
     if not isinstance(dt, datetime.datetime):
         return 'unknown'
     return long and dt.strftime('%d.%M.%Y %H:%m') or dt.strftime('%d.%M.%Y')
+
 
 class AppUtil(object):
     """Instance of this object gets Passed to main template when rendering.

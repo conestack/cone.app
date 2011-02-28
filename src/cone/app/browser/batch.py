@@ -3,6 +3,7 @@ from cone.tile import (
     render_template,
 )
 
+
 class Batch(Tile):
     """An abstract batch tile.
     

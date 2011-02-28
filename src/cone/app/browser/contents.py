@@ -12,6 +12,7 @@ from cone.app.browser.utils import (
     format_date,
 )
 
+
 @tile('contents', 'templates/contents.pt', strict=False)
 class ContentsTile(Tile):
     
@@ -37,6 +38,7 @@ class ContentsTile(Tile):
         sorturl = '%s&amp;sort=%s&amp;order=%s' % (base_url, sortkey, order)
         css = selected and order or ''
         return css, sorturl
+
 
 FAR_PAST = datetime.datetime(2000, 1, 1)
 
@@ -84,6 +86,7 @@ class Contents(object):
         #if not self.sort:
         #    return [self.model[key] for key in self.model.keys()[start:end]]
         return self.sorted[start:end]
+
 
 class ContentsBatch(Batch):
     

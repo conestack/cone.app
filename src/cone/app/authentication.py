@@ -5,6 +5,7 @@ from repoze.who.interfaces import IAuthenticator
 from repoze.who.plugins.form import FormPlugin as BasePlugin
 from webob.exc import HTTPFound
 
+
 class FormPlugin(BasePlugin):
     
     def identify(self, environ):
@@ -53,6 +54,7 @@ class FormPlugin(BasePlugin):
             return credentials
         return None
 
+
 def make_plugin(login_form_qs='__do_login',
                 rememberer_name=None, form=None):
     if rememberer_name is None:
@@ -62,6 +64,7 @@ def make_plugin(login_form_qs='__do_login',
         form = open(form).read()
     plugin = FormPlugin(login_form_qs, rememberer_name, form)
     return plugin
+
 
 ###############################################################################
 # Group resolution callback for authentication policy.

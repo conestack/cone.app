@@ -6,6 +6,7 @@ from cone.tile import tile
 from cone.app.browser.utils import authenticated
 from cone.app.browser.form import Form
 
+
 @tile('loginform', permission="login")
 class LoginForm(Form):
     

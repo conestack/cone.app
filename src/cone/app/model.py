@@ -35,6 +35,7 @@ from cone.app.interfaces import (
 )
 from cone.app.utils import DatetimeHelper
 
+
 _node_info_registry = dict()
 
 def registerNodeInfo(name, info):
@@ -95,6 +96,7 @@ class BaseNode(object):
             info.node = self.__class__
         return info
 
+
 class FactoryNode(BaseNode):
     implements(IFactoryNode)
     
@@ -125,6 +127,7 @@ class FactoryNode(BaseNode):
             self[key] = child
         return child
 
+
 class AdapterNode(BaseNode):
     implements(IAdapterNode)
     
@@ -143,6 +146,7 @@ class AdapterNode(BaseNode):
     @property
     def attrs(self):
         return self.model.attrs
+
 
 class Properties(object):
     implements(IProperties)
@@ -167,11 +171,14 @@ class Properties(object):
     def __setattr__(self, name, value):
         object.__getattribute__(self, '_data')[name] = value
 
+
 class BaseMetadata(Properties):
     implements(IMetadata)
 
+
 class BaseNodeInfo(Properties):
     implements(INodeInfo)
+
 
 class XMLProperties(Properties):
     
@@ -257,6 +264,7 @@ class XMLProperties(Properties):
     
     def _values(self):
         return object.__getattribute__(self, '_data').values()
+
 
 class ConfigProperties(Properties):
     

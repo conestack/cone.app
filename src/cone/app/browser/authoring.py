@@ -20,11 +20,13 @@ from cone.app.browser.utils import (
     make_query,
 )
 
+
 @view_config('add', request_method='POST', permission='login')
 def add(model, request):
     if request.params.get('ajax'):
         return ajax_form(model, request, 'add')
     return render_main_template(model, request, contenttilename='add')
+
 
 @tile('add', 'templates/add.pt', permission='login', strict=False)
 class AddTile(ProtectedContentTile):
@@ -49,17 +51,20 @@ class AddTile(ProtectedContentTile):
             return None
         return getNodeInfo(factory)
 
+
 @view_config('edit', request_method='POST', permission='login')
 def edit(model, request):
     if request.params.get('ajax'):
         return ajax_form(model, request, 'edit')
     return render_main_template(model, request, contenttilename='edit')
 
+
 registerTile('edit',
              'cone.app:browser/templates/edit.pt',
              class_=ProtectedContentTile,
              permission='login',
              strict=False)
+
 
 @tile('add_dropdown', 'templates/add_dropdown.pt', strict=False)
 class AddDropdown(Tile):
@@ -85,6 +90,7 @@ class AddDropdown(Tile):
             props.icon = info.icon
             ret.append(props)
         return ret
+
 
 registerTile('contextmenu',
              'cone.app:browser/templates/contextmenu.pt',
