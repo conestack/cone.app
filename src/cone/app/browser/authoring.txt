@@ -106,7 +106,7 @@ Render without factory.
 ::
 
     >>> render_tile(root, request, 'add')
-    u'<div>\n  \n  \n  \n  Unknown factory\n\n</div>'
+    u'Unknown factory'
 
 Render with valid factory.
 ::
@@ -114,7 +114,7 @@ Render with valid factory.
     >>> request.params['factory'] = 'mynode'
 
     >>> render_tile(root, request, 'add')
-    u'<div>\n  \n  \n  \n  <form action="http://example.com" ...'
+    u'<form action="http://example.com" ...'
 
 Render with submitted data.
 ::
@@ -124,7 +124,7 @@ Render with submitted data.
     >>> request.params['addform.title'] = 'Some Child'
 
     >>> render_tile(root, request, 'add')
-    u'<div>\n  \n  \n  \n  <div>Added</div>\n\n</div>'
+    '<div>Added</div>'
 
 Check the modified model.
 ::
@@ -183,7 +183,7 @@ Render form with values from model.
 
     >>> request = DummyRequest()
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<div>\n  \n  \n  \n  <form action="http://example.com/somechild" ...'
+    u'<form action="http://example.com/somechild" ...'
 
 Trigger update action and provide new title.
 ::
@@ -195,7 +195,7 @@ Check the results.
 ::
 
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<div>\n  \n  \n  \n  <div>Updated</div>\n\n</div>'
+    '<div>Updated</div>'
     
     >>> root['somechild'].attrs.title
     'Changed title'
