@@ -21,8 +21,8 @@ from cone.app.browser.utils import (
 
 AJAX_RESPONSE = """\
 <script language="javascript" type="text/javascript">
-    window.top.window.cone.ajaxformfinalize(%(rendered)s);
-</script> 
+    window.top.window.cone.ajaxformfinalize('%(rendered)s');
+</script>
 """
 
 @view_config('add', request_method='POST', permission='login')

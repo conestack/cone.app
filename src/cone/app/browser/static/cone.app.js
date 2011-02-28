@@ -15,14 +15,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         cone.livesearchbinder();
         cone.tabsbinder();
         cone.dropdownmenubinder();
-		cone.ajaxformbinder();
+        cone.ajaxformbinder();
         yafowil.referencebrowser.browser_binder();
         
         // add binders to bdajax binding callbacks
         $.extend(bdajax.binders, {
             tabsbinder: cone.tabsbinder,
             dropdownmenubinder: cone.dropdownmenubinder,
-			ajaxformbinder: cone.ajaxformbinder,
+            ajaxformbinder: cone.ajaxformbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder: 
                 yafowil.referencebrowser.add_reference_binder
@@ -61,23 +61,25 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         dropdownmenubinder: function(context) {
             $('.dropdown', context).dropdownmenu();
         },
-		
-		ajaxformbinder: function(context) {
-			var ajaxform = $('form.ajax', context);
-			ajaxform.append('<input type="hidden" name="ajax" value="1" />');
-			ajaxform.attr('target', 'ajaxformresponse');
-			ajaxform.unbind().bind('submit', function(event) {
-				cone._curajaxformid = $(this).attr('id');
-			});
-		},
-		
-		ajaxformfinalize: function(payload) {
-			alert(payload);
-			//elem = $('#' + cone._curajaxformid, document).get(0);
-			//$(elem).html(payload);
-		},
-		
-		_curajaxformid: null
+        
+        // ajax form related
+        
+        _curajaxformid: null,
+        
+        ajaxformbinder: function(context) {
+            var ajaxform = $('form.ajax', context);
+            ajaxform.append('<input type="hidden" name="ajax" value="1" />');
+            ajaxform.attr('target', 'ajaxformresponse');
+            ajaxform.unbind().bind('submit', function(event) {
+                cone._curajaxformid = $(this).attr('id');
+            });
+        },
+        
+        ajaxformfinalize: function(payload) {
+            var id = '#' + cone._curajaxformid;
+            $(id).replaceWith(payload);
+            $(id).parent().bdajax();
+        }
     }
     
     /* 
