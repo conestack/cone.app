@@ -7,6 +7,7 @@ from plumber import (
 from yafowil.base import factory
 from yafowil.controller import Controller
 from cone.tile import Tile
+from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.utils import make_url
 from webob.exc import HTTPFound
 
@@ -38,6 +39,9 @@ class Form(Tile):
         if isinstance(controller.next, HTTPFound):
             self.redirect(controller.next.location)
             return
+        if isinstance(controller.next, AjaxAction):
+            self.request['cone.app.continuation'] = controller.next
+            return ''
         return controller.next
 
 
@@ -57,9 +61,9 @@ class AddPart(Part):
     
     @default
     def next(self, request):
-        #if request.get('ajax'):
-        #    return
         url = make_url(request.request, node=self.model.__parent__)
+        if request.get('ajax'):
+            return AjaxAction(url, 'content', 'inner', '#content')
         return HTTPFound(location=url)
 
 
@@ -79,17 +83,17 @@ class EditPart(Part):
     
     @default
     def next(self, request):
-        #if request.get('ajax'):
-        #    return
         if request.get('from') == 'parent':
             url = make_url(request.request, node=self.model.__parent__)
         else:
             url = make_url(request.request, node=self.model)
+        if request.get('ajax'):
+            return AjaxAction(url, 'content', 'inner', '#content')
         return HTTPFound(location=url)
 
 
 ###############################################################################
-# deprecated, use Form with related parts
+# deprecated below, will be removed. use Form with related parts
 ###############################################################################
 
 
@@ -106,6 +110,8 @@ class AddForm(Form):
     
     def next(self, request):
         url = make_url(request.request, node=self.model.__parent__)
+        if request.get('ajax'):
+            return AjaxAction(url, 'content', 'inner', '#content')
         return HTTPFound(location=url)
 
 
@@ -125,4 +131,6 @@ class EditForm(Form):
             url = make_url(request.request, node=self.model.__parent__)
         else:
             url = make_url(request.request, node=self.model)
+        if request.get('ajax'):
+            return AjaxAction(url, 'content', 'inner', '#content')
         return HTTPFound(location=url)

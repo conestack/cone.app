@@ -1,3 +1,4 @@
+from pyramid.response import Response
 from pyramid.view import view_config
 from cone.tile import (
     registerTile,
@@ -25,6 +26,49 @@ def ajax_tile(model, request):
         'selector': request.params.get('bdajax.selector'),
         'payload': rendered,
     }
+
+class AjaxAction(object):
+    """Ajax action configuration. Used to define continuation actions for
+    client side.
+    
+    XXX: multiple continuation actions.
+    """
+    
+    def __init__(self, target, name, mode, selector, params='{}'):
+        self.target = target
+        self.params = params
+        self.name = name
+        self.mode = mode
+        self.selector = selector
+
+AJAX_FORM_RESPONSE = """\
+<script language="javascript" type="text/javascript">
+    %(call)s;
+</script>
+"""
+
+AJAX_FORM_RENDER = "window.top.window.cone.ajaxformrender('%(rendered)s')"
+AJAX_FORM_CONTINUE = "window.top.window.cone.ajaxformcontinue" + \
+    "('%(url)s', '%(name)s', '%(mode)s', '%(selector)s', %(params)s)"
+
+def ajax_form(model, request, name):
+    """Render ajax form.
+    """
+    result = render_tile(model, request, name)
+    action = request.get('cone.app.continuation')
+    if action:
+        call = AJAX_FORM_CONTINUE % {
+            'url': action.target,
+            'name': action.name,
+            'mode': action.mode,
+            'selector': action.selector,
+            'params': action.params,
+        }
+    else:
+        call = AJAX_FORM_RENDER % {
+            'rendered': result,
+        }
+    return Response(AJAX_FORM_RESPONSE % dict(call=call))
 
 def dummy_livesearch_callback(model, request):
     """Dummy callback for Livesearch. Set as default.

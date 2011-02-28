@@ -64,8 +64,10 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         
         // ajax form related
         
+        // recent committed form
         _curajaxformid: null,
         
+        // bind ajax form handling to all forms providing ajax css class
         ajaxformbinder: function(context) {
             var ajaxform = $('form.ajax', context);
             ajaxform.append('<input type="hidden" name="ajax" value="1" />');
@@ -75,10 +77,22 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         },
         
-        ajaxformfinalize: function(payload) {
+        // called by iframe response, renders form (i.e. if validation errors)
+        ajaxformrender: function(payload) {
             var id = '#' + cone._curajaxformid;
             $(id).replaceWith(payload);
             $(id).parent().bdajax();
+        },
+        
+        // called by iframe response, triggers bdajax.action
+        ajaxformcontinue: function(url, name, mode, selector, params) {
+            bdajax.action({
+                url: url,
+                params: params,
+                name: name,
+                mode: mode,
+                selector: selector
+            });
         }
     }
     

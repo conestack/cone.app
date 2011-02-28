@@ -13,25 +13,17 @@ from cone.app.model import (
     AdapterNode,
 )
 from cone.app.browser import render_main_template
+from cone.app.browser.ajax import ajax_form
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import (
     make_url,
     make_query,
 )
 
-AJAX_RESPONSE = """\
-<script language="javascript" type="text/javascript">
-    window.top.window.cone.ajaxformfinalize('%(rendered)s');
-</script>
-"""
-
 @view_config('add', request_method='POST', permission='login')
 def add(model, request):
     if request.params.get('ajax'):
-        res = AJAX_RESPONSE % {
-            'rendered': render_tile(model, request, 'add')
-        }
-        return Response(res)
+        return ajax_form(model, request, 'add')
     return render_main_template(model, request, contenttilename='add')
 
 @tile('add', 'templates/add.pt', permission='login', strict=False)
@@ -60,10 +52,7 @@ class AddTile(ProtectedContentTile):
 @view_config('edit', request_method='POST', permission='login')
 def edit(model, request):
     if request.params.get('ajax'):
-        res = AJAX_RESPONSE % {
-            'rendered': render_tile(model, request, 'edit')
-        }
-        return Response(res)
+        return ajax_form(model, request, 'edit')
     return render_main_template(model, request, contenttilename='edit')
 
 registerTile('edit',
