@@ -124,7 +124,7 @@ Render with submitted data.
     >>> request.params['addform.title'] = 'Some Child'
 
     >>> render_tile(root, request, 'add')
-    '<div>Added</div>'
+    u'<div>Added</div>'
 
 Check the modified model.
 ::
@@ -195,7 +195,7 @@ Check the results.
 ::
 
     >>> render_tile(root['somechild'], request, 'edit')
-    '<div>Updated</div>'
+    u'<div>Updated</div>'
     
     >>> root['somechild'].attrs.title
     'Changed title'
@@ -211,13 +211,14 @@ menu containing links to the addforms of allowed child nodes.
     >>> request = DummyRequest()
     >>> render_tile(root['somechild'], request, 'add_dropdown')
     u'\n  <div class="dropdown">\n    <div class="icon">\n      
-    <a href="http://example.com/somechild/adding" 
-    class="add16_16" 
-    title="Add Item">&nbsp;</a>\n    </div>\n    
-    <ul class="dropdown_items" style="display:none;">\n      <li>\n        
-    <a href="http://example.com/somechild/add?factory=mynode" 
-    ajax:bind="click" 
-    ajax:target="http://example.com/somechild?factory=mynode" 
+    <a href="http://example.com/somechild/adding"\n         
+    class="add16_16"\n         
+    title="Add Item">\xa0</a>\n    </div>\n    
+    <ul class="dropdown_items" style="display:none;">\n      
+    <li>\n        
+    <a href="http://example.com/somechild/add?factory=mynode"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/somechild?factory=mynode"\n           
     ajax:action="add:#content:inner">My Node</a>\n      
     </li>\n    </ul>\n  </div>\n'
 
@@ -234,16 +235,17 @@ Allow another node type as child.
     
     >>> render_tile(root['somechild'], request, 'add_dropdown')
     u'\n  <div class="dropdown">\n    <div class="icon">\n      
-    <a href="http://example.com/somechild/adding" 
-    class="add16_16" 
-    title="Add Item">&nbsp;</a>\n    </div>\n    
+    <a href="http://example.com/somechild/adding"\n         
+    class="add16_16"\n         
+    title="Add Item">\xa0</a>\n    </div>\n    
     <ul class="dropdown_items" style="display:none;">\n      <li>\n        
-    <a href="http://example.com/somechild/add?factory=mynode" 
-    ajax:bind="click" 
-    ajax:target="http://example.com/somechild?factory=mynode" 
-    ajax:action="add:#content:inner">My Node</a>\n      </li> <li>\n        
-    <a href="http://example.com/somechild/add?factory=anothernode" 
-    ajax:bind="click" 
-    ajax:target="http://example.com/somechild?factory=anothernode" 
-    ajax:action="add:#content:inner">Another Node</a>\n      </li>\n    
-    </ul>\n  </div>\n'
+    <a href="http://example.com/somechild/add?factory=mynode"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/somechild?factory=mynode"\n           
+    ajax:action="add:#content:inner">My Node</a>\n      </li>\n      
+    <li>\n        
+    <a href="http://example.com/somechild/add?factory=anothernode"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/somechild?factory=anothernode"\n           
+    ajax:action="add:#content:inner">Another Node</a>\n      
+    </li>\n    </ul>\n  </div>\n'
