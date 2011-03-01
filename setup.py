@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0'
+version = '0.9a1'
 shortdesc = 'Application framework for pyramid.'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -20,7 +20,7 @@ setup(name='cone.app',
       keywords='',
       author='BlueDynamics Alliance',
       author_email='dev@bluedynamics.com',
-      url=u'https://svn.bluedynamics.net/svn/internal/mdb',
+      url=u'https://github.com/bluedynamics/cone.app',
       license='GNU General Public Licence',
       packages=find_packages('src'),
       package_dir = {'': 'src'},
