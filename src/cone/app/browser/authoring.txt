@@ -124,7 +124,7 @@ Render with submitted data.
     >>> request.params['addform.title'] = 'Some Child'
 
     >>> render_tile(root, request, 'add')
-    u'<div>Added</div>'
+    '<div>Added</div>'
 
 Check the modified model.
 ::
@@ -195,7 +195,7 @@ Check the results.
 ::
 
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<div>Updated</div>'
+    '<div>Updated</div>'
     
     >>> root['somechild'].attrs.title
     'Changed title'
