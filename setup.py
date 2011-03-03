@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.9b7'
+version = '0.9b8'
 shortdesc = 'Application framework for pyramid.'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -14,8 +14,8 @@ setup(name='cone.app',
             'Development Status :: 3 - Alpha',
             'Environment :: Web Environment',
             'Operating System :: OS Independent',
-            'Programming Language :: Python', 
-            'Topic :: Internet :: WWW/HTTP :: Dynamic Content',        
+            'Programming Language :: Python',
+            'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
       ],
       keywords='',
       author='BlueDynamics Alliance',
@@ -35,7 +35,7 @@ setup(name='cone.app',
           'pyramid_zcml',
           'repoze.what',
           'repoze.what.plugins.ini',
-          'repoze.what.plugins.config',          
+          'repoze.what.plugins.config',
           'bdajax',
           'cone.tile',
           'yafowil',
