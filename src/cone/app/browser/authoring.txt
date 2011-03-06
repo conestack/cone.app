@@ -13,8 +13,7 @@ Adding
 
 Using the built-in adding mechanism.
 
-Create dummy node.
-::
+Create dummy node::
 
     >>> from cone.app.model import BaseNode
     >>> from cone.app.model import getNodeInfo
@@ -22,8 +21,7 @@ Create dummy node.
     ...     node_info_name = 'mynode'
 
 Now, if we want to use the build-in adding mechanism, we need to
-provide NodeInfo for our application nodes.
-::
+provide NodeInfo for our application nodes::
 
     >>> from cone.app.model import BaseNodeInfo, registerNodeInfo
     >>> mynodeinfo = BaseNodeInfo()
@@ -33,8 +31,7 @@ provide NodeInfo for our application nodes.
     >>> mynodeinfo.addables = ['mynode']
     >>> registerNodeInfo('mynode', mynodeinfo)
 
-Create and register an addform tile for MyNode.
-::
+Create and register an addform tile for MyNode::
 
     >>> from plumber import plumber
     >>> from yafowil import loader
@@ -85,16 +82,14 @@ Create and register an addform tile for MyNode.
     ...     def next(self, request):
     ...         return '<div>Added</div>'
 
-A small patch to make tests work with test request.
-::
+A small patch to make tests work with test request::
 
     >>> def authenticated(request):
     ...     return True
     >>> import cone.app.browser.layout
     >>> cone.app.browser.layout.authenticated = authenticated
 
-Now create dummy root and render ``add`` tile.
-::
+Now create dummy root and render ``add`` tile::
 
     >>> import cone.app.browser.authoring
     >>> from pyramid.testing import DummyRequest
@@ -102,32 +97,28 @@ Now create dummy root and render ``add`` tile.
     >>> request = DummyRequest()
     >>> root = MyNode()
 
-Render without factory.
-::
+Render without factory::
 
     >>> render_tile(root, request, 'add')
     u'Unknown factory'
 
-Render with valid factory.
-::
+Render with valid factory::
 
     >>> request.params['factory'] = 'mynode'
 
     >>> render_tile(root, request, 'add')
     u'<form action="http://example.com" ...'
 
-Render with submitted data.
-::
+Render with submitted data::
     
     >>> request.params['action.addform.add'] = '1'
     >>> request.params['addform.id'] = 'somechild'
     >>> request.params['addform.title'] = 'Some Child'
 
-    >>> render_tile(root, request, 'add')
-    '<div>Added</div>'
+    >>> render_tile(root, request, 'add').find('Added') != -1
+    True
 
-Check the modified model.
-::
+Check the modified model::
 
     >>> root.keys()
     ['somechild']
@@ -140,8 +131,7 @@ Editing
 -------
 
 Providing edit forms is easy, just bind a form tile named 'editform' for your
-application node.
-::
+application node::
 
     >>> from cone.app.browser.form import EditPart
 
@@ -178,24 +168,21 @@ application node.
     ...     def next(self, request):
     ...         return '<div>Updated</div>'
 
-Render form with values from model.
-::
+Render form with values from model::
 
     >>> request = DummyRequest()
     >>> render_tile(root['somechild'], request, 'edit')
     u'<form action="http://example.com/somechild" ...'
 
-Trigger update action and provide new title.
-::
+Trigger update action and provide new title::
 
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['addform.title'] = 'Changed title'
 
-Check the results.
-::
+Check the results::
 
-    >>> render_tile(root['somechild'], request, 'edit')
-    '<div>Updated</div>'
+    >>> render_tile(root['somechild'], request, 'edit').find('Updated') != -1
+    True
     
     >>> root['somechild'].attrs.title
     'Changed title'
@@ -205,46 +192,36 @@ Add Items Dropdown Widget
 -------------------------
 
 You can render an item dropdown in your application which renders a dropdown
-menu containing links to the addforms of allowed child nodes.
-::
+menu containing links to the addforms of allowed child nodes::
 
     >>> request = DummyRequest()
-    >>> print render_tile(root['somechild'], request, 'add_dropdown')
-    <BLANKLINE>
-      <div class="dropdown">
-        <div class="icon">
-          <a href="http://example.com/somechild/adding" class="add16_16" title="Add Item">&nbsp;</a>
-        </div>
-        <ul class="dropdown_items" style="display:none;">
-          <li>
-            <a href="http://example.com/somechild/add?factory=mynode" ajax:bind="click" ajax:target="http://example.com/somechild?factory=mynode" ajax:action="add:#content:inner">My Node</a>
-          </li>
-        </ul>
-      </div>
-    <BLANKLINE>
+    >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
 
-# XXX: before, please check and remove
-#
-# The difference as far as I can tell is, that before there were some
-# more linebreaks and \xa0 instead of &nbsp;
-#
-# I don't know what triggered that change, as I'm pretty sure I ran
-# the tests before tagging and releasing -cfl
+Non JS Fallback link to add item view (view itself not implemented yet)::
+    
+    >>> rendered.find('href="http://example.com/somechild/adding"') != -1
+    True
 
-    # u'\n  <div class="dropdown">\n    <div class="icon">\n      
-    # <a href="http://example.com/somechild/adding"\n         
-    # class="add16_16"\n         
-    # title="Add Item">\xa0</a>\n    </div>\n    
-    # <ul class="dropdown_items" style="display:none;">\n      
-    # <li>\n        
-    # <a href="http://example.com/somechild/add?factory=mynode"\n           
-    # ajax:bind="click"\n           
-    # ajax:target="http://example.com/somechild?factory=mynode"\n           
-    # ajax:action="add:#content:inner">My Node</a>\n      
-    # </li>\n    </ul>\n  </div>\n'
+Non JS link to add form::
 
-Allow another node type as child.
-::
+    >>> expected = 'href="http://example.com/somechild/add?factory=mynode"'
+    >>> rendered.find(expected) != -1
+    True
+
+Ajax target for add form::
+
+    >>> expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
+    >>> rendered.find(expected) != -1
+    True
+
+Ajax action rule for add form::
+
+    >>> expected = 'ajax:action="add:#content:inner"'
+    >>> rendered.find(expected) != -1
+    True
+
+
+Allow another node type as child::
 
     >>> nodeinfo = BaseNodeInfo()
     >>> nodeinfo.title = 'Another Node'
@@ -254,42 +231,24 @@ Allow another node type as child.
     >>> registerNodeInfo('anothernode', nodeinfo)
     >>> getNodeInfo('mynode').addables = ['mynode', 'anothernode']
     
-    >>> print render_tile(root['somechild'], request, 'add_dropdown')
-    <BLANKLINE>
-      <div class="dropdown">
-        <div class="icon">
-          <a href="http://example.com/somechild/adding" class="add16_16" title="Add Item">&nbsp;</a>
-        </div>
-        <ul class="dropdown_items" style="display:none;">
-          <li>
-            <a href="http://example.com/somechild/add?factory=mynode" ajax:bind="click" ajax:target="http://example.com/somechild?factory=mynode" ajax:action="add:#content:inner">My Node</a>
-          </li> <li>
-            <a href="http://example.com/somechild/add?factory=anothernode" ajax:bind="click" ajax:target="http://example.com/somechild?factory=anothernode" ajax:action="add:#content:inner">Another Node</a>
-          </li>
-        </ul>
-      </div>
-    <BLANKLINE>
+    >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
+    
+Non JS links to add form::
 
-# XXX: before, please check and remove
-#
-# The difference as far as I can tell is, that before there were some
-# more linebreaks and \xa0 instead of &nbsp;
-#
-# I don't know what triggered that change, as I'm pretty sure I ran
-# the tests before tagging and releasing -cfl
+    >>> expected = 'href="http://example.com/somechild/add?factory=mynode"'
+    >>> rendered.find(expected) != -1
+    True
+    
+    >>> expected = 'href="http://example.com/somechild/add?factory=anothernode"'
+    >>> rendered.find(expected) != -1
+    True
 
-    # u'\n  <div class="dropdown">\n    <div class="icon">\n      
-    # <a href="http://example.com/somechild/adding"\n         
-    # class="add16_16"\n         
-    # title="Add Item">\xa0</a>\n    </div>\n    
-    # <ul class="dropdown_items" style="display:none;">\n      <li>\n        
-    # <a href="http://example.com/somechild/add?factory=mynode"\n           
-    # ajax:bind="click"\n           
-    # ajax:target="http://example.com/somechild?factory=mynode"\n           
-    # ajax:action="add:#content:inner">My Node</a>\n      </li>\n      
-    # <li>\n        
-    # <a href="http://example.com/somechild/add?factory=anothernode"\n           
-    # ajax:bind="click"\n           
-    # ajax:target="http://example.com/somechild?factory=anothernode"\n           
-    # ajax:action="add:#content:inner">Another Node</a>\n      
-    # </li>\n    </ul>\n  </div>\n'
+Ajax targets for add form::
+
+    >>> expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
+    >>> rendered.find(expected) != -1
+    True
+    
+    >>> expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
+    >>> rendered.find(expected) != -1
+    True

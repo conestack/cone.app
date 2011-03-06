@@ -91,7 +91,7 @@ Test plugin with valid authentication credentials.
     >>> environ['repoze.who.application'] = 'unchanged'
 
     >>> plugin.identify(environ)
-    {'login': 'admin', 'password': 'admin'}
+    {'max_age': 3600, 'login': 'admin', 'password': 'admin'}
 
     >>> environ['repoze.who.application']
     <HTTPFound at ... 302 Found>
@@ -104,7 +104,7 @@ Test plugin with invalid authentication credentials.
     >>> environ['repoze.who.application'] = 'unchanged'
     
     >>> plugin.identify(environ)
-    {'login': 'admi', 'password': 'admi'}
+    {'max_age': 3600, 'login': 'admi', 'password': 'admi'}
     
     >>> environ['repoze.who.application']
     'unchanged'
