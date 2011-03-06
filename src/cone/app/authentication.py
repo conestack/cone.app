@@ -48,9 +48,12 @@ class FormPlugin(BasePlugin):
             del query[self.login_form_qs]
             environ['QUERY_STRING'] = urllib.urlencode(query)
             
-            max_age = query.get('max_age', None)
-            if max_age is not None:
-                credentials['max_age'] = max_age
+            #max_age = query.get('max_age', None)
+            #if max_age is not None:
+            #    credentials['max_age'] = max_age
+            
+            credentials['max_age'] = 3600
+            
             return credentials
         return None
 
