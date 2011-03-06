@@ -6,8 +6,7 @@ Forms
 
 We provide an abstract form tile, which renders forms, does form processing
 and renders or redirects to a result. You have to provide the ``form`` property
-on a deriving object returning a yafowil widget tree.
-::
+on a deriving object returning a yafowil widget tree::
 
     >>> from yafowil import loader
     >>> from yafowil.base import factory
@@ -47,8 +46,7 @@ on a deriving object returning a yafowil widget tree.
     ...     def next(self, request):
     ...         return '<div>Result</div>'
 
-Create dummy model and request.
-::
+Create dummy model and request::
 
     >>> from cone.app.model import BaseNode
     >>> from pyramid.testing import DummyRequest
@@ -56,46 +54,44 @@ Create dummy model and request.
     >>> model.__name__ = 'dummymodel'
     >>> request = DummyRequest()
 
-Render form. no action is triggered and no input is given.
-::
+Render form. no action is triggered and no input is given::
     
     >>> from cone.tile import render_tile
-    >>> render_tile(model, request, 'subscriptionform')
-    u'<form action="http://example.com/dummymodel" 
-    enctype="multipart/form-data" id="form-subscriptionform" 
-    method="post"><div class="field" id="field-subscriptionform-email"><label 
-    for="input-subscriptionform-email">E-Mail</label><input class="required text" 
-    id="input-subscriptionform-email" name="subscriptionform.email" 
-    required="required" type="text" value="" /></div><input 
-    id="input-subscriptionform-subscribe" 
-    name="action.subscriptionform.subscribe" type="submit" 
-    value="Subscribe" /></form>'
-
+    >>> rendered = render_tile(model, request, 'subscriptionform')
+    >>> expected = 'action="http://example.com/dummymodel"'
+    >>> rendered.find(expected) != -1
+    True
+    
+    >>> expected = 'id="form-subscriptionform"'
+    >>> rendered.find(expected) != -1
+    True
+    
+    >>> expected = 'name="subscriptionform.email"'
+    >>> rendered.find(expected) != -1
+    True
+    
+    >>> expected = 'name="action.subscriptionform.subscribe"'
+    >>> rendered.find(expected) != -1
+    True
+    
 Trigger subscribe action and set empty email value. Results in a form with
-error message since email is required.
-::
+error message since email is required::
 
     >>> request.params['action.subscriptionform.subscribe'] = '1'
     >>> request.params['subscriptionform.email'] = ''
 
-    >>> render_tile(model, request, 'subscriptionform')
-    u'<form action="http://example.com/dummymodel" 
-    enctype="multipart/form-data" id="form-subscriptionform" 
-    method="post"><div class="field" id="field-subscriptionform-email"><label 
-    for="input-subscriptionform-email">E-Mail</label><div class="error"><div 
-    class="errormessage">No email given</div><input class="required text" 
-    id="input-subscriptionform-email" name="subscriptionform.email" 
-    required="required" type="text" value="" /></div></div><input 
-    id="input-subscriptionform-subscribe" 
-    name="action.subscriptionform.subscribe" type="submit" 
-    value="Subscribe" /></form>'
+    >>> rendered = render_tile(model, request, 'subscriptionform')
+    >>> expected = 'No email given'
+    >>> rendered.find(expected) != -1
+    True
 
 Trigger subscribe action and set valid email value. Now the action handler and
-next handler are triggered.
-::
+next handler are triggered::
 
     >>> request.params['subscriptionform.email'] = 'john.doe@example.com'
     
-    >>> render_tile(model, request, 'subscriptionform')
+    >>> rendered = render_tile(model, request, 'subscriptionform')
     subscribe on "dummymodel"
-    '<div>Result</div>'
+    
+    >>> rendered.find('Result') != -1
+    True
