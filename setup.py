@@ -40,6 +40,8 @@ setup(name='cone.app',
           'yafowil.widget.datetime',
           'yafowil.widget.richtext',
           'yafowil.widget.dict',
+          'yafowil.widget.autocomplete',
+          'yafowil.widget.dynatree',
       ],
       extras_require = dict(
           test=[

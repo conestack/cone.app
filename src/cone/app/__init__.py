@@ -7,7 +7,7 @@ from cone.app.model import AppRoot
 
 root = AppRoot()
 
-def get_root(environ):
+def get_default_root(environ):
     return root
 
 def auth_tkt_factory(**kwargs):
@@ -21,15 +21,14 @@ def acl_factory(**kwargs):
 def main(global_config, **settings):
     """Returns WSGI application.
     """
-    import cone.app.security as sec
-    sec.ADMIN_USER = settings.get('cone.admin_password', 'admin')
-    sec.ADMIN_PASSWORD = settings.get('cone.admin_user', 'admin')
+    import cone.app.security as security
+    security.ADMIN_USER = settings.get('cone.admin_user', 'admin')
+    security.ADMIN_PASSWORD = settings.get('cone.admin_password', 'admin')
     secret_password = settings.get('cone.secret_password', 'secret')
     authn_factory = settings.get('cone.authn_policy_factory', auth_tkt_factory)
     authz_factory = settings.get('cone.authz_policy_factory', acl_factory)
-    
     config = Configurator(
-        root_factory=get_root,
+        root_factory=get_default_root,
         settings=settings,
         authentication_policy=authn_factory(secret=secret_password),
         authorization_policy=authz_factory(secret=secret_password),
