@@ -1,2 +1,9 @@
 *.pyc
 src/cone.app.egg-info/
+.installed.cfg
+.mr.developer.cfg
+bin/
+develop-eggs/
+devsrc/
+eggs/
+parts/

@@ -53,6 +53,8 @@ setup(name='cone.app',
           'interlude',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
-      entry_points = """
+      entry_points = """\
+      [paste.app_factory]
+      main = cone.app:main
       """
       )

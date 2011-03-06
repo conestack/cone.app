@@ -14,15 +14,5 @@
     view=".browser.static_view"
     name="static"
   />
-  
-  <authtktauthenticationpolicy
-    secret="secret"
-    cookie_name="__ac__"
-    secure="false"
-    include_ip="false"
-    callback=".authentication.groupcallback"
-  />
-  
-  <aclauthorizationpolicy />
 
 </configure>

@@ -33,8 +33,8 @@ from cone.app.interfaces import (
     IMetadata,
     INodeInfo,
 )
+from cone.app.security import DEFAULT_ACL
 from cone.app.utils import DatetimeHelper
-
 
 _node_info_registry = dict()
 
@@ -62,11 +62,7 @@ class BaseNode(object):
     )
     implements(IApplicationNode)
     
-    __acl__ = [
-        (Allow, 'group:authenticated', 'view'),
-        (Allow, Everyone, 'login'),
-        (Deny, Everyone, ALL_PERMISSIONS),
-    ]
+    __acl__ = DEFAULT_ACL
     
     # set this to name of registered node info on deriving class
     node_info_name = ''
@@ -126,6 +122,13 @@ class FactoryNode(BaseNode):
             child = self.factories[key]()
             self[key] = child
         return child
+
+
+class AppRoot(FactoryNode):
+    """Application root.
+    
+    XXX
+    """
 
 
 class AdapterNode(BaseNode):

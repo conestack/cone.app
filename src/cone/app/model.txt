@@ -45,10 +45,11 @@ Default permissions.
 ::
 
     >>> root.__acl__
-    [('Allow', 'group:authenticated', 'view'), 
-    ('Allow', 'system.Everyone', 'login'), 
+    [('Allow', 'system.Authenticated', ['view']), 
+    ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', 
     <pyramid.security.AllPermissionsList object at ...>)]
+
 
 Properties.
 ::

@@ -173,3 +173,9 @@ registerTile('listing',
              class_=ProtectedContentTile,
              permission='login',
              strict=False)
+
+registerTile('content',
+             'cone.app:browser/templates/default_root.pt',
+             class_=ProtectedContentTile,
+             permission='login',
+             strict=False)
