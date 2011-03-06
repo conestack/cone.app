@@ -21,4 +21,5 @@ def authenticate(request, login, password):
         return remember(request, login)
 
 def groups_callback(name, request):
+    # XXX: node.ext.ugm goes here
     return []
