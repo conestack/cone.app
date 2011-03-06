@@ -150,7 +150,7 @@ The class ``cone.app.browser.layout.ProtectedContentTile`` provides this
 behavior.
 ::
 
-    >>> import cone.app.browser.authentication
+    >>> import cone.app.browser.login
     >>> from cone.app.browser.layout import ProtectedContentTile
     >>> class ProtectedContent(ProtectedContentTile):
     ...     def render(self):
@@ -166,7 +166,7 @@ Render protected tile.
 ::
 
     >>> render_tile(ProtectedModel(), request, 'content')
-    u'<form action="http://example.com" enctype="multipart/form-data" 
+    u'<form action="http://example.com/login" enctype="multipart/form-data" 
     id="form-loginform" method="post">...
 
 

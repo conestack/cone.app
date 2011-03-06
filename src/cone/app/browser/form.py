@@ -37,7 +37,7 @@ class Form(Tile):
         if not controller.next:
             return controller.rendered
         if isinstance(controller.next, HTTPFound):
-            self.redirect(controller.next.location)
+            self.redirect(controller.next)
             return
         if isinstance(controller.next, AjaxAction):
             self.request['cone.app.continuation'] = [controller.next]

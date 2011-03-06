@@ -3,7 +3,8 @@ import yafowil.loader
 import yafowil.widget.datetime
 import yafowil.widget.richtext
 import yafowil.widget.dict
-from webob.exc import HTTPUnauthorized
+from webob.exc import HTTPFound
+from pyramid.security import forget
 from pyramid.view import (
     static,
     view_config,
@@ -12,10 +13,7 @@ from cone.tile import (
     render_template_to_response,
     render_tile,
 )
-from cone.app.browser.utils import (
-    authenticated,
-    AppUtil,
-)
+from cone.app.browser.utils import AppUtil
 
 # main template. Overwrite to customize
 MAIN_TEMPLATE = 'cone.app.browser:templates/main.pt'
@@ -46,7 +44,14 @@ def render_main_template(model, request, contenttilename='content'):
 def main(model, request):
     return render_main_template(model, request)
 
+@view_config('login')
+def login(model, request):
+    return render_main_template(model, request, contenttilename='loginform')
+
+#view_config(login, context='pyramid.exceptions.Forbidden')
 
 @view_config('logout')
 def logout(context, request):
-    return HTTPUnauthorized(headers=[('Location', request.application_url)])
+    headers = forget(request)
+    location = request.params.get('came_from', request.application_url)
+    return HTTPFound(location=location, headers=headers)

@@ -8,9 +8,9 @@ optionflags = doctest.NORMALIZE_WHITESPACE | \
               doctest.REPORT_ONLY_FIRST_FAILURE
 
 TESTFILES = [
-    '../authentication.txt',
     '../utils.txt',
     '../model.txt',
+    '../security.txt',
     '../browser/layout.txt',
     '../browser/utils.txt',
     '../browser/form.txt',
