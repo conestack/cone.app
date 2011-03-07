@@ -18,9 +18,9 @@ cone.app.security
     >>> from pyramid.tests.test_request import DummyRequest
     >>> request = DummyRequest()
     
-    >>> security.authenticate(request, 'foo', 'bar')
+    >> security.authenticate(request, 'foo', 'bar')
     
-    >>> security.authenticate(request, 'user', 'secret')
+    >> security.authenticate(request, 'user', 'secret')
     []
     
     >>> security.groups_callback('foo', request)

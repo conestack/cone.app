@@ -89,7 +89,7 @@ A tile named as content. This is the default content tile.
     >>> class ContentTile(Tile):
     ...     def render(self):
     ...         return '<div>Content</div>'
-    >>> registerTile('content', class_=ContentTile)
+    >>> registerTile('content', class_=ContentTile, permission='login')
 
 Request dummy.
 ::
@@ -114,7 +114,7 @@ argument. if omitted, reserved name 'content' is used.
     <body>\n    <div>Content</div>\n  
     </body>\n</html>'
 
-    >>> registerTile('othername', class_=ContentTile)
+    >>> registerTile('othername', class_=ContentTile, permission='login')
     >>> res = render_main_template(model, request, contenttilename='othername')
     >>> res.body
     '<...
@@ -124,12 +124,23 @@ argument. if omitted, reserved name 'content' is used.
 Switch back to origin main template.
 ::
 
-    >>> main =  'cone.app.browser:templates/main.pt'
+    >>> main = 'cone.app.browser:templates/main.pt'
     >>> cone.app.browser.MAIN_TEMPLATE = main
     
     >>> import cone.app.browser.ajax
     >>> import cone.app.browser.layout
     
+    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res.body.find('id="mainmenu"') > -1
+    False
+    
+    >>> res.body.find('id="navtree"') > -1
+    False
+    
+    >>> res.body.find('id="personaltools"') > -1
+    False
+    
+    >>> layer.authenticate('max')
     >>> res = render_main_template(model, request, contenttilename='othername')
     >>> res.body.find('id="mainmenu"') > -1
     True
@@ -160,11 +171,13 @@ behavior.
     
     >>> registerTile('content',
     ...              interface=ProtectedModel,
-    ...              class_=ProtectedContentTile)
+    ...              class_=ProtectedContent,
+    ...              permission='login')
 
 Render protected tile.
 ::
 
+    >>> layer.logout()
     >>> render_tile(ProtectedModel(), request, 'content')
     u'<form action="http://example.com/login" enctype="multipart/form-data" 
     id="form-loginform" method="post">...
@@ -183,6 +196,15 @@ Test main menu tile.
 Render main menu at root.
 ::
 
+    >>> res = render_tile(root, request, 'mainmenu')
+    >>> res.find('href="http://example.com/1"') > -1
+    False
+    
+    >>> res.find('href="http://example.com/2"') > -1
+    False
+    
+    >>> layer.authenticate('max')
+    
     >>> res = render_tile(root, request, 'mainmenu')
     >>> res.find('href="http://example.com/1"') > -1
     True
@@ -272,3 +294,5 @@ Personal Tools
     <ul>\n      <li>\n        
     <a href="http://example.com/logout">Logout</a>\n      </li>\n    </ul>\n  
     </li>\n</ul>'
+
+    >>> layer.logout()

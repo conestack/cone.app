@@ -54,6 +54,8 @@ Create dummy model and request.
     >>> from pyramid.testing import DummyRequest
     >>> model = BaseNode()
     >>> request = DummyRequest()
+    
+    >>> layer.authenticate('foo')
 
 Render batch.
 ::
@@ -64,3 +66,6 @@ Render batch.
     
     >>> res.find('href="http://example.com/?b_page=2"') > -1
     True
+    
+    >>> layer.logout()
+    

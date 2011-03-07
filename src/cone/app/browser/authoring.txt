@@ -96,6 +96,7 @@ Now create dummy root and render ``add`` tile::
     >>> from cone.tile import render_tile
     >>> request = DummyRequest()
     >>> root = MyNode()
+    >>> layer.authenticate('editor')
 
 Render without factory::
 
@@ -252,3 +253,5 @@ Ajax targets for add form::
     >>> expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
     >>> rendered.find(expected) != -1
     True
+    
+    >>> layer.logout()

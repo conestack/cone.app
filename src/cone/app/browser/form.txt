@@ -53,6 +53,7 @@ Create dummy model and request::
     >>> model = BaseNode()
     >>> model.__name__ = 'dummymodel'
     >>> request = DummyRequest()
+    >>> layer.authenticate('max')
 
 Render form. no action is triggered and no input is given::
     
@@ -95,3 +96,5 @@ next handler are triggered::
     
     >>> rendered.find('Result') != -1
     True
+    
+    >>> layer.logout()

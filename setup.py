@@ -46,10 +46,14 @@ setup(name='cone.app',
       extras_require = dict(
           test=[
                 'interlude',
+                'plone.testing',
+                'unittest2',
           ]
       ),
       tests_require=[
           'interlude',
+          'plone.testing',
+          'unittest2',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
       entry_points = """\
