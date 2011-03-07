@@ -18,13 +18,7 @@ from node.parts import (
 )
 from zope.interface import implements
 from pyramid.threadlocal import get_current_request
-from pyramid.security import (
-    Everyone,
-    Allow,
-    Deny,
-    ALL_PERMISSIONS,
-    authenticated_userid,
-)
+from pyramid.security import authenticated_userid
 from cone.app.interfaces import (
     IApplicationNode,
     IFactoryNode,

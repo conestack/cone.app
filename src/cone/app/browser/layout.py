@@ -25,13 +25,15 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
-@tile('personaltools', 'templates/personaltools.pt', strict=False)
+@tile('personaltools', 'templates/personaltools.pt',
+      permission='view', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
     """
 
 
-@tile('mainmenu', 'templates/mainmenu.pt', strict=False)
+@tile('mainmenu', 'templates/mainmenu.pt', 
+      permission='view', strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
     
@@ -80,7 +82,8 @@ class MainMenu(Tile):
         return ret
 
 
-@tile('pathbar', 'templates/pathbar.pt', strict=False)
+@tile('pathbar', 'templates/pathbar.pt', 
+      permission='view', strict=False)
 class PathBar(Tile):
     
     @property
@@ -103,7 +106,8 @@ class PathBar(Tile):
         return ret
 
 
-@tile('navtree', 'templates/navtree.pt', strict=False)
+@tile('navtree', 'templates/navtree.pt',
+      permission='view', strict=False)
 class NavTree(Tile):
     """Navigation tree tile.
     """
@@ -159,7 +163,8 @@ class NavTree(Tile):
                                level=level)
 
 
-@tile('byline', 'templates/byline.pt', strict=False)
+@tile('byline', 'templates/byline.pt',
+      permission='view', strict=False)
 class Byline(Tile):
     """Byline tile.
     """

@@ -8,6 +8,10 @@ from pyramid.security import (
 
 DEFAULT_ACL = [
     (Allow, 'system.Authenticated', ['view']),
+    (Allow, 'role:viewer', ['view']),
+    (Allow, 'role:editor', ['view', 'add', 'edit']),
+    (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
+    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
     (Allow, Everyone, ['login']),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
@@ -22,4 +26,6 @@ def authenticate(request, login, password):
 
 def groups_callback(name, request):
     # XXX: node.ext.ugm goes here
+    if name == ADMIN_USER:
+        return ['role:manager']
     return []

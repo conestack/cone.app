@@ -13,7 +13,7 @@ from cone.app.browser.utils import (
 )
 
 
-@tile('contents', 'templates/contents.pt', strict=False)
+@tile('contents', 'templates/contents.pt', permission='view', strict=False)
 class ContentsTile(Tile):
     
     @property

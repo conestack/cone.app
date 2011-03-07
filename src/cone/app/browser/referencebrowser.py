@@ -38,7 +38,8 @@ registerTile('referencebrowser_pathbar',
              strict=False)
 
 
-@tile('referencelisting', 'templates/referencelisting.pt', strict=False)
+@tile('referencelisting', 'templates/referencelisting.pt', 
+      permission='view', strict=False)
 class ReferenceListing(ContentsTile):
     
     @property
