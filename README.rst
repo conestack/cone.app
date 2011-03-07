@@ -50,70 +50,7 @@ your (self contained) buildout configuration might look like this.
 Authentication and Authorization Configuration
 ----------------------------------------------
 
-Configure ``repoze.who`` and ``repoze.what`` by providing the
-corresponding configuration files.
 
-We configure ``repoze.who`` to use HTTP basic auth via a ``htaccess`` file.
-A Plugin that fits our needs for form authentication is shipped with the
-``cone.app`` package.
-
-This is what our ``who.ini`` looks like.
-::
-
-    [plugin:loginform]
-    use = cone.app.authentication:make_plugin
-    login_form_qs = loginform.__do_login
-    rememberer_name = auth_tkt
-    
-    [plugin:auth_tkt]
-    use = repoze.who.plugins.auth_tkt:make_plugin
-    secret = secret
-    cookie_name = __ac__
-    secure = False
-    include_ip = False
-    
-    [plugin:htpasswd]
-    use = repoze.who.plugins.htpasswd:make_plugin
-    filename = %(here)s/etc/htpasswd
-    check_fn = repoze.who.plugins.htpasswd:crypt_check
-    
-    [general]
-    request_classifier = repoze.who.classifiers:default_request_classifier
-    challenge_decider = repoze.who.classifiers:default_challenge_decider
-    remote_user_key = REMOTE_USER
-    
-    [identifiers]
-    plugins =
-          loginform
-          auth_tkt
-    
-    [authenticators]
-    plugins = htpasswd
-    
-    [challengers]
-    plugins = loginform
-
-Create ``repoze.what`` configuration, defining plugins to use recognizing 
-permissions and groups.
- 
-The file ``what.ini`` looks like this for using the ``repoze.what.plugins.ini``
-adapters.
-::
-
-    [plugin:ini_group]
-    use = repoze.what.plugins.ini:INIGroupAdapter
-    filename = %(here)s/etc/repositories.ini
-    
-    [plugin:ini_permission]
-    use = repoze.what.plugins.ini:INIPermissionsAdapter
-    filename = %(here)s/etc/permissions.ini
-    
-    [what]
-    group_adapters = ini_group
-    permission_adapters = ini_permission
-
-Read the documentation of ``repoze.what.plugins.ini`` for information about
-group and permission configuration via INI files.
 
 
 Configure the WSGI pipeline
@@ -132,21 +69,25 @@ Create a file like ``yourapplication.ini`` which looks similar to this.
     [server:main]
     use = egg:Paste#http
     host = 0.0.0.0
-    port = 8080
+    port = 8081
     
-    [app:yourapplication]
-    use = egg:yourapplication#app
+    [app:cone]
+    use = egg:cone.app#main
     reload_templates = true
-    filter-with = what
-    
-    [filter:what]
-    use = egg:repoze.what.plugins.config#config
-    config_file = %(here)s/what.ini
-    who_config_file = %(here)s/who.ini
+    debug_authorization = false
+    debug_notfound = false
+    debug_routematch = false
+    debug_templates = true
+    default_locale_name = en
+    cone.admin_user = admin
+    cone.admin_password = admin
+    #cone.authn_policy_factory = 
+    #cone.authz_policy_factory = 
+    cone.secret_password = 12345
     
     [pipeline:main]
     pipeline =
-        yourapplication
+        cone
 
 
 Provide the application

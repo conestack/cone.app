@@ -12,8 +12,18 @@ Helper object for read/write operations with datetime values.
     >>> helper = DatetimeHelper()
     >>> dt = datetime(2010, 1, 1, 10, 15)
     
+    >>> dt.isoformat()
+    '2010-01-01T10:15:00'
+    
     >>> helper.dt_to_iso(dt)
     '2010-01-01T10:15:00'
+    
+    >>> dt = datetime(2010, 1, 1, 10, 15, 10, 5)
+    >>> dt.isoformat()
+    '2010-01-01T10:15:10.000005'
+    
+    >>> helper.dt_to_iso(dt)
+    '2010-01-01T10:15:10'
     
     >>> helper.dt_from_iso('2010-01-01T10:15:00')
     datetime.datetime(2010, 1, 1, 10, 15)
@@ -40,4 +50,4 @@ Helper object for read/write operations with datetime values.
     u'\xc3\xa4\xc3\xb6\xc3\xbc'
     
     >>> helper.w_value(dt)
-    '2010-01-01T10:15:00'
+    '2010-01-01T10:15:10'

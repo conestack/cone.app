@@ -176,6 +176,9 @@ This dummy class does a static mapping on __getitem__.
     
     >>> child.model
     <BaseNode object 'bar' at ...>
+    
+    >>> [key for key in node]
+    ['foo', 'bar']
 
 The application node path differs from the adapted node path. This is essential
 to keep the application path sane while not violating the adapted node's
@@ -345,17 +348,18 @@ XML properties could be datetime objects.
 
     >>> from datetime import datetime
     >>> props.effective = datetime(2010, 1, 1, 10, 15)
+    >>> props.empty = ''
 
 XML properties could be multi valued...
 ::
 
-    >>> props.keywords = ['a', datetime(2010, 1, 1, 10, 15)]
+    >>> props.keywords = ['a', datetime(2010, 1, 1, 10, 15), '']
 
 ...or dict/odict instance
 ::
 
     >>> from odict import odict
-    >>> props.dictlike = odict([('a', 'foo'), ('b', 'bar')])
+    >>> props.dictlike = odict([('a', 'foo'), ('b', 'bar'), ('c', '')])
 
 Nothing added yet.
 ::
@@ -378,22 +382,28 @@ Check file contents.
     ['<properties>', 
     '  <foo>&#195;&#164;&#195;&#182;&#195;&#188;&#195;&#159;</foo>', 
     '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <empty></empty>', 
     '  <keywords>', 
     '    <item>a</item>', 
     '    <item>2010-01-01T10:15:00</item>', 
+    '    <item></item>', 
     '  </keywords>', 
-    '  <dictlike>',
-     '    <elem>', 
-     '      <key>a</key>', 
-     '      <value>foo</value>', 
-     '    </elem>', 
-     '    <elem>', 
-     '      <key>b</key>', 
-     '      <value>bar</value>', 
-     '    </elem>', 
-     '  </dictlike>', 
-     '</properties>', 
-     '']
+    '  <dictlike>', 
+    '    <elem>', 
+    '      <key>a</key>', 
+    '      <value>foo</value>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>b</key>', 
+    '      <value>bar</value>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>c</key>', 
+    '      <value></value>', 
+    '    </elem>', 
+    '  </dictlike>', 
+    '</properties>', 
+    '']
 
 Overwrite ``foo`` and add ``bar`` properties; Note that even markup can be 
 used safely.
@@ -411,9 +421,11 @@ Call props and check result.
     ['<properties>', 
     '  <foo>foo</foo>', 
     '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <empty></empty>', 
     '  <keywords>', 
     '    <item>a</item>', 
     '    <item>2010-01-01T10:15:00</item>', 
+    '    <item></item>', 
     '  </keywords>', 
     '  <dictlike>', 
     '    <elem>', 
@@ -423,7 +435,12 @@ Call props and check result.
     '    <elem>', 
     '      <key>b</key>', 
     '      <value>bar</value>', 
-    '    </elem>', '  </dictlike>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>c</key>', 
+    '      <value></value>', 
+    '    </elem>', 
+    '  </dictlike>', 
     '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
     '</properties>', 
     '']
@@ -433,13 +450,14 @@ Create XML properties from existing file.
 
     >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'))
     >>> props._keys()
-    ['foo', 'effective', 'keywords', 'dictlike', 'bar']
+    ['foo', 'effective', 'empty', 'keywords', 'dictlike', 'bar']
     
     >>> props._values()
     [u'foo', 
     datetime.datetime(2010, 1, 1, 10, 15), 
-    [u'a', datetime.datetime(2010, 1, 1, 10, 15)], 
-    odict([('a', 'foo'), ('b', 'bar')]), 
+    u'', 
+    [u'a', datetime.datetime(2010, 1, 1, 10, 15), u''], 
+    odict([('a', 'foo'), ('b', 'bar'), ('c', None)]), 
     u'<bar>\xe4\xf6\xfc</bar>']
 
 Delete property.
@@ -447,7 +465,12 @@ Delete property.
 
     >>> del props['foo']
     >>> props._keys()
-    ['effective', 'keywords', 'dictlike', 'bar']
+    ['effective', 'empty', 'keywords', 'dictlike', 'bar']
+    
+    >>> del props['inexistent']
+    Traceback (most recent call last):
+      ...
+    KeyError: u'property inexistent does not exist'
 
 Call and check results.
 ::
@@ -457,9 +480,11 @@ Call and check results.
     ...     file.read().split('\n')
     ['<properties>', 
     '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <empty></empty>', 
     '  <keywords>', 
     '    <item>a</item>', 
     '    <item>2010-01-01T10:15:00</item>', 
+    '    <item></item>', 
     '  </keywords>', 
     '  <dictlike>', 
     '    <elem>', 
@@ -469,6 +494,10 @@ Call and check results.
     '    <elem>', 
     '      <key>b</key>', 
     '      <value>bar</value>', 
+    '    </elem>', 
+    '    <elem>', 
+    '      <key>c</key>', 
+    '      <value>None</value>', 
     '    </elem>', 
     '  </dictlike>', 
     '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
@@ -484,9 +513,11 @@ Change order of odict and check results
     ...     file.read().split('\n')
     ['<properties>', 
     '  <effective>2010-01-01T10:15:00</effective>', 
+    '  <empty></empty>', 
     '  <keywords>', 
     '    <item>a</item>', 
     '    <item>2010-01-01T10:15:00</item>', 
+    '    <item></item>', 
     '  </keywords>', 
     '  <dictlike>', 
     '    <elem>', 
@@ -558,9 +589,40 @@ Create config properties from existing file.
     >>> props.bar
     'bar'
 
+Test ``__getitem__``::
+
+    >>> props['foo']
+    'foo'
+    
+    >>> props['inexistent']
+    Traceback (most recent call last):
+      ...
+    KeyError: 'inexistent'
+
+Test ``get``::
+
+    >>> props.get('foo')
+    'foo'
+    
+    >>> props.get('inexistent', 'default')
+    'default'
+
+Test ``__conteins__``::
+
+    >>> 'foo' in props
+    True
+    
+    >>> 'inexistent' in props
+    False
+
 Delete property.
 ::
 
+    >>> del props['inexistent']
+    Traceback (most recent call last):
+      ...
+    KeyError: u'property inexistent does not exist'
+    
     >>> del props['foo']
     >>> props.foo
 

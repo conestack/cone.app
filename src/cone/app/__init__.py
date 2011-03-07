@@ -31,8 +31,7 @@ def main(global_config, **settings):
         root_factory=get_default_root,
         settings=settings,
         authentication_policy=authn_factory(secret=secret_password),
-        authorization_policy=authz_factory(secret=secret_password),
-        autocommit=True)
+        authorization_policy=authz_factory(secret=secret_password))
     zcml_file = settings.get('configure_zcml', 'configure.zcml')
     config.include(pyramid_zcml)
     config.begin()
