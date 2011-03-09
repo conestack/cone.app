@@ -18,6 +18,7 @@ DEFAULT_ACL = [
 
 ADMIN_USER = None
 ADMIN_PASSWORD = None
+AUTH_IMPL = None
 
 def authenticate(request, login, password):
     # XXX: node.ext.ugm goes here
