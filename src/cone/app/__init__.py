@@ -7,6 +7,14 @@ from cone.app.model import AppRoot
 
 root = AppRoot()
 
+def configure_root(settings):
+    root.metadata.title = settings.get('cone.root.title', 'CONE')
+    root.properties.default_child = settings.get('cone.root.default_child', None)
+    root.properties.mainmenu_empty_title = \
+        settings.get('cone.root.mainmenu_empty_title', False)
+    root.properties.in_navtree = False
+    root.properties.editable = False
+
 def get_default_root(environ):
     return root
 
@@ -27,6 +35,8 @@ def main(global_config, **settings):
     security.ADMIN_PASSWORD = settings.get('cone.admin_password', 'admin')
     security.AUTH_IMPL = settings.get('cone.auth_impl', None)
     secret_password = settings.get('cone.secret_password', 'secret')
+    
+    configure_root(settings)
     
     # create config
     config = Configurator(

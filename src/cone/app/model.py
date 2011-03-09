@@ -120,9 +120,20 @@ class FactoryNode(BaseNode):
 
 class AppRoot(FactoryNode):
     """Application root.
-    
-    XXX
     """
+    factories = odict()
+
+    @property
+    def properties(self):
+        if not hasattr(self, '_properties'):
+            self._properties = Properties()
+        return self._properties
+
+    @property
+    def metadata(self):
+        if not hasattr(self, '_metadata'):
+            self._metadata = BaseMetadata()
+        return self._metadata
 
 
 class AdapterNode(BaseNode):
