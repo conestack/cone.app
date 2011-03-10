@@ -72,12 +72,12 @@ To change this, provide your own main template in your package and overwrite
 ``cone.app.browser.MAIN_TEMPLATE`` on application startup.
 ::
 
-    >>> import cone.app.browser
-    >>> cone.app.browser.MAIN_TEMPLATE
+    >>> import cone.app.settings
+    >>> cone.app.settings.ui.main_template
     'cone.app.browser:templates/main.pt'
     
     >>> main = 'cone.app.tests:dummy_main.pt'
-    >>> cone.app.browser.MAIN_TEMPLATE = main
+    >>> cone.app.settings.ui.main_template = main
 
 Create mocks to test layout rendering.
 ::
@@ -125,7 +125,7 @@ Switch back to origin main template.
 ::
 
     >>> main = 'cone.app.browser:templates/main.pt'
-    >>> cone.app.browser.MAIN_TEMPLATE = main
+    >>> cone.app.settings.ui.main_template = main
     
     >>> import cone.app.browser.ajax
     >>> import cone.app.browser.layout

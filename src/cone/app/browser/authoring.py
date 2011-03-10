@@ -21,18 +21,17 @@ from cone.app.browser.utils import (
 )
 
 
-@view_config('add', request_method='POST', permission='add')
+@view_config('add', permission='add')
 def add(model, request):
     if request.params.get('ajax'):
         return ajax_form(model, request, 'add')
     return render_main_template(model, request, contenttilename='add')
 
 
-@tile('add', 'templates/add.pt', permission='add', strict=False)
+@tile('add', permission='add')
 class AddTile(ProtectedContentTile):
     
-    @property
-    def addform(self):
+    def render(self):
         nodeinfo = self.info
         if not nodeinfo:
             return u'Unknown factory'
@@ -52,18 +51,18 @@ class AddTile(ProtectedContentTile):
         return getNodeInfo(factory)
 
 
-@view_config('edit', request_method='POST', permission='edit')
+@view_config('edit', permission='edit')
 def edit(model, request):
     if request.params.get('ajax'):
         return ajax_form(model, request, 'edit')
     return render_main_template(model, request, contenttilename='edit')
 
 
-registerTile('edit',
-             'cone.app:browser/templates/edit.pt',
-             class_=ProtectedContentTile,
-             permission='edit',
-             strict=False)
+@tile('edit', permission='edit')
+class EditTile(ProtectedContentTile):
+    
+    def render(self):
+        return render_tile(self.model, self.request, 'editform')
 
 
 @tile('add_dropdown', 'templates/add_dropdown.pt', 

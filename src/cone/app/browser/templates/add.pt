@@ -1,1 +1,0 @@
-<tal:addform replace="structure context.addform" />
