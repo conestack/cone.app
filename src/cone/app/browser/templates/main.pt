@@ -1,15 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<!--
-Design by Free CSS Templates
-http://www.freecsstemplates.org
-Released for free under a Creative Commons Attribution 2.5 License
-Name       : Splendid
-Description: A two-column, fixed-width design for 1024x768 screen resolutions.
-Version    : 1.0
-Released   : 20090622
--->
-
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax">
   <head>
@@ -24,7 +14,8 @@ Released   : 20090622
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
       <script src="http://cdn.jquerytools.org/1.1.2/tiny/jquery.tools.min.js"></script>
     </tal:cdn>
-    <script src="${request.application_url}/static/cdn/jquery.min.js"></script> 
+    <script src="${request.application_url}/static/cdn/jquery.min.js"></script>
+    <script src="${request.application_url}/static/cdn/jquery.form.js"></script> 
     <script src="${request.application_url}/static/cdn/jquery.tools.min.js"></script>
     <script src="${request.application_url}/++resource++bdajax/bdajax.js"></script>
     
@@ -38,9 +29,8 @@ Released   : 20090622
     </tal:authendicated>
 
     <!-- stylesheets -->
-    <link href="${request.application_url}/static/style.css" rel="stylesheet" type="text/css" media="screen" />
-    <link href="${request.application_url}/static/icons.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="${request.application_url}/++resource++bdajax/bdajax.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="${request.application_url}/static/style.css" rel="stylesheet" type="text/css" media="screen" />
     <tal:authendicated condition="util.authenticated(request)">
       <link href="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
     </tal:authendicated>
@@ -50,10 +40,19 @@ Released   : 20090622
 
   </head>
   <body>
+    <tal:bdajax replace="structure tile('bdajax')" />
+    
+    <iframe id="ajaxformresponse"
+            name="ajaxformresponse"
+            src="#"
+            style="width:0px;height:0px;display:none">
+    </iframe>
+  
     <div id="wrapper">
-      
-      <div id="logo">
-        <h1>
+    
+      <div id="header">
+        
+        <h1 id="logo">
           <a class="logolink"
              href="${request.application_url}"
              ajax:bind="click"
@@ -62,16 +61,11 @@ Released   : 20090622
                          contextchanged:#content"
              tal:content="model.root.metadata.title">Title</a>
         </h1>
-      </div>
-      
-      <hr />
-
-      <div id="header">
         
-        <div id="menu">
-          <tal:mainmenu replace="structure tile('mainmenu')" />
-        </div>
-
+        <a href="${request.application_url}/logout"
+           class="logout"
+           tal:condition="util.authenticated(request)">logout</a>
+        
         <div id="search" tal:condition="util.authenticated(request)">
           <form method="get" action="">
             <fieldset>
@@ -80,51 +74,43 @@ Released   : 20090622
             </fieldset>
           </form>
         </div>
+        
+        <div id="menu">
+          <tal:mainmenu replace="structure tile('mainmenu')" />
+        </div>
+        
+        <tal:block condition="False">
+          <tal:navtree replace="structure tile('personaltools')" />
+        </tal:block>
+      
       </div>
-
+      
       <div id="pathbar" class="pathbar">
         <tal:mainmenu replace="structure tile('pathbar')" />
       </div>
 
-      <div id="page">
-        
-        <div id="page-bgtop">
+      <div id="content_wrapper">
           
-          <div id="content_wrapper">
-          
-            <div id="content"
-               ajax:bind="contextchanged"
-               ajax:action="content:#content:inner">
-              <tal:content replace="structure tile(contenttilename)" />
-            </div>
-          
-          </div>
-          
-          <div id="sidebar">
-            <tal:navtree replace="structure tile('navtree')" />
-            <tal:navtree replace="structure tile('personaltools')" />
-          </div>
-          
-          <div style="clear: both;">&nbsp;</div>
+        <div id="content"
+             ajax:bind="contextchanged"
+             ajax:action="content:#content:inner">
+          <tal:content replace="structure tile(contenttilename)" />
         </div>
+        
+        <div id="sidebarleft">
+          <tal:navtree replace="structure tile('navtree')" />
+        </div>
+          
+        <div style="clear: both;">&nbsp;</div>
+          
       </div>
       
       <div id="footer">
         <p>
-          Copyright (c) 2009-2010
+          Copyright (c) 2010-2011
           <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
-          All rights reserved. Design by
-          <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.
         </p>
       </div>
-      
-      <tal:bdajax replace="structure tile('bdajax')" />
-	  
-	  <iframe id="ajaxformresponse"
-              name="ajaxformresponse"
-              src="#"
-              style="width:0px;height:0px;display:none">
-      </iframe>
       
     </div>
   </body>
