@@ -1,5 +1,5 @@
 <tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
-  <div class="personaltools">
+  <div id="personaltools">
   	<div class="currentuser">
       <a href="personaltools">Admin</a>
 	</div>

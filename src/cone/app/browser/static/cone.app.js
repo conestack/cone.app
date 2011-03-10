@@ -13,7 +13,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     $(document).ready(function() {
         
         // personaltools
-        $('.personaltools').dropdownmenu({
+        $('#personaltools').dropdownmenu({
             menu: '.dropdown_items',
             trigger: '.currentuser a'
         });

@@ -289,10 +289,10 @@ Personal Tools
 --------------
 
     >>> res = render_tile(root, request, 'personaltools')
-    >>> res
-    u'<ul id="personaltools">\n  <li>\n    <h2>Personal tools</h2>\n    
-    <ul>\n      <li>\n        
-    <a href="http://example.com/logout">Logout</a>\n      </li>\n    </ul>\n  
-    </li>\n</ul>'
-
+    >>> res.find('id="personaltools"') != -1
+    True
+    
+    >>> res.find('href="http://example.com/logout"') != -1
+    True
+    
     >>> layer.logout()

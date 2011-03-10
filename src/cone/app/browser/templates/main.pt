@@ -35,11 +35,9 @@
              tal:content="model.root.metadata.title">Title</a>
         </h1>
         
-        <div id="personaltools">
-		  <tal:personaltools replace="structure tile('personaltools')" />
-		</div>
-		
-		<div id="search" tal:condition="util.authenticated(request)">
+        <tal:personaltools replace="structure tile('personaltools')" />
+        
+        <div id="search" tal:condition="util.authenticated(request)">
           <form method="get" action="">
             <fieldset>
               <input type="text" name="term" id="search-text" size="15" />

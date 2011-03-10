@@ -55,17 +55,17 @@ h1#logo a {
 }
 
 /* Personal tools */
-.personaltools {
+#personaltools {
 	position:absolute;
 	right:8px;
     top:35px;
 }
-.personaltools div.currentuser a {
+#personaltools div.currentuser a {
     text-decoration:none;
     font-weight:bold;
     color:#fff;
 }
-.personaltools .dropdown_items {
+#personaltools .dropdown_items {
 	right:0px;
 }
 
