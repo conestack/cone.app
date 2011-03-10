@@ -26,6 +26,16 @@ TESTFILES = [
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTests([
+        doctest.DocFileSuite(
+            '../__init__.txt', 
+            globs={'interact': interlude.interact,
+                   'pprint': pprint.pprint,
+                   'pp': pprint.pprint,
+                   },
+            optionflags=optionflags,
+        )
+    ])
+    suite.addTests([
         layered(
             doctest.DocFileSuite(
                 testfile,

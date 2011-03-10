@@ -23,7 +23,7 @@ AUTH_IMPL = None
 def authenticate(request, login, password):
     # XXX: node.ext.ugm goes here
     if login == ADMIN_USER and password == ADMIN_PASSWORD:
-        return remember(request, login)
+        return remember(request, login)                     #pragma NO COVERAGE
 
 def groups_callback(name, request):
     # XXX: node.ext.ugm goes here

@@ -164,20 +164,26 @@ class Properties(object):
             data = dict()
         object.__setattr__(self, '_data', data)
     
+    def _get_data(self):
+        return object.__getattribute__(self, '_data')
+    
     def __getitem__(self, key):
-        return object.__getattribute__(self, '_data')[key]
+        return self._get_data()[key]
     
     def get(self, key, default=None):
-        return object.__getattribute__(self, '_data').get(key, default)
+        return self._get_data().get(key, default)
     
     def __contains__(self, key):
-        return key in object.__getattribute__(self, '_data')
+        return key in self._get_data()
     
     def __getattr__(self, name):
-        return object.__getattribute__(self, '_data').get(name)
+        return self._get_data().get(name)
     
     def __setattr__(self, name, value):
-        object.__getattribute__(self, '_data')[name] = value
+        self._get_data()[name] = value
+    
+    def keys(self):
+        return self._get_data().keys()
 
 
 class BaseMetadata(Properties):

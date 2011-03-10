@@ -9,7 +9,7 @@ root = AppRoot()
 
 def configure_root(settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
-    root.properties.default_child = settings.get('cone.root.default_child', None)
+    root.properties.default_child = settings.get('cone.root.default_child')
     root.properties.mainmenu_empty_title = \
         settings.get('cone.root.mainmenu_empty_title', False)
     root.properties.in_navtree = False
@@ -54,7 +54,7 @@ def main(global_config, **settings):
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
-        config.load_zcml('%s:configure.zcml' % plugin)
+        config.load_zcml('%s:configure.zcml' % plugin)      #pragma NO COVERAGE
     
     # end config and return wsgi app
     config.end()

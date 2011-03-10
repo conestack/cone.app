@@ -42,14 +42,18 @@ class IProperties(IReadMapping):
     """
     
     def __getattr__(name):
-        """Return metadata by attribute access.
+        """Return property by attribute access.
         
         Never throws an AttributeError if attribute does not exists, return
         None instead.
         """
     
     def __setattr__(name, value):
-        """Set metadata by attribute access.
+        """Set property by attribute access.
+        """
+    
+    def keys():
+        """Return available properties
         """
 
 

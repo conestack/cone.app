@@ -1,0 +1,71 @@
+Cone main::
+
+    >>> import cone.app
+    >>> settings = {
+    ...     'cone.admin_user': 'admin',
+    ...     'cone.admin_password': 'admin',
+    ...     'cone.secret_password': '12345',
+    ...     'cone.auth_impl': None,
+    ...     'cone.plugins': '',
+    ...     'cone.root.title': 'cone',
+    ...     'cone.root.default_child': None,
+    ...     'cone.root.mainmenu_empty_title': False,
+    ... }
+    
+    >>> import os
+    >>> root = cone.app.get_default_root(os.environ)
+    >>> root
+    <AppRoot object 'None' at ...>
+
+    >>> root.properties.keys()
+    []
+    
+    >>> root.metadata.keys()
+    []
+    
+    >>> cone.app.configure_root(settings)
+    >>> root.properties.keys()
+    ['default_child', 'mainmenu_empty_title', 'editable', 'in_navtree']
+    
+    >>> root.properties.default_child
+    
+    >>> root.properties.mainmenu_empty_title
+    False
+    
+    >>> root.properties.editable
+    False
+    
+    >>> root.properties.in_navtree
+    False
+    
+    >>> root.metadata.keys()
+    ['title']
+    
+    >>> root.metadata.title
+    'cone'
+    
+    >>> cone.app.auth_tkt_factory(secret='12345')
+    <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
+    
+    >>> cone.app.acl_factory()
+    <pyramid.authorization.ACLAuthorizationPolicy object at ...>
+    
+    >>> del root._metadata
+    >>> del root._properties
+    
+    >>> app = cone.app.main({}, **settings)
+    >>> app
+    <pyramid.router.Router object at ...>
+
+Cleanup::
+
+    >>> from pyramid.interfaces import IAuthenticationPolicy
+    >>> authn = app.registry.getUtility(IAuthenticationPolicy)
+    >>> app.registry.unregisterUtility(authn, IAuthenticationPolicy)
+    True
+    
+    >>> from pyramid.interfaces import IAuthorizationPolicy
+    >>> authz = app.registry.getUtility(IAuthorizationPolicy)
+    >>> app.registry.unregisterUtility(authz, IAuthorizationPolicy)
+    True
+    
