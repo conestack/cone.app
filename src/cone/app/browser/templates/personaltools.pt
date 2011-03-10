@@ -1,10 +1,12 @@
-<ul id="personaltools">
-  <li>
-    <h2>Personal tools</h2>
-    <ul>
-      <li>
-        <a href="${'/'.join([request.application_url, 'logout'])}">Logout</a>
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+  <div class="personaltools">
+  	<div class="currentuser">
+      <a href="personaltools">Admin</a>
+	</div>
+    <ul class="dropdown_items" style="display:none;">
+	  <li>
+        <a href="${request.application_url}/logout">Logout</a>
       </li>
     </ul>
-  </li>
-</ul>
+  </div>
+</tal:ajax>

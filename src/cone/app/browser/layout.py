@@ -14,6 +14,25 @@ from cone.app.browser.utils import (
 )
 
 
+@tile('resources', 'templates/resources.pt',
+      permission='login')
+class Resources(Tile):
+    """Trsources tile.
+    """
+    
+    @property
+    def authenticated(self):
+        return authenticated(self.request)
+    
+    @property
+    def js(self):
+        return []
+    
+    @property
+    def css(self):
+        return []
+
+
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.

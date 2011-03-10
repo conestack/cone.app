@@ -11,6 +11,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 (function($) {
 
     $(document).ready(function() {
+        
+        // personaltools
+        $('.personaltools').dropdownmenu({
+            menu: '.dropdown_items',
+            trigger: '.currentuser a'
+        });
+        
         // initial binding
         cone.livesearchbinder();
         cone.tabsbinder();

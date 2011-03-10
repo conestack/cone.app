@@ -1,0 +1,30 @@
+<!-- javascripts -->
+<tal:cdn condition="None">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+  <script src="http://cdn.jquerytools.org/1.1.2/tiny/jquery.tools.min.js"></script>
+</tal:cdn>
+<script src="${request.application_url}/static/cdn/jquery.min.js"></script>
+<script src="${request.application_url}/static/cdn/jquery.tools.min.js"></script>
+<script src="${request.application_url}/++resource++bdajax/bdajax.js"></script>
+
+<tal:authendicated condition="context.authenticated">
+  <script src="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.min.js"></script>
+  <script src="${request.application_url}/tiny_mce/jquery.tinymce.js"></script>
+  <script src="${request.application_url}/++resource++yafowil.widget.datetime/widget.js"></script>
+  <script src="${request.application_url}/++resource++yafowil.widget.richtext/widget.js"></script>
+  <script src="${request.application_url}/++resource++yafowil.widget.dict/widget.js"></script>
+  <script src="${request.application_url}/static/cone.app.js"></script>
+</tal:authendicated>
+<tal:additional repeat="additional context.js">
+  <link href="${request.application_url}/${additional}" rel="stylesheet" type="text/css" media="screen" />
+</tal:additional>
+
+<!-- stylesheets -->
+<link href="${request.application_url}/++resource++bdajax/bdajax.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="${request.application_url}/static/style.css" rel="stylesheet" type="text/css" media="screen" />
+<tal:authendicated condition="context.authenticated">
+  <link href="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
+</tal:authendicated>
+<tal:additional repeat="additional context.css">
+  <link href="${request.application_url}/${additional}" rel="stylesheet" type="text/css" media="screen" />
+</tal:additional>

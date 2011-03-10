@@ -9,34 +9,7 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     
-    <!-- javascripts -->
-    <tal:cdn condition="None">
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-      <script src="http://cdn.jquerytools.org/1.1.2/tiny/jquery.tools.min.js"></script>
-    </tal:cdn>
-    <script src="${request.application_url}/static/cdn/jquery.min.js"></script>
-    <script src="${request.application_url}/static/cdn/jquery.form.js"></script> 
-    <script src="${request.application_url}/static/cdn/jquery.tools.min.js"></script>
-    <script src="${request.application_url}/++resource++bdajax/bdajax.js"></script>
-    
-    <tal:authendicated condition="util.authenticated(request)">
-      <script src="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.min.js"></script>
-      <script src="${request.application_url}/tiny_mce/jquery.tinymce.js"></script>
-      <script src="${request.application_url}/++resource++yafowil.widget.datetime/widget.js"></script>
-      <script src="${request.application_url}/++resource++yafowil.widget.richtext/widget.js"></script>
-      <script src="${request.application_url}/++resource++yafowil.widget.dict/widget.js"></script>
-      <script src="${request.application_url}/static/cone.app.js"></script>
-    </tal:authendicated>
-
-    <!-- stylesheets -->
-    <link href="${request.application_url}/++resource++bdajax/bdajax.css" rel="stylesheet" type="text/css" media="screen" />
-    <link href="${request.application_url}/static/style.css" rel="stylesheet" type="text/css" media="screen" />
-    <tal:authendicated condition="util.authenticated(request)">
-      <link href="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
-    </tal:authendicated>
-    <tal:additional repeat="additional util.additional_css">
-      <link href="${request.application_url}/${additional}" rel="stylesheet" type="text/css" media="screen" />
-    </tal:additional>
+    <tal:resources replace="structure tile('resources')" />
 
   </head>
   <body>
@@ -62,15 +35,15 @@
              tal:content="model.root.metadata.title">Title</a>
         </h1>
         
-        <a href="${request.application_url}/logout"
-           class="logout"
-           tal:condition="util.authenticated(request)">logout</a>
-        
-        <div id="search" tal:condition="util.authenticated(request)">
+        <div id="personaltools">
+		  <tal:personaltools replace="structure tile('personaltools')" />
+		</div>
+		
+		<div id="search" tal:condition="util.authenticated(request)">
           <form method="get" action="">
             <fieldset>
               <input type="text" name="term" id="search-text" size="15" />
-              <input type="submit" id="search-submit" value="GO" />
+              <input type="submit" id="search-submit" value="search" />
             </fieldset>
           </form>
         </div>
@@ -78,10 +51,6 @@
         <div id="menu">
           <tal:mainmenu replace="structure tile('mainmenu')" />
         </div>
-        
-        <tal:block condition="False">
-          <tal:navtree replace="structure tile('personaltools')" />
-        </tal:block>
       
       </div>
       
