@@ -27,19 +27,16 @@ from yafowil.utils import (
 
 registerTile('referencebrowser',
              'cone.app:browser/templates/referencebrowser.pt',
-             permission='view',
-             strict=False)
+             permission='view')
 
 
 registerTile('referencebrowser_pathbar',
              'cone.app:browser/templates/referencebrowser_pathbar.pt',
              permission='view',
-             class_=PathBar,
-             strict=False)
+             class_=PathBar)
 
 
-@tile('referencelisting', 'templates/referencelisting.pt', 
-      permission='view', strict=False)
+@tile('referencelisting', 'templates/referencelisting.pt', permission='view')
 class ReferenceListing(ContentsTile):
     
     @property

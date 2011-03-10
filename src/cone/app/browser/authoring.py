@@ -94,5 +94,4 @@ class AddDropdown(Tile):
 
 registerTile('contextmenu',
              'cone.app:browser/templates/contextmenu.pt',
-             permission='view',
-             strict=True)
+             permission='view')

@@ -6,10 +6,7 @@ from cone.tile import (
 )
 
 
-registerTile('bdajax',
-             'bdajax:bdajax.pt',
-             permission='login',
-             strict=False)
+registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')

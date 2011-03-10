@@ -14,8 +14,7 @@ from cone.app.browser.utils import (
 )
 
 
-@tile('resources', 'templates/resources.pt',
-      permission='login')
+@tile('resources', 'templates/resources.pt', permission='login')
 class Resources(Tile):
     """Trsources tile.
     """
