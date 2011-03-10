@@ -18,7 +18,13 @@ from node.parts import (
 )
 from zope.interface import implements
 from pyramid.threadlocal import get_current_request
-from pyramid.security import authenticated_userid
+from pyramid.security import (
+    authenticated_userid,
+    Everyone,
+    Allow,
+    Deny,
+    ALL_PERMISSIONS,
+)
 from cone.app.interfaces import (
     IApplicationNode,
     IFactoryNode,
@@ -90,7 +96,7 @@ class BaseNode(object):
 class FactoryNode(BaseNode):
     implements(IFactoryNode)
     
-    factories = {}
+    factories = odict()
     
     def __iter__(self):
         keys = set()
@@ -133,6 +139,31 @@ class AppRoot(FactoryNode):
     def metadata(self):
         if not hasattr(self, '_metadata'):
             self._metadata = BaseMetadata()
+        return self._metadata
+
+
+class AppSettings(FactoryNode):
+    """Applications Settings container.
+    """
+    __acl__ = [
+        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, Everyone, 'login'),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+    factories = odict()
+    
+    @property
+    def properties(self):
+        if not hasattr(self, '_properties'):
+            self._properties = Properties()
+            self._properties.in_navtree = True
+        return self._properties
+    
+    @property
+    def metadata(self):
+        if not hasattr(self, '_metadata'):
+            self._metadata = BaseMetadata()
+            self._metadata.title = "Settings"
         return self._metadata
 
 

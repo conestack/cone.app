@@ -13,7 +13,7 @@ from cone.tile import (
     render_template_to_response,
     render_tile,
 )
-from cone.app import settings
+import cone.app
 from cone.app.browser.utils import AppUtil
 
 # static resources
@@ -26,11 +26,11 @@ def render_main_template(model, request, contenttilename='content'):
     As main content the tile with name contenttilename is rendered.
     """
     util = AppUtil()
-    return render_template_to_response(settings.ui.main_template,
+    return render_template_to_response(cone.app.settings.ui.main_template,
                                        request=request,
                                        model=model,
                                        util=util,
-                                       layout=settings.ui.layout,
+                                       layout=cone.app.settings.ui.layout,
                                        contenttilename=contenttilename)
 
 

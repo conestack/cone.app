@@ -59,19 +59,19 @@
 
       <div id="content_wrapper">
           
+        <tal:enabled condition="layout.sidebar_left">
+          <div id="sidebar_left">
+            <tal:tiles repeat="tilename layout.sidebar_left">
+              <tal:tile replace="structure tile(tilename)" />
+            </tal:tiles>
+          </div>
+        </tal:enabled>
+        
         <div id="content"
              ajax:bind="contextchanged"
              ajax:action="content:#content:inner">
           <tal:content replace="structure tile(contenttilename)" />
         </div>
-        
-        <tal:enabled condition="layout.sidebar_left">
-          <div id="sidebar_left">
-              <tal:tiles repeat="tilename layout.sidebar_left">
-              <tal:tile replace="structure tile(tilename)" />
-            </tal:tiles>
-          </div>
-        </tal:enabled>
           
         <div style="clear: both;">&nbsp;</div>
           

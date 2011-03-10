@@ -3,9 +3,15 @@ import pyramid_zcml
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from cone.app.model import AppRoot
+from cone.app.model import (
+    AppRoot,
+    AppSettings,
+)
+
 
 root = AppRoot()
+root.factories['settings'] = AppSettings
+
 
 def configure_root(settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
@@ -15,16 +21,34 @@ def configure_root(settings):
     root.properties.in_navtree = False
     root.properties.editable = False
 
+
+def register_plugin_config(key, factory):
+    factories = root['settings'].factories
+    if key in factories:
+        raise ValueError(u"Config with name '%s' already registered." % key)
+    factories[key] = factory
+
+
+def register_plugin(key, factory):
+    factories = root.factories
+    if key in factories:
+        raise ValueError(u"App with name '%s' already registered." % key)
+    root.factories[key] = factory
+
+
 def get_default_root(environ):
     return root
+
 
 def auth_tkt_factory(**kwargs):
     from cone.app.security import groups_callback
     kwargs.setdefault('callback', groups_callback)
     return AuthTktAuthenticationPolicy(**kwargs)
 
+
 def acl_factory(**kwargs):
     return ACLAuthorizationPolicy()
+
 
 def main(global_config, **settings):
     """Returns WSGI application.

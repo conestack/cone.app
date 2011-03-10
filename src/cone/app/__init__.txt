@@ -23,6 +23,9 @@ Cone main::
     >>> root.metadata.keys()
     []
     
+    >>> root.factories
+    odict()
+    
     >>> cone.app.configure_root(settings)
     >>> root.properties.keys()
     ['default_child', 'mainmenu_empty_title', 'editable', 'in_navtree']
@@ -44,6 +47,9 @@ Cone main::
     >>> root.metadata.title
     'cone'
     
+    >>> root.factories
+    odict([('settings', <class 'cone.app.model.AppSettings'>)])
+    
     >>> cone.app.auth_tkt_factory(secret='12345')
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
     
@@ -52,6 +58,7 @@ Cone main::
     
     >>> del root._metadata
     >>> del root._properties
+    >>> del root.factories['settings']
     
     >>> app = cone.app.main({}, **settings)
     >>> app

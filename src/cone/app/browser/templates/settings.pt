@@ -1,0 +1,16 @@
+<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+
+  <tal:tabs define="tabs context.tabs">
+    <ul class="tabs">
+      <li tal:repeat="tab tabs">
+          <a class="w1" href="#" tal:content="tab['title']">Title</a>
+      </li>
+    </ul>
+    <div class="tabpanes">
+      <div tal:repeat="tab tabs">
+        <tal:content replace="structure tab['content']" />
+      </div>
+    </div>
+  </tal:tabs>
+  
+</tal:ajax>
