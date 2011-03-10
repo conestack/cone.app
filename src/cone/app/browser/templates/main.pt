@@ -35,26 +35,27 @@
              tal:content="model.root.metadata.title">Title</a>
         </h1>
         
-        <tal:personaltools replace="structure tile('personaltools')" />
+        <tal:personaltools
+          condition="layout.personaltools"
+          replace="structure tile('personaltools')" />
         
-        <div id="search" tal:condition="util.authenticated(request)">
-          <form method="get" action="">
-            <fieldset>
-              <input type="text" name="term" id="search-text" size="15" />
-              <input type="submit" id="search-submit" value="search" />
-            </fieldset>
-          </form>
-        </div>
+        <tal:livesearch
+          condition="layout.livesearch"
+          replace="structure tile('livesearch')" />
         
-        <div id="menu">
-          <tal:mainmenu replace="structure tile('mainmenu')" />
-        </div>
+        <tal:enabled condition="layout.mainmenu">
+          <div id="menu">
+            <tal:mainmenu replace="structure tile('mainmenu')" />
+          </div>
+        </tal:enabled>
       
       </div>
       
-      <div id="pathbar" class="pathbar">
-        <tal:mainmenu replace="structure tile('pathbar')" />
-      </div>
+      <tal:enabled condition="layout.pathbar">
+        <div id="pathbar" class="pathbar">
+          <tal:mainmenu replace="structure tile('pathbar')" />
+        </div>
+      </tal:enabled>
 
       <div id="content_wrapper">
           
@@ -64,9 +65,13 @@
           <tal:content replace="structure tile(contenttilename)" />
         </div>
         
-        <div id="sidebarleft">
-          <tal:navtree replace="structure tile('navtree')" />
-        </div>
+        <tal:enabled condition="layout.sidebar_left">
+          <div id="sidebar_left">
+              <tal:tiles repeat="tilename layout.sidebar_left">
+              <tal:tile replace="structure tile(tilename)" />
+            </tal:tiles>
+          </div>
+        </tal:enabled>
           
         <div style="clear: both;">&nbsp;</div>
           

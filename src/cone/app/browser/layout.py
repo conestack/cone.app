@@ -44,10 +44,18 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
+registerTile('livesearch',
+             'cone.app:browser/templates/livesearch.pt',
+             permission='view',
+             strict=False)
+
+
 @tile('personaltools', 'templates/personaltools.pt',
       permission='view', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
+    
+    XXX: extend by items, currently only login link hardcoded in template
     """
 
 
@@ -195,11 +203,9 @@ class Byline(Tile):
 registerTile('listing',
              'cone.app:browser/templates/listing.pt',
              class_=ProtectedContentTile,
-             permission='login',
-             strict=False)
+             permission='login')
 
 registerTile('content',
              'cone.app:browser/templates/default_root.pt',
              class_=ProtectedContentTile,
-             permission='login',
-             strict=False)
+             permission='login')

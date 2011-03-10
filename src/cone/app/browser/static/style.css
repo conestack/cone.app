@@ -175,45 +175,46 @@ div.box,
 }
 
 /* Sidebar left */
-#sidebar {
+#sidebar_left {
 	float:left;
 	width:220px;
 	padding-left:22px;
 	font-family: Arial, Helvetica, sans-serif;
 }
-#sidebar ul {
+#sidebar_left ul {
 	margin:0;
 	padding:0;
 	list-style:none;
 	line-height:normal;
 }
-#sidebar li {
+#sidebar_left li {
 	margin-bottom:30px;
 	padding:0 0 10px 0px;
 }
-#sidebar li ul {
+#sidebar_left li ul {
 }
-#sidebar li li {
+#sidebar_left li li {
 	margin:0 0 0 5px;
 	padding-left:10px;
 	background:url('images/doube_arr_right.jpg') no-repeat left 4px;
 }
-#sidebar p {
+#sidebar_left p {
 	margin:0;
 	padding:0px 10px;
 }
-#sidebar p {
+#sidebar_left p {
 	line-height:200%;
 }
-#sidebar a {
+#sidebar_left a {
 	color:#696969;
 }
 
 /* navtree */
-#sidebar ul.childtree {
+/* XXX: so not use sidebar id */
+#sidebar_left ul.childtree {
 	padding-top:10px;
 }
-#sidebar li.navtreeitem a.selected {
+#sidebar_left li.navtreeitem a.selected {
     color:#000000;
 }
 
