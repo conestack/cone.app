@@ -18,7 +18,7 @@
            tal:attributes="class css;
                            href item['url'];
                            title item['description'];"
-           tal:content="item['title']">Title</a>
+           tal:content="item['title'] | string:'&nbsp;'">Title</a>
       </li>
     </tal:item>
   </ul>

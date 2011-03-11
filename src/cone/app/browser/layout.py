@@ -69,7 +69,7 @@ class MainMenu(Tile):
             item = dict()
             item['id'] = key
             if empty_title:
-                item['title'] = ' '
+                item['title'] = ''
                 item['description'] = child.metadata.title
             else:
                 item['title'] = child.metadata.title
