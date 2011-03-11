@@ -17,7 +17,7 @@ DEFAULT_ACL = [
 ]
 
 DEFAULT_SETTINGS_ACL = [
-    (Allow, 'role:manager', ['view', 'manage']),
+    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
     (Allow, Everyone, 'login'),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]

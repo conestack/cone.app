@@ -81,11 +81,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             ajaxform.attr('target', 'ajaxformresponse');
             ajaxform.unbind().bind('submit', function(event) {
                 cone._curajaxformid = $(this).attr('id');
+                bdajax.spinner.show();
             });
         },
         
         // called by iframe response, renders form (i.e. if validation errors)
         ajaxformrender: function(payload) {
+            bdajax.spinner.hide();
             var id = '#' + cone._curajaxformid;
             $(id).replaceWith(payload);
             $(id).parent().bdajax();
@@ -93,6 +95,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         
         // called by iframe response, triggers bdajax.action
         ajaxformcontinue: function(url, name, mode, selector, params) {
+            bdajax.spinner.hide();
             bdajax.action({
                 url: url,
                 params: params,
