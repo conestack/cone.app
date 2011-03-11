@@ -5,9 +5,7 @@
       ajax:action="navtree:#navtree:replace">
     <li>
       <div class="heading">Navigation</div>
-      <div class="box">
-        <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
-      </div>
+      <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
     </li>
   </ul>
 </tal:ajax>

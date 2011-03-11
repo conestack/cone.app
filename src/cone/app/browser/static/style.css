@@ -1,4 +1,4 @@
-/* general */
+/* General */
 body {
     margin:0;
     padding:0;
@@ -11,6 +11,12 @@ hr {
     border-width:1px 0 0 0;
     border-color:#ccc;
     margin:12px 0;
+}
+h1, h2, h3, h4, h5 {
+    margin:0;
+}
+h1 {
+    font-size:150%;
 }
 label {
     display:block;
@@ -29,7 +35,7 @@ form .field div.error label {
     clear:both;
 }
 
-/* main layout styles */
+/* Main layout styles */
 #wrapper {
     margin:0;
     padding:0;
@@ -50,20 +56,25 @@ h1#logo a {
     text-decoration:none;
     font-size:40px;
     color:#fff;
-    font-weight: normal;
+    font-weight:normal;
     font-family:Times;
 }
 
 /* Personal tools */
 #personaltools {
     position:absolute;
-    right:8px;
-    top:35px;
+    right:18px;
+    top:0px;
 }
 #personaltools div.currentuser a {
     text-decoration:none;
     font-weight:bold;
-    color:#fff;
+    color:#333;
+    background-color:#fff;
+    padding:0px 6px 0px 6px;
+    -moz-border-radius-bottomleft:5px;
+    -moz-border-radius-bottomright:5px;
+    
 }
 #personaltools .dropdown_items {
     right:0px;
@@ -77,7 +88,7 @@ h1#logo a {
 #search form {
     float: right;
     margin:0;
-    padding:8px 5px 0 0;
+    padding:25px 15px 0 0;
 }
 #search fieldset {
     margin:0;
@@ -95,7 +106,7 @@ h1#logo a {
     padding:2px;
 }
 
-/* main menu */
+/* Main menu */
 div#menu {
     position:absolute;
     left:140px;
@@ -117,7 +128,7 @@ ul#mainmenu li a {
     font-size:51px;
 }
 
-/* main menu icon XXX: generic mechanism */
+/* Main menu icon XXX: generic mechanism */
 ul#mainmenu li.node-settings a {
     background:url('images/menu_settings.png') top left no-repeat;
 }
@@ -125,7 +136,7 @@ ul#mainmenu li.node-settings a.current_page_item {
     background:url('images/menu_settings_selected.png') top left no-repeat;
 }
 
-/* box background */
+/* Box background */
 .box,
 #form-loginform {
     background:url('images/box.gif') top left no-repeat;
@@ -145,7 +156,7 @@ ul#mainmenu li.node-settings a.current_page_item {
 }
 .pathbar ul li {
     display:inline;
-    color:#aaa;
+    color:#333;
 }
 .pathbar ul li.pathbaritem {
     margin-left:7px;
@@ -154,18 +165,18 @@ ul#mainmenu li.node-settings a.current_page_item {
 .pathbar ul li a,
 .pathbar ul li strong {
     padding-left:10px;
-    color:#aaa;
+    color:#333;
 }
 .pathbar ul li strong {
     color:#4B8749;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 /* Sidebar left */
 #sidebar_left {
     float:left;
     width:220px;
-    padding-left:10px;
+    padding:12px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -181,7 +192,7 @@ ul#mainmenu li.node-settings a.current_page_item {
 }
 .navtree li .heading {
     font-weight:bold;
-    color:#444;
+    color:#333;
     margin-bottom:10px;
 }
 .navtree li ul {
@@ -200,20 +211,20 @@ ul#mainmenu li.node-settings a.current_page_item {
     background:url('images/arr_right.jpg') no-repeat left 5px;
 }
 .navtree li.navtreeitem a {
-    color:#000;
-    text-decoration:none;
+    color:#333;
+    text-decoration:underline;
 }
 .navtree li.navtreeitem a.selected {
-    color:#000;
+    color:#4B8749;
     text-decoration:none;
+    font-weight:bold;
 }
 
-/* content */
+/* Content */
 div#content {
     float:left;
-    width:80%;
-    padding-top:12px;
-    padding-left:12px;
+    width:960px;
+    padding:12px;
 }
 div#footer {
     clear:both;
@@ -227,7 +238,7 @@ div#footer a {
     color:#aaa;
 }
 
-/* batch */
+/* Batch */
 .batch {
     clear:both;
     padding-top:12px;
@@ -251,7 +262,7 @@ div#footer a {
     padding-right:1em;
 }
 
-/* forms */
+/* Forms */
 form h5 {
     margin:0;
     font-weight:normal;
@@ -268,10 +279,12 @@ form div.message {
     padding:2px 2px 0px 2px;
 }
 
-/* Contents */
+/* Contents listing */
 #contentslisting {
+    width:100%;
 }
 table.contents {
+    width: 100%;
     border-style: solid;
     border-width:1px 0px 0px 1px;
     border-color:#ccc;
@@ -284,6 +297,7 @@ table.contents th {
     border-right:1px solid #ccc;
     background-color:#eee;
     text-align:left;
+    font-size:90%;
 }
 table.contents th.asc {
     background:#ddd url('images/up9_6.gif') right 50% no-repeat;
@@ -396,7 +410,7 @@ div.contextmenu div {
 }
 .tabs a:hover {
     background-position: -554px -31px;  
-    color:#fff; 
+    color:#333; 
 }
 .tabs .current,
 .tabs .current:hover,
