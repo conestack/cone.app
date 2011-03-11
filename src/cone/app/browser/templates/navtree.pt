@@ -1,11 +1,13 @@
 <tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
   <ul id="navtree"
-      class="contextsensitiv box navtree"
+      class="contextsensitiv navtree"
       ajax:bind="contextchanged"
       ajax:action="navtree:#navtree:replace">
     <li>
       <div class="heading">Navigation</div>
-      <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
+      <div class="box">
+        <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
+      </div>
     </li>
   </ul>
 </tal:ajax>

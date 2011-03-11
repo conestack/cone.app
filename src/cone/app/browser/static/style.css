@@ -125,25 +125,6 @@ ul#mainmenu li.node-settings a.current_page_item {
     background:url('images/menu_settings_selected.png') top left no-repeat;
 }
 
-/* content */
-div#content {
-    float:left;
-    width:70%;
-    padding-top:12px;
-    padding-left:12px;
-}
-div#footer {
-    clear:both;
-    padding-left:12px;
-    font-size:80%;
-    color:#aaa;
-}
-div#footer a {
-    text-decoration:none;
-    font-weight:bold;
-    color:#aaa;
-}
-
 /* box background */
 .box,
 #form-loginform {
@@ -183,12 +164,15 @@ div#footer a {
 /* Sidebar left */
 #sidebar_left {
     float:left;
-    width:20%;
+    width:220px;
     padding-left:10px;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Navtree */
 .navtree {
     margin:0;
+    padding:0;
 }
 .navtree li {
     padding:0 0 10px 0px;
@@ -222,6 +206,25 @@ div#footer a {
 .navtree li.navtreeitem a.selected {
     color:#000;
     text-decoration:none;
+}
+
+/* content */
+div#content {
+    float:left;
+    width:80%;
+    padding-top:12px;
+    padding-left:12px;
+}
+div#footer {
+    clear:both;
+    padding-left:12px;
+    font-size:80%;
+    color:#aaa;
+}
+div#footer a {
+    text-decoration:none;
+    font-weight:bold;
+    color:#aaa;
 }
 
 /* batch */
@@ -326,7 +329,7 @@ table.contents td {
     border:none;
 }
 
-/*  Autocomplete */
+/* Autocomplete */
 .ui-autocomplete {
     border:#ccc 4px solid !important;
     -moz-border-radius:3px;
@@ -373,7 +376,7 @@ div.contextmenu div {
     list-style-image:none !important;
 }
 .tabs li a {
-    background:url('images/tabs_blue.png') no-repeat -554px 0px;
+    background:url('images/tabs.png') no-repeat -554px 0px;
     font-size:11px;
     display:block;
     height: 30px;
@@ -435,11 +438,8 @@ div.contextmenu div {
 .tabpanes {
     border-top:#ccc 1px solid;
     border-left:#ccc 1px solid;
-    border-right:#ccc 1px solid;
     margin-top:-8px;
-    padding:18px 10px 10px 10px;
-    -moz-border-radius:3px;
-    -webkit-border-radius:3px;
+    padding:18px 12px 12px 12px;
 }
 .tabpanes .pane {
     display:none;
