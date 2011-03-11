@@ -6,7 +6,7 @@ from cone.tile import (
     render_template,
     registerTile,
 )
-from cone.app import settings
+import cone.app
 from cone.app.browser.utils import (
     authenticated,
     nodepath,
@@ -25,8 +25,12 @@ class Resources(Tile):
         return authenticated(self.request)
     
     @property
-    def settings(self):
-        return settings.ui
+    def js(self):
+        return cone.app.cfg.js
+    
+    @property
+    def css(self):
+        return cone.app.cfg.css
 
 
 class ProtectedContentTile(Tile):

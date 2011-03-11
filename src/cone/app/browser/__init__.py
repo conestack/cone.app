@@ -26,11 +26,11 @@ def render_main_template(model, request, contenttilename='content'):
     As main content the tile with name contenttilename is rendered.
     """
     util = AppUtil()
-    return render_template_to_response(cone.app.settings.ui.main_template,
+    return render_template_to_response(cone.app.cfg.main_template,
                                        request=request,
                                        model=model,
                                        util=util,
-                                       layout=cone.app.settings.ui.layout,
+                                       layout=cone.app.cfg.layout,
                                        contenttilename=contenttilename)
 
 

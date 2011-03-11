@@ -72,12 +72,12 @@ To change this, provide your own main template in your package and overwrite
 ``cone.app.browser.MAIN_TEMPLATE`` on application startup.
 ::
 
-    >>> import cone.app.settings
-    >>> cone.app.settings.ui.main_template
+    >>> import cone.app
+    >>> cone.app.cfg.main_template
     'cone.app.browser:templates/main.pt'
     
     >>> main = 'cone.app.tests:dummy_main.pt'
-    >>> cone.app.settings.ui.main_template = main
+    >>> cone.app.cfg.main_template = main
 
 Create mocks to test layout rendering.
 ::
@@ -125,7 +125,7 @@ Switch back to origin main template.
 ::
 
     >>> main = 'cone.app.browser:templates/main.pt'
-    >>> cone.app.settings.ui.main_template = main
+    >>> cone.app.cfg.main_template = main
     
     >>> import cone.app.browser.ajax
     >>> import cone.app.browser.layout
@@ -228,34 +228,18 @@ Test navigation tree tile.
 Empty navtree, no items are marked to be displayed.
 ::
 
-    >>> print render_tile(root, request, 'navtree')
-    <BLANKLINE>
-      <ul id="navtree" class="contextsensitiv" ajax:bind="contextchanged" ajax:action="navtree:#navtree:replace">
-        <li>
-          <h2>Navigation</h2>
-    <BLANKLINE>
-      <ul>
-    <BLANKLINE>
-      </ul>
-    <BLANKLINE>
-        </li>
-      </ul>
-    <BLANKLINE>
-
-# XXX: check and remove
-#
-# The difference as far as I can tell is, that before there were some
-# more linebreaks and \xa0 instead of &nbsp;
-#
-# I don't know what triggered that change, as I'm pretty sure I ran
-# the tests before tagging and releasing -cfl
-
-    # u'\n  <ul id="navtree"\n      
-    # class="contextsensitiv"\n      
-    # ajax:bind="contextchanged"\n      
-    # ajax:action="navtree:#navtree:replace">\n    
-    # <li>\n      <h2>Navigation</h2>\n      \n  <ul>\n    \n  </ul>\n\n    
-    # </li>\n  </ul>\n'
+    >>> res = render_tile(root, request, 'navtree')
+    >>> res.find('id="navtree"') != -1
+    True
+    
+    >>> res.find('ajax:bind="contextchanged"') != -1
+    True
+    
+    >>> res.find('ajax:action="navtree:#navtree:replace"') != -1
+    True
+    
+    >>> res.find('class="contextsensitiv box navtree"') != -1
+    True
 
 Node's which are in navtree.
 

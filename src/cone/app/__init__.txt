@@ -13,7 +13,7 @@ Cone main::
     ... }
     
     >>> import os
-    >>> root = cone.app.get_default_root(os.environ)
+    >>> root = cone.app.get_root(os.environ)
     >>> root
     <AppRoot object 'None' at ...>
 
@@ -24,7 +24,7 @@ Cone main::
     []
     
     >>> root.factories
-    odict()
+    odict([('settings', <class 'cone.app.model.AppSettings'>)])
     
     >>> cone.app.configure_root(settings)
     >>> root.properties.keys()

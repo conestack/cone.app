@@ -6,8 +6,48 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from cone.app.model import (
     AppRoot,
     AppSettings,
+    Properties,
 )
 
+# configuration
+cfg = Properties()
+
+# used main template
+cfg.main_template = 'cone.app.browser:templates/main.pt'
+
+# JS resources
+cfg.js = Properties()
+cfg.js.public = [
+    'static/cdn/jquery.min.js',
+    'static/cdn/jquery.tools.min.js',
+    '++resource++bdajax/bdajax.js',
+]
+cfg.js.protected = [
+    'static/jquery-ui/jquery-ui-1.8.1.custom.min.js',
+    'tiny_mce/jquery.tinymce.js',
+    '++resource++yafowil.widget.datetime/widget.js',
+    '++resource++yafowil.widget.richtext/widget.js',
+    '++resource++yafowil.widget.dict/widget.js',
+    'static/cone.app.js',
+]
+
+# CSS Resources
+cfg.css = Properties()
+cfg.css.public = [
+    'static/style.css',
+    '++resource++bdajax/bdajax.css',
+]
+cfg.css.protected = [
+    'static/jquery-ui/jquery-ui-1.8.1.custom.css',
+]
+
+# cfg.layout used to enable/disable tiles in main template
+cfg.layout = Properties()
+cfg.layout.livesearch = True
+cfg.layout.personaltools = True
+cfg.layout.mainmenu = True
+cfg.layout.pathbar = True
+cfg.layout.sidebar_left = ['navtree']
 
 root = AppRoot()
 root.factories['settings'] = AppSettings
@@ -36,7 +76,7 @@ def register_plugin(key, factory):
     root.factories[key] = factory
 
 
-def get_default_root(environ):
+def get_root(environ):
     return root
 
 
@@ -62,24 +102,24 @@ def main(global_config, **settings):
     
     configure_root(settings)
     
-    # create config
-    config = Configurator(
-        root_factory=get_default_root,
+    # create configurator
+    configurator = Configurator(
+        root_factory=get_root,
         settings=settings,
         authentication_policy=auth_tkt_factory(secret=secret_password),
         authorization_policy=acl_factory())
     
-    config.include(pyramid_zcml)
-    config.begin()
-    config.load_zcml('configure.zcml')
+    configurator.include(pyramid_zcml)
+    configurator.begin()
+    configurator.load_zcml('configure.zcml')
     
-    # read plugin config
+    # read plugin configurator
     plugins = settings.get('cone.plugins', '')
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
-        config.load_zcml('%s:configure.zcml' % plugin)      #pragma NO COVERAGE
+        configurator.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
     
     # end config and return wsgi app
-    config.end()
-    return config.make_wsgi_app()
+    configurator.end()
+    return configurator.make_wsgi_app()
