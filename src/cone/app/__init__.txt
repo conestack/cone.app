@@ -23,8 +23,8 @@ Cone main::
     >>> root.metadata.keys()
     []
     
-    >>> root.factories
-    odict([('settings', <class 'cone.app.model.AppSettings'>)])
+    >>> 'settings' in root.factories.keys()
+    True
     
     >>> cone.app.configure_root(settings)
     >>> root.properties.keys()
@@ -46,9 +46,6 @@ Cone main::
     
     >>> root.metadata.title
     'cone'
-    
-    >>> root.factories
-    odict([('settings', <class 'cone.app.model.AppSettings'>)])
     
     >>> cone.app.auth_tkt_factory(secret='12345')
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>

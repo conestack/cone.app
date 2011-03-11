@@ -33,7 +33,10 @@ from cone.app.interfaces import (
     IMetadata,
     INodeInfo,
 )
-from cone.app.security import DEFAULT_ACL
+from cone.app.security import (
+    DEFAULT_ACL,
+    DEFAULT_SETTINGS_ACL,
+)
 from cone.app.utils import DatetimeHelper
 
 _node_info_registry = dict()

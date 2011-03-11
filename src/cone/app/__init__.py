@@ -1,3 +1,4 @@
+import os
 import model
 import pyramid_zcml
 from pyramid.config import Configurator
@@ -8,6 +9,8 @@ from cone.app.model import (
     AppSettings,
     Properties,
 )
+
+APP_PATH = os.environ['APP_PATH']
 
 # configuration
 cfg = Properties()

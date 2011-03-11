@@ -16,6 +16,12 @@ DEFAULT_ACL = [
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
+DEFAULT_SETTINGS_ACL = [
+    (Allow, 'role:manager', ['view', 'manage']),
+    (Allow, Everyone, 'login'),
+    (Deny, Everyone, ALL_PERMISSIONS),
+]
+
 ADMIN_USER = None
 ADMIN_PASSWORD = None
 AUTH_IMPL = None
