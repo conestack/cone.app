@@ -23,7 +23,7 @@ cfg.js.public = [
     '++resource++bdajax/bdajax.js',
 ]
 cfg.js.protected = [
-    'static/jquery-ui/jquery-ui-1.8.1.custom.min.js',
+    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.min.js',
     'tiny_mce/jquery.tinymce.js',
     '++resource++yafowil.widget.datetime/widget.js',
     '++resource++yafowil.widget.richtext/widget.js',
@@ -38,7 +38,9 @@ cfg.css.public = [
     '++resource++bdajax/bdajax.css',
 ]
 cfg.css.protected = [
-    'static/jquery-ui/jquery-ui-1.8.1.custom.css',
+    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.css',
+    '++resource++yafowil.widget.dict/widget.css',
+    '++resource++yafowil.widget.datetime',
 ]
 
 # cfg.layout used to enable/disable tiles in main template
