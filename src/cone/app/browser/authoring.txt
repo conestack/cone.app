@@ -1,8 +1,6 @@
 Authoring
 =========
 
-The Application provides some widgets and entry hooks for authoring.
-
 There are two pyramid views registered, ``add`` and ``edit``. These views render
 the main template with the ``add`` respective ``edit`` tile as content tiles 
 which render the ``addform`` or ``editform`` tiles.

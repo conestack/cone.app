@@ -1,8 +1,7 @@
 Browser Utils
 =============
 
-Common browser utils.
-::
+Common browser utils.::
 
     >>> from cone.app.browser.utils import (
     ...     authenticated,
@@ -11,16 +10,14 @@ Common browser utils.
     ...     make_url,
     ... )
 
-``authenticated`` - Will be removed.
-::
+``authenticated`` - Will be removed.::
 
     >>> from pyramid import testing
     >>> request = testing.DummyRequest()
     >>> authenticated(request)
 
 ``nodepath`` - Propably will be implemented in ``BaseNode``. Just skips root in
-path.
-::
+path.::
 
     >>> from cone.app.model import BaseNode
     >>> root = BaseNode()
@@ -28,8 +25,7 @@ path.
     >>> nodepath(root['child'])
     ['child']
 
-``make_url`` - create URL's.
-::
+``make_url`` - create URL's.::
 
     >>> make_url(request)
     'http://example.com/'
@@ -46,8 +42,7 @@ path.
     >>> make_url(request, node=root['child'], resource='foo', query='&a=1')
     'http://example.com/child/foo&a=1'
 
-``make_query`` - create query strings.
-::
+``make_query`` - create query strings.::
 
     >>> make_query(**{
     ...     'foo': None,

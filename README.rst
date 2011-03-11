@@ -1,7 +1,7 @@
 Overview
 ========
 
-``cone.app`` provides a common web application stub.
+``cone.app`` provides a common web application stub for pyramid.
 
 This includes a base web application layout, authentication integration,
 application model handling, view helpers and commonly needed UI widgets and
@@ -14,14 +14,10 @@ Setup
 Application egg
 ---------------
 
-Create your application egg and make it depend on ``cone.app``. You must
-depend your application as well to your prefered ``repoze.what`` plugin, i.e. 
-``repoze.what.plugins.ini`` which is used in example below.
+Create your application egg and make it depend on ``cone.app``.
 
 Include the package ``cone.app`` in the ``configure.zcml`` of your 
-application egg to make sure everything needed to run the framework is
-available.
-::
+application egg to make sure everything needed to run the application.::
 
     <configure xmlns="http://pylonshq.com/pyramid">
         <include package="cone.app" />
@@ -33,8 +29,7 @@ Buildout
 --------
 
 Assuming ``Paster`` for WSGI deployment and buildout for the application setup,
-your (self contained) buildout configuration might look like this.
-::
+your (self contained) buildout configuration might look like this.::
 
     [buildout]
     parts = instance
@@ -50,7 +45,7 @@ your (self contained) buildout configuration might look like this.
 Authentication and Authorization Configuration
 ----------------------------------------------
 
-
+XXX
 
 
 Configure the WSGI pipeline
@@ -60,8 +55,7 @@ Here we use ``Paster`` to server our application.
 
 We have to provide a configuration which ties all things together.
 
-Create a file like ``yourapplication.ini`` which looks similar to this.
-::
+Create a file like ``yourapplication.ini`` which looks similar to this.::
 
     [DEFAULT]
     debug = true
@@ -81,79 +75,29 @@ Create a file like ``yourapplication.ini`` which looks similar to this.
     default_locale_name = en
     cone.admin_user = admin
     cone.admin_password = admin
-    #cone.authn_policy_factory = 
-    #cone.authz_policy_factory = 
     cone.secret_password = 12345
+    #cone.auth_impl = 
+    #cone.plugins = 
+    cone.root.title = cone
+    #cone.root.default_child = 
+    cone.root.mainmenu_empty_title = false
     
     [pipeline:main]
     pipeline =
         cone
 
 
-Provide the application
------------------------
+Extend Application with a plugin
+--------------------------------
 
-Provide the entry point ``yourapplication#app`` defined in the configuration
-above in your ``setup.py``. This entry point returns a WSGI app.
-::
-
-    >>> setup(  
-    ...     #...  
-    ...     entry_points="""\
-    ...         [paste.app_factory]
-    ...         app = yourapplication.run:app
-    ...     """
-    ...     #...
-    ... )
-
-``yourapplication/run.py`` looks like this.
-::
-
-    >>> from pyramid.config import Configurator
-    >>> from yourapplication.model import get_root
-    
-    >>> def app(global_config, **settings):
-    ...     """ This function returns a WSGI application.
-    ...     """
-    ...     zcml_file = settings.get('configure_zcml', 'configure.zcml')
-    ...     config = Configurator(
-    ...         root_factory=get_root,
-    ...         settings=settings,
-    ...         autocommit=True)
-    ...     config.begin()
-    ...     config.load_zcml(zcml_file)
-    ...     config.end()
-    ...     return config.make_wsgi_app()
+XXX
 
 
-Provide the application model
------------------------------
+Provide views for your model nodes
+----------------------------------
 
-The imported get_root function above is responsible to return the application
-model root node. Create a file ``model.py`` which looks like.
-::
-
-    >>> from cone.app.model import BaseNode
-    
-    >>> class Root(BaseNode):
-    ...     """Your application root Node.
-    ...     """
-    ...     title = "YourApplication"
-    
-    >>> root = Root()
-    
-    >>> def get_root(environ):
-    ...     return root
-
-See documentation of package ``node`` for more info about Nodes and section
-"Application model" for how it is used in ``cone.app``. 
-
-
-Provide a view for your root node
----------------------------------
-
-Now we have to provide a tile. Name it ``content`` and register it for the root 
-node in order to render it.
+Now we have to provide tile for our model. Name it ``content`` and register
+it for the root node in order to render it.
 
 See documentation of package ``cone.tile`` for more info about tiles and
 section "Reserved Tiles" which describe the application layout view hooks for
@@ -168,17 +112,16 @@ content tile in ``__init__.py`` of browser package.
     >>> from yourapplication.model import Root
     
     >>> registerTile('content',
-    ...              'yourapplication:browser/templates/root.pt',
-    ...              interface=Root,
+    ...              'yourapplication:browser/templates/foo.pt',
+    ...              interface=Foo,
     ...              class_=ProtectedContentTile,
-    ...              permission='login',
-    ...              strict=False)
+    ...              permission='login')
 
-Also create a page template named ``root.pt`` at the indicated location.
+Also create a page template named ``foo.pt`` at the indicated location.
 ::
 
     <div>
-      Root content
+      Foo content
     </div>
 
 Now add the following line to your applications ``configure.zcml`` to scan the
@@ -205,7 +148,7 @@ You should be able now to browse the application at ``localhost:8080``.
 Copyright
 =========
 
-    - Copyright (c) 2009-2010 BlueDynamics Alliance http://www.bluedynamics.com
+    - Copyright (c) 2009-2011 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
@@ -221,7 +164,7 @@ Contributors
 Changes
 =======
 
-1.0b1
------
+1.0dev
+------
 
     - Initial work [rnix]

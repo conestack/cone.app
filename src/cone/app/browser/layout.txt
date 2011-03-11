@@ -57,20 +57,7 @@ Views and widgets:
 Default Layout
 --------------
 
-The default layout contained in this package has the following grid:
-::
-
-    +--------------------------------------------------------------------+
-    | main menu                                                          |
-    +-----------------+--------------------------------------------------+
-    | navigation tree | content                                          |
-    +-----------------+                                                  |
-    | personal tools  |                                                  |
-    +-----------------+--------------------------------------------------+
-
-To change this, provide your own main template in your package and overwrite
-``cone.app.browser.MAIN_TEMPLATE`` on application startup.
-::
+To change the default layout, change the main template.::
 
     >>> import cone.app
     >>> cone.app.cfg.main_template
@@ -79,11 +66,9 @@ To change this, provide your own main template in your package and overwrite
     >>> main = 'cone.app.tests:dummy_main.pt'
     >>> cone.app.cfg.main_template = main
 
-Create mocks to test layout rendering.
-::
+Create mocks to test layout rendering.::
 
-A tile named as content. This is the default content tile.
-::
+A tile named as content. This is the default content tile.::
 
     >>> from cone.tile import registerTile, Tile, render_tile
     >>> class ContentTile(Tile):
@@ -91,21 +76,18 @@ A tile named as content. This is the default content tile.
     ...         return '<div>Content</div>'
     >>> registerTile('content', class_=ContentTile, permission='login')
 
-Request dummy.
-::
+Request dummy.::
 
     >>> from pyramid import testing
     >>> request = testing.DummyRequest()
 
-Model dummy.
-::
+Model dummy.::
 
     >>> from cone.app.model import BaseNode
     >>> model = BaseNode()
 
 Render the main template. The function accepts an optional ``contenttilename``
-argument. if omitted, reserved name 'content' is used.
-::
+argument. if omitted, reserved name 'content' is used.::
 
     >>> from cone.app.browser import render_main_template
     >>> res = render_main_template(model, request)
@@ -121,8 +103,7 @@ argument. if omitted, reserved name 'content' is used.
     <body>\n    <div>Content</div>\n  
     </body>\n</html>'
 
-Switch back to origin main template.
-::
+Switch back to origin main template.::
 
     >>> main = 'cone.app.browser:templates/main.pt'
     >>> cone.app.cfg.main_template = main
@@ -158,8 +139,7 @@ Protected content tile
 A login form should be rendered instead of the content for anonymous users.
 
 The class ``cone.app.browser.layout.ProtectedContentTile`` provides this
-behavior.
-::
+behavior.::
 
     >>> import cone.app.browser.login
     >>> from cone.app.browser.layout import ProtectedContentTile
@@ -174,8 +154,7 @@ behavior.
     ...              class_=ProtectedContent,
     ...              permission='login')
 
-Render protected tile.
-::
+Render protected tile.::
 
     >>> layer.logout()
     >>> render_tile(ProtectedModel(), request, 'content')
@@ -186,15 +165,13 @@ Render protected tile.
 Main menu
 ---------
 
-Test main menu tile.
-::
+Test main menu tile.::
 
     >>> root = BaseNode()
     >>> root['1'] = BaseNode()
     >>> root['2'] = BaseNode()
 
-Render main menu at root.
-::
+Render main menu at root.::
 
     >>> res = render_tile(root, request, 'mainmenu')
     >>> res.find('href="http://example.com/1"') > -1
@@ -212,8 +189,7 @@ Render main menu at root.
     >>> res.find('href="http://example.com/2"') > -1
     True
 
-Render main menu at child. Child is marked selected.
-::
+Render main menu at child. Child is marked selected.::
 
     >>> res = render_tile(root['1'], request, 'mainmenu')
     >>> res.find('class="first current_page_item mainmenulink"') > -1
@@ -225,8 +201,7 @@ Navtree
 
 Test navigation tree tile.
 
-Empty navtree, no items are marked to be displayed.
-::
+Empty navtree, no items are marked to be displayed.::
 
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('id="navtree"') != -1
@@ -253,16 +228,14 @@ Node's which are in navtree.
     >>> root['2'] = NavNode()
 
 The property is read from ``BaseNode.properties`` and defines the contract with
-the navtree tile.
-::
+the navtree tile.::
 
     >>> root['1'].attrs.in_navtree = True
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('href="http://example.com/1"') > -1
     True
 
-Render navtree on ``root['1']``, must be selected.
-::
+Render navtree on ``root['1']``, must be selected.::
 
     >>> res = render_tile(root['1'], request, 'navtree')
     >>> res.find('class="selected navtreelevel_1">1</a>') > -1

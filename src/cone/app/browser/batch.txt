@@ -1,7 +1,7 @@
 Batches
 =======
 
-We provide an abstract batch tile. A deriving class must implement the ``vocab``
+Abstract batch tile. A deriving class must implement the ``vocab``
 property, which promises to return a list of dict like objects, providing the
 following keys:
 
@@ -13,8 +13,7 @@ following keys:
     
     - ``url`` - Target url.
 
-Required imports.
-::
+Required imports.::
 
     >>> from cone.tile import tile, render_tile
     >>> from cone.app.browser.batch import Batch
@@ -25,8 +24,7 @@ Required imports.
     ...     make_url,
     ... )
 
-A simple batch implementation.
-::
+A simple batch implementation.::
 
     >>> @tile('testbatch')
     ... class TestBatch(Batch):
@@ -47,8 +45,7 @@ A simple batch implementation.
     ...             })
     ...         return ret
 
-Create dummy model and request.
-::
+Create dummy model and request.::
 
     >>> from cone.app.model import BaseNode
     >>> from pyramid.testing import DummyRequest
@@ -57,8 +54,7 @@ Create dummy model and request.
     
     >>> layer.authenticate('foo')
 
-Render batch.
-::
+Render batch.::
     
     >>> res = render_tile(model, request, 'testbatch')
     >>> res.find('href="http://example.com/?b_page=1"') > -1
