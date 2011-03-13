@@ -22,15 +22,18 @@ class IFactoryNode(IApplicationNode):
     """
     
     factories = Attribute(u"Dict containing available keys and the Node class "
-                          u"used to create this child.")
+                          u"used to create child.")
 
 
 class IAdapterNode(IApplicationNode):
-    """Interface to adapt any dict like object which should be hooked to
-    application model.
+    """Application node which acts as adapter on any context.
+    
+    XXX: - currently designed to adapt nodes, more generic
+         - no attrs on this interface
+         - self.context insetad of self.model
     """
     
-    attrs = Attribute(u"Return attrs.")
+    attrs = Attribute(u"Return self.model.attrs")
     
     def __init__(model, name, parent):
         """Name and parent are used to hook the correct application hierarchy.

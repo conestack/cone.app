@@ -1,4 +1,5 @@
-Cone main::
+cone main
+---------
 
     >>> import cone.app
     >>> settings = {

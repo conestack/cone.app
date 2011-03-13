@@ -7,7 +7,10 @@ from pyramid.authentication import CallbackAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from plone.testing import Layer
 
+
 def groups_callback(name, request):
+    """Group callback for security test layer.
+    """
     if name == 'viewer':
         return ['role:editor']
     if name == 'editor':
@@ -18,7 +21,10 @@ def groups_callback(name, request):
         return ['role:manager']
     return []
 
+
 class Security(Layer):
+    """Test layer with dummy authentication for security testing.
+    """
 
     def authenticate(self, login):
         self.authn.unauthenticated_userid = lambda *args: login

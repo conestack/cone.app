@@ -1,5 +1,5 @@
 cone.app.security
-=================
+-----------------
 
     >>> from cone.app import security
     >>> security.ADMIN_USER = 'user'

@@ -1,20 +1,3 @@
-Layout
-======
-
-This application strictly follows the concept of tiles. Each part of the
-application is represented by a tile, i.e. main menu, navigation tree, site
-content area, etc..
-
-Doing this gives us the following characteristics:
-
-    - Abstraction of the site to several 'subapplications' which could be
-      views, widgets and/or controllers.
-    
-    - The possibility to create generic tiles by the contract of
-      ``cone.app.interfaces.IApplicationNode``.
-    
-    - AJAX is easily integrateable.
-
 Reserved Tiles
 --------------
 
