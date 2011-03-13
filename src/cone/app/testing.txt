@@ -1,0 +1,29 @@
+cone.app.testing
+----------------
+
+Contains a test layer providing security related testing::
+
+    >>> layer.__class__
+    <class 'cone.app.testing.Security'>
+    
+    >>> from pyramid.testing import DummyRequest
+    >>> request = DummyRequest()
+
+Testing callback return respective roles for users viewer, editor, owner and
+manager. all other used login names for authentication in tests are only
+considered as authenticated with no extra permissions::
+
+    >>> layer.authn.callback('foo', request)
+    []
+    
+    >>> layer.authn.callback('viewer', request)
+    ['role:viewer']
+    
+    >>> layer.authn.callback('editor', request)
+    ['role:editor']
+    
+    >>> layer.authn.callback('owner', request)
+    ['role:owner']
+    
+    >>> layer.authn.callback('manager', request)
+    ['role:manager']

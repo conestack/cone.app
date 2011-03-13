@@ -12,9 +12,11 @@ optionflags = doctest.NORMALIZE_WHITESPACE | \
 layer = testing.Security()
 
 TESTFILES = [
+    '../testing.txt',
     '../utils.txt',
     '../model.txt',
     '../security.txt',
+    '../browser/__init__.txt',
     '../browser/layout.txt',
     '../browser/utils.txt',
     '../browser/form.txt',

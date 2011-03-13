@@ -1,10 +1,15 @@
 cone.app.security
 -----------------
 
+Superuser credentials are set on application startup my main function in
+cone.app.__init__::
+
     >>> from cone.app import security
     >>> security.ADMIN_USER = 'user'
     >>> security.ADMIN_PASSWORD = 'secret'
-    
+
+The default ACL::
+
     >>> security.DEFAULT_ACL
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
@@ -15,13 +20,29 @@ cone.app.security
     ('Deny', 'system.Everyone', 
     <pyramid.security.AllPermissionsList object at ...>)]
     
-    >>> from pyramid.tests.test_request import DummyRequest
+Test authenticated function.
+XXX: Currently only authenticates superuser. node.ext.ugm integration::
+
+    >>> from pyramid.testing import DummyRequest
     >>> request = DummyRequest()
-    
-    >> security.authenticate(request, 'foo', 'bar')
-    
-    >> security.authenticate(request, 'user', 'secret')
-    []
-    
+
+The ``remember`` function from ``pyramid.security``, which gets called by 
+``authenticate`` normally returns a list of headers. In tests, the ``remember`` 
+function set by secutity test layer is used which returns a list containing 
+the login name or ``None`` if invalid credentials::
+
+    >>> security.authenticate(request, 'foo', 'foo')
+
+    >>> security.authenticate(request,
+    ...                       security.ADMIN_USER,
+    ...                       security.ADMIN_PASSWORD)
+    ['user']
+
+Default group callback returns role manager for superuser.
+XXX: node.ext.ugm integration::
+
     >>> security.groups_callback('foo', request)
     []
+    
+    >>> security.groups_callback(security.ADMIN_USER, request)
+    ['role:manager']

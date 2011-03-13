@@ -2,6 +2,9 @@ cone main
 ---------
 
     >>> import cone.app
+
+Settings as from ini file::
+
     >>> settings = {
     ...     'cone.admin_user': 'admin',
     ...     'cone.admin_password': 'admin',
@@ -12,7 +15,9 @@ cone main
     ...     'cone.root.default_child': None,
     ...     'cone.root.mainmenu_empty_title': False,
     ... }
-    
+
+Test get_root::
+
     >>> import os
     >>> root = cone.app.get_root(os.environ)
     >>> root
@@ -23,14 +28,36 @@ cone main
     
     >>> root.metadata.keys()
     []
-    
+
+AppRoot contains a settings node by default::
+
     >>> 'settings' in root.factories.keys()
     True
+
+Settings contains metadata.title by default::
+
+    >>> root['settings'].metadata.keys()
+    ['title']
     
+    >>> root['settings'].metadata.title
+    'Settings'
+
+Settings is displayed in navtree by default::
+
+XXX: mainmenu and navtree same property, other name for controlling appearance?
+    
+    >>> root['settings'].properties.keys()
+    ['in_navtree']
+    
+    >>> root['settings'].properties.in_navtree
+    True
+
+Test configure_root::
+
     >>> cone.app.configure_root(settings)
     >>> root.properties.keys()
     ['default_child', 'mainmenu_empty_title', 'editable', 'in_navtree']
-    
+
     >>> root.properties.default_child
     
     >>> root.properties.mainmenu_empty_title
@@ -47,17 +74,46 @@ cone main
     
     >>> root.metadata.title
     'cone'
+
+Test register_plugin::
+
+    >>> from cone.app.model import BaseNode
+    >>> cone.app.register_plugin('dummy', BaseNode)
+    >>> 'dummy' in root.factories.keys()
+    True
     
+    >>> cone.app.register_plugin('dummy', BaseNode)
+    Traceback (most recent call last):
+      ...
+    ValueError: Plugin with name 'dummy' already registered.
+
+Test register_plugin_config::
+
+    >>> cone.app.register_plugin_config('dummy', BaseNode)
+    >>> 'dummy' in root['settings'].factories.keys()
+    True
+    
+    >>> cone.app.register_plugin_config('dummy', BaseNode)
+    Traceback (most recent call last):
+      ...
+    ValueError: Config with name 'dummy' already registered.
+
+Test auth_tkt_factory::
+
     >>> cone.app.auth_tkt_factory(secret='12345')
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
-    
+
+Test acl_factory::
+
     >>> cone.app.acl_factory()
     <pyramid.authorization.ACLAuthorizationPolicy object at ...>
     
     >>> del root._metadata
     >>> del root._properties
     >>> del root.factories['settings']
-    
+
+Test main::
+
     >>> app = cone.app.main({}, **settings)
     >>> app
     <pyramid.router.Router object at ...>

@@ -77,7 +77,7 @@ def register_plugin_config(key, factory):
 def register_plugin(key, factory):
     factories = root.factories
     if key in factories:
-        raise ValueError(u"App with name '%s' already registered." % key)
+        raise ValueError(u"Plugin with name '%s' already registered." % key)
     root.factories[key] = factory
 
 

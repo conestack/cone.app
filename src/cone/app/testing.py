@@ -12,7 +12,7 @@ def groups_callback(name, request):
     """Group callback for security test layer.
     """
     if name == 'viewer':
-        return ['role:editor']
+        return ['role:viewer']
     if name == 'editor':
         return ['role:editor']
     if name == 'owner':
@@ -35,6 +35,8 @@ class Security(Layer):
     def setUp(self, args=None):
         self.authn = CallbackAuthenticationPolicy()
         self.authn.callback = groups_callback
+        self.authn.remember = lambda self, x: [x]
+        self.authn.forget = lambda x: None
         self.authn.unauthenticated_userid = lambda *args: None
         self.authz = ACLAuthorizationPolicy()
         self.registry = get_current_registry()
