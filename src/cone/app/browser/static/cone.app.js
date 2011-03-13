@@ -70,7 +70,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
         
         // ajax form related
-		// XXX: move to bdajax as soon as clean
+        // XXX: move to bdajax as soon as clean
         
         // recent committed form
         _curajaxformid: null,
@@ -85,25 +85,40 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 bdajax.spinner.show();
             });
         },
-		
-		// called by iframe response, renders form (i.e. if validation errors)
+        
+        // called by iframe response, renders form (i.e. if validation errors)
         ajaxformrender: function(payload) {
+            if (!payload) {
+                return;
+            }
             bdajax.spinner.hide();
             var id = '#' + cone._curajaxformid;
-            $(id).replaceWith(payload);
+            $(id).replaceWith(unescape(payload));
             $(id).parent().bdajax();
         },
         
         // called by iframe response, triggers bdajax.action
-        ajaxformcontinue: function(url, name, mode, selector, params) {
+        ajaxformcontinue: function(actions) {
+            if (!actions) {
+                return;
+            }
             bdajax.spinner.hide();
-            bdajax.action({
-                url: url,
-                params: params,
-                name: name,
-                mode: mode,
-                selector: selector
-            });
+            var action, target;
+            for (var idx in actions) {
+                action = actions[idx];
+                if (action.type == 'action') {
+                    target = bdajax.parsetarget(action.target);
+                    bdajax.action({
+                        url: target.url,
+                        params: target.params,
+                        name: action.name,
+                        mode: action.mode,
+                        selector: action.selector
+                    });
+                } else if (action.type == 'event') {
+                    bdajax.trigger(action.name, action.selector, action.target);
+                }
+            }
         }
     }
     

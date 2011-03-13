@@ -1,3 +1,4 @@
+import json
 from pyramid.response import Response
 from pyramid.view import view_config
 from cone.tile import (
@@ -7,6 +8,24 @@ from cone.tile import (
 
 
 registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
+
+
+@view_config(name='ajaxaction', accept='application/json', renderer='json')
+def ajax_tile(model, request):
+    """Render an ajax action by name.
+    
+    Request must provide the parameter ``name`` containing the view or tile
+    name.
+    """
+    # XXX: prefix action name with tile to indicate tile rendering, otherwise
+    #      render view
+    name = request.params.get('bdajax.action')
+    rendered = render_tile(model, request, name)
+    return {
+        'mode': request.params.get('bdajax.mode'),
+        'selector': request.params.get('bdajax.selector'),
+        'payload': rendered,
+    }
 
 
 class AjaxAction(object):
@@ -34,56 +53,70 @@ class AjaxEvent(object):
         self.selector = selector
 
 
-@view_config(name='ajaxaction', accept='application/json', renderer='json')
-def ajax_tile(model, request):
-    """Render an ajax action by name.
-    
-    Request must provide the parameter ``name`` containing the view or tile
-    name.
+class AjaxFormContinue(object):
+    """Ajax form continuation computing. Used by ``render_ajax_form``
     """
-    # XXX: prefix action name with tile to indicate tile rendering, otherwise
-    #      render view
-    name = request.params.get('bdajax.action')
-    rendered = render_tile(model, request, name)
-    return {
-        'mode': request.params.get('bdajax.mode'),
-        'selector': request.params.get('bdajax.selector'),
-        'payload': rendered,
-    }
+    
+    def __init__(self, result, actions):
+        self.result = result
+        self.actions = actions
+    
+    @property
+    def form(self):
+        """Return rendered form tile result if no continuation actions
+        """
+        if not self.actions:
+            return self.result
+        return ''
+    
+    @property
+    def next(self):
+        """Return 'false' if no continuation actions, otherwise a JSON dump of
+        action definitions.
+        """
+        if not self.actions:
+            return 'false'
+        actions = list()
+        for action in self.actions:
+            if isinstance(action, AjaxAction):
+                actions.append({
+                    'type': 'action',
+                    'target': action.target,
+                    'name': action.name,
+                    'mode': action.mode,
+                    'selector': action.selector,
+                    'params': {},
+                })
+            if isinstance(action, AjaxEvent):
+                actions.append({
+                    'type': 'event',
+                    'target': action.target,
+                    'name': action.name,
+                    'selector': action.selector,
+                    'params': {},
+                })
+        return json.dumps(actions)
 
 
-AJAX_FORM_RESPONSE = """\
+ajax_form_template = """\
 <script language="javascript" type="text/javascript">
-    %(call)s;
+    var parent = window.top.window;
+    parent.cone.ajaxformrender('%(form)s');
+    parent.cone.ajaxformcontinue(%(next)s);
 </script>
 """
 
-AJAX_FORM_RENDER = "window.top.window.cone.ajaxformrender('%(rendered)s')"
-AJAX_FORM_CONTINUE = "window.top.window.cone.ajaxformcontinue" + \
-    "('%(url)s', '%(name)s', '%(mode)s', '%(selector)s', %(params)s)"
-
-def process_ajax_form(model, request, name):
+def render_ajax_form(model, request, name):
     """Render ajax form.
     """
     result = render_tile(model, request, name)
     actions = request.get('cone.app.continuation')
-    if actions:
-        if not isinstance(actions, list):
-            actions = [actions]
-        call = ''
-        for action in actions:
-            call += AJAX_FORM_CONTINUE % {
-                'url': action.target,
-                'name': action.name,
-                'mode': action.mode,
-                'selector': action.selector,
-                'params': action.params,
-            } + '\n'
-    else:
-        call = AJAX_FORM_RENDER % {
-            'rendered': result,
-        }
-    return Response(AJAX_FORM_RESPONSE % dict(call=call))
+    cont = AjaxFormContinue(result, actions)
+    rendered = ajax_form_template % {
+        'form': cont.form,
+        'next': cont.next,
+    }
+    return Response(rendered)
 
 
 def dummy_livesearch_callback(model, request):

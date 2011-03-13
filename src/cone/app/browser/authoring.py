@@ -22,26 +22,29 @@ from cone.app.model import (
 from cone.app.browser import render_main_template
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
-from cone.app.browser.ajax import process_ajax_form
+from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import (
     make_url,
     make_query,
 )
 
+
 def is_ajax(request):
     return bool(request.params.get('ajax'))
+
 
 def render_form(model, request, tilename):
     """If form is invoked without hidden ajax field, the main template is
     rendered with tile ``tilename`` as content tile, otherwise
-    ``process_ajax_form`` is called, which renders the tile wrapped by some
+    ``render_ajax_form`` is called, which renders the tile wrapped by some
     javascript calls into a script tag. The ajax response will be rendered into
     the hidden iframe on client side, where ajax continuation is processed. 
     """
     if is_ajax(request):
-        return process_ajax_form(model, request, tilename)
+        return render_ajax_form(model, request, tilename)
     return render_main_template(model, request, contenttilename=tilename)
+
 
 @view_config('add', permission='add')
 def add(model, request):
