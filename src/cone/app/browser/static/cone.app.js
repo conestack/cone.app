@@ -70,6 +70,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
         
         // ajax form related
+		// XXX: move to bdajax as soon as clean
         
         // recent committed form
         _curajaxformid: null,
@@ -84,8 +85,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 bdajax.spinner.show();
             });
         },
-        
-        // called by iframe response, renders form (i.e. if validation errors)
+		
+		// called by iframe response, renders form (i.e. if validation errors)
         ajaxformrender: function(payload) {
             bdajax.spinner.hide();
             var id = '#' + cone._curajaxformid;

@@ -20,18 +20,21 @@ from cone.app.model import (
     AdapterNode,
 )
 from cone.app.browser import render_main_template
+from cone.app.browser.ajax import AjaxAction
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import process_ajax_form
 from cone.app.browser.layout import ProtectedContentTile
-from cone.app.browser.form import AjaxForm
 from cone.app.browser.utils import (
     make_url,
     make_query,
 )
 
+def is_ajax(request):
+    return bool(request.params.get('ajax'))
 
 @view_config('add', permission='add')
 def add(model, request):
-    if request.params.get('ajax'):
+    if is_ajax(request):
         return process_ajax_form(model, request, 'add')
     return render_main_template(model, request, contenttilename='add')
 
@@ -68,8 +71,7 @@ class AddPart(Part):
         """Hook after prepare and set factory as proxy field to ``self.form``
         """
         _next(self)
-        if isinstance(self, AjaxForm):
-            self.prepare_ajax()
+        self.prepare_ajax()
         self.form['factory'] = factory(
             'proxy',
             value=self.request.params.get('factory'),
@@ -78,15 +80,14 @@ class AddPart(Part):
     @default
     def next(self, request):
         url = make_url(request.request, node=self.model.__parent__)
-        ajax_next = self.ajax_next(url)
-        if ajax_next:
-            return ajax_next
+        if self.ajax_request:
+            return AjaxAction(url, 'content', 'inner', '#content')
         return HTTPFound(location=url)
 
 
 @view_config('edit', permission='edit')
 def edit(model, request):
-    if request.params.get('ajax'):
+    if is_ajax(request):
         return process_ajax_form(model, request, 'edit')
     return render_main_template(model, request, contenttilename='edit')
 
@@ -107,8 +108,7 @@ class EditPart(Part):
         """Hook after prepare and set came_from as proxy field to ``self.form``
         """
         _next(self)
-        if isinstance(self, AjaxForm):
-            self.prepare_ajax()
+        self.prepare_ajax()
         self.form['came_from'] = factory(
             'proxy',
             value=self.request.params.get('came_from'),
@@ -122,9 +122,8 @@ class EditPart(Part):
             url = request.get('came_from')
         else:
             url = make_url(request.request, node=self.model)
-        ajax_next = self.ajax_next(url)
-        if ajax_next:
-            return ajax_next
+        if self.ajax_request:
+            return AjaxAction(url, 'content', 'inner', '#content')
         return HTTPFound(location=url)
 
 
