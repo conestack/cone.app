@@ -36,10 +36,8 @@ Create and register an addform tile for MyNode::
     >>> from yafowil.base import factory
     >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.form import (
-    ...     Form,
-    ...     AddPart,
-    ... )
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.authoring import AddPart
     
     >>> @tile('addform', interface=MyNode)
     ... class MyAddForm(Form):
@@ -132,7 +130,7 @@ Editing
 Providing edit forms is easy, just bind a form tile named 'editform' for your
 application node::
 
-    >>> from cone.app.browser.form import EditPart
+    >>> from cone.app.browser.authoring import EditPart
 
     >>> @tile('editform', interface=MyNode)
     ... class MyEditForm(Form):
