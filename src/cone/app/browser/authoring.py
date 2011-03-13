@@ -4,6 +4,7 @@ from plumber import (
     default,
     plumb,
 )
+from webob.exc import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
 from yafowil.base import factory
