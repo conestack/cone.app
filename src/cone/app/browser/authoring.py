@@ -32,15 +32,35 @@ from cone.app.browser.utils import (
 def is_ajax(request):
     return bool(request.params.get('ajax'))
 
+def render_form(model, request, tilename):
+    """If form is invoked without hidden ajax field, the main template is
+    rendered with tile ``tilename`` as content tile, otherwise
+    ``process_ajax_form`` is called, which renders the tile wrapped by some
+    javascript calls into a script tag. The ajax response will be rendered into
+    the hidden iframe on client side, where ajax continuation is processed. 
+    """
+    if is_ajax(request):
+        return process_ajax_form(model, request, tilename)
+    return render_main_template(model, request, contenttilename=tilename)
+
 @view_config('add', permission='add')
 def add(model, request):
-    if is_ajax(request):
-        return process_ajax_form(model, request, 'add')
-    return render_main_template(model, request, contenttilename='add')
+    """Add view.
+    """
+    return render_form(model, request, 'add')
 
 
 @tile('add', permission='add')
 class AddTile(ProtectedContentTile):
+    """The add tile is responsible to render add forms depending on given
+    factory name. Factory information is fetched from NodeInfo implementation
+    registered by factory name.
+    
+    XXX:form wrapping markup like some title or description goes here.
+    """
+    
+    # tile name under which the form tile is expected
+    form_tile_name = 'addform'
     
     def render(self):
         nodeinfo = self.info
@@ -51,7 +71,7 @@ class AddTile(ProtectedContentTile):
         else:
             addmodel = nodeinfo.node()
         addmodel.__parent__ = self.model
-        return render_tile(addmodel, self.request, 'addform')
+        return render_tile(addmodel, self.request, self.form_tile_name)
     
     @property
     def info(self):
@@ -87,16 +107,23 @@ class AddPart(Part):
 
 @view_config('edit', permission='edit')
 def edit(model, request):
-    if is_ajax(request):
-        return process_ajax_form(model, request, 'edit')
-    return render_main_template(model, request, contenttilename='edit')
+    """Edit view.
+    """
+    return render_form(model, request, 'edit')
 
 
 @tile('edit', permission='edit')
 class EditTile(ProtectedContentTile):
+    """The edit tile is responsible to render edit forms on given model.
+    
+    XXX:form wrapping markup like some title or description goes here.
+    """
+    
+    # tile name under which the form tile is expected
+    form_tile_name = 'editform'
     
     def render(self):
-        return render_tile(self.model, self.request, 'editform')
+        return render_tile(self.model, self.request, self.form_tile_name)
 
 
 class EditPart(Part):
