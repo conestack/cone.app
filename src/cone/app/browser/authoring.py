@@ -1,5 +1,12 @@
+from plumber import (
+    plumber,
+    Part,
+    default,
+    plumb,
+)
 from pyramid.response import Response
 from pyramid.view import view_config
+from yafowil.base import factory
 from cone.tile import (
     Tile,
     tile,
@@ -13,8 +20,9 @@ from cone.app.model import (
     AdapterNode,
 )
 from cone.app.browser import render_main_template
-from cone.app.browser.ajax import ajax_form
+from cone.app.browser.ajax import process_ajax_form
 from cone.app.browser.layout import ProtectedContentTile
+from cone.app.browser.form import AjaxForm
 from cone.app.browser.utils import (
     make_url,
     make_query,
@@ -24,7 +32,7 @@ from cone.app.browser.utils import (
 @view_config('add', permission='add')
 def add(model, request):
     if request.params.get('ajax'):
-        return ajax_form(model, request, 'add')
+        return process_ajax_form(model, request, 'add')
     return render_main_template(model, request, contenttilename='add')
 
 
@@ -51,10 +59,35 @@ class AddTile(ProtectedContentTile):
         return getNodeInfo(factory)
 
 
+class AddPart(Part):
+    """form hooking the hidden value 'factory' to self.form on __call__
+    """
+    
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set factory as proxy field to ``self.form``
+        """
+        _next(self)
+        if isinstance(self, AjaxForm):
+            self.prepare_ajax()
+        self.form['factory'] = factory(
+            'proxy',
+            value=self.request.params.get('factory'),
+        )
+    
+    @default
+    def next(self, request):
+        url = make_url(request.request, node=self.model.__parent__)
+        ajax_next = self.ajax_next(url)
+        if ajax_next:
+            return ajax_next
+        return HTTPFound(location=url)
+
+
 @view_config('edit', permission='edit')
 def edit(model, request):
     if request.params.get('ajax'):
-        return ajax_form(model, request, 'edit')
+        return process_ajax_form(model, request, 'edit')
     return render_main_template(model, request, contenttilename='edit')
 
 
@@ -63,6 +96,36 @@ class EditTile(ProtectedContentTile):
     
     def render(self):
         return render_tile(self.model, self.request, 'editform')
+
+
+class EditPart(Part):
+    """form hooking the hidden value 'from' to self.form on __call__
+    """
+    
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set came_from as proxy field to ``self.form``
+        """
+        _next(self)
+        if isinstance(self, AjaxForm):
+            self.prepare_ajax()
+        self.form['came_from'] = factory(
+            'proxy',
+            value=self.request.params.get('came_from'),
+        )
+    
+    @default
+    def next(self, request):
+        if request.get('came_from') == 'parent':
+            url = make_url(request.request, node=self.model.__parent__)
+        elif request.get('came_from'):
+            url = request.get('came_from')
+        else:
+            url = make_url(request.request, node=self.model)
+        ajax_next = self.ajax_next(url)
+        if ajax_next:
+            return ajax_next
+        return HTTPFound(location=url)
 
 
 @tile('add_dropdown', 'templates/add_dropdown.pt', 

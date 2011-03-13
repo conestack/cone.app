@@ -5,8 +5,11 @@ Forms
 ``yafowil`` for details how to use it.
 
 Abstract form tile, which renders forms, does form processing and renders 
-or redirects to a result. You have to provide the ``form`` property on a 
-deriving object returning a yafowil widget tree::
+or redirects to a result.
+
+You have to provide the ``prepare`` function on a 
+deriving object which is responsible to prepare ``self.form`` which is expected
+as yafowil widget tree::
 
     >>> from yafowil import loader
     >>> from yafowil.base import factory
@@ -53,6 +56,9 @@ Create dummy model and request::
     >>> model = BaseNode()
     >>> model.__name__ = 'dummymodel'
     >>> request = DummyRequest()
+
+Authenticate::
+
     >>> layer.authenticate('max')
 
 Render form. no action is triggered and no input is given::
@@ -96,5 +102,7 @@ next handler are triggered::
     
     >>> rendered.find('Result') != -1
     True
-    
+
+Logout authenticated::
+
     >>> layer.logout()

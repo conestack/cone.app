@@ -9,6 +9,31 @@ from cone.tile import (
 registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
 
 
+class AjaxAction(object):
+    """Ajax action configuration. Used to define continuation actions for
+    client side.
+    """
+    
+    def __init__(self, target, name, mode, selector, params='{}'):
+        self.target = target
+        self.params = params
+        self.name = name
+        self.mode = mode
+        self.selector = selector
+
+
+class AjaxEvent(object):
+    """Ajax event configuration. Used to define continuation events for
+    client side.
+    """
+    
+    def __init__(self, target, name, selector, params='{}'):
+        self.target = target
+        self.params = params
+        self.name = name
+        self.selector = selector
+
+
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
     """Render an ajax action by name.
@@ -27,21 +52,6 @@ def ajax_tile(model, request):
     }
 
 
-class AjaxAction(object):
-    """Ajax action configuration. Used to define continuation actions for
-    client side.
-    
-    XXX: multiple continuation actions.
-    """
-    
-    def __init__(self, target, name, mode, selector, params='{}'):
-        self.target = target
-        self.params = params
-        self.name = name
-        self.mode = mode
-        self.selector = selector
-
-
 AJAX_FORM_RESPONSE = """\
 <script language="javascript" type="text/javascript">
     %(call)s;
@@ -52,7 +62,7 @@ AJAX_FORM_RENDER = "window.top.window.cone.ajaxformrender('%(rendered)s')"
 AJAX_FORM_CONTINUE = "window.top.window.cone.ajaxformcontinue" + \
     "('%(url)s', '%(name)s', '%(mode)s', '%(selector)s', %(params)s)"
 
-def ajax_form(model, request, name):
+def process_ajax_form(model, request, name):
     """Render ajax form.
     """
     result = render_tile(model, request, name)
