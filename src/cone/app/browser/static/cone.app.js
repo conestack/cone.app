@@ -97,7 +97,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             $(id).parent().bdajax();
         },
         
-        // called by iframe response, triggers bdajax.action
+        // called by iframe response, triggers actions and events
         ajaxformcontinue: function(actions) {
             if (!actions) {
                 return;

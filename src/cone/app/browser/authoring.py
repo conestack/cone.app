@@ -20,9 +20,11 @@ from cone.app.model import (
     AdapterNode,
 )
 from cone.app.browser import render_main_template
-from cone.app.browser.ajax import AjaxAction
-from cone.app.browser.ajax import AjaxEvent
-from cone.app.browser.ajax import render_ajax_form
+from cone.app.browser.ajax import (
+    AjaxAction,
+    AjaxEvent,
+    render_ajax_form,
+)
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import (
     make_url,
@@ -104,7 +106,10 @@ class AddPart(Part):
     def next(self, request):
         url = make_url(request.request, node=self.model.__parent__)
         if self.ajax_request:
-            return AjaxAction(url, 'content', 'inner', '#content')
+            return [
+                AjaxAction(url, 'content', 'inner', '#content'),
+                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+            ]
         return HTTPFound(location=url)
 
 
@@ -153,7 +158,10 @@ class EditPart(Part):
         else:
             url = make_url(request.request, node=self.model)
         if self.ajax_request:
-            return AjaxAction(url, 'content', 'inner', '#content')
+            return [
+                AjaxAction(url, 'content', 'inner', '#content'),
+                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+            ]
         return HTTPFound(location=url)
 
 

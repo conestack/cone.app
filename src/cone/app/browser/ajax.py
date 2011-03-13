@@ -33,9 +33,8 @@ class AjaxAction(object):
     client side.
     """
     
-    def __init__(self, target, name, mode, selector, params='{}'):
+    def __init__(self, target, name, mode, selector):
         self.target = target
-        self.params = params
         self.name = name
         self.mode = mode
         self.selector = selector
@@ -46,9 +45,8 @@ class AjaxEvent(object):
     client side.
     """
     
-    def __init__(self, target, name, selector, params='{}'):
+    def __init__(self, target, name, selector):
         self.target = target
-        self.params = params
         self.name = name
         self.selector = selector
 
