@@ -72,19 +72,23 @@ class BaseNode(object):
     
     @property
     def properties(self):
-        props = Properties()
-        props.in_navtree = False
-        props.editable = False
-        return props
+        if not hasattr(self, '_properties'):
+            props = Properties()
+            props.in_navtree = False
+            props.editable = False
+            self._properties = props
+        return self._properties
     
     @property
     def metadata(self):
-        name = self.__name__
-        if not name:
-            name = 'No Title'
-        metadata = BaseMetadata()
-        metadata.title = name
-        return metadata
+        if not hasattr(self, '_metadata'):
+            name = self.__name__
+            if not name:
+                name = 'No Title'
+            metadata = BaseMetadata()
+            metadata.title = name
+            self._metadata = metadata
+        return self._metadata
     
     @property
     def nodeinfo(self):

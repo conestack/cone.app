@@ -1,0 +1,208 @@
+Contents listing
+================
+
+A tile named ``contents`` is available which renders the given model's children
+in a sortable, batched table.
+
+Imports and dummy context::
+
+    >>> from cone.app.browser.contents import Contents
+    >>> from pyramid.testing import DummyRequest
+    >>> from cone.app.model import BaseNode
+    
+    >>> from datetime import datetime, timedelta
+    >>> created = datetime(2011, 3, 14)
+    >>> delta = timedelta(1)
+    >>> modified = created + delta
+    >>> model = BaseNode()
+    >>> for i in range(19):
+    ...     model[str(i)] = BaseNode()
+    ...     model[str(i)].metadata.title = str(i) + ' Title'
+    ...     model[str(i)].metadata.creator = 'admin ' + str(19 - i)
+    ...     model[str(i)].metadata.created = created
+    ...     model[str(i)].metadata.modified = modified
+    ...     created = created + delta
+    ...     modified = modified + delta
+
+Create ``Contents`` instance. Responsible for listing processing::
+
+    >>> request = DummyRequest()
+    >>> contents = Contents(model, request)
+    >>> contents
+    <cone.app.browser.contents.Contents object at ...>
+
+``sort`` reads the actual sorting from request, defaults to 'created'. Possible
+values are 'title', 'creator', 'created' and 'modified'::    
+
+    >>> contents.sort
+    'created'
+    
+    >>> request.params['sort'] = 'creator'
+    >>> contents.sort
+    'creator'
+    
+    >>> del request.params['sort']
+
+``sorted`` returns sorted listing items, it considers ``sort`` and ``order``.
+Latter one is also read from request with possible values 'asc' and 'desc',
+defaults to 'desc'
+
+    >>> contents.sorted[0]
+    <BaseNode object '0' at ...>
+    
+    >>> contents.sorted[-1]
+    <BaseNode object '18' at ...>
+    
+    >>> request.params['order'] = 'asc'
+    >>> contents.sorted[0]
+    <BaseNode object '18' at ...>
+    
+    >>> contents.sorted[-1]
+    <BaseNode object '0' at ...>
+    
+    >>> del request.params['order']
+
+``slice`` return current batch start and positions::
+
+    >>> contents.slice
+    (0, 10)
+    
+    >>> request.params['b_page'] = '1'
+    >>> contents.slice
+    (10, 20)
+    
+    >>> del request.params['b_page']
+    
+``items`` return the current sorted slice for listing.
+
+Items returned by default sorting::
+
+    >>> contents.items[0]
+    <BaseNode object '0' at ...>
+    
+    >>> contents.items[-1]
+    <BaseNode object '9' at ...>
+
+Inverse order::
+
+    >>> request.params['order'] = 'asc'
+    >>> contents.items[0]
+    <BaseNode object '18' at ...>
+    
+    >>> contents.items[-1]
+    <BaseNode object '9' at ...>
+
+Switch batch page with inversed order::
+
+    >>> request.params['b_page'] = '1'
+    >>> contents.items[0]
+    <BaseNode object '8' at ...>
+    
+    >>> contents.items[-1]
+    <BaseNode object '0' at ...>
+
+Reset order and batch page::
+
+    >>> del request.params['order']
+    >>> del request.params['b_page']
+
+Sort by creator::
+
+    >>> request.params['sort'] = 'creator'
+    >>> contents.items[0].metadata.creator
+    'admin 1'
+    
+    >>> contents.items[-1].metadata.creator
+    'admin 18'
+    
+    >>> len(contents.items)
+    10
+    
+    >>> [item.metadata.creator for item in contents.items]
+    ['admin 1', 'admin 10', 'admin 11', 'admin 12', 'admin 13', 'admin 14', 
+    'admin 15', 'admin 16', 'admin 17', 'admin 18']
+    
+    >>> request.params['b_page'] = '1'
+    >>> contents.items[0].metadata.creator
+    'admin 19'
+    
+    >>> contents.items[-1].metadata.creator
+    'admin 9'
+    
+    >>> [item.metadata.creator for item in contents.items]
+    ['admin 19', 'admin 2', 'admin 3', 'admin 4', 'admin 5', 
+    'admin 6', 'admin 7', 'admin 8', 'admin 9']
+
+Sort by created::
+
+    >>> request.params['b_page'] = '0'
+    >>> request.params['sort'] = 'created'
+    >>> contents.items[0].metadata.created
+    datetime.datetime(2011, 3, 14, 0, 0)
+    
+    >>> contents.items[-1].metadata.created
+    datetime.datetime(2011, 3, 23, 0, 0)
+    
+    >>> request.params['b_page'] = '1'
+    >>> request.params['sort'] = 'modified'
+    >>> contents.items[0].metadata.modified
+    datetime.datetime(2011, 3, 25, 0, 0)
+    
+    >>> contents.items[-1].metadata.modified
+    datetime.datetime(2011, 4, 2, 0, 0)
+    
+    >>> del request.params['b_page']
+    >>> del request.params['sort']
+    
+``ContentsBatch`` must know about it's contents listing for batch vocab
+computing. The batch is created by ``ContentsTile``::
+
+    >>> from cone.app.browser.contents import ContentsBatch
+    >>> batch = ContentsBatch(contents)
+    >>> rendered = batch(model, request)
+    >>> rendered.find('class="current">1</strong>') != -1
+    True
+    
+    >>> rendered.find('http://example.com/?sort=&amp;b_page=1') != -1
+    True
+
+Change page::
+
+    >>> request.params['b_page'] = '1'
+    >>> rendered = batch(model, request)
+    >>> rendered.find('class="current">2</strong>') != -1
+    True
+    
+    >>> rendered.find('http://example.com/?sort=&amp;b_page=0') != -1
+    True
+
+Change sort and order. Sort is proxied by batch::
+
+    >>> request.params['sort'] = 'modified'
+    >>> rendered = batch(model, request)
+    >>> rendered.find('http://example.com/?sort=modified&amp;b_page=0') != -1
+    True
+
+``ContentsTile`` hooks this all together. It is registered by name 'contents'.
+
+Rendering fails unauthorized, 'view' permission is required::
+
+    >>> from cone.tile import render_tile
+    >>> render_tile(model, request, 'contents')
+    Traceback (most recent call last):
+      ...
+    Forbidden: Unauthorized: tile 
+    <cone.app.browser.contents.ContentsTile object at ...> failed 
+    permission check
+
+Render authenticated::
+
+    >>> layer.authenticate('max')
+    >>> rendered = render_tile(model, request, 'contents')
+    >>> expected = '<th>\n          ' + \
+    ... '<a href="http://example.com?b_page=1&amp;sort=created&amp;order=desc"'
+    
+    >>> rendered.find(expected) != -1
+    True
+    
+    >>> layer.logout()
