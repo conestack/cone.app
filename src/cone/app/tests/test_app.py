@@ -21,9 +21,9 @@ TESTFILES = [
     '../browser/authoring.txt',
     '../browser/batch.txt',
     '../browser/contents.txt',
+    '../browser/form.txt',
     '../browser/layout.txt',
     '../browser/utils.txt',
-    '../browser/form.txt',
     '../browser/referencebrowser.txt',
 ]
 

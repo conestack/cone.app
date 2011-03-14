@@ -97,7 +97,6 @@ class AddPart(Part):
         """Hook after prepare and set factory as proxy field to ``self.form``
         """
         _next(self)
-        self.prepare_ajax()
         self.form['factory'] = factory(
             'proxy',
             value=self.request.params.get('factory'),
@@ -144,7 +143,6 @@ class EditPart(Part):
         """Hook after prepare and set came_from as proxy field to ``self.form``
         """
         _next(self)
-        self.prepare_ajax()
         self.form['came_from'] = factory(
             'proxy',
             value=self.request.params.get('came_from'),

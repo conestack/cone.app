@@ -1,24 +1,42 @@
-Forms
-=====
+Form tiles
+==========
 
 ``cone.app`` uses ``yafowil`` as form engine. See Documentation of
 ``yafowil`` for details how to use it.
 
-Abstract form tile, which renders forms, does form processing and renders 
-or redirects to a result.
+``cone.app.browser.form`` contains an abstract form tile, which processes 
+yafowil forms and provides needed hooks to ``cona.app``.
 
-You have to provide the ``prepare`` function on a 
-deriving object which is responsible to prepare ``self.form`` which is expected
-as yafowil widget tree::
+A subclass of a form tile must implement ``prepare``. This function is 
+responsible to create the yafowil form on ``self.form``::
+
+    >>> from cone.app.browser.form import Form
+    >>> formtile = Form(None, None, 'plainform')
+    >>> formtile.prepare()
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: ``prepare`` function must be provided by 
+    deriving object.
 
     >>> from yafowil import loader
     >>> from yafowil.base import factory
     >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.ajax import AjaxAction
+    >>> from webob.exc import HTTPFound
     
     >>> @tile('subscriptionform')
     ... class SubscriptionForm(Form):
+    ...     _ajax = False # test flag
+    ...     _show = False # test flag
+    ...     
+    ...     @property
+    ...     def ajax(self):
+    ...         return self._ajax
+    ...     
+    ...     @property
+    ...     def show(self):
+    ...         return self._show
     ...     
     ...     def prepare(self):
     ...         form = factory(u'form',
@@ -47,7 +65,11 @@ as yafowil widget tree::
     ...         print 'subscribe on "%s"' % self.model.__name__
     ...         
     ...     def next(self, request):
-    ...         return '<div>Result</div>'
+    ...         url = 'http://example.com'
+    ...         if self.ajax_request:
+    ...             # return as single value, gets list on request.environ
+    ...             return AjaxAction(url, 'content', 'inner', '#content')
+    ...         return HTTPFound(url)
 
 Create dummy model and request::
 
@@ -61,9 +83,18 @@ Authenticate::
 
     >>> layer.authenticate('max')
 
+Render form. ``form.show`` returns false, render empty string::
+
+    >>> from cone.tile import render_tile
+    >>> render_tile(model, request, 'subscriptionform')
+    u''
+
+Set show to True::
+
+    >>> SubscriptionForm._show = True
+
 Render form. no action is triggered and no input is given::
     
-    >>> from cone.tile import render_tile
     >>> rendered = render_tile(model, request, 'subscriptionform')
     >>> expected = 'action="http://example.com/dummymodel"'
     >>> rendered.find(expected) != -1
@@ -80,7 +111,7 @@ Render form. no action is triggered and no input is given::
     >>> expected = 'name="action.subscriptionform.subscribe"'
     >>> rendered.find(expected) != -1
     True
-    
+
 Trigger subscribe action and set empty email value. Results in a form with
 error message since email is required::
 
@@ -99,9 +130,92 @@ next handler are triggered::
     
     >>> rendered = render_tile(model, request, 'subscriptionform')
     subscribe on "dummymodel"
+
+The form was rendered as non ajax form, so we expect an HTTPFound instance on
+request::
+
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
     
-    >>> rendered.find('Result') != -1
-    True
+    >>> del request.environ['redirect']
+
+Even if we commit as ajax form, it is treaten as normal form since ajax flag
+is set to False (defaults to True)::
+
+    >>> request.params['ajax'] = '1'
+    >>> rendered = render_tile(model, request, 'subscriptionform')
+    subscribe on "dummymodel"
+    
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+    
+    >>> del request.environ['redirect']
+    >>> del request.params['ajax']
+
+Try with ajax True. First if submitted without ajax flag, still expect
+HTTPFound instance::
+
+    >>> SubscriptionForm._ajax = True
+    >>> rendered = render_tile(model, request, 'subscriptionform')
+    subscribe on "dummymodel"
+    
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+Submit with ajax flag::
+    
+    >>> request.params['ajax'] = '1'
+    >>> rendered = render_tile(model, request, 'subscriptionform')
+    subscribe on "dummymodel"
+    
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxAction object at ...>]
+
+Provide another form tile for testing remaining aspects of ``Form`` class::
+
+    >>> @tile('otherform')
+    ... class OtherForm(Form):
+    ...     
+    ...     def prepare(self):
+    ...         form = factory(
+    ...             u'form',
+    ...             name='otherform',
+    ...             props={
+    ...                 'action': self.nodeurl,
+    ...                 'class': 'foo', # if class is set and ajax is true
+    ...                                 # class 'ajax' gets added to existing
+    ...                                 # class
+    ...             })
+    ...         form['save'] = factory(
+    ...             'submit',
+    ...             props = {
+    ...                 'action': 'save',
+    ...                 'expression': True,
+    ...                 'handler': None,
+    ...                 'next': self.next,
+    ...                 'label': 'Save',
+    ...             })
+    ...         self.form = form
+    ...     
+    ...     def next(self, request):
+    ...         url = 'http://example.com'
+    ...         if self.ajax_request:
+    ...             # return as list
+    ...             return [AjaxAction(url, 'content', 'inner', '#content')]
+    ...         # return anything else to be rendered
+    ...         return '<div>foo</div>'
+    
+    >>> request = DummyRequest()
+    >>> request.params['action.otherform.save'] = '1'
+    >>> render_tile(model, request, 'otherform')
+    '<div>foo</div>'
+    
+    >>> request.params['ajax'] = '1'
+    >>> render_tile(model, request, 'otherform')
+    u''
+    
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxAction object at ...>]
 
 Logout authenticated::
 

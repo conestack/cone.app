@@ -35,7 +35,7 @@ class Form(Tile):
     def ajax_request(self):
         """Flag whether request was made via XMLHTTPRequest.
         """
-        return bool(self.request.params.get('ajax'))
+        return bool(self.request.params.get('ajax')) and self.ajax
     
     def __call__(self, model, request):
         self.model = model
@@ -44,8 +44,9 @@ class Form(Tile):
     
     def _process_form(self):
         self.prepare()
+        self.prepare_ajax()
         if not self.show:
-            return ''
+            return u''
         controller = Controller(self.form, self.request)
         if not controller.next:
             return controller.rendered
@@ -55,9 +56,9 @@ class Form(Tile):
         if isinstance(controller.next, AjaxAction) \
           or isinstance(controller.next, AjaxEvent):
             self.request.environ['cone.app.continuation'] = [controller.next]
-            return ''
+            return u''
         if isinstance(controller.next, list):
             # we assume a list of AjaxAction and/or AjaxEvent instances
             self.request.environ['cone.app.continuation'] = controller.next
-            return ''
+            return u''
         return controller.next
