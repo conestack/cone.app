@@ -5,6 +5,7 @@ from pyramid.interfaces import (
 )
 from pyramid.authentication import CallbackAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.testing import DummyRequest
 from plone.testing import Layer
 
 

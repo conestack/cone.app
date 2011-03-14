@@ -18,10 +18,10 @@ TESTFILES = [
     '../security.txt',
     '../browser/__init__.txt',
     '../browser/ajax.txt',
+    '../browser/authoring.txt',
     '../browser/layout.txt',
     '../browser/utils.txt',
     '../browser/form.txt',
-    '../browser/authoring.txt',
     '../browser/batch.txt',
     '../browser/referencebrowser.txt',
 ]

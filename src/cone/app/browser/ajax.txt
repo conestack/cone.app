@@ -49,8 +49,8 @@ Forms
 -----
 
 Ajax form support is done with a hidden iframe where forms are committed to
-if an ajax form is detected. On the client side we have to consider this at
-some places.
+if an ajax form is detected. On server side we have to consider this at some 
+places.
 
 - The view mapping to form action must check whether ajax flag is set on request
   and return results of ``render_ajax_form`` if so. If not, return results of
@@ -89,7 +89,7 @@ AjaxEvent object::
     >>> event.name, event.selector, event.target
     ('contextchanged', '.contextsensitiv', 'http://example.com')
 
-AjaxFormContinue object::
+AjaxFormContinue object. This object is used by ``render_ajax_form``::
 
     >>> from cone.app.browser.ajax import AjaxFormContinue
     >>> result = ''
@@ -188,15 +188,6 @@ Test ``render_ajax_form``. Provide a dummy Form::
     ...             ]
     ...         return HTTPFound(location=url)
 
-    >>> def dummyget(self, key, default=None):
-    ...     return self.params.get(key, default)
-    
-    >>> def dummysetitem(self, key, value):
-    ...     self.params[key] = value
-    
-    >>> DummyRequest.get = dummyget
-    >>> DummyRequest.__setitem__ = dummysetitem
-
 Test unauthorized::
 
     >>> from cone.app.browser.ajax import render_ajax_form
@@ -247,9 +238,6 @@ Test with form perocessing passing::
     True
     
     >>> layer.logout()
-    
-    >>> del DummyRequest.get
-    >>> del DummyRequest.__setitem__
 
 
 Livesearch

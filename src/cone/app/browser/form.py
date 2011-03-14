@@ -54,10 +54,10 @@ class Form(Tile):
             return
         if isinstance(controller.next, AjaxAction) \
           or isinstance(controller.next, AjaxEvent):
-            self.request['cone.app.continuation'] = [controller.next]
+            self.request.environ['cone.app.continuation'] = [controller.next]
             return ''
         if isinstance(controller.next, list):
             # we assume a list of AjaxAction and/or AjaxEvent instances
-            self.request['cone.app.continuation'] = controller.next
+            self.request.environ['cone.app.continuation'] = controller.next
             return ''
         return controller.next

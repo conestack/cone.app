@@ -61,7 +61,7 @@ class AjaxFormContinue(object):
     
     @property
     def form(self):
-        """Return rendered form tile result if no continuation actions
+        """Return rendered form tile result if no continuation actions.
         """
         if not self.actions:
             return self.result
@@ -108,7 +108,7 @@ def render_ajax_form(model, request, name):
     """Render ajax form.
     """
     result = render_tile(model, request, name)
-    actions = request.get('cone.app.continuation')
+    actions = request.environ.get('cone.app.continuation')
     cont = AjaxFormContinue(result, actions)
     rendered = ajax_form_template % {
         'form': cont.form,
