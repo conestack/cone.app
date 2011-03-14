@@ -33,9 +33,9 @@ class Form(Tile):
     
     @property
     def ajax_request(self):
-        """Flag whether request was made via XMLHTTPRequest.
+        """Flag whether to handle current request as ajax request.
         """
-        return bool(self.request.params.get('ajax')) and self.ajax
+        return self.request.params.get('ajax') and self.ajax
     
     def __call__(self, model, request):
         self.model = model

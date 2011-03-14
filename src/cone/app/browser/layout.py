@@ -17,7 +17,10 @@ from cone.app.browser.utils import (
 
 @tile('resources', 'templates/resources.pt', permission='login')
 class Resources(Tile):
-    """Trsources tile.
+    """Resources tile.
+    
+    XXX: either switch to resource management lib here or use resource
+         management middleware.
     """
     
     @property
@@ -36,6 +39,9 @@ class Resources(Tile):
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.
+    
+    Normally used for 'content' tiles if page should render login form in place
+    instead of throwing Unauthorized.
     """
     
     def __call__(self, model, request):
@@ -55,7 +61,7 @@ registerTile('livesearch',
 class PersonalTools(Tile):
     """Personal tool tile.
     
-    XXX: extend by items, currently only login link hardcoded in template
+    XXX: extend by items, currently only 'logout' link hardcoded in template
     """
 
 
@@ -69,7 +75,7 @@ class MainMenu(Tile):
       Therefor 'node-nodeid' gets rendered as CSS class on ``li`` DOM element.
     
     * If ``default_child`` is set on ``model.root.properties``, it is marked
-      selected if not other current path could be found.
+      selected if no other current path is found.
     """
     
     @property
