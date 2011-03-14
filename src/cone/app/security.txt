@@ -36,7 +36,7 @@ the login name or ``None`` if invalid credentials::
     >>> security.authenticate(request,
     ...                       security.ADMIN_USER,
     ...                       security.ADMIN_PASSWORD)
-    ['user']
+    [['X-Foo', 'user']]
 
 Default group callback returns role manager for superuser.
 XXX: node.ext.ugm integration::

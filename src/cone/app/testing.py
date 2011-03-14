@@ -36,7 +36,7 @@ class Security(Layer):
     def setUp(self, args=None):
         self.authn = CallbackAuthenticationPolicy()
         self.authn.callback = groups_callback
-        self.authn.remember = lambda self, x: [x]
+        self.authn.remember = lambda self, x: [['X-Foo', x]]
         self.authn.forget = lambda x: None
         self.authn.unauthenticated_userid = lambda *args: None
         self.authz = ACLAuthorizationPolicy()

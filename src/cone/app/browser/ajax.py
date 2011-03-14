@@ -109,10 +109,10 @@ def render_ajax_form(model, request, name):
     """
     result = render_tile(model, request, name)
     actions = request.environ.get('cone.app.continuation')
-    cont = AjaxFormContinue(result, actions)
+    form_continue = AjaxFormContinue(result, actions)
     rendered = ajax_form_template % {
-        'form': cont.form,
-        'next': cont.next,
+        'form': form_continue.form,
+        'next': form_continue.next,
     }
     return Response(rendered)
 

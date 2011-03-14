@@ -234,7 +234,7 @@ Render protected tile.::
     >>> layer.logout()
     
     >>> render_tile(ProtectedModel(), request, 'content')
-    u'<form action="http://example.com/login" class="ajax" 
+    u'<form action="http://example.com/login" 
     enctype="multipart/form-data" id="form-loginform" method="post">...
     
     >>> layer.authenticate('max')

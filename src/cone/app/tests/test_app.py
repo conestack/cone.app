@@ -23,6 +23,7 @@ TESTFILES = [
     '../browser/contents.txt',
     '../browser/form.txt',
     '../browser/layout.txt',
+    '../browser/login.txt',
     '../browser/utils.txt',
     '../browser/referencebrowser.txt',
 ]
