@@ -27,7 +27,3 @@ Authenticate with wrong credentials::
     >>> res = render_tile(root, request, 'loginform')
     >>> request.environ['redirect']
     <HTTPFound at ... 302 Found>
-
-XXX Something strange in test after authenticate::
-
-    >> res

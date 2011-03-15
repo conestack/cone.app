@@ -7,9 +7,11 @@
       </li>
     </ul>
     <div class="tabpanes">
-      <div tal:repeat="tab tabs">
-        <tal:content replace="structure tab['content']" />
-      </div>
+      <tal:tab repeat="tab tabs">
+        <div class="${tab['css']}">
+          <tal:content replace="structure tab['content']" />
+        </div>
+      </tal:tab>
     </div>
   </tal:tabs>
   

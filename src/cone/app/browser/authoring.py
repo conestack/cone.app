@@ -89,12 +89,12 @@ class AddTile(ProtectedContentTile):
 
 
 class AddPart(Part):
-    """form hooking the hidden value 'factory' to self.form on __call__
+    """form part hooking the hidden field 'factory' to self.form on __call__
     """
     
     @plumb
     def prepare(_next, self):
-        """Hook after prepare and set factory as proxy field to ``self.form``
+        """Hook after prepare and set 'factory' as proxy field to ``self.form``
         """
         _next(self)
         self.form['factory'] = factory(
@@ -135,12 +135,13 @@ class EditTile(ProtectedContentTile):
 
 
 class EditPart(Part):
-    """form hooking the hidden value 'from' to self.form on __call__
+    """form part hooking the hidden field 'came_from' to self.form on __call__
     """
     
     @plumb
     def prepare(_next, self):
-        """Hook after prepare and set came_from as proxy field to ``self.form``
+        """Hook after prepare and set 'came_from' as proxy field to
+        ``self.form``
         """
         _next(self)
         self.form['came_from'] = factory(
