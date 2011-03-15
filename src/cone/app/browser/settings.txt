@@ -1,0 +1,57 @@
+Browser settings
+----------------
+
+The 'content' tile for ``AppSettings`` object renders all registered settings
+objects inside tabs::
+
+    >>> from cone.app import register_plugin_config
+    >>> from cone.app.model import BaseNode
+    
+    >>> class SomeSettings(BaseNode): pass
+    
+    >>> register_plugin_config('foo', SomeSettings)
+    >>> register_plugin_config('bar', SomeSettings)
+    
+    >>> from cone.tile import tile
+    >>> from cone.tile import Tile
+    
+    >>> @tile('content', interface=SomeSettings)
+    ... class Settings(Tile):
+    ...     def render(self):
+    ...         return '<div>Settings Contents</div>'
+    
+    >>> from cone.tile import render_tile
+    
+    >>> layer.authenticate('manager')
+    
+    >>> import cone.app.browser.settings
+    
+    >>> from cone.app import root
+    >>> from pyramid.testing import DummyRequest
+    >>> request = DummyRequest()
+    >>> res = render_tile(root['settings'], request, 'content')
+    >>> print res
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+        <ul class="tabs">
+          <li>
+              <a class="w1" href="#">foo</a>
+          </li>
+          <li>
+              <a class="w1" href="#">bar</a>
+          </li>
+        </ul>
+        <div class="tabpanes">
+          <div>
+            <div>Settings Contents</div>
+          </div>
+          <div>
+            <div>Settings Contents</div>
+          </div>
+        </div>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    
+    >>> layer.logout()
