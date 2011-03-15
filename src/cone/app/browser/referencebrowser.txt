@@ -1,10 +1,6 @@
 Referencebrowser
 ================
 
-The referencebrowser consists out of some tiles for rendering a
-referencebrowser inside an overlay and a yafowil widget for rendering
-form fields bound to referencebrowser.
-
 Load requirements.::
 
     >>> import yafowil.loader
@@ -169,3 +165,48 @@ Required with valid value.::
     id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
     id="input-ref-uid2" selected="selected" 
     value="uid2">Title2</option></select>'
+
+
+Reference listing tile
+----------------------
+
+Create dummy environ::
+
+    >>> from cone.tile import render_tile
+    >>> from cone.app.model import BaseNode
+    >>> from pyramid.testing import DummyRequest
+    
+    >>> from datetime import datetime
+    >>> from datetime import timedelta
+    
+    >>> created = datetime(2011, 3, 15)
+    >>> delta = timedelta(1)
+    >>> modified = created + delta
+    
+    >>> model = BaseNode()
+    >>> for i in range(20):
+    ...     model[str(i)] = BaseNode()
+    ...     model[str(i)].metadata.title = str(i)
+    ...     model[str(i)].metadata.created = created
+    ...     model[str(i)].metadata.modified = modified
+    ...     created = created + delta
+    ...     modified = modified + delta
+
+Unauthorized fails::
+
+    >>> request = DummyRequest()
+    >>> res = render_tile(model, request, 'referencelisting')
+    Traceback (most recent call last):
+      ...
+    Forbidden: Unauthorized: tile 
+    <cone.app.browser.referencebrowser.ReferenceListing object at ...> 
+    failed permission check
+    
+Authorized::
+
+    >>> layer.authenticate('max')
+    >>> res = render_tile(model, request, 'referencelisting')
+    >>> res.find('id="referencelisting"') > -1
+    True
+    
+    >>> layer.logout()
