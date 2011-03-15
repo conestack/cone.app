@@ -33,19 +33,14 @@ def make_url(request, path=[], node=None, resource=None, query=None):
 
 
 def format_date(dt, long=True):
-    """XXX
-    """
     if not isinstance(dt, datetime.datetime):
         return 'unknown'
-    return long and dt.strftime('%d.%M.%Y %H:%m') or dt.strftime('%d.%M.%Y')
+    return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
 
 
 class AppUtil(object):
     """Instance of this object gets Passed to main template when rendering.
     """
-    
-    def __init__(self):
-        self.additional_css = list()
     
     def authenticated(self, request):
         return authenticated(request)

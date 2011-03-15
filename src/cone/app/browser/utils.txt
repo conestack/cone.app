@@ -8,12 +8,14 @@ Common browser utils.::
     ...     nodepath,
     ...     make_query,
     ...     make_url,
+    ...     format_date,
+    ...     AppUtil,
     ... )
 
 ``authenticated`` - Will be removed.::
 
-    >>> from pyramid import testing
-    >>> request = testing.DummyRequest()
+    >>> from pyramid.testing import DummyRequest
+    >>> request = DummyRequest()
     >>> authenticated(request)
 
 ``nodepath`` - Propably will be implemented in ``BaseNode``. Just skips root in
@@ -51,3 +53,34 @@ path.::
     ...     'bam': ['456', '789'],
     ... })
     '?bar=123&bam=456&bam=789'
+
+``format_date``::
+
+    >>> from datetime import datetime
+    >>> dt = datetime(2011, 3, 15)
+    >>> format_date(dt)
+    '15.03.2011 00:00'
+    
+    >>> format_date(dt, long=False)
+    '15.03.2011'
+    
+    >>> format_date(object())
+    'unknown'
+
+``AppUtil``. Combines above functions in an object which is available in main
+template::
+
+    >>> util = AppUtil()
+    >>> util.authenticated(request)
+    
+    >>> util.nodepath(root['child'])
+    ['child']
+    
+    >>> util.make_url(request)
+    'http://example.com/'
+    
+    >>> util.make_query(foo='bar')
+    '?foo=bar'
+    
+    >>> util.format_date(dt)
+    '15.03.2011 00:00'

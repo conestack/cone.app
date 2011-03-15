@@ -478,8 +478,8 @@ Authenticated::
     >>> print res
     <p class="byline">
       Created by: <strong>max</strong>,
-      on <strong>14.00.2011 00:03</strong>.
-      Last modified: <strong>14.00.2011 00:03</strong>
+      on <strong>14.03.2011 00:00</strong>.
+      Last modified: <strong>14.03.2011 00:00</strong>
     </p>
     
     >>> layer.logout()
