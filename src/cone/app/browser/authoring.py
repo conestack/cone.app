@@ -92,6 +92,8 @@ class AddPart(Part):
     """form part hooking the hidden field 'factory' to self.form on __call__
     """
     
+    action_resource = default('add')
+    
     @plumb
     def prepare(_next, self):
         """Hook after prepare and set 'factory' as proxy field to ``self.form``
@@ -137,6 +139,8 @@ class EditTile(ProtectedContentTile):
 class EditPart(Part):
     """form part hooking the hidden field 'came_from' to self.form on __call__
     """
+    
+    action_resource = default('edit')
     
     @plumb
     def prepare(_next, self):
