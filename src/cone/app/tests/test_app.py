@@ -9,7 +9,7 @@ optionflags = doctest.NORMALIZE_WHITESPACE | \
               doctest.ELLIPSIS | \
               doctest.REPORT_ONLY_FIRST_FAILURE
 
-layer = testing.Security()
+layer = testing.security
 
 TESTFILES = [
     '../testing.txt',

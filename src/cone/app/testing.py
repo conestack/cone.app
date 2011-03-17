@@ -50,3 +50,5 @@ class Security(Layer):
         self.registry.unregisterUtility(self.authn, IAuthenticationPolicy)
         self.registry.unregisterUtility(self.authz, IAuthorizationPolicy)
         print "Security torn down."
+
+security = Security()
