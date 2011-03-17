@@ -28,7 +28,7 @@ def make_url(request, path=[], node=None, resource=None, query=None):
     if resource is not None:
         path.append(resource)
     # escape characters including /, the elements of path are joined
-    # with / but with one a / needs to be escaped
+    # with / but within one a / needs to be escaped
     path = [urllib.quote(x, safe='') for x in path]
     if not query:
         return '%s/%s' % (request.application_url, '/'.join(path))
