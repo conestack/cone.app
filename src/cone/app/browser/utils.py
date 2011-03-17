@@ -44,6 +44,8 @@ def make_url(request, path=[], node=None, resource=None, query=None):
     # pyramid are also involved. Until this is sorted out, we use our
     # own escaping for '/' which then needs to be undone in the
     # application nodes...
+    #
+    # see: http://mail.python.org/pipermail/web-sig/2011-March/005003.html
     path = [quote_slash(x) for x in path]
     path = [urllib.quote(x) for x in path]
     if not query:
