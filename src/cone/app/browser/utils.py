@@ -23,6 +23,13 @@ def make_query(**kw):
     return '?%s' % '&'.join(query)
 
 
+# XXX: temporary hack to enabled / in one url component, see also make_url below
+def quote_slash(x):
+    return x.replace('/', '__s_l_a_s_h__')
+
+def unquote_slash(x):
+    return x.replace('__s_l_a_s_h__', '/')
+
 def make_url(request, path=[], node=None, resource=None, query=None):
     if node is not None:
         path = nodepath(node)
@@ -30,7 +37,15 @@ def make_url(request, path=[], node=None, resource=None, query=None):
         path.append(resource)
     # escape characters including /, the elements of path are joined
     # with / but within one a / needs to be escaped
-    path = [urllib.quote(x, safe='') for x in path]
+    #path = [urllib.quote(x, safe='') for x in path]
+    #
+    # XXX: paster
+    # urllib.unquotes before the path is split by '/'. webob and
+    # pyramid are also involved. Until this is sorted out, we use our
+    # own escaping for '/' which then needs to be undone in the
+    # application nodes...
+    path = [quote_slash(x) for x in path]
+    path = [urllib.quote(x) for x in path]
     if not query:
         return '%s/%s' % (request.application_url, '/'.join(path))
     return '%s/%s%s' % (request.application_url, '/'.join(path), query)
