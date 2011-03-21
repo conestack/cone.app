@@ -7,6 +7,7 @@ from cone.tile import (
     registerTile,
 )
 import cone.app
+from cone.app.model import AppRoot
 from cone.app.browser.utils import (
     authenticated,
     nodepath,
@@ -121,6 +122,7 @@ class PathBar(Tile):
     
     @property
     def items(self):
+        # XXX: default child
         model = self.model
         ret = [{
             'title': model.metadata.title,
@@ -183,17 +185,19 @@ class NavTree(Tile):
     def navtree(self):
         root = self.navtreeitem(None, None, '')
         model = self.model.root
+        # XXX: default child
         path = nodepath(self.model)
         self.fillchildren(model, path, root)
         return root
     
     def rendertree(self, children, level=1):
-        return render_template('cone.app.browser:templates/navtree_recue.pt',
-                               model=self.model,
-                               request=self.request,
-                               context=self,
-                               children=children,
-                               level=level)
+        return render_template(
+            'cone.app.browser:templates/navtree_recue.pt',
+            model=self.model,
+            request=self.request,
+            context=self,
+            children=children,
+            level=level)
 
 
 @tile('byline', 'templates/byline.pt',
@@ -211,7 +215,16 @@ registerTile('listing',
              class_=ProtectedContentTile,
              permission='login')
 
-registerTile('content',
-             'cone.app:browser/templates/default_root.pt',
-             class_=ProtectedContentTile,
-             permission='login')
+
+@tile('content', interface=AppRoot, permission='login')
+class RootContent(ProtectedContentTile):
+    
+    def render(self):
+        if self.model.properties.default_child:
+            model = self.model[self.model.properties.default_child]
+            return render_tile(model, self.request, 'content')
+        return render_template(
+            'cone.app.browser:templates/default_root.pt',
+            model=self.model,
+            request=self.request,
+            context=self)        
