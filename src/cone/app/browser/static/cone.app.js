@@ -69,8 +69,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             $('.dropdown', context).dropdownmenu();
         },
         
-        // ajax form related
-        // XXX: move to bdajax as soon as clean
+        // ajax form related. XXX: move to bdajax
         
         // recent committed form
         _curajaxformid: null,
@@ -95,30 +94,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             var id = '#' + cone._curajaxformid;
             $(id).replaceWith(unescape(payload));
             $(id).parent().bdajax();
-        },
-        
-        // called by iframe response, triggers actions and events
-        ajaxformcontinue: function(actions) {
-            if (!actions) {
-                return;
-            }
-            bdajax.spinner.hide();
-            var action, target;
-            for (var idx in actions) {
-                action = actions[idx];
-                if (action.type == 'action') {
-                    target = bdajax.parsetarget(action.target);
-                    bdajax.action({
-                        url: target.url,
-                        params: target.params,
-                        name: action.name,
-                        mode: action.mode,
-                        selector: action.selector
-                    });
-                } else if (action.type == 'event') {
-                    bdajax.trigger(action.name, action.selector, action.target);
-                }
-            }
         }
     }
     

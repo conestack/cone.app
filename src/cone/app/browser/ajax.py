@@ -12,19 +12,25 @@ registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
-    """Render an ajax action by name.
+    """bdajax ``ajaxaction`` implementation for cone.
     
-    Request must provide the parameter ``name`` containing the view or tile
-    name.
+    * Renders tile with name ``bdajax.action``.
+    
+    * Uses definitions from ``request.environ['cone.app.continuation']``
+      for continuation definitions.
     """
-    # XXX: prefix action name with tile to indicate tile rendering, otherwise
-    #      render view
     name = request.params.get('bdajax.action')
     rendered = render_tile(model, request, name)
+    continuation = request.environ.get('cone.app.continuation')
+    if continuation:
+        continuation = AjaxContinue(continuation).continuation
+    else:
+        continuation = False
     return {
         'mode': request.params.get('bdajax.mode'),
         'selector': request.params.get('bdajax.selector'),
         'payload': rendered,
+        'continuation': continuation,
     }
 
 
@@ -51,65 +57,90 @@ class AjaxEvent(object):
         self.selector = selector
 
 
-class AjaxFormContinue(object):
-    """Ajax form continuation computing. Used by ``render_ajax_form``
+class AjaxContinue(object):
+    """Convert ``AjaxAction`` and ``AjaxEvent`` instances to JSON response
+    definitions for bdajax continuation.
     """
     
-    def __init__(self, result, actions):
+    def __init__(self, definitions):
+        self.definitions = definitions
+    
+    @property
+    def continuation(self):
+        """Continuation definitions.
+        """
+        if not self.definitions:
+            return
+        continuation = list()
+        for definition in self.definitions:
+            if isinstance(definition, AjaxAction):
+                continuation.append({
+                    'type': 'action',
+                    'target': definition.target,
+                    'name': definition.name,
+                    'mode': definition.mode,
+                    'selector': definition.selector,
+                })
+            if isinstance(definition, AjaxEvent):
+                continuation.append({
+                    'type': 'event',
+                    'target': definition.target,
+                    'name': definition.name,
+                    'selector': definition.selector,
+                })
+        return continuation
+    
+    def dump(self):
+        """Return a JSON dump of continuation definitions.
+        """
+        ret = self.continuation
+        if not ret:
+            return
+        return json.dumps(ret)
+
+
+class AjaxFormContinue(AjaxContinue):
+    """Ajax form continuation computing. Used by ``render_ajax_form``.
+    """
+    
+    def __init__(self, result, definitions):
         self.result = result
-        self.actions = actions
+        AjaxContinue.__init__(self, definitions)
     
     @property
     def form(self):
         """Return rendered form tile result if no continuation actions.
         """
-        if not self.actions:
+        if not self.definitions:
             return self.result
         return ''
     
     @property
     def next(self):
         """Return 'false' if no continuation actions, otherwise a JSON dump of
-        action definitions.
+        continuation definitions.
         """
-        if not self.actions:
+        continuation = self.dump()
+        if not continuation:
             return 'false'
-        actions = list()
-        for action in self.actions:
-            if isinstance(action, AjaxAction):
-                actions.append({
-                    'type': 'action',
-                    'target': action.target,
-                    'name': action.name,
-                    'mode': action.mode,
-                    'selector': action.selector,
-                    'params': {},
-                })
-            if isinstance(action, AjaxEvent):
-                actions.append({
-                    'type': 'event',
-                    'target': action.target,
-                    'name': action.name,
-                    'selector': action.selector,
-                    'params': {},
-                })
-        return json.dumps(actions)
+        return continuation
 
 
 ajax_form_template = """\
 <script language="javascript" type="text/javascript">
     var parent = window.top.window;
     parent.cone.ajaxformrender('%(form)s');
-    parent.cone.ajaxformcontinue(%(next)s);
+    parent.bdajax.continuation(%(next)s);
 </script>
 """
+
 
 def render_ajax_form(model, request, name):
     """Render ajax form.
     """
     result = render_tile(model, request, name)
-    actions = request.environ.get('cone.app.continuation')
-    form_continue = AjaxFormContinue(result, actions)
+    continuation = request.environ.get('cone.app.continuation')
+    form_continue = AjaxFormContinue(result, continuation)
     rendered = ajax_form_template % {
         'form': form_continue.form,
         'next': form_continue.next,

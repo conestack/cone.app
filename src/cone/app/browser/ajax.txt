@@ -40,7 +40,10 @@ Authenticate and test again::
     >>> layer.authenticate('max')
     
     >>> ajax_tile(root, request)
-    {'payload': 'rendered test tile', 'mode': 'replace', 'selector': '.foo'}
+    {'continuation': False, 
+    'payload': 'rendered test tile', 
+    'mode': 'replace', 
+    'selector': '.foo'}
 
     >>> layer.logout()
 
@@ -93,15 +96,16 @@ AjaxFormContinue object. This object is used by ``render_ajax_form``::
 
     >>> from cone.app.browser.ajax import AjaxFormContinue
     >>> result = ''
-    >>> actions = []
-    >>> afc = AjaxFormContinue(result, actions)
+    >>> definitions = []
+    >>> afc = AjaxFormContinue(result, definitions)
     >>> afc.form
     ''
     
     >>> afc.next
     'false'
 
-If no actions, ``form`` returns result and ``next`` returns 'false'::
+If no continuation definitions, ``form`` returns result and ``next`` returns 
+'false'::
 
     >>> result = 'rendered form'
     >>> afc = AjaxFormContinue(result, [])
@@ -111,9 +115,9 @@ If no actions, ``form`` returns result and ``next`` returns 'false'::
     >>> afc.next
     'false'
 
-If actions and result, ``form`` returns empty string, because form processing
-was successful. ``next`` returns a JSON dump of given actions, which gets
-interpreted and executed on client side::
+If continuation definitions and result, ``form`` returns empty string, because
+form processing was successful. ``next`` returns a JSON dump of given actions,
+which gets interpreted and executed on client side::
 
     >>> actions = [action, event]
     >>> afc = AjaxFormContinue(result, actions)
@@ -121,14 +125,12 @@ interpreted and executed on client side::
     ''
 
     >>> afc.next
-    '[{"target": "http://example.com", 
+    '[{"mode": "replace", 
     "selector": ".someselector", 
-    "params": {}, 
-    "mode": "replace", 
     "type": "action", 
+    "target": "http://example.com", 
     "name": "tilename"}, 
-    {"params": {}, 
-    "selector": ".contextsensitiv", 
+    {"selector": ".contextsensitiv", 
     "type": "event", 
     "target": "http://example.com", 
     "name": "contextchanged"}]'
@@ -141,7 +143,7 @@ the response::
     ['<script language="javascript" type="text/javascript">', 
     '    var parent = window.top.window;', 
     "    parent.cone.ajaxformrender('%(form)s');", 
-    '    parent.cone.ajaxformcontinue(%(next)s);', 
+    '    parent.bdajax.continuation(%(next)s);', 
     '</script>', 
     '']
 
@@ -217,7 +219,7 @@ Test authorized with form extraction failure::
     >>> result.find('parent.cone.ajaxformrender(\'<form action=') != -1
     True
     
-    >>> result.find('parent.cone.ajaxformcontinue(false)') != -1
+    >>> result.find('parent.bdajax.continuation(false)') != -1
     True
 
 Test with form perocessing passing::
@@ -233,7 +235,7 @@ Test with form perocessing passing::
     >>> result.find(expected) != -1
     True
     
-    >>> expected = 'parent.cone.ajaxformcontinue([{"target":'
+    >>> expected = 'parent.bdajax.continuation([{"'
     >>> result.find(expected) != -1
     True
     
