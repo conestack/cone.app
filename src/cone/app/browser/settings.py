@@ -35,7 +35,6 @@ class SettingsPart(Part):
     
     @default
     def next(self, request):
-        url = make_url(request.request, node=self.model)
         if self.ajax_request:
             url = make_url(request.request, node=self.model)
             selector = '.%s' % self.model.__name__
