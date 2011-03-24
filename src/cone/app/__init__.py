@@ -81,7 +81,7 @@ def register_plugin(key, factory):
     root.factories[key] = factory
 
 
-def get_root(environ):
+def get_root(environ=None):
     return root
 
 
