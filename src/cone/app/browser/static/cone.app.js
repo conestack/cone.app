@@ -126,23 +126,24 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
      *     });
      */
     $.fn.dropdownmenu = function (options) {
-        var selector = this.selector;
         var trigger = options ? (options.trigger ? options.trigger : '.icon a')
                               : '.icon a';
         var menu = options ? (options.menu ? options.menu : '.dropdown_items')
                            : '.dropdown_items';
-        $(this).unbind('click');
+        this.unbind('click');
         $(trigger, this).bind('click', function(event) {
             event.preventDefault();
-            var container = $(menu, $(this).parents(selector + ':first'));
-            $(document).bind('mousedown', function(event) {
-                if ($(event.target).parents(selector + ':first').length) {
+            var container = $(menu, $(this).parent().parent());
+            $(document).unbind('mousedown')
+                       .bind('mousedown', function(event) {
+                if ($(event.target).parents(menu + ':first').length) {
                     return true;
                 }
                 container.css('display', 'none');
             });
             container.css('display', 'block');
         });
+        return this;
     }
     
     /*

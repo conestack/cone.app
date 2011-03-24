@@ -371,6 +371,9 @@ div.contextmenu div {
     margin-top:2px;
     margin:0;
 }
+div.contextmenu .dropdown_items {
+	margin-top:1.4em;
+}
 
 /* Tabs */
 .tabs {
