@@ -48,27 +48,34 @@
       <tal:row repeat="item context.contents.items">
         <tr>
           <td>
-            <a href="${context.nodeurl}/${item.__name__}"
-               class="add16_16
-                      addreference"
-               title="Add reference"
-               tal:attributes="id 'ref-%s' % item.metadata.get('uid', '')">
-                &nbsp;
-            </a>
-            <span class="reftitle"
-                  style="display:none;"
-                  tal:content="item.metadata.get('title', item.__name__)">
-              Title
-            </span>
+            <tal:referencable condition="item.properties.get('referencable')">
+              <a href="${context.nodeurl}/${item.__name__}"
+                 class="add16_16
+                        addreference"
+                 title="Add reference"
+                 tal:attributes="id 'ref-%s' % item.metadata.get('uid', '')">
+                  &nbsp;
+              </a>
+              <span class="reftitle"
+                    style="display:none;"
+                    tal:content="item.metadata.get('title', item.__name__)">
+                Title
+              </span>
+            </tal:referencable>
           </td>
           <td>
-            <a href="${context.nodeurl}/${item.__name__}"
+            <a tal:condition="not item.properties.get('leaf')"
+               href="${context.nodeurl}/${item.__name__}"
                ajax:bind="click"
                ajax:target="${context.nodeurl}/${item.__name__}"
                ajax:event="contextchanged:.refbrowsersensitiv"
                tal:content="item.metadata.get('title', item.__name__)">
                 Title
             </a>
+            <span tal:condition="item.properties.get('leaf')"
+                  tal:content="item.metadata.get('title', item.__name__)">
+              Title
+            </span>
           </td>
           <td tal:content="context.format_date(item.metadata.get('created'))">Created</td>
           <td tal:content="context.format_date(item.metadata.get('modified'))">Modified</td>

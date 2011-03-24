@@ -169,14 +169,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
      */
     $.fn.referencebrowser = function() {
         var icon = $('<a>&nbsp;</a>').attr('class', 'reference16_16');
-        $(this).after(icon);
-        icon = $(this).next();
+        this.after(icon);
+        icon = this.next();
         icon.unbind('click');
         icon.bind('click', function() {
-            yafowil.referencebrowser.target = $(this).prev().get(0);
+            var elem = $(this);
+            yafowil.referencebrowser.target = elem.prev().get(0);
             yafowil.referencebrowser.overlay = bdajax.overlay({
                 action: 'referencebrowser',
-                target: ''
+                target: elem.parent().attr('ajax:target')
             });
         });
     }

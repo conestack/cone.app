@@ -52,9 +52,23 @@ def reference_extractor(widget, data):
     return data.request.get('%s.uid' % widget.dottedpath)
 
 
+def wrap_ajax_target(rendered, widget):
+    if widget.attrs.get('target'):
+        attrs = {
+            'ajax:target': widget.attrs.get('target'),
+        }
+        return tag('span', rendered, **attrs)
+    return rendered
+
+
 def reference_renderer(widget, data):
+    """Properties:
+    
+    ``multivalued``: flag whether reference field is multivalued
+    ``target``: ajax target for reference browser triggering
+    """
     if widget.attrs.get('multivalued'):
-        return select_renderer(widget, data)
+        return wrap_ajax_target(select_renderer(widget, data), widget)
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
@@ -77,7 +91,8 @@ def reference_renderer(widget, data):
         'value': value[0],
         'name_': '%s.uid' % widget.dottedpath,
     }
-    return tag('input', **text_attrs) + tag('input', **hidden_attrs)
+    return wrap_ajax_target(
+        tag('input', **text_attrs) + tag('input', **hidden_attrs), widget)
 
 
 factory.defaults['reference.required_class'] = 'required'
