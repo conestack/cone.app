@@ -50,19 +50,10 @@ def getNodeInfo(name):
         return _node_info_registry[name]
 
 
-class BaseNode(object):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        AsAttrAccess,
-        NodeChildValidate,
-        Adopt,
-        Nodespaces,
-        Attributes,
-        DefaultInit,
-        Nodify,
-        Lifecycle,
-        OdictStorage,
-    )
+
+
+class AppNodeMixin(object):
+    
     implements(IApplicationNode)
     
     __acl__ = DEFAULT_ACL
@@ -98,6 +89,21 @@ class BaseNode(object):
             info.title = str(self.__class__)
             info.node = self.__class__
         return info
+
+
+class BaseNode(AppNodeMixin):
+    __metaclass__ = plumber
+    __plumbing__ = (
+        AsAttrAccess,
+        NodeChildValidate,
+        Adopt,
+        Nodespaces,
+        Attributes,
+        DefaultInit,
+        Nodify,
+        Lifecycle,
+        OdictStorage,
+    )
 
 
 class FactoryNode(BaseNode):
