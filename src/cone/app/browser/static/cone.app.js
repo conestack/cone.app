@@ -22,6 +22,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         cone.livesearchbinder();
         cone.tabsbinder();
         cone.dropdownmenubinder();
+        cone.transitionmenubinder();
         cone.ajaxformbinder();
         yafowil.referencebrowser.browser_binder();
         
@@ -29,6 +30,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         $.extend(bdajax.binders, {
             tabsbinder: cone.tabsbinder,
             dropdownmenubinder: cone.dropdownmenubinder,
+            transitionmenubinder: cone.transitionmenubinder,
             ajaxformbinder: cone.ajaxformbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder: 
@@ -67,6 +69,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         
         dropdownmenubinder: function(context) {
             $('.dropdown', context).dropdownmenu();
+        },
+        
+        transitionmenubinder: function(context) {
+            $('.transitions_dropdown', context).dropdownmenu({
+                menu: '.dropdown_items',
+                trigger: '.state a'
+            });
         },
         
         // ajax form related. XXX: move to bdajax
