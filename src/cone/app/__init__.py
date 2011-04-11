@@ -81,6 +81,14 @@ def register_plugin(key, factory):
     root.factories[key] = factory
 
 
+main_hooks = list()
+
+def register_main_hook(callback):
+    """Register function to get called on application startup.
+    """
+    main_hooks.append(callback)
+
+
 def get_root(environ=None):
     return root
 
@@ -125,6 +133,12 @@ def main(global_config, **settings):
     for plugin in plugins:
         configurator.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
     
-    # end config and return wsgi app
+    # end config
     configurator.end()
+    
+    # execute main hooks
+    for hook in main_hooks:
+        hook(configurator, global_config, settings)
+    
+    # return wsgi app
     return configurator.make_wsgi_app()
