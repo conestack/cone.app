@@ -5,13 +5,14 @@ Workflow dropdown
     >>> from cone.app import root
     >>> from pyramid.testing import DummyRequest
     >>> from cone.app.tests.mock import WorkflowNode
+    >>> import cone.app.browser.workflow
     
     >>> request = DummyRequest()
     >>> node = WorkflowNode()
     
-    >>> from cone.app.browser.workflow import initialize_workflow
     >>> node.state
     
+    >>> from cone.app.workflow import initialize_workflow
     >>> initialize_workflow(node)
     >>> node.state
     u'initial'

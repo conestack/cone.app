@@ -1,40 +1,23 @@
+from cone.tile import (
+    tile,
+    Tile,
+)
+from cone.app.model import Properties
+from cone.app.browser.ajax import (
+    AjaxAction,
+    AjaxEvent,
+)
+from cone.app.browser.utils import (
+    make_query,
+    make_url,
+)
+
+import logging
+logger = logging.getLogger('cone.app')
+
 try:
     from repoze.workflow import get_workflow
     from repoze.workflow import WorkflowError
-    from cone.tile import (
-        tile,
-        Tile,
-    )
-    from cone.app.model import Properties
-    from cone.app.browser.ajax import (
-        AjaxAction,
-        AjaxEvent,
-    )
-    from cone.app.browser.utils import (
-        make_query,
-        make_url,
-    )
-    
-    import logging
-    logger = logging.getLogger('cone.mdb')
-    
-    
-    def initialize_workflow(node):
-        wf_name = node.properties.wf_name
-        workflow = get_workflow(node.__class__, wf_name)
-        workflow.initialize(node)
-    
-    
-    def persist_state(node, info):
-        """Transition callback for repoze.workflow.
-        
-        Persist state to ``node.state`` and call node.
-        
-        XXX: move to cone.app.workflow
-        """
-        node.state = info.transition[u'to_state']
-        node()
-    
     
     @tile('wf_dropdown', 'templates/wf_dropdown.pt', 
           permission='view', strict=False)

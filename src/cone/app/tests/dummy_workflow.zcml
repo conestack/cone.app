@@ -21,7 +21,7 @@
 
     <transition
        name="initial_2_final"
-       callback="cone.app.browser.workflow.persist_state"
+       callback="cone.app.workflow.persist_state"
        from_state="initial"
        to_state="final"
        permission="edit"
