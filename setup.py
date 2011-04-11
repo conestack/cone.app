@@ -48,12 +48,14 @@ setup(name='cone.app',
                 'interlude',
                 'plone.testing',
                 'unittest2',
+                'repoze.workflow',
           ]
       ),
       tests_require=[
           'interlude',
           'plone.testing',
           'unittest2',
+          'repoze.workflow',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
       entry_points = """\

@@ -91,6 +91,21 @@ class AppNodeMixin(object):
         return info
 
 
+class WorkflowNodeMixin(object):
+    """Mixin for nodes providing workflow states.
+    
+    This implementation persists to self.attrs['state']
+    """
+    
+    def _get_state(self):
+        return self.attrs.get('state', None)
+    
+    def _set_state(self, val):
+        self.attrs['state'] = val
+    
+    state = property(_get_state, _set_state)
+
+
 class BaseNode(AppNodeMixin):
     __metaclass__ = plumber
     __plumbing__ = (

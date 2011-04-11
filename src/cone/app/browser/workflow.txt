@@ -1,0 +1,33 @@
+Workflow dropdown
+=================
+
+    >>> from cone.tile import render_tile
+    >>> from cone.app import root
+    >>> from pyramid.testing import DummyRequest
+    >>> from cone.app.tests.mock import WorkflowNode
+    
+    >>> request = DummyRequest()
+    >>> node = WorkflowNode()
+    
+    >>> from cone.app.browser.workflow import initialize_workflow
+    >>> node.state
+    
+    >>> initialize_workflow(node)
+    >>> node.state
+    u'initial'
+    
+    >>> layer.authenticate('editor')
+    
+    >>> res = render_tile(node, request, 'wf_dropdown')
+    >>> res.find('title="Change state">initial</a>') > -1
+    True
+    
+    >>> request.params['do_transition'] = 'initial_2_final'
+    >>> res = render_tile(node, request, 'wf_dropdown')
+    >>> res.find('class="state-final">final</span>') > -1
+    True
+    
+    >>> node.state
+    u'final'
+    
+    >>> layer.logout()
