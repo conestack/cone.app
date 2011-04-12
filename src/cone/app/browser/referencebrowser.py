@@ -36,14 +36,94 @@ registerTile('referencebrowser_pathbar',
              class_=PathBar)
 
 
-@tile('referencelisting', 'templates/referencelisting.pt', permission='view')
+@tile('referencelisting', 'templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
     
-    @property
-    def batch(self):
-        batch = ContentsBatch(self.contents)
-        batch.name = 'referencebatch'
-        return batch(self.model, self.request)
+    table_id = 'referencebrowser'
+    table_tile_name = 'referencelisting'
+    col_defs = [
+        {
+            'id': 'actions',
+            'title': 'Actions',
+            'sort_key': None,
+            'sort_title': None,
+            'content': 'actions',
+            'link': False,
+        },
+        {
+            'id': 'title',
+            'title': 'Title',
+            'sort_key': 'title',
+            'sort_title': 'Sort on title',
+            'content': 'string',
+            'link': True,
+        },
+        {
+            'id': 'created',
+            'title': 'Created',
+            'sort_key': 'created',
+            'sort_title': 'Sort on created',
+            'content': 'datetime',
+            'link': False,
+        },
+        {
+            'id': 'modified',
+            'title': 'Modified',
+            'sort_key': 'modified',
+            'sort_title': 'Sort on modified',
+            'content': 'datetime',
+            'link': False,
+        },
+    ]
+    
+    def sorted_rows(self, start, end, sort, order):
+        children = self.sorted_children(sort, order)
+        rows = list()
+        for child in children[start:end]:
+            row_data = RowData()
+            row_data['actions'] = Item(actions=self.create_actions(child))
+            value = child.metadata.get('title', child.__name__)
+            if not child.properties.get('leaf'):
+                link = target = make_url(node=child)
+                title = Item(value, link, target)
+            else:
+                title = Item(value)
+            row_data['title'] = title
+            row_data['created'] = Item(child.metadata.get('created'))
+            row_data['modified'] = Item(child.metadata.get('modified'))
+            rows.append(row_data)
+        return rows
+    
+    def create_actions(self, node):
+        actions = list()
+        if not node.properties.get('referencable'):
+            return actions
+        url = make_url(node=node)
+        attrs = {
+            'href': url,
+            'id': 'ref-%s' % node.metadata.get('uid', ''),
+            'title': 'Add reference',
+            'class_': 'add16_16 addreference',
+        }
+        rendered = tag('a', '&nbsp;', **attrs)
+        attrs = {
+            'class_': 'reftitle',
+            'style': 'display:none;',
+        }
+        title = node.metadata.get('title', node.__name__)
+        rendered += tag('span', title, **attrs)
+        actions.append(Action(rendered=rendered))
+        return actions
+
+
+#@tile('referencelisting', 'templates/referencelisting.pt', permission='view')
+#class ReferenceListing(ContentsTile):
+#    
+#    @property
+#    def batch(self):
+#        batch = ContentsBatch(self.contents)
+#        batch.name = 'referencebatch'
+#        return batch(self.model, self.request)
 
 
 def reference_extractor(widget, data):

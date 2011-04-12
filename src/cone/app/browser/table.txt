@@ -23,7 +23,24 @@ Imports and dummy context::
     ...     created = created + delta
     ...     modified = modified + delta
 
-    >>> from cone.app.browser.contents import ContentsTile
+Create ``Contents`` instance. Responsible for listing processing::
+
+    >> request = DummyRequest()
+    >> contents = Contents(model, request)
+    >> contents
+    <cone.app.browser.contents.Contents object at ...>
+
+``sort`` reads the actual sorting from request, defaults to 'created'. Possible
+values are 'title', 'creator', 'created' and 'modified'::    
+
+    >>> contents.sort
+    'created'
+    
+    >>> request.params['sort'] = 'creator'
+    >>> contents.sort
+    'creator'
+    
+    >>> del request.params['sort']
 
 ``sorted`` returns sorted listing items, it considers ``sort`` and ``order``.
 Latter one is also read from request with possible values 'asc' and 'desc',
