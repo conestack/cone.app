@@ -96,8 +96,8 @@ AjaxFormContinue object. This object is used by ``render_ajax_form``::
 
     >>> from cone.app.browser.ajax import AjaxFormContinue
     >>> result = ''
-    >>> definitions = []
-    >>> afc = AjaxFormContinue(result, definitions)
+    >>> continuation = []
+    >>> afc = AjaxFormContinue(result, continuation)
     >>> afc.form
     ''
     
@@ -119,8 +119,8 @@ If continuation definitions and result, ``form`` returns empty string, because
 form processing was successful. ``next`` returns a JSON dump of given actions,
 which gets interpreted and executed on client side::
 
-    >>> actions = [action, event]
-    >>> afc = AjaxFormContinue(result, actions)
+    >>> continuation = [action, event]
+    >>> afc = AjaxFormContinue(result, continuation)
     >>> afc.form
     ''
 

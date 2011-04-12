@@ -10,6 +10,12 @@ from cone.tile import (
 registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
 
 
+def ajax_continue(request, continuation):
+    """Set ajax continuation on environ.
+    """
+    request.environ['cone.app.continuation'] = continuation
+
+
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
     """bdajax ``ajaxaction`` implementation for cone.
@@ -23,7 +29,7 @@ def ajax_tile(model, request):
     rendered = render_tile(model, request, name)
     continuation = request.environ.get('cone.app.continuation')
     if continuation:
-        continuation = AjaxContinue(continuation).continuation
+        continuation = AjaxContinue(continuation).definitions
     else:
         continuation = False
     return {
@@ -62,17 +68,17 @@ class AjaxContinue(object):
     definitions for bdajax continuation.
     """
     
-    def __init__(self, definitions):
-        self.definitions = definitions
+    def __init__(self, continuation):
+        self.continuation = continuation
     
     @property
-    def continuation(self):
-        """Continuation definitions.
+    def definitions(self):
+        """Continuation definitions as list of dicts for JSON serialization.
         """
-        if not self.definitions:
+        if not self.continuation:
             return
         continuation = list()
-        for definition in self.definitions:
+        for definition in self.continuation:
             if isinstance(definition, AjaxAction):
                 continuation.append({
                     'type': 'action',
@@ -93,7 +99,7 @@ class AjaxContinue(object):
     def dump(self):
         """Return a JSON dump of continuation definitions.
         """
-        ret = self.continuation
+        ret = self.definitions
         if not ret:
             return
         return json.dumps(ret)
@@ -103,15 +109,15 @@ class AjaxFormContinue(AjaxContinue):
     """Ajax form continuation computing. Used by ``render_ajax_form``.
     """
     
-    def __init__(self, result, definitions):
+    def __init__(self, result, continuation):
         self.result = result
-        AjaxContinue.__init__(self, definitions)
+        AjaxContinue.__init__(self, continuation)
     
     @property
     def form(self):
         """Return rendered form tile result if no continuation actions.
         """
-        if not self.definitions:
+        if not self.continuation:
             return self.result
         return ''
     
@@ -120,10 +126,10 @@ class AjaxFormContinue(AjaxContinue):
         """Return 'false' if no continuation actions, otherwise a JSON dump of
         continuation definitions.
         """
-        continuation = self.dump()
-        if not continuation:
+        ret = self.dump()
+        if not ret:
             return 'false'
-        return continuation
+        return ret
 
 
 ajax_form_template = """\
