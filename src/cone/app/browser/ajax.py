@@ -1,3 +1,4 @@
+import types
 import json
 from pyramid.response import Response
 from pyramid.view import view_config
@@ -8,12 +9,6 @@ from cone.tile import (
 
 
 registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
-
-
-def ajax_continue(request, continuation):
-    """Set ajax continuation on environ.
-    """
-    request.environ['cone.app.continuation'] = continuation
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
@@ -40,6 +35,36 @@ def ajax_tile(model, request):
     }
 
 
+def ajax_continue(request, continuation):
+    """Set ajax continuation on environ.
+    
+    ``continuation``
+        list of continuation definition objects or single continuation
+        definition.
+    """
+    if request.environ.get('cone.app.continuation', None) is None:
+        request.environ['cone.app.continuation'] = list()
+    if type(continuation) is types.ListType:
+        existent = request.environ['cone.app.continuation']
+        request.environ['cone.app.continuation'] = existent + continuation
+    else:
+        request.environ['cone.app.continuation'].append(continuation)
+
+
+def ajax_message(request, payload, flavor='message'):
+    """Convenience to add ajax message definition to ajax continuation
+    definitions.
+    """
+    ajax_continue(request, AjaxMessage(payload, flavor, None))
+
+
+def ajax_status_message(request, payload):
+    """Convenience to add ajax status message definition to ajax continuation
+    definitions.
+    """
+    ajax_continue(request, AjaxMessage(payload, None, '#status_message'))  
+
+
 class AjaxAction(object):
     """Ajax action configuration. Used to define continuation actions for
     client side.
@@ -60,6 +85,17 @@ class AjaxEvent(object):
     def __init__(self, target, name, selector):
         self.target = target
         self.name = name
+        self.selector = selector
+
+
+class AjaxMessage(object):
+    """Ajax Message configuration. Used to define continuation messages for
+    client side.
+    """
+    
+    def __init__(self, payload, flavor, selector):
+        self.payload = payload
+        self.flavor = flavor
         self.selector = selector
 
 
@@ -92,6 +128,13 @@ class AjaxContinue(object):
                     'type': 'event',
                     'target': definition.target,
                     'name': definition.name,
+                    'selector': definition.selector,
+                })
+            if isinstance(definition, AjaxMessage):
+                continuation.append({
+                    'type': 'message',
+                    'payload': definition.payload,
+                    'flavor': definition.flavor,
                     'selector': definition.selector,
                 })
         return continuation
