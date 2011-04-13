@@ -91,7 +91,9 @@ class ContentsTile(Table):
             row_data['actions'] = Item(actions=self.create_actions(child))
             value = child.metadata.get('title', child.__name__)
             link = target = make_url(self.request, node=child)
-            row_data['title'] = Item(value, link, target)
+            action = 'content:#content:inner'
+            event = 'contextchanged:.contextsensitiv'
+            row_data['title'] = Item(value, link, target, action, event)
             row_data['creator'] = Item(child.metadata.get('creator', 'unknown'))
             row_data['created'] = Item(child.metadata.get('created'))
             row_data['modified'] = Item(child.metadata.get('modified'))
@@ -110,12 +112,15 @@ class ContentsTile(Table):
         actions = list()
         link = target = make_url(self.request, node=node)
         action = 'content:#content:inner'
-        actions.append(Action('View', link, target, action, 'view16_16'))
+        event = 'contextchanged:.contextsensitiv'
+        actions.append(Action('View', link, target, action, event, 'view16_16'))
         if node.properties.editable:
             query = make_query(came_from='parent')
             link = make_url(
                 self.request, node=node, resource='edit', query=query)
             target = make_url(self.request, node=node, query=query)
             action = 'edit:#content:inner'
-            actions.append(Action('Edit', link, target, action, 'edit16_16'))
+            event = 'contextchanged:.contextsensitiv'
+            actions.append(
+                Action('Edit', link, target, action, event, 'edit16_16'))
         return actions

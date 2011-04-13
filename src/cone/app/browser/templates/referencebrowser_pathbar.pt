@@ -10,6 +10,7 @@
          ajax:bind="click"
          ajax:target="${request.application_url}"
          ajax:event="contextchanged:.refbrowsersensitiv"
+         ajax:action="referencelisting:#referencebrowser:replace"
          tal:condition="model.__parent__">Home</a>
       <strong tal:condition="not model.__parent__">Home</strong>
     </li>
@@ -19,6 +20,7 @@
          ajax:bind="click"
          ajax:target="${item['url']}"
          ajax:event="contextchanged:.refbrowsersensitiv"
+         ajax:action="referencelisting:#referencebrowser:replace"
          tal:attributes="href item['url'];
                          class item['selected'] and 'selected' or ''"
          tal:content="item['title']"

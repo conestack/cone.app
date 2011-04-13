@@ -91,7 +91,10 @@ class ReferenceListing(ContentsTile):
             value = child.metadata.get('title', child.__name__)
             if not child.properties.get('leaf'):
                 link = target = make_url(self.request, node=child)
-                title = Item(value, link, target)
+                action = \
+                    '%s:#%s:replace' % (self.table_tile_name, self.table_id)
+                event = 'contextchanged:.refbrowsersensitiv'
+                title = Item(value, link, target, action, event)
             else:
                 title = Item(value)
             row_data['title'] = title

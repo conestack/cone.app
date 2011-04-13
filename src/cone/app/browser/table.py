@@ -23,6 +23,8 @@ class Item(object):
                  value=None,
                  link=None,
                  target=None,
+                 action=None,
+                 event=None,
                  actions=[]):
         """Item definition.
         
@@ -35,12 +37,20 @@ class Item(object):
         ``target``
             item ajax:target attribute
         
+        ``action``
+            item ajax:action attribute
+        
+        ``event``
+            item ajax:event attribute
+        
         ``actions``
             item actions, list of Action instances
         """
         self.value = value
         self.link = link
         self.target = target
+        self.action = action
+        self.event = event
         self.actions = actions
 
 
@@ -51,6 +61,7 @@ class Action(object):
                  link=None,
                  target=None,
                  action=None,
+                 event=None,
                  css=None,
                  rendered=None):
         """Action definition.
@@ -67,6 +78,9 @@ class Action(object):
         ``action``
             action ajax:action attribute
         
+        ``event``
+            action ajax:event attribute
+        
         ``css``
             action class attribute
         
@@ -78,6 +92,7 @@ class Action(object):
         self.link = link
         self.target = target
         self.action = action
+        self.event = event
         self.css = css
         self.rendered = rendered
 
@@ -90,6 +105,7 @@ class Table(Tile):
     ``cone.app:browser/templates/table.pt``
     """
     
+    wrapper_binding = 'batchclicked sortclicked'
     table_id = 'table'
     table_tile_name = 'table'
     col_defs = []

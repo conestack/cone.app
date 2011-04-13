@@ -4,7 +4,7 @@
   <div id="${context.table_id}"
        class="${context.table_id}batchsensitiv
               ${context.table_id}sortingheadsensitiv"
-       ajax:bind="batchclicked sortclicked"
+       ajax:bind="${context.wrapper_binding}"
        ajax:target="${context.nodeurl}"
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
   
@@ -48,7 +48,7 @@
                    title="${action.title}"
                    ajax:bind="click"
                    ajax:target="${action.target}"
-                   ajax:event="contextchanged:.contextsensitiv"
+                   ajax:event="${action.event}"
                    ajax:action="${action.action}"
                    tal:condition="not action.rendered">&nbsp;</a>
                 <tal:action condition="action.rendered"
@@ -64,8 +64,8 @@
                 <a href="${item.link}"
                    ajax:bind="click"
                    ajax:target="${item.target}"
-                   ajax:event="contextchanged:.contextsensitiv"
-                   ajax:action="content:#content:inner"
+                   ajax:event="${item.event}"
+                   ajax:action="${item.action}"
                    tal:content="value">
                   Value
                 </a>
