@@ -206,7 +206,7 @@ Authorized::
 
     >>> layer.authenticate('max')
     >>> res = render_tile(model, request, 'referencelisting')
-    >>> res.find('id="referencelisting"') > -1
+    >>> res.find('id="referencebrowser"') > -1
     True
     
     >>> layer.logout()

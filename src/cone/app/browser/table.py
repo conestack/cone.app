@@ -50,6 +50,7 @@ class Action(object):
                  title=None,
                  link=None,
                  target=None,
+                 action=None,
                  css=None,
                  rendered=None):
         """Action definition.
@@ -63,6 +64,9 @@ class Action(object):
         ``target``
             action ajax:target attribute
         
+        ``action``
+            action ajax:action attribute
+        
         ``css``
             action class attribute
         
@@ -73,6 +77,7 @@ class Action(object):
         self.title = title
         self.link = link
         self.target = target
+        self.action = action
         self.css = css
         self.rendered = rendered
 
@@ -157,7 +162,7 @@ class TableBatch(Batch):
     
     def __init__(self, table_tile):
         self.table_tile = table_tile
-        self.name = table_tile.table_id
+        self.name = table_tile.table_id + 'batch'
         self.path = None
         self.attribute = 'render'
     

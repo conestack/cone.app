@@ -3,9 +3,15 @@ from cone.tile import (
     registerTile,
 )
 from cone.app.browser.layout import PathBar
-from cone.app.browser.contents import (
-    ContentsTile,
-    ContentsBatch,
+from cone.app.browser.table import (
+    RowData,
+    Item,
+    Action,
+)
+from cone.app.browser.contents import ContentsTile
+from cone.app.browser.utils import (
+    make_query,
+    make_url,
 )
 from yafowil.base import (
     factory,
@@ -84,7 +90,7 @@ class ReferenceListing(ContentsTile):
             row_data['actions'] = Item(actions=self.create_actions(child))
             value = child.metadata.get('title', child.__name__)
             if not child.properties.get('leaf'):
-                link = target = make_url(node=child)
+                link = target = make_url(self.request, node=child)
                 title = Item(value, link, target)
             else:
                 title = Item(value)
@@ -98,7 +104,7 @@ class ReferenceListing(ContentsTile):
         actions = list()
         if not node.properties.get('referencable'):
             return actions
-        url = make_url(node=node)
+        url = make_url(self.request, node=node)
         attrs = {
             'href': url,
             'id': 'ref-%s' % node.metadata.get('uid', ''),
@@ -114,16 +120,6 @@ class ReferenceListing(ContentsTile):
         rendered += tag('span', title, **attrs)
         actions.append(Action(rendered=rendered))
         return actions
-
-
-#@tile('referencelisting', 'templates/referencelisting.pt', permission='view')
-#class ReferenceListing(ContentsTile):
-#    
-#    @property
-#    def batch(self):
-#        batch = ContentsBatch(self.contents)
-#        batch.name = 'referencebatch'
-#        return batch(self.model, self.request)
 
 
 def reference_extractor(widget, data):

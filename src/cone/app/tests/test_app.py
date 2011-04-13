@@ -22,6 +22,7 @@ TESTFILES = [
     '../browser/ajax.txt',
     '../browser/authoring.txt',
     '../browser/batch.txt',
+#    '../browser/table.txt',
     '../browser/contents.txt',
     '../browser/form.txt',
     '../browser/layout.txt',

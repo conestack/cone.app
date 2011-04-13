@@ -1,4 +1,6 @@
-<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
   <div class="transitions_dropdown"
        tal:define="transitions context.transitions;
                    state context.model.state">

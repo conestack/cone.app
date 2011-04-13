@@ -1,4 +1,7 @@
-<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+
   <ul class="refbrowsersensitiv"
       ajax:bind="contextchanged"
       ajax:action="referencebrowser_pathbar:#referencebrowser_pathbar:inner">
@@ -24,4 +27,5 @@
               tal:condition="item['selected']">Title</strong>
     </li>
   </ul>
+
 </tal:ajax>

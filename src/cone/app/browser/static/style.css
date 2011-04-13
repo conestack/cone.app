@@ -250,6 +250,9 @@ div#footer a {
     color:#49539f;
     text-decoration:none;
 }
+.batch img {
+    border:none;
+}
 .batch strong {
     font-weight:bold;
     font-size:110%;
@@ -372,7 +375,7 @@ div.contextmenu div {
     margin:0;
 }
 div.contextmenu .dropdown_items {
-	margin-top:1.4em;
+    margin-top:1.4em;
 }
 
 /* Tabs */
