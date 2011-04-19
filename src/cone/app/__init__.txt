@@ -47,7 +47,7 @@ Settings is displayed in navtree by default::
 XXX: mainmenu and navtree same property, other name for controlling appearance?
     
     >>> root['settings'].properties.keys()
-    ['in_navtree']
+    ['in_navtree', 'icon']
     
     >>> root['settings'].properties.in_navtree
     True

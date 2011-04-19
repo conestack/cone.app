@@ -187,8 +187,10 @@ class AppSettings(FactoryNode):
     @property
     def properties(self):
         if not hasattr(self, '_properties'):
-            self._properties = Properties()
-            self._properties.in_navtree = True
+            props = Properties()
+            props.in_navtree = True
+            props.icon = 'static/images/settings16_16.png'
+            self._properties = props
         return self._properties
     
     @property

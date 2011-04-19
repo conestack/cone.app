@@ -190,25 +190,28 @@ ul#mainmenu li.node-settings a.current_page_item {
     list-style:none;
     line-height:normal;
 }
+.navtree li img {
+    float:left;
+}
+.navtree li a {
+    line-height:16px;
+    padding-left:3px;
+}
 .navtree li .heading {
     font-weight:bold;
     color:#333;
     margin-bottom:10px;
+    padding-left:8px;
 }
 .navtree li ul {
     padding:0;
 }
-.navtree li li {
-    margin:0px;
-    padding-left:0px;
-    background:url('images/doube_arr_right.jpg') no-repeat left 4px;
-}
 .navtree ul.childtree {
-    padding-top:10px;
+    padding-top:6px;
+    margin-top:4px;
 }
 .navtree li.navtreeitem {
     padding-left:8px;
-    background:url('images/arr_right.jpg') no-repeat left 5px;
 }
 .navtree li.navtreeitem a {
     color:#333;
@@ -218,6 +221,30 @@ ul#mainmenu li.node-settings a.current_page_item {
     color:#4B8749;
     text-decoration:none;
     font-weight:bold;
+}
+.navtree ul.navtreelevel_1 {
+    margin-left:6px;
+    border-left:#cccccc 3px solid;
+}
+.navtree ul.navtreelevel_2 {
+    margin-left:6px;
+    border-left:#cdcdcd 3px solid;
+}
+.navtree ul.navtreelevel_3 {
+    margin-left:6px;
+    border-left:#dddddd 3px solid;
+}
+.navtree ul.navtreelevel_4 {
+    margin-left:6px;
+    border-left:#dedede 3px solid;
+}
+.navtree ul.navtreelevel_5 {
+    margin-left:6px;
+    border-left:#eeeeee 3px solid;
+}
+.navtree ul.navtreelevel_6 {
+    margin-left:6px;
+    border-left:#efefef 3px solid;
 }
 
 /* Content */

@@ -14,7 +14,8 @@
          tal:attributes="href item['url'];
                          class css"
          tal:content="item['title']">Title</a>
-      <ul tal:condition="item['children']" class="childtree">
+      <ul tal:condition="item['children']"
+          class="childtree ${'navtreelevel_%i' % level}">
         <tal:tree replace="structure context.rendertree(item['children'],
                                                         level + 1)" />
       </ul>
