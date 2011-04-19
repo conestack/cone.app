@@ -115,7 +115,8 @@ Render without any value.::
     ...         'multivalued': True,
     ...     })
     >>> widget()
-    u'<select class="referencebrowser" id="input-ref" multiple="multiple" 
+    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
+    /><select class="referencebrowser" id="input-ref" multiple="multiple" 
     name="ref" />'
 
 Render required with empty value.::
@@ -144,7 +145,8 @@ Render required with empty value.::
     [ExtractionError('Ref Required',)]
     
     >>> widget(data=data)
-    u'<select class="referencebrowser required" id="input-ref" 
+    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
+    /><select class="referencebrowser required" id="input-ref" 
     multiple="multiple" name="ref" required="required"><option 
     id="input-ref-uid1" value="uid1">Title1</option><option 
     id="input-ref-uid2" value="uid2">Title2</option></select>'
@@ -160,7 +162,8 @@ Required with valid value.::
     []
     
     >>> widget(data=data)
-    u'<select class="referencebrowser required" id="input-ref" 
+    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
+    /><select class="referencebrowser required" id="input-ref" 
     multiple="multiple" name="ref" required="required"><option 
     id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
     id="input-ref-uid2" selected="selected" 
