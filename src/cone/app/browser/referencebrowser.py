@@ -25,10 +25,14 @@ from yafowil.common import (
     select_extractor,
 )
 from yafowil.utils import (
-    tag,
+    Tag,
     cssid,
     cssclasses,
 )
+
+
+# XXX define i18n translation callback for app
+tag = Tag(lambda x: x)
 
 
 registerTile('referencebrowser',
