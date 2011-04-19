@@ -122,22 +122,29 @@ class PathBar(Tile):
     
     @property
     def items(self):
-        # XXX: default child
-        model = self.model
-        ret = [{
-            'title': model.metadata.title,
-            'url': make_url(self.request, node=model),
-            'selected': True,
-        }]
-        while model.__parent__ is not None:
-            model = model.__parent__
-            ret.append({
-                'title': model.metadata.title,
-                'url': make_url(self.request, node=model),
+        items = list()
+        node = self.model
+        while node is not None:
+            items.append({
+                'title': node.metadata.title,
+                'url': make_url(self.request, node=node),
                 'selected': False,
+                'id': node.__name__,
+                'default_child': node.properties.default_child,
             })
-        ret.pop()
-        ret.reverse()
+            node = node.__parent__
+        items.reverse()
+        ret = list()
+        count = len(items)
+        for i in range(count):
+            default_child = items[i]['default_child']
+            if default_child \
+              and i < count - 1 \
+              and default_child == items[i + 1]['id']:
+                continue
+            ret.append(items[i])
+        ret[0]['title'] = 'Home'
+        ret[-1]['selected'] = True
         return ret
 
 

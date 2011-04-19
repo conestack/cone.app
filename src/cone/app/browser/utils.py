@@ -27,9 +27,10 @@ def make_url(request, path=[], node=None, resource=None, query=None):
         path = nodepath(node)
     if resource is not None:
         path.append(resource)
+    url = '%s/%s' % (request.application_url, '/'.join(path))
     if not query:
-        return '%s/%s' % (request.application_url, '/'.join(path))
-    return '%s/%s%s' % (request.application_url, '/'.join(path), query)
+        return url
+    return '%s%s' % (url, query)
 
 
 def format_date(dt, long=True):
