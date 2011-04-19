@@ -10,6 +10,7 @@
     </div>
     <ul class="dropdown_items" style="display:none;">
       <li tal:repeat="item context.items">
+        <img src="${item.icon}" alt="..." />
         <a href="${item.url}"
            ajax:bind="click"
            ajax:target="${item.target}"

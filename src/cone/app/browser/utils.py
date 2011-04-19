@@ -1,5 +1,7 @@
 import datetime
 from pyramid.security import authenticated_userid
+from cone.app.model import getNodeInfo
+from cone.app.utils import app_config
 
 
 def authenticated(request):
@@ -22,7 +24,11 @@ def make_query(**kw):
     return '?%s' % '&'.join(query)
 
 
-def make_url(request, path=[], node=None, resource=None, query=None):
+def make_url(request, path=None, node=None, resource=None, query=None):
+    # if path=[] in signature, path gets aggregated in recursive calls ???
+    # happens on icon lookup in navtree.
+    if path is None:
+        path = []
     if node is not None:
         path = nodepath(node)
     if resource is not None:
@@ -37,6 +43,15 @@ def format_date(dt, long=True):
     if not isinstance(dt, datetime.datetime):
         return 'unknown'
     return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
+
+
+def node_icon_url(request, node):
+    if node.properties.icon:
+        return make_url(request, resource=node.properties.icon)
+    info = node.nodeinfo
+    if not info.icon:
+        return make_url(request, resource=app_config().default_node_icon)
+    return make_url(request, resource=info.icon)
 
 
 class AppUtil(object):

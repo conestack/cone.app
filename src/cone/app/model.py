@@ -37,7 +37,10 @@ from cone.app.security import (
     DEFAULT_ACL,
     DEFAULT_SETTINGS_ACL,
 )
-from cone.app.utils import DatetimeHelper
+from cone.app.utils import (
+    DatetimeHelper,
+    app_config,
+)
 
 _node_info_registry = dict()
 
@@ -88,6 +91,7 @@ class AppNodeMixin(object):
             info = BaseNodeInfo()
             info.title = str(self.__class__)
             info.node = self.__class__
+            info.icon = app_config().default_node_icon
         return info
 
 
@@ -249,8 +253,11 @@ class BaseMetadata(Properties):
     implements(IMetadata)
 
 
-class BaseNodeInfo(Properties):
+class NodeInfo(Properties):
     implements(INodeInfo)
+
+# BBB
+BaseNodeInfo = NodeInfo
 
 
 class XMLProperties(Properties):

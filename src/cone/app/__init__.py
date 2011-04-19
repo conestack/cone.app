@@ -18,6 +18,9 @@ cfg = Properties()
 # used main template
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
+# default node icon
+cfg.default_node_icon = 'static/images/default_node_icon.png'
+
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [

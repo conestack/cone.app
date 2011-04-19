@@ -1,6 +1,11 @@
 from datetime import datetime
 
 
+def app_config():
+    import cone.app
+    return cone.app.cfg
+
+
 class DatetimeHelper(object):
     
     def w_value(self, val):

@@ -3,6 +3,7 @@
           omit-tag="True">
   <ul>
     <li tal:repeat="item children" class="navtreeitem">
+      <img src="${item['icon']}" alt="..." />
       <a href=""
          ajax:bind="click"
          ajax:target="${item['url']}"

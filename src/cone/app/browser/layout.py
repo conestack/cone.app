@@ -13,6 +13,7 @@ from cone.app.browser.utils import (
     nodepath,
     make_url,
     format_date,
+    node_icon_url,
 )
 
 
@@ -154,12 +155,13 @@ class NavTree(Tile):
     """Navigation tree tile.
     """
     
-    def navtreeitem(self, title, url, path):
+    def navtreeitem(self, title, url, path, icon):
         item = dict()
         item['title'] = title
         item['url'] = url
         item['selected'] = False
         item['path'] = path
+        item['icon'] = icon
         item['showchildren'] = False
         item['children'] = list()
         return item
@@ -186,7 +188,8 @@ class NavTree(Tile):
             title = node.metadata.title
             url = make_url(self.request, node=node)
             curnode = curpath == key and True or False
-            child = self.navtreeitem(title, url, nodepath(node))
+            icon = node_icon_url(self.request, node)
+            child = self.navtreeitem(title, url, nodepath(node), icon)
             child['showchildren'] = curnode
             if curnode:
                 child['selected'] = True
@@ -205,7 +208,7 @@ class NavTree(Tile):
             tree['children'].append(child)
     
     def navtree(self):
-        root = self.navtreeitem(None, None, '')
+        root = self.navtreeitem(None, None, '', None)
         model = self.model.root
         # XXX: default child
         path = nodepath(self.model)

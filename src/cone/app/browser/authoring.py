@@ -20,6 +20,7 @@ from cone.app.model import (
     BaseNode,
     AdapterNode,
 )
+from cone.app.utils import app_config
 from cone.app.browser import render_main_template
 from cone.app.browser.ajax import (
     AjaxAction,
@@ -191,7 +192,10 @@ class AddDropdown(Tile):
             props.url = url
             props.target = target
             props.title = info.title
-            props.icon = info.icon
+            icon = info.icon
+            if not icon:
+                icon = app_config().default_node_icon
+            props.icon = make_url(self.request, resource=icon)
             ret.append(props)
         return ret
 

@@ -339,11 +339,12 @@ table.contents td {
 }
 .dropdown_items li {
     margin:0;
+	padding-left:18px;
 }
 .dropdown_items li a {
-    padding-left:18px;
     text-decoration:none;
     border:none;
+	padding-bottom:2px;
 }
 
 /* Autocomplete */

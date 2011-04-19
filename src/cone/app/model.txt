@@ -41,7 +41,7 @@ Metadata.::
 Nodeinfo.::
 
     >>> root.nodeinfo
-    <cone.app.model.BaseNodeInfo object at ...>
+    <cone.app.model.NodeInfo object at ...>
     
     >>> root.nodeinfo.node
     <class 'cone.app.model.BaseNode'>
