@@ -86,6 +86,10 @@ look if node info for node defines icon. Otherwise use default icon.
     >>> node_icon_url(request, node)
     'http://example.com/my-static/images/myicon.png'
     
+    >>> info.icon = None
+    >>> node_icon_url(request, node)
+    'http://example.com/static/images/default_node_icon.png'
+    
     >>> node.properties.icon = 'my-static/images/othericon.png'
     >>> node_icon_url(request, node)
     'http://example.com/my-static/images/othericon.png'
