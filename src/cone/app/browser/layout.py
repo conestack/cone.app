@@ -165,10 +165,18 @@ class NavTree(Tile):
         return item
     
     def fillchildren(self, model, path, tree):
+        curpath = None
         if path:
             curpath = path[0]
-        else:
-            curpath = None
+        default_child = None
+        if model.properties.default_child:
+            default_child = model[model.properties.default_child]
+        if default_child and default_child.properties.hide_if_default:
+            model = default_child
+            default_child = None
+        if default_child:
+            if not curpath:
+                curpath = model.properties.default_child
         for key in model:
             node = model[key]
             if not has_permission('view', node, self.request):
@@ -181,12 +189,19 @@ class NavTree(Tile):
             child = self.navtreeitem(title, url, nodepath(node))
             child['showchildren'] = curnode
             if curnode:
-                self.fillchildren(node, path[1:], child)
-            selected = False
-            if nodepath(self.model) == nodepath(node):
-                selected = True
-            child['selected'] = selected
-            child['showchildren'] = curnode
+                child['selected'] = True
+                if default_child:
+                    self.fillchildren(default_child, path[1:], child)
+                else:
+                    self.fillchildren(node, path[1:], child)
+            else:
+                selected_path = nodepath(self.model)
+                if default_child:
+                    selected_path.append(default_child.__name__)
+                selected = False
+                if selected_path == nodepath(node):
+                    selected = True
+                child['selected'] = selected
             tree['children'].append(child)
     
     def navtree(self):

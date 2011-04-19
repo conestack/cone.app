@@ -377,19 +377,16 @@ Empty navtree, no items are marked to be displayed::
 
 Node's which are in navtree::
 
-    >>> from cone.app.model import Properties
-    >>> class NavNode(BaseNode):
-    ...     @property
-    ...     def properties(self):
-    ...         return Properties({'in_navtree': True})
-    >>> root = NavNode()
-    >>> root['1'] = NavNode()
-    >>> root['2'] = NavNode()
+    >>> root = BaseNode()
+    >>> root.properties.in_navtree = True
+    >>> root['1'] = BaseNode()
+    >>> root['1'].properties.in_navtree = True
+    >>> root['2'] = BaseNode()
+    >>> root['2'].properties.in_navtree = True
 
-The property is read from ``BaseNode.properties`` and defines the UI contract
+``in_navtree`` is read from ``node.properties`` and defines display UI contract
 with the navtree tile::
 
-    >>> root['1'].attrs.in_navtree = True
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('href="http://example.com/1"') > -1
     True
@@ -402,10 +399,11 @@ Render navtree on ``root['1']``, must be selected::
 
 Child nodes which do not grant permission 'view' are skipped::
 
-    >>> class InvisibleNavNode(NavNode):
+    >>> class InvisibleNavNode(BaseNode):
     ...     __acl__ =  DEFAULT_SETTINGS_ACL
     
     >>> root['3'] = InvisibleNavNode()
+    >>> root['3'].properties.in_navtree = True
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('href="http://example.com/3"') > -1
     False
@@ -416,6 +414,38 @@ Child nodes which do not grant permission 'view' are skipped::
     >>> res.find('href="http://example.com/3"') > -1
     True
 
+Default child behavior of navtree. Default children objects are displayed in 
+navtree.
+
+    >>> root.properties.default_child = '1'
+    >>> res = render_tile(root, request, 'navtree')
+    >>> res.find('class="selected navtreelevel_1">1</a>') > -1
+    True
+    
+    >>> res = render_tile(root['1'], request, 'navtree')
+    >>> res.find('class="selected navtreelevel_1">1</a>') > -1
+    True
+
+If default child should not be displayed it navtree,
+``node.properties.hide_if_default`` must be set to 'True'::
+
+    >>> root['1'].properties.hide_if_default = True
+
+In this case, also children context gets switched. Instead of remaining non
+default children, children of default node are displayed.
+
+    >>> root['1']['11'] = BaseNode()
+    >>> root['1']['11'].properties.in_navtree = True
+    >>> res = render_tile(root, request, 'navtree')
+    >>> res.find('href="http://example.com/1"') > -1
+    False
+    
+    >>> res.find('href="http://example.com/2"') > -1
+    False
+    
+    >>> res.find('href="http://example.com/1/11"') > -1
+    True
+    
     >>> layer.logout()
 
 
