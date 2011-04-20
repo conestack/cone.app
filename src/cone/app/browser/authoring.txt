@@ -336,6 +336,46 @@ Edit view::
     True
 
 
+Deleting
+--------
+
+    >>> class CallableNode(BaseNode):
+    ...     def __call__(self):
+    ...         pass
+    
+    >>> node = CallableNode()
+    >>> node['child'] = CallableNode()
+    >>> node.printtree()
+    <class 'CallableNode'>: None
+      <class 'CallableNode'>: child
+    
+    >>> del node['child']
+    >>> node.printtree()
+    <class 'CallableNode'>: None
+    
+    >>> layer.authenticate('owner')
+    >>> node['child'] = CallableNode()
+    >>> request = DummyRequest()
+    >>> render_tile(node['child'], request, 'delete')
+    u''
+    
+    >>> request.environ['cone.app.continuation'][0].payload
+    'Object "child" not deletable'
+    
+    >>> node['child'].properties.deletable = True
+    >>> request = DummyRequest()
+    >>> render_tile(node['child'], request, 'delete')
+    u''
+    
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxAction object at ...>, 
+    <cone.app.browser.ajax.AjaxEvent object at ...>, 
+    <cone.app.browser.ajax.AjaxMessage object at ...>]
+    
+    >>> node.printtree()
+    <class 'CallableNode'>: None
+
+
 Add Items Dropdown Widget
 -------------------------
 

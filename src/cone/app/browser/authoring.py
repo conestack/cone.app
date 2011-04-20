@@ -180,11 +180,11 @@ class DeleteAction(Tile):
     
     def render(self):
         model = self.model
+        title = model.metadata.get('title', model.__name__)
         if not model.properties.deletable:
-            message = 'Object id not deletable'
+            message = 'Object "%s" not deletable' % title
             ajax_message(self.request, message, 'error')
             return u''
-        title = model.metadata.get('title', model.__name__)
         parent = model.__parent__
         with TreeLock(parent):
             del parent[model.__name__]
