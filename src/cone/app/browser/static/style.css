@@ -552,3 +552,11 @@ a.listing16_16 {
     background:url('images/listing16_16.png') top left no-repeat;
     cursor:pointer;
 }
+a.delete16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('images/delete16_16.png') top left no-repeat;
+    cursor:pointer;
+}

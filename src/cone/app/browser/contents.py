@@ -123,4 +123,12 @@ class ContentsTile(Table):
             event = 'contextchanged:.contextsensitiv'
             actions.append(
                 Action('Edit', link, target, action, event, 'edit16_16'))
+        if node.properties.deletable:
+            link = make_url(
+                self.request, node=node, resource='delete')
+            target = make_url(self.request, node=node)
+            action = 'delete:#content:inner'
+            event = 'contextchanged:.contextsensitiv'
+            actions.append(
+                Action('Delete', link, target, action, event, 'delete16_16'))
         return actions

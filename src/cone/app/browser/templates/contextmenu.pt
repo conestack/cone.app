@@ -44,8 +44,17 @@
          ajax:bind="click"
          ajax:target="${context.nodeurl}"
          ajax:event="contextchanged:.contextsensitiv"
-         ajax:action="edit:#content:inner"
-         tal:condition="model.properties.editable">&nbsp;</a>
+         ajax:action="edit:#content:inner">&nbsp;</a>
+    </div>
+    
+    <div tal:condition="model.properties.deletable">
+      <a href="${context.nodeurl}/delete"
+         class="delete16_16"
+         title="Delete"
+         ajax:bind="click"
+         ajax:target="${context.nodeurl}"
+         ajax:event="contextchanged:.contextsensitiv"
+         ajax:action="delete:#content:inner">&nbsp;</a>
     </div>
     
     <tal:addables condition="model.properties.wf_state">
