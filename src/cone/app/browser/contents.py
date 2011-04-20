@@ -127,9 +127,8 @@ class ContentsTile(Table):
             link = make_url(
                 self.request, node=node, resource='delete')
             target = make_url(self.request, node=node)
-            action = 'delete:#content:inner'
-            event = 'contextchanged:.contextsensitiv'
+            action = 'delete:NONE:NONE'
             confirm = 'Do you really want to delete this item?'
             actions.append(Action('Delete', link, target, action,
-                                  event, 'delete16_16', confirm))
+                                  None, 'delete16_16', confirm))
         return actions

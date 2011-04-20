@@ -4,6 +4,7 @@ from plumber import (
     default,
     plumb,
 )
+from node.locking import TreeLock
 from webob.exc import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
@@ -26,7 +27,10 @@ from cone.app.browser.ajax import (
     AjaxAction,
     AjaxEvent,
     render_ajax_form,
+    ajax_continue,
+    ajax_message,
 )
+
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import (
     make_url,
@@ -169,6 +173,30 @@ class EditPart(CameFromNext):
     """
     
     action_resource = default('edit')
+
+
+@tile('delete', permission="delete")
+class DeleteAction(Tile):
+    
+    def render(self):
+        model = self.model
+        if not model.properties.deletable:
+            message = 'Object id not deletable'
+            ajax_message(self.request, message, 'error')
+            return u''
+        title = model.metadata.get('title', model.__name__)
+        parent = model.__parent__
+        with TreeLock(parent):
+            del parent[model.__name__]
+            parent()
+        url = make_url(self.request, node=parent)
+        action = AjaxAction(url, 'content', 'inner', '#content')
+        event = AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+        continuation = [action, event]
+        ajax_continue(self.request, continuation)
+        message = 'Deleted: %s' % title
+        ajax_message(self.request, message, 'info')
+        return u''
 
 
 @tile('add_dropdown', 'templates/add_dropdown.pt', 

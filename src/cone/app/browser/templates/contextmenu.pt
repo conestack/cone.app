@@ -53,8 +53,7 @@
          title="Delete"
          ajax:bind="click"
          ajax:target="${context.nodeurl}"
-         ajax:event="contextchanged:.contextsensitiv"
-         ajax:action="delete:#content:inner"
+         ajax:action="delete:NONE:NONE"
          ajax:confirm="Do you really want to delete this Item?">&nbsp;</a>
     </div>
     
