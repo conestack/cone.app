@@ -50,6 +50,43 @@ def render_form(model, request, tilename):
     return render_main_template(model, request, contenttilename=tilename)
 
 
+class CameFromNext(Part):
+    """Part for form tiles considering 'came_from' parameter on request.
+    """
+    
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set 'came_from' as proxy field to 
+        ``self.form``.
+        """
+        _next(self)
+        self.form['came_from'] = factory(
+            'proxy',
+            value=self.request.params.get('came_from'),
+        )
+    
+    @default
+    def next(self, request):
+        """Read 'came_from' parameter from request and compute next url.
+        
+        If came_from is 'parent', URL of node parent is computed.
+        If came_from is set but not 'parent', it is considered as URL to use
+        If no came_from is set, return URL of node
+        """
+        if request.get('came_from') == 'parent':
+            url = make_url(request.request, node=self.model.__parent__)
+        elif request.get('came_from'):
+            url = request.get('came_from')
+        else:
+            url = make_url(request.request, node=self.model)
+        if self.ajax_request:
+            return [
+                AjaxAction(url, 'content', 'inner', '#content'),
+                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+            ]
+        return HTTPFound(location=url)
+
+
 @view_config('add', permission='add')
 def add(model, request):
     """Add view.
@@ -89,7 +126,7 @@ class AddTile(ProtectedContentTile):
         return getNodeInfo(factory)
 
 
-class AddPart(Part):
+class AddPart(CameFromNext):
     """form part hooking the hidden field 'factory' to self.form on __call__
     """
     
@@ -104,16 +141,6 @@ class AddPart(Part):
             'proxy',
             value=self.request.params.get('factory'),
         )
-    
-    @default
-    def next(self, request):
-        url = make_url(request.request, node=self.model.__parent__)
-        if self.ajax_request:
-            return [
-                AjaxAction(url, 'content', 'inner', '#content'),
-                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-            ]
-        return HTTPFound(location=url)
 
 
 @view_config('edit', permission='edit')
@@ -137,37 +164,11 @@ class EditTile(ProtectedContentTile):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
-class EditPart(Part):
+class EditPart(CameFromNext):
     """form part hooking the hidden field 'came_from' to self.form on __call__
     """
     
     action_resource = default('edit')
-    
-    @plumb
-    def prepare(_next, self):
-        """Hook after prepare and set 'came_from' as proxy field to
-        ``self.form``
-        """
-        _next(self)
-        self.form['came_from'] = factory(
-            'proxy',
-            value=self.request.params.get('came_from'),
-        )
-    
-    @default
-    def next(self, request):
-        if request.get('came_from') == 'parent':
-            url = make_url(request.request, node=self.model.__parent__)
-        elif request.get('came_from'):
-            url = request.get('came_from')
-        else:
-            url = make_url(request.request, node=self.model)
-        if self.ajax_request:
-            return [
-                AjaxAction(url, 'content', 'inner', '#content'),
-                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-            ]
-        return HTTPFound(location=url)
 
 
 @tile('add_dropdown', 'templates/add_dropdown.pt', 

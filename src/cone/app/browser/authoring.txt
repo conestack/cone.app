@@ -104,6 +104,7 @@ Create and register an ``addform`` named form tile::
     ...         child = MyNode()
     ...         child.attrs.title = fetch('addform.title')
     ...         self.model.__parent__[fetch('addform.id')] = child
+    ...         self.model = child
 
 Create dummy container::
 
@@ -149,6 +150,25 @@ Render with submitted data::
     >>> res = render_tile(root, request, 'add')
     >>> request.environ['redirect']
     <HTTPFound at ... 302 Found>
+    
+    >>> root.printtree()
+    <class 'MyNode'>: None
+      <class 'MyNode'>: somechild
+    
+    >>> request.environ['redirect'].location
+    'http://example.com/somechild'
+    
+Render with 'came_from' set::
+
+    >>> request.params['came_from'] = 'parent'
+    >>> res = render_tile(root, request, 'add')
+    >>> request.environ['redirect'].location
+    'http://example.com/'
+    
+    >>> request.params['came_from'] = 'http://foobarbaz.com'
+    >>> res = render_tile(root, request, 'add')
+    >>> request.environ['redirect'].location
+    'http://foobarbaz.com'
 
 Render with ajax flag::
 
