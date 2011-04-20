@@ -63,6 +63,7 @@ class Action(object):
                  action=None,
                  event=None,
                  css=None,
+                 confirm=None,
                  rendered=None):
         """Action definition.
         
@@ -84,6 +85,9 @@ class Action(object):
         ``css``
             action class attribute
         
+        ``confirm``
+            Conform message for action if desired
+        
         ``rendered``
             an already rendered action. if set, ignore all other attributes
             and use contents of this attribute for rendering
@@ -94,6 +98,7 @@ class Action(object):
         self.action = action
         self.event = event
         self.css = css
+        self.confirm = confirm
         self.rendered = rendered
 
 

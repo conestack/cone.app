@@ -50,6 +50,7 @@
                    ajax:target="${action.target}"
                    ajax:event="${action.event}"
                    ajax:action="${action.action}"
+                   ajax:confirm="${action.confirm}"
                    tal:condition="not action.rendered">&nbsp;</a>
                 <tal:action condition="action.rendered"
                             replace="structure action.rendered" />
