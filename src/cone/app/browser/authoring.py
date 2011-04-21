@@ -4,7 +4,6 @@ from plumber import (
     default,
     plumb,
 )
-from node.locking import TreeLock
 from webob.exc import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
@@ -186,8 +185,8 @@ class DeleteAction(Tile):
             ajax_message(self.request, message, 'error')
             return u''
         parent = model.__parent__
-        with TreeLock(parent):
-            del parent[model.__name__]
+        del parent[model.__name__]
+        if hasattr(parent, '__call__'):
             parent()
         url = make_url(self.request, node=parent)
         action = AjaxAction(url, 'content', 'inner', '#content')
