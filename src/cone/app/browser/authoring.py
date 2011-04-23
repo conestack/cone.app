@@ -97,19 +97,25 @@ def add(model, request):
     return render_form(model, request, 'add')
 
 
-@tile('add', permission='add')
+@tile('add', 'templates/authoring.pt', permission='add')
 class AddTile(ProtectedContentTile):
     """The add tile is responsible to render add forms depending on given
     factory name. Factory information is fetched from NodeInfo implementation
     registered by factory name.
-    
-    XXX:form wrapping markup like some title or description goes here.
     """
     
-    # tile name under which the form tile is expected
+    # tile name of form tile
     form_tile_name = 'addform'
     
-    def render(self):
+    @property
+    def heading(self):
+        info = self.info
+        if info is not None:
+            return 'Add %s' % info.title
+        return 'Add'
+    
+    @property
+    def rendered_form(self):
         nodeinfo = self.info
         if not nodeinfo:
             return u'Unknown factory'
@@ -153,17 +159,23 @@ def edit(model, request):
     return render_form(model, request, 'edit')
 
 
-@tile('edit', permission='edit')
+@tile('edit', 'templates/authoring.pt', permission='edit')
 class EditTile(ProtectedContentTile):
     """The edit tile is responsible to render edit forms on given model.
-    
-    XXX:form wrapping markup like some title or description goes here.
     """
     
-    # tile name under which the form tile is expected
+    # tile name of form tile
     form_tile_name = 'editform'
     
-    def render(self):
+    @property
+    def heading(self):
+        info = getNodeInfo(self.model.node_info_name)
+        if info is not None:
+            return 'Edit %s' % info.title
+        return 'Edit'
+    
+    @property
+    def rendered_form(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 

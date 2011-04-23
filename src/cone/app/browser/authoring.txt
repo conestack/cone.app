@@ -120,7 +120,7 @@ Render without factory::
     >>> from pyramid.testing import DummyRequest
     >>> request = DummyRequest()
     >>> render_tile(root, request, 'add')
-    u'Unknown factory'
+    u'<div class="box">\n  <h1>Add</h1>\n  Unknown factory\n</div>\n'
 
 Render with valid factory::
 
@@ -160,11 +160,13 @@ Render with submitted data::
     
 Render with 'came_from' set::
 
+    >>> del request.environ['redirect']
     >>> request.params['came_from'] = 'parent'
     >>> res = render_tile(root, request, 'add')
     >>> request.environ['redirect'].location
     'http://example.com/'
     
+    >>> del request.environ['redirect']
     >>> request.params['came_from'] = 'http://foobarbaz.com'
     >>> res = render_tile(root, request, 'add')
     >>> request.environ['redirect'].location
@@ -254,7 +256,8 @@ Render form with value from model::
 
     >>> request = DummyRequest()
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<form action="http://example.com/somechild" ...'
+    u'<div class="box">\n  <h1>Edit My Node</h1>\n  
+    <form action="http://example.com/somechild" ...'
 
 Render with submitted data. Default next URL of EditPart is the edited node::
     
