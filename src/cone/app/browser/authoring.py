@@ -97,7 +97,7 @@ def add(model, request):
     return render_form(model, request, 'add')
 
 
-@tile('add', 'templates/authoring.pt', permission='add')
+@tile('add', permission='add')
 class AddTile(ProtectedContentTile):
     """The add tile is responsible to render add forms depending on given
     factory name. Factory information is fetched from NodeInfo implementation
@@ -114,8 +114,7 @@ class AddTile(ProtectedContentTile):
             return 'Add %s' % info.title
         return 'Add'
     
-    @property
-    def rendered_form(self):
+    def render(self):
         nodeinfo = self.info
         if not nodeinfo:
             return u'Unknown factory'
@@ -159,7 +158,7 @@ def edit(model, request):
     return render_form(model, request, 'edit')
 
 
-@tile('edit', 'templates/authoring.pt', permission='edit')
+@tile('edit', permission='edit')
 class EditTile(ProtectedContentTile):
     """The edit tile is responsible to render edit forms on given model.
     """
@@ -174,8 +173,7 @@ class EditTile(ProtectedContentTile):
             return 'Edit %s' % info.title
         return 'Edit'
     
-    @property
-    def rendered_form(self):
+    def render(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 

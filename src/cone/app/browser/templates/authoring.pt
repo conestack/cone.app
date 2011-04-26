@@ -1,4 +1,0 @@
-<div class="box">
-  <h1 tal:content="context.heading" />
-  <tal:form replace="structure context.rendered_form" />
-</div>

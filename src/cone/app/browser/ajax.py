@@ -191,7 +191,7 @@ def render_ajax_form(model, request, name):
     continuation = request.environ.get('cone.app.continuation')
     form_continue = AjaxFormContinue(result, continuation)
     rendered = ajax_form_template % {
-        'form': form_continue.form,
+        'form': form_continue.form.replace(u'\n', u' '),
         'next': form_continue.next,
     }
     return Response(rendered)
