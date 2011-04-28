@@ -1,6 +1,7 @@
 from plumber import (
     Part,
     default,
+    plumb,
 )
 from cone.tile import (
     tile,
@@ -10,7 +11,10 @@ from cone.tile import (
 from webob.exc import HTTPFound
 from cone.app.model import AppSettings
 from cone.app.browser.utils import make_url
-from cone.app.browser.ajax import AjaxAction
+from cone.app.browser.ajax import (
+    AjaxAction,
+    ajax_form_fiddle,
+)
 
 
 @tile('content', 'templates/settings.pt',
@@ -32,6 +36,12 @@ class AppSettings(Tile):
 class SettingsPart(Part):
     """Particular settings object form part.
     """
+    
+    @plumb
+    def prepare(_next, self):
+        _next(self)
+        selector = '#form-%s' % '-'.join(self.form.path)
+        ajax_form_fiddle(self.request, selector, 'replace')
     
     @default
     def next(self, request):

@@ -139,10 +139,10 @@ AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::
 
     >>> from cone.app.browser.ajax import ajax_form_template
-    >>> ajax_form_template.split('\n')
+    >>> print ajax_form_template.split('\n')
     ['<script language="javascript" type="text/javascript">', 
     '    var parent = window.top.window;', 
-    "    parent.cone.ajaxformrender('%(form)s');", 
+    "    parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');", 
     '    parent.bdajax.continuation(%(next)s);', 
     '</script>', 
     '']
@@ -231,7 +231,7 @@ Test with form perocessing passing::
     >>> response = render_ajax_form(root, request, 'ajaxtestform')
     >>> result = str(response)
     
-    >>> expected = 'parent.cone.ajaxformrender(\'\')'
+    >>> expected = 'parent.cone.ajaxformrender(\'\', \'#content\', \'inner\')'
     >>> result.find(expected) != -1
     True
     

@@ -175,10 +175,18 @@ class AjaxFormContinue(AjaxContinue):
         return ret
 
 
+def ajax_form_fiddle(request, selector, mode):
+    """Define ajax form fiddle mode and selector. Used on client side to
+    determine form location in replacement mode for rendered ajax form.
+    """
+    request.environ['cone.app.form.selector'] = selector
+    request.environ['cone.app.form.mode'] = mode
+
+
 ajax_form_template = """\
 <script language="javascript" type="text/javascript">
     var parent = window.top.window;
-    parent.cone.ajaxformrender('%(form)s');
+    parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');
     parent.bdajax.continuation(%(next)s);
 </script>
 """
@@ -188,10 +196,14 @@ def render_ajax_form(model, request, name):
     """Render ajax form.
     """
     result = render_tile(model, request, name)
+    selector = request.environ.get('cone.app.form.selector', '#content')
+    mode = request.environ.get('cone.app.form.mode', 'inner')
     continuation = request.environ.get('cone.app.continuation')
     form_continue = AjaxFormContinue(result, continuation)
     rendered = ajax_form_template % {
         'form': form_continue.form.replace(u'\n', u' '),
+        'selector': selector,
+        'mode': mode,
         'next': form_continue.next,
     }
     return Response(rendered)

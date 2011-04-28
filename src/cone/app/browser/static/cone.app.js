@@ -80,29 +80,23 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         
         // ajax form related. XXX: move to bdajax
         
-        // recent committed form
-        _curajaxformid: null,
-        
         // bind ajax form handling to all forms providing ajax css class
         ajaxformbinder: function(context) {
             var ajaxform = $('form.ajax', context);
             ajaxform.append('<input type="hidden" name="ajax" value="1" />');
             ajaxform.attr('target', 'ajaxformresponse');
             ajaxform.unbind().bind('submit', function(event) {
-                cone._curajaxformid = $(this).attr('id');
                 bdajax.spinner.show();
             });
         },
         
         // called by iframe response, renders form (i.e. if validation errors)
-        ajaxformrender: function(payload) {
+        ajaxformrender: function(payload, selector, mode) {
             if (!payload) {
                 return;
             }
             bdajax.spinner.hide();
-            var id = '#' + cone._curajaxformid;
-            $(id).replaceWith(unescape(payload));
-            $(id).parent().bdajax();
+            bdajax.fiddle(payload, selector, mode);
         }
     }
     

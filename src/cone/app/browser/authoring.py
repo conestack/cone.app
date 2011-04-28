@@ -25,9 +25,10 @@ from cone.app.browser import render_main_template
 from cone.app.browser.ajax import (
     AjaxAction,
     AjaxEvent,
-    render_ajax_form,
     ajax_continue,
     ajax_message,
+    ajax_form_fiddle,
+    render_ajax_form,
 )
 
 from cone.app.browser.layout import ProtectedContentTile
@@ -107,13 +108,6 @@ class AddTile(ProtectedContentTile):
     # tile name of form tile
     form_tile_name = 'addform'
     
-    @property
-    def heading(self):
-        info = self.info
-        if info is not None:
-            return 'Add %s' % info.title
-        return 'Add'
-    
     def render(self):
         nodeinfo = self.info
         if not nodeinfo:
@@ -149,6 +143,20 @@ class AddPart(CameFromNext):
             'proxy',
             value=self.request.params.get('factory'),
         )
+    
+    @plumb
+    def __call__(_next, self, model, request):
+        ajax_form_fiddle(request, '#content', 'inner')
+        info = getNodeInfo(model.node_info_name)
+        if info is not None:
+            heading = u'<h1>Add %s</h1>' % info.title
+        else:
+            heading = u'<h1>Add</h1>'
+        form = _next(self, model, request)
+        if form is None:
+            form = u''
+        rendered = heading + form
+        return u'<div class="box">%s</div>' % rendered
 
 
 @view_config('edit', permission='edit')
@@ -166,13 +174,6 @@ class EditTile(ProtectedContentTile):
     # tile name of form tile
     form_tile_name = 'editform'
     
-    @property
-    def heading(self):
-        info = getNodeInfo(self.model.node_info_name)
-        if info is not None:
-            return 'Edit %s' % info.title
-        return 'Edit'
-    
     def render(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
@@ -182,6 +183,20 @@ class EditPart(CameFromNext):
     """
     
     action_resource = default('edit')
+    
+    @plumb
+    def __call__(_next, self, model, request):
+        ajax_form_fiddle(request, '#content', 'inner')
+        info = getNodeInfo(model.node_info_name)
+        if info is not None:
+            heading = u'<h1>Edit %s</h1>' % info.title
+        else:
+            heading = u'<h1>Edit</h1>'
+        form = _next(self, model, request)
+        if form is None:
+            form = u''
+        rendered = heading + form
+        return u'<div class="box">%s</div>' % rendered
 
 
 @tile('delete', permission="delete")
