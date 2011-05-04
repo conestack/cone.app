@@ -1,4 +1,5 @@
 import datetime
+from pyramid.security import has_permission
 from cone.tile import (
     tile,
     Tile,
@@ -101,7 +102,11 @@ class ContentsTile(Table):
         return rows
     
     def sorted_children(self, sort, order):
-        children = [self.model[key] for key in self.model.keys()]
+        children = list()
+        for node in self.model.values():
+            if not has_permission('view', node, self.request):
+                continue
+            children.append(node)
         if sort in self.sort_keys:
             children = sorted(children, key=self.sort_keys[sort])
             if order == 'asc':
