@@ -34,6 +34,8 @@ Imports and dummy context::
 ``sorted_rows`` returns sorted listing items. ``start``, ``end``, ``sort`` and 
 ``order`` are expected by this function.
 
+    >>> layer.authenticate('max')
+
     >>> contents.sorted_rows(None, None, 'created', 'desc')[0]['title'].value
     '0 Title'
     
@@ -170,6 +172,7 @@ Change sort and order. Sort is proxied by batch::
 
 Rendering fails unauthorized, 'view' permission is required::
 
+    >>> layer.logout()
     >>> from cone.tile import render_tile
     >>> render_tile(model, request, 'contents')
     Traceback (most recent call last):
