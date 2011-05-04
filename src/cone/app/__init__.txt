@@ -108,8 +108,8 @@ Test acl_factory::
     >>> cone.app.acl_factory()
     <pyramid.authorization.ACLAuthorizationPolicy object at ...>
     
-    >>> del root._metadata
-    >>> del root._properties
+    >>> del root._v_metadata
+    >>> del root._v_properties
     >>> del root.factories['settings']
 
 Test main::

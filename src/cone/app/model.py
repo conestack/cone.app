@@ -70,7 +70,7 @@ class AppNode(Part):
     node_info_name = default('')
     
     @default
-    @instance_property('_properties')
+    @instance_property
     def properties(self):
         props = ProtectedProperties(self, DEFAULT_NODE_PROPERTY_PERMISSIONS)
         props.in_navtree = False
@@ -78,7 +78,7 @@ class AppNode(Part):
         return props
     
     @default
-    @instance_property('_metadata')
+    @instance_property
     def metadata(self):
         name = self.__name__
         if not name:
@@ -88,7 +88,7 @@ class AppNode(Part):
         return metadata
     
     @default
-    @instance_property('_nodeinfo')
+    @instance_property
     def nodeinfo(self):
         info = getNodeInfo(self.node_info_name)
         if not info:
@@ -166,11 +166,11 @@ class AppRoot(FactoryNode):
     """
     factories = odict()
 
-    @instance_property('_properties')
+    @instance_property
     def properties(self):
         return Properties()
 
-    @instance_property('_metadata')
+    @instance_property
     def metadata(self):
         return BaseMetadata()
 
@@ -185,14 +185,14 @@ class AppSettings(FactoryNode):
     ]
     factories = odict()
     
-    @instance_property('_properties')
+    @instance_property
     def properties(self):
         props = Properties()
         props.in_navtree = True
         props.icon = 'static/images/settings16_16.png'
         return props
     
-    @instance_property('_metadata')
+    @instance_property
     def metadata(self):
         metadata = BaseMetadata()
         metadata.title = "Settings"

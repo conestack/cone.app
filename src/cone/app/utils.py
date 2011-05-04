@@ -33,15 +33,16 @@ class DatetimeHelper(object):
             iso = iso[:iso.rfind('.')]
         return iso
 
-def instance_property(attribute_name):
+def instance_property(func):
     """Decorator like ``property``, but underlying function is only called once
-    per instance.  
+    per instanciated instance.  
     """
-    def decorator(func):
-        def wrapper(self):
-            if not hasattr(self, attribute_name):
-                setattr(self, attribute_name, func(self))
-            return getattr(self, attribute_name)
-        wrapper.__doc__ = func.__doc__
-        return property(wrapper)
-    return decorator
+    def wrapper(self):
+        # set instance attribute with '_v_' prefix, also works with ZODB 
+        # Persistent objects then
+        attribute_name = '_v_%s' % func.__name__
+        if not hasattr(self, attribute_name):
+            setattr(self, attribute_name, func(self))
+        return getattr(self, attribute_name)
+    wrapper.__doc__ = func.__doc__
+    return property(wrapper)
