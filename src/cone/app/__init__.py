@@ -15,6 +15,9 @@ APP_PATH = os.environ['APP_PATH']
 # configuration
 cfg = Properties()
 
+# authentication providers (expect ``node.ext.ugm.Ugm`` like API)
+cfg.auth = list()
+
 # used main template
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
