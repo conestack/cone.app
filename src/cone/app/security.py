@@ -43,7 +43,7 @@ def authenticate(request, login, password):
         return remember(request, login)                     #pragma NO COVERAGE
 
 def groups_callback(name, request):
-    """Collect and return roles for user.
+    """Collect and return roles and groups for user.
     
     XXX: request caching via decorator
     """
@@ -59,6 +59,7 @@ def groups_callback(name, request):
         for role in user.roles:
             aggregated.add('role:%s' % role)
         for group in user.groups:
+            aggregated.add('group:%s' % group.name)
             for role in group.roles:
                 aggregated.add('role:%s' % role)
         roles = list(aggregated)

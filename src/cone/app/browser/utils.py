@@ -5,6 +5,8 @@ from cone.app.utils import app_config
 
 
 def authenticated(request):
+    """XXX: remove this. use ``authenticated_userid`` directly.
+    """
     return authenticated_userid(request)
 
 

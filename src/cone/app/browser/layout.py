@@ -1,4 +1,7 @@
-from pyramid.security import has_permission
+from pyramid.security import (
+    has_permission,
+    authenticated_userid,
+)
 from cone.tile import (
     tile,
     Tile,
@@ -6,10 +9,12 @@ from cone.tile import (
     render_template,
     registerTile,
 )
-import cone.app
 from cone.app.model import AppRoot
+from cone.app.utils import (
+    app_config,
+    principal_data,
+)
 from cone.app.browser.utils import (
-    authenticated,
     nodepath,
     make_url,
     format_date,
@@ -27,15 +32,15 @@ class Resources(Tile):
     
     @property
     def authenticated(self):
-        return authenticated(self.request)
+        return authenticated_userid(self.request)
     
     @property
     def js(self):
-        return cone.app.cfg.js
+        return app_config().js
     
     @property
     def css(self):
-        return cone.app.cfg.css
+        return app_config().css
 
 
 class ProtectedContentTile(Tile):
@@ -47,7 +52,7 @@ class ProtectedContentTile(Tile):
     """
     
     def __call__(self, model, request):
-        if not authenticated(request):
+        if not authenticated_userid(request):
             return render_tile(model, request, 'loginform')
         return Tile.__call__(self, model, request)
 
@@ -65,6 +70,12 @@ class PersonalTools(Tile):
     
     XXX: extend by items, currently only 'logout' link hardcoded in template
     """
+    
+    @property
+    def user(self):
+        userid = authenticated_userid(self.request)
+        data = principal_data(userid)
+        return data.get('fullname', userid)
 
 
 @tile('mainmenu', 'templates/mainmenu.pt', 

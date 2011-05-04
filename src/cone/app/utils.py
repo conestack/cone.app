@@ -7,6 +7,17 @@ def app_config():
     return cone.app.cfg
 
 
+def principal_data(id):
+    data = dict()
+    for ugm in app_config().auth:
+        user = ugm.users.get(id)
+        if not user:
+            continue
+        data = user.attrs
+        break
+    return data
+
+
 class DatetimeHelper(object):
     
     def w_value(self, val):
@@ -33,9 +44,10 @@ class DatetimeHelper(object):
             iso = iso[:iso.rfind('.')]
         return iso
 
+
 def instance_property(func):
     """Decorator like ``property``, but underlying function is only called once
-    per instanciated instance.  
+    per instance.  
     """
     def wrapper(self):
         # set instance attribute with '_v_' prefix, also works with ZODB 

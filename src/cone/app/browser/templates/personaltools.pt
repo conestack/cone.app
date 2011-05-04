@@ -3,7 +3,7 @@
           omit-tag="True">
   <div id="personaltools">
   	<div class="currentuser">
-      <a href="personaltools">Admin</a>
+      <a href="personaltools" tal:content="context.user">Admin</a>
 	</div>
     <ul class="dropdown_items" style="display:none;">
 	  <li>
