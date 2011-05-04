@@ -32,3 +32,16 @@ class DatetimeHelper(object):
         if iso.find('.') != -1:
             iso = iso[:iso.rfind('.')]
         return iso
+
+def instance_property(attribute_name):
+    """Decorator like ``property``, but underlying function is only called once
+    per instance.  
+    """
+    def decorator(func):
+        def wrapper(self):
+            if not hasattr(self, attribute_name):
+                setattr(self, attribute_name, func(self))
+            return getattr(self, attribute_name)
+        wrapper.__doc__ = func.__doc__
+        return property(wrapper)
+    return decorator

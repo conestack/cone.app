@@ -46,6 +46,7 @@ from cone.app.security import (
 from cone.app.utils import (
     DatetimeHelper,
     app_config,
+    instance_property,
 )
 
 _node_info_registry = dict()
@@ -69,29 +70,25 @@ class AppNode(Part):
     node_info_name = default('')
     
     @default
-    @property
+    @instance_property('_properties')
     def properties(self):
-        if not hasattr(self, '_properties'):
-            props = ProtectedProperties(self, DEFAULT_NODE_PROPERTY_PERMISSIONS)
-            props.in_navtree = False
-            props.editable = False
-            self._properties = props
-        return self._properties
+        props = ProtectedProperties(self, DEFAULT_NODE_PROPERTY_PERMISSIONS)
+        props.in_navtree = False
+        props.editable = False
+        return props
     
     @default
-    @property
+    @instance_property('_metadata')
     def metadata(self):
-        if not hasattr(self, '_metadata'):
-            name = self.__name__
-            if not name:
-                name = 'No Title'
-            metadata = BaseMetadata()
-            metadata.title = name
-            self._metadata = metadata
-        return self._metadata
+        name = self.__name__
+        if not name:
+            name = 'No Title'
+        metadata = BaseMetadata()
+        metadata.title = name
+        return metadata
     
     @default
-    @property
+    @instance_property('_nodeinfo')
     def nodeinfo(self):
         info = getNodeInfo(self.node_info_name)
         if not info:
@@ -169,17 +166,13 @@ class AppRoot(FactoryNode):
     """
     factories = odict()
 
-    @property
+    @instance_property('_properties')
     def properties(self):
-        if not hasattr(self, '_properties'):
-            self._properties = Properties()
-        return self._properties
+        return Properties()
 
-    @property
+    @instance_property('_metadata')
     def metadata(self):
-        if not hasattr(self, '_metadata'):
-            self._metadata = BaseMetadata()
-        return self._metadata
+        return BaseMetadata()
 
 
 class AppSettings(FactoryNode):
@@ -192,21 +185,18 @@ class AppSettings(FactoryNode):
     ]
     factories = odict()
     
-    @property
+    @instance_property('_properties')
     def properties(self):
-        if not hasattr(self, '_properties'):
-            props = Properties()
-            props.in_navtree = True
-            props.icon = 'static/images/settings16_16.png'
-            self._properties = props
-        return self._properties
+        props = Properties()
+        props.in_navtree = True
+        props.icon = 'static/images/settings16_16.png'
+        return props
     
-    @property
+    @instance_property('_metadata')
     def metadata(self):
-        if not hasattr(self, '_metadata'):
-            self._metadata = BaseMetadata()
-            self._metadata.title = "Settings"
-        return self._metadata
+        metadata = BaseMetadata()
+        metadata.title = "Settings"
+        return metadata
 
 
 class AdapterNode(BaseNode):
