@@ -1,10 +1,13 @@
+from plumber import plumber
 from cone.app.model import (
     BaseNode,
-    WorkflowNodeMixin,
+    WorkflowState,
     Properties,
 )
 
-class WorkflowNode(BaseNode, WorkflowNodeMixin):
+class WorkflowNode(BaseNode):
+    __metaclass__ = plumber
+    __plumbing__ = WorkflowState
     
     @property
     def properties(self):

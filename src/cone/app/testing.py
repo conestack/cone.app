@@ -5,6 +5,7 @@ from pyramid.interfaces import (
 )
 from pyramid.authentication import CallbackAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.registry import global_registry
 from pyramid.testing import DummyRequest
 from plone.testing import Layer
 
@@ -33,7 +34,17 @@ class Security(Layer):
     def logout(self):
         self.authn.unauthenticated_userid = lambda *args: None
     
+    def defaults(self):
+        return {'request': self.current_request, 'registry': global_registry}
+    
+    def request(self):
+        self.current_request = DummyRequest()
+        return self.current_request
+    
     def setUp(self, args=None):
+        self.request()
+        import pyramid.threadlocal
+        pyramid.threadlocal.manager.default = self.defaults
         self.authn = CallbackAuthenticationPolicy()
         self.authn.callback = groups_callback
         self.authn.remember = lambda self, x: [['X-Foo', x]]
@@ -47,6 +58,8 @@ class Security(Layer):
         print "Security set up."
 
     def tearDown(self):
+        import pyramid.threadlocal
+        pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         self.registry.unregisterUtility(self.authn, IAuthenticationPolicy)
         self.registry.unregisterUtility(self.authz, IAuthorizationPolicy)
         print "Security torn down."

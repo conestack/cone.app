@@ -21,7 +21,7 @@ Default permissions.::
 Properties.::
 
     >>> root.properties
-    <cone.app.model.Properties object at ...>
+    <cone.app.model.ProtectedProperties object at ...>
 
 ``IProperties`` implementations do not raise AttributeErrors if requested
 attribute not exists.::
@@ -264,16 +264,14 @@ ProtectedProperties
 Protected properties checks against permission for properties::
 
     >>> from cone.app.model import ProtectedProperties
-    >>> from pyramid.testing import DummyRequest
     >>> context = BaseNode()
-    >>> request = DummyRequest()
 
 'viewprotected' property gets protected by 'view' permission::
 
     >>> permissions = {
     ...     'viewprotected': ['view'],
     ... }
-    >>> props = ProtectedProperties(context, request, permissions)
+    >>> props = ProtectedProperties(context, permissions)
 
 Setting properties works always::
 

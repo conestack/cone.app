@@ -1,4 +1,5 @@
 from datetime import datetime
+from pyramid.threadlocal import get_current_request
 
 
 def app_config():

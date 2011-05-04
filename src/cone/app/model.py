@@ -4,7 +4,11 @@ import ConfigParser
 from lxml import etree
 from datetime import datetime
 from odict import odict
-from plumber import plumber
+from plumber import (
+    plumber,
+    Part,
+    default,
+)
 from node.parts import (
     AsAttrAccess,
     NodeChildValidate,
@@ -37,6 +41,7 @@ from cone.app.interfaces import (
 from cone.app.security import (
     DEFAULT_ACL,
     DEFAULT_SETTINGS_ACL,
+    DEFAULT_NODE_PROPERTY_PERMISSIONS,
 )
 from cone.app.utils import (
     DatetimeHelper,
@@ -54,24 +59,26 @@ def getNodeInfo(name):
         return _node_info_registry[name]
 
 
-class AppNodeMixin(object):
+class AppNode(Part):
     
     implements(IApplicationNode)
     
-    __acl__ = DEFAULT_ACL
+    __acl__ = default(DEFAULT_ACL)
     
     # set this to name of registered node info on deriving class
-    node_info_name = ''
+    node_info_name = default('')
     
+    @default
     @property
     def properties(self):
         if not hasattr(self, '_properties'):
-            props = Properties()
+            props = ProtectedProperties(self, DEFAULT_NODE_PROPERTY_PERMISSIONS)
             props.in_navtree = False
             props.editable = False
             self._properties = props
         return self._properties
     
+    @default
     @property
     def metadata(self):
         if not hasattr(self, '_metadata'):
@@ -83,6 +90,7 @@ class AppNodeMixin(object):
             self._metadata = metadata
         return self._metadata
     
+    @default
     @property
     def nodeinfo(self):
         info = getNodeInfo(self.node_info_name)
@@ -94,8 +102,8 @@ class AppNodeMixin(object):
         return info
 
 
-class WorkflowNodeMixin(object):
-    """Mixin for nodes providing workflow states.
+class WorkflowState(Part):
+    """Part for nodes providing workflow states.
     
     This implementation persists to self.attrs['state']
     """
@@ -106,12 +114,13 @@ class WorkflowNodeMixin(object):
     def _set_state(self, val):
         self.attrs['state'] = val
     
-    state = property(_get_state, _set_state)
+    state = default(property(_get_state, _set_state))
 
 
-class BaseNode(AppNodeMixin):
+class BaseNode(object):
     __metaclass__ = plumber
     __plumbing__ = (
+        AppNode,
         AsAttrAccess,
         NodeChildValidate,
         Adopt,
@@ -252,28 +261,26 @@ class Properties(object):
 
 class ProtectedProperties(Properties):
     
-    def __init__(self, context, request, permissions, data=None):
+    def __init__(self, context, permissions, data=None):
         """
         >>> properties = ProtectedProperties(
         ...     context,
-        ...     request,
         ...     permissions={
         ...         'propname': ['permission1', 'permission2']
         ...     })
         """
         super(ProtectedProperties, self).__init__(data=data)
         object.__setattr__(self, '_context', context)
-        object.__setattr__(self, '_request', request)
         object.__setattr__(self, '_permissions', permissions)
     
     def _permits(self, property):
         context = object.__getattribute__(self, '_context')
-        request = object.__getattribute__(self, '_request')
         permissions = object.__getattribute__(self, '_permissions')
         required = permissions.get(property)
         if not required:
             # no security check
             return True
+        request = get_current_request()
         for permission in required:
             if has_permission(permission, context, request):
                 return True

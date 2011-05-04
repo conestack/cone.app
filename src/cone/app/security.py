@@ -23,9 +23,17 @@ DEFAULT_SETTINGS_ACL = [
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
+DEFAULT_NODE_PROPERTY_PERMISSIONS = {
+    'action_up': ['view'],
+    'action_view': ['view'],
+    'action_list': ['view'],
+    'editable': ['edit'],
+    'deletable': ['delete'],
+    'wf_state': ['edit'], # XXX: maybe change state?
+}
+
 ADMIN_USER = None
 ADMIN_PASSWORD = None
-AUTH_IMPL = None
 
 def authenticate(request, login, password):
     for impl in app_config().auth:
@@ -37,7 +45,7 @@ def authenticate(request, login, password):
 def groups_callback(name, request):
     """Collect and return roles for user.
     
-    XXX: cache decorator for request caching
+    XXX: request caching via decorator
     """
     roles = request.environ.get('cone.app.user.roles')
     if roles:
