@@ -19,6 +19,7 @@ from node.parts import (
 from zope.interface import implements
 from pyramid.threadlocal import get_current_request
 from pyramid.security import (
+    has_permission,
     authenticated_userid,
     Everyone,
     Allow,
@@ -51,8 +52,6 @@ def registerNodeInfo(name, info):
 def getNodeInfo(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
-
-
 
 
 class AppNodeMixin(object):
@@ -249,6 +248,61 @@ class Properties(object):
     
     def keys(self):
         return self._get_data().keys()
+
+
+class ProtectedProperties(Properties):
+    
+    def __init__(self, context, request, permissions, data=None):
+        """
+        >>> properties = ProtectedProperties(
+        ...     context,
+        ...     request,
+        ...     permissions={
+        ...         'propname': ['permission1', 'permission2']
+        ...     })
+        """
+        super(ProtectedProperties, self).__init__(data=data)
+        object.__setattr__(self, '_context', context)
+        object.__setattr__(self, '_request', request)
+        object.__setattr__(self, '_permissions', permissions)
+    
+    def _permits(self, property):
+        context = object.__getattribute__(self, '_context')
+        request = object.__getattribute__(self, '_request')
+        permissions = object.__getattribute__(self, '_permissions')
+        required = permissions.get(property)
+        if not required:
+            # no security check
+            return True
+        for permission in required:
+            if has_permission(permission, context, request):
+                return True
+        return False
+        
+    def __getitem__(self, key):
+        if not self._permits(key):
+            raise KeyError(u"No permission to access '%s'" % key)
+        return super(ProtectedProperties, self).__getitem__(key)
+    
+    def get(self, key, default=None):
+        if not self._permits(key):
+            return default
+        return super(ProtectedProperties, self).get(key, default)
+    
+    def __contains__(self, key):
+        if not self._permits(key):
+            return False
+        return super(ProtectedProperties, self).__contains__(key)
+    
+    def __getattr__(self, name):
+        if not self._permits(name):
+            return None
+        return super(ProtectedProperties, self).get(name)
+    
+    def keys(self):
+        keys = super(ProtectedProperties, self).keys()
+        keys = [key for key in keys if self._permits(key)]
+        return keys
 
 
 class BaseMetadata(Properties):

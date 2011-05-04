@@ -258,6 +258,84 @@ You can use the ``Properties`` object for any kind of mapping.::
     ('Foo', 'Bar')
 
 
+ProtectedProperties
+-------------------
+
+Protected properties checks against permission for properties::
+
+    >>> from cone.app.model import ProtectedProperties
+    >>> from pyramid.testing import DummyRequest
+    >>> context = BaseNode()
+    >>> request = DummyRequest()
+
+'viewprotected' property gets protected by 'view' permission::
+
+    >>> permissions = {
+    ...     'viewprotected': ['view'],
+    ... }
+    >>> props = ProtectedProperties(context, request, permissions)
+
+Setting properties works always::
+
+    >>> props.viewprotected = True
+    >>> props.unprotected = True
+
+Unauthorized just permits access to unprotected property::
+
+    >>> props.viewprotected
+    >>> props.unprotected
+    True
+    
+    >>> 'viewprotected' in props
+    False
+    
+    >>> 'unprotected' in props
+    True
+    
+    >>> props.keys()
+    ['unprotected']
+    
+    >>> props.get('viewprotected')
+    >>> props.get('unprotected')
+    True
+    
+    >>> props['viewprotected']
+    Traceback (most recent call last):
+      ...
+    KeyError: u"No permission to access 'viewprotected'"
+    
+    >>> props['unprotected']
+    True
+
+Authenticate, both properties are now available::
+
+    >>> layer.authenticate('viewer')
+    
+    >>> props['viewprotected']
+    True
+    
+    >>> props.viewprotected
+    True
+    
+    >>> props.unprotected
+    True
+    
+    >>> props.keys()
+    ['unprotected', 'viewprotected']
+    
+    >>> props.get('viewprotected')
+    True
+    
+    >>> props.get('unprotected')
+    True
+    
+    >>> props.viewprotected = False
+    >>> props.viewprotected
+    False
+    
+    >>> layer.logout()
+
+
 XML Properties
 --------------
 
