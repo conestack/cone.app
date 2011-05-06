@@ -20,6 +20,7 @@ from node.parts import (
     Lifecycle,
     OdictStorage,
 )
+from node.utils import instance_property
 from zope.interface import implements
 from pyramid.threadlocal import get_current_request
 from pyramid.security import (
@@ -46,7 +47,6 @@ from cone.app.security import (
 from cone.app.utils import (
     DatetimeHelper,
     app_config,
-    instance_property,
 )
 
 _node_info_registry = dict()
