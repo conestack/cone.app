@@ -88,7 +88,7 @@ class AppNode(Part):
         return metadata
     
     @default
-    @instance_property
+    @property
     def nodeinfo(self):
         info = getNodeInfo(self.node_info_name)
         if not info:
