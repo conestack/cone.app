@@ -24,7 +24,7 @@
        callback="cone.app.workflow.persist_state"
        from_state="initial"
        to_state="final"
-       permission="edit"
+       permission="change_state"
     />
     
   </workflow>

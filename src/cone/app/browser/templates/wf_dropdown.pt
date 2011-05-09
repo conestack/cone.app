@@ -1,3 +1,6 @@
+<tal:comment condition="False">
+  XXX: move to seperate cone.workflow egg
+</tal:comment>
 <tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">

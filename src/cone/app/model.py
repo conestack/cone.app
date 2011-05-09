@@ -99,21 +99,6 @@ class AppNode(Part):
         return info
 
 
-class WorkflowState(Part):
-    """Part for nodes providing workflow states.
-    
-    This implementation persists to self.attrs['state']
-    """
-    
-    def _get_state(self):
-        return self.attrs.get('state', None)
-    
-    def _set_state(self, val):
-        self.attrs['state'] = val
-    
-    state = default(property(_get_state, _set_state))
-
-
 class BaseNode(object):
     __metaclass__ = plumber
     __plumbing__ = (

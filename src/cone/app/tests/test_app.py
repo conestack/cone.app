@@ -18,6 +18,7 @@ TESTFILES = [
     '../utils.txt',
     '../model.txt',
     '../security.txt',
+    '../workflow.txt',
     '../browser/__init__.txt',
     '../browser/ajax.txt',
     '../browser/authoring.txt',

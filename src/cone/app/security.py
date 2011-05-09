@@ -29,7 +29,7 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_list': ['view'],
     'editable': ['edit'],
     'deletable': ['delete'],
-    'wf_state': ['edit'], # XXX: maybe change state?
+    'wf_state': ['view'],
 }
 
 ADMIN_USER = None

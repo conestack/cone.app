@@ -42,20 +42,19 @@ setup(name='cone.app',
           'yafowil.widget.dict',
           'yafowil.widget.autocomplete',
           'yafowil.widget.dynatree',
+          'repoze.workflow',
       ],
       extras_require = dict(
           test=[
                 'interlude',
                 'plone.testing',
                 'unittest2',
-                'repoze.workflow',
           ]
       ),
       tests_require=[
           'interlude',
           'plone.testing',
           'unittest2',
-          'repoze.workflow',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
       entry_points = """\
