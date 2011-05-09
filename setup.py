@@ -49,12 +49,14 @@ setup(name='cone.app',
                 'interlude',
                 'plone.testing',
                 'unittest2',
+                'node.ext.ugm',
           ]
       ),
       tests_require=[
           'interlude',
           'plone.testing',
           'unittest2',
+          'node.ext.ugm',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
       entry_points = """\
