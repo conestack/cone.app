@@ -1,8 +1,6 @@
 BaseNode
 --------
-
 ::
-
     >>> from cone.app.model import BaseNode
     >>> root = BaseNode()
 
@@ -307,7 +305,7 @@ Unauthorized just permits access to unprotected property::
 
 Authenticate, both properties are now available::
 
-    >>> layer.authenticate('viewer')
+    >>> layer.login('viewer')
     
     >>> props['viewprotected']
     True

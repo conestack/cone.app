@@ -71,17 +71,16 @@ responsible to create the yafowil form on ``self.form``::
     ...             return AjaxAction(url, 'content', 'inner', '#content')
     ...         return HTTPFound(url)
 
-Create dummy model and request::
+Create dummy model::
 
     >>> from cone.app.model import BaseNode
-    >>> from pyramid.testing import DummyRequest
     >>> model = BaseNode()
     >>> model.__name__ = 'dummymodel'
-    >>> request = DummyRequest()
 
 Authenticate::
 
-    >>> layer.authenticate('max')
+    >>> layer.login('max')
+    >>> request = layer.current_request
 
 Render form. ``form.show`` returns false, render empty string::
 
@@ -205,7 +204,8 @@ Provide another form tile for testing remaining aspects of ``Form`` class::
     ...         # return anything else to be rendered
     ...         return '<div>foo</div>'
     
-    >>> request = DummyRequest()
+    >>> layer.login('max')
+    >>> request = layer.current_request
     >>> request.params['action.otherform.save'] = '1'
     >>> render_tile(model, request, 'otherform')
     '<div>foo</div>'

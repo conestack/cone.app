@@ -5,18 +5,22 @@ cone main
 
 Settings as from ini file::
 
+    >>> import os
     >>> settings = {
     ...     'cone.admin_user': 'admin',
     ...     'cone.admin_password': 'admin',
     ...     'cone.secret_password': '12345',
-    ...     'cone.auth_impl': None,
-    ...     'cone.plugins': '',
+    ...     'cone.plugins': 'node.ext.ugm',
     ...     'cone.root.title': 'cone',
     ...     'cone.root.default_child': None,
     ...     'cone.root.mainmenu_empty_title': False,
+    ...     'node.ext.ugm.users_file': os.path.join(datadir, 'users'),
+    ...     'node.ext.ugm.groups_file': os.path.join(datadir, 'groups'),
+    ...     'node.ext.ugm.roles_file': os.path.join(datadir, 'roles'),
+    ...     'node.ext.ugm.datadir': os.path.join(datadir, 'userdata'),
     ... }
 
-Test get_root::
+``get_root``::
 
     >>> import os
     >>> root = cone.app.get_root(os.environ)
@@ -43,8 +47,6 @@ Settings contains metadata.title by default::
     'Settings'
 
 Settings is displayed in navtree by default::
-
-XXX: mainmenu and navtree same property, other name for controlling appearance?
     
     >>> root['settings'].properties.keys()
     ['in_navtree', 'icon']
@@ -52,7 +54,7 @@ XXX: mainmenu and navtree same property, other name for controlling appearance?
     >>> root['settings'].properties.in_navtree
     True
 
-Test configure_root::
+``configure_root``::
 
     >>> cone.app.configure_root(settings)
     >>> root.properties.keys()
@@ -75,7 +77,7 @@ Test configure_root::
     >>> root.metadata.title
     'cone'
 
-Test register_plugin::
+``register_plugin``::
 
     >>> from cone.app.model import BaseNode
     >>> cone.app.register_plugin('dummy', BaseNode)
@@ -87,7 +89,7 @@ Test register_plugin::
       ...
     ValueError: Plugin with name 'dummy' already registered.
 
-Test register_plugin_config::
+``register_plugin_config``::
 
     >>> cone.app.register_plugin_config('dummy', BaseNode)
     >>> 'dummy' in root['settings'].factories.keys()
@@ -98,35 +100,42 @@ Test register_plugin_config::
       ...
     ValueError: Config with name 'dummy' already registered.
 
-Test auth_tkt_factory::
+``register_main_hook``::
+
+    >>> def custom_main_hook(configurator, global_config, settings):
+    ...     print "Custom main hook called"
+    
+    >>> cone.app.register_main_hook(custom_main_hook)
+
+``auth_tkt_factory``::
 
     >>> cone.app.auth_tkt_factory(secret='12345')
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
 
-Test acl_factory::
+``acl_factory``::
 
     >>> cone.app.acl_factory()
     <pyramid.authorization.ACLAuthorizationPolicy object at ...>
-    
+
+``main``::
+
     >>> del root._metadata
     >>> del root._properties
     >>> del root.factories['settings']
 
-Test main::
-
     >>> app = cone.app.main({}, **settings)
+    Custom main hook called
+    
     >>> app
     <pyramid.router.Router object at ...>
-
-Cleanup::
+    
+Authentication policy should be registered now::
 
     >>> from pyramid.interfaces import IAuthenticationPolicy
     >>> authn = app.registry.getUtility(IAuthenticationPolicy)
-    >>> app.registry.unregisterUtility(authn, IAuthenticationPolicy)
-    True
-    
-    >>> from pyramid.interfaces import IAuthorizationPolicy
-    >>> authz = app.registry.getUtility(IAuthorizationPolicy)
-    >>> app.registry.unregisterUtility(authz, IAuthorizationPolicy)
-    True
-    
+    >>> authn.callback
+    <function groups_callback at ...>
+
+Set app registry on test layer, used along remaining tests::
+
+    >>> layer.registry = app.registry

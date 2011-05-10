@@ -5,8 +5,7 @@ Render login form::
 
     >>> from cone.app import root
     >>> from cone.tile import render_tile
-    >>> from pyramid.testing import DummyRequest
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> res = render_tile(root, request, 'loginform')
     >>> res.find('<form action="http://example.com/login"') > -1
     True

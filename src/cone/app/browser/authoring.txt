@@ -112,19 +112,17 @@ Create dummy container::
 
 Authenticate::
 
-    >>> layer.authenticate('editor')
+    >>> layer.login('owner')
 
 Render without factory::
 
+    >>> request = layer.current_request
     >>> from cone.tile import render_tile
-    >>> from pyramid.testing import DummyRequest
-    >>> request = DummyRequest()
     >>> render_tile(root, request, 'add')
     u'Unknown factory'
 
 Render with valid factory::
 
-    >>> request = DummyRequest()
     >>> request.params['factory'] = 'mynode'
     >>> result = render_tile(root, request, 'add')
     >>> result.find(u'<form action="http://example.com"') != -1
@@ -133,7 +131,6 @@ Render with valid factory::
 Render with valid factory on adapter node::
 
     >>> adapterroot = MyAdapterNode(None, None, None)
-    >>> request = DummyRequest()
     >>> request.params['factory'] = 'myadapternode'
     >>> result = render_tile(adapterroot, request, 'add')
     >>> result.find(u'<form action="http://example.com"') != -1
@@ -141,7 +138,8 @@ Render with valid factory on adapter node::
 
 Render with submitted data::
     
-    >>> request = DummyRequest()
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
     >>> request.params['addform.id'] = 'somechild'
@@ -174,7 +172,8 @@ Render with 'came_from' set::
 
 Render with ajax flag::
 
-    >>> request = DummyRequest()
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
     >>> request.params['addform.id'] = 'somechild'
@@ -196,7 +195,9 @@ Check the modified model::
 Add view::
 
     >>> from cone.app.browser.authoring import add
-    >>> request = DummyRequest()
+    
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
     >>> request.params['addform.id'] = 'somechild'
@@ -204,7 +205,6 @@ Add view::
     >>> add(root, request)
     <HTTPFound at ... 302 Found>
     
-    >>> request = DummyRequest()
     >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
     >>> request.params['addform.id'] = 'somechild'
@@ -254,14 +254,16 @@ Create and register an ``editform`` named form tile::
 
 Render form with value from model::
 
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> render_tile(root['somechild'], request, 'edit')
     u'<div class="box"><h1>Edit My Node</h1><form 
     action="http://example.com/somechild" ...'
 
 Render with submitted data. Default next URL of EditPart is the edited node::
     
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
 
@@ -271,7 +273,8 @@ Render with submitted data. Default next URL of EditPart is the edited node::
 
 Check next URL with 'came_from' 'parent'::
 
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['came_from'] = 'parent'
@@ -281,7 +284,8 @@ Check next URL with 'came_from' 'parent'::
 
 Check next URL with 'came_from' 'some_URL'::
 
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'
@@ -291,7 +295,8 @@ Check next URL with 'came_from' 'some_URL'::
 
 Render with ajax flag::
 
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['ajax'] = '1'
@@ -306,7 +311,8 @@ this URL is used as ajax target::
     >>> request.environ['cone.app.continuation'][0].target
     'http://example.com/somechild'
     
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'
@@ -323,14 +329,16 @@ Check the updated node::
 Edit view::
 
     >>> from cone.app.browser.authoring import edit
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> root.attrs.title = 'Foo'
     >>> edit(root, request)
     <HTTPFound at ... 302 Found>
     
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.current_request
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['ajax'] = '1'
@@ -356,9 +364,10 @@ Deleting
     >>> node.printtree()
     <class 'CallableNode'>: None
     
-    >>> layer.authenticate('owner')
     >>> node['child'] = CallableNode()
-    >>> request = DummyRequest()
+    
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     >>> render_tile(node['child'], request, 'delete')
     u''
     
@@ -366,7 +375,9 @@ Deleting
     'Object "child" not deletable'
     
     >>> node['child'].properties.deletable = True
-    >>> request = DummyRequest()
+    
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     >>> render_tile(node['child'], request, 'delete')
     u''
     
@@ -384,7 +395,8 @@ Add Items Dropdown Widget
 
 Dropdown menu containing links to the addforms of allowed child nodes::
 
-    >>> request = DummyRequest()
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
 
 Non JS Fallback link to add item view (view itself not implemented yet)::

@@ -27,14 +27,12 @@ Imports and dummy context::
     >>> contents = ContentsTile('cone.app:browser/templates/table.pt',
     ...                         None, 'contents')
     
-    >>> request = DummyRequest()
+    >>> layer.login('max')
     >>> contents.model = model
-    >>> contents.request = request
+    >>> contents.request = request = layer.current_request
 
 ``sorted_rows`` returns sorted listing items. ``start``, ``end``, ``sort`` and 
-``order`` are expected by this function.
-
-    >>> layer.authenticate('max')
+``order`` are expected by this function::
 
     >>> contents.sorted_rows(None, None, 'created', 'desc')[0]['title'].value
     '0 Title'
@@ -173,6 +171,7 @@ Change sort and order. Sort is proxied by batch::
 Rendering fails unauthorized, 'view' permission is required::
 
     >>> layer.logout()
+    >>> request = layer.current_request
     >>> from cone.tile import render_tile
     >>> render_tile(model, request, 'contents')
     Traceback (most recent call last):
@@ -183,7 +182,10 @@ Rendering fails unauthorized, 'view' permission is required::
 
 Render authenticated::
 
-    >>> layer.authenticate('max')
+    >>> layer.login('max')
+    >>> request = layer.current_request
+    >>> request.params['sort'] = 'modified'
+    >>> request.params['b_page'] = '1'
     >>> rendered = render_tile(model, request, 'contents')
     >>> expected = \
     ... '<a href="http://example.com?b_page=1&amp;sort=created&amp;order=desc"'

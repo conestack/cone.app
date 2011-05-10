@@ -17,11 +17,13 @@ DEFAULT_ACL = [
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
+
 DEFAULT_SETTINGS_ACL = [
     (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
     (Allow, Everyone, 'login'),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
+
 
 DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_up': ['view'],
@@ -32,15 +34,18 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'wf_state': ['view'],
 }
 
+
 ADMIN_USER = None
 ADMIN_PASSWORD = None
+
 
 def authenticate(request, login, password):
     for impl in app_config().auth:
         if impl.users.authenticate(login, password):
             return remember(request, login)
     if login == ADMIN_USER and password == ADMIN_PASSWORD:
-        return remember(request, login)                     #pragma NO COVERAGE
+        return remember(request, login)
+
 
 def groups_callback(name, request):
     """Collect and return roles and groups for user.

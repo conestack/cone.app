@@ -259,8 +259,8 @@ Rendering fails unauthorized, 'view' permission is required::
 
 Render authenticated::
 
-    >>> layer.authenticate('max')
-    >>> rendered = render_tile(model, request, 'mytabletile')
+    >>> layer.login('max')
+    >>> rendered = render_tile(model, layer.current_request, 'mytabletile')
     
 Part of custom action::
     

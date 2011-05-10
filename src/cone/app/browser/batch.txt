@@ -389,20 +389,15 @@ Register batch tile::
     ...             })
     ...         return ret
 
-Create dummy request::
-
-    >>> from pyramid.testing import DummyRequest
-    >>> request = DummyRequest()
-
 Create dummy model::
 
     >>> from cone.app.model import BaseNode
-    >>> from pyramid.testing import DummyRequest
     >>> model = BaseNode()
 
 Authenticate::
 
-    >>> layer.authenticate('foo')
+    >>> layer.login('max')
+    >>> request = layer.current_request
 
 Render batch::
     

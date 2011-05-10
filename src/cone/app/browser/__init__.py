@@ -35,17 +35,17 @@ def render_main_template(model, request, contenttilename='content'):
 
 
 @view_config(permission='login')
-def main(model, request):
+def main_view(model, request):
     return render_main_template(model, request)
 
 
 @view_config('login')
-def login(model, request):
+def login_view(model, request):
     return render_main_template(model, request, contenttilename='loginform')
 
 
 @view_config('logout')
-def logout(context, request):
+def logout_view(context, request):
     headers = forget(request)
     location = request.params.get('came_from', request.application_url)
     return HTTPFound(location=location, headers=headers)

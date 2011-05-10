@@ -197,7 +197,7 @@ Create dummy environ::
 
 Unauthorized fails::
 
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> res = render_tile(model, request, 'referencelisting')
     Traceback (most recent call last):
       ...
@@ -207,7 +207,9 @@ Unauthorized fails::
     
 Authorized::
 
-    >>> layer.authenticate('max')
+    >>> layer.login('max')
+    >>> request = layer.current_request
+    
     >>> res = render_tile(model, request, 'referencelisting')
     >>> res.find('id="referencebrowser"') > -1
     True

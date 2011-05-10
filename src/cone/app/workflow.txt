@@ -73,9 +73,9 @@ Initialize new node and check ACL's::
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
     
-    >>> layer.authenticate('manager')
+    >>> layer.login('manager')
     
-    >>> request = DummyRequest()
+    >>> request = layer.current_request
     >>> wf = get_workflow(WorkflowNode2, node.properties.wf_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state

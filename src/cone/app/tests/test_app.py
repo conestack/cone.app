@@ -15,10 +15,10 @@ optionflags = doctest.NORMALIZE_WHITESPACE | \
 layer = testing.security
 
 TESTFILES = [
-    '../testing.txt',
+    '../__init__.txt',
     '../utils.txt',
-    '../model.txt',
     '../security.txt',
+    '../model.txt',
     '../workflow.txt',
     '../browser/__init__.txt',
     '../browser/ajax.txt',
@@ -35,19 +35,11 @@ TESTFILES = [
     '../browser/utils.txt',
 ]
 
+DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
+
 def test_suite():
     XMLConfig('dummy_workflow.zcml', cone.app.tests)()
     suite = unittest.TestSuite()
-    suite.addTests([
-        doctest.DocFileSuite(
-            '../__init__.txt', 
-            globs={'interact': interlude.interact,
-                   'pprint': pprint.pprint,
-                   'pp': pprint.pprint,
-                   },
-            optionflags=optionflags,
-        )
-    ])
     suite.addTests([
         layered(
             doctest.DocFileSuite(
@@ -55,6 +47,7 @@ def test_suite():
                 globs={'interact': interlude.interact,
                        'pprint': pprint.pprint,
                        'pp': pprint.pprint,
+                       'datadir': DATADIR,
                        },
                 optionflags=optionflags,
                 ),

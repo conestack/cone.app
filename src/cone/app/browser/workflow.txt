@@ -3,11 +3,10 @@ Workflow dropdown
 
     >>> from cone.tile import render_tile
     >>> from cone.app import root
-    >>> from pyramid.testing import DummyRequest
     >>> from cone.app.tests.mock import WorkflowNode
     >>> import cone.app.browser.workflow
     
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> node = WorkflowNode()
     
     >>> node.state
@@ -17,7 +16,8 @@ Workflow dropdown
     >>> node.state
     u'initial'
     
-    >>> layer.authenticate('owner')
+    >>> layer.login('owner')
+    >>> request = layer.current_request
     
     >>> res = render_tile(node, request, 'wf_dropdown')
     >>> res.find('title="Change state">initial</a>') > -1
