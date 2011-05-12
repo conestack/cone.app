@@ -397,7 +397,7 @@ Create dummy model::
 Authenticate::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
 
 Render batch::
     

@@ -9,11 +9,10 @@ at ``self.table_tile_name``, normally bound to template
 
 Imports and dummy context::
 
-    >>> from pyramid.testing import DummyRequest
     >>> from cone.app.model import BaseNode
     
     >>> model = BaseNode()
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     
     >>> from cone.app.browser.table import (
     ...     RowData,

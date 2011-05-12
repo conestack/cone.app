@@ -43,7 +43,6 @@ Create some security context for testing::
     >>> from cone.app.security import DEFAULT_ACL
     >>> class ACLTest(object):
     ...     __acl__ = DEFAULT_ACL
-    
     >>> context = ACLTest()
 
 Authenticate as default user::

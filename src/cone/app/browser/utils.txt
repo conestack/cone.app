@@ -15,8 +15,7 @@ Common browser utils.::
 
 ``authenticated`` - Will be removed.::
 
-    >>> from pyramid.testing import DummyRequest
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> authenticated(request)
 
 ``nodepath`` - Propably will be implemented in ``BaseNode``. Just skips root in

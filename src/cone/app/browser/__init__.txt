@@ -1,7 +1,6 @@
 Import root and create dummy request::
 
     >>> from cone.app import root
-    >>> from pyramid.testing import DummyRequest
     >>> request = layer.new_request()
 
 Test render_main_template::

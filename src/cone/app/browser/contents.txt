@@ -6,7 +6,6 @@ in a sortable, batched table.
 
 Imports and dummy context::
 
-    >>> from pyramid.testing import DummyRequest
     >>> from cone.app.model import BaseNode
     
     >>> from datetime import datetime, timedelta
@@ -29,7 +28,7 @@ Imports and dummy context::
     
     >>> layer.login('max')
     >>> contents.model = model
-    >>> contents.request = request = layer.current_request
+    >>> contents.request = request = layer.new_request()
 
 ``sorted_rows`` returns sorted listing items. ``start``, ``end``, ``sort`` and 
 ``order`` are expected by this function::
@@ -171,7 +170,7 @@ Change sort and order. Sort is proxied by batch::
 Rendering fails unauthorized, 'view' permission is required::
 
     >>> layer.logout()
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> from cone.tile import render_tile
     >>> render_tile(model, request, 'contents')
     Traceback (most recent call last):
@@ -183,7 +182,7 @@ Rendering fails unauthorized, 'view' permission is required::
 Render authenticated::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> request.params['sort'] = 'modified'
     >>> request.params['b_page'] = '1'
     >>> rendered = render_tile(model, request, 'contents')

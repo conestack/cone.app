@@ -93,8 +93,8 @@ Contain CSS resource for all users::
 Render resources tile unauthorized::
 
     >>> from cone.tile import render_tile
-    >>> from pyramid.testing import DummyRequest
-    >>> result = render_tile(cone.app.root, DummyRequest(), 'resources')
+    >>> request = layer.new_request()
+    >>> result = render_tile(cone.app.root, request, 'resources')
     >>> result.find('static/style.css') > -1
     True
     
@@ -110,7 +110,7 @@ Render resources tile unauthorized::
 Render resources tile authorized::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     
     >>> result = render_tile(cone.app.root, request, 'resources')
     >>> result.find('static/style.css') > -1
@@ -150,9 +150,8 @@ An unprotected tile named 'content' registered for all sorts of node::
 
 Dummy environ::
 
-    >>> request = DummyRequest()
-
     >>> from cone.app.model import BaseNode
+    >>> request = layer.new_request()
     >>> model = BaseNode()
 
 Render main template. The function accepts an optional ``contenttilename``
@@ -204,7 +203,7 @@ navtree, mainmenu, etc::
 Authenticate non privileged::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
 
 All tiles protected by 'view' permission are now available to the user::
 
@@ -242,13 +241,12 @@ Class ``cone.app.browser.layout.ProtectedContentTile`` provides this behavior::
 Render protected tile.::
 
     >>> layer.logout()
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> render_tile(ProtectedModel(), request, 'content')
     u'<form action="http://example.com/login" 
     enctype="multipart/form-data" id="form-loginform" method="post">...
     
     >>> layer.login('max')
-    >>> request = layer.current_request
     >>> result = render_tile(ProtectedModel(), request, 'content')
     >>> result.find('<div>Content</div>') > -1
     True
@@ -267,7 +265,6 @@ Render main menu at root.
 
 Unauthorized::
 
-    >>> request = layer.current_request
     >>> res = render_tile(root, request, 'mainmenu')
     >>> res.find('href="http://example.com/1"') > -1
     False
@@ -278,8 +275,6 @@ Unauthorized::
 Authorized::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
-    
     >>> res = render_tile(root, request, 'mainmenu')
     >>> res.find('href="http://example.com/1"') > -1
     True
@@ -366,8 +361,6 @@ Unauthorized::
 Empty navtree, no items are marked to be displayed::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
-
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('id="navtree"') != -1
     True
@@ -415,8 +408,6 @@ Child nodes which do not grant permission 'view' are skipped::
     False
     
     >>> layer.login('manager')
-    >>> request = layer.current_request
-    
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('href="http://example.com/3"') > -1
     True
@@ -469,8 +460,6 @@ Unauthorized::
 Authorized::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
-
     >>> res = render_tile(root, request, 'personaltools')
     >>> res.find('id="personaltools"') != -1
     True
@@ -492,8 +481,6 @@ Unauthorized::
     False
     
     >>> layer.login('max')
-    >>> request = layer.current_request
-    
     >>> res = render_tile(root['1'], request, 'pathbar')
     >>> res.find('pathbaritem') != -1
     True
@@ -573,7 +560,6 @@ Unauthenticated::
 Authenticated::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
     >>> res = render_tile(root, request, 'byline')
     >>> print res
     <p class="byline">
@@ -592,7 +578,6 @@ Test default root content tile
     >>> from cone.app.model import AppRoot
     >>> root = AppRoot()
     >>> layer.login('max')
-    >>> request = layer.current_request
     >>> res = render_tile(root, request, 'content')
     >>> print res
     <div>

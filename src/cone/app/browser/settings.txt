@@ -23,7 +23,7 @@ objects inside tabs::
     >>> from cone.tile import render_tile
     
     >>> layer.login('manager')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     
     >>> import cone.app.browser.settings
     >>> from cone.app import root
@@ -80,7 +80,7 @@ form to correct tab::
     ...         self.form = form
     
     >>> layer.login('manager')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> request.params['action.editform.save'] = '1'
     >>> request.params['editform.foo'] = 'foo'
     >>> request.params['ajax'] = '1'
@@ -96,7 +96,7 @@ form to correct tab::
     '.foo'
     
     >>> layer.login('manager')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> request.params['action.editform.save'] = '1'
     >>> request.params['editform.foo'] = 'foo'
     >>> res = render_tile(root['settings']['foo'], request, 'editform')

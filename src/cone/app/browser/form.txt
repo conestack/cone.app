@@ -80,7 +80,7 @@ Create dummy model::
 Authenticate::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
 
 Render form. ``form.show`` returns false, render empty string::
 
@@ -205,7 +205,7 @@ Provide another form tile for testing remaining aspects of ``Form`` class::
     ...         return '<div>foo</div>'
     
     >>> layer.login('max')
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> request.params['action.otherform.save'] = '1'
     >>> render_tile(model, request, 'otherform')
     '<div>foo</div>'

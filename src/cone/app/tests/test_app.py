@@ -16,6 +16,7 @@ layer = testing.security
 
 TESTFILES = [
     '../__init__.txt',
+    '../testing.txt',
     '../utils.txt',
     '../security.txt',
     '../model.txt',

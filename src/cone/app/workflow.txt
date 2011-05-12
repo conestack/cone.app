@@ -1,7 +1,6 @@
 Cone workflow parts::
 
     >>> from plumber import plumber
-    >>> from pyramid.testing import DummyRequest
     >>> from pyramid.security import (
     ...     Everyone,
     ...     Allow,
@@ -75,7 +74,7 @@ Initialize new node and check ACL's::
     
     >>> layer.login('manager')
     
-    >>> request = layer.current_request
+    >>> request = layer.new_request()
     >>> wf = get_workflow(WorkflowNode2, node.properties.wf_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state

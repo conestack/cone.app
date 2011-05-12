@@ -37,11 +37,6 @@ Fails unauthenticated, since default permission for tiles is 'view'::
 Authenticate and test again::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
-    >>> request.params['bdajax.action'] = 'testtile'
-    >>> request.params['bdajax.mode'] = 'replace'
-    >>> request.params['bdajax.selector'] = '.foo'
-    
     >>> ajax_tile(root, request)
     {'continuation': False, 
     'payload': 'rendered test tile', 
@@ -206,7 +201,6 @@ Test unauthorized::
 Test authorized with form extraction failure::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
     >>> request.params['ajax'] = '1'
     >>> request.params['ajaxtestform.foo'] = ''
     >>> request.params['action.ajaxtestform.save'] = 1
@@ -227,12 +221,9 @@ Test authorized with form extraction failure::
 
 Test with form perocessing passing::
 
-    >>> request.params['ajax'] = '1'
     >>> request.params['ajaxtestform.foo'] = 'foo'
-    >>> request.params['action.ajaxtestform.save'] = 1
     >>> response = render_ajax_form(root, request, 'ajaxtestform')
     >>> result = str(response)
-    
     >>> expected = 'parent.cone.ajaxformrender(\'\', \'#content\', \'inner\')'
     >>> result.find(expected) != -1
     True

@@ -5,7 +5,6 @@ Load requirements.::
 
     >>> import yafowil.loader
     >>> import cone.app.browser.referencebrowser
-    >>> from pyramid.testing import DummyRequest
 
 Test widget.::
 
@@ -39,7 +38,7 @@ Render required with empty value.::
     ...         'required': 'Ref Required',
     ...     })
     
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> request.params['ref'] = ''
     >>> request.params['ref.uid'] = ''
     
@@ -134,7 +133,7 @@ Render required with empty value.::
     ...         ],
     ...     })
     
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> request.params['ref'] = ''
     
     >>> data = widget.extract(request)
@@ -177,7 +176,6 @@ Create dummy environ::
 
     >>> from cone.tile import render_tile
     >>> from cone.app.model import BaseNode
-    >>> from pyramid.testing import DummyRequest
     
     >>> from datetime import datetime
     >>> from datetime import timedelta
@@ -208,8 +206,6 @@ Unauthorized fails::
 Authorized::
 
     >>> layer.login('max')
-    >>> request = layer.current_request
-    
     >>> res = render_tile(model, request, 'referencelisting')
     >>> res.find('id="referencebrowser"') > -1
     True
