@@ -1,6 +1,5 @@
 import os
 import cone.app
-from pyramid.registry import global_registry
 from pyramid.testing import DummyRequest
 from plone.testing import Layer
 from cone.app.security import authenticate
@@ -55,17 +54,6 @@ class Security(Layer):
         self.current_request = request
         return request
     
-    def _get_registry(self):
-        if hasattr(self, '_current_registry') \
-          and self._current_registry is not None:
-            return self._current_registry
-        return global_registry
-    
-    def _set_registry(self, registry):
-        self._current_registry = registry
-    
-    registry = property(_get_registry, _set_registry)
-    
     def make_app(self):
         settings = {
             'cone.admin_user': 'admin',
@@ -86,7 +74,6 @@ class Security(Layer):
     def setUp(self, args=None):
         self.make_app()
         self.current_request = None
-        self.new_request()
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = self.defaults
         print "Security set up."

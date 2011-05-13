@@ -3,18 +3,17 @@ Test layer::
     >>> layer
     <Layer 'cone.app.testing.Security'>
     
+    >>> layer.login('inexistent')
+    
     >>> req = layer.new_request()
     >>> req
     <pyramid.testing.DummyRequest object at ...>
     
-    >>> req.environ
-    {'AUTH_TYPE': 'cookie', 'SERVER_NAME': 'testcase'}
+    >>> from pyramid.security import authenticated_userid
+    >>> authenticated_userid(req)
     
     >>> layer.current_request is req
     True
-    
-    >>> from pyramid.security import authenticated_userid
-    >>> authenticated_userid(req)
     
     >>> layer.login('max')
     >>> req.environ
