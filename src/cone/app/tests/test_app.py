@@ -36,8 +36,6 @@ TESTFILES = [
     '../browser/utils.txt',
 ]
 
-DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
-
 def test_suite():
     XMLConfig('dummy_workflow.zcml', cone.app.tests)()
     suite = unittest.TestSuite()
@@ -48,7 +46,6 @@ def test_suite():
                 globs={'interact': interlude.interact,
                        'pprint': pprint.pprint,
                        'pp': pprint.pprint,
-                       'datadir': DATADIR,
                        },
                 optionflags=optionflags,
                 ),

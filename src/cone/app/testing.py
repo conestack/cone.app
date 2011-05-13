@@ -1,8 +1,11 @@
+import os
+import cone.app
 from pyramid.registry import global_registry
 from pyramid.testing import DummyRequest
 from plone.testing import Layer
 from cone.app.security import authenticate
 
+DATADIR = os.path.join(os.path.dirname(__file__), 'tests', 'data', 'ugm')
 
 class Security(Layer):
     """Test layer with dummy authentication for security testing.
@@ -63,10 +66,27 @@ class Security(Layer):
     
     registry = property(_get_registry, _set_registry)
     
+    def make_app(self):
+        settings = {
+            'cone.admin_user': 'admin',
+            'cone.admin_password': 'admin',
+            'cone.secret_password': '12345',
+            'cone.plugins': 'node.ext.ugm',
+            'cone.root.title': 'cone',
+            'cone.root.default_child': None,
+            'cone.root.mainmenu_empty_title': False,
+            'node.ext.ugm.users_file': os.path.join(DATADIR, 'users'),
+            'node.ext.ugm.groups_file': os.path.join(DATADIR, 'groups'),
+            'node.ext.ugm.roles_file': os.path.join(DATADIR, 'roles'),
+            'node.ext.ugm.datadir': os.path.join(DATADIR, 'userdata'),
+        }
+        self.app = cone.app.main({}, **settings)
+        self.registry = self.app.registry
+    
     def setUp(self, args=None):
+        self.make_app()
         self.current_request = None
         self.new_request()
-        self.registry = None
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = self.defaults
         print "Security set up."

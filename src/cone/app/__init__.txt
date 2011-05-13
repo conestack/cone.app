@@ -3,35 +3,12 @@ cone main
 
     >>> import cone.app
 
-Settings as from ini file::
-
-    >>> import os
-    >>> settings = {
-    ...     'cone.admin_user': 'admin',
-    ...     'cone.admin_password': 'admin',
-    ...     'cone.secret_password': '12345',
-    ...     'cone.plugins': 'node.ext.ugm',
-    ...     'cone.root.title': 'cone',
-    ...     'cone.root.default_child': None,
-    ...     'cone.root.mainmenu_empty_title': False,
-    ...     'node.ext.ugm.users_file': os.path.join(datadir, 'users'),
-    ...     'node.ext.ugm.groups_file': os.path.join(datadir, 'groups'),
-    ...     'node.ext.ugm.roles_file': os.path.join(datadir, 'roles'),
-    ...     'node.ext.ugm.datadir': os.path.join(datadir, 'userdata'),
-    ... }
-
 ``get_root``::
 
     >>> import os
-    >>> root = cone.app.get_root(os.environ)
+    >>> root = cone.app.get_root()
     >>> root
     <AppRoot object 'None' at ...>
-
-    >>> root.properties.keys()
-    []
-    
-    >>> root.metadata.keys()
-    []
 
 AppRoot contains a settings node by default::
 
@@ -53,29 +30,6 @@ Settings is displayed in navtree by default::
     
     >>> root['settings'].properties.in_navtree
     True
-
-``configure_root``::
-
-    >>> cone.app.configure_root(settings)
-    >>> root.properties.keys()
-    ['default_child', 'mainmenu_empty_title', 'editable', 'in_navtree']
-
-    >>> root.properties.default_child
-    
-    >>> root.properties.mainmenu_empty_title
-    False
-    
-    >>> root.properties.editable
-    False
-    
-    >>> root.properties.in_navtree
-    False
-    
-    >>> root.metadata.keys()
-    ['title']
-    
-    >>> root.metadata.title
-    'cone'
 
 ``register_plugin``::
 
@@ -116,26 +70,3 @@ Settings is displayed in navtree by default::
 
     >>> cone.app.acl_factory()
     <pyramid.authorization.ACLAuthorizationPolicy object at ...>
-
-``main``::
-
-    >>> del root._metadata
-    >>> del root._properties
-    >>> del root.factories['settings']
-
-    >>> app = cone.app.main({}, **settings)
-    Custom main hook called
-    
-    >>> app
-    <pyramid.router.Router object at ...>
-    
-Authentication policy should be registered now::
-
-    >>> from pyramid.interfaces import IAuthenticationPolicy
-    >>> authn = app.registry.getUtility(IAuthenticationPolicy)
-    >>> authn.callback
-    <function groups_callback at ...>
-
-Set app registry on test layer, used along remaining tests::
-
-    >>> layer.registry = app.registry
