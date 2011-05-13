@@ -148,10 +148,7 @@ class AddPart(CameFromNext):
     def __call__(_next, self, model, request):
         ajax_form_fiddle(request, '#content', 'inner')
         info = getNodeInfo(model.node_info_name)
-        if info is not None:
-            heading = u'<h1>Add %s</h1>' % info.title
-        else:
-            heading = u'<h1>Add</h1>'
+        heading = u'<h1>Add %s</h1>' % info.title
         form = _next(self, model, request)
         if form is None:
             form = u''
@@ -191,7 +188,7 @@ class EditPart(CameFromNext):
         if info is not None:
             heading = u'<h1>Edit %s</h1>' % info.title
         else:
-            heading = u'<h1>Edit</h1>'
+            heading = u'<h1>Edit</h1>'                      #pragma NO COVERAGE
         form = _next(self, model, request)
         if form is None:
             form = u''

@@ -15,18 +15,31 @@ Imports and dummy context::
     >>> model = BaseNode()
     >>> for i in range(19):
     ...     model[str(i)] = BaseNode()
+    ...     model[str(i)].properties.editable = True
+    ...     model[str(i)].properties.deletable = True
     ...     model[str(i)].metadata.title = str(i) + ' Title'
     ...     model[str(i)].metadata.creator = 'admin ' + str(19 - i)
     ...     model[str(i)].metadata.created = created
     ...     model[str(i)].metadata.modified = modified
     ...     created = created + delta
     ...     modified = modified + delta
+    
+    >>> from pyramid.security import (
+    ...     Everyone,
+    ...     Deny,
+    ...     ALL_PERMISSIONS,
+    ... )
+    
+    >>> class NeverShownChild(BaseNode):
+    ...     __acl__ = [(Deny, Everyone, ALL_PERMISSIONS)]
+    
+    >>> model['nevershown'] = NeverShownChild()
 
     >>> from cone.app.browser.contents import ContentsTile
     >>> contents = ContentsTile('cone.app:browser/templates/table.pt',
     ...                         None, 'contents')
     
-    >>> layer.login('max')
+    >>> layer.login('manager')
     >>> contents.model = model
     >>> contents.request = request = layer.new_request()
 
@@ -181,7 +194,7 @@ Rendering fails unauthorized, 'view' permission is required::
 
 Render authenticated::
 
-    >>> layer.login('max')
+    >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> request.params['sort'] = 'modified'
     >>> request.params['b_page'] = '1'

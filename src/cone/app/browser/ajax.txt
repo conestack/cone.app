@@ -43,7 +43,48 @@ Authenticate and test again::
     'mode': 'replace', 
     'selector': '.foo'}
 
+
+``ajax_tile`` using ``ajax_continue``::
+
+    >>> from cone.app.browser.ajax import (
+    ...     ajax_continue,
+    ...     AjaxAction,
+    ... )
+    
+    >>> @tile('testtile2')
+    ... class TestTile(Tile):
+    ...     def render(self):
+    ...         ajax_continue(self.request,
+    ...                       AjaxAction('target', 'name', 'mode', 'selector'))
+    ...         return u''
+    
+    >>> request.params['bdajax.action'] = 'testtile2'
+    >>> ajax_tile(root, request)
+    {'continuation': 
+    [{'mode': 'mode', 
+    'selector': 'selector', 
+    'type': 'action', 
+    'target': 'target', 
+    'name': 'name'}], 
+    'payload': u'', 
+    'mode': 'replace', 
+    'selector': '.foo'}
+    
     >>> layer.logout()
+
+More convenience continuation functions::
+
+    >>> request = layer.new_request()
+    >>> from cone.app.browser.ajax import ajax_message
+    >>> ajax_message(request, 'payload')
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxMessage object at ...>]
+    
+    >>> request = layer.new_request()
+    >>> from cone.app.browser.ajax import ajax_status_message
+    >>> ajax_status_message(request, 'payload')
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxMessage object at ...>]
 
 
 Forms
@@ -58,11 +99,11 @@ places.
   ``render_main_template``
 
 - The form implementing tiles have to return a list of ``AjaxAction`` and or
-  ``AjaxEvent`` instances by ``next`` function if ajax flag is set.
-  ``AjaxAction`` and ``AjaxEvent`` each represent either a ``bdajax.action``
-  or a ``bdajax.trigger`` call on the client side, and are executed in order.
-  If no ajax flag is set, the form's next function normally returns a
-  ``HTTPFound`` instance.
+  ``AjaxEvent`` and or ``AjaxMessage`` instances by ``next`` function if ajax 
+  flag is set. ``AjaxAction``, ``AjaxEvent`` and ``AjaxMessage`` each represent
+  either a ``bdajax.action``, a ``bdajax.trigger`` or a ``bdajax.message`` call
+  on the client side, and are executed in order. If no ajax flag is set, the
+  form's next function normally returns a ``HTTPFound`` instance.
 
 AjaxAction object::
 
@@ -89,6 +130,19 @@ AjaxEvent object::
     
     >>> event.name, event.selector, event.target
     ('contextchanged', '.contextsensitiv', 'http://example.com')
+
+AjaxMessage object::
+
+    >>> from cone.app.browser.ajax import AjaxMessage
+    >>> payload = 'Some info message'
+    >>> flavor = 'info'
+    >>> selector = 'None'
+    >>> message = AjaxMessage(payload, flavor, selector)
+    >>> message
+    <cone.app.browser.ajax.AjaxMessage object at ...>
+    
+    >>> message.payload, message.flavor, message.selector
+    ('Some info message', 'info', 'None')
 
 AjaxFormContinue object. This object is used by ``render_ajax_form``::
 
@@ -117,7 +171,7 @@ If continuation definitions and result, ``form`` returns empty string, because
 form processing was successful. ``next`` returns a JSON dump of given actions,
 which gets interpreted and executed on client side::
 
-    >>> continuation = [action, event]
+    >>> continuation = [action, event, message]
     >>> afc = AjaxFormContinue(result, continuation)
     >>> afc.form
     ''
@@ -131,7 +185,11 @@ which gets interpreted and executed on client side::
     {"selector": ".contextsensitiv", 
     "type": "event", 
     "target": "http://example.com", 
-    "name": "contextchanged"}]'
+    "name": "contextchanged"}, 
+    {"flavor": "info", 
+    "type": "message", 
+    "payload": "Some info message", 
+    "selector": "None"}]'
 
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::
