@@ -1,0 +1,33 @@
+<tal:comment condition="False">
+  XXX: move to seperate cone.workflow egg
+</tal:comment>
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+  <div class="transitions_dropdown"
+       tal:define="transitions context.transitions;
+                   state context.model.state">
+    <div class="state">
+      <span>State:</span>
+      <a href="${context.nodeurl}/changestate"
+         tal:condition="transitions"
+         tal:content="state"
+         class="state-${state}"
+         title="Change state">state</a>
+      <span tal:condition="not:transitions"
+            tal:content="state"
+            class="state-${state}">state</span>
+    </div>
+    <ul class="dropdown_items" style="display:none;">
+      <li tal:repeat="transition transitions">
+        <a href="${transition.url}"
+           ajax:bind="click"
+           ajax:target="${transition.target}"
+           ajax:action="wf_dropdown:NONE:NONE"
+           tal:content="transition.title">
+          transition
+        </a>
+      </li>
+    </ul>
+  </div>
+</tal:ajax>

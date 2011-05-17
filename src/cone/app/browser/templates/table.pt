@@ -1,0 +1,85 @@
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+  <div id="${context.table_id}"
+       class="${context.table_id}batchsensitiv
+              ${context.table_id}sortingheadsensitiv"
+       ajax:bind="${context.wrapper_binding}"
+       ajax:target="${context.nodeurl}"
+       ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
+  
+    <tal:batch replace="structure context.batch" />
+  
+    <table class="contents">
+        
+      <tr class="head">
+        <tal:th repeat="col_def context.col_defs">
+              
+          <th tal:condition="not col_def['sort_key']"
+              tal:content="col_def['title']">
+            Title
+          </th>
+          
+          <th tal:condition="col_def['sort_key']"
+              tal:define="defs context.th_defs(col_def['sort_key'])"
+              tal:attributes="class defs[0] and defs[0] or None">
+            <a href="${defs[1]}"
+               title="${col_def['sort_title']}"
+               ajax:bind="click"
+               ajax:target="${defs[1]}"
+               ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
+               tal:content="col_def['title']">
+                Title
+            </a>
+          </th>
+          
+        </tal:th>
+      </tr>
+      
+      <tal:row repeat="row_data context.slice.rows">
+        <tr>
+          <tal:td repeat="col_def context.col_defs">
+                
+            <td tal:condition="col_def['content'] == 'actions'"
+                tal:define="item row_data[col_def['id']]">
+              <tal:action repeat="action item.actions">
+                <a href="${action.link}"
+                   class="${action.css}"
+                   title="${action.title}"
+                   ajax:bind="click"
+                   ajax:target="${action.target}"
+                   ajax:event="${action.event}"
+                   ajax:action="${action.action}"
+                   ajax:confirm="${action.confirm}"
+                   tal:condition="not action.rendered">&nbsp;</a>
+                <tal:action condition="action.rendered"
+                            replace="structure action.rendered" />
+              </tal:action>
+            </td>
+            
+            <td tal:condition="col_def['content'] != 'actions'"
+                tal:define="item row_data[col_def['id']];
+                            is_string col_def['content'] == 'string';
+                            value is_string and item.value or context.format_date(item.value);">
+              <tal:linked condition="item.link">
+                <a href="${item.link}"
+                   ajax:bind="click"
+                   ajax:target="${item.target}"
+                   ajax:event="${item.event}"
+                   ajax:action="${item.action}"
+                   tal:content="value">
+                  Value
+                </a>
+              </tal:linked>
+              
+              <tal:notlinked condition="not item.link">
+                <span tal:replace="value">Value</span>
+              </tal:notlinked>
+            </td>
+            
+          </tal:td>
+        </tr>
+      </tal:row>
+    </table> 
+  </div>
+</tal:ajax>

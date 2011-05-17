@@ -1,16 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<!--
-Design by Free CSS Templates
-http://www.freecsstemplates.org
-Released for free under a Creative Commons Attribution 2.5 License
-Name       : Splendid
-Description: A two-column, fixed-width design for 1024x768 screen resolutions.
-Version    : 1.0
-Released   : 20090622
--->
-
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax">
   <head>
 
@@ -19,41 +10,23 @@ Released   : 20090622
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     
-    <!-- javascripts -->
-    <tal:cdn condition="None">
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-      <script src="http://cdn.jquerytools.org/1.1.2/tiny/jquery.tools.min.js"></script>
-    </tal:cdn>
-    <script src="${request.application_url}/static/cdn/jquery.min.js"></script> 
-    <script src="${request.application_url}/static/cdn/jquery.tools.min.js"></script>
-    <script src="${request.application_url}/++resource++bdajax/bdajax.js"></script>
-    
-    <tal:authendicated condition="util.authenticated(request)">
-      <script src="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.min.js"></script>
-      <script src="${request.application_url}/tiny_mce/jquery.tinymce.js"></script>
-      <script src="${request.application_url}/++resource++yafowil.widget.datetime/widget.js"></script>
-      <script src="${request.application_url}/++resource++yafowil.widget.richtext/widget.js"></script>
-      <script src="${request.application_url}/++resource++yafowil.widget.dict/widget.js"></script>
-      <script src="${request.application_url}/static/cone.app.js"></script>
-    </tal:authendicated>
-
-    <!-- stylesheets -->
-    <link href="${request.application_url}/static/style.css" rel="stylesheet" type="text/css" media="screen" />
-    <link href="${request.application_url}/static/icons.css" rel="stylesheet" type="text/css" media="screen" />
-    <link href="${request.application_url}/++resource++bdajax/bdajax.css" rel="stylesheet" type="text/css" media="screen" />
-    <tal:authendicated condition="util.authenticated(request)">
-      <link href="${request.application_url}/static/jquery-ui/jquery-ui-1.8.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
-    </tal:authendicated>
-    <tal:additional repeat="additional util.additional_css">
-      <link href="${request.application_url}/${additional}" rel="stylesheet" type="text/css" media="screen" />
-    </tal:additional>
+    <tal:resources replace="structure tile('resources')" />
 
   </head>
   <body>
+    <tal:bdajax replace="structure tile('bdajax')" />
+    
+    <iframe id="ajaxformresponse"
+            name="ajaxformresponse"
+            src="#"
+            style="width:0px;height:0px;display:none">
+    </iframe>
+  
     <div id="wrapper">
-      
-      <div id="logo">
-        <h1>
+    
+      <div id="header">
+        
+        <h1 id="logo">
           <a class="logolink"
              href="${request.application_url}"
              ajax:bind="click"
@@ -62,69 +35,55 @@ Released   : 20090622
                          contextchanged:#content"
              tal:content="model.root.metadata.title">Title</a>
         </h1>
+        
+        <tal:personaltools
+          condition="layout.personaltools"
+          replace="structure tile('personaltools')" />
+        
+        <tal:livesearch
+          condition="layout.livesearch"
+          replace="structure tile('livesearch')" />
+        
+        <tal:enabled condition="layout.mainmenu">
+          <div id="menu">
+            <tal:mainmenu replace="structure tile('mainmenu')" />
+          </div>
+        </tal:enabled>
+      
       </div>
       
-      <hr />
-
-      <div id="header">
-        
-        <div id="menu">
-          <tal:mainmenu replace="structure tile('mainmenu')" />
+      <tal:enabled condition="layout.pathbar">
+        <div id="pathbar" class="pathbar">
+          <tal:mainmenu replace="structure tile('pathbar')" />
         </div>
+      </tal:enabled>
 
-        <div id="search" tal:condition="util.authenticated(request)">
-          <form method="get" action="">
-            <fieldset>
-              <input type="text" name="term" id="search-text" size="15" />
-              <input type="submit" id="search-submit" value="GO" />
-            </fieldset>
-          </form>
-        </div>
-      </div>
-
-      <div id="pathbar" class="pathbar">
-        <tal:mainmenu replace="structure tile('pathbar')" />
-      </div>
-
-      <div id="page">
-        
-        <div id="page-bgtop">
+      <div id="content_wrapper">
           
-          <div id="content_wrapper">
-          
-            <div id="content"
-               ajax:bind="contextchanged"
-               ajax:action="content:#content:inner">
-              <tal:content replace="structure tile(contenttilename)" />
-            </div>
-          
+        <tal:enabled condition="layout.sidebar_left">
+          <div id="sidebar_left">
+            <tal:tiles repeat="tilename layout.sidebar_left">
+              <tal:tile replace="structure tile(tilename)" />
+            </tal:tiles>
           </div>
-          
-          <div id="sidebar">
-            <tal:navtree replace="structure tile('navtree')" />
-            <tal:navtree replace="structure tile('personaltools')" />
-          </div>
-          
-          <div style="clear: both;">&nbsp;</div>
+        </tal:enabled>
+        
+        <div id="content"
+             ajax:bind="contextchanged"
+             ajax:action="content:#content:inner">
+          <tal:content replace="structure tile(contenttilename)" />
         </div>
+          
+        <div style="clear: both;">&nbsp;</div>
+          
       </div>
       
       <div id="footer">
         <p>
-          Copyright (c) 2009-2010
+          Copyright (c) 2010-2011
           <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
-          All rights reserved. Design by
-          <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.
         </p>
       </div>
-      
-      <tal:bdajax replace="structure tile('bdajax')" />
-	  
-	  <iframe id="ajaxformresponse"
-              name="ajaxformresponse"
-              src="#"
-              style="width:0px;height:0px;display:none">
-      </iframe>
       
     </div>
   </body>

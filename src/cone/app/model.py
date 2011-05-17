@@ -4,7 +4,11 @@ import ConfigParser
 from lxml import etree
 from datetime import datetime
 from odict import odict
-from plumber import plumber
+from plumber import (
+    plumber,
+    Part,
+    default,
+)
 from node.parts import (
     AsAttrAccess,
     NodeChildValidate,
@@ -16,9 +20,17 @@ from node.parts import (
     Lifecycle,
     OdictStorage,
 )
+from node.utils import instance_property
 from zope.interface import implements
 from pyramid.threadlocal import get_current_request
-from pyramid.security import authenticated_userid
+from pyramid.security import (
+    has_permission,
+    authenticated_userid,
+    Everyone,
+    Allow,
+    Deny,
+    ALL_PERMISSIONS,
+)
 from cone.app.interfaces import (
     IApplicationNode,
     IFactoryNode,
@@ -27,8 +39,15 @@ from cone.app.interfaces import (
     IMetadata,
     INodeInfo,
 )
-from cone.app.security import DEFAULT_ACL
-from cone.app.utils import DatetimeHelper
+from cone.app.security import (
+    DEFAULT_ACL,
+    DEFAULT_SETTINGS_ACL,
+    DEFAULT_NODE_PROPERTY_PERMISSIONS,
+)
+from cone.app.utils import (
+    DatetimeHelper,
+    app_config,
+)
 
 _node_info_registry = dict()
 
@@ -41,9 +60,49 @@ def getNodeInfo(name):
         return _node_info_registry[name]
 
 
+class AppNode(Part):
+    
+    implements(IApplicationNode)
+    
+    __acl__ = default(DEFAULT_ACL)
+    
+    # set this to name of registered node info on deriving class
+    node_info_name = default('')
+    
+    @default
+    @instance_property
+    def properties(self):
+        props = ProtectedProperties(self, DEFAULT_NODE_PROPERTY_PERMISSIONS)
+        props.in_navtree = False
+        props.editable = False
+        return props
+    
+    @default
+    @instance_property
+    def metadata(self):
+        name = self.__name__
+        if not name:
+            name = 'No Title'
+        metadata = BaseMetadata()
+        metadata.title = name
+        return metadata
+    
+    @default
+    @property
+    def nodeinfo(self):
+        info = getNodeInfo(self.node_info_name)
+        if not info:
+            info = BaseNodeInfo()
+            info.title = str(self.__class__)
+            info.node = self.__class__
+            info.icon = app_config().default_node_icon
+        return info
+
+
 class BaseNode(object):
     __metaclass__ = plumber
     __plumbing__ = (
+        AppNode,
         AsAttrAccess,
         NodeChildValidate,
         Adopt,
@@ -54,43 +113,12 @@ class BaseNode(object):
         Lifecycle,
         OdictStorage,
     )
-    implements(IApplicationNode)
-    
-    __acl__ = DEFAULT_ACL
-    
-    # set this to name of registered node info on deriving class
-    node_info_name = ''
-    
-    @property
-    def properties(self):
-        props = Properties()
-        props.in_navtree = False
-        props.editable = False
-        return props
-    
-    @property
-    def metadata(self):
-        name = self.__name__
-        if not name:
-            name = 'No Title'
-        metadata = BaseMetadata()
-        metadata.title = name
-        return metadata
-    
-    @property
-    def nodeinfo(self):
-        info = getNodeInfo(self.node_info_name)
-        if not info:
-            info = BaseNodeInfo()
-            info.title = str(self.__class__)
-            info.node = self.__class__
-        return info
 
 
 class FactoryNode(BaseNode):
     implements(IFactoryNode)
     
-    factories = {}
+    factories = odict()
     
     def __iter__(self):
         keys = set()
@@ -120,9 +148,40 @@ class FactoryNode(BaseNode):
 
 class AppRoot(FactoryNode):
     """Application root.
-    
-    XXX
     """
+    factories = odict()
+
+    @instance_property
+    def properties(self):
+        return Properties()
+
+    @instance_property
+    def metadata(self):
+        return BaseMetadata()
+
+
+class AppSettings(FactoryNode):
+    """Applications Settings container.
+    """
+    __acl__ = [
+        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, Everyone, 'login'),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+    factories = odict()
+    
+    @instance_property
+    def properties(self):
+        props = Properties()
+        props.in_navtree = True
+        props.icon = 'static/images/settings16_16.png'
+        return props
+    
+    @instance_property
+    def metadata(self):
+        metadata = BaseMetadata()
+        metadata.title = "Settings"
+        return metadata
 
 
 class AdapterNode(BaseNode):
@@ -153,28 +212,90 @@ class Properties(object):
             data = dict()
         object.__setattr__(self, '_data', data)
     
+    def _get_data(self):
+        return object.__getattribute__(self, '_data')
+    
     def __getitem__(self, key):
-        return object.__getattribute__(self, '_data')[key]
+        return self._get_data()[key]
     
     def get(self, key, default=None):
-        return object.__getattribute__(self, '_data').get(key, default)
+        return self._get_data().get(key, default)
     
     def __contains__(self, key):
-        return key in object.__getattribute__(self, '_data')
+        return key in self._get_data()
     
     def __getattr__(self, name):
-        return object.__getattribute__(self, '_data').get(name)
+        return self._get_data().get(name)
     
     def __setattr__(self, name, value):
-        object.__getattribute__(self, '_data')[name] = value
+        self._get_data()[name] = value
+    
+    def keys(self):
+        return self._get_data().keys()
+
+
+class ProtectedProperties(Properties):
+    
+    def __init__(self, context, permissions, data=None):
+        """
+        >>> properties = ProtectedProperties(
+        ...     context,
+        ...     permissions={
+        ...         'propname': ['permission1', 'permission2']
+        ...     })
+        """
+        super(ProtectedProperties, self).__init__(data=data)
+        object.__setattr__(self, '_context', context)
+        object.__setattr__(self, '_permissions', permissions)
+    
+    def _permits(self, property):
+        context = object.__getattribute__(self, '_context')
+        permissions = object.__getattribute__(self, '_permissions')
+        required = permissions.get(property)
+        if not required:
+            # no security check
+            return True
+        request = get_current_request()
+        for permission in required:
+            if has_permission(permission, context, request):
+                return True
+        return False
+        
+    def __getitem__(self, key):
+        if not self._permits(key):
+            raise KeyError(u"No permission to access '%s'" % key)
+        return super(ProtectedProperties, self).__getitem__(key)
+    
+    def get(self, key, default=None):
+        if not self._permits(key):
+            return default
+        return super(ProtectedProperties, self).get(key, default)
+    
+    def __contains__(self, key):
+        if not self._permits(key):
+            return False
+        return super(ProtectedProperties, self).__contains__(key)
+    
+    def __getattr__(self, name):
+        if not self._permits(name):
+            return None
+        return super(ProtectedProperties, self).get(name)
+    
+    def keys(self):
+        keys = super(ProtectedProperties, self).keys()
+        keys = [key for key in keys if self._permits(key)]
+        return keys
 
 
 class BaseMetadata(Properties):
     implements(IMetadata)
 
 
-class BaseNodeInfo(Properties):
+class NodeInfo(Properties):
     implements(INodeInfo)
+
+# BBB
+BaseNodeInfo = NodeInfo
 
 
 class XMLProperties(Properties):

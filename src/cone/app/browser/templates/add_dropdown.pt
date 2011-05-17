@@ -1,4 +1,7 @@
-<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+
   <div class="dropdown">
     <div class="icon">
       <a href="${context.nodeurl}/adding"
@@ -7,6 +10,7 @@
     </div>
     <ul class="dropdown_items" style="display:none;">
       <li tal:repeat="item context.items">
+        <img src="${item.icon}" alt="..." />
         <a href="${item.url}"
            ajax:bind="click"
            ajax:target="${item.target}"
@@ -17,4 +21,5 @@
       </li>
     </ul>
   </div>
+
 </tal:ajax>

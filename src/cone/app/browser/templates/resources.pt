@@ -1,0 +1,28 @@
+<tal:resources define="js context.js;
+                       css context.css;">
+
+  <!-- javascripts -->
+  <tal:public repeat="res js.public">
+    <script src="${request.application_url}/${res}"></script>
+  </tal:public>
+
+  <tal:protected
+    condition="context.authenticated"
+    repeat="res js.protected">
+    <script src="${request.application_url}/${res}"></script>
+  </tal:protected>
+
+  <!-- stylesheets -->
+  <tal:public repeat="res css.public">
+    <link href="${request.application_url}/${res}"
+          rel="stylesheet" type="text/css" media="screen" />
+  </tal:public>
+
+  <tal:protected 
+    condition="context.authenticated"
+    repeat="res css.protected">
+    <link href="${request.application_url}/${res}"
+          rel="stylesheet" type="text/css" media="screen" />
+  </tal:protected>
+
+</tal:resources>

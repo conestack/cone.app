@@ -6,19 +6,21 @@ from yafowil.base import (
 )
 from cone.tile import tile
 from cone.app.security import authenticate
-from cone.app.browser.utils import authenticated
 from cone.app.browser.form import Form
 from cone.app.browser.utils import make_url
 
 @tile('loginform', permission="login")
 class LoginForm(Form):
+    ajax = False
     
     def prepare(self):
         action = make_url(self.request, node=self.model, resource='login')
-        form = factory(u'form',
-                       name='loginform',
-                       props={'action': action})
-        form['__do_login'] = factory('hidden', value='true')
+        form = factory(
+            u'form',
+            name='loginform',
+            props={
+                'action': action
+            })
         form['user'] = factory(
             'field:label:error:text',
             props = {
@@ -39,23 +41,23 @@ class LoginForm(Form):
             props = {
                 'action': 'login',
                 'expression': True,
-                'handler': None,
+                'handler': self.noop,
                 'next': self.next,
                 'label': 'Login',
             })
         self.form = form
     
+    def noop(self, widget, data):
+        pass
+    
     def login(self, widget, data):
-        login = data.root['user'].extracted
-        # get password directly from request instead of widget data for password
-        # XXX_ figure out whats wrong
-        password = data.request.get('loginform.password')
-        self.headers = authenticate(data.request.request, login, password)
+        login = data.fetch('loginform.user').extracted
+        password = data.fetch('loginform.password').extracted
+        webob_req = data.request.request
+        self.headers = authenticate(webob_req, login, password)
         if not self.headers:
             raise ExtractionError(u'Invalid Credentials')
     
     def next(self, request):
-        if not self.headers:
-            return self.render()
         return HTTPFound(location=request.request.application_url,
                          headers=self.headers)

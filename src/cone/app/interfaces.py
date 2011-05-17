@@ -22,15 +22,18 @@ class IFactoryNode(IApplicationNode):
     """
     
     factories = Attribute(u"Dict containing available keys and the Node class "
-                          u"used to create this child.")
+                          u"used to create child.")
 
 
 class IAdapterNode(IApplicationNode):
-    """Interface to adapt any dict like object which should be hooked to
-    application model.
+    """Application node which acts as adapter on any context.
+    
+    XXX: - currently designed to adapt nodes, more generic
+         - no attrs on this interface
+         - self.context insetad of self.model
     """
     
-    attrs = Attribute(u"Return attrs.")
+    attrs = Attribute(u"Return self.model.attrs")
     
     def __init__(model, name, parent):
         """Name and parent are used to hook the correct application hierarchy.
@@ -42,14 +45,18 @@ class IProperties(IReadMapping):
     """
     
     def __getattr__(name):
-        """Return metadata by attribute access.
+        """Return property by attribute access.
         
         Never throws an AttributeError if attribute does not exists, return
         None instead.
         """
     
     def __setattr__(name, value):
-        """Set metadata by attribute access.
+        """Set property by attribute access.
+        """
+    
+    def keys():
+        """Return available properties
         """
 
 

@@ -1,49 +1,75 @@
 Authoring
 =========
 
-The Application provides some widgets and entry hooks for authoring.
+Provide adding and editing of nodes. 
 
-There are two pyramid views registered, ``add`` and ``edit``. These views render
-the main template with the ``add`` respective ``edit`` tile as content tiles 
-which render the ``addform`` or ``editform`` tiles.
+There are two views registered named ``add`` and ``edit``. These views either
+call ``render_main_template`` or ``render_ajax_form`` depending on the
+submitted form data (see ajax.txt for more information). As tile name for
+stated functions, ``add`` respective ``edit`` are used.
+
+The ``add`` and ``edit`` tiles itself are wrappers for the particular form tile
+and are supposed to decorate the form with some information if needed (i.e. a 
+title, description, etc).
+
+The default implementations of ``add`` and ``edit`` just proxy the form 
+rendering tiles as is, which are expected to be registered as ``addform``
+respective ``editform``.
 
 
 Adding
 ------
 
-Using the built-in adding mechanism.
+Provide a node interface needed for different node style binding to test form::
+
+    >>> from zope.interface import Interface, implements
+    >>> class ITestAddingNode(Interface): pass
 
 Create dummy node::
 
     >>> from cone.app.model import BaseNode
     >>> from cone.app.model import getNodeInfo
     >>> class MyNode(BaseNode):
+    ...     implements(ITestAddingNode)
     ...     node_info_name = 'mynode'
 
-Now, if we want to use the build-in adding mechanism, we need to
-provide NodeInfo for our application nodes::
+Provide NodeInfo for our Application node::
 
     >>> from cone.app.model import BaseNodeInfo, registerNodeInfo
     >>> mynodeinfo = BaseNodeInfo()
     >>> mynodeinfo.title = 'My Node'
     >>> mynodeinfo.description = 'This is My node.'
     >>> mynodeinfo.node = MyNode
-    >>> mynodeinfo.addables = ['mynode']
+    >>> mynodeinfo.addables = ['mynode'] # self containment
     >>> registerNodeInfo('mynode', mynodeinfo)
 
-Create and register an addform tile for MyNode::
+Create another dummy node inheriting from AdapterNode::
+
+    >>> from cone.app.model import AdapterNode
+    >>> class MyAdapterNode(AdapterNode):
+    ...     implements(ITestAddingNode)
+    ...     node_info_name = 'myadapternode'
+    
+    >>> myadapternodeinfo = BaseNodeInfo()
+    >>> myadapternodeinfo.title = 'My Adapter Node'
+    >>> myadapternodeinfo.description = 'This is My adapter node.'
+    >>> myadapternodeinfo.node = MyAdapterNode
+    >>> myadapternodeinfo.addables = ['myadapternode'] # self containment
+    >>> registerNodeInfo('myadapternode', myadapternodeinfo)
+
+Create and register an ``addform`` named form tile::
 
     >>> from plumber import plumber
     >>> from yafowil import loader
     >>> from yafowil.base import factory
     >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.form import (
-    ...     Form,
-    ...     AddPart,
-    ... )
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.authoring import AddPart
+    >>> from cone.app.browser.ajax import AjaxAction, AjaxEvent
+    >>> from webob.exc import HTTPFound
     
-    >>> @tile('addform', interface=MyNode)
+    >>> @tile('addform', interface=ITestAddingNode)
     ... class MyAddForm(Form):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = AddPart
@@ -78,46 +104,80 @@ Create and register an addform tile for MyNode::
     ...         child = MyNode()
     ...         child.attrs.title = fetch('addform.title')
     ...         self.model.__parent__[fetch('addform.id')] = child
-    ...         
-    ...     def next(self, request):
-    ...         return '<div>Added</div>'
+    ...         self.model = child
 
-A small patch to make tests work with test request::
+Create dummy container::
 
-    >>> def authenticated(request):
-    ...     return True
-    >>> import cone.app.browser.layout
-    >>> cone.app.browser.layout.authenticated = authenticated
-
-Now create dummy root and render ``add`` tile::
-
-    >>> import cone.app.browser.authoring
-    >>> from pyramid.testing import DummyRequest
-    >>> from cone.tile import render_tile
-    >>> request = DummyRequest()
     >>> root = MyNode()
-    >>> layer.authenticate('editor')
+
+Authenticate::
+
+    >>> layer.login('owner')
 
 Render without factory::
 
+    >>> request = layer.new_request()
+    >>> from cone.tile import render_tile
     >>> render_tile(root, request, 'add')
     u'Unknown factory'
 
 Render with valid factory::
 
     >>> request.params['factory'] = 'mynode'
+    >>> result = render_tile(root, request, 'add')
+    >>> result.find(u'<form action="http://example.com"') != -1
+    True
 
-    >>> render_tile(root, request, 'add')
-    u'<form action="http://example.com" ...'
+Render with valid factory on adapter node::
+
+    >>> adapterroot = MyAdapterNode(None, None, None)
+    >>> request.params['factory'] = 'myadapternode'
+    >>> result = render_tile(adapterroot, request, 'add')
+    >>> result.find(u'<form action="http://example.com"') != -1
+    True
 
 Render with submitted data::
     
+    >>> layer.login('owner')
+    >>> request = layer.current_request
+    >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
     >>> request.params['addform.id'] = 'somechild'
     >>> request.params['addform.title'] = 'Some Child'
 
-    >>> render_tile(root, request, 'add').find('Added') != -1
-    True
+    >>> res = render_tile(root, request, 'add')
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+    
+    >>> root.printtree()
+    <class 'MyNode'>: None
+      <class 'MyNode'>: somechild
+    
+    >>> request.environ['redirect'].location
+    'http://example.com/somechild'
+    
+Render with 'came_from' set::
+
+    >>> del request.environ['redirect']
+    >>> request.params['came_from'] = 'parent'
+    >>> res = render_tile(root, request, 'add')
+    >>> request.environ['redirect'].location
+    'http://example.com/'
+    
+    >>> del request.environ['redirect']
+    >>> request.params['came_from'] = 'http://foobarbaz.com'
+    >>> res = render_tile(root, request, 'add')
+    >>> request.environ['redirect'].location
+    'http://foobarbaz.com'
+
+Render with ajax flag::
+
+    >>> layer.login('owner')
+    >>> request.params['ajax'] = '1'
+    >>> res = render_tile(root, request, 'add')
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxAction object at ...>, 
+    <cone.app.browser.ajax.AjaxEvent object at ...>]
 
 Check the modified model::
 
@@ -127,14 +187,31 @@ Check the modified model::
     >>> root['somechild'].attrs.title
     'Some Child'
 
+Add view::
+
+    >>> from cone.app.browser.authoring import add
+    
+    >>> layer.login('owner')
+    >>> request = layer.new_request()
+    >>> request.params['factory'] = 'mynode'
+    >>> request.params['action.addform.add'] = '1'
+    >>> request.params['addform.id'] = 'somechild'
+    >>> request.params['addform.title'] = 'Some Child'
+    >>> add(root, request)
+    <HTTPFound at ... 302 Found>
+    
+    >>> request.params['ajax'] = '1'
+    >>> result = str(add(root, request))
+    >>> result.find('parent.cone.ajaxformrender') != -1
+    True
+
 
 Editing
 -------
 
-Providing edit forms is easy, just bind a form tile named 'editform' for your
-application node::
+Create and register an ``editform`` named form tile::
 
-    >>> from cone.app.browser.form import EditPart
+    >>> from cone.app.browser.authoring import EditPart
 
     >>> @tile('editform', interface=MyNode)
     ... class MyEditForm(Form):
@@ -164,38 +241,144 @@ application node::
     ...     
     ...     def update(self, widget, data):
     ...         fetch = self.request.params.get
-    ...         self.model.attrs.title = fetch('addform.title')
-    ...         
-    ...     def next(self, request):
-    ...         return '<div>Updated</div>'
+    ...         self.model.attrs.title = fetch('editform.title')
 
-Render form with values from model::
+Render form with value from model::
 
-    >>> request = DummyRequest()
+    >>> layer.login('editor')
+    >>> request = layer.new_request()
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<form action="http://example.com/somechild" ...'
+    u'<div class="box"><h1>Edit My Node</h1><form 
+    action="http://example.com/somechild" ...'
 
-Trigger update action and provide new title::
-
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['addform.title'] = 'Changed title'
-
-Check the results::
-
-    >>> render_tile(root['somechild'], request, 'edit').find('Updated') != -1
-    True
+Render with submitted data. Default next URL of EditPart is the edited node::
     
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> res = render_tile(root['somechild'], request, 'edit')
+    >>> request.environ['redirect'].location
+    'http://example.com/somechild'
+
+Check next URL with 'came_from' 'parent'::
+
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> request.params['came_from'] = 'parent'
+    >>> res = render_tile(root['somechild'], request, 'edit')
+    >>> request.environ['redirect'].location
+    'http://example.com/'
+
+Check next URL with 'came_from' 'some_URL'::
+
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'
+    >>> res = render_tile(root['somechild'], request, 'edit')
+    >>> request.environ['redirect'].location
+    'http://example.com/other/node/in/tree'
+
+Render with ajax flag::
+
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> request.params['ajax'] = '1'
+    >>> res = render_tile(root['somechild'], request, 'edit')
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxAction object at ...>, 
+    <cone.app.browser.ajax.AjaxEvent object at ...>]
+
+URL computing is the same as if HTTPFound instances are returned. In Ajax case,
+this URL is used as ajax target::
+
+    >>> request.environ['cone.app.continuation'][0].target
+    'http://example.com/somechild'
+    
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'
+    >>> request.params['ajax'] = '1'
+    >>> res = render_tile(root['somechild'], request, 'edit')
+    >>> request.environ['cone.app.continuation'][0].target
+    'http://example.com/other/node/in/tree'
+
+Check the updated node::
+
     >>> root['somechild'].attrs.title
     'Changed title'
+
+Edit view::
+
+    >>> from cone.app.browser.authoring import edit
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> root.attrs.title = 'Foo'
+    >>> edit(root, request)
+    <HTTPFound at ... 302 Found>
+    
+    >>> request = layer.new_request()
+    >>> request.params['action.editform.update'] = '1'
+    >>> request.params['editform.title'] = 'Changed title'
+    >>> request.params['ajax'] = '1'
+    >>> result = str(edit(root, request))
+    >>> result.find('parent.cone.ajaxformrender') != -1
+    True
+
+
+Deleting
+--------
+
+    >>> class CallableNode(BaseNode):
+    ...     def __call__(self):
+    ...         pass
+    
+    >>> node = CallableNode()
+    >>> node['child'] = CallableNode()
+    >>> node.printtree()
+    <class 'CallableNode'>: None
+      <class 'CallableNode'>: child
+    
+    >>> del node['child']
+    >>> node.printtree()
+    <class 'CallableNode'>: None
+    
+    >>> node['child'] = CallableNode()
+    
+    >>> layer.login('owner')
+    >>> request = layer.new_request()
+    >>> render_tile(node['child'], request, 'delete')
+    u''
+    
+    >>> request.environ['cone.app.continuation'][0].payload
+    'Object "child" not deletable'
+    
+    >>> node['child'].properties.deletable = True
+    
+    >>> request = layer.new_request()
+    >>> render_tile(node['child'], request, 'delete')
+    u''
+    
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxAction object at ...>, 
+    <cone.app.browser.ajax.AjaxEvent object at ...>, 
+    <cone.app.browser.ajax.AjaxMessage object at ...>]
+    
+    >>> node.printtree()
+    <class 'CallableNode'>: None
 
 
 Add Items Dropdown Widget
 -------------------------
 
-You can render an item dropdown in your application which renders a dropdown
-menu containing links to the addforms of allowed child nodes::
+Dropdown menu containing links to the addforms of allowed child nodes::
 
-    >>> request = DummyRequest()
+    >>> layer.login('owner')
+    >>> request = layer.new_request()
     >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
 
 Non JS Fallback link to add item view (view itself not implemented yet)::
@@ -221,7 +404,6 @@ Ajax action rule for add form::
     >>> rendered.find(expected) != -1
     True
 
-
 Allow another node type as child::
 
     >>> nodeinfo = BaseNodeInfo()
@@ -231,7 +413,6 @@ Allow another node type as child::
     >>> nodeinfo.addables = []
     >>> registerNodeInfo('anothernode', nodeinfo)
     >>> getNodeInfo('mynode').addables = ['mynode', 'anothernode']
-    
     >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
     
 Non JS links to add form::
@@ -253,5 +434,45 @@ Ajax targets for add form::
     >>> expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
     >>> rendered.find(expected) != -1
     True
+
+Test node without addables, results in empty listing.
+XXX: discuss whether to hide entire widget if no items::
+
+    >>> class NoChildAddingNode(BaseNode):
+    ...     node_info_name = 'nochildaddingnode'
     
+    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo.title = 'No child adding Node'
+    >>> nodeinfo.description = 'This is a no child containing node.'
+    >>> nodeinfo.node = NoChildAddingNode
+    >>> nodeinfo.addables = []
+    >>> registerNodeInfo('nochildaddingnode', nodeinfo)
+    >>> rendered = render_tile(NoChildAddingNode(), request, 'add_dropdown')
+    >>> expected = '<ul class="dropdown_items" style="display:none;">\n' +\
+    ...            '      \n    </ul>\n'
+    >>> rendered.find(expected) != -1
+    True
+
+Test node with invalid addable, results in empty listing
+XXX: discuss whether to hide entire widget if no items::
+
+    >>> class InvalidChildNodeInfoNode(BaseNode):
+    ...     node_info_name = 'invalidchildnodeinfo'
+    
+    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo.title = 'Invalid Child NodeInfo Node'
+    >>> nodeinfo.description = 'This is a node with an invalid child node info.'
+    >>> nodeinfo.node = InvalidChildNodeInfoNode
+    >>> nodeinfo.addables = ['invalid']
+    >>> registerNodeInfo('invalidchildnodeinfo', nodeinfo)
+    >>> rendered = render_tile(InvalidChildNodeInfoNode(),
+    ...                        request,
+    ...                        'add_dropdown')
+    >>> expected = '<ul class="dropdown_items" style="display:none;">\n' +\
+    ...            '      \n    </ul>\n'
+    >>> rendered.find(expected) != -1
+    True
+
+Logout::
+
     >>> layer.logout()

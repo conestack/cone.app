@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.9before_plugging_merge'
+version = '0.9dev'
 shortdesc = 'Application framework for pyramid.'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -31,6 +31,7 @@ setup(name='cone.app',
           'setuptools',
           'lxml',
           'node',
+          'node.ext.ugm',
           'pyramid',
           'pyramid_zcml',
           'bdajax',
@@ -42,6 +43,7 @@ setup(name='cone.app',
           'yafowil.widget.dict',
           'yafowil.widget.autocomplete',
           'yafowil.widget.dynatree',
+          'repoze.workflow',
       ],
       extras_require = dict(
           test=[

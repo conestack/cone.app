@@ -1,0 +1,20 @@
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+
+  <tal:tabs define="tabs context.tabs">
+    <ul class="tabs">
+      <li tal:repeat="tab tabs">
+          <a class="w1" href="#" tal:content="tab['title']">Title</a>
+      </li>
+    </ul>
+    <div class="tabpanes">
+      <tal:tab repeat="tab tabs">
+        <div class="${tab['css']}">
+          <tal:content replace="structure tab['content']" />
+        </div>
+      </tal:tab>
+    </div>
+  </tal:tabs>
+  
+</tal:ajax>

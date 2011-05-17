@@ -7,7 +7,7 @@ from cone.tile import (
 class Batch(Tile):
     """An abstract batch tile.
     
-    You have to implement 'self.vocab' and you may override 'self.batchrange',
+    A subclass has to implement 'self.vocab' and may override 'self.batchrange',
     'self.display' and 'self.batchname'.   
     """
     dummypage = {
@@ -100,11 +100,11 @@ class Batch(Tile):
 
     @property
     def leftellipsis(self):
-        return self._leftOverDiff < 0 and self.ellipsis or ''
+        return self._leftOverDiff < 0 and self.ellipsis or u''
 
     @property
     def rightellipsis(self):
-        return self._rightOverDiff < 0 and self.ellipsis or ''
+        return self._rightOverDiff < 0 and self.ellipsis or u''
 
     @property
     def pages(self):
@@ -140,4 +140,5 @@ class Batch(Tile):
             if page['page'] == current['page']:
                 return pointer
             pointer += 1
-        return -1
+        # reached if subclass implementation bug
+        return -1                                           #pragma NO COVERAGE

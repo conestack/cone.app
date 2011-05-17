@@ -1,10 +1,15 @@
 cone.app.security
-=================
+-----------------
+
+Superuser credentials are set on application startup by main function in
+cone.app.__init__::
 
     >>> from cone.app import security
     >>> security.ADMIN_USER = 'user'
     >>> security.ADMIN_PASSWORD = 'secret'
-    
+
+The default ACL::
+
     >>> security.DEFAULT_ACL
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
@@ -15,13 +20,49 @@ cone.app.security
     ('Deny', 'system.Everyone', 
     <pyramid.security.AllPermissionsList object at ...>)]
     
-    >>> from pyramid.tests.test_request import DummyRequest
-    >>> request = DummyRequest()
+Base security tests::
+
+    >>> from pyramid.interfaces import IAuthenticationPolicy
+    >>> from pyramid.threadlocal import get_current_registry
+    >>> get_current_registry().queryUtility(IAuthenticationPolicy)
+    <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
     
-    >> security.authenticate(request, 'foo', 'bar')
+    >>> layer.new_request()
+    <pyramid.testing.DummyRequest object at ...>
     
-    >> security.authenticate(request, 'user', 'secret')
-    []
+    >>> layer.current_request.registry
+    <Registry cone.app>
     
-    >>> security.groups_callback('foo', request)
-    []
+    >>> layer.login('inexistent')
+    >>> from pyramid.security import authenticated_userid
+    >>> authenticated_userid(layer.current_request)
+
+Create some security context for testing::
+
+    >>> from pyramid.security import has_permission
+    >>> from cone.app.security import DEFAULT_ACL
+    >>> class ACLTest(object):
+    ...     __acl__ = DEFAULT_ACL
+    >>> context = ACLTest()
+
+Authenticate as default user::
+
+    >>> layer.login('user')
+    >>> authenticated_userid(layer.current_request)
+    'user'
+    
+    >>> has_permission('manage', context, layer.current_request)
+    <ACLAllowed instance ...
+
+    >>> layer.login('viewer')
+    >>> authenticated_userid(layer.current_request)
+    'viewer'
+    
+    >>> has_permission('manage', context, layer.current_request)
+    <ACLDenied instance ...
+    
+    >>> layer.logout()
+    >>> authenticated_userid(layer.current_request)
+    
+    >>> has_permission('manage', context, layer.current_request)
+    <ACLDenied instance ...

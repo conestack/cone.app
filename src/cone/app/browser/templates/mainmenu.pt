@@ -1,4 +1,6 @@
-<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
   <ul id="mainmenu"
       class="contextsensitiv"
       ajax:bind="contextchanged"

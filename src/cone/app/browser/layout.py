@@ -1,4 +1,7 @@
-from pyramid.security import has_permission
+from pyramid.security import (
+    has_permission,
+    authenticated_userid,
+)
 from cone.tile import (
     tile,
     Tile,
@@ -6,30 +9,73 @@ from cone.tile import (
     render_template,
     registerTile,
 )
+from cone.app.model import AppRoot
+from cone.app.utils import (
+    app_config,
+    principal_data,
+)
 from cone.app.browser.utils import (
-    authenticated,
     nodepath,
     make_url,
     format_date,
+    node_icon_url,
 )
+
+
+@tile('resources', 'templates/resources.pt', permission='login')
+class Resources(Tile):
+    """Resources tile.
+    
+    XXX: either switch to resource management lib here or use resource
+         management middleware.
+    """
+    
+    @property
+    def authenticated(self):
+        return authenticated_userid(self.request)
+    
+    @property
+    def js(self):
+        return app_config().js
+    
+    @property
+    def css(self):
+        return app_config().css
 
 
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.
+    
+    Normally used for 'content' tiles if page should render login form in place
+    instead of throwing Unauthorized.
     """
     
     def __call__(self, model, request):
-        if not authenticated(request):
+        if not authenticated_userid(request):
             return render_tile(model, request, 'loginform')
         return Tile.__call__(self, model, request)
+
+
+registerTile('livesearch',
+             'cone.app:browser/templates/livesearch.pt',
+             permission='view',
+             strict=False)
 
 
 @tile('personaltools', 'templates/personaltools.pt',
       permission='view', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
+    
+    XXX: extend by items, currently only 'logout' link hardcoded in template
     """
+    
+    @property
+    def user(self):
+        userid = authenticated_userid(self.request)
+        data = principal_data(userid)
+        return data.get('fullname', userid)
 
 
 @tile('mainmenu', 'templates/mainmenu.pt', 
@@ -42,7 +88,7 @@ class MainMenu(Tile):
       Therefor 'node-nodeid' gets rendered as CSS class on ``li`` DOM element.
     
     * If ``default_child`` is set on ``model.root.properties``, it is marked
-      selected if not other current path could be found.
+      selected if no other current path is found.
     """
     
     @property
@@ -88,21 +134,29 @@ class PathBar(Tile):
     
     @property
     def items(self):
-        model = self.model
-        ret = [{
-            'title': model.metadata.title,
-            'url': make_url(self.request, node=model),
-            'selected': True,
-        }]
-        while model.__parent__ is not None:
-            model = model.__parent__
-            ret.append({
-                'title': model.metadata.title,
-                'url': make_url(self.request, node=model),
+        items = list()
+        node = self.model
+        while node is not None:
+            items.append({
+                'title': node.metadata.title,
+                'url': make_url(self.request, node=node),
                 'selected': False,
+                'id': node.__name__,
+                'default_child': node.properties.default_child,
             })
-        ret.pop()
-        ret.reverse()
+            node = node.__parent__
+        items.reverse()
+        ret = list()
+        count = len(items)
+        for i in range(count):
+            default_child = items[i]['default_child']
+            if default_child \
+              and i < count - 1 \
+              and default_child == items[i + 1]['id']:
+                continue
+            ret.append(items[i])
+        ret[0]['title'] = 'Home'
+        ret[-1]['selected'] = True
         return ret
 
 
@@ -112,21 +166,31 @@ class NavTree(Tile):
     """Navigation tree tile.
     """
     
-    def navtreeitem(self, title, url, path):
+    def navtreeitem(self, title, url, path, icon):
         item = dict()
         item['title'] = title
         item['url'] = url
         item['selected'] = False
         item['path'] = path
+        item['icon'] = icon
         item['showchildren'] = False
         item['children'] = list()
         return item
     
     def fillchildren(self, model, path, tree):
+        curpath = None
         if path:
             curpath = path[0]
-        else:
-            curpath = None
+        default_child = None
+        if model.properties.default_child:
+            if not curpath or curpath == model.properties.default_child:
+                default_child = model[model.properties.default_child]
+        if default_child and default_child.properties.hide_if_default:
+            model = default_child
+            default_child = None
+        if default_child:
+            if not curpath:
+                curpath = model.properties.default_child
         for key in model:
             node = model[key]
             if not has_permission('view', node, self.request):
@@ -136,31 +200,41 @@ class NavTree(Tile):
             title = node.metadata.title
             url = make_url(self.request, node=node)
             curnode = curpath == key and True or False
-            child = self.navtreeitem(title, url, nodepath(node))
+            icon = node_icon_url(self.request, node)
+            child = self.navtreeitem(title, url, nodepath(node), icon)
             child['showchildren'] = curnode
             if curnode:
-                self.fillchildren(node, path[1:], child)
-            selected = False
-            if nodepath(self.model) == nodepath(node):
-                selected = True
-            child['selected'] = selected
-            child['showchildren'] = curnode
+                child['selected'] = True
+                if default_child:
+                    self.fillchildren(default_child, path[1:], child)
+                else:
+                    self.fillchildren(node, path[1:], child)
+            else:
+                selected_path = nodepath(self.model)
+                if default_child:
+                    selected_path.append(default_child.__name__)
+                selected = False
+                if selected_path == nodepath(node):
+                    selected = True
+                child['selected'] = selected
             tree['children'].append(child)
     
     def navtree(self):
-        root = self.navtreeitem(None, None, '')
+        root = self.navtreeitem(None, None, '', None)
         model = self.model.root
+        # XXX: default child
         path = nodepath(self.model)
         self.fillchildren(model, path, root)
         return root
     
     def rendertree(self, children, level=1):
-        return render_template('cone.app.browser:templates/navtree_recue.pt',
-                               model=self.model,
-                               request=self.request,
-                               context=self,
-                               children=children,
-                               level=level)
+        return render_template(
+            'cone.app.browser:templates/navtree_recue.pt',
+            model=self.model,
+            request=self.request,
+            context=self,
+            children=children,
+            level=level)
 
 
 @tile('byline', 'templates/byline.pt',
@@ -176,11 +250,17 @@ class Byline(Tile):
 registerTile('listing',
              'cone.app:browser/templates/listing.pt',
              class_=ProtectedContentTile,
-             permission='login',
-             strict=False)
+             permission='login')
 
-registerTile('content',
-             'cone.app:browser/templates/default_root.pt',
-             class_=ProtectedContentTile,
-             permission='login',
-             strict=False)
+@tile('content', interface=AppRoot, permission='login')
+class RootContent(ProtectedContentTile):
+    
+    def render(self):
+        if self.model.properties.default_child:
+            model = self.model[self.model.properties.default_child]
+            return render_tile(model, self.request, 'content')
+        return render_template(
+            'cone.app.browser:templates/default_root.pt',
+            model=self.model,
+            request=self.request,
+            context=self)

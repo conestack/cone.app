@@ -13,13 +13,8 @@ from cone.tile import (
     render_template_to_response,
     render_tile,
 )
+import cone.app
 from cone.app.browser.utils import AppUtil
-
-# main template. Overwrite to customize
-MAIN_TEMPLATE = 'cone.app.browser:templates/main.pt'
-
-# append to this list additional relative css file URL's
-ADDITIONAL_CSS = []
 
 # static resources
 static_view = static('static')
@@ -30,28 +25,27 @@ def render_main_template(model, request, contenttilename='content'):
     
     As main content the tile with name contenttilename is rendered.
     """
-    apputil = AppUtil()
-    apputil.additional_css = ADDITIONAL_CSS
-    return render_template_to_response(MAIN_TEMPLATE,
+    util = AppUtil()
+    return render_template_to_response(cone.app.cfg.main_template,
                                        request=request,
                                        model=model,
-                                       util=apputil,
-                                       contenttilename=contenttilename,
-                                       project='BDA DB Backend')
+                                       util=util,
+                                       layout=cone.app.cfg.layout,
+                                       contenttilename=contenttilename)
 
 
 @view_config(permission='login')
-def main(model, request):
+def main_view(model, request):
     return render_main_template(model, request)
 
+
 @view_config('login')
-def login(model, request):
+def login_view(model, request):
     return render_main_template(model, request, contenttilename='loginform')
 
-#view_config(login, context='pyramid.exceptions.Forbidden')
 
 @view_config('logout')
-def logout(context, request):
+def logout_view(context, request):
     headers = forget(request)
     location = request.params.get('came_from', request.application_url)
     return HTTPFound(location=location, headers=headers)

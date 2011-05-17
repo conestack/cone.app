@@ -1,4 +1,21 @@
 from datetime import datetime
+from pyramid.threadlocal import get_current_request
+
+
+def app_config():
+    import cone.app
+    return cone.app.cfg
+
+
+def principal_data(id):
+    data = dict()
+    for ugm in app_config().auth:
+        user = ugm.users.get(id)
+        if not user:
+            continue
+        data = user.attrs
+        break
+    return data
 
 
 class DatetimeHelper(object):

@@ -11,10 +11,18 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 (function($) {
 
     $(document).ready(function() {
+        
+        // personaltools
+        $('#personaltools').dropdownmenu({
+            menu: '.dropdown_items',
+            trigger: '.currentuser a'
+        });
+        
         // initial binding
         cone.livesearchbinder();
         cone.tabsbinder();
         cone.dropdownmenubinder();
+        cone.transitionmenubinder();
         cone.ajaxformbinder();
         yafowil.referencebrowser.browser_binder();
         
@@ -22,6 +30,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         $.extend(bdajax.binders, {
             tabsbinder: cone.tabsbinder,
             dropdownmenubinder: cone.dropdownmenubinder,
+            transitionmenubinder: cone.transitionmenubinder,
             ajaxformbinder: cone.ajaxformbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder: 
@@ -62,10 +71,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             $('.dropdown', context).dropdownmenu();
         },
         
-        // ajax form related
+        transitionmenubinder: function(context) {
+            $('.transitions_dropdown', context).dropdownmenu({
+                menu: '.dropdown_items',
+                trigger: '.state a'
+            });
+        },
         
-        // recent committed form
-        _curajaxformid: null,
+        // ajax form related. XXX: move to bdajax
         
         // bind ajax form handling to all forms providing ajax css class
         ajaxformbinder: function(context) {
@@ -73,26 +86,17 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             ajaxform.append('<input type="hidden" name="ajax" value="1" />');
             ajaxform.attr('target', 'ajaxformresponse');
             ajaxform.unbind().bind('submit', function(event) {
-                cone._curajaxformid = $(this).attr('id');
+                bdajax.spinner.show();
             });
         },
         
         // called by iframe response, renders form (i.e. if validation errors)
-        ajaxformrender: function(payload) {
-            var id = '#' + cone._curajaxformid;
-            $(id).replaceWith(payload);
-            $(id).parent().bdajax();
-        },
-        
-        // called by iframe response, triggers bdajax.action
-        ajaxformcontinue: function(url, name, mode, selector, params) {
-            bdajax.action({
-                url: url,
-                params: params,
-                name: name,
-                mode: mode,
-                selector: selector
-            });
+        ajaxformrender: function(payload, selector, mode) {
+            if (!payload) {
+                return;
+            }
+            bdajax.spinner.hide();
+            bdajax.fiddle(payload, selector, mode);
         }
     }
     
@@ -125,23 +129,24 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
      *     });
      */
     $.fn.dropdownmenu = function (options) {
-        var selector = this.selector;
         var trigger = options ? (options.trigger ? options.trigger : '.icon a')
                               : '.icon a';
         var menu = options ? (options.menu ? options.menu : '.dropdown_items')
                            : '.dropdown_items';
-        $(this).unbind('click');
+        this.unbind('click');
         $(trigger, this).bind('click', function(event) {
             event.preventDefault();
-            var container = $(menu, $(this).parents(selector + ':first'));
-            $(document).bind('mousedown', function(event) {
-                if ($(event.target).parents(selector + ':first').length) {
+            var container = $(menu, $(this).parent().parent());
+            $(document).unbind('mousedown')
+                       .bind('mousedown', function(event) {
+                if ($(event.target).parents(menu + ':first').length) {
                     return true;
                 }
                 container.css('display', 'none');
             });
             container.css('display', 'block');
         });
+        return this;
     }
     
     /*
@@ -167,14 +172,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
      */
     $.fn.referencebrowser = function() {
         var icon = $('<a>&nbsp;</a>').attr('class', 'reference16_16');
-        $(this).after(icon);
-        icon = $(this).next();
+        this.after(icon);
+        icon = this.next();
         icon.unbind('click');
         icon.bind('click', function() {
-            yafowil.referencebrowser.target = $(this).prev().get(0);
+            var elem = $(this);
+            yafowil.referencebrowser.target = elem.prev().get(0);
             yafowil.referencebrowser.overlay = bdajax.overlay({
                 action: 'referencebrowser',
-                target: ''
+                target: elem.parent().attr('ajax:target')
             });
         });
     }

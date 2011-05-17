@@ -1,18 +1,11 @@
-<tal:ajax xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax" omit-tag="True">
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
   <ul class="contextsensitiv"
       ajax:bind="contextchanged"
       ajax:action="pathbar:#pathbar:inner">
     <li>
       You are here:
-    </li>
-    <li>
-      <a href="${request.application_url}"
-         ajax:bind="click"
-         ajax:target="${request.application_url}"
-         ajax:event="contextchanged:.contextsensitiv
-                     contextchanged:#content"
-         tal:condition="model.__parent__">Home</a>
-      <strong tal:condition="not model.__parent__">Home</strong>
     </li>
     <li class="pathbaritem"
         tal:repeat="item context.items">

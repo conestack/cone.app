@@ -1,0 +1,5 @@
+viewer::viewer
+editor::editor
+owner::owner
+manager::manager
+group:group1::editor

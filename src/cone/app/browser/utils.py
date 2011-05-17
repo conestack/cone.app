@@ -1,9 +1,13 @@
 import datetime
 import urllib
 from pyramid.security import authenticated_userid
+from cone.app.model import getNodeInfo
+from cone.app.utils import app_config
 
 
 def authenticated(request):
+    """XXX: remove this. use ``authenticated_userid`` directly.
+    """
     return authenticated_userid(request)
 
 
@@ -22,51 +26,39 @@ def make_query(**kw):
             query.append('%s=%s' % (name, p))
     return '?%s' % '&'.join(query)
 
-
-# XXX: temporary hack to enabled / in one url component, see also make_url below
-def quote_slash(x):
-    return x.replace('/', '__s_l_a_s_h__')
-
-def unquote_slash(x):
-    return x.replace('__s_l_a_s_h__', '/')
-
-def make_url(request, path=[], node=None, resource=None, query=None):
+def make_url(request, path=None, node=None, resource=None, query=None):
+    # if path=[] in signature, path gets aggregated in recursive calls ???
+    # happens on icon lookup in navtree.
+    if path is None:
+        path = []
     if node is not None:
         path = nodepath(node)
     if resource is not None:
         path.append(resource)
-    # escape characters including /, the elements of path are joined
-    # with / but within one a / needs to be escaped
-    #path = [urllib.quote(x, safe='') for x in path]
-    #
-    # XXX: paster
-    # urllib.unquotes before the path is split by '/'. webob and
-    # pyramid are also involved. Until this is sorted out, we use our
-    # own escaping for '/' which then needs to be undone in the
-    # application nodes...
-    #
-    # see: http://mail.python.org/pipermail/web-sig/2011-March/005003.html
-    path = [quote_slash(x) for x in path]
-    path = [urllib.quote(x) for x in path]
+    url = '%s/%s' % (request.application_url, '/'.join(path))
     if not query:
-        return '%s/%s' % (request.application_url, '/'.join(path))
-    return '%s/%s%s' % (request.application_url, '/'.join(path), query)
+        return url
+    return '%s%s' % (url, query)
 
 
 def format_date(dt, long=True):
-    """XXX
-    """
     if not isinstance(dt, datetime.datetime):
         return 'unknown'
-    return long and dt.strftime('%d.%M.%Y %H:%m') or dt.strftime('%d.%M.%Y')
+    return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
+
+
+def node_icon_url(request, node):
+    if node.properties.icon:
+        return make_url(request, resource=node.properties.icon)
+    info = node.nodeinfo
+    if not info.icon:
+        return make_url(request, resource=app_config().default_node_icon)
+    return make_url(request, resource=info.icon)
 
 
 class AppUtil(object):
     """Instance of this object gets Passed to main template when rendering.
     """
-    
-    def __init__(self):
-        self.additional_css = list()
     
     def authenticated(self, request):
         return authenticated(request)

@@ -1,19 +1,12 @@
 Referencebrowser
 ================
 
-The referencebrowser consists out of some tiles for rendering a
-referencebrowser inside an overlay and a yafowil widget for rendering
-form fields bound to referencebrowser.
-
-Load requirements.
-::
+Load requirements.::
 
     >>> import yafowil.loader
     >>> import cone.app.browser.referencebrowser
-    >>> from pyramid.testing import DummyRequest
 
-Test widget.
-::
+Test widget.::
 
     >>> from yafowil.base import factory
 
@@ -21,8 +14,7 @@ Test widget.
 Single valued
 -------------
 
-Render without any value.
-::
+Render without any value.::
 
     >>> widget = factory(
     ...     'reference',
@@ -35,8 +27,7 @@ Render without any value.
     u'<input class="referencebrowser" id="input-ref" name="ref" 
     type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
 
-Render required with empty value.
-::
+Render required with empty value.::
 
     >>> widget = factory(
     ...     'reference',
@@ -47,7 +38,7 @@ Render required with empty value.
     ...         'required': 'Ref Required',
     ...     })
     
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> request.params['ref'] = ''
     >>> request.params['ref.uid'] = ''
     
@@ -62,8 +53,7 @@ Render required with empty value.
     u'<input class="referencebrowser required" id="input-ref" name="ref" 
     type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
 
-Required with valid value.
-::
+Required with valid value.::
 
     >>> request.params['ref'] = 'Title'
     >>> request.params['ref.uid'] = '123'
@@ -79,8 +69,7 @@ Required with valid value.
     type="text" value="Title" /><input name="ref.uid" type="hidden" 
     value="123" />'
 
-Single valued expects 2-tuple as value with (uid, label).
-::
+Single valued expects 2-tuple as value with (uid, label).::
 
     >>> widget = factory(
     ...     'reference',
@@ -96,8 +85,7 @@ Single valued expects 2-tuple as value with (uid, label).
     type="text" value="Label" /><input name="ref.uid" type="hidden" 
     value="uid" />'
 
-Extract from request and render widget with data.
-::
+Extract from request and render widget with data.::
 
     >>> data = widget.extract(request)
     >>> widget(data=data)
@@ -105,8 +93,7 @@ Extract from request and render widget with data.
     type="text" value="Title" /><input name="ref.uid" type="hidden" 
     value="123" />'
 
-Render widget with request.
-::
+Render widget with request.::
 
     >>> widget(request=request)
     u'<input class="referencebrowser required" id="input-ref" name="ref" 
@@ -117,8 +104,7 @@ Render widget with request.
 Multi valued
 ------------
 
-Render without any value.
-::
+Render without any value.::
 
     >>> widget = factory(
     ...     'reference',
@@ -128,11 +114,11 @@ Render without any value.
     ...         'multivalued': True,
     ...     })
     >>> widget()
-    u'<select class="referencebrowser" id="input-ref" multiple="multiple" 
+    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
+    /><select class="referencebrowser" id="input-ref" multiple="multiple" 
     name="ref" />'
 
-Render required with empty value.
-::
+Render required with empty value.::
 
     >>> widget = factory(
     ...     'reference',
@@ -147,7 +133,7 @@ Render required with empty value.
     ...         ],
     ...     })
     
-    >>> request = DummyRequest()
+    >>> request = layer.new_request()
     >>> request.params['ref'] = ''
     
     >>> data = widget.extract(request)
@@ -158,13 +144,13 @@ Render required with empty value.
     [ExtractionError('Ref Required',)]
     
     >>> widget(data=data)
-    u'<select class="referencebrowser required" id="input-ref" 
+    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
+    /><select class="referencebrowser required" id="input-ref" 
     multiple="multiple" name="ref" required="required"><option 
     id="input-ref-uid1" value="uid1">Title1</option><option 
     id="input-ref-uid2" value="uid2">Title2</option></select>'
 
-Required with valid value.
-::
+Required with valid value.::
 
     >>> request.params['ref'] = ['uid1', 'uid2']
     >>> data = widget.extract(request)
@@ -175,8 +161,53 @@ Required with valid value.
     []
     
     >>> widget(data=data)
-    u'<select class="referencebrowser required" id="input-ref" 
+    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
+    /><select class="referencebrowser required" id="input-ref" 
     multiple="multiple" name="ref" required="required"><option 
     id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
     id="input-ref-uid2" selected="selected" 
     value="uid2">Title2</option></select>'
+
+
+Reference listing tile
+----------------------
+
+Create dummy environ::
+
+    >>> from cone.tile import render_tile
+    >>> from cone.app.model import BaseNode
+    
+    >>> from datetime import datetime
+    >>> from datetime import timedelta
+    
+    >>> created = datetime(2011, 3, 15)
+    >>> delta = timedelta(1)
+    >>> modified = created + delta
+    
+    >>> model = BaseNode()
+    >>> for i in range(20):
+    ...     model[str(i)] = BaseNode()
+    ...     model[str(i)].metadata.title = str(i)
+    ...     model[str(i)].metadata.created = created
+    ...     model[str(i)].metadata.modified = modified
+    ...     created = created + delta
+    ...     modified = modified + delta
+
+Unauthorized fails::
+
+    >>> request = layer.new_request()
+    >>> res = render_tile(model, request, 'referencelisting')
+    Traceback (most recent call last):
+      ...
+    Forbidden: Unauthorized: tile 
+    <cone.app.browser.referencebrowser.ReferenceListing object at ...> 
+    failed permission check
+    
+Authorized::
+
+    >>> layer.login('max')
+    >>> res = render_tile(model, request, 'referencelisting')
+    >>> res.find('id="referencebrowser"') > -1
+    True
+    
+    >>> layer.logout()

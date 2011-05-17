@@ -1,0 +1,32 @@
+<configure xmlns="http://namespaces.repoze.org/bfg">
+
+  <include package="repoze.workflow" file="meta.zcml"/>
+
+  <workflow type="dummy"
+            name="Dummy workflow"
+            state_attr="state"
+            initial_state="initial"
+            content_types=".mock.WorkflowNode"
+            permission_checker="pyramid.security.has_permission">
+
+    <state name="initial">
+      <key name="title" value="Initial state" />
+      <key name="description" value="Foo" />
+    </state>
+
+    <state name="final">
+      <key name="title" value="Final state"/>
+      <key name="description" value="Bar" />
+    </state>
+
+    <transition
+       name="initial_2_final"
+       callback="cone.app.workflow.persist_state"
+       from_state="initial"
+       to_state="final"
+       permission="change_state"
+    />
+    
+  </workflow>
+
+</configure>

@@ -1,48 +1,10 @@
-Application Model
-=================
-
-The application model is used to describe the application hierarchy, fetch
-application specific information and access application data.
-
-The base application node utilizes 
-`node <http://pypi.python.org/pypi/node>`_. This has some advantages:
-
-    - ``pyramid`` expects dict like objects for traversal, so we already
-      fulfill this contract by using Nodes.
-    
-    - It is ordered.
-    
-    - Nodes know about it's location so we can easily generate URL's out of
-      ``Node.path``.
-    
-    - The model is held in memory. ``LifecycleNode`` triggers object events
-      when it is modified, so we can subscribe to this events for data or tree
-      manipulation or trigger those events ourself, i.e. on cache timeouts.
-    
-    - Nodes have an index holding references to all contained Nodes in the tree
-      by uid. This makes it easy to access information from other Nodes.
-
-``cone.app.interfaces.IApplicationNode`` extend this interface by:
-
-    - An ``__acl__`` property defining security. See documentation of
-      ``pyramid.security`` for details.
-    
-    - A ``properties`` property, containing IProperties implementing object.
-    
-    - A ``metadata`` property, containing IMetadata implementing object.
-    
-    - A ``nodeinfo`` property containing INodeInfo implementing object.
-
-
 BaseNode
 --------
 ::
-
     >>> from cone.app.model import BaseNode
     >>> root = BaseNode()
 
-Default permissions.
-::
+Default permissions.::
 
     >>> root.__acl__
     [('Allow', 'system.Authenticated', ['view']), 
@@ -54,20 +16,17 @@ Default permissions.
     ('Deny', 'system.Everyone', 
     <pyramid.security.AllPermissionsList object at ...>)]
 
-Properties.
-::
+Properties.::
 
     >>> root.properties
-    <cone.app.model.Properties object at ...>
+    <cone.app.model.ProtectedProperties object at ...>
 
 ``IProperties`` implementations do not raise AttributeErrors if requested
-attribute not exists.
-::
+attribute not exists.::
 
-    root.properties.inexistent
+    >>> root.properties.inexistent
 
-Metadata.
-::
+Metadata.::
 
     >>> root.metadata
     <cone.app.model.BaseMetadata object at ...>
@@ -77,11 +36,10 @@ Metadata.
 
     >>> root.metadata.inexistent
 
-Nodeinfo.
-::
+Nodeinfo.::
 
     >>> root.nodeinfo
-    <cone.app.model.BaseNodeInfo object at ...>
+    <cone.app.model.NodeInfo object at ...>
     
     >>> root.nodeinfo.node
     <class 'cone.app.model.BaseNode'>
@@ -96,8 +54,7 @@ FactoryNode
 -----------
 
 You can use the factory node to build static structures. It created the child
-Node for ``key`` on ``__getitem__`` if not existent yet.
-::
+Node for ``key`` on ``__getitem__`` if not existent yet.::
 
     >>> from cone.app.model import FactoryNode
     >>> class Root(FactoryNode):
@@ -131,8 +88,7 @@ do not provide the extensions described in
 adapter node in order to use it inside the application.
 
 The adapter node calls for common read operations the equivalent functions on
-it's adapted model.
-::
+it's adapted model.::
 
     >>> from cone.app.model import BaseNode
     >>> from cone.app.model import AdapterNode
@@ -143,18 +99,16 @@ it's adapted model.
     >>> toadapt.attrs.title = 'Some title'
     >>> toadapt.attrs.description = 'Some description'
 
-Adapt created node structure.
-::
+Adapt created node structure.::
 
     >>> adapter = AdapterNode(toadapt, 'name', None)
 
-Check ``AdapterNode``.
+Check ``AdapterNode``.::
 
     >>> adapter.model['foo']
     <BaseNode object 'foo' at ...>
 
-``attrs``
-::
+``attrs``::
 
     >>> adapter.attrs.title
     'Some title'
@@ -162,15 +116,13 @@ Check ``AdapterNode``.
 The adapter node is responsible to return other adapter node or application
 nodes on ``__getitem__`` if application hierarchy continues.
 
-You can do key aliasing as well at this place.
-::
+You can do key aliasing as well at this place.::
 
     >>> class MyAdapterNode(AdapterNode):
     ...     def __getitem__(self, key):
     ...         return AdapterNode(self.model['bar'], key, self)
 
-This dummy class does a static mapping on __getitem__.
-::
+This dummy class does a static mapping on __getitem__.::
 
     >>> node = MyAdapterNode(toadapt, 'adapter', None)
     >>> child = node['aliased']
@@ -185,8 +137,7 @@ This dummy class does a static mapping on __getitem__.
 
 The application node path differs from the adapted node path. This is essential
 to keep the application path sane while not violating the adapted node's
-structure.
-::
+structure.::
 
     >>> child.path
     ['adapter', 'aliased']
@@ -201,8 +152,7 @@ Metadata
 The ``IMetadata`` implementation returned by ``IApplicationNode.metadata`` is
 used by the application for displaying metadata information.
 
-The default implementation accepts a dict like object on ``__init__``.
-::
+The default implementation accepts a dict like object on ``__init__``.::
 
     >>> from cone.app.model import BaseMetadata
     >>> data = {
@@ -211,13 +161,11 @@ The default implementation accepts a dict like object on ``__init__``.
     ...     'creator': 'john doe',
     ... }
 
-Check ``INodeAdapter`` interface.
-::
+Check ``INodeAdapter`` interface.::
 
     >>> metadata = BaseMetadata(data)
 
-``__getattr__``. No AttributeError is raised if attribute is inexistent.
-::
+``__getattr__``. No AttributeError is raised if attribute is inexistent.::
 
     >>> metadata.title
     'some title'
@@ -230,20 +178,17 @@ Check ``INodeAdapter`` interface.
     
     >>> metadata.inexistent
 
-``__getitem__``
-::
+``__getitem__``::
 
     >>> metadata['title']
     'some title'
 
-``__contains__``
-::
+``__contains__``::
 
     >>> 'description' in metadata
     True
 
-``get``
-::
+``get``::
 
     >>> metadata.get('creator')
     'john doe'
@@ -252,8 +197,8 @@ Check ``INodeAdapter`` interface.
 NodeInfo
 --------
 
-The ``INodeInfo`` providing object holds information about the application node.
-::
+The ``INodeInfo`` providing object holds information about the application
+node.::
 
     >>> from cone.app.model import BaseNodeInfo
     >>> nodeinfo = BaseNodeInfo()
@@ -261,41 +206,35 @@ The ``INodeInfo`` providing object holds information about the application node.
     >>> nodeinfo.addables = ['basenode']
     >>> nodeinfo.title = 'Base Node'
 
-Register node info.
-::
+Register node info.::
 
     >>> from cone.app.model import registerNodeInfo, getNodeInfo
     >>> registerNodeInfo('basenode', nodeinfo)
 
-Lookup Node info.
-::
+Lookup Node info.::
 
     >>> nodeinfo = getNodeInfo('basenode')
     >>> nodeinfo.title
     'Base Node'
 
-``__getattr__``. No AttributeError is raised if attribute is inexistent.
-::
+``__getattr__``. No AttributeError is raised if attribute is inexistent.::
 
     >>> nodeinfo.addables
     ['basenode']
     
     >>> nodeinfo.inexistent
 
-``__getitem__``
-::
+``__getitem__``::
 
     >>> nodeinfo['addables']
     ['basenode']
 
-``__contains__``
-::
+``__contains__``::
 
     >>> 'node' in nodeinfo
     True
 
-``get``
-::
+``get``::
 
     >>> nodeinfo.get('node')
     <class 'cone.app.model.BaseNode'>
@@ -304,8 +243,7 @@ Lookup Node info.
 Properties
 ----------
 
-You can use the ``Properties`` object for any kind of mapping.
-::
+You can use the ``Properties`` object for any kind of mapping.::
 
     >>> from cone.app.model import Properties
     >>> p1 = Properties()
@@ -318,27 +256,100 @@ You can use the ``Properties`` object for any kind of mapping.
     ('Foo', 'Bar')
 
 
+ProtectedProperties
+-------------------
+
+Protected properties checks against permission for properties::
+
+    >>> from cone.app.model import ProtectedProperties
+    >>> context = BaseNode()
+
+'viewprotected' property gets protected by 'view' permission::
+
+    >>> permissions = {
+    ...     'viewprotected': ['view'],
+    ... }
+    >>> props = ProtectedProperties(context, permissions)
+
+Setting properties works always::
+
+    >>> props.viewprotected = True
+    >>> props.unprotected = True
+
+Unauthorized just permits access to unprotected property::
+
+    >>> props.viewprotected
+    >>> props.unprotected
+    True
+    
+    >>> 'viewprotected' in props
+    False
+    
+    >>> 'unprotected' in props
+    True
+    
+    >>> props.keys()
+    ['unprotected']
+    
+    >>> props.get('viewprotected')
+    >>> props.get('unprotected')
+    True
+    
+    >>> props['viewprotected']
+    Traceback (most recent call last):
+      ...
+    KeyError: u"No permission to access 'viewprotected'"
+    
+    >>> props['unprotected']
+    True
+
+Authenticate, both properties are now available::
+
+    >>> layer.login('viewer')
+    
+    >>> props['viewprotected']
+    True
+    
+    >>> props.viewprotected
+    True
+    
+    >>> props.unprotected
+    True
+    
+    >>> props.keys()
+    ['unprotected', 'viewprotected']
+    
+    >>> props.get('viewprotected')
+    True
+    
+    >>> props.get('unprotected')
+    True
+    
+    >>> props.viewprotected = False
+    >>> props.viewprotected
+    False
+    
+    >>> layer.logout()
+
+
 XML Properties
 --------------
 
 There's a convenience object for XML input and output.
 
-Dummy environment.
-::
+Dummy environment.::
 
     >>> import os
     >>> import tempfile
     >>> tempdir = tempfile.mkdtemp()
     
-Create XML properties with path and optional data.
-::
+Create XML properties with path and optional data.::
 
     >>> from cone.app.model import XMLProperties
     >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'),
     ...                       data={'foo': u'äöüß'})
 
-Testing helper functions.
-::
+Testing helper functions.::
     
     >>> props._keys()
     ['foo']
@@ -346,39 +357,33 @@ Testing helper functions.
     >>> props._values()
     [u'\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f']
 
-XML properties could be datetime objects.
-::
+XML properties could be datetime objects.::
 
     >>> from datetime import datetime
     >>> props.effective = datetime(2010, 1, 1, 10, 15)
     >>> props.empty = ''
 
-XML properties could be multi valued...
-::
+XML properties could be multi valued...::
 
     >>> props.keywords = ['a', datetime(2010, 1, 1, 10, 15), '']
 
-...or dict/odict instance
-::
+...or dict/odict instance::
 
     >>> from odict import odict
     >>> props.dictlike = odict([('a', 'foo'), ('b', 'bar'), ('c', '')])
 
-Nothing added yet.
-::
+Nothing added yet.::
 
     >>> os.listdir(tempdir)
     []
 
-Call props, file is now written to disk.
-::
+Call props, file is now written to disk.::
 
     >>> props()
     >>> os.listdir(tempdir)
     ['props.xml']
 
-Check file contents.
-::
+Check file contents.::
 
     >>> with open(os.path.join(tempdir, 'props.xml')) as file:
     ...     file.read().split('\n')
@@ -409,14 +414,12 @@ Check file contents.
     '']
 
 Overwrite ``foo`` and add ``bar`` properties; Note that even markup can be 
-used safely.
-::
+used safely.::
 
     >>> props.foo = 'foo'
     >>> props.bar = '<bar>äöü</bar>'
     
-Call props and check result.
-::
+Call props and check result.::
     
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.xml')) as file:
@@ -448,8 +451,7 @@ Call props and check result.
     '</properties>', 
     '']
 
-Create XML properties from existing file.
-::
+Create XML properties from existing file.::
 
     >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'))
     >>> props._keys()
@@ -463,8 +465,7 @@ Create XML properties from existing file.
     odict([('a', 'foo'), ('b', 'bar'), ('c', None)]), 
     u'<bar>\xe4\xf6\xfc</bar>']
 
-Delete property.
-::
+Delete property.::
 
     >>> del props['foo']
     >>> props._keys()
@@ -475,8 +476,7 @@ Delete property.
       ...
     KeyError: u'property inexistent does not exist'
 
-Call and check results.
-::
+Call and check results.::
 
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.xml')) as file:
@@ -507,8 +507,7 @@ Call and check results.
     '</properties>', 
     '']
 
-Change order of odict and check results
-::
+Change order of odict and check results::
 
     >>> props.dictlike = odict([('b', 'bar'), ('a', 'foo')])
     >>> props()
@@ -541,49 +540,43 @@ Change order of odict and check results
 ConfigProperties
 ----------------
 
-A Properties implementation exists for Config files used by python configparser.
-:: 
+A Properties implementation exists for Config files used by python
+configparser.:: 
 
     >>> from cone.app.model import ConfigProperties
     >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'),
     ...                          data={'foo': 1})
 
-Nothing added yet.
-::
+Nothing added yet.::
 
     >>> os.listdir(tempdir)
     []
 
-Call props, file is now written to disk.
-::
+Call props, file is now written to disk.::
 
     >>> props()
     >>> os.listdir(tempdir)
     ['props.cfg']
 
-Check file contents.
-::
+Check file contents.::
 
     >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
     ...     file.read()
     '[properties]\nfoo = 1\n\n'
 
-Overwrite ``foo`` and add ``bar`` properties.
-::
+Overwrite ``foo`` and add ``bar`` properties.::
 
     >>> props.foo = 'foo'
     >>> props.bar = 'bar'
     
-Call props and check result.
-::
+Call props and check result.::
     
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
     ...     file.read()
     '[properties]\nfoo = foo\nbar = bar\n\n'
 
-Create config properties from existing file.
-::
+Create config properties from existing file.::
 
     >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
     >>> props.foo
@@ -618,8 +611,7 @@ Test ``__conteins__``::
     >>> 'inexistent' in props
     False
 
-Delete property.
-::
+Delete property.::
 
     >>> del props['inexistent']
     Traceback (most recent call last):
@@ -629,8 +621,7 @@ Delete property.
     >>> del props['foo']
     >>> props.foo
 
-Call and check results.
-::
+Call and check results.::
 
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
