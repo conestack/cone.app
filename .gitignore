@@ -7,3 +7,8 @@ develop-eggs/
 devsrc/
 eggs/
 parts/
+docs/Makefile
+docs/doctrees/
+docs/html/
+docs/make.bat
+docs/source/conf.py
