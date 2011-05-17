@@ -133,6 +133,7 @@ class AddPart(CameFromNext):
     """
     
     action_resource = default('add')
+    show_heading = default(True)
     
     @plumb
     def prepare(_next, self):
@@ -152,7 +153,7 @@ class AddPart(CameFromNext):
         form = _next(self, model, request)
         if form is None:
             form = u''
-        rendered = heading + form
+        rendered = self.show_heading and heading + form or form
         return u'<div class="box">%s</div>' % rendered
 
 
@@ -180,6 +181,7 @@ class EditPart(CameFromNext):
     """
     
     action_resource = default('edit')
+    show_heading = default(True)
     
     @plumb
     def __call__(_next, self, model, request):
@@ -192,7 +194,7 @@ class EditPart(CameFromNext):
         form = _next(self, model, request)
         if form is None:
             form = u''
-        rendered = heading + form
+        rendered = self.show_heading and heading + form or form
         return u'<div class="box">%s</div>' % rendered
 
 
