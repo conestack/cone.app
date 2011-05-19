@@ -149,7 +149,7 @@ register it for your root node::
     ...              class_=ProtectedContentTile,
     ...              permission='login')
 
-Also create a page template named ``myapp.pt`` at the indicated location::
+Also create a page template named ``yourapp.pt`` at the indicated location::
 
     <div>
        Your app content.
