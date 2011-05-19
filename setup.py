@@ -52,7 +52,7 @@ setup(name='cone.app',
                 'unittest2',
           ],
           docs=[
-                'Shpinx',
+                'Sphinx',
           ],
       ),
       tests_require=[
