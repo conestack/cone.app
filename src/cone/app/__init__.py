@@ -10,7 +10,8 @@ from cone.app.model import (
     Properties,
 )
 
-APP_PATH = os.environ['APP_PATH']
+# XXX: is this needed anywhere? If not, let's remove it.
+APP_PATH = os.environ.get('APP_PATH', '')
 
 # configuration
 cfg = Properties()
