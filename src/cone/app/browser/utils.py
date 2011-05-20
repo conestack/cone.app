@@ -29,6 +29,8 @@ def make_query(**kw):
 def make_url(request, path=None, node=None, resource=None, query=None):
     # if path=[] in signature, path gets aggregated in recursive calls ???
     # happens on icon lookup in navtree.
+    # ^^^ that is because the [] (a list, mutable) is generated at compile
+    # time. mutable values should not be in function signatures to avoid this.
     if path is None:
         path = []
     if node is not None:
@@ -66,7 +68,10 @@ class AppUtil(object):
     def nodepath(self, node):
         return nodepath(node)
     
-    def make_url(self, request, path=[], node=None, resource=None, query=None):
+    def make_url(self, request, path=None, node=None, resource=None,
+        query=None):
+        if path is None:
+            path = []
         return make_url(request, path, node, resource, query)
     
     def make_query(self, **kw):
