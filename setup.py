@@ -50,7 +50,10 @@ setup(name='cone.app',
                 'interlude',
                 'plone.testing',
                 'unittest2',
-          ]
+          ],
+          docs=[
+                'Sphinx',
+          ],
       ),
       tests_require=[
           'interlude',
