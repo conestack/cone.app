@@ -2,6 +2,7 @@ from plumber import (
     plumber,
     Part,
     default,
+    extend,
     plumb,
 )
 from webob.exc import HTTPFound
@@ -132,7 +133,7 @@ class AddPart(CameFromNext):
     """form part hooking the hidden field 'factory' to self.form on __call__
     """
     
-    action_resource = default('add')
+    action_resource = extend('add')
     show_heading = default(True)
     
     @plumb
@@ -180,7 +181,7 @@ class EditPart(CameFromNext):
     """form part hooking the hidden field 'came_from' to self.form on __call__
     """
     
-    action_resource = default('edit')
+    action_resource = extend('edit')
     show_heading = default(True)
     
     @plumb
