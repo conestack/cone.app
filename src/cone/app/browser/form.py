@@ -1,10 +1,33 @@
+from plumber import (
+    Part,
+    default,
+    extend,
+)
 from webob.exc import HTTPFound
 from yafowil.base import factory
 from yafowil.controller import Controller
+from yafowil.yaml import parse_from_YAML
 from cone.tile import Tile
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import make_url
+
+
+class YAMLForm(Part):
+    """Plumbing part for rendering yaml forms.
+    """
+    
+    action_resource = default(u'')
+    form_template_path = default(None)
+    
+    @default
+    def form_action(self, widget, data):
+        resource = self.action_resource
+        return make_url(self.request, node=self.model, resource=resource)
+    
+    @extend
+    def prepare(self):
+        self.form = parse_from_YAML(self.form_template_path, self)
 
 
 class Form(Tile):
