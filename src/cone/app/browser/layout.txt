@@ -244,7 +244,8 @@ Render protected tile.::
     >>> request = layer.new_request()
     >>> render_tile(ProtectedModel(), request, 'content')
     u'<form action="http://example.com/login" 
-    enctype="multipart/form-data" id="form-loginform" method="post">...
+    enctype="multipart/form-data" id="form-loginform" method="post" 
+    novalidate="novalidate">...
     
     >>> layer.login('max')
     >>> result = render_tile(ProtectedModel(), request, 'content')
