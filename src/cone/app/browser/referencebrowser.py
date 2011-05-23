@@ -137,8 +137,11 @@ def reference_extractor(widget, data):
 
 def wrap_ajax_target(rendered, widget):
     if widget.attrs.get('target'):
+        target = widget.attrs.get('target')
+        if callable(target):
+            target = target()
         attrs = {
-            'ajax:target': widget.attrs.get('target'),
+            'ajax:target': target,
         }
         return tag('span', rendered, **attrs)
     return rendered
