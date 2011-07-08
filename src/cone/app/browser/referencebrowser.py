@@ -9,14 +9,10 @@ from cone.app.browser.table import (
     Action,
 )
 from cone.app.browser.contents import ContentsTile
-from cone.app.browser.utils import (
-    make_query,
-    make_url,
-)
+from cone.app.browser.utils import make_url
 from yafowil.base import (
     factory,
     UNSET,
-    ExtractionError,
 )
 from yafowil.common import (
     generic_extractor,
@@ -181,18 +177,16 @@ def reference_renderer(widget, data):
         tag('input', **text_attrs) + tag('input', **hidden_attrs), widget)
 
 
-factory.defaults['reference.required_class'] = 'required'
-factory.defaults['reference.default'] = ''
-factory.defaults['reference.format'] = 'block'
-factory.defaults['reference.class'] = 'referencebrowser'
 factory.register(
-    'reference', 
-    [
-        generic_extractor,
-        generic_required_extractor,
-        reference_extractor,
-    ], 
-    [
-        reference_renderer,
-    ],
-)
+    'reference',
+    extractors=[generic_extractor, generic_required_extractor,
+                reference_extractor], 
+    edit_renderers=[reference_renderer])
+
+factory.defaults['reference.required_class'] = 'required'
+
+factory.defaults['reference.default'] = ''
+
+factory.defaults['reference.format'] = 'block'
+
+factory.defaults['reference.class'] = 'referencebrowser'
