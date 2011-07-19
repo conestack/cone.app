@@ -39,7 +39,7 @@ class Security(Layer):
     def defaults(self):
         return {'request': self.current_request, 'registry': self.registry}
     
-    def new_request(self):
+    def new_request(self, type=None):
         request = self.current_request
         auth = dict()
         if request:
@@ -51,10 +51,13 @@ class Security(Layer):
         request.environ['SERVER_NAME'] = 'testcase'
         request.environ['AUTH_TYPE'] = 'cookie'
         request.environ.update(auth)
+        if type == 'json':
+            request.headers['X-Request'] = 'JSON'
+            request.accept = 'application/json'
         self.current_request = request
         return request
     
-    def make_app(self):
+    def make_app(self, **kw):
         settings = {
             'cone.admin_user': 'admin',
             'cone.admin_password': 'admin',
@@ -68,17 +71,19 @@ class Security(Layer):
             'node.ext.ugm.roles_file': os.path.join(DATADIR, 'roles'),
             'node.ext.ugm.datadir': os.path.join(DATADIR, 'userdata'),
         }
+        settings.update(**kw)
         self.app = cone.app.main({}, **settings)
         self.registry = self.app.registry
-    
-    def setUp(self, args=None):
-        self.make_app()
         self.current_request = None
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = self.defaults
+    
+    def setUp(self, args=None):
+        self.make_app()
         print "Security set up."
 
     def tearDown(self):
+        # XXX: something is wrong here.
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         print "Security torn down."
