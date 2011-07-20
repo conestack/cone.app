@@ -185,7 +185,6 @@ def ajax_form_fiddle(request, selector, mode):
 
 ajax_form_template = """\
 <script language="javascript" type="text/javascript">
-    var parent = window.top.window;
     parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');
     parent.bdajax.continuation(%(next)s);
 </script>
