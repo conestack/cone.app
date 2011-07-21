@@ -4,6 +4,7 @@ import pyramid_zcml
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from zope.component import getGlobalSiteManager
 from cone.app.model import (
     AppRoot,
     AppSettings,
@@ -123,7 +124,6 @@ def main(global_config, **settings):
     configure_root(settings)
     
     if settings.get('testing.hook_global_registry'):
-        from zope.component import getGlobalSiteManager
         globalreg = getGlobalSiteManager()
         config = Configurator(registry=globalreg)
         config.setup_registry(

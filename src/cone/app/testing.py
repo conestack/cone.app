@@ -1,6 +1,7 @@
 import os
 import cone.app
 from pyramid.testing import DummyRequest
+from zope.component import getGlobalSiteManager
 from plone.testing import Layer
 from cone.app.security import authenticate
 
@@ -37,7 +38,11 @@ class Security(Layer):
                     del environ[key]
     
     def defaults(self):
-        return {'request': self.current_request, 'registry': self.app.registry}
+        return {'request': self.current_request, 'registry': self.registry}
+    
+    @property
+    def registry(self):
+        return getGlobalSiteManager()
     
     def new_request(self, type=None):
         request = self.current_request
