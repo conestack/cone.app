@@ -37,7 +37,7 @@ class Security(Layer):
                     del environ[key]
     
     def defaults(self):
-        return {'request': self.current_request, 'registry': self.registry}
+        return {'request': self.current_request, 'registry': self.app.registry}
     
     def new_request(self, type=None):
         request = self.current_request
@@ -70,10 +70,10 @@ class Security(Layer):
             'node.ext.ugm.groups_file': os.path.join(DATADIR, 'groups'),
             'node.ext.ugm.roles_file': os.path.join(DATADIR, 'roles'),
             'node.ext.ugm.datadir': os.path.join(DATADIR, 'userdata'),
+            'testing.hook_global_registry': True,
         }
         settings.update(**kw)
         self.app = cone.app.main({}, **settings)
-        self.registry = self.app.registry
         self.current_request = None
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = self.defaults

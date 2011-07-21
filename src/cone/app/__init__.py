@@ -122,30 +122,40 @@ def main(global_config, **settings):
     
     configure_root(settings)
     
-    # create configurator
-    configurator = Configurator(
-        root_factory=get_root,
-        settings=settings,
-        authentication_policy=auth_tkt_factory(secret=secret_password),
-        authorization_policy=acl_factory())
+    if settings.get('testing.hook_global_registry'):
+        from zope.component import getGlobalSiteManager
+        globalreg = getGlobalSiteManager()
+        config = Configurator(registry=globalreg)
+        config.setup_registry(
+            root_factory=get_root,
+            settings=settings,
+            authentication_policy=auth_tkt_factory(secret=secret_password),
+            authorization_policy=acl_factory())
+        config.hook_zca()
+    else:
+        config = Configurator(
+            root_factory=get_root,
+            settings=settings,
+            authentication_policy=auth_tkt_factory(secret=secret_password),
+            authorization_policy=acl_factory())
     
-    configurator.include(pyramid_zcml)
-    configurator.begin()
-    configurator.load_zcml('configure.zcml')
+    config.include(pyramid_zcml)
+    config.begin()
+    config.load_zcml('configure.zcml')
     
     # read plugin configurator
     plugins = settings.get('cone.plugins', '')
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
-        configurator.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
+        config.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
     
     # end config
-    configurator.end()
+    config.end()
     
     # execute main hooks
     for hook in main_hooks:
-        hook(configurator, global_config, settings)
+        hook(config, global_config, settings)
     
     # return wsgi app
-    return configurator.make_wsgi_app()
+    return config.make_wsgi_app()

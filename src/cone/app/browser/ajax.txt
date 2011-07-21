@@ -197,11 +197,9 @@ the response::
     >>> from cone.app.browser.ajax import ajax_form_template
     >>> print ajax_form_template.split('\n')
     ['<script language="javascript" type="text/javascript">', 
-    '    var parent = window.top.window;', 
     "    parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');", 
     '    parent.bdajax.continuation(%(next)s);', 
-    '</script>', 
-    '']
+    '</script>', '']
 
 Test ``render_ajax_form``. Provide a dummy Form::
 

@@ -31,7 +31,7 @@ Base security tests::
     <pyramid.testing.DummyRequest object at ...>
     
     >>> layer.current_request.registry
-    <Registry cone.app>
+    <BaseGlobalComponents base>
     
     >>> layer.login('inexistent')
     >>> from pyramid.security import authenticated_userid
