@@ -2,6 +2,7 @@ import os
 import cone.app
 from pyramid.testing import DummyRequest
 from zope.component import getGlobalSiteManager
+from zope.component.hooks import resetHooks
 from plone.testing import Layer
 from cone.app.security import authenticate
 
@@ -91,6 +92,7 @@ class Security(Layer):
         # XXX: something is wrong here.
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
+        resetHooks()
         print "Security torn down."
 
 security = Security()
