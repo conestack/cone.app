@@ -38,7 +38,7 @@ def ajax_tile(model, request):
 def ajax_continue(request, continuation):
     """Set ajax continuation on environ.
     
-    ``continuation``
+    continuation
         list of continuation definition objects or single continuation
         definition.
     """

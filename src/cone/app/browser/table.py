@@ -28,22 +28,22 @@ class Item(object):
                  actions=[]):
         """Item definition.
         
-        ``value``
+        value
             item value
         
-        ``link``
+        link
             item href attribute
         
-        ``target``
+        target
             item ajax:target attribute
         
-        ``action``
+        action
             item ajax:action attribute
         
-        ``event``
+        event
             item ajax:event attribute
         
-        ``actions``
+        actions
             item actions, list of Action instances
         """
         self.value = value
@@ -67,28 +67,28 @@ class Action(object):
                  rendered=None):
         """Action definition.
         
-        ``title``
+        title
             action title
         
-        ``link``
+        link
             action href attribute
         
-        ``target``
+        target
             action ajax:target attribute
         
-        ``action``
+        action
             action ajax:action attribute
         
-        ``event``
+        event
             action ajax:event attribute
         
-        ``css``
+        css
             action class attribute
         
-        ``confirm``
+        confirm
             Conform message for action if desired
         
-        ``rendered``
+        rendered
             an already rendered action. if set, ignore all other attributes
             and use contents of this attribute for rendering
         """

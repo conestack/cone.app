@@ -30,11 +30,13 @@ class WfDropdown(Tile):
     
     Configuration expected on ``self.model.properties``:
     
-    ``wf_state``
+    wf_state
         Flag whether model provides workflow.
-    ``wf_name``
+    
+    wf_name
         Registration name of workflow.
-    ``wf_transition_names``
+    
+    wf_transition_names
         transition id to transition title mapping. XXX: get rid of
     """
     

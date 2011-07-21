@@ -9,6 +9,7 @@ from cone.app.security import authenticate
 from cone.app.browser.form import Form
 from cone.app.browser.utils import make_url
 
+
 @tile('loginform', permission="login")
 class LoginForm(Form):
     ajax = False

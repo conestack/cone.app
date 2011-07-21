@@ -252,6 +252,7 @@ registerTile('listing',
              class_=ProtectedContentTile,
              permission='login')
 
+
 @tile('content', interface=AppRoot, permission='login')
 class RootContent(ProtectedContentTile):
     

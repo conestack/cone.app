@@ -146,8 +146,11 @@ def wrap_ajax_target(rendered, widget):
 def reference_renderer(widget, data):
     """Properties:
     
-    ``multivalued``: flag whether reference field is multivalued
-    ``target``: ajax target for reference browser triggering
+    multivalued
+        flag whether reference field is multivalued
+    
+    target
+        ajax target for reference browser triggering
     """
     if widget.attrs.get('multivalued'):
         return wrap_ajax_target(select_renderer(widget, data), widget)
