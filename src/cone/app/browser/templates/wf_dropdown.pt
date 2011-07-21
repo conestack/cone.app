@@ -6,7 +6,8 @@
           omit-tag="True">
   <div class="transitions_dropdown"
        tal:define="transitions context.transitions;
-                   state context.model.state">
+                   state context.model.state"
+       tal:condition="state">
     <div class="state">
       <span>State:</span>
       <a href="${context.nodeurl}/changestate"

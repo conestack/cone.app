@@ -27,3 +27,12 @@ class WorkflowNode(BaseNode):
     
     def __call__(self):
         pass
+
+
+class InexistentWorkflowNode(WorkflowNode):
+    
+    @property
+    def properties(self):
+        props = super(InexistentWorkflowNode, self).properties
+        props.wf_name = u'inexistent'
+        return props

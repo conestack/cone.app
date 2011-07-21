@@ -66,11 +66,11 @@ class WfDropdown(Tile):
     def transitions(self):
         self.do_transition()
         ret = list()
-        workflow = self.workflow
         try:
+            workflow = self.workflow
             transitions = workflow.get_transitions(
                 self.model, self.request, from_state=self.model.state)
-        except WorkflowError, e:
+        except (WorkflowError, AttributeError), e:
             logger.error("transitions error: %s" % str(e))
             return ret
         # XXX: check in repoze.workflow the intended way for naming
