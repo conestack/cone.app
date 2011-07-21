@@ -380,6 +380,8 @@ Node's which are in navtree::
     >>> root = BaseNode()
     >>> root.properties.in_navtree = True
     >>> root['1'] = BaseNode()
+    >>> root['1']['11'] = BaseNode()
+    >>> root['1']['11'].properties.in_navtree = True
     >>> root['1'].properties.in_navtree = True
     >>> root['2'] = BaseNode()
     >>> root['2'].properties.in_navtree = True
@@ -433,8 +435,6 @@ If default child should not be displayed it navtree,
 In this case, also children context gets switched. Instead of remaining non
 default children, children of default node are displayed.
 
-    >>> root['1']['11'] = BaseNode()
-    >>> root['1']['11'].properties.in_navtree = True
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('href="http://example.com/1"') > -1
     False
@@ -444,7 +444,13 @@ default children, children of default node are displayed.
     
     >>> res.find('href="http://example.com/1/11"') > -1
     True
-    
+
+Render navtree on ``root['1']['11']``, check selected::
+
+    >>> res = render_tile(root['1']['11'], request, 'navtree')
+    >>> res.find('class="selected navtreelevel_1">11</a>') > -1
+    True
+
     >>> layer.logout()
 
 
