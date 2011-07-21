@@ -22,10 +22,12 @@ Render without any value.::
     ...     props = {
     ...         'label': 'Reference',
     ...         'multivalued': False,
+    ...         'target': lambda: 'http://example.com/foo',
     ...     })
     >>> widget()
-    u'<input class="referencebrowser" id="input-ref" name="ref" 
-    type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
+    u'<span ajax:target="http://example.com/foo"><input 
+    class="referencebrowser" id="input-ref" name="ref" type="text" 
+    value="" /><input name="ref.uid" type="hidden" value="" /></span>'
 
 Render required with empty value.::
 
@@ -184,12 +186,21 @@ Create dummy environ::
     >>> delta = timedelta(1)
     >>> modified = created + delta
     
+    >>> import uuid
     >>> model = BaseNode()
     >>> for i in range(20):
     ...     model[str(i)] = BaseNode()
+    ...     # set listing display metadata
     ...     model[str(i)].metadata.title = str(i)
     ...     model[str(i)].metadata.created = created
     ...     model[str(i)].metadata.modified = modified
+    ...     # node needs a uid to be referencable
+    ...     model[str(i)].metadata.uid = uuid.uuid4()
+    ...     if i % 2 == 0:
+    ...         # make node referencable
+    ...         model[str(i)].properties.referencable = True
+    ...         # do not render link to children
+    ...         model[str(i)].properties.leaf = True
     ...     created = created + delta
     ...     modified = modified + delta
 
@@ -208,6 +219,13 @@ Authorized::
     >>> layer.login('max')
     >>> res = render_tile(model, request, 'referencelisting')
     >>> res.find('id="referencebrowser"') > -1
+    True
+
+Referencable nodes renders add reference action related markup::
+
+    >>> expected = 'add16_16 addreference" '
+    >>> expected += 'href="http://example.com/6" id="ref-'
+    >>> res.find(expected) > -1
     True
     
     >>> layer.logout()
