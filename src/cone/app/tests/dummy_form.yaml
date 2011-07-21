@@ -1,0 +1,19 @@
+factory: form
+name: subscriptionform
+props:
+    action: context.form_action
+    class: ajax
+widgets:
+- email:
+    factory: field:label:error:text
+    props:
+        label: E-Mail
+        required: No email given
+- subscribe:
+    factory: submit
+    props:
+        action: subscribe
+        expression: True
+        handler: context.subscribe
+        next: context.next
+        label: Subscribe
