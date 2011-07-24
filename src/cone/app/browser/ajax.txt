@@ -1,11 +1,11 @@
-Server side ajax support
-========================
+cone.app.browser.ajax
+=====================
 
-Bdajax
-------
+Bdajax support
+--------------
 
 ``ajax_tile`` is the server side bdajax implementation for cone.
-Using bdajax.action in cone renders tiles by action name.
+Using ``bdajax.action`` with cone renders tiles by action name.
 
 Create test environ::
 
@@ -43,67 +43,9 @@ Authenticate and test again::
     'mode': 'replace', 
     'selector': '.foo'}
 
-
-``ajax_tile`` using ``ajax_continue``::
-
-    >>> from cone.app.browser.ajax import (
-    ...     ajax_continue,
-    ...     AjaxAction,
-    ... )
-    
-    >>> @tile('testtile2')
-    ... class TestTile(Tile):
-    ...     def render(self):
-    ...         ajax_continue(self.request,
-    ...                       AjaxAction('target', 'name', 'mode', 'selector'))
-    ...         return u''
-    
-    >>> request.params['bdajax.action'] = 'testtile2'
-    >>> ajax_tile(root, request)
-    {'continuation': 
-    [{'mode': 'mode', 
-    'selector': 'selector', 
-    'type': 'action', 
-    'target': 'target', 
-    'name': 'name'}], 
-    'payload': u'', 
-    'mode': 'replace', 
-    'selector': '.foo'}
-    
-    >>> layer.logout()
-
-More convenience continuation functions::
-
-    >>> request = layer.new_request()
-    >>> from cone.app.browser.ajax import ajax_message
-    >>> ajax_message(request, 'payload')
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxMessage object at ...>]
-    
-    >>> request = layer.new_request()
-    >>> from cone.app.browser.ajax import ajax_status_message
-    >>> ajax_status_message(request, 'payload')
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxMessage object at ...>]
-
-
-Forms
------
-
-Ajax form support is done with a hidden iframe where forms are committed to
-if an ajax form is detected. On server side we have to consider this at some 
-places.
-
-- The view mapping to form action must check whether ajax flag is set on request
-  and return results of ``render_ajax_form`` if so. If not, return results of
-  ``render_main_template``
-
-- The form implementing tiles have to return a list of ``AjaxAction`` and or
-  ``AjaxEvent`` and or ``AjaxMessage`` instances by ``next`` function if ajax 
-  flag is set. ``AjaxAction``, ``AjaxEvent`` and ``AjaxMessage`` each represent
-  either a ``bdajax.action``, a ``bdajax.trigger`` or a ``bdajax.message`` call
-  on the client side, and are executed in order. If no ajax flag is set, the
-  form's next function normally returns a ``HTTPFound`` instance.
+It is possible to define continuation actions to be performed as soon as
+XHR returns. Different actions are ``AjaxAction``, ``AjaxEvent`` and
+``AjaxMessage``.
 
 AjaxAction object::
 
@@ -143,6 +85,76 @@ AjaxMessage object::
     
     >>> message.payload, message.flavor, message.selector
     ('Some info message', 'info', 'None')
+
+Use ``ajax_continue`` in your tile passing the request and an instance or a
+list of instances to set continuation actions::
+
+    >>> from cone.app.browser.ajax import (
+    ...     ajax_continue,
+    ...     AjaxAction,
+    ... )
+    
+    >>> @tile('testtile2')
+    ... class TestTile(Tile):
+    ...     def render(self):
+    ...         ajax_continue(self.request,
+    ...                       AjaxAction('target', 'name', 'mode', 'selector'))
+    ...         return u''
+    
+    >>> request.params['bdajax.action'] = 'testtile2'
+    >>> ajax_tile(root, request)
+    {'continuation': 
+    [{'mode': 'mode', 
+    'selector': 'selector', 
+    'type': 'action', 
+    'target': 'target', 
+    'name': 'name'}], 
+    'payload': u'', 
+    'mode': 'replace', 
+    'selector': '.foo'}
+    
+    >>> layer.logout()
+
+Use ``ajax_message`` as shortcut for settings continuation message::
+
+    >>> request = layer.new_request()
+    >>> from cone.app.browser.ajax import ajax_message
+    >>> ajax_message(request, 'payload')
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxMessage object at ...>]
+
+Use ``ajax_status_message`` as shortcut for settings continuation statu 
+message::
+
+    >>> request = layer.new_request()
+    >>> from cone.app.browser.ajax import ajax_status_message
+    >>> ajax_status_message(request, 'payload')
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxMessage object at ...>]
+
+
+Ajax form support
+-----------------
+
+Ajax form support is done with a hidden iframe, where forms are committed to
+if an ajax form is detected. On server side we have to consider this at some 
+places.
+
+- The view mapping to submitted form action must check whether ajax flag is set
+  on request and return results of ``render_ajax_form`` if so. If not, return
+  results of ``render_main_template``.
+  XXX: really ``render_main_template`` in all cases?
+
+- The view mapping to submitted form action must call ``ajax_form_fiddle``,
+  which defines ajax mode and selector to use when re-rendering forms if form
+  controller ``next`` returns nothing.
+
+- The form implementing tiles have to return a list of ``AjaxAction`` and or
+  ``AjaxEvent`` and or ``AjaxMessage`` instances by ``next`` function if ajax 
+  flag is set. ``AjaxAction``, ``AjaxEvent`` and ``AjaxMessage`` each represent
+  either a ``bdajax.action``, a ``bdajax.trigger`` or a ``bdajax.message`` call
+  on the client side, and are executed in order. If no ajax flag is set, the
+  form's next function normally returns a ``HTTPFound`` instance.
 
 AjaxFormContinue object. This object is used by ``render_ajax_form``::
 
@@ -197,11 +209,9 @@ the response::
     >>> from cone.app.browser.ajax import ajax_form_template
     >>> print ajax_form_template.split('\n')
     ['<script language="javascript" type="text/javascript">', 
-    '    var parent = window.top.window;', 
     "    parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');", 
     '    parent.bdajax.continuation(%(next)s);', 
-    '</script>', 
-    '']
+    '</script>', '']
 
 Test ``render_ajax_form``. Provide a dummy Form::
 

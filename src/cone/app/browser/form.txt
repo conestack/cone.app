@@ -170,6 +170,41 @@ Submit with ajax flag::
     >>> request.environ['cone.app.continuation']
     [<cone.app.browser.ajax.AjaxAction object at ...>]
 
+Same form as above using ``yafowil.yaml``::
+
+    >>> from plumber import plumber
+    >>> from cone.app.browser.form import YAMLForm
+    
+    >>> @tile('yamlsubscriptionform')
+    ... class YAMLSubscriptionForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = YAMLForm
+    ...     action_resource = 'yamlsubscriptionform'
+    ...     form_template = 'cone.app.tests:dummy_form.yaml'
+    
+    >>> request = layer.new_request()
+    >>> from cone.tile import render_tile
+    >>> res = render_tile(model, request, 'yamlsubscriptionform')
+    >>> expected = \
+    ...     'action="http://example.com/dummymodel/yamlsubscriptionform"'
+    >>> res.find(expected) > -1
+    True
+
+Instead of ``form_template`` attribute, ``form_template_path`` can be used for
+backward compatibility::
+
+    >>> @tile('yamlsubscriptionform2')
+    ... class YAMLSubscriptionForm2(YAMLSubscriptionForm):
+    ...     action_resource = 'yamlsubscriptionform2'
+    ...     form_template = None
+    ...     form_template_path = 'cone.app.tests:dummy_form.yaml'
+    
+    >>> res = render_tile(model, request, 'yamlsubscriptionform2')
+    >>> expected = \
+    ...     'action="http://example.com/dummymodel/yamlsubscriptionform2"'
+    >>> res.find(expected) > -1
+    True
+
 Provide another form tile for testing remaining aspects of ``Form`` class::
 
     >>> @tile('otherform')

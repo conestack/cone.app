@@ -18,7 +18,13 @@ class YAMLForm(Part):
     """
     
     action_resource = default(u'')
+    
+    # BBB
     form_template_path = default(None)
+    
+    # use form_template for pointing yaml files
+    form_template = default(None)
+    message_factory = default(None)
     
     @default
     def form_action(self, widget, data):
@@ -27,7 +33,13 @@ class YAMLForm(Part):
     
     @extend
     def prepare(self):
-        self.form = parse_from_YAML(self.form_template_path, self)
+        if self.form_template:
+            self.form = parse_from_YAML(
+                self.form_template, self, self.message_factory)
+            return
+        # BBB
+        self.form = parse_from_YAML(
+            self.form_template_path, self, self.message_factory)
 
 
 class Form(Tile):

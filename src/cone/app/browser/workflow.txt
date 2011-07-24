@@ -3,7 +3,10 @@ Workflow dropdown
 
     >>> from cone.tile import render_tile
     >>> from cone.app import root
-    >>> from cone.app.tests.mock import WorkflowNode
+    >>> from cone.app.tests.mock import (
+    ...     WorkflowNode,
+    ...     InexistentWorkflowNode,
+    ... )
     >>> import cone.app.browser.workflow
     
     >>> request = layer.new_request()
@@ -28,5 +31,10 @@ Workflow dropdown
     
     >>> node.state
     u'final'
+    
+    >>> node = InexistentWorkflowNode()
+    >>> request = layer.new_request()
+    >>> render_tile(node, request, 'wf_dropdown')
+    u'\n\n  \n'
     
     >>> layer.logout()

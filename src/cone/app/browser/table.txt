@@ -41,11 +41,11 @@ Imports and dummy context::
     >>> class MyTable(Table):
     ...     @property
     ...     def item_count(self):
-    ...         return 20
+    ...         return 21
     
     >>> table = MyTable('cone.app:browser/templates/table.pt', None, 'table')
     >>> table.item_count
-    20
+    21
     
     >>> batch = TableBatch(table)
     >>> batch.model = model
@@ -54,7 +54,9 @@ Imports and dummy context::
     [{'current': True, 'visible': True, 
     'url': 'http://example.com/?sort=&b_page=0', 'page': '1'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?sort=&b_page=1', 'page': '2'}]
+    'url': 'http://example.com/?sort=&b_page=1', 'page': '2'}, 
+    {'current': False, 'visible': True, 
+    'url': 'http://example.com/?sort=&b_page=2', 'page': '3'}]
 
 ``sorted_rows`` is responsible to generate the table rows data. It gets passed
 ``start``, ``end``, ``sort`` and ``order`` and must return a list of

@@ -44,3 +44,10 @@ Test layer::
     >>> req = layer.new_request()
     >>> old is req
     False
+    
+    >>> req = layer.new_request(type='json')
+    >>> req.headers
+    {'X-Request': 'JSON'}
+    
+    >>> req.accept
+    'application/json'

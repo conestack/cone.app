@@ -38,7 +38,7 @@ def ajax_tile(model, request):
 def ajax_continue(request, continuation):
     """Set ajax continuation on environ.
     
-    ``continuation``
+    continuation
         list of continuation definition objects or single continuation
         definition.
     """
@@ -185,7 +185,6 @@ def ajax_form_fiddle(request, selector, mode):
 
 ajax_form_template = """\
 <script language="javascript" type="text/javascript">
-    var parent = window.top.window;
     parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');
     parent.bdajax.continuation(%(next)s);
 </script>

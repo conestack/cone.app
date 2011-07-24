@@ -30,11 +30,13 @@ class WfDropdown(Tile):
     
     Configuration expected on ``self.model.properties``:
     
-    ``wf_state``
+    wf_state
         Flag whether model provides workflow.
-    ``wf_name``
+    
+    wf_name
         Registration name of workflow.
-    ``wf_transition_names``
+    
+    wf_transition_names
         transition id to transition title mapping. XXX: get rid of
     """
     
@@ -64,11 +66,11 @@ class WfDropdown(Tile):
     def transitions(self):
         self.do_transition()
         ret = list()
-        workflow = self.workflow
         try:
+            workflow = self.workflow
             transitions = workflow.get_transitions(
                 self.model, self.request, from_state=self.model.state)
-        except WorkflowError, e:
+        except (WorkflowError, AttributeError), e:
             logger.error("transitions error: %s" % str(e))
             return ret
         # XXX: check in repoze.workflow the intended way for naming

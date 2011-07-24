@@ -70,3 +70,14 @@ Settings is displayed in navtree by default::
 
     >>> cone.app.acl_factory()
     <pyramid.authorization.ACLAuthorizationPolicy object at ...>
+
+``main``::
+
+    >>> settings = {
+    ...     'cone.admin_user': 'admin',
+    ...     'cone.admin_password': 'admin',
+    ...     'cone.secret_password': '12345',
+    ... }
+    >>> cone.app.main({}, **settings)
+    Custom main hook called
+    <pyramid.router.Router object at ...>
