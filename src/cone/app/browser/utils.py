@@ -26,6 +26,7 @@ def make_query(**kw):
             query.append('%s=%s' % (name, p))
     return '?%s' % '&'.join(query)
 
+
 def make_url(request, path=None, node=None, resource=None, query=None):
     # if path=[] in signature, path gets aggregated in recursive calls ???
     # happens on icon lookup in navtree.

@@ -20,7 +20,6 @@
          title="View"
          ajax:bind="click"
          ajax:target="${context.nodeurl}"
-         ajax:event="contextchanged:.contextsensitiv"
          ajax:action="content:#content:inner">&nbsp;</a>
     </div>
     
@@ -43,7 +42,6 @@
          title="Edit"
          ajax:bind="click"
          ajax:target="${context.nodeurl}"
-         ajax:event="contextchanged:.contextsensitiv"
          ajax:action="edit:#content:inner">&nbsp;</a>
     </div>
     

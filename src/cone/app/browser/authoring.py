@@ -12,7 +12,6 @@ from yafowil.base import factory
 from cone.tile import (
     Tile,
     tile,
-    registerTile,
     render_tile,
 )
 from cone.app.model import (
@@ -253,6 +252,6 @@ class AddDropdown(Tile):
         return ret
 
 
-registerTile('contextmenu',
-             'cone.app:browser/templates/contextmenu.pt',
-             permission='view')
+@tile('contextmenu', 'templates/contextmenu.pt', permission='view')
+class ContextMenu(Tile):
+    pass
