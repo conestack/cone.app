@@ -118,7 +118,6 @@ def main(global_config, **settings):
     import cone.app.security as security
     security.ADMIN_USER = settings.get('cone.admin_user', 'admin')
     security.ADMIN_PASSWORD = settings.get('cone.admin_password', 'admin')
-    security.AUTH_IMPL = settings.get('cone.auth_impl', None)
     secret_password = settings.get('cone.secret_password', 'secret')
     
     configure_root(settings)
