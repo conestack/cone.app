@@ -1,3 +1,4 @@
+import logging
 from pyramid.security import (
     Everyone,
     Allow,
@@ -6,6 +7,10 @@ from pyramid.security import (
     remember,
 )
 from cone.app.utils import app_config
+
+
+logger = logging.getLogger('cone.app')
+
 
 DEFAULT_ACL = [
     (Allow, 'system.Authenticated', ['view']),
@@ -41,8 +46,14 @@ ADMIN_PASSWORD = None
 
 def authenticate(request, login, password):
     for impl in app_config().auth:
-        if impl.users.authenticate(login, password):
-            return remember(request, login)
+        try:
+            if impl.users.authenticate(login, password):
+                return remember(request, login)
+        except Exception, e:
+            msg = u"Authentication plugin %s raised an Exception while " + \
+                  u"trying to authenticate: %s"
+            msg = msg % (str(impl.__class__), str(e))
+            logger.warning(msg)
     if login == ADMIN_USER and password == ADMIN_PASSWORD:
         return remember(request, login)
 

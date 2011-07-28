@@ -66,3 +66,29 @@ Authenticate as default user::
     
     >>> has_permission('manage', context, layer.current_request)
     <ACLDenied instance ...
+
+If an authentication plugin raises an error when calling ``authenticate``, an
+error message is logged.
+
+    >>> import logging
+    >>> class TestHandler(logging.StreamHandler):
+    ...     def handle(self, record):
+    ...         print record
+    >>> handler = TestHandler()
+    >>> from cone.app.security import logger
+    >>> logger.addHandler(handler)
+    >>> logger.setLevel(logging.DEBUG)
+    
+    >>> noauthenticator = object()
+    >>> import cone.app
+    >>> cone.app.cfg.auth.append(noauthenticator)
+    >>> from cone.app.security import authenticate
+    >>> request = layer.current_request
+    >>> authenticate(request, 'foo', 'foo')
+    <LogRecord: cone.app, 30, ...security.py, 56, 
+    "Authentication plugin <type 'object'> raised an Exception while trying 
+    to authenticate: 'object' object has no attribute 'users'">
+    
+    >>> logger.setLevel(logging.INFO)
+    >>> logger.removeHandler(handler)
+    >>> cone.app.cfg.auth.remove(noauthenticator)
