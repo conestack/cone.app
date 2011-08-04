@@ -17,7 +17,7 @@ from yafowil.base import (
 from yafowil.common import (
     generic_extractor,
     generic_required_extractor,
-    select_renderer,
+    select_edit_renderer,
     select_extractor,
 )
 from yafowil.utils import (
@@ -153,7 +153,7 @@ def reference_renderer(widget, data):
         ajax target for reference browser triggering
     """
     if widget.attrs.get('multivalued'):
-        return wrap_ajax_target(select_renderer(widget, data), widget)
+        return wrap_ajax_target(select_edit_renderer(widget, data), widget)
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
