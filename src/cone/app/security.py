@@ -68,7 +68,11 @@ def groups_callback(name, request):
         return roles
     roles = list()
     for impl in app_config().auth:
-        user = impl.users.get(name)
+        try:
+            user = impl.users.get(name)
+        except Exception, e:
+            logger.error(str(e))
+            continue
         if not user:
             continue
         aggregated = set()
