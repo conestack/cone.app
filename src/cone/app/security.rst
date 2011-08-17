@@ -68,7 +68,7 @@ Authenticate as default user::
     <ACLDenied instance ...
 
 If an authentication plugin raises an error when calling ``authenticate``, an
-error message is logged.
+error message is logged::
 
     >>> import logging
     >>> class TestHandler(logging.StreamHandler):
@@ -88,7 +88,24 @@ error message is logged.
     <LogRecord: cone.app, 30, ...security.py, 56, 
     "Authentication plugin <type 'object'> raised an Exception while trying 
     to authenticate: 'object' object has no attribute 'users'">
+
+Test Group callback, also logs if an error occurs::
+
+    >>> from cone.app.security import groups_callback
+    >>> layer.login('manager')
+    >>> request = layer.current_request
+    >>> groups_callback('manager', request)
+    [u'role:manager']
     
+    >>> layer.logout()
+    
+    >>> groups_callback('foo', layer.new_request())
+    <LogRecord: cone.app, 40, 
+    ...security.py, 74, "'object' object has no attribute 'users'">
+    []
+
+Cleanup::
+
     >>> logger.setLevel(logging.INFO)
     >>> logger.removeHandler(handler)
     >>> cone.app.cfg.auth.remove(noauthenticator)
