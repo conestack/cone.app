@@ -11,11 +11,19 @@ from cone.app.utils import app_config
 
 logger = logging.getLogger('cone.app')
 
+DEFAULT_ROLES = [
+    ('viewer', 'Viewer'),
+    ('editor', 'Editor'),
+    ('admin', 'Admin'),
+    ('owner', 'Owner'),
+    ('manager', 'Manager'),
+]
 
 DEFAULT_ACL = [
     (Allow, 'system.Authenticated', ['view']),
     (Allow, 'role:viewer', ['view']),
     (Allow, 'role:editor', ['view', 'add', 'edit']),
+    (Allow, 'role:admin', ['view', 'add', 'edit', 'delete']),
     (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
     (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
     (Allow, Everyone, ['login']),

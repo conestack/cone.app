@@ -10,6 +10,7 @@ Default permissions.::
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
     ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
     ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
