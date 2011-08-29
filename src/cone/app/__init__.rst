@@ -76,7 +76,7 @@ Settings is displayed in navtree by default::
     >>> settings = {
     ...     'cone.admin_user': 'admin',
     ...     'cone.admin_password': 'admin',
-    ...     'cone.secret_password': '12345',
+    ...     'cone.auth_secret': '12345',
     ... }
     >>> cone.app.main({}, **settings)
     Custom main hook called

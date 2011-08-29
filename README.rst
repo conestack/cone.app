@@ -56,7 +56,7 @@ Create ``yourapp.ini`` and add::
     # cone.app specific settings
     cone.admin_user = admin
     cone.admin_password = admin
-    cone.secret_password = 12345
+    cone.auth_secret = 12345
     cone.plugins = your.app
     cone.root.title = your app
     
@@ -72,8 +72,43 @@ Create ``yourapp.ini`` and add::
 ``cone.admin_password``
     Password of Superuser
 
-``cone.secret_password``
+``cone.auth_secret``
     Cookie encryption password
+
+``cone.auth_cookie_name``
+    Default: ``auth_tkt``. The cookie name used
+
+``cone.auth_secure``
+    Default: ``False``. Only send the cookie back over a secure conn.
+
+``cone.auth_include_ip``
+    Default: ``False``.  Make the requesting IP address part of the
+    authentication data in the cookie.
+
+``cone.auth_timeout``
+    Default: ``None``.  Maximum number of seconds which a newly issued ticket
+    will be considered valid.
+
+``cone.auth_reissue_time``
+    Default: ``None``.  If this parameter is set, it represents the number of
+    seconds that must pass before an authentication token cookie is reissued.
+
+``cone.auth_max_age``
+    Default: ``None``.  The max age of the auth_tkt cookie, in seconds. This
+    differs from ``timeout`` inasmuch as ``timeout`` represents the lifetime
+    of the ticket contained in the cookie, while this value represents the
+    lifetime of the cookie itself.
+
+``cone.auth_http_only``
+    Default: ``False``. Hide cookie from JavaScript by setting the HttpOnly
+    flag.
+
+``cone.auth_path``
+    Default: ``/``. The path for which the auth_tkt cookie is valid.
+
+``cone.auth_wild_domain``
+    Default: ``True``. An auth_tkt cookie will be generated for the wildcard
+    domain.
 
 ``cone.plugins``
     List of eggs plugging to ``cone.app``. Plugins are included by invoking the

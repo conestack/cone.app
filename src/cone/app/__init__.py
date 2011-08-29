@@ -118,7 +118,34 @@ def main(global_config, **settings):
     import cone.app.security as security
     security.ADMIN_USER = settings.get('cone.admin_user', 'admin')
     security.ADMIN_PASSWORD = settings.get('cone.admin_password', 'admin')
-    secret_password = settings.get('cone.secret_password', 'secret')
+    
+    auth_secret = settings.get('cone.auth_secret', 'secret')
+    auth_cookie_name = settings.get('cone.auth_cookie_name', 'auth_tkt')
+    auth_secure = settings.get('cone.auth_secure', False)
+    auth_include_ip = settings.get('cone.auth_include_ip', False)
+    auth_timeout = settings.get('cone.auth_timeout', None)
+    auth_reissue_time = settings.get('cone.auth_reissue_time', None)
+    if auth_reissue_time is not None:
+        auth_reissue_time = int(auth_reissue_time)
+    auth_max_age = settings.get('cone.auth_max_age', None)
+    if auth_max_age is not None:
+        auth_max_age = int(auth_max_age)
+    auth_http_only = settings.get('cone.auth_http_only', False)
+    auth_path = settings.get('cone.auth_path', "/")
+    auth_wild_domain = settings.get('cone.auth_wild_domain', True)
+    
+    auth_policy = auth_tkt_factory(
+        secret=auth_secret,
+        cookie_name=auth_cookie_name,
+        secure=auth_secure,
+        include_ip=auth_include_ip,
+        timeout=auth_timeout,
+        reissue_time=auth_reissue_time,
+        max_age=auth_max_age,
+        http_only=auth_http_only,
+        path=auth_path,
+        wild_domain=auth_wild_domain,
+    )
     
     configure_root(settings)
     
@@ -128,14 +155,14 @@ def main(global_config, **settings):
         config.setup_registry(
             root_factory=get_root,
             settings=settings,
-            authentication_policy=auth_tkt_factory(secret=secret_password),
+            authentication_policy=auth_policy,
             authorization_policy=acl_factory())
         config.hook_zca()
     else:
         config = Configurator(
             root_factory=get_root,
             settings=settings,
-            authentication_policy=auth_tkt_factory(secret=secret_password),
+            authentication_policy=auth_policy,
             authorization_policy=acl_factory())
     
     config.include(pyramid_zcml)

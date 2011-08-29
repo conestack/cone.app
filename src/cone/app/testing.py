@@ -69,7 +69,7 @@ class Security(Layer):
         settings = {
             'cone.admin_user': 'admin',
             'cone.admin_password': 'admin',
-            'cone.secret_password': '12345',
+            'cone.auth_secret': '12345',
             'cone.plugins': 'node.ext.ugm',
             'cone.root.title': 'cone',
             'cone.root.default_child': None,
