@@ -11,7 +11,7 @@
   
   <view
     for="*"
-    view=".browser.static_view"
+    view=".browser.static_resources"
     name="static"
   />
 

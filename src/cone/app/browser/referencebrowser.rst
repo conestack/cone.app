@@ -210,7 +210,7 @@ Unauthorized fails::
     >>> res = render_tile(model, request, 'referencelisting')
     Traceback (most recent call last):
       ...
-    Forbidden: Unauthorized: tile 
+    HTTPForbidden: Unauthorized: tile 
     <cone.app.browser.referencebrowser.ReferenceListing object at ...> 
     failed permission check
     

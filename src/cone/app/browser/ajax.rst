@@ -31,7 +31,7 @@ Fails unauthenticated, since default permission for tiles is 'view'::
     >>> ajax_tile(root, request)
     Traceback (most recent call last):
       ...
-    Forbidden: Unauthorized: tile <TestTile object at ...> failed 
+    HTTPForbidden: Unauthorized: tile <TestTile object at ...> failed 
     permission check
 
 Authenticate and test again::
@@ -263,7 +263,7 @@ Test unauthorized::
     >>> render_ajax_form(root, request, 'ajaxtestform')
     Traceback (most recent call last):
       ...
-    Forbidden: Unauthorized: tile <AjaxTestForm object at ...> failed 
+    HTTPForbidden: Unauthorized: tile <AjaxTestForm object at ...> failed 
     permission check
     
 Test authorized with form extraction failure::

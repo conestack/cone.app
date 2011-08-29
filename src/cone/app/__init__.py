@@ -10,6 +10,7 @@ from cone.app.model import (
     AppSettings,
     Properties,
 )
+from cone.app.browser import forbidden_view
 
 # XXX: is this needed anywhere? If not, let's remove it.
 APP_PATH = os.environ.get('APP_PATH', '')
@@ -167,6 +168,7 @@ def main(global_config, **settings):
     
     config.include(pyramid_zcml)
     config.begin()
+    
     config.load_zcml('configure.zcml')
     
     # read plugin configurator

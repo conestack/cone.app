@@ -255,7 +255,7 @@ Rendering fails unauthorized, 'view' permission is required::
     >>> render_tile(model, request, 'mytabletile')
     Traceback (most recent call last):
       ...
-    Forbidden: Unauthorized: tile <MyTable object at ...> 
+    HTTPForbidden: Unauthorized: tile <MyTable object at ...> 
     failed permission check
 
 Render authenticated::

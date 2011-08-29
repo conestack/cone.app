@@ -188,7 +188,7 @@ Rendering fails unauthorized, 'view' permission is required::
     >>> render_tile(model, request, 'contents')
     Traceback (most recent call last):
       ...
-    Forbidden: Unauthorized: tile 
+    HTTPForbidden: Unauthorized: tile 
     <cone.app.browser.contents.ContentsTile object at ...> failed 
     permission check
 
