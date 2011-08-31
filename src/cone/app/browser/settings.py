@@ -24,7 +24,9 @@ class AppSettings(Tile):
     @property
     def tabs(self):
         ret = list()
-        for key, value in self.model.items():
+        keys = self.model.factories.keys()
+        for key in keys:
+            value = self.model[key]
             ret.append({
                 'title': value.metadata.title,
                 'content': render_tile(value, self.request, 'content'),
