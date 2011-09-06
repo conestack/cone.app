@@ -1,20 +1,25 @@
+import logging
 from datetime import datetime
 from pyramid.threadlocal import get_current_request
 
+logger = logging.getLogger('cone.app')
 
 def app_config():
     import cone.app
     return cone.app.cfg
 
 
-def principal_data(id):
+def principal_data(pid):
     data = dict()
     for ugm in app_config().auth:
-        user = ugm.users.get(id)
-        if not user:
-            continue
-        data = user.attrs
-        break
+        try:
+            user = ugm.users.get(pid)
+            if not user:
+                continue
+            data = user.attrs
+            break
+        except Exception, e:
+            logger.error(str(e))
     return data
 
 
