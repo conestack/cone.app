@@ -116,31 +116,21 @@ class BaseNode(object):
 
 
 class FactoryNode(BaseNode):
+    """XXX: like node.parts.FixedChildren -> unify.
+    """
     implements(IFactoryNode)
     
     factories = odict()
     
     def __iter__(self):
-        keys = set()
-        for key in self.factories.keys():
-            keys.add(key)
-        # access from self.storage, defined by OdictStrorage,
-        # XXX: more general solution
-        for key in self.storage:
-            keys.add(key)
-        for key in keys:
-            yield key
+        return self.factories.__iter__()
     
     iterkeys = __iter__
     
     def __getitem__(self, key):
         try:
-            # access from self.storage, defined by OdictStrorage,
-            # XXX: more general solution
             child = self.storage[key]
-        except KeyError, e:
-            if not key in self.iterkeys():
-                raise KeyError
+        except KeyError:
             child = self.factories[key]()
             self[key] = child
         return child

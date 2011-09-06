@@ -74,7 +74,7 @@ Node for ``key`` on ``__getitem__`` if not existent yet.::
     >>> root['baz']
     Traceback (most recent call last):
       ...
-    KeyError
+    KeyError: 'baz'
 
 
 AdapterNode
