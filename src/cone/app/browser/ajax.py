@@ -1,11 +1,31 @@
+import sys
 import types
 import json
+import traceback
 from pyramid.response import Response
 from pyramid.view import view_config
 from cone.tile import (
     registerTile,
     render_tile,
 )
+
+
+def format_traceback():
+    etype, value, tb = sys.exc_info()
+    ret = ''.join(traceback.format_exception(etype, value, tb))
+    return '<pre>%s</pre>' % ret
+
+
+@view_config(context=Exception, accept='application/json', renderer='json')
+def ajax_internal_server_error(request):
+    tb = format_traceback()
+    continuation = AjaxContinue([AjaxMessage(tb, 'error', None)]).definitions
+    return {
+        'mode': 'NONE',
+        'selector': 'NONE',
+        'payload': '',
+        'continuation': continuation,
+    }
 
 
 registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
@@ -20,19 +40,30 @@ def ajax_tile(model, request):
     * Uses definitions from ``request.environ['cone.app.continuation']``
       for continuation definitions.
     """
-    name = request.params.get('bdajax.action')
-    rendered = render_tile(model, request, name)
-    continuation = request.environ.get('cone.app.continuation')
-    if continuation:
-        continuation = AjaxContinue(continuation).definitions
-    else:
-        continuation = False
-    return {
-        'mode': request.params.get('bdajax.mode'),
-        'selector': request.params.get('bdajax.selector'),
-        'payload': rendered,
-        'continuation': continuation,
-    }
+    try:
+        name = request.params.get('bdajax.action')
+        rendered = render_tile(model, request, name)
+        continuation = request.environ.get('cone.app.continuation')
+        if continuation:
+            continuation = AjaxContinue(continuation).definitions
+        else:
+            continuation = False
+        return {
+            'mode': request.params.get('bdajax.mode'),
+            'selector': request.params.get('bdajax.selector'),
+            'payload': rendered,
+            'continuation': continuation,
+        }
+    except Exception:
+        tb = format_traceback()
+        continuation = AjaxContinue(
+            [AjaxMessage(tb, 'error', None)]).definitions
+        return {
+            'mode': 'NONE',
+            'selector': 'NONE',
+            'payload': '',
+            'continuation': continuation,
+        }
 
 
 def ajax_continue(request, continuation):
@@ -194,18 +225,33 @@ ajax_form_template = """\
 def render_ajax_form(model, request, name):
     """Render ajax form.
     """
-    result = render_tile(model, request, name)
-    selector = request.environ.get('cone.app.form.selector', '#content')
-    mode = request.environ.get('cone.app.form.mode', 'inner')
-    continuation = request.environ.get('cone.app.continuation')
-    form_continue = AjaxFormContinue(result, continuation)
-    rendered = ajax_form_template % {
-        'form': form_continue.form.replace(u'\n', u' '),
-        'selector': selector,
-        'mode': mode,
-        'next': form_continue.next,
-    }
-    return Response(rendered)
+    try:
+        result = render_tile(model, request, name)
+        selector = request.environ.get('cone.app.form.selector', '#content')
+        mode = request.environ.get('cone.app.form.mode', 'inner')
+        continuation = request.environ.get('cone.app.continuation')
+        form_continue = AjaxFormContinue(result, continuation)
+        rendered = ajax_form_template % {
+            'form': form_continue.form.replace(u'\n', u' '),
+            'selector': selector,
+            'mode': mode,
+            'next': form_continue.next,
+        }
+        return Response(rendered)
+    except Exception:
+        result = '<div>Form rendering error</div>'
+        selector = request.environ.get('cone.app.form.selector', '#content')
+        mode = request.environ.get('cone.app.form.mode', 'inner')
+        tb = format_traceback()
+        continuation = AjaxMessage(tb, 'error', None)
+        form_continue = AjaxFormContinue(result, [continuation])
+        rendered = ajax_form_template % {
+            'form': form_continue.form.replace(u'\n', u' '), # XXX: why replace
+            'selector': selector,
+            'mode': mode,
+            'next': form_continue.next,
+        }
+        return Response(rendered)
 
 
 def dummy_livesearch_callback(model, request):

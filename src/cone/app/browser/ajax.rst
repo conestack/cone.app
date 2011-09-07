@@ -29,10 +29,12 @@ Test ``ajax_tile``::
 Fails unauthenticated, since default permission for tiles is 'view'::
 
     >>> ajax_tile(root, request)
-    Traceback (most recent call last):
-      ...
-    HTTPForbidden: Unauthorized: tile <TestTile object at ...> failed 
-    permission check
+    {'continuation': 
+    [{'flavor': 'error', 'type': 'message', 'payload': 
+    '<pre>Traceback ...</pre>', 'selector': None}], 
+    'payload': '', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
 
 Authenticate and test again::
 
@@ -260,11 +262,11 @@ Test unauthorized::
 
     >>> from cone.app.browser.ajax import render_ajax_form
     >>> request = layer.new_request()
-    >>> render_ajax_form(root, request, 'ajaxtestform')
-    Traceback (most recent call last):
-      ...
-    HTTPForbidden: Unauthorized: tile <AjaxTestForm object at ...> failed 
-    permission check
+    >>> res = render_ajax_form(root, request, 'ajaxtestform')
+    >>> res.body
+    '<script language="javascript" 
+    ...HTTPForbidden: Unauthorized: tile <AjaxTestForm object at ...> 
+    failed permission check...
     
 Test authorized with form extraction failure::
 
