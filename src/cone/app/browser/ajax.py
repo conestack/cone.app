@@ -2,6 +2,7 @@ import sys
 import types
 import json
 import traceback
+import logging
 from pyramid.response import Response
 from pyramid.view import view_config
 from cone.tile import (
@@ -55,6 +56,7 @@ def ajax_tile(model, request):
             'continuation': continuation,
         }
     except Exception:
+        logging.exception('Error within ajax tile')
         tb = format_traceback()
         continuation = AjaxContinue(
             [AjaxMessage(tb, 'error', None)]).definitions
