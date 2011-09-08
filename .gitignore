@@ -3,7 +3,7 @@ src/cone.app.egg-info/
 .installed.cfg
 .mr.developer.cfg
 .project
-pydevproject
+.pydevproject
 bin/
 develop-eggs/
 devsrc/
