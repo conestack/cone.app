@@ -30,7 +30,6 @@ from cone.app.browser.ajax import (
     ajax_form_fiddle,
     render_ajax_form,
 )
-
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import (
     make_url,
@@ -98,6 +97,25 @@ def add(model, request):
     return render_form(model, request, 'add')
 
 
+def default_addmodel_factory(parent, nodeinfo):
+    """Default addmodel factory.
+    
+    The addmodel factory is responsible to create a model suitable for
+    rendering addforms refering to node info.
+    
+    parent
+        The parent in which the new item should be added
+    nodeinfo
+        The nodeinfo instance
+    """
+    if AdapterNode in nodeinfo.node.__bases__:
+        addmodel = nodeinfo.node(BaseNode(), None, None)
+    else:
+        addmodel = nodeinfo.node()
+    addmodel.__parent__ = parent
+    return addmodel
+
+
 @tile('add', permission='add')
 class AddTile(ProtectedContentTile):
     """The add tile is responsible to render add forms depending on given
@@ -112,11 +130,10 @@ class AddTile(ProtectedContentTile):
         nodeinfo = self.info
         if not nodeinfo:
             return u'Unknown factory'
-        if AdapterNode in nodeinfo.node.__bases__:
-            addmodel = nodeinfo.node(BaseNode(), None, None)
-        else:
-            addmodel = nodeinfo.node()
-        addmodel.__parent__ = self.model
+        factory = nodeinfo.factory
+        if not factory:
+            factory = default_addmodel_factory
+        addmodel = factory(self.model, nodeinfo)
         return render_tile(addmodel, self.request, self.form_tile_name)
     
     @property

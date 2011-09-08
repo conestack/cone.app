@@ -403,7 +403,7 @@ class ConfigProperties(Properties):
     
     def __contains__(self, key):
         try:
-            value = self.config().get('properties', key)
+            self.config().get('properties', key)
             return True
         except ConfigParser.NoOptionError:
             return False
@@ -420,7 +420,7 @@ class ConfigProperties(Properties):
     def __delitem__(self, name):
         config = self.config()
         try:
-            value = config.get('properties', name)
+            config.get('properties', name)
         except ConfigParser.NoOptionError:
             raise KeyError(u"property %s does not exist" % name)
         config.remove_option('properties', name)

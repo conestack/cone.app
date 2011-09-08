@@ -68,3 +68,15 @@ class IMetadata(IProperties):
 class INodeInfo(IProperties):
     """Interface for providing node information.
     """
+    
+    title = Attribute(u"Node meta title.")
+    
+    description = Attribute(u"Node meta description.")
+    
+    node = Attribute(u"Node implementing class.")
+    
+    factory = Attribute(u"Add model factory.")
+    
+    addables = Attribute(u"List of valid children node info names.")
+    
+    icon = Attribute(u"Node icon.")
