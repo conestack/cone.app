@@ -24,4 +24,13 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   getting_started
+   start
+   hooks
+   layout
+   model
+   security
+   authoring
+   workflows
+   ajax
+   widgets
+   settings
