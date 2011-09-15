@@ -77,7 +77,7 @@ class CameFromNext(Part):
         If no came_from is set, return URL of node
         """
         if request.get('came_from') == 'parent':
-            url = make_url(request.request, node=self.model.__parent__)
+            url = make_url(request.request, node=self.model.parent)
         elif request.get('came_from'):
             url = request.get('came_from')
         else:
@@ -220,13 +220,13 @@ class DeleteAction(Tile):
     
     def render(self):
         model = self.model
-        title = model.metadata.get('title', model.__name__)
+        title = model.metadata.get('title', model.name)
         if not model.properties.deletable:
             message = 'Object "%s" not deletable' % title
             ajax_message(self.request, message, 'error')
             return u''
-        parent = model.__parent__
-        del parent[model.__name__]
+        parent = model.parent
+        del parent[model.name]
         if hasattr(parent, '__call__'):
             parent()
         url = make_url(self.request, node=parent)

@@ -1,6 +1,8 @@
 cone main
 ---------
 
+::
+
     >>> import cone.app
 
 ``get_root``::

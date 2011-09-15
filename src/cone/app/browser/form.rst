@@ -62,7 +62,7 @@ responsible to create the yafowil form on ``self.form``::
     ...     def subscribe(self, widget, data):
     ...         """Do subscription here
     ...         """
-    ...         print 'subscribe on "%s"' % self.model.__name__
+    ...         print 'subscribe on "%s"' % self.model.name
     ...         
     ...     def next(self, request):
     ...         url = 'http://example.com'

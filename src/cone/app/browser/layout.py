@@ -153,10 +153,10 @@ class PathBar(Tile):
                 'title': node.metadata.title,
                 'url': make_url(self.request, node=node),
                 'selected': False,
-                'id': node.__name__,
+                'id': node.name,
                 'default_child': node.properties.default_child,
             })
-            node = node.__parent__
+            node = node.parent
         items.reverse()
         ret = list()
         count = len(items)
@@ -224,7 +224,7 @@ class NavTree(Tile):
             else:
                 selected_path = nodepath(self.model)
                 if default_child:
-                    selected_path.append(default_child.__name__)
+                    selected_path.append(default_child.name)
                 selected = False
                 if selected_path == nodepath(node):
                     selected = True

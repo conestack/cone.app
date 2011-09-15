@@ -90,7 +90,7 @@ class ContentsTile(Table):
         for child in children[start:end]:
             row_data = RowData()
             row_data['actions'] = Item(actions=self.create_actions(child))
-            value = child.metadata.get('title', child.__name__)
+            value = child.metadata.get('title', child.name)
             link = target = make_url(self.request, node=child)
             action = 'content:#content:inner'
             event = 'contextchanged:.contextsensitiv'

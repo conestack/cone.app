@@ -88,7 +88,7 @@ class ReferenceListing(ContentsTile):
         for child in children[start:end]:
             row_data = RowData()
             row_data['actions'] = Item(actions=self.create_actions(child))
-            value = child.metadata.get('title', child.__name__)
+            value = child.metadata.get('title', child.name)
             if not child.properties.get('leaf'):
                 link = target = make_url(self.request, node=child)
                 action = \
@@ -119,7 +119,7 @@ class ReferenceListing(ContentsTile):
             'class_': 'reftitle',
             'style': 'display:none;',
         }
-        title = node.metadata.get('title', node.__name__)
+        title = node.metadata.get('title', node.name)
         rendered += tag('span', title, **attrs)
         actions.append(Action(rendered=rendered))
         return actions

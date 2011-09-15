@@ -30,7 +30,7 @@ class AppSettings(Tile):
             ret.append({
                 'title': value.metadata.title,
                 'content': render_tile(value, self.request, 'content'),
-                'css': value.__name__,
+                'css': value.name,
             })
         return ret
 
@@ -49,9 +49,9 @@ class SettingsPart(Part):
     def next(self, request):
         if self.ajax_request:
             url = make_url(request.request, node=self.model)
-            selector = '.%s' % self.model.__name__
+            selector = '.%s' % self.model.name
             return [
                 AjaxAction(url, 'content', 'inner', selector),
             ]
-        url = make_url(request.request, node=self.model.__parent__)
+        url = make_url(request.request, node=self.model.parent)
         return HTTPFound(location=url)

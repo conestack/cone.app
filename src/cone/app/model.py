@@ -80,7 +80,7 @@ class AppNode(Part):
     @default
     @instance_property
     def metadata(self):
-        name = self.__name__
+        name = self.name
         if not name:
             name = 'No Title'
         metadata = BaseMetadata()
