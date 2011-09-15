@@ -2,13 +2,17 @@
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
   <div id="personaltools">
-  	<div class="currentuser">
+    <div class="currentuser">
       <a href="personaltools" tal:content="context.user">Admin</a>
-	</div>
+    </div>
     <ul class="dropdown_items" style="display:none;">
-	  <li>
-        <a href="${request.application_url}/logout">Logout</a>
-      </li>
+      <tal:li repeat="item context.items">
+        <li>
+          <a href=""
+             tal:attributes="href item[0]"
+             tal:content="item[1]">Logout</a>
+        </li>
+      </tal:li>
     </ul>
   </div>
 </tal:ajax>

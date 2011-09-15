@@ -1,3 +1,4 @@
+from odict import odict
 from pyramid.security import (
     has_permission,
     authenticated_userid,
@@ -63,6 +64,13 @@ registerTile('livesearch',
              strict=False)
 
 
+def logout_link(model, request):
+    return (make_url(request, resource='logout'), 'Logout')
+
+personal_tools = odict()
+personal_tools['logout'] = logout_link
+
+
 @tile('personaltools', 'templates/personaltools.pt',
       permission='view', strict=False)
 class PersonalTools(Tile):
@@ -76,6 +84,10 @@ class PersonalTools(Tile):
         userid = authenticated_userid(self.request)
         data = principal_data(userid)
         return data.get('fullname', userid)
+    
+    @property
+    def items(self):
+        return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
 @tile('mainmenu', 'templates/mainmenu.pt', 
