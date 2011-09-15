@@ -14,6 +14,17 @@ Fetch principal data::
     >>> principal_data('inexistent')
     {}
 
+If UGM implementation raises an exception when trying to fetch the principal
+it get logged::
+
+    >>> import cone.app
+    >>> cone.app.cfg.auth.append(object())
+    >>> principal_data('inexistent')
+    {}
+    
+    >>> cone.app.cfg.auth.pop()
+    <object object at ...>
+
 Helper object for read/write operations with datetime values::
 
     >>> from datetime import datetime

@@ -1,6 +1,28 @@
 cone.app.browser.ajax
 =====================
 
+General Exceptions
+------------------
+
+When JSON requests are performed, and an uncaught exception is raised,
+``ajax_internal_server_error`` view is invoked.
+
+It returns a JSON response containing bdajax continuation definitions which
+display the traceback in an error dialog.::
+
+    >>> from cone.app.browser.ajax import ajax_internal_server_error
+    >>> request = layer.new_request()
+    >>> ajax_internal_server_error(request)
+    {'continuation': 
+    [{'flavor': 'error', 
+    'type': 'message', 
+    'payload': '<pre>Traceback (most recent call last):\nNone\n</pre>', 
+    'selector': None}], 
+    'payload': '', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+
+
 Bdajax support
 --------------
 

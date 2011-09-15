@@ -79,6 +79,8 @@ Settings is displayed in navtree by default::
     ...     'cone.admin_user': 'admin',
     ...     'cone.admin_password': 'admin',
     ...     'cone.auth_secret': '12345',
+    ...     'cone.auth_reissue_time': '300',
+    ...     'cone.auth_max_age': '600',
     ... }
     >>> cone.app.main({}, **settings)
     Custom main hook called

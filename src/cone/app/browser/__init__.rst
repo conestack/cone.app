@@ -26,3 +26,12 @@ Test logout view callable::
     >>> from cone.app.browser import logout_view
     >>> logout_view(root, request)
     <HTTPFound at ... 302 Found>
+
+Test forbidden view::
+
+    >>> from cone.app.browser import forbidden_view
+    >>> from cone.app.model import BaseNode
+    >>> request.context = BaseNode()
+    >>> res = forbidden_view(request).body
+    >>> res.find('id="input-loginform-login"') > -1
+    True
