@@ -10,6 +10,7 @@ develop-eggs/
 devsrc/
 eggs/
 parts/
+dist/
 docs/Makefile
 docs/doctrees/
 docs/html/
