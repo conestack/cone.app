@@ -65,5 +65,7 @@ setup(name='cone.app',
       entry_points = """\
       [paste.app_factory]
       main = cone.app:main
+      [paste.filter_app_factory]
+      remote_addr = cone.app:make_remote_addr_middleware
       """
       )

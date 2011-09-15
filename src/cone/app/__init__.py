@@ -187,3 +187,23 @@ def main(global_config, **settings):
     
     # return wsgi app
     return config.make_wsgi_app()
+
+
+def make_remote_addr_middleware(app, global_conf):
+    return RemoteAddrFilter(app)
+
+
+class RemoteAddrFilter(object):
+    """Use this middleware if nginx is used as proxy and IP address should be
+    included in auth cookie. make sure nginx passes the right header:
+    
+    proxy_set_header X-Real-IP $remote_addr;
+    """
+    
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        if environ.has_key('HTTP_X_REAL_IP'):
+            environ['REMOTE_ADDR'] = environ['HTTP_X_REAL_IP']
+        return self.app(environ, start_response)
