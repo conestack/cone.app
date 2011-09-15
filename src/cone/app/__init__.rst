@@ -85,3 +85,19 @@ Settings is displayed in navtree by default::
     >>> cone.app.main({}, **settings)
     Custom main hook called
     <pyramid.router.Router object at ...>
+
+Remote address middleware::
+
+    >>> from cone.app import make_remote_addr_middleware
+    
+    >>> class DummyApp(object):
+    ...     def __call__(self, environ, start_response):
+    ...         print environ['REMOTE_ADDR']
+    
+    >>> app = DummyApp()
+    >>> filter = make_remote_addr_middleware(app, {})
+    
+    >>> environ = {}
+    >>> environ['HTTP_X_REAL_IP'] = '1.2.3.4'
+    >>> filter(environ, None)
+    1.2.3.4
