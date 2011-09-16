@@ -26,8 +26,8 @@ Contents:
    
    start
    hooks
-   layout
    model
+   layout
    security
    authoring
    workflows

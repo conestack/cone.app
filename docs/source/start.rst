@@ -112,63 +112,64 @@ Create ``example.ini`` and add::
         example
 
 
-Available configuration parameters::
+Available configuration parameters
+..................................
 
-cone.admin_user
+**cone.admin_user**
     Login name of Superuser
 
-cone.admin_password
+**cone.admin_password**
     Password of Superuser
 
-cone.auth_secret
+**cone.auth_secret**
     Cookie encryption password
 
-cone.auth_cookie_name
+**cone.auth_cookie_name**
     Default: ``auth_tkt``. The cookie name used
 
-cone.auth_secure
+**cone.auth_secure**
     Default: ``False``. Only send the cookie back over a secure conn.
 
-cone.auth_include_ip
+**cone.auth_include_ip**
     Default: ``False``.  Make the requesting IP address part of the
     authentication data in the cookie.
 
-cone.auth_timeout
+**cone.auth_timeout**
     Default: ``None``.  Maximum number of seconds which a newly issued ticket
     will be considered valid.
 
-cone.auth_reissue_time
+**cone.auth_reissue_time**
     Default: ``None``.  If this parameter is set, it represents the number of
     seconds that must pass before an authentication token cookie is reissued.
 
-cone.auth_max_age
+**cone.auth_max_age**
     Default: ``None``.  The max age of the auth_tkt cookie, in seconds. This
     differs from ``timeout`` inasmuch as ``timeout`` represents the lifetime
     of the ticket contained in the cookie, while this value represents the
     lifetime of the cookie itself.
 
-cone.auth_http_only
+**cone.auth_http_only**
     Default: ``False``. Hide cookie from JavaScript by setting the HttpOnly
     flag.
 
-cone.auth_path
+**cone.auth_path**
     Default: ``/``. The path for which the auth_tkt cookie is valid.
 
-cone.auth_wild_domain
+**cone.auth_wild_domain**
     Default: ``True``. An auth_tkt cookie will be generated for the wildcard
     domain.
 
-cone.plugins
+**cone.plugins**
     List of eggs plugging to ``cone.app``. Plugins are included by invoking the
     plugin package ``configure.zcml``.
 
-cone.root.title
+**cone.root.title**
     Title of the Application
 
-cone.root.default_child
+**cone.root.default_child**
     Default child of cone.app root model node
 
-cone.root.mainmenu_empty_title
+**cone.root.mainmenu_empty_title**
     Flag whether to suppress rendering main menu titles
 
 

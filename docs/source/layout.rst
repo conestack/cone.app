@@ -8,46 +8,48 @@ Reserved Tiles
 The Application ships with a set of tiles. Some of them are abstract while
 others are already registered.
 
-Reserved tile names:
 
-Behavioral:
+Behavioral
+..........
 
-content
+**content**
     Used as default content view
     
-addform
+**addform**
     Used as addform
     
-editform
+**editform**
     Used as editform
 
-Views and widgets:
 
-mainmenu
+Views and widgets
+.................
+
+**mainmenu**
     Render first level of children below root as main menu
     
-pathbar
+**pathbar**
     Render breadcrumbs
    
-navtree
+**navtree**
     Render Navigation tree
     
-personaltools
+**personaltools**
     Render personal tools
     
-contents
+**contents**
     Render model contents as batched, sortable listing
     
-byline
+**byline**
     Render byline
     
-contextmenu
+**contextmenu**
     Render contextmenu containing available actions
     
-add_dropdown
+**add_dropdown**
     Adding dropdown menu containing links to add view of valid children
     
-livesearch
+**livesearch**
     Render search box
 
 
@@ -74,15 +76,16 @@ order to get a senceful result.
 The callback gets the model and request as arguments.The search term is at
 ``request.params['term']``.
 
-A list of dicts must be returned with these keys:
+A list of dicts must be returned with these keys
+................................................
 
-label
+**label**
     Label of found item
 
-value
+**value**
     The value re-inserted in input. This is normally ``term``
 
-target
+**target**
     The target URL for rendering the content tile.
 
 To set the callback, ``cone.app.browser.ajax.LIVESEARCH_CALLBACK`` must be
@@ -128,20 +131,22 @@ Main menu
 
 A tile named ``mainmenu`` renders the first level of child nodes.
 
-Used metadata:
+Used metadata
+.............
 
 - title
 - description
 
-Used properties:
+Used properties
+...............
 
-mainmenu_empty_title
+**mainmenu_empty_title**
     if set on ``model.root.properties`` with value ``True`` links are rendered
     empty instead containing the title. Use this if main menu actions use
     icons styled by CSS. For CSS selecting, 'node-nodeid' gets rendered as
     class attribute on ``li`` DOM element.
 
-default_child
+**default_child**
     If set on ``model.root.properties``, default child is marked selected if
     no other child was selected explicitly.
 
