@@ -143,15 +143,15 @@ Hide livesearch.::
 
 Hide personaltools.::
 
-    >>> cone.app.cfg.layout.personaltools = True
+    >>> cone.app.cfg.layout.personaltools = False
 
 Hide main menu.::
 
-    >>> cone.app.cfg.layout.mainmenu = True
+    >>> cone.app.cfg.layout.mainmenu = False
 
 Hide pathbar.::
 
-    >>> cone.app.cfg.layout.pathbar = True
+    >>> cone.app.cfg.layout.pathbar = False
 
 The contents of the left sidebar can be modified. Each string in the list is
 a tile name.::

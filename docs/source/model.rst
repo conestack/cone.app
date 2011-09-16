@@ -106,14 +106,73 @@ must be overwritten.::
 AppRoot
 -------
 
+``cone.app.model.AppRoot`` is a factory node instanciated at application
+startup time. Every plugin root factory registered by
+``cone.app.register_plugin`` is written to app root's ``factories``
+attribute. Also application related settings from INI file are written to 
+``properties`` respecive ``metadata`` of app root node. The root node can be
+accessed either by calling ``node.root`` if ``node`` is child of application
+model or by using ``cone.app.get_root``.::
+
+    >>> from cone.app import get_root
+    >>> root = get_root()
+
+
 AppSettings
 -----------
+
+``cone.app.model.AppSettings`` is - like app root - also a factory node
+initialized at application startup. Every settings node factory registered by
+``cone.app.register_plugin_config`` is written to settings node ``factories``
+attribute. The settings node also provides relevant properties and metadata.
+The settings node can be accessed either by calling ``node.root['settings']``
+if ``node`` is child of application model or again by using
+``cone.app.get_root`` and access 'settings' child.::
+
+    >>> settings = get_root()['settings']
+
 
 Properties
 ----------
 
+``cone.app.model.Properties`` can be used for any kind of property mapping.
+The contract is described in ``cone.app.interfaces.IProperties``. The
+application node attributes ``properties`` and ``metadata`` promise to
+provide an ``IProperties`` implementation. A properties object never raises an
+AttributeError on attribute access, instead Node is returned if property is
+inexistent. Available properties are provided by ``keys``.::
+
+    >>> from cone.app.model import Properties
+    >>> props = Properties
+    >>> props.a = '1'
+    >>> props.b = '2'
+    >>> props.keys()
+    ['a', 'b']
+    
+    >>> props.a
+    '1'
+    
+    >>> props.c
+
+
 ProtectedProperties
 -------------------
+
+``cone.app.model.ProtectedProperties`` object is used to secure several
+properties by permissions. Properties with no permissions are always returned::
+
+    >>> from cone.app.model import ProtectedProperties
+    >>> prop_permissions = {
+    ...     'a': ['view'],
+    ...     'b': ['edit'],
+    ... }
+    >>> model = BaseNode() # model to check permissions against
+    >>> data = {
+    ...     'a': '1',
+    ...     'b': '1',
+    ... }
+    >>> props = ProtectedProperties(model, prop_permissions, data)
+
 
 Metadata
 --------
