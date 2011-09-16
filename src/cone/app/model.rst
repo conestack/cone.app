@@ -30,7 +30,7 @@ attribute not exists.::
 Metadata.::
 
     >>> root.metadata
-    <cone.app.model.BaseMetadata object at ...>
+    <cone.app.model.Metadata object at ...>
     
     >>> root.metadata.title
     'No Title'
@@ -54,8 +54,7 @@ Nodeinfo.::
 FactoryNode
 -----------
 
-You can use the factory node to build static structures. It created the child
-Node for ``key`` on ``__getitem__`` if not existent yet.::
+::
 
     >>> from cone.app.model import FactoryNode
     >>> class Root(FactoryNode):
@@ -83,16 +82,7 @@ Node for ``key`` on ``__getitem__`` if not existent yet.::
 AdapterNode
 -----------
 
-An AdapterNode is intended to be used if you want to publish some kind of dict
-like object or other node implementations.
-
-Since other node implementations depend on their own internal hierarchy and
-do not provide the extensions described in
-``cone.app.interfaces.IApplicationNode``, we have to wrap it inside a
-adapter node in order to use it inside the application.
-
-The adapter node calls for common read operations the equivalent functions on
-it's adapted model.::
+::
 
     >>> from cone.app.model import BaseNode
     >>> from cone.app.model import AdapterNode

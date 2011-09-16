@@ -10,11 +10,11 @@ class IApplicationNode(INode, IAttributes):
     
     __acl__ = Attribute(u"ACL")
     
-    properties = Attribute(u"IProperties providing object")
+    properties = Attribute(u"cone.app.interfaces.IProperties providing object")
     
-    metadata = Attribute(u"IMetadata implementation")
+    metadata = Attribute(u"cone.app.interfaces.IMetadata implementation")
     
-    nodeinfo = Attribute(u"INodeInfo providing object")
+    nodeinfo = Attribute(u"cone.app.interfaces.INodeInfo providing object")
 
 
 class IFactoryNode(IApplicationNode):

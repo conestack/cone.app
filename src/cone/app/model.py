@@ -277,8 +277,11 @@ class ProtectedProperties(Properties):
         return keys
 
 
-class BaseMetadata(Properties):
+class Metadata(Properties):
     implements(IMetadata)
+
+# BBB
+BaseMetadata = Metadata
 
 
 class NodeInfo(Properties):
