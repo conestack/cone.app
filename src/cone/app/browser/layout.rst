@@ -1,49 +1,6 @@
 cone.app layout
 ===============
 
-
-Reserved Tiles
---------------
-
-The Application ships with a set of tiles. Some of them are abstract while
-others are already registered.
-
-Currently reserved tile names:
-
-Behavioral:
-
-    - ``content`` - Used as default content view
-    
-    - ``addform`` - Used as addform
-    
-    - ``editform`` - Used as editform
-
-Views and widgets:
-
-    - ``mainmenu`` - Render ``model.root.values``
-        - set ``mainmenu_empty_title`` on ``model.root.properties`` to ``True``
-          if you want to render empty links in mainmenu for setting
-          icons via css. Therefor 'node-nodeid' gets rendered as CSS class on
-          ``li`` DOM element.
-    
-    - ``pathbar`` - Render breadcrumbs
-   
-    - ``navtree`` - Render Navigation tree
-    
-    - ``personaltools`` - Render personal tools
-    
-    - ``contents`` - Render model contents as batched, sortable listing
-    
-    - ``byline`` - Render byline
-    
-    - ``contextmenu`` - Render contextmenu containing available actions
-    
-    - ``add_dropdown`` - Adding dropdown menu containing links to add view
-                         of valid children
-    
-    - ``livesearch`` - Render search box
-
-
 Resources
 ---------
 
@@ -576,6 +533,7 @@ Authenticated::
     </p>
     
     >>> layer.logout()
+
 
 Test default root content tile
 ------------------------------
