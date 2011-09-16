@@ -162,7 +162,7 @@ ProtectedProperties
 properties by permissions. Properties with no permissions are always returned::
 
     >>> from cone.app.model import ProtectedProperties
-    >>> prop_permissions = {
+    >>> permissions = {
     ...     'a': ['view'],
     ...     'b': ['edit'],
     ... }
@@ -171,17 +171,68 @@ properties by permissions. Properties with no permissions are always returned::
     ...     'a': '1',
     ...     'b': '1',
     ... }
-    >>> props = ProtectedProperties(model, prop_permissions, data)
+    >>> props = ProtectedProperties(model, permissions, data)
 
 
 Metadata
 --------
 
-NodeInfo
---------
+``cone.app.model.Metadada`` class inherits from ``cone.app.model.Properties``
+and adds the marker interface ``cone.app.interfaces.IMetadata``. This object
+is supposed to be used for ``cone.app.interfaces.IApplicationNode.metadata``.
+
 
 XMLProperties
 -------------
 
+``cone.app.model.XMLProperties`` is an ``IProperties`` implementation which
+can be used to serialize/deserialze properties to XML files. Supported value
+types are ``string``, ``list``, ``tuple``, ``dict`` and ``datetime.datetime``::
+
+    >>> from cone.app.model import XMLProperties
+    >>> file = '/path/to/file.xml'
+    >>> props = XMLProperties(file)
+    >>> props.a = '1'
+    >>> props() # persist to file
+  
+
 ConfigProperties
 ----------------
+
+``cone.app.model.ConfigProperties`` is an ``IProperties`` implementation which
+can be used to serialize/deserialze properties to INI file. Supports value
+type ``string`` only.::
+
+    >>> from cone.app.model import ConfigProperties
+    >>> file = '/path/to/file.ini'
+    >>> props = ConfigProperties(file)
+    >>> props.a = '1'
+    >>> props() # persist to file
+
+
+NodeInfo
+--------
+
+``cone.app.model.NodeInfo`` class inherits from ``cone.app.model.Properties``
+and adds the marker interface ``cone.app.interfaces.INodeInfo``. A NodeInfo
+object contains meta information of application nodes and are basically used
+for authoring purposes.::
+
+    >>> from cone.app.model import (
+    ...     NodeInfo,
+    ...     registerNodeInfo,
+    ... )
+    >>> info = NodeInfo()
+    >>> info.title = 'Node meta title'
+    >>> info.description = 'Node meta description'
+    >>> info.node = SomeNode
+    >>> info.addables = ['node_info_name_b', 'node_info_name_c']
+    >>> registerNodeInfo('node_info_name_a', info)
+
+The refering application model node must provide ``node_info_name`` attribute,
+which is used to lookup the related NodeInfo instance.::
+
+    >>> from cone.app.model import getNodeInfo
+    >>> info = getNodeInfo('node_info_name_a')
+
+See authoring documentation for more details.
