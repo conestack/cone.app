@@ -1,14 +1,13 @@
-=================
-Application Hooks
-=================
+=======
+Plugins
+=======
 
-``cone.app`` provides a set of hooks to extend and customize the application.
+As explained in the "getting started" section, application extensions are
+organized as plugins, shipping with related application models, tiles and 
+resources.
 
-As explained in the "getting started" section, extensions are organized as
-plugins, shipping with related application models, tiles and resources.
-
-The following sections explains the hooks provided to handle plugin
-initialization.
+``cone.app`` provides a set of hooks for plugins to extend and customize the
+application which are explained in the following sections.
 
 
 ZCML

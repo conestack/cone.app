@@ -38,7 +38,7 @@ Views and widgets
     Render personal tools
     
 **contents**
-    Render model contents as batched, sortable listing
+    Render model child nodes in batched, sortable table
     
 **byline**
     Render byline
@@ -50,7 +50,38 @@ Views and widgets
     Adding dropdown menu containing links to add view of valid children
     
 **livesearch**
-    Render search box
+    Render live search box
+
+**listing**
+    Render node title, contextmenu, node description and node child listing. 
+
+**bdajax**
+    Render ``bdajax`` related markup.
+
+**add**
+    Render addform for node
+
+**edit**
+    Render editform for node
+
+**delete**
+    Delete node action
+
+**loginform**
+    Render login form
+
+**referencebrowser**
+    Render referencebrowser_pathbar and referencelisting
+
+**referencebrowser_pathbar**
+    Render referencebrowser specific pathbar
+
+**referencelisting**
+    Like contents, but with less table columns and reference browser specific
+    actions
+
+**wf_dropdown**
+    Dropdown menu containing available workflow transitions
 
 
 Resources
@@ -136,8 +167,9 @@ A tile named ``mainmenu`` renders the first level of child nodes.
 Expected metadata
 .................
 
-- title
-- description
+- **title**
+
+- **description**
 
 
 Considered properties
@@ -163,7 +195,7 @@ A tile named ``pathbar`` renders a path navigation.
 Expected metadata
 .................
 
-- title
+- **title**
 
 
 Considered properties
@@ -183,7 +215,7 @@ permission 'view' are skipped.
 Expected metadata
 .................
 
-- title
+- **title**
 
 
 Considered properties
@@ -212,8 +244,18 @@ Byline
 
 A tile named ``byline`` renders node authoring information.
 
-XXX: used node metadata
-XXX: used node properties
+
+Expected metadata
+.................
+
+- **creator**
+    Node creator name as string
+
+- **created**
+    Node creation date as ``datetime.datetime`` instance
+
+- **modified**
+    Node last modification date as ``datetime.datetime`` instance
 
 
 Listing

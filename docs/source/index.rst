@@ -24,13 +24,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   start
-   hooks
+   setup
+   plugins
    model
-   layout
    security
+   ui
    authoring
    workflows
    ajax
-   widgets
-   settings
