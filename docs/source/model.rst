@@ -81,8 +81,8 @@ used to initialize database related entry nodes.::
 AdapterNode
 -----------
 
-``cone.app.AdapterNode`` is intended to be used to publish nodes of trees with
-an orthogonal hierarchy to the application model.
+``cone.app.AdapterNode`` is intended to be used for publishing nodes of models
+where the hierarchy differs to the one of the application model.
 
 The adapter node by default act as proxy for ``__iter__`` and ``attrs``, all
 other functions map to the used ``OdictStorage``. If an adapter node provides
@@ -139,7 +139,7 @@ Properties
 The contract is described in ``cone.app.interfaces.IProperties``. The
 application node attributes ``properties`` and ``metadata`` promise to
 provide an ``IProperties`` implementation. A properties object never raises an
-AttributeError on attribute access, instead Node is returned if property is
+AttributeError on attribute access, instead ``None`` is returned if property is
 inexistent. Available properties are provided by ``keys``.::
 
     >>> from cone.app.model import Properties
@@ -158,20 +158,40 @@ inexistent. Available properties are provided by ``keys``.::
 ProtectedProperties
 -------------------
 
-``cone.app.model.ProtectedProperties`` object is used to secure several
-properties by permissions. Properties with no permissions are always returned::
+``cone.app.model.ProtectedProperties`` object is used to secure property access
+by permissions. Properties with no permissions are always returned::
 
     >>> from cone.app.model import ProtectedProperties
+
+Define the permission map. In this example, permission 'view' is required to
+access property 'a', and permission 'edit' is required to access property
+'b'.:: 
+
     >>> permissions = {
     ...     'a': ['view'],
     ...     'b': ['edit'],
     ... }
-    >>> model = BaseNode() # model to check permissions against
+
+The model to check the permissions against.::
+
+    >>> model = BaseNode()
+
+Property data.::
+
     >>> data = {
-    ...     'a': '1',
-    ...     'b': '1',
+    ...     'a': '1', # 'view' permission protected
+    ...     'b': '2', # 'edit' permission protected
+    ...     'c': '3', # unprotected
     ... }
+
+Initialize properties.::
+
     >>> props = ProtectedProperties(model, permissions, data)
+
+If a user does not have the respective permission granted to access a specific
+property, ``ProtectedProperties`` behaves as if this property is inexistent.
+
+Write access to properties is not protected at all.
 
 
 Metadata

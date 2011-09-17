@@ -76,6 +76,7 @@ order to get a senceful result.
 The callback gets the model and request as arguments.The search term is at
 ``request.params['term']``.
 
+
 A list of dicts must be returned with these keys
 ................................................
 
@@ -131,11 +132,13 @@ Main menu
 
 A tile named ``mainmenu`` renders the first level of child nodes.
 
+
 Used metadata
 .............
 
 - title
 - description
+
 
 Used properties
 ...............
