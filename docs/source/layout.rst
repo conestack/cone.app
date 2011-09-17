@@ -9,17 +9,17 @@ The Application ships with a set of tiles. Some of them are abstract while
 others are already registered.
 
 
-Behavioral
-..........
+Custom model related reserved tiles
+...................................
 
 **content**
-    Used as default content view
+    Render default content view for model node
     
 **addform**
-    Used as addform
+    Render add form for model node
     
 **editform**
-    Used as editform
+    Render edit form for model node
 
 
 Views and widgets
@@ -133,20 +133,20 @@ Main menu
 A tile named ``mainmenu`` renders the first level of child nodes.
 
 
-Used metadata
-.............
+Expected metadata
+.................
 
 - title
 - description
 
 
-Used properties
-...............
+Considered properties
+.....................
 
 **mainmenu_empty_title**
     if set on ``model.root.properties`` with value ``True`` links are rendered
     empty instead containing the title. Use this if main menu actions use
-    icons styled by CSS. For CSS selecting, 'node-nodeid' gets rendered as
+    icons styled with CSS. As CSS selector 'node-nodeid' gets rendered as
     class attribute on ``li`` DOM element.
 
 **default_child**
@@ -159,17 +159,52 @@ Pathbar
 
 A tile named ``pathbar`` renders a path navigation.
 
-XXX: used node metadata
-XXX: used node properties
+
+Expected metadata
+.................
+
+- title
+
+
+Considered properties
+.....................
+
+**default_child**
+    Render default child instead of current node in pathbar if selected.
 
 
 Navigation tree
 ---------------
 
-A tile named ``navtree`` renders a navigation tree.
+A tile named ``navtree`` renders a navigation tree. Nodes which do not grant 
+permission 'view' are skipped.
 
-XXX: used node metadata
-XXX: used node properties
+
+Expected metadata
+.................
+
+- title
+
+
+Considered properties
+.....................
+
+**in_navtree**
+    Flag whether to display the node in navtree at all
+
+**default_child**
+    Default child nodes are displayed in navtree.
+
+**hide_if_default**
+    If default child should not be displayed it navtree, ``hide_if_default``
+    must be set to 'True'. In this case, also children scope gets switched.
+    Instead of remaining non default children, children of default node are 
+    rendered.
+
+**icon**
+    Relative resource path to node icon. if not found on ``node.properties``,
+    lookup registered ``cone.app.NodeInfo`` instance. If this also does not
+    provide the ``icon`` property, ``cone.app.cfg.default_node_icon`` is used.
 
 
 Byline

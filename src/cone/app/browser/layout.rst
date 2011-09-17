@@ -373,7 +373,7 @@ Child nodes which do not grant permission 'view' are skipped::
     True
 
 Default child behavior of navtree. Default children objects are displayed in 
-navtree.
+navtree.::
 
     >>> root.properties.default_child = '1'
     >>> res = render_tile(root, request, 'navtree')
@@ -390,7 +390,7 @@ If default child should not be displayed it navtree,
     >>> root['1'].properties.hide_if_default = True
 
 In this case, also children context gets switched. Instead of remaining non
-default children, children of default node are displayed.
+default children, children of default node are displayed.::
 
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('href="http://example.com/1"') > -1
