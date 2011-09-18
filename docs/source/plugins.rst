@@ -2,7 +2,7 @@
 Plugins
 =======
 
-As explained in the "getting started" section, application extensions are
+As explained in the "setup" documentation, application extensions are
 organized as plugins, shipping with related application models, tiles and 
 resources.
 
@@ -123,8 +123,8 @@ UGM implementations acting for authentication are added to
     >>> cone.app.cfg.auth.append(ugm_impl)
 
 
-Layout
-------
+UI
+--
 
 The main template of ``cone.app`` can be altered by overriding
 ``cone.app.cfg.main_template``::

@@ -55,8 +55,8 @@ Edit ``buildout.cfg`` and add::
         example.app
 
 
-Configuration
--------------
+INI configuration
+-----------------
 
 Create ``example.ini`` and add::
 
@@ -112,8 +112,8 @@ Create ``example.ini`` and add::
         example
 
 
-Available configuration parameters
-..................................
+Available INI configuration parameters
+......................................
 
 **cone.admin_user**
     Login name of Superuser
@@ -173,8 +173,8 @@ Available configuration parameters
     Flag whether to suppress rendering main menu titles
 
 
-Model
------
+Application model
+-----------------
 
 The application model consists of nodes providing the application hierarchy,
 security declarations, UI configuration and node type information for authoring.
@@ -209,8 +209,8 @@ Hook this application node to ``cone.app`` in ``example.app.__init__``::
     >>> cone.app.register_plugin('example', ExampleApp)
 
 
-View
-----
+Views
+-----
 
 ``cone.app`` follows the concept of tiles. Each part of the application is 
 represented by a tile, i.e. main menu, navigation tree, site content area, etc.
@@ -260,8 +260,8 @@ Tell your plugin to scan the available views in ``configure.zcml``::
     <scan package=".browser" />
 
 
-Test
-----
+Install and run
+---------------
 
 To install and run the application, run buildout and then start paster server::
 

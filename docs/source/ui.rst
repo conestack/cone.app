@@ -1,87 +1,105 @@
-======
-Layout
-======
+==
+UI
+==
 
-Reserved Tiles
+Reserved tiles
 --------------
 
-The Application ships with a set of tiles. Some of them are abstract while
-others are already registered.
+``cone.app`` ships with a set of tiles. Some of them are abstract and can be
+used as base classes while others are already registered.
 
 
-Custom model related reserved tiles
-...................................
-
-**content**
-    Render default content view for model node
-    
-**addform**
-    Render add form for model node
-    
-**editform**
-    Render edit form for model node
-
-
-Views and widgets
-.................
-
-**mainmenu**
-    Render first level of children below root as main menu
-    
-**pathbar**
-    Render breadcrumbs
-   
-**navtree**
-    Render Navigation tree
-    
-**personaltools**
-    Render personal tools
-    
-**contents**
-    Render model child nodes in batched, sortable table
-    
-**byline**
-    Render byline
-    
-**contextmenu**
-    Render contextmenu containing available actions
-    
-**add_dropdown**
-    Adding dropdown menu containing links to add view of valid children
-    
-**livesearch**
-    Render live search box
-
-**listing**
-    Render node title, contextmenu, node description and node child listing. 
+Integration related tiles
+.........................
 
 **bdajax**
     Render ``bdajax`` related markup.
 
-**add**
-    Render addform for node
 
-**edit**
-    Render editform for node
-
-**delete**
-    Delete node action
+Authentication related tiles
+............................
 
 **loginform**
-    Render login form
+    Render login form.
+
+
+Main layout related tiles
+.........................
+
+**livesearch**
+    Render live search box.
+
+**personaltools**
+    Render personal tools dropdown menu.
+
+**mainmenu**
+    Render first level of children below root as main menu.
+
+**pathbar**
+    Render breadcrumb navigation.
+
+**navtree**
+    Render navigation tree.
+
+**content**
+    Render content area for node.
+
+
+Model structure related tiles
+.............................
+    
+**contents**
+    Render model child nodes in batched, sortable table.
+
+**listing**
+    Render node title, contextmenu, node description and node child listing. 
+
+
+Authoring related tiles
+.......................
+
+**byline**
+    Render node creation, modification and author information.
+
+**contextmenu**
+    Render contextmenu containing available user actions for node.
+
+**add_dropdown**
+    Adding dropdown menu contains links to add forms of allowed node children.
+
+**wf_dropdown**
+    Dropdown menu containing available workflow transitions for node.
+
+**delete**
+    Deleting action for node.
+
+**add**
+    Generic tile rendering ``addform`` or ``loginform`` if adding is not
+    permitted.
+
+**edit**
+    Generic tile rendering ``editform`` or ``loginform`` if editing is not
+    permitted.
+
+**addform**
+    Add form for node.
+    
+**editform**
+    Edit form for node.
+
+
+Form widget related tiles
+.........................
 
 **referencebrowser**
-    Render referencebrowser_pathbar and referencelisting
+    Render referencebrowser_pathbar and referencelisting.
 
 **referencebrowser_pathbar**
-    Render referencebrowser specific pathbar
+    Render referencebrowser specific pathbar.
 
 **referencelisting**
     Like contents, but with less table columns and reference browser specific
-    actions
-
-**wf_dropdown**
-    Dropdown menu containing available workflow transitions
+    actions.
 
 
 Resources
