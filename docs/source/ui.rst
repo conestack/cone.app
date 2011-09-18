@@ -15,10 +15,11 @@ Integration related tiles
 Resources
 ---------
 
+For delivering CSS and JS resources.
+
 Registration name: ``resources``
 
-For delivering CSS and JS resources. When providing your own main template,
-add to HTML header::
+When providing your own main template, add to HTML header::
 
     <head>
       ...
@@ -30,9 +31,10 @@ add to HTML header::
 Bdajax
 ------
 
-Registration name: ``bdajax``
+Renders ``bdajax`` related markup.
 
-Render ``bdajax`` related markup.
+**Registration name**
+    bdajax
 
 
 Authentication related tiles
@@ -41,9 +43,10 @@ Authentication related tiles
 Login form
 ----------
 
-Registration name: ``loginform``
-
 Renders login form and performs authentication.
+
+**Registration name**
+    loginform
 
 
 Main layout related tiles
@@ -52,24 +55,27 @@ Main layout related tiles
 Livesearch
 ----------
 
-Registration name: ``livesearch``
-
 Renders the live search widget. The client side is implemented while on the
 server side a callback function has to be provided in order to get a senceful
 result.
+
+**Registration name**
+    livesearch
+
+**Customization**
 
 The callback gets the model and request as arguments.The search term is at
 ``request.params['term']``.
 
 A list of dicts must be returned with these keys:
 
-- label
+*label*
     Label of found item
 
-- value
+*value*
     The value re-inserted in input. This is normally ``term``
 
-- target
+*target*
     The target URL for rendering the content tile.
 
 To set the callback, ``cone.app.browser.ajax.LIVESEARCH_CALLBACK`` must be
@@ -93,11 +99,14 @@ set::
 Personal Tools
 --------------
 
-Registration name: ``personaltools``
-
 Renders a dropdown if user is authenticated. It is titled with the
 authenticated user name and contains a set of links to personal stuff. By
 default, only the logout link is provided.
+
+**Registration name**
+    personaltools
+
+**Customization**
 
 To add more items in the dropdown, set a callback function on  
 ``cone.app.browser.layout.personal_tools``. The callback gets the model and
@@ -115,27 +124,28 @@ request as arguments and must return a 2-tuple containing URL and title.::
 Main menu
 ---------
 
-Registration name: ``mainmenu``
-
 Renders the first level of children below root as main menu.
 
-Expected metadata:
+**Registration name**
+    mainmenu
 
-- title
+**Expected metadata**
+
+*title*
     Node title
 
-- description
+*description*
     Node description
 
-Considered properties:
+**Considered properties**
 
-- mainmenu_empty_title
+*mainmenu_empty_title*
     if set on ``model.root.properties`` with value ``True`` links are rendered
     empty instead containing the title. Use this if main menu actions use
     icons styled with CSS. As CSS selector 'node-nodeid' gets rendered as
     class attribute on ``li`` DOM element.
 
-- default_child
+*default_child*
     If set on ``model.root.properties``, default child is marked selected if
     no other child was selected explicitly.
 
@@ -143,49 +153,51 @@ Considered properties:
 Pathbar
 -------
 
-Registration name: ``pathbar``
-
 Renders a breadcrumb navigation.
 
-Expected metadata:
+**Registration name**
+    pathbar
 
-- title
+**Expected metadata**
+
+*title*
     Node title
 
-Considered properties:
+**Considered properties**
 
-- default_child
+*default_child*
     Render default child instead of current node in pathbar if selected.
 
 
 Navigation tree
 ---------------
 
-Registration name: ``navtree``
-
 Renders a navigation tree. Nodes which do not grant  permission 'view' are
 skipped.
 
-Expected metadata:
+**Registration name**
+    navtree
 
-- title
+**Expected metadata**
+
+*title*
     Node title
 
-Considered properties:
+**Considered properties**
 
-- in_navtree
+*in_navtree*
     Flag whether to display the node in navtree at all
 
-- default_child
+*default_child*
     Default child nodes are displayed in navtree.
 
-- hide_if_default
+*hide_if_default*
     If default child should not be displayed it navtree, ``hide_if_default``
     must be set to 'True'. In this case, also children scope gets switched.
     Instead of remaining non default children, children of default node are 
     rendered.
 
-- icon
+*icon*
     Relative resource path to node icon. if not found on ``node.properties``,
     lookup registered ``cone.app.NodeInfo`` instance. If this also does not
     provide the ``icon`` property, ``cone.app.cfg.default_node_icon`` is used.
@@ -194,13 +206,13 @@ Considered properties:
 Content
 -------
 
-Registration name: ``content``
-
 Content area for node.
 
+**Registration name**
+    content
 
-ProtectedContentTile
-....................
+
+**ProtectedContentTile**
 
 When providing tiles for displaying node content, normally it's desired to
 render the login form if access is forbidden. Therefor class
@@ -226,18 +238,20 @@ Model structure related tiles
 
 Contents
 --------
-   
-Registration name: ``contents``
 
 Model child nodes in batched, sortable table.
+
+**Registration name**
+    contents
 
 
 Listing
 -------
 
-Registration name: ``listing``
+Node title, ``contextmenu`` tile, node description and ``contents`` tile.
 
-Node title, ``contextmenu`` tile, node description and ``contents`` tile. 
+**Registration name**
+    listing
 
 
 Authoring related tiles
@@ -246,86 +260,95 @@ Authoring related tiles
 Byline
 ------
 
-Registration name: ``byline``
-
 Renders node creation, modification and author information.
 
-Expected metadata:
+**Registration name**
+    byline
 
-- creator
+**Expected metadata**
+
+*creator*
     Node creator name as string
 
-- created
+*created*
     Node creation date as ``datetime.datetime`` instance
 
-- modified
+*modified*
     Node last modification date as ``datetime.datetime`` instance
 
 
 Context menu
 ------------
 
-Registration name: ``contextmenu``
-
 Contextmenu containing available user actions for node.
+
+**Registration name**
+    contextmenu
 
 
 Add dropdown
 ------------
 
-Registration name: ``add_dropdown``
-
 Adding dropdown menu contaiing links to add forms of allowed node children.
+
+**Registration name**
+    add_dropdown
 
 
 Workflow transitions dropdown
 -----------------------------
 
-Registration name: ``wf_dropdown``
-
 Dropdown menu containing available workflow transitions for node.
+
+**Registration name**
+    wf_dropdown
 
 
 Delete
 ------
 
-Registration name: ``delete``
-
 Deleting action for node.
+
+**Registration name**
+    delete
 
 
 Add
 ---
 
-Registration name: ``add``
-
 Generic tile rendering ``addform`` tile or ``loginform`` tile if adding is not
 permitted.
+
+**Registration name**
+    add
 
 
 Edit
 ----
 
-Registration name: ``edit``
-
 Generic tile rendering ``editform`` tile or ``loginform`` tile if editing is
 not permitted.
+
+**Registration name**
+    edit
 
 
 Add form
 --------
 
-Registration name: ``addform``
-
 Add form for node.
+
+**Registration name**
+    addform
 
 
 Edit form
 ---------
 
-Registration name: ``editform``
-
 Edit form for node.
+
+**Registration name**
+    editform
 
 
 Form widget related tiles
@@ -334,23 +357,26 @@ Form widget related tiles
 Reference browser
 -----------------
 
-Registration name: ``referencebrowser``
-
 Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
+
+**Registration name**
+    referencebrowser
 
 
 Reference browser pathbar
 -------------------------
 
-Registration name: ``referencebrowser_pathbar``
-
 Referencebrowser specific pathbar.
+
+**Registration name**
+    referencebrowser_pathbar
 
 
 Reference listing
 -----------------
 
-Registration name: ``referencelisting``
-
 Like ``contents`` tile, but with less table columns and reference browser
 specific actions.
+
+**Registration name**
+    referencelisting
