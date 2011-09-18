@@ -2,111 +2,23 @@
 UI
 ==
 
-Reserved tiles
---------------
-
-``cone.app`` ships with a set of tiles. Some of them are abstract and can be
-used as base classes while others are already registered.
+As explained in the "setup" documentation, the UI elements of ``cone.app`` are
+organized as tiles. Following sections explain the tiles shipped with this
+package. Some of them are abstract and can be used as base classes for custom
+tiles, while others are already registered and ready to be used. Also some tile
+names are used by plugins as UI hooks.
 
 
 Integration related tiles
-.........................
-
-**bdajax**
-    Render ``bdajax`` related markup.
-
-
-Authentication related tiles
-............................
-
-**loginform**
-    Render login form.
-
-
-Main layout related tiles
-.........................
-
-**livesearch**
-    Render live search box.
-
-**personaltools**
-    Render personal tools dropdown menu.
-
-**mainmenu**
-    Render first level of children below root as main menu.
-
-**pathbar**
-    Render breadcrumb navigation.
-
-**navtree**
-    Render navigation tree.
-
-**content**
-    Render content area for node.
-
-
-Model structure related tiles
-.............................
-    
-**contents**
-    Render model child nodes in batched, sortable table.
-
-**listing**
-    Render node title, contextmenu, node description and node child listing. 
-
-
-Authoring related tiles
-.......................
-
-**byline**
-    Render node creation, modification and author information.
-
-**contextmenu**
-    Render contextmenu containing available user actions for node.
-
-**add_dropdown**
-    Adding dropdown menu contains links to add forms of allowed node children.
-
-**wf_dropdown**
-    Dropdown menu containing available workflow transitions for node.
-
-**delete**
-    Deleting action for node.
-
-**add**
-    Generic tile rendering ``addform`` or ``loginform`` if adding is not
-    permitted.
-
-**edit**
-    Generic tile rendering ``editform`` or ``loginform`` if editing is not
-    permitted.
-
-**addform**
-    Add form for node.
-    
-**editform**
-    Edit form for node.
-
-
-Form widget related tiles
-.........................
-
-**referencebrowser**
-    Render referencebrowser_pathbar and referencelisting.
-
-**referencebrowser_pathbar**
-    Render referencebrowser specific pathbar.
-
-**referencelisting**
-    Like contents, but with less table columns and reference browser specific
-    actions.
-
+=========================
 
 Resources
 ---------
 
-For delivering CSS and JS resources, a tile named ``resources`` is registered.
-When providing your own main template, add to HTML header::
+Registration name: ``resources``
+
+For delivering CSS and JS resources. When providing your own main template,
+add to HTML header::
 
     <head>
       ...
@@ -115,31 +27,53 @@ When providing your own main template, add to HTML header::
     </head>
 
 
+Bdajax
+------
+
+Registration name: ``bdajax``
+
+Render ``bdajax`` related markup.
+
+
+Authentication related tiles
+============================
+
+Login form
+----------
+
+Registration name: ``loginform``
+
+Renders login form and performs authentication.
+
+
+Main layout related tiles
+=========================
+
 Livesearch
 ----------
 
-A tile named ``livesearch`` renders the live search widget. The client side is
-implemented while on the server side a callback function has to be provided in
-order to get a senceful result.
+Registration name: ``livesearch``
+
+Renders the live search widget. The client side is implemented while on the
+server side a callback function has to be provided in order to get a senceful
+result.
 
 The callback gets the model and request as arguments.The search term is at
 ``request.params['term']``.
 
+A list of dicts must be returned with these keys:
 
-A list of dicts must be returned with these keys
-................................................
-
-**label**
+- label
     Label of found item
 
-**value**
+- value
     The value re-inserted in input. This is normally ``term``
 
-**target**
+- target
     The target URL for rendering the content tile.
 
 To set the callback, ``cone.app.browser.ajax.LIVESEARCH_CALLBACK`` must be
-overwritten::
+set::
 
     >>> from cone.app.browser import ajax
     
@@ -159,9 +93,11 @@ overwritten::
 Personal Tools
 --------------
 
-A tile named ``personaltools`` renders a dropdown if user is authenticated. It
-is titled with the authenticated user name and contains a set of links to 
-personal stuff. By default, only the logout link is provided.
+Registration name: ``personaltools``
+
+Renders a dropdown if user is authenticated. It is titled with the
+authenticated user name and contains a set of links to personal stuff. By
+default, only the logout link is provided.
 
 To add more items in the dropdown, set a callback function on  
 ``cone.app.browser.layout.personal_tools``. The callback gets the model and
@@ -179,27 +115,27 @@ request as arguments and must return a 2-tuple containing URL and title.::
 Main menu
 ---------
 
-A tile named ``mainmenu`` renders the first level of child nodes.
+Registration name: ``mainmenu``
 
+Renders the first level of children below root as main menu.
 
-Expected metadata
-.................
+Expected metadata:
 
-- **title**
+- title
+    Node title
 
-- **description**
+- description
+    Node description
 
+Considered properties:
 
-Considered properties
-.....................
-
-**mainmenu_empty_title**
+- mainmenu_empty_title
     if set on ``model.root.properties`` with value ``True`` links are rendered
     empty instead containing the title. Use this if main menu actions use
     icons styled with CSS. As CSS selector 'node-nodeid' gets rendered as
     class attribute on ``li`` DOM element.
 
-**default_child**
+- default_child
     If set on ``model.root.properties``, default child is marked selected if
     no other child was selected explicitly.
 
@@ -207,87 +143,64 @@ Considered properties
 Pathbar
 -------
 
-A tile named ``pathbar`` renders a path navigation.
+Registration name: ``pathbar``
 
+Renders a breadcrumb navigation.
 
-Expected metadata
-.................
+Expected metadata:
 
-- **title**
+- title
+    Node title
 
+Considered properties:
 
-Considered properties
-.....................
-
-**default_child**
+- default_child
     Render default child instead of current node in pathbar if selected.
 
 
 Navigation tree
 ---------------
 
-A tile named ``navtree`` renders a navigation tree. Nodes which do not grant 
-permission 'view' are skipped.
+Registration name: ``navtree``
 
+Renders a navigation tree. Nodes which do not grant  permission 'view' are
+skipped.
 
-Expected metadata
-.................
+Expected metadata:
 
-- **title**
+- title
+    Node title
 
+Considered properties:
 
-Considered properties
-.....................
-
-**in_navtree**
+- in_navtree
     Flag whether to display the node in navtree at all
 
-**default_child**
+- default_child
     Default child nodes are displayed in navtree.
 
-**hide_if_default**
+- hide_if_default
     If default child should not be displayed it navtree, ``hide_if_default``
     must be set to 'True'. In this case, also children scope gets switched.
     Instead of remaining non default children, children of default node are 
     rendered.
 
-**icon**
+- icon
     Relative resource path to node icon. if not found on ``node.properties``,
     lookup registered ``cone.app.NodeInfo`` instance. If this also does not
     provide the ``icon`` property, ``cone.app.cfg.default_node_icon`` is used.
 
 
-Byline
-------
-
-A tile named ``byline`` renders node authoring information.
-
-
-Expected metadata
-.................
-
-- **creator**
-    Node creator name as string
-
-- **created**
-    Node creation date as ``datetime.datetime`` instance
-
-- **modified**
-    Node last modification date as ``datetime.datetime`` instance
-
-
-Listing
+Content
 -------
 
-A tile named ``listing`` provides rendering the current node children as
-listing.
+Registration name: ``content``
 
-XXX: used node metadata
-XXX: used node properties
+Content area for node.
 
 
 ProtectedContentTile
---------------------
+....................
 
 When providing tiles for displaying node content, normally it's desired to
 render the login form if access is forbidden. Therefor class
@@ -306,4 +219,138 @@ from it when working with the ``cone.tile.tile`` decorator.::
     ... class ProtectedTile(ProtectedContentTile):
     ...     def render(self):
     ...         return '<div>protected stuff</div>'
-    
+
+
+Model structure related tiles
+=============================
+
+Contents
+--------
+   
+Registration name: ``contents``
+
+Model child nodes in batched, sortable table.
+
+
+Listing
+-------
+
+Registration name: ``listing``
+
+Node title, ``contextmenu`` tile, node description and ``contents`` tile. 
+
+
+Authoring related tiles
+=======================
+
+Byline
+------
+
+Registration name: ``byline``
+
+Renders node creation, modification and author information.
+
+Expected metadata:
+
+- creator
+    Node creator name as string
+
+- created
+    Node creation date as ``datetime.datetime`` instance
+
+- modified
+    Node last modification date as ``datetime.datetime`` instance
+
+
+Context menu
+------------
+
+Registration name: ``contextmenu``
+
+Contextmenu containing available user actions for node.
+
+
+Add dropdown
+------------
+
+Registration name: ``add_dropdown``
+
+Adding dropdown menu contaiing links to add forms of allowed node children.
+
+
+Workflow transitions dropdown
+-----------------------------
+
+Registration name: ``wf_dropdown``
+
+Dropdown menu containing available workflow transitions for node.
+
+
+Delete
+------
+
+Registration name: ``delete``
+
+Deleting action for node.
+
+
+Add
+---
+
+Registration name: ``add``
+
+Generic tile rendering ``addform`` tile or ``loginform`` tile if adding is not
+permitted.
+
+
+Edit
+----
+
+Registration name: ``edit``
+
+Generic tile rendering ``editform`` tile or ``loginform`` tile if editing is
+not permitted.
+
+
+Add form
+--------
+
+Registration name: ``addform``
+
+Add form for node.
+
+
+Edit form
+---------
+
+Registration name: ``editform``
+
+Edit form for node.
+
+
+Form widget related tiles
+=========================
+
+Reference browser
+-----------------
+
+Registration name: ``referencebrowser``
+
+Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
+
+
+Reference browser pathbar
+-------------------------
+
+Registration name: ``referencebrowser_pathbar``
+
+Referencebrowser specific pathbar.
+
+
+Reference listing
+-----------------
+
+Registration name: ``referencelisting``
+
+Like ``contents`` tile, but with less table columns and reference browser
+specific actions.
