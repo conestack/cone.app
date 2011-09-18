@@ -28,7 +28,7 @@ Contents:
    plugins
    model
    security
-   ui
+   tiles
    authoring
    workflows
    ajax

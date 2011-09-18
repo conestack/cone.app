@@ -1,6 +1,6 @@
-==
-UI
-==
+=====
+Tiles
+=====
 
 As explained in the "setup" documentation, the UI elements of ``cone.app`` are
 organized as tiles. Following sections explain the tiles shipped with this
@@ -9,15 +9,16 @@ tiles, while others are already registered and ready to be used. Also some tile
 names are used by plugins as UI hooks.
 
 
-Integration related tiles
-=========================
+Integration related
+===================
 
 Resources
 ---------
 
 For delivering CSS and JS resources.
 
-Registration name: ``resources``
+**Registration name**
+    *resources*
 
 When providing your own main template, add to HTML header::
 
@@ -34,11 +35,11 @@ Bdajax
 Renders ``bdajax`` related markup.
 
 **Registration name**
-    bdajax
+    *bdajax*
 
 
-Authentication related tiles
-============================
+Authentication related
+======================
 
 Login form
 ----------
@@ -46,11 +47,11 @@ Login form
 Renders login form and performs authentication.
 
 **Registration name**
-    loginform
+    *loginform*
 
 
-Main layout related tiles
-=========================
+Main layout related
+===================
 
 Livesearch
 ----------
@@ -60,7 +61,7 @@ server side a callback function has to be provided in order to get a senceful
 result.
 
 **Registration name**
-    livesearch
+    *livesearch*
 
 **Customization**
 
@@ -104,7 +105,7 @@ authenticated user name and contains a set of links to personal stuff. By
 default, only the logout link is provided.
 
 **Registration name**
-    personaltools
+    *personaltools*
 
 **Customization**
 
@@ -127,15 +128,15 @@ Main menu
 Renders the first level of children below root as main menu.
 
 **Registration name**
-    mainmenu
+    *mainmenu*
 
 **Expected metadata**
 
 *title*
-    Node title
+    Node title.
 
 *description*
-    Node description
+    Node description.
 
 **Considered properties**
 
@@ -156,12 +157,12 @@ Pathbar
 Renders a breadcrumb navigation.
 
 **Registration name**
-    pathbar
+    *pathbar*
 
 **Expected metadata**
 
 *title*
-    Node title
+    Node title.
 
 **Considered properties**
 
@@ -176,17 +177,17 @@ Renders a navigation tree. Nodes which do not grant  permission 'view' are
 skipped.
 
 **Registration name**
-    navtree
+    *navtree*
 
 **Expected metadata**
 
 *title*
-    Node title
+    Node title.
 
 **Considered properties**
 
 *in_navtree*
-    Flag whether to display the node in navtree at all
+    Flag whether to display the node in navtree at all.
 
 *default_child*
     Default child nodes are displayed in navtree.
@@ -206,11 +207,12 @@ skipped.
 Content
 -------
 
-Content area for node.
+Content area for node. ``cone.app`` expects a tile registered by name content
+to render the default content view of a node. The plugin code is responsible
+to provide a content tile for model nodes.
 
 **Registration name**
-    content
-
+    *content*
 
 **ProtectedContentTile**
 
@@ -233,8 +235,8 @@ from it when working with the ``cone.tile.tile`` decorator.::
     ...         return '<div>protected stuff</div>'
 
 
-Model structure related tiles
-=============================
+Model structure related
+=======================
 
 Contents
 --------
@@ -242,20 +244,51 @@ Contents
 Model child nodes in batched, sortable table.
 
 **Registration name**
-    contents
+    *contents*
+
+**Expected metadata**
+
+*title*
+    Node title.
+
+*creator*
+    Node creator name as string.
+
+*created*
+    Node creation date as ``datetime.datetime`` instance.
+
+*modified*
+    Node last modification date as ``datetime.datetime`` instance.
+
+**Considered properties**
+
+*editable*
+    Flag whether node is editable.
+
+*deletable*
+    Flag whether node is deletable.
 
 
 Listing
 -------
 
-Node title, ``contextmenu`` tile, node description and ``contents`` tile.
+Renders node title, ``contextmenu`` tile, node description and ``contents``
+tile.
 
 **Registration name**
-    listing
+    *listing*
+
+**Expected metadata**
+
+*title*
+    Node title.
+
+*description*
+    Node description.
 
 
-Authoring related tiles
-=======================
+Authoring related
+=================
 
 Byline
 ------
@@ -263,18 +296,18 @@ Byline
 Renders node creation, modification and author information.
 
 **Registration name**
-    byline
+    *byline*
 
 **Expected metadata**
 
 *creator*
-    Node creator name as string
+    Node creator name as string.
 
 *created*
-    Node creation date as ``datetime.datetime`` instance
+    Node creation date as ``datetime.datetime`` instance.
 
 *modified*
-    Node last modification date as ``datetime.datetime`` instance
+    Node last modification date as ``datetime.datetime`` instance.
 
 
 Context menu
@@ -283,7 +316,7 @@ Context menu
 Contextmenu containing available user actions for node.
 
 **Registration name**
-    contextmenu
+    *contextmenu*
 
 
 Add dropdown
@@ -292,7 +325,7 @@ Add dropdown
 Adding dropdown menu contaiing links to add forms of allowed node children.
 
 **Registration name**
-    add_dropdown
+    *add_dropdown*
 
 
 Workflow transitions dropdown
@@ -301,7 +334,7 @@ Workflow transitions dropdown
 Dropdown menu containing available workflow transitions for node.
 
 **Registration name**
-    wf_dropdown
+    *wf_dropdown*
 
 
 Delete
@@ -310,7 +343,7 @@ Delete
 Deleting action for node.
 
 **Registration name**
-    delete
+    *delete*
 
 
 Add
@@ -320,7 +353,7 @@ Generic tile rendering ``addform`` tile or ``loginform`` tile if adding is not
 permitted.
 
 **Registration name**
-    add
+    *add*
 
 
 Edit
@@ -330,7 +363,7 @@ Generic tile rendering ``editform`` tile or ``loginform`` tile if editing is
 not permitted.
 
 **Registration name**
-    edit
+    *edit*
 
 
 Add form
@@ -339,7 +372,7 @@ Add form
 Add form for node.
 
 **Registration name**
-    addform
+    *addform*
 
 
 Edit form
@@ -348,11 +381,11 @@ Edit form
 Edit form for node.
 
 **Registration name**
-    editform
+    *editform*
 
 
-Form widget related tiles
-=========================
+Form widget related
+===================
 
 Reference browser
 -----------------
@@ -360,7 +393,7 @@ Reference browser
 Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
 
 **Registration name**
-    referencebrowser
+    *referencebrowser*
 
 
 Reference browser pathbar
@@ -369,7 +402,7 @@ Reference browser pathbar
 Referencebrowser specific pathbar.
 
 **Registration name**
-    referencebrowser_pathbar
+    *referencebrowser_pathbar*
 
 
 Reference listing
@@ -379,4 +412,4 @@ Like ``contents`` tile, but with less table columns and reference browser
 specific actions.
 
 **Registration name**
-    referencelisting
+    *referencelisting*
