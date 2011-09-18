@@ -318,39 +318,104 @@ Contextmenu containing available user actions for node.
 **Registration name**
     *contextmenu*
 
+**Considered properties**
+
+*action_up*
+    Flag whether to render "One level up" action. Renders ``listing`` tile on
+    parent node to main content area.
+
+*action_view*
+    Flag whether to render view action. Renders ``content`` tile on node to
+    main content area.
+
+*action_list*
+    Flag whether to render list action. Renders ``listing`` tile on node to
+    main content area.
+
+*editable*
+    Flag whether node is editable. Renders ``edit`` tile to main content area.
+
+*deletable*
+    Flag whether node is deletable. Invokes ``delete`` tile on node after
+    confirming action.
+
+*wf_state*
+    Flag whether model provides workflow. If so, render ``wf_dropdown`` tile.
+
+**Considered node information**
+
+*addables*
+    If node can have children, render ``add_dropdown`` tile.
+
 
 Add dropdown
 ------------
 
-Adding dropdown menu contaiing links to add forms of allowed node children.
+Adding dropdown menu contains addable node types. Renders the ``add`` tile to
+main content area passing desired ``cone.app.model.NodeInfo`` registration name
+as param.
 
 **Registration name**
     *add_dropdown*
+
+**Considered node information**
+
+*addables*
+    Build addable dropdown by ``cone.app.model.NodeInfo`` instances registered
+    by names defined in ``node.nodeinfo.addables``.
 
 
 Workflow transitions dropdown
 -----------------------------
 
-Dropdown menu containing available workflow transitions for node.
+Renders dropdown menu containing available workflow transitions for node.
+Performs workflow transition if ``do_transition`` is passed to request
+containing the transition id.
 
 **Registration name**
     *wf_dropdown*
+
+**Considered properties**
+
+*wf_state*
+    Flag whether model provides workflow.
+
+*wf_name*
+    Registration name of workflow.
+
+*wf_transition_names*
+    transition id to transition title mapping.
 
 
 Delete
 ------
 
-Deleting action for node.
+Delete node from model. Does not render directly but uses bdajax continuation
+mechanism. Triggers rendering main content area with ``contents`` tile.
+Triggers ``contextchanged`` event. Displays info dialog.
 
 **Registration name**
     *delete*
+
+**Considered metadata**
+
+*title*
+    Used for message creation.
+
+**Considered properties**
+
+*deletable*
+    Flag whether node can be deleted. If not, a bdajax error message gets
+    displayed.
 
 
 Add
 ---
 
-Generic tile rendering ``addform`` tile or ``loginform`` tile if adding is not
-permitted.
+Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
+rendering ``addform`` tile. It is used by ajax calls and by generic ``add``
+view. If ajax request, render ``cone.app.browser.ajax.render_ajax_form``. If
+not, render main template with ``add`` tile in main content area.
 
 **Registration name**
     *add*
@@ -359,8 +424,10 @@ permitted.
 Edit
 ----
 
-Generic tile rendering ``editform`` tile or ``loginform`` tile if editing is
-not permitted.
+Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
+rendering ``editform`` tile. Is is used by ajax calls and by generic ``edit``
+view. If ajax request, render ``cone.app.browser.ajax.render_ajax_form``. If
+not, render main template with ``edit`` tile in main content area.
 
 **Registration name**
     *edit*
