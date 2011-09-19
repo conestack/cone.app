@@ -27,7 +27,6 @@ Contents:
    setup
    plugins
    model
-   security
    tiles
    forms
    workflows

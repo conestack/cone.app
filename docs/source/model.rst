@@ -255,4 +255,69 @@ which is used to lookup the related NodeInfo instance.::
     >>> from cone.app.model import getNodeInfo
     >>> info = getNodeInfo('node_info_name_a')
 
-See authoring documentation for more details.
+See forms documentation for more details.
+
+
+Security
+--------
+
+In ``cone.app``, security declarations on models and authorization is done with
+``pyramid.security``. As authorization policy
+``pyramid.authorization.ACLAuthorizationPolicy`` is used.
+
+For authentication, users, groups and roles, the contract of ``node.ext.ugm``
+is used. As authentication policy
+``pyramid.authentication.AuthTktAuthenticationPolicy`` with
+``cone.app.security.groups_callback`` is used, which bridges roles and group
+membership.
+
+The desired ``node.ext.ugm`` instance(s) is created in application main hook(s)
+and appended to ``cone.app.cfg.auth``.
+
+If no authentication implementation is registered, the only user which can
+authenticate is the admin user defined in application configuration INI file.
+
+By default, anonymous access to all application model nodes is prohibited.
+
+Default ACL for application nodes::
+
+    cone.app.security.DEFAULT_ACL = [
+        (Allow, 'system.Authenticated', ['view']),
+        (Allow, 'role:viewer', ['view']),
+        (Allow, 'role:editor', ['view', 'add', 'edit']),
+        (Allow, 'role:admin', ['view', 'add', 'edit', 'delete']),
+        (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
+        (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
+        (Allow, Everyone, ['login']),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+
+Default ACL for settings nodes.::
+
+    cone.app.security.DEFAULT_SETTINGS_ACL = [
+        (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
+        (Allow, Everyone, 'login'),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+
+Default vocab for available roles.::
+
+    cone.app.security.DEFAULT_ROLES = [
+        ('viewer', 'Viewer'),
+        ('editor', 'Editor'),
+        ('admin', 'Admin'),
+        ('owner', 'Owner'),
+        ('manager', 'Manager'),
+    ]
+
+Application nodes contain ``cone.app.model.ProtectedProperties`` by default,
+which are instanciated with default node property permissions.::
+
+    cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS = {
+        'action_up': ['view'],
+        'action_view': ['view'],
+        'action_list': ['view'],
+        'editable': ['edit'],
+        'deletable': ['delete'],
+        'wf_state': ['view'],
+    }
