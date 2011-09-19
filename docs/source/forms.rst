@@ -51,7 +51,7 @@ done when the tile gets called.::
     ...                 'action': 'save',
     ...                 'expression': True,
     ...                 'handler': self.save,
-    ...                 'next': self.next,
+    ...                 'next': None,
     ...                 'label': 'Save',
     ...             })
     ...         self.form = form
@@ -83,8 +83,8 @@ definitions. The form implementation from above now looks like::
     >>> from plumber import plumber
     >>> from cone.app.browser.form import YAMLForm
     
-    @tile('someyamlform', interface=ExampleApp, permission="edit")
-    >>> class SomeYAMLForm(Form):
+    >>> @tile('someyamlform', interface=ExampleApp, permission="edit")
+    ... class SomeYAMLForm(Form):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = YAMLForm
     ... 
@@ -112,12 +112,46 @@ The YAML file which must be present at the given location contains::
             action: save
             expression: True
             handler: context.save
-            next: context.next
+            next: None
             label: Save
 
 
 CameFromNext part
 -----------------
+
+In the examples above we've seen how forms are created, form submission are
+processed and forms are rendered. However, a mechanism to handle what happens
+after a form actions has been processed successfully is also needed.
+
+This is provided by the plumbing part
+``cone.app.browser.authoring.CameFromNext``.
+
+It plumbs to the prepare function and adds a 'came_from' proxy widget to the
+already processed form, which can contain either 'parent' or a URL from where
+the form was triggered from. If 'came_from' is not found on request, the
+application node URL is used.
+
+It extends the form tile by a ``next`` function, which can be defined in form
+action definitions as ``next`` property. It also considers 'came_from' on the
+request for building the appropriate next URL.
+
+If form was submitted by AJAX call, the ``next`` function returns the desired
+AJAX continuation definitions, or an HTTPFound instance used to redirect if
+non AJAX request.
+
+Default ajax continuation definitions are an ``AjaxAction`` to render the
+``content`` tile to main content area of the page and an ``AjaxEvent``
+triggering the contxt change event, both on target URL resulting by 'came_from'.
+
+Define ``self.next``, respective ``context.next`` if YAML form, in save widget
+of form as ``next`` property and add ``CameFromNext`` part to plumbing parts on
+form tile class.::
+
+    >>> @tile('someyamlform', interface=ExampleApp, permission="edit")
+    ... class SomeYAMLForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = YAMLForm, CameFromNext
+
 
 Add forms
 =========
