@@ -436,7 +436,8 @@ not, render main template with ``edit`` tile in main content area.
 Add form
 --------
 
-Add form for node.
+Add form for node. The plugin code is responsible to provide the addform tile
+for nodes. See documentation of forms for more details.
 
 **Registration name**
     *addform*
@@ -445,7 +446,8 @@ Add form for node.
 Edit form
 ---------
 
-Edit form for node.
+Edit form for node. The plugin code is responsible to provide the editform tile
+for nodes. See documentation of forms for more details.
 
 **Registration name**
     *editform*
@@ -458,6 +460,9 @@ Reference browser
 -----------------
 
 Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
+
+This tile gets rendered in an overlay and is used by the ``referencebrowser``
+YAFOWIL widget provided by ``cone.app``.
 
 **Registration name**
     *referencebrowser*
@@ -480,3 +485,51 @@ specific actions.
 
 **Registration name**
     *referencelisting*
+
+**Expected metadata**
+
+*title*
+    Node title.
+
+*created*
+    Node creation date as ``datetime.datetime`` instance.
+
+*modified*
+    Node last modification date as ``datetime.datetime`` instance.
+
+**Considered properties**
+
+*leaf*
+    Whether node contains children. Used to check rendering of navigational
+    links.
+
+*referencable*
+    Flag whether node can be referenced.
+
+
+Abstract tiles
+==============
+
+Batch
+-----
+
+A tile for rendering Batches is contained at ``cone.app.browser.batch.Batch``.
+
+**Customization**
+
+A subclass has to implement ``vocab`` and may override ``batchrange``,
+``display`` and ``batchname``.   
+
+
+Table
+-----
+
+A tile for rendering sortable, batched tables is contained at
+``cone.app.browser.table.Table``.
+
+**Customization**
+
+A subclass of this tile must be registered under the same name as defined
+at ``table_tile_name``, normally bound to template
+``cone.app:browser/templates/table.pt``. A subclass has to provide ``col_defs``,
+``item_count`` and ``sorted_rows``.

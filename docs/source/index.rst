@@ -29,6 +29,6 @@ Contents:
    model
    security
    tiles
-   authoring
+   forms
    workflows
    ajax
