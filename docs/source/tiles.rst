@@ -513,7 +513,7 @@ Abstract tiles
 Batch
 -----
 
-A tile for rendering Batches is contained at ``cone.app.browser.batch.Batch``.
+A tile for rendering batches is contained at ``cone.app.browser.batch.Batch``.
 
 **Customization**
 
