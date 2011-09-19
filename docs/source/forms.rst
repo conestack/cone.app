@@ -159,14 +159,77 @@ Add forms
 Add part
 --------
 
+As described in tiles documentation, tiles named ``addform`` are reserved
+for application node add forms. They are invoked by the ``add`` tile for the
+context returen by the referring node info ``factory``, which could be a vessel
+object or a "real life" node - consider this at tile registration. The default
+add model factory returns an instance of the class defined in node info
+``node`` with adding context set as ``__parent__``.
+
+For creating add form tiles, ``cone.app.browser.authoring.AddPart`` provides
+the required plumbings. It derives from ``CameFromNext``.
+
+The ``prepare`` function is plumbed in order to extend the form with a
+'factory' proxy widget, which passes the node info name.
+
+The ``__call__`` function gets also plumbed, and renders a heading prior to
+form if ``show_heading`` on form tile is set to ``True``, which is default.::
+
+    >>> from cone.app.browser.authoring import AddPart
+    
+    >>> @tile('addform', interface=ExampleApp, permission="add")
+    ... class ExampleAppAddForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = AddPart
+
+
 Edit forms
 ==========
 
 Edit part
 ---------
 
+As described in tiles documentation, tiles named ``editform`` are reserved
+for application node edit forms. They are invoked by the ``edit`` tile for
+node.
+
+For creating edit form tiles, ``cone.app.browser.authoring.EditPart`` provides
+the required plumbings. It derives from ``CameFromNext``.
+
+The ``__call__`` function gets plumbed, and renders a heading prior to
+form if ``show_heading`` on form tile is set to ``True``, which is default.::
+
+    >>> from cone.app.browser.authoring import EditPart
+    
+    >>> @tile('editform', interface=ExampleApp, permission="edit")
+    ... class ExampleAppEditForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = EditPart
+
+For add and edit forms it propably makes sence to write one base class
+providing the ``prepare`` function.
+
+
 Settings part
 -------------
+
+``cone.app`` renders forms for application settings in tabs, all at once.
+To provide a edit form for your settings node,
+``cone.app.browser.settings.SettingsPart`` should be used.
+
+The ``prepare`` function gets plumbed which calls
+``cone.app.browser.ajax.ajax_form_fiddle`` with form selector in order to
+define which of the rendered forms on client side should be altered.
+
+The settings form tile gets extended by a ``next`` function, which handles
+form continuation similar to ``CameFromNext`` part, without the consideration
+of 'came_from'.::
+
+    @tile('editform', interface=AppSettings, permission="manage")
+    class ServerSettingsForm(Form):
+        __metaclass__ = plumber
+        __plumbing__ = SettingsPart
+
 
 Extending forms
 ===============
