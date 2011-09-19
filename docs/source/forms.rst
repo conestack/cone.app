@@ -225,13 +225,54 @@ The settings form tile gets extended by a ``next`` function, which handles
 form continuation similar to ``CameFromNext`` part, without the consideration
 of 'came_from'.::
 
-    @tile('editform', interface=AppSettings, permission="manage")
-    class ServerSettingsForm(Form):
-        __metaclass__ = plumber
-        __plumbing__ = SettingsPart
+    >>> from cone.app.browser.settings import SettingsPart
+    
+    >>> @tile('editform', interface=AppSettings, permission="manage")
+    ... class ServerSettingsForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = SettingsPart
 
 
 Extending forms
 ===============
 
-FormExtension(Part)
+The plumbing mechanism could also be used for generic form extension. This is
+interresting in cases where a set of different nodes partly contain the same
+set of data.
+
+To achieve this, write a plumbing part which hooks to the ``prepare`` function,
+which adds form widgets to ``self.form`` after processing ``_next`` downstream
+function, which in case is the following ``prepare`` function in the plumbing
+pipeline. Also hook to the ``save`` function (the one defined as form action
+``handler`` property) and add the related persisting code.::
+
+    >>> from plumber import Part, plumb
+    
+    >>> class FormExtension(Part):
+    ... 
+    ...     @plumb
+    ...     def prepare(_next, self):
+    ...         # downstream ``prepare`` function, after this self.form must
+    ...         # be present
+    ...         _next(self)
+    ...         # extension widget
+    ...         widget = factory(
+    ...             'field:text',
+    ...             value=self.model.attrs['generic'])
+    ...         # add new widget before save widget
+    ...         save_widget = self.form['save']
+    ...         self.form.insertbefore(roles_widget, save_widget)
+    ... 
+    ...     @plumb
+    ...     def save(_next, self, widget, data):
+    ...         value = data.fetch('%s.generic' % self.form_name).extracted
+    ...         self.model.attrs['generic'] = value
+    ...         _next(self, widget, data)
+
+This part can now be used like any other plumbing part for extending form
+tiles.::
+
+    >>> @tile('editform', interface=ExampleApp, permission="edit")
+    ... class ServerSettingsForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = EditPart, FormExtension
