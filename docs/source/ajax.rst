@@ -10,10 +10,10 @@ General contracts
 -----------------
 
 Some tiles of the application (like ``mainmenu`` and ``navtree``)
-are using ``bdajax`` to notify each other about a changed application context. 
-The custom JS event ``contextchanged`` gets triggered on DOM elements with CSS
-class ``contextsensitiv`` set. The main content area is seperate bound to this
-event by ID ``content``.
+are using ``bdajax`` to notify each other about changes of the application
+context. The custom JS event ``contextchanged`` gets triggered on DOM elements
+with CSS class ``contextsensitiv`` set. The main content area is seperatly
+bound to this event by ID ``content``.
 
 If some action changes the application context it's usally desired to render 
 navigation tree, main menu and main content area. Thus, trigger the 
