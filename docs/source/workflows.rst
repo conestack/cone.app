@@ -4,6 +4,10 @@ Workflows
 
 ``cone.app`` uses ``repoze.workflow`` for state based workflows.
 
+
+Define workflow
+---------------
+
 Workflows are described in ZCML. See documentation of ``repoze.workflow`` for
 details.
 
@@ -47,6 +51,10 @@ as ``callback``, which sets the ``state`` attribute of the node.::
       </workflow>
     
     </configure>
+
+
+Use workflow
+------------
 
 To use workflows on application model nodes, two plumbing parts are provided.
 
@@ -92,6 +100,10 @@ workflow is provided, ``wf_name`` contains the workflow ID, and
     ...             'initial_2_final': 'Finalize',
     ...         }
     ...         return props
+
+
+State specific access control
+-----------------------------
 
 ACL's defined for specific workflow states are defined in ``state_acls``
 attribute of the node by state id.::
