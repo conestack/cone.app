@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.9pre3'
-shortdesc = 'Application framework for pyramid.'
+version = '0.9'
+shortdesc = 'Web application stub'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 
@@ -11,13 +11,12 @@ setup(name='cone.app',
       description=shortdesc,
       long_description=longdesc,
       classifiers=[
-            'Development Status :: 4 - Beta',
             'Environment :: Web Environment',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
       ],
-      keywords='',
+      keywords='node pyramid cone web',
       author='BlueDynamics Alliance',
       author_email='dev@bluedynamics.com',
       url=u'https://github.com/bluedynamics/cone.app',

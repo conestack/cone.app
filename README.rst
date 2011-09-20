@@ -1,4 +1,4 @@
-``cone.app`` provides a common web application stub for the pyramid framework.
+``cone.app`` - Build Web Applications on top of the pyramid framework.
 
 
 Detailed Documentation
@@ -34,7 +34,7 @@ Contributors
 Changes
 =======
 
-0.9dev
-------
+0.9
+---
 
     - Initial work
