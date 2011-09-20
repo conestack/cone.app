@@ -6,8 +6,8 @@ AJAX
 Please see related documentation for detailed documentation.
 
 
-General UI Contracts
---------------------
+General contracts
+-----------------
 
 Tiles representing parts of the application, like ``mainmenu`` and ``navtree``
 use ``bdajax`` to notify each other about a changed application context by the
@@ -45,8 +45,8 @@ application context changes.::
     </div>
 
 
-AJAX action
------------
+Actions
+-------
 
 As described in the documentation of ``bdajax``, it does not ship the server
 implementation performing ajax actions.
@@ -59,8 +59,8 @@ thrown during ajax action processing, the traceback gets displayed in a
 ``bdajax.error`` message.
 
 
-AJAX continuation
------------------
+Continuation
+------------
 
 ``bdajax`` supports AJAX continuation. This is useful i.e. if a data
 manipulating tile needs to finish it's job before anything can be re-rendered,
@@ -96,8 +96,8 @@ A shortcut for continuation messages is located at
     >>> ajax_message(request, payload, flavor='message')
 
 
-AJAX Forms
-----------
+Forms
+-----
 
 AJAX forms are automatically detected and computed porperly as long as they
 are rendered via ``cone.app.browser.authoring.render_form``. However, the
@@ -131,8 +131,8 @@ Use this part in form tile.::
     ...     __plumbing__ = EditPart, FormFiddle
 
 
-Client side JavaScript
-----------------------
+JavaScript
+----------
 
 Using ``bdajax`` dispatching is desired to be used for very general contracts.
 Often, it's faster or even required to provide a snippet of Javascript code
