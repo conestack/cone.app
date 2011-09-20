@@ -9,17 +9,18 @@ Please see related documentation for detailed documentation.
 General contracts
 -----------------
 
-Tiles representing parts of the application, like ``mainmenu`` and ``navtree``
-use ``bdajax`` to notify each other about a changed application context by the
-custom ``contextchanged`` JS event, which gets triggered on DOM elements
-with CSS class ``contextsensitiv`` set by this tiles. The main content area is
-seperate bound to this event by ID ``content``.
+Some tiles of the application (like ``mainmenu`` and ``navtree``)
+are using ``bdajax`` to notify each other about a changed application context. 
+The custom JS event ``contextchanged`` gets triggered on DOM elements with CSS
+class ``contextsensitiv`` set. The main content area is seperate bound to this
+event by ID ``content``.
 
-When providing an action which changes the application context, it's propably
-desired to render the navigation tree, the main menu and the main content area
-of the page. Thus, trigger the ``contextchanged`` event from your markup on
-user interaction. The defined target is the application context to get switched
-to.::
+If some action changes the application context it's usally desired to render 
+navigation tree, main menu and main content area. Thus, trigger the 
+``contextchanged`` event from your markup on user interaction. Defined 
+target is the new application context.
+
+::
 
     <a href=""
        ajax:bind="click"
@@ -29,13 +30,13 @@ to.::
       Trigger context change.
     </a>
 
-Given a custom tile, i.e. rendering some node metadata, which should be
-re-rendered every time the context changes, bind DOM element to the
-``contextchanged`` event, add ``contextsensitiv`` CSS class and define the
+For a custom tile, i.e. rendering some node metadata which should be
+re-rendered every time the context changes, bind the DOM element to
+event ``contextchanged``, add ``contextsensitiv`` CSS class and define the
 desired ajax action.
 
-Tile registered by name ``myfancytile`` re-rendering itself each time the
-application context changes.::
+The tile registered by name ``myfancytile`` is re-rendering itself each time 
+application context changes::
 
     <div id="myfancytile"
          class="contextsensitiv"
@@ -48,10 +49,10 @@ application context changes.::
 Actions
 -------
 
-As described in the documentation of ``bdajax``, it does not ship the server
-implementation performing ajax actions.
+``bdajax``  does not ship with server implementation performing ajax actions. 
+For details follow up to the bdajax-documentation  
 
-The server side implementation is located at
+Server side implementation is located at
 ``cone.app.browser.ajax.ajax_tile``. It renders the tile registered by action
 name. AJAX continuation definitions are read from
 ``request.environ['cone.app.continuation']``. If an uncaught exception is
@@ -64,15 +65,16 @@ Continuation
 
 ``bdajax`` supports AJAX continuation. This is useful i.e. if a data
 manipulating tile needs to finish it's job before anything can be re-rendered,
-or if user should get a message displayed after action processing or similar.
+or if user should get a message displayed after action processing. Several
+other use cases are applying.
 
 Available continuation objects on the server side are
 ``cone.app.browser.ajax.AjaxAction``, ``cone.app.browser.ajax.AjaxEvent`` and
 ``cone.app.browser.ajax.AjaxMessage``.
 
 To trigger AJAX continuation, instanciate the desired definition(s) and call
-``cone.app.browser.ajax.ajax_continue``, which expects the request and a
-continuation definition or al list of continuation definitions as arguments.::
+``cone.app.browser.ajax.ajax_continue``. It expects the request and a
+continuation definition or a list of continuation definitions as arguments::
 
     >>> from cone.app.browser.ajax import (
     ...     ajax_continue,
@@ -99,12 +101,12 @@ A shortcut for continuation messages is located at
 Forms
 -----
 
-AJAX forms are automatically detected and computed porperly as long as they
-are rendered via ``cone.app.browser.authoring.render_form``. However, the
-default rendering location is the main content area of the page. If the
-DOM element on client side containing the form differs, re-rendering
-definitions of the form must also change in order to make validation error form
-re-rendering do the right thing.
+AJAX forms are automatically detected and computed properly as long as they
+are rendered via ``cone.app.browser.authoring.render_form``. Default rendering 
+location is the main content area of the page. If DOM element on client side 
+containing the form is not default, re-rendering definitions of form must 
+also change in order to make validation error form re-rendering do the right 
+thing.
 
 The rendering target of a form can be changed with
 ``cone.app.browser.ajax.ajax_form_fiddle``. Provide a plumbing part hooking to
@@ -134,12 +136,12 @@ Use this part in form tile.::
 JavaScript
 ----------
 
-Using ``bdajax`` dispatching is desired to be used for very general contracts.
+Using ``bdajax`` dispatching is supposed to be used for very general contracts.
 Often, it's faster or even required to provide a snippet of Javascript code
 doing something specific.
 
 To make custom JS work propably in combination with the dispatching system,
-define a "binder" function and register it in ``bdajax.binders``.::
+define a "binder" function and register it in ``bdajax.binders``::
 
     (function($) {
     
