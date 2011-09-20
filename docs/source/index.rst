@@ -14,7 +14,7 @@ The authors of this package are coming from ``Zope`` and ``Plone`` development,
 thus a developer originating those domains will be familiar with lots of the
 concepts used.
 
-The package does NOT aim to provide another CMS. Plone is already very done.
+The package does NOT aim to provide another CMS. Plone is already well done.
 ``cone.app`` aims to provide an environment for building web applications used
 to serve and modify node-like data structures. They all follow the same
 contract of how data nodes must look like. Doing so ensures that user interface
@@ -36,6 +36,8 @@ processing library.
 
 For authentication and authorization
 `node.ext.ugm <http://pypi.python.org/pypi/node.ext.ugm>`_ contract is expected.
+
+Note: ``cone.app`` currently requires pyramid 1.1!
 
 
 Features
