@@ -46,7 +46,9 @@ def render_form(model, request, tilename):
     rendered with tile ``tilename`` as content tile, otherwise
     ``render_ajax_form`` is called, which renders the tile wrapped by some
     javascript calls into a script tag. The ajax response will be rendered into
-    the hidden iframe on client side, where ajax continuation is processed. 
+    the hidden iframe on client side, where ajax continuation is processed.
+    
+    XXX: move to cone.app.browser.form 
     """
     if is_ajax(request):
         return render_ajax_form(model, request, tilename)
