@@ -6,6 +6,7 @@
   <include package="yafowil.widget.datetime" />
   <include package="yafowil.widget.richtext" />
   <include package="yafowil.widget.dict" />
+  <include package="yafowil.widget.array" />
   
   <scan package=".browser" />
   

@@ -34,7 +34,12 @@ Contributors
 Changes
 =======
 
+0.9.1dev
+--------
+
+- add yafowil.widget.array to dependencies
+
 0.9
 ---
 
-    - Initial work
+- Initial work
