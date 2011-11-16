@@ -210,8 +210,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 elem = $(elem);
                 var uid = elem.attr('id');
                 uid = uid.substring(4, uid.length);
-                // XXX: UID missing - Check!
                 if (!uid) {
+                    bdajax.error(
+                        'Can not add reference, no UID for node found!');
                     return;
                 }
                 var label = $('.reftitle', elem.parent()).html();

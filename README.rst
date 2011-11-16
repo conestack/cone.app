@@ -37,7 +37,11 @@ Changes
 0.9.1dev
 --------
 
+- show error message at attempt to add reference with missing UID
+  [rnix, 2011-11-16]
+
 - add yafowil.widget.array to dependencies
+  [rnix]
 
 0.9
 ---
