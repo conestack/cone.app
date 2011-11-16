@@ -26,7 +26,7 @@ def principal_data(pid):
 def timestamp():
     """XXX: tz aware
     """
-    return datetime.datetime.now()
+    return datetime.now()
 
 
 class DatetimeHelper(object):
