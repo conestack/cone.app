@@ -37,11 +37,16 @@ Changes
 0.9.1dev
 --------
 
+- Add ``bda.calendar.base`` as install dependency for timezone aware 
+  datetime handling.
+  [rnix, 2011-11-16]
+
 - show error message at attempt to add reference with missing UID
   [rnix, 2011-11-16]
 
 - add yafowil.widget.array to dependencies
   [rnix]
+
 
 0.9
 ---

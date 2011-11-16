@@ -23,7 +23,15 @@ def principal_data(pid):
     return data
 
 
+def timestamp():
+    """XXX: tz aware
+    """
+    return datetime.datetime.now()
+
+
 class DatetimeHelper(object):
+    """XXX: tz aware
+    """
     
     def w_value(self, val):
         if isinstance(val, datetime):

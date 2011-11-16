@@ -9,6 +9,7 @@
   <include package="yafowil.widget.array" />
   <include package="yafowil.widget.autocomplete" />
   <include package="yafowil.widget.dynatree" />
+  <include package="bda.calendar.base" />
   
   <scan package=".browser" />
   
