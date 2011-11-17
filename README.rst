@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- ``contextmenu`` tile considers ``action_up_tile`` property now.
+  [rnix, 2011-11-17]
+
 - Add ``bda.calendar.base`` as install dependency for timezone aware 
   datetime handling.
   [rnix, 2011-11-16]

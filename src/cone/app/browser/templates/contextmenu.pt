@@ -4,14 +4,15 @@
     
   <div class="contextmenu">
       
-    <div tal:condition="model.properties.action_up">
-      <a href="${context.nodeurl[:context.nodeurl.rfind('/')]}"
+    <div tal:condition="model.properties.action_up"
+         tal:define="action context.action_up">
+      <a href="${action['target']}"
          class="up16_16"
          title="One level up"
          ajax:bind="click"
-         ajax:target="${context.nodeurl[:context.nodeurl.rfind('/')]}"
+         ajax:target="${action['target']}"
          ajax:event="contextchanged:.contextsensitiv"
-         ajax:action="listing:#content:inner">&nbsp;</a>
+         ajax:action="${action['action']}">&nbsp;</a>
     </div>
     
     <div tal:condition="model.properties.action_view">

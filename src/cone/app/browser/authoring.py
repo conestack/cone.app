@@ -273,4 +273,13 @@ class AddDropdown(Tile):
 
 @tile('contextmenu', 'templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
-    pass
+    
+    @property
+    def action_up(self):
+        action = self.model.properties.action_up_tile
+        if not action:
+            action = 'listing'
+        return {
+            'target': make_url(self.request, node=self.model.parent),
+            'action': '%s:#content:inner' % action,
+        }

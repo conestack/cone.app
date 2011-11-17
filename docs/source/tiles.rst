@@ -321,8 +321,12 @@ Contextmenu containing available user actions for node.
 **Considered properties**
 
 *action_up*
-    Flag whether to render "One level up" action. Renders ``listing`` tile on
+    Flag whether to render "One level up" action. Renders content area tile on
     parent node to main content area.
+
+*action_up_tile*
+    Considered if ``action_up`` is true. Defines the tilename used for
+    rendering parent content area. Defaults to ``listing`` if undefined.
 
 *action_view*
     Flag whether to render view action. Renders ``content`` tile on node to
