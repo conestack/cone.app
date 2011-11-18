@@ -15,12 +15,12 @@ ZCML
 
 For each plugin registered in the application configuration ini file, a
 configure.zcml file must be provided which may contain package includes,
-package scans and other ZCML directives, i.e.::
+package scans and other ZCML directives, e.g.::
 
     <?xml version="1.0" encoding="utf-8" ?>
     <configure xmlns="http://pylonshq.com/pyramid">
       
-      <!-- directives goes here -->
+      <!-- directives go here -->
     
     </configure>
 
@@ -56,7 +56,7 @@ For delivering CSS and JS resources, register them in plugin ``__init__.py``::
     # public CSS
     cone.app.cfg.css.public.append('example.static/public.css')
     
-    # protectes CSS
+    # protected CSS
     cone.app.cfg.css.protected.append('example.static/protected.css')
     
     # public Javascript
@@ -96,9 +96,9 @@ Application startup
 
 If there is the need of performing some code on application startup, a main
 hook function can be registered by any plugin (or other package). The main
-hooks are performed after configuration loading. The hooks gets passed the
+hooks are performed after configuration loading. The hook gets passed the
 ``pyramid.config.Configurator`` object, global_config and local_config 
-dictionariers.::
+dictionaries.::
 
     >>> def example_main_hook(config, global_config, local_config):
     ...     """Initialization at application startup"""
@@ -113,7 +113,7 @@ Authentication
 ``cone.app`` provides pluggable authentication as long as the authentication
 implementation follows the contract described in ``node.ext.ugm.interfaces``.
 
-If a UGM implementation is provided, it makes sence to initialize it inside
+If a UGM implementation is provided, it makes sense to initialize it inside
 an application startup main hook.
 
 UGM implementations acting for authentication are added to
@@ -132,7 +132,7 @@ The main template of ``cone.app`` can be altered by overriding
     >>> import cone.app
     >>> cone.app.cfg.main_template = 'example.app.browser:templates/main.pt'
 
-When using the default main template, some tiles could be disabled globally
+When using the default main template, some tiles can be disabled globally
 by settings some properties on ``cone.app.cfg.layout``.
 
 Hide livesearch.::
