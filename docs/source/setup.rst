@@ -13,14 +13,14 @@ a seperate package.
 Hello world
 ===========
 
-In this example a package named ``exmaple.app`` is created, which contains the
+In this example a package named ``example.app`` is created, which contains the
 plugin code and the application configuration.
 
 
-Create package
---------------
+Create the package
+----------------
 
-Create python egg named ``example.app`` with has a file system structure like::
+Create a python egg named ``example.app`` with a file system structure like::
 
     example.app
         src
