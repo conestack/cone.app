@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Add margin top for sidebar and content.
+  [rnix, 2011-11-18]
+
 - ``contextmenu`` tile considers ``action_up_tile`` property now.
   [rnix, 2011-11-17]
 
@@ -44,10 +47,10 @@ Changes
   datetime handling.
   [rnix, 2011-11-16]
 
-- show error message at attempt to add reference with missing UID
+- Show error message at attempt to add reference with missing UID.
   [rnix, 2011-11-16]
 
-- add yafowil.widget.array to dependencies
+- Add yafowil.widget.array to dependencies.
   [rnix]
 
 
