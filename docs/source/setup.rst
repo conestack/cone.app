@@ -20,20 +20,31 @@ plugin code and the application configuration.
 Create the package
 ----------------
 
-Create a python egg named ``example.app`` with a file system structure like::
+Create a python egg named ``example.app`` with a folder structure like this and
+featuring the following files. Instructions follow :-) ::
 
-    example.app
-        src
-            example
-                __init__.py
-                app
-                    __init__.py
+    example.app/
+        bootstrap.py
         buildout.cfg
         example.ini
         setup.py
+        src/
+            example/
+                __init__.py
+                app/
+                    __init__.py
+                    browser/
+                    templates/
+                        example.pt
+                    configure.zcml
+                    model.py
+
 
 The package must depend on ``cone.app`` as installation dependency.
-
+``bootstrap.py`` and ``setup.py`` must be copied from somewhere or reinvented,
+see http://docs.python.org/distutils/setupscript.html#writing-the-setup-script
+and wget http://python-distribute.org/bootstrap.py .
+But let's first create the config files before we start and try to run it.
 
 Buildout
 --------
@@ -62,51 +73,51 @@ Create ``example.ini`` and add::
 
     [DEFAULT]
     debug = true
-    
+
     [server:main]
     use = egg:Paste#http
     host = 0.0.0.0
     port = 8081
-    
+
     [app:example]
     use = egg:cone.app#main
     reload_templates = true
-    
+
     # paster debugging flags
     debug_authorization = false
     debug_notfound = false
     debug_routematch = false
     debug_templates = true
     default_locale_name = en
-    
+
     # cone.app admin user and password
     cone.admin_user = admin
     cone.admin_password = admin
-    
+
     # cone.app auth tkt settings
     cone.auth_secret = 12345
-    #cone.auth_cookie_name = 
-    #cone.auth_secure = 
-    #cone.auth_include_ip = 
-    #cone.auth_timeout = 
-    #cone.auth_reissue_time = 
-    #cone.auth_max_age = 
-    #cone.auth_http_only = 
-    #cone.auth_path = 
-    #cone.auth_wild_domain = 
-    
+    #cone.auth_cookie_name =
+    #cone.auth_secure =
+    #cone.auth_include_ip =
+    #cone.auth_timeout =
+    #cone.auth_reissue_time =
+    #cone.auth_max_age =
+    #cone.auth_http_only =
+    #cone.auth_path =
+    #cone.auth_wild_domain =
+
     # plugins to be loaded
     cone.plugins = example.app
-    
+
     # application title
     cone.root.title = example
-    
+
     # default child of cone.app root model node
     cone.root.default_child = example
-    
+
     # flag whether to suppress rendering main menu titles
     cone.root.mainmenu_empty_title = false
-    
+
     [pipeline:main]
     pipeline =
         example
@@ -186,21 +197,21 @@ inherits from ``node.interfaces.INode`` and extends it by:
 *__acl__*
     Property defining security. See documentation of ``pyramid.security`` for
     details.
-    
+
 *properties*
     Property containing ``cone.app.IProperties`` implementing object. This
     properties usually hold UI configuration information.
-    
+
 *metadata*
     Property containing ``cone.app.IMetadata`` implementing object. Metadata
     are used by different UI widgets to display node metadata.
-    
+
 *nodeinfo*
     Property containing ``cone.app.INodeInfo`` implementing object. NodeInfo
-    provides cardinality information and general node information which is 
+    provides cardinality information and general node information which is
     primary needed for authoring operations.
 
-Create plugin root node in ``example.app.model``::
+Create plugin root node in ``example/app/model.py``::
 
     >>> from cone.app.model import BaseNode
     >>> class ExampleApp(BaseNode): pass
@@ -208,13 +219,14 @@ Create plugin root node in ``example.app.model``::
 Hook this application node to ``cone.app`` in ``example.app.__init__``::
 
     >>> import cone.app
+    >>> import my.app.model import MyApp
     >>> cone.app.register_plugin('example', ExampleApp)
 
 
 Views
 -----
 
-``cone.app`` follows the concept of tiles. Each part of the application is 
+``cone.app`` follows the concept of tiles. Each part of the application is
 represented by a tile, i.e. main menu, navigation tree, site content area, etc.
 
 The implementation and more documentation of tiles can be found here
@@ -244,7 +256,7 @@ root node::
     >>> from cone.tile import registerTile
     >>> from cone.app.browser.layout import ProtectedContentTile
     >>> from example.app.model import ExampleApp
-    
+
     >>> registerTile('content',
     ...              'your.app:browser/templates/exampleapp.pt',
     ...              interface=ExampleApp,
@@ -259,7 +271,11 @@ Also create the page template named ``exampleapp.pt`` at the indicated location:
 
 Tell your plugin to scan the available views in ``configure.zcml``::
 
-    <scan package=".browser" />
+    <?xml version="1.0" encoding="utf-8" ?>
+    <configure xmlns="http://pylonshq.com/pyramid">
+      <include package="pyramid_zcml"/>
+      <scan package=".browser" />
+    </configure>
 
 
 Install and run application
