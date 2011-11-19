@@ -31,8 +31,12 @@ form .field div.error {
 form .field div.error label {
     color:#333;
 }
-.clear {
+.clear,
+.visual_clear {
     clear:both;
+}
+.hiddenStructure {
+    display:none;
 }
 
 /* Main layout styles */
