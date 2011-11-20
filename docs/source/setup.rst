@@ -18,7 +18,7 @@ plugin code and the application configuration.
 
 
 Create the package
-----------------
+------------------
 
 Create a python egg named ``example.app`` with a folder structure like this and
 featuring the following files. Instructions follow :-) ::

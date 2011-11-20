@@ -66,7 +66,7 @@ The second one is ``cone.app.workflow.WorkflowACL``, which alters the
 ``__acl__`` property of the node. The property computing code first tries to
 lookup an ACL explicitly defined for current workflow state. If no ACL for
 state is found, the ACL defined in ``default_acl`` is returned. This ACL
-permits 'change_state' for roles owner and manager by default.::
+permits 'change_state' for roles owner and manager by default.
 
 Also workflow tile related node ``properties`` must be set. As described in
 tiles documentation, ``wf_state`` must be set to ``True`` indicating that
