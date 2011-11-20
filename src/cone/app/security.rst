@@ -68,6 +68,57 @@ Authenticate as default user::
     >>> has_permission('manage', context, layer.current_request)
     <ACLDenied instance ...
 
+PrincipalACL::
+
+    >>> from plumber import plumber, default
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.security import PrincipalACL
+    
+    >>> class PrincipalACLNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = PrincipalACL
+    ...     @property
+    ...     def __acl__(self):
+    ...         return BaseNode.__acl__
+    
+    >>> node = PrincipalACLNode()
+    >>> node.__acl__
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Abstract ``PrincipalACL`` does not 
+    implement ``principal_roles``.
+    
+    >>> class MyPrincipalACL(PrincipalACL):
+    ...     @default
+    ...     @property
+    ...     def principal_roles(self):
+    ...         return {
+    ...             'someuser': ['manager'],
+    ...             'otheruser': ['editor'],
+    ...             'group:some_group': ['editor', 'manager'],
+    ...         }
+    
+    >>> class MyPrincipalACLNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = MyPrincipalACL
+    ...     @property
+    ...     def __acl__(self):
+    ...         return BaseNode.__acl__
+    
+    >>> node = MyPrincipalACLNode()
+    >>> node.__acl__
+    [('Allow', 'someuser', ['edit', 'add', 'delete', 'manage', 'view']), 
+    ('Allow', 'otheruser', ['edit', 'add', 'view']), 
+    ('Allow', 'group:some_group', ['edit', 'add', 'delete', 'manage', 'view']), 
+    ('Allow', 'system.Authenticated', ['view']), 
+    ('Allow', 'role:viewer', ['view']), 
+    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'system.Everyone', ['login']), 
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
+
 If an authentication plugin raises an error when calling ``authenticate``, an
 error message is logged::
 
@@ -86,7 +137,7 @@ error message is logged::
     >>> from cone.app.security import authenticate
     >>> request = layer.current_request
     >>> authenticate(request, 'foo', 'foo')
-    <LogRecord: cone.app, 30, ...security.py, 64, 
+    <LogRecord: cone.app, 30, ...security.py, 71, 
     "Authentication plugin <type 'object'> raised an Exception while trying 
     to authenticate: 'object' object has no attribute 'users'">
 
@@ -102,7 +153,7 @@ Test Group callback, also logs if an error occurs::
     
     >>> groups_callback('foo', layer.new_request())
     <LogRecord: cone.app, 40, 
-    ...security.py, 82, "'object' object has no attribute 'users'">
+    ...security.py, 119, "'object' object has no attribute 'users'">
     []
 
 Cleanup::

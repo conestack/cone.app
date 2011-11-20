@@ -1,0 +1,22 @@
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+  <div class="box">
+    <h1>
+      Sharing for <tal:title replace="model.metadata.title" />
+    </h1>
+    
+    <tal:contextmenu replace="structure tile('contextmenu')" />
+    
+    <div class="principal-search">
+      <label>Search for principal</label>
+      <input type="text" id="principal-search" size="15" />
+      <input type="button"
+             id="principal-search-submit"
+             value="search"
+             ajax:target="${context.nodeurl}" />
+    </div>
+    
+    <tal:listing replace="structure tile('local_acl')" />
+  </div>
+</tal:ajax>

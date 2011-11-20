@@ -407,6 +407,20 @@ class ActionDelete(ContextAction):
         return self.model.properties.deletable
 
 
+class ActionSharing(ContextAction):
+    css_class = 'sharing16_16'
+    title = 'Sharing'
+    action = 'sharing:#content:inner'
+    
+    @property
+    def href(self):
+        return '%s/sharing' % self.target
+    
+    @property
+    def enabled(self):
+        return hasattr(self.model, 'principal_roles')
+
+
 class ActionState(ContextAction):
     type = 'tile'
     tile = 'wf_dropdown'
@@ -431,6 +445,7 @@ GeneralActions.factories['action_list'] = ActionList
 ObjectActions.factories['action_add'] = ActionAdd
 ObjectActions.factories['action_edit'] = ActionEdit
 ObjectActions.factories['action_delete'] = ActionDelete
+ObjectActions.factories['action_sharing'] = ActionSharing
 ObjectActions.factories['action_state'] = ActionState
 
 context_menu_sections = odict()

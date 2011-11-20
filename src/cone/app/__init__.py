@@ -19,6 +19,7 @@ APP_PATH = os.environ.get('APP_PATH', '')
 cfg = Properties()
 
 # authentication providers (expect ``node.ext.ugm.Ugm`` like API)
+# XXX: delegate provider aggregating to ugm implementation.
 cfg.auth = list()
 
 # used main template

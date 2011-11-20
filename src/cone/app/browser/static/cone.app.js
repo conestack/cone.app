@@ -24,6 +24,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         cone.dropdownmenubinder();
         cone.transitionmenubinder();
         cone.ajaxformbinder();
+        cone.sharingbinder();
         yafowil.referencebrowser.browser_binder();
         
         // add binders to bdajax binding callbacks
@@ -32,8 +33,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             dropdownmenubinder: cone.dropdownmenubinder,
             transitionmenubinder: cone.transitionmenubinder,
             ajaxformbinder: cone.ajaxformbinder,
+            sharingbinder: cone.sharingbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
-            refbrowser_add_reference_binder: 
+            refbrowser_add_reference_binder:
                 yafowil.referencebrowser.add_reference_binder
         });
     });
@@ -75,6 +77,32 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             $('.transitions_dropdown', context).dropdownmenu({
                 menu: '.dropdown_items',
                 trigger: '.state a'
+            });
+        },
+        
+        sharingbinder: function(context) {
+            var button = $('#principal-search-submit', context);
+            button.unbind('click').bind('click', function(event) {
+                event.preventDefault();
+                var button_elem = $(this);
+                var input = $('#principal-search', button_elem.parent());
+                var target = 
+                    bdajax.parsetarget(button_elem.attr('ajax:target'));
+                target.params.term = input.attr('value');
+                // XXX: start, end, sort, order (from table)
+                bdajax.action({
+                    name: 'local_acl',
+                    mode: 'replace',
+                    selector: '#localacltable',
+                    url: target.url,
+                    params: target.params
+                });
+            });
+            var checkboxes = $('.principal_role', context);
+            checkboxes.unbind('change').bind('change', function(event) {
+                event.preventDefault();
+                var checkbox = $(this);
+                bdajax.message(checkbox.attr('checked'));
             });
         },
         

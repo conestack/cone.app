@@ -60,7 +60,9 @@
             <td tal:condition="col_def['content'] != 'actions'"
                 tal:define="item row_data[col_def['id']];
                             is_string col_def['content'] == 'string';
-                            value is_string and item.value or context.format_date(item.value);">
+                            is_structure col_def['content'] == 'structure';
+                            value (is_string or is_structure) and item.value or context.format_date(item.value);">
+              
               <tal:linked condition="item.link">
                 <a href="${item.link}"
                    ajax:bind="click"
@@ -73,8 +75,17 @@
               </tal:linked>
               
               <tal:notlinked condition="not item.link">
-                <span tal:replace="value">Value</span>
+              
+                <tal:string condition="is_string">
+                  <span tal:replace="value">Value</span>
+                </tal:string>
+              
+                <tal:structure condition="is_structure">
+                  <span tal:replace="structure value">Value</span>
+                </tal:structure>
+              
               </tal:notlinked>
+            
             </td>
             
           </tal:td>

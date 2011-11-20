@@ -347,6 +347,13 @@ table.contents td {
     border-right:1px solid #ccc;
 }
 
+/* Sharing tile */
+div.principal-search {
+	margin-bottom:8px;
+	padding:8px;
+	border:#ccc 1px solid;
+}
+
 /* Dropdown */
 .dropdown {
     padding:0;
@@ -564,5 +571,13 @@ a.delete16_16 {
     width:16px;
     font-size:16px;
     background:url('images/delete16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.sharing16_16 {
+    text-decoration: none;
+    padding-left:16px;
+    width:16px;
+    font-size:16px;
+    background:url('images/sharing16_16.png') top left no-repeat;
     cursor:pointer;
 }
