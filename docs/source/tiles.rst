@@ -313,43 +313,123 @@ Renders node creation, modification and author information.
 Context menu
 ------------
 
-Contextmenu containing available user actions for node.
+User actions for a node. The context menu consists of sections containing
+actions. Sections or actions can be added to
+``cone.app.browser.authoring.context_menu_sections``.
 
 **Registration name**
     *contextmenu*
 
+Existing Actions
+................
+
+ActionUp
+~~~~~~~~
+
+Renders content area tile on parent node to main content area.
+
 **Considered properties**
 
 *action_up*
-    Flag whether to render "One level up" action. Renders content area tile on
-    parent node to main content area.
+    Flag whether to render "One level up" action.
 
 *action_up_tile*
     Considered if ``action_up`` is true. Defines the tilename used for
     rendering parent content area. Defaults to ``listing`` if undefined.
 
+ActionView
+~~~~~~~~~~
+
+Renders ``content`` tile on node to main content area.
+
+**Considered properties**
+
 *action_view*
-    Flag whether to render view action. Renders ``content`` tile on node to
-    main content area.
+    Flag whether to render view action.
+
+ActionList
+~~~~~~~~~~
+
+Renders ``listing`` tile on node to main content area.
+
+**Considered properties**
 
 *action_list*
-    Flag whether to render list action. Renders ``listing`` tile on node to
-    main content area.
+    Flag whether to render list action.
 
-*editable*
-    Flag whether node is editable. Renders ``edit`` tile to main content area.
+ActionAdd
+~~~~~~~~~
 
-*deletable*
-    Flag whether node is deletable. Invokes ``delete`` tile on node after
-    confirming action.
-
-*wf_state*
-    Flag whether model provides workflow. If so, render ``wf_dropdown`` tile.
+Renders add dropdown menu.
 
 **Considered node information**
 
 *addables*
-    If node can have children, render ``add_dropdown`` tile.
+    Addable children defined for node.
+
+ActionEdit
+~~~~~~~~~~
+
+Renders ``edit`` tile to main content area.
+
+**Considered properties**
+
+*editable*
+    Flag whether node is editable.
+
+ActionDelete
+~~~~~~~~~~~~
+
+Invokes ``delete`` tile on node after confirming action.
+
+**Considered properties**
+
+*deletable*
+    Flag whether node is deletable.
+
+ActionState
+~~~~~~~~~~~
+
+Renders workflow state dropdown menu.
+
+**Considered properties**
+
+*wf_state*
+    Flag whether model provides workflow.
+
+Add Actions
+...........
+
+Define action::
+
+    >>> from cone.app.browser.authoring import ContextAction
+    >>> class MyAction(ContextAction):
+    ...     css_class = 'myaction16_16'
+    ...     title = 'My Action'
+    ...     action = 'myaction:#content:inner'
+    ...
+    ...     @property
+    ...     def href(self):
+    ...         return '%s/myaction_no_js' % self.target
+    ...
+    ...     @property
+    ...     def enabled(self):
+    ...         return self.model.properties.action_myaction
+
+Define section and register action on it. Actions can also be added to existing
+sections::
+
+    >>> from cone.app.browser.authoring import ContextActionsSection
+    >>> from odict import odict
+    >>> class MyActions(ContextActionsSection):
+    ...     factories = odict()
+
+    >>> MyActions.factories['action_myaction'] = MyAction
+
+Register section::
+
+    >>> from cone.app.browser.authoring import context_menu_sections
+    >>> context_menu_sections['myactions'] = MyActions
 
 
 Add dropdown
