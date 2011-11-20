@@ -52,11 +52,11 @@ Imports and dummy context::
     >>> batch.request = request
     >>> batch.vocab
     [{'current': True, 'visible': True, 
-    'url': 'http://example.com/?sort=&b_page=0', 'page': '1'}, 
+    'url': 'http://example.com/?sort=&order=&b_page=0', 'page': '1'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?sort=&b_page=1', 'page': '2'}, 
+    'url': 'http://example.com/?sort=&order=&b_page=1', 'page': '2'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?sort=&b_page=2', 'page': '3'}]
+    'url': 'http://example.com/?sort=&order=&b_page=2', 'page': '3'}]
 
 ``sorted_rows`` is responsible to generate the table rows data. It gets passed
 ``start``, ``end``, ``sort`` and ``order`` and must return a list of
