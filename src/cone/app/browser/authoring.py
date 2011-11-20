@@ -1,3 +1,4 @@
+from odict import odict
 from plumber import (
     plumber,
     Part,
@@ -275,11 +276,169 @@ class AddDropdown(Tile):
 class ContextMenu(Tile):
     
     @property
-    def action_up(self):
+    def sections(self):
+        sections = list()
+        for factory in context_menu_sections.values():
+            sections.append(factory(self.model, self.request))
+        return sections
+
+
+class ContextAction(object):
+    type = 'direct'
+    bind = 'click'
+    href = None
+    css_class = None
+    title = None
+    target = None
+    event = None
+    action = None
+    confirm = None
+    tile = None
+    
+    @property
+    def target(self):
+        return make_url(self.request, node=self.model)
+    
+    def __init__(self, model, request):
+        self.model = model
+        self.request = request
+    
+    def enabled(self):
+        raise NotImplementedError(u"Abstract ``ContextAction`` does not "
+                                  u"implement ``enabled``.")
+
+
+class ContextActionsSection(object):
+    factories = odict()
+    
+    def __init__(self, model, request):
+        self.model = model
+        self.request = request
+    
+    @property
+    def actions(self):
+        actions = list()
+        for factory in self.factories.values():
+            actions.append(factory(self.model, self.request))
+        return actions
+    
+    @property
+    def enabled(self):
+        return True
+
+
+class ActionUp(ContextAction):
+    css_class = 'up16_16'
+    title = 'One level up'
+    event = 'contextchanged:.contextsensitiv'
+    
+    @property
+    def action(self):
         action = self.model.properties.action_up_tile
         if not action:
             action = 'listing'
-        return {
-            'target': make_url(self.request, node=self.model.parent),
-            'action': '%s:#content:inner' % action,
-        }
+        return '%s:#content:inner' % action
+    
+    @property
+    def enabled(self):
+        return self.model.properties.action_up
+    
+    @property
+    def target(self):
+        return make_url(self.request, node=self.model.parent)
+    
+    href = target
+
+
+class ActionView(ContextAction):
+    css_class = 'view16_16'
+    title = 'View'
+    action = 'content:#content:inner'
+    href = ContextAction.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.action_view
+
+
+class ActionList(ContextAction):
+    css_class = 'listing16_16'
+    title = 'Listing'
+    action = 'listing:#content:inner'
+    
+    @property
+    def href(self):
+        return '%s/listing' % self.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.action_list
+
+
+class ActionAdd(ContextAction):
+    type = 'tile'
+    tile = 'add_dropdown'
+    
+    @property
+    def enabled(self):
+        return self.model.nodeinfo.addables
+
+
+class ActionEdit(ContextAction):
+    css_class = 'edit16_16'
+    title = 'Edit'
+    action = 'edit:#content:inner'
+    
+    @property
+    def href(self):
+        return '%s/edit' % self.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.editable
+
+
+class ActionDelete(ContextAction):
+    css_class = 'delete16_16'
+    title = 'Delete'
+    action = 'delete:NONE:NONE'
+    confirm = 'Do you really want to delete this Item?'
+    
+    @property
+    def href(self):
+        return '%s/delete' % self.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.deletable
+
+
+class ActionState(ContextAction):
+    type = 'tile'
+    tile = 'wf_dropdown'
+    
+    @property
+    def enabled(self):
+        return self.model.properties.wf_state
+
+
+class GeneralActions(ContextActionsSection):
+    factories = odict()
+
+
+class ObjectActions(ContextActionsSection):
+    factories = odict()
+
+
+GeneralActions.factories['action_up'] = ActionUp
+GeneralActions.factories['action_view'] = ActionView
+GeneralActions.factories['action_list'] = ActionList
+    
+ObjectActions.factories['action_add'] = ActionAdd
+ObjectActions.factories['action_edit'] = ActionEdit
+ObjectActions.factories['action_delete'] = ActionDelete
+ObjectActions.factories['action_state'] = ActionState
+
+context_menu_sections = odict()
+context_menu_sections['general'] = GeneralActions
+context_menu_sections['object'] = ObjectActions

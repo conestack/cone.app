@@ -1,66 +1,41 @@
 <tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
-    
+  
   <div class="contextmenu">
-      
-    <div tal:condition="model.properties.action_up"
-         tal:define="action context.action_up">
-      <a href="${action['target']}"
-         class="up16_16"
-         title="One level up"
-         ajax:bind="click"
-         ajax:target="${action['target']}"
-         ajax:event="contextchanged:.contextsensitiv"
-         ajax:action="${action['action']}">&nbsp;</a>
-    </div>
+  
+    <tal:sections repeat="section context.sections">
     
-    <div tal:condition="model.properties.action_view">
-      <a href="${context.nodeurl}"
-         class="view16_16"
-         title="View"
-         ajax:bind="click"
-         ajax:target="${context.nodeurl}"
-         ajax:action="content:#content:inner">&nbsp;</a>
-    </div>
-    
-    <div tal:condition="model.properties.action_list">
-      <a href="${context.nodeurl}/listing"
-         class="listing16_16"
-         title="Listing"
-         ajax:bind="click"
-         ajax:target="${context.nodeurl}"
-         ajax:action="listing:#content:inner">&nbsp;</a>
-    </div>
-    
-    <tal:addables condition="model.nodeinfo.addables">
-      <tal:add_dropdown replace="structure tile('add_dropdown')" />
-    </tal:addables>
-    
-    <div tal:condition="model.properties.editable">
-      <a href="${context.nodeurl}/edit"
-         class="edit16_16"
-         title="Edit"
-         ajax:bind="click"
-         ajax:target="${context.nodeurl}"
-         ajax:action="edit:#content:inner">&nbsp;</a>
-    </div>
-    
-    <div tal:condition="model.properties.deletable">
-      <a href="${context.nodeurl}/delete"
-         class="delete16_16"
-         title="Delete"
-         ajax:bind="click"
-         ajax:target="${context.nodeurl}"
-         ajax:action="delete:NONE:NONE"
-         ajax:confirm="Do you really want to delete this Item?">&nbsp;</a>
-    </div>
-    
-    <tal:addables condition="model.properties.wf_state">
-      <tal:add_dropdown replace="structure tile('wf_dropdown')" />
-    </tal:addables>
-    
+      <tal:section condition="section.enabled">
+        <tal:actions repeat="action section.actions">
+        
+          <tal:action condition="action.enabled">
+            <tal:direct condition="action.type == 'direct'">
+            
+              <div>
+                <a href="${action.href|nothing}"
+                   class="${action.css_class|nothing}"
+                   title="${action.title|nothing}"
+                   ajax:bind="${action.bind|nothing}"
+                   ajax:target="${action.target|nothing}"
+                   ajax:event="${action.event|nothing}"
+                   ajax:action="${action.action|nothing}"
+                   ajax:confirm="${action.confirm|nothing}">&nbsp;</a>
+              </div>
+            </tal:direct>
+            
+            <tal:tile condition="action.type == 'tile'">
+              <tal:tile replace="structure tile(action.tile)" />
+            </tal:tile>
+            
+          </tal:action>
+        </tal:actions>
+        
+      </tal:section>
+    </tal:sections>
+  
   </div>
+  
   <div style="clear:both;"></div>
   
 </tal:ajax>

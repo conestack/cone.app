@@ -473,6 +473,33 @@ XXX: discuss whether to hide entire widget if no items::
     >>> rendered.find(expected) != -1
     True
 
+ContextMenu
+-----------
+
+::
+
+    >>> model = root['somechild']
+    >>> model.properties.action_up = True
+    >>> model.properties.action_view = True
+    >>> model.properties.action_list = True
+    >>> model.properties.editable = True
+    >>> model.properties.deletable = True
+    >>> rendered = render_tile(model, request, 'contextmenu')
+    >>> rendered.find('up16_16') > -1
+    True
+    
+    >>> rendered.find('view16_16') > -1
+    True
+    
+    >>> rendered.find('listing16_16') > -1
+    True
+    
+    >>> rendered.find('edit16_16') > -1
+    True
+    
+    >>> rendered.find('delete16_16') > -1
+    True
+
 Logout::
 
     >>> layer.logout()
