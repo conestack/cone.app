@@ -117,6 +117,7 @@ class Table(Tile):
     default_sort = None
     default_order = None
     slicesize = 10
+    query_whitelist = []
     
     @property
     def slice(self):
@@ -142,13 +143,20 @@ class Table(Tile):
         b_page = self.request.params.get('b_page', '0')
         cur_sort = self.request.params.get('sort')
         cur_order = self.request.params.get('order', self.default_order)
-        base_url = '%s?b_page=%s' % (self.nodeurl, b_page)
         selected = cur_sort == sortkey
         alter = selected and cur_order == 'desc'
         order = alter and 'asc' or 'desc'
-        sorturl = '%s&amp;sort=%s&amp;order=%s' % (base_url, sortkey, order)
+        params = {
+            'b_page': b_page,
+            'sort': sortkey,
+            'order': order,
+        }
+        for term in self.query_whitelist:
+            params[term] = self.request.params.get(term, '')
+        query = make_query(**params)
+        url = make_url(self.request, node=self.model, query=query)
         css = selected and order or ''
-        return css, sorturl
+        return css, url
 
 
 class TableSlice(object):
@@ -201,8 +209,16 @@ class TableBatch(Batch):
             pages += 1
         current = self.request.params.get('b_page', '0')
         sort = self.request.params.get('sort', '')
+        order = self.request.params.get('order', '')
+        params = {
+            'sort': sort,
+            'order': order,
+        }
+        for term in self.table_tile.query_whitelist:
+            params[term] = self.request.params.get(term, '')
         for i in range(pages):
-            query = make_query(b_page=str(i), sort=sort)
+            params['b_page'] = str(i)
+            query = make_query(**params)
             url = make_url(self.request, path=path, query=query)
             ret.append({
                 'page': '%i' % (i + 1),

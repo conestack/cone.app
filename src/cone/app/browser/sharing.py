@@ -26,8 +26,9 @@ class SharingTable(Table):
     table_id = 'localacltable'
     table_tile_name = 'local_acl'
     default_sort = 'principal'
-    default_order = 'desc'
+    default_order = 'asc'
     slicesize = 15
+    query_whitelist = ['term']
     
     @property
     def col_defs(self):
@@ -77,7 +78,10 @@ class SharingTable(Table):
         else:
             principal_roles = self.model.principal_roles
             principal_ids = principal_roles.keys()
-        for principal_id in principal_ids:
+        ids = principal_ids
+        if order == 'desc':
+            ids.reverse()
+        for principal_id in ids[start:end]:
             principal = security.principal_by_id(principal_id)
             if not principal:
                 # XXX: mark not found
