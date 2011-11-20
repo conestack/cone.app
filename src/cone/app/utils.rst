@@ -71,3 +71,9 @@ Helper object for read/write operations with datetime values::
     
     >>> helper.w_value(dt)
     '2010-01-01T10:15:10'
+
+Timestamp::
+
+    >>> from cone.app.utils import timestamp
+    >>> timestamp()
+    datetime.datetime(..., ..., ..., ..., ..., ..., ...)

@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Refactor contextmenu, can now be extended by plugins.
+  [rnix, 2011-11-19]
+
 - Add margin top for sidebar and content.
   [rnix, 2011-11-18]
 

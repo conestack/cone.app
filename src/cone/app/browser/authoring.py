@@ -294,6 +294,7 @@ class ContextAction(object):
     action = None
     confirm = None
     tile = None
+    enabled = True
     
     @property
     def target(self):
@@ -302,14 +303,11 @@ class ContextAction(object):
     def __init__(self, model, request):
         self.model = model
         self.request = request
-    
-    def enabled(self):
-        raise NotImplementedError(u"Abstract ``ContextAction`` does not "
-                                  u"implement ``enabled``.")
 
 
 class ContextActionsSection(object):
     factories = odict()
+    enabled = True
     
     def __init__(self, model, request):
         self.model = model
@@ -321,10 +319,6 @@ class ContextActionsSection(object):
         for factory in self.factories.values():
             actions.append(factory(self.model, self.request))
         return actions
-    
-    @property
-    def enabled(self):
-        return True
 
 
 class ActionUp(ContextAction):
