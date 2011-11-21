@@ -14,9 +14,9 @@ The default ACL::
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage_permissions', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', 
     <pyramid.security.AllPermissionsList object at ...>)]
@@ -112,15 +112,15 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     >>> node.principal_roles['group:some_group'] = ['editor', 'manager']
     
     >>> node.__acl__
-    [('Allow', 'someuser', ['edit', 'add', 'delete', 'manage', 'view']), 
+    [('Allow', 'someuser', ['edit', 'manage', 'add', 'view', 'manage_permissions', 'delete']), 
     ('Allow', 'otheruser', ['edit', 'add', 'view']), 
-    ('Allow', 'group:some_group', ['edit', 'add', 'delete', 'manage', 'view']), 
+    ('Allow', 'group:some_group', ['edit', 'manage', 'add', 'view', 'manage_permissions', 'delete']), 
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage_permissions', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
@@ -133,9 +133,9 @@ PrincipalACL role inheritance::
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage_permissions', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
     
@@ -152,17 +152,17 @@ PrincipalACL role inheritance::
     ['admin', 'editor']
     
     >>> subchild.__acl__
-    [('Allow', 'someuser', ['edit', 'add', 'delete', 'manage', 'view']), 
-    ('Allow', 'otheruser', ['edit', 'add', 'delete', 'view']), 
-    ('Allow', 'group:some_group', ['edit', 'add', 'delete', 'manage', 'view']), 
+    [('Allow', 'someuser', ['edit', 'manage', 'add', 'view', 'manage_permissions', 'delete']), 
+    ('Allow', 'otheruser', ['edit', 'add', 'delete', 'manage_permissions', 'view']), 
+    ('Allow', 'group:some_group', ['edit', 'manage', 'add', 'view', 'manage_permissions', 'delete']), 
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage_permissions', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
-    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]    
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 If an authentication plugin raises an error when calling ``authenticate``, an
 error message is logged::
@@ -182,7 +182,7 @@ error message is logged::
     >>> from cone.app.security import authenticate
     >>> request = layer.current_request
     >>> authenticate(request, 'foo', 'foo')
-    <LogRecord: cone.app, 30, ...security.py, 71, 
+    <LogRecord: cone.app, 30, ...security.py, 74, 
     "Authentication plugin <type 'object'> raised an Exception while trying 
     to authenticate: 'object' object has no attribute 'users'">
 
@@ -198,7 +198,7 @@ Test Group callback, also logs if an error occurs::
     
     >>> groups_callback('foo', layer.new_request())
     <LogRecord: cone.app, 40, 
-    ...security.py, 121, "'object' object has no attribute 'users'">
+    ...security.py, 124, "'object' object has no attribute 'users'">
     []
 
 Cleanup::

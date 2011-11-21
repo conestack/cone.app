@@ -26,7 +26,7 @@ registerTile('sharing',
 
 
 @tile('local_acl', 'cone.app:browser/templates/table.pt',
-      permission='manage') # XXX: manage_permissions
+      permission='manage_permissions')
 class SharingTable(Table):
     
     table_id = 'localacltable'
@@ -120,7 +120,7 @@ class SharingTable(Table):
         return ret
 
 
-@tile('add_principal_role', permission='manage') # XXX: manage_permissions
+@tile('add_principal_role', permission='manage_permissions')
 class AddPrincipalRole(Tile):
     
     def render(self):
@@ -144,7 +144,7 @@ class AddPrincipalRole(Tile):
         return u''
 
 
-@tile('remove_principal_role', permission='manage') # XXX: manage_permissions
+@tile('remove_principal_role', permission='manage_permissions')
 class RemovePrincipalRole(Tile):
     
     def render(self):

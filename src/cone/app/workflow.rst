@@ -35,8 +35,8 @@ Default workflow state ACL::
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'change_state', 'manage']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'change_state', 'manage_permissions']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'change_state', 'manage_permissions', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 

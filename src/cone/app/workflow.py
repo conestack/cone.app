@@ -1,5 +1,3 @@
-# XXX: move to seperate cone.workflow egg
-
 from plumber import (
     Part,
     default,
@@ -59,9 +57,10 @@ class WorkflowACL(Part):
         (Allow, 'role:viewer', ['view']),
         (Allow, 'role:editor', ['view', 'add', 'edit']),
         (Allow, 'role:owner', ['view', 'add', 'edit', 'delete', 
-                               'change_state']),
+                               'change_state', 'manage_permissions']),
         (Allow, 'role:manager', ['view', 'add', 'edit', 'delete',
-                                 'change_state', 'manage']),
+                                 'change_state', 'manage_permissions',
+                                 'manage']),
         (Allow, Everyone, ['login']),
         (Deny, Everyone, ALL_PERMISSIONS),
     ])

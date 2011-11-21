@@ -26,13 +26,15 @@ DEFAULT_ROLES = [
     ('manager', 'Manager'),
 ]
 
+
+ADMIN_PERM = ['view', 'add', 'edit', 'delete', 'manage_permissions']
 DEFAULT_ACL = [
     (Allow, 'system.Authenticated', ['view']),
     (Allow, 'role:viewer', ['view']),
     (Allow, 'role:editor', ['view', 'add', 'edit']),
-    (Allow, 'role:admin', ['view', 'add', 'edit', 'delete']),
-    (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
-    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
+    (Allow, 'role:admin', ADMIN_PERM),
+    (Allow, 'role:owner', ADMIN_PERM),
+    (Allow, 'role:manager', ADMIN_PERM + ['manage']),
     (Allow, Everyone, ['login']),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
@@ -51,6 +53,7 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_list': ['view'],
     'editable': ['edit'],
     'deletable': ['delete'],
+    'shareable': ['manage_permissions'],
     'wf_state': ['view'],
 }
 
@@ -159,6 +162,9 @@ class PrincipalACL(Part):
         aggregated = dict()
         model = self
         while model:
+            if not hasattr(model, 'principal_roles'):
+                model = model.parent
+                continue
             for id, roles in model.principal_roles.items():
                 if aggregated.get(id):
                     aggregated[id].update(roles)

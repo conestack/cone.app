@@ -418,7 +418,8 @@ class ActionSharing(ContextAction):
     
     @property
     def enabled(self):
-        return hasattr(self.model, 'principal_roles')
+        return hasattr(self.model, 'principal_roles') \
+            and self.model.properties.shareable
 
 
 class ActionState(ContextAction):
