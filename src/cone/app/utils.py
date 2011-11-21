@@ -9,17 +9,16 @@ def app_config():
     return cone.app.cfg
 
 
-def principal_data(pid):
+def principal_data(principal_id):
     data = dict()
-    for ugm in app_config().auth:
-        try:
-            user = ugm.users.get(pid)
-            if not user:
-                continue
-            data = user.attrs
-            break
-        except Exception, e:
-            logger.error(str(e))
+    ugm = app_config().auth
+    try:
+        user = ugm.users.get(principal_id)
+        if not user:
+            return data
+        data = user.attrs
+    except Exception, e:
+        logger.error(str(e))
     return data
 
 

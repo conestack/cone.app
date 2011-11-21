@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Single UGM implementation.
+  [rnix, 2011-11-21]
+
 - Add ``PrincipalACL`` part and ``sharing`` tile.
   [rnix, 2011-11-21]
 

@@ -18,12 +18,12 @@ If UGM implementation raises an exception when trying to fetch the principal
 it get logged::
 
     >>> import cone.app
-    >>> cone.app.cfg.auth.append(object())
+    >>> old_ugm = cone.app.cfg.auth
+    >>> cone.app.cfg.auth = None
     >>> principal_data('inexistent')
     {}
     
-    >>> cone.app.cfg.auth.pop()
-    <object object at ...>
+    >>> cone.app.cfg.auth = old_ugm
 
 Helper object for read/write operations with datetime values::
 

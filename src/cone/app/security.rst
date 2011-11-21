@@ -8,6 +8,28 @@ cone.app.__init__::
     >>> security.ADMIN_USER = 'user'
     >>> security.ADMIN_PASSWORD = 'secret'
 
+authenticated_user::
+
+    >>> from cone.app.security import authenticated_user
+    >>> authenticated_user(layer.current_request)
+    
+    >>> layer.login('manager')
+    >>> authenticated_user(layer.current_request)
+    <User object 'manager' at ...>
+    
+    >>> layer.logout()
+
+principal_by_id::
+
+    >>> from cone.app.security import principal_by_id
+    >>> principal_by_id('manager')
+    <User object 'manager' at ...>
+
+XXX: search_for_principals::
+
+    >> from cone.app.security import search_for_principals
+    >> search_for_principals('viewer')
+
 The default ACL::
 
     >>> security.DEFAULT_ACL
@@ -171,38 +193,42 @@ error message is logged::
     >>> class TestHandler(logging.StreamHandler):
     ...     def handle(self, record):
     ...         print record
+    
     >>> handler = TestHandler()
+    
     >>> from cone.app.security import logger
     >>> logger.addHandler(handler)
     >>> logger.setLevel(logging.DEBUG)
     
-    >>> noauthenticator = object()
     >>> import cone.app
-    >>> cone.app.cfg.auth.append(noauthenticator)
+    >>> old_ugm = cone.app.cfg.auth
+    >>> cone.app.cfg.auth = object()
+    
     >>> from cone.app.security import authenticate
     >>> request = layer.current_request
+    
     >>> authenticate(request, 'foo', 'foo')
-    <LogRecord: cone.app, 30, ...security.py, 74, 
+    <LogRecord: cone.app, 30, ...security.py, 76, 
     "Authentication plugin <type 'object'> raised an Exception while trying 
     to authenticate: 'object' object has no attribute 'users'">
 
 Test Group callback, also logs if an error occurs::
 
     >>> from cone.app.security import groups_callback
-    >>> layer.login('manager')
+    >>> layer.login('user')
     >>> request = layer.current_request
-    >>> groups_callback('manager', request)
+    >>> groups_callback('user', request)
     [u'role:manager']
     
     >>> layer.logout()
     
     >>> groups_callback('foo', layer.new_request())
     <LogRecord: cone.app, 40, 
-    ...security.py, 124, "'object' object has no attribute 'users'">
+    ...security.py, 129, "'object' object has no attribute 'users'">
     []
 
 Cleanup::
 
     >>> logger.setLevel(logging.INFO)
     >>> logger.removeHandler(handler)
-    >>> cone.app.cfg.auth.remove(noauthenticator)
+    >>> cone.app.cfg.auth = old_ugm

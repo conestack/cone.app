@@ -63,17 +63,17 @@ ADMIN_PASSWORD = None
 
 
 def authenticate(request, login, password):
-    for impl in app_config().auth:
-        try:
-            if impl.users.authenticate(login, password):
-                return remember(request, login)
-        except Exception, e:
-            msg = u"Authentication plugin %s raised an Exception while " + \
-                  u"trying to authenticate: %s"
-            msg = msg % (str(impl.__class__), str(e))
-            logger.warning(msg)
     if login == ADMIN_USER and password == ADMIN_PASSWORD:
         return remember(request, login)
+    ugm = app_config().auth
+    try:
+        if ugm.users.authenticate(login, password):
+            return remember(request, login)
+    except Exception, e:
+        msg = u"Authentication plugin %s raised an Exception while " + \
+              u"trying to authenticate: %s"
+        msg = msg % (str(ugm.__class__), str(e))
+        logger.warning(msg)
 
 
 def authenticated_user(request):
@@ -82,17 +82,17 @@ def authenticated_user(request):
 
 
 def principal_by_id(principal_id):
-    for impl in app_config().auth:
-        try:
-            if principal_id.startswith('group:'):
-                principal = impl.group.get(principal_id[6:])
-            else:
-                principal = impl.users.get(principal_id)
-            if not principal:
-                continue
-            return principal
-        except Exception:
+    ugm = app_config().auth
+    try:
+        if principal_id.startswith('group:'):
+            principal = ugm.group.get(principal_id[6:])
+        else:
+            principal = ugm.users.get(principal_id)
+        if not principal:
             return None
+        return principal
+    except Exception:
+        return None
 
 
 def search_for_principals(term):
@@ -100,31 +100,35 @@ def search_for_principals(term):
     criteria = {
         'id': term,
     }
-    for impl in app_config().auth:
-        for user in impl.users.search(criteria=criteria, or_search=True):
-            ret.append(user)
-        for group in impl.groups.search(criteria=criteria, or_search=True):
-            ret.append('group:%s' % group)
+    ugm = app_config().auth
+    for user in ugm.users.search(criteria=criteria, or_search=True):
+        ret.append(user)
+    for group in ugm.groups.search(criteria=criteria, or_search=True):
+        ret.append('group:%s' % group)
     return ret
 
 
+ROLES_CACHE_KEY = 'cone.app.user.roles'
 def groups_callback(name, request):
     """Collect and return roles and groups for user.
     
     XXX: request caching via decorator
     """
-    roles = request.environ.get('cone.app.user.roles')
+    environ = request.environ
+    roles = environ.get(ROLES_CACHE_KEY)
     if roles:
         return roles
+    if name == ADMIN_USER:
+        roles = environ[ROLES_CACHE_KEY] = [u'role:manager']
+        return roles
+    ugm = app_config().auth
+    user = None
+    try:
+        user = ugm.users.get(name)
+    except Exception, e:
+        logger.error(str(e))
     roles = list()
-    for impl in app_config().auth:
-        try:
-            user = impl.users.get(name)
-        except Exception, e:
-            logger.error(str(e))
-            continue
-        if not user:
-            continue
+    if user:
         aggregated = set()
         for role in user.roles:
             aggregated.add('role:%s' % role)
@@ -132,11 +136,7 @@ def groups_callback(name, request):
             aggregated.add('group:%s' % group.name)
             for role in group.roles:
                 aggregated.add('role:%s' % role)
-        roles = list(aggregated)
-        break
-    if name == ADMIN_USER:
-        roles = ['role:manager']
-    request.environ['cone.app.user.roles'] = roles
+        roles = environ[ROLES_CACHE_KEY] = list(aggregated)
     return roles
 
 

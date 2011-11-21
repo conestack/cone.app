@@ -105,6 +105,7 @@ Create ``example.ini`` and add::
     #cone.auth_http_only =
     #cone.auth_path =
     #cone.auth_wild_domain =
+    #cone.auth_impl =
 
     # plugins to be loaded
     cone.plugins = example.app
@@ -169,6 +170,13 @@ Available INI configuration parameters
 *cone.auth_wild_domain*
     Default: ``True``. An auth_tkt cookie will be generated for the wildcard
     domain.
+
+*cone.auth_impl*
+    UGM implementation to use for authentication and principal authorization.
+    If not set, only ``cone.admin_user`` is available. It's recommended
+    to avoid setting a global superuser via ini file for live deployments.
+    ``cone.auth_impl`` is not considered at any place in cone.app. This is left
+    to the UGM implementation creating application hook callback.
 
 *cone.plugins*
     List of eggs plugging to ``cone.app``. Plugins are included by invoking the

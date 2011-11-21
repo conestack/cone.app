@@ -18,9 +18,8 @@ APP_PATH = os.environ.get('APP_PATH', '')
 # configuration
 cfg = Properties()
 
-# authentication providers (expect ``node.ext.ugm.Ugm`` like API)
-# XXX: delegate provider aggregating to ugm implementation.
-cfg.auth = list()
+# authentication provider (expect ``node.ext.ugm.Ugm`` API)
+cfg.auth = None
 
 # used main template
 cfg.main_template = 'cone.app.browser:templates/main.pt'
