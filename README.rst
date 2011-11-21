@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Add ``PrincipalACL`` part and ``sharing`` tile.
+  [rnix, 2011-11-21]
+
 - Refactor contextmenu, can now be extended by plugins.
   [rnix, 2011-11-19]
 
