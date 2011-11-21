@@ -81,6 +81,20 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
         
         sharingbinder: function(context) {
+            var searchfield = $('#principal-search', context);
+            searchfield.unbind('keypress').bind('keypress', function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                }
+            });
+            searchfield.unbind('keyup').bind('keyup', function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    var button_elem = $('#principal-search-submit',
+                                        $(this).parent());
+                    button_elem.trigger('click');
+                }
+            });
             var button = $('#principal-search-submit', context);
             button.unbind('click').bind('click', function(event) {
                 event.preventDefault();
@@ -89,7 +103,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var target = 
                     bdajax.parsetarget(button_elem.attr('ajax:target'));
                 target.params.term = input.attr('value');
-                // XXX: start, end, sort, order (from table)
                 bdajax.action({
                     name: 'local_acl',
                     mode: 'replace',
@@ -98,11 +111,28 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     params: target.params
                 });
             });
-            var checkboxes = $('.principal_role', context);
+            var checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.unbind('change').bind('change', function(event) {
                 event.preventDefault();
                 var checkbox = $(this);
-                bdajax.message(checkbox.attr('checked'));
+                var action;
+                if (checkbox.attr('checked')) {
+                    action = 'add_principal_role';
+                } else {
+                    action = 'remove_principal_role';
+                }
+                var url = checkbox.parent().attr('ajax:target');
+                var params = {
+                    id: checkbox.attr('name'),
+                    role: checkbox.attr('value')
+                };
+                bdajax.action({
+                    name: action,
+                    mode: 'NONE',
+                    selector: 'NONE',
+                    url: url,
+                    params: params
+                });
             });
         },
         

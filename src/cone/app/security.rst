@@ -153,7 +153,7 @@ Test Group callback, also logs if an error occurs::
     
     >>> groups_callback('foo', layer.new_request())
     <LogRecord: cone.app, 40, 
-    ...security.py, 119, "'object' object has no attribute 'users'">
+    ...security.py, 121, "'object' object has no attribute 'users'">
     []
 
 Cleanup::

@@ -85,6 +85,8 @@ def principal_by_id(principal_id):
                 principal = impl.group.get(principal_id[6:])
             else:
                 principal = impl.users.get(principal_id)
+            if not principal:
+                continue
             return principal
         except Exception:
             return None
