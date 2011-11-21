@@ -73,6 +73,8 @@ PrincipalACL::
     >>> from plumber import plumber, default
     >>> from cone.app.model import BaseNode
     >>> from cone.app.security import PrincipalACL
+
+PrincipalACL is an abstract class. Directly mixing in causes an error on use::
     
     >>> class PrincipalACLNode(BaseNode):
     ...     __metaclass__ = plumber
@@ -87,16 +89,15 @@ PrincipalACL::
       ...
     NotImplementedError: Abstract ``PrincipalACL`` does not 
     implement ``principal_roles``.
-    
+
+Concrete PrincipalACL implementation. Implements principal_roles property::
+
+    >>> from node.utils import instance_property
     >>> class MyPrincipalACL(PrincipalACL):
     ...     @default
-    ...     @property
+    ...     @instance_property
     ...     def principal_roles(self):
-    ...         return {
-    ...             'someuser': ['manager'],
-    ...             'otheruser': ['editor'],
-    ...             'group:some_group': ['editor', 'manager'],
-    ...         }
+    ...         return dict()
     
     >>> class MyPrincipalACLNode(BaseNode):
     ...     __metaclass__ = plumber
@@ -106,6 +107,10 @@ PrincipalACL::
     ...         return BaseNode.__acl__
     
     >>> node = MyPrincipalACLNode()
+    >>> node.principal_roles['someuser'] = ['manager']
+    >>> node.principal_roles['otheruser'] = ['editor']
+    >>> node.principal_roles['group:some_group'] = ['editor', 'manager']
+    
     >>> node.__acl__
     [('Allow', 'someuser', ['edit', 'add', 'delete', 'manage', 'view']), 
     ('Allow', 'otheruser', ['edit', 'add', 'view']), 
@@ -118,6 +123,46 @@ PrincipalACL::
     ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
+
+PrincipalACL role inheritance::
+
+    >>> child = node['child'] = MyPrincipalACLNode()
+    >>> child.principal_roles['someuser'] = ['editor']
+    >>> child.__acl__
+    [('Allow', 'someuser', ['edit', 'add', 'view']), 
+    ('Allow', 'system.Authenticated', ['view']), 
+    ('Allow', 'role:viewer', ['view']), 
+    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'system.Everyone', ['login']), 
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
+    
+    >>> subchild = child['child'] = MyPrincipalACLNode()
+    >>> subchild.role_inheritance = True
+    >>> subchild.principal_roles['otheruser'] = ['admin']
+    >>> subchild.aggregated_roles_for('inexistent')
+    []
+    
+    >>> subchild.aggregated_roles_for('someuser')
+    ['manager', 'editor']
+    
+    >>> subchild.aggregated_roles_for('otheruser')
+    ['admin', 'editor']
+    
+    >>> subchild.__acl__
+    [('Allow', 'someuser', ['edit', 'add', 'delete', 'manage', 'view']), 
+    ('Allow', 'otheruser', ['edit', 'add', 'delete', 'view']), 
+    ('Allow', 'group:some_group', ['edit', 'add', 'delete', 'manage', 'view']), 
+    ('Allow', 'system.Authenticated', ['view']), 
+    ('Allow', 'role:viewer', ['view']), 
+    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']), 
+    ('Allow', 'system.Everyone', ['login']), 
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]    
 
 If an authentication plugin raises an error when calling ``authenticate``, an
 error message is logged::

@@ -145,18 +145,42 @@ class PrincipalACL(Part):
     (yet).
     """
     
+    role_inheritance = default(False)
+    
     @default
     @property
     def principal_roles(self):
         raise NotImplementedError(u"Abstract ``PrincipalACL`` does not "
                                   u"implement ``principal_roles``.")
     
+    @default
+    @property
+    def aggregated_roles(self):
+        aggregated = dict()
+        model = self
+        while model:
+            for id, roles in model.principal_roles.items():
+                if aggregated.get(id):
+                    aggregated[id].update(roles)
+                else:
+                    aggregated[id] = set(roles)
+            model = model.parent
+        return aggregated
+    
+    @default
+    def aggregated_roles_for(self, principal_id):
+        return list(self.aggregated_roles.get(principal_id, list()))
+    
     @plumb
     @property
     def __acl__(_next, self):
         base_acl = _next(self)
         acl = list()
-        for id, roles in self.principal_roles.items():
+        if self.role_inheritance:
+            principal_roles = self.aggregated_roles
+        else:
+            principal_roles = self.principal_roles
+        for id, roles in principal_roles.items():
             aggregated = set()
             for role in roles:
                 aggregated.update(self._permissions_for_role(base_acl, role))
