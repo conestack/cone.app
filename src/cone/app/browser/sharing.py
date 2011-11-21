@@ -79,11 +79,16 @@ class SharingTable(Table):
         rows = list()
         chb = '<input type="checkbox" />'
         term = self.request.params.get('term')
-        principal_roles = self.model.principal_roles
+        model = self.model
+        principal_roles = model.principal_roles
+        inheritance = model.role_inheritance
         if term:
             principal_ids = security.search_for_principals('*%s*' % term)
         else:
-            principal_ids = principal_roles.keys()
+            if inheritance:
+                principal_ids = model.aggregated_roles.keys()
+            else:
+                principal_ids = principal_roles.keys()
         ids = principal_ids
         if order == 'desc':
             ids.reverse()
@@ -99,6 +104,10 @@ class SharingTable(Table):
             row_data['principal'] = Item(title)
             ugm_roles = principal.roles
             local_roles = principal_roles.get(principal_id, list())
+            if inheritance:
+                for role in model.aggregated_roles_for(principal_id):
+                    if not role in local_roles:
+                        ugm_roles.append(role)
             for role in security.DEFAULT_ROLES:
                 inherited = role[0] in ugm_roles
                 local = role[0] in local_roles
