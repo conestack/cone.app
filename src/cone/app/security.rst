@@ -24,6 +24,9 @@ principal_by_id::
     >>> from cone.app.security import principal_by_id
     >>> principal_by_id('manager')
     <User object 'manager' at ...>
+    
+    >>> principal_by_id('group:group1')
+    <Group object 'group1' at ...>
 
 XXX: search_for_principals::
 
@@ -177,6 +180,30 @@ PrincipalACL role inheritance::
     [('Allow', 'someuser', ['edit', 'manage', 'add', 'view', 'manage_permissions', 'delete']), 
     ('Allow', 'otheruser', ['edit', 'add', 'delete', 'manage_permissions', 'view']), 
     ('Allow', 'group:some_group', ['edit', 'manage', 'add', 'view', 'manage_permissions', 'delete']), 
+    ('Allow', 'system.Authenticated', ['view']), 
+    ('Allow', 'role:viewer', ['view']), 
+    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage_permissions', 'manage']), 
+    ('Allow', 'system.Everyone', ['login']), 
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
+
+Principal roles get inherited even if some parent does not provide principal
+roles::
+
+    >>> child = node['no_principal_roles'] = BaseNode()
+    >>> subchild = child['no_principal_roles'] =  MyPrincipalACLNode()
+    >>> subchild.aggregated_roles_for('group:some_group')
+    ['manager', 'editor']
+
+If principal role found which is not provided by plumbing endpoint acl, this
+role does not grant any permissions::
+
+    >>> node = MyPrincipalACLNode()
+    >>> node.principal_roles['someuser'] = ['inexistent_role']
+    >>> node.__acl__
+    [('Allow', 'someuser', []), 
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 

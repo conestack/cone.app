@@ -85,7 +85,7 @@ def principal_by_id(principal_id):
     ugm = app_config().auth
     try:
         if principal_id.startswith('group:'):
-            principal = ugm.group.get(principal_id[6:])
+            principal = ugm.groups.get(principal_id[6:])
         else:
             principal = ugm.users.get(principal_id)
         if not principal:
