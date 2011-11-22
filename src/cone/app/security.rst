@@ -8,7 +8,7 @@ cone.app.__init__::
     >>> security.ADMIN_USER = 'user'
     >>> security.ADMIN_PASSWORD = 'secret'
 
-authenticated_user::
+``authenticated_user``::
 
     >>> from cone.app.security import authenticated_user
     >>> authenticated_user(layer.current_request)
@@ -19,7 +19,7 @@ authenticated_user::
     
     >>> layer.logout()
 
-principal_by_id::
+``principal_by_id``::
 
     >>> from cone.app.security import principal_by_id
     >>> principal_by_id('manager')
@@ -28,10 +28,14 @@ principal_by_id::
     >>> principal_by_id('group:group1')
     <Group object 'group1' at ...>
 
-XXX: search_for_principals::
+``search_for_principals``::
 
-    >> from cone.app.security import search_for_principals
-    >> search_for_principals('viewer')
+    >>> from cone.app.security import search_for_principals
+    >>> search_for_principals('viewer')
+    [u'viewer']
+    
+    >>> search_for_principals('group*')
+    [u'group:group1']
 
 The default ACL::
 
