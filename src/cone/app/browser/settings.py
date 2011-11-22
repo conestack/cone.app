@@ -27,9 +27,13 @@ class AppSettings(Tile):
         keys = self.model.factories.keys()
         for key in keys:
             value = self.model[key]
+            try:
+                rendered = render_tile(value, self.request, 'content')
+            except Exception, e:
+                rendered = '<div class="box">Error: %s</div>' % str(e)
             ret.append({
                 'title': value.metadata.title,
-                'content': render_tile(value, self.request, 'content'),
+                'content': rendered,
                 'css': value.name,
             })
         return ret
