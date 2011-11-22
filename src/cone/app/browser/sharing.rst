@@ -122,5 +122,134 @@ could happen if user was deleted but principal roles were not::
     >>> res = render_tile(child, request, 'sharing')
     >>> res.find('name="inexistent"') > -1
     False
+
+Add role for user::
+    
+    >>> from cone.app.browser.ajax import ajax_tile
+    
+    >>> request.params['id'] = 'viewer'
+    >>> request.params['role'] = 'manager'
+    >>> request.params['bdajax.action'] = 'add_principal_role'
+    >>> request.params['bdajax.mode'] = 'NONE'
+    >>> request.params['bdajax.selector'] = 'NONE'
+
+Nothing happens if success::
+
+    >>> ajax_tile(child, request)
+    {'continuation': False, 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+
+Principal roles has changed::
+
+    >>> child.principal_roles
+    {'viewer': ['admin', 'manager'], 
+    'inexistent': ['viewer'], 
+    'editor': ['admin']}
+
+Add role for user not added yet::
+
+    >>> request.params['id'] = 'otheruser'
+    >>> request.params['role'] = 'manager'
+    >>> ajax_tile(child, request)
+    {'continuation': False, 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+    
+    >>> child.principal_roles
+    {'viewer': ['admin', 'manager'], 
+    'inexistent': ['viewer'], 
+    'editor': ['admin'], 
+    'otheruser': ['manager']}
+
+If an error occurs, a message gets displayed::
+
+    >>> from cone.app.model import BaseNode
+    >>> invalid_node = BaseNode()
+    >>> request.params['id'] = 'viewer'
+    >>> ajax_tile(invalid_node, request)
+    {'continuation': 
+    [{'flavor': 'error', 
+    'type': 'message', 
+    'payload': "Can not add role 'manager' for principal 'viewer'", 
+    'selector': None}], 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+
+Remove role for user::
+
+    >>> request = layer.new_request()
+    >>> request.params['id'] = 'viewer'
+    >>> request.params['role'] = 'manager'
+    >>> request.params['bdajax.action'] = 'remove_principal_role'
+    >>> request.params['bdajax.mode'] = 'NONE'
+    >>> request.params['bdajax.selector'] = 'NONE'
+
+Nothing happens if success::
+
+    >>> ajax_tile(child, request)
+    {'continuation': False, 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+
+Principal roles has changed::
+
+    >>> child.principal_roles
+    {'viewer': ['admin'], 
+    'inexistent': ['viewer'], 
+    'editor': ['admin'], 
+    'otheruser': ['manager']}
+
+Principal id gets removed if no more roles left::
+
+    >>> request.params['id'] = 'otheruser'
+    >>> request.params['role'] = 'manager'
+    >>> ajax_tile(child, request)
+    {'continuation': False, 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+    
+    >>> child.principal_roles
+    {'viewer': ['admin'], 
+    'inexistent': ['viewer'], 
+    'editor': ['admin']}
+
+If an error occurs, a message gets displayed.
+Inexistent role::
+
+    >>> request.params['id'] = 'viewer'
+    >>> request.params['role'] = 'inexistent'
+    >>> ajax_tile(child, request)
+    {'continuation': 
+    [{'flavor': 'error', 
+    'type': 'message', 
+    'payload': "Can not remove role 'inexistent' for principal 'viewer'", 
+    'selector': None}], 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
+
+Inexistent userid::
+
+    >>> request = layer.new_request()
+    >>> request.params['id'] = 'foo'
+    >>> request.params['role'] = 'manager'
+    >>> request.params['bdajax.action'] = 'remove_principal_role'
+    >>> request.params['bdajax.mode'] = 'NONE'
+    >>> request.params['bdajax.selector'] = 'NONE'
+    >>> ajax_tile(child, request)
+    {'continuation': 
+    [{'flavor': 'error', 
+    'type': 'message', 
+    'payload': "Can not remove role 'manager' for principal 'foo'", 
+    'selector': None}], 
+    'payload': u'', 
+    'mode': 'NONE', 
+    'selector': 'NONE'}
     
     >>> layer.logout()

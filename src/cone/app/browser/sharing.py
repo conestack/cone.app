@@ -141,12 +141,12 @@ class AddPrincipalRole(Tile):
             roles = model.principal_roles
             if not principal_id in roles:
                 model.principal_roles[principal_id] = [role]
-                return
+                return u''
             existing = set(model.principal_roles[principal_id])
             existing.add(role)
             model.principal_roles[principal_id] = list(existing)
         except Exception, e:
-            print e
+            logger.error(e)
             message = "Can not add role '%s' for principal '%s'" % (
                 role, principal_id)
             ajax_message(self.request, message, 'error')
@@ -172,7 +172,7 @@ class RemovePrincipalRole(Tile):
             else:
                 model.principal_roles[principal_id] = existing
         except Exception, e:
-            print e
+            logger.error(e)
             message = "Can not remove role '%s' for principal '%s'" % \
                 (role, principal_id)
             ajax_message(self.request, message, 'error')
