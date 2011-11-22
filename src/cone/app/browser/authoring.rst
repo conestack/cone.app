@@ -478,12 +478,14 @@ ContextMenu
 
 ::
 
-    >>> model = root['somechild']
+    >>> from cone.app.tests.mock import SharingNode
+    >>> model = SharingNode()
     >>> model.properties.action_up = True
     >>> model.properties.action_view = True
     >>> model.properties.action_list = True
     >>> model.properties.editable = True
     >>> model.properties.deletable = True
+    >>> model.properties.shareable = True
     >>> rendered = render_tile(model, request, 'contextmenu')
     >>> rendered.find('up16_16') > -1
     True
@@ -498,6 +500,9 @@ ContextMenu
     True
     
     >>> rendered.find('delete16_16') > -1
+    True
+    
+    >>> rendered.find('sharing16_16') > -1
     True
 
 Logout::

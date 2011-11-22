@@ -1,5 +1,15 @@
 from plumber import plumber
+from node.parts import (
+    Adopt,
+    Nodespaces,
+    Attributes,
+    Nodify,
+    OdictStorage,
+    DefaultInit,
+)
+from node.utils import instance_property
 from cone.app.model import (
+    AppNode,
     BaseNode,
     Properties,
 )
@@ -7,6 +17,11 @@ from cone.app.workflow import (
     WorkflowState,
     WorkflowACL,
 )
+from cone.app.security import (
+    PrincipalACL,
+    DEFAULT_ACL,
+)
+
 
 class WorkflowNode(BaseNode):
     __metaclass__ = plumber
@@ -36,3 +51,25 @@ class InexistentWorkflowNode(WorkflowNode):
         props = super(InexistentWorkflowNode, self).properties
         props.wf_name = u'inexistent'
         return props
+
+
+class SharingNode(object):
+    __metaclass__ = plumber
+    __plumbing__ = (
+        PrincipalACL,
+        AppNode,
+        Adopt,
+        Nodespaces,
+        Attributes,
+        DefaultInit,
+        Nodify,
+        OdictStorage,
+    )
+
+    @property
+    def __acl__(self):
+        return DEFAULT_ACL
+
+    @instance_property
+    def principal_roles(self):
+        return dict()
