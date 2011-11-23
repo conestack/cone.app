@@ -519,7 +519,7 @@ div.contextmenu .dropdown_items {
 /* Icons */
 a.view16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/view16_16.png') top left no-repeat;
@@ -527,7 +527,7 @@ a.view16_16 {
 }
 a.edit16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/edit16_16.png') top left no-repeat;
@@ -535,7 +535,7 @@ a.edit16_16 {
 }
 a.add16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/add16_16.png') top left no-repeat;
@@ -543,7 +543,7 @@ a.add16_16 {
 }
 a.up16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/up16_16.png') top left no-repeat;
@@ -551,7 +551,7 @@ a.up16_16 {
 }
 a.reference16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/reference16_16.png') top left no-repeat;
@@ -559,7 +559,7 @@ a.reference16_16 {
 }
 a.listing16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/listing16_16.png') top left no-repeat;
@@ -567,7 +567,7 @@ a.listing16_16 {
 }
 a.delete16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/delete16_16.png') top left no-repeat;
@@ -575,9 +575,33 @@ a.delete16_16 {
 }
 a.sharing16_16 {
     text-decoration: none;
-    padding-left:16px;
+    padding-left:18px;
     width:16px;
     font-size:16px;
     background:url('images/sharing16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.cut16_16 {
+    text-decoration: none;
+    padding-left:18px;
+    width:16px;
+    font-size:16px;
+    background:url('images/cut16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.copy16_16 {
+    text-decoration: none;
+    padding-left:18px;
+    width:16px;
+    font-size:16px;
+    background:url('images/copy16_16.png') top left no-repeat;
+    cursor:pointer;
+}
+a.paste16_16 {
+    text-decoration: none;
+    padding-left:18px;
+    width:16px;
+    font-size:16px;
+    background:url('images/paste16_16.png') top left no-repeat;
     cursor:pointer;
 }

@@ -239,7 +239,7 @@ error message is logged::
     >>> request = layer.current_request
     
     >>> authenticate(request, 'foo', 'foo')
-    <LogRecord: cone.app, 30, ...security.py, 76, 
+    <LogRecord: cone.app, 30, ...security.py, ..., 
     "Authentication plugin <type 'object'> raised an Exception while trying 
     to authenticate: 'object' object has no attribute 'users'">
 
@@ -255,7 +255,7 @@ Test Group callback, also logs if an error occurs::
     
     >>> groups_callback('foo', layer.new_request())
     <LogRecord: cone.app, 40, 
-    ...security.py, 129, "'object' object has no attribute 'users'">
+    ...security.py, ..., "'object' object has no attribute 'users'">
     []
 
 Cleanup::

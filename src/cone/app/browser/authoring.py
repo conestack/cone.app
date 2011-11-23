@@ -431,6 +431,48 @@ class ActionState(ContextAction):
         return self.model.properties.wf_state
 
 
+class ActionCut(ContextAction):
+    css_class = 'cut16_16'
+    title = 'Cut'
+    action = 'cut:NONE:NONE'
+    
+    @property
+    def href(self):
+        return '%s/cut' % self.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.action_cut
+
+
+class ActionCopy(ContextAction):
+    css_class = 'copy16_16'
+    title = 'Copy'
+    action = 'copy:NONE:NONE'
+    
+    @property
+    def href(self):
+        return '%s/copy' % self.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.action_copy
+
+
+class ActionPaste(ContextAction):
+    css_class = 'paste16_16'
+    title = 'Paste'
+    action = 'paste:NONE:NONE'
+    
+    @property
+    def href(self):
+        return '%s/paste' % self.target
+    
+    @property
+    def enabled(self):
+        return self.model.properties.action_paste
+
+
 class GeneralActions(ContextActionsSection):
     factories = odict()
 
@@ -445,8 +487,11 @@ GeneralActions.factories['action_list'] = ActionList
     
 ObjectActions.factories['action_add'] = ActionAdd
 ObjectActions.factories['action_edit'] = ActionEdit
-ObjectActions.factories['action_delete'] = ActionDelete
 ObjectActions.factories['action_sharing'] = ActionSharing
+ObjectActions.factories['action_cut'] = ActionCut
+ObjectActions.factories['action_copy'] = ActionCopy
+ObjectActions.factories['action_paste'] = ActionPaste
+ObjectActions.factories['action_delete'] = ActionDelete
 ObjectActions.factories['action_state'] = ActionState
 
 context_menu_sections = odict()

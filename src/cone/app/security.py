@@ -54,6 +54,9 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'editable': ['edit'],
     'deletable': ['delete'],
     'shareable': ['manage_permissions'],
+    'action_cut': ['delete'],
+    'action_copy': ['edit'],
+    'action_paste': ['add'],
     'wf_state': ['view'],
 }
 
