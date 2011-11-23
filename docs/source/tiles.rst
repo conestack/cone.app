@@ -387,10 +387,22 @@ Invokes ``delete`` tile on node after confirming action.
 *deletable*
     Flag whether node is deletable.
 
+ActionShare
+~~~~~~~~~~~
+
+Renders ``sharing`` tile on node to main content area. Only works for
+nodes with ``cone.app.security.PrincipalACL`` behavior.
+
+**Considered properties**
+
+*shareable*
+    Flag whether to render sharing action.
+
 ActionState
 ~~~~~~~~~~~
 
-Renders workflow state dropdown menu.
+Renders workflow state dropdown menu. Only works for nodes with
+``cone.app.workflow.WorkflowState`` behavior.
 
 **Considered properties**
 

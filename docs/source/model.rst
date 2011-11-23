@@ -281,43 +281,80 @@ By default, anonymous access to all application model nodes is prohibited.
 
 Default ACL for application nodes::
 
-    cone.app.security.DEFAULT_ACL = [
-        (Allow, 'system.Authenticated', ['view']),
-        (Allow, 'role:viewer', ['view']),
-        (Allow, 'role:editor', ['view', 'add', 'edit']),
-        (Allow, 'role:admin', ['view', 'add', 'edit', 'delete']),
-        (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
-        (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-        (Allow, Everyone, ['login']),
-        (Deny, Everyone, ALL_PERMISSIONS),
-    ]
+    >>> cone.app.security.DEFAULT_ACL = [
+    ...     (Allow, 'system.Authenticated', ['view']),
+    ...     (Allow, 'role:viewer', ['view']),
+    ...     (Allow, 'role:editor', ['view', 'add', 'edit']),
+    ...     (Allow, 'role:admin', ['view', 'add', 'edit', 'delete']),
+    ...     (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
+    ...     (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
+    ...     (Allow, Everyone, ['login']),
+    ...     (Deny, Everyone, ALL_PERMISSIONS),
+    ... ]
 
-Default ACL for settings nodes.::
+Default ACL for settings nodes::
 
-    cone.app.security.DEFAULT_SETTINGS_ACL = [
-        (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-        (Allow, Everyone, 'login'),
-        (Deny, Everyone, ALL_PERMISSIONS),
-    ]
+    >>> cone.app.security.DEFAULT_SETTINGS_ACL = [
+    ...     (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
+    ...     (Allow, Everyone, 'login'),
+    ...     (Deny, Everyone, ALL_PERMISSIONS),
+    ... ]
 
 Default vocab for available roles.::
 
-    cone.app.security.DEFAULT_ROLES = [
-        ('viewer', 'Viewer'),
-        ('editor', 'Editor'),
-        ('admin', 'Admin'),
-        ('owner', 'Owner'),
-        ('manager', 'Manager'),
-    ]
+    >>> cone.app.security.DEFAULT_ROLES = [
+    ...     ('viewer', 'Viewer'),
+    ...     ('editor', 'Editor'),
+    ...     ('admin', 'Admin'),
+    ...     ('owner', 'Owner'),
+    ...     ('manager', 'Manager'),
+    ... ]
 
 Application nodes contain ``cone.app.model.ProtectedProperties`` by default,
 which are instanciated with default node property permissions.::
 
-    cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS = {
-        'action_up': ['view'],
-        'action_view': ['view'],
-        'action_list': ['view'],
-        'editable': ['edit'],
-        'deletable': ['delete'],
-        'wf_state': ['view'],
-    }
+    >>> cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS = {
+    ...     'action_up': ['view'],
+    ...     'action_view': ['view'],
+    ...     'action_list': ['view'],
+    ...     'editable': ['edit'],
+    ...     'deletable': ['delete'],
+    ...     'wf_state': ['view'],
+    ... }
+
+
+PrincipalACL
+------------
+
+In many applications it's required to grant access for specific parts of the
+application model to specific users and groups. ``cone.app`` ships with a
+plumbing part providing principal related roles. It's an abstract
+implementation leaving the persistence apart. A concrete shareable node looks
+like::
+
+    >>> from plumber import plumber
+    >>> from node.utils import instance_property
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.security import (
+    ...     PrincipalACL,
+    ...     DEFAULT_ACL,
+    ... )
+    >>> class SharingNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = PrincipalACL
+    ... 
+    ...     role_inheritance = True
+    ... 
+    ...     @property
+    ...     def __acl__(self):
+    ...         return DEFAULT_ACL
+    ... 
+    ...     @instance_property
+    ...     def principal_roles(self):
+    ...         return dict()
+
+The ``role_inheritance`` attribute defines whether to aggregate roles from
+parent nodes. It's important for shareable nodes that the ``__acl__`` attribute
+is implemented as property function to make sure plumber can hook in correctly.
+``principal_roles`` returns a persistent dict like object containing the stored
+or computed local roles for this node.
