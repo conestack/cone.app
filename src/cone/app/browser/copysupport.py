@@ -7,7 +7,9 @@ from cone.tile import (
 class CutAction(Tile):
     
     def render(self):
+        #print 'cut'
         model = self.model
+        request = self.request
         return u''
 
 
@@ -15,7 +17,9 @@ class CutAction(Tile):
 class CopyAction(Tile):
     
     def render(self):
+        #print 'copy'
         model = self.model
+        request = self.request
         return u''
 
 
@@ -23,5 +27,7 @@ class CopyAction(Tile):
 class PasteAction(Tile):
     
     def render(self):
+        #print 'paste'
         model = self.model
+        request = self.request
         return u''

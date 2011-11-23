@@ -37,7 +37,7 @@
       </tr>
       
       <tal:row repeat="row_data context.slice.rows">
-        <tr>
+        <tr class="${row_data.selectable and 'selectable' or None}">
           <tal:td repeat="col_def context.col_defs">
                 
             <td tal:condition="col_def['content'] == 'actions'"

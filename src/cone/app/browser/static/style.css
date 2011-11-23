@@ -341,10 +341,27 @@ table.contents th.asc {
 table.contents th.desc {
     background:#ddd url('images/down9_6.gif') right 50% no-repeat;
 }
+table.contents tr.selected {
+    color:#fff;
+    background-color:#49539f !important;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+table.contents tr.selected a {
+    color:#fff;
+}
 table.contents td {
     padding:3px;
     border-bottom:1px solid #ccc;
     border-right:1px solid #ccc;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 /* Sharing tile */

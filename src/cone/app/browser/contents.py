@@ -89,6 +89,8 @@ class ContentsTile(Table):
         rows = list()
         for child in children[start:end]:
             row_data = RowData()
+            if child.properties.action_copy or child.properties.action_cut:
+                row_data.selectable = True
             row_data['actions'] = Item(actions=self.create_actions(child))
             value = child.metadata.get('title', child.name)
             link = target = make_url(self.request, node=child)

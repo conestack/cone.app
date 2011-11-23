@@ -14,7 +14,9 @@ from cone.app.browser.utils import (
 
 
 class RowData(dict):
-    pass
+    
+    def __init__(self, selectable=False):
+        self.selectable = selectable
 
 
 class Item(object):

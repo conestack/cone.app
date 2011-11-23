@@ -40,6 +40,7 @@ cfg.js.protected = [
     '++resource++yafowil.widget.datetime/widget.js',
     '++resource++yafowil.widget.richtext/widget.js',
     '++resource++yafowil.widget.dict/widget.js',
+    'static/cookie_functions.js',
     'static/cone.app.js',
 ]
 
@@ -52,7 +53,6 @@ cfg.css.public = [
 cfg.css.protected = [
     '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.css',
     '++resource++yafowil.widget.dict/widget.css',
-    '++resource++yafowil.widget.datetime',
 ]
 
 # cfg.layout used to enable/disable tiles in main template

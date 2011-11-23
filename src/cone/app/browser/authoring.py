@@ -434,7 +434,8 @@ class ActionState(ContextAction):
 class ActionCut(ContextAction):
     css_class = 'cut16_16'
     title = 'Cut'
-    action = 'cut:NONE:NONE'
+    action = None
+    bind = None
     
     @property
     def href(self):
@@ -448,7 +449,8 @@ class ActionCut(ContextAction):
 class ActionCopy(ContextAction):
     css_class = 'copy16_16'
     title = 'Copy'
-    action = 'copy:NONE:NONE'
+    action = None
+    bind = None
     
     @property
     def href(self):
@@ -462,7 +464,8 @@ class ActionCopy(ContextAction):
 class ActionPaste(ContextAction):
     css_class = 'paste16_16'
     title = 'Paste'
-    action = 'paste:NONE:NONE'
+    action = None
+    bind = None
     
     @property
     def href(self):

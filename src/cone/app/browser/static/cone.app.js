@@ -19,12 +19,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         });
         
         // initial binding
+        cone.key_binder();
         cone.livesearchbinder();
         cone.tabsbinder();
         cone.dropdownmenubinder();
         cone.transitionmenubinder();
         cone.ajaxformbinder();
         cone.sharingbinder();
+        cone.selectablebinder();
+        cone.copysupportbinder();
         yafowil.referencebrowser.browser_binder();
         
         // add binders to bdajax binding callbacks
@@ -34,6 +37,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             transitionmenubinder: cone.transitionmenubinder,
             ajaxformbinder: cone.ajaxformbinder,
             sharingbinder: cone.sharingbinder,
+            selectablebinder: cone.selectablebinder,
+            copysupportbinder: cone.copysupportbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder:
                 yafowil.referencebrowser.add_reference_binder
@@ -41,6 +46,36 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     });
     
     cone = {
+            
+        // object to store global flags
+        flags: {},
+                
+        // keyboard control keys status
+        keys: {},
+        
+        // keydown / keyup binder for shift and ctrl keys
+        key_binder: function() {
+            $(document).bind('keydown', function(event) {
+                switch (event.keyCode || event.which) {
+                    case 16:
+                        cone.keys.shift_down = true;
+                        break;
+                    case 17:
+                        cone.keys.ctrl_down = true;
+                        break;
+                }
+            });
+            $(document).bind('keyup', function(event) {
+                switch (event.keyCode || event.which) {
+                    case 16:
+                        cone.keys.shift_down = false;
+                           break;
+                    case 17:
+                        cone.keys.ctrl_down = false;
+                        break;
+                }
+            });
+        },
         
         livesearchbinder: function(context) {
             $('input#search-text', context).autocomplete({
@@ -132,6 +167,49 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     selector: 'NONE',
                     url: url,
                     params: params
+                });
+            });
+        },
+        
+        selectablebinder: function(context) {
+            $('table tr.selectable', context).selectable();
+        },
+        
+        copysupportbinder: function(context) {
+            $('a.cut16_16', context).unbind('click').bind('click',
+                                                          function(event) {
+                event.preventDefault();
+                var target = bdajax.parsetarget($(this).attr('ajax:target'));
+                bdajax.action({
+                    name: 'cut',
+                    mode: 'NONE',
+                    selector: 'NONE',
+                    url: target.url,
+                    params: target.params,
+                });
+            });
+            $('a.copy16_16', context).unbind('click').bind('click',
+                                                           function(event) {
+                event.preventDefault();
+                var target = bdajax.parsetarget($(this).attr('ajax:target'));
+                bdajax.action({
+                    name: 'copy',
+                    mode: 'NONE',
+                    selector: 'NONE',
+                    url: target.url,
+                    params: target.params,
+                });
+            });
+            $('a.paste16_16', context).unbind('click').bind('click',
+                                                            function(event) {
+                event.preventDefault();
+                var target = bdajax.parsetarget($(this).attr('ajax:target'));
+                bdajax.action({
+                    name: 'paste',
+                    mode: 'NONE',
+                    selector: 'NONE',
+                    url: target.url,
+                    params: target.params,
                 });
             });
         },
@@ -241,6 +319,93 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 target: elem.parent().attr('ajax:target')
             });
         });
+        return this;
+    }
+    
+    /*
+     * Selectable Items
+     * ================
+     * 
+     * Markup
+     * ------
+     * 
+     *     <div>
+     *       <div class="selectable">selectable 1</div>
+     *       <div class="selectable">selectable 2</div>
+     *     </div>
+     * 
+     * Script
+     * ------
+     * 
+     *     $('a.selectable').selectable();
+     */
+    $.fn.selectable = function() {
+        this.unbind('click').bind('click', function(event) {
+            event.preventDefault();
+            $(document).unbind('mousedown')
+                       .bind('mousedown', function(event) {
+                // var elem = $(event.currentTarget);
+                // XXX: unselect other selections therefor
+            });
+            var elem = $(event.currentTarget);
+            var container = elem.parent();
+            if (!cone.keys.ctrl_down && !cone.keys.shift_down) {
+                container.children().removeClass('selected');
+                elem.addClass('selected');
+            } else {
+                if (cone.keys.ctrl_down) {
+                    elem.toggleClass('selected');
+                }
+                if (cone.keys.shift_down) {
+                    var selected = container.children('.selected');
+                    // get nearest next selected item, disable others
+                    var current_index = elem.index();
+                    // -1 means no other selected item
+                    var nearest = -1;
+                    var selected_index, selected_elem;
+                    $(selected).each(function() {
+                        selected_elem = $(this);
+                        selected_index = selected_elem.index();
+                        if (nearest == -1) {
+                            nearest = selected_index;
+                        } else if (current_index > selected_index) {
+                            if (cone.flags.select_direction > 0) {
+                                if (selected_index < nearest) {
+                                    nearest = selected_index;
+                                }
+                            } else {
+                                if (selected_index > nearest) {
+                                    nearest = selected_index;
+                                }
+                            }
+                        } else if (current_index < selected_index) {
+                            if (selected_index < nearest) {
+                                nearest = selected_index;
+                            }
+                        }
+                    });
+                    if (nearest == -1) {
+                        elem.addClass('selected');
+                    } else {
+                        container.children().removeClass('selected');
+                        var start, end;
+                        if (current_index < nearest) {
+                            cone.flags.select_direction = -1;
+                            start = current_index;
+                            end = nearest;
+                        } else {
+                            cone.flags.select_direction = 1;
+                            start = nearest;
+                            end = current_index;
+                        }
+                        container.children()
+                                 .slice(start, end + 1)
+                                 .addClass('selected');
+                    }
+                }
+            }
+        });
+        return this;
     }
     
     // extend yafowil by reference browser widget.

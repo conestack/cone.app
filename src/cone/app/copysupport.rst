@@ -9,5 +9,11 @@ Copysupport::
     >>> from cone.app.tests.mock import CopySupportNode
     
     >>> node = CopySupportNode()
-    >>> node.properties.copysupport
+    >>> node.properties.action_cut
+    True
+    
+    >>> node.properties.action_copy
+    True
+    
+    >>> node.properties.action_paste
     True

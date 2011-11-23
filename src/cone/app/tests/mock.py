@@ -83,5 +83,7 @@ class CopySupportNode(BaseNode):
     @instance_property
     def properties(self):
         props = Properties()
-        props.copysupport = True
+        props.action_cut = True
+        props.action_copy = True
+        props.action_paste = True
         return props
