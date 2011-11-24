@@ -11,6 +11,7 @@ from cone.app.browser.table import (
     Item,
     Action,
 )
+from cone.app.browser.copysupport import extract_copysupport_cookie
 from cone.app.browser.utils import (
     nodepath, 
     make_query, 
@@ -87,13 +88,18 @@ class ContentsTile(Table):
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
+        cut_paths = extract_copysupport_cookie(self.request, 'cut')
         for child in children[start:end]:
             row_data = RowData()
-            if child.properties.action_copy or child.properties.action_cut:
-                row_data.selectable = True
             row_data['actions'] = Item(actions=self.create_actions(child))
             value = child.metadata.get('title', child.name)
             link = target = make_url(self.request, node=child)
+            if child.properties.action_copy or child.properties.action_cut:
+                row_data.selectable = True
+                row_data.target = target
+                row_data.css = 'copysupportitem'
+                if target in cut_paths:
+                    row_data.css += ' copysupport_cut'
             action = 'content:#content:inner'
             event = 'contextchanged:.contextsensitiv'
             row_data['title'] = Item(value, link, target, action, event)

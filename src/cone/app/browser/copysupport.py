@@ -1,33 +1,24 @@
+import urllib
 from cone.tile import (
     tile,
     Tile,
 )
 
-@tile('cut', permission="delete")
-class CutAction(Tile):
-    
-    def render(self):
-        #print 'cut'
-        model = self.model
-        request = self.request
-        return u''
 
-
-@tile('copy', permission="edit")
-class CopyAction(Tile):
-    
-    def render(self):
-        #print 'copy'
-        model = self.model
-        request = self.request
-        return u''
+def extract_copysupport_cookie(request, name):
+    cookie = request.cookies.get('cone.app.copysupport.%s' % name, '')
+    cookie = urllib.unquote(cookie)
+    paths = cookie.split('::')
+    return paths
 
 
 @tile('paste', permission="add")
 class PasteAction(Tile):
     
     def render(self):
-        #print 'paste'
-        model = self.model
-        request = self.request
+        cut_paths = extract_copysupport_cookie(self.request, 'cut')
+        copy_path = extract_copysupport_cookie(self.request, 'copy')
+        #print cut_paths
+        #print copy_path
+        # XXX: extend cone.tile for deleting cookies
         return u''

@@ -37,7 +37,13 @@
       </tr>
       
       <tal:row repeat="row_data context.slice.rows">
-        <tr class="${row_data.selectable and 'selectable' or None}">
+      
+        <tr tal:define="css row_data.selectable and 'selectable' or '';
+                        css ' '.join([css, row_data.css]).strip();
+                        css css and css or None"
+            class="${css|nothing}"
+            ajax:target="${row_data.target and row_data.target or None}">
+          
           <tal:td repeat="col_def context.col_defs">
                 
             <td tal:condition="col_def['content'] == 'actions'"
@@ -90,6 +96,7 @@
             </td>
             
           </tal:td>
+          
         </tr>
       </tal:row>
     </table> 

@@ -176,29 +176,41 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
         
         copysupportbinder: function(context) {
+            var cut_cookie = 'cone.app.copysupport.cut';
+            var copy_cookie = 'cone.app.copysupport.copy';
+            var write_selected_to_cookie = function(selectable, name) {
+                var ids = new Array();
+                var elem;
+                selectable.each(function() {
+                    elem = $(this);
+                    if (elem.hasClass('selected')) {
+                        ids.push(elem.attr('ajax:target'));
+                    }
+                });
+                createCookie(name, ids.join('::'));
+            };
             $('a.cut16_16', context).unbind('click').bind('click',
                                                           function(event) {
                 event.preventDefault();
-                var target = bdajax.parsetarget($(this).attr('ajax:target'));
-                bdajax.action({
-                    name: 'cut',
-                    mode: 'NONE',
-                    selector: 'NONE',
-                    url: target.url,
-                    params: target.params,
+                var selectable = $('.selectable');
+                createCookie(copy_cookie, '', 0);
+                write_selected_to_cookie(selectable, cut_cookie);
+                selectable.removeClass('copysupport_cut');
+                selectable.each(function() {
+                    elem = $(this);
+                    if (elem.hasClass('selected')) {
+                        elem.addClass('copysupport_cut');
+                        elem.removeClass('selected');
+                    }
                 });
             });
             $('a.copy16_16', context).unbind('click').bind('click',
                                                            function(event) {
                 event.preventDefault();
-                var target = bdajax.parsetarget($(this).attr('ajax:target'));
-                bdajax.action({
-                    name: 'copy',
-                    mode: 'NONE',
-                    selector: 'NONE',
-                    url: target.url,
-                    params: target.params,
-                });
+                var selectable = $('.selectable');
+                createCookie(cut_cookie, '', 0);
+                write_selected_to_cookie(selectable, copy_cookie);
+                selectable.removeClass('copysupport_cut selected');
             });
             $('a.paste16_16', context).unbind('click').bind('click',
                                                             function(event) {

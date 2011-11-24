@@ -315,6 +315,12 @@ form div.message {
     padding:2px 2px 0px 2px;
 }
 
+/* Copysupport */
+.copysupport_cut {
+    background-color:#efefef;
+    color:#bbb;
+}
+
 /* Contents listing */
 #contentslisting {
     width:100%;
@@ -366,9 +372,9 @@ table.contents td {
 
 /* Sharing tile */
 div.principal-search {
-	margin-bottom:8px;
-	padding:8px;
-	border:#ccc 1px solid;
+    margin-bottom:8px;
+    padding:8px;
+    border:#ccc 1px solid;
 }
 
 /* Dropdown */

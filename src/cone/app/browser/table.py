@@ -15,8 +15,10 @@ from cone.app.browser.utils import (
 
 class RowData(dict):
     
-    def __init__(self, selectable=False):
+    def __init__(self, selectable=False, target=None, css=''):
         self.selectable = selectable
+        self.target = target
+        self.css = css
 
 
 class Item(object):
