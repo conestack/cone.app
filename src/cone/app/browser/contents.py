@@ -88,7 +88,7 @@ class ContentsTile(Table):
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
-        cut_paths = extract_copysupport_cookie(self.request, 'cut')
+        cut_urls = extract_copysupport_cookie(self.request, 'cut')
         for child in children[start:end]:
             row_data = RowData()
             row_data['actions'] = Item(actions=self.create_actions(child))
@@ -98,7 +98,7 @@ class ContentsTile(Table):
                 row_data.selectable = True
                 row_data.target = target
                 row_data.css = 'copysupportitem'
-                if target in cut_paths:
+                if target in cut_urls:
                     row_data.css += ' copysupport_cut'
             action = 'content:#content:inner'
             event = 'contextchanged:.contextsensitiv'

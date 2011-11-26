@@ -1,22 +1,139 @@
 Copysupport::
 
     >>> from cone.app.tests.mock import CopySupportNode
-    >>> from cone.app.browser.ajax import ajax_tile
+    >>> from cone.app.model import (
+    ...     NodeInfo,
+    ...     registerNodeInfo,
+    ... )
     
-    >>> layer.login('manager')
+    >>> class CopySupportNodeA(CopySupportNode):
+    ...     node_info_name = 'copy_support_node_a'
+    >>> info = NodeInfo()
+    >>> info.title = 'CopySupportNodeA'
+    >>> info.addables = ['copy_support_node_a', 'copy_support_node_b']
+    >>> registerNodeInfo('copy_support_node_a', info)
     
-    >>> model = CopySupportNode()
+    >>> class CopySupportNodeB(CopySupportNode):
+    ...     node_info_name = 'copy_support_node_b'
+    >>> info = NodeInfo()
+    >>> info.title = 'CopySupportNodeB'
+    >>> info.addables = ['copy_support_node_b']
+    >>> registerNodeInfo('copy_support_node_b', info)
+    
+    >>> root = CopySupportNodeA()
+    >>> source = root['source'] = CopySupportNodeA()
+    >>> source['a_child'] = CopySupportNodeA()
+    >>> source['b_child'] = CopySupportNodeB()
+    >>> target = root['target'] = CopySupportNodeB()
+    
+    >>> root.printtree()
+    <class 'CopySupportNodeA'>: None
+      <class 'CopySupportNodeA'>: source
+        <class 'CopySupportNodeA'>: a_child
+        <class 'CopySupportNodeB'>: b_child
+      <class 'CopySupportNodeB'>: target
+    
+    >>> import urllib
+    >>> from cone.app.browser.utils import make_url
     >>> request = layer.new_request()
-    >>> request.cookies['__cone.app.copysupport'] = ''
-    >>> request.params['bdajax.mode'] = 'NONE'
-    >>> request.params['bdajax.selector'] = 'NONE'
-    >>> request.params['bdajax.action'] = 'paste'
-    >>> ajax_tile(model, request)
+    >>> copy_url = urllib.quote(make_url(request, node=source['a_child']))
+    >>> request.cookies['cone.app.copysupport.copy'] = copy_url
+    
+    >>> from cone.app.browser.copysupport import PasteAction
+    >>> paste_tile = PasteAction(None, 'render', '')
+    >>> res = paste_tile(target, request)
+    
+    >>> request.environ['cone.app.continuation'][0].payload
+    u"Abort. 'CopySupportNodeB' is not allowed to contain 'CopySupportNodeA'"
+    
+    >>> copy_url = urllib.quote(make_url(request, node=source['b_child']))
+    >>> request.cookies['cone.app.copysupport.copy'] = copy_url
+    >>> del request.environ['cone.app.continuation']
+    
+    >>> res = paste_tile(target, request)
+    Called: target
+    
+    >>> root.printtree()
+    <class 'CopySupportNodeA'>: None
+      <class 'CopySupportNodeA'>: source
+        <class 'CopySupportNodeA'>: a_child
+        <class 'CopySupportNodeB'>: b_child
+      <class 'CopySupportNodeB'>: target
+        <class 'CopySupportNodeB'>: b_child
+    
+    >>> res = paste_tile(target, request)
+    Called: target
+    
+    >>> root.printtree()
+    <class 'CopySupportNodeA'>: None
+      <class 'CopySupportNodeA'>: source
+        <class 'CopySupportNodeA'>: a_child
+        <class 'CopySupportNodeB'>: b_child
+      <class 'CopySupportNodeB'>: target
+        <class 'CopySupportNodeB'>: b_child
+        <class 'CopySupportNodeB'>: b_child-1
+    
+    >>> cut_url = urllib.quote(make_url(request, node=source['b_child']))
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> del request.cookies['cone.app.copysupport.copy']
+    >>> res = paste_tile(target, request)
+    Called: target
+    Called: source
+    
+    >>> root.printtree()
+    <class 'CopySupportNodeA'>: None
+      <class 'CopySupportNodeA'>: source
+        <class 'CopySupportNodeA'>: a_child
+      <class 'CopySupportNodeB'>: target
+        <class 'CopySupportNodeB'>: b_child
+        <class 'CopySupportNodeB'>: b_child-1
+        <class 'CopySupportNodeB'>: b_child-2
+    
+    >>> cut_url = urllib.quote(make_url(request, node=source['a_child']))
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> res = paste_tile(target, request)
+    >>> root.printtree()
+    <class 'CopySupportNodeA'>: None
+      <class 'CopySupportNodeA'>: source
+        <class 'CopySupportNodeA'>: a_child
+      <class 'CopySupportNodeB'>: target
+        <class 'CopySupportNodeB'>: b_child
+        <class 'CopySupportNodeB'>: b_child-1
+        <class 'CopySupportNodeB'>: b_child-2
+    
+    >>> request.environ['cone.app.continuation'][0].payload
+    u"Abort. 'CopySupportNodeB' is not allowed to contain 'CopySupportNodeA'"
+    
+    >>> cut_url = '::'.join([
+    ...     urllib.quote(make_url(request, node=target['b_child'])),
+    ...     urllib.quote(make_url(request, node=target['b_child-1'])),
+    ... ])
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> res = paste_tile(source, request)
+    Called: source
+    Called: target
+    
+    >>> root.printtree()
+    <class 'CopySupportNodeA'>: None
+      <class 'CopySupportNodeA'>: source
+        <class 'CopySupportNodeA'>: a_child
+        <class 'CopySupportNodeB'>: b_child
+        <class 'CopySupportNodeB'>: b_child-1
+      <class 'CopySupportNodeB'>: target
+        <class 'CopySupportNodeB'>: b_child-2
+    
+    >> layer.login('manager')
+    >> from cone.app.browser.ajax import ajax_tile
+    
+    >> request.params['bdajax.mode'] = 'NONE'
+    >> request.params['bdajax.selector'] = 'NONE'
+    >> request.params['bdajax.action'] = 'paste'
+    >> ajax_tile(target, request)
     {'continuation': False, 
     'payload': u'', 
     'mode': 'NONE', 
     'selector': 'NONE'}
     
-    u'http%3A//localhost%3A8081/time/orga_group0/planning/962273be-9ff3-4170-bb67-b1f8023ccb21/315ee5ab-81de-4431-b1b1-61f97a38dafe%3A%3Ahttp%3A//localhost%3A8081/time/orga_group0/planning/962273be-9ff3-4170-bb67-b1f8023ccb21/85805e24-faaf-4570-ae02-19ed1ad1d6aa'
+    >> root.printtree()
     
-    >>> layer.logout()
+    >> layer.logout()

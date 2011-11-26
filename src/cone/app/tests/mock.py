@@ -87,3 +87,6 @@ class CopySupportNode(BaseNode):
         props.action_copy = True
         props.action_paste = True
         return props
+    
+    def __call__(self):
+        print 'Called: %s' % self.name
