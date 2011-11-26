@@ -44,7 +44,9 @@ Copysupport::
     >>> res = paste_tile(target, request)
     
     >>> request.environ['cone.app.continuation'][0].payload
-    u"Abort. 'CopySupportNodeB' is not allowed to contain 'CopySupportNodeA'"
+    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
+    failed:</strong><br />Violation. 'CopySupportNodeB' is not allowed 
+    to contain 'CopySupportNodeA'"
     
     >>> copy_url = urllib.quote(make_url(request, node=source['b_child']))
     >>> request.cookies['cone.app.copysupport.copy'] = copy_url
@@ -91,6 +93,7 @@ Copysupport::
     
     >>> cut_url = urllib.quote(make_url(request, node=source['a_child']))
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> del request.environ['cone.app.continuation']
     >>> res = paste_tile(target, request)
     >>> root.printtree()
     <class 'CopySupportNodeA'>: None
@@ -102,7 +105,9 @@ Copysupport::
         <class 'CopySupportNodeB'>: b_child-2
     
     >>> request.environ['cone.app.continuation'][0].payload
-    u"Abort. 'CopySupportNodeB' is not allowed to contain 'CopySupportNodeA'"
+    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
+    failed:</strong><br />Violation. 'CopySupportNodeB' is not 
+    allowed to contain 'CopySupportNodeA'"
     
     >>> cut_url = '::'.join([
     ...     urllib.quote(make_url(request, node=target['b_child'])),
@@ -122,18 +127,28 @@ Copysupport::
       <class 'CopySupportNodeB'>: target
         <class 'CopySupportNodeB'>: b_child-2
     
-    >> layer.login('manager')
-    >> from cone.app.browser.ajax import ajax_tile
+    >>> from cone.app.model import BaseNode
+    >>> root['unknown_source'] = BaseNode()
+    >>> root['unknown_target'] = BaseNode()
     
-    >> request.params['bdajax.mode'] = 'NONE'
-    >> request.params['bdajax.selector'] = 'NONE'
-    >> request.params['bdajax.action'] = 'paste'
-    >> ajax_tile(target, request)
-    {'continuation': False, 
-    'payload': u'', 
-    'mode': 'NONE', 
-    'selector': 'NONE'}
+    >>> cut_url = urllib.quote(make_url(request, node=root['unknown_source']))
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> del request.environ['cone.app.continuation']
+    >>> res = paste_tile(target, request)
+    >>> request.environ['cone.app.continuation'][0].payload
+    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
+    failed:</strong><br />Cannot paste 'unknown_source'. Unknown source"
     
-    >> root.printtree()
+    >>> cut_url = urllib.quote(make_url(request, node=source['b_child']))
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> del request.environ['cone.app.continuation']
+    >>> res = paste_tile(root['unknown_target'], request)
+    >>> request.environ['cone.app.continuation'][0].payload
+    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
+    failed:</strong><br />Cannot paste to 'unknown_target'. Unknown target"
     
-    >> layer.logout()
+    >>> del request.cookies['cone.app.copysupport.cut']
+    >>> del request.environ['cone.app.continuation']
+    >>> res = paste_tile(root['unknown_target'], request)
+    >>> request.environ['cone.app.continuation'][0].payload
+    u'Nothing to paste'

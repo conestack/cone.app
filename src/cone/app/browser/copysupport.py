@@ -30,24 +30,30 @@ class PasteAction(Tile):
         cut = extract_copysupport_cookie(self.request, 'cut')
         copy = extract_copysupport_cookie(self.request, 'copy')
         if not cut and not copy:
+            ajax_message(self.request, u"Nothing to paste")
             return u''
         urls = copy and copy or cut
         paths = paths_from_urls(urls)
         call_sources = set()
+        errors = list()
+        success = 0
         for path in paths:
             node = self.model.root
             for key in path:
                 node = node[key]
-            if not hasattr(node, 'nodeinfo') \
-              or not hasattr(self.model, 'nodeinfo'):
-                ajax_message(self.request, u'Operation forbidden', 'error')
-                return u''
+            if not node.node_info_name:
+                errors.append(u"Cannot paste '%s'. Unknown source" % node.name)
+                continue
+            if not self.model.node_info_name:
+                errors.append(
+                    u"Cannot paste to '%s'. Unknown target" % self.model.name)
+                continue
             if not node.node_info_name in self.model.nodeinfo.addables:
-                message = u"Abort. '%s' is not allowed to contain '%s'"
+                message = u"Violation. '%s' is not allowed to contain '%s'"
                 message = message % (self.model.nodeinfo.title,
                                      node.nodeinfo.title)
-                ajax_message(self.request, message, 'error')
-                return u''
+                errors.append(message)
+                continue
             source = node.parent
             if copy:
                 node = source[node.name].copy()
@@ -56,8 +62,16 @@ class PasteAction(Tile):
             self.model[choose_name(self.model, node.name)] = node
             if cut:
                 call_sources.add(source)
-        self.model()
+            success += 1
+        if success > 0:
+            self.model()
         for source in call_sources:
             source()
+        message = "Pasted %i items." % success
+        if errors:
+            failed = "<br /><strong>Pasting of %i items failed:</strong>"
+            failed = failed % len(errors)
+            message += "<br />".join([failed] + errors)
+        ajax_message(self.request, message)
         # XXX: delete cookies (extend cone.tile for deleting cookies)
         return u''

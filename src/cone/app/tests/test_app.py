@@ -21,7 +21,6 @@ TESTFILES = [
     '../security.rst',
     '../model.rst',
     '../workflow.rst',
-    '../copysupport.rst',
     '../browser/__init__.rst',
     '../browser/ajax.rst',
     '../browser/authoring.rst',

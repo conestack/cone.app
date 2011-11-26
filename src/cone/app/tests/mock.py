@@ -21,7 +21,6 @@ from cone.app.security import (
     PrincipalACL,
     DEFAULT_ACL,
 )
-from cone.app.copysupport import CopySupport
 
 
 class WorkflowNode(BaseNode):
@@ -75,10 +74,8 @@ class SharingNode(object):
     def principal_roles(self):
         return dict()
 
-    
+
 class CopySupportNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = CopySupport
 
     @instance_property
     def properties(self):
