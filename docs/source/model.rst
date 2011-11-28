@@ -13,7 +13,7 @@ BaseNode
 --------
 
 ``cone.app.model.BaseNode`` plumbs together all required aspects for
-representing an application node. It's propably a good idea to inherit from it
+representing an application node. It's probably a good idea to inherit from it
 if none of the ongoing objects fit desired behavior.::
 
     >>> from cone.app.model import BaseNode
@@ -82,9 +82,9 @@ AdapterNode
 -----------
 
 ``cone.app.AdapterNode`` is intended to be used for publishing nodes of models
-where the hierarchy differs to the one of the application model.
+where the hierarchy differs from the one of the application model.
 
-The adapter node by default act as proxy for ``__iter__`` and ``attrs``, all
+The adapter node by default acts as proxy for ``__iter__`` and ``attrs``, all
 other functions map to the used ``OdictStorage``. If an adapter node provides
 children itself, it may be needed to adapted them as well, thus ``__getitem__``
 must be overwritten.::
@@ -109,8 +109,8 @@ AppRoot
 ``cone.app.model.AppRoot`` is a factory node instanciated at application
 startup time. Every plugin root factory registered by
 ``cone.app.register_plugin`` is written to app root's ``factories``
-attribute. Also application related settings from INI file are written to 
-``properties`` respecive ``metadata`` of app root node. The root node can be
+attribute. Also application related settings from the INI file are written to 
+``properties`` respective ``metadata`` of app root node. The root node can be
 accessed either by calling ``node.root`` if ``node`` is child of application
 model or by using ``cone.app.get_root``.::
 
