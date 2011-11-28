@@ -4,8 +4,16 @@ from cone.tile import (
     tile,
     Tile,
 )
-from cone.app.browser.ajax import ajax_message
-from cone.app.browser.utils import choose_name
+from cone.app.browser.ajax import (
+    ajax_message,
+    ajax_continue,
+    AjaxAction,
+    AjaxEvent,
+)
+from cone.app.browser.utils import (
+    choose_name,
+    make_url,
+)
 
 
 def cookie_name(name):
@@ -77,6 +85,11 @@ class PasteAction(Tile):
             failed = failed % len(errors)
             message += "<br />".join([failed] + errors)
         ajax_message(self.request, message)
+        url = make_url(self.request, node=self.model)
+        action = AjaxAction(url, 'content', 'inner', '#content')
+        event = AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+        continuation = [action, event]
+        ajax_continue(self.request, continuation)
         res = self.request.response
         res.delete_cookie(cookie_name(copy and 'copy' or 'cut'))
         return u''

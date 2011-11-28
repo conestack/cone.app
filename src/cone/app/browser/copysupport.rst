@@ -58,6 +58,11 @@ Copysupport::
     >>> request.response.headers['Set-Cookie']
     'cone.app.copysupport.copy=; Max-Age=0; Path=/; expires=...'
     
+    >>> request.environ['cone.app.continuation']
+    [<cone.app.browser.ajax.AjaxMessage object at ...>, 
+    <cone.app.browser.ajax.AjaxAction object at ...>, 
+    <cone.app.browser.ajax.AjaxEvent object at ...>]
+    
     >>> root.printtree()
     <class 'CopySupportNodeA'>: None
       <class 'CopySupportNodeA'>: source
