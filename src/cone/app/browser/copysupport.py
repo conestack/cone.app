@@ -8,8 +8,12 @@ from cone.app.browser.ajax import ajax_message
 from cone.app.browser.utils import choose_name
 
 
+def cookie_name(name):
+    return u'cone.app.copysupport.%s' % name
+
+
 def extract_copysupport_cookie(request, name):
-    cookie = request.cookies.get('cone.app.copysupport.%s' % name, '')
+    cookie = request.cookies.get(cookie_name(name), '')
     cookie = urllib.unquote(cookie)
     paths = cookie.split('::')
     return [path for path in paths if path]
@@ -73,5 +77,6 @@ class PasteAction(Tile):
             failed = failed % len(errors)
             message += "<br />".join([failed] + errors)
         ajax_message(self.request, message)
-        # XXX: delete cookies (extend cone.tile for deleting cookies)
+        res = self.request.response
+        res.delete_cookie(cookie_name(copy and 'copy' or 'cut'))
         return u''

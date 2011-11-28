@@ -204,5 +204,26 @@ Render authenticated::
     
     >>> rendered.find(expected) != -1
     True
+
+Copysupport Attributes::
+
+    >>> from cone.app.tests.mock import CopySupportNode
+    >>> model = CopySupportNode()
+    >>> model['child'] = CopySupportNode()
+    >>> request = layer.new_request()
+    >>> rendered = render_tile(model, request, 'contents')
+    >>> expected = 'class="selectable copysupportitem"'
+    >>> rendered.find(expected) > -1
+    True
     
+    >>> import urllib
+    >>> from cone.app.browser.utils import make_url
+    >>> request = layer.new_request()
+    >>> cut_url = urllib.quote(make_url(request, node=model['child']))
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> rendered = render_tile(model, request, 'contents')
+    >>> expected = 'class="selectable copysupportitem copysupport_cut"'
+    >>> rendered.find(expected) > -1
+    True
+
     >>> layer.logout()

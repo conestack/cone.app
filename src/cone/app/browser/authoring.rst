@@ -504,6 +504,18 @@ ContextMenu
     
     >>> rendered.find('sharing16_16') > -1
     True
+    
+    >>> from cone.app.tests.mock import CopySupportNode
+    >>> model = CopySupportNode()
+    >>> rendered = render_tile(model, request, 'contextmenu')
+    >>> rendered.find('cut16_16') > -1
+    True
+    
+    >>> rendered.find('copy16_16') > -1
+    True
+    
+    >>> rendered.find('paste16_16') > -1
+    True
 
 Logout::
 

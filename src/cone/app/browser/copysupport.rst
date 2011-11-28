@@ -55,6 +55,9 @@ Copysupport::
     >>> res = paste_tile(target, request)
     Called: target
     
+    >>> request.response.headers['Set-Cookie']
+    'cone.app.copysupport.copy=; Max-Age=0; Path=/; expires=...'
+    
     >>> root.printtree()
     <class 'CopySupportNodeA'>: None
       <class 'CopySupportNodeA'>: source
@@ -81,6 +84,9 @@ Copysupport::
     >>> res = paste_tile(target, request)
     Called: target
     Called: source
+    
+    >>> request.response.headers['Set-Cookie']
+    'cone.app.copysupport.cut=; Max-Age=0; Path=/; expires=...'
     
     >>> root.printtree()
     <class 'CopySupportNodeA'>: None
