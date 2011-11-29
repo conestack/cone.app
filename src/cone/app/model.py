@@ -1,4 +1,5 @@
 import os
+import uuid
 import types
 import ConfigParser
 from lxml import etree
@@ -8,6 +9,7 @@ from plumber import (
     plumber,
     Part,
     default,
+    plumb,
 )
 from node.parts import (
     AsAttrAccess,
@@ -32,6 +34,7 @@ from pyramid.security import (
     ALL_PERMISSIONS,
 )
 from cone.app.interfaces import (
+    IUIDAware,
     IApplicationNode,
     IFactoryNode,
     IAdapterNode,
@@ -97,6 +100,37 @@ class AppNode(Part):
             info.node = self.__class__
             info.icon = app_config().default_node_icon
         return info
+
+
+class UIDAware(Part):
+    """Plumbing part for automatic uid setting.
+    """
+    
+    implements(IUIDAware)
+    
+    uid_handling_recursiv = default(True)
+    
+    @default
+    def set_uid_for(self, node, override=False):
+        if IUIDAware.providedBy(node):
+            if override or not node.attrs.get('uid'):
+                node.attrs['uid'] = uuid.uuid4()
+        if self.uid_handling_recursiv:
+            for child in node.values():
+                self.set_uid_for(child, override)
+    
+    @plumb
+    def __init__(_next, self, *args, **kw):
+        _next(self, *args, **kw)
+        self.set_uid_for(self)
+    
+    @plumb
+    def copy(_next, self):
+        """Set new uid on copied node.
+        """
+        ret = _next(self)
+        self.set_uid_for(ret, True)
+        return ret
 
 
 class BaseNode(object):

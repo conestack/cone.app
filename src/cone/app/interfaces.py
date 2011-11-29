@@ -4,6 +4,17 @@ from node.interfaces import INode
 from node.interfaces import IAttributes
 
 
+class IUIDAware(INode, IAttributes):
+    """UID aware node.
+    """
+    
+    uid_handling_recursiv = Attribute(u"Flag whether to set UID recursiv.")
+    
+    def set_uid_for(node, override=False):
+        """Set uid for given node.
+        """
+
+
 class IApplicationNode(INode, IAttributes):
     """Application Node interface.
     """
