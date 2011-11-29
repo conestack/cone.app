@@ -67,7 +67,7 @@ class AppNode(Part):
     
     implements(IApplicationNode)
     
-    __acl__ = default(DEFAULT_ACL)
+    __acl__ = default(DEFAULT_ACL) # XXX: make property function
     
     # set this to name of registered node info on deriving class
     node_info_name = default('')

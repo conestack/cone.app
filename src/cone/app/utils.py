@@ -1,8 +1,11 @@
 import logging
 from datetime import datetime
 from pyramid.threadlocal import get_current_request
+from pyramid.security import authenticated_userid
+
 
 logger = logging.getLogger('cone.app')
+
 
 def app_config():
     import cone.app
@@ -26,6 +29,16 @@ def timestamp():
     """XXX: tz aware
     """
     return datetime.now()
+
+
+def add_creation_metadata(request, mapping):
+    mapping['creator'] = authenticated_userid(request)
+    mapping['created'] = timestamp()
+    mapping['modified'] = mapping['created']
+
+
+def update_creation_metadata(request, mapping):
+    mapping['modified'] = timestamp()
 
 
 class DatetimeHelper(object):
