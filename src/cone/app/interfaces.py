@@ -15,6 +15,13 @@ class IUIDAware(INode, IAttributes):
         """
 
 
+class IWorkflowState(INode, IAttributes):
+    """Workflow support on nodes.
+    """
+    
+    state = Attribute(u"Current workflow state")
+
+
 class IApplicationNode(INode, IAttributes):
     """Application Node interface.
     """

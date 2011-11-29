@@ -8,6 +8,12 @@ from node.parts import (
     DefaultInit,
 )
 from node.utils import instance_property
+from pyramid.security import (
+    Everyone,
+    Allow,
+    Deny,
+    ALL_PERMISSIONS,
+)
 from cone.app.model import (
     AppNode,
     BaseNode,
@@ -51,6 +57,20 @@ class InexistentWorkflowNode(WorkflowNode):
         props = super(InexistentWorkflowNode, self).properties
         props.wf_name = u'inexistent'
         return props
+
+
+class StateACLWorkflowNode(WorkflowNode):
+    state_acls = {
+        'initial': [
+            (Allow, 'role:manager', ['manage', 'edit', 'change_state']),
+            (Allow, Everyone, ['login']),
+            (Deny, Everyone, ALL_PERMISSIONS),
+        ],
+        'final': [
+            (Allow, 'role:manager', ['view', 'edit', 'change_state']),
+            (Deny, Everyone, ALL_PERMISSIONS),
+        ],
+    }
 
 
 class SharingNode(object):

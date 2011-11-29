@@ -15,10 +15,6 @@ Workflow dropdown
     >>> node = WorkflowNode()
     
     >>> node.state
-    
-    >>> from cone.app.workflow import initialize_workflow
-    >>> initialize_workflow(node)
-    >>> node.state
     u'initial'
     
     >>> layer.login('owner')

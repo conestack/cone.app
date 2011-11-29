@@ -1,9 +1,8 @@
-# XXX: move to seperate cone.workflow egg
-
 from cone.tile import (
     tile,
     Tile,
 )
+from cone.app.interfaces import IWorkflowState
 from cone.app.model import Properties
 from cone.app.browser.ajax import (
     AjaxAction,
@@ -59,7 +58,7 @@ class WfDropdown(Tile):
         
     @property
     def workflow(self):
-        return get_workflow(self.model.__class__,
+        return get_workflow(IWorkflowState,
                             self.model.properties.wf_name)
     
     @property

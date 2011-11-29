@@ -1,8 +1,11 @@
+import logging
 from plumber import (
     Part,
     default,
     extend,
+    plumb,
 )
+from zope.interface import implements
 from pyramid.security import (
     Everyone,
     Allow,
@@ -11,15 +14,17 @@ from pyramid.security import (
     remember,
 )
 from repoze.workflow import get_workflow
+from cone.app.interfaces import IWorkflowState
 
-import logging
+
 logger = logging.getLogger('cone.workflow')
 
 
 def initialize_workflow(node):
     wf_name = node.properties.wf_name
-    workflow = get_workflow(node.__class__, wf_name)
-    workflow.initialize(node)
+    workflow = get_workflow(IWorkflowState, wf_name)
+    if workflow:
+        workflow.initialize(node)
 
 
 def persist_state(node, info):
@@ -36,6 +41,26 @@ class WorkflowState(Part):
     
     This implementation persists to self.attrs['state']
     """
+    implements(IWorkflowState)
+    
+    @plumb
+    def __init__(_next, self, *args, **kw):
+        _next(self, *args, **kw)
+        initialize_workflow(self)
+    
+    @plumb
+    def copy(_next, self):
+        """Set initial state for copied node and all children providing
+        ``cone.app.interfaces.IWorkflowState``.
+        """
+        ret = _next(self)
+        def recursiv_initial_state(node):
+            if IWorkflowState.providedBy(node):
+                initialize_workflow(node)
+                for child in node.values():
+                    recursiv_initial_state(child)
+        recursiv_initial_state(ret)
+        return ret
     
     def _get_state(self):
         return self.attrs.get('state', None)

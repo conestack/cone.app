@@ -6,7 +6,7 @@
             name="Dummy workflow"
             state_attr="state"
             initial_state="initial"
-            content_types=".mock.WorkflowNode"
+            content_types="cone.app.interfaces.IWorkflowState"
             permission_checker="pyramid.security.has_permission">
 
     <state name="initial">
