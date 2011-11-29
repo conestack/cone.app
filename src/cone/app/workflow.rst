@@ -13,7 +13,7 @@ Test env provides mock node with workflow parts configured::
     >>> IWorkflowState.providedBy(node)
     True
     
-    >>> get_workflow(IWorkflowState, node.properties.wf_name)
+    >>> get_workflow(node.__class__, node.properties.wf_name)
     <repoze.workflow.workflow.Workflow object at ...>
     
     >>> node.state
@@ -68,6 +68,9 @@ Test ``state_acls``::
 
     >>> from cone.app.tests.mock import StateACLWorkflowNode
     >>> node = StateACLWorkflowNode()
+    >>> get_workflow(node.__class__, node.properties.wf_name)
+    <repoze.workflow.workflow.Workflow object at ...>
+    
     >>> node.properties.wf_name
     u'dummy'
     
@@ -82,7 +85,7 @@ Test ``state_acls``::
     >>> layer.login('manager')
     
     >>> request = layer.new_request()
-    >>> wf = get_workflow(IWorkflowState, node.properties.wf_name)
+    >>> wf = get_workflow(node.__class__, node.properties.wf_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state
     u'final'

@@ -22,7 +22,7 @@ logger = logging.getLogger('cone.workflow')
 
 def initialize_workflow(node):
     wf_name = node.properties.wf_name
-    workflow = get_workflow(IWorkflowState, wf_name)
+    workflow = get_workflow(node.__class__, wf_name)
     if workflow:
         workflow.initialize(node)
 

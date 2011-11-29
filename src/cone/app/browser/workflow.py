@@ -2,7 +2,6 @@ from cone.tile import (
     tile,
     Tile,
 )
-from cone.app.interfaces import IWorkflowState
 from cone.app.model import Properties
 from cone.app.browser.ajax import (
     AjaxAction,
@@ -58,7 +57,7 @@ class WfDropdown(Tile):
         
     @property
     def workflow(self):
-        return get_workflow(IWorkflowState,
+        return get_workflow(self.model.__class__,
                             self.model.properties.wf_name)
     
     @property
