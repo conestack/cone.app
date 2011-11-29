@@ -315,7 +315,7 @@ Context menu
 
 User actions for a node. The context menu consists of sections containing
 actions. Sections or actions can be added to
-``cone.app.browser.authoring.context_menu_sections``.
+``cone.app.browser.contextmenu.context_menu_sections``.
 
 **Registration name**
     *contextmenu*
@@ -386,6 +386,38 @@ Invokes ``delete`` tile on node after confirming action.
 
 *deletable*
     Flag whether node is deletable.
+
+ActionCut
+~~~~~~~~~
+
+Writes selected elements contained in ``cone.selectable.selected`` to cookie
+on client.
+
+**Considered properties**
+
+*action_cut*
+    Flag whether node provides detaching children.
+
+ActionCopy
+~~~~~~~~~~
+
+Writes selected elements contained in ``cone.selectable.selected`` to cookie
+on client.
+
+**Considered properties**
+
+*action_copy*
+    Flag whether node provides copying children.
+
+ActionPaste
+~~~~~~~~~~~
+
+Invokes ``paste`` tile on node.
+
+**Considered properties**
+
+*action_paste*
+    Flag whether node can be pasted to.
 
 ActionShare
 ~~~~~~~~~~~
