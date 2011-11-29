@@ -628,3 +628,7 @@ a.paste16_16 {
     background:url('images/paste16_16.png') top left no-repeat;
     cursor:pointer;
 }
+a.paste16_16.disabled {
+    background:url('images/paste16_16_disabled.png') top left no-repeat;
+    cursor:default;
+}

@@ -6,15 +6,15 @@
   
     <tal:sections repeat="section context.sections">
     
-      <tal:section condition="section.enabled">
+      <tal:section condition="section.display">
         <tal:actions repeat="action section.actions">
         
-          <tal:action condition="action.enabled">
+          <tal:action condition="action.display">
             <tal:direct condition="action.type == 'direct'">
             
               <div>
                 <a href="${action.href|nothing}"
-                   class="${action.css_class|nothing}"
+                   class="${action.css|nothing}"
                    title="${action.title|nothing}"
                    ajax:bind="${action.bind|nothing}"
                    ajax:target="${action.target|nothing}"

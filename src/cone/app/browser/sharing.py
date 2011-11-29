@@ -40,14 +40,6 @@ class SharingTable(Table):
     def col_defs(self):
         col_defs = [
             {
-                'id': 'actions',
-                'title': 'Actions',
-                'sort_key': None,
-                'sort_title': None,
-                'content': 'actions',
-                'link': False,
-            },
-            {
                 'id': 'principal',
                 'title': 'Principal',
                 'sort_key': 'principal',
@@ -100,7 +92,6 @@ class SharingTable(Table):
             else:
                 title = principal.attrs.get('fullname', principal_id)
             row_data = RowData()
-            row_data['actions'] = Item(actions=[])
             row_data['principal'] = Item(title)
             ugm_roles = principal.roles
             local_roles = principal_roles.get(principal_id, list())

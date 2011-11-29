@@ -187,14 +187,23 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                         ids.push(elem.attr('ajax:target'));
                     }
                 });
-                createCookie(name, ids.join('::'));
+                var cookie = ids.join('::');
+                createCookie(name, cookie);
+                if (cookie.length) {
+                    return true;
+                }
+                return false;
             };
             $('a.cut16_16', context).unbind('click').bind('click',
                                                           function(event) {
                 event.preventDefault();
                 var selectable = $('.selectable');
                 createCookie(copy_cookie, '', 0);
-                write_selected_to_cookie(selectable, cut_cookie);
+                var selected_exist = 
+                    write_selected_to_cookie(selectable, cut_cookie);
+                if (selected_exist) {
+                    $('a.paste16_16').removeClass('disabled');
+                }
                 selectable.removeClass('copysupport_cut');
                 selectable.each(function() {
                     elem = $(this);
@@ -209,13 +218,21 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 event.preventDefault();
                 var selectable = $('.selectable');
                 createCookie(cut_cookie, '', 0);
-                write_selected_to_cookie(selectable, copy_cookie);
+                var selected_exist = 
+                    write_selected_to_cookie(selectable, copy_cookie);
+                if (selected_exist) {
+                    $('a.paste16_16').removeClass('disabled');
+                }
                 selectable.removeClass('copysupport_cut selected');
             });
             $('a.paste16_16', context).unbind('click').bind('click',
                                                             function(event) {
                 event.preventDefault();
-                var target = bdajax.parsetarget($(this).attr('ajax:target'));
+                var elem = $(this);
+                if (elem.hasClass('disabled')) {
+                    return;
+                }
+                var target = bdajax.parsetarget(elem.attr('ajax:target'));
                 bdajax.action({
                     name: 'paste',
                     mode: 'NONE',

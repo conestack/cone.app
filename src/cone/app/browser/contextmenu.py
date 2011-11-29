@@ -5,6 +5,7 @@ from cone.tile import (
 )
 from cone.app.browser.utils import make_url
 
+
 @tile('contextmenu', 'templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
     
@@ -27,11 +28,20 @@ class ContextAction(object):
     action = None
     confirm = None
     tile = None
+    display = True
     enabled = True
     
     @property
     def target(self):
         return make_url(self.request, node=self.model)
+    
+    @property
+    def css(self):
+        css = not self.enabled and 'disabled' or ''
+        if self.css_class:
+            css = '%s %s' % (self.css_class, css)
+        css = css.strip()
+        return css and css or None
     
     def __init__(self, model, request):
         self.model = model
@@ -40,7 +50,7 @@ class ContextAction(object):
 
 class ContextActionsSection(object):
     factories = odict()
-    enabled = True
+    display = True
     
     def __init__(self, model, request):
         self.model = model
@@ -67,7 +77,7 @@ class ActionUp(ContextAction):
         return '%s:#content:inner' % action
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.action_up
     
     @property
@@ -84,7 +94,7 @@ class ActionView(ContextAction):
     href = ContextAction.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.action_view
 
 
@@ -98,7 +108,7 @@ class ActionList(ContextAction):
         return '%s/listing' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.action_list
 
 
@@ -107,7 +117,7 @@ class ActionAdd(ContextAction):
     tile = 'add_dropdown'
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.nodeinfo.addables
 
 
@@ -121,7 +131,7 @@ class ActionEdit(ContextAction):
         return '%s/edit' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.editable
 
 
@@ -136,7 +146,7 @@ class ActionDelete(ContextAction):
         return '%s/delete' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.deletable
 
 
@@ -150,7 +160,7 @@ class ActionSharing(ContextAction):
         return '%s/sharing' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return hasattr(self.model, 'principal_roles') \
             and self.model.properties.shareable
 
@@ -160,7 +170,7 @@ class ActionState(ContextAction):
     tile = 'wf_dropdown'
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.wf_state
 
 
@@ -175,7 +185,7 @@ class ActionCut(ContextAction):
         return '%s/cut' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.action_cut
 
 
@@ -190,7 +200,7 @@ class ActionCopy(ContextAction):
         return '%s/copy' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.action_copy
 
 
@@ -205,8 +215,13 @@ class ActionPaste(ContextAction):
         return '%s/paste' % self.target
     
     @property
-    def enabled(self):
+    def display(self):
         return self.model.properties.action_paste
+    
+    @property
+    def enabled(self):
+        return self.request.cookies.get('cone.app.copysupport.cut') \
+            or self.request.cookies.get('cone.app.copysupport.copy')
 
 
 class GeneralActions(ContextActionsSection):
