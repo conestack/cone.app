@@ -332,7 +332,7 @@ Edit view::
 
 Deleting
 --------
-
+::
     >>> class CallableNode(BaseNode):
     ...     def __call__(self):
     ...         pass
@@ -471,50 +471,6 @@ XXX: discuss whether to hide entire widget if no items::
     >>> expected = '<ul class="dropdown_items" style="display:none;">\n' +\
     ...            '      \n    </ul>\n'
     >>> rendered.find(expected) != -1
-    True
-
-ContextMenu
------------
-
-::
-
-    >>> from cone.app.tests.mock import SharingNode
-    >>> model = SharingNode()
-    >>> model.properties.action_up = True
-    >>> model.properties.action_view = True
-    >>> model.properties.action_list = True
-    >>> model.properties.editable = True
-    >>> model.properties.deletable = True
-    >>> model.properties.shareable = True
-    >>> rendered = render_tile(model, request, 'contextmenu')
-    >>> rendered.find('up16_16') > -1
-    True
-    
-    >>> rendered.find('view16_16') > -1
-    True
-    
-    >>> rendered.find('listing16_16') > -1
-    True
-    
-    >>> rendered.find('edit16_16') > -1
-    True
-    
-    >>> rendered.find('delete16_16') > -1
-    True
-    
-    >>> rendered.find('sharing16_16') > -1
-    True
-    
-    >>> from cone.app.tests.mock import CopySupportNode
-    >>> model = CopySupportNode()
-    >>> rendered = render_tile(model, request, 'contextmenu')
-    >>> rendered.find('cut16_16') > -1
-    True
-    
-    >>> rendered.find('copy16_16') > -1
-    True
-    
-    >>> rendered.find('paste16_16') > -1
     True
 
 Logout::

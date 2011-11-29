@@ -24,6 +24,7 @@ TESTFILES = [
     '../browser/__init__.rst',
     '../browser/ajax.rst',
     '../browser/authoring.rst',
+    '../browser/contextmenu.rst',
     '../browser/batch.rst',
     '../browser/table.rst',
     '../browser/contents.rst',
