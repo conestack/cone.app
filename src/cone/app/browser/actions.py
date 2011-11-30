@@ -4,6 +4,10 @@ from cone.tile import (
     render_template,
     render_tile,
 )
+from cone.app.interfaces import (
+    IWorkflowState,
+    IPrincipalACL,
+)
 
 
 class Toolbar(odict):
@@ -133,9 +137,9 @@ class ActionSharing(LinkAction):
     
     @property
     def display(self):
-        return has_permission('view', self.model, self.request)
-        return hasattr(self.model, 'principal_roles') \
-            and self.model.properties.shareable
+        if not IPrincipalACL.providedBy(self.model):
+            return False
+        return has_permission('manage_permissions', self.model, self.request)
 
 
 class ActionState(TileAction):
@@ -143,7 +147,9 @@ class ActionState(TileAction):
     
     @property
     def display(self):
-        return self.model.properties.wf_state
+        if not IWorkflowState.providedBy(self.model):
+            return False
+        return has_permission('change_state', self.model, self.request)
 
 
 class ActionAdd(TileAction):
@@ -151,7 +157,8 @@ class ActionAdd(TileAction):
     
     @property
     def display(self):
-        return self.model.nodeinfo.addables
+        return has_permission('add', self.model, self.request) \
+            and self.model.nodeinfo.addables
 
 
 class ActionEdit(LinkAction):
@@ -165,7 +172,7 @@ class ActionEdit(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.editable
+        return has_permission('edit', self.model, self.request)
 
 
 class ActionDelete(LinkAction):
@@ -180,7 +187,7 @@ class ActionDelete(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.deletable
+        return has_permission('delete', self.model, self.request)
 
 
 class ActionDeleteChildren(LinkAction):
@@ -194,7 +201,7 @@ class ActionDeleteChildren(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.deletable
+        return has_permission('delete', self.model, self.request)
 
 
 class ActionCut(LinkAction):
@@ -208,7 +215,7 @@ class ActionCut(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.action_cut
+        return has_permission('cut', self.model, self.request)
 
 
 class ActionCopy(LinkAction):
@@ -222,7 +229,7 @@ class ActionCopy(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.action_copy
+        return has_permission('copy', self.model, self.request)
 
 
 class ActionPaste(LinkAction):
@@ -236,7 +243,7 @@ class ActionPaste(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.action_paste
+        return has_permission('paste', self.model, self.request)
     
     @property
     def enabled(self):
