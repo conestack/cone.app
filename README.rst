@@ -37,6 +37,12 @@ Changes
 0.9.1dev
 --------
 
+- Update jQuery (1.6.4) and jQuery Tools (1.2.6)
+  [rnix, 2011-11-30]
+
+- Add Copy support.
+  [rnix, 2011-11-30]
+
 - Single UGM implementation.
   [rnix, 2011-11-21]
 
