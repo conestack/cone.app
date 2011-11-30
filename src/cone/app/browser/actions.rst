@@ -105,3 +105,7 @@ LinkAction::
     >>> action.display = False
     >>> action(model, request)
     u''
+
+ActionUp::
+
+    >>> 

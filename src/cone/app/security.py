@@ -29,14 +29,27 @@ DEFAULT_ROLES = [
 ]
 
 
-ADMIN_PERM = ['view', 'add', 'edit', 'delete', 'manage_permissions']
+ADMIN_PERMISSIONS = [
+    'view',
+    'add',
+    'edit',
+    'delete',
+    'cut',
+    'copy',
+    'paste',
+    'manage_permissions',
+    'change_state',
+]
+ADMIN_PERM = ADMIN_PERMISSIONS
+
+
 DEFAULT_ACL = [
     (Allow, 'system.Authenticated', ['view']),
     (Allow, 'role:viewer', ['view']),
     (Allow, 'role:editor', ['view', 'add', 'edit']),
-    (Allow, 'role:admin', ADMIN_PERM),
-    (Allow, 'role:owner', ADMIN_PERM),
-    (Allow, 'role:manager', ADMIN_PERM + ['manage']),
+    (Allow, 'role:admin', ADMIN_PERMISSIONS),
+    (Allow, 'role:owner', ADMIN_PERMISSIONS),
+    (Allow, 'role:manager', ADMIN_PERMISSIONS + ['manage']),
     (Allow, Everyone, ['login']),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
@@ -49,6 +62,7 @@ DEFAULT_SETTINGS_ACL = [
 ]
 
 
+# XXX: get rid of.
 DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_up': ['view'],
     'action_view': ['view'],
@@ -56,9 +70,9 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'editable': ['edit'],
     'deletable': ['delete'],
     'shareable': ['manage_permissions'],
-    'action_cut': ['delete'], # XXX: specific permission
-    'action_copy': ['view'], # XXX: specific permission
-    'action_paste': ['add'], # XXX: specific permission
+    'action_cut': ['cut'],
+    'action_copy': ['copy'],
+    'action_paste': ['paste'],
     'wf_state': ['view'],
 }
 

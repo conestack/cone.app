@@ -29,6 +29,9 @@ class Action(object):
             return u''
         return self.render()
     
+    def permitted(self, permission):
+        return has_permission('view', self.model, self.request)
+    
     def render(self):
         raise NotImplementedError(u"Abstract ``Action`` does not implement "
                                   u"render.")
@@ -53,7 +56,6 @@ class TemplateAction(Action):
 
 class LinkAction(TemplateAction):
     template = 'cone.app.browser:templates/link_action.pt'
-    
     bind = 'click'    # ajax:bind attribute
     href = None       # href attribute
     css = None        # in addition for computed class attribute
@@ -92,7 +94,9 @@ class ActionUp(LinkAction):
     
     @property
     def display(self):
-        return has_permission('view', self.model.parent, self.request)
+        return self.model.properties.action_up \
+            and has_permission('view', self.model.parent, self.request) \
+            and self.permitted('view')
     
     @property
     def target(self):
@@ -109,7 +113,7 @@ class ActionView(LinkAction):
     
     @property
     def display(self):
-        return has_permission('view', self.model, self.request)
+        return self.model.properies.action_view and self.permitted('view')
 
 
 class ActionList(LinkAction):
@@ -123,7 +127,7 @@ class ActionList(LinkAction):
     
     @property
     def display(self):
-        return has_permission('view', self.model, self.request)
+        return self.model.properies.action_list and self.permitted('view')
 
 
 class ActionSharing(LinkAction):
@@ -139,7 +143,7 @@ class ActionSharing(LinkAction):
     def display(self):
         if not IPrincipalACL.providedBy(self.model):
             return False
-        return has_permission('manage_permissions', self.model, self.request)
+        return self.permitted('manage_permissions')
 
 
 class ActionState(TileAction):
@@ -147,9 +151,11 @@ class ActionState(TileAction):
     
     @property
     def display(self):
-        if not IWorkflowState.providedBy(self.model):
-            return False
-        return has_permission('change_state', self.model, self.request)
+        return IWorkflowState.providedBy(self.model)
+    
+    @property
+    def enabled(self):
+        return self.permitted('change_state')
 
 
 class ActionAdd(TileAction):
@@ -157,8 +163,7 @@ class ActionAdd(TileAction):
     
     @property
     def display(self):
-        return has_permission('add', self.model, self.request) \
-            and self.model.nodeinfo.addables
+        return self.permitted('add') and self.model.nodeinfo.addables
 
 
 class ActionEdit(LinkAction):
@@ -172,7 +177,7 @@ class ActionEdit(LinkAction):
     
     @property
     def display(self):
-        return has_permission('edit', self.model, self.request)
+        return self.permitted('edit')
 
 
 class ActionDelete(LinkAction):
@@ -187,7 +192,7 @@ class ActionDelete(LinkAction):
     
     @property
     def display(self):
-        return has_permission('delete', self.model, self.request)
+        return self.permitted('delete')
 
 
 class ActionDeleteChildren(LinkAction):
@@ -201,7 +206,7 @@ class ActionDeleteChildren(LinkAction):
     
     @property
     def display(self):
-        return has_permission('delete', self.model, self.request)
+        return self.permitted('delete')
 
 
 class ActionCut(LinkAction):
@@ -215,7 +220,7 @@ class ActionCut(LinkAction):
     
     @property
     def display(self):
-        return has_permission('cut', self.model, self.request)
+        return ICopySupport.providedBy(self.model) and self.permitted('cut')
 
 
 class ActionCopy(LinkAction):
@@ -229,7 +234,7 @@ class ActionCopy(LinkAction):
     
     @property
     def display(self):
-        return has_permission('copy', self.model, self.request)
+        return ICopySupport.providedBy(self.model) and self.permitted('copy')
 
 
 class ActionPaste(LinkAction):
@@ -243,7 +248,7 @@ class ActionPaste(LinkAction):
     
     @property
     def display(self):
-        return has_permission('paste', self.model, self.request)
+        return ICopySupport.providedBy(self.model) and self.permitted('paste')
     
     @property
     def enabled(self):

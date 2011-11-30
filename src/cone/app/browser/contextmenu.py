@@ -4,6 +4,36 @@ from cone.tile import (
     Tile,
 )
 from cone.app.browser.utils import make_url
+from cone.app.browser.actions import (
+    Toolbar,
+    ActionUp,
+    ActionView,
+    ActionList,
+    ActionSharing,
+    ActionState,
+    ActionAdd,
+    ActionEdit,
+    ActionDelete,
+    ActionDeleteChildren,
+    ActionCut,
+    ActionCopy,
+    ActionPaste,
+)
+
+
+context_menu = Toolbar()
+context_menu['up'] = ActionUp()
+context_menu['view'] = ActionView()
+context_menu['list'] = ActionList()
+context_menu['sharing'] = ActionSharing()
+context_menu['change_state'] = ActionState()
+context_menu['add'] = ActionAdd()
+context_menu['edit'] = ActionEdit()
+context_menu['delete'] = ActionDelete()
+#context_menu['delete'] = ActionDeleteChildren()
+context_menu['cut'] = ActionCut()
+context_menu['copy'] = ActionCopy()
+context_menu['paste'] = ActionPaste()
 
 
 @tile('contextmenu', 'templates/contextmenu.pt', permission='view')
