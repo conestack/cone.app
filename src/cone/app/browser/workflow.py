@@ -19,7 +19,7 @@ logger = logging.getLogger('cone.app')
 
 
 @tile('wf_dropdown', 'templates/wf_dropdown.pt', 
-      permission='view', strict=False)
+      permission='change_state', strict=False)
 class WfDropdown(Tile):
     """Transition dropdown.
     
@@ -27,9 +27,6 @@ class WfDropdown(Tile):
     transition on ``self.model`` immediately before dropdown gets rendered.
     
     Configuration expected on ``self.model.properties``:
-    
-    wf_state
-        Flag whether model provides workflow.
     
     wf_name
         Registration name of workflow.

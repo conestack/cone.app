@@ -6,7 +6,7 @@
     
     <tal:toolbars repeat="toolbar context.toolbars">
       <div tal:condition="toolbar.display"
-           tal:content="toolbar(model, request)">
+           tal:content="structure toolbar(model, request)">
       </div>
     </tal:toolbars>
   

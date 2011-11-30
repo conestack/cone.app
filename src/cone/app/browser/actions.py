@@ -9,6 +9,7 @@ from cone.app.interfaces import (
     IPrincipalACL,
     ICopySupport,
 )
+from cone.app.browser.utils import make_url
 
 
 class Toolbar(odict):
@@ -65,7 +66,7 @@ class LinkAction(TemplateAction):
     event = None      # ajax:event attribute
     confirm = None    # ajax:confirm attribute
     overlay=None      # ajax:overlay attribute
-    text = '&nbsp;'   # link text
+    text = ' '   # link text
     enabled = True    # if false, link gets 'disabled' css class
     
     @property
