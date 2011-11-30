@@ -20,44 +20,61 @@ from cone.app.utils import app_config
 
 logger = logging.getLogger('cone.app')
 
+
 DEFAULT_ROLES = [
     ('viewer', 'Viewer'),
     ('editor', 'Editor'),
     ('admin', 'Admin'),
-    ('owner', 'Owner'),
+    ('owner', 'Owner'), # XXX: owner handling on nodes
     ('manager', 'Manager'),
 ]
 
 
-ADMIN_PERMISSIONS = [
-    'view',
-    'add',
-    'edit',
-    'delete',
-    'cut',
-    'copy',
-    'paste',
-    'manage_permissions',
-    'change_state',
-]
+AUTHENTICATED = 'system.Authenticated'
+VIEWER = 'role:viewer'
+EDITOR = 'role:editor'
+ADMIN = 'role:admin'
+OWNER = 'role:owner'
+MANAGER = 'role:manager'
+
+
+WORKFLOW_PERMISSIONS = ['change_state']
+SHARING_PERMISSIONS = ['manage_permissions']
+COPYSUPPORT_PERMISSIONS = ['cut', 'copy', 'paste']
+
+
+AUTHENTICATED_PERMISSIONS = ['view']
+VIEWER_PERMISSIONS = AUTHENTICATED_PERMISSIONS
+EDITOR_PERMISSIONS = VIEWER_PERMISSIONS + ['add', 'edit']
+ADMIN_PERMISSIONS = \
+    EDITOR_PERMISSIONS + \
+    ['delete'] + \
+    COPYSUPPORT_PERMISSIONS + \
+    SHARING_PERMISSIONS + \
+    WORKFLOW_PERMISSIONS
+OWNER_PERMISSIONS = ADMIN_PERMISSIONS
+MANAGER_PERMISSIONS = ADMIN_PERMISSIONS + ['manage']
+EVERYONE_PERMISSIONS = ['login']
+
+# BBB
 ADMIN_PERM = ADMIN_PERMISSIONS
 
 
 DEFAULT_ACL = [
-    (Allow, 'system.Authenticated', ['view']),
-    (Allow, 'role:viewer', ['view']),
-    (Allow, 'role:editor', ['view', 'add', 'edit']),
-    (Allow, 'role:admin', ADMIN_PERMISSIONS),
-    (Allow, 'role:owner', ADMIN_PERMISSIONS),
-    (Allow, 'role:manager', ADMIN_PERMISSIONS + ['manage']),
-    (Allow, Everyone, ['login']),
+    (Allow, AUTHENTICATED, AUTHENTICATED_PERMISSIONS),
+    (Allow, VIEWER, VIEWER_PERMISSIONS),
+    (Allow, EDITOR, EDITOR_PERMISSIONS),
+    (Allow, ADMIN, ADMIN_PERMISSIONS),
+    (Allow, OWNER, ADMIN_PERMISSIONS),
+    (Allow, MANAGER, MANAGER_PERMISSIONS),
+    (Allow, Everyone, EVERYONE_PERMISSIONS),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
 
 DEFAULT_SETTINGS_ACL = [
-    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-    (Allow, Everyone, 'login'),
+    (Allow, MANAGER, EDITOR_PERMISSIONS + ['delete', 'manage']),
+    (Allow, Everyone, EVERYONE_PERMISSIONS),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 

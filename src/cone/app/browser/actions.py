@@ -66,7 +66,7 @@ class LinkAction(TemplateAction):
     event = None      # ajax:event attribute
     confirm = None    # ajax:confirm attribute
     overlay=None      # ajax:overlay attribute
-    text = ' '   # link text
+    text = None       # link text
     enabled = True    # if false, link gets 'disabled' css class
     
     @property

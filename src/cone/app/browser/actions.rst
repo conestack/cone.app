@@ -77,7 +77,8 @@ LinkAction::
 
     >>> from cone.app.browser.actions import LinkAction
     >>> LinkAction()(model, request)
-    u'\n  <a\n     ajax:bind="click">&amp;nbsp;</a>\n'
+    u'\n  \n  <a\n     ajax:bind="click"\n     
+    ajax:target="http://example.com/">&nbsp;</a>\n'
     
     >>> action = LinkAction()
     >>> action.href = 'http://example.com/foo'
@@ -89,14 +90,16 @@ LinkAction::
     >>> action.overlay = 'someaction'
     >>> action.text = 'Foo'
     >>> action(model, request)
-    u'\n  <a href="http://example.com/foo"\n     
+    u'\n  <a\n     
+    href="http://example.com/foo"\n     
     class="link_action"\n     
     title="Foo"\n     
     ajax:bind="click"\n     
+    ajax:target="http://example.com/"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
     ajax:action="http://example.com/foo"\n     
     ajax:confirm="Do you want to perform?"\n     
-    ajax:overlay="someaction">Foo</a>\n'
+    ajax:overlay="someaction">Foo</a>\n  \n'
 
     >>> action.enabled = False
     >>> action(model, request).find('class="link_action disabled"') > -1

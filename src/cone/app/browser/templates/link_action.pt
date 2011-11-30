@@ -1,7 +1,8 @@
 <tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
-  <a href="${context.href|nothing}"
+  <a tal:condition="context.text"
+     href="${context.href|nothing}"
      class="${context.css_class|nothing}"
      title="${context.title|nothing}"
      ajax:bind="${context.bind|nothing}"
@@ -11,4 +12,14 @@
      ajax:confirm="${context.confirm|nothing}"
      ajax:overlay="${context.overlay|nothing}"
      tal:content="context.text">Text</a>
+  <a tal:condition="not context.text"
+     href="${context.href|nothing}"
+     class="${context.css_class|nothing}"
+     title="${context.title|nothing}"
+     ajax:bind="${context.bind|nothing}"
+     ajax:target="${context.target|nothing}"
+     ajax:event="${context.event|nothing}"
+     ajax:action="${context.action|nothing}"
+     ajax:confirm="${context.confirm|nothing}"
+     ajax:overlay="${context.overlay|nothing}">&nbsp;</a>
 </tal:ajax>
