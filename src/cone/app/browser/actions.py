@@ -7,6 +7,7 @@ from cone.tile import (
 from cone.app.interfaces import (
     IWorkflowState,
     IPrincipalACL,
+    ICopySupport,
 )
 
 
@@ -95,8 +96,10 @@ class ActionUp(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_up \
-            and has_permission('view', self.model.parent, self.request) \
             and self.permitted('view')
+        #return self.model.properties.action_up \
+        #    and has_permission('view', self.model.parent, self.request) \
+        #    and self.permitted('view')
     
     @property
     def target(self):
@@ -113,7 +116,7 @@ class ActionView(LinkAction):
     
     @property
     def display(self):
-        return self.model.properies.action_view and self.permitted('view')
+        return self.model.properties.action_view and self.permitted('view')
 
 
 class ActionList(LinkAction):
@@ -127,7 +130,7 @@ class ActionList(LinkAction):
     
     @property
     def display(self):
-        return self.model.properies.action_list and self.permitted('view')
+        return self.model.properties.action_list and self.permitted('view')
 
 
 class ActionSharing(LinkAction):
@@ -220,7 +223,10 @@ class ActionCut(LinkAction):
     
     @property
     def display(self):
-        return ICopySupport.providedBy(self.model) and self.permitted('cut')
+        return ICopySupport.providedBy(self.model) \
+            and self.model.supports_cut \
+            and self.permitted('cut')
+    
 
 
 class ActionCopy(LinkAction):
@@ -234,7 +240,9 @@ class ActionCopy(LinkAction):
     
     @property
     def display(self):
-        return ICopySupport.providedBy(self.model) and self.permitted('copy')
+        return ICopySupport.providedBy(self.model) \
+            and self.model.supports_copy \
+            and self.permitted('copy')
 
 
 class ActionPaste(LinkAction):
@@ -248,7 +256,9 @@ class ActionPaste(LinkAction):
     
     @property
     def display(self):
-        return ICopySupport.providedBy(self.model) and self.permitted('paste')
+        return ICopySupport.providedBy(self.model) \
+            and self.model.supports_paste \
+            and self.permitted('paste')
     
     @property
     def enabled(self):

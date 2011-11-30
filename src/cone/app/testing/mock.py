@@ -17,6 +17,7 @@ from pyramid.security import (
 from cone.app.model import (
     AppNode,
     BaseNode,
+    CopySupport,
     Properties,
 )
 from cone.app.workflow import (
@@ -96,14 +97,8 @@ class SharingNode(object):
 
 
 class CopySupportNode(BaseNode):
-
-    @instance_property
-    def properties(self):
-        props = Properties()
-        props.action_cut = True
-        props.action_copy = True
-        props.action_paste = True
-        return props
+    __metaclass__ = plumber
+    __plumbing__ = CopySupport
     
     def __call__(self):
         print 'Called: %s' % self.name

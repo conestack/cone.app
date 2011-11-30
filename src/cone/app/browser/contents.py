@@ -5,6 +5,7 @@ from cone.tile import (
     Tile,
     render_tile,
 )
+from cone.app.interfaces import ICopySupport
 from cone.app.browser.table import (
     Table,
     RowData,
@@ -94,7 +95,8 @@ class ContentsTile(Table):
             row_data['actions'] = Item(actions=self.create_actions(child))
             value = child.metadata.get('title', child.name)
             link = target = make_url(self.request, node=child)
-            if child.properties.action_copy or child.properties.action_cut:
+            if ICopySupport.providedBy(child):
+            #if child.properties.action_copy or child.properties.action_cut:
                 row_data.selectable = True
                 row_data.target = target
                 row_data.css = 'copysupportitem'

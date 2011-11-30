@@ -9,12 +9,10 @@ ContextMenu
     >>> model.properties.action_up = True
     >>> model.properties.action_view = True
     >>> model.properties.action_list = True
-    >>> model.properties.editable = True
-    >>> model.properties.deletable = True
-    >>> model.properties.shareable = True
     
     >>> request = layer.new_request()
     >>> rendered = render_tile(model, request, 'contextmenu')
+    
     >>> rendered.find('up16_16') > -1
     True
     

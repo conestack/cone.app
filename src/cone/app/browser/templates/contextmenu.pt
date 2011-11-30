@@ -3,36 +3,12 @@
           omit-tag="True">
   
   <div class="contextmenu">
-  
-    <tal:sections repeat="section context.sections">
     
-      <tal:section condition="section.display">
-        <tal:actions repeat="action section.actions">
-        
-          <tal:action condition="action.display">
-            <tal:direct condition="action.type == 'direct'">
-            
-              <div>
-                <a href="${action.href|nothing}"
-                   class="${action.css|nothing}"
-                   title="${action.title|nothing}"
-                   ajax:bind="${action.bind|nothing}"
-                   ajax:target="${action.target|nothing}"
-                   ajax:event="${action.event|nothing}"
-                   ajax:action="${action.action|nothing}"
-                   ajax:confirm="${action.confirm|nothing}">&nbsp;</a>
-              </div>
-            </tal:direct>
-            
-            <tal:tile condition="action.type == 'tile'">
-              <tal:tile replace="structure tile(action.tile)" />
-            </tal:tile>
-            
-          </tal:action>
-        </tal:actions>
-        
-      </tal:section>
-    </tal:sections>
+    <tal:toolbars repeat="toolbar context.toolbars">
+      <div tal:condition="toolbar.display"
+           tal:content="toolbar(model, request)">
+      </div>
+    </tal:toolbars>
   
   </div>
   

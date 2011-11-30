@@ -231,9 +231,9 @@ class CopySupport(Part):
     """
     implements(ICopySupport)
     
-    support_cut = default(True)
-    support_copy = default(True)
-    suport_paste = default(True)
+    supports_cut = default(True)
+    supports_copy = default(True)
+    supports_paste = default(True)
 
 
 class Properties(object):

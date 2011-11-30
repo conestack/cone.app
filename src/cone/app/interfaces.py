@@ -112,3 +112,6 @@ class IPrincipalACL(ISecured):
 class ICopySupport(INode):
     """Copysupport for nodes.
     """
+    supports_cut = Attribute(u"Supports cut")
+    supports_copy = Attribute(u"Supports copy")
+    supports_paste = Attribute(u"Supports paste")
