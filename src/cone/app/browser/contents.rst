@@ -207,7 +207,7 @@ Render authenticated::
 
 Copysupport Attributes::
 
-    >>> from cone.app.tests.mock import CopySupportNode
+    >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode()
     >>> model['child'] = CopySupportNode()
     >>> request = layer.new_request()

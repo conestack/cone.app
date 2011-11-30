@@ -180,7 +180,7 @@ Same form as above using ``yafowil.yaml``::
     ...     __metaclass__ = plumber
     ...     __plumbing__ = YAMLForm
     ...     action_resource = 'yamlsubscriptionform'
-    ...     form_template = 'cone.app.tests:dummy_form.yaml'
+    ...     form_template = 'cone.app.testing:dummy_form.yaml'
     
     >>> request = layer.new_request()
     >>> from cone.tile import render_tile
@@ -197,7 +197,7 @@ backward compatibility::
     ... class YAMLSubscriptionForm2(YAMLSubscriptionForm):
     ...     action_resource = 'yamlsubscriptionform2'
     ...     form_template = None
-    ...     form_template_path = 'cone.app.tests:dummy_form.yaml'
+    ...     form_template_path = 'cone.app.testing:dummy_form.yaml'
     
     >>> res = render_tile(model, request, 'yamlsubscriptionform2')
     >>> expected = \

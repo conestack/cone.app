@@ -7,7 +7,7 @@ from plone.testing import Layer
 from cone.app.security import authenticate
 
 
-DATADIR = os.path.join(os.path.dirname(__file__), 'tests', 'data', 'ugm')
+DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
 class Security(Layer):

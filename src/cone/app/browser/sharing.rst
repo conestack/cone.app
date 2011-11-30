@@ -1,7 +1,7 @@
 Imports::
 
     >>> from cone.tile import render_tile
-    >>> from cone.app.tests.mock import SharingNode
+    >>> from cone.app.testing.mock import SharingNode
 
 Create model root::
 

@@ -7,7 +7,7 @@ Cone workflow parts::
 
 Test env provides mock node with workflow parts configured::
 
-    >>> from cone.app.tests.mock import WorkflowNode
+    >>> from cone.app.testing.mock import WorkflowNode
     
     >>> node = WorkflowNode()
     >>> IWorkflowState.providedBy(node)
@@ -66,7 +66,7 @@ If not set, and ACL not found in ``state_acls``, raise on access::
 
 Test ``state_acls``::
 
-    >>> from cone.app.tests.mock import StateACLWorkflowNode
+    >>> from cone.app.testing.mock import StateACLWorkflowNode
     >>> node = StateACLWorkflowNode()
     >>> get_workflow(node.__class__, node.properties.wf_name)
     <repoze.workflow.workflow.Workflow object at ...>

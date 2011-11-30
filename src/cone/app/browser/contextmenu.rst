@@ -4,7 +4,7 @@ ContextMenu
     >>> layer.login('manager')
     
     >>> from cone.tile import render_tile
-    >>> from cone.app.tests.mock import SharingNode
+    >>> from cone.app.testing.mock import SharingNode
     >>> model = SharingNode()
     >>> model.properties.action_up = True
     >>> model.properties.action_view = True
@@ -33,7 +33,7 @@ ContextMenu
     >>> rendered.find('sharing16_16') > -1
     True
     
-    >>> from cone.app.tests.mock import CopySupportNode
+    >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode()
     >>> rendered = render_tile(model, request, 'contextmenu')
     >>> rendered.find('cut16_16') > -1

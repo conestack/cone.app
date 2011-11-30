@@ -132,6 +132,12 @@ class AjaxMessage(object):
         self.selector = selector
 
 
+# XXX
+#class AjaxOverlay(object):
+#    """Ajax overlay configuration
+#    """
+
+
 class AjaxContinue(object):
     """Convert ``AjaxAction`` and ``AjaxEvent`` instances to JSON response
     definitions for bdajax continuation.

@@ -1,6 +1,6 @@
 Copysupport::
 
-    >>> from cone.app.tests.mock import CopySupportNode
+    >>> from cone.app.testing.mock import CopySupportNode
     >>> from cone.app.model import (
     ...     NodeInfo,
     ...     registerNodeInfo,
