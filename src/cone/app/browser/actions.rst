@@ -51,3 +51,57 @@ Dummy actions::
     u'<a href="">dummy template action</a>'
     
     >>> layer.logout()
+
+Toolbar::
+
+    >>> from cone.app.browser.actions import Toolbar
+    >>> tb = Toolbar()
+    >>> tb['a'] = DummyAction()
+    >>> tb['b'] = DummyTemplateAction()
+    >>> tb['c'] = DummyTileAction()
+    
+    >>> layer.login('viewer')
+    
+    >>> tb(model, request).split('\n')
+    [u'<a href="">dummy action</a>', 
+    u'<a href="">dummy template action</a>', 
+    u'<a href="">dummy template action</a>']
+    
+    >>> tb.display = False
+    >>> tb(model, request)
+    u''
+    
+    >>> layer.logout()
+
+LinkAction::
+
+    >>> from cone.app.browser.actions import LinkAction
+    >>> LinkAction()(model, request)
+    u'\n  <a\n     ajax:bind="click">&amp;nbsp;</a>\n'
+    
+    >>> action = LinkAction()
+    >>> action.href = 'http://example.com/foo'
+    >>> action.css = 'link_action'
+    >>> action.title = 'Foo'
+    >>> action.action = 'http://example.com/foo'
+    >>> action.event = 'contextchanged:.contextsensitiv'
+    >>> action.confirm = 'Do you want to perform?'
+    >>> action.overlay = 'someaction'
+    >>> action.text = 'Foo'
+    >>> action(model, request)
+    u'\n  <a href="http://example.com/foo"\n     
+    class="link_action"\n     
+    title="Foo"\n     
+    ajax:bind="click"\n     
+    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:action="http://example.com/foo"\n     
+    ajax:confirm="Do you want to perform?"\n     
+    ajax:overlay="someaction">Foo</a>\n'
+
+    >>> action.enabled = False
+    >>> action(model, request).find('class="link_action disabled"') > -1
+    True
+    
+    >>> action.display = False
+    >>> action(model, request)
+    u''
