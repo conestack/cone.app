@@ -5,6 +5,7 @@ from plumber import (
     extend,
     plumb,
 )
+from zope.interface import implements
 from pyramid.security import (
     Everyone,
     Allow,
@@ -13,6 +14,7 @@ from pyramid.security import (
     remember,
     authenticated_userid,
 )
+from cone.app.interfaces import IPrincipalACL
 from cone.app.utils import app_config
 
 
@@ -150,7 +152,7 @@ class PrincipalACL(Part):
     as property function. Plumber does not support class property plumbing
     (yet).
     """
-    
+    implements(IPrincipalACL)
     role_inheritance = default(False)
     
     @default
@@ -165,7 +167,7 @@ class PrincipalACL(Part):
         aggregated = dict()
         model = self
         while model:
-            if not hasattr(model, 'principal_roles'):
+            if not IPrincipalACL.providedBy(model):
                 model = model.parent
                 continue
             for id, roles in model.principal_roles.items():

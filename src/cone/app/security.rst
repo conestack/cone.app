@@ -100,6 +100,7 @@ Authenticate as default user::
 PrincipalACL::
 
     >>> from plumber import plumber, default
+    >>> from cone.app.interfaces import IPrincipalACL
     >>> from cone.app.model import BaseNode
     >>> from cone.app.security import PrincipalACL
 
@@ -136,6 +137,9 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     ...         return BaseNode.__acl__
     
     >>> node = MyPrincipalACLNode()
+    >>> IPrincipalACL.providedBy(node)
+    True
+    
     >>> node.principal_roles['someuser'] = ['manager']
     >>> node.principal_roles['otheruser'] = ['editor']
     >>> node.principal_roles['group:some_group'] = ['editor', 'manager']

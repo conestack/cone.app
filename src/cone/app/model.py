@@ -105,9 +105,7 @@ class AppNode(Part):
 class UIDAware(Part):
     """Plumbing part for automatic uid setting.
     """
-    
     implements(IUIDAware)
-    
     uid_handling_recursiv = default(True)
     
     @default

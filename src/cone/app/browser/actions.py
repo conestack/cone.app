@@ -1,4 +1,5 @@
 from odict import odict
+from pyramid.security import has_permission
 from cone.tile import (
     render_template,
     render_tile,
@@ -87,7 +88,7 @@ class ActionUp(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.action_up
+        return has_permission('view', self.model.parent, self.request)
     
     @property
     def target(self):
@@ -104,7 +105,7 @@ class ActionView(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.action_view
+        return has_permission('view', self.model, self.request)
 
 
 class ActionList(LinkAction):
@@ -118,7 +119,7 @@ class ActionList(LinkAction):
     
     @property
     def display(self):
-        return self.model.properties.action_list
+        return has_permission('view', self.model, self.request)
 
 
 class ActionSharing(LinkAction):
@@ -132,6 +133,7 @@ class ActionSharing(LinkAction):
     
     @property
     def display(self):
+        return has_permission('view', self.model, self.request)
         return hasattr(self.model, 'principal_roles') \
             and self.model.properties.shareable
 
