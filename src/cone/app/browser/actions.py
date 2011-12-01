@@ -125,6 +125,10 @@ class ViewLink(ActionView):
     @property
     def text(self):
         return self.model.metadata.get('title', self.model.name)
+    
+    @property
+    def display(self):
+        return self.permitted('view')
 
 
 class ActionList(LinkAction):
