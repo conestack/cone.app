@@ -133,7 +133,7 @@ class ActionList(LinkAction):
 
 
 class ActionSharing(LinkAction):
-    css_class = 'sharing16_16'
+    css = 'sharing16_16'
     title = 'Sharing'
     action = 'sharing:#content:inner'
     
@@ -165,7 +165,7 @@ class ActionAdd(TileAction):
 
 
 class ActionEdit(LinkAction):
-    css_class = 'edit16_16'
+    css = 'edit16_16'
     title = 'Edit'
     action = 'edit:#content:inner'
     
@@ -175,11 +175,11 @@ class ActionEdit(LinkAction):
     
     @property
     def display(self):
-        return self.permitted('edit')
+        return self.model.properties.action_edit and self.permitted('edit')
 
 
 class ActionDelete(LinkAction):
-    css_class = 'delete16_16'
+    css = 'delete16_16'
     title = 'Delete'
     action = 'delete:NONE:NONE'
     confirm = 'Do you really want to delete this Item?'
@@ -190,13 +190,16 @@ class ActionDelete(LinkAction):
     
     @property
     def display(self):
-        return self.permitted('delete')
+        return self.model.properties.action_delete \
+            and has_permission('delete', self.model.parent, self.request) \
+            and self.permitted('delete')
 
 
 class ActionDeleteChildren(LinkAction):
-    css_class = 'delete16_16'
+    css = 'delete16_16'
     title = 'Delete selected children'
-    bind = None
+    action = 'delete_children:NONE:NONE'
+    confirm = 'Do you really want to delete selected Items?'
     
     @property
     def href(self):
@@ -204,11 +207,16 @@ class ActionDeleteChildren(LinkAction):
     
     @property
     def display(self):
-        return self.permitted('delete')
+        return self.model.properties.action_delete_children \
+            and self.permitted('delete')
+    
+    @property
+    def enabled(self):
+        return self.request.cookies.get('cone.app.selected')
 
 
 class ActionCut(LinkAction):
-    css_class = 'cut16_16'
+    css = 'cut16_16'
     title = 'Cut'
     bind = None
     
@@ -221,11 +229,10 @@ class ActionCut(LinkAction):
         return ICopySupport.providedBy(self.model) \
             and self.model.supports_cut \
             and self.permitted('cut')
-    
 
 
 class ActionCopy(LinkAction):
-    css_class = 'copy16_16'
+    css = 'copy16_16'
     title = 'Copy'
     bind = None
     
@@ -241,7 +248,7 @@ class ActionCopy(LinkAction):
 
 
 class ActionPaste(LinkAction):
-    css_class = 'paste16_16'
+    css = 'paste16_16'
     title = 'Paste'
     bind = None
     

@@ -359,4 +359,212 @@ ActionEdit
 ::
     >>> from cone.app.browser.actions import ActionEdit
     >>> action = ActionEdit()
+    >>> action(model, request)
+    u''
     
+    >>> model.properties.action_edit = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('viewer')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/model/edit"\n     
+    class="edit16_16"\n     
+    title="Edit"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="edit:#content:inner">&nbsp;</a>\n'
+    
+    >>> layer.logout()
+
+
+ActionDelete
+------------
+::
+    >>> from cone.app.browser.actions import ActionDelete
+    >>> action = ActionDelete()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_delete = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/model/delete"\n     
+    class="delete16_16"\n     
+    title="Delete"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="delete:NONE:NONE"\n     
+    ajax:confirm="Do you really want to delete this Item?">&nbsp;</a>\n'
+    
+    >>> layer.logout()
+
+
+ActionDeleteChildren
+--------------------
+::
+    >>> from cone.app.browser.actions import ActionDeleteChildren
+    >>> action = ActionDeleteChildren()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_delete_children = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/model/delete_children"\n     
+    class="delete16_16 disabled"\n     
+    title="Delete selected children"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="delete_children:NONE:NONE"\n     
+    ajax:confirm="Do you really want to delete selected Items?">&nbsp;</a>\n'
+    
+    >>> request.cookies['cone.app.selected'] = ['foo']
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/model/delete_children"\n     
+    class="delete16_16"\n     
+    title="Delete selected children"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="delete_children:NONE:NONE"\n     
+    ajax:confirm="Do you really want to delete selected Items?">&nbsp;</a>\n'
+    
+    >>> del request.cookies['cone.app.selected']
+    >>> layer.logout()
+
+
+ActionCut
+---------
+::
+    >>> from cone.app.interfaces import ICopySupport
+    >>> from cone.app.testing.mock import CopySupportNode
+    >>> model = CopySupportNode('copysupport')
+    >>> ICopySupport.providedBy(model)
+    True
+    
+    >>> model.supports_cut
+    True
+    
+    >>> from cone.app.browser.actions import ActionCut
+    >>> action = ActionCut()
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/copysupport/cut"\n     
+    class="cut16_16"\n     
+    title="Cut"\n     
+    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    
+    >>> model.supports_cut = False
+    >>> action(model, request)
+    u''
+    
+    >>> layer.logout()
+
+
+ActionCopy
+----------
+::
+    >>> model.supports_copy
+    True
+    
+    >>> from cone.app.browser.actions import ActionCopy
+    >>> action = ActionCopy()
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/copysupport/copy"\n     
+    class="copy16_16"\n     
+    title="Copy"\n     
+    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    
+    >>> model.supports_copy = False
+    >>> action(model, request)
+    u''
+    
+    >>> layer.logout()
+
+
+ActionPaste
+-----------
+::
+    >>> model.supports_paste
+    True
+    
+    >>> from cone.app.browser.actions import ActionPaste
+    >>> action = ActionPaste()
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/copysupport/paste"\n     
+    class="paste16_16 disabled"\n     
+    title="Paste"\n     
+    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    
+    >>> request.cookies['cone.app.copysupport.cut'] = ['foo']
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/copysupport/paste"\n     
+    class="paste16_16"\n     
+    title="Paste"\n     
+    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    
+    >>> del request.cookies['cone.app.copysupport.cut']
+    >>> request.cookies['cone.app.copysupport.copy'] = ['foo']
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/copysupport/paste"\n     
+    class="paste16_16"\n     
+    title="Paste"\n     
+    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    
+    >>> del request.cookies['cone.app.copysupport.copy']
+    
+    >>> model.supports_paste = False
+    >>> action(model, request)
+    u''
+    
+    >>> layer.logout()

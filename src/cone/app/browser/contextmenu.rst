@@ -11,6 +11,11 @@ ContextMenu
     >>> model.properties.action_up = True
     >>> model.properties.action_view = True
     >>> model.properties.action_list = True
+    >>> model.properties.action_edit = True
+    
+    >>> model.properties.action_delete = True
+    
+    >> model.properties.action_delete_children = True
     
     >>> request = layer.new_request()
     >>> rendered = render_tile(model, request, 'contextmenu')
