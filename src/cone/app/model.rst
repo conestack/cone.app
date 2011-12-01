@@ -99,7 +99,7 @@ Default permissions.::
 Properties.::
 
     >>> root.properties
-    <cone.app.model.ProtectedProperties object at ...>
+    <cone.app.model.Properties object at ...>
 
 ``IProperties`` implementations do not raise AttributeErrors if requested
 attribute not exists.::

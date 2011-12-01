@@ -86,8 +86,8 @@ LinkAction
 ::
     >>> from cone.app.browser.actions import LinkAction
     >>> LinkAction()(model, request)
-    u'\n  \n  <a\n     ajax:bind="click"\n     
-    ajax:target="http://example.com/">&nbsp;</a>\n'
+    u'...<a\n     ajax:bind="click"\n     
+    ajax:target="http://example.com/">&nbsp;</a>...'
     
     >>> action = LinkAction()
     >>> action.href = 'http://example.com/foo'
@@ -99,7 +99,7 @@ LinkAction
     >>> action.overlay = 'someaction'
     >>> action.text = 'Foo'
     >>> action(model, request)
-    u'\n  <a\n     
+    u'...<a\n     
     href="http://example.com/foo"\n     
     class="link_action"\n     
     title="Foo"\n     
@@ -108,7 +108,7 @@ LinkAction
     ajax:event="contextchanged:.contextsensitiv"\n     
     ajax:action="http://example.com/foo"\n     
     ajax:confirm="Do you want to perform?"\n     
-    ajax:overlay="someaction">Foo</a>\n  \n'
+    ajax:overlay="someaction">Foo</a>...'
 
     >>> action.enabled = False
     >>> action(model, request).find('class="link_action disabled"') > -1
@@ -136,25 +136,25 @@ ActionUp
     
     >>> layer.login('viewer')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root"\n     
     class="up16_16"\n     
     title="One level up"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="listing:#content:inner">&nbsp;</a>\n'
+    ajax:action="listing:#content:inner">&nbsp;</a>...'
     
     >>> model.properties.action_up_tile = 'otherparentcontent'
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root"\n     
     class="up16_16"\n     
     title="One level up"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="otherparentcontent:#content:inner">&nbsp;</a>\n'
+    ajax:action="otherparentcontent:#content:inner">&nbsp;</a>...'
     
     >>> layer.logout()
 
@@ -173,13 +173,13 @@ ActionView
     
     >>> layer.login('viewer')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/model"\n     
     class="view16_16"\n     
     title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="content:#content:inner">&nbsp;</a>\n'
+    ajax:action="content:#content:inner">&nbsp;</a>...'
     
     >>> layer.logout()
 
@@ -198,13 +198,13 @@ ActionList
     
     >>> layer.login('viewer')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/model/listing"\n     
     class="listing16_16"\n     
     title="Listing"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="listing:#content:inner">&nbsp;</a>\n'
+    ajax:action="listing:#content:inner">&nbsp;</a>...'
     
     >>> layer.logout()
 
@@ -245,13 +245,13 @@ ActionSharing
     "ACLAllowed permission 'manage_permissions' via ACE ...
     
     >>> action(sharingmodel, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/sharingmodel/sharing"\n     
     class="sharing16_16"\n     
     title="Sharing"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/sharingmodel"\n     
-    ajax:action="sharing:#content:inner">&nbsp;</a>\n'
+    ajax:action="sharing:#content:inner">&nbsp;</a>...'
     
     >>> layer.logout()
 
@@ -372,13 +372,13 @@ ActionEdit
     
     >>> layer.login('editor')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/model/edit"\n     
     class="edit16_16"\n     
     title="Edit"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="edit:#content:inner">&nbsp;</a>\n'
+    ajax:action="edit:#content:inner">&nbsp;</a>...'
     
     >>> layer.logout()
 
@@ -401,14 +401,14 @@ ActionDelete
     
     >>> layer.login('owner')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/model/delete"\n     
     class="delete16_16"\n     
     title="Delete"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete this Item?">&nbsp;</a>\n'
+    ajax:confirm="Do you really want to delete this Item?">&nbsp;</a>...'
     
     >>> layer.logout()
 
@@ -431,25 +431,25 @@ ActionDeleteChildren
     
     >>> layer.login('owner')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/model/delete_children"\n     
     class="delete16_16 disabled"\n     
     title="Delete selected children"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete_children:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete selected Items?">&nbsp;</a>\n'
+    ajax:confirm="Do you really want to delete selected Items?">&nbsp;</a>...'
     
     >>> request.cookies['cone.app.selected'] = ['foo']
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/root/model/delete_children"\n     
     class="delete16_16"\n     
     title="Delete selected children"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete_children:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete selected Items?">&nbsp;</a>\n'
+    ajax:confirm="Do you really want to delete selected Items?">&nbsp;</a>...'
     
     >>> del request.cookies['cone.app.selected']
     >>> layer.logout()
@@ -478,11 +478,11 @@ ActionCut
     
     >>> layer.login('owner')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/copysupport/cut"\n     
     class="cut16_16"\n     
     title="Cut"\n     
-    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    ajax:target="http://example.com/copysupport">&nbsp;</a>...'
     
     >>> model.supports_cut = False
     >>> action(model, request)
@@ -508,11 +508,11 @@ ActionCopy
     
     >>> layer.login('owner')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/copysupport/copy"\n     
     class="copy16_16"\n     
     title="Copy"\n     
-    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    ajax:target="http://example.com/copysupport">&nbsp;</a>...'
     
     >>> model.supports_copy = False
     >>> action(model, request)
@@ -538,28 +538,28 @@ ActionPaste
     
     >>> layer.login('owner')
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/copysupport/paste"\n     
     class="paste16_16 disabled"\n     
     title="Paste"\n     
-    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    ajax:target="http://example.com/copysupport">&nbsp;</a>...'
     
     >>> request.cookies['cone.app.copysupport.cut'] = ['foo']
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/copysupport/paste"\n     
     class="paste16_16"\n     
     title="Paste"\n     
-    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    ajax:target="http://example.com/copysupport">&nbsp;</a>...'
     
     >>> del request.cookies['cone.app.copysupport.cut']
     >>> request.cookies['cone.app.copysupport.copy'] = ['foo']
     >>> action(model, request)
-    u'\n  \n  <a\n     
+    u'...<a\n     
     href="http://example.com/copysupport/paste"\n     
     class="paste16_16"\n     
     title="Paste"\n     
-    ajax:target="http://example.com/copysupport">&nbsp;</a>\n'
+    ajax:target="http://example.com/copysupport">&nbsp;</a>...'
     
     >>> del request.cookies['cone.app.copysupport.copy']
     

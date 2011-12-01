@@ -46,7 +46,6 @@ from cone.app.interfaces import (
 from cone.app.security import (
     DEFAULT_ACL,
     DEFAULT_SETTINGS_ACL,
-    DEFAULT_NODE_PROPERTY_PERMISSIONS,
 )
 from cone.app.utils import (
     DatetimeHelper,
@@ -75,9 +74,8 @@ class AppNode(Part):
     @default
     @instance_property
     def properties(self):
-        props = ProtectedProperties(self, DEFAULT_NODE_PROPERTY_PERMISSIONS)
+        props = Properties()
         props.in_navtree = False
-        props.editable = False
         return props
     
     @default

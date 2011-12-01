@@ -357,7 +357,7 @@ Deleting
     >>> request.environ['cone.app.continuation'][0].payload
     'Object "child" not deletable'
     
-    >>> node['child'].properties.deletable = True
+    >>> node['child'].properties.action_delete = True
     
     >>> request = layer.new_request()
     >>> render_tile(node['child'], request, 'delete')

@@ -73,7 +73,6 @@ def configure_root(settings):
     root.properties.mainmenu_empty_title = \
         settings.get('cone.root.mainmenu_empty_title', False)
     root.properties.in_navtree = False
-    root.properties.editable = False
 
 
 def register_plugin_config(key, factory):

@@ -96,7 +96,6 @@ class ContentsTile(Table):
             value = child.metadata.get('title', child.name)
             link = target = make_url(self.request, node=child)
             if ICopySupport.providedBy(child):
-            #if child.properties.action_copy or child.properties.action_cut:
                 row_data.selectable = True
                 row_data.target = target
                 row_data.css = 'copysupportitem'

@@ -223,7 +223,7 @@ class DeleteAction(Tile):
     def render(self):
         model = self.model
         title = model.metadata.get('title', model.name)
-        if not model.properties.deletable:
+        if not model.properties.action_delete:
             message = 'Object "%s" not deletable' % title
             ajax_message(self.request, message, 'error')
             return u''

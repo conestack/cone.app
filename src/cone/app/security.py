@@ -84,13 +84,9 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_up': ['view'],
     'action_view': ['view'],
     'action_list': ['view'],
-    'editable': ['edit'],
-    'deletable': ['delete'],
-    'shareable': ['manage_permissions'],
-    'action_cut': ['cut'],
-    'action_copy': ['copy'],
-    'action_paste': ['paste'],
-    'wf_state': ['view'],
+    'action_edit': ['edit'],
+    'action_delete': ['delete'],
+    'action_delete_children': ['delete'],
 }
 
 
