@@ -35,7 +35,7 @@ TESTFILES = [
     'browser/workflow.rst',
     'browser/referencebrowser.rst',
     'browser/settings.rst',
-#    'browser/sharing.rst',
+    'browser/sharing.rst',
     'browser/copysupport.rst',
     'browser/utils.rst',
 ]

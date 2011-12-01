@@ -104,8 +104,6 @@ class SharingTable(Table):
         return rows
     
     def _role_column(self, id, role, local, inherited):
-        """Create action rendering a checkbox.
-        """
         props = {
             'class': 'add_remove_role_for_principal',
             'disabled': inherited,
