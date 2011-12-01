@@ -1,5 +1,6 @@
-Actions::
-
+Actions
+=======
+::
     >>> from cone.app.model import BaseNode
     >>> from cone.app.browser.actions import (
     ...     Action,
@@ -10,8 +11,10 @@ Actions::
     >>> model = BaseNode()
     >>> request = layer.new_request()
 
-Abstract actions fail::
 
+Abstract actions
+----------------
+::
     >>> Action()(model, request)
     Traceback (most recent call last):
       ...
@@ -24,9 +27,11 @@ Abstract actions fail::
     Traceback (most recent call last):
       ...
     ValueError: Relative path not supported:
-    
-Dummy actions::
 
+
+Dummy actions
+-------------
+::
     >>> class DummyAction(Action):
     ...     def render(self):
     ...         return '<a href="">dummy action</a>'
@@ -52,8 +57,10 @@ Dummy actions::
     
     >>> layer.logout()
 
-Toolbar::
 
+Toolbar
+-------
+::
     >>> from cone.app.browser.actions import Toolbar
     >>> tb = Toolbar()
     >>> tb['a'] = DummyAction()
@@ -73,8 +80,10 @@ Toolbar::
     
     >>> layer.logout()
 
-LinkAction::
 
+LinkAction
+----------
+::
     >>> from cone.app.browser.actions import LinkAction
     >>> LinkAction()(model, request)
     u'\n  \n  <a\n     ajax:bind="click"\n     
@@ -109,6 +118,245 @@ LinkAction::
     >>> action(model, request)
     u''
 
-ActionUp::
 
-    >>> 
+ActionUp
+--------
+::
+    >>> from cone.app.browser.actions import ActionUp
+    >>> parent = BaseNode(name='root')
+    >>> model = parent['model'] = BaseNode()
+    
+    >>> action = ActionUp()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_up = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('viewer')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root"\n     
+    class="up16_16"\n     
+    title="One level up"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root"\n     
+    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:action="listing:#content:inner">&nbsp;</a>\n'
+    
+    >>> model.properties.action_up_tile = 'otherparentcontent'
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root"\n     
+    class="up16_16"\n     
+    title="One level up"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root"\n     
+    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:action="otherparentcontent:#content:inner">&nbsp;</a>\n'
+    
+    >>> layer.logout()
+
+
+ActionView
+----------
+::
+    >>> from cone.app.browser.actions import ActionView
+    >>> action = ActionView()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_view = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('viewer')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/model"\n     
+    class="view16_16"\n     
+    title="View"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="content:#content:inner">&nbsp;</a>\n'
+    
+    >>> layer.logout()
+
+
+ActionList
+----------
+::
+    >>> from cone.app.browser.actions import ActionList
+    >>> action = ActionList()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_list = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('viewer')
+    >>> action(model, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/model/listing"\n     
+    class="listing16_16"\n     
+    title="Listing"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="listing:#content:inner">&nbsp;</a>\n'
+    
+    >>> layer.logout()
+
+
+ActionSharing
+-------------
+::
+    >>> from pyramid.security import has_permission
+    >>> from cone.app.interfaces import IPrincipalACL
+    >>> from cone.app.testing.mock import SharingNode
+    >>> from cone.app.browser.actions import ActionSharing
+    >>> action = ActionSharing()
+    
+    >>> IPrincipalACL.providedBy(model)
+    False
+    
+    >>> action(model, request)
+    u''
+    
+    >>> sharingmodel = parent['sharingmodel'] = SharingNode()
+    >>> IPrincipalACL.providedBy(sharingmodel)
+    True
+    
+    >>> action(sharingmodel, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> has_permission('manage_permissions', sharingmodel, request)
+    <ACLDenied instance at ... with msg 
+    "ACLDenied permission 'manage_permissions' via ACE ...
+    
+    >>> action(sharingmodel, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> has_permission('manage_permissions', sharingmodel, request)
+    <ACLAllowed instance at ... with msg 
+    "ACLAllowed permission 'manage_permissions' via ACE ...
+    
+    >>> action(sharingmodel, request)
+    u'\n  \n  <a\n     
+    href="http://example.com/root/sharingmodel/sharing"\n     
+    class="sharing16_16"\n     
+    title="Sharing"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/sharingmodel"\n     
+    ajax:action="sharing:#content:inner">&nbsp;</a>\n'
+    
+    >>> layer.logout()
+
+
+ActionState
+-----------
+::
+    >>> from cone.app.interfaces import IWorkflowState
+    >>> from cone.app.testing.mock import WorkflowNode
+    >>> from cone.app.browser.actions import ActionState
+    >>> action = ActionState()
+    
+    >>> IWorkflowState.providedBy(model)
+    False
+    
+    >>> action(model, request)
+    u''
+    
+    >>> wfmodel = parent['wfmodel'] = WorkflowNode()
+    >>> IWorkflowState.providedBy(wfmodel)
+    True
+    
+    >>> action(wfmodel, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> has_permission('change_state', wfmodel, request)
+    <ACLDenied instance at ... with msg 
+    "ACLDenied permission 'change_state' via ACE ...
+    
+    >>> action(wfmodel, request)
+    u''
+    
+    >>> layer.login('owner')
+    >>> has_permission('change_state', wfmodel, request)
+    <ACLAllowed instance at ... with msg 
+    "ACLAllowed permission 'change_state' via ACE ...
+    
+    >>> action(wfmodel, request)
+    u'\n\n  <div class="transitions_dropdown">\n    
+      ...    
+    <a href="http://example.com/root/wfmodel/dotransition?do_transition=initial_2_final"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"\n           
+    ajax:action="wf_dropdown:NONE:NONE">Finalize</a>\n      
+      ...
+    
+    >>> layer.logout()
+
+
+ActionAdd
+---------
+::
+    >>> from cone.app.model import (
+    ...     NodeInfo,
+    ...     registerNodeInfo,
+    ... )
+    
+    >>> info = NodeInfo()
+    >>> info.title = 'Addable'
+    >>> info.addables = ['addable']
+    >>> registerNodeInfo('addable', info)
+    
+    >>> from cone.app.browser.actions import ActionAdd
+    >>> action = ActionAdd()
+    
+    >>> addmodel = BaseNode()
+    >>> action(addmodel, request)
+    u''
+    
+    >>> layer.login('viewer')
+    >>> has_permission('add', addmodel, request)
+    <ACLDenied instance at ... with msg 
+    "ACLDenied permission 'add' via ACE ...
+    
+    >>> action(addmodel, request)
+    u''
+    
+    >>> layer.login('editor')
+    >>> has_permission('add', addmodel, request)
+    <ACLAllowed instance at ... with msg 
+    "ACLAllowed permission 'add' via ACE ...
+    
+    >>> action(addmodel, request)
+    u''
+    
+    >>> addmodel.node_info_name = 'addable'
+    >>> addmodel.nodeinfo
+    <cone.app.model.NodeInfo object at ...>
+    
+    >>> action(addmodel, request)
+    u'\n\n  <div class="dropdown">\n    
+      ...        
+    <a href="http://example.com/add?factory=addable"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/?factory=addable"\n           
+    ajax:action="add:#content:inner">Addable</a>\n      
+      ...
+    
+    >>> layer.logout()
+
+
+ActionEdit
+----------
+::
+    >>> from cone.app.browser.actions import ActionEdit
+    >>> action = ActionEdit()
+    

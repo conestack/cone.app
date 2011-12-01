@@ -38,7 +38,6 @@ class WorkflowNode(BaseNode):
     def properties(self):
         props = Properties()
         props.in_navtree = True
-        props.wf_state = True
         props.wf_name = u'dummy'
         # XXX: check in repoze.workflow the intended way for naming
         #      transitions

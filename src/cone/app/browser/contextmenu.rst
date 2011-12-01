@@ -4,8 +4,10 @@ ContextMenu
     >>> layer.login('manager')
     
     >>> from cone.tile import render_tile
+    >>> from cone.app.model import BaseNode
     >>> from cone.app.testing.mock import SharingNode
-    >>> model = SharingNode()
+    >>> parent = BaseNode('root')
+    >>> model = parent['model'] = SharingNode()
     >>> model.properties.action_up = True
     >>> model.properties.action_view = True
     >>> model.properties.action_list = True

@@ -32,7 +32,7 @@ class Action(object):
         return self.render()
     
     def permitted(self, permission):
-        return has_permission('view', self.model, self.request)
+        return has_permission(permission, self.model, self.request)
     
     def render(self):
         raise NotImplementedError(u"Abstract ``Action`` does not implement "
@@ -97,10 +97,8 @@ class ActionUp(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_up \
+            and has_permission('view', self.model.parent, self.request) \
             and self.permitted('view')
-        #return self.model.properties.action_up \
-        #    and has_permission('view', self.model.parent, self.request) \
-        #    and self.permitted('view')
     
     @property
     def target(self):
@@ -145,9 +143,8 @@ class ActionSharing(LinkAction):
     
     @property
     def display(self):
-        if not IPrincipalACL.providedBy(self.model):
-            return False
-        return self.permitted('manage_permissions')
+        return IPrincipalACL.providedBy(self.model) \
+            and self.permitted('manage_permissions')
 
 
 class ActionState(TileAction):
@@ -155,11 +152,8 @@ class ActionState(TileAction):
     
     @property
     def display(self):
-        return IWorkflowState.providedBy(self.model)
-    
-    @property
-    def enabled(self):
-        return self.permitted('change_state')
+        return IWorkflowState.providedBy(self.model) \
+            and self.permitted('change_state')
 
 
 class ActionAdd(TileAction):
