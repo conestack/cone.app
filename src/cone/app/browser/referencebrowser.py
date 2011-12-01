@@ -56,7 +56,7 @@ class ActionAddReference(LinkAction):
         return self.model.properties.action_add_reference
     
     def render(self):
-        rendered = LinkAction.render()
+        rendered = LinkAction.render(self)
         attrs = {
             'class_': 'reftitle',
             'style': 'display:none;',
@@ -80,10 +80,9 @@ class ReferencableChildrenLink(LinkAction):
     def action(self):
         return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
     
-    @property
     def render(self):
-        if not child.properties.get('leaf'): # XXX: IAppLeaf
-            return LinkAction.render()
+        if not self.model.properties.get('leaf'): # XXX: IAppLeaf
+            return LinkAction.render(self)
         return self.text
 
 

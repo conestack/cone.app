@@ -198,7 +198,7 @@ Create dummy environ::
     ...     model[str(i)].metadata.uid = uuid.uuid4()
     ...     if i % 2 == 0:
     ...         # make node referencable
-    ...         model[str(i)].properties.referencable = True
+    ...         model[str(i)].properties.action_add_reference = True
     ...         # do not render link to children
     ...         model[str(i)].properties.leaf = True
     ...     created = created + delta
@@ -221,11 +221,26 @@ Authorized::
     >>> res.find('id="referencebrowser"') > -1
     True
 
+    >>> res
+    u'\n  <div id="referencebrowser"\n       
+      ...
+    <a\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/5"\n     
+    ajax:event="contextchanged:.refbrowsersensitiv"\n     
+    ajax:action="referencelisting:#referencebrowser:replace">5</a>...
+
 Referencable nodes renders add reference action related markup::
 
-    >>> expected = 'add16_16 addreference" '
-    >>> expected += 'href="http://example.com/6" id="ref-'
-    >>> res.find(expected) > -1
-    True
+    >>> res
+    u'\n  <div id="referencebrowser"\n       
+      ...
+    <a\n     
+    id="ref-..."\n     
+    href="http://example.com/6"\n     
+    class="add16_16 addreference"\n     
+    title="Add reference"\n     
+    ajax:bind="click">&nbsp;</a>\n\n<span class="reftitle" 
+    style="display:none;">6</span>\n...
     
     >>> layer.logout()

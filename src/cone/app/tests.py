@@ -33,7 +33,7 @@ TESTFILES = [
     'browser/layout.rst',
     'browser/login.rst',
     'browser/workflow.rst',
-#    'browser/referencebrowser.rst',
+    'browser/referencebrowser.rst',
     'browser/settings.rst',
 #    'browser/sharing.rst',
     'browser/copysupport.rst',
