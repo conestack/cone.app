@@ -10,8 +10,6 @@ from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.table import (
     Table,
     RowData,
-    Item,
-    Action,
 )
 from yafowil.base import factory
 
@@ -45,7 +43,6 @@ class SharingTable(Table):
                 'sort_key': 'principal',
                 'sort_title': 'Sort by principal',
                 'content': 'string',
-                'link': True,
             },
         ]
         for role in security.DEFAULT_ROLES:
@@ -55,7 +52,6 @@ class SharingTable(Table):
                 'sort_key': None,
                 'sort_title': None,
                 'content': 'structure',
-                'link': False,
             })
         return col_defs
     
@@ -92,7 +88,7 @@ class SharingTable(Table):
             else:
                 title = principal.attrs.get('fullname', principal_id)
             row_data = RowData()
-            row_data['principal'] = Item(title)
+            row_data['principal'] = title
             ugm_roles = principal.roles
             local_roles = principal_roles.get(principal_id, list())
             if inheritance:
@@ -102,12 +98,14 @@ class SharingTable(Table):
             for role in security.DEFAULT_ROLES:
                 inherited = role[0] in ugm_roles
                 local = role[0] in local_roles
-                row_data[role[0]] = Item(
-                    self._role_column(principal_id, role[0], local, inherited))
+                row_data[role[0]] = \
+                    self._role_column(principal_id, role[0], local, inherited)
             rows.append(row_data)
         return rows
     
     def _role_column(self, id, role, local, inherited):
+        """Create action rendering a checkbox.
+        """
         props = {
             'class': 'add_remove_role_for_principal',
             'disabled': inherited,

@@ -3,6 +3,7 @@
           omit-tag="True">
   
   <a tal:condition="context.text"
+     id="${context.id|nothing}"
      href="${context.href|nothing}"
      class="${context.css_class|nothing}"
      title="${context.title|nothing}"
@@ -15,6 +16,7 @@
      tal:content="context.text">Text</a>
   
   <a tal:condition="not context.text"
+     id="${context.id|nothing}"
      href="${context.href|nothing}"
      class="${context.css_class|nothing}"
      title="${context.title|nothing}"

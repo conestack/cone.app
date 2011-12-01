@@ -16,8 +16,6 @@ Imports and dummy context::
     
     >>> from cone.app.browser.table import (
     ...     RowData,
-    ...     Item,
-    ...     Action,
     ...     Table,
     ...     TableSlice,
     ...     TableBatch,
@@ -71,8 +69,8 @@ Imports and dummy context::
     ...         rows = []
     ...         for i in range(self.item_count):
     ...             row_data = RowData()
-    ...             row_data['col_1'] = Item('Col 1 Value')
-    ...             row_data['col_2'] = Item('Col 2 Value')
+    ...             row_data['col_1'] = 'Col 1 Value'
+    ...             row_data['col_2'] = 'Col 2 Value'
     ...             rows.append(row_data)
     ...         return rows[start:end]
 
@@ -81,10 +79,10 @@ Imports and dummy context::
     >>> slice.slice
     (0, 10)
     
-    >>> slice.rows[0]['col_1'].value
+    >>> slice.rows[0]['col_1']
     'Col 1 Value'
     
-    >>> slice.rows[0]['col_2'].value
+    >>> slice.rows[0]['col_2']
     'Col 2 Value'
 
 In order to get row_data rendered inside table, column definitions must be
@@ -107,7 +105,6 @@ defined::
     ...         'sort_key': 'col_1',
     ...         'sort_title': 'Sort by col 1',
     ...         'content': 'string',
-    ...         'link': False,
     ...     },
     ...     {
     ...         'id': 'col_2',
@@ -115,7 +112,6 @@ defined::
     ...         'sort_key': 'col_2',
     ...         'sort_title': 'Sort by col 2',
     ...         'content': 'string',
-    ...         'link': False,
     ...     },
     ... ]
     
@@ -145,25 +141,19 @@ A column definition consists of:
     Column content definition. possible values are 'string', 'datetime' and
     'actions'.
     
-    If 'string', ``Item.value`` is rendered as is to column.
+    If 'string', value is rendered as is to column.
     
-    If 'datetime' ``Item.value`` is expected as ``datetime.datetime`` value and
+    If 'datetime' value is expected as ``datetime.datetime`` value and
     gets formatted.
     
-    If 'actions' ``Item.actions`` is rendered and all other attributes of
-    Item are ignored.
-
-``link``
-    Flag whether to render ``Item.value`` as hyperlink. Ignored if column
-    content is 'actions'.
-    
-    If 'True', ``Item.link``, ``Item.target``, ``Item.action`` and
-    ``Item.event`` are considered.
+    If 'structure' value is rendered as markup.
 
 A complete example::
 
     >>> from cone.tile import tile
     >>> from datetime import datetime
+    >>> from cone.app.browser.actions import ViewLink
+    >>> view_link = ViewLink()
     
     >>> @tile('mytabletile', 'cone.app:browser/templates/table.pt',
     ...       permission='view')
@@ -177,8 +167,7 @@ A complete example::
     ...             'title': 'Col 1',
     ...             'sort_key': None,
     ...             'sort_title': None,
-    ...             'content': 'actions',
-    ...             'link': False,
+    ...             'content': 'structure',
     ...         },
     ...         {
     ...             'id': 'col_2',
@@ -186,7 +175,6 @@ A complete example::
     ...             'sort_key': 'col_2',
     ...             'sort_title': 'Sort by col 2',
     ...             'content': 'string',
-    ...             'link': True,
     ...         },
     ...         {
     ...             'id': 'col_3',
@@ -194,12 +182,12 @@ A complete example::
     ...             'sort_key': 'col_3',
     ...             'sort_title': 'Sort by col 3',
     ...             'content': 'datetime',
-    ...             'link': False,
     ...         },
     ...     ]
     ...     default_sort = 'col_2'
     ...     default_order = 'desc'
     ...     slicesize = 10
+    ...     query_whitelist = ['foo'] # additional query params to consider
     ...     
     ...     @property
     ...     def item_count(self):
@@ -209,38 +197,15 @@ A complete example::
     ...         rows = []
     ...         for i in range(self.item_count):
     ...             row_data = RowData()
-    ...             actions = []
     ...             
-    ...             # common action definition
-    ...             title = 'Action title'
-    ...             link = 'http://example.com'     # action href
-    ...             target = 'http://example.com'   # action ajax:target
-    ...             action = 'action:selector:mode' # action ajax:action
-    ...             event = 'event:selector'        # action ajax:event
-    ...             css = 'myaction'                # action css class
-    ...             action = Action(title, link, target, action, event, css)
-    ...             actions.append(action)
+    ...             # structure
+    ...             row_data['col_1'] = view_link(self.model, self.request)
     ...             
-    ...             # if custom action, pass ``rendered`` as kwarg, all other
-    ...             # action arguments are ignored then and contents of
-    ...             # rendered is used
-    ...             action = Action(rendered='<strong>CustomAction</strong>')
-    ...             actions.append(action)
+    ...             # string
+    ...             row_data['col_2'] = 'Col 2 -> %i' % i
     ...             
-    ...             # add item with actions for column 1
-    ...             row_data['col_1'] = Item(actions=actions)
-    ...             
-    ...             # add item with link definitions for column 2
-    ...             value = 'Col 2 -> %i' % i         # item value
-    ...             link = 'http://example.org'       # item href
-    ...             target = 'http://example.org'     # item ajax:target
-    ...             action = 'action2:selector2:mode' # item ajax:action
-    ...             event = 'event2:selector2'        # item ajax:event
-    ...             row_data['col_2'] = Item(value, link, target, action, event)
-    ...             
-    ...             # add item with datetime value for column 3, no link
-    ...             # definitions required since column definition says so
-    ...             row_data['col_3'] = Item(datetime(2011, 4, 1))
+    ...             # datetime value
+    ...             row_data['col_3'] = datetime(2011, 4, 1)
     ...             
     ...             # append row data
     ...             rows.append(row_data)
@@ -261,51 +226,40 @@ Rendering fails unauthorized, 'view' permission is required::
 Render authenticated::
 
     >>> layer.login('max')
-    >>> rendered = render_tile(model, layer.current_request, 'mytabletile')
-    
-Part of custom action::
-    
-    >>> expected = '<strong>CustomAction</strong>'
-    >>> rendered.find(expected) != -1
-    True
+    >>> model.properties.action_view = True
+    >>> model.metadata.title = 'Foo'
+    >>> request = layer.new_request()
+    >>> request.params['foo'] = 'bar'
+    >>> rendered = render_tile(model, request, 'mytabletile')
 
-Part of action::
+Sort header with query white list param::
 
-    >>> expected = 'class="myaction"'
-    >>> rendered.find(expected) != -1
-    True
-    
-    >>> expected = 'title="Action title"'
-    >>> rendered.find(expected) != -1
-    True
-    
-    >>> expected = 'ajax:target="http://example.com"'
-    >>> rendered.find(expected) != -1
-    True
-    
-    >>> expected = 'ajax:action="action:selector:mode">&nbsp;</a>'
-    >>> rendered.find(expected) != -1
-    True
+    >>> rendered
+    u'\n  <div id="mytable"\n
+      ...
+    ajax:target="http://example.com/?sort=&foo=bar&order=&b_page=1"...
 
-Part of link::
+Structure content::
+    
+    >>> rendered
+    u'\n  <div id="mytable"\n
+      ...
+    <a\n     
+    href="http://example.com/"\n     
+    title="View"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/"\n     
+    ajax:action="content:#content:inner">Foo</a>...
+    
 
-    >>> expected = 'href="http://example.org"'
-    >>> rendered.find(expected) != -1
-    True
-    
-    >>> expected = 'ajax:action="action2:selector2:mode">Col 2 -&gt; 8</a>'
-    >>> rendered.find(expected) != -1
-    True
-    
-    >>> expected = 'ajax:target="http://example.org"'
-    >>> rendered.find(expected) != -1
-    True
-    
-    >>> expected = 'ajax:event="event2:selector2"'
-    >>> rendered.find(expected) != -1
-    True
+String::
 
-Part of datetime::
+    >>> rendered
+    u'\n  <div id="mytable"\n
+      ...
+    Col 2 -&gt; 1...
+
+Datetime::
 
     >>> expected = '01.04.2011 00:00'
     >>> rendered.find(expected) != -1

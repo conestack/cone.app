@@ -59,6 +59,7 @@ class TemplateAction(Action):
 class LinkAction(TemplateAction):
     template = 'cone.app.browser:templates/link_action.pt'
     bind = 'click'    # ajax:bind attribute
+    id = None         # id attribute
     href = None       # href attribute
     css = None        # in addition for computed class attribute
     title = None      # title attribute
@@ -116,6 +117,14 @@ class ActionView(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_view and self.permitted('view')
+
+
+class ViewLink(ActionView):
+    css = None
+    
+    @property
+    def text(self):
+        return self.model.metadata.get('title', self.model.name)
 
 
 class ActionList(LinkAction):

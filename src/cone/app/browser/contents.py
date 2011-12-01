@@ -9,10 +9,15 @@ from cone.app.interfaces import ICopySupport
 from cone.app.browser.table import (
     Table,
     RowData,
-    Item,
-    Action,
 )
 from cone.app.browser.copysupport import extract_copysupport_cookie
+from cone.app.browser.actions import (
+    Toolbar,
+    ActionView,
+    ViewLink,
+    ActionEdit,
+    ActionDelete,
+)
 from cone.app.browser.utils import (
     nodepath, 
     make_query, 
@@ -20,7 +25,16 @@ from cone.app.browser.utils import (
     format_date,
 )
 
+
 FAR_PAST = datetime.datetime(2000, 1, 1)
+
+row_actions = Toolbar()
+row_actions['view'] = ActionView()
+row_actions['edit'] = ActionEdit()
+row_actions['delete'] = ActionDelete()
+
+view_link = ViewLink()
+
 
 @tile('contents', 'templates/table.pt', permission='view')
 class ContentsTile(Table):
@@ -33,16 +47,14 @@ class ContentsTile(Table):
             'title': 'Actions',
             'sort_key': None,
             'sort_title': None,
-            'content': 'actions',
-            'link': False,
+            'content': 'structure',
         },
         {
             'id': 'title',
             'title': 'Title',
             'sort_key': 'title',
             'sort_title': 'Sort on title',
-            'content': 'string',
-            'link': True,
+            'content': 'structure',
         },
         {
             'id': 'creator',
@@ -50,7 +62,6 @@ class ContentsTile(Table):
             'sort_key': 'creator',
             'sort_title': 'Sort on creator',
             'content': 'string',
-            'link': False,
         },
         {
             'id': 'created',
@@ -58,7 +69,6 @@ class ContentsTile(Table):
             'sort_key': 'created',
             'sort_title': 'Sort on created',
             'content': 'datetime',
-            'link': False,
         },
         {
             'id': 'modified',
@@ -66,7 +76,6 @@ class ContentsTile(Table):
             'sort_key': 'modified',
             'sort_title': 'Sort on modified',
             'content': 'datetime',
-            'link': False,
         },
     ]
     default_sort = 'created'
@@ -92,21 +101,19 @@ class ContentsTile(Table):
         cut_urls = extract_copysupport_cookie(self.request, 'cut')
         for child in children[start:end]:
             row_data = RowData()
-            row_data['actions'] = Item(actions=self.create_actions(child))
+            row_data['actions'] = row_actions(child, request)
             value = child.metadata.get('title', child.name)
-            link = target = make_url(self.request, node=child)
+            target = make_url(self.request, node=child)
             if ICopySupport.providedBy(child):
                 row_data.selectable = True
                 row_data.target = target
                 row_data.css = 'copysupportitem'
                 if target in cut_urls:
                     row_data.css += ' copysupport_cut'
-            action = 'content:#content:inner'
-            event = 'contextchanged:.contextsensitiv'
-            row_data['title'] = Item(value, link, target, action, event)
-            row_data['creator'] = Item(child.metadata.get('creator', 'unknown'))
-            row_data['created'] = Item(child.metadata.get('created'))
-            row_data['modified'] = Item(child.metadata.get('modified'))
+            row_data['title'] = view_link(child, request)
+            row_data['creator'] = child.metadata.get('creator', 'unknown')
+            row_data['created'] = child.metadata.get('created')
+            row_data['modified'] = child.metadata.get('modified')
             rows.append(row_data)
         return rows
     
@@ -121,28 +128,3 @@ class ContentsTile(Table):
             if order == 'asc':
                 children.reverse()
         return children
-    
-    def create_actions(self, node):
-        actions = list()
-        link = target = make_url(self.request, node=node)
-        action = 'content:#content:inner'
-        event = 'contextchanged:.contextsensitiv'
-        actions.append(Action('View', link, target, action, event, 'view16_16'))
-        if node.properties.editable:
-            query = make_query(came_from='parent')
-            link = make_url(
-                self.request, node=node, resource='edit', query=query)
-            target = make_url(self.request, node=node, query=query)
-            action = 'edit:#content:inner'
-            event = 'contextchanged:.contextsensitiv'
-            actions.append(
-                Action('Edit', link, target, action, event, 'edit16_16'))
-        if node.properties.deletable:
-            link = make_url(
-                self.request, node=node, resource='delete')
-            target = make_url(self.request, node=node)
-            action = 'delete:NONE:NONE'
-            confirm = 'Do you really want to delete this item?'
-            actions.append(Action('Delete', link, target, action,
-                                  None, 'delete16_16', confirm))
-        return actions

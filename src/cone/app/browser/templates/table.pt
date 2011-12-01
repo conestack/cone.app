@@ -45,53 +45,20 @@
             ajax:target="${row_data.target and row_data.target or None}">
           
           <tal:td repeat="col_def context.col_defs">
-                
-            <td tal:condition="col_def['content'] == 'actions'"
-                tal:define="item row_data[col_def['id']]">
-              <tal:action repeat="action item.actions">
-                <a href="${action.link}"
-                   class="${action.css}"
-                   title="${action.title}"
-                   ajax:bind="click"
-                   ajax:target="${action.target}"
-                   ajax:event="${action.event}"
-                   ajax:action="${action.action}"
-                   ajax:confirm="${action.confirm}"
-                   tal:condition="not action.rendered">&nbsp;</a>
-                <tal:action condition="action.rendered"
-                            replace="structure action.rendered" />
-              </tal:action>
-            </td>
             
-            <td tal:condition="col_def['content'] != 'actions'"
-                tal:define="item row_data[col_def['id']];
-                            is_string col_def['content'] == 'string';
+            <td tal:define="is_string col_def['content'] == 'string';
                             is_structure col_def['content'] == 'structure';
                             is_datetime col_def['content'] == 'datetime';
-                            value is_datetime and context.format_date(item.value) or item.value;">
+                            value row_data[col_def['id']];
+                            value is_datetime and context.format_date(value) or value;">
               
-              <tal:linked condition="item.link">
-                <a href="${item.link}"
-                   ajax:bind="click"
-                   ajax:target="${item.target}"
-                   ajax:event="${item.event}"
-                   ajax:action="${item.action}"
-                   tal:content="value">
-                  Value
-                </a>
-              </tal:linked>
+              <tal:string condition="is_string or is_datetime">
+                <span tal:replace="value">Value</span>
+              </tal:string>
               
-              <tal:notlinked condition="not item.link">
-              
-                <tal:string condition="is_string or is_datetime">
-                  <span tal:replace="value">Value</span>
-                </tal:string>
-              
-                <tal:structure condition="is_structure">
-                  <span tal:replace="structure value">Value</span>
-                </tal:structure>
-              
-              </tal:notlinked>
+              <tal:structure condition="is_structure">
+                <span tal:replace="structure value">Value</span>
+              </tal:structure>
             
             </td>
             

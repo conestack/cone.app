@@ -27,6 +27,8 @@ cone.app.__init__::
     
     >>> principal_by_id('group:group1')
     <Group object 'group1' at ...>
+    
+    >>> principal_by_id('inexistent')
 
 ``search_for_principals``::
 
