@@ -1,4 +1,5 @@
 import datetime
+from node.utils import instance_property
 from pyramid.security import has_permission
 from cone.tile import (
     tile,
@@ -27,13 +28,6 @@ from cone.app.browser.utils import (
 
 
 FAR_PAST = datetime.datetime(2000, 1, 1)
-
-row_actions = Toolbar()
-row_actions['view'] = ActionView()
-row_actions['edit'] = ActionEdit()
-row_actions['delete'] = ActionDelete()
-
-view_link = ViewLink()
 
 
 @tile('contents', 'templates/table.pt', permission='view')
@@ -95,13 +89,25 @@ class ContentsTile(Table):
     def item_count(self):
         return len(self.model.keys())
     
+    @instance_property
+    def row_actions(self):
+        row_actions = Toolbar()
+        row_actions['view'] = ActionView()
+        row_actions['edit'] = ActionEdit()
+        row_actions['delete'] = ActionDelete()
+        return row_actions
+    
+    @instance_property
+    def view_link(self):
+        return ViewLink()
+    
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
         cut_urls = extract_copysupport_cookie(self.request, 'cut')
         for child in children[start:end]:
             row_data = RowData()
-            row_data['actions'] = row_actions(child, request)
+            row_data['actions'] = self.row_actions(child, self.request)
             value = child.metadata.get('title', child.name)
             target = make_url(self.request, node=child)
             if ICopySupport.providedBy(child):
@@ -110,7 +116,7 @@ class ContentsTile(Table):
                 row_data.css = 'copysupportitem'
                 if target in cut_urls:
                     row_data.css += ' copysupport_cut'
-            row_data['title'] = view_link(child, request)
+            row_data['title'] = self.view_link(child, self.request)
             row_data['creator'] = child.metadata.get('creator', 'unknown')
             row_data['created'] = child.metadata.get('created')
             row_data['modified'] = child.metadata.get('modified')

@@ -90,6 +90,7 @@ LinkAction
     ajax:target="http://example.com/">&nbsp;</a>...'
     
     >>> action = LinkAction()
+    >>> action.id = 'link_id'
     >>> action.href = 'http://example.com/foo'
     >>> action.css = 'link_action'
     >>> action.title = 'Foo'
@@ -100,6 +101,7 @@ LinkAction
     >>> action.text = 'Foo'
     >>> action(model, request)
     u'...<a\n     
+    id="link_id"\n     
     href="http://example.com/foo"\n     
     class="link_action"\n     
     title="Foo"\n     
@@ -180,6 +182,30 @@ ActionView
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="content:#content:inner">&nbsp;</a>...'
+    
+    >>> layer.logout()
+
+
+ViewLink
+--------
+::
+    >>> from cone.app.browser.actions import ViewLink
+    >>> action = ViewLink()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_view = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('viewer')
+    >>> action(model, request)
+    u'...<a\n     
+    href="http://example.com/root/model"\n     
+    title="View"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="content:#content:inner">model</a>...'
     
     >>> layer.logout()
 

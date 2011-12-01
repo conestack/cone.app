@@ -28,7 +28,7 @@ TESTFILES = [
     'browser/contextmenu.rst',
     'browser/batch.rst',
     'browser/table.rst',
-#    'browser/contents.rst',
+    'browser/contents.rst',
     'browser/form.rst',
     'browser/layout.rst',
     'browser/login.rst',
