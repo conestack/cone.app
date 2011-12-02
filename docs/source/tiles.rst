@@ -260,14 +260,6 @@ Model child nodes in batched, sortable table.
 *modified*
     Node last modification date as ``datetime.datetime`` instance.
 
-**Considered properties**
-
-*editable*
-    Flag whether node is editable.
-
-*deletable*
-    Flag whether node is deletable.
-
 
 Listing
 -------
@@ -313,167 +305,12 @@ Renders node creation, modification and author information.
 Context menu
 ------------
 
-User actions for a node. The context menu consists of sections containing
-actions. Sections or actions can be added to
-``cone.app.browser.contextmenu.context_menu_sections``.
+User actions for a node. The context menu consists of toolbars containing
+actions. toolbars and actions can be added to
+``cone.app.browser.contextmenu.context_menu``.
 
 **Registration name**
     *contextmenu*
-
-Existing Actions
-................
-
-ActionUp
-~~~~~~~~
-
-Renders content area tile on parent node to main content area.
-
-**Considered properties**
-
-*action_up*
-    Flag whether to render "One level up" action.
-
-*action_up_tile*
-    Considered if ``action_up`` is true. Defines the tilename used for
-    rendering parent content area. Defaults to ``listing`` if undefined.
-
-ActionView
-~~~~~~~~~~
-
-Renders ``content`` tile on node to main content area.
-
-**Considered properties**
-
-*action_view*
-    Flag whether to render view action.
-
-ActionList
-~~~~~~~~~~
-
-Renders ``listing`` tile on node to main content area.
-
-**Considered properties**
-
-*action_list*
-    Flag whether to render list action.
-
-ActionAdd
-~~~~~~~~~
-
-Renders add dropdown menu.
-
-**Considered node information**
-
-*addables*
-    Addable children defined for node.
-
-ActionEdit
-~~~~~~~~~~
-
-Renders ``edit`` tile to main content area.
-
-**Considered properties**
-
-*editable*
-    Flag whether node is editable.
-
-ActionDelete
-~~~~~~~~~~~~
-
-Invokes ``delete`` tile on node after confirming action.
-
-**Considered properties**
-
-*deletable*
-    Flag whether node is deletable.
-
-ActionCut
-~~~~~~~~~
-
-Writes selected elements contained in ``cone.selectable.selected`` to cookie
-on client.
-
-**Considered properties**
-
-*action_cut*
-    Flag whether node provides detaching children.
-
-ActionCopy
-~~~~~~~~~~
-
-Writes selected elements contained in ``cone.selectable.selected`` to cookie
-on client.
-
-**Considered properties**
-
-*action_copy*
-    Flag whether node provides copying children.
-
-ActionPaste
-~~~~~~~~~~~
-
-Invokes ``paste`` tile on node.
-
-**Considered properties**
-
-*action_paste*
-    Flag whether node can be pasted to.
-
-ActionShare
-~~~~~~~~~~~
-
-Renders ``sharing`` tile on node to main content area. Only works for
-nodes with ``cone.app.security.PrincipalACL`` behavior.
-
-**Considered properties**
-
-*shareable*
-    Flag whether to render sharing action.
-
-ActionState
-~~~~~~~~~~~
-
-Renders workflow state dropdown menu. Only works for nodes with
-``cone.app.workflow.WorkflowState`` behavior.
-
-**Considered properties**
-
-*wf_state*
-    Flag whether model provides workflow.
-
-Add Actions
-...........
-
-Define action::
-
-    >>> from cone.app.browser.authoring import ContextAction
-    >>> class MyAction(ContextAction):
-    ...     css_class = 'myaction16_16'
-    ...     title = 'My Action'
-    ...     action = 'myaction:#content:inner'
-    ...
-    ...     @property
-    ...     def href(self):
-    ...         return '%s/myaction_no_js' % self.target
-    ...
-    ...     @property
-    ...     def enabled(self):
-    ...         return self.model.properties.action_myaction
-
-Define section and register action on it. Actions can also be added to existing
-sections::
-
-    >>> from cone.app.browser.authoring import ContextActionsSection
-    >>> from odict import odict
-    >>> class MyActions(ContextActionsSection):
-    ...     factories = odict()
-
-    >>> MyActions.factories['action_myaction'] = MyAction
-
-Register section::
-
-    >>> from cone.app.browser.authoring import context_menu_sections
-    >>> context_menu_sections['myactions'] = MyActions
 
 
 Add dropdown
@@ -505,9 +342,6 @@ containing the transition id.
 
 **Considered properties**
 
-*wf_state*
-    Flag whether model provides workflow.
-
 *wf_name*
     Registration name of workflow.
 
@@ -532,7 +366,7 @@ Triggers ``contextchanged`` event. Displays info dialog.
 
 **Considered properties**
 
-*deletable*
+*action_delete*
     Flag whether node can be deleted. If not, a bdajax error message gets
     displayed.
 
@@ -631,8 +465,8 @@ specific actions.
     Whether node contains children. Used to check rendering of navigational
     links.
 
-*referencable*
-    Flag whether node can be referenced.
+*action_add_reference*
+    Flag whether to render add reference link for node.
 
 
 Abstract tiles
@@ -661,3 +495,132 @@ A subclass of this tile must be registered under the same name as defined
 at ``table_tile_name``, normally bound to template
 ``cone.app:browser/templates/table.pt``. A subclass has to provide ``col_defs``,
 ``item_count`` and ``sorted_rows``.
+
+
+Actions
+=======
+
+Actions are used to render action user action triggers. They are used in
+contexmenu and contents table by default, but you can use them elsewhere to
+render user actions for nodes.
+
+Action are no "real" tiles, but behave similar that they get normally called
+with context and request as arguments, are responsible to read related
+information from given node and request and render some appropriate 
+action (or not).
+
+There exist base objects ``Action``, ``TileAction``, ``TemplateAction`` and
+``LinkAction`` in ``cone.app.browser.actions`` which can be used as base class
+for custom actions.
+
+Class ``Toolbar`` can be used to render a set of actions.
+
+
+ActionUp
+--------
+
+Renders content area tile on parent node to main content area.
+
+**Considered properties**
+
+*action_up*
+    Flag whether to render "One level up" action.
+
+*action_up_tile*
+    Considered if ``action_up`` is true. Defines the tilename used for
+    rendering parent content area. Defaults to ``listing`` if undefined.
+
+
+ActionView
+----------
+
+Renders ``content`` tile on node to main content area.
+
+**Considered properties**
+
+*action_view*
+    Flag whether to render view action.
+
+
+ViewLink
+--------
+
+Renders ``content`` tile on node to main content area.
+
+
+ActionList
+----------
+
+Renders ``listing`` tile on node to main content area.
+
+**Considered properties**
+
+*action_list*
+    Flag whether to render list action.
+
+
+ActionAdd
+---------
+
+Renders add dropdown menu.
+
+**Considered node information**
+
+*addables*
+    Addable children defined for node.
+
+
+ActionEdit
+----------
+
+Renders ``edit`` tile to main content area.
+
+**Considered properties**
+
+*action_edit*
+    Flag whether to render edit action.
+
+
+ActionDelete
+------------
+
+Invokes ``delete`` tile on node after confirming action.
+
+**Considered properties**
+
+*action_delete*
+    Flag whether to render delete action.
+
+
+ActionCut
+---------
+
+Writes selected elements contained in ``cone.selectable.selected`` to cookie
+on client.
+
+
+ActionCopy
+----------
+
+Writes selected elements contained in ``cone.selectable.selected`` to cookie
+on client.
+
+
+ActionPaste
+-----------
+
+Invokes ``paste`` tile on node.
+
+
+ActionShare
+-----------
+
+Renders ``sharing`` tile on node to main content area. Only renders for
+nodes with ``cone.app.security.PrincipalACL`` behavior.
+
+
+ActionState
+-----------
+
+Renders workflow state dropdown menu. Only renders for nodes with
+``cone.app.workflow.WorkflowState`` behavior.

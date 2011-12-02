@@ -94,7 +94,7 @@ LinkAction
     >>> action.href = 'http://example.com/foo'
     >>> action.css = 'link_action'
     >>> action.title = 'Foo'
-    >>> action.action = 'http://example.com/foo'
+    >>> action.action = 'actionname:#content:replace'
     >>> action.event = 'contextchanged:.contextsensitiv'
     >>> action.confirm = 'Do you want to perform?'
     >>> action.overlay = 'someaction'
@@ -108,7 +108,7 @@ LinkAction
     ajax:bind="click"\n     
     ajax:target="http://example.com/"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="http://example.com/foo"\n     
+    ajax:action="actionname:#content:replace"\n     
     ajax:confirm="Do you want to perform?"\n     
     ajax:overlay="someaction">Foo</a>...'
 
