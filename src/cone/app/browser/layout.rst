@@ -94,7 +94,7 @@ To change the default layout, change the main template::
     >>> cone.app.cfg.main_template
     '...'
     
-    >>> main = 'cone.app.tests:dummy_main.pt'
+    >>> main = 'cone.app.testing:dummy_main.pt'
     >>> cone.app.cfg.main_template = main
 
 An unprotected tile named 'content' registered for all sorts of node::

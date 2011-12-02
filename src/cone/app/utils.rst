@@ -77,3 +77,34 @@ Timestamp::
     >>> from cone.app.utils import timestamp
     >>> timestamp()
     datetime.datetime(..., ..., ..., ..., ..., ..., ...)
+
+Creation metadata::
+
+    >>> from cone.app.utils import (
+    ...     add_creation_metadata,
+    ...     update_creation_metadata,
+    ... )
+    
+    >>> from cone.app.model import BaseNode
+    >>> node = BaseNode()
+    >>> layer.login('editor')
+    
+    >>> add_creation_metadata(layer.new_request(), node.attrs)
+    >>> node.attrs.items()
+    [('creator', 'editor'), 
+    ('created', datetime.datetime(...)), 
+    ('modified', datetime.datetime(...))]
+    
+    >>> node.attrs['created'] == node.attrs['modified']
+    True
+    
+    >>> update_creation_metadata(layer.new_request(), node.attrs)
+    >>> node.attrs.items()
+    [('creator', 'editor'), 
+    ('created', datetime.datetime(...)), 
+    ('modified', datetime.datetime(...))]
+    
+    >>> node.attrs['created'] == node.attrs['modified']
+    False
+    
+    >>> layer.logout()

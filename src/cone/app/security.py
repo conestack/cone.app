@@ -5,6 +5,7 @@ from plumber import (
     extend,
     plumb,
 )
+from zope.interface import implements
 from pyramid.security import (
     Everyone,
     Allow,
@@ -13,48 +14,79 @@ from pyramid.security import (
     remember,
     authenticated_userid,
 )
+from cone.app.interfaces import IPrincipalACL
 from cone.app.utils import app_config
 
 
 logger = logging.getLogger('cone.app')
 
+
 DEFAULT_ROLES = [
     ('viewer', 'Viewer'),
     ('editor', 'Editor'),
     ('admin', 'Admin'),
-    ('owner', 'Owner'),
+    ('owner', 'Owner'), # XXX: owner handling on nodes
     ('manager', 'Manager'),
 ]
 
 
-ADMIN_PERM = ['view', 'add', 'edit', 'delete', 'manage_permissions']
+AUTHENTICATED = 'system.Authenticated'
+VIEWER = 'role:viewer'
+EDITOR = 'role:editor'
+ADMIN = 'role:admin'
+OWNER = 'role:owner'
+MANAGER = 'role:manager'
+
+
+WORKFLOW_PERMISSIONS = ['change_state']
+SHARING_PERMISSIONS = ['manage_permissions']
+COPYSUPPORT_PERMISSIONS = ['cut', 'copy', 'paste']
+
+
+AUTHENTICATED_PERMISSIONS = ['view']
+VIEWER_PERMISSIONS = AUTHENTICATED_PERMISSIONS
+EDITOR_PERMISSIONS = VIEWER_PERMISSIONS + ['add', 'edit']
+ADMIN_PERMISSIONS = \
+    EDITOR_PERMISSIONS + \
+    ['delete'] + \
+    COPYSUPPORT_PERMISSIONS + \
+    SHARING_PERMISSIONS + \
+    WORKFLOW_PERMISSIONS
+OWNER_PERMISSIONS = ADMIN_PERMISSIONS
+MANAGER_PERMISSIONS = ADMIN_PERMISSIONS + ['manage']
+EVERYONE_PERMISSIONS = ['login']
+
+# BBB
+ADMIN_PERM = ADMIN_PERMISSIONS
+
+
 DEFAULT_ACL = [
-    (Allow, 'system.Authenticated', ['view']),
-    (Allow, 'role:viewer', ['view']),
-    (Allow, 'role:editor', ['view', 'add', 'edit']),
-    (Allow, 'role:admin', ADMIN_PERM),
-    (Allow, 'role:owner', ADMIN_PERM),
-    (Allow, 'role:manager', ADMIN_PERM + ['manage']),
-    (Allow, Everyone, ['login']),
+    (Allow, AUTHENTICATED, AUTHENTICATED_PERMISSIONS),
+    (Allow, VIEWER, VIEWER_PERMISSIONS),
+    (Allow, EDITOR, EDITOR_PERMISSIONS),
+    (Allow, ADMIN, ADMIN_PERMISSIONS),
+    (Allow, OWNER, ADMIN_PERMISSIONS),
+    (Allow, MANAGER, MANAGER_PERMISSIONS),
+    (Allow, Everyone, EVERYONE_PERMISSIONS),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
 
 DEFAULT_SETTINGS_ACL = [
-    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-    (Allow, Everyone, 'login'),
+    (Allow, MANAGER, EDITOR_PERMISSIONS + ['delete', 'manage']),
+    (Allow, Everyone, EVERYONE_PERMISSIONS),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
 
+# XXX: get rid of.
 DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_up': ['view'],
     'action_view': ['view'],
     'action_list': ['view'],
-    'editable': ['edit'],
-    'deletable': ['delete'],
-    'shareable': ['manage_permissions'],
-    'wf_state': ['view'],
+    'action_edit': ['edit'],
+    'action_delete': ['delete'],
+    'action_delete_children': ['delete'],
 }
 
 
@@ -147,7 +179,7 @@ class PrincipalACL(Part):
     as property function. Plumber does not support class property plumbing
     (yet).
     """
-    
+    implements(IPrincipalACL)
     role_inheritance = default(False)
     
     @default
@@ -162,7 +194,7 @@ class PrincipalACL(Part):
         aggregated = dict()
         model = self
         while model:
-            if not hasattr(model, 'principal_roles'):
+            if not IPrincipalACL.providedBy(model):
                 model = model.parent
                 continue
             for id, roles in model.principal_roles.items():

@@ -15,30 +15,33 @@ optionflags = doctest.NORMALIZE_WHITESPACE | \
 layer = testing.security
 
 TESTFILES = [
-    '../__init__.rst',
-    '../testing.rst',
-    '../utils.rst',
-    '../security.rst',
-    '../model.rst',
-    '../workflow.rst',
-    '../browser/__init__.rst',
-    '../browser/ajax.rst',
-    '../browser/authoring.rst',
-    '../browser/batch.rst',
-    '../browser/table.rst',
-    '../browser/contents.rst',
-    '../browser/form.rst',
-    '../browser/layout.rst',
-    '../browser/login.rst',
-    '../browser/workflow.rst',
-    '../browser/referencebrowser.rst',
-    '../browser/settings.rst',
-    '../browser/sharing.rst',
-    '../browser/utils.rst',
+    '__init__.rst',
+    'testing/__init__.rst',
+    'utils.rst',
+    'security.rst',
+    'model.rst',
+    'workflow.rst',
+    'browser/__init__.rst',
+    'browser/ajax.rst',
+    'browser/actions.rst',
+    'browser/authoring.rst',
+    'browser/contextmenu.rst',
+    'browser/batch.rst',
+    'browser/table.rst',
+    'browser/contents.rst',
+    'browser/form.rst',
+    'browser/layout.rst',
+    'browser/login.rst',
+    'browser/workflow.rst',
+    'browser/referencebrowser.rst',
+    'browser/settings.rst',
+    'browser/sharing.rst',
+    'browser/copysupport.rst',
+    'browser/utils.rst',
 ]
 
 def test_suite():
-    XMLConfig('dummy_workflow.zcml', cone.app.tests)()
+    XMLConfig('testing/dummy_workflow.zcml', cone.app.tests)()
     suite = unittest.TestSuite()
     suite.addTests([
         layered(

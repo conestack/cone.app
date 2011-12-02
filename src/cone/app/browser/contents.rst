@@ -15,8 +15,9 @@ Imports and dummy context::
     >>> model = BaseNode()
     >>> for i in range(19):
     ...     model[str(i)] = BaseNode()
-    ...     model[str(i)].properties.editable = True
-    ...     model[str(i)].properties.deletable = True
+    ...     model[str(i)].properties.action_view = True
+    ...     model[str(i)].properties.action_edit = True
+    ...     model[str(i)].properties.action_delete = True
     ...     model[str(i)].metadata.title = str(i) + ' Title'
     ...     model[str(i)].metadata.creator = 'admin ' + str(19 - i)
     ...     model[str(i)].metadata.created = created
@@ -46,17 +47,17 @@ Imports and dummy context::
 ``sorted_rows`` returns sorted listing items. ``start``, ``end``, ``sort`` and 
 ``order`` are expected by this function::
 
-    >>> contents.sorted_rows(None, None, 'created', 'desc')[0]['title'].value
-    '0 Title'
+    >>> contents.sorted_rows(None, None, 'created', 'desc')[0]['title']
+    u'...0 Title...'
     
-    >>> contents.sorted_rows(None, None, 'created', 'desc')[-1]['title'].value
-    '18 Title'
+    >>> contents.sorted_rows(None, None, 'created', 'desc')[-1]['title']
+    u'...18 Title...'
     
-    >>> contents.sorted_rows(None, None, 'created', 'asc')[0]['title'].value
-    '18 Title'
+    >>> contents.sorted_rows(None, None, 'created', 'asc')[0]['title']
+    u'...18 Title...'
     
-    >>> contents.sorted_rows(None, None, 'created', 'asc')[-1]['title'].value
-    '0 Title'
+    >>> contents.sorted_rows(None, None, 'created', 'asc')[-1]['title']
+    u'...0 Title...'
 
 ``contents.slice.slice`` return current batch start and positions::
 
@@ -76,29 +77,29 @@ Imports and dummy context::
 
 Items returned by default sorting::
 
-    >>> contents.slice.rows[0]['title'].value
-    '0 Title'
+    >>> contents.slice.rows[0]['title']
+    u'...0 Title...'
     
-    >>> contents.slice.rows[-1]['title'].value
-    '9 Title'
+    >>> contents.slice.rows[-1]['title']
+    u'...9 Title...'
 
 Inverse order::
 
     >>> request.params['order'] = 'asc'
-    >>> contents.slice.rows[0]['title'].value
-    '18 Title'
+    >>> contents.slice.rows[0]['title']
+    u'...18 Title...'
     
-    >>> contents.slice.rows[-1]['title'].value
-    '9 Title'
+    >>> contents.slice.rows[-1]['title']
+    u'...9 Title...'
 
 Switch batch page with inversed order::
 
     >>> request.params['b_page'] = '1'
-    >>> contents.slice.rows[0]['title'].value
-    '8 Title'
+    >>> contents.slice.rows[0]['title']
+    u'...8 Title...'
     
-    >>> contents.slice.rows[-1]['title'].value
-    '0 Title'
+    >>> contents.slice.rows[-1]['title']
+    u'...0 Title...'
 
 Reset order and batch page::
 
@@ -108,27 +109,27 @@ Reset order and batch page::
 Sort by creator::
 
     >>> request.params['sort'] = 'creator'
-    >>> contents.slice.rows[0]['creator'].value
+    >>> contents.slice.rows[0]['creator']
     'admin 1'
     
-    >>> contents.slice.rows[-1]['creator'].value
+    >>> contents.slice.rows[-1]['creator']
     'admin 18'
     
     >>> len(contents.slice.rows)
     10
     
-    >>> [row['creator'].value for row in contents.slice.rows]
+    >>> [row['creator'] for row in contents.slice.rows]
     ['admin 1', 'admin 10', 'admin 11', 'admin 12', 'admin 13', 'admin 14', 
     'admin 15', 'admin 16', 'admin 17', 'admin 18']
     
     >>> request.params['b_page'] = '1'
-    >>> contents.slice.rows[0]['creator'].value
+    >>> contents.slice.rows[0]['creator']
     'admin 19'
     
-    >>> contents.slice.rows[-1]['creator'].value
+    >>> contents.slice.rows[-1]['creator']
     'admin 9'
     
-    >>> [row['creator'].value for row in contents.slice.rows]
+    >>> [row['creator'] for row in contents.slice.rows]
     ['admin 19', 'admin 2', 'admin 3', 'admin 4', 'admin 5', 
     'admin 6', 'admin 7', 'admin 8', 'admin 9']
 
@@ -136,18 +137,18 @@ Sort by created::
 
     >>> request.params['b_page'] = '0'
     >>> request.params['sort'] = 'created'
-    >>> contents.slice.rows[0]['created'].value
+    >>> contents.slice.rows[0]['created']
     datetime.datetime(2011, 3, 14, 0, 0)
     
-    >>> contents.slice.rows[-1]['created'].value
+    >>> contents.slice.rows[-1]['created']
     datetime.datetime(2011, 3, 23, 0, 0)
     
     >>> request.params['b_page'] = '1'
     >>> request.params['sort'] = 'modified'
-    >>> contents.slice.rows[0]['modified'].value
+    >>> contents.slice.rows[0]['modified']
     datetime.datetime(2011, 3, 25, 0, 0)
     
-    >>> contents.slice.rows[-1]['modified'].value
+    >>> contents.slice.rows[-1]['modified']
     datetime.datetime(2011, 4, 2, 0, 0)
     
     >>> del request.params['b_page']
@@ -204,5 +205,26 @@ Render authenticated::
     
     >>> rendered.find(expected) != -1
     True
+
+Copysupport Attributes::
+
+    >>> from cone.app.testing.mock import CopySupportNode
+    >>> model = CopySupportNode()
+    >>> model['child'] = CopySupportNode()
+    >>> request = layer.new_request()
+    >>> rendered = render_tile(model, request, 'contents')
+    >>> expected = 'class="selectable copysupportitem"'
+    >>> rendered.find(expected) > -1
+    True
     
+    >>> import urllib
+    >>> from cone.app.browser.utils import make_url
+    >>> request = layer.new_request()
+    >>> cut_url = urllib.quote(make_url(request, node=model['child']))
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> rendered = render_tile(model, request, 'contents')
+    >>> expected = 'class="selectable copysupportitem copysupport_cut"'
+    >>> rendered.find(expected) > -1
+    True
+
     >>> layer.logout()

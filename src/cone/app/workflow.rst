@@ -1,33 +1,49 @@
 Cone workflow parts::
 
     >>> from plumber import plumber
-    >>> from pyramid.security import (
-    ...     Everyone,
-    ...     Allow,
-    ...     Deny,
-    ...     ALL_PERMISSIONS,
-    ... )
     >>> from repoze.workflow import get_workflow
-    >>> from cone.app.model import (
-    ...     BaseNode,
-    ...     Properties,
-    ... )
+    >>> from cone.app.interfaces import IWorkflowState
     >>> from cone.app.workflow import initialize_workflow
 
 Test env provides mock node with workflow parts configured::
 
-    >>> from cone.app.tests.mock import WorkflowNode
+    >>> from cone.app.testing.mock import WorkflowNode
     
     >>> node = WorkflowNode()
+    >>> IWorkflowState.providedBy(node)
+    True
+    
+    >>> get_workflow(node.__class__, node.properties.wf_name)
+    <repoze.workflow.workflow.Workflow object at ...>
+    
     >>> node.state
+    u'initial'
     
     >>> node.state = 'foo'
     >>> node.attrs['state']
     'foo'
     
+    >>> node.attrs['state'] is node.state
+    True
+    
     >>> initialize_workflow(node)
     >>> node.state
     u'initial'
+
+Test copy::
+
+    >>> root = WorkflowNode()
+    >>> child = root['child'] = WorkflowNode()
+    >>> root.state == child.state == u'initial'
+    True
+    
+    >>> root.state = child.state = u'final'
+    >>> root.state == child.state == u'final'
+    True
+    
+    >>> copied = root.copy()
+    >>> copied.state == copied['child'].state == 'initial'
+    True
 
 Default workflow state ACL::
 
@@ -48,25 +64,19 @@ If not set, and ACL not found in ``state_acls``, raise on access::
       ...
     ValueError: No ACL found for state 'initial'
 
-Subclass workflow node and define ``state_acls`` for dummy workflow states::
+Test ``state_acls``::
 
-    >>> class WorkflowNode2(WorkflowNode):
-    ...     state_acls = {
-    ...         'initial': [
-    ...             (Allow, 'role:manager', ['manage', 'edit', 'change_state']),
-    ...             (Allow, Everyone, ['login']),
-    ...             (Deny, Everyone, ALL_PERMISSIONS),
-    ...         ],
-    ...         'final': [
-    ...             (Allow, 'role:manager', ['view', 'edit', 'change_state']),
-    ...             (Deny, Everyone, ALL_PERMISSIONS),
-    ...         ],
-    ...     }
-
-Initialize new node and check ACL's::
-
-    >>> node = WorkflowNode2()
-    >>> initialize_workflow(node)
+    >>> from cone.app.testing.mock import StateACLWorkflowNode
+    >>> node = StateACLWorkflowNode()
+    >>> get_workflow(node.__class__, node.properties.wf_name)
+    <repoze.workflow.workflow.Workflow object at ...>
+    
+    >>> node.properties.wf_name
+    u'dummy'
+    
+    >>> IWorkflowState.providedBy(node)
+    True
+    
     >>> node.__acl__
     [('Allow', 'role:manager', ['manage', 'edit', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
@@ -75,7 +85,7 @@ Initialize new node and check ACL's::
     >>> layer.login('manager')
     
     >>> request = layer.new_request()
-    >>> wf = get_workflow(WorkflowNode2, node.properties.wf_name)
+    >>> wf = get_workflow(node.__class__, node.properties.wf_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state
     u'final'

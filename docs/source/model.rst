@@ -132,6 +132,24 @@ if ``node`` is child of application model or again by using
     >>> settings = get_root()['settings']
 
 
+UIDAware
+--------
+
+``cone.app.model.UIDAware`` is a plumbing part for application model nodes
+taking care that the node has an appropriate uid set on node attributes when
+it's created or copied. Works by default recursiv for all children implementing
+``cone.app.interfaces.IUIDAware``
+
+
+CopySupport
+-----------
+
+``cone.app.model.CopySupport`` is a plumbing part for application model nodes
+indicating that children of nodes can be cut and copied, and that nodes can be
+pasted. cut, copy and paste can be disabled explicitly by setting
+``supports_cut``, ``supports_copy`` respective ``supports_paste``.
+
+
 Properties
 ----------
 
@@ -158,8 +176,8 @@ inexistent. Available properties are provided by ``keys``.::
 ProtectedProperties
 -------------------
 
-``cone.app.model.ProtectedProperties`` object is used to secure property access
-by permissions. Properties with no permissions are always returned::
+``cone.app.model.ProtectedProperties`` object can be used to secure property
+access by permissions. Properties with no permissions are always returned::
 
     >>> from cone.app.model import ProtectedProperties
 
@@ -271,56 +289,22 @@ is used. As authentication policy
 ``cone.app.security.groups_callback`` is used, which bridges roles and group
 membership.
 
-The desired ``node.ext.ugm`` instance(s) is created in application main hook(s)
-and appended to ``cone.app.cfg.auth``.
+The desired ``node.ext.ugm`` instance is created in application main hook
+and set to ``cone.app.cfg.auth``.
 
 If no authentication implementation is registered, the only user which can
 authenticate is the admin user defined in application configuration INI file.
 
 By default, anonymous access to all application model nodes is prohibited.
 
-Default ACL for application nodes::
+Default ACL for application nodes is located at
+``cone.app.security.DEFAULT_ACL``.
 
-    >>> cone.app.security.DEFAULT_ACL = [
-    ...     (Allow, 'system.Authenticated', ['view']),
-    ...     (Allow, 'role:viewer', ['view']),
-    ...     (Allow, 'role:editor', ['view', 'add', 'edit']),
-    ...     (Allow, 'role:admin', ['view', 'add', 'edit', 'delete']),
-    ...     (Allow, 'role:owner', ['view', 'add', 'edit', 'delete']),
-    ...     (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-    ...     (Allow, Everyone, ['login']),
-    ...     (Deny, Everyone, ALL_PERMISSIONS),
-    ... ]
+Default ACL for settings nodes is located at
+``cone.app.security.DEFAULT_SETTINGS_ACL``.
 
-Default ACL for settings nodes::
-
-    >>> cone.app.security.DEFAULT_SETTINGS_ACL = [
-    ...     (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-    ...     (Allow, Everyone, 'login'),
-    ...     (Deny, Everyone, ALL_PERMISSIONS),
-    ... ]
-
-Default vocab for available roles.::
-
-    >>> cone.app.security.DEFAULT_ROLES = [
-    ...     ('viewer', 'Viewer'),
-    ...     ('editor', 'Editor'),
-    ...     ('admin', 'Admin'),
-    ...     ('owner', 'Owner'),
-    ...     ('manager', 'Manager'),
-    ... ]
-
-Application nodes contain ``cone.app.model.ProtectedProperties`` by default,
-which are instanciated with default node property permissions.::
-
-    >>> cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS = {
-    ...     'action_up': ['view'],
-    ...     'action_view': ['view'],
-    ...     'action_list': ['view'],
-    ...     'editable': ['edit'],
-    ...     'deletable': ['delete'],
-    ...     'wf_state': ['view'],
-    ... }
+Default vocab for available roles is located at
+``cone.app.security.DEFAULT_ROLES``.
 
 
 PrincipalACL

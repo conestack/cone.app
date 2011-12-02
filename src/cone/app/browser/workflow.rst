@@ -5,7 +5,7 @@ Workflow dropdown
 
     >>> from cone.tile import render_tile
     >>> from cone.app import root
-    >>> from cone.app.tests.mock import (
+    >>> from cone.app.testing.mock import (
     ...     WorkflowNode,
     ...     InexistentWorkflowNode,
     ... )
@@ -14,10 +14,6 @@ Workflow dropdown
     >>> request = layer.new_request()
     >>> node = WorkflowNode()
     
-    >>> node.state
-    
-    >>> from cone.app.workflow import initialize_workflow
-    >>> initialize_workflow(node)
     >>> node.state
     u'initial'
     

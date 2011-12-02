@@ -19,12 +19,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         });
         
         // initial binding
+        cone.key_binder();
         cone.livesearchbinder();
         cone.tabsbinder();
         cone.dropdownmenubinder();
         cone.transitionmenubinder();
         cone.ajaxformbinder();
         cone.sharingbinder();
+        cone.selectable.binder();
+        cone.copysupportbinder();
         yafowil.referencebrowser.browser_binder();
         
         // add binders to bdajax binding callbacks
@@ -34,6 +37,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             transitionmenubinder: cone.transitionmenubinder,
             ajaxformbinder: cone.ajaxformbinder,
             sharingbinder: cone.sharingbinder,
+            selectablebinder: cone.selectable.binder,
+            copysupportbinder: cone.copysupportbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder:
                 yafowil.referencebrowser.add_reference_binder
@@ -41,6 +46,36 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     });
     
     cone = {
+            
+        // object to store global flags
+        flags: {},
+                
+        // keyboard control keys status
+        keys: {},
+        
+        // keydown / keyup binder for shift and ctrl keys
+        key_binder: function() {
+            $(document).bind('keydown', function(event) {
+                switch (event.keyCode || event.which) {
+                    case 16:
+                        cone.keys.shift_down = true;
+                        break;
+                    case 17:
+                        cone.keys.ctrl_down = true;
+                        break;
+                }
+            });
+            $(document).bind('keyup', function(event) {
+                switch (event.keyCode || event.which) {
+                    case 16:
+                        cone.keys.shift_down = false;
+                           break;
+                    case 17:
+                        cone.keys.ctrl_down = false;
+                        break;
+                }
+            });
+        },
         
         livesearchbinder: function(context) {
             $('input#search-text', context).autocomplete({
@@ -136,6 +171,71 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         },
         
+        copysupportbinder: function(context) {
+            var cut_cookie = 'cone.app.copysupport.cut';
+            var copy_cookie = 'cone.app.copysupport.copy';
+            var write_selected_to_cookie = function(name) {
+                var selected = $(cone.selectable.selected);
+                var ids = new Array();
+                selected.each(function() {
+                    ids.push($(this).attr('ajax:target'));
+                });
+                var cookie = ids.join('::');
+                createCookie(name, cookie);
+                if (cookie.length) {
+                    return true;
+                }
+                return false;
+            };
+            $('a.cut16_16', context).unbind('click').bind('click',
+                                                          function(event) {
+                event.preventDefault();
+                createCookie(copy_cookie, '', 0);
+                var selected_exist = 
+                    write_selected_to_cookie(cut_cookie);
+                if (selected_exist) {
+                    $('a.paste16_16').removeClass('disabled');
+                }
+                var selectable = $('.selectable');
+                selectable.removeClass('copysupport_cut');
+                var selected = $(cone.selectable.selected);
+                selected.each(function() {
+                    elem = $(this);
+                    elem.addClass('copysupport_cut');
+                });
+                cone.selectable.reset();
+            });
+            $('a.copy16_16', context).unbind('click').bind('click',
+                                                           function(event) {
+                event.preventDefault();
+                createCookie(cut_cookie, '', 0);
+                var selected_exist = 
+                    write_selected_to_cookie(copy_cookie);
+                if (selected_exist) {
+                    $('a.paste16_16').removeClass('disabled');
+                }
+                var selectable = $('.selectable');
+                selectable.removeClass('copysupport_cut');
+                cone.selectable.reset();
+            });
+            $('a.paste16_16', context).unbind('click').bind('click',
+                                                            function(event) {
+                event.preventDefault();
+                var elem = $(this);
+                if (elem.hasClass('disabled')) {
+                    return;
+                }
+                var target = bdajax.parsetarget(elem.attr('ajax:target'));
+                bdajax.action({
+                    name: 'paste',
+                    mode: 'NONE',
+                    selector: 'NONE',
+                    url: target.url,
+                    params: target.params,
+                });
+            });
+        },
+        
         // ajax form related. XXX: move to bdajax
         
         // bind ajax form handling to all forms providing ajax css class
@@ -208,6 +308,143 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     }
     
     /*
+     * Selectable Items
+     * ================
+     * 
+     * Markup
+     * ------
+     * 
+     *     <div>
+     *       <div class="selectable">selectable 1</div>
+     *       <div class="selectable">selectable 2</div>
+     *     </div>
+     * 
+     * Script
+     * ------
+     * 
+     *     $('div.selectable').selectable();
+     */
+    $.fn.selectable = function() {
+        this.unbind('click').bind('click', function(event) {
+            event.preventDefault();
+            $(document).unbind('mousedown')
+                       .bind('mousedown', function(event) {
+                var elem = $(event.target);
+                // XXX: currently static selector
+                if (elem.parents('.selectable').length) {
+                    return true;
+                }
+                $('.selectable').removeClass('selected');
+                $(document).unbind('mousedown');
+                return false;
+            });
+            var elem = $(event.currentTarget);
+            var container = elem.parent();
+            if (!cone.keys.ctrl_down && !cone.keys.shift_down) {
+                container.children().removeClass('selected');
+                elem.addClass('selected');
+                cone.selectable.reset();
+                cone.selectable.add(event.currentTarget);
+            } else {
+                if (cone.keys.ctrl_down) {
+                    elem.toggleClass('selected');
+                    if (elem.hasClass('selected')) {
+                        cone.selectable.add(event.currentTarget);
+                    } else {
+                        cone.selectable.remove(event.currentTarget);
+                    }
+                }
+                if (cone.keys.shift_down) {
+                    var selected = container.children('.selected');
+                    // get nearest next selected item, disable others
+                    var current_index = elem.index();
+                    // -1 means no other selected item
+                    var nearest = -1;
+                    var selected_index, selected_elem;
+                    $(selected).each(function() {
+                        selected_elem = $(this);
+                        selected_index = selected_elem.index();
+                        if (nearest == -1) {
+                            nearest = selected_index;
+                        } else if (current_index > selected_index) {
+                            if (cone.flags.select_direction > 0) {
+                                if (selected_index < nearest) {
+                                    nearest = selected_index;
+                                }
+                            } else {
+                                if (selected_index > nearest) {
+                                    nearest = selected_index;
+                                }
+                            }
+                        } else if (current_index < selected_index) {
+                            if (selected_index < nearest) {
+                                nearest = selected_index;
+                            }
+                        }
+                    });
+                    if (nearest == -1) {
+                        elem.addClass('selected');
+                        cone.selectable.add(event.currentTarget);
+                    } else {
+                        container.children().removeClass('selected');
+                        var start, end;
+                        if (current_index < nearest) {
+                            cone.flags.select_direction = -1;
+                            start = current_index;
+                            end = nearest;
+                        } else {
+                            cone.flags.select_direction = 1;
+                            start = nearest;
+                            end = current_index;
+                        }
+                        cone.selectable.reset();
+                        container.children()
+                                 .slice(start, end + 1)
+                                 .addClass('selected')
+                                 .each(function() {
+                                     cone.selectable.add(this);
+                                 });
+                    }
+                }
+            }
+        });
+        return this;
+    }
+    
+    $.extend(cone, {
+        
+        selectable: {
+            
+            // current selected dom elements
+            selected: [],
+            
+            // reset
+            reset: function() {
+                cone.selectable.selected = [];
+            },
+            
+            // add element to selected
+            add: function(elem) {
+                cone.selectable.remove(elem);
+                cone.selectable.selected.push(elem);
+            },
+            
+            // remove element from selected
+            remove: function(elem) {
+                var reduced = $.grep(cone.selectable.selected,
+                                     function(item, index) {
+                    return item !== elem;
+                });
+                cone.selectable.selected = reduced;
+            },
+            
+            binder: function(context) {
+                $('table tr.selectable', context).selectable();
+            }
+        }
+    });
+    
+    /*
      * Reference Browser
      * =================
      * 
@@ -241,6 +478,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 target: elem.parent().attr('ajax:target')
             });
         });
+        return this;
     }
     
     // extend yafowil by reference browser widget.

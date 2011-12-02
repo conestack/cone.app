@@ -14,92 +14,11 @@ from cone.app.browser.utils import (
 
 
 class RowData(dict):
-    pass
-
-
-class Item(object):
     
-    def __init__(self,
-                 value=None,
-                 link=None,
-                 target=None,
-                 action=None,
-                 event=None,
-                 actions=[]):
-        """Item definition.
-        
-        value
-            item value
-        
-        link
-            item href attribute
-        
-        target
-            item ajax:target attribute
-        
-        action
-            item ajax:action attribute
-        
-        event
-            item ajax:event attribute
-        
-        actions
-            item actions, list of Action instances
-        """
-        self.value = value
-        self.link = link
+    def __init__(self, selectable=False, target=None, css=''):
+        self.selectable = selectable
         self.target = target
-        self.action = action
-        self.event = event
-        self.actions = actions
-
-
-class Action(object):
-    
-    def __init__(self,
-                 title=None,
-                 link=None,
-                 target=None,
-                 action=None,
-                 event=None,
-                 css=None,
-                 confirm=None,
-                 rendered=None):
-        """Action definition.
-        
-        title
-            action title
-        
-        link
-            action href attribute
-        
-        target
-            action ajax:target attribute
-        
-        action
-            action ajax:action attribute
-        
-        event
-            action ajax:event attribute
-        
-        css
-            action class attribute
-        
-        confirm
-            Conform message for action if desired
-        
-        rendered
-            an already rendered action. if set, ignore all other attributes
-            and use contents of this attribute for rendering
-        """
-        self.title = title
-        self.link = link
-        self.target = target
-        self.action = action
-        self.event = event
         self.css = css
-        self.confirm = confirm
-        self.rendered = rendered
 
 
 class Table(Tile):

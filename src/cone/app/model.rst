@@ -1,7 +1,84 @@
+UID aware
+---------
+::
+    >>> import copy
+    >>> from plumber import plumber
+    >>> from cone.app.model import (
+    ...     BaseNode,
+    ...     UIDAware,
+    ... )
+
+Create a uid aware node. For recursiv uid handling the ``copy`` function needs
+to perform a ``deepcopy``::
+
+    >>> class UIDAwareNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = UIDAware
+    ...     def copy(self):
+    ...         return copy.deepcopy(self)
+
+UID is set at init time::
+
+    >>> root = UIDAwareNode(name='root')
+    >>> root.attrs['uid']
+    UUID('...')
+
+On ``copy``, a new uid gets set::
+
+    >>> root_cp = root.copy()
+    >>> root is root_cp
+    False
+    
+    >>> root.attrs['uid'] == root_cp.attrs['uid']
+    False
+
+Create children, copy tree and check if all uids have changed::
+
+    >>> c1 = root['c1'] = UIDAwareNode()
+    >>> s1 = c1['s1'] = UIDAwareNode()
+    >>> root.printtree()
+    <class 'UIDAwareNode'>: root
+      <class 'UIDAwareNode'>: c1
+        <class 'UIDAwareNode'>: s1
+    
+    >>> root_cp = root.copy()
+    >>> root_cp.printtree()
+    <class 'UIDAwareNode'>: root
+      <class 'UIDAwareNode'>: c1
+        <class 'UIDAwareNode'>: s1
+    
+    >>> root.attrs['uid'] == root_cp.attrs['uid']
+    False
+    
+    >>> root['c1'].attrs['uid'] == root_cp['c1'].attrs['uid']
+    False
+    
+    >>> root['c1']['s1'].attrs['uid'] == root_cp['c1']['s1'].attrs['uid']
+    False
+
+When detaching, part of a tree, uids stay unchanged::
+
+    >>> c1_uid = root['c1'].attrs['uid']
+    >>> s1_uid = root['c1']['s1'].attrs['uid']
+    >>> detached = root.detach('c1')
+    
+    >>> root.printtree()
+    <class 'UIDAwareNode'>: root
+    
+    >>> detached.printtree()
+    <class 'UIDAwareNode'>: c1
+      <class 'UIDAwareNode'>: s1
+    
+    >>> c1_uid == detached.attrs['uid']
+    True
+    
+    >>> s1_uid == detached['s1'].attrs['uid']
+    True
+
+
 BaseNode
 --------
 ::
-    >>> from cone.app.model import BaseNode
     >>> root = BaseNode()
 
 Default permissions.::
@@ -10,17 +87,19 @@ Default permissions.::
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'manage_permissions']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'manage_permissions', 'manage']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state', 'manage']), 
     ('Allow', 'system.Everyone', ['login']), 
-    ('Deny', 'system.Everyone', 
-    <pyramid.security.AllPermissionsList object at ...>)]
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 Properties.::
 
     >>> root.properties
-    <cone.app.model.ProtectedProperties object at ...>
+    <cone.app.model.Properties object at ...>
 
 ``IProperties`` implementations do not raise AttributeErrors if requested
 attribute not exists.::

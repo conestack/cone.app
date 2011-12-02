@@ -69,10 +69,9 @@ state is found, the ACL defined in ``default_acl`` is returned. This ACL
 permits 'change_state' for roles owner and manager by default.
 
 Also workflow tile related node ``properties`` must be set. As described in
-tiles documentation, ``wf_state`` must be set to ``True`` indicating that
-workflow is provided, ``wf_name`` contains the workflow ID, and
+tiles documentation, ``wf_name`` contains the workflow ID, and
 ``wf_transition_names`` contains a mapping "transition ID -> transition Title"
-(needed due to the lack of transition titles in repoze.workflow).::
+(needed due to the lack of transition titles in repoze.workflow)::
 
     >>> from plumber import plumber
     >>> from node.utils import instance_property
@@ -94,7 +93,6 @@ workflow is provided, ``wf_name`` contains the workflow ID, and
     ...     @instance_property
     ...     def properties(self):
     ...         props = Properties()
-    ...         props.wf_state = True
     ...         props.wf_name = u'example'
     ...         props.wf_transition_names = {
     ...             'initial_2_final': 'Finalize',
@@ -106,7 +104,7 @@ State specific access control
 -----------------------------
 
 ACL's defined for specific workflow states are defined in ``state_acls``
-attribute of the node by state id.::
+attribute of the node by state id::
 
     >>> class WorkflowNodeWithStateACLs(WorkflowNode):
     ... 

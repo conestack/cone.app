@@ -1,3 +1,4 @@
+import re
 import datetime
 import urllib
 from pyramid.security import authenticated_userid
@@ -42,6 +43,19 @@ def make_url(request, path=None, node=None, resource=None, query=None):
     if not query:
         return url
     return '%s%s' % (url, query)
+
+
+def choose_name(container, name):
+    name = re.sub(
+        r'-{2,}', '-',
+        re.sub('^\w-|-\w-|-\w$', '-',
+               re.sub(r'\W', '-', name.strip()))).strip('-').lower()
+    n = name
+    i = 0
+    while n in container:
+        i += 1
+        n = u'%s-%s' % (name, i)
+    return n.replace('/', '-').lstrip('+@')
 
 
 def format_date(dt, long=True):

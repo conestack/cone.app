@@ -1,14 +1,12 @@
+from node.utils import instance_property
 from cone.tile import (
     tile,
     registerTile,
 )
 from cone.app.browser.layout import PathBar
-from cone.app.browser.table import (
-    RowData,
-    Item,
-    Action,
-)
+from cone.app.browser.table import RowData
 from cone.app.browser.contents import ContentsTile
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.utils import make_url
 from yafowil.base import (
     factory,
@@ -27,7 +25,7 @@ from yafowil.utils import (
 )
 
 
-# XXX define i18n translation callback for app
+# XXX: define i18n translation callback for app
 tag = Tag(lambda x: x)
 
 
@@ -42,6 +40,52 @@ registerTile('referencebrowser_pathbar',
              class_=PathBar)
 
 
+class ActionAddReference(LinkAction):
+    css = 'add16_16 addreference'
+    title = 'Add reference'
+    target = None
+    href = LinkAction.target
+    
+    @property
+    def id(self):
+        return 'ref-%s' % self.model.metadata.get('uid', '')
+    
+    @property
+    def display(self):
+        # XXX: IUIDAware
+        return self.model.properties.action_add_reference
+    
+    def render(self):
+        rendered = LinkAction.render(self)
+        attrs = {
+            'class_': 'reftitle',
+            'style': 'display:none;',
+        }
+        title = self.model.metadata.get('title', self.model.name)
+        return rendered + tag('span', title, **attrs)
+
+
+class ReferencableChildrenLink(LinkAction):
+    event = 'contextchanged:.refbrowsersensitiv'
+    
+    def __init__(self, table_tile_name, table_id):
+        self.table_tile_name = table_tile_name
+        self.table_id = table_id
+    
+    @property
+    def text(self):
+        return self.model.metadata.get('title', self.model.name)
+    
+    @property
+    def action(self):
+        return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
+    
+    def render(self):
+        if not self.model.properties.get('leaf'): # XXX: IAppLeaf
+            return LinkAction.render(self)
+        return self.text
+
+
 @tile('referencelisting', 'templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
     
@@ -53,16 +97,14 @@ class ReferenceListing(ContentsTile):
             'title': 'Actions',
             'sort_key': None,
             'sort_title': None,
-            'content': 'actions',
-            'link': False,
+            'content': 'structure',
         },
         {
             'id': 'title',
             'title': 'Title',
             'sort_key': 'title',
             'sort_title': 'Sort on title',
-            'content': 'string',
-            'link': True,
+            'content': 'structure',
         },
         {
             'id': 'created',
@@ -70,7 +112,6 @@ class ReferenceListing(ContentsTile):
             'sort_key': 'created',
             'sort_title': 'Sort on created',
             'content': 'datetime',
-            'link': False,
         },
         {
             'id': 'modified',
@@ -78,51 +119,29 @@ class ReferenceListing(ContentsTile):
             'sort_key': 'modified',
             'sort_title': 'Sort on modified',
             'content': 'datetime',
-            'link': False,
         },
     ]
+    
+    @instance_property
+    def action_add_reference(self):
+        return ActionAddReference()
+    
+    @instance_property
+    def referencable_children_link(self):
+        return ReferencableChildrenLink(self.table_tile_name, self.table_id)
     
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
         for child in children[start:end]:
             row_data = RowData()
-            row_data['actions'] = Item(actions=self.create_actions(child))
-            value = child.metadata.get('title', child.name)
-            if not child.properties.get('leaf'):
-                link = target = make_url(self.request, node=child)
-                action = \
-                    '%s:#%s:replace' % (self.table_tile_name, self.table_id)
-                event = 'contextchanged:.refbrowsersensitiv'
-                title = Item(value, link, target, action, event)
-            else:
-                title = Item(value)
-            row_data['title'] = title
-            row_data['created'] = Item(child.metadata.get('created'))
-            row_data['modified'] = Item(child.metadata.get('modified'))
+            row_data['actions'] = self.action_add_reference(child, self.request)
+            row_data['title'] = \
+                self.referencable_children_link(child, self.request)
+            row_data['created'] = child.metadata.get('created')
+            row_data['modified'] = child.metadata.get('modified')
             rows.append(row_data)
         return rows
-    
-    def create_actions(self, node):
-        actions = list()
-        if not node.properties.get('referencable'):
-            return actions
-        url = make_url(self.request, node=node)
-        attrs = {
-            'href': url,
-            'id': 'ref-%s' % node.metadata.get('uid', ''),
-            'title': 'Add reference',
-            'class_': 'add16_16 addreference',
-        }
-        rendered = tag('a', '&nbsp;', **attrs)
-        attrs = {
-            'class_': 'reftitle',
-            'style': 'display:none;',
-        }
-        title = node.metadata.get('title', node.name)
-        rendered += tag('span', title, **attrs)
-        actions.append(Action(rendered=rendered))
-        return actions
 
 
 def reference_extractor(widget, data):
