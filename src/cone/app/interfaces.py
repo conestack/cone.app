@@ -3,8 +3,11 @@ from zope.interface import (
     Attribute,
 )
 from zope.interface.common.mapping import IReadMapping
-from node.interfaces import INode
-from node.interfaces import IAttributes
+from node.interfaces import (
+    INode,
+    IAttributes,
+    IChildFactory,
+)
 
 
 class ISecured(Interface):
@@ -21,11 +24,9 @@ class IApplicationNode(ISecured, INode, IAttributes):
     nodeinfo = Attribute(u"cone.app.interfaces.INodeInfo providing object")
 
 
-class IFactoryNode(IApplicationNode):
+class IFactoryNode(IApplicationNode, IChildFactory):
     """Application node for static children.
     """
-    factories = Attribute(u"Dict containing available keys and the Node class "
-                          u"used to create child.")
 
 
 class IAdapterNode(IApplicationNode):

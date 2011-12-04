@@ -16,6 +16,7 @@ from node.parts import (
     AsAttrAccess,
     NodeChildValidate,
     Adopt,
+    ChildFactory,
     Nodespaces,
     Attributes,
     DefaultInit,
@@ -116,35 +117,11 @@ class BaseNode(object):
     )
 
 
-class ChildFactory(Part):
-    """XXX: move to node.parts.common and deprecate
-    node.parts.common.FixedChildren.
-    """
-    
-    implements(IFactoryNode)
-    factories = default(odict())
-    
-    @extend
-    def __iter__(self):
-        return self.factories.__iter__()
-    
-    iterkeys = extend(__iter__)
-    
-    @plumb
-    def __getitem__(_next, self, key):
-        try:
-            child = _next(self, key)
-        except KeyError:
-            child = self.factories[key]()
-            self[key] = child
-        return child
-
-
 class FactoryNode(BaseNode):
-    """XXX: like node.parts.FixedChildren -> unify.
-    """
     __metaclass__ = plumber
     __plumbing__ = ChildFactory
+    
+    implements(IFactoryNode)
 
 
 class AppRoot(FactoryNode):
