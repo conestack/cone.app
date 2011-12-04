@@ -1,12 +1,12 @@
 Referencebrowser
 ================
 
-Load requirements.::
+Load requirements::
 
     >>> import yafowil.loader
     >>> import cone.app.browser.referencebrowser
 
-Test widget.::
+Test widget::
 
     >>> from yafowil.base import factory
 
@@ -14,7 +14,7 @@ Test widget.::
 Single valued
 -------------
 
-Render without any value.::
+Render without any value::
 
     >>> widget = factory(
     ...     'reference',
@@ -29,7 +29,7 @@ Render without any value.::
     class="referencebrowser" id="input-ref" name="ref" type="text" 
     value="" /><input name="ref.uid" type="hidden" value="" /></span>'
 
-Render required with empty value.::
+Render required with empty value::
 
     >>> widget = factory(
     ...     'reference',
@@ -55,7 +55,7 @@ Render required with empty value.::
     u'<input class="referencebrowser required" id="input-ref" name="ref" 
     type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
 
-Required with valid value.::
+Required with valid value::
 
     >>> request.params['ref'] = 'Title'
     >>> request.params['ref.uid'] = '123'
@@ -71,7 +71,7 @@ Required with valid value.::
     type="text" value="Title" /><input name="ref.uid" type="hidden" 
     value="123" />'
 
-Single valued expects 2-tuple as value with (uid, label).::
+Single valued expects 2-tuple as value with (uid, label)::
 
     >>> widget = factory(
     ...     'reference',
@@ -87,7 +87,7 @@ Single valued expects 2-tuple as value with (uid, label).::
     type="text" value="Label" /><input name="ref.uid" type="hidden" 
     value="uid" />'
 
-Extract from request and render widget with data.::
+Extract from request and render widget with data::
 
     >>> data = widget.extract(request)
     >>> widget(data=data)
@@ -106,7 +106,7 @@ Render widget with request.::
 Multi valued
 ------------
 
-Render without any value.::
+Render without any value::
 
     >>> widget = factory(
     ...     'reference',
@@ -120,7 +120,7 @@ Render without any value.::
     /><select class="referencebrowser" id="input-ref" multiple="multiple" 
     name="ref" />'
 
-Render required with empty value.::
+Render required with empty value::
 
     >>> widget = factory(
     ...     'reference',
@@ -152,7 +152,7 @@ Render required with empty value.::
     id="input-ref-uid1" value="uid1">Title1</option><option 
     id="input-ref-uid2" value="uid2">Title2</option></select>'
 
-Required with valid value.::
+Required with valid value::
 
     >>> request.params['ref'] = ['uid1', 'uid2']
     >>> data = widget.extract(request)
@@ -171,13 +171,74 @@ Required with valid value.::
     value="uid2">Title2</option></select>'
 
 
+ActionAddReference
+------------------
+::
+    >>> from plumber import plumber
+    >>> from node.parts import UUIDAware
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.browser.referencebrowser import ActionAddReference
+    
+    >>> model = BaseNode()
+    >>> request = layer.new_request()
+    
+    >>> action = ActionAddReference()
+    >>> action(model, request)
+    u''
+    
+    >>> model.properties.action_add_reference = True
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('manager')
+    >>> action(model, request)
+    u''
+    
+    >>> class UUIDNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = UUIDAware
+    >>> model = UUIDNode(name='model')
+    >>> model.properties.action_add_reference = True
+    
+    >>> action(model, request)
+    u'...<a\n     
+    id="ref-"\n     
+    href="http://example.com/model"\n     
+    class="add16_16 addreference"\n     
+    title="Add reference"\n     
+    ajax:bind="click">&nbsp;</a>\n\n<span class="reftitle" 
+    style="display:none;">model</span>'
+    
+    >>> model.properties.action_add_reference = False
+    
+    >>> layer.logout()
+
+
+ReferencableChildrenLink
+------------------------
+::
+    >>> from cone.app.browser.referencebrowser import ReferencableChildrenLink
+    >>> action = ReferencableChildrenLink('tabletile', 'tableid')
+    >>> action(model, request)
+    u''
+    
+    >>> layer.login('manager')
+    >>> action(model, request)
+    u'...<a\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/model"\n     
+    ajax:event="contextchanged:.refbrowsersensitiv"\n     
+    ajax:action="tabletile:#tableid:replace">model</a>...'
+    
+    >>> layer.logout()
+
+
 Reference listing tile
 ----------------------
 
 Create dummy environ::
 
     >>> from cone.tile import render_tile
-    >>> from cone.app.model import BaseNode
     
     >>> from datetime import datetime
     >>> from datetime import timedelta
@@ -187,15 +248,13 @@ Create dummy environ::
     >>> modified = created + delta
     
     >>> import uuid
-    >>> model = BaseNode()
+    >>> model = UUIDNode()
     >>> for i in range(20):
-    ...     model[str(i)] = BaseNode()
+    ...     model[str(i)] = UUIDNode()
     ...     # set listing display metadata
     ...     model[str(i)].metadata.title = str(i)
     ...     model[str(i)].metadata.created = created
     ...     model[str(i)].metadata.modified = modified
-    ...     # node needs a uid to be referencable
-    ...     model[str(i)].metadata.uid = uuid.uuid4()
     ...     if i % 2 == 0:
     ...         # make node referencable
     ...         model[str(i)].properties.action_add_reference = True

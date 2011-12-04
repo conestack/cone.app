@@ -37,10 +37,16 @@ Changes
 0.9.1dev
 --------
 
-- Update jQuery (1.6.4) and jQuery Tools (1.2.6)
+- Use ``node.parts.IUUIDAware`` as dependency for node beeing referencable.
+  [rnix, 2011-12-02]
+
+- Add ``browser.actions``.
+  [rnix, 2011-12-01]
+
+- Update jQuery (1.6.4) and jQuery Tools (1.2.6).
   [rnix, 2011-11-30]
 
-- Add Copy support.
+- Add copy support.
   [rnix, 2011-11-30]
 
 - Single UGM implementation.

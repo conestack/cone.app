@@ -77,16 +77,6 @@ class INodeInfo(IProperties):
     icon = Attribute(u"Node icon.")
 
 
-class IUIDAware(INode, IAttributes):
-    """UID aware node.
-    """
-    uid_handling_recursiv = Attribute(u"Flag whether to set UID recursiv.")
-    
-    def set_uid_for(node, override=False):
-        """Set uid for given node.
-        """
-
-
 class IWorkflowState(INode, IAttributes):
     """Workflow support on nodes.
     """

@@ -9,6 +9,7 @@ from plumber import (
     plumber,
     Part,
     default,
+    extend,
     plumb,
 )
 from node.parts import (
@@ -37,7 +38,6 @@ from cone.app.interfaces import (
     IApplicationNode,
     IFactoryNode,
     IAdapterNode,
-    IUIDAware,
     ICopySupport,
     IProperties,
     IMetadata,
@@ -116,25 +116,35 @@ class BaseNode(object):
     )
 
 
-class FactoryNode(BaseNode):
-    """XXX: like node.parts.FixedChildren -> unify.
+class ChildFactory(Part):
+    """XXX: move to node.parts.common and deprecate
+    node.parts.common.FixedChildren.
     """
+    
     implements(IFactoryNode)
+    factories = default(odict())
     
-    factories = odict()
-    
+    @extend
     def __iter__(self):
         return self.factories.__iter__()
     
-    iterkeys = __iter__
+    iterkeys = extend(__iter__)
     
-    def __getitem__(self, key):
+    @plumb
+    def __getitem__(_next, self, key):
         try:
-            child = self.storage[key]
+            child = _next(self, key)
         except KeyError:
             child = self.factories[key]()
             self[key] = child
         return child
+
+
+class FactoryNode(BaseNode):
+    """XXX: like node.parts.FixedChildren -> unify.
+    """
+    __metaclass__ = plumber
+    __plumbing__ = ChildFactory
 
 
 class AppRoot(FactoryNode):
@@ -193,35 +203,6 @@ class AdapterNode(BaseNode):
     @property
     def attrs(self):
         return self.model.attrs
-
-
-class UIDAware(Part):
-    """Plumbing part for automatic uid setting.
-    """
-    implements(IUIDAware)
-    uid_handling_recursiv = default(True)
-    
-    @default
-    def set_uid_for(self, node, override=False):
-        if IUIDAware.providedBy(node):
-            if override or not node.attrs.get('uid'):
-                node.attrs['uid'] = uuid.uuid4()
-        if self.uid_handling_recursiv:
-            for child in node.values():
-                self.set_uid_for(child, override)
-    
-    @plumb
-    def __init__(_next, self, *args, **kw):
-        _next(self, *args, **kw)
-        self.set_uid_for(self)
-    
-    @plumb
-    def copy(_next, self):
-        """Set new uid on copied node.
-        """
-        ret = _next(self)
-        self.set_uid_for(ret, True)
-        return ret
 
 
 class CopySupport(Part):

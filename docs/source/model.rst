@@ -132,15 +132,6 @@ if ``node`` is child of application model or again by using
     >>> settings = get_root()['settings']
 
 
-UIDAware
---------
-
-``cone.app.model.UIDAware`` is a plumbing part for application model nodes
-taking care that the node has an appropriate uid set on node attributes when
-it's created or copied. Works by default recursiv for all children implementing
-``cone.app.interfaces.IUIDAware``
-
-
 CopySupport
 -----------
 

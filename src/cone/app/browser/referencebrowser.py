@@ -1,3 +1,4 @@
+from node.interfaces import IUUIDAware
 from node.utils import instance_property
 from cone.tile import (
     tile,
@@ -48,12 +49,12 @@ class ActionAddReference(LinkAction):
     
     @property
     def id(self):
-        return 'ref-%s' % self.model.metadata.get('uid', '')
+        return 'ref-%s' % self.model.attrs.get('uid', '')
     
     @property
     def display(self):
-        # XXX: IUIDAware
-        return self.model.properties.action_add_reference
+        return IUUIDAware.providedBy(self.model) \
+            and self.model.properties.action_add_reference
     
     def render(self):
         rendered = LinkAction.render(self)
@@ -79,6 +80,10 @@ class ReferencableChildrenLink(LinkAction):
     @property
     def action(self):
         return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
+    
+    @property
+    def display(self):
+        return self.permitted('view')
     
     def render(self):
         if not self.model.properties.get('leaf'): # XXX: IAppLeaf
