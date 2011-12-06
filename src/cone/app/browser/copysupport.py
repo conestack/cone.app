@@ -1,5 +1,6 @@
 import urllib
 import urlparse
+from node.utils import LocationIterator
 from cone.tile import (
     tile,
     Tile,
@@ -70,6 +71,16 @@ class PasteAction(Tile):
             if copy:
                 node = source[node.name].copy()
             else:
+                in_model = False
+                for parent in LocationIterator(self.model):
+                    if parent is node:
+                        message = u"Cannot paste cut object to child of it: %s"
+                        message = message % parent.name
+                        errors.append(message)
+                        in_model = True
+                        break
+                if in_model:
+                    continue
                 node = source.detach(node.name)
             self.model[choose_name(self.model, node.name)] = node
             if cut:

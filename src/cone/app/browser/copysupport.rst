@@ -120,11 +120,20 @@ Copysupport::
     failed:</strong><br />Violation. 'CopySupportNodeB' is not 
     allowed to contain 'CopySupportNodeA'"
     
+    >>> cut_url = urllib.quote(make_url(request, node=source))
+    >>> del request.environ['cone.app.continuation']
+    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> res = paste_tile(root['source']['a_child'], request)
+    >>> request.environ['cone.app.continuation'][0].payload
+    u'Pasted 0 items.<br /><strong>Pasting of 1 items 
+    failed:</strong><br />Cannot paste cut object to child of it: source'
+    
     >>> cut_url = '::'.join([
     ...     urllib.quote(make_url(request, node=target['b_child'])),
     ...     urllib.quote(make_url(request, node=target['b_child-1'])),
     ... ])
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url
+    >>> del request.environ['cone.app.continuation']
     >>> res = paste_tile(source, request)
     Called: source
     Called: target
