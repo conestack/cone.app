@@ -25,7 +25,6 @@ DEFAULT_ROLES = [
     ('editor', 'Editor'),
     ('admin', 'Admin'),
     ('manager', 'Manager'),
-    ('owner', 'Owner'), # XXX: owner handling on nodes
 ]
 
 owner_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
@@ -41,9 +40,9 @@ DEFAULT_ACL = [
     (Allow, 'system.Authenticated', ['view']),
     (Allow, 'role:viewer', ['view']),
     (Allow, 'role:editor', ['view', 'add', 'edit']),
-    (Allow, 'role:owner', owner_permissions),
     (Allow, 'role:admin', admin_permissions),
     (Allow, 'role:manager', manager_permissions),
+    (Allow, 'role:owner', owner_permissions),
     (Allow, Everyone, ['login']),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]

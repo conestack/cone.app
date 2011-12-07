@@ -45,12 +45,12 @@ The default ACL::
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
     'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
     'paste', 'manage_permissions', 'change_state', 'manage']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
     

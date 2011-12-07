@@ -67,8 +67,8 @@ class Security(Layer):
     
     def make_app(self, **kw):
         settings = {
-            'cone.admin_user': 'admin',
-            'cone.admin_password': 'admin',
+            'cone.admin_user': 'superuser',
+            'cone.admin_password': 'superuser',
             'cone.auth_secret': '12345',
             'cone.auth_impl': 'node.ext.ugm',
             'cone.plugins': 'node.ext.ugm',
