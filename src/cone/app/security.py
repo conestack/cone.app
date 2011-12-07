@@ -6,6 +6,7 @@ from plumber import (
     plumb,
 )
 from zope.interface import implements
+from pyramid.threadlocal import get_current_request
 from pyramid.security import (
     Everyone,
     Allow,
@@ -165,19 +166,20 @@ class OwnerSupport(Part):
     """
     implements(IOwnerSupport)
     
-    @default
-    @property
-    def owner(self):
-        raise NotImplementedError(u"Abstract ``OwnerSupport`` does not "
-                                  u"implement ``owner``.")
+    @plumb
+    def __init__(_next, self, *args, **kw):
+        _next(self, *args, **kw)
+        request = get_current_request()
+        self.owner = authenticated_userid(request)
     
     @plumb
     @property
     def __acl__(_next, self):
         acl = _next(self)
-        for ace in acl:
-            if ace[1] == 'role:owner':
-                return [(Allow, self.owner, ace[2])] + acl
+        if self.owner:
+            for ace in acl:
+                if ace[1] == 'role:owner':
+                    return [(Allow, self.owner, ace[2])] + acl
         return acl
 
 

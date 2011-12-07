@@ -135,21 +135,17 @@ OwnerSupport::
     >>> from cone.app.model import BaseNode
     >>> from cone.app.security import OwnerSupport
     
-    >>> class AbstractOwnerSupportNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = OwnerSupport
-    
-    >>> ownersupportnode = AbstractOwnerSupportNode()
-    >>> ownersupportnode.__acl__
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``OwnerSupport`` does not implement ``owner``.
-    
     >>> class OwnerSupportNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = OwnerSupport
-    ...     owner = 'sepp'
     
+    >>> ownersupportnode = OwnerSupportNode()
+    >>> ownersupportnode.owner
+    
+    >>> ownersupportnode.__acl__
+    [('Allow', 'system.Authenticated', ['view']), ...]
+    
+    >>> layer.login('sepp')
     >>> ownersupportnode = OwnerSupportNode()
     >>> ownersupportnode.owner
     'sepp'
@@ -177,12 +173,9 @@ OwnerSupport::
     >>> has_permission('delete', ownersupportnode, layer.current_request)
     <ACLAllowed instance ...
     
-    >>> layer.logout()
-    
     >>> class NoOwnerACLOnBaseNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = OwnerSupport
-    ...     owner = 'sepp'
     ...     @property
     ...     def __acl__(self):
     ...         return [('Allow', 'role:viewer', ['view'])]
@@ -193,6 +186,8 @@ OwnerSupport::
     
     >>> ownersupportnode.__acl__
     [('Allow', 'role:viewer', ['view'])]
+    
+    >>> layer.logout()
 
 PrincipalACL::
 
