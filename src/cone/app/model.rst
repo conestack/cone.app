@@ -236,6 +236,23 @@ Lookup Node info.::
     <class 'cone.app.model.BaseNode'>
 
 
+UUIDAttributeAware
+------------------
+::
+    >>> from plumber import plumber
+    >>> from cone.app.model import UUIDAttributeAware
+    >>> class UUIDNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = UUIDAttributeAware
+    
+    >>> node = UUIDNode()
+    >>> node.uuid
+    UUID('...')
+    
+    >>> node.attrs['uuid']
+    UUID('...')
+
+
 Properties
 ----------
 

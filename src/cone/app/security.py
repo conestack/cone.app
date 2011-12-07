@@ -181,6 +181,14 @@ class OwnerSupport(Part):
                 if ace[1] == 'role:owner':
                     return [(Allow, self.owner, ace[2])] + acl
         return acl
+    
+    def _get_owner(self):
+        return self.attrs['owner']
+    
+    def _set_owner(self, value):
+        self.attrs['owner'] = value
+    
+    owner = default(property(_get_owner, _set_owner))
 
 
 class PrincipalACL(Part):

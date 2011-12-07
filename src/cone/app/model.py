@@ -16,6 +16,7 @@ from node.parts import (
     AsAttrAccess,
     NodeChildValidate,
     Adopt,
+    UUIDAware,
     ChildFactory,
     Nodespaces,
     Attributes,
@@ -181,6 +182,17 @@ class AdapterNode(BaseNode):
     @property
     def attrs(self):
         return self.model.attrs
+
+
+class UUIDAttributeAware(UUIDAware):
+    
+    def _get_uuid(self):
+        return self.attrs['uuid']
+    
+    def _set_uuid(self, value):
+        self.attrs['uuid'] = value
+    
+    uuid = default(property(_get_uuid, _set_uuid))
 
 
 class CopySupport(Part):

@@ -150,6 +150,9 @@ OwnerSupport::
     >>> ownersupportnode.owner
     'sepp'
     
+    >>> ownersupportnode.attrs['owner']
+    'sepp'
+    
     >>> ownersupportnode.__acl__
     [('Allow', 'sepp', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
     'paste', 'manage_permissions', 'change_state']), 

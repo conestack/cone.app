@@ -37,6 +37,12 @@ Changes
 0.9.1dev
 --------
 
+- Add ``cone.app.model.UUIDAttributeAware``.
+  [rnix, 2011-12-07]
+
+- Add ``cone.app.security.OwnerSupport``.
+  [rnix, 2011-12-07]
+
 - Add ``cone.app.security.ACLRegistry``.
   [rnix, 2011-12-07]
 
