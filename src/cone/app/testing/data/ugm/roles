@@ -1,5 +1,5 @@
 viewer::viewer
 editor::editor
-owner::owner
+admin::admin
 manager::manager
 group:group1::editor

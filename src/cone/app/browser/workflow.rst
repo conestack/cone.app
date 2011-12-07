@@ -17,7 +17,7 @@ Workflow dropdown
     >>> node.state
     u'initial'
     
-    >>> layer.login('owner')
+    >>> layer.login('admin')
     >>> res = render_tile(node, request, 'wf_dropdown')
     >>> res.find('title="Change state">initial</a>') > -1
     True
