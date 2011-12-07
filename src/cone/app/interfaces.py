@@ -84,6 +84,14 @@ class IWorkflowState(INode, IAttributes):
     state = Attribute(u"Current workflow state.")
 
 
+class IOwnerSupport(ISecured):
+    """Interface for providing ownership information.
+    
+    Plumbs __acl__ property.
+    """
+    owner = Attribute(u"User id of node owner")
+
+
 class IPrincipalACL(ISecured):
     """Principal specific roles on nodes.
     

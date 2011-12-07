@@ -128,11 +128,76 @@ ACLRegistry::
     >>> acl_registry.lookup(SomeModel, 'some_model')
     [('Allow', 'role:viewer', ['delete'])]
 
+OwnerSupport::
+
+    >>> from plumber import plumber
+    >>> from cone.app.interfaces import IOwnerSupport
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.security import OwnerSupport
+    
+    >>> class AbstractOwnerSupportNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = OwnerSupport
+    
+    >>> ownersupportnode = AbstractOwnerSupportNode()
+    >>> ownersupportnode.__acl__
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Abstract ``OwnerSupport`` does not implement ``owner``.
+    
+    >>> class OwnerSupportNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = OwnerSupport
+    ...     owner = 'sepp'
+    
+    >>> ownersupportnode = OwnerSupportNode()
+    >>> ownersupportnode.owner
+    'sepp'
+    
+    >>> ownersupportnode.__acl__
+    [('Allow', 'sepp', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'system.Authenticated', ['view']), 
+    ('Allow', 'role:viewer', ['view']), 
+    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state', 'manage']), 
+    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'system.Everyone', ['login']), 
+    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
+    
+    >>> layer.login('viewer')
+    >>> has_permission('delete', ownersupportnode, layer.current_request)
+    <ACLDenied instance ...
+    
+    >>> layer.login('sepp')
+    >>> has_permission('delete', ownersupportnode, layer.current_request)
+    <ACLAllowed instance ...
+    
+    >>> layer.logout()
+    
+    >>> class NoOwnerACLOnBaseNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = OwnerSupport
+    ...     owner = 'sepp'
+    ...     @property
+    ...     def __acl__(self):
+    ...         return [('Allow', 'role:viewer', ['view'])]
+    
+    >>> ownersupportnode = NoOwnerACLOnBaseNode()
+    >>> ownersupportnode.owner
+    'sepp'
+    
+    >>> ownersupportnode.__acl__
+    [('Allow', 'role:viewer', ['view'])]
+
 PrincipalACL::
 
-    >>> from plumber import plumber, default
+    >>> from plumber import default
     >>> from cone.app.interfaces import IPrincipalACL
-    >>> from cone.app.model import BaseNode
     >>> from cone.app.security import PrincipalACL
 
 PrincipalACL is an abstract class. Directly mixing in causes an error on use::
@@ -140,9 +205,6 @@ PrincipalACL is an abstract class. Directly mixing in causes an error on use::
     >>> class PrincipalACLNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = PrincipalACL
-    ...     @property
-    ...     def __acl__(self):
-    ...         return BaseNode.__acl__
     
     >>> node = PrincipalACLNode()
     >>> node.__acl__

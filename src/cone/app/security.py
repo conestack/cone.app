@@ -14,7 +14,10 @@ from pyramid.security import (
     remember,
     authenticated_userid,
 )
-from cone.app.interfaces import IPrincipalACL
+from cone.app.interfaces import (
+    IOwnerSupport,
+    IPrincipalACL,
+)
 from cone.app.utils import app_config
 
 logger = logging.getLogger('cone.app')
@@ -155,6 +158,27 @@ class ACLRegistry(dict):
         return self.get((obj, node_info_name), default)
 
 acl_registry = ACLRegistry()
+
+
+class OwnerSupport(Part):
+    """Plumbing part providing ownership information.
+    """
+    implements(IOwnerSupport)
+    
+    @default
+    @property
+    def owner(self):
+        raise NotImplementedError(u"Abstract ``OwnerSupport`` does not "
+                                  u"implement ``owner``.")
+    
+    @plumb
+    @property
+    def __acl__(_next, self):
+        acl = _next(self)
+        for ace in acl:
+            if ace[1] == 'role:owner':
+                return [(Allow, self.owner, ace[2])] + acl
+        return acl
 
 
 class PrincipalACL(Part):
