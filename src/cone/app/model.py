@@ -44,14 +44,12 @@ from cone.app.interfaces import (
     IMetadata,
     INodeInfo,
 )
-from cone.app.security import (
-    DEFAULT_ACL,
-    DEFAULT_SETTINGS_ACL,
-)
+from cone.app.security import acl_registry
 from cone.app.utils import (
     DatetimeHelper,
     app_config,
 )
+
 
 _node_info_registry = dict()
 
@@ -67,10 +65,13 @@ def getNodeInfo(name):
 class AppNode(Part):
     implements(IApplicationNode)
     
-    __acl__ = default(DEFAULT_ACL) # XXX: make property function
-    
     # set this to name of registered node info on deriving class
     node_info_name = default('')
+    
+    @default
+    @property
+    def __acl__(self):
+        return acl_registry.lookup(self.__class__, self.node_info_name)
     
     @default
     @instance_property

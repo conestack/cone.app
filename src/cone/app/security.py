@@ -17,69 +17,45 @@ from pyramid.security import (
 from cone.app.interfaces import IPrincipalACL
 from cone.app.utils import app_config
 
-
 logger = logging.getLogger('cone.app')
 
-
+# XXX: get rid of -> i18n
 DEFAULT_ROLES = [
     ('viewer', 'Viewer'),
     ('editor', 'Editor'),
     ('admin', 'Admin'),
-    ('owner', 'Owner'), # XXX: owner handling on nodes
     ('manager', 'Manager'),
+    ('owner', 'Owner'), # XXX: owner handling on nodes
 ]
 
+owner_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
+    'paste', 'manage_permissions', 'change_state']
 
-AUTHENTICATED = 'system.Authenticated'
-VIEWER = 'role:viewer'
-EDITOR = 'role:editor'
-ADMIN = 'role:admin'
-OWNER = 'role:owner'
-MANAGER = 'role:manager'
+admin_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
+    'paste', 'manage_permissions', 'change_state']
 
-
-WORKFLOW_PERMISSIONS = ['change_state']
-SHARING_PERMISSIONS = ['manage_permissions']
-COPYSUPPORT_PERMISSIONS = ['cut', 'copy', 'paste']
-
-
-AUTHENTICATED_PERMISSIONS = ['view']
-VIEWER_PERMISSIONS = AUTHENTICATED_PERMISSIONS
-EDITOR_PERMISSIONS = VIEWER_PERMISSIONS + ['add', 'edit']
-ADMIN_PERMISSIONS = \
-    EDITOR_PERMISSIONS + \
-    ['delete'] + \
-    COPYSUPPORT_PERMISSIONS + \
-    SHARING_PERMISSIONS + \
-    WORKFLOW_PERMISSIONS
-OWNER_PERMISSIONS = ADMIN_PERMISSIONS
-MANAGER_PERMISSIONS = ADMIN_PERMISSIONS + ['manage']
-EVERYONE_PERMISSIONS = ['login']
-
-# BBB
-ADMIN_PERM = ADMIN_PERMISSIONS
-
+manager_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
+    'paste', 'manage_permissions', 'change_state', 'manage']
 
 DEFAULT_ACL = [
-    (Allow, AUTHENTICATED, AUTHENTICATED_PERMISSIONS),
-    (Allow, VIEWER, VIEWER_PERMISSIONS),
-    (Allow, EDITOR, EDITOR_PERMISSIONS),
-    (Allow, ADMIN, ADMIN_PERMISSIONS),
-    (Allow, OWNER, ADMIN_PERMISSIONS),
-    (Allow, MANAGER, MANAGER_PERMISSIONS),
-    (Allow, Everyone, EVERYONE_PERMISSIONS),
+    (Allow, 'system.Authenticated', ['view']),
+    (Allow, 'role:viewer', ['view']),
+    (Allow, 'role:editor', ['view', 'add', 'edit']),
+    (Allow, 'role:owner', owner_permissions),
+    (Allow, 'role:admin', admin_permissions),
+    (Allow, 'role:manager', manager_permissions),
+    (Allow, Everyone, ['login']),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
-
 
 DEFAULT_SETTINGS_ACL = [
-    (Allow, MANAGER, EDITOR_PERMISSIONS + ['delete', 'manage']),
-    (Allow, Everyone, EVERYONE_PERMISSIONS),
+    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
+    (Allow, Everyone, ['login']),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
-
-# XXX: get rid of.
+# XXX: get rid of. Protected properties should only be used for protecting
+#      persistent properties/attributes.
 DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_up': ['view'],
     'action_view': ['view'],
@@ -89,10 +65,8 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_delete_children': ['delete'],
 }
 
-
 ADMIN_USER = None
 ADMIN_PASSWORD = None
-
 
 def authenticate(request, login, password):
     if login == ADMIN_USER and password == ADMIN_PASSWORD:
@@ -141,6 +115,7 @@ def search_for_principals(term):
 
 
 ROLES_CACHE_KEY = 'cone.app.user.roles'
+
 def groups_callback(name, request):
     """Collect and return roles and groups for user.
     
@@ -170,6 +145,17 @@ def groups_callback(name, request):
                 aggregated.add('role:%s' % role)
         roles = environ[ROLES_CACHE_KEY] = list(aggregated)
     return roles
+
+
+class ACLRegistry(dict):
+    
+    def register(self, acl, obj=None, node_info_name=''):
+        self[(obj, node_info_name)] = acl
+    
+    def lookup(self, obj=None, node_info_name='', default=DEFAULT_ACL):
+        return self.get((obj, node_info_name), default)
+
+acl_registry = ACLRegistry()
 
 
 class PrincipalACL(Part):

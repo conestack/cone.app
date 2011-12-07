@@ -45,9 +45,9 @@ The default ACL::
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
     ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
+    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
     'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
     'paste', 'manage_permissions', 'change_state', 'manage']), 
@@ -101,6 +101,33 @@ Authenticate as default user::
     >>> has_permission('manage', context, layer.current_request)
     <ACLDenied instance ...
 
+ACLRegistry::
+
+    >>> from cone.app.security import acl_registry
+    
+    >>> class SomeModel(object): pass
+    
+    >>> acl = [('Allow', 'role:viewer', ['view'])]
+    >>> acl_registry.register(acl, SomeModel)
+    
+    >>> acl = [('Allow', 'role:viewer', ['edit'])]
+    >>> acl_registry.register(acl, node_info_name='some_model')
+    
+    >>> acl = [('Allow', 'role:viewer', ['delete'])]
+    >>> acl_registry.register(acl, SomeModel, 'some_model')
+    
+    >>> acl_registry.lookup(None, None, [('Allow', 'role:viewer', ['add'])])
+    [('Allow', 'role:viewer', ['add'])]
+    
+    >>> acl_registry.lookup(SomeModel)
+    [('Allow', 'role:viewer', ['view'])]
+    
+    >>> acl_registry.lookup(node_info_name='some_model')
+    [('Allow', 'role:viewer', ['edit'])]
+    
+    >>> acl_registry.lookup(SomeModel, 'some_model')
+    [('Allow', 'role:viewer', ['delete'])]
+
 PrincipalACL::
 
     >>> from plumber import plumber, default
@@ -136,9 +163,6 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     >>> class MyPrincipalACLNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = MyPrincipalACL
-    ...     @property
-    ...     def __acl__(self):
-    ...         return BaseNode.__acl__
     
     >>> node = MyPrincipalACLNode()
     >>> IPrincipalACL.providedBy(node)
@@ -156,14 +180,7 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     'change_state', 'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'system.Everyone', ['login']), 
+      ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 PrincipalACL role inheritance::
@@ -174,14 +191,7 @@ PrincipalACL role inheritance::
     [('Allow', 'someuser', ['edit', 'add', 'view']), 
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'system.Everyone', ['login']), 
+      ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
     
     >>> subchild = child['child'] = MyPrincipalACLNode()
@@ -204,15 +214,7 @@ PrincipalACL role inheritance::
     ('Allow', 'group:some_group', ['cut', 'edit', 'view', 'add', 
     'change_state', 'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
     ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'system.Everyone', ['login']), 
+      ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 Principal roles get inherited even if some parent does not provide principal
@@ -232,14 +234,7 @@ role does not grant any permissions::
     [('Allow', 'someuser', []), 
     ('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'system.Everyone', ['login']), 
+      ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 If an authentication plugin raises an error when calling ``authenticate``, an

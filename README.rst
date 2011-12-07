@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Add ``cone.app.security.ACLRegistry``.
+  [rnix, 2011-12-07]
+
 - Use ``node.parts.IUUIDAware`` as dependency for node beeing referencable.
   [rnix, 2011-12-02]
 
