@@ -1,4 +1,5 @@
 from odict import odict
+from node.utils import LocationIterator
 from pyramid.security import (
     has_permission,
     authenticated_userid,
@@ -146,9 +147,11 @@ class PathBar(Tile):
     
     @property
     def items(self):
+        return self.items_for(self.model)
+    
+    def items_for(self, model, breakpoint=None):
         items = list()
-        node = self.model
-        while node is not None:
+        for node in LocationIterator(model):
             items.append({
                 'title': node.metadata.title,
                 'url': make_url(self.request, node=node),
@@ -156,7 +159,8 @@ class PathBar(Tile):
                 'id': node.name,
                 'default_child': node.properties.default_child,
             })
-            node = node.parent
+            if node is breakpoint:
+                break
         items.reverse()
         ret = list()
         count = len(items)
@@ -167,7 +171,11 @@ class PathBar(Tile):
               and default_child == items[i + 1]['id']:
                 continue
             ret.append(items[i])
-        ret[0]['title'] = 'Home'
+        
+        # XXX: this is crap!
+        if not breakpoint:
+            ret[0]['title'] = 'Home'
+        
         ret[-1]['selected'] = True
         return ret
 

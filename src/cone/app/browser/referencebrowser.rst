@@ -202,7 +202,7 @@ ActionAddReference
     
     >>> action(model, request)
     u'...<a\n     
-    id="ref-"\n     
+    id="ref-..."\n     
     href="http://example.com/model"\n     
     class="add16_16 addreference"\n     
     title="Add reference"\n     
@@ -233,13 +233,53 @@ ReferencableChildrenLink
     >>> layer.logout()
 
 
+Reference Pathbar
+-----------------
+
+::
+    >>> from cone.tile import render_tile
+    >>> model = UUIDNode()
+    >>> model['a'] = UUIDNode()
+    >>> model['a']['b'] = UUIDNode()
+    >>> node = model['a']['b']['c'] = UUIDNode()
+    
+    >>> request = layer.new_request()
+    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
+    Traceback (most recent call last):
+      ...
+    HTTPForbidden: Unauthorized: tile 
+    <cone.app.browser.referencebrowser.ReferenceBrowserPathBar object at ...> 
+    failed permission check
+    
+    >>> layer.login('max')
+    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
+    >>> res.find('"http://example.com/"') > -1
+    True
+    
+    >>> res.find('"http://example.com/a"') > -1
+    True
+    
+    >>> res.find('"http://example.com/a/b"') > -1
+    True
+    
+    >>> model['a'].properties.referenceable_root = True
+    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
+    >>> res.find('"http://example.com/"') > -1
+    False
+    
+    >>> res.find('"http://example.com/a"') > -1
+    True
+    
+    >>> res.find('"http://example.com/a/b"') > -1
+    True
+    
+    >>> layer.logout()
+
 Reference listing tile
 ----------------------
 
 Create dummy environ::
 
-    >>> from cone.tile import render_tile
-    
     >>> from datetime import datetime
     >>> from datetime import timedelta
     
@@ -247,7 +287,6 @@ Create dummy environ::
     >>> delta = timedelta(1)
     >>> modified = created + delta
     
-    >>> import uuid
     >>> model = UUIDNode()
     >>> for i in range(20):
     ...     model[str(i)] = UUIDNode()

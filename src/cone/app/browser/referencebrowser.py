@@ -1,5 +1,8 @@
 from node.interfaces import IUUIDAware
-from node.utils import instance_property
+from node.utils import (
+    instance_property,
+    LocationIterator,
+)
 from cone.tile import (
     tile,
     registerTile,
@@ -35,10 +38,18 @@ registerTile('referencebrowser',
              permission='view')
 
 
-registerTile('referencebrowser_pathbar',
-             'cone.app:browser/templates/referencebrowser_pathbar.pt',
-             permission='view',
-             class_=PathBar)
+@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt', 
+      permission='view')
+class ReferenceBrowserPathBar(PathBar):
+    
+    @property
+    def items(self):
+        breakpoint = None
+        for node in LocationIterator(self.model):
+            if node.properties.referenceable_root:
+                breakpoint = node
+                break
+        return self.items_for(self.model, breakpoint)
 
 
 class ActionAddReference(LinkAction):
@@ -49,7 +60,7 @@ class ActionAddReference(LinkAction):
     
     @property
     def id(self):
-        return 'ref-%s' % self.model.attrs.get('uid', '')
+        return 'ref-%s' % self.model.uuid
     
     @property
     def display(self):
