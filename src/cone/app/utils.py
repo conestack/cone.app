@@ -26,24 +26,10 @@ def principal_data(principal_id):
 
 
 def timestamp():
-    """XXX: tz aware
-    """
     return datetime.now()
 
 
-def add_creation_metadata(request, mapping):
-    mapping['creator'] = authenticated_userid(request)
-    mapping['created'] = timestamp()
-    mapping['modified'] = mapping['created']
-
-
-def update_creation_metadata(request, mapping):
-    mapping['modified'] = timestamp()
-
-
 class DatetimeHelper(object):
-    """XXX: tz aware
-    """
     
     def w_value(self, val):
         if isinstance(val, datetime):
@@ -68,3 +54,15 @@ class DatetimeHelper(object):
         if iso.find('.') != -1:
             iso = iso[:iso.rfind('.')]
         return iso
+
+
+# XXX: move somewhere else, probably plumbing part for node
+def add_creation_metadata(request, mapping):
+    mapping['creator'] = authenticated_userid(request)
+    mapping['created'] = timestamp()
+    mapping['modified'] = mapping['created']
+
+
+# XXX: move somewhere else, probably plumbing part for node
+def update_creation_metadata(request, mapping):
+    mapping['modified'] = timestamp()

@@ -45,7 +45,6 @@ setup(name='cone.app',
           'yafowil.widget.autocomplete',
           'yafowil.widget.dynatree',
           'repoze.workflow',
-          'bda.calendar.base',
       ],
       extras_require = dict(
           test=[
