@@ -183,7 +183,7 @@ class OwnerSupport(Part):
         return acl
     
     def _get_owner(self):
-        return self.attrs['owner']
+        return self.attrs.get('owner')
     
     def _set_owner(self, value):
         self.attrs['owner'] = value

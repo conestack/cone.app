@@ -446,6 +446,9 @@ div.contextmenu div {
 div.contextmenu .dropdown_items {
     margin-top:1.4em;
 }
+div.contextmenu div.state {
+    margin-right:8px;
+}
 
 /* Tabs */
 .tabs {
