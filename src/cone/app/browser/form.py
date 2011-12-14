@@ -4,6 +4,7 @@ from plumber import (
     extend,
 )
 from webob.exc import HTTPFound
+from pyramid.security import has_permission
 from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
@@ -40,6 +41,36 @@ class YAMLForm(Part):
         # BBB
         self.form = parse_from_YAML(
             self.form_template_path, self, self.message_factory)
+
+
+class ProtectedAttributesForm(Part):
+    """Plumbing part supposed to be used for yafowil forms calculating widget
+    modes based on security checks.
+    
+    Security declarations for attributes are stored at
+    ``self.attribute_permissions`` containing the attribute names as key, and
+    a 2-tuple containing required edit and view permission for this attribute.
+    """
+    
+    attribute_permissions = default(dict())
+    attribute_default_mode = default('edit')
+    
+    @default
+    def mode_for(self, name):
+        """Calculate mode by checking permission defined in
+        ``self.attribute_permissions`` for attribute ``name`` against model.
+        
+        If no permissions defined for attribute name, return
+        ``self.attribute_default_mode``
+        """
+        permissions = self.attribute_permissions.get(name)
+        if not permissions:
+            return self.attribute_default_mode
+        if has_permission(permissions[0], self.model, self.request):
+            return 'edit'
+        if has_permission(permissions[1], self.model, self.request):
+            return 'display'
+        return 'skip'
 
 
 class Form(Tile):

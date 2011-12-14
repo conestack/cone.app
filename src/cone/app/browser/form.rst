@@ -205,6 +205,69 @@ backward compatibility::
     >>> res.find(expected) > -1
     True
 
+ProtectedAttributesForm plumbing part::
+
+    >>> from cone.app.browser.form import ProtectedAttributesForm
+    >>> @tile('protectedattributesform')
+    ... class ProtectedAttributesForm(Form):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = ProtectedAttributesForm
+    ...     
+    ...     attribute_permissions = {
+    ...         'protectedfield': ('manage', 'edit')
+    ...     }
+    ...     
+    ...     def prepare(self):
+    ...         form = factory(
+    ...             u'form',
+    ...             name='protectedattributesform',
+    ...             props={
+    ...                 'action': self.nodeurl,
+    ...             })
+    ...         form['protectedfield'] = factory(
+    ...             u'field:label:text',
+    ...             value=u'Protectedfield',
+    ...             mode=self.mode_for('protectedfield')
+    ...         )
+    ...         self.form = form
+    
+    >>> from pyramid.security import has_permission
+    >>> layer.login('viewer')
+    >>> request = layer.new_request()
+    >>> has_permission('edit', model, request)
+    <ACLDenied ...
+    
+    >>> render_tile(model, request, 'protectedattributesform')
+    u'<form 
+    action="http://example.com/dummymodel" 
+    class="ajax" 
+    enctype="multipart/form-data" 
+    id="form-protectedattributesform" 
+    method="post" 
+    novalidate="novalidate"></form>'
+    
+    >>> layer.login('editor')
+    >>> request = layer.new_request()
+    >>> has_permission('edit', model, request)
+    <ACLAllowed ...
+    
+    >>> render_tile(model, request, 'protectedattributesform')
+    u'<form ...<div class="display-text" 
+    id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>'
+    
+    >>> layer.login('manager')
+    >>> request = layer.new_request()
+    >>> has_permission('manage', model, request)
+    <ACLAllowed ...
+    
+    >>> render_tile(model, request, 'protectedattributesform')
+    u'<form ...<input class="text" 
+    id="input-protectedattributesform-protectedfield" 
+    name="protectedattributesform.protectedfield" 
+    type="text" value="Protectedfield" /></div></form>'
+    
+    >>> layer.logout()
+
 Provide another form tile for testing remaining aspects of ``Form`` class::
 
     >>> @tile('otherform')
