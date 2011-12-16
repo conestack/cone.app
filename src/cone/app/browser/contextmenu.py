@@ -22,21 +22,26 @@ from cone.app.browser.actions import (
 
 
 context_menu = odict()
-context_menu['general'] = Toolbar()
-context_menu['general']['up'] = ActionUp()
-context_menu['general']['list'] = ActionList()
-context_menu['general']['view'] = ActionView()
-context_menu['object'] = Toolbar()
-context_menu['object']['edit'] = ActionEdit()
-context_menu['object']['change_state'] = ActionState()
-context_menu['object']['sharing'] = ActionSharing()
-context_menu['object']['delete'] = ActionDelete() # XXX: remove here
-context_menu['children'] = Toolbar()
-context_menu['children']['add'] = ActionAdd()
-context_menu['children']['cut'] = ActionCut()
-context_menu['children']['copy'] = ActionCopy()
-context_menu['children']['paste'] = ActionPaste()
-#context_menu['children']['delete'] = ActionDeleteChildren()
+
+context_menu['navigation'] = Toolbar()
+context_menu['navigation']['up'] = ActionUp()
+
+context_menu['contentviews'] = Toolbar()
+context_menu['contentviews']['list'] = ActionList()
+context_menu['contentviews']['view'] = ActionView()
+context_menu['contentviews']['edit'] = ActionEdit()
+context_menu['contentviews']['sharing'] = ActionSharing()
+
+context_menu['contextactions'] = Toolbar()
+context_menu['contextactions']['delete'] = ActionDelete() # XXX: remove here
+context_menu['contextactions']['change_state'] = ActionState()
+
+context_menu['childactions'] = Toolbar()
+context_menu['childactions']['add'] = ActionAdd()
+context_menu['childactions']['cut'] = ActionCut()
+context_menu['childactions']['copy'] = ActionCopy()
+context_menu['childactions']['paste'] = ActionPaste()
+#context_menu['childactions']['delete'] = ActionDeleteChildren()
 
 
 @tile('contextmenu', 'templates/contextmenu.pt', permission='view')

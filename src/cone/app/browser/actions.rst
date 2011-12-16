@@ -70,9 +70,9 @@ Toolbar
     >>> layer.login('viewer')
     
     >>> tb(model, request).split('\n')
-    [u'<a href="">dummy action</a>', 
+    [u'<div class="toolbar"><a href="">dummy action</a>', 
     u'<a href="">dummy template action</a>', 
-    u'<a href="">dummy template action</a>']
+    u'<a href="">dummy template action</a></div>']
     
     >>> tb.display = False
     >>> tb(model, request)

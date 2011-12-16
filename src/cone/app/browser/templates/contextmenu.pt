@@ -5,9 +5,7 @@
   <div class="contextmenu">
     
     <tal:toolbars repeat="toolbar context.toolbars">
-      <div tal:condition="toolbar.display"
-           tal:content="structure toolbar(model, request)">
-      </div>
+      <div tal:replace="structure toolbar(model, request)"></div>
     </tal:toolbars>
   
   </div>

@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Extend UI actions by ``selected`` property.
+  [rnix, 2011-12-16]
+
 - Add ``cone.app.model.UUIDAttributeAware``.
   [rnix, 2011-12-07]
 

@@ -18,7 +18,11 @@ class Toolbar(odict):
     def __call__(self, model, request):
         if not self.display:
             return u''
-        return '\n'.join([action(model, request) for action in self.values()])
+        ret = u'\n'.join([action(model, request) for action in self.values()])
+        ret = ret.strip()
+        if not ret:
+            return ret
+        return u'<div class="toolbar">%s</div>' % ret
 
 
 class Action(object):
@@ -69,10 +73,13 @@ class LinkAction(TemplateAction):
     overlay=None      # ajax:overlay attribute
     text = None       # link text
     enabled = True    # if false, link gets 'disabled' css class
+    selected = False  # if true, link get 'selected' css class
     
     @property
     def css_class(self):
         css = not self.enabled and 'disabled' or ''
+        css = self.selected and '%s selected' % css or css
+        css = css.strip()
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
@@ -117,6 +124,10 @@ class ActionView(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_view and self.permitted('view')
+    
+    @property
+    def selected(self):
+        return self.request.params.get('bdajax.action') == 'content'
 
 
 class ViewLink(ActionView):
@@ -143,6 +154,10 @@ class ActionList(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_list and self.permitted('view')
+    
+    @property
+    def selected(self):
+        return self.request.params.get('bdajax.action') == 'listing'
 
 
 class ActionSharing(LinkAction):
@@ -158,6 +173,10 @@ class ActionSharing(LinkAction):
     def display(self):
         return IPrincipalACL.providedBy(self.model) \
             and self.permitted('manage_permissions')
+    
+    @property
+    def selected(self):
+        return self.request.params.get('bdajax.action') == 'sharing'
 
 
 class ActionState(TileAction):
@@ -189,6 +208,10 @@ class ActionEdit(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_edit and self.permitted('edit')
+    
+    @property
+    def selected(self):
+        return self.request.params.get('bdajax.action') == 'edit'
 
 
 class ActionDelete(LinkAction):
