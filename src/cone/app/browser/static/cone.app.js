@@ -231,7 +231,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     mode: 'NONE',
                     selector: 'NONE',
                     url: target.url,
-                    params: target.params,
+                    params: target.params
                 });
             });
         },
