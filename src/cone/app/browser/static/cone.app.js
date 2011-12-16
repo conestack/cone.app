@@ -151,7 +151,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 event.preventDefault();
                 var checkbox = $(this);
                 var action;
-                if (checkbox.attr('checked')) {
+                if (this.checked) {
                     action = 'add_principal_role';
                 } else {
                     action = 'remove_principal_role';
