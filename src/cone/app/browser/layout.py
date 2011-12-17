@@ -4,6 +4,7 @@ from pyramid.security import (
     has_permission,
     authenticated_userid,
 )
+from pyramid.view import view_config
 from cone.tile import (
     tile,
     Tile,
@@ -16,6 +17,7 @@ from cone.app.utils import (
     app_config,
     principal_data,
 )
+from cone.app.browser import render_main_template
 from cone.app.browser.utils import (
     nodepath,
     make_url,
@@ -271,6 +273,13 @@ registerTile('listing',
              'cone.app:browser/templates/listing.pt',
              class_=ProtectedContentTile,
              permission='login')
+
+
+@view_config('listing', permission='view')
+def listing(model, request):
+    """Listing view
+    """
+    return render_main_template(model, request, 'listing')
 
 
 @tile('content', interface=AppRoot, permission='login')

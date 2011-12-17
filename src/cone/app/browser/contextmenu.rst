@@ -17,7 +17,11 @@ ContextMenu
     
     >> model.properties.action_delete_children = True
     
+    >>> from cone.app.browser.actions import ActionContext
+    
     >>> request = layer.new_request()
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(model, request, 'content')
     >>> rendered = render_tile(model, request, 'contextmenu')
     
     >>> rendered.find('up16_16') > -1

@@ -4,7 +4,9 @@ from cone.tile import (
     registerTile,
     Tile,
 )
+from pyramid.view import view_config
 from cone.app import security
+from cone.app.browser import render_main_template
 from cone.app.browser.ajax import ajax_message
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.table import (
@@ -21,6 +23,13 @@ registerTile('sharing',
              'cone.app:browser/templates/sharing.pt',
              class_=ProtectedContentTile,
              permission='login')
+
+
+@view_config('sharing', permission='manage_permissions')
+def sharing(model, request):
+    """Sharing view
+    """
+    return render_main_template(model, request, 'sharing')
 
 
 @tile('local_acl', 'cone.app:browser/templates/table.pt',

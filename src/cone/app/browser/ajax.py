@@ -9,6 +9,7 @@ from cone.tile import (
     registerTile,
     render_tile,
 )
+from cone.app.browser.actions import ActionContext
 
 
 def format_traceback():
@@ -43,7 +44,9 @@ def ajax_tile(model, request):
     """
     try:
         name = request.params.get('bdajax.action')
-        rendered = render_tile(model, request, name)
+        action_context = ActionContext(model, request, name)
+        request.environ['action_context'] = action_context
+        rendered = render_tile(model, request, action_context.scope)
         continuation = request.environ.get('cone.app.continuation')
         if continuation:
             continuation = AjaxContinue(continuation).definitions

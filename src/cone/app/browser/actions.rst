@@ -165,6 +165,11 @@ ActionView
 ----------
 ::
     >>> from cone.app.browser.actions import ActionView
+    >>> from cone.app.browser.actions import ActionContext
+    
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(model, request, 'content')
+    
     >>> action = ActionView()
     >>> action(model, request)
     u''
@@ -177,7 +182,7 @@ ActionView
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/root/model"\n     
-    class="view16_16"\n     
+    class="view16_16 selected"\n     
     title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
@@ -202,6 +207,7 @@ ViewLink
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/root/model"\n     
+    class="selected"\n     
     title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     

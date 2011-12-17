@@ -12,6 +12,26 @@ from cone.app.interfaces import (
 from cone.app.browser.utils import make_url
 
 
+class ActionContext(object):
+    """Set by render_mail_template and ajax_action. instance will be found at
+    request.environ['action_context']
+    """
+    
+    def __init__(self, model, request, tilename):
+        self.model = model
+        self.request = request
+        self.tilename = tilename
+    
+    @property
+    def scope(self):
+        scope = self.tilename
+        if self.request.params.get('bdajax.action'):
+            scope = self.request.params.get('bdajax.action')
+        if self.model.properties.default_content_tile and scope == 'content':
+            scope = self.model.properties.default_content_tile
+        return scope
+
+
 class Toolbar(odict):
     display = True
     
@@ -34,6 +54,10 @@ class Action(object):
         if not self.display:
             return u''
         return self.render()
+    
+    @property
+    def action_scope(self):
+        return self.request.environ['action_context'].scope
     
     def permitted(self, permission):
         return has_permission(permission, self.model, self.request)
@@ -118,8 +142,14 @@ class ActionUp(LinkAction):
 class ActionView(LinkAction):
     css = 'view16_16'
     title = 'View'
-    action = 'content:#content:inner'
     href = LinkAction.target
+    
+    @property
+    def action(self):
+        contenttile = 'content'
+        if self.model.properties.default_content_tile:
+            contenttile = 'view'
+        return '%s:#content:inner' % contenttile
     
     @property
     def display(self):
@@ -127,7 +157,9 @@ class ActionView(LinkAction):
     
     @property
     def selected(self):
-        return self.request.params.get('bdajax.action') == 'content'
+        if self.model.properties.default_content_tile:
+            return self.action_scope == 'view'
+        return self.action_scope == 'content'
 
 
 class ViewLink(ActionView):
@@ -157,7 +189,7 @@ class ActionList(LinkAction):
     
     @property
     def selected(self):
-        return self.request.params.get('bdajax.action') == 'listing'
+        return self.action_scope == 'listing'
 
 
 class ActionSharing(LinkAction):
@@ -176,7 +208,7 @@ class ActionSharing(LinkAction):
     
     @property
     def selected(self):
-        return self.request.params.get('bdajax.action') == 'sharing'
+        return self.action_scope == 'sharing'
 
 
 class ActionState(TileAction):
@@ -211,7 +243,7 @@ class ActionEdit(LinkAction):
     
     @property
     def selected(self):
-        return self.request.params.get('bdajax.action') == 'edit'
+        return self.action_scope == 'edit'
 
 
 class ActionDelete(LinkAction):
