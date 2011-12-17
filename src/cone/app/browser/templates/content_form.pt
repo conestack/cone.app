@@ -1,0 +1,9 @@
+<div class="box">
+  <tal:contextmenu condition="context.show_contextmenu"
+                   replace="structure context.rendered_contextmenu" />
+  
+  <h1 tal:condition="context.show_heading"
+      tal:content="context.form_heading">Title</h1>
+  
+  <tal:form replace="structure context.rendered_form" />
+</div>

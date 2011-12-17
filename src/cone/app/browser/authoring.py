@@ -13,6 +13,7 @@ from cone.tile import (
     Tile,
     tile,
     render_tile,
+    render_template,
 )
 from cone.app.model import (
     getNodeInfo,
@@ -124,8 +125,6 @@ class AddTile(ProtectedContentTile):
     factory name. Factory information is fetched from NodeInfo implementation
     registered by factory name.
     """
-    
-    # tile name of form tile
     form_tile_name = 'addform'
     
     def render(self):
@@ -147,12 +146,52 @@ class AddTile(ProtectedContentTile):
         return getNodeInfo(factory)
 
 
-class AddPart(CameFromNext):
-    """form part hooking the hidden field 'factory' to self.form on __call__
+class ContentForm(Part):
+    """Form part rendering to content area.
     """
     
-    action_resource = extend('add')
     show_heading = default(True)
+    show_contextmenu = default(True)
+    
+    @default
+    @property
+    def form_heading(self):
+        return u'Context Form Heading'
+    
+    @default
+    @property
+    def rendered_contextmenu(self):
+        return render_tile(self.model, self.request, 'contextmenu')
+    
+    @plumb
+    def __call__(_next, self, model, request):
+        ajax_form_fiddle(request, '#content', 'inner')
+        form = _next(self, model, request)
+        if form is None:
+            form = u''
+        self.rendered_form = form
+        path = self.path
+        if not path:
+            path = 'cone.app.browser:templates/content_form.pt'
+        return render_template(
+            path, request=request, model=model, context=self)
+
+
+class AddPart(CameFromNext, ContentForm):
+    """form part hooking the hidden field 'factory' to self.form on __call__
+    """
+    action_resource = extend('add')
+    
+    @default
+    @property
+    def form_heading(self):
+        info = getNodeInfo(self.model.node_info_name)
+        return u'Add %s' % info.title
+    
+    @default
+    @property
+    def rendered_contextmenu(self):
+        return render_tile(self.model.parent, self.request, 'contextmenu')
     
     @plumb
     def prepare(_next, self):
@@ -163,17 +202,6 @@ class AddPart(CameFromNext):
             'proxy',
             value=self.request.params.get('factory'),
         )
-    
-    @plumb
-    def __call__(_next, self, model, request):
-        ajax_form_fiddle(request, '#content', 'inner')
-        info = getNodeInfo(model.node_info_name)
-        heading = u'<h1>Add %s</h1>' % info.title
-        form = _next(self, model, request)
-        if form is None:
-            form = u''
-        rendered = self.show_heading and heading + form or form
-        return u'<div class="box">%s</div>' % rendered
 
 
 @view_config('edit', permission='edit')
@@ -187,34 +215,24 @@ def edit(model, request):
 class EditTile(ProtectedContentTile):
     """The edit tile is responsible to render edit forms on given model.
     """
-    
-    # tile name of form tile
     form_tile_name = 'editform'
     
     def render(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
-class EditPart(CameFromNext):
+class EditPart(CameFromNext, ContentForm):
     """form part hooking the hidden field 'came_from' to self.form on __call__
     """
-    
     action_resource = extend('edit')
-    show_heading = default(True)
     
-    @plumb
-    def __call__(_next, self, model, request):
-        ajax_form_fiddle(request, '#content', 'inner')
-        info = getNodeInfo(model.node_info_name)
+    @default
+    @property
+    def form_heading(self):
+        info = getNodeInfo(self.model.node_info_name)
         if info is not None:
-            heading = u'<h1>Edit %s</h1>' % info.title
-        else:
-            heading = u'<h1>Edit</h1>'                      #pragma NO COVERAGE
-        form = _next(self, model, request)
-        if form is None:
-            form = u''
-        rendered = self.show_heading and heading + form or form
-        return u'<div class="box">%s</div>' % rendered
+            return u'Edit %s' % info.title
+        return 'Edit'
 
 
 @tile('delete', permission="delete")

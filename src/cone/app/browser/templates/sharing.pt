@@ -2,11 +2,9 @@
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
   <div class="box">
-    <h1>
-      Sharing for <tal:title replace="model.metadata.title" />
-    </h1>
-    
     <tal:contextmenu replace="structure tile('contextmenu')" />
+    
+    <h1>Sharing for <tal:title replace="model.metadata.title" /></h1>
     
     <div class="principal-search">
       <label>Search for principal</label>
