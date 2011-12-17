@@ -30,6 +30,14 @@ from cone.app.browser.utils import (
 FAR_PAST = datetime.datetime(2000, 1, 1)
 
 
+class ContentsActionView(ActionView):
+    event = 'contextchanged:.contextsensitiv'
+
+
+class ContentsActionEdit(ActionEdit):
+    event = 'contextchanged:.contextsensitiv'
+
+
 class ContentsActionDelete(ActionDelete):
     """Delete action for contents table.
     """
@@ -44,6 +52,7 @@ class ContentsActionDelete(ActionDelete):
 class ContentsViewLink(ViewLink):
     """Ciew link for contents table.
     """
+    event = 'contextchanged:.contextsensitiv'
     
     @property
     def action(self):
@@ -115,8 +124,8 @@ class ContentsTile(Table):
     @instance_property
     def row_actions(self):
         row_actions = Toolbar()
-        row_actions['view'] = ActionView()
-        row_actions['edit'] = ActionEdit()
+        row_actions['view'] = ContentsActionView()
+        row_actions['edit'] = ContentsActionEdit()
         row_actions['delete'] = ContentsActionDelete()
         return row_actions
     
