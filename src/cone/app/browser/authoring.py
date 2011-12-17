@@ -23,6 +23,7 @@ from cone.app.model import (
 )
 from cone.app.utils import app_config
 from cone.app.browser import render_main_template
+from cone.app.browser.actions import ActionContext
 from cone.app.browser.ajax import (
     AjaxAction,
     AjaxEvent,
@@ -52,6 +53,9 @@ def render_form(model, request, tilename):
     XXX: move to cone.app.browser.form 
     """
     if is_ajax(request):
+        # XXX: ActionContext centralized
+        action_context = ActionContext(model, request, tilename)
+        request.environ['action_context'] = action_context
         return render_ajax_form(model, request, tilename)
     return render_main_template(model, request, contenttilename=tilename)
 
