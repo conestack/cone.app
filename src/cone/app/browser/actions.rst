@@ -351,6 +351,10 @@ ActionAdd
     >>> action = ActionAdd()
     
     >>> addmodel = BaseNode()
+    
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(addmodel, request, 'listing')
+    
     >>> action(addmodel, request)
     u''
     
@@ -389,6 +393,9 @@ ActionAdd
 ActionEdit
 ----------
 ::
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(model, request, 'listing')
+    
     >>> from cone.app.browser.actions import ActionEdit
     >>> action = ActionEdit()
     >>> action(model, request)
@@ -418,6 +425,9 @@ ActionEdit
 ActionDelete
 ------------
 ::
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(model, request, 'content')
+    
     >>> from cone.app.browser.actions import ActionDelete
     >>> action = ActionDelete()
     >>> action(model, request)
@@ -493,6 +503,10 @@ ActionCut
     >>> from cone.app.interfaces import ICopySupport
     >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode('copysupport')
+    
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(model, request, 'listing')
+    
     >>> ICopySupport.providedBy(model)
     True
     

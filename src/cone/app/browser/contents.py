@@ -30,6 +30,29 @@ from cone.app.browser.utils import (
 FAR_PAST = datetime.datetime(2000, 1, 1)
 
 
+class ContentsActionDelete(ActionDelete):
+    """Delete action for contents table.
+    """
+    
+    @property
+    def display(self):
+        return self.model.properties.action_delete \
+            and has_permission('delete', self.model.parent, self.request) \
+            and self.permitted('delete') \
+
+
+class ContentsViewLink(ViewLink):
+    """Ciew link for contents table.
+    """
+    
+    @property
+    def action(self):
+        contenttile = 'content'
+        if self.model.properties.default_content_tile:
+            contenttile = self.model.properties.default_content_tile
+        return '%s:#content:inner' % contenttile
+
+
 @tile('contents', 'templates/table.pt', permission='view')
 class ContentsTile(Table):
     
@@ -94,12 +117,12 @@ class ContentsTile(Table):
         row_actions = Toolbar()
         row_actions['view'] = ActionView()
         row_actions['edit'] = ActionEdit()
-        row_actions['delete'] = ActionDelete()
+        row_actions['delete'] = ContentsActionDelete()
         return row_actions
     
     @instance_property
     def view_link(self):
-        return ViewLink()
+        return ContentsViewLink()
     
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)

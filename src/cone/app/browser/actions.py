@@ -225,7 +225,9 @@ class ActionAdd(TileAction):
     
     @property
     def display(self):
-        return self.permitted('add') and self.model.nodeinfo.addables
+        return self.permitted('add') \
+            and self.model.nodeinfo.addables \
+            and self.action_scope == 'listing'
 
 
 class ActionEdit(LinkAction):
@@ -258,9 +260,14 @@ class ActionDelete(LinkAction):
     
     @property
     def display(self):
+        # XXX: scope in subclass for contextmenu
+        scope = self.action_scope == 'content'
+        if self.model.properties.default_content_tile:
+            scope = self.action_scope == 'view'
         return self.model.properties.action_delete \
             and has_permission('delete', self.model.parent, self.request) \
-            and self.permitted('delete')
+            and self.permitted('delete') \
+            and scope
 
 
 class ActionDeleteChildren(LinkAction):
@@ -296,7 +303,8 @@ class ActionCut(LinkAction):
     def display(self):
         return ICopySupport.providedBy(self.model) \
             and self.model.supports_cut \
-            and self.permitted('cut')
+            and self.permitted('cut') \
+            and self.action_scope == 'listing'
 
 
 class ActionCopy(LinkAction):
@@ -312,7 +320,8 @@ class ActionCopy(LinkAction):
     def display(self):
         return ICopySupport.providedBy(self.model) \
             and self.model.supports_copy \
-            and self.permitted('copy')
+            and self.permitted('copy') \
+            and self.action_scope == 'listing'
 
 
 class ActionPaste(LinkAction):
@@ -328,7 +337,8 @@ class ActionPaste(LinkAction):
     def display(self):
         return ICopySupport.providedBy(self.model) \
             and self.model.supports_paste \
-            and self.permitted('paste')
+            and self.permitted('paste') \
+            and self.action_scope == 'listing'
     
     @property
     def enabled(self):

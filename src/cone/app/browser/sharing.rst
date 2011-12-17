@@ -14,6 +14,11 @@ Render sharing tile::
     >>> layer.login('manager')
     
     >>> request = layer.new_request()
+    
+    >>> from cone.app.browser.actions import ActionContext
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(root, request, 'content')
+    
     >>> res = render_tile(root, request, 'sharing')
     >>> res.find('Sharing for root') > -1
     True

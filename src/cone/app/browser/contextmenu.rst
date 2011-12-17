@@ -44,6 +44,8 @@ ContextMenu
     
     >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode()
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(model, request, 'listing')
     >>> rendered = render_tile(model, request, 'contextmenu')
     >>> rendered.find('cut16_16') > -1
     True

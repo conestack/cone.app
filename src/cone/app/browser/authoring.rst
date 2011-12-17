@@ -123,6 +123,10 @@ Render without factory::
 
 Render with valid factory::
 
+    >>> from cone.app.browser.actions import ActionContext
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(root, request, 'content')
+    
     >>> request.params['factory'] = 'mynode'
     >>> result = render_tile(root, request, 'add')
     >>> result.find(u'<form action="http://example.com"') != -1
@@ -247,6 +251,10 @@ Render form with value from model::
 
     >>> layer.login('editor')
     >>> request = layer.new_request()
+    
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(root['somechild'], request, 'content')
+    
     >>> render_tile(root['somechild'], request, 'edit')
     u'<div class="box">...<h1>Edit My Node</h1>...<form 
     action="http://example.com/somechild" ...'
@@ -263,6 +271,9 @@ Render with submitted data. Default next URL of EditPart is the edited node::
 Check next URL with 'came_from' 'parent'::
 
     >>> request = layer.new_request()
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(root['somechild'], request, 'content')
+    
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['came_from'] = 'parent'
@@ -283,6 +294,9 @@ Check next URL with 'came_from' 'some_URL'::
 Render with ajax flag::
 
     >>> request = layer.new_request()
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(root['somechild'], request, 'content')
+    
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['ajax'] = '1'
@@ -298,6 +312,9 @@ this URL is used as ajax target::
     'http://example.com/somechild'
     
     >>> request = layer.new_request()
+    >>> request.environ['action_context'] = \
+    ...     ActionContext(root['somechild'], request, 'content')
+    
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'

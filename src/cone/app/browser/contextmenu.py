@@ -33,7 +33,7 @@ context_menu['contentviews']['edit'] = ActionEdit()
 context_menu['contentviews']['sharing'] = ActionSharing()
 
 context_menu['contextactions'] = Toolbar()
-context_menu['contextactions']['delete'] = ActionDelete() # XXX: remove here
+context_menu['contextactions']['delete'] = ActionDelete()
 context_menu['contextactions']['change_state'] = ActionState()
 
 context_menu['childactions'] = Toolbar()
