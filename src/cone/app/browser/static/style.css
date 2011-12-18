@@ -17,7 +17,18 @@ h1, h2, h3, h4, h5 {
 }
 h1 {
     font-size:150%;
+    padding-bottom:12px;
+    border-bottom:#ccc 1px solid;
 }
+.clear,
+.visual_clear {
+    clear:both;
+}
+.hiddenStructure {
+    display:none;
+}
+
+/* forms */
 label {
     display:block;
     font-weight:bold;
@@ -30,13 +41,6 @@ form .field div.error {
 }
 form .field div.error label {
     color:#333;
-}
-.clear,
-.visual_clear {
-    clear:both;
-}
-.hiddenStructure {
-    display:none;
 }
 
 /* Main layout styles */
@@ -55,6 +59,7 @@ h1#logo {
     left:12px;
     margin:0;
     text-shadow:#aaa 1px 1px 1px;
+    border:none;
 }
 h1#logo a {
     text-decoration:none;
@@ -176,12 +181,22 @@ ul#mainmenu li.node-settings a.current_page_item {
     font-weight: bold;
 }
 
+/* contetn wrapper */
+#content_wrapper {
+    display: block;
+    float: left;
+    position: relative;
+    width: 100%;
+}
+
 /* Sidebar left */
 #sidebar_left {
     float:left;
-    width:220px;
-    padding:12px;
-    margin-top:18px;
+    left:100%;
+    position:relative;
+    width:18.75%;
+    margin-left:-98.875%;
+    margin-top:26px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -255,9 +270,11 @@ ul#mainmenu li.node-settings a.current_page_item {
 /* Content */
 div#content {
     float:left;
-    width:960px;
-    padding:12px;
-    margin-top:18px;
+    left:100%;
+    position:relative;
+    margin-left:-77.875%;
+    width:76.75%;
+    margin-top:26px;
 }
 div#footer {
     clear:both;

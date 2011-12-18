@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Dynamic width CSS
+  [rnix, 2011-12-18]
+
 - Extend UI actions by ``selected`` property.
   [rnix, 2011-12-16]
 
