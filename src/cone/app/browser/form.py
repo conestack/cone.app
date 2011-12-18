@@ -53,7 +53,7 @@ class ProtectedAttributesForm(Part):
     """
     
     attribute_permissions = default(dict())
-    attribute_default_mode = default('edit')
+    attribute_default_permissions = default(('edit', 'view'))
     
     @default
     def mode_for(self, name):
@@ -65,7 +65,7 @@ class ProtectedAttributesForm(Part):
         """
         permissions = self.attribute_permissions.get(name)
         if not permissions:
-            return self.attribute_default_mode
+            permissions = self.attribute_default_permissions
         if has_permission(permissions[0], self.model, self.request):
             return 'edit'
         if has_permission(permissions[1], self.model, self.request):
