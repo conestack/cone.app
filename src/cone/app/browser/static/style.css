@@ -225,6 +225,7 @@ ul#mainmenu li.node-settings a.current_page_item {
 }
 .navtree li ul {
     padding:0;
+    margin:0;
 }
 .navtree ul.childtree {
     padding-top:6px;
