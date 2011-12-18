@@ -19,7 +19,7 @@ Render without any value::
     >>> widget = factory(
     ...     'reference',
     ...     'ref',
-    ...     props = {
+    ...     props={
     ...         'label': 'Reference',
     ...         'multivalued': False,
     ...         'target': lambda: 'http://example.com/foo',
@@ -34,7 +34,7 @@ Render required with empty value::
     >>> widget = factory(
     ...     'reference',
     ...     'ref',
-    ...     props = {
+    ...     props={
     ...         'label': 'Reference',
     ...         'multivalued': False,
     ...         'required': 'Ref Required',
@@ -76,8 +76,8 @@ Single valued expects 2-tuple as value with (uid, label)::
     >>> widget = factory(
     ...     'reference',
     ...     'ref',
-    ...     value = ('uid', 'Label'),
-    ...     props = {
+    ...     value=('uid', 'Label'),
+    ...     props={
     ...         'label': 'Reference',
     ...         'multivalued': False,
     ...         'required': 'Ref Required',
@@ -95,12 +95,37 @@ Extract from request and render widget with data::
     type="text" value="Title" /><input name="ref.uid" type="hidden" 
     value="123" />'
 
-Render widget with request.::
+Render widget with request::
 
     >>> widget(request=request)
     u'<input class="referencebrowser required" id="input-ref" name="ref" 
     type="text" value="Title" /><input name="ref.uid" type="hidden" 
     value="123" />'
+
+Single value display renderer::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     props={
+    ...         'label': 'Reference',
+    ...         'multivalued': False,
+    ...     },
+    ...     mode='display')
+    >>> widget()
+    u'<div class="display-referencebrowser" id="display-ref"></div>'
+    
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     value=('uid', 'Label'),
+    ...     props={
+    ...         'label': 'Reference',
+    ...         'multivalued': False,
+    ...     },
+    ...     mode='display')
+    >>> widget()
+    u'<div class="display-referencebrowser" id="display-ref">Label</div>'
 
 
 Multi valued
@@ -125,7 +150,7 @@ Render required with empty value::
     >>> widget = factory(
     ...     'reference',
     ...     'ref',
-    ...     props = {
+    ...     props={
     ...         'label': 'Reference',
     ...         'multivalued': True,
     ...         'required': 'Ref Required',
@@ -169,6 +194,25 @@ Required with valid value::
     id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
     id="input-ref-uid2" selected="selected" 
     value="uid2">Title2</option></select>'
+
+Multi value display renderer::
+
+    >>> widget = factory(
+    ...     'reference',
+    ...     'ref',
+    ...     value=['uid1', 'uid2'],
+    ...     props={
+    ...         'label': 'Reference',
+    ...         'multivalued': True,
+    ...         'vocabulary': [
+    ...             ('uid1', 'Title1'),
+    ...             ('uid2', 'Title2'),
+    ...         ],
+    ...     },
+    ...     mode='display')
+    >>> widget()
+    u'<ul class="display-referencebrowser" 
+    id="display-ref"><li>Title1</li><li>Title2</li></ul>'
 
 
 ActionAddReference

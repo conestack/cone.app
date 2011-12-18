@@ -15,11 +15,13 @@ from cone.app.browser.utils import make_url
 from yafowil.base import (
     factory,
     UNSET,
+    fetch_value,
 )
 from yafowil.common import (
     generic_extractor,
     generic_required_extractor,
     select_edit_renderer,
+    select_display_renderer,
     select_extractor,
 )
 from yafowil.utils import (
@@ -178,7 +180,7 @@ def wrap_ajax_target(rendered, widget):
     return rendered
 
 
-def reference_renderer(widget, data):
+def reference_edit_renderer(widget, data):
     """Properties:
     
     multivalued
@@ -215,11 +217,27 @@ def reference_renderer(widget, data):
         tag('input', **text_attrs) + tag('input', **hidden_attrs), widget)
 
 
+def reference_display_renderer(widget, data):
+    if widget.attrs.get('multivalued'):
+        return select_display_renderer(widget, data)
+    value = fetch_value(widget, data)
+    if value in [UNSET, u'', None]:
+        value = u''
+    else:
+        value = value[1]
+    attrs = {
+        'id': cssid(widget, 'display'),
+        'class_': 'display-%s' % widget.attrs['class'] or 'generic'
+    }
+    return data.tag('div', value, **attrs)
+
+
 factory.register(
     'reference',
     extractors=[generic_extractor, generic_required_extractor,
                 reference_extractor], 
-    edit_renderers=[reference_renderer])
+    edit_renderers=[reference_edit_renderer],
+    display_renderers=[reference_display_renderer])
 
 factory.defaults['reference.required_class'] = 'required'
 
