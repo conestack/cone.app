@@ -522,13 +522,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var label = $('.reftitle', elem.parent()).html();
                 if (this.singlevalue()) {
                     target.attr('value', label);
-                    var sel = '[name=' + target.attr('name') + '.uid]';
+                    var sel = '[name="' + target.attr('name') + '.uid"]';
                     $(sel).attr('value', uid);
+                    this._set_selected_on_ajax_target(target.parent(), [uid]);
                     this.overlay().close();
                     return;
                 }
                 if (this.multivalue()) {
-                    if ($('[value=' + uid + ']', target.parent()).length) {
+                    if ($('[value="' + uid + '"]', target.parent()).length) {
                         return;
                     }
                     var option = $('<option></option>');
@@ -545,11 +546,11 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 uid = uid.substring(4, uid.length);
                 if (this.singlevalue()) {
                     target.attr('value', '');
-                    var sel = '[name=' + target.attr('name') + '.uid]';
+                    var sel = '[name="' + target.attr('name') + '.uid"]';
                     $(sel).attr('value', '');
                 }
                 if (this.multivalue()) {
-                    var sel = '[value=' + uid + ']';
+                    var sel = '[value="' + uid + '"]';
                     if (!$(sel, target.parent()).length) {
                         return;
                     }
