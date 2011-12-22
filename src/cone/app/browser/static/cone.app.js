@@ -533,7 +533,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     option.val(uid).html(label).attr('selected', 'selected');
                     target.append(option);
                 }
-                this._resetselected(target);
+                this._reset_selected(target);
                 this._toggle_enabled(elem);
             },
             
@@ -553,7 +553,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     }
                     $(sel, target).remove();
                 }
-                this._resetselected(target);
+                this._reset_selected(target);
                 this._toggle_enabled(elem);
             },
             
@@ -570,18 +570,28 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             },
             
             // reset selected param on ajax triggers
-            _resetselected: function(elem) {
+            _reset_selected: function(elem) {
                 var wrapper = elem.parent();
                 var target = bdajax.parsetarget(wrapper.attr('ajax:target'));
                 var url = target.url;
                 var params = target.params;
                 var selected = '';
                 if (this.singlevalue()) {
-                    
+                    selected = [elem.attr('value')];
                 }
                 if (this.multivalue()) {
-                    
+                    selected = new Array();
+                    $('[selected=selected]', elem).each(function() {
+                        selected.push($(this).attr('value'))
+                    });
                 }
+                params.selected = selected.join(',');
+                var query = new Array();
+                for (var name in params) {
+                    query.push(name + '=' + params[name]);
+                }
+                query = query.join('&');
+                wrapper.attr('ajax:target', url + '?' + query);
             }
         }
     });
