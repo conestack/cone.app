@@ -191,6 +191,7 @@ class ReferenceListing(ContentsTile):
             'content': 'datetime',
         },
     ]
+    query_whitelist = ['root', 'referencable', 'selected']
     
     @instance_property
     def row_actions(self):
@@ -239,7 +240,7 @@ def wrap_ajax_target(rendered, widget, data):
         selected = ''
         if widget.attrs['multivalued'] and data.value:
             selected = ','.join(data.value)
-        elif data.value:
+        elif data.value and data.value[0]:
             selected = data.value[0]
         query = make_query(**{
             'root': root,
