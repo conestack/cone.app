@@ -23,9 +23,11 @@ Render without any value::
     ...         'label': 'Reference',
     ...         'multivalued': False,
     ...         'target': lambda: 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...     })
     >>> widget()
-    u'<span ajax:target="http://example.com/foo"><input 
+    u'<span 
+    ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
     class="referencebrowser" id="input-ref" name="ref" type="text" 
     value="" /><input name="ref.uid" type="hidden" value="" /></span>'
 
@@ -38,6 +40,8 @@ Render required with empty value::
     ...         'label': 'Reference',
     ...         'multivalued': False,
     ...         'required': 'Ref Required',
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...     })
     
     >>> request = layer.new_request()
@@ -52,8 +56,9 @@ Render required with empty value::
     [ExtractionError('Ref Required',)]
     
     >>> widget(data=data)
-    u'<input class="referencebrowser required" id="input-ref" name="ref" 
-    type="text" value="" /><input name="ref.uid" type="hidden" value="" />'
+    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
+    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    value="" /><input name="ref.uid" type="hidden" value="" /></span>'
 
 Required with valid value::
 
@@ -67,9 +72,9 @@ Required with valid value::
     []
     
     >>> widget(data=data)
-    u'<input class="referencebrowser required" id="input-ref" name="ref" 
-    type="text" value="Title" /><input name="ref.uid" type="hidden" 
-    value="123" />'
+    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
+    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>'
 
 Single valued expects 2-tuple as value with (uid, label)::
 
@@ -81,26 +86,28 @@ Single valued expects 2-tuple as value with (uid, label)::
     ...         'label': 'Reference',
     ...         'multivalued': False,
     ...         'required': 'Ref Required',
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...     })
     >>> widget()
-    u'<input class="referencebrowser required" id="input-ref" name="ref" 
-    type="text" value="Label" /><input name="ref.uid" type="hidden" 
-    value="uid" />'
+    u'<span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input 
+    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>'
 
 Extract from request and render widget with data::
 
     >>> data = widget.extract(request)
     >>> widget(data=data)
-    u'<input class="referencebrowser required" id="input-ref" name="ref" 
-    type="text" value="Title" /><input name="ref.uid" type="hidden" 
-    value="123" />'
+    u'<span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input 
+    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>'
 
 Render widget with request::
 
     >>> widget(request=request)
-    u'<input class="referencebrowser required" id="input-ref" name="ref" 
-    type="text" value="Title" /><input name="ref.uid" type="hidden" 
-    value="123" />'
+    u'<span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input 
+    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>'
 
 Single value display renderer::
 
@@ -110,6 +117,8 @@ Single value display renderer::
     ...     props={
     ...         'label': 'Reference',
     ...         'multivalued': False,
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...     },
     ...     mode='display')
     >>> widget()
@@ -122,6 +131,8 @@ Single value display renderer::
     ...     props={
     ...         'label': 'Reference',
     ...         'multivalued': False,
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...     },
     ...     mode='display')
     >>> widget()
@@ -139,11 +150,14 @@ Render without any value::
     ...     props = {
     ...         'label': 'Reference',
     ...         'multivalued': True,
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...     })
     >>> widget()
-    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
-    /><select class="referencebrowser" id="input-ref" multiple="multiple" 
-    name="ref" />'
+    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
+    id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select 
+    class="referencebrowser" id="input-ref" multiple="multiple" 
+    name="ref" /></span>'
 
 Render required with empty value::
 
@@ -154,6 +168,8 @@ Render required with empty value::
     ...         'label': 'Reference',
     ...         'multivalued': True,
     ...         'required': 'Ref Required',
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...         'vocabulary': [
     ...             ('uid1', 'Title1'),
     ...             ('uid2', 'Title2'),
@@ -171,11 +187,12 @@ Render required with empty value::
     [ExtractionError('Ref Required',)]
     
     >>> widget(data=data)
-    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
-    /><select class="referencebrowser required" id="input-ref" 
-    multiple="multiple" name="ref" required="required"><option 
+    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
+    id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select 
+    class="referencebrowser required" id="input-ref" multiple="multiple" 
+    name="ref" required="required"><option 
     id="input-ref-uid1" value="uid1">Title1</option><option 
-    id="input-ref-uid2" value="uid2">Title2</option></select>'
+    id="input-ref-uid2" value="uid2">Title2</option></select></span>'
 
 Required with valid value::
 
@@ -188,12 +205,13 @@ Required with valid value::
     []
     
     >>> widget(data=data)
-    u'<input id="exists-ref" name="ref-exists" type="hidden" value="exists" 
-    /><select class="referencebrowser required" id="input-ref" 
+    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
+    id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select 
+    class="referencebrowser required" id="input-ref" 
     multiple="multiple" name="ref" required="required"><option 
     id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
     id="input-ref-uid2" selected="selected" 
-    value="uid2">Title2</option></select>'
+    value="uid2">Title2</option></select></span>'
 
 Multi value display renderer::
 
@@ -203,6 +221,8 @@ Multi value display renderer::
     ...     value=['uid1', 'uid2'],
     ...     props={
     ...         'label': 'Reference',
+    ...         'target': 'http://example.com/foo',
+    ...         'referencable': 'dummy',
     ...         'multivalued': True,
     ...         'vocabulary': [
     ...             ('uid1', 'Title1'),
@@ -225,12 +245,11 @@ ActionAddReference
     
     >>> model = BaseNode()
     >>> request = layer.new_request()
+    >>> request.params['referencable'] = 'dummy'
+    >>> request.params['selected'] = ''
+    >>> request.params['root'] = '/'
     
     >>> action = ActionAddReference()
-    >>> action(model, request)
-    u''
-    
-    >>> model.properties.action_add_reference = True
     >>> action(model, request)
     u''
     
@@ -241,19 +260,18 @@ ActionAddReference
     >>> class UUIDNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = UUIDAware
+    ...     node_info_name = 'dummy'
+    
     >>> model = UUIDNode(name='model')
-    >>> model.properties.action_add_reference = True
     
     >>> action(model, request)
     u'...<a\n     
     id="ref-..."\n     
     href="http://example.com/model"\n     
-    class="add16_16 addreference"\n     
+    class="add_small16_16 addreference"\n     
     title="Add reference"\n     
     ajax:bind="click">&nbsp;</a>\n\n<span class="reftitle" 
     style="display:none;">model</span>'
-    
-    >>> model.properties.action_add_reference = False
     
     >>> layer.logout()
 
@@ -270,7 +288,7 @@ ReferencableChildrenLink
     >>> action(model, request)
     u'...<a\n     
     ajax:bind="click"\n     
-    ajax:target="http://example.com/model"\n     
+    ajax:target="http://example.com/model?selected=&root=/&referencable=dummy"\n     
     ajax:event="contextchanged:.refbrowsersensitiv"\n     
     ajax:action="tabletile:#tableid:replace">model</a>...'
     
@@ -288,6 +306,10 @@ Reference Pathbar
     >>> node = model['a']['b']['c'] = UUIDNode()
     
     >>> request = layer.new_request()
+    >>> request.params['referencable'] = 'dummy'
+    >>> request.params['selected'] = ''
+    >>> request.params['root'] = '/'
+    
     >>> res = render_tile(node, request, 'referencebrowser_pathbar')
     Traceback (most recent call last):
       ...
@@ -297,24 +319,24 @@ Reference Pathbar
     
     >>> layer.login('max')
     >>> res = render_tile(node, request, 'referencebrowser_pathbar')
-    >>> res.find('"http://example.com/"') > -1
+    >>> res.find('"http://example.com/?') > -1
     True
     
-    >>> res.find('"http://example.com/a"') > -1
+    >>> res.find('"http://example.com/a?') > -1
     True
     
-    >>> res.find('"http://example.com/a/b"') > -1
+    >>> res.find('"http://example.com/a/b?') > -1
     True
     
-    >>> model['a'].properties.referenceable_root = True
+    >>> request.params['root'] = 'a'
     >>> res = render_tile(node, request, 'referencebrowser_pathbar')
-    >>> res.find('"http://example.com/"') > -1
+    >>> res.find('"http://example.com/?') > -1
     False
     
-    >>> res.find('"http://example.com/a"') > -1
+    >>> res.find('"http://example.com/a?') > -1
     True
     
-    >>> res.find('"http://example.com/a/b"') > -1
+    >>> res.find('"http://example.com/a/b?') > -1
     True
     
     >>> layer.logout()
@@ -349,6 +371,10 @@ Create dummy environ::
 Unauthorized fails::
 
     >>> request = layer.new_request()
+    >>> request.params['referencable'] = 'dummy'
+    >>> request.params['selected'] = ''
+    >>> request.params['root'] = '/'
+    
     >>> res = render_tile(model, request, 'referencelisting')
     Traceback (most recent call last):
       ...
@@ -368,21 +394,20 @@ Authorized::
       ...
     <a\n     
     ajax:bind="click"\n     
-    ajax:target="http://example.com/5"\n     
+    ajax:target="http://example.com/5?..."\n     
     ajax:event="contextchanged:.refbrowsersensitiv"\n     
     ajax:action="referencelisting:#referencebrowser:replace">5</a>...
 
 Referencable nodes renders add reference action related markup::
 
     >>> res
-    u'\n  <div id="referencebrowser"\n       
-      ...
+    u'...
     <a\n     
     id="ref-..."\n     
-    href="http://example.com/6"\n     
-    class="add16_16 addreference"\n     
+    href="http://example.com/2"\n     
+    class="add_small16_16 addreference"\n     
     title="Add reference"\n     
-    ajax:bind="click">&nbsp;</a>\n\n<span class="reftitle" 
-    style="display:none;">6</span>\n...
+    ajax:bind="click">&nbsp;</a>\n\n<span 
+    class="reftitle" style="display:none;">2</span>...
     
     >>> layer.logout()
