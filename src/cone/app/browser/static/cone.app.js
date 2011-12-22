@@ -475,7 +475,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         icon.bind('click', function() {
             var elem = $(this);
             yafowil.referencebrowser.target = elem.prev().get(0);
-            yafowil.referencebrowser.overlay = bdajax.overlay({
+            bdajax.overlay({
                 action: 'referencebrowser',
                 target: elem.parent().attr('ajax:target')
             });
@@ -487,10 +487,12 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     $.extend(yafowil, {
         
         referencebrowser: {
-        
-            overlay: null,
             
             target: null,
+            
+            overlay: function() {
+                return $('#ajax-overlay').data('overlay');
+            },
             
             browser_binder: function(context) {
                 $('input.referencebrowser', context).referencebrowser();
@@ -522,7 +524,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     target.attr('value', label);
                     var sel = '[name=' + target.attr('name') + '.uid]';
                     $(sel).attr('value', uid);
-                    this.overlay.close();
+                    this.overlay().close();
                     return;
                 }
                 if (this.multivalue()) {
@@ -569,29 +571,36 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 $('a', elem.parent()).toggleClass('disabled');
             },
             
-            // reset selected param on ajax triggers
             _reset_selected: function(elem) {
-                var wrapper = elem.parent();
-                var target = bdajax.parsetarget(wrapper.attr('ajax:target'));
-                var url = target.url;
-                var params = target.params;
-                var selected = '';
+                var selected = new Array();
                 if (this.singlevalue()) {
-                    selected = [elem.attr('value')];
+                    selected.push(elem.attr('value'));
                 }
                 if (this.multivalue()) {
-                    selected = new Array();
                     $('[selected=selected]', elem).each(function() {
-                        selected.push($(this).attr('value'))
+                        selected.push($(this).attr('value'));
                     });
                 }
-                params.selected = selected.join(',');
+                this._set_selected_on_ajax_target(elem.parent(), selected);
+                var overlay = this.overlay().getOverlay();
+                var rb;
+                $('div.referencebrowser a', overlay).each(function() {
+                    var link = $(this);
+                    if (link.attr('ajax:target')) {
+                        rb = yafowil.referencebrowser;
+                        rb._set_selected_on_ajax_target(link, selected);
+                    }
+                });
+            },
+            
+            _set_selected_on_ajax_target: function(elem, selected) {
+                var target = bdajax.parsetarget(elem.attr('ajax:target'));
+                target.params.selected = selected.join(',');
                 var query = new Array();
-                for (var name in params) {
-                    query.push(name + '=' + params[name]);
+                for (var name in target.params) {
+                    query.push(name + '=' + target.params[name]);
                 }
-                query = query.join('&');
-                wrapper.attr('ajax:target', url + '?' + query);
+                elem.attr('ajax:target', target.url + '?' + query.join('&'));
             }
         }
     });

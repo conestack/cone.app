@@ -172,22 +172,22 @@ class ReferenceListing(ContentsTile):
         {
             'id': 'title',
             'title': 'Title',
-            'sort_key': 'title',
-            'sort_title': 'Sort on title',
+            'sort_key': None,
+            'sort_title': None,
             'content': 'structure',
         },
         {
             'id': 'created',
             'title': 'Created',
-            'sort_key': 'created',
-            'sort_title': 'Sort on created',
+            'sort_key': None,
+            'sort_title': None,
             'content': 'datetime',
         },
         {
             'id': 'modified',
             'title': 'Modified',
-            'sort_key': 'modified',
-            'sort_title': 'Sort on modified',
+            'sort_key': None,
+            'sort_title': None,
             'content': 'datetime',
         },
     ]
