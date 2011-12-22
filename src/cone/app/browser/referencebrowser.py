@@ -12,7 +12,10 @@ from cone.app.interfaces import INavigationLeaf
 from cone.app.browser.layout import PathBar
 from cone.app.browser.table import RowData
 from cone.app.browser.contents import ContentsTile
-from cone.app.browser.actions import LinkAction
+from cone.app.browser.actions import (
+    Toolbar,
+    LinkAction,
+)
 from cone.app.browser.utils import (
     make_url,
     make_query,
@@ -45,6 +48,14 @@ registerTile('referencebrowser',
              permission='view')
 
 
+def make_refbrowser_query(request):
+    return make_query(**{
+        'root': request.params['root'],
+        'referencable': request.params['referencable'],
+        'selected': request.params['selected'],
+    })
+
+
 @tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt', 
       permission='view')
 class ReferenceBrowserPathBar(PathBar):
@@ -58,18 +69,18 @@ class ReferenceBrowserPathBar(PathBar):
             if path == root:
                 breakpoint = node
                 break
-        query = make_query(**{
-            'root': self.request.params['root'],
-            'referencable': self.request.params['referencable']
-        })
-        return self.items_for(self.model, breakpoint, query)
+        return self.items_for(self.model,
+                              breakpoint,
+                              make_refbrowser_query(self.request))
 
 
-class ActionAddReference(LinkAction):
-    css = 'add16_16 addreference'
-    title = 'Add reference'
+class ReferenceAction(LinkAction):
     target = None
     href = LinkAction.target
+    
+    @property
+    def selected_uids(self):
+        return self.request.params['selected'].split(',')
     
     @property
     def id(self):
@@ -93,6 +104,28 @@ class ActionAddReference(LinkAction):
         return rendered + tag('span', title, **attrs)
 
 
+class ActionAddReference(ReferenceAction):
+    css = 'add_small16_16 addreference'
+    title = 'Add reference'
+    
+    @property
+    def enabled(self):
+        if IUUIDAware.providedBy(self.model):
+            return not str(self.model.uuid) in self.selected_uids
+        return False
+
+
+class ActionRemoveReference(ReferenceAction):
+    css = 'remove16_16 removereference'
+    title = 'Remove reference'
+    
+    @property
+    def enabled(self):
+        if IUUIDAware.providedBy(self.model):
+            return str(self.model.uuid) in self.selected_uids
+        return False
+
+
 class ReferencableChildrenLink(LinkAction):
     event = 'contextchanged:.refbrowsersensitiv'
     
@@ -102,11 +135,8 @@ class ReferencableChildrenLink(LinkAction):
     
     @property
     def target(self):
-        query = make_query(**{
-            'root': self.request.params['root'],
-            'referencable': self.request.params['referencable']
-        })
-        return '%s%s' % (super(ReferencableChildrenLink, self).target, query)
+        return '%s%s' % (super(ReferencableChildrenLink, self).target,
+                         make_refbrowser_query(self.request))
     
     @property
     def text(self):
@@ -163,8 +193,11 @@ class ReferenceListing(ContentsTile):
     ]
     
     @instance_property
-    def action_add_reference(self):
-        return ActionAddReference()
+    def row_actions(self):
+        row_actions = Toolbar()
+        row_actions['add'] = ActionAddReference()
+        row_actions['remove'] = ActionRemoveReference()
+        return row_actions
     
     @instance_property
     def referencable_children_link(self):
@@ -175,7 +208,7 @@ class ReferenceListing(ContentsTile):
         rows = list()
         for child in children[start:end]:
             row_data = RowData()
-            row_data['actions'] = self.action_add_reference(child, self.request)
+            row_data['actions'] = self.row_actions(child, self.request)
             row_data['title'] = \
                 self.referencable_children_link(child, self.request)
             row_data['created'] = child.metadata.get('created')
@@ -190,7 +223,7 @@ def reference_extractor(widget, data):
     return data.request.get('%s.uid' % widget.dottedpath)
 
 
-def wrap_ajax_target(rendered, widget):
+def wrap_ajax_target(rendered, widget, data):
     if widget.attrs.get('target'):
         target = widget.attrs.get('target')
         if callable(target):
@@ -203,9 +236,15 @@ def wrap_ajax_target(rendered, widget):
         root = widget.attrs['root']
         if callable(root):
             root = root()
+        selected = ''
+        if widget.attrs['multivalued'] and data.value:
+            selected = ','.join(data.value)
+        elif data.value:
+            selected = data.value[0]
         query = make_query(**{
             'root': root,
             'referencable': referencable,
+            'selected': selected,
         })
         target = '%s%s' % (target, query)
         attrs = {
@@ -236,7 +275,8 @@ def reference_edit_renderer(widget, data):
         ``IUUIDAware`` and a node info.
     """
     if widget.attrs.get('multivalued'):
-        return wrap_ajax_target(select_edit_renderer(widget, data), widget)
+        rendered = select_edit_renderer(widget, data)
+        return wrap_ajax_target(rendered, widget, data)
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
@@ -259,8 +299,8 @@ def reference_edit_renderer(widget, data):
         'value': value[0],
         'name_': '%s.uid' % widget.dottedpath,
     }
-    return wrap_ajax_target(
-        tag('input', **text_attrs) + tag('input', **hidden_attrs), widget)
+    rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
+    return wrap_ajax_target(rendered, widget, data)
 
 
 def reference_display_renderer(widget, data):

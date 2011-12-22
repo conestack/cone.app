@@ -673,3 +673,29 @@ a.paste16_16.disabled {
     background:url('images/paste16_16_disabled.png') 3px 2px no-repeat;
     cursor:default;
 }
+a.remove16_16 {
+    text-decoration: none;
+    padding-left:18px;
+    width:16px;
+    font-size:16px;
+    margin-right:4px;
+    background:url('images/icon_remove.png') 3px 2px no-repeat;
+    cursor:pointer;
+}
+a.remove16_16.disabled {
+    background:url('images/icon_remove_disabled.png') 3px 2px no-repeat;
+    cursor:default;
+}
+a.add_small16_16 {
+    text-decoration: none;
+    padding-left:18px;
+    width:16px;
+    font-size:16px;
+    margin-right:4px;
+    background:url('images/icon_add.png') 3px 2px no-repeat;
+    cursor:pointer;
+}
+a.add_small16_16.disabled {
+    background:url('images/icon_add_disabled.png') 3px 2px no-repeat;
+    cursor:default;
+}

@@ -41,7 +41,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             copysupportbinder: cone.copysupportbinder,
             refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
             refbrowser_add_reference_binder:
-                yafowil.referencebrowser.add_reference_binder
+                yafowil.referencebrowser.add_reference_binder,
+            refbrowser_remove_reference_binder:
+                yafowil.referencebrowser.remove_reference_binder
         });
     });
     
@@ -496,44 +498,89 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             },
             
             add_reference_binder: function(context) {
-                $('a.addreference').bind('click', function(event) {
+                $('a.addreference').unbind('click')
+                                   .bind('click', function(event) {
                     event.preventDefault();
-                    yafowil.referencebrowser.addreference(this);
+                    yafowil.referencebrowser.addreference($(this));
+                });
+            },
+            
+            remove_reference_binder: function(context) {
+                $('a.removereference').unbind('click')
+                                      .bind('click', function(event) {
+                    event.preventDefault();
+                    yafowil.referencebrowser.removereference($(this));
                 });
             },
             
             addreference: function(elem) {
-                elem = $(elem);
+                var target = $(this.target);
                 var uid = elem.attr('id');
                 uid = uid.substring(4, uid.length);
-                if (!uid) {
-                    bdajax.error(
-                        'Can not add reference, no UID for node found!');
-                    return;
-                }
                 var label = $('.reftitle', elem.parent()).html();
-                var target = yafowil.referencebrowser.target;
-                var tag = target.tagName;
-                target = $(target);
-                // text input for single valued
-                if (tag == 'INPUT') {
+                if (this.singlevalue()) {
                     target.attr('value', label);
                     var sel = '[name=' + target.attr('name') + '.uid]';
                     $(sel).attr('value', uid);
-                    yafowil.referencebrowser.overlay.close();
+                    this.overlay.close();
                     return;
                 }
-                // select input for multi valued
-                if (tag == 'SELECT') {
+                if (this.multivalue()) {
                     if ($('[value=' + uid + ']', target.parent()).length) {
                         return;
                     }
-                    var option = $('<option></option>')
-                        .val(uid)
-                        .html(label)
-                        .attr('selected', 'selected')
-                    ;
+                    var option = $('<option></option>');
+                    option.val(uid).html(label).attr('selected', 'selected');
                     target.append(option);
+                }
+                this._resetselected(target);
+                this._toggle_enabled(elem);
+            },
+            
+            removereference: function(elem) {
+                var target = $(this.target);
+                var uid = elem.attr('id');
+                uid = uid.substring(4, uid.length);
+                if (this.singlevalue()) {
+                    target.attr('value', '');
+                    var sel = '[name=' + target.attr('name') + '.uid]';
+                    $(sel).attr('value', '');
+                }
+                if (this.multivalue()) {
+                    var sel = '[value=' + uid + ']';
+                    if (!$(sel, target.parent()).length) {
+                        return;
+                    }
+                    $(sel, target).remove();
+                }
+                this._resetselected(target);
+                this._toggle_enabled(elem);
+            },
+            
+            singlevalue: function() {
+                return this.target.tagName == 'INPUT';
+            },
+            
+            multivalue: function() {
+                return this.target.tagName == 'SELECT';
+            },
+            
+            _toggle_enabled: function(elem) {
+                $('a', elem.parent()).toggleClass('disabled');
+            },
+            
+            // reset selected param on ajax triggers
+            _resetselected: function(elem) {
+                var wrapper = elem.parent();
+                var target = bdajax.parsetarget(wrapper.attr('ajax:target'));
+                var url = target.url;
+                var params = target.params;
+                var selected = '';
+                if (this.singlevalue()) {
+                    
+                }
+                if (this.multivalue()) {
+                    
                 }
             }
         }
