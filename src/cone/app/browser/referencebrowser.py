@@ -1,3 +1,4 @@
+import types
 from node.interfaces import IUUIDAware
 from node.utils import (
     instance_property,
@@ -7,11 +8,15 @@ from cone.tile import (
     tile,
     registerTile,
 )
+from cone.app.interfaces import INavigationLeaf
 from cone.app.browser.layout import PathBar
 from cone.app.browser.table import RowData
 from cone.app.browser.contents import ContentsTile
 from cone.app.browser.actions import LinkAction
-from cone.app.browser.utils import make_url
+from cone.app.browser.utils import (
+    make_url,
+    make_query,
+)
 from yafowil.base import (
     factory,
     UNSET,
@@ -46,12 +51,18 @@ class ReferenceBrowserPathBar(PathBar):
     
     @property
     def items(self):
+        root = self.request.params['root'].split('/')
         breakpoint = None
         for node in LocationIterator(self.model):
-            if node.properties.referenceable_root:
+            path = [_ for _ in node.path if _]
+            if path == root:
                 breakpoint = node
                 break
-        return self.items_for(self.model, breakpoint)
+        query = make_query(**{
+            'root': self.request.params['root'],
+            'referencable': self.request.params['referencable']
+        })
+        return self.items_for(self.model, breakpoint, query)
 
 
 class ActionAddReference(LinkAction):
@@ -66,8 +77,11 @@ class ActionAddReference(LinkAction):
     
     @property
     def display(self):
+        referencable = self.request.params['referencable']
+        referencable = referencable.find(',') > -1 \
+            and referencable.split(',') or [referencable]
         return IUUIDAware.providedBy(self.model) \
-            and self.model.properties.action_add_reference
+            and self.model.node_info_name in referencable
     
     def render(self):
         rendered = LinkAction.render(self)
@@ -87,6 +101,14 @@ class ReferencableChildrenLink(LinkAction):
         self.table_id = table_id
     
     @property
+    def target(self):
+        query = make_query(**{
+            'root': self.request.params['root'],
+            'referencable': self.request.params['referencable']
+        })
+        return '%s%s' % (super(ReferencableChildrenLink, self).target, query)
+    
+    @property
     def text(self):
         return self.model.metadata.get('title', self.model.name)
     
@@ -99,9 +121,9 @@ class ReferencableChildrenLink(LinkAction):
         return self.permitted('view')
     
     def render(self):
-        if not self.model.properties.get('leaf'): # XXX: IAppLeaf
-            return LinkAction.render(self)
-        return self.text
+        if INavigationLeaf.providedBy(self.model):
+            return self.text
+        return LinkAction.render(self)
 
 
 @tile('referencelisting', 'templates/table.pt', permission='view')
@@ -173,6 +195,19 @@ def wrap_ajax_target(rendered, widget):
         target = widget.attrs.get('target')
         if callable(target):
             target = target()
+        referencable = widget.attrs['referencable']
+        if callable(referencable):
+            referencable = referencable()
+        if type(referencable) in [types.ListType, types.TupleType]:
+            referencable = ','.join(referencable)
+        root = widget.attrs['root']
+        if callable(root):
+            root = root()
+        query = make_query(**{
+            'root': root,
+            'referencable': referencable,
+        })
+        target = '%s%s' % (target, query)
         attrs = {
             'ajax:target': target,
         }
@@ -184,10 +219,21 @@ def reference_edit_renderer(widget, data):
     """Properties:
     
     multivalued
-        flag whether reference field is multivalued
+        flag whether reference field is multivalued.
+    
+    vocabulary
+        if multivalued, provide a vocabulary mapping uids to node names.
     
     target
-        ajax target for reference browser triggering
+        ajax target for reference browser triggering.
+    
+    root
+        path of reference browser root. Defaults to '/'
+    
+    referencable
+        list of node info names which are referencable.  Defaults to '',
+        which means all objects are referencable, given they provide
+        ``IUUIDAware`` and a node info.
     """
     if widget.attrs.get('multivalued'):
         return wrap_ajax_target(select_edit_renderer(widget, data), widget)
@@ -246,3 +292,9 @@ factory.defaults['reference.default'] = ''
 factory.defaults['reference.format'] = 'block'
 
 factory.defaults['reference.class'] = 'referencebrowser'
+
+factory.defaults['reference.multivalued'] = False
+
+factory.defaults['reference.root'] = '/'
+
+factory.defaults['reference.referencable'] = ''

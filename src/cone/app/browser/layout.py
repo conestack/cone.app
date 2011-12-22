@@ -12,6 +12,7 @@ from cone.tile import (
     render_template,
     registerTile,
 )
+from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
 from cone.app.utils import (
     app_config,
@@ -151,12 +152,12 @@ class PathBar(Tile):
     def items(self):
         return self.items_for(self.model)
     
-    def items_for(self, model, breakpoint=None):
+    def items_for(self, model, breakpoint=None, query=None):
         items = list()
         for node in LocationIterator(model):
             items.append({
                 'title': node.metadata.title,
-                'url': make_url(self.request, node=node),
+                'url': make_url(self.request, node=node, query=query),
                 'selected': False,
                 'id': node.name,
                 'default_child': node.properties.default_child,
@@ -200,6 +201,8 @@ class NavTree(Tile):
         return item
     
     def fillchildren(self, model, path, tree):
+        """XXX: consider cone.app.interfaces.INavigationLeaf
+        """
         curpath = None
         if path:
             curpath = path[0]

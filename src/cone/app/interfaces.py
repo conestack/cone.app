@@ -5,6 +5,7 @@ from zope.interface import (
 from zope.interface.common.mapping import IReadMapping
 from node.interfaces import (
     INode,
+    ILeaf,
     IAttributes,
     IChildFactory,
 )
@@ -76,6 +77,11 @@ class INodeInfo(IProperties):
     factory = Attribute(u"Add model factory.")
     addables = Attribute(u"List of valid children node info names.")
     icon = Attribute(u"Node icon.")
+
+
+class INavigationLeaf(ILeaf):
+    """Marker interface for nodes which have no navigatable children.
+    """
 
 
 class IWorkflowState(INode, IAttributes):

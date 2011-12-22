@@ -459,6 +459,8 @@ specific actions.
 *modified*
     Node last modification date as ``datetime.datetime`` instance.
 
+XXX: outdated
+
 **Considered properties**
 
 *leaf*
