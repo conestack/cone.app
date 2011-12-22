@@ -13,17 +13,32 @@ from cone.app.browser.utils import make_url
 
 
 class ActionContext(object):
-    """Set by render_mail_template and ajax_action. instance will be found at
-    request.environ['action_context']
+    """The action context is used to calculate action scopes. The action scope
+    is used by actions to calculate it's own state, i.e. if it is selected,
+    displayed or disabled.
+    
+    The action scope is bound to either the content tile name used in main
+    template, or to the requested ajax action name if ajax request.
+    
+    XXX: Think of better class name.
     """
     
     def __init__(self, model, request, tilename):
+        """Created by ``render_mail_template`` and ``ajax_action``.
+        
+        Instance is wtitten to request.environ['action_context'].
+        """
+        request.environ['action_context'] = self
         self.model = model
         self.request = request
         self.tilename = tilename
     
     @property
     def scope(self):
+        """default_content_tile of application model is returned if recent
+        action scope is 'content' and default content tile property found.
+        Otherwise tile name is returned as found.
+        """
         scope = self.tilename
         if self.request.params.get('bdajax.action'):
             scope = self.request.params.get('bdajax.action')
@@ -33,6 +48,8 @@ class ActionContext(object):
 
 
 class Toolbar(odict):
+    """A toolbar rendering actions.
+    """
     display = True
     
     def __call__(self, model, request):
@@ -46,6 +63,8 @@ class Toolbar(odict):
 
 
 class Action(object):
+    """Abstract Action.
+    """
     display = True
     
     def __call__(self, model, request):
@@ -68,6 +87,8 @@ class Action(object):
 
 
 class TileAction(Action):
+    """Action rendered by a tile.
+    """
     tile = u''
     
     def render(self):
@@ -75,6 +96,8 @@ class TileAction(Action):
 
 
 class TemplateAction(Action):
+    """Action rendered by a template.
+    """
     template = u''
     
     def render(self):
@@ -85,6 +108,8 @@ class TemplateAction(Action):
 
 
 class LinkAction(TemplateAction):
+    """Action rendering a HTML link, optional with bdajax attributes.
+    """
     template = 'cone.app.browser:templates/link_action.pt'
     bind = 'click'    # ajax:bind attribute
     id = None         # id attribute
@@ -115,6 +140,8 @@ class LinkAction(TemplateAction):
 
 
 class ActionUp(LinkAction):
+    """One level up action.
+    """
     css = 'up16_16'
     title = 'One level up'
     event = 'contextchanged:.contextsensitiv'
@@ -140,6 +167,8 @@ class ActionUp(LinkAction):
 
 
 class ActionView(LinkAction):
+    """View action.
+    """
     css = 'view16_16'
     title = 'View'
     href = LinkAction.target
@@ -163,6 +192,8 @@ class ActionView(LinkAction):
 
 
 class ViewLink(ActionView):
+    """View link
+    """
     css = None
     
     @property
@@ -175,6 +206,8 @@ class ViewLink(ActionView):
 
 
 class ActionList(LinkAction):
+    """Contents listing action.
+    """
     css = 'listing16_16'
     title = 'Listing'
     action = 'listing:#content:inner'
@@ -193,6 +226,8 @@ class ActionList(LinkAction):
 
 
 class ActionSharing(LinkAction):
+    """Sharing action.
+    """
     css = 'sharing16_16'
     title = 'Sharing'
     action = 'sharing:#content:inner'
@@ -212,6 +247,8 @@ class ActionSharing(LinkAction):
 
 
 class ActionState(TileAction):
+    """Change state action.
+    """
     tile = 'wf_dropdown'
     
     @property
@@ -221,6 +258,8 @@ class ActionState(TileAction):
 
 
 class ActionAdd(TileAction):
+    """Add dropdown action.
+    """
     tile = 'add_dropdown'
     
     @property
@@ -231,6 +270,8 @@ class ActionAdd(TileAction):
 
 
 class ActionEdit(LinkAction):
+    """Edit action.
+    """
     css = 'edit16_16'
     title = 'Edit'
     action = 'edit:#content:inner'
@@ -249,6 +290,8 @@ class ActionEdit(LinkAction):
 
 
 class ActionDelete(LinkAction):
+    """Delete action.
+    """
     css = 'delete16_16'
     title = 'Delete'
     action = 'delete:NONE:NONE'
@@ -271,6 +314,8 @@ class ActionDelete(LinkAction):
 
 
 class ActionDeleteChildren(LinkAction):
+    """Delete children action.
+    """
     css = 'delete16_16'
     title = 'Delete selected children'
     action = 'delete_children:NONE:NONE'
@@ -291,6 +336,8 @@ class ActionDeleteChildren(LinkAction):
 
 
 class ActionCut(LinkAction):
+    """Cut children action.
+    """
     css = 'cut16_16'
     title = 'Cut'
     bind = None
@@ -308,6 +355,8 @@ class ActionCut(LinkAction):
 
 
 class ActionCopy(LinkAction):
+    """Copy children action.
+    """
     css = 'copy16_16'
     title = 'Copy'
     bind = None
@@ -325,6 +374,8 @@ class ActionCopy(LinkAction):
 
 
 class ActionPaste(LinkAction):
+    """Paste children action.
+    """
     css = 'paste16_16'
     title = 'Paste'
     bind = None

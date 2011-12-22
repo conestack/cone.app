@@ -44,9 +44,7 @@ def ajax_tile(model, request):
     """
     try:
         name = request.params.get('bdajax.action')
-        # XXX: ActionContext centralized
         action_context = ActionContext(model, request, name)
-        request.environ['action_context'] = action_context
         rendered = render_tile(model, request, action_context.scope)
         continuation = request.environ.get('cone.app.continuation')
         if continuation:
