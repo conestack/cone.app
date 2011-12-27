@@ -242,6 +242,12 @@ class EditPart(CameFromNext, ContentForm):
 @tile('delete', permission="delete")
 class DeleteAction(Tile):
     
+    def continuation(self, url):
+        return [
+            AjaxAction(url, 'content', 'inner', '#content'),
+            AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
+        ]
+    
     def render(self):
         model = self.model
         title = model.metadata.get('title', model.name)
@@ -254,10 +260,7 @@ class DeleteAction(Tile):
         if hasattr(parent, '__call__'):
             parent()
         url = make_url(self.request, node=parent)
-        action = AjaxAction(url, 'content', 'inner', '#content')
-        event = AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-        continuation = [action, event]
-        ajax_continue(self.request, continuation)
+        ajax_continue(self.request, self.continuation(url))
         message = 'Deleted: %s' % title
         ajax_message(self.request, message, 'info')
         return u''
