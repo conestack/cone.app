@@ -46,7 +46,7 @@ context_menu['childactions']['paste'] = ActionPaste()
 
 @tile('contextmenu', 'templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
-    
+
     @property
     def toolbars(self):
         return context_menu.values()

@@ -33,7 +33,7 @@ from cone.app.security import (
 class WorkflowNode(BaseNode):
     __metaclass__ = plumber
     __plumbing__ = WorkflowState, WorkflowACL
-    
+
     @property
     def properties(self):
         props = Properties()
@@ -45,13 +45,13 @@ class WorkflowNode(BaseNode):
             'initial_2_final': 'Finalize',
         }
         return props
-    
+
     def __call__(self):
         pass
 
 
 class InexistentWorkflowNode(WorkflowNode):
-    
+
     @property
     def properties(self):
         props = super(InexistentWorkflowNode, self).properties
@@ -98,6 +98,6 @@ class SharingNode(object):
 class CopySupportNode(BaseNode):
     __metaclass__ = plumber
     __plumbing__ = CopySupport
-    
+
     def __call__(self):
         print 'Called: %s' % self.name

@@ -20,7 +20,7 @@ from cone.app.browser.ajax import (
 @tile('content', 'templates/settings.pt',
       interface=AppSettings, permission='manage')
 class AppSettings(Tile):
-    
+
     @property
     def tabs(self):
         ret = list()
@@ -42,13 +42,13 @@ class AppSettings(Tile):
 class SettingsPart(Part):
     """Particular settings object form part.
     """
-    
+
     @plumb
     def prepare(_next, self):
         _next(self)
         selector = '#form-%s' % '-'.join(self.form.path)
         ajax_form_fiddle(self.request, selector, 'replace')
-    
+
     @default
     def next(self, request):
         if self.ajax_request:

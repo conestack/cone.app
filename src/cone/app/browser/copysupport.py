@@ -38,7 +38,7 @@ def paths_from_urls(urls):
 
 @tile('paste', permission="paste")
 class PasteAction(Tile):
-    
+
     def render(self):
         cut = extract_copysupport_cookie(self.request, 'cut')
         copy = extract_copysupport_cookie(self.request, 'copy')

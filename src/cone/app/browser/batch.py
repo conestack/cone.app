@@ -6,9 +6,9 @@ from cone.tile import (
 
 class Batch(Tile):
     """An abstract batch tile.
-    
-    A subclass has to implement 'self.vocab' and may override 'self.batchrange',
-    'self.display' and 'self.batchname'.   
+
+    A subclass has to implement 'self.vocab' and may override
+    'self.batchrange', 'self.display' and 'self.batchname'.
     """
     dummypage = {
         'page': '',
@@ -16,14 +16,14 @@ class Batch(Tile):
         'visible': False,
         'url': '',
     }
-    
+
     ellipsis = u'...'
-    
+
     def render(self):
         return render_template('cone.app.browser:templates/batch.pt',
                                request=self.request,
                                model=self.model, context=self)
-    
+
     @property
     def vocab(self):
         return []
@@ -31,18 +31,18 @@ class Batch(Tile):
     @property
     def display(self):
         return True
-    
+
     @property
     def batchrange(self):
         return 30
-    
+
     @property
     def currentpage(self):
         for page in self.vocab:
             if page['current']:
                 return page
         return None
-    
+
     @property
     def firstpage(self):
         firstpage = None
@@ -110,11 +110,12 @@ class Batch(Tile):
     def pages(self):
         position = self._getPositionOfCurrentInVocab()
         count = len(self.vocab)
-        start = max(position - self._siderange - max(self._rightOverDiff, 0), 0)
+        start = max(
+            position - self._siderange - max(self._rightOverDiff, 0), 0)
         end = min(position + self._siderange + max(self._leftOverDiff, 0) + 1,
                   count)
         return self.vocab[start:end]
-    
+
     @property
     def _siderange(self):
         return self.batchrange / 2
@@ -129,7 +130,7 @@ class Batch(Tile):
         position = self._getPositionOfCurrentInVocab()
         count = len(self.vocab)
         return position + self._siderange - count + 1
-    
+
     def _getPositionOfCurrentInVocab(self):
         #TODO: wildcard handling
         current = self.currentpage
@@ -141,4 +142,4 @@ class Batch(Tile):
                 return pointer
             pointer += 1
         # reached if subclass implementation bug
-        return -1                                           #pragma NO COVERAGE
+        return -1                                          # pragma NO COVERAGE

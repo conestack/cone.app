@@ -40,10 +40,10 @@ registerTile('referencebrowser',
              permission='view')
 
 
-@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt', 
+@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt',
       permission='view')
 class ReferenceBrowserPathBar(PathBar):
-    
+
     @property
     def items(self):
         breakpoint = None
@@ -59,16 +59,16 @@ class ActionAddReference(LinkAction):
     title = 'Add reference'
     target = None
     href = LinkAction.target
-    
+
     @property
     def id(self):
         return 'ref-%s' % self.model.uuid
-    
+
     @property
     def display(self):
         return IUUIDAware.providedBy(self.model) \
             and self.model.properties.action_add_reference
-    
+
     def render(self):
         rendered = LinkAction.render(self)
         attrs = {
@@ -81,32 +81,32 @@ class ActionAddReference(LinkAction):
 
 class ReferencableChildrenLink(LinkAction):
     event = 'contextchanged:.refbrowsersensitiv'
-    
+
     def __init__(self, table_tile_name, table_id):
         self.table_tile_name = table_tile_name
         self.table_id = table_id
-    
+
     @property
     def text(self):
         return self.model.metadata.get('title', self.model.name)
-    
+
     @property
     def action(self):
         return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
-    
+
     @property
     def display(self):
         return self.permitted('view')
-    
+
     def render(self):
-        if not self.model.properties.get('leaf'): # XXX: IAppLeaf
+        if not self.model.properties.get('leaf'):  # XXX: IAppLeaf
             return LinkAction.render(self)
         return self.text
 
 
 @tile('referencelisting', 'templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
-    
+
     table_id = 'referencebrowser'
     table_tile_name = 'referencelisting'
     col_defs = [
@@ -139,21 +139,22 @@ class ReferenceListing(ContentsTile):
             'content': 'datetime',
         },
     ]
-    
+
     @instance_property
     def action_add_reference(self):
         return ActionAddReference()
-    
+
     @instance_property
     def referencable_children_link(self):
         return ReferencableChildrenLink(self.table_tile_name, self.table_id)
-    
+
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
         for child in children[start:end]:
             row_data = RowData()
-            row_data['actions'] = self.action_add_reference(child, self.request)
+            row_data['actions'] = self.action_add_reference(
+                child, self.request)
             row_data['title'] = \
                 self.referencable_children_link(child, self.request)
             row_data['created'] = child.metadata.get('created')
@@ -182,10 +183,10 @@ def wrap_ajax_target(rendered, widget):
 
 def reference_edit_renderer(widget, data):
     """Properties:
-    
+
     multivalued
         flag whether reference field is multivalued
-    
+
     target
         ajax target for reference browser triggering
     """
@@ -206,7 +207,7 @@ def reference_edit_renderer(widget, data):
         'value': value[1],
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
-        'class_': cssclasses(widget, data),    
+        'class_': cssclasses(widget, data),
     }
     hidden_attrs = {
         'type': 'hidden',
@@ -235,7 +236,7 @@ def reference_display_renderer(widget, data):
 factory.register(
     'reference',
     extractors=[generic_extractor, generic_required_extractor,
-                reference_extractor], 
+                reference_extractor],
     edit_renderers=[reference_edit_renderer],
     display_renderers=[reference_display_renderer])
 

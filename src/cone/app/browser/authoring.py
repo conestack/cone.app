@@ -49,8 +49,8 @@ def render_form(model, request, tilename):
     ``render_ajax_form`` is called, which renders the tile wrapped by some
     javascript calls into a script tag. The ajax response will be rendered into
     the hidden iframe on client side, where ajax continuation is processed.
-    
-    XXX: move to cone.app.browser.form 
+
+    XXX: move to cone.app.browser.form
     """
     if is_ajax(request):
         # XXX: ActionContext centralized
@@ -63,10 +63,10 @@ def render_form(model, request, tilename):
 class CameFromNext(Part):
     """Part for form tiles considering 'came_from' parameter on request.
     """
-    
+
     @plumb
     def prepare(_next, self):
-        """Hook after prepare and set 'came_from' as proxy field to 
+        """Hook after prepare and set 'came_from' as proxy field to
         ``self.form``.
         """
         _next(self)
@@ -74,11 +74,11 @@ class CameFromNext(Part):
             'proxy',
             value=self.request.params.get('came_from'),
         )
-    
+
     @default
     def next(self, request):
         """Read 'came_from' parameter from request and compute next url.
-        
+
         If came_from is 'parent', URL of node parent is computed.
         If came_from is set but not 'parent', it is considered as URL to use
         If no came_from is set, return URL of node
@@ -106,10 +106,10 @@ def add(model, request):
 
 def default_addmodel_factory(parent, nodeinfo):
     """Default addmodel factory.
-    
+
     The addmodel factory is responsible to create a model suitable for
     rendering addforms refering to node info.
-    
+
     parent
         The parent in which the new item should be added
     nodeinfo
@@ -130,7 +130,7 @@ class AddTile(ProtectedContentTile):
     registered by factory name.
     """
     form_tile_name = 'addform'
-    
+
     def render(self):
         nodeinfo = self.info
         if not nodeinfo:
@@ -140,7 +140,7 @@ class AddTile(ProtectedContentTile):
             factory = default_addmodel_factory
         addmodel = factory(self.model, nodeinfo)
         return render_tile(addmodel, self.request, self.form_tile_name)
-    
+
     @property
     def info(self):
         factory = self.request.params.get('factory')
@@ -153,20 +153,20 @@ class AddTile(ProtectedContentTile):
 class ContentForm(Part):
     """Form part rendering to content area.
     """
-    
+
     show_heading = default(True)
     show_contextmenu = default(True)
-    
+
     @default
     @property
     def form_heading(self):
         return u'Context Form Heading'
-    
+
     @default
     @property
     def rendered_contextmenu(self):
         return render_tile(self.model, self.request, 'contextmenu')
-    
+
     @plumb
     def __call__(_next, self, model, request):
         ajax_form_fiddle(request, '#content', 'inner')
@@ -185,18 +185,18 @@ class AddPart(CameFromNext, ContentForm):
     """form part hooking the hidden field 'factory' to self.form on __call__
     """
     action_resource = extend('add')
-    
+
     @default
     @property
     def form_heading(self):
         info = getNodeInfo(self.model.node_info_name)
         return u'Add %s' % info.title
-    
+
     @default
     @property
     def rendered_contextmenu(self):
         return render_tile(self.model.parent, self.request, 'contextmenu')
-    
+
     @plumb
     def prepare(_next, self):
         """Hook after prepare and set 'factory' as proxy field to ``self.form``
@@ -220,7 +220,7 @@ class EditTile(ProtectedContentTile):
     """The edit tile is responsible to render edit forms on given model.
     """
     form_tile_name = 'editform'
-    
+
     def render(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
@@ -229,7 +229,7 @@ class EditPart(CameFromNext, ContentForm):
     """form part hooking the hidden field 'came_from' to self.form on __call__
     """
     action_resource = extend('edit')
-    
+
     @default
     @property
     def form_heading(self):
@@ -241,7 +241,7 @@ class EditPart(CameFromNext, ContentForm):
 
 @tile('delete', permission="delete")
 class DeleteAction(Tile):
-    
+
     def render(self):
         model = self.model
         title = model.metadata.get('title', model.name)
@@ -263,10 +263,10 @@ class DeleteAction(Tile):
         return u''
 
 
-@tile('add_dropdown', 'templates/add_dropdown.pt', 
+@tile('add_dropdown', 'templates/add_dropdown.pt',
       permission='add', strict=False)
 class AddDropdown(Tile):
-    
+
     @property
     def items(self):
         ret = list()

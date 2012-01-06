@@ -18,25 +18,25 @@ import logging
 logger = logging.getLogger('cone.app')
 
 
-@tile('wf_dropdown', 'templates/wf_dropdown.pt', 
+@tile('wf_dropdown', 'templates/wf_dropdown.pt',
       permission='change_state', strict=False)
 class WfDropdown(Tile):
     """Transition dropdown.
-    
+
     If ``do_transition`` is found in ``request.params``, perform given
     transition on ``self.model`` immediately before dropdown gets rendered.
-    
+
     Configuration expected on ``self.model.properties``:
-    
+
     wf_name
         Registration name of workflow.
-    
+
     wf_transition_names
         transition id to transition title mapping. XXX: get rid of
     """
-    
+
     def do_transition(self):
-        """if ``do_transition`` is found on request.params, perform 
+        """if ``do_transition`` is found on request.params, perform
         transition.
         """
         transition = self.request.params.get('do_transition')
@@ -51,12 +51,12 @@ class WfDropdown(Tile):
             AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
         ]
         self.request.environ['cone.app.continuation'] = continuation
-        
+
     @property
     def workflow(self):
         return get_workflow(self.model.__class__,
                             self.model.properties.wf_name)
-    
+
     @property
     def transitions(self):
         self.do_transition()

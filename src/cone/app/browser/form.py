@@ -17,21 +17,21 @@ from cone.app.browser.utils import make_url
 class YAMLForm(Part):
     """Plumbing part for rendering yaml forms.
     """
-    
+
     action_resource = default(u'')
-    
+
     # BBB
     form_template_path = default(None)
-    
+
     # use form_template for pointing yaml files
     form_template = default(None)
     message_factory = default(None)
-    
+
     @default
     def form_action(self, widget, data):
         resource = self.action_resource
         return make_url(self.request, node=self.model, resource=resource)
-    
+
     @extend
     def prepare(self):
         if self.form_template:
@@ -46,20 +46,20 @@ class YAMLForm(Part):
 class ProtectedAttributesForm(Part):
     """Plumbing part supposed to be used for yafowil forms calculating widget
     modes based on security checks.
-    
+
     Security declarations for attributes are stored at
     ``self.attribute_permissions`` containing the attribute names as key, and
     a 2-tuple containing required edit and view permission for this attribute.
     """
-    
+
     attribute_permissions = default(dict())
     attribute_default_permissions = default(('edit', 'view'))
-    
+
     @default
     def mode_for(self, name):
         """Calculate mode by checking permission defined in
         ``self.attribute_permissions`` for attribute ``name`` against model.
-        
+
         If no permissions defined for attribute name, return
         ``self.attribute_default_mode``
         """
@@ -77,15 +77,15 @@ class Form(Tile):
     """A form tile.
     """
 
-    form = None # yafowil compound expected.
-    ajax = True # render ajax form related by default.
-    
+    form = None  # yafowil compound expected.
+    ajax = True  # render ajax form related by default.
+
     def prepare(self):
         """Responsible to prepare ``self.form``.
         """
         raise NotImplementedError(u"``prepare`` function must be provided "
                                   u"by deriving object.")
-    
+
     def prepare_ajax(self):
         """Set ajax class attribute on self.form.
         """
@@ -96,18 +96,18 @@ class Form(Tile):
             self.form.attrs['class'] += ' ajax'
         else:
             self.form.attrs['class'] = 'ajax'
-    
+
     @property
     def ajax_request(self):
         """Flag whether to handle current request as ajax request.
         """
         return self.request.params.get('ajax') and self.ajax
-    
+
     def __call__(self, model, request):
         self.model = model
         self.request = request
         return self._process_form()
-    
+
     def _process_form(self):
         self.prepare()
         self.prepare_ajax()

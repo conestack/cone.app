@@ -36,9 +36,9 @@ registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
     """bdajax ``ajaxaction`` implementation for cone.
-    
+
     * Renders tile with name ``bdajax.action``.
-    
+
     * Uses definitions from ``request.environ['cone.app.continuation']``
       for continuation definitions.
     """
@@ -74,7 +74,7 @@ def ajax_tile(model, request):
 
 def ajax_continue(request, continuation):
     """Set ajax continuation on environ.
-    
+
     continuation
         list of continuation definition objects or single continuation
         definition.
@@ -99,14 +99,14 @@ def ajax_status_message(request, payload):
     """Convenience to add ajax status message definition to ajax continuation
     definitions.
     """
-    ajax_continue(request, AjaxMessage(payload, None, '#status_message'))  
+    ajax_continue(request, AjaxMessage(payload, None, '#status_message'))
 
 
 class AjaxAction(object):
     """Ajax action configuration. Used to define continuation actions for
     client side.
     """
-    
+
     def __init__(self, target, name, mode, selector):
         self.target = target
         self.name = name
@@ -118,7 +118,7 @@ class AjaxEvent(object):
     """Ajax event configuration. Used to define continuation events for
     client side.
     """
-    
+
     def __init__(self, target, name, selector):
         self.target = target
         self.name = name
@@ -129,7 +129,7 @@ class AjaxMessage(object):
     """Ajax Message configuration. Used to define continuation messages for
     client side.
     """
-    
+
     def __init__(self, payload, flavor, selector):
         self.payload = payload
         self.flavor = flavor
@@ -146,10 +146,10 @@ class AjaxContinue(object):
     """Convert ``AjaxAction`` and ``AjaxEvent`` instances to JSON response
     definitions for bdajax continuation.
     """
-    
+
     def __init__(self, continuation):
         self.continuation = continuation
-    
+
     @property
     def definitions(self):
         """Continuation definitions as list of dicts for JSON serialization.
@@ -181,7 +181,7 @@ class AjaxContinue(object):
                     'selector': definition.selector,
                 })
         return continuation
-    
+
     def dump(self):
         """Return a JSON dump of continuation definitions.
         """
@@ -194,11 +194,11 @@ class AjaxContinue(object):
 class AjaxFormContinue(AjaxContinue):
     """Ajax form continuation computing. Used by ``render_ajax_form``.
     """
-    
+
     def __init__(self, result, continuation):
         self.result = result
         AjaxContinue.__init__(self, continuation)
-    
+
     @property
     def form(self):
         """Return rendered form tile result if no continuation actions.
@@ -206,7 +206,7 @@ class AjaxFormContinue(AjaxContinue):
         if not self.continuation:
             return self.result
         return ''
-    
+
     @property
     def next(self):
         """Return 'false' if no continuation actions, otherwise a JSON dump of
@@ -258,7 +258,7 @@ def render_ajax_form(model, request, name):
         continuation = AjaxMessage(tb, 'error', None)
         form_continue = AjaxFormContinue(result, [continuation])
         rendered = ajax_form_template % {
-            'form': form_continue.form.replace(u'\n', u' '), # XXX: why replace
+            'form': form_continue.form.replace(u'\n', u' '),  # XXX:why replace
             'selector': selector,
             'mode': mode,
             'next': form_continue.next,
@@ -268,9 +268,9 @@ def render_ajax_form(model, request, name):
 
 def dummy_livesearch_callback(model, request):
     """Dummy callback for Livesearch. Set as default.
-    
+
     We receive the search term at ``request.params['term']``.
-    
+
     Livesearch expects a list of dicts with keys:
         ``label`` - Label of found item
         ``value`` - The value re-inserted in input. This is normally ``term``
@@ -288,6 +288,7 @@ def dummy_livesearch_callback(model, request):
 
 # Overwrite this with your own implementation on application startup
 LIVESEARCH_CALLBACK = dummy_livesearch_callback
+
 
 @view_config(name='livesearch', accept='application/json', renderer='json')
 def livesearch(model, request):

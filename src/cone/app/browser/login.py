@@ -13,7 +13,7 @@ from cone.app.browser.utils import make_url
 @tile('loginform', permission="login")
 class LoginForm(Form):
     ajax = False
-    
+
     def prepare(self):
         action = make_url(self.request, node=self.model, resource='login')
         form = factory(
@@ -24,22 +24,22 @@ class LoginForm(Form):
             })
         form['user'] = factory(
             'field:label:error:text',
-            props = {
+            props={
                 'required': 'No username given',
                 'label': 'Username',
-            })    
+            })
         form['password'] = factory(
             'field:label:*credentials:error:password',
-            props = {
+            props={
                 'required': 'No password given',
                 'label': 'Password',
             },
-            custom = {
+            custom={
                 'credentials': ([self.login], [], [], []),
             })
         form['login'] = factory(
             'submit',
-            props = {
+            props={
                 'action': 'login',
                 'expression': True,
                 'handler': self.noop,
@@ -47,10 +47,10 @@ class LoginForm(Form):
                 'label': 'Login',
             })
         self.form = form
-    
+
     def noop(self, widget, data):
         pass
-    
+
     def login(self, widget, data):
         login = data.fetch('loginform.user').extracted
         password = data.fetch('loginform.password').extracted
@@ -58,7 +58,7 @@ class LoginForm(Form):
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
             raise ExtractionError(u'Invalid Credentials')
-    
+
     def next(self, request):
         return HTTPFound(location=request.request.application_url,
                          headers=self.headers)

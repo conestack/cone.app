@@ -20,8 +20,8 @@ from cone.app.browser.actions import (
     ActionDelete,
 )
 from cone.app.browser.utils import (
-    nodepath, 
-    make_query, 
+    nodepath,
+    make_query,
     make_url,
     format_date,
 )
@@ -41,19 +41,19 @@ class ContentsActionEdit(ActionEdit):
 class ContentsActionDelete(ActionDelete):
     """Delete action for contents table.
     """
-    
+
     @property
     def display(self):
         return self.model.properties.action_delete \
             and has_permission('delete', self.model.parent, self.request) \
-            and self.permitted('delete') \
+            and self.permitted('delete')
 
 
 class ContentsViewLink(ViewLink):
     """Ciew link for contents table.
     """
     event = 'contextchanged:.contextsensitiv'
-    
+
     @property
     def action(self):
         contenttile = 'content'
@@ -64,7 +64,7 @@ class ContentsViewLink(ViewLink):
 
 @tile('contents', 'templates/table.pt', permission='view')
 class ContentsTile(Table):
-    
+
     table_id = 'contents'
     table_tile_name = 'contents'
     col_defs = [
@@ -107,7 +107,7 @@ class ContentsTile(Table):
     default_sort = 'created'
     default_order = 'desc'
     slicesize = 10
-    
+
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),
         'creator': lambda x: x.metadata.creator.lower(),
@@ -116,11 +116,11 @@ class ContentsTile(Table):
         'modified': lambda x: x.metadata.modified \
                       and x.metadata.modified or FAR_PAST,
     }
-    
+
     @property
     def item_count(self):
         return len(self.model.keys())
-    
+
     @instance_property
     def row_actions(self):
         row_actions = Toolbar()
@@ -128,11 +128,11 @@ class ContentsTile(Table):
         row_actions['edit'] = ContentsActionEdit()
         row_actions['delete'] = ContentsActionDelete()
         return row_actions
-    
+
     @instance_property
     def view_link(self):
         return ContentsViewLink()
-    
+
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
@@ -154,7 +154,7 @@ class ContentsTile(Table):
             row_data['modified'] = child.metadata.get('modified')
             rows.append(row_data)
         return rows
-    
+
     def sorted_children(self, sort, order):
         children = list()
         for node in self.model.values():
