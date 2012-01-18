@@ -37,6 +37,10 @@ Changes
 0.9.1dev
 --------
 
+- Use ``node.ext.ugm.interfaces.Users.id_for_login`` contract for remembering
+  User id instead of login name in authentication cookie.
+  [rnix, 2012-01-18]
+
 - Dynamic width CSS
   [rnix, 2011-12-18]
 

@@ -77,7 +77,8 @@ def authenticate(request, login, password):
     ugm = app_config().auth
     try:
         if ugm.users.authenticate(login, password):
-            return remember(request, login)
+            id = ugm.users.id_for_login(login)
+            return remember(request, id)
     except Exception, e:
         msg = u"Authentication plugin %s raised an Exception while " + \
               u"trying to authenticate: %s"
