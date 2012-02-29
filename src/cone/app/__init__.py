@@ -22,9 +22,6 @@ from yafowil.utils import (
 
 logger = logging.getLogger('cone.app')
 
-# XXX: is this needed anywhere? If not, let's remove it.
-APP_PATH = os.environ.get('APP_PATH', '')
-
 # configuration
 cfg = Properties()
 

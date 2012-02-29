@@ -37,6 +37,15 @@ Changes
 0.9.1dev
 --------
 
+- Cleanup self contained buidlout.
+  [rnix, 2012-02-29]
+
+- Remove ``cone.app.APP_PATH``.
+  [rnix, 2012-02-29]
+
+- Adopt YAFOWIL addon registration to YAFOWIL 1.3
+  [rnix, 2012-02-29]
+
 - Use ``node.ext.ugm.interfaces.Users.id_for_login`` contract for remembering
   User id instead of login name in authentication cookie.
   [rnix, 2012-01-18]

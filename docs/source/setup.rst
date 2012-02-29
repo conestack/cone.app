@@ -46,6 +46,7 @@ see http://docs.python.org/distutils/setupscript.html#writing-the-setup-script
 and wget http://python-distribute.org/bootstrap.py .
 But let's first create the config files before we start and try to run it.
 
+
 Buildout
 --------
 
@@ -59,9 +60,6 @@ Edit ``buildout.cfg`` and add::
     [instance]
     recipe = zc.recipe.egg:scripts
     dependent-scripts = true
-    initialization =
-        import os
-        os.environ['APP_PATH'] = '${buildout:directory}'
     eggs =
         example.app
 
