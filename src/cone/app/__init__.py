@@ -44,16 +44,15 @@ cfg.js.public = [
     'static/cdn/jquery.tools.min.js',
     '++resource++bdajax/bdajax.js',
 ]
-cfg.js.protected = list()
-#cfg.js.protected = [
+cfg.js.protected = [
 #    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.min.js',
 #    'tiny_mce/jquery.tinymce.js',
 #    '++resource++yafowil.widget.datetime/widget.js',
 #    '++resource++yafowil.widget.richtext/widget.js',
 #    '++resource++yafowil.widget.dict/widget.js',
-#    'static/cookie_functions.js',
-#    'static/cone.app.js',
-#]
+    'static/cookie_functions.js',
+    'static/cone.app.js',
+]
 
 # CSS Resources
 cfg.css = Properties()
