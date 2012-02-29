@@ -22,12 +22,12 @@ CSS Resource::
 Contain CSS resources for authenticated users::
 
     >>> cone.app.cfg.css.protected
-    [...'++resource++yafowil.widget.dict/widget.css'...]
+    [...]
 
 Contain CSS resource for all users::
 
     >>> cone.app.cfg.css.public
-    [...'static/style.css'...]
+    [...]
 
 JS Resources::
 
@@ -40,12 +40,12 @@ JS Resources::
 Contain CSS resources for authenticated users::
 
     >>> cone.app.cfg.js.protected
-    [...'++resource++yafowil.widget.dict/widget.js'...]
+    [...]
 
 Contain CSS resource for all users::
 
     >>> cone.app.cfg.js.public
-    [...'static/cdn/jquery.min.js'...]
+    [...]
 
 Render resources tile unauthorized::
 
@@ -76,10 +76,10 @@ Render resources tile authorized::
     >>> result.find('static/cdn/jquery.min.js') > -1
     True
     
-    >>> result.find('++resource++yafowil.widget.dict/widget.css') > -1
+    >>> result.find('yafowil.widget.dict.resources/widget.css') > -1
     True
     
-    >>> result.find('++resource++yafowil.widget.dict/widget.js') > -1
+    >>> result.find('yafowil.widget.dict.resources/widget.js') > -1
     True
     
     >>> layer.logout()

@@ -1,9 +1,11 @@
 import os
+import logging
 import model
 import pyramid_zcml
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.static import static_view
 from zope.component import getGlobalSiteManager
 from cone.app.model import (
     AppRoot,
@@ -11,6 +13,14 @@ from cone.app.model import (
     Properties,
 )
 from cone.app.browser import forbidden_view
+from yafowil.utils import (
+    get_plugin_names,
+    get_resource_directory,
+    get_javascripts,
+    get_stylesheets,
+)
+
+logger = logging.getLogger('cone.app')
 
 # XXX: is this needed anywhere? If not, let's remove it.
 APP_PATH = os.environ.get('APP_PATH', '')
@@ -34,15 +44,16 @@ cfg.js.public = [
     'static/cdn/jquery.tools.min.js',
     '++resource++bdajax/bdajax.js',
 ]
-cfg.js.protected = [
-    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.min.js',
-    'tiny_mce/jquery.tinymce.js',
-    '++resource++yafowil.widget.datetime/widget.js',
-    '++resource++yafowil.widget.richtext/widget.js',
-    '++resource++yafowil.widget.dict/widget.js',
-    'static/cookie_functions.js',
-    'static/cone.app.js',
-]
+cfg.js.protected = list()
+#cfg.js.protected = [
+#    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.min.js',
+#    'tiny_mce/jquery.tinymce.js',
+#    '++resource++yafowil.widget.datetime/widget.js',
+#    '++resource++yafowil.widget.richtext/widget.js',
+#    '++resource++yafowil.widget.dict/widget.js',
+#    'static/cookie_functions.js',
+#    'static/cone.app.js',
+#]
 
 # CSS Resources
 cfg.css = Properties()
@@ -50,10 +61,11 @@ cfg.css.public = [
     'static/style.css',
     '++resource++bdajax/bdajax.css',
 ]
-cfg.css.protected = [
-    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.css',
-    '++resource++yafowil.widget.dict/widget.css',
-]
+cfg.css.protected = list()
+#cfg.css.protected = [
+#    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.css',
+#    '++resource++yafowil.widget.dict/widget.css',
+#]
 
 # cfg.layout used to enable/disable tiles in main template
 cfg.layout = Properties()
@@ -109,6 +121,26 @@ def auth_tkt_factory(**kwargs):
 
 def acl_factory(**kwargs):
     return ACLAuthorizationPolicy()
+
+
+def configure_yafowil_addon_resources(config):
+    import cone.app
+    yafowil_plugins = get_plugin_names()
+    for plugin_name in yafowil_plugins:
+        plugin_resources_dir = get_resource_directory(plugin_name)
+        if not (plugin_resources_dir):
+            logger.info('No resource directories in %s' % plugin_name)
+            continue
+        resources_view = static_view(plugin_resources_dir, use_subpath=True)
+        view_name = '%s_resources' % plugin_name.replace('.', '_')
+        setattr(cone.app, view_name, resources_view)
+        view_path = 'cone.app.%s' % view_name
+        resource_name = '%s.resources' % plugin_name
+        config.add_view(view_path, name=resource_name)
+        for js in get_javascripts(plugin_name):
+            cone.app.cfg.js.protected.append('%s/%s' % (resource_name, js))
+        for css in get_stylesheets(plugin_name):
+            cone.app.cfg.css.protected.append('%s/%s' % (resource_name, css))
 
 
 def main(global_config, **settings):
@@ -168,6 +200,10 @@ def main(global_config, **settings):
     config.include(pyramid_zcml)
     config.begin()
     
+    # register yafowil static resources
+    configure_yafowil_addon_resources(config)
+    
+    # load cone.app configure.zcml
     config.load_zcml('configure.zcml')
     
     # read plugin configurator
@@ -175,6 +211,7 @@ def main(global_config, **settings):
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
+        # XXX: check whether configure.zcml exists, skip loading if not found
         config.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
     
     # end config
