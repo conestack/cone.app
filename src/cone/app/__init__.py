@@ -51,8 +51,8 @@ cfg.js.protected = [
 cfg.css = Properties()
 cfg.css.public = [
     'static/style.css',
+    'static/cdn/jquery-ui-1.8.18.css',
     '++resource++bdajax/bdajax.css',
-    'static/cdn/jquery-ui-1.8.18.css'
 ]
 cfg.css.protected = list()
 
@@ -124,7 +124,7 @@ def configure_yafowil_addon_resources(config):
         view_name = '%s_resources' % plugin_name.replace('.', '_')
         setattr(cone.app, view_name, resources_view)
         view_path = 'cone.app.%s' % view_name
-        resource_name = '%s.resources' % plugin_name
+        resource_name = '++resource++%s' % plugin_name
         config.add_view(view_path, name=resource_name)
         for js in get_javascripts(plugin_name):
             cone.app.cfg.js.protected.append('%s/%s' % (resource_name, js))

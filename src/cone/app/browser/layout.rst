@@ -76,10 +76,10 @@ Render resources tile authorized::
     >>> result.find('static/cdn/jquery.min.js') > -1
     True
     
-    >>> result.find('yafowil.widget.dict.resources/widget.css') > -1
+    >>> result.find('++resource++yafowil.widget.dict/widget.css') > -1
     True
     
-    >>> result.find('yafowil.widget.dict.resources/widget.js') > -1
+    >>> result.find('++resource++yafowil.widget.dict/widget.js') > -1
     True
     
     >>> layer.logout()
