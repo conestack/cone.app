@@ -3,7 +3,5 @@
 
   <include package="pyramid_zcml" />
   <include package="bdajax" />
-  
-  <scan package=".browser" />
 
 </configure>

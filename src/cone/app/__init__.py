@@ -195,7 +195,10 @@ def main(global_config, **settings):
     # register yafowil static resources
     configure_yafowil_addon_resources(config)
     
-    # load cone.app configure.zcml
+    # scan browser package
+    config.scan('cone.app.browser')
+    
+    # load zcml
     config.load_zcml('configure.zcml')
     
     # read plugin configurator
