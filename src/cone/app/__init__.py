@@ -39,14 +39,10 @@ cfg.js = Properties()
 cfg.js.public = [
     'static/cdn/jquery.min.js',
     'static/cdn/jquery.tools.min.js',
+    'static/cdn/jquery-ui-1.8.18.min.js',
     '++resource++bdajax/bdajax.js',
 ]
 cfg.js.protected = [
-#    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.min.js',
-#    'tiny_mce/jquery.tinymce.js',
-#    '++resource++yafowil.widget.datetime/widget.js',
-#    '++resource++yafowil.widget.richtext/widget.js',
-#    '++resource++yafowil.widget.dict/widget.js',
     'static/cookie_functions.js',
     'static/cone.app.js',
 ]
@@ -56,12 +52,9 @@ cfg.css = Properties()
 cfg.css.public = [
     'static/style.css',
     '++resource++bdajax/bdajax.css',
+    'static/cdn/jquery-ui-1.8.18.css'
 ]
 cfg.css.protected = list()
-#cfg.css.protected = [
-#    '++resource++yafowil.widget.datetime/jquery-ui-1.8.1.custom.css',
-#    '++resource++yafowil.widget.dict/widget.css',
-#]
 
 # cfg.layout used to enable/disable tiles in main template
 cfg.layout = Properties()
