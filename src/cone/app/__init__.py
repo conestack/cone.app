@@ -189,6 +189,9 @@ def main(global_config, **settings):
     config.include(pyramid_zcml)
     config.begin()
     
+    # static resources
+    config.add_view('cone.app.browser.static_resources', name='static')
+    
     # register yafowil static resources
     configure_yafowil_addon_resources(config)
     
@@ -203,12 +206,12 @@ def main(global_config, **settings):
         # XXX: check whether configure.zcml exists, skip loading if not found
         config.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
     
-    # end config
-    config.end()
-    
     # execute main hooks
     for hook in main_hooks:
         hook(config, global_config, settings)
+    
+    # end configuration
+    config.end()
     
     # return wsgi app
     return config.make_wsgi_app()

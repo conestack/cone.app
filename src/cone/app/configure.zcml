@@ -4,21 +4,6 @@
   <include package="pyramid_zcml" />
   <include package="bdajax" />
   
-  <!--
-  <include package="yafowil.widget.datetime" />
-  <include package="yafowil.widget.richtext" />
-  <include package="yafowil.widget.dict" />
-  <include package="yafowil.widget.array" />
-  <include package="yafowil.widget.autocomplete" />
-  <include package="yafowil.widget.dynatree" />
-  -->
-  
   <scan package=".browser" />
-  
-  <view
-    for="*"
-    view=".browser.static_resources"
-    name="static"
-  />
 
 </configure>
