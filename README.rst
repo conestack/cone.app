@@ -37,6 +37,9 @@ Changes
 0.9.1dev
 --------
 
+- Fix default ``sort`` and ``order`` request parameters for table batch.
+  [rnix, 2012-03-16]
+
 - Cleanup self contained buidlout.
   [rnix, 2012-02-29]
 

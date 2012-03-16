@@ -161,7 +161,7 @@ Test batch::
     >>> rendered.find('class="current">1</strong>') != -1
     True
     
-    >>> rendered.find('http://example.com/?sort=&order=&b_page=1') != -1
+    >>> rendered.find('http://example.com/?sort=created&order=desc&b_page=1') != -1
     True
 
 Change page::
@@ -171,14 +171,14 @@ Change page::
     >>> rendered.find('class="current">2</strong>') != -1
     True
     
-    >>> rendered.find('http://example.com/?sort=&order=&b_page=0') != -1
+    >>> rendered.find('http://example.com/?sort=created&order=desc&b_page=0') != -1
     True
 
 Change sort and order. Sort is proxied by batch::
 
     >>> request.params['sort'] = 'modified'
     >>> rendered = contents.batch
-    >>> rendered.find('http://example.com/?sort=modified&amp;order=&amp;b_page=0') != -1
+    >>> rendered.find('http://example.com/?sort=modified&amp;order=desc&amp;b_page=0') != -1
     True
 
 Rendering fails unauthorized, 'view' permission is required::
@@ -201,7 +201,7 @@ Render authenticated::
     >>> request.params['b_page'] = '1'
     >>> rendered = render_tile(model, request, 'contents')
     >>> expected = \
-    ... '<a href="http://example.com/?sort=modified&amp;order=&amp;b_page=0"'
+    ... '<a href="http://example.com/?sort=modified&amp;order=desc&amp;b_page=0"'
     
     >>> rendered.find(expected) != -1
     True

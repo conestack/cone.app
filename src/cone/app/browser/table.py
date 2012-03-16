@@ -127,8 +127,8 @@ class TableBatch(Batch):
         if count % self.table_tile.slicesize != 0:
             pages += 1
         current = self.request.params.get('b_page', '0')
-        sort = self.request.params.get('sort', '')
-        order = self.request.params.get('order', '')
+        sort = self.request.params.get('sort', self.table_tile.default_sort)
+        order = self.request.params.get('order', self.table_tile.default_order)
         params = {
             'sort': sort,
             'order': order,

@@ -50,11 +50,11 @@ Imports and dummy context::
     >>> batch.request = request
     >>> batch.vocab
     [{'current': True, 'visible': True, 
-    'url': 'http://example.com/?sort=&order=&b_page=0', 'page': '1'}, 
+    'url': 'http://example.com/?b_page=0', 'page': '1'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?sort=&order=&b_page=1', 'page': '2'}, 
+    'url': 'http://example.com/?b_page=1', 'page': '2'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?sort=&order=&b_page=2', 'page': '3'}]
+    'url': 'http://example.com/?b_page=2', 'page': '3'}]
 
 ``sorted_rows`` is responsible to generate the table rows data. It gets passed
 ``start``, ``end``, ``sort`` and ``order`` and must return a list of
@@ -237,7 +237,7 @@ Sort header with query white list param::
     >>> rendered
     u'\n  <div id="mytable"\n
       ...
-    ajax:target="http://example.com/?sort=&foo=bar&order=&b_page=1"...
+    ajax:target="http://example.com/?sort=col_2&foo=bar&order=desc&b_page=1"...
 
 Structure content::
     
