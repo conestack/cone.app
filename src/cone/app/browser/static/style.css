@@ -534,6 +534,27 @@ table.pretty_table tr.odd.selected {
 table.pretty_table tr.odd.selected td.sorted_col {
     background-color:#C4C4FF;
 }
+div.pretty_table_info {
+    float:left;
+    width:40%;
+    margin-top:4px;
+}
+div.pretty_batch {
+    float:right;
+    text-align:right;
+    width:50%;
+    padding:0;
+    margin:3px 0 3px 0;
+}
+div.pretty_batch a {
+    padding:2px 6px;
+    text-decoration:none;
+    margin:0 0 0 -5px;
+}
+div.pretty_batch a.current {
+    font-weight:bold;
+    background:transparent;
+}
 
 /* Sharing tile */
 div.principal-search {

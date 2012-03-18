@@ -125,6 +125,8 @@ class TableSlice(object):
         start, end = self.slice
         return self.table_tile.sorted_rows(start, end, self.sort, self.order)
 
+# XXX: tmp
+from cone.tile import render_template
 
 class TableBatch(Batch):
     
@@ -133,6 +135,12 @@ class TableBatch(Batch):
         self.name = table_tile.table_id + 'batch'
         self.path = None
         self.attribute = 'render'
+    
+    # XXX: tmp
+    def render(self):
+        return render_template('cone.app.browser:templates/pretty_batch.pt',
+                               request=self.request,
+                               model=self.model, context=self)
     
     @property
     def display(self):

@@ -129,5 +129,23 @@
         </tal:row>
       </tbody>
     </table> 
+    
+    <div class="pretty_table_toolbar pretty_table_toolbar_bottom">
+      
+      <div class="pretty_table_info"
+           tal:define="slice context.slice.slice">
+        Showing
+        <span tal:replace="slice[0]">0</span>
+        to
+        <span tal:replace="slice[1]">10</span>
+        of
+        <span tal:replace="context.item_count">35</span>
+        entries
+      </div>
+      
+      <tal:batch replace="structure context.batch" />
+      
+    </div>
+    
   </div>
 </tal:ajax>
