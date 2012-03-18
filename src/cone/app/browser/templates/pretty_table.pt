@@ -89,7 +89,8 @@
       
       <tbody role="alert"
              aria-live="polite"
-             aria-relevant="all">
+             aria-relevant="all"
+             tal:define="sort_index context.sort_index">
         <tal:row repeat="row_data context.slice.rows">
         
           <tr tal:define="css repeat.row_data.even and 'even' or 'odd';
@@ -100,11 +101,13 @@
             
             <tal:td repeat="col_def context.col_defs">
               
-              <td tal:define="is_string col_def['content'] == 'string';
+              <td tal:define="current_index repeat.col_def.index;
+                              is_string col_def['content'] == 'string';
                               is_structure col_def['content'] == 'structure';
                               is_datetime col_def['content'] == 'datetime';
                               value row_data[col_def['id']];
-                              value is_datetime and context.format_date(value) or value;">
+                              value is_datetime and context.format_date(value) or value;"
+                  tal:attributes="class sort_index == current_index and 'sorted_col' or None">
                 
                 <div class="col">
                 

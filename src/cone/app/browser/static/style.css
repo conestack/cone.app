@@ -513,16 +513,27 @@ table.pretty_table td:last-child div.col {
 table.pretty_table tr.even {
     background-color:#EEFFEE;
 }
+table.pretty_table tr.even td.sorted_col {
+    background-color:#D5FFD5;
+}
 table.pretty_table tr.odd {
     background-color:#DDFFDD;
+}
+table.pretty_table tr.odd td.sorted_col {
+    background-color:#C4FFC4;
 }
 table.pretty_table tr.even.selected {
     background-color:#EEEEFF;
 }
+table.pretty_table tr.even.selected td.sorted_col {
+    background-color:#D5D5FF;
+}
 table.pretty_table tr.odd.selected {
     background-color:#DDDDFF;
 }
-
+table.pretty_table tr.odd.selected td.sorted_col {
+    background-color:#C4C4FF;
+}
 
 /* Sharing tile */
 div.principal-search {

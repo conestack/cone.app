@@ -47,6 +47,26 @@ class Table(Tile):
         return TableBatch(self)(self.model, self.request)
     
     @property
+    def sort_column(self):
+        return self.request.params.get('sort', self.default_sort)
+    
+    @property
+    def sort_order(self):
+        return self.request.params.get('order', self.default_order)
+    
+    @property
+    def sort_index(self):
+        """Index of recent sort column.
+        """
+        col = self.sort_column
+        idx = 0
+        for col_def in self.col_defs:
+            key = col_def.get('sort_key')
+            if key == col:
+                return idx
+            idx += 1
+    
+    @property
     def item_count(self):
         raise NotImplementedError("Abstract table does not implement "
                                   "``item_count``.")
@@ -60,8 +80,8 @@ class Table(Tile):
     
     def th_defs(self, sortkey):
         b_page = self.request.params.get('b_page', '0')
-        cur_sort = self.request.params.get('sort', self.default_sort)
-        cur_order = self.request.params.get('order', self.default_order)
+        cur_sort = self.sort_column
+        cur_order = self.sort_order
         selected = cur_sort == sortkey
         alter = selected and cur_order == 'desc'
         order = alter and 'asc' or 'desc'
