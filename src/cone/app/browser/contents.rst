@@ -201,8 +201,7 @@ Render authenticated::
     >>> request.params['b_page'] = '1'
     >>> rendered = render_tile(model, request, 'contents')
     >>> expected = \
-    ... '<a href="http://example.com/?sort=modified&amp;order=desc&amp;b_page=0"'
-    
+    ... '<a href="http://example.com/?sort=title&order=desc&b_page=1"'
     >>> rendered.find(expected) != -1
     True
 
@@ -213,7 +212,7 @@ Copysupport Attributes::
     >>> model['child'] = CopySupportNode()
     >>> request = layer.new_request()
     >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = 'class="selectable copysupportitem"'
+    >>> expected = 'class="even selectable copysupportitem"'
     >>> rendered.find(expected) > -1
     True
     
@@ -223,7 +222,7 @@ Copysupport Attributes::
     >>> cut_url = urllib.quote(make_url(request, node=model['child']))
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url
     >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = 'class="selectable copysupportitem copysupport_cut"'
+    >>> expected = 'class="even selectable copysupportitem copysupport_cut"'
     >>> rendered.find(expected) > -1
     True
 

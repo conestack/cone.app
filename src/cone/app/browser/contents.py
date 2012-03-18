@@ -62,7 +62,8 @@ class ContentsViewLink(ViewLink):
         return '%s:#content:inner' % contenttile
 
 
-@tile('contents', 'templates/table.pt', permission='view')
+#@tile('contents', 'templates/table.pt', permission='view')
+@tile('contents', 'templates/pretty_table.pt', permission='view')
 class ContentsTile(Table):
     
     table_id = 'contents'

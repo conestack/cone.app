@@ -60,7 +60,7 @@ class Table(Tile):
     
     def th_defs(self, sortkey):
         b_page = self.request.params.get('b_page', '0')
-        cur_sort = self.request.params.get('sort')
+        cur_sort = self.request.params.get('sort', self.default_sort)
         cur_order = self.request.params.get('order', self.default_order)
         selected = cur_sort == sortkey
         alter = selected and cur_order == 'desc'
