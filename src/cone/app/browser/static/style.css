@@ -294,33 +294,6 @@ div#footer a {
     color:#aaa;
 }
 
-/* Batch old */
-.batch {
-    clear:both;
-    padding-top:12px;
-}
-.batch span {
-    color:#ccc;
-}
-.batch a {
-    color:#49539f;
-    text-decoration:none;
-}
-.batch img {
-    border:none;
-}
-.batch strong {
-    font-weight:bold;
-    font-size:110%;
-    color:#333;
-}
-.leftellipsis {
-    margin-left:1em;
-}
-.rightellipsis {
-    padding-right:1em;
-}
-
 /* Forms */
 form h5 {
     margin:0;
@@ -342,55 +315,6 @@ form div.message {
 .copysupport_cut {
     background-color:#efefef;
     color:#bbb;
-}
-
-/* Table old */
-#contentslisting {
-    width:100%;
-}
-table.contents {
-    width: 100%;
-    border-style: solid;
-    border-width:1px 0px 0px 1px;
-    border-color:#ccc;
-    border-collapse: collapse;
-    border-spacing: none;
-}
-table.contents th {
-    padding:3px;
-    border-bottom:1px solid #ccc;
-    border-right:1px solid #ccc;
-    background-color:#eee;
-    text-align:left;
-    font-size:90%;
-}
-table.contents th.asc {
-    background:#ddd url('images/up9_6.gif') right 50% no-repeat;
-}
-table.contents th.desc {
-    background:#ddd url('images/down9_6.gif') right 50% no-repeat;
-}
-table.contents tr.selected {
-    color:#fff;
-    background-color:#49539f !important;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-}
-table.contents tr.selected a {
-    color:#fff;
-}
-table.contents td {
-    padding:3px;
-    border-bottom:1px solid #ccc;
-    border-right:1px solid #ccc;
-    -webkit-user-select:none;
-    -khtml-user-select:none;
-    -moz-user-select:none;
-    -o-user-select:none;
-    user-select:none;
 }
 
 /* Table */
