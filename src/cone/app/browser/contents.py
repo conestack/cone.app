@@ -158,8 +158,8 @@ class ContentsTile(Table):
     
     @property
     def filtered_children(self):
-        if self.request.has_key('_filtered_children'):
-            return self.request['_filtered_children']
+        if self.request.environ.has_key('_filtered_children'):
+            return self.request.environ['_filtered_children']
         children = list()
         term = self.filter_term
         if term:
@@ -173,7 +173,7 @@ class ContentsTile(Table):
                   md.get('creator', 'unknown').lower().find(term) == -1:
                     continue
             children.append(node)
-        self.request['_filtered_children'] = children
+        self.request.environ['_filtered_children'] = children
         return children
     
     def sorted_children(self, sort, order):
