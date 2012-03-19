@@ -31,7 +31,8 @@
         </label>
       </div>
       
-      <div class="pretty_table_filter">
+      <div class="pretty_table_filter"
+           tal:condition="None">
         <label>
           Search:
           <input type="text" aria-controls="${context.table_id}_table">

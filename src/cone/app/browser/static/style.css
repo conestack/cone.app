@@ -289,7 +289,7 @@ div#footer a {
     color:#aaa;
 }
 
-/* Batch */
+/* Batch old */
 .batch {
     clear:both;
     padding-top:12px;
@@ -339,7 +339,7 @@ form div.message {
     color:#bbb;
 }
 
-/* Contents listing */
+/* Table old */
 #contentslisting {
     width:100%;
 }
@@ -388,7 +388,7 @@ table.contents td {
     user-select:none;
 }
 
-/* pretty table */
+/* Table */
 div.pretty_table_wrapper {
     border-radius:5px 5px 5px 5px;
     box-shadow:2px 2px 6px #666666;
@@ -539,6 +539,8 @@ div.pretty_table_info {
     width:40%;
     margin-top:4px;
 }
+
+/* Batch */
 div.pretty_batch {
     float:right;
     text-align:right;
@@ -554,6 +556,11 @@ div.pretty_batch a {
 div.pretty_batch a.current {
     font-weight:bold;
     background:transparent;
+    cursor:default;
+}
+div.pretty_batch a.invisible {
+    cursor:default;
+    color:#cccccc;
 }
 
 /* Sharing tile */
