@@ -37,6 +37,8 @@ class Table(Tile):
     default_order = None
     default_slicesize = 15
     query_whitelist = []
+    show_title = True
+    show_filter = False
     
     @property
     def slice(self):
@@ -55,17 +57,28 @@ class Table(Tile):
         return [i * self.default_slicesize for i in range(1, 5)]
     
     @property
+    def table_title(self):
+        return self.model.metadata.title
+    
+    @property
     def slice_target(self):
-        sort = self.sort_column
-        order = self.sort_order
-        params = {
-            'sort': sort,
-            'order': order,
-        }
-        for term in self.query_whitelist:
-            params[term] = self.request.params.get(term, '')
-        query = make_query(**params)
-        return make_url(self.request, node=self.model, query=query)
+        return self.make_url({
+            'sort': self.sort_column,
+            'order': self.sort_order,
+            'term': self.filter_term,
+        })
+    
+    @property
+    def filter_target(self):
+        return self.make_url({
+            'sort': self.sort_column,
+            'order': self.sort_order,
+            'size': self.slicesize,
+        })
+    
+    @property
+    def filter_term(self):
+        return self.request.params.get('term')
     
     @property
     def sort_column(self):
@@ -87,6 +100,32 @@ class Table(Tile):
                 return idx
             idx += 1
     
+    def make_url(self, params):
+        for param in self.query_whitelist:
+            params[param] = self.request.params.get(param, '')
+        query = make_query(**params)
+        return make_url(self.request, node=self.model, query=query)
+    
+    def format_date(self, dt):
+        return format_date(dt)
+    
+    def th_defs(self, sortkey):
+        cur_sort = self.sort_column
+        cur_order = self.sort_order
+        selected = cur_sort == sortkey
+        alter = selected and cur_order == 'desc'
+        order = alter and 'asc' or 'desc'
+        params = {
+            'b_page': self.request.params.get('b_page', '0'),
+            'sort': sortkey,
+            'order': order,
+            'size': self.slicesize,
+            'term': self.filter_term,
+        }
+        url = self.make_url(params)
+        css = selected and order or ''
+        return css, url
+    
     @property
     def item_count(self):
         raise NotImplementedError("Abstract table does not implement "
@@ -95,30 +134,6 @@ class Table(Tile):
     def sorted_rows(self, start, end, sort, order):
         raise NotImplementedError("Abstract table does not implement "
                                   "``sorted_rows``.")
-    
-    def format_date(self, dt):
-        return format_date(dt)
-    
-    def th_defs(self, sortkey):
-        b_page = self.request.params.get('b_page', '0')
-        cur_sort = self.sort_column
-        cur_order = self.sort_order
-        slicesize = self.slicesize
-        selected = cur_sort == sortkey
-        alter = selected and cur_order == 'desc'
-        order = alter and 'asc' or 'desc'
-        params = {
-            'b_page': b_page,
-            'sort': sortkey,
-            'order': order,
-            'size': slicesize,
-        }
-        for term in self.query_whitelist:
-            params[term] = self.request.params.get(term, '')
-        query = make_query(**params)
-        url = make_url(self.request, node=self.model, query=query)
-        css = selected and order or ''
-        return css, url
 
 
 class TableSlice(object):
@@ -164,12 +179,11 @@ class TableBatch(Batch):
         if count % slicesize != 0:
             pages += 1
         current = self.request.params.get('b_page', '0')
-        sort = self.request.params.get('sort', self.table_tile.default_sort)
-        order = self.request.params.get('order', self.table_tile.default_order)
         params = {
-            'sort': sort,
-            'order': order,
+            'sort': self.table_tile.sort_column,
+            'order': self.table_tile.sort_order,
             'size': slicesize,
+            'term': self.table_tile.filter_term,
         }
         for term in self.table_tile.query_whitelist:
             params[term] = self.request.params.get(term, '')

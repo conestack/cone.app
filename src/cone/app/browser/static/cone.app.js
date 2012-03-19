@@ -128,10 +128,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var target = selection.attr('ajax:target') + '&size=' + size;
                 bdajax.trigger(evt[0], evt[1], target);
             });
-        },
-        
-        sharingbinder: function(context) {
-            var searchfield = $('#principal-search', context);
+            var trigger_search = function(input) {
+                var term = input.attr('value');
+                var evt = input.attr('ajax:event').split(':');
+                var target = input.attr('ajax:target') + '&term=' + term;
+                bdajax.trigger(evt[0], evt[1], target);
+            };
+            var searchfield = $('.pretty_table_filter input', context);
             searchfield.unbind('keypress').bind('keypress', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
@@ -140,27 +143,16 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             searchfield.unbind('keyup').bind('keyup', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
-                    var button_elem = $('#principal-search-submit',
-                                        $(this).parent());
-                    button_elem.trigger('click');
+                    trigger_search($(this));
                 }
             });
-            var button = $('#principal-search-submit', context);
-            button.unbind('click').bind('click', function(event) {
+            searchfield.unbind('change').bind('change', function(event) {
                 event.preventDefault();
-                var button_elem = $(this);
-                var input = $('#principal-search', button_elem.parent());
-                var target = 
-                    bdajax.parsetarget(button_elem.attr('ajax:target'));
-                target.params.term = input.attr('value');
-                bdajax.action({
-                    name: 'local_acl',
-                    mode: 'replace',
-                    selector: '#localacltable',
-                    url: target.url,
-                    params: target.params
-                });
+                trigger_search($(this));
             });
+        },
+        
+        sharingbinder: function(context) {
             var checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.unbind('change').bind('change', function(event) {
                 event.preventDefault();

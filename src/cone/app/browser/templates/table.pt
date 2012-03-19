@@ -13,6 +13,10 @@
   
     <div class="pretty_table_toolbar pretty_table_toolbar_top">
       
+      <label class="pretty_table_title"
+           tal:condition="context.show_title"
+           tal:content="context.table_title">Title</label>
+      
       <div class="pretty_table_length">
         <label>
           Show
@@ -33,10 +37,15 @@
       </div>
       
       <div class="pretty_table_filter"
-           tal:condition="None">
+           tal:condition="context.show_filter">
         <label>
           Search:
-          <input type="text" aria-controls="${context.table_id}_table">
+          <input type="text"
+                 name="term"
+                 ajax:target="${context.filter_target}"
+                 ajax:event="batchclicked:.${context.table_id}batchsensitiv"
+                 aria-controls="${context.table_id}_table"
+                 tal:attributes="value context.filter_term">
         </label>
       </div>
       

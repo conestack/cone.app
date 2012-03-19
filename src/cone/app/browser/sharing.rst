@@ -20,8 +20,6 @@ Render sharing tile::
     ...     ActionContext(root, request, 'content')
     
     >>> res = render_tile(root, request, 'sharing')
-    >>> res.find('Sharing for root') > -1
-    True
 
 Render sharing tile with search term.
 XXX: node.ext.ugm.file search implementations::

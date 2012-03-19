@@ -3,18 +3,6 @@
           omit-tag="True">
   <div class="box">
     <tal:contextmenu replace="structure tile('contextmenu')" />
-    
-    <h1>Sharing for <tal:title replace="model.metadata.title" /></h1>
-    
-    <div class="principal-search">
-      <label>Search for principal</label>
-      <input type="text" id="principal-search" size="15" />
-      <input type="button"
-             id="principal-search-submit"
-             value="search"
-             ajax:target="${context.nodeurl}" />
-    </div>
-    
     <tal:listing replace="structure tile('local_acl')" />
   </div>
 </tal:ajax>

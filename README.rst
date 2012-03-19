@@ -37,6 +37,10 @@ Changes
 0.9.1dev
 --------
 
+- Better table and batch templates and styles. Table now supports slice size
+  selection and filtering.
+  [rnix, 2012-03-19]
+
 - Fix default ``sort`` and ``order`` request parameters for table batch.
   [rnix, 2012-03-16]
 

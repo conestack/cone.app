@@ -40,7 +40,7 @@ class SharingTable(Table):
     table_tile_name = 'local_acl'
     default_sort = 'principal'
     default_order = 'asc'
-    query_whitelist = ['term']
+    show_filter = True
     
     @property
     def col_defs(self):
@@ -64,8 +64,12 @@ class SharingTable(Table):
         return col_defs
     
     @property
+    def table_title(self):
+        return u'Sharing: ' + self.model.metadata.title
+    
+    @property
     def item_count(self):
-        term = self.request.params.get('term')
+        term = self.filter_term
         if term:
             principals = security.search_for_principals('*%s*' % term)
             return len(principals)
@@ -74,7 +78,7 @@ class SharingTable(Table):
     def sorted_rows(self, start, end, sort, order):
         rows = list()
         chb = '<input type="checkbox" />'
-        term = self.request.params.get('term')
+        term = self.filter_term
         model = self.model
         principal_roles = model.principal_roles
         inheritance = model.role_inheritance

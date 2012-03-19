@@ -428,20 +428,30 @@ div.pretty_table_toolbar_bottom {
     border-bottom-right-radius:4px;
     border-bottom-left-radius:4px;
 }
+label.pretty_table_title {
+    float:left;
+    margin:0;
+    padding:0;
+    font-size:1.4em;
+    font-weight:bold;
+    padding:2px 20px 0 5px;
+}
 div.pretty_table_length {
     font-weight:normal;
     color:#222222;
-    float:left;
-    width:40%;
-    margin:0;
+    float:right;
+    text-align:right;
+    width:130px;
+    margin:0 3px 0 0;
     padding:0;
 }
 div.pretty_table_filter {
     float:right;
     text-align:right;
-    width:50%;
+    width:250px;
     margin:0;
-    padding:0;
+    padding:0 20px 0 0;
+    border-right:#aaaaaa 1px solid;
 }
 table.pretty_table {
     border-collapse:collapse;
@@ -541,6 +551,7 @@ div.pretty_table_info {
     float:left;
     width:40%;
     margin-top:4px;
+    margin-left:5px;
 }
 
 /* Batch */
@@ -564,13 +575,6 @@ div.pretty_batch a.current {
 div.pretty_batch a.invisible {
     cursor:default;
     color:#cccccc;
-}
-
-/* Sharing tile */
-div.principal-search {
-    margin-bottom:8px;
-    padding:8px;
-    border:#ccc 1px solid;
 }
 
 /* Dropdown */
@@ -743,8 +747,12 @@ div.contextmenu div.state {
 }
 
 /* Reference Browser */
+.referencebrowser {
+    width:500px;
+}
 .referencebrowser .pathbar ul {
     padding-left:0px;
+    margin-bottom:0.5em;
 }
 
 /* Icons */
