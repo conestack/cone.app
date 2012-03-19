@@ -24,6 +24,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         cone.tabsbinder();
         cone.dropdownmenubinder();
         cone.transitionmenubinder();
+        cone.tabletoolbarbinder();
         cone.ajaxformbinder();
         cone.sharingbinder();
         cone.selectable.binder();
@@ -35,6 +36,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             tabsbinder: cone.tabsbinder,
             dropdownmenubinder: cone.dropdownmenubinder,
             transitionmenubinder: cone.transitionmenubinder,
+            tabletoolbarbinder: cone.tabletoolbarbinder,
             ajaxformbinder: cone.ajaxformbinder,
             sharingbinder: cone.sharingbinder,
             selectablebinder: cone.selectable.binder,
@@ -114,6 +116,17 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             $('.transitions_dropdown', context).dropdownmenu({
                 menu: '.dropdown_items',
                 trigger: '.state a'
+            });
+        },
+        
+        tabletoolbarbinder: function(context) {
+            var selection = $('.pretty_table_length select', context);
+            selection.unbind('change').bind('change', function(event) {
+                var option = $('option:selected', $(this)).first();
+                var size = option.text();
+                var evt = selection.attr('ajax:event').split(':');
+                var target = selection.attr('ajax:target') + '&size=' + size;
+                bdajax.trigger(evt[0], evt[1], target);
             });
         },
         

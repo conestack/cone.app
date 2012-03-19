@@ -1,6 +1,7 @@
 import re
 import datetime
 import urllib
+import types
 from pyramid.security import authenticated_userid
 from cone.app.model import getNodeInfo
 from cone.app.utils import app_config
@@ -23,6 +24,8 @@ def make_query(**kw):
             continue
         if isinstance(param, basestring):
             param = [param]
+        if type(param) is types.IntType:
+            param = [str(param)]
         for p in param:
             query.append('%s=%s' % (name, p))
     return '?%s' % '&'.join(query)

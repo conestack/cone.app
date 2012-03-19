@@ -106,7 +106,6 @@ class ContentsTile(Table):
     ]
     default_sort = 'created'
     default_order = 'desc'
-    default_slicesize = 10
     
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),

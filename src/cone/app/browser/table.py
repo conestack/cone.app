@@ -48,7 +48,24 @@ class Table(Tile):
     
     @property
     def slicesize(self):
-        return self.request.params.get('size', self.default_slicesize)
+        return int(self.request.params.get('size', self.default_slicesize))
+    
+    @property
+    def slicesizes(self):
+        return [i * self.default_slicesize for i in range(1, 5)]
+    
+    @property
+    def slice_target(self):
+        sort = self.sort_column
+        order = self.sort_order
+        params = {
+            'sort': sort,
+            'order': order,
+        }
+        for term in self.query_whitelist:
+            params[term] = self.request.params.get(term, '')
+        query = make_query(**params)
+        return make_url(self.request, node=self.model, query=query)
     
     @property
     def sort_column(self):
@@ -86,6 +103,7 @@ class Table(Tile):
         b_page = self.request.params.get('b_page', '0')
         cur_sort = self.sort_column
         cur_order = self.sort_order
+        slicesize = self.slicesize
         selected = cur_sort == sortkey
         alter = selected and cur_order == 'desc'
         order = alter and 'asc' or 'desc'
@@ -93,6 +111,7 @@ class Table(Tile):
             'b_page': b_page,
             'sort': sortkey,
             'order': order,
+            'size': slicesize,
         }
         for term in self.query_whitelist:
             params[term] = self.request.params.get(term, '')
@@ -140,8 +159,9 @@ class TableBatch(Batch):
         ret = list()
         path = nodepath(self.model)
         count = self.table_tile.item_count
-        pages = count / self.table_tile.slicesize
-        if count % self.table_tile.slicesize != 0:
+        slicesize = self.table_tile.slicesize
+        pages = count / slicesize
+        if count % slicesize != 0:
             pages += 1
         current = self.request.params.get('b_page', '0')
         sort = self.request.params.get('sort', self.table_tile.default_sort)
@@ -149,6 +169,7 @@ class TableBatch(Batch):
         params = {
             'sort': sort,
             'order': order,
+            'size': slicesize,
         }
         for term in self.table_tile.query_whitelist:
             params[term] = self.request.params.get(term, '')
