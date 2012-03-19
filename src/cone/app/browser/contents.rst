@@ -65,11 +65,11 @@ Imports and dummy context::
     <cone.app.browser.table.TableSlice object at ...>
 
     >>> contents.slice.slice
-    (0, 10)
+    (0, 15)
     
     >>> request.params['b_page'] = '1'
     >>> contents.slice.slice
-    (10, 20)
+    (15, 30)
     
     >>> del request.params['b_page']
     
@@ -81,7 +81,7 @@ Items returned by default sorting::
     u'...0 Title...'
     
     >>> contents.slice.rows[-1]['title']
-    u'...9 Title...'
+    u'...14 Title...'
 
 Inverse order::
 
@@ -90,13 +90,13 @@ Inverse order::
     u'...18 Title...'
     
     >>> contents.slice.rows[-1]['title']
-    u'...9 Title...'
+    u'...4 Title...'
 
 Switch batch page with inversed order::
 
     >>> request.params['b_page'] = '1'
     >>> contents.slice.rows[0]['title']
-    u'...8 Title...'
+    u'...3 Title...'
     
     >>> contents.slice.rows[-1]['title']
     u'...0 Title...'
@@ -109,44 +109,31 @@ Reset order and batch page::
 Sort by creator::
 
     >>> request.params['sort'] = 'creator'
-    >>> contents.slice.rows[0]['creator']
-    'admin 1'
-    
-    >>> contents.slice.rows[-1]['creator']
-    'admin 18'
-    
-    >>> len(contents.slice.rows)
-    10
-    
     >>> [row['creator'] for row in contents.slice.rows]
     ['admin 1', 'admin 10', 'admin 11', 'admin 12', 'admin 13', 'admin 14', 
-    'admin 15', 'admin 16', 'admin 17', 'admin 18']
+    'admin 15', 'admin 16', 'admin 17', 'admin 18', 'admin 19', 'admin 2', 
+    'admin 3', 'admin 4', 'admin 5']
     
     >>> request.params['b_page'] = '1'
-    >>> contents.slice.rows[0]['creator']
-    'admin 19'
-    
-    >>> contents.slice.rows[-1]['creator']
-    'admin 9'
-    
     >>> [row['creator'] for row in contents.slice.rows]
-    ['admin 19', 'admin 2', 'admin 3', 'admin 4', 'admin 5', 
-    'admin 6', 'admin 7', 'admin 8', 'admin 9']
+    ['admin 6', 'admin 7', 'admin 8', 'admin 9']
 
 Sort by created::
 
     >>> request.params['b_page'] = '0'
     >>> request.params['sort'] = 'created'
+    
     >>> contents.slice.rows[0]['created']
     datetime.datetime(2011, 3, 14, 0, 0)
     
     >>> contents.slice.rows[-1]['created']
-    datetime.datetime(2011, 3, 23, 0, 0)
+    datetime.datetime(2011, 3, 28, 0, 0)
     
     >>> request.params['b_page'] = '1'
     >>> request.params['sort'] = 'modified'
+    
     >>> contents.slice.rows[0]['modified']
-    datetime.datetime(2011, 3, 25, 0, 0)
+    datetime.datetime(2011, 3, 30, 0, 0)
     
     >>> contents.slice.rows[-1]['modified']
     datetime.datetime(2011, 4, 2, 0, 0)
@@ -158,27 +145,27 @@ Test batch::
 
     >>> rendered = contents.batch
     >>> rendered = contents.batch
-    >>> rendered.find('class="current">1</strong>') != -1
+    >>> rendered.find('class="ui-state-default current">1</a>') != -1
     True
     
-    >>> rendered.find('http://example.com/?sort=created&order=desc&b_page=1') != -1
+    >>> rendered.find('http://example.com/?sort=created&amp;order=desc&amp;b_page=1&amp;size=15') != -1
     True
 
 Change page::
 
     >>> request.params['b_page'] = '1'
     >>> rendered = contents.batch
-    >>> rendered.find('class="current">2</strong>') != -1
+    >>> rendered.find('class="ui-state-default current">2</a>') != -1
     True
     
-    >>> rendered.find('http://example.com/?sort=created&order=desc&b_page=0') != -1
+    >>> rendered.find('http://example.com/?sort=created&amp;order=desc&amp;b_page=0&amp;size=15') != -1
     True
 
 Change sort and order. Sort is proxied by batch::
 
     >>> request.params['sort'] = 'modified'
     >>> rendered = contents.batch
-    >>> rendered.find('http://example.com/?sort=modified&amp;order=desc&amp;b_page=0') != -1
+    >>> rendered.find('http://example.com/?sort=modified&amp;order=desc&amp;b_page=0&amp;size=15') != -1
     True
 
 Rendering fails unauthorized, 'view' permission is required::
@@ -201,7 +188,7 @@ Render authenticated::
     >>> request.params['b_page'] = '1'
     >>> rendered = render_tile(model, request, 'contents')
     >>> expected = \
-    ... '<a href="http://example.com/?sort=title&order=desc&b_page=1"'
+    ... '<a href="http://example.com/?sort=title&order=desc&b_page=1&size=15"'
     >>> rendered.find(expected) != -1
     True
 

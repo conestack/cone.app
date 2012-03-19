@@ -37,11 +37,14 @@ Imports and dummy context::
 ``item_count`` is used to calculate the slice::
 
     >>> class MyTable(Table):
+    ...     default_slicesize = 10
+    ...     
     ...     @property
     ...     def item_count(self):
     ...         return 21
     
     >>> table = MyTable('cone.app:browser/templates/table.pt', None, 'table')
+    >>> table.request = request
     >>> table.item_count
     21
     
@@ -50,17 +53,19 @@ Imports and dummy context::
     >>> batch.request = request
     >>> batch.vocab
     [{'current': True, 'visible': True, 
-    'url': 'http://example.com/?b_page=0', 'page': '1'}, 
+    'url': 'http://example.com/?b_page=0&size=10', 'page': '1'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?b_page=1', 'page': '2'}, 
+    'url': 'http://example.com/?b_page=1&size=10', 'page': '2'}, 
     {'current': False, 'visible': True, 
-    'url': 'http://example.com/?b_page=2', 'page': '3'}]
+    'url': 'http://example.com/?b_page=2&size=10', 'page': '3'}]
 
 ``sorted_rows`` is responsible to generate the table rows data. It gets passed
 ``start``, ``end``, ``sort`` and ``order`` and must return a list of
 ``RowData`` instances::
 
     >>> class MyTable(Table):
+    ...     default_slicesize = 10
+    ...     
     ...     @property
     ...     def item_count(self):
     ...         return 20
@@ -75,6 +80,7 @@ Imports and dummy context::
     ...         return rows[start:end]
 
     >>> table = MyTable('cone.app:browser/templates/table.pt', None, 'table')
+    >>> table.request = request
     >>> slice = TableSlice(table, model, request)
     >>> slice.slice
     (0, 10)
@@ -237,7 +243,7 @@ Sort header with query white list param::
     >>> rendered
     u'\n  <div id="mytable"\n
       ...
-    ajax:target="http://example.com/?sort=col_2&foo=bar&order=desc&b_page=1"...
+    ajax:target="http://example.com/?sort=col_2&foo=bar&order=desc&b_page=1&size=10"...
 
 Structure content::
     
