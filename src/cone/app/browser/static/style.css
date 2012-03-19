@@ -671,7 +671,7 @@ div.contextmenu div.state {
 }
 
 /* Reference Browser */
-.referencebrowser {
+#referencebrowser {
     width:500px;
 }
 .referencebrowser .pathbar ul {
