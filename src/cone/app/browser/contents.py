@@ -116,9 +116,11 @@ class ContentsTile(Table):
                       and x.metadata.modified or FAR_PAST,
     }
     
+    show_filter = True
+    
     @property
     def item_count(self):
-        return len(self.model.keys())
+        return len(self.filtered_children)
     
     @instance_property
     def row_actions(self):
@@ -154,12 +156,28 @@ class ContentsTile(Table):
             rows.append(row_data)
         return rows
     
-    def sorted_children(self, sort, order):
+    @property
+    def filtered_children(self):
+        if self.request.has_key('_filtered_children'):
+            return self.request['_filtered_children']
         children = list()
+        term = self.filter_term
+        if term:
+            term = term.lower()
         for node in self.model.values():
             if not has_permission('view', node, self.request):
                 continue
+            if term:
+                md = node.metadata
+                if md.get('title', '').lower().find(term) == -1 and \
+                  md.get('creator', 'unknown').lower().find(term) == -1:
+                    continue
             children.append(node)
+        self.request['_filtered_children'] = children
+        return children
+    
+    def sorted_children(self, sort, order):
+        children = self.filtered_children
         if sort in self.sort_keys:
             children = sorted(children, key=self.sort_keys[sort])
             if order == 'asc':
