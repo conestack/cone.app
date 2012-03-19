@@ -4,7 +4,8 @@
   <div id="${context.table_id}"
        class="${context.table_id}batchsensitiv
               ${context.table_id}sortingheadsensitiv
-              pretty_table_wrapper"
+              pretty_table_wrapper
+              box_shadow"
        role="grid"
        ajax:bind="${context.wrapper_binding}"
        ajax:target="${context.nodeurl}"

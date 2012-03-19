@@ -152,6 +152,11 @@ ul#mainmenu li.node-settings a.current_page_item {
     padding:12px;
 }
 
+.box_shadow {
+    border-radius:5px 5px 5px 5px;
+    box-shadow:2px 2px 6px #666666;
+}
+
 /* Pathbar */
 #pathbar {
     margin-top:22px;
@@ -390,8 +395,6 @@ table.contents td {
 
 /* Table */
 div.pretty_table_wrapper {
-    border-radius:5px 5px 5px 5px;
-    box-shadow:2px 2px 6px #666666;
     clear:both;
     position:relative;
 }
