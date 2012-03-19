@@ -62,8 +62,7 @@ class ContentsViewLink(ViewLink):
         return '%s:#content:inner' % contenttile
 
 
-#@tile('contents', 'templates/table.pt', permission='view')
-@tile('contents', 'templates/pretty_table.pt', permission='view')
+@tile('contents', 'templates/table.pt', permission='view')
 class ContentsTile(Table):
     
     table_id = 'contents'
@@ -107,7 +106,7 @@ class ContentsTile(Table):
     ]
     default_sort = 'created'
     default_order = 'desc'
-    slicesize = 10
+    default_slicesize = 10
     
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),

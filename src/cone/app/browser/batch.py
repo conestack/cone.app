@@ -34,7 +34,7 @@ class Batch(Tile):
     
     @property
     def batchrange(self):
-        return 30
+        return 10
     
     @property
     def currentpage(self):

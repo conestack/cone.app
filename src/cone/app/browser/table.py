@@ -35,7 +35,7 @@ class Table(Tile):
     col_defs = []
     default_sort = None
     default_order = None
-    slicesize = 10
+    default_slicesize = 15
     query_whitelist = []
     
     @property
@@ -45,6 +45,10 @@ class Table(Tile):
     @property
     def batch(self):
         return TableBatch(self)(self.model, self.request)
+    
+    @property
+    def slicesize(self):
+        return self.request.params.get('size', self.default_slicesize)
     
     @property
     def sort_column(self):
@@ -106,14 +110,6 @@ class TableSlice(object):
         self.request = request
     
     @property
-    def sort(self):
-        return self.request.params.get('sort', self.table_tile.default_sort)
-    
-    @property
-    def order(self):
-        return self.request.params.get('order', self.table_tile.default_order)
-    
-    @property
     def slice(self):
         current = int(self.request.params.get('b_page', '0'))
         start = current * self.table_tile.slicesize
@@ -123,10 +119,9 @@ class TableSlice(object):
     @property
     def rows(self):
         start, end = self.slice
-        return self.table_tile.sorted_rows(start, end, self.sort, self.order)
+        return self.table_tile.sorted_rows(
+            start, end, self.table_tile.sort_column, self.table_tile.sort_order)
 
-# XXX: tmp
-from cone.tile import render_template
 
 class TableBatch(Batch):
     
@@ -135,12 +130,6 @@ class TableBatch(Batch):
         self.name = table_tile.table_id + 'batch'
         self.path = None
         self.attribute = 'render'
-    
-    # XXX: tmp
-    def render(self):
-        return render_template('cone.app.browser:templates/pretty_batch.pt',
-                               request=self.request,
-                               model=self.model, context=self)
     
     @property
     def display(self):

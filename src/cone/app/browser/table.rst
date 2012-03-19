@@ -186,7 +186,7 @@ A complete example::
     ...     ]
     ...     default_sort = 'col_2'
     ...     default_order = 'desc'
-    ...     slicesize = 10
+    ...     default_slicesize = 10
     ...     query_whitelist = ['foo'] # additional query params to consider
     ...     
     ...     @property

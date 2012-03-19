@@ -40,7 +40,6 @@ class SharingTable(Table):
     table_tile_name = 'local_acl'
     default_sort = 'principal'
     default_order = 'asc'
-    slicesize = 15
     query_whitelist = ['term']
     
     @property

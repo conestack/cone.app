@@ -1,0 +1,97 @@
+<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+
+  <div tal:condition="context.display"
+       class="batch">
+     
+    <span tal:define="firstpage context.firstpage"
+          tal:condition="firstpage">
+      <a href="#"
+         ajax:bind="click"
+         ajax:target="${firstpage['url']}"
+         ajax:event="batchclicked:.${context.name}sensitiv"
+         tal:condition="firstpage['visible'] and not firstpage['current']"
+         tal:attributes="href firstpage['url']"
+        ><img src="${request.application_url}/static/images/leftmost.gif"
+              tal:attributes="name firstpage['url']"
+              class="batchlink" /></a>
+      <span tal:condition="not firstpage['visible'] or firstpage['current']">
+        <img src="${request.application_url}/static/images/leftmost_invisible.gif" />
+      </span>
+    </span>
+  
+    <span tal:define="prevpage context.prevpage"
+          tal:condition="prevpage">
+      <a href="#"
+         ajax:bind="click"
+         ajax:target="${prevpage['url']}"
+         ajax:event="batchclicked:.${context.name}sensitiv"
+         tal:condition="prevpage['visible'] and not prevpage['current']"
+         tal:attributes="href prevpage['url']"
+        ><img src="${request.application_url}/static/images/left.gif"
+              tal:attributes="name prevpage['url']"
+              class="batchlink" /></a>
+      <span tal:condition="not prevpage['visible'] or prevpage['current']">
+        <img src="${request.application_url}/static/images/left_invisible.gif" />
+      </span>
+    </span>
+  
+    <span tal:content="context.leftellipsis"
+          class="leftellipsis" />
+  
+    <tal:page repeat="page context.pages">
+      <span>
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${page['url']}"
+           ajax:event="batchclicked:.${context.name}sensitiv"
+           tal:condition="page['visible'] and not page['current']"
+           tal:attributes="href page['url']"
+           tal:content="page['page']">X</a>
+        <span tal:condition="not page['visible']"
+              tal:content="page['page']">X</span>
+        <strong tal:condition="page['current']"
+                tal:content="page['page']"
+                class="current">X</strong>
+      </span>
+    </tal:page>
+  
+    <span tal:content="context.rightellipsis"
+          class="rightellipsis" />
+  
+    <span tal:define="nextpage context.nextpage"
+          tal:condition="nextpage">
+      <a href="#"
+         ajax:bind="click"
+         ajax:target="${nextpage['url']}"
+         ajax:event="batchclicked:.${context.name}sensitiv"
+         tal:condition="nextpage['visible'] and not nextpage['current']"
+         tal:attributes="href nextpage['url']"
+        ><img src="${request.application_url}/static/images/right.gif"
+              tal:attributes="name nextpage['url']"
+              class="batchlink" /></a>
+      <span tal:condition="not nextpage['visible'] or nextpage['current']">
+        <img src="${request.application_url}/static/images/right_invisible.gif" />
+      </span>
+    </span>
+  
+    <span tal:define="lastpage context.lastpage"
+          tal:condition="lastpage">
+      <a href="#"
+         ajax:bind="click"
+         ajax:target="${lastpage['url']}"
+         ajax:event="batchclicked:.${context.name}sensitiv"
+         tal:condition="lastpage['visible'] and not lastpage['current']"
+         tal:attributes="href lastpage['url']"
+        ><img src="${request.application_url}/static/images/rightmost.gif"
+              tal:attributes="name lastpage['url']"
+              class="batchlink" /></a>
+      <span tal:condition="not lastpage['visible'] or lastpage['current']">
+        <img src="${request.application_url}/static/images/rightmost_invisible.gif" />
+      </span>
+    </span>
+  
+  </div>
+
+</tal:ajax>
