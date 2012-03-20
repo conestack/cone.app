@@ -34,8 +34,8 @@ Contributors
 Changes
 =======
 
-0.9.1dev
---------
+0.9.1
+-----
 
 - Better table and batch templates and styles. Table now supports slice size
   selection and filtering.
