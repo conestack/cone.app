@@ -41,11 +41,25 @@ class Resources(Tile):
     
     @property
     def js(self):
-        return app_config().js
+        return self.resources(app_config().js)
     
     @property
     def css(self):
-        return app_config().css
+        return self.resources(app_config().css)
+    
+    def resources(self, reg):
+        ret = list()
+        for res in reg['public']:
+            ret.append(self.resource_url(res))
+        if self.authenticated:
+            for res in reg['protected']:
+                ret.append(self.resource_url(res))
+        return ret
+    
+    def resource_url(self, resource):
+        if resource.startswith('http'):
+            return resource
+        return '%s/%s' % (self.request.application_url, resource)
 
 
 class ProtectedContentTile(Tile):

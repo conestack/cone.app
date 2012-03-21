@@ -34,6 +34,13 @@ Contributors
 Changes
 =======
 
+0.9.2dev
+--------
+
+- Resources also can originate at a remote server.
+  [rnix, 2012-03-21]
+
+
 0.9.1
 -----
 
