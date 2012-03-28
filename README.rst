@@ -34,6 +34,13 @@ Contributors
 Changes
 =======
 
+0.9.3dev
+--------
+
+- Add resizeable plugin to jQuery UI custom built.
+  [rnix, 2012-03-27]
+
+
 0.9.2
 -----
 
