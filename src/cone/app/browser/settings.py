@@ -8,13 +8,25 @@ from cone.tile import (
     Tile,
     render_tile,
 )
-from webob.exc import HTTPFound
+from webob import Response
+from pyramid.view import view_config
 from cone.app.model import AppSettings
 from cone.app.browser.utils import make_url
 from cone.app.browser.ajax import (
     AjaxAction,
     ajax_form_fiddle,
 )
+
+
+@view_config('settings_tab_content', xhr=True, permission='manage')
+def settings_tab_content(model, request):
+    """Used by jquerytools tabs plugin to get settings section content.
+    """
+    try:
+        rendered = render_tile(model, request, 'content')
+    except Exception, e:
+        rendered = '<div class="box">Error: %s</div>' % str(e)
+    return Response('<div class="%s">%s</div>' % (model.name, rendered))
 
 
 @tile('content', 'templates/settings.pt',
@@ -24,17 +36,12 @@ class AppSettings(Tile):
     @property
     def tabs(self):
         ret = list()
-        keys = self.model.factories.keys()
-        for key in keys:
-            value = self.model[key]
-            try:
-                rendered = render_tile(value, self.request, 'content')
-            except Exception, e:
-                rendered = '<div class="box">Error: %s</div>' % str(e)
+        for val in self.model.values():
             ret.append({
-                'title': value.metadata.title,
-                'content': rendered,
-                'css': value.name,
+                'title': val.metadata.title,
+                'target': make_url(self.request,
+                                   node=val,
+                                   resource='settings_tab_content'),
             })
         return ret
 
@@ -51,11 +58,8 @@ class SettingsPart(Part):
     
     @default
     def next(self, request):
-        if self.ajax_request:
-            url = make_url(request.request, node=self.model)
-            selector = '.%s' % self.model.name
-            return [
-                AjaxAction(url, 'content', 'inner', selector),
-            ]
-        url = make_url(request.request, node=self.model.parent)
-        return HTTPFound(location=url)
+        url = make_url(request.request, node=self.model)
+        selector = '.%s' % self.model.name
+        return [
+            AjaxAction(url, 'content', 'inner', selector),
+        ]

@@ -584,7 +584,8 @@ div.contextmenu div.state {
 }
 
 /* Tabs */
-.tabs {
+.tabs,
+.ajaxtabs {
     position:relative;
     z-index:1;
     list-style:none; 
@@ -593,14 +594,16 @@ div.contextmenu div.state {
     height:30px;
     border:none;   
 }
-.tabs li { 
+.tabs li,
+.ajaxtabs li { 
     float:left;  
     text-indent:0;
     padding:0;
     margin:0px !important;
     list-style-image:none !important;
 }
-.tabs li a {
+.tabs li a,
+.ajaxtabs li a {
     background:url('images/tabs.png') no-repeat -554px 0px;
     font-size:11px;
     display:block;
@@ -616,57 +619,73 @@ div.contextmenu div.state {
     top:1px;
     font-weight:bold;
 }
-.tabs a:active {
+.tabs a:active,
+.ajaxtabs a:active {
     outline:none;       
 }
-.tabs a:hover {
+.tabs a:hover,
+.ajaxtabs a:hover {
     background-position: -554px -31px;  
     color:#333; 
 }
 .tabs .current,
 .tabs .current:hover,
-.tabs li.current a {
+.tabs li.current a,
+.ajaxtabs .current,
+.ajaxtabs .current:hover,
+.ajaxtabs li.current a {
     background-position:-554px -62px;      
     cursor:default !important; 
     color:#000 !important;
 }
-.tabs .w1 {
+.tabs .w1,
+.ajaxtabs .w1 {
     background-position:-420px 0px;
     width:134px;
 }
-.tabs .w1:hover {
+.tabs .w1:hover,
+.ajaxtabs .w1:hover {
     background-position:-420px -31px;
 }
-.tabs .w1.current {
+.tabs .w1.current,
+.ajaxtabs .w1.current {
     background-position:-420px -62px;
 }
-.tabs .w2 {
+.tabs .w2,
+.ajaxtabs .w2 {
     background-position:-248px 0px;
     width:173px;
 }
-.tabs .w2:hover {
+.tabs .w2:hover,
+.ajaxtabs .w2:hover {
     background-position:-248px -31px;
 }
-.tabs .w2.current {
+.tabs .w2.current,
+.ajaxtabs .w2.current {
     background-position:-248px -62px;
 }
-.tabs .w3 {
+.tabs .w3,
+.ajaxtabs .w3 {
     background-position:0px 0px;
     width:248px;
 }
-.tabs .w3:hover {
+.tabs .w3:hover,
+.ajaxtabs .w3:hover {
     background-position:0px -31px;
 }
-.tabs .w3.current {
+.tabs .w3.current,
+.ajaxtabs .w3.current {
     background-position:0px -62px;
 }
-.tabpanes {
+.tabpanes,
+.ajaxtabpanes {
     border-top:#ccc 1px solid;
     border-left:#ccc 1px solid;
     margin-top:-8px;
     padding:18px 12px 12px 12px;
 }
-.tabpanes .pane {
+.tabpanes .pane,
+.ajaxtabpanes .pane {
     display:none;
 }
 

@@ -103,9 +103,24 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
         
         tabsbinder: function(context) {
-            // XXX: make it possible to bind ajax tabs by indicating ajax via 
-            //      css class.
-            $("ul.tabs", context).tabs("div.tabpanes > div");
+            // normal tabs
+            $('ul.tabs', context).tabs('div.tabpanes > div');
+            // ajax tabs
+            $('ul.ajaxtabs', context).tabs('div.ajaxtabpanes > div');
+            $('ul.ajaxtabs li a', context).bind('click', function(event) {
+                event.preventDefault();
+                var elem = $(this);
+                var target = bdajax.parsetarget(elem.attr('ajax:target'));
+                bdajax.request({
+                    url: target.url,
+                    params: target.params,
+                    success: function(data, status, request) {
+                        var container = elem.parents('.ajaxtabs').parent();
+                        $('.ajaxtabpane', container)
+                            .html(data).css('display', 'block').bdajax();
+                    }
+                });
+            }).first().trigger('click');
         },
         
         dropdownmenubinder: function(context) {

@@ -18,7 +18,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2011 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2012 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
@@ -36,6 +36,9 @@ Changes
 
 0.9.3dev
 --------
+
+- Ajaxify settings tabs.
+  [rnix, 2012-04-19]
 
 - Add resizeable plugin to jQuery UI custom built.
   [rnix, 2012-03-27]

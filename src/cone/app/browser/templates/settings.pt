@@ -3,17 +3,18 @@
           omit-tag="True">
 
   <tal:tabs define="tabs context.tabs">
-    <ul class="tabs">
+    <ul class="ajaxtabs">
       <li tal:repeat="tab tabs">
-          <a class="w1" href="#" tal:content="tab['title']">Title</a>
+          <a class="w1"
+             href=""
+             ajax:target="${tab['target']}"
+             tal:content="tab['title']">
+            Title
+          </a>
       </li>
     </ul>
-    <div class="tabpanes">
-      <tal:tab repeat="tab tabs">
-        <div class="${tab['css']}">
-          <tal:content replace="structure tab['content']" />
-        </div>
-      </tal:tab>
+    <div class="ajaxtabpanes">
+      <div class="ajaxtabpane" style="display:block"></div>
     </div>
   </tal:tabs>
   
