@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- Improve ajax form rendering.
+  [rnix, 2012-04-19]
+
 - Ajaxify settings tabs.
   [rnix, 2012-04-19]
 

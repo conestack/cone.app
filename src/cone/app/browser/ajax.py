@@ -225,8 +225,13 @@ def ajax_form_fiddle(request, selector, mode):
 
 
 ajax_form_template = """\
+<div id="ajaxform">
+    %(form)s
+</div>
 <script language="javascript" type="text/javascript">
-    parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');
+    var container = document.getElementById('ajaxform');
+    var form = container.getElementsByTagName('form')[0];
+    parent.cone.ajaxformrender(form, '%(selector)s', '%(mode)s');
     parent.bdajax.continuation(%(next)s);
 </script>
 """
@@ -241,8 +246,9 @@ def render_ajax_form(model, request, name):
         mode = request.environ.get('cone.app.form.mode', 'inner')
         continuation = request.environ.get('cone.app.continuation')
         form_continue = AjaxFormContinue(result, continuation)
+        rendered_form = form_continue.form
         rendered = ajax_form_template % {
-            'form': form_continue.form.replace(u'\n', u' '),
+            'form': rendered_form,
             'selector': selector,
             'mode': mode,
             'next': form_continue.next,
