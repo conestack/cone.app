@@ -232,10 +232,16 @@ the response::
 
     >>> from cone.app.browser.ajax import ajax_form_template
     >>> print ajax_form_template.split('\n')
-    ['<script language="javascript" type="text/javascript">', 
-    "    parent.cone.ajaxformrender('%(form)s', '%(selector)s', '%(mode)s');", 
+    ['<div id="ajaxform">', 
+    '    %(form)s', 
+    '</div>', 
+    '<script language="javascript" type="text/javascript">', 
+    "    var container = document.getElementById('ajaxform');", 
+    "    var form = container.getElementsByTagName('form')[0];", 
+    "    parent.cone.ajaxformrender(form, '%(selector)s', '%(mode)s');", 
     '    parent.bdajax.continuation(%(next)s);', 
-    '</script>', '']
+    '</script>', 
+    '']
 
 Test ``render_ajax_form``. Provide a dummy Form::
 
@@ -286,7 +292,7 @@ Test unauthorized::
     >>> request = layer.new_request()
     >>> res = render_ajax_form(root, request, 'ajaxtestform')
     >>> res.body
-    '<script language="javascript" 
+    '<div id="ajaxform">\n    \n</div>\n<script language="javascript" 
     ...HTTPForbidden: Unauthorized: tile <AjaxTestForm object at ...> 
     failed permission check...
     
@@ -305,7 +311,7 @@ Test authorized with form extraction failure::
     >>> result.find('<script language="javascript"') != -1
     True
     
-    >>> result.find('parent.cone.ajaxformrender(\'<form action=') != -1
+    >>> result.find('parent.cone.ajaxformrender(form, ') != -1
     True
     
     >>> result.find('parent.bdajax.continuation(false)') != -1
@@ -316,7 +322,7 @@ Test with form perocessing passing::
     >>> request.params['ajaxtestform.foo'] = 'foo'
     >>> response = render_ajax_form(root, request, 'ajaxtestform')
     >>> result = str(response)
-    >>> expected = 'parent.cone.ajaxformrender(\'\', \'#content\', \'inner\')'
+    >>> expected = 'parent.cone.ajaxformrender(form, \'#content\', \'inner\')'
     >>> result.find(expected) != -1
     True
     

@@ -35,16 +35,10 @@ Login and render settings::
     
     >>> from cone.app import get_root
     >>> res = render_tile(get_root()['settings'], request, 'content')
-    >>> res.find('<a class="w1" href="#">foo</a>') > -1
+    >>> res.find('foo</a>') > -1
     True
     
-    >>> res.find('<a class="w1" href="#">bar</a>') > -1
-    True
-    
-    >>> res.find('<div class="foo">') > -1
-    True
-    
-    >>> res.find('<div class="bar">') > -1
+    >>> res.find('bar</a>') > -1
     True
 
 Another settings node::
@@ -62,13 +56,13 @@ Tile for ``OtherSettings`` which raises an exception at render time::
     ...         raise Exception(u"This tile can not be rendered for some "
     ...                         u"reason")
 
-Check if error raised by ``OtherSettingsTile`` is caught::
+Check if error raised by ``OtherSettingsTile``::
 
-    >>> res = render_tile(get_root()['settings'], request, 'content')
-    >>> expected = '<div class="box">Error: This tile can not be rendered ' +\
-    ...            'for some reason</div>'
-    >>> res.find(expected) > -1
-    True
+    >>> model = get_root()['settings']['baz']
+    >>> res = render_tile(model, request, 'content')
+    Traceback (most recent call last):
+      ...
+    Exception: This tile can not be rendered for some reason
     
     >>> layer.logout()
 
@@ -125,13 +119,17 @@ form to correct tab::
     >>> request.environ['cone.app.continuation'][0].selector
     '.foo'
     
-    >>> layer.login('manager')
+Ajax View for tabs::
+
+    >>> from cone.app.browser.settings import settings_tab_content
     >>> request = layer.new_request()
-    >>> request.params['action.editform.save'] = '1'
-    >>> request.params['editform.foo'] = 'foo'
-    >>> res = render_tile(get_root()['settings']['foo'], request, 'editform')
+    >>> response = settings_tab_content(get_root()['settings']['foo'], request)
+    >>> response.body
+    '<div class="foo"><div>Settings Contents</div></div>'
     
-    >>> request.environ['redirect']
-    <HTTPFound at ... 302 Found>
+    >>> response = settings_tab_content(get_root()['settings']['baz'], request)
+    >>> response.body
+    '<div class="baz"><div class="box">Error: This tile can not be rendered 
+    for some reason</div></div>'
     
     >>> layer.logout()
