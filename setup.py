@@ -44,6 +44,7 @@ setup(name='cone.app',
           'yafowil.widget.array',
           'yafowil.widget.autocomplete',
           'yafowil.widget.dynatree',
+          'yafowil.widget.image',
           'repoze.workflow',
       ],
       extras_require = dict(

@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- Include ``yafowil.widget.image``.
+  [rnix, 2012-04-21]
+
 - Improve ajax form rendering.
   [rnix, 2012-04-19]
 
