@@ -34,13 +34,23 @@ label {
     font-weight:bold;
 }
 form .field {
-    margin-bottom:6px;
+    margin:2px 2px 6px 2px;
 }
 form .field div.error {
     color:red;
+    border:red 1px solid;
+    background-color:#f3c789; 
 }
 form .field div.error label {
     color:#333;
+}
+form div.message {
+    padding:2px 2px 0px 2px;
+}
+form h5 {
+    margin:0;
+    font-weight:normal;
+    font-size:100%;
 }
 
 /* Main layout styles */
@@ -292,23 +302,6 @@ div#footer a {
     text-decoration:none;
     font-weight:bold;
     color:#aaa;
-}
-
-/* Forms */
-form h5 {
-    margin:0;
-    font-weight:normal;
-    font-size:100%;
-}
-form div.error {
-    border:red 1px solid;
-    background-color:#f3c789; 
-}
-form div.field {
-    margin:2px;
-}
-form div.message {
-    padding:2px 2px 0px 2px;
 }
 
 /* Copysupport */
