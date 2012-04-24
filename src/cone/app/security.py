@@ -15,6 +15,7 @@ from pyramid.security import (
     remember,
     authenticated_userid,
 )
+from pyramid.i18n import TranslationStringFactory
 from cone.app.interfaces import (
     IOwnerSupport,
     IPrincipalACL,
@@ -22,13 +23,13 @@ from cone.app.interfaces import (
 from cone.app.utils import app_config
 
 logger = logging.getLogger('cone.app')
+_ = TranslationStringFactory('cone.app')
 
-# XXX: get rid of -> i18n
 DEFAULT_ROLES = [
-    ('viewer', 'Viewer'),
-    ('editor', 'Editor'),
-    ('admin', 'Admin'),
-    ('manager', 'Manager'),
+    ('viewer', _('role_viewer', 'Viewer')),
+    ('editor', _('role_editor', 'Editor')),
+    ('admin', _('role_admin', 'Admin')),
+    ('manager', _('role_manager', 'Manager')),
 ]
 
 owner_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',

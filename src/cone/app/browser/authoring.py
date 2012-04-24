@@ -8,6 +8,10 @@ from plumber import (
 from webob.exc import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
+from pyramid.i18n import (
+    TranslationStringFactory,
+    get_localizer,
+)
 from yafowil.base import factory
 from cone.tile import (
     Tile,
@@ -37,6 +41,8 @@ from cone.app.browser.utils import (
     make_url,
     make_query,
 )
+
+_ = TranslationStringFactory('cone.app')
 
 
 def is_ajax(request):
@@ -134,7 +140,7 @@ class AddTile(ProtectedContentTile):
     def render(self):
         nodeinfo = self.info
         if not nodeinfo:
-            return u'Unknown factory'
+            return _('unknown_factory', 'Unknown factory')
         factory = nodeinfo.factory
         if not factory:
             factory = default_addmodel_factory
@@ -160,7 +166,7 @@ class ContentForm(Part):
     @default
     @property
     def form_heading(self):
-        return u'Context Form Heading'
+        return _('content_form_heading', 'Content Form Heading')
     
     @default
     @property
@@ -189,8 +195,13 @@ class AddPart(CameFromNext, ContentForm):
     @default
     @property
     def form_heading(self):
-        info = getNodeInfo(self.model.node_info_name)
-        return u'Add %s' % info.title
+        ts = _('add_form_heading',
+               default='Add: ${title}',
+               mapping={
+                   'title': getNodeInfo(self.model.node_info_name).title,
+               })
+        localizer = get_localizer(self.request)
+        return localizer.translate(ts)
     
     @default
     @property
@@ -234,9 +245,15 @@ class EditPart(CameFromNext, ContentForm):
     @property
     def form_heading(self):
         info = getNodeInfo(self.model.node_info_name)
-        if info is not None:
-            return u'Edit %s' % info.title
-        return 'Edit'
+        if info is None:
+            return _('edit', 'Edit')
+        ts = _('edit_form_heading',
+               default='Edit: ${title}',
+               mapping={
+                   'title': info.title,
+               })
+        localizer = get_localizer(self.request)
+        return localizer.translate(ts)
 
 
 @tile('delete', permission="delete")
@@ -252,7 +269,11 @@ class DeleteAction(Tile):
         model = self.model
         title = model.metadata.get('title', model.name)
         if not model.properties.action_delete:
-            message = 'Object "%s" not deletable' % title
+            ts = _('object_not_deletable',
+                   default='Object "${title}" not deletable',
+                   mapping={'title': title})
+            localizer = get_localizer(self.request)
+            message = localizer.translate(ts)
             ajax_message(self.request, message, 'error')
             return u''
         parent = model.parent
@@ -261,7 +282,11 @@ class DeleteAction(Tile):
             parent()
         url = make_url(self.request, node=parent)
         ajax_continue(self.request, self.continuation(url))
-        message = 'Deleted: %s' % title
+        ts = _('deleted_object',
+               default='Deleted: ${title}',
+               mapping={'title': title})
+        localizer = get_localizer(self.request)
+        message = localizer.translate(ts)
         ajax_message(self.request, message, 'info')
         return u''
 

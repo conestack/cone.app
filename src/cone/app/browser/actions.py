@@ -1,5 +1,6 @@
 from odict import odict
 from pyramid.security import has_permission
+from pyramid.i18n import TranslationStringFactory
 from cone.tile import (
     render_template,
     render_tile,
@@ -10,6 +11,8 @@ from cone.app.interfaces import (
     ICopySupport,
 )
 from cone.app.browser.utils import make_url
+
+_ = TranslationStringFactory('cone.app')
 
 
 class ActionContext(object):
@@ -146,7 +149,7 @@ class ActionUp(LinkAction):
     """One level up action.
     """
     css = 'up16_16'
-    title = 'One level up'
+    title = _('action_one_level_up', 'One level up')
     event = 'contextchanged:.contextsensitiv'
     
     @property
@@ -177,7 +180,7 @@ class ActionView(LinkAction):
     """View action.
     """
     css = 'view16_16'
-    title = 'View'
+    title = _('action_view', 'View')
     href = LinkAction.target
     
     @property
@@ -216,7 +219,7 @@ class ActionList(LinkAction):
     """Contents listing action.
     """
     css = 'listing16_16'
-    title = 'Listing'
+    title = _('action_listing', 'Listing')
     action = 'listing:#content:inner'
     
     @property
@@ -236,7 +239,7 @@ class ActionSharing(LinkAction):
     """Sharing action.
     """
     css = 'sharing16_16'
-    title = 'Sharing'
+    title = _('action_sharing', 'Sharing')
     action = 'sharing:#content:inner'
     
     @property
@@ -280,7 +283,7 @@ class ActionEdit(LinkAction):
     """Edit action.
     """
     css = 'edit16_16'
-    title = 'Edit'
+    title = _('action_edit', 'Edit')
     action = 'edit:#content:inner'
     
     @property
@@ -300,9 +303,10 @@ class ActionDelete(LinkAction):
     """Delete action.
     """
     css = 'delete16_16'
-    title = 'Delete'
+    title = _('action_delete', 'Delete')
     action = 'delete:NONE:NONE'
-    confirm = 'Do you really want to delete this Item?'
+    confirm = _('delete_item_confirm',
+                'Do you really want to delete this Item?')
     
     @property
     def href(self):
@@ -324,9 +328,10 @@ class ActionDeleteChildren(LinkAction):
     """Delete children action.
     """
     css = 'delete16_16'
-    title = 'Delete selected children'
+    title = _('action_delete_selected_children', 'Delete selected children')
     action = 'delete_children:NONE:NONE'
-    confirm = 'Do you really want to delete selected Items?'
+    confirm = _('delete_items_confirm',
+                'Do you really want to delete selected Items?')
     
     @property
     def href(self):
@@ -346,7 +351,7 @@ class ActionCut(LinkAction):
     """Cut children action.
     """
     css = 'cut16_16'
-    title = 'Cut'
+    title = _('action_cut', 'Cut')
     bind = None
     
     @property
@@ -365,7 +370,7 @@ class ActionCopy(LinkAction):
     """Copy children action.
     """
     css = 'copy16_16'
-    title = 'Copy'
+    title = _('action_copy', 'Copy')
     bind = None
     
     @property
@@ -384,7 +389,7 @@ class ActionPaste(LinkAction):
     """Paste children action.
     """
     css = 'paste16_16'
-    title = 'Paste'
+    title = _('action_paste', 'Paste')
     bind = None
     
     @property

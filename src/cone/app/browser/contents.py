@@ -1,6 +1,7 @@
 import datetime
 from node.utils import instance_property
 from pyramid.security import has_permission
+from pyramid.i18n import TranslationStringFactory
 from cone.tile import (
     tile,
     Tile,
@@ -26,6 +27,7 @@ from cone.app.browser.utils import (
     format_date,
 )
 
+_ = TranslationStringFactory('cone.app')
 
 FAR_PAST = datetime.datetime(2000, 1, 1)
 
@@ -70,37 +72,37 @@ class ContentsTile(Table):
     col_defs = [
         {
             'id': 'actions',
-            'title': 'Actions',
+            'title': _('actions', 'Actions'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',
         },
         {
             'id': 'title',
-            'title': 'Title',
+            'title': _('title', 'Title'),
             'sort_key': 'title',
-            'sort_title': 'Sort on title',
+            'sort_title': _('sort_on_title', 'Sort on title'),
             'content': 'structure',
         },
         {
             'id': 'creator',
-            'title': 'Creator',
+            'title': _('creator', 'Creator'),
             'sort_key': 'creator',
-            'sort_title': 'Sort on creator',
+            'sort_title': _('sort_on_creator', 'Sort on creator'),
             'content': 'string',
         },
         {
             'id': 'created',
-            'title': 'Created',
+            'title': _('creted', 'Created'),
             'sort_key': 'created',
-            'sort_title': 'Sort on created',
+            'sort_title': _('sort_on_created', 'Sort on created'),
             'content': 'datetime',
         },
         {
             'id': 'modified',
-            'title': 'Modified',
+            'title': _('modified', 'Modified'),
             'sort_key': 'modified',
-            'sort_title': 'Sort on modified',
+            'sort_title': _('sort_on_modified', 'Sort on modified'),
             'content': 'datetime',
         },
     ]

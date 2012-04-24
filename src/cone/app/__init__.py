@@ -6,6 +6,7 @@ from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
+#from pyramid.i18n import TranslationStringFactory
 from zope.component import getGlobalSiteManager
 from cone.app.model import (
     AppRoot,
@@ -21,6 +22,7 @@ from yafowil.utils import (
 )
 
 logger = logging.getLogger('cone.app')
+#_ = TranslationStringFactory('cone.app')
 
 # configuration
 cfg = Properties()

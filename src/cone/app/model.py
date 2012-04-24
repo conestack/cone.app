@@ -36,6 +36,7 @@ from pyramid.security import (
     Deny,
     ALL_PERMISSIONS,
 )
+from pyramid.i18n import TranslationStringFactory
 from cone.app.interfaces import (
     IApplicationNode,
     IFactoryNode,
@@ -51,6 +52,7 @@ from cone.app.utils import (
     app_config,
 )
 
+_ = TranslationStringFactory('cone.app')
 
 _node_info_registry = dict()
 
@@ -86,7 +88,7 @@ class AppNode(Part):
     def metadata(self):
         name = self.name
         if not name:
-            name = 'No Title'
+            name = _('no_title', 'No Title')
         metadata = BaseMetadata()
         metadata.title = name
         return metadata
@@ -160,7 +162,7 @@ class AppSettings(FactoryNode):
     @instance_property
     def metadata(self):
         metadata = BaseMetadata()
-        metadata.title = "Settings"
+        metadata.title = _("settings", "Settings")
         return metadata
 
 

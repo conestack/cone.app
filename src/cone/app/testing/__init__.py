@@ -67,6 +67,7 @@ class Security(Layer):
     
     def make_app(self, **kw):
         settings = {
+            'default_locale_name': 'en',
             'cone.admin_user': 'superuser',
             'cone.admin_password': 'superuser',
             'cone.auth_secret': '12345',

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-04-24 12:07+0200\n"
+"POT-Creation-Date: 2012-04-24 17:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,4 +16,174 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
+
+#. Default: No Title
+#: src/cone/app/model.py:91
+msgid "no_title"
+msgstr ""
+
+#. Default: Settings
+#: src/cone/app/model.py:165
+msgid "settings"
+msgstr ""
+
+#. Default: Viewer
+#: src/cone/app/security.py:29
+msgid "role_viewer"
+msgstr ""
+
+#. Default: Editor
+#: src/cone/app/security.py:30
+msgid "role_editor"
+msgstr ""
+
+#. Default: Admin
+#: src/cone/app/security.py:31
+msgid "role_admin"
+msgstr ""
+
+#. Default: Manager
+#: src/cone/app/security.py:32
+msgid "role_manager"
+msgstr ""
+
+#. Default: One level up
+#: src/cone/app/browser/actions.py:152
+msgid "action_one_level_up"
+msgstr ""
+
+#. Default: View
+#: src/cone/app/browser/actions.py:183
+msgid "action_view"
+msgstr ""
+
+#. Default: Listing
+#: src/cone/app/browser/actions.py:222
+msgid "action_listing"
+msgstr ""
+
+#. Default: Sharing
+#: src/cone/app/browser/actions.py:242
+msgid "action_sharing"
+msgstr ""
+
+#. Default: Edit
+#: src/cone/app/browser/actions.py:286
+msgid "action_edit"
+msgstr ""
+
+#. Default: Delete
+#: src/cone/app/browser/actions.py:306
+msgid "action_delete"
+msgstr ""
+
+#. Default: Do you really want to delete this Item?
+#: src/cone/app/browser/actions.py:308
+msgid "delete_item_confirm"
+msgstr ""
+
+#. Default: Delete selected children
+#: src/cone/app/browser/actions.py:331
+msgid "action_delete_selected_children"
+msgstr ""
+
+#. Default: Do you really want to delete selected Items?
+#: src/cone/app/browser/actions.py:333
+msgid "delete_items_confirm"
+msgstr ""
+
+#. Default: Cut
+#: src/cone/app/browser/actions.py:354
+msgid "action_cut"
+msgstr ""
+
+#. Default: Copy
+#: src/cone/app/browser/actions.py:373
+msgid "action_copy"
+msgstr ""
+
+#. Default: Paste
+#: src/cone/app/browser/actions.py:392
+msgid "action_paste"
+msgstr ""
+
+#. Default: Unknown factory
+#: src/cone/app/browser/authoring.py:143
+msgid "unknown_factory"
+msgstr ""
+
+#. Default: Content Form Heading
+#: src/cone/app/browser/authoring.py:169
+msgid "content_form_heading"
+msgstr ""
+
+#. Default: Add: ${title}
+#: src/cone/app/browser/authoring.py:198
+msgid "add_form_heading"
+msgstr ""
+
+#. Default: Edit
+#: src/cone/app/browser/authoring.py:249
+msgid "edit"
+msgstr ""
+
+#. Default: Edit: ${title}
+#: src/cone/app/browser/authoring.py:250
+msgid "edit_form_heading"
+msgstr ""
+
+#. Default: Object "${title}" not deletable
+#: src/cone/app/browser/authoring.py:272
+msgid "object_not_deletable"
+msgstr ""
+
+#. Default: Deleted: ${title}
+#: src/cone/app/browser/authoring.py:283
+msgid "deleted_object"
+msgstr ""
+
+#. Default: Actions
+#: src/cone/app/browser/contents.py:75
+msgid "actions"
+msgstr ""
+
+#. Default: Title
+#: src/cone/app/browser/contents.py:82
+msgid "title"
+msgstr ""
+
+#. Default: Sort on title
+#: src/cone/app/browser/contents.py:84
+msgid "sort_on_title"
+msgstr ""
+
+#. Default: Creator
+#: src/cone/app/browser/contents.py:89
+msgid "creator"
+msgstr ""
+
+#. Default: Sort on creator
+#: src/cone/app/browser/contents.py:91
+msgid "sort_on_creator"
+msgstr ""
+
+#. Default: Created
+#: src/cone/app/browser/contents.py:96
+msgid "creted"
+msgstr ""
+
+#. Default: Sort on created
+#: src/cone/app/browser/contents.py:98
+msgid "sort_on_created"
+msgstr ""
+
+#. Default: Modified
+#: src/cone/app/browser/contents.py:103
+msgid "modified"
+msgstr ""
+
+#. Default: Sort on modified
+#: src/cone/app/browser/contents.py:105
+msgid "sort_on_modified"
+msgstr ""
 
