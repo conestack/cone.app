@@ -195,13 +195,14 @@ class AddPart(CameFromNext, ContentForm):
     @default
     @property
     def form_heading(self):
-        ts = _('add_form_heading',
-               default='Add: ${title}',
-               mapping={
-                   'title': getNodeInfo(self.model.node_info_name).title,
-               })
         localizer = get_localizer(self.request)
-        return localizer.translate(ts)
+        title = localizer.translate(
+            getNodeInfo(self.model.node_info_name).title)
+        heading = localizer.translate(
+            _('add_form_heading',
+              default='Add: ${title}',
+              mapping={'title': title}))
+        return heading
     
     @default
     @property
@@ -247,13 +248,13 @@ class EditPart(CameFromNext, ContentForm):
         info = getNodeInfo(self.model.node_info_name)
         if info is None:
             return _('edit', 'Edit')
-        ts = _('edit_form_heading',
-               default='Edit: ${title}',
-               mapping={
-                   'title': info.title,
-               })
         localizer = get_localizer(self.request)
-        return localizer.translate(ts)
+        title = localizer.translate(_(info.title))
+        heading = localizer.translate(
+            _('edit_form_heading',
+              default='Edit: ${title}',
+              mapping={'title': localizer.translate(info.title)}))
+        return heading
 
 
 @tile('delete', permission="delete")
