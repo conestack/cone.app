@@ -59,6 +59,7 @@ class Security(Layer):
         request.environ['SERVER_NAME'] = 'testcase'
         request.environ['AUTH_TYPE'] = 'cookie'
         request.environ.update(auth)
+        request.params['_LOCALE_'] = 'en'
         if type == 'json':
             request.headers['X-Request'] = 'JSON'
             request.accept = 'application/json'

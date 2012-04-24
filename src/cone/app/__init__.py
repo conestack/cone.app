@@ -6,7 +6,6 @@ from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
-#from pyramid.i18n import TranslationStringFactory
 from zope.component import getGlobalSiteManager
 from cone.app.model import (
     AppRoot,
@@ -14,6 +13,7 @@ from cone.app.model import (
     Properties,
 )
 from cone.app.browser import forbidden_view
+from yafowil.base import factory
 from yafowil.utils import (
     get_plugin_names,
     get_resource_directory,
@@ -22,7 +22,6 @@ from yafowil.utils import (
 )
 
 logger = logging.getLogger('cone.app')
-#_ = TranslationStringFactory('cone.app')
 
 # configuration
 cfg = Properties()

@@ -35,7 +35,7 @@ Metadata.::
     <cone.app.model.Metadata object at ...>
     
     >>> root.metadata.title
-    'No Title'
+    u'no_title'
 
     >>> root.metadata.inexistent
 

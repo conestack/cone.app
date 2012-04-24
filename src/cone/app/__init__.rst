@@ -23,7 +23,7 @@ Settings contains metadata.title by default::
     ['title']
     
     >>> root['settings'].metadata.title
-    'Settings'
+    u'settings'
 
 Settings is displayed in navtree by default::
     

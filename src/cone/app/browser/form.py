@@ -5,13 +5,40 @@ from plumber import (
 )
 from webob.exc import HTTPFound
 from pyramid.security import has_permission
+from pyramid.i18n import get_localizer
 from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
+from yafowil.webob import WebObRequestAdapter
 from cone.tile import Tile
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import make_url
+
+
+class TranslateCallable(object):
+    
+    def __init__(self, data):
+        if isinstance(data.request, WebObRequestAdapter):
+            self.request = data.request.request
+        else:
+            self.request = data.request
+        
+    def __call__(self, msg):
+        if self.request:
+            localizer = get_localizer(self.request)
+            return localizer.translate(msg)
+        return msg
+
+
+def yafowil_preprocessor(widget, data):
+    if not isinstance(data.translate_callable, TranslateCallable):
+        data.translate_callable = TranslateCallable(data)    
+    return data
+
+
+def yafowil_register():
+    factory.register_global_preprocessors([yafowil_preprocessor])
 
 
 class YAMLForm(Part):

@@ -119,7 +119,7 @@ Render without factory::
     >>> request = layer.new_request()
     >>> from cone.tile import render_tile
     >>> render_tile(root, request, 'add')
-    u'Unknown factory'
+    u'unknown_factory'
 
 Render with valid factory::
 
@@ -256,7 +256,7 @@ Render form with value from model::
     ...     ActionContext(root['somechild'], request, 'content')
     
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<div class="box">...<h1>Edit My Node</h1>...<form 
+    u'<div class="box">...<h1>Edit: My Node</h1>...<form 
     action="http://example.com/somechild" ...'
 
 Render with submitted data. Default next URL of EditPart is the edited node::
@@ -372,7 +372,7 @@ Deleting
     u''
     
     >>> request.environ['cone.app.continuation'][0].payload
-    'Object "child" not deletable'
+    u'Object "child" not deletable'
     
     >>> node['child'].properties.action_delete = True
     

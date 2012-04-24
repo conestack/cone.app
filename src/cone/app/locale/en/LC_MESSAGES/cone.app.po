@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-04-24 12:07+0200\n"
-"PO-Revision-Date: 2012-04-24 18:18+0200\n"
+"PO-Revision-Date: 2012-04-24 19:28+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -221,4 +221,34 @@ msgstr "Pasted ${count} items"
 #: src/cone/app/browser/copysupport.py:122
 msgid "pasting_items_failed"
 msgstr "Pasting of ${count} items failed"
+
+#. Default: No username given
+#: src/cone/app/browser/login.py:31
+msgid "no_username_given"
+msgstr "No username given"
+
+#. Default: Username
+#: src/cone/app/browser/login.py:32
+msgid "username"
+msgstr "Username"
+
+#. Default: No password given
+#: src/cone/app/browser/login.py:37
+msgid "no_password_given"
+msgstr "No password given"
+
+#. Default: Password
+#: src/cone/app/browser/login.py:38
+msgid "password"
+msgstr "Password"
+
+#. Default: Login
+#: src/cone/app/browser/login.py:50
+msgid "login"
+msgstr "Login"
+
+#. Default: Invalid Credentials
+#: src/cone/app/browser/login.py:64
+msgid "invalid_credentials"
+msgstr "Invalid Credentials"
 

@@ -44,8 +44,8 @@ Copysupport::
     >>> res = paste_tile(target, request)
     
     >>> request.environ['cone.app.continuation'][0].payload
-    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
-    failed:</strong><br />Violation. 'CopySupportNodeB' is not allowed 
+    u"Pasted 0 items<br /><strong>Pasting of 1 items 
+    failed</strong><br />Violation. 'CopySupportNodeB' is not allowed 
     to contain 'CopySupportNodeA'"
     
     >>> copy_url = urllib.quote(make_url(request, node=source['b_child']))
@@ -116,8 +116,8 @@ Copysupport::
         <class 'CopySupportNodeB'>: b_child-2
     
     >>> request.environ['cone.app.continuation'][0].payload
-    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
-    failed:</strong><br />Violation. 'CopySupportNodeB' is not 
+    u"Pasted 0 items<br /><strong>Pasting of 1 items 
+    failed</strong><br />Violation. 'CopySupportNodeB' is not 
     allowed to contain 'CopySupportNodeA'"
     
     >>> cut_url = urllib.quote(make_url(request, node=source))
@@ -125,8 +125,8 @@ Copysupport::
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url
     >>> res = paste_tile(root['source']['a_child'], request)
     >>> request.environ['cone.app.continuation'][0].payload
-    u'Pasted 0 items.<br /><strong>Pasting of 1 items 
-    failed:</strong><br />Cannot paste cut object to child of it: source'
+    u'Pasted 0 items<br /><strong>Pasting of 1 items 
+    failed</strong><br />Cannot paste cut object to child of it: source'
     
     >>> cut_url = '::'.join([
     ...     urllib.quote(make_url(request, node=target['b_child'])),
@@ -156,16 +156,16 @@ Copysupport::
     >>> del request.environ['cone.app.continuation']
     >>> res = paste_tile(target, request)
     >>> request.environ['cone.app.continuation'][0].payload
-    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
-    failed:</strong><br />Cannot paste 'unknown_source'. Unknown source"
+    u"Pasted 0 items<br /><strong>Pasting of 1 items 
+    failed</strong><br />Cannot paste 'unknown_source'. Unknown source"
     
     >>> cut_url = urllib.quote(make_url(request, node=source['b_child']))
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url
     >>> del request.environ['cone.app.continuation']
     >>> res = paste_tile(root['unknown_target'], request)
     >>> request.environ['cone.app.continuation'][0].payload
-    u"Pasted 0 items.<br /><strong>Pasting of 1 items 
-    failed:</strong><br />Cannot paste to 'unknown_target'. Unknown target"
+    u"Pasted 0 items<br /><strong>Pasting of 1 items 
+    failed</strong><br />Cannot paste to 'unknown_target'. Unknown target"
     
     >>> del request.cookies['cone.app.copysupport.cut']
     >>> del request.environ['cone.app.continuation']

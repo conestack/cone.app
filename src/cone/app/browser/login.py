@@ -1,4 +1,5 @@
 from webob.exc import HTTPFound
+from pyramid.i18n import TranslationStringFactory
 from yafowil.base import (
     factory,
     ExtractionError,
@@ -8,6 +9,8 @@ from cone.tile import tile
 from cone.app.security import authenticate
 from cone.app.browser.form import Form
 from cone.app.browser.utils import make_url
+
+_ = TranslationStringFactory('cone.app')
 
 
 @tile('loginform', permission="login")
@@ -25,14 +28,14 @@ class LoginForm(Form):
         form['user'] = factory(
             'field:label:error:text',
             props = {
-                'required': 'No username given',
-                'label': 'Username',
+                'required': _('no_username_given', 'No username given'),
+                'label': _('username', 'Username'),
             })    
         form['password'] = factory(
             'field:label:*credentials:error:password',
             props = {
-                'required': 'No password given',
-                'label': 'Password',
+                'required': _('no_password_given', 'No password given'),
+                'label': _('password', 'Password'),
             },
             custom = {
                 'credentials': ([self.login], [], [], []),
@@ -44,7 +47,7 @@ class LoginForm(Form):
                 'expression': True,
                 'handler': self.noop,
                 'next': self.next,
-                'label': 'Login',
+                'label': _('login', 'Login'),
             })
         self.form = form
     
@@ -57,7 +60,8 @@ class LoginForm(Form):
         webob_req = data.request.request
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
-            raise ExtractionError(u'Invalid Credentials')
+            raise ExtractionError(
+                _('invalid_credentials', 'Invalid Credentials'))
     
     def next(self, request):
         return HTTPFound(location=request.request.application_url,
