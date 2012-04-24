@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-04-24 17:30+0200\n"
+"POT-Creation-Date: 2012-04-24 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,27 +118,27 @@ msgid "content_form_heading"
 msgstr ""
 
 #. Default: Add: ${title}
-#: src/cone/app/browser/authoring.py:198
+#: src/cone/app/browser/authoring.py:202
 msgid "add_form_heading"
 msgstr ""
 
 #. Default: Edit
-#: src/cone/app/browser/authoring.py:249
+#: src/cone/app/browser/authoring.py:250
 msgid "edit"
 msgstr ""
 
 #. Default: Edit: ${title}
-#: src/cone/app/browser/authoring.py:250
+#: src/cone/app/browser/authoring.py:254
 msgid "edit_form_heading"
 msgstr ""
 
 #. Default: Object "${title}" not deletable
-#: src/cone/app/browser/authoring.py:272
+#: src/cone/app/browser/authoring.py:273
 msgid "object_not_deletable"
 msgstr ""
 
 #. Default: Deleted: ${title}
-#: src/cone/app/browser/authoring.py:283
+#: src/cone/app/browser/authoring.py:286
 msgid "deleted_object"
 msgstr ""
 
@@ -185,5 +185,40 @@ msgstr ""
 #. Default: Sort on modified
 #: src/cone/app/browser/contents.py:105
 msgid "sort_on_modified"
+msgstr ""
+
+#. Default: Nothing to paste
+#: src/cone/app/browser/copysupport.py:54
+msgid "nothing_to_paste"
+msgstr ""
+
+#. Default: Cannot paste '${name}'. Unknown source
+#: src/cone/app/browser/copysupport.py:68
+msgid "cannot_paste_unknown_source"
+msgstr ""
+
+#. Default: Cannot paste to '${name}'. Unknown target
+#: src/cone/app/browser/copysupport.py:75
+msgid "cannot_paste_unknown_target"
+msgstr ""
+
+#. Default: Violation. '${target}' is not allowed to contain '${source}'
+#: src/cone/app/browser/copysupport.py:82
+msgid "cannot_paste_cardinality_violation"
+msgstr ""
+
+#. Default: Cannot paste cut object to child of it: ${name}
+#: src/cone/app/browser/copysupport.py:98
+msgid "cannot_paste_self_containment"
+msgstr ""
+
+#. Default: Pasted ${count} items
+#: src/cone/app/browser/copysupport.py:117
+msgid "pasted_items"
+msgstr ""
+
+#. Default: Pasting of ${count} items failed
+#: src/cone/app/browser/copysupport.py:122
+msgid "pasting_items_failed"
 msgstr ""
 

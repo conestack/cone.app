@@ -1,6 +1,10 @@
 import urllib
 import urlparse
 from node.utils import LocationIterator
+from pyramid.i18n import (
+    TranslationStringFactory,
+    get_localizer,
+)
 from cone.tile import (
     tile,
     Tile,
@@ -15,6 +19,8 @@ from cone.app.browser.utils import (
     choose_name,
     make_url,
 )
+
+_ = TranslationStringFactory('cone.app')
 
 
 def cookie_name(name):
@@ -42,8 +48,11 @@ class PasteAction(Tile):
     def render(self):
         cut = extract_copysupport_cookie(self.request, 'cut')
         copy = extract_copysupport_cookie(self.request, 'copy')
+        localizer = get_localizer(self.request)
         if not cut and not copy:
-            ajax_message(self.request, u"Nothing to paste")
+            message = localizer.translate(
+                _('nothing_to_paste', 'Nothing to paste'))
+            ajax_message(self.request, message)
             return u''
         urls = copy and copy or cut
         paths = paths_from_urls(urls)
@@ -55,16 +64,27 @@ class PasteAction(Tile):
             for key in path:
                 node = node[key]
             if not node.node_info_name:
-                errors.append(u"Cannot paste '%s'. Unknown source" % node.name)
+                message = localizer.translate(
+                    _('cannot_paste_unknown_source',
+                      default="Cannot paste '${name}'. Unknown source"),
+                      mapping={'name': node.name})
+                errors.append(message)
                 continue
             if not self.model.node_info_name:
-                errors.append(
-                    u"Cannot paste to '%s'. Unknown target" % self.model.name)
+                message = localizer.translate(
+                    _('cannot_paste_unknown_target',
+                      default="Cannot paste to '${name}'. Unknown target"),
+                      mapping={'name': self.model.name})
+                errors.append(message)
                 continue
             if not node.node_info_name in self.model.nodeinfo.addables:
-                message = u"Violation. '%s' is not allowed to contain '%s'"
-                message = message % (self.model.nodeinfo.title,
-                                     node.nodeinfo.title)
+                message = localizer.translate(
+                    _('cannot_paste_cardinality_violation',
+                      default="Violation. '${target}' is not allowed to " +\
+                              "contain '${source}'"),
+                      mapping={
+                          'target': self.model.nodeinfo.title,
+                          'source': node.nodeinfo.title})
                 errors.append(message)
                 continue
             source = node.parent
@@ -74,8 +94,11 @@ class PasteAction(Tile):
                 in_model = False
                 for parent in LocationIterator(self.model):
                     if parent is node:
-                        message = u"Cannot paste cut object to child of it: %s"
-                        message = message % parent.name
+                        message = localizer.translate(
+                            _('cannot_paste_self_containment',
+                              default="Cannot paste cut object to child " +\
+                                      "of it: ${name}"),
+                              mapping={'name': parent.name})
                         errors.append(message)
                         in_model = True
                         break
@@ -90,10 +113,16 @@ class PasteAction(Tile):
             self.model()
         for source in call_sources:
             source()
-        message = "Pasted %i items." % success
+        message = localizer.translate(
+            _('pasted_items',
+              default="Pasted ${count} items"),
+              mapping={'count': success})
         if errors:
-            failed = "<br /><strong>Pasting of %i items failed:</strong>"
-            failed = failed % len(errors)
+            failed = localizer.translate(
+                _('pasting_items_failed',
+                  default="Pasting of ${count} items failed"),
+                  mapping={'count': len(errors)})
+            failed = "<br /><strong>%s</strong>" % failed
             message += "<br />".join([failed] + errors)
         ajax_message(self.request, message)
         url = make_url(self.request, node=self.model)

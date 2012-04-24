@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-04-24 12:07+0200\n"
-"PO-Revision-Date: 2012-04-24 17:31+0200\n"
+"PO-Revision-Date: 2012-04-24 18:18+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -118,27 +118,27 @@ msgid "content_form_heading"
 msgstr "Content Formular Überschrift"
 
 #. Default: Add: ${title}
-#: src/cone/app/browser/authoring.py:198
+#: src/cone/app/browser/authoring.py:202
 msgid "add_form_heading"
 msgstr "Hinzufügen: ${title}"
 
 #. Default: Edit
-#: src/cone/app/browser/authoring.py:249
+#: src/cone/app/browser/authoring.py:250
 msgid "edit"
 msgstr "Editieren"
 
 #. Default: Edit: ${title}
-#: src/cone/app/browser/authoring.py:250
+#: src/cone/app/browser/authoring.py:254
 msgid "edit_form_heading"
 msgstr "Editieren: ${title}"
 
 #. Default: Object "${title}" not deletable
-#: src/cone/app/browser/authoring.py:272
+#: src/cone/app/browser/authoring.py:273
 msgid "object_not_deletable"
 msgstr "Objekt \"${title}\" kann nicht gelöscht werden"
 
 #. Default: Deleted: ${title}
-#: src/cone/app/browser/authoring.py:283
+#: src/cone/app/browser/authoring.py:286
 msgid "deleted_object"
 msgstr "Gelöscht: ${title}"
 
@@ -186,4 +186,39 @@ msgstr "Geändert"
 #: src/cone/app/browser/contents.py:105
 msgid "sort_on_modified"
 msgstr "Sortiere nach Geändert"
+
+#. Default: Nothing to paste
+#: src/cone/app/browser/copysupport.py:54
+msgid "nothing_to_paste"
+msgstr "Keine Objekte ausgewählt"
+
+#. Default: Cannot paste '${name}'. Unknown source
+#: src/cone/app/browser/copysupport.py:68
+msgid "cannot_paste_unknown_source"
+msgstr "'${name}' Einfügen fehlgeschlagen. Unbekannte Quelle"
+
+#. Default: Cannot paste to '${name}'. Unknown target
+#: src/cone/app/browser/copysupport.py:75
+msgid "cannot_paste_unknown_target"
+msgstr "Einfügen in '${name}' fehlgeschlagen. Unbekanntes Ziel"
+
+#. Default: Violation. '${target}' is not allowed to contain '${source}'
+#: src/cone/app/browser/copysupport.py:82
+msgid "cannot_paste_cardinality_violation"
+msgstr "Fehler. '${source}' darf '${target}' nicht beinhalten"
+
+#. Default: Cannot paste cut object to child of it: ${name}
+#: src/cone/app/browser/copysupport.py:98
+msgid "cannot_paste_self_containment"
+msgstr "${name} kann nicht als Objekt in sich selbst eingefügt werden"
+
+#. Default: Pasted ${count} items
+#: src/cone/app/browser/copysupport.py:117
+msgid "pasted_items"
+msgstr "${count} Objekte eingefügt"
+
+#. Default: Pasting of ${count} items failed
+#: src/cone/app/browser/copysupport.py:122
+msgid "pasting_items_failed"
+msgstr "${count} Objekte konnten nicht eingefügt werden"
 
