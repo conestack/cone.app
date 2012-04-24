@@ -14,19 +14,19 @@ from cone.app.browser.utils import make_url
 
 class ActionContext(object):
     """The action context is used to calculate action scopes. The action scope
-    is used by actions to calculate it's own state, i.e. if it is selected,
-    displayed or disabled.
+    is used by browser actions to calculate it's own state, i.e. if it is
+    selected, displayed or disabled.
     
     The action scope is bound to either the content tile name used in main
     template, or to the requested ajax action name if ajax request.
     
-    XXX: Think of better class name.
+    XXX: Better class name.
     """
     
     def __init__(self, model, request, tilename):
         """Created by ``render_mail_template`` and ``ajax_action``.
         
-        Instance is wtitten to request.environ['action_context'].
+        Instance is written to request.environ['action_context'].
         """
         request.environ['action_context'] = self
         self.model = model
@@ -35,15 +35,18 @@ class ActionContext(object):
     
     @property
     def scope(self):
-        """default_content_tile of application model is returned if recent
-        action scope is 'content' and default content tile property found.
-        Otherwise tile name is returned as found.
-        """
         scope = self.tilename
+        # if bdajax.action found on request, return it as current scope
         if self.request.params.get('bdajax.action'):
             scope = self.request.params.get('bdajax.action')
-        if self.model.properties.default_content_tile and scope == 'content':
-            scope = self.model.properties.default_content_tile
+        model = self.model
+        # change model if default child defined
+        if model.properties.default_child:
+            model = model[model.properties.default_child]
+        # change scope if default content rendering and custom default
+        # content tile
+        if model.properties.default_content_tile and scope == 'content':
+            scope = model.properties.default_content_tile
         return scope
 
 
@@ -161,7 +164,11 @@ class ActionUp(LinkAction):
     
     @property
     def target(self):
-        return make_url(self.request, node=self.model.parent)
+        container = self.model.parent
+        default_child = container.properties.default_child
+        if default_child and self.model.name == default_child:
+            container = container.parent
+        return make_url(self.request, node=container)
     
     href = target
 

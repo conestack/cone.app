@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- Consider ``default_child`` property in UP action and action scope.
+  [rnix, 2012-04-24]
+
 - Include ``yafowil.widget.image``.
   [rnix, 2012-04-21]
 
