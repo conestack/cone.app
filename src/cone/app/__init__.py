@@ -189,6 +189,9 @@ def main(global_config, **settings):
     config.include(pyramid_zcml)
     config.begin()
     
+    # add translation
+    config.add_translation_dirs('cone.app:locale/')
+    
     # static resources
     config.add_view('cone.app.browser.static_resources', name='static')
     
