@@ -14,3 +14,7 @@ msgstr ""
 
 msgid "change_state"
 msgstr ""
+
+msgid "add_item"
+msgstr ""
+
