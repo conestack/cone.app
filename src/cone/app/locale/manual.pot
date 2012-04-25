@@ -11,3 +11,6 @@ msgstr ""
 
 msgid "of"
 msgstr ""
+
+msgid "change_state"
+msgstr ""
