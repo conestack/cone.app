@@ -4,6 +4,7 @@ from node.utils import (
     instance_property,
     LocationIterator,
 )
+from pyramid.i18n import TranslationStringFactory
 from cone.tile import (
     tile,
     registerTile,
@@ -37,6 +38,8 @@ from yafowil.utils import (
     cssid,
     cssclasses,
 )
+
+_ = TranslationStringFactory('cone.app')
 
 
 # XXX: define i18n translation callback for app
@@ -106,7 +109,7 @@ class ReferenceAction(LinkAction):
 
 class ActionAddReference(ReferenceAction):
     css = 'add_small16_16 addreference'
-    title = 'Add reference'
+    title = _('add_reference', 'Add reference')
     
     @property
     def enabled(self):
@@ -117,7 +120,7 @@ class ActionAddReference(ReferenceAction):
 
 class ActionRemoveReference(ReferenceAction):
     css = 'remove16_16 removereference'
-    title = 'Remove reference'
+    title = _('remove_reference', 'Remove reference')
     
     @property
     def enabled(self):
@@ -164,28 +167,28 @@ class ReferenceListing(ContentsTile):
     col_defs = [
         {
             'id': 'actions',
-            'title': 'Actions',
+            'title': _('table_actions', 'Actions'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',
         },
         {
             'id': 'title',
-            'title': 'Title',
+            'title': _('title', 'Title'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',
         },
         {
             'id': 'created',
-            'title': 'Created',
+            'title': _('created', 'Created'),
             'sort_key': None,
             'sort_title': None,
             'content': 'datetime',
         },
         {
             'id': 'modified',
-            'title': 'Modified',
+            'title': _('modified', 'Modified'),
             'sort_key': None,
             'sort_title': None,
             'content': 'datetime',

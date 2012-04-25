@@ -93,7 +93,7 @@ class ContentsTile(Table):
         },
         {
             'id': 'created',
-            'title': _('creted', 'Created'),
+            'title': _('created', 'Created'),
             'sort_key': 'created',
             'sort_title': _('sort_on_created', 'Sort on created'),
             'content': 'datetime',

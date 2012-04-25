@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-04-24 12:07+0200\n"
-"PO-Revision-Date: 2012-04-24 19:28+0200\n"
+"PO-Revision-Date: 2012-04-25 08:08+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -149,6 +149,7 @@ msgstr "Aktionen"
 
 #. Default: Title
 #: src/cone/app/browser/contents.py:82
+#: src/cone/app/browser/referencebrowser.py:177
 msgid "title"
 msgstr "Titel"
 
@@ -169,7 +170,7 @@ msgstr "Sortiere nach Ersteller"
 
 #. Default: Created
 #: src/cone/app/browser/contents.py:96
-msgid "creted"
+msgid "created"
 msgstr "Erstellt"
 
 #. Default: Sort on created
@@ -179,6 +180,7 @@ msgstr "Sortiere nach Erstellt"
 
 #. Default: Modified
 #: src/cone/app/browser/contents.py:103
+#: src/cone/app/browser/referencebrowser.py:191
 msgid "modified"
 msgstr "Geändert"
 
@@ -251,4 +253,54 @@ msgstr "Anmelden"
 #: src/cone/app/browser/login.py:64
 msgid "invalid_credentials"
 msgstr "Anmeldung fehlgeschlagen"
+
+#. Default: Add reference
+#: src/cone/app/browser/referencebrowser.py:112
+msgid "add_reference"
+msgstr "Referenz hinzufügen"
+
+#. Default: Remove reference
+#: src/cone/app/browser/referencebrowser.py:123
+msgid "remove_reference"
+msgstr "Referenz entfernen"
+
+#. Default: Actions
+#: src/cone/app/browser/referencebrowser.py:170
+msgid "table_actions"
+msgstr "Aktionen"
+
+#. Default: Created
+#: src/cone/app/browser/referencebrowser.py:184
+msgid "created"
+msgstr "Erstellt"
+
+#. Default: Error
+#: src/cone/app/browser/settings.py:35
+msgid "error"
+msgstr "Fehler"
+
+#. Default: Principal
+#: src/cone/app/browser/sharing.py:54
+msgid "principal"
+msgstr "Benutzer/Gruppe"
+
+#. Default: Sort by principal
+#: src/cone/app/browser/sharing.py:56
+msgid "sort_by_principal"
+msgstr "Sortiere nach Benutzer/Gruppe"
+
+#. Default: Sharing: ${title}
+#: src/cone/app/browser/sharing.py:76
+msgid "sharing_table_title"
+msgstr "Freigabe: ${title}"
+
+#. Default: Can not add role '${role}' for principal '${pid}'
+#: src/cone/app/browser/sharing.py:165
+msgid "cannot_add_role_for_principal"
+msgstr "Rolle '${role}' kann für '${pid}' nicht gesetzt werden"
+
+#. Default: Can remove role '${role}' for principal '${pid}'
+#: src/cone/app/browser/sharing.py:194
+msgid "cannot_remove_role_for_principal"
+msgstr "Rolle '${role}' kann von '${pid}' nicht gelöscht werden"
 

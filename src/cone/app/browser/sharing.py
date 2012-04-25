@@ -5,6 +5,10 @@ from cone.tile import (
     Tile,
 )
 from pyramid.view import view_config
+from pyramid.i18n import (
+    TranslationStringFactory,
+    get_localizer,
+)
 from cone.app import security
 from cone.app.browser import render_main_template
 from cone.app.browser.ajax import ajax_message
@@ -15,8 +19,8 @@ from cone.app.browser.table import (
 )
 from yafowil.base import factory
 
-
 logger = logging.getLogger('cone.app')
+_ = TranslationStringFactory('cone.app')
 
 
 registerTile('sharing',
@@ -47,9 +51,9 @@ class SharingTable(Table):
         col_defs = [
             {
                 'id': 'principal',
-                'title': 'Principal',
+                'title': _('principal', 'Principal'),
                 'sort_key': 'principal',
-                'sort_title': 'Sort by principal',
+                'sort_title': _('sort_by_principal', 'Sort by principal'),
                 'content': 'string',
             },
         ]
@@ -65,7 +69,11 @@ class SharingTable(Table):
     
     @property
     def table_title(self):
-        return u'Sharing: ' + self.model.metadata.title
+        localizer = get_localizer(self.request)
+        title = localizer.translate(self.model.metadata.title)
+        return _('sharing_table_title',
+                 default='Sharing: ${title}',
+                 mapping={'title': title})
     
     @property
     def item_count(self):
@@ -149,8 +157,11 @@ class AddPrincipalRole(Tile):
             model.principal_roles[principal_id] = list(existing)
         except Exception, e:
             logger.error(e)
-            message = "Can not add role '%s' for principal '%s'" % (
-                role, principal_id)
+            localizer = get_localizer(self.request)
+            message = localizer.translate(
+                _('cannot_add_role_for_principal',
+                  default="Can not add role '${role}' for principal '${pid}'"),
+                  mapping={'role': role, 'pid': principal_id})
             ajax_message(self.request, message, 'error')
         return u''
 
@@ -175,7 +186,10 @@ class RemovePrincipalRole(Tile):
                 model.principal_roles[principal_id] = existing
         except Exception, e:
             logger.error(e)
-            message = "Can not remove role '%s' for principal '%s'" % \
-                (role, principal_id)
+            localizer = get_localizer(self.request)
+            message = localizer.translate(
+                _('cannot_remove_role_for_principal',
+                  default="Can remove role '${role}' for principal '${pid}'"),
+                  mapping={'role': role, 'pid': principal_id})
             ajax_message(self.request, message, 'error')
         return u''

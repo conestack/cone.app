@@ -10,12 +10,18 @@ from cone.tile import (
 )
 from webob import Response
 from pyramid.view import view_config
+from pyramid.i18n import (
+    TranslationStringFactory,
+    get_localizer,
+)
 from cone.app.model import AppSettings
 from cone.app.browser.utils import make_url
 from cone.app.browser.ajax import (
     AjaxAction,
     ajax_form_fiddle,
 )
+
+_ = TranslationStringFactory('cone.app')
 
 
 @view_config('settings_tab_content', xhr=True, permission='manage')
@@ -25,7 +31,9 @@ def settings_tab_content(model, request):
     try:
         rendered = render_tile(model, request, 'content')
     except Exception, e:
-        rendered = '<div class="box">Error: %s</div>' % str(e)
+        localizer = get_localizer(request)
+        error = localizer.translate(_('error', 'Error'))
+        rendered = '<div class="box">%s: %s</div>' % (error, str(e))
     return Response('<div class="%s">%s</div>' % (model.name, rendered))
 
 
