@@ -25,7 +25,11 @@ class YAMLForm(Part):
     
     # use form_template for pointing yaml files
     form_template = default(None)
-    message_factory = default(None)
+    
+    @default
+    @property
+    def message_factory(self):
+        return None
     
     @default
     def form_action(self, widget, data):
