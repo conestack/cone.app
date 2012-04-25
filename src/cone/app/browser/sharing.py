@@ -189,7 +189,8 @@ class RemovePrincipalRole(Tile):
             localizer = get_localizer(self.request)
             message = localizer.translate(
                 _('cannot_remove_role_for_principal',
-                  default="Can remove role '${role}' for principal '${pid}'"),
+                  default="Can not remove role '${role}' for " +\
+                          "principal '${pid}'"),
                   mapping={'role': role, 'pid': principal_id})
             ajax_message(self.request, message, 'error')
         return u''

@@ -299,7 +299,7 @@ msgstr "Freigabe: ${title}"
 msgid "cannot_add_role_for_principal"
 msgstr "Rolle '${role}' kann für '${pid}' nicht gesetzt werden"
 
-#. Default: Can remove role '${role}' for principal '${pid}'
+#. Default: Can not remove role '${role}' for principal '${pid}'
 #: src/cone/app/browser/sharing.py:194
 msgid "cannot_remove_role_for_principal"
 msgstr "Rolle '${role}' kann von '${pid}' nicht gelöscht werden"

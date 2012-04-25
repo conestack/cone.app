@@ -141,7 +141,7 @@ If an error occurs, a message gets displayed::
     {'continuation': 
     [{'flavor': 'error', 
     'type': 'message', 
-    'payload': "Can not add role 'manager' for principal 'viewer'", 
+    'payload': u"Can not add role 'manager' for principal 'viewer'", 
     'selector': None}], 
     'payload': u'', 
     'mode': 'NONE', 
@@ -196,7 +196,7 @@ Inexistent role::
     {'continuation': 
     [{'flavor': 'error', 
     'type': 'message', 
-    'payload': "Can not remove role 'inexistent' for principal 'viewer'", 
+    'payload': u"Can not remove role 'inexistent' for principal 'viewer'", 
     'selector': None}], 
     'payload': u'', 
     'mode': 'NONE', 
@@ -214,7 +214,7 @@ Inexistent userid::
     {'continuation': 
     [{'flavor': 'error', 
     'type': 'message', 
-    'payload': "Can not remove role 'manager' for principal 'foo'", 
+    'payload': u"Can not remove role 'manager' for principal 'foo'", 
     'selector': None}], 
     'payload': u'', 
     'mode': 'NONE', 

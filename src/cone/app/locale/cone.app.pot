@@ -298,7 +298,7 @@ msgstr ""
 msgid "cannot_add_role_for_principal"
 msgstr ""
 
-#. Default: Can remove role '${role}' for principal '${pid}'
+#. Default: Can not remove role '${role}' for principal '${pid}'
 #: src/cone/app/browser/sharing.py:194
 msgid "cannot_remove_role_for_principal"
 msgstr ""
