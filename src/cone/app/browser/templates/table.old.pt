@@ -1,6 +1,6 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           omit-tag="True">
   <div id="${context.table_id}"
        class="${context.table_id}batchsensitiv
               ${context.table_id}sortingheadsensitiv"
@@ -68,4 +68,4 @@
       </tal:row>
     </table> 
   </div>
-</tal:ajax>
+</tal:block>

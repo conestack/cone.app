@@ -1,12 +1,15 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
 
   <div class="dropdown">
     <div class="icon">
       <a href="${context.nodeurl}/adding"
          class="add16_16"
-         title="Add Item">&nbsp;</a>
+         title="Add Item"
+         i18n:attributes="title add_item">&nbsp;</a>
     </div>
     <ul class="dropdown_items" style="display:none;">
       <li tal:repeat="item context.items">
@@ -22,4 +25,4 @@
     </ul>
   </div>
 
-</tal:ajax>
+</tal:block>

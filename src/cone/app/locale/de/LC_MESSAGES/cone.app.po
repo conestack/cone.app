@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-04-24 12:07+0200\n"
-"PO-Revision-Date: 2012-04-25 08:08+0200\n"
+"PO-Revision-Date: 2012-04-25 10:02+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -170,6 +170,7 @@ msgstr "Sortiere nach Ersteller"
 
 #. Default: Created
 #: src/cone/app/browser/contents.py:96
+#: src/cone/app/browser/referencebrowser.py:184
 msgid "created"
 msgstr "Erstellt"
 
@@ -224,6 +225,11 @@ msgstr "${count} Objekte eingefügt"
 msgid "pasting_items_failed"
 msgstr "${count} Objekte konnten nicht eingefügt werden"
 
+#. Default: Logout
+#: src/cone/app/browser/layout.py:89
+msgid "logout"
+msgstr "Abmelden"
+
 #. Default: No username given
 #: src/cone/app/browser/login.py:31
 msgid "no_username_given"
@@ -255,7 +261,9 @@ msgid "invalid_credentials"
 msgstr "Anmeldung fehlgeschlagen"
 
 #. Default: Add reference
+#. Default: Add Reference
 #: src/cone/app/browser/referencebrowser.py:112
+#: src/cone/app/browser/templates/referencebrowser.pt:9
 msgid "add_reference"
 msgstr "Referenz hinzufügen"
 
@@ -268,11 +276,6 @@ msgstr "Referenz entfernen"
 #: src/cone/app/browser/referencebrowser.py:170
 msgid "table_actions"
 msgstr "Aktionen"
-
-#. Default: Created
-#: src/cone/app/browser/referencebrowser.py:184
-msgid "created"
-msgstr "Erstellt"
 
 #. Default: Error
 #: src/cone/app/browser/settings.py:35
@@ -290,17 +293,86 @@ msgid "sort_by_principal"
 msgstr "Sortiere nach Benutzer/Gruppe"
 
 #. Default: Sharing: ${title}
-#: src/cone/app/browser/sharing.py:76
+#: src/cone/app/browser/sharing.py:74
 msgid "sharing_table_title"
 msgstr "Freigabe: ${title}"
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:165
+#: src/cone/app/browser/sharing.py:162
 msgid "cannot_add_role_for_principal"
 msgstr "Rolle '${role}' kann für '${pid}' nicht gesetzt werden"
 
 #. Default: Can not remove role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:194
+#: src/cone/app/browser/sharing.py:191
 msgid "cannot_remove_role_for_principal"
 msgstr "Rolle '${role}' kann von '${pid}' nicht gelöscht werden"
+
+#. Default: First
+#: src/cone/app/browser/templates/batch.pt:17
+#: src/cone/app/browser/templates/batch.pt:26
+msgid "first"
+msgstr "Anfang"
+
+#. Default: Previous
+#: src/cone/app/browser/templates/batch.pt:40
+#: src/cone/app/browser/templates/batch.pt:49
+msgid "previous"
+msgstr "vorherige"
+
+#. Default: Next
+#: src/cone/app/browser/templates/batch.pt:92
+#: src/cone/app/browser/templates/batch.pt:101
+msgid "next"
+msgstr "nächste"
+
+#. Default: Last
+#: src/cone/app/browser/templates/batch.pt:115
+#: src/cone/app/browser/templates/batch.pt:124
+msgid "last"
+msgstr "Ende"
+
+#. Default: Created by
+#: src/cone/app/browser/templates/byline.pt:7
+msgid "created_by"
+msgstr "Erstellt von"
+
+#. Default: on
+#: src/cone/app/browser/templates/byline.pt:9
+msgid "created_on"
+msgstr "am"
+
+#. Default: Last modified
+#: src/cone/app/browser/templates/byline.pt:13
+msgid "last_modified"
+msgstr "zuletzt geändert"
+
+#. Default: Navigation
+#: src/cone/app/browser/templates/navtree.pt:11
+msgid "navigation"
+msgstr "Navigation"
+
+#. Default: You are here
+#: src/cone/app/browser/templates/pathbar.pt:10
+msgid "you_are_here"
+msgstr "Sie sind hier"
+
+#. Default: Show
+#: src/cone/app/browser/templates/table.pt:24
+msgid "show"
+msgstr "zeige"
+
+#. Default: entries
+#: src/cone/app/browser/templates/table.pt:37
+msgid "entries"
+msgstr "Einträge"
+
+#. Default: Search
+#: src/cone/app/browser/templates/table.pt:44
+msgid "search"
+msgstr "Suche"
+
+#. Default: State
+#: src/cone/app/browser/templates/wf_dropdown.pt:11
+msgid "state"
+msgstr "Status"
 

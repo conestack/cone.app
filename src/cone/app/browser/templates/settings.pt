@@ -1,6 +1,6 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           omit-tag="True">
 
   <tal:tabs define="tabs context.tabs">
     <ul class="ajaxtabs">
@@ -8,6 +8,7 @@
           <a class="w1"
              href=""
              ajax:target="${tab['target']}"
+             tal:attributes="title tab['title']"
              tal:content="tab['title']">
             Title
           </a>
@@ -18,4 +19,4 @@
     </div>
   </tal:tabs>
   
-</tal:ajax>
+</tal:block>

@@ -1,6 +1,6 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           omit-tag="True">
   
   <div class="contextmenu">
     
@@ -12,4 +12,4 @@
   
   <div style="clear:both;"></div>
   
-</tal:ajax>
+</tal:block>

@@ -526,11 +526,16 @@ Authenticated::
     >>> layer.login('max')
     >>> res = render_tile(root, request, 'byline')
     >>> print res
-    <p class="byline">
-      Created by: <strong>max</strong>,
-      on <strong>14.03.2011 00:00</strong>.
-      Last modified: <strong>14.03.2011 00:00</strong>
-    </p>
+    <BLANKLINE>
+      <p class="byline">
+        <span>Created by</span>:
+        <strong>max</strong>,
+        <span>on</span>
+        <strong>14.03.2011 00:00</strong>.
+        <span>Last modified</span>:
+        <strong>14.03.2011 00:00</strong>
+      </p>
+    <BLANKLINE>
     
     >>> layer.logout()
 

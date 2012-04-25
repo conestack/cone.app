@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-04-25 08:08+0200\n"
+"POT-Creation-Date: 2012-04-25 10:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,7 +168,7 @@ msgid "sort_on_creator"
 msgstr ""
 
 #. Default: Created
-#: src/cone/app/browser/contents.py:96
+#: src/cone/app/browser/contents.py:96 src/cone/app/browser/referencebrowser.py:184
 msgid "created"
 msgstr ""
 
@@ -223,6 +223,11 @@ msgstr ""
 msgid "pasting_items_failed"
 msgstr ""
 
+#. Default: Logout
+#: src/cone/app/browser/layout.py:89
+msgid "logout"
+msgstr ""
+
 #. Default: No username given
 #: src/cone/app/browser/login.py:31
 msgid "no_username_given"
@@ -254,7 +259,9 @@ msgid "invalid_credentials"
 msgstr ""
 
 #. Default: Add reference
+#. Default: Add Reference
 #: src/cone/app/browser/referencebrowser.py:112
+#: src/cone/app/browser/templates/referencebrowser.pt:9
 msgid "add_reference"
 msgstr ""
 
@@ -266,11 +273,6 @@ msgstr ""
 #. Default: Actions
 #: src/cone/app/browser/referencebrowser.py:170
 msgid "table_actions"
-msgstr ""
-
-#. Default: Created
-#: src/cone/app/browser/referencebrowser.py:184
-msgid "created"
 msgstr ""
 
 #. Default: Error
@@ -289,17 +291,86 @@ msgid "sort_by_principal"
 msgstr ""
 
 #. Default: Sharing: ${title}
-#: src/cone/app/browser/sharing.py:76
+#: src/cone/app/browser/sharing.py:74
 msgid "sharing_table_title"
 msgstr ""
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:165
+#: src/cone/app/browser/sharing.py:162
 msgid "cannot_add_role_for_principal"
 msgstr ""
 
 #. Default: Can not remove role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:194
+#: src/cone/app/browser/sharing.py:191
 msgid "cannot_remove_role_for_principal"
+msgstr ""
+
+#. Default: First
+#: src/cone/app/browser/templates/batch.pt:17
+#: src/cone/app/browser/templates/batch.pt:26
+msgid "first"
+msgstr ""
+
+#. Default: Previous
+#: src/cone/app/browser/templates/batch.pt:40
+#: src/cone/app/browser/templates/batch.pt:49
+msgid "previous"
+msgstr ""
+
+#. Default: Next
+#: src/cone/app/browser/templates/batch.pt:92
+#: src/cone/app/browser/templates/batch.pt:101
+msgid "next"
+msgstr ""
+
+#. Default: Last
+#: src/cone/app/browser/templates/batch.pt:115
+#: src/cone/app/browser/templates/batch.pt:124
+msgid "last"
+msgstr ""
+
+#. Default: Created by
+#: src/cone/app/browser/templates/byline.pt:7
+msgid "created_by"
+msgstr ""
+
+#. Default: on
+#: src/cone/app/browser/templates/byline.pt:9
+msgid "created_on"
+msgstr ""
+
+#. Default: Last modified
+#: src/cone/app/browser/templates/byline.pt:13
+msgid "last_modified"
+msgstr ""
+
+#. Default: Navigation
+#: src/cone/app/browser/templates/navtree.pt:11
+msgid "navigation"
+msgstr ""
+
+#. Default: You are here
+#: src/cone/app/browser/templates/pathbar.pt:10
+msgid "you_are_here"
+msgstr ""
+
+#. Default: Show
+#: src/cone/app/browser/templates/table.pt:24
+msgid "show"
+msgstr ""
+
+#. Default: entries
+#: src/cone/app/browser/templates/table.pt:37
+msgid "entries"
+msgstr ""
+
+#. Default: Search
+#: src/cone/app/browser/templates/table.pt:44
+msgid "search"
+msgstr ""
+
+#. Default: State
+#: src/cone/app/browser/templates/wf_dropdown.pt:11
+msgid "state"
 msgstr ""
 

@@ -1,13 +1,16 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
   <ul id="navtree"
       class="contextsensitiv navtree"
       ajax:bind="contextchanged"
       ajax:action="navtree:#navtree:replace">
     <li>
-      <div class="heading">Navigation</div>
+      <div class="heading"
+           i18n:translate="navigation">Navigation</div>
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
     </li>
   </ul>
-</tal:ajax>
+</tal:block>

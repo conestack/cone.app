@@ -1,4 +1,5 @@
-<tal:resources define="js context.js;
+<tal:resources xmlns:tal="http://xml.zope.org/namespaces/tal"
+               define="js context.js;
                        css context.css;">
 
   <!-- javascripts -->

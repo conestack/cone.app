@@ -1,6 +1,6 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           omit-tag="True">
   <ul>
     <li tal:repeat="item children" class="navtreeitem">
       <img src="${item['icon']}" alt="..." />
@@ -21,4 +21,4 @@
       </ul>
     </li>
   </ul>
-</tal:ajax>
+</tal:block>

@@ -1,6 +1,18 @@
-<p class="byline"
-   tal:define="metadata model.metadata">
-  Created by: <strong tal:content="metadata.creator" />,
-  on <strong tal:content="context.format_date(metadata.created)" />.
-  Last modified: <strong tal:content="context.format_date(metadata.modified)" />
-</p>
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+  <p class="byline"
+     tal:define="metadata model.metadata">
+    <span i18n:translate="created_by">Created by</span>:
+    <strong tal:content="metadata.creator">creator</strong>,
+    <span i18n:translate="created_on">on</span>
+    <strong tal:content="context.format_date(metadata.created)">
+      1.1.2012 - 10:00
+    </strong>.
+    <span i18n:translate="last_modified">Last modified</span>:
+    <strong tal:content="context.format_date(metadata.modified)">
+      1.1.2012 - 10:00
+    </strong>
+  </p>
+</tal:block>

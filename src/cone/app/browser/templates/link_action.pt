@@ -1,4 +1,4 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
+<tal:link xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
   
@@ -27,4 +27,4 @@
      ajax:confirm="${context.confirm|nothing}"
      ajax:overlay="${context.overlay|nothing}">&nbsp;</a>
 
-</tal:ajax>
+</tal:link>

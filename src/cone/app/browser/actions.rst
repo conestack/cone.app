@@ -323,7 +323,7 @@ ActionState
     "ACLAllowed permission 'change_state' via ACE ...
     
     >>> action(wfmodel, request)
-    u'\n\n  <div class="transitions_dropdown">\n    
+    u'\n  <div class="transitions_dropdown">\n    
       ...    
     <a href="http://example.com/root/wfmodel/dotransition?do_transition=initial_2_final"\n           
     ajax:bind="click"\n           

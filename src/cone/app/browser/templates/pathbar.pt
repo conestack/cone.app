@@ -1,11 +1,13 @@
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
   <ul class="contextsensitiv"
       ajax:bind="contextchanged"
       ajax:action="pathbar:#pathbar:inner">
     <li>
-      You are here:
+      <span i18n:translate="you_are_here">You are here</span>:
     </li>
     <li class="pathbaritem"
         tal:repeat="item context.items">
@@ -22,4 +24,4 @@
               tal:condition="item['selected']">Title</strong>
     </li>
   </ul>
-</tal:ajax>
+</tal:block>

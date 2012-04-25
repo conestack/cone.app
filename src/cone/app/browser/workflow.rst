@@ -34,6 +34,6 @@ Workflow dropdown
     >>> node = InexistentWorkflowNode()
     >>> request = layer.new_request()
     >>> render_tile(node, request, 'wf_dropdown')
-    u'\n\n  \n'
+    u'\n  \n'
     
     >>> layer.logout()

@@ -1,8 +1,16 @@
-<div id="search">
-  <form method="get" action="">
-    <fieldset>
-      <input type="text" name="term" id="search-text" size="15" />
-      <input type="submit" id="search-submit" value="search" />
-    </fieldset>
-  </form>
-</div>
+<tal:search xmlns:tal="http://xml.zope.org/namespaces/tal"
+            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+            i18n:domain="cone.app"
+            omit-tag="True">
+  <div id="search">
+    <form method="get" action="">
+      <fieldset>
+        <input type="text" name="term" id="search-text" size="15" />
+        <input type="submit"
+               id="search-submit"
+               value="search"
+               i18n:attributes="value search" />
+      </fieldset>
+    </form>
+  </div>
+</tal:search>

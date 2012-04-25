@@ -256,7 +256,7 @@ Render form with value from model::
     ...     ActionContext(root['somechild'], request, 'content')
     
     >>> render_tile(root['somechild'], request, 'edit')
-    u'<div class="box">...<h1>Edit: My Node</h1>...<form 
+    u'\n  <div class="box">...<h1>Edit: My Node</h1>...<form 
     action="http://example.com/somechild" ...'
 
 Render with submitted data. Default next URL of EditPart is the edited node::

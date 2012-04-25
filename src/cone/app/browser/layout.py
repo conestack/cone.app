@@ -5,6 +5,7 @@ from pyramid.security import (
     authenticated_userid,
 )
 from pyramid.view import view_config
+from pyramid.i18n import TranslationStringFactory
 from cone.tile import (
     tile,
     Tile,
@@ -25,6 +26,8 @@ from cone.app.browser.utils import (
     format_date,
     node_icon_url,
 )
+
+_ = TranslationStringFactory('cone.app')
 
 
 @tile('resources', 'templates/resources.pt', permission='login')
@@ -83,7 +86,7 @@ registerTile('livesearch',
 
 
 def logout_link(model, request):
-    return (make_url(request, resource='logout'), 'Logout')
+    return (make_url(request, resource='logout'), _('logout', 'Logout'))
 
 personal_tools = odict()
 personal_tools['logout'] = logout_link
@@ -284,6 +287,11 @@ class Byline(Tile):
     
     def format_date(self, dt):
         return format_date(dt)
+
+
+registerTile('footer',
+             'cone.app:browser/templates/footer.pt',
+             permission='login')
 
 
 registerTile('listing',

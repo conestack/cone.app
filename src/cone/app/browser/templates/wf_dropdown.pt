@@ -1,20 +1,20 @@
-<tal:comment condition="False">
-  XXX: move to seperate cone.workflow egg
-</tal:comment>
-<tal:ajax xmlns:tal="http://xml.zope.org/namespaces/tal"
-          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-          omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
   <div class="transitions_dropdown"
        tal:define="transitions context.transitions;
                    state context.model.state"
        tal:condition="state">
     <div class="state">
-      <span>State:</span>
+      <span i18n:translate="state">State</span>:
       <a href="${context.nodeurl}/changestate"
          tal:condition="transitions"
          tal:content="state"
          class="state-${state}"
-         title="Change state">state</a>
+         title="Change state"
+         i18n:attributes="title change_state">state</a>
       <span tal:condition="not:transitions"
             tal:content="state"
             class="state-${state}">state</span>
@@ -31,4 +31,4 @@
       </li>
     </ul>
   </div>
-</tal:ajax>
+</tal:block>
