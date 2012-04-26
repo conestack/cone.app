@@ -292,9 +292,20 @@ class Byline(Tile):
         return format_date(dt)
 
 
-registerTile('footer',
-             'cone.app:browser/templates/footer.pt',
-             permission='login')
+FOOTER = """
+<p>
+  Copyright (c) 2010-2012
+  <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
+</p>
+"""
+
+@tile('footer', 'templates/footer.pt',
+      permission='login', strict=False)
+class Footer(Tile):
+    
+    @property
+    def content(self):
+        return FOOTER
 
 
 registerTile('listing',
