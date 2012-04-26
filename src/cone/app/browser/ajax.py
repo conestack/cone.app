@@ -230,8 +230,11 @@ ajax_form_template = """\
 </div>
 <script language="javascript" type="text/javascript">
     var container = document.getElementById('ajaxform');
-    var form = container.getElementsByTagName('form')[0];
-    parent.cone.ajaxformrender(form, '%(selector)s', '%(mode)s');
+    var child = container.firstChild;
+    while(child != null && child.nodeType == 3) {
+        child = child.nextSibling;
+    }
+    parent.cone.ajaxformrender(child, '%(selector)s', '%(mode)s');
     parent.bdajax.continuation(%(next)s);
 </script>
 """
