@@ -37,6 +37,10 @@ Changes
 0.9.3dev
 --------
 
+- Fix bug in navtree when displaying children of node with ``hide_if_default``
+  property set.
+  [rnix, 2012-04-26]
+
 - Consider ``default_child`` property in UP action and action scope.
   [rnix, 2012-04-24]
 

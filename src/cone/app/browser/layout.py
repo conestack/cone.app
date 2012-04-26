@@ -230,6 +230,9 @@ class NavTree(Tile):
         if default_child and default_child.properties.hide_if_default:
             model = default_child
             default_child = None
+            if path:
+                path = path[1:]
+                curpath = path[0]
         if default_child:
             if not curpath:
                 curpath = model.properties.default_child

@@ -402,6 +402,42 @@ default children, children of default node are displayed.::
     >>> res.find('href="http://example.com/1/11"') > -1
     True
 
+Check whether children subrendering works on nodes which have set
+``hide_if_default``::
+
+    >>> root['1']['11']['a'] = BaseNode()
+    >>> root['1']['11']['a'].properties.in_navtree = True
+    >>> root['1']['11']['a']['aa'] = BaseNode()
+    >>> root['1']['11']['a']['aa'].properties.in_navtree = True
+    >>> root['1']['11']['b'] = BaseNode()
+    >>> root['1']['11']['b'].properties.in_navtree = True
+    >>> root.printtree()
+    <class 'cone.app.model.BaseNode'>: None
+      <class 'cone.app.model.BaseNode'>: 1
+        <class 'cone.app.model.BaseNode'>: 11
+          <class 'cone.app.model.BaseNode'>: a
+            <class 'cone.app.model.BaseNode'>: aa
+          <class 'cone.app.model.BaseNode'>: b
+      <class 'cone.app.model.BaseNode'>: 2
+      <class 'InvisibleNavNode'>: 3
+    
+    >>> res = render_tile(root['1']['11'], request, 'navtree')
+    >>> res.find('href="http://example.com/1/11/a"') > -1
+    True
+    
+    >>> res.find('href="http://example.com/1/11/b"') > -1
+    True
+    
+    >>> res = render_tile(root['1']['11']['a'], request, 'navtree')
+    
+    >>> res.find('href="http://example.com/1/11/a/aa"') > -1
+    True
+    
+    >>> res = render_tile(root['1']['11']['a']['aa'], request, 'navtree')
+    
+    >>> res.find('href="http://example.com/1/11/a/aa"') > -1
+    True
+
 Render navtree on ``root['1']['11']``, check selected::
 
     >>> res = render_tile(root['1']['11'], request, 'navtree')
