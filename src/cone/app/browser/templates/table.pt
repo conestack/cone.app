@@ -51,6 +51,13 @@
         </label>
       </div>
       
+      <div class="pretty_table_additional"
+           tal:define="additional context.head_additional"
+           tal:condition="additional"
+           tal:content="structure additional">
+        Additional Header Markup.
+      </div>
+      
     </div>
   
     <table class="pretty_table" id="${context.table_id}_table">

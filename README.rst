@@ -37,6 +37,10 @@ Changes
 0.9.3dev
 --------
 
+- Add property ``head_additional`` to table tile. Supposed to be used for
+  hooking additional markup to table header.
+  [rnix, 2012-05-03]
+
 - Fix bug in navtree when displaying children of node with ``hide_if_default``
   property set.
   [rnix, 2012-04-26]

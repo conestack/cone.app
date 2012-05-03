@@ -39,6 +39,7 @@ class Table(Tile):
     query_whitelist = []
     show_title = True
     show_filter = False
+    head_additional = None
     
     @property
     def slice(self):
