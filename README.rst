@@ -37,7 +37,10 @@ Changes
 0.9.3dev
 --------
 
-- Move AJAX forms related markup and javascript to ``bdajax``.
+- Support bdajax overlay continuation as introduced in bdajax 1.4.
+  [rnix, 2012-05-04]
+
+- Move AJAX forms related markup and javascript to bdajax.
   [rnix, 2012-05-04]
 
 - Add property ``head_additional`` to table tile. Supposed to be used for

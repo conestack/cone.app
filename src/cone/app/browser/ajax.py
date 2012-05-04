@@ -134,10 +134,17 @@ class AjaxMessage(object):
         self.selector = selector
 
 
-# XXX
-#class AjaxOverlay(object):
-#    """Ajax overlay configuration
-#    """
+class AjaxOverlay(object):
+    """Ajax overlay configuration. Used to display or close overlays on client
+    side.
+    """
+    
+    def __init__(self, selector='#ajax-overlay',
+                 action=None, target=None, close=False):
+        self.selector = selector
+        self.action = action
+        self.target = target
+        self.close = close
 
 
 class AjaxContinue(object):
@@ -177,6 +184,14 @@ class AjaxContinue(object):
                     'payload': definition.payload,
                     'flavor': definition.flavor,
                     'selector': definition.selector,
+                })
+            if isinstance(definition, AjaxOverlay):
+                continuation.append({
+                    'type': 'overlay',
+                    'selector': definition.selector,
+                    'action': definition.action,
+                    'target': definition.target,
+                    'close': definition.close,
                 })
         return continuation
     
