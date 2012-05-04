@@ -25,7 +25,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         cone.dropdownmenubinder();
         cone.transitionmenubinder();
         cone.tabletoolbarbinder();
-        cone.ajaxformbinder();
         cone.sharingbinder();
         cone.selectable.binder();
         cone.copysupportbinder();
@@ -37,7 +36,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             dropdownmenubinder: cone.dropdownmenubinder,
             transitionmenubinder: cone.transitionmenubinder,
             tabletoolbarbinder: cone.tabletoolbarbinder,
-            ajaxformbinder: cone.ajaxformbinder,
             sharingbinder: cone.sharingbinder,
             selectablebinder: cone.selectable.binder,
             copysupportbinder: cone.copysupportbinder,
@@ -256,27 +254,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     params: target.params
                 });
             });
-        },
-        
-        // ajax form related. XXX: move to bdajax
-        
-        // bind ajax form handling to all forms providing ajax css class
-        ajaxformbinder: function(context) {
-            var ajaxform = $('form.ajax', context);
-            ajaxform.append('<input type="hidden" name="ajax" value="1" />');
-            ajaxform.attr('target', 'ajaxformresponse');
-            ajaxform.unbind().bind('submit', function(event) {
-                bdajax.spinner.show();
-            });
-        },
-        
-        // called by iframe response, renders form (i.e. if validation errors)
-        ajaxformrender: function(payload, selector, mode) {
-            if (!payload) {
-                return;
-            }
-            bdajax.spinner.hide();
-            bdajax.fiddle(payload, selector, mode);
         }
     }
     

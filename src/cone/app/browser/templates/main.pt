@@ -15,12 +15,6 @@
   </head>
   <body>
     <tal:bdajax replace="structure tile('bdajax')" />
-    
-    <iframe id="ajaxformresponse"
-            name="ajaxformresponse"
-            src="#"
-            style="width:0px;height:0px;display:none">
-    </iframe>
   
     <div id="wrapper">
     

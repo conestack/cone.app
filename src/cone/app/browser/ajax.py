@@ -234,7 +234,7 @@ ajax_form_template = """\
     while(child != null && child.nodeType == 3) {
         child = child.nextSibling;
     }
-    parent.cone.ajaxformrender(child, '%(selector)s', '%(mode)s');
+    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s');
     parent.bdajax.continuation(%(next)s);
 </script>
 """

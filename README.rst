@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- Move AJAX forms related markup and javascript to ``bdajax``.
+  [rnix, 2012-05-04]
+
 - Add property ``head_additional`` to table tile. Supposed to be used for
   hooking additional markup to table header.
   [rnix, 2012-05-03]

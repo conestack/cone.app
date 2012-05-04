@@ -187,6 +187,16 @@ class ContentForm(Part):
             path, request=request, model=model, context=self)
 
 
+class OverlayPart(Part):
+    """Form part rendering to overlay.
+    """
+    
+    @plumb
+    def __call__(_next, self, model, request):
+        ajax_form_fiddle(request, '#ajax-overlay-content', 'inner')
+        return _next(self, model, request)
+
+
 class AddPart(CameFromNext, ContentForm):
     """form part hooking the hidden field 'factory' to self.form on __call__
     """
