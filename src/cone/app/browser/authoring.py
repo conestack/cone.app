@@ -31,6 +31,7 @@ from cone.app.browser.actions import ActionContext
 from cone.app.browser.ajax import (
     AjaxAction,
     AjaxEvent,
+    AjaxOverlay,
     ajax_continue,
     ajax_message,
     ajax_form_fiddle,
@@ -278,12 +279,17 @@ class OverlayPart(Part):
     """Form part rendering to overlay.
     """
     action_resource = extend('overlayform')
+    overlay_selector = extend('#ajax-form')
     
     @plumb
     def __call__(_next, self, model, request):
         form = _next(self, model, request)
-        ajax_form_fiddle(request, '#ajax-form', 'inner')
+        ajax_form_fiddle(request, self.overlay_selector, 'inner')
         return form
+    
+    @default
+    def next(self, request):
+        return [AjaxOverlay(selector=self.overlay_selector, close=True)]
 
 
 @tile('delete', permission="delete")
