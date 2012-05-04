@@ -187,16 +187,6 @@ class ContentForm(Part):
             path, request=request, model=model, context=self)
 
 
-class OverlayPart(Part):
-    """Form part rendering to overlay.
-    """
-    
-    @plumb
-    def __call__(_next, self, model, request):
-        ajax_form_fiddle(request, '#ajax-overlay-content', 'inner')
-        return _next(self, model, request)
-
-
 class AddPart(CameFromNext, ContentForm):
     """form part hooking the hidden field 'factory' to self.form on __call__
     """
@@ -265,6 +255,35 @@ class EditPart(CameFromNext, ContentForm):
               default='Edit: ${title}',
               mapping={'title': localizer.translate(info.title)}))
         return heading
+
+
+@view_config('overlayform', permission='view')
+def overlayform(model, request):
+    """Overlay form.
+    """
+    return render_form(model, request, 'overlayform')
+
+
+@tile('overlayform', permission='view')
+class OverlayFormTile(ProtectedContentTile):
+    """The overlayform tile is responsible to render forms on given model.
+    """
+    form_tile_name = 'overlayeditform'
+    
+    def render(self):
+        return render_tile(self.model, self.request, self.form_tile_name)
+
+
+class OverlayPart(Part):
+    """Form part rendering to overlay.
+    """
+    action_resource = extend('overlayform')
+    
+    @plumb
+    def __call__(_next, self, model, request):
+        form = _next(self, model, request)
+        ajax_form_fiddle(request, '#ajax-form', 'inner')
+        return form
 
 
 @tile('delete', permission="delete")
