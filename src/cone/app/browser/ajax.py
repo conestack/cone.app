@@ -139,9 +139,10 @@ class AjaxOverlay(object):
     side.
     """
     
-    def __init__(self, selector='#ajax-overlay',
-                 action=None, target=None, close=False):
+    def __init__(self, selector='#ajax-overlay', action=None, target=None,
+                 close=False, content_selector='.overlay_content'):
         self.selector = selector
+        self.content_selector = content_selector
         self.action = action
         self.target = target
         self.close = close
@@ -189,6 +190,7 @@ class AjaxContinue(object):
                 continuation.append({
                     'type': 'overlay',
                     'selector': definition.selector,
+                    'content_selector': definition.content_selector,
                     'action': definition.action,
                     'target': definition.target,
                     'close': definition.close,

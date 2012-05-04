@@ -280,11 +280,14 @@ class OverlayPart(Part):
     """
     action_resource = extend('overlayform')
     overlay_selector = extend('#ajax-form')
+    overlay_content_selector = extend('.overlay_content')
     
     @plumb
     def __call__(_next, self, model, request):
         form = _next(self, model, request)
-        ajax_form_fiddle(request, self.overlay_selector, 'inner')
+        selector = '%s %s' % (self.overlay_selector,
+                              self.overlay_content_selector)
+        ajax_form_fiddle(request, selector, 'inner')
         return form
     
     @default
