@@ -206,7 +206,7 @@ Add view::
     
     >>> request.params['ajax'] = '1'
     >>> result = str(add(root, request))
-    >>> result.find('parent.cone.ajaxformrender') != -1
+    >>> result.find('parent.bdajax.render_ajax_form') != -1
     True
 
 
@@ -343,7 +343,7 @@ Edit view::
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['ajax'] = '1'
     >>> result = str(edit(root, request))
-    >>> result.find('parent.cone.ajaxformrender') != -1
+    >>> result.find('parent.bdajax.render_ajax_form') != -1
     True
 
 
