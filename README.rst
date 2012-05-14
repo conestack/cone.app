@@ -37,6 +37,10 @@ Changes
 0.9.3dev
 --------
 
+- Consider ``default_content_tile`` in application ini in order to support
+  configuring root content tile.
+  [rnix, 2012-05-14]
+
 - Support bdajax overlay continuation as introduced in bdajax 1.4.
   [rnix, 2012-05-04]
 

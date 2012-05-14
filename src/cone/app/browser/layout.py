@@ -329,6 +329,10 @@ class RootContent(ProtectedContentTile):
         if self.model.properties.default_child:
             model = self.model[self.model.properties.default_child]
             return render_tile(model, self.request, 'content')
+        if self.model.properties.default_content_tile:
+            return render_tile(self.model,
+                               self.request,
+                               self.model.properties.default_content_tile)
         return render_template(
             'cone.app.browser:templates/default_root.pt',
             model=self.model,
