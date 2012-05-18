@@ -37,6 +37,12 @@ Changes
 0.9.3dev
 --------
 
+- Add ``form_flavor`` attribute to ``cone.app.browser.form.YAMLForm``.
+  [rnix, 2012-05-18]
+
+- Add ``cone.app.model.UUIDAsName`` part.
+  [rnix, 2012-05-18]
+
 - Use ``zope.interface.implementer`` instead of ``zope.interface.implements``.
   [rnix, 2012-05-18]
 

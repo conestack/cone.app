@@ -10,6 +10,7 @@ from plumber import (
     Part,
     default,
     extend,
+    finalize,
     plumb,
 )
 from node.parts import (
@@ -194,6 +195,17 @@ class UUIDAttributeAware(UUIDAware):
         self.attrs['uuid'] = value
     
     uuid = default(property(_get_uuid, _set_uuid))
+
+
+class UUIDAsName(Part):
+    
+    def _get_name(self):
+        return str(self.uuid)
+    
+    def _set_name(self, name):
+        pass
+    
+    __name__ = finalize(property(_get_name, _set_name))
 
 
 @implementer(ICopySupport)

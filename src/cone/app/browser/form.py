@@ -26,6 +26,9 @@ class YAMLForm(Part):
     # use form_template for pointing yaml files
     form_template = default(None)
     
+    # considered in form_action, either 'add' or 'edit'
+    form_flavor = default('edit')
+    
     @default
     @property
     def message_factory(self):
@@ -34,6 +37,9 @@ class YAMLForm(Part):
     @default
     def form_action(self, widget, data):
         resource = self.action_resource
+        if self.form_flavor == 'add':
+            return make_url(self.request, node=self.model.parent,
+                            resource=resource)
         return make_url(self.request, node=self.model, resource=resource)
     
     @extend

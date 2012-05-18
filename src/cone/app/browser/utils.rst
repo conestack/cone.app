@@ -68,7 +68,7 @@ path.::
     'unknown'
 
 ``node_icon_url``. First looks if ``node.properties.icon`` is set. If not found,
-look if node info for node defines icon. Otherwise use default icon.
+look if node info for node defines icon. Otherwise use default icon::
 
     >>> from cone.app.model import (
     ...     NodeInfo,

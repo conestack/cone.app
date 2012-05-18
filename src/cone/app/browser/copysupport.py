@@ -105,6 +105,7 @@ class PasteAction(Tile):
                 if in_model:
                     continue
                 node = source.detach(node.name)
+            node.__parent__ = self.model
             self.model[choose_name(self.model, node.name)] = node
             if cut:
                 call_sources.add(source)
