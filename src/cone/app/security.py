@@ -5,7 +5,7 @@ from plumber import (
     extend,
     plumb,
 )
-from zope.interface import implements
+from zope.interface import implementer
 from pyramid.threadlocal import get_current_request
 from pyramid.security import (
     Everyone,
@@ -163,10 +163,10 @@ class ACLRegistry(dict):
 acl_registry = ACLRegistry()
 
 
+@implementer(IOwnerSupport)
 class OwnerSupport(Part):
     """Plumbing part providing ownership information.
     """
-    implements(IOwnerSupport)
     
     @plumb
     def __init__(_next, self, *args, **kw):
@@ -193,6 +193,7 @@ class OwnerSupport(Part):
     owner = default(property(_get_owner, _set_owner))
 
 
+@implementer(IPrincipalACL)
 class PrincipalACL(Part):
     """Plumbing part providing principal ACL's.
     
@@ -200,7 +201,6 @@ class PrincipalACL(Part):
     as property function. Plumber does not support class property plumbing
     (yet).
     """
-    implements(IPrincipalACL)
     role_inheritance = default(False)
     
     @default

@@ -89,7 +89,7 @@ class PasteAction(Tile):
                 continue
             source = node.parent
             if copy:
-                node = source[node.name].copy()
+                node = source[node.name].deepcopy()
             else:
                 in_model = False
                 for parent in LocationIterator(self.model):

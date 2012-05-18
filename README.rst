@@ -37,6 +37,13 @@ Changes
 0.9.3dev
 --------
 
+- Use ``zope.interface.implementer`` instead of ``zope.interface.implements``.
+  [rnix, 2012-05-18]
+
+- Remove BBB classes ``come.app.model.BaseNodeInfo`` and
+  ``cone.app.model.BaseMetadata``.
+  [rnix, 2012-05-18]
+
 - Consider ``default_content_tile`` in application ini in order to support
   configuring root content tile.
   [rnix, 2012-05-14]

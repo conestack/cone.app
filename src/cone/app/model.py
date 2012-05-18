@@ -26,7 +26,7 @@ from node.parts import (
     OdictStorage,
 )
 from node.utils import instance_property
-from zope.interface import implements
+from zope.interface import implementer
 from pyramid.threadlocal import get_current_request
 from pyramid.security import (
     has_permission,
@@ -65,8 +65,8 @@ def getNodeInfo(name):
         return _node_info_registry[name]
 
 
+@implementer(IApplicationNode)
 class AppNode(Part):
-    implements(IApplicationNode)
     
     # set this to name of registered node info on deriving class
     node_info_name = default('')
@@ -89,7 +89,7 @@ class AppNode(Part):
         name = self.name
         if not name:
             name = _('no_title', 'No Title')
-        metadata = BaseMetadata()
+        metadata = Metadata()
         metadata.title = name
         return metadata
     
@@ -98,7 +98,7 @@ class AppNode(Part):
     def nodeinfo(self):
         info = getNodeInfo(self.node_info_name)
         if not info:
-            info = BaseNodeInfo()
+            info = NodeInfo()
             info.title = str(self.__class__)
             info.node = self.__class__
             info.icon = app_config().default_node_icon
@@ -121,11 +121,10 @@ class BaseNode(object):
     )
 
 
+@implementer(IFactoryNode)
 class FactoryNode(BaseNode):
     __metaclass__ = plumber
     __plumbing__ = ChildFactory
-    
-    implements(IFactoryNode)
 
 
 class AppRoot(FactoryNode):
@@ -139,7 +138,7 @@ class AppRoot(FactoryNode):
 
     @instance_property
     def metadata(self):
-        return BaseMetadata()
+        return Metadata()
 
 
 class AppSettings(FactoryNode):
@@ -161,13 +160,13 @@ class AppSettings(FactoryNode):
     
     @instance_property
     def metadata(self):
-        metadata = BaseMetadata()
+        metadata = Metadata()
         metadata.title = _("settings", "Settings")
         return metadata
 
 
+@implementer(IAdapterNode)
 class AdapterNode(BaseNode):
-    implements(IAdapterNode)
     
     def __init__(self, model, name, parent):
         BaseNode.__init__(self, name)
@@ -197,18 +196,17 @@ class UUIDAttributeAware(UUIDAware):
     uuid = default(property(_get_uuid, _set_uuid))
 
 
+@implementer(ICopySupport)
 class CopySupport(Part):
     """Plumbing part for copy support.
     """
-    implements(ICopySupport)
-    
     supports_cut = default(True)
     supports_copy = default(True)
     supports_paste = default(True)
 
 
+@implementer(IProperties)
 class Properties(object):
-    implements(IProperties)
     
     def __init__(self, data=None):
         if data is None:
@@ -290,18 +288,14 @@ class ProtectedProperties(Properties):
         return keys
 
 
+@implementer(IMetadata)
 class Metadata(Properties):
-    implements(IMetadata)
-
-# BBB
-BaseMetadata = Metadata
+    pass
 
 
+@implementer(INodeInfo)
 class NodeInfo(Properties):
-    implements(INodeInfo)
-
-# BBB
-BaseNodeInfo = NodeInfo
+    pass
 
 
 class XMLProperties(Properties):

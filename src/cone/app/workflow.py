@@ -5,7 +5,7 @@ from plumber import (
     extend,
     plumb,
 )
-from zope.interface import implements
+from zope.interface import implementer
 from pyramid.security import (
     Everyone,
     Allow,
@@ -36,12 +36,12 @@ def persist_state(node, info):
     node()
 
 
+@implementer(IWorkflowState)
 class WorkflowState(Part):
     """Part for nodes providing workflow states.
     
     This implementation persists to self.attrs['state']
     """
-    implements(IWorkflowState)
     
     @plumb
     def __init__(_next, self, *args, **kw):

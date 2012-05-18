@@ -22,21 +22,25 @@ Adding
 
 Provide a node interface needed for different node style binding to test form::
 
-    >>> from zope.interface import Interface, implements
+    >>> from zope.interface import (
+    ...     Interface,
+    ...     implementer,
+    ... )
     >>> class ITestAddingNode(Interface): pass
 
 Create dummy node::
 
     >>> from cone.app.model import BaseNode
     >>> from cone.app.model import getNodeInfo
-    >>> class MyNode(BaseNode):
-    ...     implements(ITestAddingNode)
+    
+    >>> @implementer(ITestAddingNode)
+    ... class MyNode(BaseNode):
     ...     node_info_name = 'mynode'
 
 Provide NodeInfo for our Application node::
 
-    >>> from cone.app.model import BaseNodeInfo, registerNodeInfo
-    >>> mynodeinfo = BaseNodeInfo()
+    >>> from cone.app.model import NodeInfo, registerNodeInfo
+    >>> mynodeinfo = NodeInfo()
     >>> mynodeinfo.title = 'My Node'
     >>> mynodeinfo.description = 'This is My node.'
     >>> mynodeinfo.node = MyNode
@@ -46,11 +50,12 @@ Provide NodeInfo for our Application node::
 Create another dummy node inheriting from AdapterNode::
 
     >>> from cone.app.model import AdapterNode
-    >>> class MyAdapterNode(AdapterNode):
-    ...     implements(ITestAddingNode)
+    
+    >>> @implementer(ITestAddingNode)
+    ... class MyAdapterNode(AdapterNode):
     ...     node_info_name = 'myadapternode'
     
-    >>> myadapternodeinfo = BaseNodeInfo()
+    >>> myadapternodeinfo = NodeInfo()
     >>> myadapternodeinfo.title = 'My Adapter Node'
     >>> myadapternodeinfo.description = 'This is My adapter node.'
     >>> myadapternodeinfo.node = MyAdapterNode
@@ -423,7 +428,7 @@ Ajax action rule for add form::
 
 Allow another node type as child::
 
-    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo = NodeInfo()
     >>> nodeinfo.title = 'Another Node'
     >>> nodeinfo.description = 'This is another node.'
     >>> nodeinfo.node = BaseNode
@@ -458,7 +463,7 @@ XXX: discuss whether to hide entire widget if no items::
     >>> class NoChildAddingNode(BaseNode):
     ...     node_info_name = 'nochildaddingnode'
     
-    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo = NodeInfo()
     >>> nodeinfo.title = 'No child adding Node'
     >>> nodeinfo.description = 'This is a no child containing node.'
     >>> nodeinfo.node = NoChildAddingNode
@@ -476,7 +481,7 @@ XXX: discuss whether to hide entire widget if no items::
     >>> class InvalidChildNodeInfoNode(BaseNode):
     ...     node_info_name = 'invalidchildnodeinfo'
     
-    >>> nodeinfo = BaseNodeInfo()
+    >>> nodeinfo = NodeInfo()
     >>> nodeinfo.title = 'Invalid Child NodeInfo Node'
     >>> nodeinfo.description = 'This is a node with an invalid child node info.'
     >>> nodeinfo.node = InvalidChildNodeInfoNode

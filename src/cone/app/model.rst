@@ -150,7 +150,7 @@ used by the application for displaying metadata information.
 
 The default implementation accepts a dict like object on ``__init__``.::
 
-    >>> from cone.app.model import BaseMetadata
+    >>> from cone.app.model import Metadata
     >>> data = {
     ...     'title': 'some title',
     ...     'description': 'some description',
@@ -159,7 +159,7 @@ The default implementation accepts a dict like object on ``__init__``.::
 
 Check ``INodeAdapter`` interface.::
 
-    >>> metadata = BaseMetadata(data)
+    >>> metadata = Metadata(data)
 
 ``__getattr__``. No AttributeError is raised if attribute is inexistent.::
 
@@ -196,8 +196,8 @@ NodeInfo
 The ``INodeInfo`` providing object holds information about the application
 node.::
 
-    >>> from cone.app.model import BaseNodeInfo
-    >>> nodeinfo = BaseNodeInfo()
+    >>> from cone.app.model import NodeInfo
+    >>> nodeinfo = NodeInfo()
     >>> nodeinfo.node = BaseNode
     >>> nodeinfo.addables = ['basenode']
     >>> nodeinfo.title = 'Base Node'
