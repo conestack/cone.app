@@ -15,10 +15,7 @@ from cone.tile import (
 )
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
-from cone.app.utils import (
-    app_config,
-    principal_data,
-)
+from cone.app.utils import principal_data
 from cone.app.browser import render_main_template
 from cone.app.browser.utils import (
     nodepath,
@@ -28,41 +25,6 @@ from cone.app.browser.utils import (
 )
 
 _ = TranslationStringFactory('cone.app')
-
-
-@tile('resources', 'templates/resources.pt', permission='login')
-class Resources(Tile):
-    """Resources tile.
-    
-    XXX: either switch to resource management lib here or use resource
-         management middleware.
-    """
-    
-    @property
-    def authenticated(self):
-        return authenticated_userid(self.request)
-    
-    @property
-    def js(self):
-        return self.resources(app_config().js)
-    
-    @property
-    def css(self):
-        return self.resources(app_config().css)
-    
-    def resources(self, reg):
-        ret = list()
-        for res in reg['public']:
-            ret.append(self.resource_url(res))
-        if self.authenticated:
-            for res in reg['protected']:
-                ret.append(self.resource_url(res))
-        return ret
-    
-    def resource_url(self, resource):
-        if resource.startswith('http'):
-            return resource
-        return '%s/%s' % (self.request.application_url, resource)
 
 
 class ProtectedContentTile(Tile):

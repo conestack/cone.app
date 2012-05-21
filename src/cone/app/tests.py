@@ -30,6 +30,7 @@ TESTFILES = [
     'browser/table.rst',
     'browser/contents.rst',
     'browser/form.rst',
+    'browser/resources.rst',
     'browser/layout.rst',
     'browser/login.rst',
     'browser/workflow.rst',

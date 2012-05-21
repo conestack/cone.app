@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- Move resources rendering to seperate module.
+  [rnix, 2012-05-21]
+
 - Add ``form_flavor`` attribute to ``cone.app.browser.form.YAMLForm``.
   [rnix, 2012-05-18]
 
