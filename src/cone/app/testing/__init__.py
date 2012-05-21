@@ -76,6 +76,7 @@ class Security(Layer):
             'cone.plugins': 'node.ext.ugm',
             'cone.root.title': 'cone',
             'cone.root.default_child': None,
+            'cone.root.default_content_tile': 'content',
             'cone.root.mainmenu_empty_title': False,
             'node.ext.ugm.users_file': os.path.join(DATADIR, 'users'),
             'node.ext.ugm.groups_file': os.path.join(DATADIR, 'groups'),

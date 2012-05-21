@@ -110,6 +110,14 @@ AjaxMessage object::
     >>> message.payload, message.flavor, message.selector
     ('Some info message', 'info', 'None')
 
+AjaxOverlay object::
+
+    >>> from cone.app.browser.ajax import AjaxOverlay
+    >>> overlay = AjaxOverlay('#ajax-overlay', 'someaction',
+    ...     'http://example.com', False, '.overlay_content')
+    >>> overlay
+    <cone.app.browser.ajax.AjaxOverlay object at ...>
+
 Use ``ajax_continue`` in your tile passing the request and an instance or a
 list of instances to set continuation actions::
 
@@ -206,8 +214,8 @@ If no continuation definitions, ``form`` returns result and ``next`` returns
 If continuation definitions and result, ``form`` returns empty string, because
 form processing was successful. ``next`` returns a JSON dump of given actions,
 which gets interpreted and executed on client side::
-
-    >>> continuation = [action, event, message]
+    
+    >>> continuation = [action, event, message, overlay]
     >>> afc = AjaxFormContinue(result, continuation)
     >>> afc.form
     ''
@@ -225,7 +233,13 @@ which gets interpreted and executed on client side::
     {"flavor": "info", 
     "type": "message", 
     "payload": "Some info message", 
-    "selector": "None"}]'
+    "selector": "None"}, 
+    {"target": "http://example.com", 
+    "content_selector": ".overlay_content", 
+    "selector": "#ajax-overlay", 
+    "action": "someaction", 
+    "close": false, 
+    "type": "overlay"}]'
 
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::

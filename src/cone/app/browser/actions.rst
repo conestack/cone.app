@@ -158,6 +158,19 @@ ActionUp
     ajax:event="contextchanged:.contextsensitiv"\n     
     ajax:action="otherparentcontent:#content:inner">&nbsp;</a>...'
     
+    >>> default = model['default'] = BaseNode()
+    >>> default.properties.action_up = True
+    >>> model.properties.default_child = 'default'
+    >>> action(default, request)
+    u'...<a\n     
+    href="http://example.com/root"\n     
+    class="up16_16"\n     
+    title="One level up"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root"\n     
+    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:action="listing:#content:inner">&nbsp;</a>\n\n'
+    
     >>> layer.logout()
 
 
@@ -188,6 +201,17 @@ ActionView
     ajax:target="http://example.com/root/model"\n     
     ajax:action="content:#content:inner">&nbsp;</a>...'
     
+    >>> model.properties.default_content_tile = 'otherdefault'
+    >>> action(model, request)
+    u'...<a\n     
+    href="http://example.com/root/model"\n     
+    class="view16_16"\n     
+    title="View"\n     
+    ajax:bind="click"\n     
+    ajax:target="http://example.com/root/model"\n     
+    ajax:action="view:#content:inner">&nbsp;</a>\n\n'
+    
+    >>> model.properties.default_content_tile = None
     >>> layer.logout()
 
 
@@ -451,6 +475,10 @@ ActionDelete
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete:NONE:NONE"\n     
     ajax:confirm="Do you really want to delete this Item?">&nbsp;</a>...'
+    
+    >>> model.properties.default_content_tile = 'othertile'
+    >>> action(model, request)
+    u''
     
     >>> layer.logout()
 
