@@ -13,6 +13,10 @@ from plumber import (
     finalize,
     plumb,
 )
+from node.interfaces import (
+    IUUIDAware,
+    IOrdered,
+)
 from node.parts import (
     AsAttrAccess,
     NodeChildValidate,
@@ -46,6 +50,7 @@ from cone.app.interfaces import (
     IProperties,
     IMetadata,
     INodeInfo,
+    IUUIDAsName,
 )
 from cone.app.security import acl_registry
 from cone.app.utils import (
@@ -197,7 +202,8 @@ class UUIDAttributeAware(UUIDAware):
     uuid = default(property(_get_uuid, _set_uuid))
 
 
-class UUIDAsName(Part):
+@implementer(IUUIDAsName)
+class UUIDAsName(UUIDAware):
     
     def _get_name(self):
         return str(self.uuid)
@@ -206,6 +212,22 @@ class UUIDAsName(Part):
         pass
     
     __name__ = finalize(property(_get_name, _set_name))
+    
+    @finalize
+    def set_uuid_for(self, node, override=False, recursiv=False):
+        if IUUIDAware.providedBy(node):
+            if override or not node.uuid:
+                node.uuid = uuid.uuid4()
+        if recursiv:
+            for k, v in node.items():
+                self.set_uuid_for(v, override, recursiv)
+                if IUUIDAware.providedBy(v) and override:
+                    if IOrdered.providedBy(v):
+                        # XXX: improve
+                        node.storage.alter_key(k, v.name)
+                    else:
+                        del node[k]
+                        node[v.name] = v
 
 
 @implementer(ICopySupport)

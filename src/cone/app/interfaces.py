@@ -8,6 +8,7 @@ from node.interfaces import (
     ILeaf,
     IAttributes,
     IChildFactory,
+    IUUIDAware,
 )
 
 
@@ -120,3 +121,9 @@ class ICopySupport(INode):
     supports_cut = Attribute(u"Supports cut")
     supports_copy = Attribute(u"Supports copy")
     supports_paste = Attribute(u"Supports paste")
+
+
+class IUUIDAsName(IUUIDAware):
+    """Exposes ``self.uuid`` as ``self.__name__``. Considers key changes in
+    node trees at copy time.
+    """

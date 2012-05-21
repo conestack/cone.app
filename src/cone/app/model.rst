@@ -253,6 +253,64 @@ UUIDAttributeAware
     UUID('...')
 
 
+UUIDAsName
+----------
+::
+    >>> from cone.app.model import UUIDAsName
+    >>> class UUIDAsNameNode(BaseNode):
+    ...     __metaclass__ = plumber
+    ...     __plumbing__ = UUIDAsName
+    
+    >>> node = UUIDAsNameNode()
+    >>> node.uuid
+    UUID('...')
+    
+    >>> node.name
+    '...'
+    
+    >>> str(node.uuid) == node.name
+    True
+
+    >>> child = UUIDAsNameNode()
+    >>> node[child.name] = child
+    >>> sub = UUIDAsNameNode()
+    >>> node[child.name][sub.name] = sub
+    >>> sub = UUIDAsNameNode()
+    >>> node[child.name][sub.name] = sub
+    >>> node.printtree()
+    <class 'UUIDAsNameNode'>: ...
+      <class 'UUIDAsNameNode'>: ...
+        <class 'UUIDAsNameNode'>: ...
+        <class 'UUIDAsNameNode'>: ...
+    
+    >>> copy = node[child.name].copy()
+    Traceback (most recent call last):
+      ...
+    RuntimeError: Shallow copy useless on UUID aware node trees, use deepcopy.
+    
+    >>> copy = child.deepcopy()
+    >>> copy.printtree()
+    <class 'UUIDAsNameNode'>: ...
+      <class 'UUIDAsNameNode'>: ...
+      <class 'UUIDAsNameNode'>: ...
+    
+    >>> copy.uuid == child.uuid
+    False
+    
+    >>> sorted(copy.keys()) == sorted(child.keys())
+    False
+    
+    >>> copy.keys()
+    ['...', '...']
+    
+    >>> copy.values()
+    [<UUIDAsNameNode object '...' at ...>, 
+    <UUIDAsNameNode object '...' at ...>]
+    
+    >>> copy[copy.keys()[0]].name == copy.keys()[0]
+    True
+
+
 Properties
 ----------
 
