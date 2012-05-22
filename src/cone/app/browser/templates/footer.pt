@@ -1,6 +1,9 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
   <div id="footer">
-    <tal:footercontent replace="structure context.content" />
+    <p>
+      Copyright (c) 2010-2012
+      <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
+    </p>
   </div>
 </tal:block>
