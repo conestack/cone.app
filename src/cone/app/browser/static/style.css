@@ -149,16 +149,16 @@ ul#mainmenu li a {
 
 /* Main menu icon XXX: generic mechanism */
 ul#mainmenu li.node-settings a {
-    background:url('images/menu_settings.png') top left no-repeat;
+    background:url('static/images/menu_settings.png') top left no-repeat;
 }
 ul#mainmenu li.node-settings a.current_page_item {
-    background:url('images/menu_settings_selected.png') top left no-repeat;
+    background:url('static/images/menu_settings_selected.png') top left no-repeat;
 }
 
 /* Box background */
 .box,
 #form-loginform {
-    background:url('images/box.gif') top left no-repeat;
+    background:url('static/images/box.gif') top left no-repeat;
     padding:12px;
 }
 
@@ -184,7 +184,7 @@ ul#mainmenu li.node-settings a.current_page_item {
 }
 .pathbar ul li.pathbaritem {
     margin-left:7px;
-    background:url('images/arr_right.jpg') no-repeat left 5px;
+    background:url('static/images/arr_right.jpg') no-repeat left 5px;
 }
 .pathbar ul li a,
 .pathbar ul li strong {
@@ -319,7 +319,7 @@ div.pretty_table_toolbar {
     font-size:0.8em;
     font-weight:normal;
     padding:5px;
-    background:url('images/bg_pretty_table_toolbar.png') repeat-x scroll 50% 50% #CCCCCC;
+    background:url('static/images/bg_pretty_table_toolbar.png') repeat-x scroll 50% 50% #CCCCCC;
     border:1px solid #AAAAAA;
     color:#222222;
 }
@@ -380,7 +380,7 @@ table.pretty_table {
 table.pretty_table th {
     font-size:0.8em;
     font-weight:normal;
-    background:url("cdn/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    background:url("static/cdn/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
     color:#333333;
     outline:medium none;
     margin:0;
@@ -597,7 +597,7 @@ div.contextmenu div.state {
 }
 .tabs li a,
 .ajaxtabs li a {
-    background:url('images/tabs.png') no-repeat -554px 0px;
+    background:url('static/images/tabs.png') no-repeat -554px 0px;
     font-size:11px;
     display:block;
     height: 30px;
@@ -698,7 +698,7 @@ a.view16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/view16_16.png') 3px 2px no-repeat;
+    background:url('static/images/view16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.edit16_16 {
@@ -707,7 +707,7 @@ a.edit16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/edit16_16.png') 3px 2px no-repeat;
+    background:url('static/images/edit16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.add16_16 {
@@ -716,7 +716,7 @@ a.add16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/add16_16.png') 3px 2px no-repeat;
+    background:url('static/images/add16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.up16_16 {
@@ -725,7 +725,7 @@ a.up16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/up16_16.png') 3px 2px no-repeat;
+    background:url('static/images/up16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.reference16_16 {
@@ -734,7 +734,7 @@ a.reference16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/reference16_16.png') 3px 2px no-repeat;
+    background:url('static/images/reference16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.listing16_16 {
@@ -743,7 +743,7 @@ a.listing16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/listing16_16.png') 3px 2px no-repeat;
+    background:url('static/images/listing16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.delete16_16 {
@@ -752,7 +752,7 @@ a.delete16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/delete16_16.png') 3px 2px no-repeat;
+    background:url('static/images/delete16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.sharing16_16 {
@@ -761,7 +761,7 @@ a.sharing16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/sharing16_16.png') 3px 2px no-repeat;
+    background:url('static/images/sharing16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.cut16_16 {
@@ -770,7 +770,7 @@ a.cut16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/cut16_16.png') 3px 2px no-repeat;
+    background:url('static/images/cut16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.copy16_16 {
@@ -779,7 +779,7 @@ a.copy16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/copy16_16.png') 3px 2px no-repeat;
+    background:url('static/images/copy16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.paste16_16 {
@@ -788,11 +788,11 @@ a.paste16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/paste16_16.png') 3px 2px no-repeat;
+    background:url('static/images/paste16_16.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.paste16_16.disabled {
-    background:url('images/paste16_16_disabled.png') 3px 2px no-repeat;
+    background:url('static/images/paste16_16_disabled.png') 3px 2px no-repeat;
     cursor:default;
 }
 a.remove16_16 {
@@ -801,11 +801,11 @@ a.remove16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/icon_remove.png') 3px 2px no-repeat;
+    background:url('static/images/icon_remove.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.remove16_16.disabled {
-    background:url('images/icon_remove_disabled.png') 3px 2px no-repeat;
+    background:url('static/images/icon_remove_disabled.png') 3px 2px no-repeat;
     cursor:default;
 }
 a.add_small16_16 {
@@ -814,10 +814,10 @@ a.add_small16_16 {
     width:16px;
     font-size:16px;
     margin-right:4px;
-    background:url('images/icon_add.png') 3px 2px no-repeat;
+    background:url('static/images/icon_add.png') 3px 2px no-repeat;
     cursor:pointer;
 }
 a.add_small16_16.disabled {
-    background:url('images/icon_add_disabled.png') 3px 2px no-repeat;
+    background:url('static/images/icon_add_disabled.png') 3px 2px no-repeat;
     cursor:default;
 }

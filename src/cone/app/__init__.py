@@ -12,7 +12,10 @@ from cone.app.model import (
     AppSettings,
     Properties,
 )
-from cone.app.browser import forbidden_view
+from cone.app.browser import (
+    forbidden_view,
+    static_resources,
+)
 from yafowil.base import factory
 from yafowil.utils import (
     get_plugin_names,
@@ -38,24 +41,36 @@ cfg.default_node_icon = 'static/images/default_node_icon.png'
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
-    'static/cdn/jquery.min.js',
-    'static/cdn/jquery.tools.min.js',
-    'static/cdn/jquery-ui-1.8.18.min.js',
     '++resource++bdajax/bdajax.js',
 ]
-cfg.js.protected = [
-    'static/cookie_functions.js',
-    'static/cone.app.js',
-]
+cfg.js.protected = list()
 
 # CSS Resources
 cfg.css = Properties()
 cfg.css.public = [
-    'static/style.css',
     'static/cdn/jquery-ui-1.8.18.css',
     '++resource++bdajax/bdajax.css',
 ]
 cfg.css.protected = list()
+
+# JS and CSS Assets to publish merged
+cfg.merged = Properties()
+cfg.merged.js = Properties()
+cfg.merged.js.public = [
+    (static_resources, 'cdn/jquery.min.js'),
+    (static_resources, 'cdn/jquery.tools.min.js'),
+    (static_resources, 'cdn/jquery-ui-1.8.18.min.js'),
+]
+cfg.merged.js.protected = [
+    (static_resources, 'cookie_functions.js'),
+    (static_resources, 'cone.app.js'),
+]
+
+cfg.merged.css = Properties()
+cfg.merged.css.public = [
+    (static_resources, 'style.css'),
+]
+cfg.merged.css.protected = list()
 
 # cfg.layout used to enable/disable tiles in main template
 cfg.layout = Properties()
@@ -131,7 +146,7 @@ def configure_yafowil_addon_resources(config):
         resource_name = '++resource++%s' % plugin_name
         config.add_view(view_path, name=resource_name)
         for js in get_javascripts(plugin_name):
-            cone.app.cfg.js.protected.append('%s/%s' % (resource_name, js))
+            cone.app.cfg.merged.js.protected.append((resources_view, js))
         for css in get_stylesheets(plugin_name):
             cone.app.cfg.css.protected.append('%s/%s' % (resource_name, css))
 

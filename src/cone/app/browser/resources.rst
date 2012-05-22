@@ -53,17 +53,8 @@ Render resources tile unauthorized::
     >>> from cone.tile import render_tile
     >>> request = layer.new_request()
     >>> result = render_tile(cone.app.root, request, 'resources')
-    >>> result.find('static/style.css') > -1
-    True
-    
-    >>> result.find('static/cdn/jquery.min.js') > -1
-    True
-    
-    >>> result.find('++resource++yafowil.widget.dict/widget.css') > -1
-    False
-    
-    >>> result.find('++resource++yafowil.widget.dict/widget.js') > -1
-    False
+    >>> result
+    u'...  <!-- javascripts -->\n  ...'
 
 Render resources tile authorized::
 
@@ -71,16 +62,58 @@ Render resources tile authorized::
     >>> request = layer.new_request()
     
     >>> result = render_tile(cone.app.root, request, 'resources')
-    >>> result.find('static/style.css') > -1
-    True
-    
-    >>> result.find('static/cdn/jquery.min.js') > -1
-    True
-    
-    >>> result.find('++resource++yafowil.widget.dict/widget.css') > -1
-    True
-    
-    >>> result.find('++resource++yafowil.widget.dict/widget.js') > -1
-    True
+    >>> result
+    u'...  <!-- javascripts -->\n  ...'
     
     >>> layer.logout()
+
+Merged Assets::
+
+    >>> import os
+    >>> import pkg_resources
+    >>> assets = cone.app.cfg.merged.js.public
+    >>> assets
+    [(<pyramid.static.static_view object at ...>, 
+    'cdn/jquery.min.js'), 
+    (<pyramid.static.static_view object at ...>, 
+    'cdn/jquery.tools.min.js'), 
+    (<pyramid.static.static_view object at ...>, 
+    'cdn/jquery-ui-1.8.18.min.js')]
+    
+    >>> static = assets[0][0]
+    >>> resource = assets[0][1]
+    >>> static.app.package_name
+    'cone.app.browser'
+    
+    >>> static.app.resource_name
+    'static'
+    
+    >>> subpath = os.path.join(static.app.resource_name, resource)
+    >>> path = pkg_resources.resource_filename(static.app.package_name, subpath)
+    >>> path
+    '/.../cone/app/browser/static/cdn/jquery.min.js'
+    
+    >>> data = ''
+    >>> with open(path, 'r') as file:
+    ...     data += file.read() + '\n\n'
+    
+    >>> data
+    '...\n\n'
+    
+    >>> from cone.app.browser.resources import MergedAssets
+    >>> request = layer.new_request()
+    >>> assets = MergedAssets(request)
+    >>> anon_js_len = len(assets.merged_js)
+    >>> anon_css_len = len(assets.merged_css)
+    
+    >>> layer.login('admin')
+    >>> auth_js_len = len(assets.merged_js)
+    >>> auth_css_len = len(assets.merged_css)
+    >>> layer.logout()
+    
+    >>> anon_js_len < auth_js_len
+    True
+    
+    >>> anon_css_len < auth_css_len
+    False
+    

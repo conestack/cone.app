@@ -1,3 +1,9 @@
+import os
+import pkg_resources
+import cone.app
+from webob import Response
+from paste.urlparser import StaticURLParser
+from pyramid.static import PackageURLParser
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 from cone.tile import (
@@ -7,20 +13,51 @@ from cone.tile import (
 from cone.app.utils import app_config
 
 
-class MergedResources(object):
+class MergedAssets(object):
     
     def __init__(self, request):
         self.request = request
+    
+    def merged_assets(self, assets):
+        if authenticated_userid(self.request):
+            assets = assets.public + assets.protected
+        else:
+            assets = assets.public
+        data = ''
+        for view, subpath in assets:
+            if isinstance(view.app, PackageURLParser):
+                path = pkg_resources.resource_filename(
+                    view.app.package_name,
+                    os.path.join(view.app.resource_name, subpath))
+            elif isinstance(view.app, StaticURLParser):
+                path = os.path.join(view.app.directory, subpath)
+            else:
+                raise ValueError(u"Unknown assets view app %s" % str(view.app))
+            with open(path, 'r') as file:
+                data += file.read() + '\n\n'
+        return data
+    
+    @property
+    def merged_js(self):
+        return self.merged_assets(cone.app.cfg.merged.js)
+    
+    @property
+    def merged_css(self):
+        return self.merged_assets(cone.app.cfg.merged.css)
 
 
 @view_config('cone.js')
 def cone_js(model, request):
-    pass
+    assets = MergedAssets(request)
+    return Response(assets.merged_js)
 
 
 @view_config('cone.css')
 def cone_css(model, request):
-    pass
+    assets = MergedAssets(request)
+    response = Response(assets.merged_css)
+    response.headers['Content-Type'] = 'text/css'
+    return response
 
 
 @tile('resources', 'templates/resources.pt', permission='login')

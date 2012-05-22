@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- CSS and JS can be delivered merged if desired.
+  [rnix, 2012-05-22]
+
 - Move resources rendering to seperate module.
   [rnix, 2012-05-21]
 
