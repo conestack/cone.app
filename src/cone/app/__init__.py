@@ -146,7 +146,8 @@ def configure_yafowil_addon_resources(config):
         resource_name = '++resource++%s' % plugin_name
         config.add_view(view_path, name=resource_name)
         for js in get_javascripts(plugin_name):
-            cone.app.cfg.merged.js.protected.append((resources_view, js))
+            cone.app.cfg.js.protected.append('%s/%s' % (resource_name, js))
+            #cone.app.cfg.merged.js.protected.append((resources_view, js))
         for css in get_stylesheets(plugin_name):
             cone.app.cfg.css.protected.append('%s/%s' % (resource_name, css))
 
