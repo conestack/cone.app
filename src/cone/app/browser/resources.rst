@@ -103,17 +103,17 @@ Merged Assets::
     >>> from cone.app.browser.resources import MergedAssets
     >>> request = layer.new_request()
     >>> assets = MergedAssets(request)
-    >>> anon_js_len = len(assets.merged_js)
-    >>> anon_css_len = len(assets.merged_css)
+    >>> assets.merged_js
+    '...'
+    
+    >>> assets.merged_css
+    '...'
     
     >>> layer.login('admin')
-    >>> auth_js_len = len(assets.merged_js)
-    >>> auth_css_len = len(assets.merged_css)
+    >>> assets.merged_js
+    '...'
+    
+    >>> assets.merged_css
+    '...'
+    
     >>> layer.logout()
-    
-    >>> anon_js_len < auth_js_len
-    True
-    
-    >>> anon_css_len < auth_css_len
-    False
-    
