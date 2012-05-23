@@ -550,6 +550,9 @@ div.pretty_batch a.invisible {
 }
 
 /* Contextmenu */
+div.contextmenu_wrapper {
+    clear:both;
+}
 div.contextmenu {
     border-bottom:#ccc 1px solid;
     padding:2px 0px 12px 0px;

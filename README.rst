@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- ``contextmenu`` tile got a ``bdajax`` contract.
+  [rnix, 2012-05-23]
+
 - CSS and JS can be delivered merged if desired.
   [rnix, 2012-05-22]
 
