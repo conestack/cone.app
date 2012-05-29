@@ -72,6 +72,12 @@ cfg.merged.css.public = [
 ]
 cfg.merged.css.protected = list()
 
+cfg.merged.print_css = Properties()
+cfg.merged.print_css.public = [
+    (static_resources, 'print.css'),
+]
+cfg.merged.print_css.protected = list()
+
 # cfg.layout used to enable/disable tiles in main template
 cfg.layout = Properties()
 cfg.layout.livesearch = True

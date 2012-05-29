@@ -37,6 +37,9 @@ Changes
 0.9.3dev
 --------
 
+- Add basic print CSS.
+  [rnix, 2012-05-29]
+
 - ``contextmenu`` tile got a ``bdajax`` contract.
   [rnix, 2012-05-23]
 

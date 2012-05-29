@@ -10,10 +10,12 @@
 
   <!-- stylesheets -->
   <link href="${request.application_url}/cone.css"
-        rel="stylesheet" type="text/css" media="screen" />
+        rel="stylesheet" type="text/css" media="all" />
+  <link href="${request.application_url}/print.css"
+        rel="stylesheet" type="text/css" media="print" />
   <tal:public repeat="res css">
     <link href="${res}"
-          rel="stylesheet" type="text/css" media="screen" />
+          rel="stylesheet" type="text/css" media="all" />
   </tal:public>
 
 </tal:resources>

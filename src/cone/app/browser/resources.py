@@ -44,6 +44,10 @@ class MergedAssets(object):
     @property
     def merged_css(self):
         return self.merged_assets(cone.app.cfg.merged.css)
+    
+    @property
+    def merged_print_css(self):
+        return self.merged_assets(cone.app.cfg.merged.print_css)
 
 
 @view_config('cone.js')
@@ -56,6 +60,14 @@ def cone_js(model, request):
 def cone_css(model, request):
     assets = MergedAssets(request)
     response = Response(assets.merged_css)
+    response.headers['Content-Type'] = 'text/css'
+    return response
+
+
+@view_config('print.css')
+def print_css(model, request):
+    assets = MergedAssets(request)
+    response = Response(assets.merged_print_css)
     response.headers['Content-Type'] = 'text/css'
     return response
 

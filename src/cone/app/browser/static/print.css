@@ -1,0 +1,10 @@
+#header,
+#sidebar_left,
+#footer,
+.contextmenu_wrapper {
+    display:none;
+}
+#content {
+    margin-left:-99% !important;
+    width:99% !important;
+}
