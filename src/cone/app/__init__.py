@@ -49,6 +49,8 @@ cfg.js.protected = list()
 cfg.css = Properties()
 cfg.css.public = [
     'static/cdn/jquery-ui-1.8.18.css',
+    'static/cdn/bootstrap/css/bootstrap.css',
+    'static/cdn/bootstrap/css/bootstrap-responsive.css',
     '++resource++bdajax/bdajax.css',
 ]
 cfg.css.protected = list()
@@ -68,7 +70,7 @@ cfg.merged.js.protected = [
 
 cfg.merged.css = Properties()
 cfg.merged.css.public = [
-    (static_resources, 'style.css'),
+#    (static_resources, 'style.css'),
 ]
 cfg.merged.css.protected = list()
 
