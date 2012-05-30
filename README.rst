@@ -34,8 +34,8 @@ Contributors
 Changes
 =======
 
-0.9.3dev
---------
+0.9.3
+-----
 
 - Add basic print CSS.
   [rnix, 2012-05-29]
