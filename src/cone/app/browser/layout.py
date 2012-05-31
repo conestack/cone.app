@@ -22,6 +22,7 @@ from cone.app.browser.utils import (
     make_url,
     format_date,
     node_icon_url,
+    node_icon,
 )
 
 _ = TranslationStringFactory('cone.app')
@@ -208,7 +209,8 @@ class NavTree(Tile):
             title = node.metadata.title
             url = make_url(self.request, node=node)
             curnode = curpath == key and True or False
-            icon = node_icon_url(self.request, node)
+            #icon = node_icon_url(self.request, node)
+            icon = node_icon(self.request, node)
             child = self.navtreeitem(title, url, nodepath(node), icon)
             child['showchildren'] = curnode
             if curnode:
