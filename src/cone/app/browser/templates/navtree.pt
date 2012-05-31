@@ -4,13 +4,11 @@
            i18n:domain="cone.app"
            omit-tag="True">
   <ul id="navtree"
-      class="contextsensitiv navtree"
+      class="contextsensitiv navtree nav nav-list"
       ajax:bind="contextchanged"
       ajax:action="navtree:#navtree:replace">
-    <li>
-      <div class="heading"
-           i18n:translate="navigation">Navigation</div>
+      <li class="heading nav-header"
+           i18n:translate="navigation">Navigation</li>
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
-    </li>
   </ul>
 </tal:block>

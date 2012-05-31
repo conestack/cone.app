@@ -20,15 +20,15 @@
     
       <div id="header">
         
-        <h1 id="logo">
-          <a class="logolink"
-             href="${request.application_url}"
-             ajax:bind="click"
-             ajax:target="${request.application_url}"
-             ajax:event="contextchanged:.contextsensitiv
-                         contextchanged:#content"
-             tal:content="model.root.metadata.title">Title</a>
-        </h1>
+        <a id="logo" class="logolink"
+           href="${request.application_url}"
+           ajax:bind="click"
+           ajax:target="${request.application_url}"
+           ajax:event="contextchanged:.contextsensitiv
+                       contextchanged:#content">
+           <img src="/tehut-static/logo.png"
+            tal:attributes="alt model.root.metadata.title" />
+         </a>
         
         <tal:personaltools
           condition="layout.personaltools"
@@ -38,13 +38,13 @@
           condition="layout.livesearch"
           replace="structure tile('livesearch')" />
         
-        <tal:enabled condition="layout.mainmenu">
-          <div id="menu">
-            <tal:mainmenu replace="structure tile('mainmenu')" />
-          </div>
-        </tal:enabled>
-      
       </div>
+
+      <tal:enabled condition="layout.mainmenu">
+        <div id="menu">
+          <tal:mainmenu replace="structure tile('mainmenu')" />
+        </div>
+      </tal:enabled>
       
       <tal:enabled condition="layout.pathbar">
         <div id="pathbar" class="pathbar">
@@ -52,17 +52,17 @@
         </div>
       </tal:enabled>
 
-      <div id="content_wrapper">
+      <div id="content_wrapper" class="container-fluid">
           
         <tal:enabled condition="layout.sidebar_left">
-          <div id="sidebar_left">
+          <div id="sidebar_left" class="span3">
             <tal:tiles repeat="tilename layout.sidebar_left">
               <tal:tile replace="structure tile(tilename)" />
             </tal:tiles>
           </div>
         </tal:enabled>
         
-        <div id="content"
+        <div id="content" class="span9"
              ajax:bind="contextchanged"
              ajax:action="content:#content:inner">
           <tal:content replace="structure tile(contenttilename)" />

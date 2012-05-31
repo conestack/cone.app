@@ -1,9 +1,7 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
-  <ul>
     <li tal:repeat="item children" class="navtreeitem">
-      <img src="${item['icon']}" alt="..." />
       <a href=""
          ajax:bind="click"
          ajax:target="${item['url']}"
@@ -12,13 +10,14 @@
          tal:define="css item['selected'] and 'selected' or '';
                      css ' '.join([css, 'navtreelevel_%i' % level])"
          tal:attributes="href item['url'];
-                         class css"
-         tal:content="item['title']">Title</a>
+                         class css">
+         <i class="${item['icon']}" alt="..."></i>
+         <span tal:replace="item['title']">Title</span>
+         </a>
       <ul tal:condition="item['children']"
           class="childtree ${'navtreelevel_%i' % level}">
         <tal:tree replace="structure context.rendertree(item['children'],
                                                         level + 1)" />
       </ul>
     </li>
-  </ul>
 </tal:block>

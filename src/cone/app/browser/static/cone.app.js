@@ -104,8 +104,24 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             // normal tabs
             $('ul.tabs', context).tabs('div.tabpanes > div');
             // ajax tabs
-            $('ul.ajaxtabs', context).tabs('div.ajaxtabpanes > div');
-            $('ul.ajaxtabs li a', context).bind('click', function(event) {
+//            $('ul.ajaxtabs', context).tabs('div.ajaxtabpanes > div');
+//            $('ul.ajaxtabs li a', context).bind('click', function(event) {
+//                event.preventDefault();
+//                var elem = $(this);
+//                var target = bdajax.parsetarget(elem.attr('ajax:target'));
+//                bdajax.request({
+//                    url: target.url,
+//                    params: target.params,
+//                    success: function(data, status, request) {
+//                        var container = elem.parents('.ajaxtabs').parent();
+//                        $('.ajaxtabpane', container)
+//                            .html(data).css('display', 'block').bdajax();
+//                    }
+//                });
+//            }).first().trigger('click');
+
+            $('div.ajaxtabs', context).tabs('div.ajaxtabpanes > div');
+            $('div.ajaxtabs a', context).bind('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
                 var target = bdajax.parsetarget(elem.attr('ajax:target'));
@@ -119,6 +135,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     }
                 });
             }).first().trigger('click');
+
+
+
         },
         
         dropdownmenubinder: function(context) {

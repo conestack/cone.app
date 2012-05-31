@@ -48,10 +48,10 @@ cfg.js.protected = list()
 # CSS Resources
 cfg.css = Properties()
 cfg.css.public = [
-    'static/cdn/jquery-ui-1.8.18.css',
-    'static/cdn/bootstrap/css/bootstrap.css',
-    'static/cdn/bootstrap/css/bootstrap-responsive.css',
     '++resource++bdajax/bdajax.css',
+    'static/cdn/jquery-ui-1.8.18.css',
+    'static/cdn/bootstrap/css/bootstrap-responsive.css',
+    'static/cdn/bootstrap/css/bootstrap.css',
 ]
 cfg.css.protected = list()
 

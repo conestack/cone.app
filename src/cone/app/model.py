@@ -161,7 +161,7 @@ class AppSettings(FactoryNode):
     def properties(self):
         props = Properties()
         props.in_navtree = True
-        props.icon = 'static/images/settings16_16.png'
+        props.icon = 'icon-cog'
         return props
     
     @instance_property
