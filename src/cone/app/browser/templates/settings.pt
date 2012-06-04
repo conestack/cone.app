@@ -12,10 +12,10 @@
          tal:content="tab['title']">
         Title
       </a>
-      <div class="ajaxtabpanes">
-        <div class="ajaxtabpane" style="display:block"></div>
-      </div>
     </tal:tabs>
   </div>
-</div>
+  <div class="ajaxtabpanes">
+    <div class="ajaxtabpane" style="display:block"></div>
+  </div>
+  </div>
 </tal:block>
