@@ -129,12 +129,14 @@ class LinkAction(TemplateAction):
     text = None       # link text
     enabled = True    # if false, link gets 'disabled' css class
     selected = False  # if true, link get 'selected' css class
+    icon = None       # if set, render <i> tag with value as CSS class on link
     
     @property
     def css_class(self):
         css = not self.enabled and 'disabled' or ''
         css = self.selected and '%s selected' % css or css
         css = css.strip()
+        css = '%s btn' % css
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
