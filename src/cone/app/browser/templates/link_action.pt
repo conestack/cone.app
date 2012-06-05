@@ -12,8 +12,10 @@
      ajax:event="${context.event|nothing}"
      ajax:action="${context.action|nothing}"
      ajax:confirm="${context.confirm|nothing}"
-     ajax:overlay="${context.overlay|nothing}"
-     tal:content="context.text">Text</a>
+     ajax:overlay="${context.overlay|nothing}"><i
+         class="${context.icon}"
+         tal:condition="context.icon"></i><span 
+             tal:replace="context.text">Text</span></a>
   
   <a tal:condition="not context.text"
      id="${context.id|nothing}"
@@ -25,6 +27,8 @@
      ajax:event="${context.event|nothing}"
      ajax:action="${context.action|nothing}"
      ajax:confirm="${context.confirm|nothing}"
-     ajax:overlay="${context.overlay|nothing}">&nbsp;</a>
+     ajax:overlay="${context.overlay|nothing}"><i
+         class="${context.icon}"
+         tal:condition="context.icon"></i>&nbsp;</a>
 
 </tal:link>
