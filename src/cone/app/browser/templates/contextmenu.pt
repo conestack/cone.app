@@ -9,7 +9,9 @@
     <div class="contextmenu">
     
       <tal:toolbars repeat="toolbar context.toolbars">
-        <div tal:replace="structure toolbar(model, request)"></div>
+        <div class="btn-toolbar">
+          <div tal:replace="structure toolbar(model, request)"></div>
+        </div>
       </tal:toolbars>
     
     </div>

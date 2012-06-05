@@ -65,7 +65,7 @@ class Toolbar(odict):
         ret = ret.strip()
         if not ret:
             return ret
-        return u'<div class="toolbar">%s</div>' % ret
+        return u'<div class="toolbar btn-group">%s</div>' % ret
 
 
 class Action(object):
@@ -148,7 +148,7 @@ class LinkAction(TemplateAction):
 class ActionUp(LinkAction):
     """One level up action.
     """
-    css = 'up16_16'
+    css = 'toolbaricon-up'
     title = _('action_one_level_up', 'One level up')
     event = 'contextchanged:.contextsensitiv'
     
@@ -218,7 +218,7 @@ class ViewLink(ActionView):
 class ActionList(LinkAction):
     """Contents listing action.
     """
-    css = 'listing16_16'
+    css = 'toolbaricon-list'
     title = _('action_listing', 'Listing')
     action = 'listing:#content:inner'
     
@@ -238,7 +238,7 @@ class ActionList(LinkAction):
 class ActionSharing(LinkAction):
     """Sharing action.
     """
-    css = 'sharing16_16'
+    css = 'toolbaricon-share'
     title = _('action_sharing', 'Sharing')
     action = 'sharing:#content:inner'
     
