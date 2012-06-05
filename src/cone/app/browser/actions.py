@@ -65,7 +65,7 @@ class Toolbar(odict):
         ret = ret.strip()
         if not ret:
             return ret
-        return u'<div class="toolbar btn-group">%s</div>' % ret
+        return u'<div class="btn-group">%s</div>' % ret
 
 
 class Action(object):
@@ -136,7 +136,7 @@ class LinkAction(TemplateAction):
         css = not self.enabled and 'disabled' or ''
         css = self.selected and '%s selected' % css or css
         css = css.strip()
-        css = '%s btn' % css
+        css = '%s btn btn-mini' % css
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
@@ -151,6 +151,7 @@ class ActionUp(LinkAction):
     """One level up action.
     """
     css = 'toolbaricon-up'
+    icon = 'toolbaricon-up'
     title = _('action_one_level_up', 'One level up')
     event = 'contextchanged:.contextsensitiv'
     
@@ -181,7 +182,8 @@ class ActionUp(LinkAction):
 class ActionView(LinkAction):
     """View action.
     """
-    css = 'view16_16'
+    css = 'toolbaricon-view'
+    icon = 'toolbaricon-view'
     title = _('action_view', 'View')
     href = LinkAction.target
     
@@ -241,6 +243,7 @@ class ActionSharing(LinkAction):
     """Sharing action.
     """
     css = 'toolbaricon-share'
+    icon = 'toolbaricon-share'
     title = _('action_sharing', 'Sharing')
     action = 'sharing:#content:inner'
     
@@ -284,7 +287,8 @@ class ActionAdd(TileAction):
 class ActionEdit(LinkAction):
     """Edit action.
     """
-    css = 'edit16_16'
+    css = 'toolbar-edit'
+    icon = 'toolbar-edit'
     title = _('action_edit', 'Edit')
     action = 'edit:#content:inner'
     
@@ -304,7 +308,8 @@ class ActionEdit(LinkAction):
 class ActionDelete(LinkAction):
     """Delete action.
     """
-    css = 'delete16_16'
+    css = 'toolbar-delete'
+    icon = 'toolbar-delete'
     title = _('action_delete', 'Delete')
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
@@ -329,7 +334,8 @@ class ActionDelete(LinkAction):
 class ActionDeleteChildren(LinkAction):
     """Delete children action.
     """
-    css = 'delete16_16'
+    css = 'toolbar-delete'
+    icon = 'toolbar-delete'
     title = _('action_delete_selected_children', 'Delete selected children')
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
@@ -352,7 +358,8 @@ class ActionDeleteChildren(LinkAction):
 class ActionCut(LinkAction):
     """Cut children action.
     """
-    css = 'cut16_16'
+    css = 'toolbaricon-cut'
+    icon = 'toolbaricon-cut'
     title = _('action_cut', 'Cut')
     bind = None
     
@@ -371,7 +378,8 @@ class ActionCut(LinkAction):
 class ActionCopy(LinkAction):
     """Copy children action.
     """
-    css = 'copy16_16'
+    css = 'toolbaricon-copy'
+    icon = 'toolbaricon-copy'
     title = _('action_copy', 'Copy')
     bind = None
     
@@ -390,7 +398,8 @@ class ActionCopy(LinkAction):
 class ActionPaste(LinkAction):
     """Paste children action.
     """
-    css = 'paste16_16'
+    css = 'toolbaricon-paste'
+    icon = 'toolbaricon-paste'
     title = _('action_paste', 'Paste')
     bind = None
     

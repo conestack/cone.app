@@ -9,11 +9,11 @@
     <div class="contextmenu">
     
       <tal:toolbars repeat="toolbar context.toolbars">
-        <div class="btn-toolbar">
+        <div class="btn-toolbar toolbar">
           <div tal:replace="structure toolbar(model, request)"></div>
         </div>
       </tal:toolbars>
-    
+      <div class="visualClear"></div>
     </div>
   
   </div>
