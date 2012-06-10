@@ -42,6 +42,7 @@ cfg.default_node_icon = 'static/images/default_node_icon.png'
 cfg.js = Properties()
 cfg.js.public = [
     '++resource++bdajax/bdajax.js',
+    'static/cdn/bootstrap/js/bootstrap.js',
 ]
 cfg.js.protected = list()
 

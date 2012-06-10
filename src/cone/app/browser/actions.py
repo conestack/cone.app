@@ -136,7 +136,7 @@ class LinkAction(TemplateAction):
         css = not self.enabled and 'disabled' or ''
         css = self.selected and '%s selected' % css or css
         css = css.strip()
-        css = '%s btn btn-mini' % css
+        css = '%s btn btn-small' % css
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
@@ -150,7 +150,8 @@ class LinkAction(TemplateAction):
 class ActionUp(LinkAction):
     """One level up action.
     """
-    css = 'toolbaricon-up'
+    id = 'toolbaraction-up'
+    css = ''
     icon = 'toolbaricon-up'
     title = _('action_one_level_up', 'One level up')
     event = 'contextchanged:.contextsensitiv'
@@ -182,7 +183,8 @@ class ActionUp(LinkAction):
 class ActionView(LinkAction):
     """View action.
     """
-    css = 'toolbaricon-view'
+    id = 'toolbaraction-view'
+    css = ''
     icon = 'toolbaricon-view'
     title = _('action_view', 'View')
     href = LinkAction.target
@@ -222,7 +224,9 @@ class ViewLink(ActionView):
 class ActionList(LinkAction):
     """Contents listing action.
     """
-    css = 'toolbaricon-list'
+    id = 'toolbaraction-list'
+    css = ''
+    icon = 'toolbaricon-list'
     title = _('action_listing', 'Listing')
     action = 'listing:#content:inner'
     
@@ -242,7 +246,8 @@ class ActionList(LinkAction):
 class ActionSharing(LinkAction):
     """Sharing action.
     """
-    css = 'toolbaricon-share'
+    id = 'toolbaraction-share'
+    css = ''
     icon = 'toolbaricon-share'
     title = _('action_sharing', 'Sharing')
     action = 'sharing:#content:inner'
@@ -358,7 +363,8 @@ class ActionDeleteChildren(LinkAction):
 class ActionCut(LinkAction):
     """Cut children action.
     """
-    css = 'toolbaricon-cut'
+    id = 'toolbaraction-cut'
+    css = ''
     icon = 'toolbaricon-cut'
     title = _('action_cut', 'Cut')
     bind = None
@@ -378,7 +384,8 @@ class ActionCut(LinkAction):
 class ActionCopy(LinkAction):
     """Copy children action.
     """
-    css = 'toolbaricon-copy'
+    id = 'toolbaraction-copy'
+    css = ''
     icon = 'toolbaricon-copy'
     title = _('action_copy', 'Copy')
     bind = None
@@ -398,7 +405,8 @@ class ActionCopy(LinkAction):
 class ActionPaste(LinkAction):
     """Paste children action.
     """
-    css = 'toolbaricon-paste'
+    id = 'toolbaraction-paste'
+    css = ''
     icon = 'toolbaricon-paste'
     title = _('action_paste', 'Paste')
     bind = None

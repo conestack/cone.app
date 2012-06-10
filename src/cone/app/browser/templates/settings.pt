@@ -5,7 +5,7 @@
   <div class="btn-group ajaxtabs">
     <tal:tabs define="tabs context.tabs">
       <a tal:repeat="tab tabs"
-         class="w1 btn btn-mini"
+         class="w1 btn btn-small"
          href=""
          ajax:target="${tab['target']}"
          tal:attributes="title tab['title']"

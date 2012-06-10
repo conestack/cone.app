@@ -3,17 +3,18 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
-
-  <div class="dropdown">
-    <div class="icon">
-      <a href="${context.nodeurl}/adding"
+    
+    <button class="btn btn-small dropdown-toggle">
+      <i class="toolbaricon-add"></i>Add
+      <span class="caret"></span>
+      <!--a href="${context.nodeurl}/adding"
          class="add16_16"
          title="Add Item"
-         i18n:attributes="title add_item">&nbsp;</a>
-    </div>
-    <ul class="dropdown_items" style="display:none;">
+         i18n:attributes="title add_item">&nbsp;</a-->
+    </button>
+    <ul class="dropdown_items dropdown-menu">
       <li tal:repeat="item context.items">
-        <img src="${item.icon}" alt="..." />
+        <!--img src="${item.icon}" alt="..." /-->
         <a href="${item.url}"
            ajax:bind="click"
            ajax:target="${item.target}"
@@ -23,6 +24,5 @@
         </a>
       </li>
     </ul>
-  </div>
 
 </tal:block>
