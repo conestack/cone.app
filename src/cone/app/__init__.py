@@ -17,12 +17,7 @@ from cone.app.browser import (
     static_resources,
 )
 from yafowil.base import factory
-from yafowil.utils import (
-    get_plugin_names,
-    get_resource_directory,
-    get_javascripts,
-    get_stylesheets,
-)
+from yafowil.utils import get_plugin_names
 
 logger = logging.getLogger('cone.app')
 
@@ -139,23 +134,34 @@ def acl_factory(**kwargs):
 
 def configure_yafowil_addon_resources(config):
     import cone.app
-    yafowil_plugins = get_plugin_names()
-    for plugin_name in yafowil_plugins:
-        plugin_resources_dir = get_resource_directory(plugin_name)
-        if not (plugin_resources_dir):
-            logger.info('No resource directories in %s' % plugin_name)
+    all_js = list()
+    all_css = list()
+    for plugin_name in get_plugin_names():
+        resources = factory.resources_for(plugin_name)
+        if not resources:
             continue
-        resources_view = static_view(plugin_resources_dir, use_subpath=True)
+        resources_view = static_view(resources['resourcedir'],
+                                     use_subpath=True)
         view_name = '%s_resources' % plugin_name.replace('.', '_')
         setattr(cone.app, view_name, resources_view)
         view_path = 'cone.app.%s' % view_name
         resource_name = '++resource++%s' % plugin_name
         config.add_view(view_path, name=resource_name)
-        for js in get_javascripts(plugin_name):
-            cone.app.cfg.js.protected.append('%s/%s' % (resource_name, js))
-            #cone.app.cfg.merged.js.protected.append((resources_view, js))
-        for css in get_stylesheets(plugin_name):
-            cone.app.cfg.css.protected.append('%s/%s' % (resource_name, css))
+        for js in resources['js']:
+            if not js['resource'].startswith('http'):
+                js['resource'] = resource_name + '/' + js['resource']
+            all_js.append(js)
+        for css in resources['css']:
+            if not css['resource'].startswith('http'):
+                css['resource'] = resource_name + '/' + css['resource']
+            all_css.append(css)
+    all_js = sorted(all_js, key=lambda x: x['order'])
+    all_css = sorted(all_css, key=lambda x: x['order'])
+    for js in all_js:
+        cone.app.cfg.js.protected.append(js['resource'])
+        #cone.app.cfg.merged.js.protected.append(js['resource'])
+    for css in all_css:
+        cone.app.cfg.css.protected.append(css['resource'])
 
 
 def main(global_config, **settings):
