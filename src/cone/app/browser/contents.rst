@@ -44,7 +44,7 @@ Imports and dummy context::
     >>> contents.model = model
     >>> contents.request = request = layer.new_request()
 
-``sorted_rows`` returns sorted listing items. ``start``, ``end``, ``sort`` and 
+``sorted_rows`` returns sorted listing items. ``start``, ``end``, ``sort`` and
 ``order`` are expected by this function::
 
     >>> contents.sorted_rows(None, None, 'created', 'desc')[0]['title']
@@ -188,7 +188,7 @@ Render authenticated::
     >>> request.params['b_page'] = '1'
     >>> rendered = render_tile(model, request, 'contents')
     >>> expected = \
-    ... '<a href="http://example.com/?sort=title&order=desc&b_page=1&size=15"'
+    ... '<a href="http://example.com/?sort=title&amp;order=desc&amp;b_page=1&amp;size=15"'
     >>> rendered.find(expected) != -1
     True
 

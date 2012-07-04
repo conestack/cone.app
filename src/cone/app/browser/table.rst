@@ -2,7 +2,7 @@ Table
 =====
 
 Abstract table tile. Provides rendering of sortable, batched tables.
-    
+
 A subclass of this tile must be registered under the same name as defined
 at ``self.table_tile_name``, normally bound to template
 ``cone.app:browser/templates/table.pt``
@@ -146,12 +146,12 @@ A column definition consists of:
 ``content``
     Column content definition. possible values are 'string', 'datetime' and
     'actions'.
-    
+
     If 'string', value is rendered as is to column.
-    
+
     If 'datetime' value is expected as ``datetime.datetime`` value and
     gets formatted.
-    
+
     If 'structure' value is rendered as markup.
 
 A complete example::
@@ -242,8 +242,8 @@ Sort header with query white list param::
 
     >>> rendered
     u'\n  <div id="mytable"\n
-      ...
-    ajax:target="http://example.com/?sort=col_2&b_page=1&foo=bar&order=desc&size=10"...
+    ...
+    ajax:target="http://example.com/?sort=col_2&amp;b_page=1&amp;foo=bar&amp;order=desc&amp;size=10"...
 
 Structure content::
     

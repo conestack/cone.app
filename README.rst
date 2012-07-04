@@ -34,6 +34,12 @@ Contributors
 Changes
 =======
 
+0.9.4-unreleased
+----------------
+
+- use fresh Chameleon and fix tests to recognize correct output of new Chameleon
+  [jensens, 2012-07-04]
+
 0.9.3
 -----
 

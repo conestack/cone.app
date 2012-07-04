@@ -288,7 +288,7 @@ ReferencableChildrenLink
     >>> action(model, request)
     u'...<a\n     
     ajax:bind="click"\n     
-    ajax:target="http://example.com/model?selected=&root=/&referencable=dummy"\n     
+    ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"\n     
     ajax:event="contextchanged:.refbrowsersensitiv"\n     
     ajax:action="tabletile:#tableid:replace">model</a>...'
     
