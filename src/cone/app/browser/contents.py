@@ -7,7 +7,10 @@ from cone.tile import (
     Tile,
     render_tile,
 )
-from cone.app.interfaces import ICopySupport
+from cone.app.interfaces import (
+    ICopySupport,
+    IWorkflowState,
+)
 from cone.app.browser.table import (
     Table,
     RowData,
@@ -54,6 +57,7 @@ class ContentsActionDelete(ActionDelete):
 class ContentsViewLink(ViewLink):
     """Ciew link for contents table.
     """
+    css = 'title'
     event = 'contextchanged:.contextsensitiv'
     
     @property
@@ -151,6 +155,10 @@ class ContentsTile(Table):
                 row_data.css = 'copysupportitem'
                 if target in cut_urls:
                     row_data.css += ' copysupport_cut'
+            if IWorkflowState.providedBy(child):
+                row_data.css += ' state-%s' % child.state
+            if hasattr(child, 'node_info_name') and child.node_info_name:
+                row_data.css += ' node-type-%s' % child.node_info_name
             row_data['title'] = self.view_link(child, self.request)
             row_data['creator'] = child.metadata.get('creator', 'unknown')
             row_data['created'] = child.metadata.get('created')
