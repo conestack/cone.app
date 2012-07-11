@@ -254,9 +254,9 @@ ul#mainmenu li.node-settings a.current_page_item {
     text-decoration:underline;
 }
 .navtree li.navtreeitem a.selected {
-    color:#4B8749;
     text-decoration:none;
     font-weight:bold;
+    cursor:default;
 }
 .navtree ul.navtreelevel_1 {
     margin-left:6px;

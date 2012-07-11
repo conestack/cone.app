@@ -10,7 +10,8 @@
          ajax:event="contextchanged:.contextsensitiv
                      contextchanged:#content"
          tal:define="css item['selected'] and 'selected' or '';
-                     css ' '.join([css, 'navtreelevel_%i' % level])"
+                     css ' '.join([item['css'], css, 'navtreelevel_%i' % level]);
+                     css css.strip()"
          tal:attributes="href item['url'];
                          class css"
          tal:content="item['title']">Title</a>

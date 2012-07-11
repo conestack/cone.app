@@ -13,7 +13,10 @@ from cone.tile import (
     render_template,
     registerTile,
 )
-from cone.app.interfaces import INavigationLeaf
+from cone.app.interfaces import (
+    INavigationLeaf,
+    IWorkflowState,
+)
 from cone.app.model import AppRoot
 from cone.app.utils import principal_data
 from cone.app.browser import render_main_template
@@ -168,13 +171,14 @@ class NavTree(Tile):
     """Navigation tree tile.
     """
     
-    def navtreeitem(self, title, url, path, icon):
+    def navtreeitem(self, title, url, path, icon, css=''):
         item = dict()
         item['title'] = title
         item['url'] = url
         item['selected'] = False
         item['path'] = path
         item['icon'] = icon
+        item['css'] = css
         item['showchildren'] = False
         item['children'] = list()
         return item
@@ -209,7 +213,10 @@ class NavTree(Tile):
             url = make_url(self.request, node=node)
             curnode = curpath == key and True or False
             icon = node_icon_url(self.request, node)
-            child = self.navtreeitem(title, url, nodepath(node), icon)
+            css = ''
+            if IWorkflowState.providedBy(node):
+                css = 'state-%s' % node.state
+            child = self.navtreeitem(title, url, nodepath(node), icon, css)
             child['showchildren'] = curnode
             if curnode:
                 child['selected'] = True
