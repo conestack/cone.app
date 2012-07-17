@@ -37,6 +37,9 @@ Changes
 0.9.4-unreleased
 ----------------
 
+- update jquery to 1.7.2
+  [rnix, 2012-07-17]
+
 - use fresh Chameleon and fix tests to recognize correct output of new Chameleon
   [jensens, 2012-07-04]
 
