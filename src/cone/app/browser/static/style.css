@@ -445,16 +445,16 @@ table.pretty_table td:last-child div.col {
     border-right:1px solid #AAAAAA;
 }
 table.pretty_table tr.even {
-    background-color:#EEFFEE;
+    background-color:#f8f8f8;
 }
 table.pretty_table tr.even td.sorted_col {
-    background-color:#D5FFD5;
+    background-color:#f0f0f0;
 }
 table.pretty_table tr.odd {
-    background-color:#DDFFDD;
+    background-color:#ffffff;
 }
 table.pretty_table tr.odd td.sorted_col {
-    background-color:#C4FFC4;
+    background-color:#fbfbfb;
 }
 table.pretty_table tr.even.selected {
     background-color:#EEEEFF;
