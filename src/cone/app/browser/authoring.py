@@ -260,11 +260,10 @@ class EditBehavior(CameFromNext, ContentForm):
         if info is None:
             return _('edit', 'Edit')
         localizer = get_localizer(self.request)
-        title = localizer.translate(_(info.title))
         heading = localizer.translate(
             _('edit_form_heading',
               default='Edit: ${title}',
-              mapping={'title': localizer.translate(info.title)}))
+              mapping={'title': localizer.translate(_(info.title))}))
         return heading
 
 
