@@ -34,8 +34,17 @@ Contributors
 Changes
 =======
 
-0.9.4-unreleased
-----------------
+0.9.4dev
+--------
+
+- Rename parts to behaviors.
+  [rnix, 2012-07-29]
+
+- adopt to ``node`` 0.9.8
+  [rnix, 2012-07-29]
+
+- adopt to ``plumber`` 1.2
+  [rnix, 2012-07-29]
 
 - use fresh Chameleon and fix tests to recognize correct output of new Chameleon
   [jensens, 2012-07-04]

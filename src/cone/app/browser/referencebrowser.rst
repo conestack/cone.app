@@ -239,7 +239,7 @@ ActionAddReference
 ------------------
 ::
     >>> from plumber import plumber
-    >>> from node.parts import UUIDAware
+    >>> from node.behaviors import UUIDAware
     >>> from cone.app.model import BaseNode
     >>> from cone.app.browser.referencebrowser import ActionAddReference
     

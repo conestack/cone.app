@@ -1,7 +1,7 @@
 from plumber import (
-    Part,
+    Behavior,
     default,
-    extend,
+    override,
 )
 from webob.exc import HTTPFound
 from pyramid.security import has_permission
@@ -14,8 +14,8 @@ from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import make_url
 
 
-class YAMLForm(Part):
-    """Plumbing part for rendering yaml forms.
+class YAMLForm(Behavior):
+    """Plumbing behavior for rendering yaml forms.
     """
     
     action_resource = default(u'')
@@ -42,7 +42,7 @@ class YAMLForm(Part):
                             resource=resource)
         return make_url(self.request, node=self.model, resource=resource)
     
-    @extend
+    @override
     def prepare(self):
         if self.form_template:
             self.form = parse_from_YAML(
@@ -53,9 +53,9 @@ class YAMLForm(Part):
             self.form_template_path, self, self.message_factory)
 
 
-class ProtectedAttributesForm(Part):
-    """Plumbing part supposed to be used for yafowil forms calculating widget
-    modes based on security checks.
+class ProtectedAttributesForm(Behavior):
+    """Plumbing behavior supposed to be used for yafowil forms calculating
+    widget modes based on security checks.
     
     Security declarations for attributes are stored at
     ``self.attribute_permissions`` containing the attribute names as key, and

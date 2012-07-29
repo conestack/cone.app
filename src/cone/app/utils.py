@@ -56,13 +56,13 @@ class DatetimeHelper(object):
         return iso
 
 
-# XXX: move somewhere else, probably plumbing part for node
+# XXX: move somewhere else, probably plumbing behavior for node
 def add_creation_metadata(request, mapping):
     mapping['creator'] = authenticated_userid(request)
     mapping['created'] = timestamp()
     mapping['modified'] = mapping['created']
 
 
-# XXX: move somewhere else, probably plumbing part for node
+# XXX: move somewhere else, probably plumbing behavior for node
 def update_creation_metadata(request, mapping):
     mapping['modified'] = timestamp()

@@ -1,8 +1,8 @@
 import logging
 from plumber import (
-    Part,
+    Behavior,
     default,
-    extend,
+    override,
     plumb,
 )
 from zope.interface import implementer
@@ -37,8 +37,8 @@ def persist_state(node, info):
 
 
 @implementer(IWorkflowState)
-class WorkflowState(Part):
-    """Part for nodes providing workflow states.
+class WorkflowState(Behavior):
+    """Behavior for nodes providing workflow states.
     
     This implementation persists to self.attrs['state']
     """
@@ -71,10 +71,10 @@ class WorkflowState(Part):
     state = default(property(_get_state, _set_state))
 
 
-class WorkflowACL(Part):
-    """Part providing ACL's by worfklow state.
+class WorkflowACL(Behavior):
+    """Behavior providing ACL's by worfklow state.
     
-    Requires ``WorkflowState`` part.
+    Requires ``WorkflowState`` behavior.
     """
     state_acls = default(dict())
     default_acl = default([
@@ -92,7 +92,7 @@ class WorkflowACL(Part):
         (Deny, Everyone, ALL_PERMISSIONS),
     ])
     
-    @extend
+    @override
     @property
     def __acl__(self):
         acl = self.state_acls.get(self.state, self.default_acl)

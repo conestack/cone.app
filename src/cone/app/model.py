@@ -7,17 +7,15 @@ from datetime import datetime
 from odict import odict
 from plumber import (
     plumber,
-    Part,
+    Behavior,
     default,
-    extend,
     finalize,
-    plumb,
 )
 from node.interfaces import (
     IUUIDAware,
     IOrdered,
 )
-from node.parts import (
+from node.behaviors import (
     AsAttrAccess,
     NodeChildValidate,
     Adopt,
@@ -72,7 +70,7 @@ def getNodeInfo(name):
 
 
 @implementer(IApplicationNode)
-class AppNode(Part):
+class AppNode(Behavior):
     
     # set this to name of registered node info on deriving class
     node_info_name = default('')
@@ -231,8 +229,8 @@ class UUIDAsName(UUIDAware):
 
 
 @implementer(ICopySupport)
-class CopySupport(Part):
-    """Plumbing part for copy support.
+class CopySupport(Behavior):
+    """Plumbing behavior for copy support.
     """
     supports_cut = default(True)
     supports_copy = default(True)

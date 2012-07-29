@@ -1,8 +1,7 @@
 import logging
 from plumber import (
-    Part,
+    Behavior,
     default,
-    extend,
     plumb,
 )
 from zope.interface import implementer
@@ -164,8 +163,8 @@ acl_registry = ACLRegistry()
 
 
 @implementer(IOwnerSupport)
-class OwnerSupport(Part):
-    """Plumbing part providing ownership information.
+class OwnerSupport(Behavior):
+    """Plumbing behavior providing ownership information.
     """
     
     @plumb
@@ -194,12 +193,12 @@ class OwnerSupport(Part):
 
 
 @implementer(IPrincipalACL)
-class PrincipalACL(Part):
-    """Plumbing part providing principal ACL's.
+class PrincipalACL(Behavior):
+    """Plumbing behavior providing principal ACL's.
     
-    Warning: This part works only for nodes defining the ``__acl__`` attribute
-    as property function. Plumber does not support class property plumbing
-    (yet).
+    Warning: This behavior works only for nodes defining the ``__acl__``
+    attribute as property function. Plumber does not support class property
+    plumbing (yet).
     """
     role_inheritance = default(False)
     

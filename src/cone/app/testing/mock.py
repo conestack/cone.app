@@ -1,5 +1,5 @@
 from plumber import plumber
-from node.parts import (
+from node.behaviors import (
     Adopt,
     Nodespaces,
     Attributes,

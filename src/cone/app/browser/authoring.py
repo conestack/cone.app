@@ -1,8 +1,9 @@
+from zope.deprecation import deprecated
 from plumber import (
     plumber,
-    Part,
+    Behavior,
     default,
-    extend,
+    override,
     plumb,
 )
 from webob.exc import HTTPFound
@@ -67,8 +68,8 @@ def render_form(model, request, tilename):
     return render_main_template(model, request, contenttilename=tilename)
 
 
-class CameFromNext(Part):
-    """Part for form tiles considering 'came_from' parameter on request.
+class CameFromNext(Behavior):
+    """Behavior for form tiles considering 'came_from' parameter on request.
     """
     
     @plumb
@@ -157,8 +158,8 @@ class AddTile(ProtectedContentTile):
         return getNodeInfo(factory)
 
 
-class ContentForm(Part):
-    """Form part rendering to content area.
+class ContentForm(Behavior):
+    """Form behavior rendering to content area.
     """
     
     show_heading = default(True)
@@ -188,10 +189,11 @@ class ContentForm(Part):
             path, request=request, model=model, context=self)
 
 
-class AddPart(CameFromNext, ContentForm):
-    """form part hooking the hidden field 'factory' to self.form on __call__
+class AddBehavior(CameFromNext, ContentForm):
+    """form behavior hooking the hidden field 'factory' to self.form on
+    __call__.
     """
-    action_resource = extend('add')
+    action_resource = override('add')
     
     @default
     @property
@@ -221,6 +223,13 @@ class AddPart(CameFromNext, ContentForm):
         )
 
 
+AddPart = AddBehavior # B/C
+deprecated('AddPart', """
+``cone.app.browser.authoring.AddPart`` is deprecated as of cone.app 0.9.4 and
+will be removed in cone.app 1.0. Use ``cone.app.browser.authoring.AddBehavior``
+instead.""")
+
+
 @view_config('edit', permission='edit')
 def edit(model, request):
     """Edit view.
@@ -238,10 +247,11 @@ class EditTile(ProtectedContentTile):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
-class EditPart(CameFromNext, ContentForm):
-    """form part hooking the hidden field 'came_from' to self.form on __call__
+class EditBehavior(CameFromNext, ContentForm):
+    """form behavior hooking the hidden field 'came_from' to self.form on
+    __call__.
     """
-    action_resource = extend('edit')
+    action_resource = override('edit')
     
     @default
     @property
@@ -256,6 +266,13 @@ class EditPart(CameFromNext, ContentForm):
               default='Edit: ${title}',
               mapping={'title': localizer.translate(info.title)}))
         return heading
+
+
+EditPart = EditBehavior # B/C
+deprecated('EditPart', """
+``cone.app.browser.authoring.EditPart`` is deprecated as of cone.app 0.9.4 and
+will be removed in cone.app 1.0. Use ``cone.app.browser.authoring.EditBehavior``
+instead.""")
 
 
 @view_config('overlayform', permission='view')
@@ -275,12 +292,12 @@ class OverlayFormTile(ProtectedContentTile):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
-class OverlayPart(Part):
-    """Form part rendering to overlay.
+class OverlayBehavior(Behavior):
+    """Form behavior rendering to overlay.
     """
-    action_resource = extend('overlayform')
-    overlay_selector = extend('#ajax-form')
-    overlay_content_selector = extend('.overlay_content')
+    action_resource = override('overlayform')
+    overlay_selector = override('#ajax-form')
+    overlay_content_selector = override('.overlay_content')
     
     @plumb
     def __call__(_next, self, model, request):
@@ -293,6 +310,13 @@ class OverlayPart(Part):
     @default
     def next(self, request):
         return [AjaxOverlay(selector=self.overlay_selector, close=True)]
+
+
+OverlayPart = OverlayBehavior # B/C
+deprecated('OverlayPart', """
+``cone.app.browser.authoring.OverlayPart`` is deprecated as of cone.app 0.9.4
+and will be removed in cone.app 1.0. Use
+``cone.app.browser.authoring.OverlayBehavior`` instead.""")
 
 
 @tile('delete', permission="delete")

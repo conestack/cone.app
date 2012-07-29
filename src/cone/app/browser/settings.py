@@ -1,5 +1,6 @@
+from zope.deprecation import deprecated
 from plumber import (
-    Part,
+    Behavior,
     default,
     plumb,
 )
@@ -54,8 +55,8 @@ class AppSettings(Tile):
         return ret
 
 
-class SettingsPart(Part):
-    """Particular settings object form part.
+class SettingsBehavior(Behavior):
+    """Particular settings object form behavior.
     """
     
     @plumb
@@ -71,3 +72,10 @@ class SettingsPart(Part):
         return [
             AjaxAction(url, 'content', 'inner', selector),
         ]
+
+
+SettingsPart = SettingsBehavior # B/C
+deprecated('SettingsPart', """
+``cone.app.browser.settings.SettingsPart`` is deprecated as of cone.app 0.9.4
+and will be removed in cone.app 1.0. Use
+``cone.app.browser.settings.SettingsBehavior`` instead.""")
