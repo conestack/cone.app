@@ -2,6 +2,7 @@ import os
 import logging
 import model
 import pyramid_zcml
+from zope.deprecation import __show__
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -230,8 +231,14 @@ def main(global_config, **settings):
     # register yafowil static resources
     configure_yafowil_addon_resources(config)
     
+    # supress deprecation warning during scan phase
+    __show__.off()
+    
     # scan browser package
     config.scan('cone.app.browser')
+    
+    # re-enable deprecation warning
+    __show__.on()
     
     # load zcml
     config.load_zcml('configure.zcml')
