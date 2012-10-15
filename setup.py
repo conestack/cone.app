@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.9.4pre1'
+version = '0.9.4dev'
 shortdesc = 'Web application stub'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -21,7 +21,7 @@ setup(name='cone.app',
       url=u'https://github.com/bluedynamics/cone.app',
       license='Simplified BSD',
       packages=find_packages('src'),
-      package_dir = {'': 'src'},
+      package_dir={'': 'src'},
       namespace_packages=['cone'],
       include_package_data=True,
       zip_safe=False,
@@ -65,13 +65,13 @@ setup(name='cone.app',
           'unittest2',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
-      message_extractors = {
+      message_extractors={
           '.': [
               ('**.py', 'lingua_python', None),
               ('**.pt', 'lingua_xml', None),
           ]
       },
-      entry_points = """\
+      entry_points="""\
       [paste.app_factory]
       main = cone.app:main
       [paste.filter_app_factory]
