@@ -15,9 +15,9 @@ from pyramid.i18n import (
     TranslationStringFactory,
     get_localizer,
 )
-from cone.app.model import AppSettings
-from cone.app.browser.utils import make_url
-from cone.app.browser.ajax import (
+from ..model import AppSettings
+from .utils import make_url
+from .ajax import (
     AjaxAction,
     ajax_form_fiddle,
 )
@@ -41,7 +41,7 @@ def settings_tab_content(model, request):
 @tile('content', 'templates/settings.pt',
       interface=AppSettings, permission='manage')
 class AppSettings(Tile):
-    
+
     @property
     def tabs(self):
         ret = list()
@@ -58,13 +58,13 @@ class AppSettings(Tile):
 class SettingsBehavior(Behavior):
     """Particular settings object form behavior.
     """
-    
+
     @plumb
     def prepare(_next, self):
         _next(self)
         selector = '#form-%s' % '-'.join(self.form.path)
         ajax_form_fiddle(self.request, selector, 'replace')
-    
+
     @default
     def next(self, request):
         url = make_url(request.request, node=self.model)
@@ -74,7 +74,7 @@ class SettingsBehavior(Behavior):
         ]
 
 
-SettingsPart = SettingsBehavior # B/C
+SettingsPart = SettingsBehavior  # B/C
 deprecated('SettingsPart', """
 ``cone.app.browser.settings.SettingsPart`` is deprecated as of cone.app 0.9.4
 and will be removed in cone.app 1.0. Use

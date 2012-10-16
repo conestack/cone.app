@@ -1,4 +1,3 @@
-import os
 import doctest
 import interlude
 import pprint
@@ -40,6 +39,7 @@ TESTFILES = [
     'browser/copysupport.rst',
     'browser/utils.rst',
 ]
+
 
 def test_suite():
     XMLConfig('testing/dummy_workflow.zcml', cone.app.tests)()

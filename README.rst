@@ -34,8 +34,15 @@ Contributors
 Changes
 =======
 
+
 0.9.4dev
 --------
+
+- PEP-8.
+  [rnix, 2012-10-16]
+
+- Python2.7 Support.
+  [rnix, 2012-10-16]
 
 - Rename parts to behaviors.
   [rnix, 2012-07-29]
@@ -48,6 +55,7 @@ Changes
 
 - use fresh Chameleon and fix tests to recognize correct output of new Chameleon
   [jensens, 2012-07-04]
+
 
 0.9.3
 -----

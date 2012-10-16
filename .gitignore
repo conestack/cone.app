@@ -4,6 +4,7 @@ src/cone.app.egg-info/
 .mr.developer.cfg
 .project
 .pydevproject
+.pydevproject.bak
 .settings/
 bin/
 develop-eggs/

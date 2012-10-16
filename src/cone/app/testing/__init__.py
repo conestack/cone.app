@@ -23,7 +23,7 @@ class Security(Layer):
         res = authenticate(request, login, 'secret')
         if res:
             request.environ['HTTP_COOKIE'] = res[0][1]
-        
+
     auth_env_keys = [
         'HTTP_COOKIE',
         'paste.cookies',
@@ -31,29 +31,29 @@ class Security(Layer):
         'REMOTE_USER_DATA',
         'cone.app.user.roles',
     ]
-    
+
     def logout(self):
         request = self.current_request
         if request:
             environ = request.environ
             for key in self.auth_env_keys:
-                if environ.has_key(key):
+                if key in environ:
                     del environ[key]
-    
+
     def defaults(self):
         return {'request': self.current_request, 'registry': self.registry}
-    
+
     @property
     def registry(self):
         return getGlobalSiteManager()
-    
+
     def new_request(self, type=None):
         request = self.current_request
         auth = dict()
         if request:
             environ = request.environ
             for key in self.auth_env_keys:
-                if environ.has_key(key):
+                if key in environ:
                     auth[key] = environ[key]
         request = DummyRequest()
         request.environ['SERVER_NAME'] = 'testcase'
@@ -65,7 +65,7 @@ class Security(Layer):
             request.accept = 'application/json'
         self.current_request = request
         return request
-    
+
     def make_app(self, **kw):
         settings = {
             'default_locale_name': 'en',
@@ -89,7 +89,7 @@ class Security(Layer):
         self.current_request = None
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = self.defaults
-    
+
     def setUp(self, args=None):
         self.make_app()
         print "Security set up."

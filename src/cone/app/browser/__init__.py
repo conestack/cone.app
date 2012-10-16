@@ -15,8 +15,8 @@ from cone.tile import (
     render_tile,
 )
 import cone.app
-from cone.app.browser.utils import AppUtil
-from cone.app.browser.actions import ActionContext
+from .utils import AppUtil
+from .actions import ActionContext
 
 
 static_resources = static_view('static', use_subpath=True)
@@ -24,7 +24,7 @@ static_resources = static_view('static', use_subpath=True)
 
 def render_main_template(model, request, contenttilename='content'):
     """Renders main template and return response object.
-    
+
     As main content the tile with name contenttilename is rendered.
     """
     action_context = ActionContext(model, request, contenttilename)

@@ -8,12 +8,12 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
 from zope.component import getGlobalSiteManager
-from cone.app.model import (
+from .model import (
     AppRoot,
     AppSettings,
     Properties,
 )
-from cone.app.browser import (
+from .browser import (
     forbidden_view,
     static_resources,
 )
@@ -113,6 +113,7 @@ def register_plugin(key, factory):
 
 main_hooks = list()
 
+
 def register_main_hook(callback):
     """Register function to get called on application startup.
     """
@@ -172,7 +173,7 @@ def main(global_config, **settings):
     import cone.app.security as security
     security.ADMIN_USER = settings.get('cone.admin_user', 'admin')
     security.ADMIN_PASSWORD = settings.get('cone.admin_password', 'admin')
-    
+
     auth_secret = settings.get('cone.auth_secret', 'secret')
     auth_cookie_name = settings.get('cone.auth_cookie_name', 'auth_tkt')
     auth_secure = settings.get('cone.auth_secure', False)
@@ -187,7 +188,7 @@ def main(global_config, **settings):
     auth_http_only = settings.get('cone.auth_http_only', False)
     auth_path = settings.get('cone.auth_path', "/")
     auth_wild_domain = settings.get('cone.auth_wild_domain', True)
-    
+
     auth_policy = auth_tkt_factory(
         secret=auth_secret,
         cookie_name=auth_cookie_name,
@@ -200,9 +201,9 @@ def main(global_config, **settings):
         path=auth_path,
         wild_domain=auth_wild_domain,
     )
-    
+
     configure_root(settings)
-    
+
     if settings.get('testing.hook_global_registry'):
         globalreg = getGlobalSiteManager()
         config = Configurator(registry=globalreg)
@@ -218,46 +219,46 @@ def main(global_config, **settings):
             settings=settings,
             authentication_policy=auth_policy,
             authorization_policy=acl_factory())
-    
+
     config.include(pyramid_zcml)
     config.begin()
-    
+
     # add translation
     config.add_translation_dirs('cone.app:locale/')
-    
+
     # static resources
     config.add_view('cone.app.browser.static_resources', name='static')
-    
+
     # register yafowil static resources
     configure_yafowil_addon_resources(config)
-    
+
     # supress deprecation warning during scan phase
     __show__.off()
-    
+
     # scan browser package
     config.scan('cone.app.browser')
-    
+
     # re-enable deprecation warning
     __show__.on()
-    
+
     # load zcml
     config.load_zcml('configure.zcml')
-    
+
     # read plugin configurator
     plugins = settings.get('cone.plugins', '')
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
         # XXX: check whether configure.zcml exists, skip loading if not found
-        config.load_zcml('%s:configure.zcml' % plugin) #pragma NO COVERAGE
-    
+        config.load_zcml('%s:configure.zcml' % plugin)      #pragma NO COVERAGE
+
     # execute main hooks
     for hook in main_hooks:
         hook(config, global_config, settings)
-    
+
     # end configuration
     config.end()
-    
+
     # return wsgi app
     return config.make_wsgi_app()
 
@@ -269,14 +270,14 @@ def make_remote_addr_middleware(app, global_conf):
 class RemoteAddrFilter(object):
     """Use this middleware if nginx is used as proxy and IP address should be
     included in auth cookie. make sure nginx passes the right header:
-    
+
     proxy_set_header X-Real-IP $remote_addr;
     """
-    
+
     def __init__(self, app):
         self.app = app
 
     def __call__(self, environ, start_response):
-        if environ.has_key('HTTP_X_REAL_IP'):
+        if 'HTTP_X_REAL_IP' in environ:
             environ['REMOTE_ADDR'] = environ['HTTP_X_REAL_IP']
         return self.app(environ, start_response)

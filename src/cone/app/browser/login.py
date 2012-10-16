@@ -3,12 +3,11 @@ from pyramid.i18n import TranslationStringFactory
 from yafowil.base import (
     factory,
     ExtractionError,
-    UNSET,
 )
 from cone.tile import tile
-from cone.app.security import authenticate
-from cone.app.browser.form import Form
-from cone.app.browser.utils import make_url
+from ..security import authenticate
+from .form import Form
+from .utils import make_url
 
 _ = TranslationStringFactory('cone.app')
 
@@ -16,7 +15,7 @@ _ = TranslationStringFactory('cone.app')
 @tile('loginform', permission="login")
 class LoginForm(Form):
     ajax = False
-    
+
     def prepare(self):
         action = make_url(self.request, node=self.model, resource='login')
         form = factory(
@@ -27,22 +26,22 @@ class LoginForm(Form):
             })
         form['user'] = factory(
             'field:label:error:text',
-            props = {
+            props={
                 'required': _('no_username_given', 'No username given'),
                 'label': _('username', 'Username'),
-            })    
+            })
         form['password'] = factory(
             'field:label:*credentials:error:password',
-            props = {
+            props={
                 'required': _('no_password_given', 'No password given'),
                 'label': _('password', 'Password'),
             },
-            custom = {
+            custom={
                 'credentials': ([self.login], [], [], []),
             })
         form['login'] = factory(
             'submit',
-            props = {
+            props={
                 'action': 'login',
                 'expression': True,
                 'handler': self.noop,
@@ -50,10 +49,10 @@ class LoginForm(Form):
                 'label': _('login', 'Login'),
             })
         self.form = form
-    
+
     def noop(self, widget, data):
         pass
-    
+
     def login(self, widget, data):
         login = data.fetch('loginform.user').extracted
         password = data.fetch('loginform.password').extracted
@@ -62,7 +61,7 @@ class LoginForm(Form):
         if not self.headers:
             raise ExtractionError(
                 _('invalid_credentials', 'Invalid Credentials'))
-    
+
     def next(self, request):
         return HTTPFound(location=request.request.application_url,
                          headers=self.headers)

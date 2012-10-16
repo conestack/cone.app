@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
 
 
@@ -30,14 +29,14 @@ def timestamp():
 
 
 class DatetimeHelper(object):
-    
+
     def w_value(self, val):
         if isinstance(val, datetime):
             return self.dt_to_iso(val)
         if not isinstance(val, unicode):
             val = str(val).decode('utf-8')
         return val
-    
+
     def r_value(self, val):
         try:
             return self.dt_from_iso(val)
@@ -45,10 +44,10 @@ class DatetimeHelper(object):
             if not isinstance(val, unicode):
                 val = str(val).decode('utf-8')
             return val
-    
+
     def dt_from_iso(self, str):
         return datetime.strptime(str, '%Y-%m-%dT%H:%M:%S')
-    
+
     def dt_to_iso(self, dt):
         iso = dt.isoformat()
         if iso.find('.') != -1:

@@ -11,10 +11,9 @@ from pyramid.security import (
     Allow,
     Deny,
     ALL_PERMISSIONS,
-    remember,
 )
 from repoze.workflow import get_workflow
-from cone.app.interfaces import IWorkflowState
+from .interfaces import IWorkflowState
 
 
 logger = logging.getLogger('cone.workflow')
@@ -29,7 +28,7 @@ def initialize_workflow(node):
 
 def persist_state(node, info):
     """Transition callback for repoze.workflow.
-    
+
     Persist state to ``node.state`` and call node.
     """
     node.state = info.transition[u'to_state']
@@ -39,21 +38,22 @@ def persist_state(node, info):
 @implementer(IWorkflowState)
 class WorkflowState(Behavior):
     """Behavior for nodes providing workflow states.
-    
+
     This implementation persists to self.attrs['state']
     """
-    
+
     @plumb
     def __init__(_next, self, *args, **kw):
         _next(self, *args, **kw)
         initialize_workflow(self)
-    
+
     @plumb
     def copy(_next, self):
         """Set initial state for copied node and all children providing
         ``cone.app.interfaces.IWorkflowState``.
         """
         ret = _next(self)
+
         def recursiv_initial_state(node):
             if IWorkflowState.providedBy(node):
                 initialize_workflow(node)
@@ -61,19 +61,19 @@ class WorkflowState(Behavior):
                     recursiv_initial_state(child)
         recursiv_initial_state(ret)
         return ret
-    
+
     def _get_state(self):
         return self.attrs.get('state', None)
-    
+
     def _set_state(self, val):
         self.attrs['state'] = val
-    
+
     state = default(property(_get_state, _set_state))
 
 
 class WorkflowACL(Behavior):
     """Behavior providing ACL's by worfklow state.
-    
+
     Requires ``WorkflowState`` behavior.
     """
     state_acls = default(dict())
@@ -81,9 +81,9 @@ class WorkflowACL(Behavior):
         (Allow, 'system.Authenticated', ['view']),
         (Allow, 'role:viewer', ['view']),
         (Allow, 'role:editor', ['view', 'add', 'edit']),
-        (Allow, 'role:owner', ['view', 'add', 'edit', 'delete', 
+        (Allow, 'role:owner', ['view', 'add', 'edit', 'delete',
                                'change_state', 'manage_permissions']),
-        (Allow, 'role:admin', ['view', 'add', 'edit', 'delete', 
+        (Allow, 'role:admin', ['view', 'add', 'edit', 'delete',
                                'change_state', 'manage_permissions']),
         (Allow, 'role:manager', ['view', 'add', 'edit', 'delete',
                                  'change_state', 'manage_permissions',
@@ -91,7 +91,7 @@ class WorkflowACL(Behavior):
         (Allow, Everyone, ['login']),
         (Deny, Everyone, ALL_PERMISSIONS),
     ])
-    
+
     @override
     @property
     def __acl__(self):

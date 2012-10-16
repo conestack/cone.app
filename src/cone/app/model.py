@@ -3,7 +3,6 @@ import uuid
 import types
 import ConfigParser
 from lxml import etree
-from datetime import datetime
 from odict import odict
 from plumber import (
     plumber,
@@ -33,14 +32,13 @@ from zope.interface import implementer
 from pyramid.threadlocal import get_current_request
 from pyramid.security import (
     has_permission,
-    authenticated_userid,
     Everyone,
     Allow,
     Deny,
     ALL_PERMISSIONS,
 )
 from pyramid.i18n import TranslationStringFactory
-from cone.app.interfaces import (
+from .interfaces import (
     IApplicationNode,
     IFactoryNode,
     IAdapterNode,
@@ -50,8 +48,8 @@ from cone.app.interfaces import (
     INodeInfo,
     IUUIDAsName,
 )
-from cone.app.security import acl_registry
-from cone.app.utils import (
+from .security import acl_registry
+from .utils import (
     DatetimeHelper,
     app_config,
 )
@@ -59,6 +57,7 @@ from cone.app.utils import (
 _ = TranslationStringFactory('cone.app')
 
 _node_info_registry = dict()
+
 
 def registerNodeInfo(name, info):
     _node_info_registry[name] = info
@@ -71,22 +70,22 @@ def getNodeInfo(name):
 
 @implementer(IApplicationNode)
 class AppNode(Behavior):
-    
+
     # set this to name of registered node info on deriving class
     node_info_name = default('')
-    
+
     @default
     @property
     def __acl__(self):
         return acl_registry.lookup(self.__class__, self.node_info_name)
-    
+
     @default
     @instance_property
     def properties(self):
         props = Properties()
         props.in_navtree = False
         return props
-    
+
     @default
     @instance_property
     def metadata(self):
@@ -96,7 +95,7 @@ class AppNode(Behavior):
         metadata = Metadata()
         metadata.title = name
         return metadata
-    
+
     @default
     @property
     def nodeinfo(self):
@@ -154,14 +153,14 @@ class AppSettings(FactoryNode):
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
     factories = odict()
-    
+
     @instance_property
     def properties(self):
         props = Properties()
         props.in_navtree = True
         props.icon = 'static/images/settings16_16.png'
         return props
-    
+
     @instance_property
     def metadata(self):
         metadata = Metadata()
@@ -171,46 +170,46 @@ class AppSettings(FactoryNode):
 
 @implementer(IAdapterNode)
 class AdapterNode(BaseNode):
-    
+
     def __init__(self, model, name, parent):
         BaseNode.__init__(self, name)
         self.model = model
         self.__name__ = name
         self.__parent__ = parent
-    
+
     def __iter__(self):
         for key in self.model:
             yield key
-    
+
     iterkeys = __iter__
-    
+
     @property
     def attrs(self):
         return self.model.attrs
 
 
 class UUIDAttributeAware(UUIDAware):
-    
+
     def _get_uuid(self):
         return self.attrs['uuid']
-    
+
     def _set_uuid(self, value):
         self.attrs['uuid'] = value
-    
+
     uuid = default(property(_get_uuid, _set_uuid))
 
 
 @implementer(IUUIDAsName)
 class UUIDAsName(UUIDAware):
-    
+
     def _get_name(self):
         return str(self.uuid)
-    
+
     def _set_name(self, name):
         pass
-    
+
     __name__ = finalize(property(_get_name, _set_name))
-    
+
     @finalize
     def set_uuid_for(self, node, override=False, recursiv=False):
         if IUUIDAware.providedBy(node):
@@ -239,36 +238,36 @@ class CopySupport(Behavior):
 
 @implementer(IProperties)
 class Properties(object):
-    
+
     def __init__(self, data=None):
         if data is None:
             data = dict()
         object.__setattr__(self, '_data', data)
-    
+
     def _get_data(self):
         return object.__getattribute__(self, '_data')
-    
+
     def __getitem__(self, key):
         return self._get_data()[key]
-    
+
     def get(self, key, default=None):
         return self._get_data().get(key, default)
-    
+
     def __contains__(self, key):
         return key in self._get_data()
-    
+
     def __getattr__(self, name):
         return self._get_data().get(name)
-    
+
     def __setattr__(self, name, value):
         self._get_data()[name] = value
-    
+
     def keys(self):
         return self._get_data().keys()
 
 
 class ProtectedProperties(Properties):
-    
+
     def __init__(self, context, permissions, data=None):
         """
         >>> properties = ProtectedProperties(
@@ -280,7 +279,7 @@ class ProtectedProperties(Properties):
         super(ProtectedProperties, self).__init__(data=data)
         object.__setattr__(self, '_context', context)
         object.__setattr__(self, '_permissions', permissions)
-    
+
     def _permits(self, property):
         context = object.__getattribute__(self, '_context')
         permissions = object.__getattribute__(self, '_permissions')
@@ -293,27 +292,27 @@ class ProtectedProperties(Properties):
             if has_permission(permission, context, request):
                 return True
         return False
-        
+
     def __getitem__(self, key):
         if not self._permits(key):
             raise KeyError(u"No permission to access '%s'" % key)
         return super(ProtectedProperties, self).__getitem__(key)
-    
+
     def get(self, key, default=None):
         if not self._permits(key):
             return default
         return super(ProtectedProperties, self).get(key, default)
-    
+
     def __contains__(self, key):
         if not self._permits(key):
             return False
         return super(ProtectedProperties, self).__contains__(key)
-    
+
     def __getattr__(self, name):
         if not self._permits(name):
             return None
         return super(ProtectedProperties, self).get(name)
-    
+
     def keys(self):
         keys = super(ProtectedProperties, self).keys()
         keys = [key for key in keys if self._permits(key)]
@@ -331,26 +330,26 @@ class NodeInfo(Properties):
 
 
 class XMLProperties(Properties):
-    
+
     def __init__(self, path, data=None):
         object.__setattr__(self, '_path', path)
         object.__setattr__(self, '_data', odict())
         if data:
             object.__getattribute__(self, '_data').update(data)
         self._init()
-    
+
     def __call__(self):
         file = open(object.__getattribute__(self, '_path'), 'w')
         file.write(self._xml_repr())
         file.close()
-    
+
     def __delitem__(self, name):
         data = object.__getattribute__(self, '_data')
         if name in data:
             del data[name]
         else:
             raise KeyError(u"property %s does not exist" % name)
-    
+
     def _init(self):
         dth = DatetimeHelper()
         path = object.__getattribute__(self, '_path')
@@ -386,7 +385,7 @@ class XMLProperties(Properties):
                     value = ''
                 data[elem.tag] = dth.r_value(value.strip())
         file.close()
-    
+
     def _xml_repr(self):
         dth = DatetimeHelper()
         root = etree.Element('properties')
@@ -407,58 +406,58 @@ class XMLProperties(Properties):
             else:
                 sub.text = dth.w_value(value)
         return etree.tostring(root, pretty_print=True)
-    
+
     # testing
     def _keys(self):
         return object.__getattribute__(self, '_data').keys()
-    
+
     def _values(self):
         return object.__getattribute__(self, '_data').values()
 
 
 class ConfigProperties(Properties):
-    
+
     def __init__(self, path, data=None):
         object.__setattr__(self, '_path', path)
         object.__setattr__(self, '_data', dict())
         if data:
             object.__getattribute__(self, '_data').update(data)
         self._init()
-    
+
     def __call__(self):
         path = object.__getattribute__(self, '_path')
         config = self.config()
         with open(path, 'wb') as configfile:
             config.write(configfile)
-    
+
     def __getitem__(self, key):
         try:
             return self.config().get('properties', key)
         except ConfigParser.NoOptionError:
             raise KeyError(key)
-    
+
     def get(self, key, default=None):
         try:
             return self.config().get('properties', key)
         except ConfigParser.NoOptionError:
             return default
-    
+
     def __contains__(self, key):
         try:
             self.config().get('properties', key)
             return True
         except ConfigParser.NoOptionError:
             return False
-    
+
     def __getattr__(self, name):
         try:
             return self.config().get('properties', name)
         except ConfigParser.NoOptionError:
             return
-    
+
     def __setattr__(self, name, value):
         self.config().set('properties', name, value)
-    
+
     def __delitem__(self, name):
         config = self.config()
         try:
@@ -466,7 +465,7 @@ class ConfigProperties(Properties):
         except ConfigParser.NoOptionError:
             raise KeyError(u"property %s does not exist" % name)
         config.remove_option('properties', name)
-    
+
     def config(self):
         try:
             return object.__getattribute__(self, '_config')
@@ -480,7 +479,7 @@ class ConfigProperties(Properties):
             config.add_section('properties')
         object.__setattr__(self, '_config', config)
         return object.__getattribute__(self, '_config')
-    
+
     def _init(self):
         data = object.__getattribute__(self, '_data')
         config = self.config()

@@ -33,13 +33,13 @@ class IFactoryNode(IApplicationNode, IChildFactory):
 
 class IAdapterNode(IApplicationNode):
     """Application node which acts as adapter on any context.
-    
+
     XXX: - currently designed to adapt nodes, more generic
          - no attrs on this interface
          - self.context insetad of self.model
     """
     attrs = Attribute(u"Return self.model.attrs")
-    
+
     def __init__(model, name, parent):
         """Name and parent are used to hook the correct application hierarchy.
         """
@@ -50,15 +50,15 @@ class IProperties(IReadMapping):
     """
     def __getattr__(name):
         """Return property by attribute access.
-        
+
         Never throws an AttributeError if attribute does not exists, return
         None instead.
         """
-    
+
     def __setattr__(name, value):
         """Set property by attribute access.
         """
-    
+
     def keys():
         """Return available properties
         """
@@ -93,7 +93,7 @@ class IWorkflowState(INode, IAttributes):
 
 class IOwnerSupport(ISecured):
     """Interface for providing ownership information.
-    
+
     Plumbs __acl__ property.
     """
     owner = Attribute(u"User id of node owner")
@@ -101,7 +101,7 @@ class IOwnerSupport(ISecured):
 
 class IPrincipalACL(ISecured):
     """Principal specific roles on nodes.
-    
+
     Plumbs __acl__ property.
     """
     role_inheritance = Attribute(u"Flag whether principal roles are "
@@ -109,7 +109,7 @@ class IPrincipalACL(ISecured):
     principal_roles = Attribute(u"Attribute containing principal roles for "
                                 u"secured object.")
     aggregated_roles = Attribute(u"Aggregated roles.")
-    
+
     def aggregated_roles_for(principal_id):
         """Return aggregated roles for principal by principal_id.
         """

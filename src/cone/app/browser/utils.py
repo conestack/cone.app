@@ -1,10 +1,8 @@
 import re
 import datetime
-import urllib
 import types
 from pyramid.security import authenticated_userid
-from cone.app.model import getNodeInfo
-from cone.app.utils import app_config
+from ..utils import app_config
 
 
 def authenticated(request):
@@ -79,21 +77,21 @@ def node_icon_url(request, node):
 class AppUtil(object):
     """Instance of this object gets Passed to main template when rendering.
     """
-    
+
     def authenticated(self, request):
         return authenticated(request)
-    
+
     def nodepath(self, node):
         return nodepath(node)
-    
+
     def make_url(self, request, path=None, node=None, resource=None,
         query=None):
         if path is None:
             path = []
         return make_url(request, path, node, resource, query)
-    
+
     def make_query(self, **kw):
         return make_query(**kw)
-    
+
     def format_date(self, dt, long=True):
         return format_date(dt, long)

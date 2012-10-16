@@ -14,10 +14,10 @@ from cone.app.utils import app_config
 
 
 class MergedAssets(object):
-    
+
     def __init__(self, request):
         self.request = request
-    
+
     def merged_assets(self, assets):
         if authenticated_userid(self.request):
             assets = assets.public + assets.protected
@@ -36,15 +36,15 @@ class MergedAssets(object):
             with open(path, 'r') as file:
                 data += file.read() + '\n\n'
         return data
-    
+
     @property
     def merged_js(self):
         return self.merged_assets(cone.app.cfg.merged.js)
-    
+
     @property
     def merged_css(self):
         return self.merged_assets(cone.app.cfg.merged.css)
-    
+
     @property
     def merged_print_css(self):
         return self.merged_assets(cone.app.cfg.merged.print_css)
@@ -75,23 +75,23 @@ def print_css(model, request):
 @tile('resources', 'templates/resources.pt', permission='login')
 class Resources(Tile):
     """Resources tile.
-    
+
     XXX: either switch to resource management lib here or use resource
          management middleware.
     """
-    
+
     @property
     def authenticated(self):
         return authenticated_userid(self.request)
-    
+
     @property
     def js(self):
         return self.resources(app_config().js)
-    
+
     @property
     def css(self):
         return self.resources(app_config().css)
-    
+
     def resources(self, reg):
         ret = list()
         for res in reg['public']:
@@ -100,7 +100,7 @@ class Resources(Tile):
             for res in reg['protected']:
                 ret.append(self.resource_url(res))
         return ret
-    
+
     def resource_url(self, resource):
         if resource.startswith('http'):
             return resource
