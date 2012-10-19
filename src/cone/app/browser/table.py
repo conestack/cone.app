@@ -33,6 +33,7 @@ class Table(Tile):
     query_whitelist = []
     show_title = True
     show_filter = False
+    show_slicesize = True
     head_additional = None
 
     @property

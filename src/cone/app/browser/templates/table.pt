@@ -19,7 +19,8 @@
            tal:condition="context.show_title"
            tal:content="context.table_title">Title</label>
       
-      <div class="pretty_table_length">
+      <div class="pretty_table_length"
+           tal:condition="context.show_slicesize">
         <label>
           <span i18n:translate="show">Show</span>
           <select name="size"
