@@ -319,9 +319,9 @@ and will be removed in cone.app 1.0. Use
 @tile('delete', permission="delete")
 class DeleteAction(Tile):
 
-    def continuation(self, url):
+    def continuation(self, url, content_tile):
         return [
-            AjaxAction(url, 'content', 'inner', '#content'),
+            AjaxAction(url, content_tile, 'inner', '#content'),
             AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
         ]
 
@@ -336,12 +336,15 @@ class DeleteAction(Tile):
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'error')
             return u''
+        content_tile = model.properties.action_delete_tile
+        if not content_tile:
+            content_tile = 'content'
         parent = model.parent
         del parent[model.name]
         if hasattr(parent, '__call__'):
             parent()
         url = make_url(self.request, node=parent)
-        ajax_continue(self.request, self.continuation(url))
+        ajax_continue(self.request, self.continuation(url, content_tile))
         ts = _('deleted_object',
                default='Deleted: ${title}',
                mapping={'title': title})

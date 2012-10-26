@@ -38,6 +38,11 @@ Changes
 0.9.4dev
 --------
 
+- ``model.properties.action_delete_tile`` can be set if
+  ``model.properties.action_delete`` is True. Used to define the content tile
+  which gets rendered on parent of model after deleting.
+  [rnix, 2012-10-26]
+
 - Available child nodes of ``ContentsTile`` can be controlled by
   ``listable_children``.
   [rnix, 2012-10-26]
