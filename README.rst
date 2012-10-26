@@ -38,6 +38,10 @@ Changes
 0.9.4dev
 --------
 
+- Available child nodes of ``ContentsTile`` can be controlled by
+  ``listable_children``.
+  [rnix, 2012-10-26]
+
 - Introduce ``show_slicesize`` on tables.
   [rnix, 2012-10-19]
 

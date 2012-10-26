@@ -157,6 +157,10 @@ class ContentsTile(Table):
         return rows
 
     @property
+    def listable_children(self):
+        return self.model.values()
+
+    @property
     def filtered_children(self):
         if '_filtered_children' in self.request.environ:
             return self.request.environ['_filtered_children']
@@ -164,7 +168,7 @@ class ContentsTile(Table):
         term = self.filter_term
         if term:
             term = term.lower()
-        for node in self.model.values():
+        for node in self.listable_children:
             if not has_permission('view', node, self.request):
                 continue
             if term:
