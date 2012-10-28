@@ -63,43 +63,35 @@ class ContentsViewLink(ViewLink):
 class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'
-    col_defs = [
-        {
+    col_defs = [{
             'id': 'actions',
             'title': _('actions', 'Actions'),
             'sort_key': None,
             'sort_title': None,
-            'content': 'structure',
-        },
-        {
+            'content': 'structure'
+        }, {
             'id': 'title',
             'title': _('title', 'Title'),
             'sort_key': 'title',
             'sort_title': _('sort_on_title', 'Sort on title'),
-            'content': 'structure',
-        },
-        {
+            'content': 'structure'}, {
             'id': 'creator',
             'title': _('creator', 'Creator'),
             'sort_key': 'creator',
             'sort_title': _('sort_on_creator', 'Sort on creator'),
-            'content': 'string',
-        },
-        {
+            'content': 'string'
+        }, {
             'id': 'created',
             'title': _('created', 'Created'),
             'sort_key': 'created',
             'sort_title': _('sort_on_created', 'Sort on created'),
-            'content': 'datetime',
-        },
-        {
+            'content': 'datetime'
+        }, {
             'id': 'modified',
             'title': _('modified', 'Modified'),
             'sort_key': 'modified',
             'sort_title': _('sort_on_modified', 'Sort on modified'),
-            'content': 'datetime',
-        },
-    ]
+            'content': 'datetime'}]
     default_sort = 'created'
     default_order = 'desc'
     sort_keys = {
