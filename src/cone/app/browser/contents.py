@@ -61,7 +61,6 @@ class ContentsViewLink(ViewLink):
 
 @tile('contents', 'templates/table.pt', permission='view')
 class ContentsTile(Table):
-
     table_id = 'contents'
     table_tile_name = 'contents'
     col_defs = [
@@ -103,7 +102,6 @@ class ContentsTile(Table):
     ]
     default_sort = 'created'
     default_order = 'desc'
-
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),
         'creator': lambda x: x.metadata.creator.lower(),
@@ -112,7 +110,6 @@ class ContentsTile(Table):
         'modified': lambda x: x.metadata.modified \
                       and x.metadata.modified or FAR_PAST,
     }
-
     show_filter = True
 
     @property
@@ -131,13 +128,21 @@ class ContentsTile(Table):
     def view_link(self):
         return ContentsViewLink()
 
+    def row_data(self, node):
+        row_data = RowData()
+        row_data['actions'] = self.row_actions(node, self.request)
+        row_data['title'] = self.view_link(node, self.request)
+        row_data['creator'] = node.metadata.get('creator', 'unknown')
+        row_data['created'] = node.metadata.get('created')
+        row_data['modified'] = node.metadata.get('modified')
+        return row_data
+
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
         cut_urls = extract_copysupport_cookie(self.request, 'cut')
         for child in children[start:end]:
-            row_data = RowData()
-            row_data['actions'] = self.row_actions(child, self.request)
+            row_data = self.row_data(child)
             target = make_url(self.request, node=child)
             if ICopySupport.providedBy(child):
                 row_data.selectable = True
@@ -149,10 +154,6 @@ class ContentsTile(Table):
                 row_data.css += ' state-%s' % child.state
             if hasattr(child, 'node_info_name') and child.node_info_name:
                 row_data.css += ' node-type-%s' % child.node_info_name
-            row_data['title'] = self.view_link(child, self.request)
-            row_data['creator'] = child.metadata.get('creator', 'unknown')
-            row_data['created'] = child.metadata.get('created')
-            row_data['modified'] = child.metadata.get('modified')
             rows.append(row_data)
         return rows
 

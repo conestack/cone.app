@@ -38,6 +38,10 @@ Changes
 0.9.4dev
 --------
 
+- Introduce ``row_data`` on ``ContentsTile`` for customizing column data on
+  ``ContentsTile`` deriving objects.
+  [rnix, 2012-10-28]
+
 - ``model.properties.action_delete_tile`` can be set if
   ``model.properties.action_delete`` is True. Used to define the content tile
   which gets rendered on parent of model after deleting.
