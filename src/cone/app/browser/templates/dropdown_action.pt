@@ -1,0 +1,27 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <div class="dropdown">
+    <div class="icon">
+      <a href="${context.href|nothing}"
+         class="${context.css}"
+         title="${context.title|nothing}">&nbsp;</a>
+    </div>
+    <ul class="dropdown_items" style="display:none;">
+      <li tal:repeat="item context.items">
+        <img src="${item.icon}" alt="..." />
+        <a href="${item.url|nothing}"
+           ajax:bind="click"
+           ajax:target="${item.target}"
+           ajax:action="${item.action}"
+           tal:content="item.title">
+          Item title
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</tal:block>

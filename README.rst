@@ -38,6 +38,9 @@ Changes
 0.9.4dev
 --------
 
+- Introduce ``cone.app.browser.actions.DropdownAction``.
+  [rnix, 2012-10-28]
+
 - Introduce ``row_data`` on ``ContentsTile`` for customizing column data on
   ``ContentsTile`` deriving objects.
   [rnix, 2012-10-28]

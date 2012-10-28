@@ -113,6 +113,23 @@ class TemplateAction(Action):
                                context=self)
 
 
+class DropdownAction(TemplateAction):
+    """Action rendering a dropdown.
+    """
+    template = u'cone.app.browser:templates/dropdown_action.pt'
+    href = None
+    css = None
+    title = None
+
+    @property
+    def items(self):
+        """Return list of ``cone.app.model.Properties`` instances providing
+        attributes ``icon``, ``url``, ``target``, ``action`` and ``title``. 
+        """
+        raise NotImplementedError(u"Abstract ``DropdownAction`` does not "
+                                  u"implement  ``items``")
+
+
 class LinkAction(TemplateAction):
     """Action rendering a HTML link, optional with bdajax attributes.
     """
