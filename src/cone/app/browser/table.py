@@ -35,6 +35,8 @@ class Table(Tile):
     show_filter = False
     show_slicesize = True
     head_additional = None
+    display_table_header = True
+    display_table_footer = True
 
     @property
     def slice(self):

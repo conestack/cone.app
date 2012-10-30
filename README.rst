@@ -38,6 +38,10 @@ Changes
 0.9.4dev
 --------
 
+- Introduce ``Table.display_table_header`` and ``Table.display_table_footer``
+  properties.
+  [rnix, 2012-10-28]
+
 - Introduce ``cone.app.browser.actions.DropdownAction``.
   [rnix, 2012-10-28]
 

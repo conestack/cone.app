@@ -13,7 +13,8 @@
        ajax:target="${context.nodeurl}"
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
   
-    <div class="pretty_table_toolbar pretty_table_toolbar_top">
+    <div class="pretty_table_toolbar pretty_table_toolbar_top"
+         tal:condition="context.display_table_header">
       
       <label class="pretty_table_title"
            tal:condition="context.show_title"
@@ -155,7 +156,8 @@
       </tbody>
     </table> 
     
-    <div class="pretty_table_toolbar pretty_table_toolbar_bottom">
+    <div class="pretty_table_toolbar pretty_table_toolbar_bottom"
+         tal:condition="context.display_table_footer">
       
       <div class="pretty_table_info"
            tal:define="slice context.slice.slice">
