@@ -35,8 +35,8 @@ Changes
 =======
 
 
-0.9.4dev
---------
+0.9.4
+-----
 
 - Introduce ``Table.display_table_header`` and ``Table.display_table_footer``
   properties.
