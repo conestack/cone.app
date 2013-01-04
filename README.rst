@@ -35,6 +35,13 @@ Changes
 =======
 
 
+0.9.5dev
+--------
+
+- Remove yafowil addon widgets from default setup dependencies.
+  [rnix, 2013-01-04]
+
+
 0.9.4
 -----
 

@@ -1,10 +1,5 @@
 import yafowil.webob
 import yafowil.loader
-import yafowil.widget.datetime
-import yafowil.widget.richtext
-import yafowil.widget.dict
-import yafowil.widget.array
-import yafowil.widget.image
 from webob.exc import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.security import forget
