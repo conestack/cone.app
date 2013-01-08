@@ -134,6 +134,11 @@ def acl_factory(**kwargs):
     return ACLAuthorizationPolicy()
 
 
+cfg.yafowil = Properties()
+cfg.yafowil.js_skip = set()
+cfg.yafowil.css_skip = set()
+
+
 def configure_yafowil_addon_resources(config):
     import cone.app
     all_js = list()
@@ -150,20 +155,23 @@ def configure_yafowil_addon_resources(config):
         resource_name = '++resource++%s' % plugin_name
         config.add_view(view_path, name=resource_name)
         for js in resources['js']:
+            if js['group'] in cone.app.cfg.yafowil.js_skip:
+                continue
             if not js['resource'].startswith('http'):
                 js['resource'] = resource_name + '/' + js['resource']
             all_js.append(js)
         for css in resources['css']:
+            if css['group'] in cone.app.cfg.yafowil.css_skip:
+                continue
             if not css['resource'].startswith('http'):
                 css['resource'] = resource_name + '/' + css['resource']
             all_css.append(css)
     all_js = sorted(all_js, key=lambda x: x['order'])
     all_css = sorted(all_css, key=lambda x: x['order'])
     for js in all_js:
-        cone.app.cfg.js.protected.append(js['resource'])
-        #cone.app.cfg.merged.js.protected.append(js['resource'])
+        cone.app.cfg.js.protected.insert(0, js['resource'])
     for css in all_css:
-        cone.app.cfg.css.protected.append(css['resource'])
+        cone.app.cfg.css.protected.insert(0, css['resource'])
 
 
 def main(global_config, **settings):
