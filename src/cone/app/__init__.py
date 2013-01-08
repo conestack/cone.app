@@ -169,9 +169,9 @@ def configure_yafowil_addon_resources(config):
     all_js = sorted(all_js, key=lambda x: x['order'])
     all_css = sorted(all_css, key=lambda x: x['order'])
     for js in all_js:
-        cone.app.cfg.js.protected.insert(0, js['resource'])
+        cone.app.cfg.js.public.insert(0, js['resource'])
     for css in all_css:
-        cone.app.cfg.css.protected.insert(0, css['resource'])
+        cone.app.cfg.css.public.insert(0, css['resource'])
 
 
 def main(global_config, **settings):
@@ -237,9 +237,6 @@ def main(global_config, **settings):
     # static resources
     config.add_view('cone.app.browser.static_resources', name='static')
 
-    # register yafowil static resources
-    configure_yafowil_addon_resources(config)
-
     # supress deprecation warning during scan phase
     __show__.off()
 
@@ -263,6 +260,10 @@ def main(global_config, **settings):
     # execute main hooks
     for hook in main_hooks:
         hook(config, global_config, settings)
+
+    # register yafowil static resources
+    # done after addon config - addon code may disable yafowil resource groups
+    configure_yafowil_addon_resources(config)
 
     # end configuration
     config.end()
