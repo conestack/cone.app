@@ -80,6 +80,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
         
         livesearchbinder: function(context) {
+            if (!$.fn.autocomplete) {
+                return;
+            }
             $('input#search-text', context).autocomplete({
                 source: 'livesearch',
                 minLength: 3,
