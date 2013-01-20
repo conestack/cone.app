@@ -39,7 +39,9 @@ cfg.js = Properties()
 cfg.js.public = [
     '++resource++bdajax/bdajax.js',
 ]
-cfg.js.protected = list()
+cfg.js.protected = [
+    'static/cone.app.js',
+]
 
 # CSS Resources
 cfg.css = Properties()
@@ -59,7 +61,6 @@ cfg.merged.js.public = [
 ]
 cfg.merged.js.protected = [
     (static_resources, 'cookie_functions.js'),
-    (static_resources, 'cone.app.js'),
 ]
 
 cfg.merged.css = Properties()
@@ -169,7 +170,10 @@ def configure_yafowil_addon_resources(config):
     all_js = sorted(all_js, key=lambda x: x['order'])
     all_css = sorted(all_css, key=lambda x: x['order'])
     for js in all_js:
-        cone.app.cfg.js.public.insert(0, js['resource'])
+        # bdajax needs to be loaded first in order to avoid double binding on
+        # document ready
+        idx = cone.app.cfg.js.public.index('++resource++bdajax/bdajax.js') + 1
+        cone.app.cfg.js.public.insert(idx, js['resource'])
     for css in all_css:
         cone.app.cfg.css.public.insert(0, css['resource'])
 
