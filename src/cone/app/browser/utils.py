@@ -74,6 +74,27 @@ def node_icon_url(request, node):
     return make_url(request, resource=info.icon)
 
 
+def request_property(func):
+    """Decorator like ``property``, but underlying function is only called once
+    per request.
+
+    Cache attribute on request.environ under key
+    ``instanceid.classname.funcname``.
+
+    Works only on instances providing a request attribute.
+    """
+    def wrapper(self):
+        cache_key = '%s.%s.%s' \
+            % (str(id(self)), self.__class__.__name__, func.__name__)
+        try:
+            return self.request.environ[cache_key]
+        except KeyError:
+            val = self.request.environ[cache_key] = func(self)
+            return val
+    wrapper.__doc__ = func.__doc__
+    return property(wrapper)
+
+
 class AppUtil(object):
     """Instance of this object gets Passed to main template when rendering.
     """
