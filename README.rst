@@ -38,6 +38,27 @@ Changes
 0.9.5dev
 --------
 
+- Improve exception view to handle default error page and bdajax action
+  requests. Move Exception code to ``cone.app.browser.exception``.
+  [rnix, 2013-02-10]
+
+- Introduce ``cone.app.browser.utils.request_property``.
+  [rnix, 2013-02-05]
+
+- Do not load ``cone.app.js`` merged, ensures to be loaded after bdajax.
+  [rnix, 2013-01-20]
+
+- Check if autocomplete plugin is available in ``cone.app.js`` when trying to
+  bind livesearch.
+  [rnix, 2013-01-08]
+
+- Make yafowil resources beeing delivered public as well.
+  [rnix, 2013-01-08]
+
+- Possibility to skip yafowil resource groups, deliver yafowil resources
+  before addon resources.
+  [rnix, 2013-01-08]
+
 - Remove yafowil addon widgets from default setup dependencies.
   [rnix, 2013-01-04]
 

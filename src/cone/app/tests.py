@@ -21,6 +21,7 @@ TESTFILES = [
     'model.rst',
     'workflow.rst',
     'browser/__init__.rst',
+    'browser/exception.rst',
     'browser/ajax.rst',
     'browser/actions.rst',
     'browser/authoring.rst',

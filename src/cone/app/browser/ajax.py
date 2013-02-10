@@ -10,24 +10,7 @@ from cone.tile import (
     render_tile,
 )
 from .actions import ActionContext
-
-
-def format_traceback():
-    etype, value, tb = sys.exc_info()
-    ret = ''.join(traceback.format_exception(etype, value, tb))
-    return '<pre>%s</pre>' % ret
-
-
-@view_config(context=Exception, accept='application/json', renderer='json')
-def ajax_internal_server_error(request):
-    tb = format_traceback()
-    continuation = AjaxContinue([AjaxMessage(tb, 'error', None)]).definitions
-    return {
-        'mode': 'NONE',
-        'selector': 'NONE',
-        'payload': '',
-        'continuation': continuation,
-    }
+from .exception import format_traceback
 
 
 registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
