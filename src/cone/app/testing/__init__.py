@@ -1,6 +1,6 @@
 import os
 import cone.app
-from pyramid.testing import DummyRequest
+from pyramid.testing import DummyRequest as BaseDummyRequest
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 from plone.testing import Layer
@@ -8,6 +8,13 @@ from cone.app.security import authenticate
 
 
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
+
+
+class DummyRequest(BaseDummyRequest):
+
+    @property
+    def is_xhr(self):
+        return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
 
 class Security(Layer):
@@ -47,7 +54,7 @@ class Security(Layer):
     def registry(self):
         return getGlobalSiteManager()
 
-    def new_request(self, type=None):
+    def new_request(self, type=None, xhr=False):
         request = self.current_request
         auth = dict()
         if request:
@@ -63,6 +70,8 @@ class Security(Layer):
         if type == 'json':
             request.headers['X-Request'] = 'JSON'
             request.accept = 'application/json'
+        if xhr:
+            request.headers['X-Requested-With'] = 'XMLHttpRequest'
         self.current_request = request
         return request
 

@@ -38,6 +38,9 @@ Changes
 0.9.5dev
 --------
 
+- Test request can be flagged as XHR request.
+  [rnix, 2013-03-23]
+
 - Improve exception view to handle default error page and bdajax action
   requests. Move Exception code to ``cone.app.browser.exception``.
   [rnix, 2013-02-10]

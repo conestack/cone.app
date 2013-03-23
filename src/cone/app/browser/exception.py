@@ -24,7 +24,7 @@ ERROR_PAGE = """
 @view_config(context=Exception)
 def internal_server_error(request):
     tb = format_traceback()
-    if not request.params.get('bdajax.action'):
+    if not request.is_xhr:
         return Response(ERROR_PAGE % {'error': tb})
     from cone.app.browser.ajax import (
         AjaxContinue,

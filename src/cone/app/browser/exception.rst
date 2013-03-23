@@ -14,7 +14,7 @@ display the traceback in an error dialog if request was a bdajax action.
     120\n\n\n<h1>An error occured</h1>\n<p>\n  <a href="/">HOME</a>\n  
     <hr />\n</p>\n<pre>Traceback (most recent call last):\nNone\n</pre>\n'
 
-    >>> request.params['bdajax.action'] = 'someajaxaction'
+    >>> request = layer.new_request(xhr=1)
     >>> str(internal_server_error(request))
     '200 OK\nContent-Length: 195\nContent-Type: application/json; 
     charset=UTF-8\n\n{"continuation": [{"flavor": "error", "type": "message", 
