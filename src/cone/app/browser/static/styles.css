@@ -1,6 +1,6 @@
 /* General */
 html body {
-    background:#E2E0D5;
+    background:#ffffff;
 }
 .clear,
 .visualClear {
@@ -137,13 +137,13 @@ html body {
 #content_wrapper {
     padding-top: 2em;
     padding-bottom: 2em;
-    background-image: -moz-linear-gradient(top, #f7f8f4, #E2E0D5, #E2E0D5);
-    background-color: ##E2E0D5;
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f7f8f4), to(#E2E0D5));
-    background-image: -webkit-linear-gradient(top, #f7f8f4, #E2E0D5, #E2E0D5);
-    background-image:    -moz-linear-gradient(top, #f7f8f4, #E2E0D5 #E2E0D5);
-    background-image:     -ms-linear-gradient(top, #f7f8f4, #E2E0D5 #E2E0D5);
-    background-image:      -o-linear-gradient(top, #f7f8f4, #E2E0D5, #E2E0D5);
+    background-color:#ffffff;
+    background-image:-moz-linear-gradient(top, #eeeeee, #ffffff, #ffffff);
+    background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#eeeeee), to(#ffffff));
+    background-image:-webkit-linear-gradient(top, #eeeeee, #ffffff, #ffffff);
+    background-image:-moz-linear-gradient(top, #eeeeee, #ffffff #ffffff);
+    background-image:-ms-linear-gradient(top, #eeeeee, #ffffff #ffffff);
+    background-image:-o-linear-gradient(top, #eeeeee, #ffffff, #ffffff);
 }
 
 #sidebar_left {
