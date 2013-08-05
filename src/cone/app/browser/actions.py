@@ -316,8 +316,9 @@ class ActionAdd(TileAction):
 class ActionEdit(LinkAction):
     """Edit action.
     """
-    css = 'toolbar-edit'
-    icon = 'toolbar-edit'
+    id = 'toolbaraction-edit'
+    css = ''
+    icon = 'toolbaricon-edit'
     title = _('action_edit', 'Edit')
     action = 'edit:#content:inner'
 

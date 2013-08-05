@@ -159,10 +159,13 @@ html body {
 }
 
 /* contextmenu */
+.contextmenu {
+    margin-bottom:1em;
+}
 .contextmenu .toolbar {
-    float:left;
     margin-right:1em;
     margin-bottom:1em;
+    display:inline-block;
 }
 [class^="toolbaricon-"],
 [class*=" toolbaricon-"] {
@@ -225,7 +228,7 @@ html body {
     background-position:-290px -103px;
 }
 .toolbaricon-edit {
-    background-position:-71px -179px;
+    background-position:-71px -175px;
 }
 .toolbaricon-add {
     background-position:-71px -751px;
