@@ -68,7 +68,8 @@ cfg.merged.js.protected = [
 
 cfg.merged.css = Properties()
 cfg.merged.css.public = [
-#    (static_resources, 'style.css'),
+    (static_resources, 'styles.css'),
+#    (static_resources, 'styles_old.css'),
 ]
 cfg.merged.css.protected = list()
 

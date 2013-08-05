@@ -3,7 +3,7 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
-  <ul class="contextsensitiv"
+  <ul class="contextsensitiv inline"
       ajax:bind="contextchanged"
       ajax:action="pathbar:#pathbar:inner">
     <li>
