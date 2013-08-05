@@ -69,16 +69,7 @@ html body {
     z-index:3;
 }
 
-/* pathbar */
-#pathbar {
-    margin-top:0.5em;
-    margin-left:2.15em;
-}
-#pathbar ul.inline {
-    margin-bottom:0.5em;
-}
-
-/* navbar */
+/* global nav */
 .navbar-inner-cone-time {
     background:#646c6e;
     background-color:#646c6e;
@@ -125,6 +116,29 @@ html body {
     background-color:#222222;
 }
 
+/* pathbar */
+#pathbar {
+    margin-top:0.5em;
+    margin-left:2.15em;
+}
+#pathbar ul.inline {
+    margin-bottom:0.5em;
+}
+
+/* left sidebar */
+#sidebar_left {
+    margin-left: 0;
+}
+
+/* nav tree */
+.nav > li > a:hover,
+.nav > li > a:focus {
+    background-color:transparent;
+}
+.navtreeitem a.selected {
+    text-decoration:underline;
+}
+
 /* content */
 #content .btn-toolbar {
     margin-top: 0;
@@ -132,8 +146,6 @@ html body {
 .ajaxtabs {
     margin-bottom: 1em;
 }
-
-/* content */
 #content_wrapper {
     padding-top: 2em;
     padding-bottom: 2em;
@@ -146,102 +158,96 @@ html body {
     background-image:-o-linear-gradient(top, #eeeeee, #ffffff, #ffffff);
 }
 
-#sidebar_left {
-    margin-left: 0;
-}
-
 /* contextmenu */
-.contextmenu {
-}
 .contextmenu .toolbar {
-    float: left;
-    margin-right: 1em;
-    margin-bottom: 1em;
+    float:left;
+    margin-right:1em;
+    margin-bottom:1em;
 }
 [class^="toolbaricon-"],
 [class*=" toolbaricon-"] {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    *margin-right: .3em;
-    line-height: 24px;
-    vertical-align: text-top;
-    background-image: url("/static/glyphicons_75_all.png");
-    background-position: 24px 24px;
-    background-repeat: no-repeat;
-    margin-top: -5px;
-    margin-bottom: -5px;
+    display:inline-block;
+    width:24px;
+    height:24px;
+    *margin-right:.3em;
+    line-height:24px;
+    vertical-align:text-top;
+    background-image:url("/static/glyphicons_75_all.png");
+    background-position:24px 24px;
+    background-repeat:no-repeat;
+    margin-top:-5px;
+    margin-bottom:-5px;
 }
 [class^="toolbaricon-"]:last-child,
 [class*=" toolbaricon-"]:last-child {
-    *margin-left: 0;
+    *margin-left:0;
 }
 .toolbar a:hover {
-    text-decoration: none;
+    text-decoration:none;
 }
 .toolbaricon-share {
-    background-position: -141px -607px;
+    background-position:-141px -607px;
 }
 .toolbaricon-timer {
-    background-position: -250px -247px;
+    background-position:-250px -247px;
 }
 .toolbaricon-database {
-    background-position: -31px -571px;
+    background-position:-31px -571px;
 }
 .toolbaricon-up {
-    background-position: -359px -823px;
+    background-position:-359px -823px;
 }
 .toolbaricon-reports {
-    background-position: -394px -318px;
+    background-position:-394px -318px;
 }
 .toolbaricon-list {
-    background-position: -68px -391px;
+    background-position:-68px -391px;
 }
 .toolbaricon-cut {
-    background-position: -358px -1074px;
+    background-position:-358px -1074px;
 }
 .toolbaricon-copy {
-    background-position: -451px -139px;
+    background-position:-451px -139px;
 }
 .toolbaricon-paste {
-    background-position: -394px -139px;
+    background-position:-394px -139px;
 }
 .toolbaricon-map {
-    background-position: -69px -1291px;
+    background-position:-69px -1291px;
 }
 .toolbaricon-comment {
-    background-position: -394px -1148px;
+    background-position:-394px -1148px;
 }
 .toolbaricon-view {
-    background-position: -423px -139px;
+    background-position:-423px -139px;
 }
 .toolbaricon-delete {
-    background-position: -290px -103px;
+    background-position:-290px -103px;
 }
 .toolbaricon-edit {
-    background-position: -71px -179px;
+    background-position:-71px -179px;
 }
 .toolbaricon-add {
-    background-position: -71px -751px;
+    background-position:-71px -751px;
 }
 
 /* footer */
 #footer_wrapper {
-    background: #545C60;
-    padding-top: 0.5em;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+    background:#545C60;
+    padding-top:0.5em;
+    position:fixed;
+    width:100%;
+    bottom:0;
 }
 #footer {
-    background: #383E40;
-    color: #fff;
-    padding: 1em 1em 1em 35px;
+    background:#383E40;
+    color:#fff;
+    padding:1em 1em 1em 35px;
 }
 #footer a {
-    color: #fff;
-    border-bottom: 0.1em solid #fff;
+    color:#fff;
+    border-bottom:0.1em solid #fff;
 }
 #footer p {
-    margin: 0;
+    margin:0;
 }
