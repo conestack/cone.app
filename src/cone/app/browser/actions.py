@@ -61,11 +61,16 @@ class Toolbar(odict):
     def __call__(self, model, request):
         if not self.display:
             return u''
-        ret = u'\n'.join([action(model, request) for action in self.values()])
+        values = self.values()
+        ret = u'\n'.join([action(model, request) for action in values])
         ret = ret.strip()
         if not ret:
             return ret
-        return u'<div class="btn-group">%s</div>' % ret
+        buttongroup = False
+        for val in values:
+            if getattr(val, 'button', False):
+                return u'<div class="btn-group">%s</div>' % ret
+        return u'<div>%s</div>' % ret
 
 
 class Action(object):
@@ -138,6 +143,7 @@ class LinkAction(TemplateAction):
     id = None         # id attribute
     href = None       # href attribute
     css = None        # in addition for computed class attribute
+    button = True     # display as button
     title = None      # title attribute
     action = None     # ajax:action attribute
     event = None      # ajax:event attribute
@@ -153,7 +159,8 @@ class LinkAction(TemplateAction):
         css = not self.enabled and 'disabled' or ''
         css = self.selected and '%s selected' % css or css
         css = css.strip()
-        css = '%s btn btn-small' % css
+        if self.button:
+            css = '%s btn btn-small' % css
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
@@ -330,8 +337,8 @@ class ActionEdit(LinkAction):
 class ActionDelete(LinkAction):
     """Delete action.
     """
-    css = 'toolbar-delete'
-    icon = 'toolbar-delete'
+    css = ''
+    icon = 'toolbaricon-delete'
     title = _('action_delete', 'Delete')
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
@@ -356,8 +363,8 @@ class ActionDelete(LinkAction):
 class ActionDeleteChildren(LinkAction):
     """Delete children action.
     """
-    css = 'toolbar-delete'
-    icon = 'toolbar-delete'
+    css = ''
+    icon = 'toolbaricon-delete'
     title = _('action_delete_selected_children', 'Delete selected children')
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',

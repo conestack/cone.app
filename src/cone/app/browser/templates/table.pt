@@ -62,7 +62,8 @@
       
     </div>
   
-    <table class="pretty_table" id="${context.table_id}_table">
+    <table class="pretty_table"
+           id="${context.table_id}_table">
         
       <thead>
         <tr role="row">

@@ -231,6 +231,205 @@ html body {
     background-position:-71px -751px;
 }
 
+/* Table */
+div.pretty_table_wrapper {
+    clear:both;
+    position:relative;
+}
+div.pretty_table_toolbar {
+    font-size:0.8em;
+    font-weight:normal;
+    padding:5px;
+    background:url('static/images/bg_pretty_table_toolbar.png') repeat-x scroll 50% 50% #CCCCCC;
+    border:1px solid #AAAAAA;
+    color:#222222;
+}
+div.pretty_table_toolbar:after {
+    clear:both;
+    content:".";
+    display:block;
+    height:0;
+    visibility:hidden;
+}
+div.pretty_table_toolbar label {
+    font-weight:normal;
+    height:24px;
+    font-size:12px;
+    margin-bottom:0;
+}
+div.pretty_table_toolbar select {
+	height:24px;
+    font-size:10px;
+    line-height:14px;
+    width:50px;
+    margin-bottom:0;
+}
+div.pretty_table_toolbar input {
+    height:14px;
+    font-size:10px;
+    line-height:14px;
+    width:140px;
+    margin-bottom:0;
+}
+div.pretty_table_toolbar_top {
+    border-top-right-radius:4px;
+    border-top-left-radius:4px;
+}
+div.pretty_table_toolbar_bottom {
+    border-bottom-right-radius:4px;
+    border-bottom-left-radius:4px;
+}
+label.pretty_table_title {
+    float:left;
+    margin:0;
+    padding:0;
+    font-size:1.4em;
+    font-weight:bold;
+    padding:2px 20px 0 5px;
+}
+div.pretty_table_length {
+    font-weight:normal;
+    color:#222222;
+    float:right;
+    text-align:right;
+    width:140px;
+    margin:0 3px 0 0;
+    padding:0;
+}
+div.pretty_table_filter {
+    float:right;
+    text-align:right;
+    width:250px;
+    margin:0;
+    padding:0 20px 0 0;
+    border-right:#aaaaaa 1px solid;
+}
+table.pretty_table {
+    border-collapse:collapse;
+    border-spacing:0;
+    clear:both;
+    margin:0;
+    width:100%;
+    margin-bottom:0;
+}
+table.pretty_table th {
+    font-size:0.8em;
+    font-weight:normal;
+    background:url("static/cdn/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    color:#333333;
+    outline:medium none;
+    margin:0;
+    padding:0;
+}
+table.pretty_table th div {
+    border-left:1px solid #D3D3D3;
+    border-bottom:1px solid #D3D3D3;
+    border-top:1px solid #D3D3D3;
+    padding:6px 20px 6px 10px;
+    position:relative;
+    text-align:left;
+    margin:0;
+}
+table.pretty_table th:first-child div {
+    border-left:1px solid #AAAAAA;
+}
+table.pretty_table th:last-child div {
+    border-right:1px solid #AAAAAA;
+}
+table.pretty_table th.head_sortable {
+    cursor:pointer;
+}
+table.pretty_table th a {
+    text-decoration:none;
+    color:#333333;
+}
+span.pretty_table_sort {
+    margin-top:-8px;
+    position:absolute;
+    right:3px;
+    top:50%;
+}
+table.pretty_table td {
+    font-size:0.8em;
+    font-weight:normal;
+    line-height:2.4em;
+    color:#333333;
+    outline:medium none;
+    margin:0;
+    padding:0;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+}
+table.pretty_table td div.col {
+    padding:3px 10px;
+    position:relative;
+    text-align:left;
+    margin:-1px 0 -1px 0;
+    min-height:2.4em;
+}
+table.pretty_table td:first-child div.col {
+    border-left:1px solid #AAAAAA;
+}
+table.pretty_table td:last-child div.col {
+    border-right:1px solid #AAAAAA;
+}
+table.pretty_table tr.even {
+    background-color:#f8f8f8;
+}
+table.pretty_table tr.even td.sorted_col {
+    background-color:#f0f0f0;
+}
+table.pretty_table tr.odd {
+    background-color:#ffffff;
+}
+table.pretty_table tr.odd td.sorted_col {
+    background-color:#fbfbfb;
+}
+table.pretty_table tr.even.selected {
+    background-color:#EEEEFF;
+}
+table.pretty_table tr.even.selected td.sorted_col {
+    background-color:#D5D5FF;
+}
+table.pretty_table tr.odd.selected {
+    background-color:#DDDDFF;
+}
+table.pretty_table tr.odd.selected td.sorted_col {
+    background-color:#C4C4FF;
+}
+div.pretty_table_info {
+    float:left;
+    width:40%;
+    margin-top:4px;
+    margin-left:5px;
+}
+
+/* Batch */
+div.pretty_batch {
+    float:right;
+    text-align:right;
+    width:50%;
+    padding:0;
+    margin:3px 0 3px 0;
+}
+div.pretty_batch a {
+    padding:2px 6px;
+    text-decoration:none;
+    margin:0 0 0 -5px;
+}
+div.pretty_batch a.current {
+    font-weight:bold;
+    background:transparent;
+    cursor:default;
+}
+div.pretty_batch a.invisible {
+    cursor:default;
+    color:#cccccc;
+}
+
 /* footer */
 #footer_wrapper {
     background:#545C60;
