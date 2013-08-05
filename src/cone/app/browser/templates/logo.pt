@@ -1,0 +1,16 @@
+<tal:logo xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          i18n:domain="cone.app"
+          omit-tag="True">
+
+  <a id="logo" class="logolink"
+     href="${request.application_url}"
+     ajax:bind="click"
+     ajax:target="${request.application_url}"
+     ajax:event="contextchanged:.contextsensitiv
+                 contextchanged:#content"
+     tal:content="model.root.metadata.title">
+  </a>
+
+</tal:logo>

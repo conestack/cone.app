@@ -5,7 +5,7 @@
     <div class="currentuser">
       <a href="personaltools" tal:content="context.user">Admin</a>
     </div>
-    <ul class="dropdown_items" style="display:none;">
+    <ul class="dropdown_items dropdown-menu pull-right" style="display:none;">
       <tal:li repeat="item context.items">
         <li>
           <a href=""

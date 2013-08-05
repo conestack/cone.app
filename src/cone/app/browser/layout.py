@@ -42,6 +42,12 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
+registerTile('logo',
+             'cone.app:browser/templates/logo.pt',
+             permission='login',
+             strict=False)
+
+
 registerTile('livesearch',
              'cone.app:browser/templates/livesearch.pt',
              permission='view',

@@ -38,7 +38,7 @@ cfg.default_node_icon = 'static/images/default_node_icon.png'
 cfg.js = Properties()
 cfg.js.public = [
     '++resource++bdajax/bdajax.js',
-    'static/cdn/bootstrap/js/bootstrap.js',
+#    'static/cdn/bootstrap/js/bootstrap.js',
 ]
 cfg.js.protected = [
     'static/cone.app.js',
@@ -51,6 +51,7 @@ cfg.css.public = [
     'static/cdn/jquery-ui-1.8.18.css',
     'static/cdn/bootstrap/css/bootstrap-responsive.css',
     'static/cdn/bootstrap/css/bootstrap.css',
+    'static/styles.css',
 ]
 cfg.css.protected = list()
 
@@ -58,7 +59,7 @@ cfg.css.protected = list()
 cfg.merged = Properties()
 cfg.merged.js = Properties()
 cfg.merged.js.public = [
-    (static_resources, 'cdn/jquery1.7.2.min.js'),
+    (static_resources, 'cdn/jquery1.6.4.min.js'),
     (static_resources, 'cdn/jquery.tools.min.js'),
     (static_resources, 'cdn/jquery-ui-1.8.18.min.js'),
 ]
@@ -67,10 +68,7 @@ cfg.merged.js.protected = [
 ]
 
 cfg.merged.css = Properties()
-cfg.merged.css.public = [
-    (static_resources, 'styles.css'),
-#    (static_resources, 'styles_old.css'),
-]
+cfg.merged.css.public = list()
 cfg.merged.css.protected = list()
 
 cfg.merged.print_css = Properties()
@@ -95,7 +93,8 @@ def configure_root(settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
     root.properties.default_child = settings.get('cone.root.default_child')
     root.properties.mainmenu_empty_title = \
-        settings.get('cone.root.mainmenu_empty_title', False)
+        settings.get('cone.root.mainmenu_empty_title', 'false') \
+            in ['True', 'true', '1']
     default_content_tile = settings.get('cone.root.default_content_tile')
     if default_content_tile:
         root.properties.default_content_tile = default_content_tile

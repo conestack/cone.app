@@ -3,12 +3,17 @@
             i18n:domain="cone.app"
             omit-tag="True">
   <div id="search">
-    <form method="get" action="">
+    <form method="get" action="" class="form-search">
       <fieldset>
-        <input type="text" name="term" id="search-text" size="15" />
+        <input type="text"
+               name="term"
+               id="search-text"
+               size="15"
+               class="input-medium search-query" />
         <input type="submit"
                id="search-submit"
                value="search"
+               class="btn"
                i18n:attributes="value search" />
       </fieldset>
     </form>
