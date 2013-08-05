@@ -1,10 +1,8 @@
 import re
 import datetime
-import urllib
 import types
 from pyramid.security import authenticated_userid
-from cone.app.model import getNodeInfo
-from cone.app.utils import app_config
+from ..utils import app_config
 
 
 def authenticated(request):
@@ -86,24 +84,45 @@ def node_icon(request, node):
     return info.icon
 
 
+def request_property(func):
+    """Decorator like ``property``, but underlying function is only called once
+    per request.
+
+    Cache attribute on request.environ under key
+    ``instanceid.classname.funcname``.
+
+    Works only on instances providing a request attribute.
+    """
+    def wrapper(self):
+        cache_key = '%s.%s.%s' \
+            % (str(id(self)), self.__class__.__name__, func.__name__)
+        try:
+            return self.request.environ[cache_key]
+        except KeyError:
+            val = self.request.environ[cache_key] = func(self)
+            return val
+    wrapper.__doc__ = func.__doc__
+    return property(wrapper)
+
+
 class AppUtil(object):
     """Instance of this object gets Passed to main template when rendering.
     """
-    
+
     def authenticated(self, request):
         return authenticated(request)
-    
+
     def nodepath(self, node):
         return nodepath(node)
-    
+
     def make_url(self, request, path=None, node=None, resource=None,
         query=None):
         if path is None:
             path = []
         return make_url(request, path, node, resource, query)
-    
+
     def make_query(self, **kw):
         return make_query(**kw)
-    
+
     def format_date(self, dt, long=True):
         return format_date(dt, long)

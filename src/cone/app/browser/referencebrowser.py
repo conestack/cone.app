@@ -9,18 +9,15 @@ from cone.tile import (
     tile,
     registerTile,
 )
-from cone.app.interfaces import INavigationLeaf
-from cone.app.browser.layout import PathBar
-from cone.app.browser.table import RowData
-from cone.app.browser.contents import ContentsTile
-from cone.app.browser.actions import (
+from ..interfaces import INavigationLeaf
+from .layout import PathBar
+from .table import RowData
+from .contents import ContentsTile
+from .actions import (
     Toolbar,
     LinkAction,
 )
-from cone.app.browser.utils import (
-    make_url,
-    make_query,
-)
+from .utils import make_query
 from yafowil.base import (
     factory,
     UNSET,
@@ -59,10 +56,10 @@ def make_refbrowser_query(request):
     })
 
 
-@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt', 
+@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt',
       permission='view')
 class ReferenceBrowserPathBar(PathBar):
-    
+
     @property
     def items(self):
         root = self.request.params['root'].split('/')
@@ -80,15 +77,15 @@ class ReferenceBrowserPathBar(PathBar):
 class ReferenceAction(LinkAction):
     target = None
     href = LinkAction.target
-    
+
     @property
     def selected_uids(self):
         return self.request.params['selected'].split(',')
-    
+
     @property
     def id(self):
         return 'ref-%s' % self.model.uuid
-    
+
     @property
     def display(self):
         referencable = self.request.params['referencable']
@@ -96,7 +93,7 @@ class ReferenceAction(LinkAction):
             and referencable.split(',') or [referencable]
         return IUUIDAware.providedBy(self.model) \
             and self.model.node_info_name in referencable
-    
+
     def render(self):
         rendered = LinkAction.render(self)
         attrs = {
@@ -110,7 +107,7 @@ class ReferenceAction(LinkAction):
 class ActionAddReference(ReferenceAction):
     css = 'add_small16_16 addreference'
     title = _('add_reference', 'Add reference')
-    
+
     @property
     def enabled(self):
         if IUUIDAware.providedBy(self.model):
@@ -121,7 +118,7 @@ class ActionAddReference(ReferenceAction):
 class ActionRemoveReference(ReferenceAction):
     css = 'remove16_16 removereference'
     title = _('remove_reference', 'Remove reference')
-    
+
     @property
     def enabled(self):
         if IUUIDAware.providedBy(self.model):
@@ -131,28 +128,28 @@ class ActionRemoveReference(ReferenceAction):
 
 class ReferencableChildrenLink(LinkAction):
     event = 'contextchanged:.refbrowsersensitiv'
-    
+
     def __init__(self, table_tile_name, table_id):
         self.table_tile_name = table_tile_name
         self.table_id = table_id
-    
+
     @property
     def target(self):
         return '%s%s' % (super(ReferencableChildrenLink, self).target,
                          make_refbrowser_query(self.request))
-    
+
     @property
     def text(self):
         return self.model.metadata.get('title', self.model.name)
-    
+
     @property
     def action(self):
         return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
-    
+
     @property
     def display(self):
         return self.permitted('view')
-    
+
     def render(self):
         if INavigationLeaf.providedBy(self.model):
             return self.text
@@ -161,7 +158,7 @@ class ReferencableChildrenLink(LinkAction):
 
 @tile('referencelisting', 'templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
-    
+
     table_id = 'referencebrowser'
     table_tile_name = 'referencelisting'
     col_defs = [
@@ -195,18 +192,18 @@ class ReferenceListing(ContentsTile):
         },
     ]
     query_whitelist = ['root', 'referencable', 'selected']
-    
+
     @instance_property
     def row_actions(self):
         row_actions = Toolbar()
         row_actions['add'] = ActionAddReference()
         row_actions['remove'] = ActionRemoveReference()
         return row_actions
-    
+
     @instance_property
     def referencable_children_link(self):
         return ReferencableChildrenLink(self.table_tile_name, self.table_id)
-    
+
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
@@ -260,19 +257,19 @@ def wrap_ajax_target(rendered, widget, data):
 
 def reference_edit_renderer(widget, data):
     """Properties:
-    
+
     multivalued
         flag whether reference field is multivalued.
-    
+
     vocabulary
         if multivalued, provide a vocabulary mapping uids to node names.
-    
+
     target
         ajax target for reference browser triggering.
-    
+
     root
         path of reference browser root. Defaults to '/'
-    
+
     referencable
         list of node info names which are referencable.  Defaults to '',
         which means all objects are referencable, given they provide
@@ -296,7 +293,7 @@ def reference_edit_renderer(widget, data):
         'value': value[1],
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
-        'class_': cssclasses(widget, data),    
+        'class_': cssclasses(widget, data),
     }
     hidden_attrs = {
         'type': 'hidden',
@@ -325,7 +322,7 @@ def reference_display_renderer(widget, data):
 factory.register(
     'reference',
     extractors=[generic_extractor, generic_required_extractor,
-                reference_extractor], 
+                reference_extractor],
     edit_renderers=[reference_edit_renderer],
     display_renderers=[reference_display_renderer])
 

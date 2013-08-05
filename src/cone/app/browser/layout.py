@@ -13,15 +13,15 @@ from cone.tile import (
     render_template,
     registerTile,
 )
-from cone.app.interfaces import INavigationLeaf
-from cone.app.model import AppRoot
-from cone.app.utils import principal_data
-from cone.app.browser import render_main_template
-from cone.app.browser.utils import (
+from ..interfaces import IWorkflowState
+from ..model import AppRoot
+from ..utils import principal_data
+from . import render_main_template
+from .utils import (
     nodepath,
     make_url,
     format_date,
-    node_icon_url,
+#    node_icon_url,
     node_icon,
 )
 
@@ -31,11 +31,11 @@ _ = TranslationStringFactory('cone.app')
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.
-    
+
     Normally used for 'content' tiles if page should render login form in place
     instead of throwing Unauthorized.
     """
-    
+
     def __call__(self, model, request):
         if not authenticated_userid(request):
             return render_tile(model, request, 'loginform')
@@ -59,34 +59,34 @@ personal_tools['logout'] = logout_link
       permission='view', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
-    
+
     XXX: extend by items, currently only 'logout' link hardcoded in template
     """
-    
+
     @property
     def user(self):
         userid = authenticated_userid(self.request)
         data = principal_data(userid)
         return data.get('fullname', userid)
-    
+
     @property
     def items(self):
         return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
-@tile('mainmenu', 'templates/mainmenu.pt', 
+@tile('mainmenu', 'templates/mainmenu.pt',
       permission='view', strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
-    
+
     * set ``mainmenu_empty_title`` on ``model.root.properties`` to ``True``
       if you want to render empty links in mainmenu for setting icons via css.
       Therefor 'node-nodeid' gets rendered as CSS class on ``li`` DOM element.
-    
+
     * If ``default_child`` is set on ``model.root.properties``, it is marked
       selected if no other current path is found.
     """
-    
+
     @property
     def menuitems(self):
         ret = list()
@@ -124,14 +124,14 @@ class MainMenu(Tile):
         return ret
 
 
-@tile('pathbar', 'templates/pathbar.pt', 
+@tile('pathbar', 'templates/pathbar.pt',
       permission='view', strict=False)
 class PathBar(Tile):
-    
+
     @property
     def items(self):
         return self.items_for(self.model)
-    
+
     def items_for(self, model, breakpoint=None, query=None):
         items = list()
         for node in LocationIterator(model):
@@ -154,11 +154,11 @@ class PathBar(Tile):
               and default_child == items[i + 1]['id']:
                 continue
             ret.append(items[i])
-        
+
         # XXX: this is crap!
         if not breakpoint:
             ret[0]['title'] = 'Home'
-        
+
         ret[-1]['selected'] = True
         return ret
 
@@ -168,18 +168,19 @@ class PathBar(Tile):
 class NavTree(Tile):
     """Navigation tree tile.
     """
-    
-    def navtreeitem(self, title, url, path, icon):
+
+    def navtreeitem(self, title, url, path, icon, css=''):
         item = dict()
         item['title'] = title
         item['url'] = url
         item['selected'] = False
         item['path'] = path
         item['icon'] = icon
+        item['css'] = css
         item['showchildren'] = False
         item['children'] = list()
         return item
-    
+
     def fillchildren(self, model, path, tree):
         """XXX: consider cone.app.interfaces.INavigationLeaf
         """
@@ -211,7 +212,10 @@ class NavTree(Tile):
             curnode = curpath == key and True or False
             #icon = node_icon_url(self.request, node)
             icon = node_icon(self.request, node)
-            child = self.navtreeitem(title, url, nodepath(node), icon)
+            css = ''
+            if IWorkflowState.providedBy(node):
+                css = 'state-%s' % node.state
+            child = self.navtreeitem(title, url, nodepath(node), icon, css)
             child['showchildren'] = curnode
             if curnode:
                 child['selected'] = True
@@ -228,7 +232,7 @@ class NavTree(Tile):
                     selected = True
                 child['selected'] = selected
             tree['children'].append(child)
-    
+
     def navtree(self):
         root = self.navtreeitem(None, None, '', None)
         model = self.model.root
@@ -236,7 +240,7 @@ class NavTree(Tile):
         path = nodepath(self.model)
         self.fillchildren(model, path, root)
         return root
-    
+
     def rendertree(self, children, level=1):
         return render_template(
             'cone.app.browser:templates/navtree_recue.pt',
@@ -252,7 +256,7 @@ class NavTree(Tile):
 class Byline(Tile):
     """Byline tile.
     """
-    
+
     def format_date(self, dt):
         return format_date(dt)
 
@@ -278,7 +282,7 @@ def listing(model, request):
 
 @tile('content', interface=AppRoot, permission='login')
 class RootContent(ProtectedContentTile):
-    
+
     def render(self):
         if self.model.properties.default_child:
             model = self.model[self.model.properties.default_child]

@@ -205,7 +205,7 @@ backward compatibility::
     >>> res.find(expected) > -1
     True
 
-ProtectedAttributesForm plumbing part::
+ProtectedAttributesForm plumbing behavior::
 
     >>> from cone.app.browser.form import ProtectedAttributesForm
     >>> @tile('protectedattributesform')

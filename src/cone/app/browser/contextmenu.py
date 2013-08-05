@@ -3,8 +3,7 @@ from cone.tile import (
     tile,
     Tile,
 )
-from cone.app.browser.utils import make_url
-from cone.app.browser.actions import (
+from .actions import (
     Toolbar,
     ActionUp,
     ActionView,
@@ -46,7 +45,7 @@ context_menu['childactions']['paste'] = ActionPaste()
 
 @tile('contextmenu', 'templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
-    
+
     @property
     def toolbars(self):
         return context_menu.values()

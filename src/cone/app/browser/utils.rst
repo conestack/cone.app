@@ -93,6 +93,26 @@ look if node info for node defines icon. Otherwise use default icon::
     >>> node_icon_url(request, node)
     'http://example.com/my-static/images/othericon.png'
 
+``request_property``::
+
+    >>> from cone.app.browser.utils import request_property
+    >>> class RequestPropertyUsingClass(object):
+    ...     def __init__(self, request):
+    ...         self.request = request
+    ...     @request_property
+    ...     def cached_attr(self):
+    ...         print 'compute me'
+    ...         return 'cached attribute'
+
+    >>> request = layer.new_request()
+    >>> rpuc = RequestPropertyUsingClass(request)
+    >>> rpuc.cached_attr
+    compute me
+    'cached attribute'
+
+    >>> rpuc.cached_attr
+    'cached attribute'
+
 ``AppUtil``. Combines above functions in an object which is available in main
 template::
 

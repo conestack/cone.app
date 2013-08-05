@@ -1,11 +1,11 @@
-Cone workflow parts::
+Cone workflow behaviors::
 
     >>> from plumber import plumber
     >>> from repoze.workflow import get_workflow
     >>> from cone.app.interfaces import IWorkflowState
     >>> from cone.app.workflow import initialize_workflow
 
-Test env provides mock node with workflow parts configured::
+Test env provides mock node with workflow behaviors configured::
 
     >>> from cone.app.testing.mock import WorkflowNode
     

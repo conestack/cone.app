@@ -1,8 +1,7 @@
 import logging
 from plumber import (
-    Part,
+    Behavior,
     default,
-    extend,
     plumb,
 )
 from zope.interface import implementer
@@ -16,11 +15,11 @@ from pyramid.security import (
     authenticated_userid,
 )
 from pyramid.i18n import TranslationStringFactory
-from cone.app.interfaces import (
+from .interfaces import (
     IOwnerSupport,
     IPrincipalACL,
 )
-from cone.app.utils import app_config
+from .utils import app_config
 
 logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
@@ -72,6 +71,7 @@ DEFAULT_NODE_PROPERTY_PERMISSIONS = {
 ADMIN_USER = None
 ADMIN_PASSWORD = None
 
+
 def authenticate(request, login, password):
     if login == ADMIN_USER and password == ADMIN_PASSWORD:
         return remember(request, login)
@@ -121,9 +121,10 @@ def search_for_principals(term):
 
 ROLES_CACHE_KEY = 'cone.app.user.roles'
 
+
 def groups_callback(name, request):
     """Collect and return roles and groups for user.
-    
+
     XXX: request caching via decorator
     """
     environ = request.environ
@@ -153,10 +154,10 @@ def groups_callback(name, request):
 
 
 class ACLRegistry(dict):
-    
+
     def register(self, acl, obj=None, node_info_name=''):
         self[(obj, node_info_name)] = acl
-    
+
     def lookup(self, obj=None, node_info_name='', default=DEFAULT_ACL):
         return self.get((obj, node_info_name), default)
 
@@ -164,16 +165,16 @@ acl_registry = ACLRegistry()
 
 
 @implementer(IOwnerSupport)
-class OwnerSupport(Part):
-    """Plumbing part providing ownership information.
+class OwnerSupport(Behavior):
+    """Plumbing behavior providing ownership information.
     """
-    
+
     @plumb
     def __init__(_next, self, *args, **kw):
         _next(self, *args, **kw)
         request = get_current_request()
         self.owner = authenticated_userid(request)
-    
+
     @plumb
     @property
     def __acl__(_next, self):
@@ -183,32 +184,32 @@ class OwnerSupport(Part):
                 if ace[1] == 'role:owner':
                     return [(Allow, self.owner, ace[2])] + acl
         return acl
-    
+
     def _get_owner(self):
         return self.attrs.get('owner')
-    
+
     def _set_owner(self, value):
         self.attrs['owner'] = value
-    
+
     owner = default(property(_get_owner, _set_owner))
 
 
 @implementer(IPrincipalACL)
-class PrincipalACL(Part):
-    """Plumbing part providing principal ACL's.
-    
-    Warning: This part works only for nodes defining the ``__acl__`` attribute
-    as property function. Plumber does not support class property plumbing
-    (yet).
+class PrincipalACL(Behavior):
+    """Plumbing behavior providing principal ACL's.
+
+    Warning: This behavior works only for nodes defining the ``__acl__``
+    attribute as property function. Plumber does not support class property
+    plumbing (yet).
     """
     role_inheritance = default(False)
-    
+
     @default
     @property
     def principal_roles(self):
         raise NotImplementedError(u"Abstract ``PrincipalACL`` does not "
                                   u"implement ``principal_roles``.")
-    
+
     @default
     @property
     def aggregated_roles(self):
@@ -225,11 +226,11 @@ class PrincipalACL(Part):
                     aggregated[id] = set(roles)
             model = model.parent
         return aggregated
-    
+
     @default
     def aggregated_roles_for(self, principal_id):
         return list(self.aggregated_roles.get(principal_id, list()))
-    
+
     @plumb
     @property
     def __acl__(_next, self):
@@ -247,7 +248,7 @@ class PrincipalACL(Part):
         for ace in base_acl:
             acl.append(ace)
         return acl
-    
+
     @default
     def _permissions_for_role(self, acl, role):
         for ace in acl:

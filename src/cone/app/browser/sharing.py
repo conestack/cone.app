@@ -9,11 +9,11 @@ from pyramid.i18n import (
     TranslationStringFactory,
     get_localizer,
 )
-from cone.app import security
-from cone.app.browser import render_main_template
-from cone.app.browser.ajax import ajax_message
-from cone.app.browser.layout import ProtectedContentTile
-from cone.app.browser.table import (
+from .. import security
+from . import render_main_template
+from .ajax import ajax_message
+from .layout import ProtectedContentTile
+from .table import (
     Table,
     RowData,
 )
@@ -39,13 +39,13 @@ def sharing(model, request):
 @tile('local_acl', 'cone.app:browser/templates/table.pt',
       permission='manage_permissions')
 class SharingTable(Table):
-    
+
     table_id = 'localacltable'
     table_tile_name = 'local_acl'
     default_sort = 'principal'
     default_order = 'asc'
     show_filter = True
-    
+
     @property
     def col_defs(self):
         col_defs = [
@@ -66,7 +66,7 @@ class SharingTable(Table):
                 'content': 'structure',
             })
         return col_defs
-    
+
     @property
     def table_title(self):
         localizer = get_localizer(self.request)
@@ -74,7 +74,7 @@ class SharingTable(Table):
         return _('sharing_table_title',
                  default='Sharing: ${title}',
                  mapping={'title': title})
-    
+
     @property
     def item_count(self):
         term = self.filter_term
@@ -82,10 +82,9 @@ class SharingTable(Table):
             principals = security.search_for_principals('*%s*' % term)
             return len(principals)
         return len(self.model.principal_roles.keys())
-    
+
     def sorted_rows(self, start, end, sort, order):
         rows = list()
-        chb = '<input type="checkbox" />'
         term = self.filter_term
         model = self.model
         principal_roles = model.principal_roles
@@ -125,7 +124,7 @@ class SharingTable(Table):
                     self._role_column(principal_id, role[0], local, inherited)
             rows.append(row_data)
         return rows
-    
+
     def _role_column(self, id, role, local, inherited):
         props = {
             'class': 'add_remove_role_for_principal',
@@ -141,7 +140,7 @@ class SharingTable(Table):
 
 @tile('add_principal_role', permission='manage_permissions')
 class AddPrincipalRole(Tile):
-    
+
     def render(self):
         model = self.model
         request = self.request
@@ -168,7 +167,7 @@ class AddPrincipalRole(Tile):
 
 @tile('remove_principal_role', permission='manage_permissions')
 class RemovePrincipalRole(Tile):
-    
+
     def render(self):
         model = self.model
         request = self.request

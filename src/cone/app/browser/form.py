@@ -1,39 +1,40 @@
 from plumber import (
-    Part,
+    Behavior,
     default,
-    extend,
+    override,
 )
 from webob.exc import HTTPFound
 from pyramid.security import has_permission
-from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
 from cone.tile import Tile
-from cone.app.browser.ajax import AjaxAction
-from cone.app.browser.ajax import AjaxEvent
-from cone.app.browser.utils import make_url
+from .ajax import (
+    AjaxAction,
+    AjaxEvent,
+)
+from .utils import make_url
 
 
-class YAMLForm(Part):
-    """Plumbing part for rendering yaml forms.
+class YAMLForm(Behavior):
+    """Plumbing behavior for rendering yaml forms.
     """
-    
+
     action_resource = default(u'')
-    
-    # BBB
+
+    # B/C
     form_template_path = default(None)
-    
+
     # use form_template for pointing yaml files
     form_template = default(None)
-    
+
     # considered in form_action, either 'add' or 'edit'
     form_flavor = default('edit')
-    
+
     @default
     @property
     def message_factory(self):
         return None
-    
+
     @default
     def form_action(self, widget, data):
         resource = self.action_resource
@@ -41,8 +42,8 @@ class YAMLForm(Part):
             return make_url(self.request, node=self.model.parent,
                             resource=resource)
         return make_url(self.request, node=self.model, resource=resource)
-    
-    @extend
+
+    @override
     def prepare(self):
         if self.form_template:
             self.form = parse_from_YAML(
@@ -53,23 +54,23 @@ class YAMLForm(Part):
             self.form_template_path, self, self.message_factory)
 
 
-class ProtectedAttributesForm(Part):
-    """Plumbing part supposed to be used for yafowil forms calculating widget
-    modes based on security checks.
-    
+class ProtectedAttributesForm(Behavior):
+    """Plumbing behavior supposed to be used for yafowil forms calculating
+    widget modes based on security checks.
+
     Security declarations for attributes are stored at
     ``self.attribute_permissions`` containing the attribute names as key, and
     a 2-tuple containing required edit and view permission for this attribute.
     """
-    
+
     attribute_permissions = default(dict())
     attribute_default_permissions = default(('edit', 'view'))
-    
+
     @default
     def mode_for(self, name):
         """Calculate mode by checking permission defined in
         ``self.attribute_permissions`` for attribute ``name`` against model.
-        
+
         If no permissions defined for attribute name, return
         ``self.attribute_default_mode``
         """
@@ -87,15 +88,15 @@ class Form(Tile):
     """A form tile.
     """
 
-    form = None # yafowil compound expected.
-    ajax = True # render ajax form related by default.
-    
+    form = None  # yafowil compound expected.
+    ajax = True  # render ajax form related by default.
+
     def prepare(self):
         """Responsible to prepare ``self.form``.
         """
         raise NotImplementedError(u"``prepare`` function must be provided "
                                   u"by deriving object.")
-    
+
     def prepare_ajax(self):
         """Set ajax class attribute on self.form.
         """
@@ -106,18 +107,18 @@ class Form(Tile):
             self.form.attrs['class'] += ' ajax'
         else:
             self.form.attrs['class'] = 'ajax'
-    
+
     @property
     def ajax_request(self):
         """Flag whether to handle current request as ajax request.
         """
         return self.request.params.get('ajax') and self.ajax
-    
+
     def __call__(self, model, request):
         self.model = model
         self.request = request
         return self._process_form()
-    
+
     def _process_form(self):
         self.prepare()
         self.prepare_ajax()

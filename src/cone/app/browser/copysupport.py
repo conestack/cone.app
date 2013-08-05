@@ -9,13 +9,13 @@ from cone.tile import (
     tile,
     Tile,
 )
-from cone.app.browser.ajax import (
+from .ajax import (
     ajax_message,
     ajax_continue,
     AjaxAction,
     AjaxEvent,
 )
-from cone.app.browser.utils import (
+from .utils import (
     choose_name,
     make_url,
 )
@@ -44,7 +44,7 @@ def paths_from_urls(urls):
 
 @tile('paste', permission="paste")
 class PasteAction(Tile):
-    
+
     def render(self):
         cut = extract_copysupport_cookie(self.request, 'cut')
         copy = extract_copysupport_cookie(self.request, 'copy')

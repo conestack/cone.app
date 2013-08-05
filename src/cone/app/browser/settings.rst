@@ -67,21 +67,21 @@ Check if error raised by ``OtherSettingsTile``::
     >>> layer.logout()
 
 
-Settings Form Part
-------------------
+Settings Form Behavior
+----------------------
 
-Settings part for settings forms. Provides a default ``next`` function hooking
-form to correct tab::
+Settings behavior for settings forms. Provides a default ``next`` function
+hooking form to correct tab::
 
     >>> from plumber import plumber
     >>> from yafowil.base import factory
     >>> from cone.app.browser.form import Form
-    >>> from cone.app.browser.settings import SettingsPart
+    >>> from cone.app.browser.settings import SettingsBehavior
     
     >>> @tile('editform', interface=SomeSettings)
     ... class SomeSettingsForm(Form):
     ...     __metaclass__ = plumber
-    ...     __plumbing__ = SettingsPart
+    ...     __plumbing__ = SettingsBehavior
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',

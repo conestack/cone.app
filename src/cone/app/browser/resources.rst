@@ -74,7 +74,7 @@ Merged Assets::
     >>> assets = cone.app.cfg.merged.js.public
     >>> assets
     [(<pyramid.static.static_view object at ...>, 
-    'cdn/jquery.min.js'), 
+    'cdn/jquery1.6.4.min.js'), 
     (<pyramid.static.static_view object at ...>, 
     'cdn/jquery.tools.min.js'), 
     (<pyramid.static.static_view object at ...>, 
@@ -91,7 +91,7 @@ Merged Assets::
     >>> subpath = os.path.join(static.app.resource_name, resource)
     >>> path = pkg_resources.resource_filename(static.app.package_name, subpath)
     >>> path
-    '/.../cone/app/browser/static/cdn/jquery.min.js'
+    '/.../cone/app/browser/static/cdn/jquery1.6.4.min.js'
     
     >>> data = ''
     >>> with open(path, 'r') as file:

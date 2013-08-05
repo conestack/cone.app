@@ -91,8 +91,12 @@ h1#logo a {
     color:#333;
     background-color:#fff;
     padding:0px 6px 0px 6px;
+    border-radius-bottomleft:5px;
+    border-radius-bottomright:5px;
     -moz-border-radius-bottomleft:5px;
     -moz-border-radius-bottomright:5px;
+    -webkit-border-radius-bottomleft:5px;
+    -webkit-border-radius-bottomright:5px;
     
 }
 #personaltools .dropdown_items {
@@ -254,9 +258,9 @@ ul#mainmenu li.node-settings a.current_page_item {
     text-decoration:underline;
 }
 .navtree li.navtreeitem a.selected {
-    color:#4B8749;
     text-decoration:none;
     font-weight:bold;
+    cursor:default;
 }
 .navtree ul.navtreelevel_1 {
     margin-left:6px;
@@ -441,16 +445,16 @@ table.pretty_table td:last-child div.col {
     border-right:1px solid #AAAAAA;
 }
 table.pretty_table tr.even {
-    background-color:#EEFFEE;
+    background-color:#f8f8f8;
 }
 table.pretty_table tr.even td.sorted_col {
-    background-color:#D5FFD5;
+    background-color:#f0f0f0;
 }
 table.pretty_table tr.odd {
-    background-color:#DDFFDD;
+    background-color:#ffffff;
 }
 table.pretty_table tr.odd td.sorted_col {
-    background-color:#C4FFC4;
+    background-color:#fbfbfb;
 }
 table.pretty_table tr.even.selected {
     background-color:#EEEEFF;
@@ -514,6 +518,7 @@ div.pretty_batch a.invisible {
     list-style-image:none;
     border:#ccc 4px solid;
     background-color:#fff;
+    border-radius:3px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
 }
@@ -535,6 +540,7 @@ div.pretty_batch a.invisible {
 /* Autocomplete */
 .ui-autocomplete {
     border:#ccc 4px solid !important;
+    border-radius:3px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
 }
@@ -542,6 +548,7 @@ div.pretty_batch a.invisible {
 /* Datepicker */
 #ui-datepicker-div {
     border:#ccc 4px solid !important;
+    border-radius:3px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
 }
@@ -560,6 +567,7 @@ div.contextmenu {
     height:20px;
 }
 div.contextmenu a.selected {
+    box-shadow:0 0 6px 3px #eee;
     -moz-box-shadow:0 0 6px 3px #eee;
     -webkit-box-shadow:0 0 6px #eee;
     background-color:#eee;

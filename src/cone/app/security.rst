@@ -62,7 +62,7 @@ Base security tests::
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
     
     >>> layer.new_request()
-    <pyramid.testing.DummyRequest object at ...>
+    <cone.app.testing.DummyRequest object at ...>
     
     >>> layer.current_request.registry
     <BaseGlobalComponents base>

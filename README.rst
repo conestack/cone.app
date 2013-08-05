@@ -34,8 +34,85 @@ Contributors
 Changes
 =======
 
-0.9.3dev
+
+0.9.5dev
 --------
+
+- Test request can be flagged as XHR request.
+  [rnix, 2013-03-23]
+
+- Improve exception view to handle default error page and bdajax action
+  requests. Move Exception code to ``cone.app.browser.exception``.
+  [rnix, 2013-02-10]
+
+- Introduce ``cone.app.browser.utils.request_property``.
+  [rnix, 2013-02-05]
+
+- Do not load ``cone.app.js`` merged, ensures to be loaded after bdajax.
+  [rnix, 2013-01-20]
+
+- Check if autocomplete plugin is available in ``cone.app.js`` when trying to
+  bind livesearch.
+  [rnix, 2013-01-08]
+
+- Make yafowil resources beeing delivered public as well.
+  [rnix, 2013-01-08]
+
+- Possibility to skip yafowil resource groups, deliver yafowil resources
+  before addon resources.
+  [rnix, 2013-01-08]
+
+- Remove yafowil addon widgets from default setup dependencies.
+  [rnix, 2013-01-04]
+
+
+0.9.4
+-----
+
+- Introduce ``Table.display_table_header`` and ``Table.display_table_footer``
+  properties.
+  [rnix, 2012-10-30]
+
+- Introduce ``cone.app.browser.actions.DropdownAction``.
+  [rnix, 2012-10-28]
+
+- Introduce ``row_data`` on ``ContentsTile`` for customizing column data on
+  ``ContentsTile`` deriving objects.
+  [rnix, 2012-10-28]
+
+- ``model.properties.action_delete_tile`` can be set if
+  ``model.properties.action_delete`` is True. Used to define the content tile
+  which gets rendered on parent of model after deleting.
+  [rnix, 2012-10-26]
+
+- Available child nodes of ``ContentsTile`` can be controlled by
+  ``listable_children``.
+  [rnix, 2012-10-26]
+
+- Introduce ``show_slicesize`` on tables.
+  [rnix, 2012-10-19]
+
+- PEP-8.
+  [rnix, 2012-10-16]
+
+- Python2.7 Support.
+  [rnix, 2012-10-16]
+
+- Rename parts to behaviors.
+  [rnix, 2012-07-29]
+
+- adopt to ``node`` 0.9.8
+  [rnix, 2012-07-29]
+
+- adopt to ``plumber`` 1.2
+  [rnix, 2012-07-29]
+
+- use fresh Chameleon and fix tests to recognize correct output of new Chameleon
+  [jensens, 2012-07-04]
+
+
+0.9.3
+-----
 
 - Add basic print CSS.
   [rnix, 2012-05-29]

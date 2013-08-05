@@ -1,12 +1,11 @@
+from zope.deprecation import deprecated
 from plumber import (
-    plumber,
-    Part,
+    Behavior,
     default,
-    extend,
+    override,
     plumb,
 )
 from webob.exc import HTTPFound
-from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.i18n import (
     TranslationStringFactory,
@@ -19,16 +18,16 @@ from cone.tile import (
     render_tile,
     render_template,
 )
-from cone.app.model import (
+from ..model import (
     getNodeInfo,
     Properties,
     BaseNode,
     AdapterNode,
 )
-from cone.app.utils import app_config
-from cone.app.browser import render_main_template
-from cone.app.browser.actions import ActionContext
-from cone.app.browser.ajax import (
+from ..utils import app_config
+from . import render_main_template
+from .actions import ActionContext
+from .ajax import (
     AjaxAction,
     AjaxEvent,
     AjaxOverlay,
@@ -37,8 +36,8 @@ from cone.app.browser.ajax import (
     ajax_form_fiddle,
     render_ajax_form,
 )
-from cone.app.browser.layout import ProtectedContentTile
-from cone.app.browser.utils import (
+from .layout import ProtectedContentTile
+from .utils import (
     make_url,
     make_query,
 )
@@ -56,8 +55,8 @@ def render_form(model, request, tilename):
     ``render_ajax_form`` is called, which renders the tile wrapped by some
     javascript calls into a script tag. The ajax response will be rendered into
     the hidden iframe on client side, where ajax continuation is processed.
-    
-    XXX: move to cone.app.browser.form 
+
+    XXX: move to cone.app.browser.form
     """
     if is_ajax(request):
         # XXX: ActionContext centralized
@@ -67,13 +66,13 @@ def render_form(model, request, tilename):
     return render_main_template(model, request, contenttilename=tilename)
 
 
-class CameFromNext(Part):
-    """Part for form tiles considering 'came_from' parameter on request.
+class CameFromNext(Behavior):
+    """Behavior for form tiles considering 'came_from' parameter on request.
     """
-    
+
     @plumb
     def prepare(_next, self):
-        """Hook after prepare and set 'came_from' as proxy field to 
+        """Hook after prepare and set 'came_from' as proxy field to
         ``self.form``.
         """
         _next(self)
@@ -81,11 +80,11 @@ class CameFromNext(Part):
             'proxy',
             value=self.request.params.get('came_from'),
         )
-    
+
     @default
     def next(self, request):
         """Read 'came_from' parameter from request and compute next url.
-        
+
         If came_from is 'parent', URL of node parent is computed.
         If came_from is set but not 'parent', it is considered as URL to use
         If no came_from is set, return URL of node
@@ -113,10 +112,10 @@ def add(model, request):
 
 def default_addmodel_factory(parent, nodeinfo):
     """Default addmodel factory.
-    
+
     The addmodel factory is responsible to create a model suitable for
     rendering addforms refering to node info.
-    
+
     parent
         The parent in which the new item should be added
     nodeinfo
@@ -137,7 +136,7 @@ class AddTile(ProtectedContentTile):
     registered by factory name.
     """
     form_tile_name = 'addform'
-    
+
     def render(self):
         nodeinfo = self.info
         if not nodeinfo:
@@ -147,7 +146,7 @@ class AddTile(ProtectedContentTile):
             factory = default_addmodel_factory
         addmodel = factory(self.model, nodeinfo)
         return render_tile(addmodel, self.request, self.form_tile_name)
-    
+
     @property
     def info(self):
         factory = self.request.params.get('factory')
@@ -157,23 +156,23 @@ class AddTile(ProtectedContentTile):
         return getNodeInfo(factory)
 
 
-class ContentForm(Part):
-    """Form part rendering to content area.
+class ContentForm(Behavior):
+    """Form behavior rendering to content area.
     """
-    
+
     show_heading = default(True)
     show_contextmenu = default(True)
-    
+
     @default
     @property
     def form_heading(self):
         return _('content_form_heading', 'Content Form Heading')
-    
+
     @default
     @property
     def rendered_contextmenu(self):
         return render_tile(self.model, self.request, 'contextmenu')
-    
+
     @plumb
     def __call__(_next, self, model, request):
         ajax_form_fiddle(request, '#content', 'inner')
@@ -188,11 +187,12 @@ class ContentForm(Part):
             path, request=request, model=model, context=self)
 
 
-class AddPart(CameFromNext, ContentForm):
-    """form part hooking the hidden field 'factory' to self.form on __call__
+class AddBehavior(CameFromNext, ContentForm):
+    """form behavior hooking the hidden field 'factory' to self.form on
+    __call__.
     """
-    action_resource = extend('add')
-    
+    action_resource = override('add')
+
     @default
     @property
     def form_heading(self):
@@ -204,12 +204,12 @@ class AddPart(CameFromNext, ContentForm):
               default='Add: ${title}',
               mapping={'title': title}))
         return heading
-    
+
     @default
     @property
     def rendered_contextmenu(self):
         return render_tile(self.model.parent, self.request, 'contextmenu')
-    
+
     @plumb
     def prepare(_next, self):
         """Hook after prepare and set 'factory' as proxy field to ``self.form``
@@ -219,6 +219,13 @@ class AddPart(CameFromNext, ContentForm):
             'proxy',
             value=self.request.params.get('factory'),
         )
+
+
+AddPart = AddBehavior  # B/C
+deprecated('AddPart', """
+``cone.app.browser.authoring.AddPart`` is deprecated as of cone.app 0.9.4 and
+will be removed in cone.app 1.0. Use ``cone.app.browser.authoring.AddBehavior``
+instead.""")
 
 
 @view_config('edit', permission='edit')
@@ -233,16 +240,17 @@ class EditTile(ProtectedContentTile):
     """The edit tile is responsible to render edit forms on given model.
     """
     form_tile_name = 'editform'
-    
+
     def render(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
-class EditPart(CameFromNext, ContentForm):
-    """form part hooking the hidden field 'came_from' to self.form on __call__
+class EditBehavior(CameFromNext, ContentForm):
+    """form behavior hooking the hidden field 'came_from' to self.form on
+    __call__.
     """
-    action_resource = extend('edit')
-    
+    action_resource = override('edit')
+
     @default
     @property
     def form_heading(self):
@@ -250,12 +258,18 @@ class EditPart(CameFromNext, ContentForm):
         if info is None:
             return _('edit', 'Edit')
         localizer = get_localizer(self.request)
-        title = localizer.translate(_(info.title))
         heading = localizer.translate(
             _('edit_form_heading',
               default='Edit: ${title}',
-              mapping={'title': localizer.translate(info.title)}))
+              mapping={'title': localizer.translate(_(info.title))}))
         return heading
+
+
+EditPart = EditBehavior  # B/C
+deprecated('EditPart', """
+``cone.app.browser.authoring.EditPart`` is deprecated as of cone.app 0.9.4 and
+will be removed in cone.app 1.0. Use
+``cone.app.browser.authoring.EditBehavior`` instead.""")
 
 
 @view_config('overlayform', permission='view')
@@ -270,18 +284,18 @@ class OverlayFormTile(ProtectedContentTile):
     """The overlayform tile is responsible to render forms on given model.
     """
     form_tile_name = 'overlayeditform'
-    
+
     def render(self):
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
-class OverlayPart(Part):
-    """Form part rendering to overlay.
+class OverlayBehavior(Behavior):
+    """Form behavior rendering to overlay.
     """
-    action_resource = extend('overlayform')
-    overlay_selector = extend('#ajax-form')
-    overlay_content_selector = extend('.overlay_content')
-    
+    action_resource = override('overlayform')
+    overlay_selector = override('#ajax-form')
+    overlay_content_selector = override('.overlay_content')
+
     @plumb
     def __call__(_next, self, model, request):
         form = _next(self, model, request)
@@ -289,21 +303,28 @@ class OverlayPart(Part):
                               self.overlay_content_selector)
         ajax_form_fiddle(request, selector, 'inner')
         return form
-    
+
     @default
     def next(self, request):
         return [AjaxOverlay(selector=self.overlay_selector, close=True)]
 
 
+OverlayPart = OverlayBehavior  # B/C
+deprecated('OverlayPart', """
+``cone.app.browser.authoring.OverlayPart`` is deprecated as of cone.app 0.9.4
+and will be removed in cone.app 1.0. Use
+``cone.app.browser.authoring.OverlayBehavior`` instead.""")
+
+
 @tile('delete', permission="delete")
 class DeleteAction(Tile):
-    
-    def continuation(self, url):
+
+    def continuation(self, url, content_tile):
         return [
-            AjaxAction(url, 'content', 'inner', '#content'),
+            AjaxAction(url, content_tile, 'inner', '#content'),
             AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
         ]
-    
+
     def render(self):
         model = self.model
         title = model.metadata.get('title', model.name)
@@ -315,12 +336,15 @@ class DeleteAction(Tile):
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'error')
             return u''
+        content_tile = model.properties.action_delete_tile
+        if not content_tile:
+            content_tile = 'content'
         parent = model.parent
         del parent[model.name]
         if hasattr(parent, '__call__'):
             parent()
         url = make_url(self.request, node=parent)
-        ajax_continue(self.request, self.continuation(url))
+        ajax_continue(self.request, self.continuation(url, content_tile))
         ts = _('deleted_object',
                default='Deleted: ${title}',
                mapping={'title': title})
@@ -330,10 +354,10 @@ class DeleteAction(Tile):
         return u''
 
 
-@tile('add_dropdown', 'templates/add_dropdown.pt', 
+@tile('add_dropdown', 'templates/add_dropdown.pt',
       permission='add', strict=False)
 class AddDropdown(Tile):
-    
+
     @property
     def items(self):
         ret = list()

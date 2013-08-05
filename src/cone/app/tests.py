@@ -1,4 +1,3 @@
-import os
 import doctest
 import interlude
 import pprint
@@ -22,6 +21,7 @@ TESTFILES = [
     'model.rst',
     'workflow.rst',
     'browser/__init__.rst',
+    'browser/exception.rst',
     'browser/ajax.rst',
     'browser/actions.rst',
     'browser/authoring.rst',
@@ -40,6 +40,7 @@ TESTFILES = [
     'browser/copysupport.rst',
     'browser/utils.rst',
 ]
+
 
 def test_suite():
     XMLConfig('testing/dummy_workflow.zcml', cone.app.tests)()
