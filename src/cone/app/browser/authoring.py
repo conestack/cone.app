@@ -379,6 +379,6 @@ class AddDropdown(Tile):
             icon = info.icon
             if not icon:
                 icon = app_config().default_node_icon
-            props.icon = make_url(self.request, resource=icon)
+            props.icon = icon
             ret.append(props)
         return ret

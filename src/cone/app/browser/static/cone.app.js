@@ -11,29 +11,31 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 (function($) {
 
     $(document).ready(function() {
-        
+
         // personaltools
         $('#personaltools').dropdownmenu({
             menu: '.dropdown_items',
             trigger: '.currentuser a'
         });
-        
+
         // initial binding
         cone.key_binder();
         cone.livesearchbinder();
         cone.tabsbinder();
         cone.dropdownmenubinder();
+        cone.adddropdownbinder();
         cone.transitionmenubinder();
         cone.tabletoolbarbinder();
         cone.sharingbinder();
         cone.selectable.binder();
         cone.copysupportbinder();
         yafowil.referencebrowser.browser_binder();
-        
+
         // add binders to bdajax binding callbacks
         $.extend(bdajax.binders, {
             tabsbinder: cone.tabsbinder,
             dropdownmenubinder: cone.dropdownmenubinder,
+            adddropdownbinder: cone.adddropdownbinder,
             transitionmenubinder: cone.transitionmenubinder,
             tabletoolbarbinder: cone.tabletoolbarbinder,
             sharingbinder: cone.sharingbinder,
@@ -46,15 +48,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 yafowil.referencebrowser.remove_reference_binder
         });
     });
-    
+
     cone = {
-            
+
         // object to store global flags
         flags: {},
-                
+
         // keyboard control keys status
         keys: {},
-        
+
         // keydown / keyup binder for shift and ctrl keys
         key_binder: function() {
             $(document).bind('keydown', function(event) {
@@ -78,7 +80,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
             });
         },
-        
+
         livesearchbinder: function(context) {
             if (!$.fn.autocomplete) {
                 return;
@@ -102,7 +104,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
             });
         },
-        
+
         tabsbinder: function(context) {
             // normal tabs
             $('ul.tabs', context).tabs('div.tabpanes > div');
@@ -138,22 +140,26 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     }
                 });
             }).first().trigger('click');
-
-
-
         },
-        
+
         dropdownmenubinder: function(context) {
             $('.dropdown', context).dropdownmenu();
         },
-        
+
+        adddropdownbinder: function(context) {
+            $('.add_dropdown', context).dropdownmenu({
+                menu: '.dropdown_items',
+                trigger: 'button'
+            });
+        },
+
         transitionmenubinder: function(context) {
             $('.transitions_dropdown', context).dropdownmenu({
                 menu: '.dropdown_items',
                 trigger: '.state a'
             });
         },
-        
+
         tabletoolbarbinder: function(context) {
             var selection = $('.pretty_table_length select', context);
             selection.unbind('change').bind('change', function(event) {
@@ -186,7 +192,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 trigger_search($(this));
             });
         },
-        
+
         sharingbinder: function(context) {
             var checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.unbind('change').bind('change', function(event) {
@@ -212,7 +218,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 });
             });
         },
-        
+
         copysupportbinder: function(context) {
             var cut_cookie = 'cone.app.copysupport.cut';
             var copy_cookie = 'cone.app.copysupport.copy';
@@ -278,7 +284,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         }
     }
-    
+
     /* 
      * Dropdown menu
      * =============
@@ -327,7 +333,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         });
         return this;
     }
-    
+
     /*
      * Selectable Items
      * ================
@@ -431,25 +437,25 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         });
         return this;
     }
-    
+
     $.extend(cone, {
-        
+
         selectable: {
-            
+
             // current selected dom elements
             selected: [],
-            
+
             // reset
             reset: function() {
                 cone.selectable.selected = [];
             },
-            
+
             // add element to selected
             add: function(elem) {
                 cone.selectable.remove(elem);
                 cone.selectable.selected.push(elem);
             },
-            
+
             // remove element from selected
             remove: function(elem) {
                 var reduced = $.grep(cone.selectable.selected,
@@ -458,13 +464,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 });
                 cone.selectable.selected = reduced;
             },
-            
+
             binder: function(context) {
                 $('table tr.selectable', context).selectable();
             }
         }
     });
-    
+
     /*
      * Reference Browser
      * =================
@@ -501,23 +507,23 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         });
         return this;
     }
-    
+
     // extend yafowil by reference browser widget.
     $.extend(yafowil, {
-        
+
         referencebrowser: {
-            
+
             target: null,
-            
+
             overlay: function() {
                 return $('#ajax-overlay').data('overlay');
             },
-            
+
             browser_binder: function(context) {
                 $('input.referencebrowser', context).referencebrowser();
                 $('select.referencebrowser', context).referencebrowser();
             },
-            
+
             add_reference_binder: function(context) {
                 $('a.addreference').unbind('click')
                                    .bind('click', function(event) {
@@ -525,7 +531,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     yafowil.referencebrowser.addreference($(this));
                 });
             },
-            
+
             remove_reference_binder: function(context) {
                 $('a.removereference').unbind('click')
                                       .bind('click', function(event) {
@@ -533,7 +539,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     yafowil.referencebrowser.removereference($(this));
                 });
             },
-            
+
             addreference: function(elem) {
                 var target = $(this.target);
                 var uid = elem.attr('id');
@@ -558,7 +564,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 this._reset_selected(target);
                 this._toggle_enabled(elem);
             },
-            
+
             removereference: function(elem) {
                 var target = $(this.target);
                 var uid = elem.attr('id');
@@ -578,19 +584,19 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 this._reset_selected(target);
                 this._toggle_enabled(elem);
             },
-            
+
             singlevalue: function() {
                 return this.target.tagName == 'INPUT';
             },
-            
+
             multivalue: function() {
                 return this.target.tagName == 'SELECT';
             },
-            
+
             _toggle_enabled: function(elem) {
                 $('a', elem.parent()).toggleClass('disabled');
             },
-            
+
             _reset_selected: function(elem) {
                 var selected = new Array();
                 if (this.singlevalue()) {
@@ -612,7 +618,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     }
                 });
             },
-            
+
             _set_selected_on_ajax_target: function(elem, selected) {
                 var target = bdajax.parsetarget(elem.attr('ajax:target'));
                 target.params.selected = selected.join(',');
