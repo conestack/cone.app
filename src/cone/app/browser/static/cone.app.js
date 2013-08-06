@@ -21,7 +21,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         // initial binding
         cone.key_binder();
         cone.livesearchbinder();
-        cone.tabsbinder();
+        cone.settingstabsbinder();
         cone.dropdownmenubinder();
         cone.adddropdownbinder();
         cone.transitionmenubinder();
@@ -33,7 +33,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // add binders to bdajax binding callbacks
         $.extend(bdajax.binders, {
-            tabsbinder: cone.tabsbinder,
+            settingstabsbinder: cone.settingstabsbinder,
             dropdownmenubinder: cone.dropdownmenubinder,
             adddropdownbinder: cone.adddropdownbinder,
             transitionmenubinder: cone.transitionmenubinder,
@@ -105,28 +105,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         },
 
-        tabsbinder: function(context) {
-            // normal tabs
-            $('ul.tabs', context).tabs('div.tabpanes > div');
-            // ajax tabs
-//            $('ul.ajaxtabs', context).tabs('div.ajaxtabpanes > div');
-//            $('ul.ajaxtabs li a', context).bind('click', function(event) {
-//                event.preventDefault();
-//                var elem = $(this);
-//                var target = bdajax.parsetarget(elem.attr('ajax:target'));
-//                bdajax.request({
-//                    url: target.url,
-//                    params: target.params,
-//                    success: function(data, status, request) {
-//                        var container = elem.parents('.ajaxtabs').parent();
-//                        $('.ajaxtabpane', container)
-//                            .html(data).css('display', 'block').bdajax();
-//                    }
-//                });
-//            }).first().trigger('click');
-
-            $('div.ajaxtabs', context).tabs('div.ajaxtabpanes > div');
-            $('div.ajaxtabs a', context).bind('click', function(event) {
+        settingstabsbinder: function(context) {
+            $('div.settingstabs a', context).bind('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
                 var target = bdajax.parsetarget(elem.attr('ajax:target'));
@@ -134,9 +114,10 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     url: target.url,
                     params: target.params,
                     success: function(data, status, request) {
-                        var container = elem.parents('.ajaxtabs').parent();
-                        $('.ajaxtabpane', container)
-                            .html(data).css('display', 'block').bdajax();
+                        $('.settingstabpane')
+                            .html(data)
+                            .css('display', 'block')
+                            .bdajax();
                     }
                 });
             }).first().trigger('click');

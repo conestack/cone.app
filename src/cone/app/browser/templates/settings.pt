@@ -1,21 +1,24 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
-<div class="btn-toolbar">
-  <div class="btn-group ajaxtabs">
-    <tal:tabs define="tabs context.tabs">
-      <a tal:repeat="tab tabs"
-         class="w1 btn btn-small"
-         href=""
-         ajax:target="${tab['target']}"
-         tal:attributes="title tab['title']"
-         tal:content="tab['title']">
-        Title
-      </a>
-    </tal:tabs>
+
+  <div class="btn-toolbar">
+    <div class="btn-group settingstabs">
+      <tal:tabs define="tabs context.tabs">
+        <a tal:repeat="tab tabs"
+           class="w1 btn btn-small"
+           href=""
+           ajax:target="${tab['target']}"
+           tal:attributes="title tab['title']"
+           tal:content="tab['title']">
+          Title
+        </a>
+      </tal:tabs>
+    </div>
   </div>
-  <div class="ajaxtabpanes">
-    <div class="ajaxtabpane" style="display:block"></div>
-  </div>
-  </div>
+
+  <div class="visualClear"></div>
+
+  <div class="settingstabpane"></div>
+
 </tal:block>
