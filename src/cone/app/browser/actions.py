@@ -66,6 +66,7 @@ class Toolbar(odict):
         ret = ret.strip()
         if not ret:
             return ret
+        # XXX: fix button group determination
         buttongroup = False
         for val in values:
             if getattr(val, 'button', False):
@@ -143,7 +144,7 @@ class LinkAction(TemplateAction):
     id = None         # id attribute
     href = None       # href attribute
     css = None        # in addition for computed class attribute
-    button = True     # display as button
+    button = False    # display as bootstrap style button
     title = None      # title attribute
     action = None     # ajax:action attribute
     event = None      # ajax:event attribute
@@ -153,6 +154,10 @@ class LinkAction(TemplateAction):
     enabled = True    # if false, link gets 'disabled' css class
     selected = False  # if true, link get 'selected' css class
     icon = None       # if set, render <i> tag with value as CSS class on link
+
+    def __init__(self, button=None):
+        if button is not None:
+            self.button = button
 
     @property
     def css_class(self):
