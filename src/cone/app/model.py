@@ -247,6 +247,9 @@ class Properties(object):
     def _get_data(self):
         return object.__getattribute__(self, '_data')
 
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
     def __getitem__(self, key):
         return self._get_data()[key]
 
@@ -256,11 +259,11 @@ class Properties(object):
     def __contains__(self, key):
         return key in self._get_data()
 
-    def __getattr__(self, name):
-        return self._get_data().get(name)
+    def __getattr__(self, key):
+        return self._get_data().get(key)
 
-    def __setattr__(self, name, value):
-        self._get_data()[name] = value
+    def __setattr__(self, key, value):
+        self._get_data()[key] = value
 
     def keys(self):
         return self._get_data().keys()
@@ -349,6 +352,12 @@ class XMLProperties(Properties):
             del data[name]
         else:
             raise KeyError(u"property %s does not exist" % name)
+
+    def get_path(self):
+        return object.__getattribute__(self, '_path')
+
+    def set_path(self, path):
+        object.__setattr__(self, '_path', path)
 
     def _init(self):
         dth = DatetimeHelper()
