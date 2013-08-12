@@ -48,9 +48,9 @@ cfg.js.protected = [
 cfg.css = Properties()
 cfg.css.public = [
     '++resource++bdajax/bdajax.css',
-    'static/cdn/jquery-ui-1.8.18.css',
-    'static/cdn/bootstrap/css/bootstrap-responsive.css',
-    'static/cdn/bootstrap/css/bootstrap.css',
+    'static/jqueryui/jquery-ui-1.10.0.custom.css',
+    'static/bootstrap/css/bootstrap-responsive.css',
+    'static/bootstrap/css/bootstrap.css',
     'static/styles.css',
 ]
 cfg.css.protected = list()
@@ -59,9 +59,9 @@ cfg.css.protected = list()
 cfg.merged = Properties()
 cfg.merged.js = Properties()
 cfg.merged.js.public = [
-    (static_resources, 'cdn/jquery1.6.4.min.js'),
-    (static_resources, 'cdn/jquery.tools.min.js'),
-    (static_resources, 'cdn/jquery-ui-1.8.18.min.js'),
+    (static_resources, 'jquery1.6.4.min.js'),
+    (static_resources, 'jquerytools/jquery.tools.min.js'),
+    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
 ]
 cfg.merged.js.protected = [
     (static_resources, 'cookie_functions.js'),
