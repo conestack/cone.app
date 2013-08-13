@@ -31,12 +31,60 @@ Contributors
 - Georg Gogo. BERNHARD <gogo [at] bluedynamics [dot] com>
 
 
+Coverage Report
+===============
+
+::
+    lines   cov%   module
+      189    88%   cone.app.__init__
+       32   100%   cone.app.browser.__init__
+      288    99%   cone.app.browser.actions
+      170   100%   cone.app.browser.ajax
+      219    95%   cone.app.browser.authoring
+      100   100%   cone.app.browser.batch
+      138    94%   cone.app.browser.contents
+       23   100%   cone.app.browser.contextmenu
+      111   100%   cone.app.browser.copysupport
+       24   100%   cone.app.browser.exception
+       81    96%   cone.app.browser.form
+      208    97%   cone.app.browser.layout
+       52   100%   cone.app.browser.login
+      216    95%   cone.app.browser.referencebrowser
+       69    76%   cone.app.browser.resources
+       43   100%   cone.app.browser.settings
+      150    98%   cone.app.browser.sharing
+      134   100%   cone.app.browser.table
+       87    97%   cone.app.browser.utils
+       48   100%   cone.app.browser.workflow
+       53   100%   cone.app.interfaces
+      332    98%   cone.app.model
+      172   100%   cone.app.security
+       88   100%   cone.app.testing.__init__
+       50   100%   cone.app.testing.mock
+       44   100%   cone.app.tests
+       47   100%   cone.app.utils
+       60   100%   cone.app.workflow
+
+
 Changes
 =======
 
 
 0.9.5dev
 --------
+
+- Update jQuery, jQuery-UI and remove jQuery Tools.
+  [rnix, 2013-08-13]
+
+- ``cone.app.model.Properties`` now supports ``__setitem__`` and setting file
+  ``path`` manually.
+  [rnix, 2013-08-06]
+
+- No more generic tabs binder, refactor settings tabs.
+  [rnix, 2013-08-06]
+
+- Change base styles to twitter bootstrap.
+  [rnix, 2013-08-05]
 
 - Test request can be flagged as XHR request.
   [rnix, 2013-03-23]
