@@ -21,15 +21,15 @@ Settings contains metadata.title by default::
 
     >>> root['settings'].metadata.keys()
     ['title']
-    
+
     >>> root['settings'].metadata.title
     u'settings'
 
 Settings is displayed in navtree by default::
-    
+
     >>> root['settings'].properties.keys()
     ['in_navtree', 'icon']
-    
+
     >>> root['settings'].properties.in_navtree
     True
 
@@ -39,7 +39,7 @@ Settings is displayed in navtree by default::
     >>> cone.app.register_plugin('dummy', BaseNode)
     >>> 'dummy' in root.factories.keys()
     True
-    
+
     >>> cone.app.register_plugin('dummy', BaseNode)
     Traceback (most recent call last):
       ...
@@ -50,7 +50,7 @@ Settings is displayed in navtree by default::
     >>> cone.app.register_plugin_config('dummy', BaseNode)
     >>> 'dummy' in root['settings'].factories.keys()
     True
-    
+
     >>> cone.app.register_plugin_config('dummy', BaseNode)
     Traceback (most recent call last):
       ...
@@ -60,7 +60,7 @@ Settings is displayed in navtree by default::
 
     >>> def custom_main_hook(configurator, global_config, settings):
     ...     print "Custom main hook called"
-    
+
     >>> cone.app.register_main_hook(custom_main_hook)
 
 ``auth_tkt_factory``::
@@ -89,14 +89,14 @@ Settings is displayed in navtree by default::
 Remote address middleware::
 
     >>> from cone.app import make_remote_addr_middleware
-    
+
     >>> class DummyApp(object):
     ...     def __call__(self, environ, start_response):
     ...         print environ['REMOTE_ADDR']
-    
+
     >>> app = DummyApp()
     >>> filter = make_remote_addr_middleware(app, {})
-    
+
     >>> environ = {}
     >>> environ['HTTP_X_REAL_IP'] = '1.2.3.4'
     >>> filter(environ, None)

@@ -12,11 +12,11 @@ cone.app.__init__::
 
     >>> from cone.app.security import authenticated_user
     >>> authenticated_user(layer.current_request)
-    
+
     >>> layer.login('manager')
     >>> authenticated_user(layer.current_request)
     <User object 'manager' at ...>
-    
+
     >>> layer.logout()
 
 ``principal_by_id``::
@@ -24,10 +24,10 @@ cone.app.__init__::
     >>> from cone.app.security import principal_by_id
     >>> principal_by_id('manager')
     <User object 'manager' at ...>
-    
+
     >>> principal_by_id('group:group1')
     <Group object 'group1' at ...>
-    
+
     >>> principal_by_id('inexistent')
 
 ``search_for_principals``::
@@ -35,7 +35,7 @@ cone.app.__init__::
     >>> from cone.app.security import search_for_principals
     >>> search_for_principals('viewer')
     [u'viewer']
-    
+
     >>> search_for_principals('group*')
     [u'group:group1']
 
@@ -53,20 +53,20 @@ The default ACL::
     'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-    
+
 Base security tests::
 
     >>> from pyramid.interfaces import IAuthenticationPolicy
     >>> from pyramid.threadlocal import get_current_registry
     >>> get_current_registry().queryUtility(IAuthenticationPolicy)
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
-    
+
     >>> layer.new_request()
     <cone.app.testing.DummyRequest object at ...>
-    
+
     >>> layer.current_request.registry
     <BaseGlobalComponents base>
-    
+
     >>> layer.login('inexistent')
     >>> from pyramid.security import authenticated_userid
     >>> authenticated_userid(layer.current_request)
@@ -84,47 +84,47 @@ Authenticate as default user::
     >>> layer.login('user')
     >>> authenticated_userid(layer.current_request)
     'user'
-    
+
     >>> has_permission('manage', context, layer.current_request)
     <ACLAllowed instance ...
 
     >>> layer.login('viewer')
     >>> authenticated_userid(layer.current_request)
     'viewer'
-    
+
     >>> has_permission('manage', context, layer.current_request)
     <ACLDenied instance ...
-    
+
     >>> layer.logout()
     >>> authenticated_userid(layer.current_request)
-    
+
     >>> has_permission('manage', context, layer.current_request)
     <ACLDenied instance ...
 
 ACLRegistry::
 
     >>> from cone.app.security import acl_registry
-    
+
     >>> class SomeModel(object): pass
-    
+
     >>> acl = [('Allow', 'role:viewer', ['view'])]
     >>> acl_registry.register(acl, SomeModel)
-    
+
     >>> acl = [('Allow', 'role:viewer', ['edit'])]
     >>> acl_registry.register(acl, node_info_name='some_model')
-    
+
     >>> acl = [('Allow', 'role:viewer', ['delete'])]
     >>> acl_registry.register(acl, SomeModel, 'some_model')
-    
+
     >>> acl_registry.lookup(None, None, [('Allow', 'role:viewer', ['add'])])
     [('Allow', 'role:viewer', ['add'])]
-    
+
     >>> acl_registry.lookup(SomeModel)
     [('Allow', 'role:viewer', ['view'])]
-    
+
     >>> acl_registry.lookup(node_info_name='some_model')
     [('Allow', 'role:viewer', ['edit'])]
-    
+
     >>> acl_registry.lookup(SomeModel, 'some_model')
     [('Allow', 'role:viewer', ['delete'])]
 
@@ -134,25 +134,25 @@ OwnerSupport::
     >>> from cone.app.interfaces import IOwnerSupport
     >>> from cone.app.model import BaseNode
     >>> from cone.app.security import OwnerSupport
-    
+
     >>> class OwnerSupportNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = OwnerSupport
-    
+
     >>> ownersupportnode = OwnerSupportNode()
     >>> ownersupportnode.owner
-    
+
     >>> ownersupportnode.__acl__
     [('Allow', 'system.Authenticated', ['view']), ...]
-    
+
     >>> layer.login('sepp')
     >>> ownersupportnode = OwnerSupportNode()
     >>> ownersupportnode.owner
     'sepp'
-    
+
     >>> ownersupportnode.attrs['owner']
     'sepp'
-    
+
     >>> ownersupportnode.__acl__
     [('Allow', 'sepp', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
     'paste', 'manage_permissions', 'change_state']), 
@@ -167,29 +167,29 @@ OwnerSupport::
     'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-    
+
     >>> layer.login('viewer')
     >>> has_permission('delete', ownersupportnode, layer.current_request)
     <ACLDenied instance ...
-    
+
     >>> layer.login('sepp')
     >>> has_permission('delete', ownersupportnode, layer.current_request)
     <ACLAllowed instance ...
-    
+
     >>> class NoOwnerACLOnBaseNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = OwnerSupport
     ...     @property
     ...     def __acl__(self):
     ...         return [('Allow', 'role:viewer', ['view'])]
-    
+
     >>> ownersupportnode = NoOwnerACLOnBaseNode()
     >>> ownersupportnode.owner
     'sepp'
-    
+
     >>> ownersupportnode.__acl__
     [('Allow', 'role:viewer', ['view'])]
-    
+
     >>> layer.logout()
 
 PrincipalACL::
@@ -199,11 +199,11 @@ PrincipalACL::
     >>> from cone.app.security import PrincipalACL
 
 PrincipalACL is an abstract class. Directly mixing in causes an error on use::
-    
+
     >>> class PrincipalACLNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = PrincipalACL
-    
+
     >>> node = PrincipalACLNode()
     >>> node.__acl__
     Traceback (most recent call last):
@@ -219,19 +219,19 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     ...     @instance_property
     ...     def principal_roles(self):
     ...         return dict()
-    
+
     >>> class MyPrincipalACLNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = MyPrincipalACL
-    
+
     >>> node = MyPrincipalACLNode()
     >>> IPrincipalACL.providedBy(node)
     True
-    
+
     >>> node.principal_roles['someuser'] = ['manager']
     >>> node.principal_roles['otheruser'] = ['editor']
     >>> node.principal_roles['group:some_group'] = ['editor', 'manager']
-    
+
     >>> node.__acl__
     [('Allow', 'someuser', ['cut', 'edit', 'view', 'add', 'change_state', 
     'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
@@ -253,19 +253,19 @@ PrincipalACL role inheritance::
     ('Allow', 'role:viewer', ['view']), 
       ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-    
+
     >>> subchild = child['child'] = MyPrincipalACLNode()
     >>> subchild.role_inheritance = True
     >>> subchild.principal_roles['otheruser'] = ['admin']
     >>> subchild.aggregated_roles_for('inexistent')
     []
-    
+
     >>> subchild.aggregated_roles_for('someuser')
     ['manager', 'editor']
-    
+
     >>> subchild.aggregated_roles_for('otheruser')
     ['admin', 'editor']
-    
+
     >>> subchild.__acl__
     [('Allow', 'someuser', ['cut', 'edit', 'view', 'add', 'change_state', 
     'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
@@ -304,20 +304,20 @@ error message is logged::
     >>> class TestHandler(logging.StreamHandler):
     ...     def handle(self, record):
     ...         print record
-    
+
     >>> handler = TestHandler()
-    
+
     >>> from cone.app.security import logger
     >>> logger.addHandler(handler)
     >>> logger.setLevel(logging.DEBUG)
-    
+
     >>> import cone.app
     >>> old_ugm = cone.app.cfg.auth
     >>> cone.app.cfg.auth = object()
-    
+
     >>> from cone.app.security import authenticate
     >>> request = layer.current_request
-    
+
     >>> authenticate(request, 'foo', 'foo')
     <LogRecord: cone.app, 30, ...security.py, ..., 
     "Authentication plugin <type 'object'> raised an Exception while trying 
@@ -330,9 +330,9 @@ Test Group callback, also logs if an error occurs::
     >>> request = layer.current_request
     >>> groups_callback('user', request)
     [u'role:manager']
-    
+
     >>> layer.logout()
-    
+
     >>> groups_callback('foo', layer.new_request())
     <LogRecord: cone.app, 40, 
     ...security.py, ..., "'object' object has no attribute 'users'">

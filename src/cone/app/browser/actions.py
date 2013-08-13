@@ -343,6 +343,7 @@ class ActionEdit(LinkAction):
 class ActionDelete(LinkAction):
     """Delete action.
     """
+    id = 'toolbaraction-delete'
     css = ''
     icon = 'toolbaricon-delete'
     title = _('action_delete', 'Delete')

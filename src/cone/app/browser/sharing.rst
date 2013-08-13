@@ -12,13 +12,13 @@ Create model root::
 Render sharing tile::
 
     >>> layer.login('manager')
-    
+
     >>> request = layer.new_request()
-    
+
     >>> from cone.app.browser.actions import ActionContext
     >>> request.environ['action_context'] = \
     ...     ActionContext(root, request, 'content')
-    
+
     >>> res = render_tile(root, request, 'sharing')
 
 Render sharing tile with search term.
@@ -56,13 +56,13 @@ Inherited principal roles::
     ...     'id="input-viewer" name="viewer" type="checkbox" value="editor" />'
     >>> res.find(expected) > -1
     True
-    
+
     >>> expected = '<input checked="checked" ' +\
     ...     'class="add_remove_role_for_principal" id="input-viewer" ' +\
     ...     'name="viewer" type="checkbox" value="admin" />'
     >>> res.find(expected) > -1
     True
-    
+
     >>> expected = '<input class="add_remove_role_for_principal" ' +\
     ...     'id="input-viewer" name="viewer" type="checkbox" ' +\
     ...     'value="manager" />'
@@ -75,12 +75,12 @@ Sharing table sorting::
     >>> res = render_tile(child, request, 'sharing')
     >>> res.find('Editor User') > res.find('Viewer User')
     True
-    
+
     >>> request.params['order'] = 'desc'
     >>> res = render_tile(child, request, 'sharing')
     >>> res.find('Editor User') > res.find('Viewer User')
     False
-    
+
     >>> del request.params['order']
 
 Users defined in ``principal_roles`` but not exists in ugm are skipped. This
@@ -92,9 +92,9 @@ could happen if user was deleted but principal roles were not::
     False
 
 Add role for user::
-    
+
     >>> from cone.app.browser.ajax import ajax_tile
-    
+
     >>> request.params['id'] = 'viewer'
     >>> request.params['role'] = 'manager'
     >>> request.params['bdajax.action'] = 'add_principal_role'
@@ -125,7 +125,7 @@ Add role for user not added yet::
     'payload': u'', 
     'mode': 'NONE', 
     'selector': 'NONE'}
-    
+
     >>> child.principal_roles
     {'viewer': ['admin', 'manager'], 
     'inexistent': ['viewer'], 
@@ -181,7 +181,7 @@ Principal id gets removed if no more roles left::
     'payload': u'', 
     'mode': 'NONE', 
     'selector': 'NONE'}
-    
+
     >>> child.principal_roles
     {'viewer': ['admin'], 
     'inexistent': ['viewer'], 
@@ -219,5 +219,5 @@ Inexistent userid::
     'payload': u'', 
     'mode': 'NONE', 
     'selector': 'NONE'}
-    
+
     >>> layer.logout()

@@ -33,7 +33,7 @@ Metadata.::
 
     >>> root.metadata
     <cone.app.model.Metadata object at ...>
-    
+
     >>> root.metadata.title
     u'no_title'
 
@@ -43,13 +43,13 @@ Nodeinfo.::
 
     >>> root.nodeinfo
     <cone.app.model.NodeInfo object at ...>
-    
+
     >>> root.nodeinfo.node
     <class 'cone.app.model.BaseNode'>
-    
+
     >>> root.nodeinfo.title
     "<class 'cone.app.model.BaseNode'>"
-    
+
     >>> root.nodeinfo.inexistent
 
 
@@ -64,19 +64,19 @@ FactoryNode
     ...         'foo': BaseNode,
     ...         'bar': BaseNode,
     ...     }
-    
+
     >>> root = Root()
     >>> root['foo']
     <BaseNode object 'foo' at ...>
-    
+
     >>> root['bar']
     <BaseNode object 'bar' at ...>
-    
+
     >>> root['baz']
     Traceback (most recent call last):
       ...
     KeyError: 'baz'
-    
+
     >>> [_ for _ in root]
     ['foo', 'bar']
 
@@ -88,7 +88,7 @@ AdapterNode
 
     >>> from cone.app.model import BaseNode
     >>> from cone.app.model import AdapterNode
-    
+
     >>> toadapt = BaseNode()
     >>> toadapt['foo'] = BaseNode()
     >>> toadapt['bar'] = BaseNode()
@@ -108,7 +108,7 @@ Check ``AdapterNode``.::
 
     >>> adapter.attrs.title
     'Some title'
-    
+
 The adapter node is responsible to return other adapter node or application
 nodes on ``__getitem__`` if application hierarchy continues.
 
@@ -124,10 +124,10 @@ This dummy class does a static mapping on __getitem__.::
     >>> child = node['aliased']
     >>> child
     <AdapterNode object 'aliased' at ...>
-    
+
     >>> child.model
     <BaseNode object 'bar' at ...>
-    
+
     >>> [key for key in node]
     ['foo', 'bar']
 
@@ -137,7 +137,7 @@ structure.::
 
     >>> child.path
     ['adapter', 'aliased']
-    
+
     >>> child.model.path
     [None, 'bar']
 
@@ -165,13 +165,13 @@ Check ``INodeAdapter`` interface.::
 
     >>> metadata.title
     'some title'
-    
+
     >>> metadata.description
     'some description'
-    
+
     >>> metadata.creator
     'john doe'
-    
+
     >>> metadata.inexistent
 
 ``__getitem__``::
@@ -217,7 +217,7 @@ Lookup Node info.::
 
     >>> nodeinfo.addables
     ['basenode']
-    
+
     >>> nodeinfo.inexistent
 
 ``__getitem__``::
@@ -244,11 +244,11 @@ UUIDAttributeAware
     >>> class UUIDNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = UUIDAttributeAware
-    
+
     >>> node = UUIDNode()
     >>> node.uuid
     UUID('...')
-    
+
     >>> node.attrs['uuid']
     UUID('...')
 
@@ -260,14 +260,14 @@ UUIDAsName
     >>> class UUIDAsNameNode(BaseNode):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = UUIDAsName
-    
+
     >>> node = UUIDAsNameNode()
     >>> node.uuid
     UUID('...')
-    
+
     >>> node.name
     '...'
-    
+
     >>> str(node.uuid) == node.name
     True
 
@@ -282,31 +282,31 @@ UUIDAsName
       <class 'UUIDAsNameNode'>: ...
         <class 'UUIDAsNameNode'>: ...
         <class 'UUIDAsNameNode'>: ...
-    
+
     >>> copy = node[child.name].copy()
     Traceback (most recent call last):
       ...
     RuntimeError: Shallow copy useless on UUID aware node trees, use deepcopy.
-    
+
     >>> copy = child.deepcopy()
     >>> copy.printtree()
     <class 'UUIDAsNameNode'>: ...
       <class 'UUIDAsNameNode'>: ...
       <class 'UUIDAsNameNode'>: ...
-    
+
     >>> copy.uuid == child.uuid
     False
-    
+
     >>> sorted(copy.keys()) == sorted(child.keys())
     False
-    
+
     >>> copy.keys()
     ['...', '...']
-    
+
     >>> copy.values()
     [<UUIDAsNameNode object '...' at ...>, 
     <UUIDAsNameNode object '...' at ...>]
-    
+
     >>> copy[copy.keys()[0]].name == copy.keys()[0]
     True
 
@@ -319,10 +319,10 @@ You can use the ``Properties`` object for any kind of mapping.::
     >>> from cone.app.model import Properties
     >>> p1 = Properties()
     >>> p1.prop = 'Foo'
-    
+
     >>> p2 = Properties()
     >>> p2.prop = 'Bar'
-    
+
     >>> p1.prop, p2.prop
     ('Foo', 'Bar')
 
@@ -352,54 +352,54 @@ Unauthorized just permits access to unprotected property::
     >>> props.viewprotected
     >>> props.unprotected
     True
-    
+
     >>> 'viewprotected' in props
     False
-    
+
     >>> 'unprotected' in props
     True
-    
+
     >>> props.keys()
     ['unprotected']
-    
+
     >>> props.get('viewprotected')
     >>> props.get('unprotected')
     True
-    
+
     >>> props['viewprotected']
     Traceback (most recent call last):
       ...
     KeyError: u"No permission to access 'viewprotected'"
-    
+
     >>> props['unprotected']
     True
 
 Authenticate, both properties are now available::
 
     >>> layer.login('viewer')
-    
+
     >>> props['viewprotected']
     True
-    
+
     >>> props.viewprotected
     True
-    
+
     >>> props.unprotected
     True
-    
+
     >>> props.keys()
     ['unprotected', 'viewprotected']
-    
+
     >>> props.get('viewprotected')
     True
-    
+
     >>> props.get('unprotected')
     True
-    
+
     >>> props.viewprotected = False
     >>> props.viewprotected
     False
-    
+
     >>> layer.logout()
 
 
@@ -413,7 +413,7 @@ Dummy environment.::
     >>> import os
     >>> import tempfile
     >>> tempdir = tempfile.mkdtemp()
-    
+
 Create XML properties with path and optional data.::
 
     >>> from cone.app.model import XMLProperties
@@ -421,10 +421,10 @@ Create XML properties with path and optional data.::
     ...                       data={'foo': u'äöüß'})
 
 Testing helper functions.::
-    
+
     >>> props._keys()
     ['foo']
-    
+
     >>> props._values()
     [u'\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f']
 
@@ -489,9 +489,9 @@ used safely.::
 
     >>> props.foo = 'foo'
     >>> props.bar = '<bar>äöü</bar>'
-    
+
 Call props and check result.::
-    
+
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.xml')) as file:
     ...     file.read().split('\n')
@@ -527,7 +527,7 @@ Create XML properties from existing file.::
     >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'))
     >>> props._keys()
     ['foo', 'effective', 'empty', 'keywords', 'dictlike', 'bar']
-    
+
     >>> props._values()
     [u'foo', 
     datetime.datetime(2010, 1, 1, 10, 15), 
@@ -541,7 +541,7 @@ Delete property.::
     >>> del props['foo']
     >>> props._keys()
     ['effective', 'empty', 'keywords', 'dictlike', 'bar']
-    
+
     >>> del props['inexistent']
     Traceback (most recent call last):
       ...
@@ -605,7 +605,7 @@ Change order of odict and check results::
     '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
     '</properties>', 
     '']
-    
+
     >>> os.remove(os.path.join(tempdir, 'props.xml'))
 
 ConfigProperties
@@ -641,7 +641,7 @@ Overwrite ``foo`` and add ``bar`` properties.::
     >>> props.bar = 'bar'
     
 Call props and check result.::
-    
+
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
     ...     file.read()
@@ -652,7 +652,7 @@ Create config properties from existing file.::
     >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
     >>> props.foo
     'foo'
-    
+
     >>> props.bar
     'bar'
 
@@ -660,7 +660,7 @@ Test ``__getitem__``::
 
     >>> props['foo']
     'foo'
-    
+
     >>> props['inexistent']
     Traceback (most recent call last):
       ...
@@ -670,7 +670,7 @@ Test ``get``::
 
     >>> props.get('foo')
     'foo'
-    
+
     >>> props.get('inexistent', 'default')
     'default'
 
@@ -678,7 +678,7 @@ Test ``__conteins__``::
 
     >>> 'foo' in props
     True
-    
+
     >>> 'inexistent' in props
     False
 
@@ -688,7 +688,7 @@ Delete property.::
     Traceback (most recent call last):
       ...
     KeyError: u'property inexistent does not exist'
-    
+
     >>> del props['foo']
     >>> props.foo
 

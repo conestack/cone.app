@@ -37,12 +37,8 @@ cfg.default_node_icon = 'static/images/default_node_icon.png'
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
-    'static/jquery1.9.1.min.js',
-    'static/jquery.migrate1.2.1.min.js',
-    'static/jqueryui/jquery-ui-1.10.3.custom.min.js',
     '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
-#    'static/cdn/bootstrap/js/bootstrap.js',
 ]
 cfg.js.protected = [
     'static/cone.app.js',
@@ -63,6 +59,10 @@ cfg.css.protected = list()
 cfg.merged = Properties()
 cfg.merged.js = Properties()
 cfg.merged.js.public = [
+    (static_resources, 'jquery1.9.1.min.js'),
+    (static_resources, 'jquery.migrate1.2.1.min.js'),
+    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
+#    (static_resources, 'bootstrap/js/bootstrap.js'),
 ]
 cfg.merged.js.protected = [
     (static_resources, 'cookie_functions.js'),

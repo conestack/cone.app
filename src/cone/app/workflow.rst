@@ -8,24 +8,24 @@ Cone workflow behaviors::
 Test env provides mock node with workflow behaviors configured::
 
     >>> from cone.app.testing.mock import WorkflowNode
-    
+
     >>> node = WorkflowNode()
     >>> IWorkflowState.providedBy(node)
     True
-    
+
     >>> get_workflow(node.__class__, node.properties.wf_name)
     <repoze.workflow.workflow.Workflow object at ...>
-    
+
     >>> node.state
     u'initial'
-    
+
     >>> node.state = 'foo'
     >>> node.attrs['state']
     'foo'
-    
+
     >>> node.attrs['state'] is node.state
     True
-    
+
     >>> initialize_workflow(node)
     >>> node.state
     u'initial'
@@ -36,11 +36,11 @@ Test copy::
     >>> child = root['child'] = WorkflowNode()
     >>> root.state == child.state == u'initial'
     True
-    
+
     >>> root.state = child.state = u'final'
     >>> root.state == child.state == u'final'
     True
-    
+
     >>> copied = root.copy()
     >>> copied.state == copied['child'].state == 'initial'
     True
@@ -71,28 +71,28 @@ Test ``state_acls``::
     >>> node = StateACLWorkflowNode()
     >>> get_workflow(node.__class__, node.properties.wf_name)
     <repoze.workflow.workflow.Workflow object at ...>
-    
+
     >>> node.properties.wf_name
     u'dummy'
-    
+
     >>> IWorkflowState.providedBy(node)
     True
-    
+
     >>> node.__acl__
     [('Allow', 'role:manager', ['manage', 'edit', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-    
+
     >>> layer.login('manager')
-    
+
     >>> request = layer.new_request()
     >>> wf = get_workflow(node.__class__, node.properties.wf_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state
     u'final'
-    
+
     >>> layer.logout()
-    
+
     >>> node.__acl__
     [('Allow', 'role:manager', ['view', 'edit', 'change_state']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]

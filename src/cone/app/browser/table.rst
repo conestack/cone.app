@@ -10,10 +10,10 @@ at ``self.table_tile_name``, normally bound to template
 Imports and dummy context::
 
     >>> from cone.app.model import BaseNode
-    
+
     >>> model = BaseNode()
     >>> request = layer.new_request()
-    
+
     >>> from cone.app.browser.table import (
     ...     RowData,
     ...     Table,
@@ -28,7 +28,7 @@ Imports and dummy context::
     Traceback (most recent call last):
       ...
     NotImplementedError: Abstract table does not implement ``item_count``.
-    
+
     >>> table.sorted_rows(None, None, None, None)
     Traceback (most recent call last):
       ...
@@ -42,12 +42,12 @@ Imports and dummy context::
     ...     @property
     ...     def item_count(self):
     ...         return 21
-    
+
     >>> table = MyTable('cone.app:browser/templates/table.pt', None, 'table')
     >>> table.request = request
     >>> table.item_count
     21
-    
+
     >>> batch = TableBatch(table)
     >>> batch.model = model
     >>> batch.request = request
@@ -84,10 +84,10 @@ Imports and dummy context::
     >>> slice = TableSlice(table, model, request)
     >>> slice.slice
     (0, 10)
-    
+
     >>> slice.rows[0]['col_1']
     'Col 1 Value'
-    
+
     >>> slice.rows[0]['col_2']
     'Col 2 Value'
 
@@ -96,14 +96,14 @@ defined::
 
     >>> table.col_defs
     []
-    
+
     >>> res = table(model, request)
     >>> res.find('Col 1 Value') > -1
     False
-    
+
     >>> res.find('Col 2 Value') > -1
     False
-    
+
     >>> table.col_defs = [
     ...     {
     ...         'id': 'col_1',
@@ -120,11 +120,11 @@ defined::
     ...         'content': 'string',
     ...     },
     ... ]
-    
+
     >>> res = table(model, request)
     >>> res.find('Col 1 Value') > -1
     True
-    
+
     >>> res.find('Col 2 Value') > -1
     True
 
@@ -160,7 +160,7 @@ A complete example::
     >>> from datetime import datetime
     >>> from cone.app.browser.actions import ViewLink
     >>> view_link = ViewLink()
-    
+
     >>> @tile('mytabletile', 'cone.app:browser/templates/table.pt',
     ...       permission='view')
     ... class MyTable(Table):
@@ -219,7 +219,7 @@ A complete example::
     ...         # sorting goes here (i.e.)
     ...         
     ...         return rows[start:end]
-    
+
 Rendering fails unauthorized, 'view' permission is required::
 
     >>> from cone.tile import render_tile
@@ -246,17 +246,18 @@ Sort header with query white list param::
     ajax:target="http://example.com/?sort=col_2&amp;b_page=1&amp;foo=bar&amp;order=desc&amp;size=10"...
 
 Structure content::
-    
+
     >>> rendered
     u'\n  <div id="mytable"\n
       ...
     <a\n     
+    id="toolbaraction-view"\n     
     href="http://example.com/"\n     
     title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/"\n     
-    ajax:action="content:#content:inner">Foo</a>...
-    
+    ajax:action="content:#content:inner"><i\n         
+    class="toolbaricon-view"></i>Foo</a>...
 
 String::
 
@@ -270,5 +271,5 @@ Datetime::
     >>> expected = '01.04.2011 00:00'
     >>> rendered.find(expected) != -1
     True
-    
+
     >>> layer.logout()

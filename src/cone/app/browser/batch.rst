@@ -5,13 +5,13 @@ Abstract batch tile. A deriving class must implement the ``vocab``
 property, which promises to return a list of dict like objects, providing the
 following keys:
 
-    - ``page`` - the displayed page name, normally a number, or a character.
-    
-    - ``current`` - Flag wether page is current page or not.
-    
-    - ``visible`` - Flag wether page is visible or not.
-    
-    - ``url`` - Target url.
+- ``page`` - the displayed page name, normally a number, or a character.
+
+- ``current`` - Flag wether page is current page or not.
+
+- ``visible`` - Flag wether page is visible or not.
+
+- ``url`` - Target url.
 
 Required imports.::
 
@@ -76,7 +76,7 @@ No left or right ellipsis sind no batchrange exceeding::
 
     >>> batch.leftellipsis
     u''
-    
+
     >>> batch.rightellipsis
     u''
 
@@ -131,7 +131,7 @@ No visible pages in vocab return ``dummypage`` on prevpage and nextpage::
 
     >>> batch.prevpage
     {'current': False, 'visible': False, 'url': '', 'page': ''}
-    
+
     >>> batch.nextpage
     {'current': False, 'visible': False, 'url': '', 'page': ''}
 
@@ -305,16 +305,16 @@ Batchrange ends::
     'visible': False, 
     'url': 'http://example.com/', 
     'page': '2'}
-    
+
     >>> batch.pages[-1]
     {'current': False, 
     'visible': False, 
     'url': 'http://example.com/', 
     'page': '4'}
-    
+
     >>> batch.leftellipsis
     u'...'
-    
+
     >>> batch.rightellipsis
     u''
 
@@ -322,22 +322,22 @@ Batchrange starts::
 
     >>> batch._vocab[1]['current'] = True
     >>> batch._vocab[3]['current'] = False
-    
+
     >>> batch.pages[0]
     {'current': False, 
     'visible': False, 
     'url': 'http://example.com/', 
     'page': '0'}
-    
+
     >>> batch.pages[-1]
     {'current': False, 
     'visible': False, 
     'url': 'http://example.com/', 
     'page': '2'}
-    
+
     >>> batch.leftellipsis
     u''
-    
+
     >>> batch.rightellipsis
     u'...'
 
@@ -346,25 +346,25 @@ Batchrange between start and end::
     >>> batch._vocab[0]['visible'] = True
     >>> batch._vocab[2]['visible'] = True
     >>> batch._vocab[4]['visible'] = True
-    
+
     >>> batch._vocab[1]['current'] = False
     >>> batch._vocab[2]['current'] = True
-    
+
     >>> batch.pages[0]
     {'current': False, 
     'visible': True, 
     'url': 'http://example.com/', 
     'page': '1'}
-    
+
     >>> batch.pages[-1]
     {'current': False, 
     'visible': True, 
     'url': 'http://example.com/', 
     'page': '3'}
-    
+
     >>> batch.leftellipsis
     u'...'
-    
+
     >>> batch.rightellipsis
     u'...'
 
@@ -404,7 +404,7 @@ Render batch::
     >>> res = render_tile(model, request, 'testbatch')
     >>> res.find('href="http://example.com/?b_page=1"') > -1
     True
-    
+
     >>> res.find('href="http://example.com/?b_page=2"') > -1
     True
 
