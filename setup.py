@@ -1,19 +1,24 @@
-from setuptools import setup, find_packages
-import sys, os
+import os
+from setuptools import (
+    setup,
+    find_packages,
+)
+
 
 version = '0.9.5dev'
 shortdesc = 'Web application stub'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 
+
 setup(name='cone.app',
       version=version,
       description=shortdesc,
       long_description=longdesc,
       classifiers=[
-            'Environment :: Web Environment',
-            'Programming Language :: Python',
-            'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+          'Environment :: Web Environment',
+          'Programming Language :: Python',
+          'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
       ],
       keywords='node pyramid cone web',
       author='BlueDynamics Alliance',
@@ -42,7 +47,7 @@ setup(name='cone.app',
           'yafowil.webob',
           'repoze.workflow',
       ],
-      extras_require = dict(
+      extras_require=dict(
           test=[
                 'interlude',
                 'plone.testing',
