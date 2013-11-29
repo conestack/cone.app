@@ -117,7 +117,7 @@ Create dummy container::
 
 Authenticate::
 
-    >>> layer.login('admin')
+    >>> layer.login('manager')
 
 Render without factory::
 
@@ -147,7 +147,7 @@ Render with valid factory on adapter node::
 
 Render with submitted data::
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> request = layer.current_request
     >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
@@ -181,7 +181,7 @@ Render with 'came_from' set::
 
 Render with ajax flag::
 
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> request.params['ajax'] = '1'
     >>> res = render_tile(root, request, 'add')
     >>> request.environ['cone.app.continuation']
@@ -200,7 +200,7 @@ Add view::
 
     >>> from cone.app.browser.authoring import add
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> request.params['factory'] = 'mynode'
     >>> request.params['action.addform.add'] = '1'
@@ -372,7 +372,7 @@ Deleting
     
     >>> node['child'] = CallableNode()
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> render_tile(node['child'], request, 'delete')
     u''
@@ -400,7 +400,7 @@ Add Items Dropdown Widget
 
 Dropdown menu containing links to the addforms of allowed child nodes::
 
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
 

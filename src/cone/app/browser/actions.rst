@@ -295,7 +295,7 @@ ActionSharing
     >>> action(sharingmodel, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> has_permission('manage_permissions', sharingmodel, request)
     <ACLAllowed instance at ... with msg 
     "ACLAllowed permission 'manage_permissions' via ACE ...
@@ -341,7 +341,7 @@ ActionState
     >>> action(wfmodel, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> has_permission('change_state', wfmodel, request)
     <ACLAllowed instance at ... with msg 
     "ACLAllowed permission 'change_state' via ACE ...
@@ -465,7 +465,7 @@ ActionDelete
     >>> action(model, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/root/model/delete"\n     
@@ -499,7 +499,7 @@ ActionDeleteChildren
     >>> action(model, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/root/model/delete_children"\n     
@@ -550,7 +550,7 @@ ActionCut
     >>> action(model, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/copysupport/cut"\n     
@@ -580,7 +580,7 @@ ActionCopy
     >>> action(model, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/copysupport/copy"\n     
@@ -610,7 +610,7 @@ ActionPaste
     >>> action(model, request)
     u''
     
-    >>> layer.login('admin')
+    >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
     href="http://example.com/copysupport/paste"\n     
