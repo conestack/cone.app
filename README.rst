@@ -38,6 +38,9 @@ Changes
 0.9.5dev
 --------
 
+- Factory node can be invalidated now.
+  [rnix, 2014-01-15]
+
 - Test request can be flagged as XHR request.
   [rnix, 2013-03-23]
 

@@ -80,6 +80,27 @@ FactoryNode
     >>> [_ for _ in root]
     ['foo', 'bar']
 
+    >>> from node.interfaces import IInvalidate
+    >>> IInvalidate.providedBy(root)
+    True
+
+    >>> root.storage.values()
+    [<BaseNode object 'foo' at ...>, <BaseNode object 'bar' at ...>]
+
+    >>> root.invalidate()
+    >>> root.storage.values()
+    []
+
+    >>> root.values()
+    [<BaseNode object 'foo' at ...>, <BaseNode object 'bar' at ...>]
+
+    >>> root.storage.values()
+    [<BaseNode object 'foo' at ...>, <BaseNode object 'bar' at ...>]
+
+    >>> root.invalidate('foo')
+    >>> root.storage.values()
+    [<BaseNode object 'bar' at ...>]
+
 
 AdapterNode
 -----------

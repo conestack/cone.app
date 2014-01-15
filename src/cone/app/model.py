@@ -26,6 +26,7 @@ from node.behaviors import (
     Nodify,
     Lifecycle,
     OdictStorage,
+    VolatileStorageInvalidate,
 )
 from node.utils import instance_property
 from zope.interface import implementer
@@ -127,7 +128,10 @@ class BaseNode(object):
 @implementer(IFactoryNode)
 class FactoryNode(BaseNode):
     __metaclass__ = plumber
-    __plumbing__ = ChildFactory
+    __plumbing__ = (
+        VolatileStorageInvalidate,
+        ChildFactory,
+    )
 
 
 class AppRoot(FactoryNode):
