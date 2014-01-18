@@ -1,8 +1,8 @@
 import os
 import uuid
 import types
+import logging
 import ConfigParser
-from lxml import etree
 from odict import odict
 from plumber import (
     plumber,
@@ -54,6 +54,14 @@ from .utils import (
     DatetimeHelper,
     app_config,
 )
+
+logger = logging.getLogger('cone.app')
+
+try:
+    from lxml import etree
+except ImportError:
+    logger.warning('``lxml`` not present. ``cone.app.model.XMLProperties`` '
+                   'will not work')
 
 _ = TranslationStringFactory('cone.app')
 

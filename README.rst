@@ -38,6 +38,9 @@ Changes
 0.9.5dev
 --------
 
+- ``lxml`` is no longer a hard dependency.
+  [rnix, 2014-01-18]
+
 - Factory node can be invalidated now.
   [rnix, 2014-01-15]
 
