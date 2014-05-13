@@ -35,8 +35,8 @@ Changes
 =======
 
 
-0.9.5dev
---------
+0.9.5
+-----
 
 - ``lxml`` is no longer a hard dependency.
   [rnix, 2014-01-18]
