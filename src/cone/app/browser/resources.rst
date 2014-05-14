@@ -78,7 +78,7 @@ Merged Assets::
     (<pyramid.static.static_view object at ...>, 
     'cdn/jquery.tools.min.js'), 
     (<pyramid.static.static_view object at ...>, 
-    'cdn/jquery-ui-1.8.18.min.js')]
+    'cdn/jquery-ui-1.8.18.min.js')...]
     
     >>> static = assets[0][0]
     >>> resource = assets[0][1]
