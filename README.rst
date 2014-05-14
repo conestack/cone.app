@@ -70,8 +70,14 @@ Changes
 =======
 
 
-0.9.5dev
---------
+0.9.5
+-----
+
+- ``lxml`` is no longer a hard dependency.
+  [rnix, 2014-01-18]
+
+- Factory node can be invalidated now.
+  [rnix, 2014-01-15]
 
 - Update jQuery, jQuery-UI and remove jQuery Tools.
   [rnix, 2013-08-13]

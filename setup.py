@@ -5,7 +5,7 @@ from setuptools import (
 )
 
 
-version = '0.9.5dev'
+version = '0.9.5'
 shortdesc = 'Web application stub'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -32,7 +32,6 @@ setup(name='cone.app',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'lxml',
           'Babel',
           'lingua',
           'Chameleon',
@@ -48,13 +47,17 @@ setup(name='cone.app',
           'repoze.workflow',
       ],
       extras_require=dict(
+          lxml=[
+              'lxml',
+          ],
           test=[
-                'interlude',
-                'plone.testing',
-                'unittest2',
+              'lxml',
+              'interlude',
+              'plone.testing',
+              'unittest2',
           ],
           docs=[
-                'Sphinx',
+              'Sphinx',
           ],
       ),
       tests_require=[

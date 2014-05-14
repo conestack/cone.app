@@ -1,8 +1,8 @@
 import os
 import uuid
 import types
+import logging
 import ConfigParser
-from lxml import etree
 from odict import odict
 from plumber import (
     plumber,
@@ -26,6 +26,7 @@ from node.behaviors import (
     Nodify,
     Lifecycle,
     OdictStorage,
+    VolatileStorageInvalidate,
 )
 from node.utils import instance_property
 from zope.interface import implementer
@@ -53,6 +54,14 @@ from .utils import (
     DatetimeHelper,
     app_config,
 )
+
+logger = logging.getLogger('cone.app')
+
+try:
+    from lxml import etree
+except ImportError:
+    logger.warning('``lxml`` not present. ``cone.app.model.XMLProperties`` '
+                   'will not work')
 
 _ = TranslationStringFactory('cone.app')
 
@@ -127,7 +136,10 @@ class BaseNode(object):
 @implementer(IFactoryNode)
 class FactoryNode(BaseNode):
     __metaclass__ = plumber
-    __plumbing__ = ChildFactory
+    __plumbing__ = (
+        VolatileStorageInvalidate,
+        ChildFactory,
+    )
 
 
 class AppRoot(FactoryNode):

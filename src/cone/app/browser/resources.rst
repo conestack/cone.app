@@ -73,9 +73,10 @@ Merged Assets::
     >>> import pkg_resources
     >>> assets = cone.app.cfg.merged.js.public
     >>> assets
+
     [(<pyramid.static.static_view object at ...>, 'jquery1.9.1.min.js'), 
     (<pyramid.static.static_view object at ...>, 'jquery.migrate1.2.1.min.js'), 
-    (<pyramid.static.static_view object at ...>, 'jqueryui/jquery-ui-1.10.3.custom.min.js')]
+    (<pyramid.static.static_view object at ...>, 'jqueryui/jquery-ui-1.10.3.custom.min.js')...]
 
     >>> static = assets[0][0]
     >>> resource = assets[0][1]
