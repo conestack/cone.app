@@ -73,7 +73,7 @@ Merged Assets::
     >>> import pkg_resources
     >>> assets = cone.app.cfg.merged.js.public
     >>> assets
-    [(<pyramid.static.static_view object at ...>, 'jquery-1.10.2.js'), 
+    [(<pyramid.static.static_view object at ...>, 'jquery-1.9.1.js'), 
     (<pyramid.static.static_view object at ...>, 'jquery.migrate-1.2.1.js'), 
     (<pyramid.static.static_view object at ...>, 'jqueryui/jquery-ui-1.10.3.custom.min.js')...]
 
@@ -88,7 +88,7 @@ Merged Assets::
     >>> subpath = os.path.join(static.app.resource_name, resource)
     >>> path = pkg_resources.resource_filename(static.app.package_name, subpath)
     >>> path
-    '/.../cone/app/browser/static/jquery-1.10.2.js'
+    '/.../cone/app/browser/static/jquery-1.9.1.js'
 
     >>> data = ''
     >>> with open(path, 'r') as file:

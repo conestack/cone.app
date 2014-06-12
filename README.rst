@@ -69,6 +69,22 @@ Coverage Report
 Changes
 =======
 
+0.9.6.dev0 (unreleased)
+-----------------------
+
+- Update jQuery, jQuery-UI and remove jQuery Tools.
+  [rnix, 2013-08-13]
+
+- ``cone.app.model.Properties`` now supports ``__setitem__`` and setting file
+  ``path`` manually.
+  [rnix, 2013-08-06]
+
+- No more generic tabs binder, refactor settings tabs.
+  [rnix, 2013-08-06]
+
+- Change base styles to twitter bootstrap.
+  [rnix, 2013-08-05]
+
 
 0.9.5
 -----

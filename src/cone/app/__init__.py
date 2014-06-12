@@ -59,8 +59,8 @@ cfg.css.protected = list()
 cfg.merged = Properties()
 cfg.merged.js = Properties()
 cfg.merged.js.public = [
-    (static_resources, 'jquery-1.10.2.js'),
-#    (static_resources, 'jquery-1.10.2.min.js'),
+    (static_resources, 'jquery-1.9.1.js'),
+#    (static_resources, 'jquery-1.9.1.min.js'),
     (static_resources, 'jquery.migrate-1.2.1.js'),
 #    (static_resources, 'jquery.migrate-1.2.1.min.js'),
     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
