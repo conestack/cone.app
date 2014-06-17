@@ -434,17 +434,13 @@ div.pretty_batch a.invisible {
 }
 
 /* footer */
-#footer_wrapper {
-    background:#545C60;
-    padding-top:0.5em;
-    position:fixed;
-    width:100%;
-    bottom:0;
-}
 #footer {
     background:#383E40;
     color:#fff;
     padding:1em 1em 1em 35px;
+    position:fixed;
+    width:100%;
+    bottom:0;
 }
 #footer a {
     color:#fff;
