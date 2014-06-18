@@ -88,7 +88,10 @@ class Action(object):
 
     @property
     def action_scope(self):
-        return self.request.environ['action_context'].scope
+        action_context = self.request.environ.get('action_context', None)
+        if action_context is None:
+            return ''
+        return action_context.scope
 
     def permitted(self, permission):
         return has_permission(permission, self.model, self.request)
