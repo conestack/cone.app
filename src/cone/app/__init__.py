@@ -64,7 +64,7 @@ cfg.merged.js.public = [
     (static_resources, 'jquery.migrate-1.2.1.js'),
 #    (static_resources, 'jquery.migrate-1.2.1.min.js'),
     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
-#    (static_resources, 'bootstrap/js/bootstrap.js'),
+    (static_resources, 'bootstrap/js/bootstrap.js'),
 ]
 cfg.merged.js.protected = [
     (static_resources, 'cookie_functions.js'),
