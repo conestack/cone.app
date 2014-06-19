@@ -175,7 +175,7 @@ def configure_yafowil_addon_resources(config):
             all_css.append(css)
     all_js = sorted(all_js, key=lambda x: x['order'])
     all_css = sorted(all_css, key=lambda x: x['order'])
-    for js in all_js:
+    for js in reversed(all_js):
         # bdajax needs to be loaded first in order to avoid double binding on
         # document ready
         idx = cone.app.cfg.js.public.index('++resource++bdajax/bdajax.js') + 1

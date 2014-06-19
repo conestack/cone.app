@@ -72,6 +72,9 @@ Changes
 0.9.6.dev0 (unreleased)
 -----------------------
 
+- Fix yafowil JS resources delivery order.
+  [rnix, 2014-06-19]
+
 - Do not fail in ``cone.app.browser.actions.Action.action_scope`` if no
   ``ActionContext`` defined. Useful for testing.
   [rnix, 2014-06-18]
