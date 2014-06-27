@@ -2,21 +2,23 @@
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
 
-  <tal:tabs define="tabs context.tabs">
-    <ul class="ajaxtabs">
-      <li tal:repeat="tab tabs">
-          <a class="w1"
-             href=""
-             ajax:target="${tab['target']}"
-             tal:attributes="title tab['title']"
-             tal:content="tab['title']">
-            Title
-          </a>
-      </li>
-    </ul>
-    <div class="ajaxtabpanes">
-      <div class="ajaxtabpane" style="display:block"></div>
+  <div>
+    <div class="settingstabs">
+      <tal:tabs define="tabs context.tabs">
+        <a tal:repeat="tab tabs"
+           class="settingstab"
+           href=""
+           ajax:target="${tab['target']}"
+           tal:attributes="title tab['title']"
+           tal:content="tab['title']">
+          Title
+        </a>
+      </tal:tabs>
     </div>
-  </tal:tabs>
-  
+  </div>
+
+  <div class="visualClear"></div>
+
+  <div class="settingstabpane"></div>
+
 </tal:block>
