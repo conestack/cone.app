@@ -143,6 +143,12 @@ cfg.yafowil.js_skip = set()
 cfg.yafowil.css_skip = set()
 
 
+def is_remote_resource(resource):
+    return resource.startswith('http://') \
+        or resource.startswith('https://') \
+        or resource.startswith('//')
+
+
 def configure_yafowil_addon_resources(config):
     import cone.app
     all_js = list()
@@ -161,13 +167,13 @@ def configure_yafowil_addon_resources(config):
         for js in resources['js']:
             if js['group'] in cone.app.cfg.yafowil.js_skip:
                 continue
-            if not js['resource'].startswith('http'):
+            if not is_remote_resource(js['resource']):
                 js['resource'] = resource_name + '/' + js['resource']
             all_js.append(js)
         for css in resources['css']:
             if css['group'] in cone.app.cfg.yafowil.css_skip:
                 continue
-            if not css['resource'].startswith('http'):
+            if not is_remote_resource(css['resource']):
                 css['resource'] = resource_name + '/' + css['resource']
             all_css.append(css)
     all_js = sorted(all_js, key=lambda x: x['order'])

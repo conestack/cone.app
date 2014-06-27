@@ -10,6 +10,7 @@ from cone.tile import (
     tile,
     Tile,
 )
+from cone.app import is_remote_resource
 from cone.app.utils import app_config
 
 
@@ -102,6 +103,6 @@ class Resources(Tile):
         return ret
 
     def resource_url(self, resource):
-        if resource.startswith('http'):
+        if is_remote_resource(resource):
             return resource
         return '%s/%s' % (self.request.application_url, resource)

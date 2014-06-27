@@ -37,6 +37,12 @@ Changes
 0.9.6.dev0 (unreleased)
 -----------------------
 
+- Introduce ``cone.app.is_remote_resource``.
+  [rnix, 2014-06-27]
+
+- CSS background image path from site root.
+  [rnix, 2014-06-27]
+
 - Fix yafowil JS resources delivery order.
   [rnix, 2014-06-19]
 
