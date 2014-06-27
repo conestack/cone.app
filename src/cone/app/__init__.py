@@ -37,6 +37,7 @@ cfg.default_node_icon = 'static/images/default_node_icon.png'
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
+    '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
 ]
 cfg.js.protected = [
@@ -46,8 +47,9 @@ cfg.js.protected = [
 # CSS Resources
 cfg.css = Properties()
 cfg.css.public = [
-    'static/cdn/jquery-ui-1.8.18.css',
     '++resource++bdajax/bdajax.css',
+    'static/jqueryui/jquery-ui-1.10.0.custom.css',
+    'static/styles.css',
 ]
 cfg.css.protected = list()
 
@@ -55,18 +57,18 @@ cfg.css.protected = list()
 cfg.merged = Properties()
 cfg.merged.js = Properties()
 cfg.merged.js.public = [
-    (static_resources, 'cdn/jquery1.6.4.min.js'),
-    (static_resources, 'cdn/jquery.tools.min.js'),
-    (static_resources, 'cdn/jquery-ui-1.8.18.min.js'),
+    (static_resources, 'jquery-1.9.1.js'),
+#    (static_resources, 'jquery-1.9.1.min.js'),
+    (static_resources, 'jquery.migrate-1.2.1.js'),
+#    (static_resources, 'jquery.migrate-1.2.1.min.js'),
+    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
 ]
 cfg.merged.js.protected = [
     (static_resources, 'cookie_functions.js'),
 ]
 
 cfg.merged.css = Properties()
-cfg.merged.css.public = [
-    (static_resources, 'style.css'),
-]
+cfg.merged.css.public = list()
 cfg.merged.css.protected = list()
 
 cfg.merged.print_css = Properties()
@@ -91,7 +93,8 @@ def configure_root(settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
     root.properties.default_child = settings.get('cone.root.default_child')
     root.properties.mainmenu_empty_title = \
-        settings.get('cone.root.mainmenu_empty_title', False)
+        settings.get('cone.root.mainmenu_empty_title', 'false') \
+            in ['True', 'true', '1']
     default_content_tile = settings.get('cone.root.default_content_tile')
     if default_content_tile:
         root.properties.default_content_tile = default_content_tile
@@ -169,7 +172,7 @@ def configure_yafowil_addon_resources(config):
             all_css.append(css)
     all_js = sorted(all_js, key=lambda x: x['order'])
     all_css = sorted(all_css, key=lambda x: x['order'])
-    for js in all_js:
+    for js in reversed(all_js):
         # bdajax needs to be loaded first in order to avoid double binding on
         # document ready
         idx = cone.app.cfg.js.public.index('++resource++bdajax/bdajax.js') + 1

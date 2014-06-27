@@ -4,14 +4,15 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax">
   <head>
+    <title tal:content="model.root.metadata.title"></title>
 
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title tal:content="model.root.metadata.title"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="keywords" content="" />
     <meta name="description" content="" />
-    
-    <tal:resources replace="structure tile('resources')" />
 
+    <tal:resources replace="structure tile('resources')" />
   </head>
   <body>
     <tal:bdajax replace="structure tile('bdajax')" />

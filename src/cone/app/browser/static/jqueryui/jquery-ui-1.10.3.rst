@@ -1,4 +1,4 @@
-jquery-ui-1.8.18
+jquery-ui-1.10.3
 ================
 
 Included Components:

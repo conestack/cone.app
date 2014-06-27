@@ -34,6 +34,19 @@ Contributors
 Changes
 =======
 
+0.9.6.dev0 (unreleased)
+-----------------------
+
+- Fix yafowil JS resources delivery order.
+  [rnix, 2014-06-19]
+
+- Do not fail in ``cone.app.browser.actions.Action.action_scope`` if no
+  ``ActionContext`` defined. Useful for testing.
+  [rnix, 2014-06-18]
+
+- Update jQuery, jQuery-UI and remove jQuery Tools.
+  [rnix, 2013-08-13]
+
 
 0.9.5
 -----
