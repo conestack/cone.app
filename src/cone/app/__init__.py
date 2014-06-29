@@ -48,9 +48,11 @@ cfg.js.protected = [
 cfg.css = Properties()
 cfg.css.public = [
     '++resource++bdajax/bdajax.css',
-    'static/jqueryui/jquery-ui-1.10.0.custom.css',
-    'static/bootstrap/css/bootstrap-responsive.css',
     'static/bootstrap/css/bootstrap.css',
+    'static/bootstrap/css/bootstrap-theme.css',
+    'static/jqueryui/jquery-ui-1.10.3.custom.css',
+    'static/jqueryui/jquery-ui-1.10.3.theme.css',
+    'static/jqueryui/jquery-ui-1.10.3.ie.css',
     'static/styles.css',
 ]
 cfg.css.protected = list()
