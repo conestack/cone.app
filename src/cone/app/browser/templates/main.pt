@@ -51,37 +51,39 @@
       </div>
     </div>
 
+    <div class="container" role="main">
 
-
-
-
-      <tal:enabled condition="layout.pathbar">
-        <div id="pathbar" class="pathbar">
-          <tal:mainmenu replace="structure tile('pathbar')" />
+      <div class="row">
+        <div class="col-md-12">
+          <!-- XXX: layout.pathbar -->
+          <tal:pathbar replace="structure tile('pathbar')" />
         </div>
-      </tal:enabled>
-
-      <div id="content_wrapper" class="container-fluid">
-
-        <tal:enabled condition="layout.sidebar_left">
-          <div id="sidebar_left" class="span3">
-            <tal:tiles repeat="tilename layout.sidebar_left">
-              <tal:tile replace="structure tile(tilename)" />
-            </tal:tiles>
-          </div>
-        </tal:enabled>
-
-        <div id="content" class="span9"
-             ajax:bind="contextchanged"
-             ajax:action="content:#content:inner">
-          <tal:content replace="structure tile(contenttilename)" />
-        </div>
-
-        <div style="clear: both;">&nbsp;</div>
-
       </div>
 
-      <tal:footer replace="structure tile('footer')" />
+      <div class="row">
+        <!-- XXX: layout.sidebar_left condition -->
+        <div id="sidebar_left"
+             class="col-md-3">
+          <tal:tiles repeat="tilename layout.sidebar_left">
+            <tal:tile replace="structure tile(tilename)" />
+          </tal:tiles>
+        </div>
+
+        <div class="col-md-9">
+          <div id="content"
+               ajax:bind="contextchanged"
+               ajax:action="content:#content:inner">
+            <tal:content replace="structure tile(contenttilename)" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <tal:footer replace="structure tile('footer')" />
+      </div>
+    </div>
 
   </body>
 </html>

@@ -3,25 +3,33 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
-  <ul class="contextsensitiv inline"
+
+  <ol id="pathbar"
+      class="contextsensitiv breadcrumb"
       ajax:bind="contextchanged"
-      ajax:action="pathbar:#pathbar:inner">
+      ajax:action="pathbar:#pathbar:replace">
+
     <li>
       <span i18n:translate="you_are_here">You are here</span>:
     </li>
-    <li class="pathbaritem"
-        tal:repeat="item context.items">
-      <a href=""
-         ajax:bind="click"
-         ajax:target="${item['url']}"
-         ajax:event="contextchanged:.contextsensitiv
-                     contextchanged:#content"
-         tal:attributes="href item['url'];
-                         class item['selected'] and 'selected' or ''"
-         tal:content="item['title']"
-         tal:condition="not item['selected']">Title</a>
-      <strong tal:content="item['title']"
-              tal:condition="item['selected']">Title</strong>
-    </li>
-  </ul>
+
+    <tal:li repeat="item context.items">
+      <li tal:attributes="class item['selected'] and 'active' or ''">
+        <a href=""
+           ajax:bind="click"
+           ajax:target="${item['url']}"
+           ajax:event="contextchanged:.contextsensitiv
+                       contextchanged:#content"
+           tal:attributes="href item['url']"
+           tal:content="item['title']"
+           tal:condition="not item['selected']">
+          Title
+        </a>
+        <strong tal:content="item['title']"
+                tal:condition="item['selected']">Title</strong>
+      </li>
+    </tal:li>
+
+  </ol>
+
 </tal:block>
