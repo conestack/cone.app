@@ -28,7 +28,11 @@
 
     </tal:item>
 
+    <!-- XXX: check layout condition flag in tile class -->
     <tal:personaltools replace="structure tile('personaltools')" />
+
+    <!-- XXX: check layout condition flag in tile class -->
+    <tal:livesearch replace="structure tile('livesearch')" />
 
   </ul>
 

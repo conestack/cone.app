@@ -2,20 +2,28 @@
             xmlns:i18n="http://xml.zope.org/namespaces/i18n"
             i18n:domain="cone.app"
             omit-tag="True">
-  <div id="search">
-    <form method="get" action="" class="form-search">
-      <fieldset>
+
+  <li id="search">
+    <form class="form-inline" role="form">
+
+      <div class="input-group input-group-sm">
+
         <input type="text"
-               name="term"
-               id="search-text"
-               size="15"
-               class="input-medium search-query" />
-        <input type="submit"
-               id="search-submit"
-               value="search"
-               class="btn"
-               i18n:attributes="value search" />
-      </fieldset>
+             class="form-control"
+             id="search-text"
+             name="term"
+             placeholder="search"
+             i18n:attributes="placeholder search" />
+
+        <span class="input-group-btn">
+          <button class="btn btn-default"
+                  type="button"
+                  i18n:translate="Go!">Go!</button>
+        </span>
+
+      </div>
+
     </form>
-  </div>
+  </li>
+
 </tal:search>
