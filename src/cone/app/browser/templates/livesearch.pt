@@ -4,7 +4,7 @@
             omit-tag="True">
 
   <li id="search">
-    <form class="form-inline" role="form">
+    <form class="form-inline" role="search">
 
       <div class="input-group input-group-sm">
 
