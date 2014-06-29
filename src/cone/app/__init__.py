@@ -46,6 +46,7 @@ cfg.js.protected = [
 
 # CSS Resources
 cfg.css = Properties()
+# dev
 cfg.css.public = [
     '++resource++bdajax/bdajax.css',
     'static/bootstrap/css/bootstrap.css',
@@ -55,19 +56,35 @@ cfg.css.public = [
     'static/jqueryui/jquery-ui-1.10.3.ie.css',
     'static/styles.css',
 ]
+# prod
+# cfg.css.public = [
+#     '++resource++bdajax/bdajax.css',
+#     'static/bootstrap/css/bootstrap.min.css',
+#     'static/bootstrap/css/bootstrap-theme.min.css',
+#     'static/jqueryui/jquery-ui-1.10.3.custom.css',
+#     'static/jqueryui/jquery-ui-1.10.3.theme.css',
+#     'static/jqueryui/jquery-ui-1.10.3.ie.css',
+#     'static/styles.css',
+# ]
 cfg.css.protected = list()
 
 # JS and CSS Assets to publish merged
 cfg.merged = Properties()
 cfg.merged.js = Properties()
+# dev
 cfg.merged.js.public = [
     (static_resources, 'jquery-1.9.1.js'),
-#    (static_resources, 'jquery-1.9.1.min.js'),
     (static_resources, 'jquery.migrate-1.2.1.js'),
-#    (static_resources, 'jquery.migrate-1.2.1.min.js'),
-    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
+    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
     (static_resources, 'bootstrap/js/bootstrap.js'),
 ]
+# prod
+# cfg.merged.js.public = [
+#     (static_resources, 'jquery-1.9.1.min.js'),
+#     (static_resources, 'jquery.migrate-1.2.1.min.js'),
+#     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
+#     (static_resources, 'bootstrap/js/bootstrap.min.js'),
+# ]
 cfg.merged.js.protected = [
     (static_resources, 'cookie_functions.js'),
 ]
