@@ -124,7 +124,7 @@ class MainMenu(Tile):
                 item['description'] = child.metadata.description
             item['url'] = make_url(self.request, path=[key])
             item['selected'] = curpath == key
-            item['first'] = count == 0
+            item['first'] = count == 0 # XXX: remove
             ret.append(item)
             count += 1
         return ret

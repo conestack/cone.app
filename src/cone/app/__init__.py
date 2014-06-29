@@ -51,9 +51,9 @@ cfg.css.public = [
     '++resource++bdajax/bdajax.css',
     'static/bootstrap/css/bootstrap.css',
     'static/bootstrap/css/bootstrap-theme.css',
-    'static/jqueryui/jquery-ui-1.10.3.custom.css',
-    'static/jqueryui/jquery-ui-1.10.3.theme.css',
-    'static/jqueryui/jquery-ui-1.10.3.ie.css',
+#    'static/jqueryui/jquery-ui-1.10.3.custom.css',
+#    'static/jqueryui/jquery-ui-1.10.3.theme.css',
+#    'static/jqueryui/jquery.ui.1.10.3.ie.css',
     'static/styles.css',
 ]
 # prod

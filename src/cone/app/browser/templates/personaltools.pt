@@ -1,18 +1,29 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
-  <div id="personaltools">
-    <div class="currentuser">
-      <a href="personaltools" tal:content="context.user">Admin</a>
-    </div>
-    <ul class="dropdown_items dropdown-menu pull-right" style="display:none;">
+
+  <li id="personaltools"
+      class="dropdown">
+
+    <a href="#"
+       class="dropdown-toggle"
+       data-toggle="dropdown">
+      <span tal:replace="context.user">Admin</span>
+      <span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu">
+
       <tal:li repeat="item context.items">
         <li>
-          <a href=""
+          <a href="#"
              tal:attributes="href item[0]"
              tal:content="item[1]">Logout</a>
         </li>
       </tal:li>
+
     </ul>
-  </div>
+
+  </li>
+
 </tal:block>
