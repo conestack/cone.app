@@ -1,8 +1,8 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
-  <div class="box">
-    <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
     
-    <tal:listing replace="structure tile('contents')" />
-  </div>
+  <tal:listing replace="structure tile('contents')" />
+
 </tal:block>
