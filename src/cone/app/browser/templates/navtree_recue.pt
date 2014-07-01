@@ -1,24 +1,32 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
-    <li tal:repeat="item children" class="navtreeitem">
+
+  <tal:li repeat="item children">
+
+    <li tal:define="css item['selected'] and 'active' or '';
+                    css ' '.join([item['css'], css, 'navtreelevel_%i' % level]);
+                    css css.strip()"
+        tal:attributes="class css">
+
       <a href=""
          ajax:bind="click"
          ajax:target="${item['url']}"
          ajax:event="contextchanged:.contextsensitiv
                      contextchanged:#content"
-         tal:define="css item['selected'] and 'selected' or '';
-                     css ' '.join([item['css'], css, 'navtreelevel_%i' % level]);
-                     css css.strip()"
-         tal:attributes="href item['url'];
-                         class css">
-         <i class="${item['icon']}" alt="..."></i>
-         <span tal:replace="item['title']">Title</span>
-         </a>
+         tal:attributes="href item['url']">
+        <i class="${item['icon']}" alt="..."></i>
+        <span tal:replace="item['title']">Title</span>
+      </a>
+
       <ul tal:condition="item['children']"
-          class="childtree ${'navtreelevel_%i' % level}">
+          class="nav ${'navtreelevel_%i' % level}">
         <tal:tree replace="structure context.rendertree(item['children'],
                                                         level + 1)" />
       </ul>
+
     </li>
+
+  </tal:li>
+
 </tal:block>

@@ -5,17 +5,13 @@
            omit-tag="True">
 
   <div id="navtree"
-       class="contextsensitiv list-group"
+       class="contextsensitiv"
        ajax:bind="contextchanged"
        ajax:action="navtree:#navtree:replace">
 
-    <a href="#"
-       class="list-group-item disabled"
-       i18n:translate="navigation">
-      Navigation
-    </a>
-
-    <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
+    <ul class="nav">
+      <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
+    </ul>
 
   </div>
 

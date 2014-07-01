@@ -10,3 +10,42 @@ body {
     padding-top:10px;
     padding-right:10px;
 }
+
+/* navtree */
+#navtree li {
+    padding-left:8px;
+}
+#navtree li > a {
+    padding:6px 10px 6px 0px;
+}
+#navtree li > a:hover {
+    color:#333;
+    background-color:transparent;
+}
+#navtree li.active > a {
+    font-weight:bold;
+}
+ul.navtreelevel_1 {
+    margin-left:6px;
+    border-left:#cccccc 3px solid;
+}
+ul.navtreelevel_2 {
+    margin-left:6px;
+    border-left:#cdcdcd 3px solid;
+}
+ul.navtreelevel_3 {
+    margin-left:6px;
+    border-left:#dddddd 3px solid;
+}
+ul.navtreelevel_4 {
+    margin-left:6px;
+    border-left:#dedede 3px solid;
+}
+ul.navtreelevel_5 {
+    margin-left:6px;
+    border-left:#eeeeee 3px solid;
+}
+ul.navtreelevel_6 {
+    margin-left:6px;
+    border-left:#efefef 3px solid;
+}
