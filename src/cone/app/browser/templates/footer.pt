@@ -1,9 +1,15 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
-  <div id="footer">
-    <p>
-      Copyright (c) 2010-2014
-      <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
-    </p>
-  </div>
+
+  <footer class="navbar-default navbar-fixed-bottom">
+
+    <div class="container">
+      <p>
+        Copyright (c) 2010-2014
+        <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
+      </p>
+    </div>
+
+  </footer>
+
 </tal:block>

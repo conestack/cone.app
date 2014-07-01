@@ -49,3 +49,8 @@ ul.navtreelevel_6 {
     margin-left:6px;
     border-left:#efefef 3px solid;
 }
+
+/* footer */
+footer p {
+    margin:12px;
+}

@@ -79,11 +79,7 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <tal:footer replace="structure tile('footer')" />
-      </div>
-    </div>
+    <tal:footer replace="structure tile('footer')" />
 
   </body>
 </html>
