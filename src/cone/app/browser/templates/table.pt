@@ -107,6 +107,12 @@
                    ajax:target="${defs[1]}"
                    ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv">
 
+                <span tal:define="css order == '' and 'glyphicon glyphicon-stop' or '';
+                                  css order == 'asc' and 'glyphicon glyphicon-chevron-up' or css;
+                                  css order == 'desc' and 'glyphicon glyphicon-chevron-down' or css;
+                                  css 'table_sort %s' % css"
+                      tal:attributes="class css"></span>
+
                 <a href="${defs[1]}"
                    title="${col_def['sort_title']}"
                    ajax:bind="click"
@@ -115,11 +121,7 @@
                    tal:content="col_def['title']">
                     Title
                 </a>
-                <span tal:define="css order == '' and 'ui-icon-carat-2-n-s' or '';
-                                  css order == 'asc' and 'ui-icon-triangle-1-n' or css;
-                                  css order == 'desc' and 'ui-icon-triangle-1-s' or css;
-                                  css 'pretty_table_sort ui-icon %s' % css"
-                      tal:attributes="class css"></span>
+
               </div>
 
             </th>
@@ -130,8 +132,7 @@
       <tbody tal:define="sort_index context.sort_index">
         <tal:row repeat="row_data context.slice.rows">
 
-          <tr tal:define="css repeat.row_data.even and 'even' or 'odd';
-                          css ' '.join([css, row_data.selectable and 'selectable' or '']).strip();
+          <tr tal:define="css row_data.selectable and 'selectable' or '';
                           css ' '.join([css, row_data.css]).strip()"
               class="${css}"
               ajax:target="${row_data.target and row_data.target or None}">

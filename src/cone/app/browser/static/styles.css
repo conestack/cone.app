@@ -57,6 +57,10 @@ ul.navtreelevel_6 {
 .table_filter {
     margin-right:8px;
 }
+.table_sort {
+    font-size:80%;
+    color:#428BCA;
+}
 table tr th:first-child,
 table tr td:first-child {
     padding-left:20px;
