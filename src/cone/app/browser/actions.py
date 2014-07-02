@@ -57,21 +57,26 @@ class Toolbar(odict):
     """A toolbar rendering actions.
     """
     display = True
+    css = None
+
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
 
     def __call__(self, model, request):
         if not self.display:
             return u''
-        values = self.values()
-        ret = u'\n'.join([action(model, request) for action in values])
-        ret = ret.strip()
-        if not ret:
-            return ret
-        # XXX: fix button group determination
-        buttongroup = False
-        for val in values:
-            if getattr(val, 'button', False):
-                return u'<div class="btn-group">%s</div>' % ret
-        return u'<div>%s</div>' % ret
+        rendered_actions = list()
+        for action in self.values():
+            rendered = action(model, request)
+            if not rendered:
+                continue
+            rendered_actions.append(rendered)
+        if not rendered_actions:
+            return u''
+        rendered_actions = u'\n'.join(rendered_actions)
+        if not self.css:
+            return u'<div>%s</div>' % rendered_actions
+        return u'<div class="%s">%s</div>' % (self.css, rendered_actions)
 
 
 class Action(object):
@@ -147,7 +152,6 @@ class LinkAction(TemplateAction):
     id = None         # id attribute
     href = None       # href attribute
     css = None        # in addition for computed class attribute
-    button = False    # display as bootstrap style button
     title = None      # title attribute
     action = None     # ajax:action attribute
     event = None      # ajax:event attribute
@@ -158,17 +162,13 @@ class LinkAction(TemplateAction):
     selected = False  # if true, link get 'selected' css class
     icon = None       # if set, render <i> tag with value as CSS class on link
 
-    def __init__(self, button=None):
-        if button is not None:
-            self.button = button
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
 
     @property
     def css_class(self):
         css = not self.enabled and 'disabled' or ''
         css = self.selected and '%s selected' % css or css
-        css = css.strip()
-        if self.button:
-            css = '%s btn btn-small' % css
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
@@ -184,9 +184,10 @@ class ActionUp(LinkAction):
     """
     id = 'toolbaraction-up'
     css = ''
-    icon = 'toolbaricon-up'
-    title = _('action_one_level_up', 'One level up')
+    icon = 'glyphicon glyphicon-arrow-up'
     event = 'contextchanged:.contextsensitiv'
+    title = _('action_one_level_up', 'One level up')
+    text = title
 
     @property
     def action(self):
@@ -217,8 +218,9 @@ class ActionView(LinkAction):
     """
     id = 'toolbaraction-view'
     css = ''
-    icon = 'toolbaricon-view'
+    icon = 'glyphicon glyphicon-eye-open'
     title = _('action_view', 'View')
+    text = title
     href = LinkAction.target
 
     @property
@@ -243,6 +245,7 @@ class ViewLink(ActionView):
     """View link
     """
     css = None
+    icon = None
 
     @property
     def text(self):
@@ -258,9 +261,10 @@ class ActionList(LinkAction):
     """
     id = 'toolbaraction-list'
     css = ''
-    icon = 'toolbaricon-list'
-    title = _('action_listing', 'Listing')
+    icon = 'glyphicon glyphicon-th-list'
     action = 'listing:#content:inner'
+    title = _('action_listing', 'Listing')
+    text = title
 
     @property
     def href(self):
@@ -280,9 +284,10 @@ class ActionSharing(LinkAction):
     """
     id = 'toolbaraction-share'
     css = ''
-    icon = 'toolbaricon-share'
-    title = _('action_sharing', 'Sharing')
+    icon = 'glyphicon glyphicon-share'
     action = 'sharing:#content:inner'
+    title = _('action_sharing', 'Sharing')
+    text = title
 
     @property
     def href(self):
@@ -326,9 +331,10 @@ class ActionEdit(LinkAction):
     """
     id = 'toolbaraction-edit'
     css = ''
-    icon = 'toolbaricon-edit'
-    title = _('action_edit', 'Edit')
+    icon = 'glyphicon glyphicon-pencil'
     action = 'edit:#content:inner'
+    title = _('action_edit', 'Edit')
+    text = title
 
     @property
     def href(self):
@@ -348,11 +354,12 @@ class ActionDelete(LinkAction):
     """
     id = 'toolbaraction-delete'
     css = ''
-    icon = 'toolbaricon-delete'
-    title = _('action_delete', 'Delete')
+    icon = 'glyphicon glyphicon-remove'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
                 'Do you really want to delete this Item?')
+    title = _('action_delete', 'Delete')
+    text = title
 
     @property
     def href(self):
@@ -373,12 +380,14 @@ class ActionDelete(LinkAction):
 class ActionDeleteChildren(LinkAction):
     """Delete children action.
     """
+    id = 'toolbaraction-delete-children'
     css = ''
-    icon = 'toolbaricon-delete'
-    title = _('action_delete_selected_children', 'Delete selected children')
+    icon = 'glyphicon glyphicon-remove'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
                 'Do you really want to delete selected Items?')
+    title = _('action_delete_selected_children', 'Delete selected children')
+    text = title
 
     @property
     def href(self):
@@ -399,8 +408,9 @@ class ActionCut(LinkAction):
     """
     id = 'toolbaraction-cut'
     css = ''
-    icon = 'toolbaricon-cut'
+    icon = 'glyphicon glyphicon-cut'
     title = _('action_cut', 'Cut')
+    text = title
     bind = None
 
     @property
@@ -420,8 +430,9 @@ class ActionCopy(LinkAction):
     """
     id = 'toolbaraction-copy'
     css = ''
-    icon = 'toolbaricon-copy'
+    icon = 'glyphicon glyphicon-copy'
     title = _('action_copy', 'Copy')
+    text = title
     bind = None
 
     @property
@@ -441,8 +452,9 @@ class ActionPaste(LinkAction):
     """
     id = 'toolbaraction-paste'
     css = ''
-    icon = 'toolbaricon-paste'
+    icon = 'glyphicon glyphicon-paste'
     title = _('action_paste', 'Paste')
+    text = title
     bind = None
 
     @property

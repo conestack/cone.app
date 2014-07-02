@@ -12,13 +12,12 @@
     </div>
     <ul class="dropdown_items" style="display:none;">
       <li tal:repeat="item context.items">
-        <img src="${item.icon}" alt="..." />
         <a href="${item.url|nothing}"
            ajax:bind="click"
            ajax:target="${item.target}"
-           ajax:action="${item.action}"
-           tal:content="item.title">
-          Item title
+           ajax:action="${item.action}">
+          <i class="${item.icon}"></i>
+          <tal:title replace="item.title" />
         </a>
       </li>
     </ul>

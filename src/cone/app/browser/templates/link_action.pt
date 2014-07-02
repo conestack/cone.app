@@ -1,7 +1,7 @@
 <tal:link xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
-  
+
   <a tal:condition="context.text"
      id="${context.id|nothing}"
      href="${context.href|nothing}"
@@ -12,11 +12,12 @@
      ajax:event="${context.event|nothing}"
      ajax:action="${context.action|nothing}"
      ajax:confirm="${context.confirm|nothing}"
-     ajax:overlay="${context.overlay|nothing}"><i
-         class="${context.icon}"
-         tal:condition="context.icon"></i><span 
-             tal:replace="context.text">Text</span></a>
-  
+     ajax:overlay="${context.overlay|nothing}">
+    <span class="${context.icon}"
+          tal:condition="context.icon"></span>
+    <span tal:replace="context.text">Text</span>
+  </a>
+
   <a tal:condition="not context.text"
      id="${context.id|nothing}"
      href="${context.href|nothing}"
@@ -27,8 +28,10 @@
      ajax:event="${context.event|nothing}"
      ajax:action="${context.action|nothing}"
      ajax:confirm="${context.confirm|nothing}"
-     ajax:overlay="${context.overlay|nothing}"><i
-         class="${context.icon}"
-         tal:condition="context.icon"></i>&nbsp;</a>
+     ajax:overlay="${context.overlay|nothing}">
+    <span class="${context.icon}"
+          tal:condition="context.icon"></span>
+       &nbsp;
+  </a>
 
 </tal:link>

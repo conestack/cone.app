@@ -3,6 +3,7 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
+
   <div id="${context.table_id}"
        class="${context.table_id}batchsensitiv
               ${context.table_id}sortingheadsensitiv
@@ -12,14 +13,14 @@
        ajax:bind="${context.wrapper_binding}"
        ajax:target="${context.nodeurl}"
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
-  
+
     <div class="pretty_table_toolbar pretty_table_toolbar_top"
          tal:condition="context.display_table_header">
-      
+
       <label class="pretty_table_title"
            tal:condition="context.show_title"
            tal:content="context.table_title">Title</label>
-      
+
       <div class="pretty_table_length"
            tal:condition="context.show_slicesize">
         <label>
@@ -39,7 +40,7 @@
           <span i18n:translate="entries">entries</span>
         </label>
       </div>
-      
+
       <div class="pretty_table_filter"
            tal:condition="context.show_filter">
         <label>
@@ -52,19 +53,19 @@
                  tal:attributes="value context.filter_term">
         </label>
       </div>
-      
+
       <div class="pretty_table_additional"
            tal:define="additional context.head_additional"
            tal:condition="additional"
            tal:content="structure additional">
         Additional Header Markup.
       </div>
-      
+
     </div>
-  
-    <table class="pretty_table"
+
+    <table class="table"
            id="${context.table_id}_table">
-        
+
       <thead>
         <tr role="row">
           <tal:th repeat="col_def context.col_defs">
@@ -74,12 +75,12 @@
                 colspan="1"
                 tabindex="0"
                 aria-controls="${context.table_id}_table">
-              
+
               <div tal:content="col_def['title']">
                 Title
               </div>
             </th>
-            
+
             <th tal:condition="col_def['sort_key']"
                 tal:define="defs context.th_defs(col_def['sort_key']);
                             order defs[0] and defs[0] or ''"
@@ -89,11 +90,11 @@
                 colspan="1"
                 tabindex="0"
                 aria-controls="${context.table_id}_table">
-              
+
               <div ajax:bind="click"
                    ajax:target="${defs[1]}"
                    ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv">
-                
+
                 <a href="${defs[1]}"
                    title="${col_def['sort_title']}"
                    ajax:bind="click"
@@ -108,26 +109,26 @@
                                   css 'pretty_table_sort ui-icon %s' % css"
                       tal:attributes="class css"></span>
               </div>
-              
+
             </th>
           </tal:th>
         </tr>
       <thead>
-      
+
       <tbody role="alert"
              aria-live="polite"
              aria-relevant="all"
              tal:define="sort_index context.sort_index">
         <tal:row repeat="row_data context.slice.rows">
-        
+
           <tr tal:define="css repeat.row_data.even and 'even' or 'odd';
                           css ' '.join([css, row_data.selectable and 'selectable' or '']).strip();
                           css ' '.join([css, row_data.css]).strip()"
               class="${css}"
               ajax:target="${row_data.target and row_data.target or None}">
-            
+
             <tal:td repeat="col_def context.col_defs">
-              
+
               <td tal:define="current_index repeat.col_def.index;
                               is_string col_def['content'] == 'string';
                               is_structure col_def['content'] == 'structure';
@@ -135,31 +136,31 @@
                               value row_data[col_def['id']];
                               value is_datetime and context.format_date(value) or value;"
                   tal:attributes="class sort_index == current_index and 'sorted_col' or None">
-                
+
                 <div class="col">
-                
+
                   <tal:string condition="is_string or is_datetime">
                     <span tal:replace="value">Value</span>
                   </tal:string>
-                
+
                   <tal:structure condition="is_structure">
                     <span tal:replace="structure value">Value</span>
                   </tal:structure>
-                
+
                 </div>
-              
+
               </td>
-            
+
             </tal:td>
-          
+
           </tr>
         </tal:row>
       </tbody>
     </table> 
-    
+
     <div class="pretty_table_toolbar pretty_table_toolbar_bottom"
          tal:condition="context.display_table_footer">
-      
+
       <div class="pretty_table_info"
            tal:define="slice context.slice.slice">
         <span i18n:translate="showing">Showing</span>
@@ -170,10 +171,11 @@
         <span tal:replace="context.item_count">35</span>
         <span i18n:translate="entries">entries</span>
       </div>
-      
+
       <tal:batch replace="structure context.batch" />
-      
+
     </div>
-    
+
   </div>
+
 </tal:block>
