@@ -25,29 +25,46 @@ body {
 #navtree li.active > a {
     font-weight:bold;
 }
-ul.navtreelevel_1 {
-    margin-left:6px;
-    border-left:#cccccc 3px solid;
+#navtree li.navtreelevel_1 {
+    font-size:130%;
 }
-ul.navtreelevel_2 {
+#navtree li.navtreelevel_2 {
+    font-size:95%;
     margin-left:6px;
     border-left:#cdcdcd 3px solid;
 }
-ul.navtreelevel_3 {
-    margin-left:6px;
+#navtree li.navtreelevel_2 > a {
+    padding:5px 10px 5px 0px;
+}
+#navtree li.navtreelevel_3 {
+    font-size:95%;
+    margin-left:5px;
     border-left:#dddddd 3px solid;
 }
-ul.navtreelevel_4 {
-    margin-left:6px;
+#navtree li.navtreelevel_3 > a {
+    padding:4px 10px 4px 0px;
+}
+#navtree li.navtreelevel_4 {
+    font-size:95%;
+    margin-left:4px;
     border-left:#dedede 3px solid;
 }
-ul.navtreelevel_5 {
-    margin-left:6px;
+#navtree li.navtreelevel_4 > a {
+    padding:3px 10px 3px 0px;
+}
+#navtree li.navtreelevel_5 {
+    margin-left:4px;
     border-left:#eeeeee 3px solid;
 }
-ul.navtreelevel_6 {
-    margin-left:6px;
+#navtree li.navtreelevel_5 > a {
+    padding:2px 10px 2px 0px;
+}
+#navtree li.navtreelevel_6 {
+    margin-left:4px;
     border-left:#efefef 3px solid;
+}
+#navtree li.navtreelevel_6 > a {
+    padding:2px 10px 2px 0px;
 }
 
 /* table */
