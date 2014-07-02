@@ -4,7 +4,7 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <ul class="pagination"
+  <ul class="pagination pagination-sm"
       tal:condition="context.display">
 
     <tal:fistpage
@@ -65,7 +65,9 @@
              tal:content="page['page']">X</a>
         </li>
 
-        <li class="disabled"
+        <li class="${css}"
+            tal:define="css invisible and 'invisible' or '';
+                        css current and 'active' or css;"
             tal:condition="invisible or current">
           <a href="javascript:void(0)"
              tal:content="page['page']">X</a>

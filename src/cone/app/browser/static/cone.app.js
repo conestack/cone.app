@@ -142,7 +142,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
 
         tabletoolbarbinder: function(context) {
-            var selection = $('.pretty_table_length select', context);
+            var selection = $('.table_length select', context);
             selection.unbind('change').bind('change', function(event) {
                 var option = $('option:selected', $(this)).first();
                 var size = option.text();
@@ -156,7 +156,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var target = input.attr('ajax:target') + '&term=' + term;
                 bdajax.trigger(evt[0], evt[1], target);
             };
-            var searchfield = $('.pretty_table_filter input', context);
+            var searchfield = $('.table_filter input', context);
             searchfield.unbind('keypress').bind('keypress', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();

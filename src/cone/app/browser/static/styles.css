@@ -1,6 +1,6 @@
 /* general */
 body {
-    padding-bottom: 30px;
+    padding-bottom: 70px;
     padding-top: 70px;
 }
 
@@ -48,6 +48,25 @@ ul.navtreelevel_5 {
 ul.navtreelevel_6 {
     margin-left:6px;
     border-left:#efefef 3px solid;
+}
+
+/* table */
+.table-heading h4 {
+    padding-left:0;
+}
+.table_filter {
+    margin-right:8px;
+}
+table tr th:first-child,
+table tr td:first-child {
+    padding-left:20px;
+}
+.table-footer .pagination {
+    margin-top:0;
+    margin-bottom:0;
+}
+.table_info {
+    margin-top:4px;
 }
 
 /* footer */

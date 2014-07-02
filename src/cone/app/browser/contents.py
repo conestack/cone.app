@@ -27,16 +27,22 @@ FAR_PAST = datetime.datetime(2000, 1, 1)
 
 
 class ContentsActionView(ActionView):
+    title = ActionView.text
+    text = None
     event = 'contextchanged:.contextsensitiv'
 
 
 class ContentsActionEdit(ActionEdit):
+    title = ActionEdit.text
+    text = None
     event = 'contextchanged:.contextsensitiv'
 
 
 class ContentsActionDelete(ActionDelete):
     """Delete action for contents table.
     """
+    title = ActionDelete.text
+    text = None
 
     @property
     def display(self):
