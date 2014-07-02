@@ -170,7 +170,7 @@ class AppSettings(FactoryNode):
     def properties(self):
         props = Properties()
         props.in_navtree = True
-        props.icon = 'icon-cog'
+        props.icon = 'ion-ios7-gear'
         return props
 
     @instance_property

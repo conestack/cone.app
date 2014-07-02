@@ -54,6 +54,7 @@ cfg.css.public = [
 #    'static/jqueryui/jquery-ui-1.10.3.custom.css',
 #    'static/jqueryui/jquery-ui-1.10.3.theme.css',
 #    'static/jqueryui/jquery.ui.1.10.3.ie.css',
+    'static/ionicons/css/ionicons.css',
     'static/styles.css',
 ]
 # prod
