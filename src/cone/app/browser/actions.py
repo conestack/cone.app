@@ -401,7 +401,7 @@ class ActionCut(LinkAction):
     """
     id = 'toolbaraction-cut'
     css = ''
-    icon = 'glyphicon glyphicon-cut'
+    icon = 'glyphicon glyphicon-floppy-remove'
     text = _('action_cut', 'Cut')
     bind = None
 
@@ -422,7 +422,7 @@ class ActionCopy(LinkAction):
     """
     id = 'toolbaraction-copy'
     css = ''
-    icon = 'glyphicon glyphicon-copy'
+    icon = 'glyphicon glyphicon-floppy-disk'
     text = _('action_copy', 'Copy')
     bind = None
 
@@ -443,7 +443,7 @@ class ActionPaste(LinkAction):
     """
     id = 'toolbaraction-paste'
     css = ''
-    icon = 'glyphicon glyphicon-paste'
+    icon = 'glyphicon glyphicon-floppy-save'
     text = _('action_paste', 'Paste')
     bind = None
 
