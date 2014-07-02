@@ -3,32 +3,44 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
-  <div class="transitions_dropdown"
-       tal:define="transitions context.transitions;
-                   state context.model.state"
-       tal:condition="state">
-    <div class="state">
-      <span i18n:translate="state">State</span>:
+
+  <li class="dropdown"
+      tal:define="transitions context.transitions;
+                  state context.model.state"
+      tal:condition="state">
+
+    <tal:transitions condition="transitions">
+
       <a href="${context.nodeurl}/changestate"
-         tal:condition="transitions"
-         tal:content="state"
-         class="state-${state}"
+         class="state-${state} dropdown-toggle"
          title="Change state"
-         i18n:attributes="title change_state">state</a>
-      <span tal:condition="not:transitions"
-            tal:content="state"
+         data-toggle="dropdown"
+         tal:condition="transitions"
+         i18n:attributes="title change_state">
+        <span i18n:translate="state">State</span>:
+        <span tal:content="state">WF State</span>
+      </a>
+
+      <ul class="dropdown-menu" role="addmenu">
+        <li tal:repeat="transition transitions">
+          <a href="${transition.url}"
+             ajax:bind="click"
+             ajax:target="${transition.target}"
+             ajax:action="wf_dropdown:NONE:NONE"
+             tal:content="transition.title">
+            transition
+          </a>
+        </li>
+      </ul>
+
+    </tal:transitions>
+
+    <tal:notransitions condition="not transitions">
+      <span i18n:translate="state">State</span>:
+      <span tal:content="state"
             class="state-${state}">state</span>
-    </div>
-    <ul class="dropdown_items" style="display:none;">
-      <li tal:repeat="transition transitions">
-        <a href="${transition.url}"
-           ajax:bind="click"
-           ajax:target="${transition.target}"
-           ajax:action="wf_dropdown:NONE:NONE"
-           tal:content="transition.title">
-          transition
-        </a>
-      </li>
-    </ul>
-  </div>
+    </tal:notransitions>
+
+  </li>
+
 </tal:block>

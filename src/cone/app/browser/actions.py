@@ -130,7 +130,7 @@ class TemplateAction(Action):
 class DropdownAction(TemplateAction):
     """Action rendering a dropdown.
     """
-    template = u'cone.app.browser:templates/dropdown_action.pt'
+    template = u'cone.app.browser:templates/action_dropdown.pt'
     href = None
     css = None
     title = None
@@ -186,8 +186,7 @@ class ActionUp(LinkAction):
     css = ''
     icon = 'glyphicon glyphicon-arrow-up'
     event = 'contextchanged:.contextsensitiv'
-    title = _('action_one_level_up', 'One level up')
-    text = title
+    text = _('action_one_level_up', 'One level up')
 
     @property
     def action(self):
@@ -219,8 +218,7 @@ class ActionView(LinkAction):
     id = 'toolbaraction-view'
     css = ''
     icon = 'glyphicon glyphicon-eye-open'
-    title = _('action_view', 'View')
-    text = title
+    text = _('action_view', 'View')
     href = LinkAction.target
 
     @property
@@ -263,8 +261,7 @@ class ActionList(LinkAction):
     css = ''
     icon = 'glyphicon glyphicon-th-list'
     action = 'listing:#content:inner'
-    title = _('action_listing', 'Listing')
-    text = title
+    text = _('action_listing', 'Listing')
 
     @property
     def href(self):
@@ -286,8 +283,7 @@ class ActionSharing(LinkAction):
     css = ''
     icon = 'glyphicon glyphicon-share'
     action = 'sharing:#content:inner'
-    title = _('action_sharing', 'Sharing')
-    text = title
+    text = _('action_sharing', 'Sharing')
 
     @property
     def href(self):
@@ -333,8 +329,7 @@ class ActionEdit(LinkAction):
     css = ''
     icon = 'glyphicon glyphicon-pencil'
     action = 'edit:#content:inner'
-    title = _('action_edit', 'Edit')
-    text = title
+    text = _('action_edit', 'Edit')
 
     @property
     def href(self):
@@ -358,8 +353,7 @@ class ActionDelete(LinkAction):
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
                 'Do you really want to delete this Item?')
-    title = _('action_delete', 'Delete')
-    text = title
+    text = _('action_delete', 'Delete')
 
     @property
     def href(self):
@@ -386,8 +380,7 @@ class ActionDeleteChildren(LinkAction):
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
                 'Do you really want to delete selected Items?')
-    title = _('action_delete_selected_children', 'Delete selected children')
-    text = title
+    text = _('action_delete_selected_children', 'Delete selected children')
 
     @property
     def href(self):
@@ -409,8 +402,7 @@ class ActionCut(LinkAction):
     id = 'toolbaraction-cut'
     css = ''
     icon = 'glyphicon glyphicon-cut'
-    title = _('action_cut', 'Cut')
-    text = title
+    text = _('action_cut', 'Cut')
     bind = None
 
     @property
@@ -431,8 +423,7 @@ class ActionCopy(LinkAction):
     id = 'toolbaraction-copy'
     css = ''
     icon = 'glyphicon glyphicon-copy'
-    title = _('action_copy', 'Copy')
-    text = title
+    text = _('action_copy', 'Copy')
     bind = None
 
     @property
@@ -453,8 +444,7 @@ class ActionPaste(LinkAction):
     id = 'toolbaraction-paste'
     css = ''
     icon = 'glyphicon glyphicon-paste'
-    title = _('action_paste', 'Paste')
-    text = title
+    text = _('action_paste', 'Paste')
     bind = None
 
     @property
