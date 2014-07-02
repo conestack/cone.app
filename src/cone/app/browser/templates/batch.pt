@@ -4,130 +4,120 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <div tal:condition="context.display"
-       class="pretty_batch">
-    
+  <ul class="pagination"
+      tal:condition="context.display">
+
     <tal:fistpage
         define="firstpage context.firstpage;
-                invisible not firstpage['visible'] or firstpage['current'];
-                css 'ui-corner-tl ui-corner-bl ui-state-default';
-                css invisible and css + ' invisible' or css"
+                invisible not firstpage['visible'] or firstpage['current']"
         condition="firstpage">
-      
-      <a href="#"
-         ajax:bind="click"
-         ajax:target="${firstpage['url']}"
-         ajax:event="batchclicked:.${context.name}sensitiv"
-         tal:condition="not invisible"
-         tal:attributes="href firstpage['url'];
-                         class css"
-         i18n:translate="first">First</a>
-      
-      <a href="javascript:void(0)"
-         tal:condition="invisible"
-         tal:attributes="class css"
-         i18n:translate="first">First</a>
-      
+
+      <li tal:condition="not invisible">
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${firstpage['url']}"
+           ajax:event="batchclicked:.${context.name}sensitiv"
+           tal:attributes="href firstpage['url']"
+           i18n:translate="first">First</a>
+      </li>
+
+      <li class="disabled"
+          tal:condition="invisible">
+        <a href="javascript:void(0)"
+           i18n:translate="first">First</a>
+      </li>
+
     </tal:fistpage>
-  
+
     <tal:prevpage
         define="prevpage context.prevpage;
-                invisible not prevpage['visible'] or prevpage['current'];
-                css 'ui-state-default';
-                css invisible and css + ' invisible' or css"
+                invisible not prevpage['visible'] or prevpage['current']"
         condition="prevpage">
-      
-      <a href="#"
-         ajax:bind="click"
-         ajax:target="${prevpage['url']}"
-         ajax:event="batchclicked:.${context.name}sensitiv"
-         tal:condition="not invisible"
-         tal:attributes="href prevpage['url'];
-                         class css"
-         i18n:translate="previous">Previous</a>
-      
-      <a href="javascript:void(0)"
-         tal:condition="invisible"
-         tal:attributes="class css"
-         i18n:translate="previous">Previous</a>
-      
+
+      <li tal:condition="not invisible">
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${prevpage['url']}"
+           ajax:event="batchclicked:.${context.name}sensitiv"
+           tal:attributes="href prevpage['url']"
+           i18n:translate="previous">Previous</a>
+      </li>
+
+      <li class="disabled"
+          tal:condition="invisible">
+        <a href="javascript:void(0)"
+           i18n:translate="previous">Previous</a>
+      </li>
+
     </tal:prevpage>
-    
-    <span>
-    
-      <tal:pages repeat="page context.pages">
-        <tal:page
-            define="invisible not page['visible'];
-                    current page['current'];
-                    css 'ui-state-default';
-                    css invisible and css + ' invisible' or css;
-                    css current and css + ' current' or css">
-        
+
+    <tal:pages repeat="page context.pages">
+      <tal:page
+          define="invisible not page['visible'];
+                  current page['current']">
+
+        <li tal:condition="not invisible and not current">
           <a href="#"
              ajax:bind="click"
              ajax:target="${page['url']}"
              ajax:event="batchclicked:.${context.name}sensitiv"
-             tal:condition="not invisible and not current"
-             tal:attributes="href page['url'];
-                             class css"
+             tal:attributes="href page['url']"
              tal:content="page['page']">X</a>
-           
-           <a href="javascript:void(0)"
-              tal:condition="invisible or current"
-              tal:attributes="class css"
-              tal:content="page['page']">X</a>
-        
-        </tal:page>
-      </tal:pages>
-    
-    </span>
-  
+        </li>
+
+        <li class="disabled"
+            tal:condition="invisible or current">
+          <a href="javascript:void(0)"
+             tal:content="page['page']">X</a>
+        </li>
+
+      </tal:page>
+    </tal:pages>
+
     <tal:nextpage
         define="nextpage context.nextpage;
-                invisible not nextpage['visible'] or nextpage['current'];
-                css 'ui-state-default';
-                css invisible and css + ' invisible' or css"
+                invisible not nextpage['visible'] or nextpage['current']"
         condition="nextpage">
-      
-      <a href="#"
-         ajax:bind="click"
-         ajax:target="${nextpage['url']}"
-         ajax:event="batchclicked:.${context.name}sensitiv"
-         tal:condition="not invisible"
-         tal:attributes="href nextpage['url'];
-                         class css"
-         i18n:translate="next">Next</a>
-      
-      <a href="javascript:void(0)"
-         tal:condition="invisible"
-         tal:attributes="class css"
-         i18n:translate="next">Next</a>
-      
+
+      <li tal:condition="not invisible">
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${nextpage['url']}"
+           ajax:event="batchclicked:.${context.name}sensitiv"
+           tal:attributes="href nextpage['url']"
+           i18n:translate="next">Next</a>
+      </li>
+
+      <li class="disabled"
+          tal:condition="invisible">
+        <a href="javascript:void(0)"
+           i18n:translate="next">Next</a>
+      </li>
+
     </tal:nextpage>
-  
+
     <tal:lastpage
         define="lastpage context.lastpage;
-                invisible not lastpage['visible'] or lastpage['current'];
-                css 'ui-corner-tr ui-corner-br ui-state-default';
-                css invisible and css + ' invisible' or css"
+                invisible not lastpage['visible'] or lastpage['current']"
         condition="lastpage">
-      
-      <a href="#"
-         ajax:bind="click"
-         ajax:target="${lastpage['url']}"
-         ajax:event="batchclicked:.${context.name}sensitiv"
-         tal:condition="not invisible"
-         tal:attributes="href lastpage['url'];
-                         class css"
-         i18n:translate="last">Last</a>
-      
-      <a href="javascript:void(0)"
-         tal:condition="invisible"
-         tal:attributes="class css"
-         i18n:translate="last">Last</a>
-      
+
+      <li tal:condition="not invisible">
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${lastpage['url']}"
+           ajax:event="batchclicked:.${context.name}sensitiv"
+           tal:attributes="href lastpage['url']"
+           i18n:translate="last">Last</a>
+      </li>
+
+      <li class="disabled"
+          tal:condition="invisible">
+        <a href="javascript:void(0)"
+           i18n:translate="last">Last</a>
+      </li>
+
     </tal:lastpage>
-  
-  </div>
+
+  </ul>
 
 </tal:block>
