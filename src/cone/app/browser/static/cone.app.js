@@ -189,14 +189,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
                 return false;
             };
-            $('a.cut16_16', context).unbind('click').bind('click',
-                                                          function(event) {
+            $('a#toolbaraction-cut', context)
+                    .unbind('click').bind('click', function(event) {
                 event.preventDefault();
                 createCookie(copy_cookie, '', 0);
                 var selected_exist = 
                     write_selected_to_cookie(cut_cookie);
                 if (selected_exist) {
-                    $('a.paste16_16').removeClass('disabled');
+                    $('a#toolbaraction-paste').removeClass('disabled');
                 }
                 var selectable = $('.selectable');
                 selectable.removeClass('copysupport_cut');
@@ -207,21 +207,21 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 });
                 cone.selectable.reset();
             });
-            $('a.copy16_16', context).unbind('click').bind('click',
-                                                           function(event) {
+            $('a#toolbaraction-copy', context)
+                    .unbind('click').bind('click', function(event) {
                 event.preventDefault();
                 createCookie(cut_cookie, '', 0);
                 var selected_exist = 
                     write_selected_to_cookie(copy_cookie);
                 if (selected_exist) {
-                    $('a.paste16_16').removeClass('disabled');
+                    $('a#toolbaraction-paste').removeClass('disabled');
                 }
                 var selectable = $('.selectable');
                 selectable.removeClass('copysupport_cut');
                 cone.selectable.reset();
             });
-            $('a.paste16_16', context).unbind('click').bind('click',
-                                                            function(event) {
+            $('a#toolbaraction-paste', context).unbind('click')
+                    .bind('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
                 if (elem.hasClass('disabled')) {

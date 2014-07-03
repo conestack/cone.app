@@ -74,6 +74,7 @@ Changes
 
 - Remove custom dropdown from ``cone.app.js``. Boostrap dropdown is used all
   over the place.
+  [rnix, 2014-07-03]
 
 - Introduce ``cone.app.browser.batch.BATCH_RANGE`` which can be used for
   default batch range configuration.

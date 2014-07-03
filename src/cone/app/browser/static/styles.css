@@ -91,6 +91,20 @@ table tr td:first-child {
     margin-bottom:4px;
 }
 
+/* copysupport */
+tr.selectable td {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+tr.selectable.selected td {
+    background-color:#dfeefb;
+}
+.table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+    background-color:#cfdce7;
+}
+
 /* footer */
 footer p {
     margin:12px;
