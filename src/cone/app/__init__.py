@@ -54,6 +54,7 @@ cfg.css.public = [
 #    'static/jqueryui/jquery-ui-1.10.3.theme.css',
 #    'static/jqueryui/jquery.ui.1.10.3.ie.css',
     'static/ionicons/css/ionicons.css',
+    '++resource++bdajax/bdajax_bootstrap_3.css',
     'static/styles.css',
 ]
 # prod
@@ -64,6 +65,7 @@ cfg.css.public = [
 #     'static/jqueryui/jquery-ui-1.10.3.theme.css',
 #     'static/jqueryui/jquery-ui-1.10.3.ie.css',
 #     'static/ionicons/css/ionicons.css',
+#     '++resource++bdajax/bdajax_bootstrap_3.css',
 #     'static/styles.css',
 # ]
 cfg.css.protected = list()
