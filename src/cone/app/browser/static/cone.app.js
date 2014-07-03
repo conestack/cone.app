@@ -12,19 +12,10 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
     $(document).ready(function() {
 
-        // personaltools
-        $('#personaltools').dropdownmenu({
-            menu: '.dropdown_items',
-            trigger: '.currentuser a'
-        });
-
         // initial binding
         cone.key_binder();
         cone.livesearchbinder();
         cone.settingstabsbinder();
-        cone.dropdownmenubinder();
-        cone.adddropdownbinder();
-        cone.transitionmenubinder();
         cone.tabletoolbarbinder();
         cone.sharingbinder();
         cone.selectable.binder();
@@ -34,9 +25,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         // add binders to bdajax binding callbacks
         $.extend(bdajax.binders, {
             settingstabsbinder: cone.settingstabsbinder,
-            dropdownmenubinder: cone.dropdownmenubinder,
-            adddropdownbinder: cone.adddropdownbinder,
-            transitionmenubinder: cone.transitionmenubinder,
             tabletoolbarbinder: cone.tabletoolbarbinder,
             sharingbinder: cone.sharingbinder,
             selectablebinder: cone.selectable.binder,
@@ -124,24 +112,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     }
                 });
             }).first().trigger('click');
-        },
-
-        dropdownmenubinder: function(context) {
-            $('.dropdown', context).dropdownmenu();
-        },
-
-        adddropdownbinder: function(context) {
-            $('.add_dropdown', context).dropdownmenu({
-                menu: '.dropdown_items',
-                trigger: 'button'
-            });
-        },
-
-        transitionmenubinder: function(context) {
-            $('.transitions_dropdown', context).dropdownmenu({
-                menu: '.dropdown_items',
-                trigger: '.state a'
-            });
         },
 
         tabletoolbarbinder: function(context) {
@@ -267,55 +237,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 });
             });
         }
-    }
-
-    /* 
-     * Dropdown menu
-     * =============
-     * 
-     * Markup
-     * ------
-     * 
-     *     <div class="dropdown">
-     *       <div class="icon">
-     *         <a href="http://example.com">&nbsp;</a>
-     *       </div>
-     *       <ul class="dropdown_items" style="display:none;">
-     *         <li>
-     *           <a href="http://example.com/whatever">
-     *             Item title
-     *           </a>
-     *         </li>
-     *       </ul>
-     *     </div>
-     * 
-     * Script
-     * ------
-     * 
-     *     $('.dropdown').dropdownmenu({
-     *         menu: '.dropdown_items',
-     *         trigger: '.icon a'
-     *     });
-     */
-    $.fn.dropdownmenu = function (options) {
-        var trigger = options ? (options.trigger ? options.trigger : '.icon a')
-                              : '.icon a';
-        var menu = options ? (options.menu ? options.menu : '.dropdown_items')
-                           : '.dropdown_items';
-        this.unbind('click');
-        $(trigger, this).bind('click', function(event) {
-            event.preventDefault();
-            var container = $(menu, $(this).parent().parent());
-            $(document).unbind('mousedown')
-                       .bind('mousedown', function(event) {
-                if ($(event.target).parents(menu + ':first').length) {
-                    return true;
-                }
-                container.css('display', 'none');
-            });
-            container.css('display', 'block');
-        });
-        return this;
     }
 
     /*
