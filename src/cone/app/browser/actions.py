@@ -183,7 +183,6 @@ class ActionUp(LinkAction):
     """One level up action.
     """
     id = 'toolbaraction-up'
-    css = ''
     icon = 'glyphicon glyphicon-arrow-up'
     event = 'contextchanged:.contextsensitiv'
     text = _('action_one_level_up', 'One level up')
@@ -216,7 +215,6 @@ class ActionView(LinkAction):
     """View action.
     """
     id = 'toolbaraction-view'
-    css = ''
     icon = 'glyphicon glyphicon-eye-open'
     text = _('action_view', 'View')
     href = LinkAction.target
@@ -258,7 +256,6 @@ class ActionList(LinkAction):
     """Contents listing action.
     """
     id = 'toolbaraction-list'
-    css = ''
     icon = 'glyphicon glyphicon-th-list'
     action = 'listing:#content:inner'
     text = _('action_listing', 'Listing')
@@ -280,7 +277,6 @@ class ActionSharing(LinkAction):
     """Sharing action.
     """
     id = 'toolbaraction-share'
-    css = ''
     icon = 'glyphicon glyphicon-share'
     action = 'sharing:#content:inner'
     text = _('action_sharing', 'Sharing')
@@ -326,7 +322,6 @@ class ActionEdit(LinkAction):
     """Edit action.
     """
     id = 'toolbaraction-edit'
-    css = ''
     icon = 'glyphicon glyphicon-pencil'
     action = 'edit:#content:inner'
     text = _('action_edit', 'Edit')
@@ -348,7 +343,6 @@ class ActionDelete(LinkAction):
     """Delete action.
     """
     id = 'toolbaraction-delete'
-    css = ''
     icon = 'ion-trash-a'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
@@ -375,7 +369,6 @@ class ActionDeleteChildren(LinkAction):
     """Delete children action.
     """
     id = 'toolbaraction-delete-children'
-    css = ''
     icon = 'ion-trash-a'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
@@ -400,7 +393,6 @@ class ActionCut(LinkAction):
     """Cut children action.
     """
     id = 'toolbaraction-cut'
-    css = ''
     icon = 'ion-scissors'
     text = _('action_cut', 'Cut')
     bind = None
@@ -421,7 +413,6 @@ class ActionCopy(LinkAction):
     """Copy children action.
     """
     id = 'toolbaraction-copy'
-    css = ''
     icon = 'ion-ios7-copy-outline'
     text = _('action_copy', 'Copy')
     bind = None
@@ -442,7 +433,6 @@ class ActionPaste(LinkAction):
     """Paste children action.
     """
     id = 'toolbaraction-paste'
-    css = ''
     icon = 'ion-clipboard'
     text = _('action_paste', 'Paste')
     bind = None

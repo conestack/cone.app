@@ -2,11 +2,13 @@
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
 
-  <ul class="refbrowsersensitiv"
+  <ol class="refbrowsersensitiv breadcrumb"
       ajax:bind="contextchanged"
       ajax:action="referencebrowser_pathbar:#referencebrowser_pathbar:inner">
+
     <li class="pathbaritem"
         tal:repeat="item context.items">
+
       <a href=""
          ajax:bind="click"
          ajax:target="${item['url']}"
@@ -16,9 +18,12 @@
                          class item['selected'] and 'selected' or ''"
          tal:content="item['title']"
          tal:condition="not item['selected']">Title</a>
+
       <strong tal:content="item['title']"
               tal:condition="item['selected']">Title</strong>
+
     </li>
-  </ul>
+
+  </ol>
 
 </tal:block>

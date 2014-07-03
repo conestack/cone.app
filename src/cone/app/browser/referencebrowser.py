@@ -105,8 +105,9 @@ class ReferenceAction(LinkAction):
 
 
 class ActionAddReference(ReferenceAction):
-    css = 'add_small16_16 addreference'
+    css = 'addreference'
     title = _('add_reference', 'Add reference')
+    icon = 'ion-plus-round'
 
     @property
     def enabled(self):
@@ -116,8 +117,9 @@ class ActionAddReference(ReferenceAction):
 
 
 class ActionRemoveReference(ReferenceAction):
-    css = 'remove16_16 removereference'
+    css = 'removereference'
     title = _('remove_reference', 'Remove reference')
+    icon = 'ion-minus-round'
 
     @property
     def enabled(self):
@@ -176,20 +178,6 @@ class ReferenceListing(ContentsTile):
             'sort_title': None,
             'content': 'structure',
         },
-        {
-            'id': 'created',
-            'title': _('created', 'Created'),
-            'sort_key': None,
-            'sort_title': None,
-            'content': 'datetime',
-        },
-        {
-            'id': 'modified',
-            'title': _('modified', 'Modified'),
-            'sort_key': None,
-            'sort_title': None,
-            'content': 'datetime',
-        },
     ]
     query_whitelist = ['root', 'referencable', 'selected']
 
@@ -212,8 +200,6 @@ class ReferenceListing(ContentsTile):
             row_data['actions'] = self.row_actions(child, self.request)
             row_data['title'] = \
                 self.referencable_children_link(child, self.request)
-            row_data['created'] = child.metadata.get('created')
-            row_data['modified'] = child.metadata.get('modified')
             rows.append(row_data)
         return rows
 

@@ -5,15 +5,13 @@
            omit-tag="True">
 
   <div class="referencebrowser">
-  
-    <h3 i18n:translate="add_reference">Add Reference</h3>
-  
+
     <div id="referencebrowser_pathbar" class="pathbar">
       <tal:mainmenu replace="structure tile('referencebrowser_pathbar')" />
     </div>
-    
+
     <tal:referencelisting replace="structure tile('referencelisting')" />
-  
+
   </div>
 
 </tal:block>
