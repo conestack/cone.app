@@ -59,7 +59,18 @@ class ContextMenuDropdown(Toolbar):
     icon = None
     title = None
 
+    @property
+    def display(self):
+        for val in self.values():
+            val.model = self.model
+            val.request = self.request
+            if val.display:
+                return True
+        return False
+
     def __call__(self, model, request):
+        self.model= model
+        self.request = request
         return render_template(self.template,
                                request=request,
                                model=model,

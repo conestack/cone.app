@@ -349,7 +349,7 @@ class ActionDelete(LinkAction):
     """
     id = 'toolbaraction-delete'
     css = ''
-    icon = 'glyphicon glyphicon-remove'
+    icon = 'ion-trash-a'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
                 'Do you really want to delete this Item?')
@@ -376,7 +376,7 @@ class ActionDeleteChildren(LinkAction):
     """
     id = 'toolbaraction-delete-children'
     css = ''
-    icon = 'glyphicon glyphicon-remove'
+    icon = 'ion-trash-a'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
                 'Do you really want to delete selected Items?')
@@ -401,7 +401,7 @@ class ActionCut(LinkAction):
     """
     id = 'toolbaraction-cut'
     css = ''
-    icon = 'glyphicon glyphicon-floppy-remove'
+    icon = 'ion-scissors'
     text = _('action_cut', 'Cut')
     bind = None
 
@@ -422,7 +422,7 @@ class ActionCopy(LinkAction):
     """
     id = 'toolbaraction-copy'
     css = ''
-    icon = 'glyphicon glyphicon-floppy-disk'
+    icon = 'ion-ios7-copy-outline'
     text = _('action_copy', 'Copy')
     bind = None
 
@@ -443,7 +443,7 @@ class ActionPaste(LinkAction):
     """
     id = 'toolbaraction-paste'
     css = ''
-    icon = 'glyphicon glyphicon-floppy-save'
+    icon = 'ion-clipboard'
     text = _('action_paste', 'Paste')
     bind = None
 

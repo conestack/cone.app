@@ -106,7 +106,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
 
         settingstabsbinder: function(context) {
-            $('div.settingstabs a', context).bind('click', function(event) {
+            $('ul.settingstabs a', context).bind('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
                 var target = bdajax.parsetarget(elem.attr('ajax:target'));
@@ -114,6 +114,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     url: target.url,
                     params: target.params,
                     success: function(data, status, request) {
+                        var tabs = $(elem).parent().parent();
+                        $('li', tabs).removeClass('active');
+                        elem.parent().addClass('active');
                         $('.settingstabpane')
                             .html(data)
                             .css('display', 'block')

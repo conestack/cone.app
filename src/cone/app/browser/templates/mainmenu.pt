@@ -20,9 +20,8 @@
                        contextchanged:#content"
            tal:attributes="href item['url'];
                            title item['description'];"
-           tal:content="item['title'] | string:'&nbsp;'">
-          Title
-        </a>
+          ><span class="${item['icon']|nothing}"></span>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
 
       </li>
 

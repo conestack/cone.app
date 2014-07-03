@@ -69,8 +69,18 @@ Coverage Report
 Changes
 =======
 
-0.9.6.dev0 (unreleased)
------------------------
+1.0.dev0 (unreleased)
+---------------------
+
+- Introduce ``cone.app.browser.batch.BATCH_RANGE`` which can be used for
+  default batch range configuration.
+  [rnix, 2014-07-03]
+
+- Remove ``cone.app.utils.node_icon_url``.
+  [rnix, 2014-07-03]
+
+- Include ionicons
+  [rnix, 2014-07-02]
 
 - Fix yafowil JS resources delivery order.
   [rnix, 2014-06-19]
@@ -89,7 +99,7 @@ Changes
 - No more generic tabs binder, refactor settings tabs.
   [rnix, 2013-08-06]
 
-- Change base styles to twitter bootstrap.
+- Change base styles to twitter bootstrap 3.
   [rnix, 2013-08-05]
 
 

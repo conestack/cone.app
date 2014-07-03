@@ -9,7 +9,6 @@ Common browser utils.::
     ...     make_query,
     ...     make_url,
     ...     format_date,
-    ...     node_icon_url,
     ...     AppUtil,
     ... )
 
@@ -66,32 +65,6 @@ path.::
 
     >>> format_date(object())
     'unknown'
-
-``node_icon_url``. First looks if ``node.properties.icon`` is set. If not found,
-look if node info for node defines icon. Otherwise use default icon::
-
-    >>> from cone.app.model import (
-    ...     NodeInfo,
-    ...     registerNodeInfo,
-    ... )
-    >>> node = BaseNode()
-    >>> node_icon_url(request, node)
-    'http://example.com/static/images/default_node_icon.png'
-
-    >>> info = NodeInfo
-    >>> info.icon = 'my-static/images/myicon.png'
-    >>> registerNodeInfo('mytype', info)
-    >>> node.node_info_name = 'mytype'
-    >>> node_icon_url(request, node)
-    'http://example.com/my-static/images/myicon.png'
-
-    >>> info.icon = None
-    >>> node_icon_url(request, node)
-    'http://example.com/static/images/default_node_icon.png'
-
-    >>> node.properties.icon = 'my-static/images/othericon.png'
-    >>> node_icon_url(request, node)
-    'http://example.com/my-static/images/othericon.png'
 
 ``request_property``::
 

@@ -4,7 +4,8 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <ul class="nav navbar-nav">
+  <ul class="nav navbar-nav"
+      tal:condition="context.display">
 
     <li class="dropdown">
 

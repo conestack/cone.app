@@ -88,6 +88,7 @@ table tr td:first-child {
 }
 .table_info {
     margin-top:4px;
+    margin-bottom:4px;
 }
 
 /* footer */

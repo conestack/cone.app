@@ -21,7 +21,6 @@ from .utils import (
     nodepath,
     make_url,
     format_date,
-#    node_icon_url,
     node_icon,
 )
 
@@ -96,7 +95,6 @@ class MainMenu(Tile):
     @property
     def menuitems(self):
         ret = list()
-        count = 0
         path = nodepath(self.model)
         if path:
             curpath = path[0]
@@ -110,6 +108,7 @@ class MainMenu(Tile):
             curpath = root.properties.default_child
         # check wether to render mainmenu item title
         empty_title = root.properties.mainmenu_empty_title
+        # XXX: icons
         for key in root.keys():
             child = root[key]
             if not has_permission('view', child, self.request):
@@ -124,9 +123,8 @@ class MainMenu(Tile):
                 item['description'] = child.metadata.description
             item['url'] = make_url(self.request, path=[key])
             item['selected'] = curpath == key
-            item['first'] = count == 0 # XXX: remove
+            item['icon'] = node_icon(self.request, child)
             ret.append(item)
-            count += 1
         return ret
 
 
@@ -216,7 +214,6 @@ class NavTree(Tile):
             title = node.metadata.title
             url = make_url(self.request, node=node)
             curnode = curpath == key and True or False
-            #icon = node_icon_url(self.request, node)
             icon = node_icon(self.request, node)
             css = ''
             if IWorkflowState.providedBy(node):

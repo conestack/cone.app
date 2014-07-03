@@ -65,16 +65,6 @@ def format_date(dt, long=True):
     return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
 
 
-def node_icon_url(request, node):
-    # XXX: outdated
-    if node.properties.icon:
-        return make_url(request, resource=node.properties.icon)
-    info = node.nodeinfo
-    if not info.icon:
-        return make_url(request, resource=app_config().default_node_icon)
-    return make_url(request, resource=info.icon)
-
-
 def node_icon(request, node):
     if node.properties.icon:
         return node.properties.icon
