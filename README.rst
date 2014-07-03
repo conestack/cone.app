@@ -72,6 +72,9 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Use ``bdajax_bootstrap_3.pt`` template for bdajax markup integration.
+  [rnix, 2014-07-03]
+
 - Remove custom dropdown from ``cone.app.js``. Boostrap dropdown is used all
   over the place.
   [rnix, 2014-07-03]

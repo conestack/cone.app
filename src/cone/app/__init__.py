@@ -48,7 +48,6 @@ cfg.js.protected = [
 cfg.css = Properties()
 # dev
 cfg.css.public = [
-    '++resource++bdajax/bdajax.css',
     'static/bootstrap/css/bootstrap.css',
     'static/bootstrap/css/bootstrap-theme.css',
 #    'static/jqueryui/jquery-ui-1.10.3.custom.css',
@@ -59,12 +58,12 @@ cfg.css.public = [
 ]
 # prod
 # cfg.css.public = [
-#     '++resource++bdajax/bdajax.css',
 #     'static/bootstrap/css/bootstrap.min.css',
 #     'static/bootstrap/css/bootstrap-theme.min.css',
 #     'static/jqueryui/jquery-ui-1.10.3.custom.css',
 #     'static/jqueryui/jquery-ui-1.10.3.theme.css',
 #     'static/jqueryui/jquery-ui-1.10.3.ie.css',
+#     'static/ionicons/css/ionicons.css',
 #     'static/styles.css',
 # ]
 cfg.css.protected = list()
