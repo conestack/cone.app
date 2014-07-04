@@ -39,6 +39,7 @@ cfg.js = Properties()
 cfg.js.public = [
     '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
+    '++resource++bdajax/bdajax_bs3.js',
 ]
 cfg.js.protected = [
     'static/cone.app.js',
@@ -54,7 +55,7 @@ cfg.css.public = [
 #    'static/jqueryui/jquery-ui-1.10.3.theme.css',
 #    'static/jqueryui/jquery.ui.1.10.3.ie.css',
     'static/ionicons/css/ionicons.css',
-    '++resource++bdajax/bdajax_bootstrap_3.css',
+    '++resource++bdajax/bdajax_bs3.css',
     'static/styles.css',
 ]
 # prod

@@ -72,8 +72,8 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
-- Use ``bdajax_bootstrap_3.pt`` template for bdajax markup integration.
-  [rnix, 2014-07-03]
+- Use bootstrap 3 related resources for bdajax integration.
+  [rnix, 2014-07-04]
 
 - Remove custom dropdown from ``cone.app.js``. Boostrap dropdown is used all
   over the place.
@@ -86,7 +86,7 @@ Changes
 - Remove ``cone.app.utils.node_icon_url``.
   [rnix, 2014-07-03]
 
-- Include ionicons
+- Include ionicons.
   [rnix, 2014-07-02]
 
 - Fix yafowil JS resources delivery order.

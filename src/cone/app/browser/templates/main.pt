@@ -19,8 +19,7 @@
   <body role="document">
     <tal:bdajax replace="structure tile('bdajax')" />
 
-    <div class="navbar navbar-inverse navbar-fixed-top"
-         role="navigation">
+    <div class="navbar navbar-inverse navbar-top">
 
       <div class="container">
 

@@ -13,7 +13,7 @@ from .actions import ActionContext
 from .exception import format_traceback
 
 
-registerTile('bdajax', 'bdajax:bdajax_bootstrap_3.pt', permission='login')
+registerTile('bdajax', 'bdajax:bdajax_bs3.pt', permission='login')
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')

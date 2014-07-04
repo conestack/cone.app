@@ -1,7 +1,12 @@
 /* general */
 body {
     padding-bottom: 70px;
-    padding-top: 70px;
+}
+
+/* main nav bar */
+.navbar-top {
+    border-radius:0;
+    border-width:0 0 1px;
 }
 
 /* search field */
