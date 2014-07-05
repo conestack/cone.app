@@ -38,6 +38,9 @@ class Table(Tile):
     display_table_header = True
     display_table_footer = True
 
+    table_length_size = 'col-xs-4 col-sm3'
+    table_filter_size = 'col-xs-3'
+
     @property
     def slice(self):
         return TableSlice(self, self.model, self.request)

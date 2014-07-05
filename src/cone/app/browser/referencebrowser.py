@@ -280,6 +280,7 @@ def reference_edit_renderer(widget, data):
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
         'class_': cssclasses(widget, data),
+        'readonly': 'readonly',
     }
     hidden_attrs = {
         'type': 'hidden',

@@ -44,6 +44,7 @@ setup(name='cone.app',
           'yafowil',
           'yafowil.yaml',
           'yafowil.webob',
+          'yafowil.bootstrap',
           'repoze.workflow',
       ],
       extras_require=dict(

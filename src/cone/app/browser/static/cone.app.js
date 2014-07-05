@@ -398,7 +398,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
      *     $('input.referencebrowser').referencebrowser();
      */
     $.fn.referencebrowser = function() {
-        var icon = $('<span class="ion-android-share"></span>');
+        var icon = $(
+            '<span class="ion-android-share referencebrowser_trigger"></span>');
         this.after(icon);
         icon = this.next();
         icon.unbind('click');

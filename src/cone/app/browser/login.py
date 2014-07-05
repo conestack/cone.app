@@ -9,6 +9,7 @@ from ..security import authenticate
 from .form import Form
 from .utils import make_url
 
+
 _ = TranslationStringFactory('cone.app')
 
 
@@ -22,31 +23,37 @@ class LoginForm(Form):
             u'form',
             name='loginform',
             props={
-                'action': action
+                'action': action,
+                'class': 'form-horizontal',
             })
         form['user'] = factory(
-            'field:label:error:text',
+            'field:label:div:help:error:text',
             props={
                 'required': _('no_username_given', 'No username given'),
                 'label': _('username', 'Username'),
+                'label.class_add': 'col-sm-2',
+                'div.class_add': 'col-sm-5',
             })
         form['password'] = factory(
-            'field:label:*credentials:error:password',
+            'field:label:div:help:*credentials:error:password',
             props={
                 'required': _('no_password_given', 'No password given'),
                 'label': _('password', 'Password'),
+                'label.class_add': 'col-sm-2',
+                'div.class_add': 'col-sm-5',
             },
             custom={
                 'credentials': ([self.login], [], [], []),
             })
         form['login'] = factory(
-            'submit',
+            'field:div:submit',
             props={
                 'action': 'login',
                 'expression': True,
                 'handler': self.noop,
                 'next': self.next,
                 'label': _('login', 'Login'),
+                'div.class_add': 'col-sm-offset-2 col-sm-5',
             })
         self.form = form
 

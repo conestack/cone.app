@@ -21,7 +21,11 @@
               tal:content="context.table_title">Title</span>
       </h4>
 
-      <div class="table_length pull-right input-group input-group-sm col-xs-3"
+      <div class="table_length
+                  pull-right
+                  input-group
+                  input-group-sm
+                  ${context.table_length_size}"
            tal:condition="context.show_slicesize">
 
         <span i18n:translate="show"
@@ -48,7 +52,11 @@
 
       </div>
 
-      <div class="table_filter pull-right input-group input-group-sm col-xs-3"
+      <div class="table_filter
+                  pull-right
+                  input-group
+                  input-group-sm
+                  ${context.table_filter_size}"
            tal:condition="context.show_filter">
 
         <span i18n:translate="search"
@@ -134,7 +142,7 @@
 
           <tr tal:define="css row_data.selectable and 'selectable' or '';
                           css ' '.join([css, row_data.css]).strip()"
-              class="${css}"
+              class="${css|nothing}"
               ajax:target="${row_data.target and row_data.target or None}">
 
             <tal:td repeat="col_def context.col_defs">
@@ -144,8 +152,9 @@
                               is_structure col_def['content'] == 'structure';
                               is_datetime col_def['content'] == 'datetime';
                               value row_data[col_def['id']];
-                              value is_datetime and context.format_date(value) or value;"
-                  tal:attributes="class sort_index == current_index and 'sorted_col' or None">
+                              value is_datetime and context.format_date(value) or value;
+                              css sort_index == current_index and col_def['id'] + ' sorted_col' or col_def['id'];"
+                  tal:attributes="class css">
 
                 <div class="col">
 

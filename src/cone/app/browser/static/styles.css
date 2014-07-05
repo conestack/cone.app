@@ -76,8 +76,12 @@ body {
 .table-heading h4 {
     padding-left:0;
 }
+.table_length {
+    margin-top:2px;
+}
 .table_filter {
     margin-right:8px;
+    margin-top:2px;
 }
 .table_sort {
     font-size:80%;
@@ -108,6 +112,15 @@ tr.selectable.selected td {
 }
 .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
     background-color:#cfdce7;
+}
+
+/* referencebrowser */
+.referencebrowser_trigger {
+    padding:10px 15px 10px 5px;
+    cursor:pointer;
+}
+#referencebrowser_table td.actions {
+    width:100px;
 }
 
 /* footer */
