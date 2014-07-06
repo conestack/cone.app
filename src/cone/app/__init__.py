@@ -50,9 +50,9 @@ cfg.css = Properties()
 
 # dev
 cfg.css.public = [
+    'static/jqueryui/jquery-ui-1.10.3.custom.css',
     'static/bootstrap/css/bootstrap.css',
     'static/bootstrap/css/bootstrap-theme.css',
-#    'static/jqueryui/jquery-ui-1.10.3.custom.css',
     'static/ionicons/css/ionicons.css',
     '++resource++bdajax/bdajax_bs3.css',
     'static/styles.css',
@@ -60,9 +60,9 @@ cfg.css.public = [
 
 # production
 # cfg.css.public = [
+#     'static/jqueryui/jquery-ui-1.10.3.custom.css',
 #     'static/bootstrap/css/bootstrap.min.css',
 #     'static/bootstrap/css/bootstrap-theme.min.css',
-#     'static/jqueryui/jquery-ui-1.10.3.custom.css',
 #     'static/ionicons/css/ionicons.css',
 #     '++resource++bdajax/bdajax_bootstrap_3.css',
 #     'static/styles.css',
