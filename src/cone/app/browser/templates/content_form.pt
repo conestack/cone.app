@@ -3,10 +3,25 @@
 
   <tal:contextmenu condition="context.show_contextmenu"
                    replace="structure context.rendered_contextmenu" />
-    
-  <h1 tal:condition="context.show_heading"
-      tal:content="context.form_heading">Title</h1>
-    
-  <tal:form replace="structure context.rendered_form" />
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading content-heading"
+         tal:condition="context.show_heading">
+
+      <h4 class="col-xs-4 pull-left">
+        <span class="label label-primary"
+              tal:content="context.form_heading">Title</span>
+      </h4>
+
+      <div class="clearfix" />
+
+    </div>
+
+    <div class="panel-body">
+      <tal:form replace="structure context.rendered_form" />
+    </div>
+
+  </div>
 
 </tal:block>

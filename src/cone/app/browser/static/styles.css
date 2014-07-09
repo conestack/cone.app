@@ -72,10 +72,12 @@ body {
     padding:2px 10px 2px 0px;
 }
 
-/* table */
-.table-heading h4 {
-    padding-left:0;
+/* content panel heading */
+.content-heading h4 {
+    padding-left: 0;
 }
+
+/* table */
 .table_length {
     margin-top:2px;
 }

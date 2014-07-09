@@ -35,29 +35,30 @@ Coverage Report
 ===============
 
 ::
+
     lines   cov%   module
-      189    88%   cone.app.__init__
+      194    98%   cone.app.__init__
        32   100%   cone.app.browser.__init__
-      288    99%   cone.app.browser.actions
+      283    99%   cone.app.browser.actions
       170   100%   cone.app.browser.ajax
       219    95%   cone.app.browser.authoring
-      100   100%   cone.app.browser.batch
-      138    94%   cone.app.browser.contents
-       23   100%   cone.app.browser.contextmenu
+      101   100%   cone.app.browser.batch
+      144    94%   cone.app.browser.contents
+       72    91%   cone.app.browser.contextmenu
       111   100%   cone.app.browser.copysupport
        24   100%   cone.app.browser.exception
        81    96%   cone.app.browser.form
-      208    97%   cone.app.browser.layout
-       52   100%   cone.app.browser.login
-      216    95%   cone.app.browser.referencebrowser
-       69    76%   cone.app.browser.resources
+      229    96%   cone.app.browser.layout
+       58   100%   cone.app.browser.login
+      205    95%   cone.app.browser.referencebrowser
+       69    78%   cone.app.browser.resources
        43   100%   cone.app.browser.settings
       150    98%   cone.app.browser.sharing
-      134   100%   cone.app.browser.table
-       87    97%   cone.app.browser.utils
+      136   100%   cone.app.browser.table
+       80    98%   cone.app.browser.utils
        48   100%   cone.app.browser.workflow
        53   100%   cone.app.interfaces
-      332    98%   cone.app.model
+      339    97%   cone.app.model
       172   100%   cone.app.security
        88   100%   cone.app.testing.__init__
        50   100%   cone.app.testing.mock
@@ -71,6 +72,9 @@ Changes
 
 1.0.dev0 (unreleased)
 ---------------------
+
+- Content forms are now wrapped by a bs3 panel element.
+  [rnix, 2014-07-09]
 
 - Introduce ``skip_mainmenu`` in ``model.properties``. Gets considered in
   mainmenu.

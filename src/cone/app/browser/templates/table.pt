@@ -12,7 +12,7 @@
        ajax:target="${context.nodeurl}"
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
 
-    <div class="panel-heading table-heading"
+    <div class="panel-heading content-heading"
          tal:condition="context.display_table_header">
 
       <h4 class="col-xs-4 pull-left">
