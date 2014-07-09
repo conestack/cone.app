@@ -145,7 +145,8 @@ Test batch::
 
     >>> rendered = contents.batch
     >>> rendered = contents.batch
-    >>> rendered.find('class="ui-state-default current">1</a>') != -1
+    >>> expected = '<li class="active">\n          <a href="javascript:void(0)">1</a>'
+    >>> rendered.find(expected) != -1
     True
 
     >>> rendered.find('http://example.com/?sort=created&amp;order=desc&amp;b_page=1&amp;size=15') != -1
@@ -155,7 +156,8 @@ Change page::
 
     >>> request.params['b_page'] = '1'
     >>> rendered = contents.batch
-    >>> rendered.find('class="ui-state-default current">2</a>') != -1
+    >>> expected = '<li class="active">\n          <a href="javascript:void(0)">2</a>'
+    >>> rendered.find(expected) != -1
     True
 
     >>> rendered.find('http://example.com/?sort=created&amp;order=desc&amp;b_page=0&amp;size=15') != -1
@@ -199,7 +201,7 @@ Copysupport Attributes::
     >>> model['child'] = CopySupportNode()
     >>> request = layer.new_request()
     >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = 'class="even selectable copysupportitem"'
+    >>> expected = 'class="selectable copysupportitem"'
     >>> rendered.find(expected) > -1
     True
 
@@ -209,7 +211,7 @@ Copysupport Attributes::
     >>> cut_url = urllib.quote(make_url(request, node=model['child']))
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url
     >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = 'class="even selectable copysupportitem copysupport_cut"'
+    >>> expected = 'class="selectable copysupportitem copysupport_cut"'
     >>> rendered.find(expected) > -1
     True
 

@@ -120,8 +120,9 @@ Render protected tile.::
     >>> request = layer.new_request()
     >>> render_tile(ProtectedModel(), request, 'content')
     u'<form action="http://example.com/login" 
+    class="form-horizontal" 
     enctype="multipart/form-data" id="form-loginform" method="post" 
-    novalidate="novalidate">...
+    novalidate="novalidate">...'
 
     >>> layer.login('max')
     >>> result = render_tile(ProtectedModel(), request, 'content')
@@ -133,7 +134,9 @@ Render protected tile.::
 
 Main menu
 ---------
+
 ::
+
     >>> root = BaseNode()
     >>> root['1'] = BaseNode()
     >>> root['2'] = BaseNode()
@@ -162,7 +165,7 @@ Authorized::
 Render main menu at child. Child is marked selected::
 
     >>> res = render_tile(root['1'], request, 'mainmenu')
-    >>> res.find('class="first current_page_item mainmenulink"') > -1
+    >>> res.find('<li class="active node-1">') > -1
     True
 
 Render main menu with default child::
@@ -172,16 +175,16 @@ Render main menu with default child::
     >>> model['2'] = BaseNode()
     >>> model.properties.default_child = '2'
     >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('current_page_item mainmenulink">2</a>') > -1
+    >>> res.find('<li class="active node-2">') > -1
     True
 
 Render main menu on child '1' and check if '2' is unselected now::
 
     >>> res = render_tile(model['1'], request, 'mainmenu')
-    >>> res.find('current_page_item mainmenulink">2</a>') > -1
+    >>> res.find('<li class="active node-2">') > -1
     False
 
-    >>> res.find('current_page_item mainmenulink">1</a>') > -1
+    >>> res.find('<li class="active node-1">') > -1
     True
 
 Check rendering of main menu with empty title. This is needed if main menu
@@ -189,18 +192,25 @@ items are supposed to be displayed as icons via CSS::
 
     >>> model.properties.mainmenu_empty_title = True
     >>> res = render_tile(model, request, 'mainmenu')
-
-    >>> res.find('<li class="node-1">') > -1
-    True
-
-    >>> res.find('<li class="node-2">') > -1
-    True
-
-    >>> res.find('mainmenulink" title="1">') > -1
-    True
-
-    >>> res.find('mainmenulink" title="2">') > -1
-    True
+    >>> res
+    u'...<li class=" node-1">\n\n        
+    <a href="http://example.com/1"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/1"\n           
+    ajax:event="contextchanged:.contextsensitiv\n                       
+    contextchanged:#content" title="1"\n          
+    ><span class="glyphicon glyphicon-asterisk"></span>\n          
+    <span></span></a>\n\n      
+    </li>\n\n    \n\n      
+    <li class="active node-2">\n\n        
+    <a href="http://example.com/2"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/2"\n           
+    ajax:event="contextchanged:.contextsensitiv\n                       
+    contextchanged:#content" title="2"\n          
+    ><span class="glyphicon glyphicon-asterisk"></span>\n          
+    <span></span></a>\n\n      
+    </li>...'
 
 Child nodes which do not grant permission 'view' are skipped::
 
@@ -210,14 +220,14 @@ Child nodes which do not grant permission 'view' are skipped::
 
     >>> model['3'] = InvisibleNode()
     >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class="node-3">') > -1
+    >>> res.find('<li class=" node-3">') > -1
     False
 
     >>> layer.login('manager')
     >>> request = layer.current_request
 
     >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class="node-3">') > -1
+    >>> res.find('<li class=" node-3">') > -1
     True
 
     >>> layer.logout()
@@ -248,7 +258,7 @@ Empty navtree, no items are marked to be displayed::
     >>> res.find('ajax:action="navtree:#navtree:replace"') != -1
     True
 
-    >>> res.find('class="contextsensitiv navtree nav nav-list"') != -1
+    >>> res.find('class="contextsensitiv"') != -1
     True
 
 Node's which are in navtree::
@@ -272,11 +282,15 @@ with the navtree tile::
 Render navtree on ``root['1']``, must be selected::
 
     >>> res = render_tile(root['1'], request, 'navtree')
-    >>> expected = 'class="selected navtreelevel_1">\n         ' +\
-    ...     '<i class="static/images/default_node_icon.png" alt="..."></i>\n' +\
-    ...     '         1\n         </a>'
-    >>> res.find(expected) > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1"\n         
+    ajax:event="contextchanged:.contextsensitiv\n                     
+    contextchanged:#content">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
+    </a>...'
 
 Child nodes which do not grant permission 'view' are skipped::
 
@@ -299,15 +313,26 @@ navtree.::
 
     >>> root.properties.default_child = '1'
     >>> res = render_tile(root, request, 'navtree')
-    >>> expected = 'class="selected navtreelevel_1">\n         ' +\
-    ...     '<i class="static/images/default_node_icon.png" alt="..."></i>\n' +\
-    ...     '         1\n         </a>'
-    >>> res.find(expected) > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1"\n         
+    ajax:event="contextchanged:.contextsensitiv\n                     
+    contextchanged:#content">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
+    </a>...'
 
     >>> res = render_tile(root['1'], request, 'navtree')
-    >>> res.find(expected) > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1"\n         
+    ajax:event="contextchanged:.contextsensitiv\n                     
+    contextchanged:#content">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
+    </a>...'
 
 If default child should not be displayed it navtree,
 ``node.properties.hide_if_default`` must be set to 'True'::
@@ -366,11 +391,15 @@ Check whether children subrendering works on nodes which have set
 Render navtree on ``root['1']['11']``, check selected::
 
     >>> res = render_tile(root['1']['11'], request, 'navtree')
-    >>> expected = 'class="selected navtreelevel_1">\n         ' +\
-    ...     '<i class="static/images/default_node_icon.png" alt="..."></i>\n' +\
-    ...     '         11\n         </a>'
-    >>> res.find(expected) > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1/11"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1/11"\n         
+    ajax:event="contextchanged:.contextsensitiv\n                     
+    contextchanged:#content">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        11\n      
+    </a>...'
 
     >>> layer.logout()
 
@@ -410,7 +439,7 @@ Unauthorized::
 
     >>> layer.login('max')
     >>> res = render_tile(root['1'], request, 'pathbar')
-    >>> res.find('pathbaritem') != -1
+    >>> res.find('id="pathbar"') != -1
     True
 
 Default child behavior of pathbar::

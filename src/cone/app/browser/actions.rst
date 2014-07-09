@@ -1,6 +1,8 @@
 Actions
 =======
+
 ::
+
     >>> from cone.app.model import BaseNode
     >>> from cone.app.browser.actions import (
     ...     Action,
@@ -14,7 +16,9 @@ Actions
 
 Abstract actions
 ----------------
+
 ::
+
     >>> Action()(model, request)
     Traceback (most recent call last):
       ...
@@ -31,7 +35,9 @@ Abstract actions
 
 Dummy actions
 -------------
+
 ::
+
     >>> class DummyAction(Action):
     ...     def render(self):
     ...         return '<a href="">dummy action</a>'
@@ -60,7 +66,9 @@ Dummy actions
 
 Toolbar
 -------
+
 ::
+
     >>> from cone.app.browser.actions import Toolbar
     >>> tb = Toolbar()
     >>> tb['a'] = DummyAction()
@@ -83,11 +91,12 @@ Toolbar
 
 LinkAction
 ----------
+
 ::
+
     >>> from cone.app.browser.actions import LinkAction
     >>> LinkAction()(model, request)
-    u'...<a\n     ajax:bind="click"\n     
-    ajax:target="http://example.com/">&nbsp;</a>...'
+    u'...<a\n...ajax:bind="click"\n...ajax:target="http://example.com/"\n...></a>...'
 
     >>> action = LinkAction()
     >>> action.id = 'link_id'
@@ -110,7 +119,7 @@ LinkAction
     ajax:event="contextchanged:.contextsensitiv"\n     
     ajax:action="actionname:#content:replace"\n     
     ajax:confirm="Do you want to perform?"\n     
-    ajax:overlay="someaction">Foo</a>...'
+    ajax:overlay="someaction"\n    >&nbsp;Foo</a>...'
 
     >>> action.enabled = False
     >>> action(model, request).find('class="link_action disabled"') > -1
@@ -123,7 +132,9 @@ LinkAction
 
 ActionUp
 --------
+
 ::
+
     >>> from cone.app.browser.actions import ActionUp
     >>> parent = BaseNode(name='root')
     >>> model = parent['model'] = BaseNode()
@@ -141,24 +152,24 @@ ActionUp
     u'...<a\n     
     id="toolbaraction-up"\n     
     href="http://example.com/root"\n     
-    title="One level up"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="listing:#content:inner"><i\n         
-    class="toolbaricon-up"></i>&nbsp;</a>...'
+    ajax:action="listing:#content:inner"\n    ><span 
+    class="glyphicon glyphicon-arrow-up"></span\n    \n    
+    >&nbsp;One level up</a>...'
 
     >>> model.properties.action_up_tile = 'otherparentcontent'
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
     href="http://example.com/root"\n     
-    title="One level up"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="otherparentcontent:#content:inner"><i\n         
-    class="toolbaricon-up"></i>&nbsp;</a>...'
+    ajax:action="otherparentcontent:#content:inner"\n    ><span 
+    class="glyphicon glyphicon-arrow-up"></span\n    \n    
+    >&nbsp;One level up</a>...'
 
     >>> default = model['default'] = BaseNode()
     >>> default.properties.action_up = True
@@ -167,55 +178,57 @@ ActionUp
     u'...<a\n     
     id="toolbaraction-up"\n     
     href="http://example.com/root"\n     
-    title="One level up"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
     ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="listing:#content:inner"><i\n         
-    class="toolbaricon-up"></i>&nbsp;</a>...'
+    ajax:action="listing:#content:inner"\n    ><span 
+    class="glyphicon glyphicon-arrow-up"></span\n    \n    
+    >&nbsp;One level up</a>...'
 
     >>> layer.logout()
 
 
 ActionView
 ----------
+
 ::
+
     >>> from cone.app.browser.actions import ActionView
     >>> from cone.app.browser.actions import ActionContext
-    
+
     >>> request.environ['action_context'] = \
     ...     ActionContext(model, request, 'content')
-    
+
     >>> action = ActionView()
     >>> action(model, request)
     u''
-    
+
     >>> model.properties.action_view = True
     >>> action(model, request)
     u''
-    
+
     >>> layer.login('viewer')
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-view"\n     
     href="http://example.com/root/model"\n     
     class="selected"\n     
-    title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="content:#content:inner"><i\n         
-    class="toolbaricon-view"></i>&nbsp;</a>...'
+    ajax:action="content:#content:inner"\n    
+    ><span class="glyphicon glyphicon-eye-open"></span\n    \n    
+    >&nbsp;View</a>...'
 
     >>> model.properties.default_content_tile = 'otherdefault'
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-view"\n     
     href="http://example.com/root/model"\n     
-    title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="view:#content:inner"><i\n         
-    class="toolbaricon-view"></i>&nbsp;</a>...'
+    ajax:action="view:#content:inner"\n    
+    ><span class="glyphicon glyphicon-eye-open"></span\n    \n    
+    >&nbsp;View</a>...'
 
     >>> model.properties.default_content_tile = None
     >>> layer.logout()
@@ -223,7 +236,9 @@ ActionView
 
 ViewLink
 --------
+
 ::
+
     >>> from cone.app.browser.actions import ViewLink
     >>> action = ViewLink()
     >>> action(model, request)
@@ -239,18 +254,19 @@ ViewLink
     id="toolbaraction-view"\n     
     href="http://example.com/root/model"\n     
     class="selected"\n     
-    title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="content:#content:inner"><i\n         
-    class="toolbaricon-view"></i>model</a>...'
+    ajax:action="content:#content:inner"\n    
+    >&nbsp;model</a>...'
 
     >>> layer.logout()
 
 
 ActionList
 ----------
+
 ::
+
     >>> from cone.app.browser.actions import ActionList
     >>> action = ActionList()
     >>> action(model, request)
@@ -265,18 +281,20 @@ ActionList
     u'...<a\n     
     id="toolbaraction-list"\n     
     href="http://example.com/root/model/listing"\n     
-    title="Listing"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="listing:#content:inner"><i\n         
-    class="toolbaricon-list"></i>&nbsp;</a>...'
+    ajax:action="listing:#content:inner"\n    
+    ><span class="glyphicon glyphicon-th-list"></span\n    \n    
+    >&nbsp;Listing</a>...'
 
     >>> layer.logout()
 
 
 ActionSharing
 -------------
+
 ::
+
     >>> from pyramid.security import has_permission
     >>> from cone.app.interfaces import IPrincipalACL
     >>> from cone.app.testing.mock import SharingNode
@@ -313,18 +331,20 @@ ActionSharing
     u'...<a\n     
     id="toolbaraction-share"\n     
     href="http://example.com/root/sharingmodel/sharing"\n     
-    title="Sharing"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/sharingmodel"\n     
-    ajax:action="sharing:#content:inner"><i\n         
-    class="toolbaricon-share"></i>&nbsp;</a>\n\n'
+    ajax:action="sharing:#content:inner"\n    
+    ><span class="glyphicon glyphicon-share"></span\n    \n    
+    >&nbsp;Sharing</a>...'
 
     >>> layer.logout()
 
 
 ActionState
 -----------
+
 ::
+
     >>> from cone.app.interfaces import IWorkflowState
     >>> from cone.app.testing.mock import WorkflowNode
     >>> from cone.app.browser.actions import ActionState
@@ -357,20 +377,20 @@ ActionState
     "ACLAllowed permission 'change_state' via ACE ...
 
     >>> action(wfmodel, request)
-    u'\n  <div class="transitions_dropdown">\n    
-      ...    
-    <a href="http://example.com/root/wfmodel/dotransition?do_transition=initial_2_final"\n           
-    ajax:bind="click"\n           
-    ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"\n           
-    ajax:action="wf_dropdown:NONE:NONE">Finalize</a>\n      
-      ...
+    u'...<li class="dropdown">...      
+    <a href="http://example.com/root/wfmodel/dotransition?do_transition=initial_2_final"\n             
+    ajax:bind="click"\n             
+    ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"\n             
+    ajax:action="wf_dropdown:NONE:NONE">Finalize</a>...'
 
     >>> layer.logout()
 
 
 ActionAdd
 ---------
+
 ::
+
     >>> from cone.app.model import (
     ...     NodeInfo,
     ...     registerNodeInfo,
@@ -413,27 +433,30 @@ ActionAdd
     <cone.app.model.NodeInfo object at ...>
 
     >>> action(addmodel, request)
-    u'...<span class="add_dropdown">\n      
-    <button class="btn btn-small">\n        
-    <i class="toolbaricon-add"></i>Add\n        
-    <span class="caret"></span>\n      
-    </button>\n    
-    </span>\n    
-    <ul class="dropdown_items dropdown-menu">\n      
+    u'...<li class="dropdown">\n\n    
+    <a href="#"\n       
+    class="dropdown-toggle"\n       
+    data-toggle="dropdown">\n      
+    <span>Add</span>\n      
+    <span class="caret"></span>\n    
+    </a>\n\n    
+    <ul class="dropdown-menu" role="addmenu">\n      
     <li>\n        
     <a href="http://example.com/add?factory=addable"\n           
     ajax:bind="click"\n           
     ajax:target="http://example.com/?factory=addable"\n           
     ajax:action="add:#content:inner">\n          
-    <i class="static/images/default_node_icon.png"></i>\n          
-    Addable\n        </a>\n      </li>\n    </ul>\n\n'
+    <span class="glyphicon glyphicon-asterisk"></span>\n          
+    Addable\n        </a>\n      </li>\n    </ul>\n\n  </li>...'
 
     >>> layer.logout()
 
 
 ActionEdit
 ----------
+
 ::
+
     >>> request.environ['action_context'] = \
     ...     ActionContext(model, request, 'listing')
 
@@ -455,18 +478,20 @@ ActionEdit
     u'...<a\n     
     id="toolbaraction-edit"\n     
     href="http://example.com/root/model/edit"\n     
-    title="Edit"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="edit:#content:inner"><i\n         
-    class="toolbaricon-edit"></i>&nbsp;</a>...'
+    ajax:action="edit:#content:inner"\n    
+    ><span class="glyphicon glyphicon-pencil"></span\n    \n    
+    >&nbsp;Edit</a>...'
 
     >>> layer.logout()
 
 
 ActionDelete
 ------------
+
 ::
+
     >>> request.environ['action_context'] = \
     ...     ActionContext(model, request, 'content')
 
@@ -488,12 +513,12 @@ ActionDelete
     u'...<a\n     
     id="toolbaraction-delete"\n     
     href="http://example.com/root/model/delete"\n     
-    title="Delete"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete this Item?"><i\n         
-    class="toolbaricon-delete"></i>&nbsp;</a>\n\n'
+    ajax:confirm="Do you really want to delete this Item?"\n    
+    ><span class="ion-trash-a"></span\n    \n    
+    >&nbsp;Delete</a>...'
 
     >>> model.properties.default_content_tile = 'othertile'
     >>> action(model, request)
@@ -504,7 +529,9 @@ ActionDelete
 
 ActionDeleteChildren
 --------------------
+
 ::
+
     >>> from cone.app.browser.actions import ActionDeleteChildren
     >>> action = ActionDeleteChildren()
     >>> action(model, request)
@@ -521,25 +548,27 @@ ActionDeleteChildren
     >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
+    id="toolbaraction-delete-children"\n     
     href="http://example.com/root/model/delete_children"\n     
     class="disabled"\n     
-    title="Delete selected children"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete_children:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete selected Items?"><i\n         
-    class="toolbaricon-delete"></i>&nbsp;</a>...'
+    ajax:confirm="Do you really want to delete selected Items?"\n    
+    ><span class="ion-trash-a"></span\n    \n    
+    >&nbsp;Delete selected children</a>...'
 
     >>> request.cookies['cone.app.selected'] = ['foo']
     >>> action(model, request)
     u'...<a\n     
+    id="toolbaraction-delete-children"\n     
     href="http://example.com/root/model/delete_children"\n     
-    title="Delete selected children"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete_children:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete selected Items?"><i\n         
-    class="toolbaricon-delete"></i>&nbsp;</a>...'
+    ajax:confirm="Do you really want to delete selected Items?"\n    
+    ><span class="ion-trash-a"></span\n    \n    
+    >&nbsp;Delete selected children</a>...'
 
     >>> del request.cookies['cone.app.selected']
     >>> layer.logout()
@@ -547,7 +576,9 @@ ActionDeleteChildren
 
 ActionCut
 ---------
+
 ::
+
     >>> from cone.app.interfaces import ICopySupport
     >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode('copysupport')
@@ -575,9 +606,9 @@ ActionCut
     u'...<a\n     
     id="toolbaraction-cut"\n     
     href="http://example.com/copysupport/cut"\n     
-    title="Cut"\n     
-    ajax:target="http://example.com/copysupport"><i\n         
-    class="toolbaricon-cut"></i>&nbsp;</a>...'
+    ajax:target="http://example.com/copysupport"\n    
+    ><span class="ion-scissors"></span\n    \n    
+    >&nbsp;Cut</a>...'
 
     >>> model.supports_cut = False
     >>> action(model, request)
@@ -588,7 +619,9 @@ ActionCut
 
 ActionCopy
 ----------
+
 ::
+
     >>> model.supports_copy
     True
 
@@ -606,9 +639,9 @@ ActionCopy
     u'...<a\n     
     id="toolbaraction-copy"\n     
     href="http://example.com/copysupport/copy"\n     
-    title="Copy"\n     
-    ajax:target="http://example.com/copysupport"><i\n         
-    class="toolbaricon-copy"></i>&nbsp;</a>...'
+    ajax:target="http://example.com/copysupport"\n    
+    ><span class="ion-ios7-copy-outline"></span\n    \n    
+    >&nbsp;Copy</a>...'
 
     >>> model.supports_copy = False
     >>> action(model, request)
@@ -619,7 +652,9 @@ ActionCopy
 
 ActionPaste
 -----------
+
 ::
+
     >>> model.supports_paste
     True
 
@@ -638,18 +673,18 @@ ActionPaste
     id="toolbaraction-paste"\n     
     href="http://example.com/copysupport/paste"\n     
     class="disabled"\n     
-    title="Paste"\n     
-    ajax:target="http://example.com/copysupport"><i\n         
-    class="toolbaricon-paste"></i>&nbsp;</a>...'
+    ajax:target="http://example.com/copysupport"\n    
+    ><span class="ion-clipboard"></span\n    \n    
+    >&nbsp;Paste</a>...'
 
     >>> request.cookies['cone.app.copysupport.cut'] = ['foo']
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-paste"\n     
     href="http://example.com/copysupport/paste"\n     
-    title="Paste"\n     
-    ajax:target="http://example.com/copysupport"><i\n         
-    class="toolbaricon-paste"></i>&nbsp;</a>...'
+    ajax:target="http://example.com/copysupport"\n    
+    ><span class="ion-clipboard"></span\n    \n    
+    >&nbsp;Paste</a>...'
 
     >>> del request.cookies['cone.app.copysupport.cut']
     >>> request.cookies['cone.app.copysupport.copy'] = ['foo']
@@ -657,9 +692,9 @@ ActionPaste
     u'...<a\n     
     id="toolbaraction-paste"\n     
     href="http://example.com/copysupport/paste"\n     
-    title="Paste"\n     
-    ajax:target="http://example.com/copysupport"><i\n         
-    class="toolbaricon-paste"></i>&nbsp;</a>...'
+    ajax:target="http://example.com/copysupport"\n    
+    ><span class="ion-clipboard"></span\n    \n    
+    >&nbsp;Paste</a>...'
 
     >>> del request.cookies['cone.app.copysupport.copy']
 

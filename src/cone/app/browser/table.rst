@@ -38,7 +38,7 @@ Imports and dummy context::
 
     >>> class MyTable(Table):
     ...     default_slicesize = 10
-    ...     
+    ... 
     ...     @property
     ...     def item_count(self):
     ...         return 21
@@ -65,7 +65,7 @@ Imports and dummy context::
 
     >>> class MyTable(Table):
     ...     default_slicesize = 10
-    ...     
+    ... 
     ...     @property
     ...     def item_count(self):
     ...         return 20
@@ -194,30 +194,30 @@ A complete example::
     ...     default_order = 'desc'
     ...     default_slicesize = 10
     ...     query_whitelist = ['foo'] # additional query params to consider
-    ...     
+    ... 
     ...     @property
     ...     def item_count(self):
     ...         return 20
-    ...     
+    ... 
     ...     def sorted_rows(self, start, end, sort, order):
     ...         rows = []
     ...         for i in range(self.item_count):
     ...             row_data = RowData()
-    ...             
+    ... 
     ...             # structure
     ...             row_data['col_1'] = view_link(self.model, self.request)
-    ...             
+    ... 
     ...             # string
     ...             row_data['col_2'] = 'Col 2 -> %i' % i
-    ...             
+    ... 
     ...             # datetime value
     ...             row_data['col_3'] = datetime(2011, 4, 1)
-    ...             
+    ... 
     ...             # append row data
     ...             rows.append(row_data)
-    ...         
+    ... 
     ...         # sorting goes here (i.e.)
-    ...         
+    ... 
     ...         return rows[start:end]
 
 Rendering fails unauthorized, 'view' permission is required::
@@ -241,28 +241,26 @@ Render authenticated::
 Sort header with query white list param::
 
     >>> rendered
-    u'\n  <div id="mytable"\n
+    u'...<div id="mytable"\n
     ...
     ajax:target="http://example.com/?sort=col_2&amp;b_page=1&amp;foo=bar&amp;order=desc&amp;size=10"...
 
 Structure content::
 
     >>> rendered
-    u'\n  <div id="mytable"\n
-      ...
+    u'...<div id="mytable"...
     <a\n     
     id="toolbaraction-view"\n     
     href="http://example.com/"\n     
-    title="View"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/"\n     
-    ajax:action="content:#content:inner"><i\n         
-    class="toolbaricon-view"></i>Foo</a>...
+    ajax:action="content:#content:inner"\n    
+    >&nbsp;Foo</a>...'
 
 String::
 
     >>> rendered
-    u'\n  <div id="mytable"\n
+    u'...<div id="mytable"\n
       ...
     Col 2 -&gt; 1...
 

@@ -75,7 +75,8 @@ Merged Assets::
     >>> assets
     [(<pyramid.static.static_view object at ...>, 'jquery-1.9.1.js'), 
     (<pyramid.static.static_view object at ...>, 'jquery.migrate-1.2.1.js'), 
-    (<pyramid.static.static_view object at ...>, 'jqueryui/jquery-ui-1.10.3.custom.min.js')...]
+    (<pyramid.static.static_view object at ...>, 'jqueryui/jquery-ui-1.10.3.custom.js'), 
+    (<pyramid.static.static_view object at ...>, 'bootstrap/js/bootstrap.js')...]
 
     >>> static = assets[0][0]
     >>> resource = assets[0][1]
@@ -100,15 +101,15 @@ Merged Assets::
     >>> from cone.app.browser.resources import MergedAssets
     >>> request = layer.new_request()
     >>> assets = MergedAssets(request)
-    >>> assets.merged_js
-    '...'
+    >>> len(assets.merged_js) > 0
+    True
 
     >>> assets.merged_css
     '...'
 
     >>> layer.login('admin')
-    >>> assets.merged_js
-    '...'
+    >>> len(assets.merged_js) > 0
+    True
 
     >>> assets.merged_css
     '...'

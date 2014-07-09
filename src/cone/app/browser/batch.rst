@@ -50,7 +50,7 @@ Batches are displayed by default::
 Default ``batchrange`` is 30 items. Defines how many pages are displayed::
 
     >>> batch.batchrange
-    10
+    8
 
 Test ``currentpage`` returns None if no currentpage::
 

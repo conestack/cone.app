@@ -78,7 +78,7 @@ Create and register an ``addform`` named form tile::
     ... class MyAddForm(Form):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = AddBehavior
-    ...     
+    ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='addform',
@@ -103,7 +103,7 @@ Create and register an ``addform`` named form tile::
     ...                 'label': 'Add',
     ...             })
     ...         self.form = form
-    ...     
+    ... 
     ...     def add(self, widget, data):
     ...         fetch = self.request.params.get
     ...         child = MyNode()
@@ -164,7 +164,7 @@ Render with submitted data::
 
     >>> request.environ['redirect'].location
     'http://example.com/somechild'
-    
+
 Render with 'came_from' set::
 
     >>> del request.environ['redirect']
@@ -226,7 +226,7 @@ Create and register an ``editform`` named form tile::
     ... class MyEditForm(Form):
     ...     __metaclass__ = plumber
     ...     __plumbing__ = EditBehavior
-    ...     
+    ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='editform',
@@ -247,7 +247,7 @@ Create and register an ``editform`` named form tile::
     ...                 'label': 'Update',
     ...             })
     ...         self.form = form
-    ...     
+    ... 
     ...     def update(self, widget, data):
     ...         fetch = self.request.params.get
     ...         self.model.attrs.title = fetch('editform.title')
@@ -261,8 +261,8 @@ Render form with value from model::
     ...     ActionContext(root['somechild'], request, 'content')
 
     >>> render_tile(root['somechild'], request, 'edit')
-    u'\n  <div class="box">...<h1>Edit: My Node</h1>...<form 
-    action="http://example.com/somechild" ...'
+    u'...<h1>Edit: My Node</h1>...
+    <form action="http://example.com/somechild"...'
 
 Render with submitted data. Default next URL of EditBehavior is the edited
 node::
@@ -355,7 +355,9 @@ Edit view::
 
 Deleting
 --------
+
 ::
+
     >>> class CallableNode(BaseNode):
     ...     def __call__(self):
     ...         pass
@@ -468,14 +470,15 @@ XXX: discuss whether to hide entire widget if no items::
     >>> rendered = render_tile(NoChildAddingNode(), request, 'add_dropdown')
     
     >>> rendered
-    u'...<span class="add_dropdown">\n      
-    <button class="btn btn-small">\n        
-    <i class="toolbaricon-add"></i>Add\n        
-    <span class="caret"></span>\n      
-    </button>\n    
-    </span>\n    
-    <ul class="dropdown_items dropdown-menu">\n      \n    
-    </ul>...'
+    u'...<li class="dropdown">\n\n    
+    <a href="#"\n       
+    class="dropdown-toggle"\n       
+    data-toggle="dropdown">\n      
+    <span>Add</span>\n      
+    <span class="caret"></span>\n    
+    </a>\n\n    
+    <ul class="dropdown-menu" role="addmenu">\n      \n    
+    </ul>\n\n  </li>...'
 
 Test node with invalid addable, results in empty listing
 XXX: discuss whether to hide entire widget if no items::
@@ -493,14 +496,15 @@ XXX: discuss whether to hide entire widget if no items::
     ...                        request,
     ...                        'add_dropdown')
     >>> rendered
-    u'...<span class="add_dropdown">\n      
-    <button class="btn btn-small">\n        
-    <i class="toolbaricon-add"></i>Add\n        
-    <span class="caret"></span>\n      
-    </button>\n    
-    </span>\n    
-    <ul class="dropdown_items dropdown-menu">\n      \n    
-    </ul>...'
+    u'...<li class="dropdown">\n\n    
+    <a href="#"\n       
+    class="dropdown-toggle"\n       
+    data-toggle="dropdown">\n      
+    <span>Add</span>\n      
+    <span class="caret"></span>\n    
+    </a>\n\n    
+    <ul class="dropdown-menu" role="addmenu">\n      \n    
+    </ul>\n\n  </li>...'
 
 Logout::
 

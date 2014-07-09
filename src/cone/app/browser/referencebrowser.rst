@@ -28,8 +28,8 @@ Render without any value::
     >>> widget()
     u'<span 
     ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
-    class="referencebrowser" id="input-ref" name="ref" type="text" 
-    value="" /><input name="ref.uid" type="hidden" value="" /></span>'
+    class="referencebrowser" id="input-ref" name="ref" readonly="readonly" 
+    type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>'
 
 Render required with empty value::
 
@@ -57,7 +57,7 @@ Render required with empty value::
 
     >>> widget(data=data)
     u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
-    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text" 
     value="" /><input name="ref.uid" type="hidden" value="" /></span>'
 
 Required with valid value::
@@ -73,7 +73,7 @@ Required with valid value::
 
     >>> widget(data=data)
     u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
-    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text" 
     value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>'
 
 Single valued expects 2-tuple as value with (uid, label)::
@@ -91,7 +91,7 @@ Single valued expects 2-tuple as value with (uid, label)::
     ...     })
     >>> widget()
     u'<span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input 
-    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text" 
     value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>'
 
 Extract from request and render widget with data::
@@ -99,14 +99,14 @@ Extract from request and render widget with data::
     >>> data = widget.extract(request)
     >>> widget(data=data)
     u'<span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input 
-    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text" 
     value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>'
 
 Render widget with request::
 
     >>> widget(request=request)
     u'<span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input 
-    class="referencebrowser required" id="input-ref" name="ref" type="text" 
+    class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text" 
     value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>'
 
 Single value display renderer::
@@ -237,7 +237,9 @@ Multi value display renderer::
 
 ActionAddReference
 ------------------
+
 ::
+
     >>> from plumber import plumber
     >>> from node.behaviors import UUIDAware
     >>> from cone.app.model import BaseNode
@@ -268,9 +270,12 @@ ActionAddReference
     u'...<a\n     
     id="ref-..."\n     
     href="http://example.com/model"\n     
-    class="add_small16_16 addreference"\n     
+    class="addreference"\n     
     title="Add reference"\n     
-    ajax:bind="click">&nbsp;</a>\n\n<span class="reftitle" 
+    data-toggle="tooltip"\n     
+    data-placement="top"\n     
+    ajax:bind="click"\n    
+    ><span class="ion-plus-round"></span></a>\n\n\n<span class="reftitle" 
     style="display:none;">model</span>'
 
     >>> layer.logout()
@@ -278,7 +283,9 @@ ActionAddReference
 
 ReferencableChildrenLink
 ------------------------
+
 ::
+
     >>> from cone.app.browser.referencebrowser import ReferencableChildrenLink
     >>> action = ReferencableChildrenLink('tabletile', 'tableid')
     >>> action(model, request)
@@ -290,7 +297,7 @@ ReferencableChildrenLink
     ajax:bind="click"\n     
     ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"\n     
     ajax:event="contextchanged:.refbrowsersensitiv"\n     
-    ajax:action="tabletile:#tableid:replace">model</a>...'
+    ajax:action="tabletile:#tableid:replace"\n    >&nbsp;model</a>\n\n  \n\n\n'
 
     >>> layer.logout()
 
@@ -299,6 +306,7 @@ Reference Pathbar
 -----------------
 
 ::
+
     >>> from cone.tile import render_tile
     >>> model = UUIDNode()
     >>> model['a'] = UUIDNode()
@@ -341,6 +349,7 @@ Reference Pathbar
 
     >>> layer.logout()
 
+
 Reference listing tile
 ----------------------
 
@@ -381,7 +390,7 @@ Unauthorized fails::
     HTTPForbidden: Unauthorized: tile 
     <cone.app.browser.referencebrowser.ReferenceListing object at ...> 
     failed permission check
-    
+
 Authorized::
 
     >>> layer.login('max')
@@ -390,13 +399,7 @@ Authorized::
     True
 
     >>> res
-    u'\n  <div id="referencebrowser"\n       
-      ...
-    <a\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/5?..."\n     
-    ajax:event="contextchanged:.refbrowsersensitiv"\n     
-    ajax:action="referencelisting:#referencebrowser:replace">5</a>...
+    u'...<div id="referencebrowser"...'
 
 Referencable nodes renders add reference action related markup::
 
@@ -404,10 +407,11 @@ Referencable nodes renders add reference action related markup::
     u'...
     <a\n     
     id="ref-..."\n     
-    href="http://example.com/2"\n     
-    class="add_small16_16 addreference"\n     
+    href="http://example.com/1"\n     
+    class="addreference"\n     
     title="Add reference"\n     
-    ajax:bind="click">&nbsp;</a>\n\n<span 
-    class="reftitle" style="display:none;">2</span>...
+    data-toggle="tooltip"\n     
+    data-placement="top"\n     
+    ajax:bind="click"\n    ><span class="ion-plus-round"></span></a>...'
 
     >>> layer.logout()
