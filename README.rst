@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Workflow state only gets initialized at node creation time if not set at
+  corresponding data yet. Needed for non persisting application nodes.
+  [rnix, 2014-07-09]
+
 - Content forms are now wrapped by a bs3 panel element.
   [rnix, 2014-07-09]
 

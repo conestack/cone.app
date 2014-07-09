@@ -9,26 +9,35 @@ Test env provides mock node with workflow behaviors configured::
 
     >>> from cone.app.testing.mock import WorkflowNode
 
+Dummy workflow is registered for ``WorkflowNode``::
+
+    >>> get_workflow(WorkflowNode, u'dummy')
+    <repoze.workflow.workflow.Workflow object at ...>
+
     >>> node = WorkflowNode()
     >>> IWorkflowState.providedBy(node)
     True
 
-    >>> get_workflow(node.__class__, node.properties.wf_name)
-    <repoze.workflow.workflow.Workflow object at ...>
+Workflow name is set on node properties for lookup::
+
+    >>> node.properties.wf_name
+    u'dummy'
+
+Initial workflow state gets set at node creation time if not set yet::
 
     >>> node.state
     u'initial'
 
-    >>> node.state = 'foo'
+    >>> node.state = u'final'
     >>> node.attrs['state']
-    'foo'
+    u'final'
 
     >>> node.attrs['state'] is node.state
     True
 
     >>> initialize_workflow(node)
     >>> node.state
-    u'initial'
+    u'final'
 
 Test copy::
 
@@ -41,12 +50,15 @@ Test copy::
     >>> root.state == child.state == u'final'
     True
 
+Workflow state gets set to initial state on copied nodes::
+
     >>> copied = root.copy()
-    >>> copied.state == copied['child'].state == 'initial'
+    >>> copied.state == copied['child'].state == u'initial'
     True
 
 Default workflow state ACL::
 
+    >>> node = WorkflowNode()
     >>> node.__acl__
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
