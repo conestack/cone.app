@@ -72,6 +72,18 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Introduce ``skip_mainmenu`` in ``model.properties``. Gets considered in
+  mainmenu.
+  [rnix, 2014-07-09]
+
+- Settings are displayed in personaltools menu rather than navtree and
+  mainmenu.
+  [rnix, 2014-07-09]
+
+- ``personaltools`` tile now renders ``cone.app.browser.actions.LinkAction``
+  based items.
+  [rnix, 2014-07-09]
+
 - Use bootstrap 3 related resources for bdajax integration.
   [rnix, 2014-07-04]
 

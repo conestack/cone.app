@@ -28,9 +28,12 @@ Settings contains metadata.title by default::
 Settings is displayed in navtree by default::
 
     >>> root['settings'].properties.keys()
-    ['in_navtree', 'icon']
+    ['skip_mainmenu', 'in_navtree', 'icon']
 
     >>> root['settings'].properties.in_navtree
+    False
+
+    >>> root['settings'].properties.skip_mainmenu
     True
 
 ``register_plugin``::

@@ -16,9 +16,7 @@
 
       <tal:li repeat="item context.items">
         <li>
-          <a href="#"
-             tal:attributes="href item[0]"
-             tal:content="item[1]">Logout</a>
+          <tal:action replace="structure item" />
         </li>
       </tal:li>
 

@@ -17,12 +17,14 @@ from ..interfaces import IWorkflowState
 from ..model import AppRoot
 from ..utils import principal_data
 from . import render_main_template
+from .actions import LinkAction
 from .utils import (
     nodepath,
     make_url,
     format_date,
     node_icon,
 )
+
 
 _ = TranslationStringFactory('cone.app')
 
@@ -53,19 +55,49 @@ registerTile('livesearch',
              strict=False)
 
 
-def logout_link(model, request):
-    return (make_url(request, resource='logout'), _('logout', 'Logout'))
+class ViewSettingsAction(LinkAction):
+    action = 'content:#content:inner'
+    text = _('settings', 'Settings')
+    icon = 'ion-ios7-gear'
+    event = 'contextchanged:.contextsensitiv'
+
+    @property
+    def settings(self):
+        root = self.model.root
+        return root and root.get('settings') or None
+
+    @property
+    def target(self):
+        return make_url(self.request, node=self.settings)
+
+    href = target
+
+    @property
+    def display(self):
+        settings = self.settings
+        if not settings:
+            return False
+        return has_permission('view', settings, self.request)
+
+
+class LogoutAction(LinkAction):
+    text = _('logout', 'Logout')
+    icon = 'ion-log-out'
+
+    @property
+    def href(self):
+        return make_url(self.request, resource='logout')
+
 
 personal_tools = odict()
-personal_tools['logout'] = logout_link
+personal_tools['settings'] = ViewSettingsAction()
+personal_tools['logout'] = LogoutAction()
 
 
 @tile('personaltools', 'templates/personaltools.pt',
       permission='view', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
-
-    XXX: extend by items, currently only 'logout' link hardcoded in template
     """
 
     @property
@@ -83,6 +115,9 @@ class PersonalTools(Tile):
       permission='view', strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
+
+    * set ``skip_mainmenu`` on ``model.properties`` to ``True`` if node should
+      not be displayed in mainmenu.
 
     * set ``mainmenu_empty_title`` on ``model.root.properties`` to ``True``
       if you want to render empty links in mainmenu for setting icons via css.
@@ -111,6 +146,8 @@ class MainMenu(Tile):
         # XXX: icons
         for key in root.keys():
             child = root[key]
+            if child.properties.skip_mainmenu:
+                continue
             if not has_permission('view', child, self.request):
                 continue
             item = dict()

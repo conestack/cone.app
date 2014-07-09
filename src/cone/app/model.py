@@ -169,7 +169,8 @@ class AppSettings(FactoryNode):
     @instance_property
     def properties(self):
         props = Properties()
-        props.in_navtree = True
+        props.in_navtree = False
+        props.skip_mainmenu = True
         props.icon = 'ion-ios7-gear'
         return props
 
