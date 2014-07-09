@@ -93,6 +93,9 @@ table.table tr th:first-child,
 table.table tr td:first-child {
     padding-left:20px;
 }
+td.actions a {
+    margin-right:4px;
+}
 .table-footer .pagination {
     margin-top:0;
     margin-bottom:0;
