@@ -288,7 +288,7 @@ Render navtree on ``root['1']``, must be selected::
     >>> res = render_tile(root['1'], request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="#"\n         
+    <a href="http://example.com/1"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
     ajax:event="contextchanged:#layout">\n        
@@ -318,7 +318,7 @@ navtree.::
     >>> res = render_tile(root, request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="#"\n         
+    <a href="http://example.com/1"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
     ajax:event="contextchanged:#layout">\n        
@@ -328,7 +328,7 @@ navtree.::
     >>> res = render_tile(root['1'], request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="#"\n         
+    <a href="http://example.com/1"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
     ajax:event="contextchanged:#layout">\n        
@@ -394,7 +394,7 @@ Render navtree on ``root['1']['11']``, check selected::
     >>> res = render_tile(root['1']['11'], request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="#"\n         
+    <a href="http://example.com/1/11"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1/11"\n         
     ajax:event="contextchanged:#layout">\n        
