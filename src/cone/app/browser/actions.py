@@ -10,7 +10,11 @@ from ..interfaces import (
     IPrincipalACL,
     ICopySupport,
 )
-from .utils import make_url
+from .utils import (
+    make_url,
+    make_query,
+)
+
 
 _ = TranslationStringFactory('cone.app')
 
@@ -131,7 +135,7 @@ class DropdownAction(TemplateAction):
     """Action rendering a dropdown.
     """
     template = u'cone.app.browser:templates/action_dropdown.pt'
-    href = None
+    href = '#'
     css = None
     title = None
 
@@ -150,7 +154,7 @@ class LinkAction(TemplateAction):
     template = 'cone.app.browser:templates/link_action.pt'
     bind = 'click'    # ajax:bind attribute
     id = None         # id attribute
-    href = None       # href attribute
+    href = '#'        # href attribute
     css = None        # in addition for computed class attribute
     title = None      # title attribute
     action = None     # ajax:action attribute
@@ -184,7 +188,7 @@ class ActionUp(LinkAction):
     """
     id = 'toolbaraction-up'
     icon = 'glyphicon glyphicon-arrow-up'
-    event = 'contextchanged:.contextsensitiv'
+    event = 'contextchanged:#layout'
     text = _('action_one_level_up', 'One level up')
 
     @property
@@ -206,7 +210,9 @@ class ActionUp(LinkAction):
         default_child = container.properties.default_child
         if default_child and self.model.name == default_child:
             container = container.parent
-        return make_url(self.request, node=container)
+        query = make_query(
+            contenttile=container.properties.default_content_tile)
+        return make_url(self.request, node=container, query=query)
 
     href = target
 
@@ -350,10 +356,6 @@ class ActionDelete(LinkAction):
     text = _('action_delete', 'Delete')
 
     @property
-    def href(self):
-        return '%s/delete' % self.target
-
-    @property
     def display(self):
         # XXX: scope in subclass for contextmenu
         scope = self.action_scope == 'content'
@@ -376,10 +378,6 @@ class ActionDeleteChildren(LinkAction):
     text = _('action_delete_selected_children', 'Delete selected children')
 
     @property
-    def href(self):
-        return '%s/delete_children' % self.target
-
-    @property
     def display(self):
         return self.model.properties.action_delete_children \
             and self.permitted('delete')
@@ -398,10 +396,6 @@ class ActionCut(LinkAction):
     bind = None
 
     @property
-    def href(self):
-        return '%s/cut' % self.target
-
-    @property
     def display(self):
         return ICopySupport.providedBy(self.model) \
             and self.model.supports_cut \
@@ -418,10 +412,6 @@ class ActionCopy(LinkAction):
     bind = None
 
     @property
-    def href(self):
-        return '%s/copy' % self.target
-
-    @property
     def display(self):
         return ICopySupport.providedBy(self.model) \
             and self.model.supports_copy \
@@ -436,10 +426,6 @@ class ActionPaste(LinkAction):
     icon = 'ion-clipboard'
     text = _('action_paste', 'Paste')
     bind = None
-
-    @property
-    def href(self):
-        return '%s/paste' % self.target
 
     @property
     def display(self):

@@ -154,7 +154,7 @@ ActionUp
     href="http://example.com/root"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
-    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:event="contextchanged:#layout"\n     
     ajax:action="listing:#content:inner"\n    ><span 
     class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
@@ -166,7 +166,7 @@ ActionUp
     href="http://example.com/root"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
-    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:event="contextchanged:#layout"\n     
     ajax:action="otherparentcontent:#content:inner"\n    ><span 
     class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
@@ -180,7 +180,7 @@ ActionUp
     href="http://example.com/root"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root"\n     
-    ajax:event="contextchanged:.contextsensitiv"\n     
+    ajax:event="contextchanged:#layout"\n     
     ajax:action="listing:#content:inner"\n    ><span 
     class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
@@ -378,7 +378,7 @@ ActionState
 
     >>> action(wfmodel, request)
     u'...<li class="dropdown">...      
-    <a href="http://example.com/root/wfmodel/dotransition?do_transition=initial_2_final"\n             
+    <a href="#"\n             
     ajax:bind="click"\n             
     ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"\n             
     ajax:action="wf_dropdown:NONE:NONE">Finalize</a>...'
@@ -512,7 +512,7 @@ ActionDelete
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-delete"\n     
-    href="http://example.com/root/model/delete"\n     
+    href="#"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete:NONE:NONE"\n     
@@ -549,7 +549,7 @@ ActionDeleteChildren
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-delete-children"\n     
-    href="http://example.com/root/model/delete_children"\n     
+    href="#"\n     
     class="disabled"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
@@ -562,7 +562,7 @@ ActionDeleteChildren
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-delete-children"\n     
-    href="http://example.com/root/model/delete_children"\n     
+    href="#"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="delete_children:NONE:NONE"\n     
@@ -605,7 +605,7 @@ ActionCut
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-cut"\n     
-    href="http://example.com/copysupport/cut"\n     
+    href="#"\n     
     ajax:target="http://example.com/copysupport"\n    
     ><span class="ion-scissors"></span\n    \n    
     >&nbsp;Cut</a>...'
@@ -638,7 +638,7 @@ ActionCopy
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-copy"\n     
-    href="http://example.com/copysupport/copy"\n     
+    href="#"\n     
     ajax:target="http://example.com/copysupport"\n    
     ><span class="ion-ios7-copy-outline"></span\n    \n    
     >&nbsp;Copy</a>...'
@@ -671,7 +671,7 @@ ActionPaste
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-paste"\n     
-    href="http://example.com/copysupport/paste"\n     
+    href="#"\n     
     class="disabled"\n     
     ajax:target="http://example.com/copysupport"\n    
     ><span class="ion-clipboard"></span\n    \n    
@@ -681,7 +681,7 @@ ActionPaste
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-paste"\n     
-    href="http://example.com/copysupport/paste"\n     
+    href="#"\n     
     ajax:target="http://example.com/copysupport"\n    
     ><span class="ion-clipboard"></span\n    \n    
     >&nbsp;Paste</a>...'
@@ -691,7 +691,7 @@ ActionPaste
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-paste"\n     
-    href="http://example.com/copysupport/paste"\n     
+    href="#"\n     
     ajax:target="http://example.com/copysupport"\n    
     ><span class="ion-clipboard"></span\n    \n    
     >&nbsp;Paste</a>...'

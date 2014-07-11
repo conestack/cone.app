@@ -294,6 +294,7 @@ ReferencableChildrenLink
     >>> layer.login('manager')
     >>> action(model, request)
     u'...<a\n     
+    href="#"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"\n     
     ajax:event="contextchanged:.refbrowsersensitiv"\n     

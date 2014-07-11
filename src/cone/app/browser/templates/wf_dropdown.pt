@@ -11,7 +11,7 @@
 
     <tal:transitions condition="transitions">
 
-      <a href="${context.nodeurl}/changestate"
+      <a href="#"
          class="state-${state} dropdown-toggle"
          title="Change state"
          data-toggle="dropdown"
@@ -21,9 +21,9 @@
         <span tal:content="state">WF State</span>
       </a>
 
-      <ul class="dropdown-menu" role="addmenu">
+      <ul class="dropdown-menu" role="workflowmenu">
         <li tal:repeat="transition transitions">
-          <a href="${transition.url}"
+          <a href="#"
              ajax:bind="click"
              ajax:target="${transition.target}"
              ajax:action="wf_dropdown:NONE:NONE"

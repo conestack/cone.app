@@ -21,7 +21,7 @@ Workflow dropdown
 
     >>> res = render_tile(node, request, 'wf_dropdown')
     >>> res
-    u'...<a href="http://example.com/changestate"\n         
+    u'...<a href="#"\n         
     class="state-initial dropdown-toggle"\n         
     title="Change state"\n         
     data-toggle="dropdown">\n        

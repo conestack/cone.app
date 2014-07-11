@@ -73,11 +73,8 @@ class WfDropdown(Tile):
         transition_names = self.model.properties.wf_transition_names
         for transition in transitions:
             query = make_query(do_transition=transition['name'])
-            url = make_url(self.request, node=self.model,
-                           resource='dotransition', query=query)
             target = make_url(self.request, node=self.model, query=query)
             props = Properties()
-            props.url = url
             props.target = target
             props.title = transition_names[transition['name']]
             ret.append(props)
