@@ -176,6 +176,7 @@ class MainMenu(Tile):
             else:
                 item['title'] = child.metadata.title
                 item['description'] = child.metadata.description
+            item['url'] = make_url(self.request, path=[key])
             query = make_query(
                 contenttile=child.properties.default_content_tile)
             item['target'] = make_url(self.request, path=[key], query=query)
@@ -193,6 +194,9 @@ class PathBar(Tile):
     def items(self):
         return self.items_for(self.model)
 
+    def item_url(self, node):
+        return make_url(self.request, node=node)
+
     def item_target(self, node):
         query = make_query(contenttile=node.properties.default_content_tile)
         return make_url(self.request, node=node, query=query)
@@ -202,6 +206,7 @@ class PathBar(Tile):
         for node in LocationIterator(model):
             items.append({
                 'title': node.metadata.title,
+                'url': self.item_url(node),
                 'target': self.item_target(node),
                 'selected': False,
                 'id': node.name,

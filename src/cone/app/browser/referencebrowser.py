@@ -76,6 +76,10 @@ class ReferenceBrowserPathBar(PathBar):
                 break
         return self.items_for(self.model, breakpoint)
 
+    def item_url(self, node):
+        query = make_refbrowser_query(self.request)
+        return make_url(self.request, node=node, query=query)
+
     def item_target(self, node):
         query = make_refbrowser_query(
             self.request, contenttile=node.properties.default_content_tile)

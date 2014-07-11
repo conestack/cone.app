@@ -15,7 +15,7 @@
 
     <tal:li repeat="item context.items">
       <li tal:attributes="class item['selected'] and 'active' or ''">
-        <a href="#"
+        <a href="${item['url']}"
            ajax:bind="click"
            ajax:target="${item['target']}"
            ajax:event="contextchanged:#layout"

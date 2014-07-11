@@ -162,6 +162,12 @@ Authorized::
     >>> res.find('ajax:target="http://example.com/2"') > -1
     True
 
+    >>> res.find('href="http://example.com/1"') > -1
+    True
+
+    >>> res.find('href="http://example.com/2"') > -1
+    True
+
 Render main menu at child. Child is marked selected::
 
     >>> res = render_tile(root['1'], request, 'mainmenu')
@@ -194,7 +200,7 @@ items are supposed to be displayed as icons via CSS::
     >>> res = render_tile(model, request, 'mainmenu')
     >>> res
     u'...<li class=" node-1">\n\n        
-    <a href="#"\n           
+    <a href="http://example.com/1"\n           
     ajax:bind="click"\n           
     ajax:target="http://example.com/1"\n           
     ajax:event="contextchanged:#layout" title="1"\n          
@@ -202,7 +208,7 @@ items are supposed to be displayed as icons via CSS::
     <span></span></a>\n\n      
     </li>\n\n    \n\n      
     <li class="active node-2">\n\n        
-    <a href="#"\n           
+    <a href="http://example.com/2"\n           
     ajax:bind="click"\n           
     ajax:target="http://example.com/2"\n           
     ajax:event="contextchanged:#layout" title="2"\n          

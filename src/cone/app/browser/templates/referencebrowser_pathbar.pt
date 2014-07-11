@@ -9,7 +9,7 @@
     <li class="pathbaritem"
         tal:repeat="item context.items">
 
-      <a href="#"
+      <a href="${item['url']}"
          ajax:bind="click"
          ajax:target="${item['target']}"
          ajax:event="contextchanged:.refbrowsersensitiv"

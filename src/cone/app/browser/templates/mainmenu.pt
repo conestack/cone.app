@@ -14,7 +14,7 @@
                       css ' '.join([css, 'node-%s' % item['id']]);"
           tal:attributes="class css">
 
-        <a href="#"
+        <a href="${item['url']}"
            ajax:bind="click"
            ajax:target="${item['target']}"
            ajax:event="contextchanged:#layout"
