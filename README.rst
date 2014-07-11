@@ -73,6 +73,13 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Trigger ``contextchanged`` to ``#layout`` rather than ``.contextsensitiv``
+  in ``mainmenu``.
+  [rnix, 2014-07-11]
+
+- Introduce ``layout`` tile.
+  [rnix, 2014-07-11]
+
 - Provide Layout configuration via ``AppNode``.
   [rnix, 2014-07-11]
 
