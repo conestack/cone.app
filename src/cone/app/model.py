@@ -65,7 +65,9 @@ except ImportError:
     logger.warning('``lxml`` not present. ``cone.app.model.XMLProperties`` '
                    'will not work')
 
+
 _ = TranslationStringFactory('cone.app')
+
 
 _node_info_registry = dict()
 
@@ -77,6 +79,31 @@ def registerNodeInfo(name, info):
 def getNodeInfo(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
+
+
+class node_info(object):
+    """Node info decorator.
+    """
+
+    def __init__(self, name, title=None,
+                 description=None, icon=None,
+                 addables=[]):
+        self.name = name
+        self.title = title
+        self.description = description
+        self.icon = icon
+        self.addables = addables
+
+    def __call__(self, cls):
+        cls.node_info_name = self.name
+        info = NodeInfo()
+        info.title = self.title
+        info.description = self.description
+        info.node = cls
+        info.addables = self.addables
+        info.icon = self.icon
+        registerNodeInfo(cls.node_info_name, info)
+        return cls
 
 
 @implementer(IApplicationNode)

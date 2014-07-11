@@ -389,8 +389,7 @@ Deleting
     u''
 
     >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxAction object at ...>, 
-    <cone.app.browser.ajax.AjaxEvent object at ...>, 
+    [<cone.app.browser.ajax.AjaxEvent object at ...>, 
     <cone.app.browser.ajax.AjaxMessage object at ...>]
 
     >>> node.printtree()

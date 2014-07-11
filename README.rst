@@ -73,6 +73,9 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Add ``node_info`` decorator.
+  [rnix, 2014-07-11]
+
 - Trigger ``contextchanged`` to ``#layout`` rather than ``.contextsensitiv``
   in ``mainmenu``, ``logo``, ``pathbar``, ``navtree``.
   [rnix, 2014-07-11]
