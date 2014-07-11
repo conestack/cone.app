@@ -77,7 +77,7 @@ class ViewSettingsAction(LinkAction):
     action = 'content:#content:inner'
     text = _('settings', 'Settings')
     icon = 'ion-ios7-gear'
-    event = 'contextchanged:.contextsensitiv'
+    event = 'contextchanged:#layout'
 
     @property
     def settings(self):

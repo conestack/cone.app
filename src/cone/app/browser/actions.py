@@ -135,7 +135,7 @@ class DropdownAction(TemplateAction):
     """Action rendering a dropdown.
     """
     template = u'cone.app.browser:templates/action_dropdown.pt'
-    href = '#'
+    href = None
     css = None
     title = None
 
@@ -193,6 +193,7 @@ class ActionUp(LinkAction):
 
     @property
     def action(self):
+        # XXX: consider in ajax target
         action = self.model.properties.action_up_tile
         if not action:
             action = 'listing'
@@ -319,9 +320,7 @@ class ActionAdd(TileAction):
 
     @property
     def display(self):
-        return self.permitted('add') \
-            and self.model.nodeinfo.addables \
-            and self.action_scope == 'listing'
+        return self.permitted('add') and self.model.nodeinfo.addables
 
 
 class ActionEdit(LinkAction):

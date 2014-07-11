@@ -319,11 +319,8 @@ and will be removed in cone.app 1.0. Use
 @tile('delete', permission="delete")
 class DeleteAction(Tile):
 
-    def continuation(self, url, content_tile):
-        return [
-            AjaxAction(url, content_tile, 'inner', '#content'),
-            AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
-        ]
+    def continuation(self, url):
+        return [AjaxEvent(url, 'contextchanged', '#layout')]
 
     def render(self):
         model = self.model
@@ -343,8 +340,9 @@ class DeleteAction(Tile):
         del parent[model.name]
         if hasattr(parent, '__call__'):
             parent()
-        url = make_url(self.request, node=parent)
-        ajax_continue(self.request, self.continuation(url, content_tile))
+        query = make_query(contenttile=content_tile)
+        url = make_url(self.request, node=parent, query=query)
+        ajax_continue(self.request, self.continuation(url))
         ts = _('deleted_object',
                default='Deleted: ${title}',
                mapping={'title': title})

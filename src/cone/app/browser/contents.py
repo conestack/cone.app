@@ -19,7 +19,10 @@ from .actions import (
     ActionEdit,
     ActionDelete,
 )
-from .utils import make_url
+from .utils import (
+    make_url,
+    make_query,
+)
 
 _ = TranslationStringFactory('cone.app')
 
@@ -29,13 +32,20 @@ FAR_PAST = datetime.datetime(2000, 1, 1)
 class ContentsActionView(ActionView):
     title = ActionView.text
     text = None
-    event = 'contextchanged:.contextsensitiv'
+    action = None
+    event = 'contextchanged:#layout'
 
 
 class ContentsActionEdit(ActionEdit):
     title = ActionEdit.text
     text = None
-    event = 'contextchanged:.contextsensitiv'
+    action = None
+    event = 'contextchanged:#layout'
+
+    @property
+    def target(self):
+        query = make_query(contenttile='edit')
+        return make_url(self.request, node=self.model, query=query)
 
 
 class ContentsActionDelete(ActionDelete):
@@ -55,14 +65,15 @@ class ContentsViewLink(ViewLink):
     """Ciew link for contents table.
     """
     css = 'title'
-    event = 'contextchanged:.contextsensitiv'
+    event = 'contextchanged:#layout'
+    action = None
 
-    @property
-    def action(self):
-        contenttile = 'content'
-        if self.model.properties.default_content_tile:
-            contenttile = self.model.properties.default_content_tile
-        return '%s:#content:inner' % contenttile
+    #@property
+    #def action(self):
+    #    contenttile = 'content'
+    #    if self.model.properties.default_content_tile:
+    #        contenttile = self.model.properties.default_content_tile
+    #    return '%s:#content:inner' % contenttile
 
 
 @tile('contents', 'templates/table.pt', permission='view')
