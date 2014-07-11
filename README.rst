@@ -74,7 +74,7 @@ Changes
 ---------------------
 
 - Trigger ``contextchanged`` to ``#layout`` rather than ``.contextsensitiv``
-  in ``mainmenu``, ``logo``, ``pathbar``.
+  in ``mainmenu``, ``logo``, ``pathbar``, ``navtree``.
   [rnix, 2014-07-11]
 
 - Introduce ``layout`` tile.

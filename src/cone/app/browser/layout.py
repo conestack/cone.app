@@ -234,10 +234,10 @@ class NavTree(Tile):
     """Navigation tree tile.
     """
 
-    def navtreeitem(self, title, url, path, icon, css=''):
+    def navtreeitem(self, title, target, path, icon, css=''):
         item = dict()
         item['title'] = title
-        item['url'] = url
+        item['target'] = target
         item['selected'] = False
         item['path'] = path
         item['icon'] = icon
@@ -273,13 +273,14 @@ class NavTree(Tile):
             if not node.properties.get('in_navtree'):
                 continue
             title = node.metadata.title
-            url = make_url(self.request, node=node)
+            query = make_query(contenttile=node.properties.default_content_tile)
+            target = make_url(self.request, node=node, query=query)
             curnode = curpath == key and True or False
             icon = node_icon(self.request, node)
             css = ''
             if IWorkflowState.providedBy(node):
                 css = 'state-%s' % node.state
-            child = self.navtreeitem(title, url, nodepath(node), icon, css)
+            child = self.navtreeitem(title, target, nodepath(node), icon, css)
             child['showchildren'] = curnode
             if curnode:
                 child['selected'] = True

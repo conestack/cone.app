@@ -156,10 +156,10 @@ Authorized::
 
     >>> layer.login('max')
     >>> res = render_tile(root, request, 'mainmenu')
-    >>> res.find('target="http://example.com/1"') > -1
+    >>> res.find('ajax:target="http://example.com/1"') > -1
     True
 
-    >>> res.find('target="http://example.com/2"') > -1
+    >>> res.find('ajax:target="http://example.com/2"') > -1
     True
 
 Render main menu at child. Child is marked selected::
@@ -274,7 +274,7 @@ Node's which are in navtree::
 with the navtree tile::
 
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/1"') > -1
+    >>> res.find('ajax:target="http://example.com/1"') > -1
     True
 
 Render navtree on ``root['1']``, must be selected::
@@ -282,11 +282,10 @@ Render navtree on ``root['1']``, must be selected::
     >>> res = render_tile(root['1'], request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1"\n         
+    <a href="#"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:.contextsensitiv\n                     
-    contextchanged:#content">\n        
+    ajax:event="contextchanged:#layout">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
     </a>...'
 
@@ -298,12 +297,12 @@ Child nodes which do not grant permission 'view' are skipped::
     >>> root['3'] = InvisibleNavNode()
     >>> root['3'].properties.in_navtree = True
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/3"') > -1
+    >>> res.find('ajax:target="http://example.com/3"') > -1
     False
 
     >>> layer.login('manager')
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/3"') > -1
+    >>> res.find('ajax:target="http://example.com/3"') > -1
     True
 
 Default child behavior of navtree. Default children objects are displayed in 
@@ -313,22 +312,20 @@ navtree.::
     >>> res = render_tile(root, request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1"\n         
+    <a href="#"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:.contextsensitiv\n                     
-    contextchanged:#content">\n        
+    ajax:event="contextchanged:#layout">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
     </a>...'
 
     >>> res = render_tile(root['1'], request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1"\n         
+    <a href="#"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:.contextsensitiv\n                     
-    contextchanged:#content">\n        
+    ajax:event="contextchanged:#layout">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
     </a>...'
 
@@ -341,13 +338,13 @@ In this case, also children context gets switched. Instead of remaining non
 default children, children of default node are displayed.::
 
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/1"') > -1
+    >>> res.find('ajax:target="http://example.com/1"') > -1
     False
 
-    >>> res.find('href="http://example.com/2"') > -1
+    >>> res.find('ajax:target="http://example.com/2"') > -1
     False
 
-    >>> res.find('href="http://example.com/1/11"') > -1
+    >>> res.find('ajax:target="http://example.com/1/11"') > -1
     True
 
 Check whether children subrendering works on nodes which have set
@@ -370,20 +367,20 @@ Check whether children subrendering works on nodes which have set
       <class 'InvisibleNavNode'>: 3
 
     >>> res = render_tile(root['1']['11'], request, 'navtree')
-    >>> res.find('href="http://example.com/1/11/a"') > -1
+    >>> res.find('ajax:target="http://example.com/1/11/a"') > -1
     True
 
-    >>> res.find('href="http://example.com/1/11/b"') > -1
+    >>> res.find('ajax:target="http://example.com/1/11/b"') > -1
     True
 
     >>> res = render_tile(root['1']['11']['a'], request, 'navtree')
 
-    >>> res.find('href="http://example.com/1/11/a/aa"') > -1
+    >>> res.find('ajax:target="http://example.com/1/11/a/aa"') > -1
     True
 
     >>> res = render_tile(root['1']['11']['a']['aa'], request, 'navtree')
 
-    >>> res.find('href="http://example.com/1/11/a/aa"') > -1
+    >>> res.find('ajax:target="http://example.com/1/11/a/aa"') > -1
     True
 
 Render navtree on ``root['1']['11']``, check selected::
@@ -391,11 +388,10 @@ Render navtree on ``root['1']['11']``, check selected::
     >>> res = render_tile(root['1']['11'], request, 'navtree')
     >>> res
     u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1/11"\n         
+    <a href="#"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1/11"\n         
-    ajax:event="contextchanged:.contextsensitiv\n                     
-    contextchanged:#content">\n        
+    ajax:event="contextchanged:#layout">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        11\n      
     </a>...'
 
