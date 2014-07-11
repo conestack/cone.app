@@ -33,7 +33,7 @@
       replace="structure tile('personaltools')" />
 
     <tal:livesearch
-      condition="layout.lifesearch"
+      condition="layout.livesearch"
       replace="structure tile('livesearch')" />
 
   </ul>

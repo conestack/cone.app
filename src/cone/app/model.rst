@@ -733,7 +733,7 @@ Test ``get``::
     >>> props.get('inexistent', 'default')
     'default'
 
-Test ``__conteins__``::
+Test ``__contains__``::
 
     >>> 'foo' in props
     True
