@@ -1,6 +1,8 @@
 BaseNode
 --------
+
 ::
+
     >>> from cone.app.model import BaseNode
     >>> root = BaseNode()
 
@@ -38,6 +40,38 @@ Metadata.::
     u'no_title'
 
     >>> root.metadata.inexistent
+
+Layout::
+
+    >>> root.layout
+    <cone.app.model.Properties object at ...>
+
+    >>> root.layout.mainmenu
+    True
+
+    >>> root.layout.mainmenu_fluid
+    False
+
+    >>> root.layout.livesearch
+    True
+
+    >>> root.layout.personaltools
+    True
+
+    >>> root.layout.columns_fluid
+    False
+
+    >>> root.layout.pathbar
+    True
+
+    >>> root.layout.sidebar_left
+    ['navtree']
+
+    >>> root.layout.sidebar_left_grid_width
+    3
+
+    >>> root.layout.content_grid_width
+    9
 
 Nodeinfo.::
 
@@ -259,7 +293,9 @@ Lookup Node info.::
 
 UUIDAttributeAware
 ------------------
+
 ::
+
     >>> from plumber import plumber
     >>> from cone.app.model import UUIDAttributeAware
     >>> class UUIDNode(BaseNode):
@@ -276,7 +312,9 @@ UUIDAttributeAware
 
 UUIDAsName
 ----------
+
 ::
+
     >>> from cone.app.model import UUIDAsName
     >>> class UUIDAsNameNode(BaseNode):
     ...     __metaclass__ = plumber

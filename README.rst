@@ -73,6 +73,12 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Provide Layout configuration via ``AppNode``.
+  [rnix, 2014-07-11]
+
+- Remove ``cone.app.util.AppUtil``.
+  [rnix, 2014-07-11]
+
 - Workflow state only gets initialized at node creation time if not set at
   corresponding data yet. Needed for non persisting application nodes.
   [rnix, 2014-07-09]

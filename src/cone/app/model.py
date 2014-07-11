@@ -3,6 +3,7 @@ import uuid
 import types
 import logging
 import ConfigParser
+import cone.app
 from odict import odict
 from plumber import (
     plumber,
@@ -55,6 +56,7 @@ from .utils import (
     app_config,
 )
 
+
 logger = logging.getLogger('cone.app')
 
 try:
@@ -104,6 +106,11 @@ class AppNode(Behavior):
         metadata = Metadata()
         metadata.title = name
         return metadata
+
+    @default
+    @property
+    def layout(self):
+        return cone.app.cfg.layout
 
     @default
     @property

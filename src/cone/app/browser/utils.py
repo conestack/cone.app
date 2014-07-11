@@ -93,26 +93,3 @@ def request_property(func):
             return val
     wrapper.__doc__ = func.__doc__
     return property(wrapper)
-
-
-class AppUtil(object):
-    """Instance of this object gets Passed to main template when rendering.
-    """
-
-    def authenticated(self, request):
-        return authenticated(request)
-
-    def nodepath(self, node):
-        return nodepath(node)
-
-    def make_url(self, request, path=None, node=None, resource=None,
-        query=None):
-        if path is None:
-            path = []
-        return make_url(request, path, node, resource, query)
-
-    def make_query(self, **kw):
-        return make_query(**kw)
-
-    def format_date(self, dt, long=True):
-        return format_date(dt, long)

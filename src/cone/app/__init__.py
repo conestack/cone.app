@@ -103,14 +103,19 @@ cfg.merged.print_css.public = [
 ]
 cfg.merged.print_css.protected = list()
 
-# cfg.layout used to enable/disable tiles in main template
+# layout defaults
 cfg.layout = Properties()
+cfg.layout.mainmenu = True
+cfg.layout.mainmenu_fluid = False
 cfg.layout.livesearch = True
 cfg.layout.personaltools = True
-cfg.layout.mainmenu = True
+cfg.layout.columns_fluid = False
 cfg.layout.pathbar = True
 cfg.layout.sidebar_left = ['navtree']
+cfg.layout.sidebar_left_grid_width = 3
+cfg.layout.content_grid_width = 9
 
+# root node
 root = AppRoot()
 root.factories['settings'] = AppSettings
 

@@ -16,12 +16,13 @@
     <tal:resources replace="structure tile('resources')" />
   </head>
 
-  <body role="document">
+  <body role="document"
+        tal:define="layout model.layout">
     <tal:bdajax replace="structure tile('bdajax')" />
 
     <div class="navbar navbar-inverse navbar-top">
 
-      <div class="container">
+      <div class="${layout.mainmenu_fluid and 'container-fluid' or 'container'}">
 
         <div class="navbar-header">
 
@@ -50,25 +51,25 @@
       </div>
     </div>
 
-    <div class="container" role="main">
+    <div class="${layout.columns_fluid and 'container-fluid' or 'container'}">
 
-      <div class="row">
+      <div class="row"
+           tal:condition="layout.pathbar">
         <div class="col-md-12">
-          <!-- XXX: layout.pathbar -->
           <tal:pathbar replace="structure tile('pathbar')" />
         </div>
       </div>
 
       <div class="row">
-        <!-- XXX: layout.sidebar_left condition -->
         <div id="sidebar_left"
-             class="col-md-3">
+             class="col-md-${layout.sidebar_left_grid_width}"
+             tal:condition="layout.sidebar_left">
           <tal:tiles repeat="tilename layout.sidebar_left">
             <tal:tile replace="structure tile(tilename)" />
           </tal:tiles>
         </div>
 
-        <div class="col-md-9">
+        <div class="col-md-${layout.content_grid_width}">
           <div id="content"
                ajax:bind="contextchanged"
                ajax:action="content:#content:inner">

@@ -10,7 +10,6 @@ from cone.tile import (
     render_tile,
 )
 import cone.app
-from .utils import AppUtil
 from .actions import ActionContext
 
 
@@ -24,12 +23,9 @@ def render_main_template(model, request, contenttilename='content'):
     """
     action_context = ActionContext(model, request, contenttilename)
     contenttilename = action_context.scope
-    util = AppUtil()
     return render_template_to_response(cone.app.cfg.main_template,
                                        request=request,
                                        model=model,
-                                       util=util,
-                                       layout=cone.app.cfg.layout,
                                        contenttilename=contenttilename)
 
 

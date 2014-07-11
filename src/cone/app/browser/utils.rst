@@ -9,7 +9,6 @@ Common browser utils.::
     ...     make_query,
     ...     make_url,
     ...     format_date,
-    ...     AppUtil,
     ... )
 
 ``authenticated`` - Will be removed.::
@@ -85,21 +84,3 @@ path.::
 
     >>> rpuc.cached_attr
     'cached attribute'
-
-``AppUtil``. Combines above functions in an object which is available in main
-template::
-
-    >>> util = AppUtil()
-    >>> util.authenticated(request)
-
-    >>> util.nodepath(root['child'])
-    ['child']
-
-    >>> util.make_url(request)
-    'http://example.com/'
-
-    >>> util.make_query(foo='bar')
-    '?foo=bar'
-
-    >>> util.format_date(dt)
-    '15.03.2011 00:00'
