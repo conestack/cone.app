@@ -26,7 +26,9 @@ def make_query(**kw):
             param = [str(param)]
         for p in param:
             query.append('%s=%s' % (name, p))
-    return '?%s' % '&'.join(query)
+    query = '&'.join(query)
+    if query:
+        return '?%s' % query
 
 
 def make_url(request, path=None, node=None, resource=None, query=None):

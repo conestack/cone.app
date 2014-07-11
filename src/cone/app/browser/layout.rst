@@ -197,8 +197,7 @@ items are supposed to be displayed as icons via CSS::
     <a href="http://example.com/1"\n           
     ajax:bind="click"\n           
     ajax:target="http://example.com/1"\n           
-    ajax:event="contextchanged:.contextsensitiv\n                       
-    contextchanged:#content" title="1"\n          
+    ajax:event="contextchanged:#layout" title="1"\n          
     ><span class="glyphicon glyphicon-asterisk"></span>\n          
     <span></span></a>\n\n      
     </li>\n\n    \n\n      
@@ -206,8 +205,7 @@ items are supposed to be displayed as icons via CSS::
     <a href="http://example.com/2"\n           
     ajax:bind="click"\n           
     ajax:target="http://example.com/2"\n           
-    ajax:event="contextchanged:.contextsensitiv\n                       
-    contextchanged:#content" title="2"\n          
+    ajax:event="contextchanged:#layout" title="2"\n          
     ><span class="glyphicon glyphicon-asterisk"></span>\n          
     <span></span></a>\n\n      
     </li>...'

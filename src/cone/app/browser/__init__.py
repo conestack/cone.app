@@ -23,6 +23,8 @@ def render_main_template(model, request, contenttilename='content'):
     """
     action_context = ActionContext(model, request, contenttilename)
     contenttilename = action_context.scope
+    request.environ['contenttilename'] = contenttilename
+    # XXX: contenttilename passed only for B/C reasons
     return render_template_to_response(cone.app.cfg.main_template,
                                        request=request,
                                        model=model,

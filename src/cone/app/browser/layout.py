@@ -21,6 +21,7 @@ from .actions import LinkAction
 from .utils import (
     nodepath,
     make_url,
+    make_query,
     format_date,
     node_icon,
 )
@@ -53,6 +54,19 @@ registerTile('livesearch',
              'cone.app:browser/templates/livesearch.pt',
              permission='view',
              strict=False)
+
+
+@tile('layout', 'templates/layout.pt', permission='login', strict=False)
+class Layout(Tile):
+    """Main layout tile.
+    """
+
+    @property
+    def contenttile(self):
+        contenttile = self.request.environ.get('contenttilename')
+        if not contenttile:
+            contenttile = self.request.params.get('contenttile', 'content')
+        return contenttile
 
 
 class ViewSettingsAction(LinkAction):
@@ -158,7 +172,9 @@ class MainMenu(Tile):
             else:
                 item['title'] = child.metadata.title
                 item['description'] = child.metadata.description
-            item['url'] = make_url(self.request, path=[key])
+            query = make_query(
+                contenttile=child.properties.default_content_tile)
+            item['url'] = make_url(self.request, path=[key], query=query)
             item['selected'] = curpath == key
             item['icon'] = node_icon(self.request, child)
             ret.append(item)

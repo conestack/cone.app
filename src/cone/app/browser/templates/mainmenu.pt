@@ -17,8 +17,7 @@
         <a href=""
            ajax:bind="click"
            ajax:target="${item['url']}"
-           ajax:event="contextchanged:.contextsensitiv
-                       contextchanged:#content"
+           ajax:event="contextchanged:#layout"
            tal:attributes="href item['url'];
                            title item['description'];"
           ><span class="${item['icon']|nothing}"></span>

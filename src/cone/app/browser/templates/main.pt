@@ -16,70 +16,11 @@
     <tal:resources replace="structure tile('resources')" />
   </head>
 
-  <body role="document"
-        tal:define="layout model.layout">
+  <body role="document">
+
     <tal:bdajax replace="structure tile('bdajax')" />
 
-    <div class="navbar navbar-inverse navbar-top">
-
-      <div class="${layout.mainmenu_fluid and 'container-fluid' or 'container'}">
-
-        <div class="navbar-header">
-
-          <button class="navbar-toggle collapsed"
-                  data-target=".navbar-collapse"
-                  data-toggle="collapse"
-                  type="button">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-
-          <tal:logo replace="structure tile('logo')" />
-
-        </div>
-
-        <div class="navbar-collapse collapse"
-             style="height:1px;">
-
-          <tal:mainmenu
-            condition="layout.mainmenu"
-            replace="structure tile('mainmenu')" />
-
-        </div>
-      </div>
-    </div>
-
-    <div class="${layout.columns_fluid and 'container-fluid' or 'container'}">
-
-      <div class="row"
-           tal:condition="layout.pathbar">
-        <div class="col-md-12">
-          <tal:pathbar replace="structure tile('pathbar')" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div id="sidebar_left"
-             class="col-md-${layout.sidebar_left_grid_width}"
-             tal:condition="layout.sidebar_left">
-          <tal:tiles repeat="tilename layout.sidebar_left">
-            <tal:tile replace="structure tile(tilename)" />
-          </tal:tiles>
-        </div>
-
-        <div class="col-md-${layout.content_grid_width}">
-          <div id="content"
-               ajax:bind="contextchanged"
-               ajax:action="content:#content:inner">
-            <tal:content replace="structure tile(contenttilename)" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <tal:footer replace="structure tile('footer')" />
+    <tal:layout replace="structure tile('layout')" />
 
   </body>
 </html>
