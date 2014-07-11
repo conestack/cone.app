@@ -9,13 +9,12 @@
     <li class="pathbaritem"
         tal:repeat="item context.items">
 
-      <a href=""
+      <a href="#"
          ajax:bind="click"
-         ajax:target="${item['url']}"
+         ajax:target="${item['target']}"
          ajax:event="contextchanged:.refbrowsersensitiv"
          ajax:action="referencelisting:#referencebrowser:replace"
-         tal:attributes="href item['url'];
-                         class item['selected'] and 'selected' or ''"
+         tal:attributes="class item['selected'] and 'selected' or ''"
          tal:content="item['title']"
          tal:condition="not item['selected']">Title</a>
 

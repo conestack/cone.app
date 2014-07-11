@@ -17,7 +17,10 @@ from .actions import (
     Toolbar,
     LinkAction,
 )
-from .utils import make_query
+from .utils import (
+    make_url,
+    make_query,
+)
 from yafowil.base import (
     factory,
     UNSET,
@@ -48,12 +51,14 @@ registerTile('referencebrowser',
              permission='view')
 
 
-def make_refbrowser_query(request):
-    return make_query(**{
+def make_refbrowser_query(request, **kw):
+    params = {
         'root': request.params['root'],
         'referencable': request.params['referencable'],
         'selected': request.params['selected'],
-    })
+    }
+    params.update(kw)
+    return make_query(**params)
 
 
 @tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt',
@@ -69,9 +74,12 @@ class ReferenceBrowserPathBar(PathBar):
             if path == root:
                 breakpoint = node
                 break
-        return self.items_for(self.model,
-                              breakpoint,
-                              make_refbrowser_query(self.request))
+        return self.items_for(self.model, breakpoint)
+
+    def item_target(self, node):
+        query = make_refbrowser_query(
+            self.request, contenttile=node.properties.default_content_tile)
+        return make_url(self.request, node=node, query=query)
 
 
 class ReferenceAction(LinkAction):

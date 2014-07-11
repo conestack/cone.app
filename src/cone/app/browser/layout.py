@@ -178,7 +178,7 @@ class MainMenu(Tile):
                 item['description'] = child.metadata.description
             query = make_query(
                 contenttile=child.properties.default_content_tile)
-            item['url'] = make_url(self.request, path=[key], query=query)
+            item['target'] = make_url(self.request, path=[key], query=query)
             item['selected'] = curpath == key
             item['icon'] = node_icon(self.request, child)
             ret.append(item)
@@ -193,12 +193,16 @@ class PathBar(Tile):
     def items(self):
         return self.items_for(self.model)
 
-    def items_for(self, model, breakpoint=None, query=None):
+    def item_target(self, node):
+        query = make_query(contenttile=node.properties.default_content_tile)
+        return make_url(self.request, node=node, query=query)
+
+    def items_for(self, model, breakpoint=None):
         items = list()
         for node in LocationIterator(model):
             items.append({
                 'title': node.metadata.title,
-                'url': make_url(self.request, node=node, query=query),
+                'target': self.item_target(node),
                 'selected': False,
                 'id': node.name,
                 'default_child': node.properties.default_child,
