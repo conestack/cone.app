@@ -63,7 +63,7 @@ def render_form(model, request, tilename):
         action_context = ActionContext(model, request, tilename)
         request.environ['action_context'] = action_context
         return render_ajax_form(model, request, tilename)
-    return render_main_template(model, request, contenttilename=tilename)
+    return render_main_template(model, request, contenttile=tilename)
 
 
 class CameFromNext(Behavior):

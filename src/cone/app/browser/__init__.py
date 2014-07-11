@@ -16,19 +16,19 @@ from .actions import ActionContext
 static_resources = static_view('static', use_subpath=True)
 
 
-def render_main_template(model, request, contenttilename='content'):
+def render_main_template(model, request, contenttile='content'):
     """Renders main template and return response object.
 
-    As main content the tile with name contenttilename is rendered.
+    As main content the tile with name contenttile is rendered.
     """
-    action_context = ActionContext(model, request, contenttilename)
-    contenttilename = action_context.scope
-    request.environ['contenttilename'] = contenttilename
-    # XXX: contenttilename passed only for B/C reasons
+    action_context = ActionContext(model, request, contenttile)
+    contenttile = action_context.scope
+    request.environ['contenttile'] = contenttile
+    # XXX: contenttile passed only for B/C reasons
     return render_template_to_response(cone.app.cfg.main_template,
                                        request=request,
                                        model=model,
-                                       contenttilename=contenttilename)
+                                       contenttile=contenttile)
 
 
 @view_config(permission='login')
@@ -38,7 +38,7 @@ def main_view(model, request):
 
 @view_config('login')
 def login_view(model, request):
-    return render_main_template(model, request, contenttilename='loginform')
+    return render_main_template(model, request, contenttile='loginform')
 
 
 @view_config('logout')

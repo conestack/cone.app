@@ -28,7 +28,7 @@ Dummy environ::
     >>> request = layer.new_request()
     >>> model = BaseNode()
 
-Render main template. The function accepts an optional ``contenttilename``
+Render main template. The function accepts an optional ``contenttile``
 argument. if omitted, reserved name 'content' is used::
 
     >>> from cone.app.browser import render_main_template
@@ -39,7 +39,7 @@ argument. if omitted, reserved name 'content' is used::
     </body>\n</html>'
 
     >>> registerTile('othername', class_=ContentTile, permission='login')
-    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body
     '<...
     <body>\n    <div>Content</div>\n  
@@ -61,7 +61,7 @@ Reset possible layout changes from plugin for tests::
 Non authenticated users only gets unprotected content tile, no controls like
 navtree, mainmenu, etc::
 
-    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body.find('id="mainmenu"') > -1
     False
 
@@ -81,7 +81,7 @@ Authenticate non privileged::
 
 All tiles protected by 'view' permission are now available to the user::
 
-    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body.find('id="mainmenu"') > -1
     True
 

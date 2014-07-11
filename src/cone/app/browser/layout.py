@@ -63,9 +63,13 @@ class Layout(Tile):
 
     @property
     def contenttile(self):
-        contenttile = self.request.environ.get('contenttilename')
+        contenttile = self.request.environ.get('contenttile')
         if not contenttile:
-            contenttile = self.request.params.get('contenttile', 'content')
+            contenttile = self.request.params.get('contenttile')
+        if not contenttile:
+            contenttile = self.model.properties.default_content_tile
+        if not contenttile:
+            contenttile = 'content'
         return contenttile
 
 
