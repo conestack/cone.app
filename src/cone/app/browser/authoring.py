@@ -1,4 +1,3 @@
-from zope.deprecation import deprecated
 from plumber import (
     Behavior,
     default,
@@ -215,13 +214,6 @@ class AddBehavior(CameFromNext, ContentForm):
         )
 
 
-AddPart = AddBehavior  # B/C
-deprecated('AddPart', """
-``cone.app.browser.authoring.AddPart`` is deprecated as of cone.app 0.9.4 and
-will be removed in cone.app 1.0. Use ``cone.app.browser.authoring.AddBehavior``
-instead.""")
-
-
 @view_config('edit', permission='edit')
 def edit(model, request):
     """Edit view.
@@ -259,13 +251,6 @@ class EditBehavior(CameFromNext, ContentForm):
         return heading
 
 
-EditPart = EditBehavior  # B/C
-deprecated('EditPart', """
-``cone.app.browser.authoring.EditPart`` is deprecated as of cone.app 0.9.4 and
-will be removed in cone.app 1.0. Use
-``cone.app.browser.authoring.EditBehavior`` instead.""")
-
-
 @view_config('overlayform', permission='view')
 def overlayform(model, request):
     """Overlay form.
@@ -301,13 +286,6 @@ class OverlayBehavior(Behavior):
     @default
     def next(self, request):
         return [AjaxOverlay(selector=self.overlay_selector, close=True)]
-
-
-OverlayPart = OverlayBehavior  # B/C
-deprecated('OverlayPart', """
-``cone.app.browser.authoring.OverlayPart`` is deprecated as of cone.app 0.9.4
-and will be removed in cone.app 1.0. Use
-``cone.app.browser.authoring.OverlayBehavior`` instead.""")
 
 
 @tile('delete', permission="delete")

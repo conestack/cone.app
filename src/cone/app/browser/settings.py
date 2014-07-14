@@ -1,4 +1,3 @@
-from zope.deprecation import deprecated
 from plumber import (
     Behavior,
     default,
@@ -69,13 +68,4 @@ class SettingsBehavior(Behavior):
     def next(self, request):
         url = make_url(request.request, node=self.model)
         selector = '.%s' % self.model.name
-        return [
-            AjaxAction(url, 'content', 'inner', selector),
-        ]
-
-
-SettingsPart = SettingsBehavior  # B/C
-deprecated('SettingsPart', """
-``cone.app.browser.settings.SettingsPart`` is deprecated as of cone.app 0.9.4
-and will be removed in cone.app 1.0. Use
-``cone.app.browser.settings.SettingsBehavior`` instead.""")
+        return [AjaxAction(url, 'content', 'inner', selector)]

@@ -7,7 +7,6 @@ from zope.interface import (
     implementer,
 )
 from zope.component import adapter
-from zope.deprecation import __show__
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -115,8 +114,6 @@ root = AppRoot()
 root.factories['settings'] = AppSettings
 
 
-@adapter(Interface)
-@implementer(ILayout)
 def default_layout(context):
     layout = Layout()
     layout.mainmenu = True
@@ -285,20 +282,17 @@ def main(global_config, **settings):
     config.include(pyramid_zcml)
     config.begin()
 
+    # default layout adapter
+    config.registry.registerAdapter(default_layout, (Interface,), ILayout)
+
     # add translation
     config.add_translation_dirs('cone.app:locale/')
 
     # static resources
     config.add_view('cone.app.browser.static_resources', name='static')
 
-    # supress deprecation warning during scan phase
-    __show__.off()
-
     # scan browser package
     config.scan('cone.app.browser')
-
-    # re-enable deprecation warning
-    __show__.on()
 
     # load zcml
     config.load_zcml('configure.zcml')
