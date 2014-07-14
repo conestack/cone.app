@@ -30,10 +30,6 @@
       condition="layout.personaltools"
       replace="structure tile('personaltools')" />
 
-    <tal:livesearch
-      condition="layout.livesearch"
-      replace="structure tile('livesearch')" />
-
   </ul>
 
 </tal:mainmenu>

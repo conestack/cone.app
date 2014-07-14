@@ -36,6 +36,10 @@
             condition="layout.mainmenu"
             replace="structure tile('mainmenu')" />
 
+          <tal:livesearch
+            condition="layout.livesearch"
+            replace="structure tile('livesearch')" />
+
         </div>
       </div>
     </div>
