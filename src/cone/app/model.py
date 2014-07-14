@@ -30,7 +30,10 @@ from node.behaviors import (
 )
 from node.utils import instance_property
 from zope.interface import implementer
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import (
+    get_current_request,
+    get_current_registry,
+)
 from pyramid.security import (
     has_permission,
     Everyone,
@@ -118,7 +121,7 @@ class AppNode(Behavior):
     @default
     @property
     def layout(self):
-        return ILayout(self)
+        return get_current_registry().getAdapter(self, ILayout)
 
     @default
     @instance_property

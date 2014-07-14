@@ -12,7 +12,10 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
 from zope.component import getGlobalSiteManager
-from .interfaces import ILayout
+from .interfaces import (
+    IApplicationNode,
+    ILayout,
+)
 from .model import (
     AppRoot,
     AppSettings,
@@ -25,6 +28,7 @@ from .browser import (
 )
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
+
 
 logger = logging.getLogger('cone.app')
 
@@ -114,6 +118,8 @@ root = AppRoot()
 root.factories['settings'] = AppSettings
 
 
+@implementer(ILayout)
+@adapter(IApplicationNode)
 def default_layout(context):
     layout = Layout()
     layout.mainmenu = True
@@ -283,7 +289,7 @@ def main(global_config, **settings):
     config.begin()
 
     # default layout adapter
-    config.registry.registerAdapter(default_layout, (Interface,), ILayout)
+    config.registry.registerAdapter(default_layout)
 
     # add translation
     config.add_translation_dirs('cone.app:locale/')
