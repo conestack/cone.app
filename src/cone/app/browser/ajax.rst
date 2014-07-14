@@ -350,4 +350,4 @@ The livesearch view calls the livesearch callback::
     >>> request = layer.new_request()
     >>> request.params['term'] = 'foo'
     >>> livesearch(root, request)
-    [{'target': 'http://example.com', 'value': 'foo', 'label': 'Root'}]
+    [{...}...]
