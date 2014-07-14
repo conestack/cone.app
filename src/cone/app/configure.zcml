@@ -4,4 +4,6 @@
   <include package="pyramid_zcml" />
   <include package="bdajax" />
 
+  <adapter factory=".default_layout" />
+
 </configure>

@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- ``cone.app.cfg.layout`` not exists any longer. Register ``ILayout`` providing
+  adapter for application nodes in order to customize layout configuration.
+  [rnix, 2014-07-14]
+
 - Add ``node_info`` decorator.
   [rnix, 2014-07-11]
 

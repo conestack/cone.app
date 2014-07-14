@@ -2,15 +2,22 @@ import os
 import logging
 import model
 import pyramid_zcml
+from zope.interface import (
+    Interface,
+    implementer,
+)
+from zope.component import adapter
 from zope.deprecation import __show__
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
 from zope.component import getGlobalSiteManager
+from .interfaces import ILayout
 from .model import (
     AppRoot,
     AppSettings,
+    Layout,
     Properties,
 )
 from .browser import (
@@ -103,21 +110,25 @@ cfg.merged.print_css.public = [
 ]
 cfg.merged.print_css.protected = list()
 
-# layout defaults
-cfg.layout = Properties()
-cfg.layout.mainmenu = True
-cfg.layout.mainmenu_fluid = False
-cfg.layout.livesearch = True
-cfg.layout.personaltools = True
-cfg.layout.columns_fluid = False
-cfg.layout.pathbar = True
-cfg.layout.sidebar_left = ['navtree']
-cfg.layout.sidebar_left_grid_width = 3
-cfg.layout.content_grid_width = 9
-
 # root node
 root = AppRoot()
 root.factories['settings'] = AppSettings
+
+
+@adapter(Interface)
+@implementer(ILayout)
+def default_layout(context):
+    layout = Layout()
+    layout.mainmenu = True
+    layout.mainmenu_fluid = False
+    layout.livesearch = True
+    layout.personaltools = True
+    layout.columns_fluid = False
+    layout.pathbar = True
+    layout.sidebar_left = ['navtree']
+    layout.sidebar_left_grid_width = 3
+    layout.content_grid_width = 9
+    return layout
 
 
 def configure_root(settings):

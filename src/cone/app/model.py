@@ -3,7 +3,6 @@ import uuid
 import types
 import logging
 import ConfigParser
-import cone.app
 from odict import odict
 from plumber import (
     plumber,
@@ -46,6 +45,7 @@ from .interfaces import (
     IAdapterNode,
     ICopySupport,
     IProperties,
+    ILayout,
     IMetadata,
     INodeInfo,
     IUUIDAsName,
@@ -108,14 +108,17 @@ class node_info(object):
 
 @implementer(IApplicationNode)
 class AppNode(Behavior):
-
-    # set this to name of registered node info on deriving class
     node_info_name = default('')
 
     @default
     @property
     def __acl__(self):
         return acl_registry.lookup(self.__class__, self.node_info_name)
+
+    @default
+    @property
+    def layout(self):
+        return ILayout(self)
 
     @default
     @instance_property
@@ -133,11 +136,6 @@ class AppNode(Behavior):
         metadata = Metadata()
         metadata.title = name
         return metadata
-
-    @default
-    @property
-    def layout(self):
-        return cone.app.cfg.layout
 
     @default
     @property
@@ -367,6 +365,11 @@ class ProtectedProperties(Properties):
         keys = super(ProtectedProperties, self).keys()
         keys = [key for key in keys if self._permits(key)]
         return keys
+
+
+@implementer(ILayout)
+class Layout(Properties):
+    pass
 
 
 @implementer(IMetadata)

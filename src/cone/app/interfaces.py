@@ -21,6 +21,7 @@ class ISecured(Interface):
 class IApplicationNode(ISecured, INode, IAttributes):
     """Application Node interface.
     """
+    layout = Attribute(u"cone.app.interfaces.ILayout providing object")
     properties = Attribute(u"cone.app.interfaces.IProperties providing object")
     metadata = Attribute(u"cone.app.interfaces.IMetadata implementation")
     nodeinfo = Attribute(u"cone.app.interfaces.INodeInfo providing object")
@@ -62,6 +63,20 @@ class IProperties(IReadMapping):
     def keys():
         """Return available properties
         """
+
+
+class ILayout(IProperties):
+    """Layout configuration.
+    """
+    mainmenu = Attribute(u"Flag whether to display mainmenu")
+    mainmenu_fluid = Attribute(u"Flag whether mainmenu is fluid")
+    livesearch = Attribute(u"Flag whether to display livesearch")
+    personaltools = Attribute(u"Flag whether to display personaltools")
+    columns_fluid = Attribute(u"Flag whether columns are fluid")
+    pathbar = Attribute(u"Flag whether to display pathbar")
+    sidebar_left = Attribute(u"Tiles which should be rendered in sidebar")
+    sidebar_left_grid_width = Attribute(u"Sidebar grid width")
+    content_grid_width = Attribute(u"Content grid width")
 
 
 class IMetadata(IProperties):

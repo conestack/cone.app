@@ -46,14 +46,6 @@ Switch back to default main template::
     >>> main = 'cone.app.browser:templates/main.pt'
     >>> cone.app.cfg.main_template = main
 
-Reset possible layout changes from plugin for tests::
-
-    >>> cone.app.cfg.layout.livesearch = True
-    >>> cone.app.cfg.layout.personaltools = True
-    >>> cone.app.cfg.layout.mainmenu = True
-    >>> cone.app.cfg.layout.pathbar = True
-    >>> cone.app.cfg.layout.sidebar_left = ['navtree']
-
 Non authenticated users only gets unprotected content tile, no controls like
 navtree, mainmenu, etc::
 

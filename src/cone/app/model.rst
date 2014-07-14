@@ -44,7 +44,7 @@ Metadata.::
 Layout::
 
     >>> root.layout
-    <cone.app.model.Properties object at ...>
+    <cone.app.model.Layout object at ...>
 
     >>> root.layout.mainmenu
     True
