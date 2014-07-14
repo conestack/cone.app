@@ -3,21 +3,77 @@ Actions
 
 ::
 
-    >>> from cone.app.model import BaseNode
+    >>> from cone.app.model import (
+    ...     BaseNode,
+    ...     Properties,
+    ... )
     >>> from cone.app.browser.actions import (
+    ...     get_action_context,
+    ...     ActionContext,
+    ...     Toolbar,
     ...     Action,
     ...     TileAction,
     ...     TemplateAction,
     ... )
 
+
+ActionContext
+-------------
+
+::
+
     >>> model = BaseNode()
     >>> request = layer.new_request()
+
+    >>> ac = ActionContext(model, request, 'tile')
+    >>> ac
+    <cone.app.browser.actions.ActionContext object at ...>
+
+    >>> request.environ['action_context']
+    <cone.app.browser.actions.ActionContext object at ...>
+
+    >>> ac = get_action_context(request)
+    >>> ac
+    <cone.app.browser.actions.ActionContext object at ...>
+
+    >>> ac.scope
+    'tile'
+
+    >>> request.params['bdajax.action'] = 'ajaxaction'
+    >>> ac.scope
+    'ajaxaction'
+
+    >>> request.params['bdajax.action'] = 'layout'
+    >>> ac.scope
+    'content'
+
+    >>> request.params['contenttile'] = 'contenttile'
+    >>> ac.scope
+    'contenttile'
+
+    >>> class PropNode(BaseNode):
+    ...     properties = None
+
+    >>> node = PropNode()
+    >>> node.properties = Properties()
+    >>> node.properties.default_child = 'a'
+    >>> node['a'] = PropNode()
+    >>> node['a'].properties = Properties()
+    >>> node['a'].properties.default_content_tile = 'default'
+
+    >>> request = layer.new_request()
+    >>> ac = ActionContext(node, request, 'content')
+    >>> ac.scope
+    'default'
 
 
 Abstract actions
 ----------------
 
 ::
+
+    >>> model = BaseNode()
+    >>> request = layer.new_request()
 
     >>> Action()(model, request)
     Traceback (most recent call last):
@@ -82,11 +138,30 @@ Toolbar
     u'<a href="">dummy template action</a>', 
     u'<a href="">dummy template action</a></div>']
 
+    >>> tb.css = 'someclass'
+    >>> tb(model, request).split('\n')
+    [u'<div class="someclass"><a href="">dummy action</a>', 
+    u'<a href="">dummy template action</a>', 
+    u'<a href="">dummy template action</a></div>']
+
     >>> tb.display = False
     >>> tb(model, request)
     u''
 
     >>> layer.logout()
+
+
+Abstract Dropdown
+-----------------
+
+::
+
+    >>> from cone.app.browser.actions import DropdownAction
+    >>> DropdownAction()(model, request)
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Abstract ``DropdownAction`` does not implement  ``items``
+    ...
 
 
 LinkAction
@@ -151,24 +226,22 @@ ActionUp
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
-    href="http://example.com/root"\n     
+    href="#"\n     
     ajax:bind="click"\n     
-    ajax:target="http://example.com/root"\n     
-    ajax:event="contextchanged:#layout"\n     
-    ajax:action="listing:#content:inner"\n    ><span 
-    class="glyphicon glyphicon-arrow-up"></span\n    \n    
-    >&nbsp;One level up</a>...'
+    ajax:target="http://example.com/root?contenttile=listing"\n     
+    ajax:event="contextchanged:#layout"\n    
+    ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
+    >&nbsp;One level up</a>\n\n  \n\n\n'
 
     >>> model.properties.action_up_tile = 'otherparentcontent'
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
-    href="http://example.com/root"\n     
+    href="#"\n     
     ajax:bind="click"\n     
-    ajax:target="http://example.com/root"\n     
-    ajax:event="contextchanged:#layout"\n     
-    ajax:action="otherparentcontent:#content:inner"\n    ><span 
-    class="glyphicon glyphicon-arrow-up"></span\n    \n    
+    ajax:target="http://example.com/root?contenttile=otherparentcontent"\n     
+    ajax:event="contextchanged:#layout"\n    
+    ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
 
     >>> default = model['default'] = BaseNode()
@@ -177,11 +250,10 @@ ActionUp
     >>> action(default, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
-    href="http://example.com/root"\n     
+    href="#"\n     
     ajax:bind="click"\n     
-    ajax:target="http://example.com/root"\n     
-    ajax:event="contextchanged:#layout"\n     
-    ajax:action="listing:#content:inner"\n    ><span 
+    ajax:target="http://example.com/root?contenttile=listing"\n     
+    ajax:event="contextchanged:#layout"\n    ><span 
     class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
 
@@ -196,8 +268,7 @@ ActionView
     >>> from cone.app.browser.actions import ActionView
     >>> from cone.app.browser.actions import ActionContext
 
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(model, request, 'content')
+    >>> ac = ActionContext(model, request, 'content')
 
     >>> action = ActionView()
     >>> action(model, request)
@@ -406,8 +477,7 @@ ActionAdd
 
     >>> addmodel = BaseNode()
 
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(addmodel, request, 'listing')
+    >>> ac = ActionContext(addmodel, request, 'listing')
 
     >>> action(addmodel, request)
     u''
@@ -457,8 +527,7 @@ ActionEdit
 
 ::
 
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(model, request, 'listing')
+    >>> ac = ActionContext(model, request, 'listing')
 
     >>> from cone.app.browser.actions import ActionEdit
     >>> action = ActionEdit()
@@ -492,8 +561,7 @@ ActionDelete
 
 ::
 
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(model, request, 'content')
+    >>> ac = ActionContext(model, request, 'content')
 
     >>> from cone.app.browser.actions import ActionDelete
     >>> action = ActionDelete()
@@ -583,8 +651,7 @@ ActionCut
     >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode('copysupport')
 
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(model, request, 'listing')
+    >>> ac = ActionContext(model, request, 'listing')
 
     >>> ICopySupport.providedBy(model)
     True

@@ -21,14 +21,10 @@ def render_main_template(model, request, contenttile='content'):
 
     As main content the tile with name contenttile is rendered.
     """
-    action_context = ActionContext(model, request, contenttile)
-    contenttile = action_context.scope
-    request.environ['contenttile'] = contenttile
-    # XXX: contenttile passed only for B/C reasons
+    ActionContext(model, request, contenttile)
     return render_template_to_response(cone.app.cfg.main_template,
                                        request=request,
-                                       model=model,
-                                       contenttile=contenttile)
+                                       model=model)
 
 
 @view_config(permission='login')

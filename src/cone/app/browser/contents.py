@@ -24,7 +24,9 @@ from .utils import (
     make_query,
 )
 
+
 _ = TranslationStringFactory('cone.app')
+
 
 FAR_PAST = datetime.datetime(2000, 1, 1)
 
@@ -67,13 +69,6 @@ class ContentsViewLink(ViewLink):
     css = 'title'
     event = 'contextchanged:#layout'
     action = None
-
-    #@property
-    #def action(self):
-    #    contenttile = 'content'
-    #    if self.model.properties.default_content_tile:
-    #        contenttile = self.model.properties.default_content_tile
-    #    return '%s:#content:inner' % contenttile
 
 
 @tile('contents', 'templates/table.pt', permission='view')

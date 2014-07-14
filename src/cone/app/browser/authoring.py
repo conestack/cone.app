@@ -28,7 +28,6 @@ from ..utils import app_config
 from . import render_main_template
 from .actions import ActionContext
 from .ajax import (
-    AjaxAction,
     AjaxEvent,
     AjaxOverlay,
     ajax_continue,
@@ -59,9 +58,7 @@ def render_form(model, request, tilename):
     XXX: move to cone.app.browser.form
     """
     if is_ajax(request):
-        # XXX: ActionContext centralized
-        action_context = ActionContext(model, request, tilename)
-        request.environ['action_context'] = action_context
+        ActionContext(model, request, tilename)
         return render_ajax_form(model, request, tilename)
     return render_main_template(model, request, contenttile=tilename)
 
@@ -96,10 +93,7 @@ class CameFromNext(Behavior):
         else:
             url = make_url(request.request, node=self.model)
         if self.ajax_request:
-            return [
-                AjaxAction(url, 'content', 'inner', '#content'),
-                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-            ]
+            return [AjaxEvent(url, 'contextchanged', '#layout')]
         return HTTPFound(location=url)
 
 

@@ -129,8 +129,8 @@ Render without factory::
 Render with valid factory::
 
     >>> from cone.app.browser.actions import ActionContext
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(root, request, 'content')
+
+    >>> ac = ActionContext(root, request, 'content')
 
     >>> request.params['factory'] = 'mynode'
     >>> result = render_tile(root, request, 'add')
@@ -185,8 +185,7 @@ Render with ajax flag::
     >>> request.params['ajax'] = '1'
     >>> res = render_tile(root, request, 'add')
     >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxAction object at ...>, 
-    <cone.app.browser.ajax.AjaxEvent object at ...>]
+    [<cone.app.browser.ajax.AjaxEvent object at ...>]
 
 Check the modified model::
 
@@ -257,8 +256,7 @@ Render form with value from model::
     >>> layer.login('editor')
     >>> request = layer.new_request()
 
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(root['somechild'], request, 'content')
+    >>> ac = ActionContext(root['somechild'], request, 'content')
 
     >>> render_tile(root['somechild'], request, 'edit')
     u'...<span class="label label-primary">Edit: My Node</span>...
@@ -277,8 +275,8 @@ node::
 Check next URL with 'came_from' 'parent'::
 
     >>> request = layer.new_request()
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(root['somechild'], request, 'content')
+
+    >>> ac = ActionContext(root['somechild'], request, 'content')
 
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
@@ -300,16 +298,15 @@ Check next URL with 'came_from' 'some_URL'::
 Render with ajax flag::
 
     >>> request = layer.new_request()
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(root['somechild'], request, 'content')
+
+    >>> ac = ActionContext(root['somechild'], request, 'content')
 
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
     >>> request.params['ajax'] = '1'
     >>> res = render_tile(root['somechild'], request, 'edit')
     >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxAction object at ...>, 
-    <cone.app.browser.ajax.AjaxEvent object at ...>]
+    [<cone.app.browser.ajax.AjaxEvent object at ...>]
 
 URL computing is the same as if HTTPFound instances are returned. In Ajax case,
 this URL is used as ajax target::
@@ -318,8 +315,8 @@ this URL is used as ajax target::
     'http://example.com/somechild'
 
     >>> request = layer.new_request()
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(root['somechild'], request, 'content')
+
+    >>> ac = ActionContext(root['somechild'], request, 'content')
 
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'

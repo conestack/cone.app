@@ -34,16 +34,12 @@ argument. if omitted, reserved name 'content' is used::
     >>> from cone.app.browser import render_main_template
     >>> res = render_main_template(model, request)
     >>> res.body
-    '<...
-    <body>\n    <div>Content</div>\n  
-    </body>\n</html>'
+    '<!DOCTYPE html...<div>Content</div>...</html>'
 
     >>> registerTile('othername', class_=ContentTile, permission='login')
     >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body
-    '<...
-    <body>\n    <div>Content</div>\n  
-    </body>\n</html>'
+    '<!DOCTYPE html...<div>Content</div>...</html>'
 
 Switch back to default main template::
 

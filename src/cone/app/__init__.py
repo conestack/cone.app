@@ -196,13 +196,13 @@ def configure_yafowil_addon_resources(config):
         config.add_view(view_path, name=resource_name)
         for js in resources['js']:
             if js['group'] in cone.app.cfg.yafowil.js_skip:
-                continue
+                continue #pragma NO COVERAGE
             if not js['resource'].startswith('http'):
                 js['resource'] = resource_name + '/' + js['resource']
             all_js.append(js)
         for css in resources['css']:
             if css['group'] in cone.app.cfg.yafowil.css_skip:
-                continue
+                continue #pragma NO COVERAGE
             if not css['resource'].startswith('http'):
                 css['resource'] = resource_name + '/' + css['resource']
             all_css.append(css)

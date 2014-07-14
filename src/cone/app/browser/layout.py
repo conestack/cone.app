@@ -17,7 +17,10 @@ from ..interfaces import IWorkflowState
 from ..model import AppRoot
 from ..utils import principal_data
 from . import render_main_template
-from .actions import LinkAction
+from .actions import (
+    get_action_context,
+    LinkAction,
+)
 from .utils import (
     nodepath,
     make_url,
@@ -63,18 +66,10 @@ class Layout(Tile):
 
     @property
     def contenttile(self):
-        contenttile = self.request.environ.get('contenttile')
-        if not contenttile:
-            contenttile = self.request.params.get('contenttile')
-        if not contenttile:
-            contenttile = self.model.properties.default_content_tile
-        if not contenttile:
-            contenttile = 'content'
-        return contenttile
+        return get_action_context(self.request).scope
 
 
 class ViewSettingsAction(LinkAction):
-    action = 'content:#content:inner'
     text = _('settings', 'Settings')
     icon = 'ion-ios7-gear'
     event = 'contextchanged:#layout'

@@ -26,9 +26,9 @@ def ajax_tile(model, request):
       for continuation definitions.
     """
     try:
-        name = request.params.get('bdajax.action')
-        action_context = ActionContext(model, request, name)
-        rendered = render_tile(model, request, action_context.scope)
+        name = request.params['bdajax.action']
+        ActionContext(model, request, name)
+        rendered = render_tile(model, request, name)
         continuation = request.environ.get('cone.app.continuation')
         if continuation:
             continuation = AjaxContinue(continuation).definitions

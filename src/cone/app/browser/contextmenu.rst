@@ -20,8 +20,9 @@ ContextMenu
     >>> from cone.app.browser.actions import ActionContext
 
     >>> request = layer.new_request()
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(model, request, 'content')
+
+    >>> ac = ActionContext(model, request, 'content')
+
     >>> rendered = render_tile(model, request, 'contextmenu')
 
     >>> rendered.find('toolbaraction-up') > -1
@@ -44,8 +45,9 @@ ContextMenu
 
     >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode()
-    >>> request.environ['action_context'] = \
-    ...     ActionContext(model, request, 'listing')
+
+    >>> ac = ActionContext(model, request, 'listing')
+
     >>> rendered = render_tile(model, request, 'contextmenu')
     >>> rendered.find('toolbaraction-cut') > -1
     True

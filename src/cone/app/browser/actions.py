@@ -19,34 +19,33 @@ from .utils import (
 _ = TranslationStringFactory('cone.app')
 
 
+def get_action_context(request):
+    return request.environ['action_context']
+
+
 class ActionContext(object):
-    """The action context is used to calculate action scopes. The action scope
-    is used by browser actions to calculate it's own state, i.e. if it is
-    selected, displayed or disabled.
-
-    The action scope is bound to either the content tile name used in main
-    template, or to the requested ajax action name if ajax request.
-
-    XXX: Better class name.
+    """The action context is used to determine action scopes. The action scope
+    is used by browser actions to check it's own state, e.g. if action button
+    is selected, disabled or displayed at all.
     """
 
     def __init__(self, model, request, tilename):
-        """Created by ``render_mail_template`` and ``ajax_action``.
-
-        Instance is written to request.environ['action_context'].
-        """
-        request.environ['action_context'] = self
         self.model = model
         self.request = request
         self.tilename = tilename
+        request.environ['action_context'] = self
 
     @property
     def scope(self):
-        scope = self.tilename
-        # if bdajax.action found on request, return it as current scope
-        if self.request.params.get('bdajax.action'):
-            scope = self.request.params.get('bdajax.action')
         model = self.model
+        request = self.request
+        scope = self.tilename
+        # if ``bdajax.action`` found on request, use it as current scope
+        if 'bdajax.action' in request.params:
+            scope = request.params['bdajax.action']
+        # if action is ``layout``, content tile name is passed
+        if scope == 'layout':
+            scope = request.params.get('contenttile', 'content')
         # change model if default child defined
         if model.properties.default_child:
             model = model[model.properties.default_child]
@@ -192,14 +191,6 @@ class ActionUp(LinkAction):
     text = _('action_one_level_up', 'One level up')
 
     @property
-    def action(self):
-        # XXX: consider in ajax target
-        action = self.model.properties.action_up_tile
-        if not action:
-            action = 'listing'
-        return '%s:#content:inner' % action
-
-    @property
     def display(self):
         return self.model.properties.action_up \
             and has_permission('view', self.model.parent, self.request) \
@@ -211,11 +202,11 @@ class ActionUp(LinkAction):
         default_child = container.properties.default_child
         if default_child and self.model.name == default_child:
             container = container.parent
-        query = make_query(
-            contenttile=container.properties.default_content_tile)
+        contenttile = self.model.properties.action_up_tile
+        if not contenttile:
+            contenttile = 'listing'
+        query = make_query(contenttile=contenttile)
         return make_url(self.request, node=container, query=query)
-
-    href = target
 
 
 class ActionView(LinkAction):
