@@ -12,10 +12,7 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
 from zope.component import getGlobalSiteManager
-from .interfaces import (
-    IApplicationNode,
-    ILayout,
-)
+from .interfaces import ILayout
 from .model import (
     AppRoot,
     AppSettings,
@@ -119,7 +116,7 @@ root.factories['settings'] = AppSettings
 
 
 @implementer(ILayout)
-@adapter(IApplicationNode)
+@adapter(Interface)
 def default_layout(context):
     layout = Layout()
     layout.mainmenu = True
