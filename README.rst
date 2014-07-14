@@ -73,6 +73,9 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Move over to ``typeahead.js`` for livesearch.
+  [rnix, 2014-07-14]
+
 - ``cone.app.cfg.layout`` not exists any longer. Register ``ILayout`` providing
   adapter for application nodes in order to customize layout configuration.
   [rnix, 2014-07-14]

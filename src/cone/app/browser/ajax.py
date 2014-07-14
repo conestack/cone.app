@@ -277,20 +277,13 @@ def dummy_livesearch_callback(model, request):
     """Dummy callback for Livesearch. Set as default.
 
     We receive the search term at ``request.params['term']``.
-
-    Livesearch expects a list of dicts with keys:
-        ``label`` - Label of found item
-        ``value`` - The value re-inserted in input. This is normally ``term``
-        ``target`` - The target URL for rendering the content tile.
     """
     term = request.params['term']
-    return [
-        {
-            'label': 'Root',
-            'value': term,
-            'target': request.application_url,
-        },
-    ]
+    return [{'value': 'Value 1'},
+            {'value': 'Value 2'},
+            {'value': 'Value 3'},
+            {'value': 'Value 4'},
+            {'value': 'Value 5'}]
 
 
 # Overwrite this with your own implementation on application startup

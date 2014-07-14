@@ -3,31 +3,24 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-    <ul class="nav navbar-nav navbar-right">
-
+  <ul class="nav navbar-nav navbar-right">
     <li id="search">
+
       <form class="form-inline" role="search">
 
         <div class="input-group input-group-sm">
-
           <input type="text"
-               class="form-control"
-               id="search-text"
-               name="term"
-               placeholder="search"
-               i18n:attributes="placeholder search" />
-
-          <span class="input-group-btn">
-            <button class="btn btn-default"
-                    type="button"
-                    i18n:translate="Go!">Go!</button>
-          </span>
-
+                 class="form-control"
+                 id="search-text"
+                 name="term" />
+          <span class="input-group-addon
+                       glyphicon
+                       glyphicon-search"></span>
         </div>
 
       </form>
-    </li>
 
+    </li>
   </ul>
 
 </tal:search>

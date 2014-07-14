@@ -62,6 +62,7 @@ cfg.css.public = [
     'static/bootstrap/css/bootstrap.css',
     'static/bootstrap/css/bootstrap-theme.css',
     'static/ionicons/css/ionicons.css',
+    'static/typeahead/typeahead.css',
     '++resource++bdajax/bdajax_bs3.css',
     'static/styles.css',
 ]
@@ -87,6 +88,7 @@ cfg.merged.js.public = [
     (static_resources, 'jquery.migrate-1.2.1.js'),
     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
     (static_resources, 'bootstrap/js/bootstrap.js'),
+    (static_resources, 'typeahead/typeahead.bundle.js'),
     (static_resources, 'cookie_functions.js'),
 ]
 

@@ -4,7 +4,7 @@
  * Requires:
  *     jquery
  *     bdajax
- *     jqueryui autocomplete
+ *     typeahead.js
  */
 
 (function($) {
@@ -21,27 +21,16 @@
 
     livesearch = {
         binder: function(context) {
-            console.log($.fn.autocomplete);
-            if (!$.fn.autocomplete) {
-                return;
-            }
-            $('input#search-text', context).autocomplete({
-                source: 'livesearch',
-                minLength: 3,
-                select: function(event, ui) {
-                    $('input#search-text').val('');
-                    bdajax.action({
-                        name: 'content',
-                        selector: '#content',
-                        mode: 'inner',
-                        url: ui.item.target,
-                        params: {}
-                    });
-                    bdajax.trigger('contextchanged',
-                                   '.contextsensitiv',
-                                   ui.item.target);
-                    return false;
-                }
+            var livesearch_source = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: 'livesearch?term=%QUERY'
+            });
+            livesearch_source.initialize();
+            $('input#search-text').typeahead(null, {
+                name: 'livesearch',
+                displayKey: 'value',
+                source: livesearch_source.ttAdapter()
             });
         }
     };
