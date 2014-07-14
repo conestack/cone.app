@@ -47,9 +47,10 @@ cfg.js.public = [
     '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
     '++resource++bdajax/bdajax_bs3.js',
+    'static/public.js',
 ]
 cfg.js.protected = [
-    'static/cone.app.js',
+    'static/protected.js',
 ]
 
 # CSS Resources
@@ -86,6 +87,7 @@ cfg.merged.js.public = [
     (static_resources, 'jquery.migrate-1.2.1.js'),
     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
     (static_resources, 'bootstrap/js/bootstrap.js'),
+    (static_resources, 'cookie_functions.js'),
 ]
 
 # production
@@ -96,9 +98,7 @@ cfg.merged.js.public = [
 #     (static_resources, 'bootstrap/js/bootstrap.min.js'),
 # ]
 
-cfg.merged.js.protected = [
-    (static_resources, 'cookie_functions.js'),
-]
+cfg.merged.js.protected = list()
 
 cfg.merged.css = Properties()
 cfg.merged.css.public = list()

@@ -1,9 +1,9 @@
-/* 
- * cone.app main JS
- * 
+/*
+ * cone.app protected JS
+ *
  * Requires:
+ *     jquery
  *     bdajax
- *     jquery ui autocomplete
  */
 
 if (typeof(window['yafowil']) == "undefined") yafowil = {};
@@ -14,7 +14,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // initial binding
         cone.key_binder();
-        cone.livesearchbinder();
         cone.settingstabsbinder();
         cone.tabletoolbarbinder();
         cone.sharingbinder();
@@ -65,30 +64,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     case 17:
                         cone.keys.ctrl_down = false;
                         break;
-                }
-            });
-        },
-
-        livesearchbinder: function(context) {
-            if (!$.fn.autocomplete) {
-                return;
-            }
-            $('input#search-text', context).autocomplete({
-                source: 'livesearch',
-                minLength: 3,
-                select: function(event, ui) {
-                    $('input#search-text').val('');
-                    bdajax.action({
-                        name: 'content',
-                        selector: '#content',
-                        mode: 'inner',
-                        url: ui.item.target,
-                        params: {}
-                    });
-                    bdajax.trigger('contextchanged',
-                                   '.contextsensitiv',
-                                   ui.item.target);
-                    return false;
                 }
             });
         },
