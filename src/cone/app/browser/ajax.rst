@@ -332,22 +332,30 @@ Test with form perocessing passing::
 Livesearch
 ----------
 
-Cone provides a livesearch, but no callback implementation for it.
-
-The callback could be set by overwriting
-``cone.app.browser.ajax.LIVESEARCH_CALLBACK``
-
-For testing purposes a dummy_livesearch_callback is bound which always return
-one item::
-
-    >>> from cone.app.browser.ajax import LIVESEARCH_CALLBACK
-    >>> LIVESEARCH_CALLBACK
-    <function dummy_livesearch_callback at ...>
-
-The livesearch view calls the livesearch callback::
+Cone provides a livesearch view, but no referring ``ILiveSearch`` implementing
+adapter for it::
 
     >>> from cone.app.browser.ajax import livesearch
     >>> request = layer.new_request()
     >>> request.params['term'] = 'foo'
     >>> livesearch(root, request)
-    [{...}...]
+    []
+
+Provide dummy adapter::
+
+    >>> from zope.interface import Interface, implementer
+    >>> from zope.component import adapter
+    >>> from cone.app.interfaces import ILiveSearch
+    >>> @implementer(ILiveSearch)
+    ... @adapter(Interface)
+    ... class LiveSearch(object):
+    ...     def __init__(self, model):
+    ...         self.model = model
+    ...     def search(self, request, query):
+    ...         return [{'value': 'Value'}]
+
+    >>> registry = request.registry
+    >>> registry.registerAdapter(LiveSearch)
+
+    >>> livesearch(root, request)
+    [{'value': 'Value'}]
