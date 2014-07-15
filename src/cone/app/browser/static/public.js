@@ -27,10 +27,13 @@
                 remote: 'livesearch?term=%QUERY'
             });
             livesearch_source.initialize();
-            $('input#search-text').typeahead(null, {
+            var input = $('input#search-text');
+            input.typeahead(null, {
                 name: 'livesearch',
                 displayKey: 'value',
                 source: livesearch_source.ttAdapter()
+            });
+            input.on('typeahead:selected', function(evt, suggestion, dataset) {
             });
         }
     };
