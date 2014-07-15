@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Introduce ``ILiveSearch`` adapter interface and remove
+  ``cone.app.browser.ajax.LIVESEARCH_CALLBACK``.
+  [rnix, 2014-07-15]
+
 - Move over to ``typeahead.js`` for livesearch.
   [rnix, 2014-07-14]
 

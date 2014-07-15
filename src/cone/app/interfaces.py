@@ -142,3 +142,12 @@ class IUUIDAsName(IUUIDAware):
     """Exposes ``self.uuid`` as ``self.__name__``. Considers key changes in
     node trees at copy time.
     """
+
+
+class ILiveSearch(Interface):
+    """Livesearch adapter.
+    """
+
+    def search(request, query):
+        """Return search result.
+        """

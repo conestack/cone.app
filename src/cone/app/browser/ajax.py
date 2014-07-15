@@ -11,6 +11,7 @@ from cone.tile import (
 )
 from .actions import ActionContext
 from .exception import format_traceback
+from ..interfaces import ILiveSearch
 
 
 registerTile('bdajax', 'bdajax:bdajax_bs3.pt', permission='login')
@@ -273,25 +274,9 @@ def render_ajax_form(model, request, name):
         return Response(rendered)
 
 
-def dummy_livesearch_callback(model, request):
-    """Dummy callback for Livesearch. Set as default.
-
-    We receive the search term at ``request.params['term']``.
-    """
-    term = request.params['term']
-    return [{'value': 'Value 1'},
-            {'value': 'Value 2'},
-            {'value': 'Value 3'},
-            {'value': 'Value 4'},
-            {'value': 'Value 5'}]
-
-
-# Overwrite this with your own implementation on application startup
-LIVESEARCH_CALLBACK = dummy_livesearch_callback
-
-
 @view_config(name='livesearch', accept='application/json', renderer='json')
 def livesearch(model, request):
-    """Call ``LIVESEARCH_CALLBACK`` and return its results.
-    """
-    return LIVESEARCH_CALLBACK(model, request)
+    adapter = request.registry.queryAdapter(model, ILiveSearch)
+    if not adapter:
+        return list()
+    return adapter.search(request, request.params['term'])
