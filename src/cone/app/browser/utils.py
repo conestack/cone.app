@@ -2,7 +2,11 @@ import re
 import datetime
 import types
 from pyramid.security import authenticated_userid
+from pyramid.i18n import TranslationStringFactory
 from ..utils import app_config
+
+
+_ = TranslationStringFactory('cone.app')
 
 
 def authenticated(request):
@@ -63,7 +67,7 @@ def choose_name(container, name):
 
 def format_date(dt, long=True):
     if not isinstance(dt, datetime.datetime):
-        return 'unknown'
+        return _('unknown', default=u'Unknown')
     return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
 
 

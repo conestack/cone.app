@@ -63,7 +63,7 @@ path.::
     '15.03.2011'
 
     >>> format_date(object())
-    'unknown'
+    u'unknown'
 
 ``request_property``::
 
