@@ -21,6 +21,10 @@ from .actions import (
     get_action_context,
     LinkAction,
 )
+from .ajax import (
+    AjaxPath,
+    ajax_continue,
+)
 from .utils import (
     nodepath,
     make_url,
@@ -66,6 +70,8 @@ class Layout(Tile):
 
     @property
     def contenttile(self):
+        path = '/'.join([it for it in self.model.path if it])
+        ajax_continue(self.request, [AjaxPath(path)])
         return get_action_context(self.request).scope
 
 

@@ -84,6 +84,15 @@ def ajax_status_message(request, payload):
     ajax_continue(request, AjaxMessage(payload, None, '#status_message'))
 
 
+class AjaxPath(object):
+    """Ajax path configuration. Used to define continuation path for
+    client side.
+    """
+
+    def __init__(self, path):
+        self.path = path
+
+
 class AjaxAction(object):
     """Ajax action configuration. Used to define continuation actions for
     client side.
@@ -148,6 +157,11 @@ class AjaxContinue(object):
             return
         continuation = list()
         for definition in self.continuation:
+            if isinstance(definition, AjaxPath):
+                continuation.append({
+                    'type': 'path',
+                    'path': definition.path,
+                })
             if isinstance(definition, AjaxAction):
                 continuation.append({
                     'type': 'action',
