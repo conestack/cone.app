@@ -7,6 +7,9 @@
  *     typeahead.js
  */
 
+// additional livesearch options
+var livesearch_options = new Object();
+
 (function($) {
 
     $(document).ready(function() {
@@ -28,13 +31,13 @@
             });
             livesearch_source.initialize();
             var input = $('input#search-text');
-            input.typeahead(null, {
+            var options = {
                 name: 'livesearch',
                 displayKey: 'value',
                 source: livesearch_source.ttAdapter()
-            });
-            input.on('typeahead:selected', function(evt, suggestion, dataset) {
-            });
+            };
+            $.extend(options, livesearch_options);
+            input.typeahead(null, options);
         }
     };
 
