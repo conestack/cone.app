@@ -1,6 +1,7 @@
 /* general */
 body {
     padding-bottom:44px;
+    overflow-y:scroll;
 }
 
 /* main nav bar */
