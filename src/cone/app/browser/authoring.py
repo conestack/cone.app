@@ -43,6 +43,10 @@ from .utils import (
 _ = TranslationStringFactory('cone.app')
 
 
+###############################################################################
+# general
+###############################################################################
+
 def is_ajax(request):
     return bool(request.params.get('ajax'))
 
@@ -62,8 +66,20 @@ def render_form(model, request, tilename):
     return render_main_template(model, request, contenttile=tilename)
 
 
+class _FormRenderingTile(Tile):
+    form_tile_name = ''
+
+    def render(self):
+        return render_tile(self.model, self.request, self.form_tile_name)
+
+
+###############################################################################
+# form continuation control
+###############################################################################
+
 class CameFromNext(Behavior):
-    """Behavior for form tiles considering 'came_from' parameter on request.
+    """Form behavior for form tiles considering 'came_from' parameter on
+    request for continuation purposes.
     """
 
     @plumb
@@ -96,58 +112,9 @@ class CameFromNext(Behavior):
         return HTTPFound(location=url)
 
 
-@view_config('add', permission='add')
-def add(model, request):
-    """Add view.
-    """
-    return render_form(model, request, 'add')
-
-
-def default_addmodel_factory(parent, nodeinfo):
-    """Default addmodel factory.
-
-    The addmodel factory is responsible to create a model suitable for
-    rendering addforms refering to node info.
-
-    parent
-        The parent in which the new item should be added
-    nodeinfo
-        The nodeinfo instance
-    """
-    if AdapterNode in nodeinfo.node.__bases__:
-        addmodel = nodeinfo.node(BaseNode(), None, None)
-    else:
-        addmodel = nodeinfo.node()
-    addmodel.__parent__ = parent
-    return addmodel
-
-
-@tile('add', permission='add')
-class AddTile(ProtectedContentTile):
-    """The add tile is responsible to render add forms depending on given
-    factory name. Factory information is fetched from NodeInfo implementation
-    registered by factory name.
-    """
-    form_tile_name = 'addform'
-
-    def render(self):
-        nodeinfo = self.info
-        if not nodeinfo:
-            return _('unknown_factory', 'Unknown factory')
-        factory = nodeinfo.factory
-        if not factory:
-            factory = default_addmodel_factory
-        addmodel = factory(self.model, nodeinfo)
-        return render_tile(addmodel, self.request, self.form_tile_name)
-
-    @property
-    def info(self):
-        factory = self.request.params.get('factory')
-        allowed = self.model.nodeinfo.addables
-        if not factory or not allowed or not factory in allowed:
-            return None
-        return getNodeInfo(factory)
-
+###############################################################################
+# content area related forms
+###############################################################################
 
 class ContentForm(Behavior):
     """Form behavior rendering to content area.
@@ -180,9 +147,147 @@ class ContentForm(Behavior):
             path, request=request, model=model, context=self)
 
 
-class AddBehavior(CameFromNext, ContentForm):
-    """form behavior hooking the hidden field 'factory' to self.form on
-    __call__.
+###############################################################################
+# overlay forms
+###############################################################################
+
+@view_config('overlayform', permission='view')
+def overlayform(model, request):
+    return render_form(model, request, 'overlayformtile')
+
+
+@tile('overlayformtile', permission='view')
+class OverlayFormTile(ProtectedContentTile, _FormRenderingTile):
+    form_tile_name = 'overlayform'
+
+
+class OverlayForm(Behavior):
+    """Form behavior rendering to overlay.
+    """
+    action_resource = override('overlayform')
+    overlay_selector = override('#ajax-form')
+    overlay_content_selector = override('.overlay_content')
+
+    @plumb
+    def __call__(_next, self, model, request):
+        form = _next(self, model, request)
+        selector = '%s %s' % (self.overlay_selector,
+                              self.overlay_content_selector)
+        ajax_form_fiddle(request, selector, 'inner')
+        return form
+
+    @default
+    def next(self, request):
+        return [AjaxOverlay(selector=self.overlay_selector, close=True)]
+
+# B/C
+# deprecated: will be removed in cone.app 1.1
+OverlayBehavior = OverlayForm
+
+
+###############################################################################
+# adding
+###############################################################################
+
+def default_addmodel_factory(parent, nodeinfo):
+    """Default addmodel factory.
+
+    The addmodel factory is responsible to create a model suitable for
+    rendering addforms refering to node info.
+
+    parent
+        The parent in which the new item should be added
+    nodeinfo
+        The nodeinfo instance
+    """
+    if AdapterNode in nodeinfo.node.__bases__:
+        addmodel = nodeinfo.node(BaseNode(), None, None)
+    else:
+        addmodel = nodeinfo.node()
+    addmodel.__parent__ = parent
+    return addmodel
+
+
+@tile('add_dropdown', 'templates/add_dropdown.pt',
+      permission='add', strict=False)
+class AddDropdown(Tile):
+
+    @property
+    def items(self):
+        ret = list()
+        addables = self.model.nodeinfo.addables
+        if not addables:
+            return ret
+        for addable in addables:
+            info = getNodeInfo(addable)
+            if not info:
+                continue
+            query = make_query(factory=addable)
+            url = make_url(self.request, node=self.model,
+                           resource='add', query=query)
+            target = make_url(self.request, node=self.model, query=query)
+            props = Properties()
+            props.url = url
+            props.target = target
+            props.title = info.title
+            icon = info.icon
+            if not icon:
+                icon = app_config().default_node_icon
+            props.icon = icon
+            ret.append(props)
+        return ret
+
+
+@view_config('add', permission='add')
+def add(model, request):
+    return render_form(model, request, 'add')
+
+
+@tile('add', permission='add')
+class AddTile(ProtectedContentTile, _FormRenderingTile):
+    """The add tile is responsible to render add forms depending on given
+    factory name. Factory information is fetched from NodeInfo implementation
+    registered by factory name.
+    """
+    form_tile_name = 'addform'
+
+    def render(self):
+        nodeinfo = self.info
+        if not nodeinfo:
+            return _('unknown_factory', 'Unknown factory')
+        factory = nodeinfo.factory
+        if not factory:
+            factory = default_addmodel_factory
+        addmodel = factory(self.model, nodeinfo)
+        return render_tile(addmodel, self.request, self.form_tile_name)
+
+    @property
+    def info(self):
+        factory = self.request.params.get('factory')
+        allowed = self.model.nodeinfo.addables
+        if not factory or not allowed or not factory in allowed:
+            return None
+        return getNodeInfo(factory)
+
+
+class AddFactoryProxy(Behavior):
+    """Form behavior for add forms hooking the hidden field 'factory' to
+    request parameters.
+    """
+
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set 'factory' as proxy field to form.
+        """
+        _next(self)
+        self.form['factory'] = factory(
+            'proxy',
+            value=self.request.params.get('factory'),
+        )
+
+
+class AddForm(CameFromNext, ContentForm, AddFactoryProxy):
+    """Form behavior rendering add form to content area.
     """
     action_resource = override('add')
 
@@ -203,37 +308,47 @@ class AddBehavior(CameFromNext, ContentForm):
     def rendered_contextmenu(self):
         return render_tile(self.model.parent, self.request, 'contextmenu')
 
-    @plumb
-    def prepare(_next, self):
-        """Hook after prepare and set 'factory' as proxy field to ``self.form``
-        """
-        _next(self)
-        self.form['factory'] = factory(
-            'proxy',
-            value=self.request.params.get('factory'),
-        )
+# B/C
+# deprecated: will be removed in cone.app 1.1
+AddBehavior = AddForm
 
+
+###############################################################################
+# overlay adding
+###############################################################################
+
+@view_config('overlayadd', permission='view')
+def overlayadd(model, request):
+    return render_form(model, request, 'overlayadd')
+
+
+@tile('overlayadd', permission='add')
+class OverlayAddTile(AddTile):
+    form_tile_name = 'overlayaddform'
+
+
+class OverlayAddForm(OverlayForm, AddFactoryProxy):
+    """Add form behavior rendering to overlay.
+    """
+    action_resource = override('overlayadd')
+
+
+###############################################################################
+# editing
+###############################################################################
 
 @view_config('edit', permission='edit')
 def edit(model, request):
-    """Edit view.
-    """
     return render_form(model, request, 'edit')
 
 
 @tile('edit', permission='edit')
-class EditTile(ProtectedContentTile):
-    """The edit tile is responsible to render edit forms on given model.
-    """
+class EditTile(ProtectedContentTile, _FormRenderingTile):
     form_tile_name = 'editform'
 
-    def render(self):
-        return render_tile(self.model, self.request, self.form_tile_name)
 
-
-class EditBehavior(CameFromNext, ContentForm):
-    """form behavior hooking the hidden field 'came_from' to self.form on
-    __call__.
+class EditForm(CameFromNext, ContentForm):
+    """Form behavior rendering edit form to content area.
     """
     action_resource = override('edit')
 
@@ -250,43 +365,34 @@ class EditBehavior(CameFromNext, ContentForm):
               mapping={'title': localizer.translate(_(info.title))}))
         return heading
 
+# B/C
+# deprecated: will be removed in cone.app 1.1
+EditBehavior = EditForm
 
-@view_config('overlayform', permission='view')
+
+###############################################################################
+# overlay editing
+###############################################################################
+
+@view_config('overlayedit', permission='view')
 def overlayform(model, request):
-    """Overlay form.
-    """
-    return render_form(model, request, 'overlayform')
+    return render_form(model, request, 'overlayedit')
 
 
-@tile('overlayform', permission='view')
-class OverlayFormTile(ProtectedContentTile):
-    """The overlayform tile is responsible to render forms on given model.
-    """
+@tile('overlayedit', permission='view')
+class OverlayFormTile(ProtectedContentTile, _FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
-    def render(self):
-        return render_tile(self.model, self.request, self.form_tile_name)
 
-
-class OverlayBehavior(Behavior):
-    """Form behavior rendering to overlay.
+class OverlayEditForm(OverlayForm):
+    """Edit form behavior rendering to overlay.
     """
-    action_resource = override('overlayform')
-    overlay_selector = override('#ajax-form')
-    overlay_content_selector = override('.overlay_content')
+    action_resource = override('overlayedit')
 
-    @plumb
-    def __call__(_next, self, model, request):
-        form = _next(self, model, request)
-        selector = '%s %s' % (self.overlay_selector,
-                              self.overlay_content_selector)
-        ajax_form_fiddle(request, selector, 'inner')
-        return form
 
-    @default
-    def next(self, request):
-        return [AjaxOverlay(selector=self.overlay_selector, close=True)]
-
+###############################################################################
+# deleting
+###############################################################################
 
 @tile('delete', permission="delete")
 class DeleteAction(Tile):
@@ -322,33 +428,3 @@ class DeleteAction(Tile):
         message = localizer.translate(ts)
         ajax_message(self.request, message, 'info')
         return u''
-
-
-@tile('add_dropdown', 'templates/add_dropdown.pt',
-      permission='add', strict=False)
-class AddDropdown(Tile):
-
-    @property
-    def items(self):
-        ret = list()
-        addables = self.model.nodeinfo.addables
-        if not addables:
-            return ret
-        for addable in addables:
-            info = getNodeInfo(addable)
-            if not info:
-                continue
-            query = make_query(factory=addable)
-            url = make_url(self.request, node=self.model,
-                           resource='add', query=query)
-            target = make_url(self.request, node=self.model, query=query)
-            props = Properties()
-            props.url = url
-            props.target = target
-            props.title = info.title
-            icon = info.icon
-            if not icon:
-                icon = app_config().default_node_icon
-            props.icon = icon
-            ret.append(props)
-        return ret

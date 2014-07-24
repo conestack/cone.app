@@ -73,6 +73,17 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Introduce ``OverlayAddForm`` and ``OverlayEditForm``.
+  [rnix, 2014-07-24]
+
+- ``OverlayForm`` renders ``overlayform`` form tile instead of
+  ``overlayeditform``.
+  [rnix, 2014-07-24]
+
+- Authoring forms cleanup. Rename ``AddBehavior`` to ``AddForm``,
+  ``EditBehavior`` to ``EditForm`` and ``OverlayBehavior`` to ``OverlayForm``.
+  [rnix, 2014-07-24]
+
 - Introduce ``ILiveSearch`` adapter interface and remove
   ``cone.app.browser.ajax.LIVESEARCH_CALLBACK``.
   [rnix, 2014-07-15]

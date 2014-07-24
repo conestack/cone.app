@@ -70,14 +70,14 @@ Create and register an ``addform`` named form tile::
     >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
     >>> from cone.app.browser.form import Form
-    >>> from cone.app.browser.authoring import AddBehavior
+    >>> from cone.app.browser.authoring import AddForm
     >>> from cone.app.browser.ajax import AjaxAction, AjaxEvent
     >>> from webob.exc import HTTPFound
 
     >>> @tile('addform', interface=ITestAddingNode)
     ... class MyAddForm(Form):
     ...     __metaclass__ = plumber
-    ...     __plumbing__ = AddBehavior
+    ...     __plumbing__ = AddForm
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
@@ -219,12 +219,12 @@ Editing
 
 Create and register an ``editform`` named form tile::
 
-    >>> from cone.app.browser.authoring import EditBehavior
+    >>> from cone.app.browser.authoring import EditForm
 
     >>> @tile('editform', interface=MyNode)
     ... class MyEditForm(Form):
     ...     __metaclass__ = plumber
-    ...     __plumbing__ = EditBehavior
+    ...     __plumbing__ = EditForm
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
@@ -262,7 +262,7 @@ Render form with value from model::
     u'...<span class="label label-primary">Edit: My Node</span>...
     <form action="http://example.com/somechild"...'
 
-Render with submitted data. Default next URL of EditBehavior is the edited
+Render with submitted data. Default next URL of EditForm is the edited
 node::
 
     >>> request = layer.new_request()
