@@ -73,6 +73,11 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- ``OverlayForm`` now renders by default to ``#ajax-overlay`` instead of
+  ``#ajax-form``. Latter is supposed to be used if overlay form should be
+  rendered above an already opened overlay.
+  [rnix, 2014-07-25]
+
 - Introduce ``OverlayAddForm`` and ``OverlayEditForm``.
   [rnix, 2014-07-24]
 
