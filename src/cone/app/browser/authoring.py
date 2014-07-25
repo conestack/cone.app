@@ -317,7 +317,7 @@ AddBehavior = AddForm
 # overlay adding
 ###############################################################################
 
-@view_config('overlayadd', permission='view')
+@view_config('overlayadd', permission='add')
 def overlayadd(model, request):
     return render_form(model, request, 'overlayadd')
 
@@ -374,12 +374,12 @@ EditBehavior = EditForm
 # overlay editing
 ###############################################################################
 
-@view_config('overlayedit', permission='view')
+@view_config('overlayedit', permission='edit')
 def overlayform(model, request):
     return render_form(model, request, 'overlayedit')
 
 
-@tile('overlayedit', permission='view')
+@tile('overlayedit', permission='edit')
 class OverlayFormTile(ProtectedContentTile, _FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
