@@ -34,7 +34,6 @@ from .ajax import (
     ajax_form_fiddle,
     render_ajax_form,
 )
-from .layout import ProtectedContentTile
 from .utils import (
     make_url,
     make_query,
@@ -157,7 +156,7 @@ def overlayform(model, request):
 
 
 @tile('overlayformtile', permission='view')
-class OverlayFormTile(ProtectedContentTile, _FormRenderingTile):
+class OverlayFormTile(_FormRenderingTile):
     form_tile_name = 'overlayform'
 
 
@@ -244,7 +243,7 @@ def add(model, request):
 
 
 @tile('add', permission='add')
-class AddTile(ProtectedContentTile, _FormRenderingTile):
+class AddTile(_FormRenderingTile):
     """The add tile is responsible to render add forms depending on given
     factory name. Factory information is fetched from NodeInfo implementation
     registered by factory name.
@@ -343,7 +342,7 @@ def edit(model, request):
 
 
 @tile('edit', permission='edit')
-class EditTile(ProtectedContentTile, _FormRenderingTile):
+class EditTile(_FormRenderingTile):
     form_tile_name = 'editform'
 
 
@@ -380,7 +379,7 @@ def overlayform(model, request):
 
 
 @tile('overlayedit', permission='edit')
-class OverlayFormTile(ProtectedContentTile, _FormRenderingTile):
+class OverlayFormTile(_FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
 

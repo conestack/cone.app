@@ -73,6 +73,13 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Improve forbidden view, renders unauthorized tile in case user is
+  authenticated, otherwise redirect to login form.
+  [rnix, 2014-07-26]
+
+- All Authoring forms are no longer derived from ``ProtectedContentTile``.
+  [rnix, 2014-07-26]
+
 - ``OverlayForm`` now renders by default to ``#ajax-overlay`` instead of
   ``#ajax-form``. Latter is supposed to be used if overlay form should be
   rendered above an already opened overlay.

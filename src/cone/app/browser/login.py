@@ -13,7 +13,7 @@ from .utils import make_url
 _ = TranslationStringFactory('cone.app')
 
 
-@tile('loginform', permission="login")
+@tile('loginform', permission='login')
 class LoginForm(Form):
     ajax = False
 

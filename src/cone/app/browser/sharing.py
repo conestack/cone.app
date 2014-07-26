@@ -12,7 +12,6 @@ from pyramid.i18n import (
 from .. import security
 from . import render_main_template
 from .ajax import ajax_message
-from .layout import ProtectedContentTile
 from .table import (
     Table,
     RowData,
@@ -24,9 +23,8 @@ _ = TranslationStringFactory('cone.app')
 
 
 registerTile('sharing',
-             'cone.app:browser/templates/sharing.pt',
-             class_=ProtectedContentTile,
-             permission='login')
+             'templates/sharing.pt',
+             permission='manage_permissions')
 
 
 @view_config('sharing', permission='manage_permissions')
@@ -36,7 +34,7 @@ def sharing(model, request):
     return render_main_template(model, request, 'sharing')
 
 
-@tile('local_acl', 'cone.app:browser/templates/table.pt',
+@tile('local_acl', 'templates/table.pt',
       permission='manage_permissions')
 class SharingTable(Table):
 

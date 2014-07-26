@@ -37,6 +37,12 @@ from .utils import (
 _ = TranslationStringFactory('cone.app')
 
 
+registerTile('unauthorized', 'templates/unauthorized.pt', permission='login')
+registerTile('logo', 'templates/logo.pt', permission='login')
+registerTile('livesearch', 'templates/livesearch.pt', permission='login')
+registerTile('footer', 'templates/footer.pt', permission='login')
+
+
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.
@@ -51,19 +57,7 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
-registerTile('logo',
-             'cone.app:browser/templates/logo.pt',
-             permission='login',
-             strict=False)
-
-
-registerTile('livesearch',
-             'cone.app:browser/templates/livesearch.pt',
-             permission='view',
-             strict=False)
-
-
-@tile('layout', 'templates/layout.pt', permission='login', strict=False)
+@tile('layout', 'templates/layout.pt', permission='login')
 class Layout(Tile):
     """Main layout tile.
     """
@@ -130,8 +124,7 @@ class PersonalTools(Tile):
         return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
-@tile('mainmenu', 'templates/mainmenu.pt',
-      permission='view', strict=False)
+@tile('mainmenu', 'templates/mainmenu.pt', permission='view', strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
 
@@ -187,8 +180,7 @@ class MainMenu(Tile):
         return ret
 
 
-@tile('pathbar', 'templates/pathbar.pt',
-      permission='view', strict=False)
+@tile('pathbar', 'templates/pathbar.pt', permission='view', strict=False)
 class PathBar(Tile):
 
     @property
@@ -234,8 +226,7 @@ class PathBar(Tile):
         return ret
 
 
-@tile('navtree', 'templates/navtree.pt',
-      permission='view', strict=False)
+@tile('navtree', 'templates/navtree.pt', permission='view', strict=False)
 class NavTree(Tile):
     """Navigation tree tile.
     """
@@ -325,8 +316,7 @@ class NavTree(Tile):
             level=level)
 
 
-@tile('byline', 'templates/byline.pt',
-      permission='view', strict=False)
+@tile('byline', 'templates/byline.pt', permission='view', strict=False)
 class Byline(Tile):
     """Byline tile.
     """
@@ -335,16 +325,7 @@ class Byline(Tile):
         return format_date(dt)
 
 
-registerTile('footer',
-             'templates/footer.pt',
-             permission='login',
-             strict=False)
-
-
-registerTile('listing',
-             'templates/listing.pt',
-             class_=ProtectedContentTile,
-             permission='login')
+registerTile('listing', 'templates/listing.pt', permission='view')
 
 
 @view_config('listing', permission='view')

@@ -47,7 +47,7 @@ tag = Tag(lambda x: x)
 
 
 registerTile('referencebrowser',
-             'cone.app:browser/templates/referencebrowser.pt',
+             'templates/referencebrowser.pt',
              permission='view')
 
 
