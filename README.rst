@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Introduce ``list`` permission, bind ``listing`` and ``contents`` tile to it
+  and adopt default ACL's.
+  [rnix, 2014-07-26]
+
 - Improve forbidden view, renders unauthorized tile in case user is
   authenticated, otherwise redirect to login form.
   [rnix, 2014-07-26]

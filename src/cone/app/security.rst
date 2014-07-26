@@ -43,14 +43,14 @@ The default ACL::
 
     >>> security.DEFAULT_ACL
     [('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:viewer', ['view', 'list']), 
+    ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:manager', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state', 'manage']), 
+    ('Allow', 'role:owner', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
@@ -154,17 +154,17 @@ OwnerSupport::
     'sepp'
 
     >>> ownersupportnode.__acl__
-    [('Allow', 'sepp', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
+    [('Allow', 'sepp', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:viewer', ['view', 'list']), 
+    ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:manager', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state', 'manage']), 
+    ('Allow', 'role:owner', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
@@ -233,14 +233,14 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     >>> node.principal_roles['group:some_group'] = ['editor', 'manager']
 
     >>> node.__acl__
-    [('Allow', 'someuser', ['cut', 'edit', 'view', 'add', 'change_state', 
-    'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'otheruser', ['edit', 'add', 'view']), 
-    ('Allow', 'group:some_group', ['cut', 'edit', 'view', 'add', 
-    'change_state', 'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
+    [('Allow', 'someuser', ['cut', 'edit', 'copy', 'manage', 'list', 'add', 
+    'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
+    ('Allow', 'otheruser', ['edit', 'add', 'list', 'view']), 
+    ('Allow', 'group:some_group', ['cut', 'edit', 'copy', 'manage', 'list', 
+    'add', 'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
     ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-      ...
+    ('Allow', 'role:viewer', ['view', 'list']), 
+    ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 PrincipalACL role inheritance::
@@ -248,10 +248,10 @@ PrincipalACL role inheritance::
     >>> child = node['child'] = MyPrincipalACLNode()
     >>> child.principal_roles['someuser'] = ['editor']
     >>> child.__acl__
-    [('Allow', 'someuser', ['edit', 'add', 'view']), 
+    [('Allow', 'someuser', ['edit', 'add', 'list', 'view']), 
     ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-      ...
+    ('Allow', 'role:viewer', ['view', 'list']), 
+    ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
     >>> subchild = child['child'] = MyPrincipalACLNode()
@@ -267,14 +267,14 @@ PrincipalACL role inheritance::
     ['admin', 'editor']
 
     >>> subchild.__acl__
-    [('Allow', 'someuser', ['cut', 'edit', 'view', 'add', 'change_state', 
-    'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'otheruser', ['cut', 'edit', 'view', 'add', 'change_state', 
-    'copy', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'group:some_group', ['cut', 'edit', 'view', 'add', 
-    'change_state', 'manage', 'copy', 'paste', 'manage_permissions', 'delete']), 
+    [('Allow', 'someuser', ['cut', 'edit', 'copy', 'manage', 'list', 'add', 
+    'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
+    ('Allow', 'otheruser', ['cut', 'edit', 'copy', 'list', 'add', 
+    'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
+    ('Allow', 'group:some_group', ['cut', 'edit', 'copy', 'manage', 'list', 
+    'add', 'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
     ('Allow', 'system.Authenticated', ['view']), 
-      ...
+    ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 Principal roles get inherited even if some parent does not provide principal
@@ -293,8 +293,8 @@ role does not grant any permissions::
     >>> node.__acl__
     [('Allow', 'someuser', []), 
     ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-      ...
+    ('Allow', 'role:viewer', ['view', 'list']), 
+    ...
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 
 If an authentication plugin raises an error when calling ``authenticate``, an

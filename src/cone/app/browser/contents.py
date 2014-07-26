@@ -2,7 +2,11 @@ import datetime
 from node.utils import instance_property
 from pyramid.security import has_permission
 from pyramid.i18n import TranslationStringFactory
-from cone.tile import tile
+from pyramid.view import view_config
+from cone.tile import (
+    tile,
+    registerTile,
+)
 from ..interfaces import (
     ICopySupport,
     IWorkflowState,
@@ -23,6 +27,7 @@ from .utils import (
     make_url,
     make_query,
 )
+from . import render_main_template
 
 
 _ = TranslationStringFactory('cone.app')
@@ -71,7 +76,7 @@ class ContentsViewLink(ViewLink):
     action = None
 
 
-@tile('contents', 'templates/table.pt', permission='view')
+@tile('contents', 'templates/table.pt', permission='list')
 class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'
@@ -192,3 +197,13 @@ class ContentsTile(Table):
             if order == 'asc':
                 children.reverse()
         return children
+
+
+registerTile('listing', 'templates/listing.pt', permission='list')
+
+
+@view_config('listing', permission='list')
+def listing(model, request):
+    """Listing view
+    """
+    return render_main_template(model, request, 'listing')

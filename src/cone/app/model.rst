@@ -10,14 +10,14 @@ Default permissions.::
 
     >>> root.__acl__
     [('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view']), 
-    ('Allow', 'role:editor', ['view', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'role:owner', ['view', 'add', 'edit', 'delete', 'cut', 'copy', 
-    'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:viewer', ['view', 'list']), 
+    ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']), 
+    ('Allow', 'role:admin', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
+    ('Allow', 'role:manager', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state', 'manage']), 
+    ('Allow', 'role:owner', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
+    'copy', 'paste', 'manage_permissions', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
 

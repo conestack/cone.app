@@ -21,8 +21,10 @@ from .interfaces import (
 )
 from .utils import app_config
 
+
 logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
+
 
 DEFAULT_ROLES = [
     ('viewer', _('role_viewer', 'Viewer')),
@@ -31,42 +33,64 @@ DEFAULT_ROLES = [
     ('manager', _('role_manager', 'Manager')),
 ]
 
-owner_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
-    'paste', 'manage_permissions', 'change_state']
 
-admin_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
-    'paste', 'manage_permissions', 'change_state']
-
-manager_permissions = ['view', 'add', 'edit', 'delete', 'cut', 'copy',
-    'paste', 'manage_permissions', 'change_state', 'manage']
-
+authenticated_permissions = [
+    'view',
+]
+viewer_permissions = [
+    'view', 'list',
+]
+editor_permissions = [
+    'view', 'list', 'add', 'edit',
+]
+owner_permissions = [
+    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
+    'manage_permissions', 'change_state',
+]
+admin_permissions = [
+    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
+    'manage_permissions', 'change_state',
+]
+manager_permissions = [
+    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
+    'manage_permissions', 'change_state', 'manage',
+]
+everyone_permissions = [
+    'login',
+]
 DEFAULT_ACL = [
-    (Allow, 'system.Authenticated', ['view']),
-    (Allow, 'role:viewer', ['view']),
-    (Allow, 'role:editor', ['view', 'add', 'edit']),
+    (Allow, 'system.Authenticated', authenticated_permissions),
+    (Allow, 'role:viewer', viewer_permissions),
+    (Allow, 'role:editor', editor_permissions),
     (Allow, 'role:admin', admin_permissions),
     (Allow, 'role:manager', manager_permissions),
     (Allow, 'role:owner', owner_permissions),
-    (Allow, Everyone, ['login']),
+    (Allow, Everyone, everyone_permissions),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
 
+
+settings_manager_permissions = [
+     'view', 'manage',
+]
 DEFAULT_SETTINGS_ACL = [
-    (Allow, 'role:manager', ['view', 'add', 'edit', 'delete', 'manage']),
-    (Allow, Everyone, ['login']),
+    (Allow, 'role:manager', settings_manager_permissions),
+    (Allow, Everyone, everyone_permissions),
     (Deny, Everyone, ALL_PERMISSIONS),
 ]
+
 
 # XXX: get rid of. Protected properties should only be used for protecting
 #      persistent properties/attributes.
 DEFAULT_NODE_PROPERTY_PERMISSIONS = {
     'action_up': ['view'],
     'action_view': ['view'],
-    'action_list': ['view'],
+    'action_list': ['list'],
     'action_edit': ['edit'],
     'action_delete': ['delete'],
     'action_delete_children': ['delete'],
 }
+
 
 ADMIN_USER = None
 ADMIN_PASSWORD = None

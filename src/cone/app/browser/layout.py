@@ -4,7 +4,6 @@ from pyramid.security import (
     has_permission,
     authenticated_userid,
 )
-from pyramid.view import view_config
 from pyramid.i18n import TranslationStringFactory
 from cone.tile import (
     tile,
@@ -16,7 +15,6 @@ from cone.tile import (
 from ..interfaces import IWorkflowState
 from ..model import AppRoot
 from ..utils import principal_data
-from . import render_main_template
 from .actions import (
     get_action_context,
     LinkAction,
@@ -323,16 +321,6 @@ class Byline(Tile):
 
     def format_date(self, dt):
         return format_date(dt)
-
-
-registerTile('listing', 'templates/listing.pt', permission='view')
-
-
-@view_config('listing', permission='view')
-def listing(model, request):
-    """Listing view
-    """
-    return render_main_template(model, request, 'listing')
 
 
 @tile('content', interface=AppRoot, permission='login')
