@@ -91,7 +91,8 @@ class ContentsTile(Table):
             'title': _('title', 'Title'),
             'sort_key': 'title',
             'sort_title': _('sort_on_title', 'Sort on title'),
-            'content': 'structure'}, {
+            'content': 'structure'
+        }, {
             'id': 'creator',
             'title': _('creator', 'Creator'),
             'sort_key': 'creator',
@@ -108,7 +109,9 @@ class ContentsTile(Table):
             'title': _('modified', 'Modified'),
             'sort_key': 'modified',
             'sort_title': _('sort_on_modified', 'Sort on modified'),
-            'content': 'datetime'}]
+            'content': 'datetime'
+        }
+    ]
     default_sort = 'created'
     default_order = 'desc'
     sort_keys = {
