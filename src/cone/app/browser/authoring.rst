@@ -70,14 +70,14 @@ Create and register an ``addform`` named form tile::
     >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
     >>> from cone.app.browser.form import Form
-    >>> from cone.app.browser.authoring import AddForm
+    >>> from cone.app.browser.authoring import ContentAddForm
     >>> from cone.app.browser.ajax import AjaxAction, AjaxEvent
     >>> from webob.exc import HTTPFound
 
     >>> @tile('addform', interface=ITestAddingNode)
     ... class MyAddForm(Form):
     ...     __metaclass__ = plumber
-    ...     __plumbing__ = AddForm
+    ...     __plumbing__ = ContentAddForm
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
@@ -219,12 +219,12 @@ Editing
 
 Create and register an ``editform`` named form tile::
 
-    >>> from cone.app.browser.authoring import EditForm
+    >>> from cone.app.browser.authoring import ContentEditForm
 
     >>> @tile('editform', interface=MyNode)
     ... class MyEditForm(Form):
     ...     __metaclass__ = plumber
-    ...     __plumbing__ = EditForm
+    ...     __plumbing__ = ContentEditForm
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',

@@ -112,13 +112,25 @@ class CameFromNext(Behavior):
 
 
 ###############################################################################
+# form heading
+###############################################################################
+
+class FormHeading(Behavior):
+
+    @default
+    @property
+    def form_heading(self):
+        raise NotImplementedError(u'Abstract ``FormHeading`` does not '
+                                  u'implement ``form_heading``')
+
+
+###############################################################################
 # content area related forms
 ###############################################################################
 
-class ContentForm(Behavior):
+class ContentForm(FormHeading):
     """Form behavior rendering to content area.
     """
-
     show_heading = default(True)
     show_contextmenu = default(True)
 
@@ -285,10 +297,7 @@ class AddFactoryProxy(Behavior):
         )
 
 
-class AddForm(CameFromNext, ContentForm, AddFactoryProxy):
-    """Form behavior rendering add form to content area.
-    """
-    action_resource = override('add')
+class AddFormHeading(FormHeading):
 
     @default
     @property
@@ -302,6 +311,15 @@ class AddForm(CameFromNext, ContentForm, AddFactoryProxy):
               mapping={'title': title}))
         return heading
 
+
+class ContentAddForm(AddFactoryProxy,
+                     AddFormHeading,
+                     ContentForm,
+                     CameFromNext):
+    """Form behavior rendering add form to content area.
+    """
+    action_resource = override('add')
+
     @default
     @property
     def rendered_contextmenu(self):
@@ -309,7 +327,7 @@ class AddForm(CameFromNext, ContentForm, AddFactoryProxy):
 
 # B/C
 # deprecated: will be removed in cone.app 1.1
-AddBehavior = AddForm
+AddBehavior = ContentAddForm
 
 
 ###############################################################################
@@ -326,7 +344,9 @@ class OverlayAddTile(AddTile):
     form_tile_name = 'overlayaddform'
 
 
-class OverlayAddForm(OverlayForm, AddFactoryProxy):
+class OverlayAddForm(OverlayForm,
+                     AddFactoryProxy,
+                     AddFormHeading):
     """Add form behavior rendering to overlay.
     """
     action_resource = override('overlayadd')
@@ -346,10 +366,7 @@ class EditTile(_FormRenderingTile):
     form_tile_name = 'editform'
 
 
-class EditForm(CameFromNext, ContentForm):
-    """Form behavior rendering edit form to content area.
-    """
-    action_resource = override('edit')
+class EditFormHeading(FormHeading):
 
     @default
     @property
@@ -364,9 +381,17 @@ class EditForm(CameFromNext, ContentForm):
               mapping={'title': localizer.translate(_(info.title))}))
         return heading
 
+
+class ContentEditForm(EditFormHeading,
+                      ContentForm,
+                      CameFromNext):
+    """Form behavior rendering edit form to content area.
+    """
+    action_resource = override('edit')
+
 # B/C
 # deprecated: will be removed in cone.app 1.1
-EditBehavior = EditForm
+EditBehavior = ContentEditForm
 
 
 ###############################################################################
@@ -383,7 +408,8 @@ class OverlayFormTile(_FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
 
-class OverlayEditForm(OverlayForm):
+class OverlayEditForm(OverlayForm,
+                      EditFormHeading):
     """Edit form behavior rendering to overlay.
     """
     action_resource = override('overlayedit')

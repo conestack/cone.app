@@ -96,8 +96,9 @@ Changes
   ``overlayeditform``.
   [rnix, 2014-07-24]
 
-- Authoring forms cleanup. Rename ``AddBehavior`` to ``AddForm``,
-  ``EditBehavior`` to ``EditForm`` and ``OverlayBehavior`` to ``OverlayForm``.
+- Authoring forms cleanup. Rename ``AddBehavior`` to ``ContentAddForm``,
+  ``EditBehavior`` to ``ContentEditForm`` and ``OverlayBehavior`` to
+  ``OverlayForm``.
   [rnix, 2014-07-24]
 
 - Introduce ``ILiveSearch`` adapter interface and remove
