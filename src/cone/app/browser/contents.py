@@ -69,7 +69,7 @@ class ContentsActionDelete(ActionDelete):
 
 
 class ContentsViewLink(ViewLink):
-    """Ciew link for contents table.
+    """View link for contents table.
     """
     css = 'title'
     event = 'contextchanged:#layout'
