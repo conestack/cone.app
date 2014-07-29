@@ -1,3 +1,4 @@
+import urllib2
 from cone.tile import Tile
 from .batch import Batch
 from .utils import (
@@ -79,7 +80,10 @@ class Table(Tile):
 
     @property
     def filter_term(self):
-        return self.request.params.get('term')
+        term = self.request.params.get('term')
+        if term:
+            term = urllib2.unquote(str(term)).decode('utf-8')
+        return term
 
     @property
     def sort_column(self):

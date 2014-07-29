@@ -128,7 +128,7 @@ Ajax View for tabs::
 
     >>> response = settings_tab_content(get_root()['settings']['baz'], request)
     >>> response.body
-    '<div class="baz"><div class="box">Error: This tile can not be rendered 
-    for some reason</div></div>'
+    '<div class="baz">...Exception: This tile can not be rendered for some 
+    reason\n</pre></div></div>'
 
     >>> layer.logout()
