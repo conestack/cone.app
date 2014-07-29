@@ -7,17 +7,18 @@
     <li id="search">
 
       <form class="form-inline" role="search">
-
-        <div class="input-group input-group-sm">
-          <input type="text"
-                 class="form-control"
-                 id="search-text"
-                 name="term" />
-          <span class="input-group-addon
-                       glyphicon
-                       glyphicon-search"></span>
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <div class="input-group-addon">
+              <span class="glyphicon glyphicon-search"></span>
+            </div>
+            <input type="text"
+                   class="form-control"
+                   id="search-text"
+                   placeholder="search database..."
+                   name="term" />
+          </div>
         </div>
-
       </form>
 
     </li>
