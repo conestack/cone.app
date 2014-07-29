@@ -20,6 +20,8 @@ from .ajax import (
     AjaxAction,
     ajax_form_fiddle,
 )
+from .exception import format_traceback
+
 
 _ = TranslationStringFactory('cone.app')
 
@@ -33,7 +35,7 @@ def settings_tab_content(model, request):
     except Exception, e:
         localizer = get_localizer(request)
         error = localizer.translate(_('error', 'Error'))
-        rendered = '<div class="box">%s: %s</div>' % (error, str(e))
+        rendered = '<div>%s: %s</div>' % (error, format_traceback())
     return Response('<div class="%s">%s</div>' % (model.name, rendered))
 
 

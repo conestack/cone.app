@@ -129,6 +129,11 @@ tr.selectable.selected td {
     width:100px;
 }
 
+/* settings */
+.settingstabpane {
+    margin-top:12px;
+}
+
 /* footer */
 footer p {
     margin:12px;
