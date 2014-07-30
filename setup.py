@@ -32,8 +32,6 @@ setup(name='cone.app',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Babel',
-          'lingua',
           'Chameleon',
           'node',
           'node.ext.ugm',
@@ -67,12 +65,6 @@ setup(name='cone.app',
           'unittest2',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
-      message_extractors={
-          '.': [
-              ('**.py', 'lingua_python', None),
-              ('**.pt', 'lingua_xml', None),
-          ]
-      },
       entry_points="""\
       [paste.app_factory]
       main = cone.app:main
