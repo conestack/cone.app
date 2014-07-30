@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-30 16:18+0200\n"
+"POT-Creation-Date: 2014-07-30 16:24+0200\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -395,8 +395,9 @@ msgstr "Keine Berechtigung"
 #. Default: You are not allowed to access this resource.
 #: src/cone/app/browser/templates/unauthorized.pt:9
 msgid "unauthorized_text"
-msgstr "Sie haben nicht die erforderlichen Berechtigungen, um auf diese "
-"Ressource zuzugreifen"
+msgstr ""
+"Sie haben nicht die erforderlichen Berechtigungen, um auf diese Ressource "
+"zuzugreifen"
 
 #. Default: Created by
 #: src/cone/app/browser/templates/byline.pt:5
