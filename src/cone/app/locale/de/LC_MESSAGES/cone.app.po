@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-30 16:02+0200\n"
+"POT-Creation-Date: 2014-07-30 16:18+0200\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,123 +18,147 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
+#. Default: Viewer
 #: src/cone/app/security.py:30
 msgid "role_viewer"
 msgstr "Betrachter"
 
+#. Default: Editor
 #: src/cone/app/security.py:31
 msgid "role_editor"
 msgstr "Editor"
 
+#. Default: Admin
 #: src/cone/app/security.py:32
 msgid "role_admin"
 msgstr "Administrator"
 
+#. Default: Manager
 #: src/cone/app/security.py:33
 msgid "role_manager"
 msgstr "Superuser"
 
+#. Default: Settings
 #: src/cone/app/model.py:215 src/cone/app/browser/layout.py:71
 msgid "settings"
 msgstr "Einstellungen"
 
+#. Default: No Title
 #: src/cone/app/model.py:138
 msgid "no_title"
 msgstr "Kein Titel"
 
+#. Default: Invalid Credentials
 #: src/cone/app/browser/login.py:70
 msgid "invalid_credentials"
 msgstr "Anmeldung fehlgeschlagen"
 
+#. Default: No username given
 #: src/cone/app/browser/login.py:32
 msgid "no_username_given"
 msgstr "Kein Benutzername angegeben"
 
+#. Default: Username
 #: src/cone/app/browser/login.py:33
 msgid "username"
 msgstr "Benutzername"
 
+#. Default: No password given
 #: src/cone/app/browser/login.py:40
 msgid "no_password_given"
 msgstr "Kein Passwort angegeben"
 
+#. Default: Password
 #: src/cone/app/browser/login.py:41
 msgid "password"
 msgstr "Passwort"
 
+#. Default: Login
 #: src/cone/app/browser/login.py:55
 msgid "login"
 msgstr "Anmelden"
 
 #. Default: Sharing: ${title}
-#: src/cone/app/browser/sharing.py:72
+#: src/cone/app/browser/sharing.py:73
 msgid "sharing_table_title"
 msgstr "Freigabe: ${title}"
 
+#. Default: Principal
 #: src/cone/app/browser/sharing.py:52
 msgid "principal"
 msgstr "Benutzer/Gruppe"
 
+#. Default: Sort by principal
 #: src/cone/app/browser/sharing.py:54
 msgid "sort_by_principal"
 msgstr "Sortiere nach Benutzer/Gruppe"
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:159
+#: src/cone/app/browser/sharing.py:160
 msgid "cannot_add_role_for_principal"
 msgstr "Rolle '${role}' kann für '${pid}' nicht gesetzt werden"
 
-#: src/cone/app/browser/sharing.py:188
+#: src/cone/app/browser/sharing.py:189
 msgid "cannot_remove_role_for_principal"
 msgstr "Rolle '${role}' kann von '${pid}' nicht gelöscht werden"
 
+#. Default: Add reference
 #: src/cone/app/browser/referencebrowser.py:121
 msgid "add_reference"
 msgstr "Referenz hinzufügen"
 
+#. Default: Remove reference
 #: src/cone/app/browser/referencebrowser.py:133
 msgid "remove_reference"
 msgstr "Referenz entfernen"
 
+#. Default: Actions
 #: src/cone/app/browser/referencebrowser.py:181
 msgid "table_actions"
 msgstr "Aktionen"
 
+#. Default: Title
 #: src/cone/app/browser/referencebrowser.py:188
 #: src/cone/app/browser/contents.py:91
 msgid "title"
 msgstr "Titel"
 
-#.
 #. Default: Actions
 #: src/cone/app/browser/contents.py:85 src/cone/app/browser/contextmenu.py:98
 msgid "actions"
 msgstr "Aktionen"
 
+#. Default: Sort on title
 #: src/cone/app/browser/contents.py:93
 msgid "sort_on_title"
 msgstr "Sortiere nach Titel"
 
+#. Default: Creator
 #: src/cone/app/browser/contents.py:97
 msgid "creator"
 msgstr "Ersteller"
 
+#. Default: Sort on creator
 #: src/cone/app/browser/contents.py:99
 msgid "sort_on_creator"
 msgstr "Sortiere nach Ersteller"
 
+#. Default: Created
 #: src/cone/app/browser/contents.py:103
 msgid "created"
 msgstr "Erstellt"
 
+#. Default: Sort on created
 #: src/cone/app/browser/contents.py:105
 msgid "sort_on_created"
 msgstr "Sortiere nach Erstellt"
 
+#. Default: Modified
 #: src/cone/app/browser/contents.py:109
 msgid "modified"
 msgstr "Geändert"
 
+#. Default: Sort on modified
 #: src/cone/app/browser/contents.py:111
 msgid "sort_on_modified"
 msgstr "Sortiere nach Geändert"
@@ -144,6 +168,7 @@ msgstr "Sortiere nach Geändert"
 msgid "pasted_items"
 msgstr "${count} Objekte eingefügt"
 
+#. Default: Nothing to paste
 #: src/cone/app/browser/copysupport.py:54
 msgid "nothing_to_paste"
 msgstr "Keine Objekte ausgewählt"
@@ -171,51 +196,63 @@ msgstr "Fehler. '${source}' darf '${target}' nicht beinhalten"
 msgid "cannot_paste_self_containment"
 msgstr "${name} kann nicht als Objekt in sich selbst eingefügt werden"
 
+#. Default: One level up
 #: src/cone/app/browser/actions.py:191
 msgid "action_one_level_up"
 msgstr "Eine Ebene höher"
 
+#. Default: View
 #: src/cone/app/browser/actions.py:217
 msgid "action_view"
 msgstr "Anzeigen"
 
+#. Default: Listing
 #: src/cone/app/browser/actions.py:259
 msgid "action_listing"
 msgstr "Liste"
 
+#. Default: Sharing
 #: src/cone/app/browser/actions.py:280
 msgid "action_sharing"
 msgstr "Freigabe"
 
+#. Default: Edit
 #: src/cone/app/browser/actions.py:323
 msgid "action_edit"
 msgstr "Editieren"
 
+#. Default: Do you really want to delete this Item?
 #: src/cone/app/browser/actions.py:344
 msgid "delete_item_confirm"
 msgstr "Wollen Sie dieses Objekt wirklich löschen?"
 
+#. Default: Delete
 #: src/cone/app/browser/actions.py:346
 msgid "action_delete"
 msgstr "Löschen"
 
+#. Default: Do you really want to delete selected Items?
 #: src/cone/app/browser/actions.py:366
 msgid "delete_items_confirm"
 msgstr "Wollen Sie die ausgewählten Objekte wirklich löschen?"
 
+#. Default: Delete selected children
 #: src/cone/app/browser/actions.py:368
 msgid "action_delete_selected_children"
 msgstr "Wollen Sie die ausgewählten Objekte wirklich löschen?"
 
-#: src/cone/app/browser/actions.py:385
+#. Default: Cut
+#: src/cone/app/browser/actions.py:386
 msgid "action_cut"
 msgstr "Ausschneiden"
 
-#: src/cone/app/browser/actions.py:401
+#. Default: Copy
+#: src/cone/app/browser/actions.py:402
 msgid "action_copy"
 msgstr "Kopieren"
 
-#: src/cone/app/browser/actions.py:417
+#. Default: Paste
+#: src/cone/app/browser/actions.py:418
 msgid "action_paste"
 msgstr "Einfügen"
 
@@ -224,6 +261,7 @@ msgstr "Einfügen"
 msgid "display"
 msgstr ""
 
+#. Default: Content Form Heading
 #: src/cone/app/browser/authoring.py:140
 msgid "content_form_heading"
 msgstr "Content Formular Überschrift"
@@ -233,6 +271,7 @@ msgstr "Content Formular Überschrift"
 msgid "deleted_object"
 msgstr "Gelöscht: ${title}"
 
+#. Default: Unknown factory
 #: src/cone/app/browser/authoring.py:268
 msgid "unknown_factory"
 msgstr "Unbekannt"
@@ -242,6 +281,7 @@ msgstr "Unbekannt"
 msgid "add_form_heading"
 msgstr "Hinzufügen: ${title}"
 
+#. Default: Edit
 #: src/cone/app/browser/authoring.py:376
 msgid "edit"
 msgstr "Editieren"
@@ -256,16 +296,17 @@ msgstr "Editieren: ${title}"
 msgid "object_not_deletable"
 msgstr "Objekt \"${title}\" kann nicht gelöscht werden"
 
+#. Default: Logout
 #: src/cone/app/browser/layout.py:95
 msgid "logout"
 msgstr "Abmelden"
 
 #. Default: Unknown
 #: src/cone/app/browser/utils.py:70
-#, fuzzy
 msgid "unknown"
 msgstr "Unbekannt"
 
+#. Default: Error
 #: src/cone/app/browser/settings.py:37
 msgid "error"
 msgstr "Fehler"
@@ -286,8 +327,6 @@ msgstr "Einträge"
 msgid "search"
 msgstr "Suche"
 
-# #############################################################################
-# manually created message strings
 #. Default: Showing
 #: src/cone/app/browser/templates/table.pt:174
 msgid "showing"
@@ -311,7 +350,7 @@ msgstr "Sie sind hier"
 #. Default: search database ...
 #: src/cone/app/browser/templates/livesearch.pt:21
 msgid "search_database"
-msgstr ""
+msgstr "Datenbank durchsuchen ..."
 
 #. Default: First
 #: src/cone/app/browser/templates/batch.pt:12
@@ -351,12 +390,13 @@ msgstr "Status"
 #. Default: Unauthorized
 #: src/cone/app/browser/templates/unauthorized.pt:6
 msgid "unauthorized_label"
-msgstr ""
+msgstr "Keine Berechtigung"
 
 #. Default: You are not allowed to access this resource.
 #: src/cone/app/browser/templates/unauthorized.pt:9
 msgid "unauthorized_text"
-msgstr ""
+msgstr "Sie haben nicht die erforderlichen Berechtigungen, um auf diese "
+"Ressource zuzugreifen"
 
 #. Default: Created by
 #: src/cone/app/browser/templates/byline.pt:5
@@ -376,10 +416,4 @@ msgstr "zuletzt geändert"
 #. Default: Add
 #: src/cone/app/browser/templates/add_dropdown.pt:9
 msgid "add"
-msgstr ""
-
-#~ msgid "navigation"
-#~ msgstr "Navigation"
-
-#~ msgid "add_item"
-#~ msgstr "Hinzufügen"
+msgstr "Hinzufügen"
