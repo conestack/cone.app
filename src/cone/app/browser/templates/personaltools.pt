@@ -1,5 +1,4 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
 
   <li id="personaltools"

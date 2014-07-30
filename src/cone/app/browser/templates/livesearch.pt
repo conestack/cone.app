@@ -15,8 +15,9 @@
             <input type="text"
                    class="form-control"
                    id="search-text"
-                   placeholder="search database..."
-                   name="term" />
+                   placeholder="search database ..."
+                   name="term"
+                   i18n:attributes="placeholder search_database" />
           </div>
         </div>
       </form>
