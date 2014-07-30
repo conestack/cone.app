@@ -137,7 +137,7 @@ class ContentForm(FormHeading):
     @default
     @property
     def form_heading(self):
-        return _('content_form_heading', 'Content Form Heading')
+        return _('content_form_heading', default='Content Form Heading')
 
     @default
     @property
@@ -265,7 +265,7 @@ class AddTile(_FormRenderingTile):
     def render(self):
         nodeinfo = self.info
         if not nodeinfo:
-            return _('unknown_factory', 'Unknown factory')
+            return _('unknown_factory', default='Unknown factory')
         factory = nodeinfo.factory
         if not factory:
             factory = default_addmodel_factory
@@ -373,7 +373,7 @@ class EditFormHeading(FormHeading):
     def form_heading(self):
         info = getNodeInfo(self.model.node_info_name)
         if info is None:
-            return _('edit', 'Edit')
+            return _('edit', default='Edit')
         localizer = get_localizer(self.request)
         heading = localizer.translate(
             _('edit_form_heading',

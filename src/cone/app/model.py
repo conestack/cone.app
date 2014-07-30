@@ -135,7 +135,7 @@ class AppNode(Behavior):
     def metadata(self):
         name = self.name
         if not name:
-            name = _('no_title', 'No Title')
+            name = _('no_title', default='No Title')
         metadata = Metadata()
         metadata.title = name
         return metadata
@@ -212,7 +212,7 @@ class AppSettings(FactoryNode):
     @instance_property
     def metadata(self):
         metadata = Metadata()
-        metadata.title = _("settings", "Settings")
+        metadata.title = _('settings', default='Settings')
         return metadata
 
 

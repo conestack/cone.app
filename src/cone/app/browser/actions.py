@@ -188,7 +188,7 @@ class ActionUp(LinkAction):
     id = 'toolbaraction-up'
     icon = 'glyphicon glyphicon-arrow-up'
     event = 'contextchanged:#layout'
-    text = _('action_one_level_up', 'One level up')
+    text = _('action_one_level_up', default='One level up')
 
     @property
     def display(self):
@@ -214,7 +214,7 @@ class ActionView(LinkAction):
     """
     id = 'toolbaraction-view'
     icon = 'glyphicon glyphicon-eye-open'
-    text = _('action_view', 'View')
+    text = _('action_view', default='View')
     href = LinkAction.target
 
     @property
@@ -256,7 +256,7 @@ class ActionList(LinkAction):
     id = 'toolbaraction-list'
     icon = 'glyphicon glyphicon-th-list'
     action = 'listing:#content:inner'
-    text = _('action_listing', 'Listing')
+    text = _('action_listing', default='Listing')
 
     @property
     def href(self):
@@ -277,7 +277,7 @@ class ActionSharing(LinkAction):
     id = 'toolbaraction-share'
     icon = 'glyphicon glyphicon-share'
     action = 'sharing:#content:inner'
-    text = _('action_sharing', 'Sharing')
+    text = _('action_sharing', default='Sharing')
 
     @property
     def href(self):
@@ -320,7 +320,7 @@ class ActionEdit(LinkAction):
     id = 'toolbaraction-edit'
     icon = 'glyphicon glyphicon-pencil'
     action = 'edit:#content:inner'
-    text = _('action_edit', 'Edit')
+    text = _('action_edit', default='Edit')
 
     @property
     def href(self):
@@ -342,8 +342,8 @@ class ActionDelete(LinkAction):
     icon = 'ion-trash-a'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
-                'Do you really want to delete this Item?')
-    text = _('action_delete', 'Delete')
+                default='Do you really want to delete this Item?')
+    text = _('action_delete', default='Delete')
 
     @property
     def display(self):
@@ -364,8 +364,9 @@ class ActionDeleteChildren(LinkAction):
     icon = 'ion-trash-a'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
-                'Do you really want to delete selected Items?')
-    text = _('action_delete_selected_children', 'Delete selected children')
+                default='Do you really want to delete selected Items?')
+    text = _('action_delete_selected_children',
+             default='Delete selected children')
 
     @property
     def display(self):
@@ -382,7 +383,7 @@ class ActionCut(LinkAction):
     """
     id = 'toolbaraction-cut'
     icon = 'ion-scissors'
-    text = _('action_cut', 'Cut')
+    text = _('action_cut', default='Cut')
     bind = None
 
     @property
@@ -398,7 +399,7 @@ class ActionCopy(LinkAction):
     """
     id = 'toolbaraction-copy'
     icon = 'ion-ios7-copy-outline'
-    text = _('action_copy', 'Copy')
+    text = _('action_copy', default='Copy')
     bind = None
 
     @property
@@ -414,7 +415,7 @@ class ActionPaste(LinkAction):
     """
     id = 'toolbaraction-paste'
     icon = 'ion-clipboard'
-    text = _('action_paste', 'Paste')
+    text = _('action_paste', default='Paste')
     bind = None
 
     @property

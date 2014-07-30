@@ -82,33 +82,33 @@ class ContentsTile(Table):
     table_tile_name = 'contents'
     col_defs = [{
             'id': 'actions',
-            'title': _('actions', 'Actions'),
+            'title': _('actions', default='Actions'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure'
         }, {
             'id': 'title',
-            'title': _('title', 'Title'),
+            'title': _('title', default='Title'),
             'sort_key': 'title',
-            'sort_title': _('sort_on_title', 'Sort on title'),
+            'sort_title': _('sort_on_title', default='Sort on title'),
             'content': 'structure'
         }, {
             'id': 'creator',
-            'title': _('creator', 'Creator'),
+            'title': _('creator', default='Creator'),
             'sort_key': 'creator',
-            'sort_title': _('sort_on_creator', 'Sort on creator'),
+            'sort_title': _('sort_on_creator', default='Sort on creator'),
             'content': 'string'
         }, {
             'id': 'created',
-            'title': _('created', 'Created'),
+            'title': _('created', default='Created'),
             'sort_key': 'created',
-            'sort_title': _('sort_on_created', 'Sort on created'),
+            'sort_title': _('sort_on_created', default='Sort on created'),
             'content': 'datetime'
         }, {
             'id': 'modified',
-            'title': _('modified', 'Modified'),
+            'title': _('modified', default='Modified'),
             'sort_key': 'modified',
-            'sort_title': _('sort_on_modified', 'Sort on modified'),
+            'sort_title': _('sort_on_modified', default='Sort on modified'),
             'content': 'datetime'
         }
     ]

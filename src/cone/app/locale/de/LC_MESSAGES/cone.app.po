@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-30 12:36+0200\n"
+"POT-Creation-Date: 2014-07-30 16:02+0200\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -308,6 +308,11 @@ msgstr "von"
 msgid "you_are_here"
 msgstr "Sie sind hier"
 
+#. Default: search database ...
+#: src/cone/app/browser/templates/livesearch.pt:21
+msgid "search_database"
+msgstr ""
+
 #. Default: First
 #: src/cone/app/browser/templates/batch.pt:12
 #: src/cone/app/browser/templates/batch.pt:20
@@ -370,7 +375,7 @@ msgstr "zuletzt geändert"
 
 #. Default: Add
 #: src/cone/app/browser/templates/add_dropdown.pt:9
-msgid "Add"
+msgid "add"
 msgstr ""
 
 #~ msgid "navigation"

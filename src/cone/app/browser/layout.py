@@ -68,7 +68,7 @@ class Layout(Tile):
 
 
 class ViewSettingsAction(LinkAction):
-    text = _('settings', 'Settings')
+    text = _('settings', default='Settings')
     icon = 'ion-ios7-gear'
     event = 'contextchanged:#layout'
 
@@ -92,7 +92,7 @@ class ViewSettingsAction(LinkAction):
 
 
 class LogoutAction(LinkAction):
-    text = _('logout', 'Logout')
+    text = _('logout', default='Logout')
     icon = 'ion-log-out'
 
     @property

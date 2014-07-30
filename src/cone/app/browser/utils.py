@@ -67,7 +67,7 @@ def choose_name(container, name):
 
 def format_date(dt, long=True):
     if not isinstance(dt, datetime.datetime):
-        return _('unknown', default=u'Unknown')
+        return _('unknown', default='Unknown')
     return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
 
 

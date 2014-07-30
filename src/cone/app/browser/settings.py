@@ -34,7 +34,7 @@ def settings_tab_content(model, request):
         rendered = render_tile(model, request, 'content')
     except Exception, e:
         localizer = get_localizer(request)
-        error = localizer.translate(_('error', 'Error'))
+        error = localizer.translate(_('error', default='Error'))
         rendered = '<div>%s: %s</div>' % (error, format_traceback())
     return Response('<div class="%s">%s</div>' % (model.name, rendered))
 

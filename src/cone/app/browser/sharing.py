@@ -49,9 +49,10 @@ class SharingTable(Table):
         col_defs = [
             {
                 'id': 'principal',
-                'title': _('principal', 'Principal'),
+                'title': _('principal', default='Principal'),
                 'sort_key': 'principal',
-                'sort_title': _('sort_by_principal', 'Sort by principal'),
+                'sort_title': _('sort_by_principal',
+                                default='Sort by principal'),
                 'content': 'string',
             },
         ]

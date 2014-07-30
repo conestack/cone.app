@@ -27,10 +27,10 @@ _ = TranslationStringFactory('cone.app')
 
 
 DEFAULT_ROLES = [
-    ('viewer', _('role_viewer', 'Viewer')),
-    ('editor', _('role_editor', 'Editor')),
-    ('admin', _('role_admin', 'Admin')),
-    ('manager', _('role_manager', 'Manager')),
+    ('viewer', _('role_viewer', default='Viewer')),
+    ('editor', _('role_editor', default='Editor')),
+    ('admin', _('role_admin', default='Admin')),
+    ('manager', _('role_manager', default='Manager')),
 ]
 
 

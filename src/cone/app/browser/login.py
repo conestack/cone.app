@@ -29,16 +29,16 @@ class LoginForm(Form):
         form['user'] = factory(
             'field:label:div:help:error:text',
             props={
-                'required': _('no_username_given', 'No username given'),
-                'label': _('username', 'Username'),
+                'required': _('no_username_given', default='No username given'),
+                'label': _('username', default='Username'),
                 'label.class_add': 'col-sm-2',
                 'div.class_add': 'col-sm-5',
             })
         form['password'] = factory(
             'field:label:div:help:*credentials:error:password',
             props={
-                'required': _('no_password_given', 'No password given'),
-                'label': _('password', 'Password'),
+                'required': _('no_password_given', default='No password given'),
+                'label': _('password', default='Password'),
                 'label.class_add': 'col-sm-2',
                 'div.class_add': 'col-sm-5',
             },
@@ -52,7 +52,7 @@ class LoginForm(Form):
                 'expression': True,
                 'handler': self.noop,
                 'next': self.next,
-                'label': _('login', 'Login'),
+                'label': _('login', default='Login'),
                 'div.class_add': 'col-sm-offset-2 col-sm-5',
             })
         self.form = form
@@ -67,7 +67,7 @@ class LoginForm(Form):
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
             raise ExtractionError(
-                _('invalid_credentials', 'Invalid Credentials'))
+                _('invalid_credentials', default='Invalid Credentials'))
 
     def next(self, request):
         return HTTPFound(location=request.request.application_url,

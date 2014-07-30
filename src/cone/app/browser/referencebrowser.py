@@ -118,7 +118,7 @@ class ReferenceAction(LinkAction):
 
 class ActionAddReference(ReferenceAction):
     css = 'addreference'
-    title = _('add_reference', 'Add reference')
+    title = _('add_reference', default='Add reference')
     icon = 'ion-plus-round'
 
     @property
@@ -130,7 +130,7 @@ class ActionAddReference(ReferenceAction):
 
 class ActionRemoveReference(ReferenceAction):
     css = 'removereference'
-    title = _('remove_reference', 'Remove reference')
+    title = _('remove_reference', default='Remove reference')
     icon = 'ion-minus-round'
 
     @property
@@ -178,14 +178,14 @@ class ReferenceListing(ContentsTile):
     col_defs = [
         {
             'id': 'actions',
-            'title': _('table_actions', 'Actions'),
+            'title': _('table_actions', default='Actions'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',
         },
         {
             'id': 'title',
-            'title': _('title', 'Title'),
+            'title': _('title', default='Title'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',

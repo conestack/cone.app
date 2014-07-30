@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2014-07-30 12:36+0200\n"
+"POT-Creation-Date: 2014-07-30 16:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -303,6 +303,11 @@ msgstr ""
 msgid "you_are_here"
 msgstr ""
 
+#. Default: search database ...
+#: ./src/cone/app/browser/templates/livesearch.pt:21
+msgid "search_database"
+msgstr ""
+
 #. Default: First
 #: ./src/cone/app/browser/templates/batch.pt:12
 #: ./src/cone/app/browser/templates/batch.pt:20
@@ -365,5 +370,5 @@ msgstr ""
 
 #. Default: Add
 #: ./src/cone/app/browser/templates/add_dropdown.pt:9
-msgid "Add"
+msgid "add"
 msgstr ""
