@@ -34,7 +34,7 @@ fi
 # no arguments, extract and update
 if [ $# -eq 0 ]; then
     echo "Extract messages"
-    xpot-create $SEACH_PATH -o $LOCALES_PATH/$DOMAIN.pot
+    pot-create $SEACH_PATH -o $LOCALES_PATH/$DOMAIN.pot
 
     echo "Update translations"
     for po in $LOCALES_PATH/*/LC_MESSAGES/$DOMAIN.po; do
