@@ -43,6 +43,13 @@ class WfDropdown(Tile):
         return get_workflow(self.model.__class__, self.model.workflow_name)
 
     @property
+    def state_name(self):
+        workflow_tsf = self.model.workflow_tsf
+        if workflow_tsf:
+            return workflow_tsf(self.model.state)
+        return self.model.state
+
+    @property
     def transitions(self):
         self.do_transition()
         ret = list()
@@ -59,7 +66,9 @@ class WfDropdown(Tile):
             target = make_url(self.request, node=self.model, query=query)
             props = Properties()
             props.target = target
-            props.title = workflow_tsf is not None \
-                and workflow_tsf(transition['name']) or transition['name']
+            if workflow_tsf:
+                props.title = workflow_tsf(transition['name'])
+            else:
+                props.title = transition['name']
             ret.append(props)
         return ret

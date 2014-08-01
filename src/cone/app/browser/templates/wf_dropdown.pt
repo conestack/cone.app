@@ -18,7 +18,7 @@
          tal:condition="transitions"
          i18n:attributes="title change_state">
         <span i18n:translate="state">State</span>:
-        <span tal:content="state">WF State</span>
+        <span tal:content="context.state_name">WF State</span>
       </a>
 
       <ul class="dropdown-menu" role="workflowmenu">
