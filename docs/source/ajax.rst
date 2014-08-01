@@ -113,6 +113,7 @@ The rendering target of a form can be changed with
 ``__call__`` function.::
 
     >>> from plumber import (
+    ...     plumbing,
     ...     plumb,
     ...     Part,
     ... )
@@ -128,9 +129,9 @@ The rendering target of a form can be changed with
 Use this part in form tile.::
 
     >>> @tile('someform', interface=ExampleApp, permission='edit')
+    ... @plumbing(EditPart, FormFiddle)
     >>> class SomeForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = EditPart, FormFiddle
+    ...     pass
 
 
 JavaScript

@@ -80,13 +80,12 @@ YAMLForm part
 ``prepare`` function to the form tile building the YAFOWIL form from YAML
 definitions. The form implementation from above now looks like::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from cone.app.browser.form import YAMLForm
     
     >>> @tile('someyamlform', interface=ExampleApp, permission="edit")
+    ... @plumbing(YAMLForm)
     ... class SomeYAMLForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = YAMLForm
     ... 
     ...     action_resource = u'someyamlform'
     ...     form_template = 'example.app.browser:forms/some_form.yaml'
@@ -148,9 +147,9 @@ of form as ``next`` property and add ``CameFromNext`` part to plumbing parts on
 form tile class.::
 
     >>> @tile('someyamlform', interface=ExampleApp, permission="edit")
+    ... @plumbing(YAMLForm, CameFromNext)
     ... class SomeYAMLForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = YAMLForm, CameFromNext
+    ...     pass
 
 
 Add forms
@@ -178,9 +177,9 @@ form if ``show_heading`` on form tile is set to ``True``, which is default.::
     >>> from cone.app.browser.authoring import AddPart
     
     >>> @tile('addform', interface=ExampleApp, permission="add")
+    ... @plumbing(AddPart)
     ... class ExampleAppAddForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = AddPart
+    ...     pass
 
 
 Edit forms
@@ -202,9 +201,9 @@ form if ``show_heading`` on form tile is set to ``True``, which is default.::
     >>> from cone.app.browser.authoring import EditPart
     
     >>> @tile('editform', interface=ExampleApp, permission="edit")
+    ... @plumbing(EditPart)
     ... class ExampleAppEditForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = EditPart
+    ...     pass
 
 For add and edit forms it propably makes sence to write one base class
 providing the ``prepare`` function.
@@ -228,9 +227,9 @@ of 'came_from'.::
     >>> from cone.app.browser.settings import SettingsPart
     
     >>> @tile('editform', interface=AppSettings, permission="manage")
+    ... @plumbing(SettingsPart)
     ... class ServerSettingsForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = SettingsPart
+    ...     pass
 
 
 Extending forms
@@ -273,6 +272,6 @@ This part can now be used like any other plumbing part for extending form
 tiles.::
 
     >>> @tile('editform', interface=ExampleApp, permission="edit")
+    >>> @plumbing(EditPart, FormExtension)
     ... class ServerSettingsForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = EditPart, FormExtension
+    ...     pass

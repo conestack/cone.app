@@ -29,7 +29,7 @@ are also implemented as plumbing part (see documentation of plumber package to
 get a clue), and the ``BaseNode`` class is just a combination of plumbing parts
 without extending anything on the class directly.::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from node.parts import (
     ...     AsAttrAccess,
     ...     NodeChildValidate,
@@ -42,21 +42,20 @@ without extending anything on the class directly.::
     ...     OdictStorage,
     ... )
     >>> from cone.app.model import AppNode
-    
-    >>> class MyAdvancedNode(object)
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = (
-    ...         AppNode,
-    ...         AsAttrAccess,
-    ...         NodeChildValidate,
-    ...         Adopt,
-    ...         Nodespaces,
-    ...         Attributes,
-    ...         DefaultInit,
-    ...         Nodify,
-    ...         Lifecycle,
-    ...         OdictStorage,
-    ...     )
+
+    >>> @plumbing(
+    ...     AppNode,
+    ...     AsAttrAccess,
+    ...     NodeChildValidate,
+    ...     Adopt,
+    ...     Nodespaces,
+    ...     Attributes,
+    ...     DefaultInit,
+    ...     Nodify,
+    ...     Lifecycle,
+    ...     OdictStorage)
+    ... class MyAdvancedNode(object)
+    ...     pass
 
 
 FactoryNode
@@ -307,7 +306,6 @@ plumbing part providing principal related roles. It's an abstract
 implementation leaving the persistence apart. A concrete shareable node looks
 like::
 
-    >>> from plumber import plumber
     >>> from node.utils import instance_property
     >>> from cone.app.model import BaseNode
     >>> from cone.app.security import (
@@ -315,8 +313,6 @@ like::
     ...     DEFAULT_ACL,
     ... )
     >>> class SharingNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = PrincipalACL
     ... 
     ...     role_inheritance = True
     ... 

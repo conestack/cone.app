@@ -296,11 +296,11 @@ UUIDAttributeAware
 
 ::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from cone.app.model import UUIDAttributeAware
-    >>> class UUIDNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = UUIDAttributeAware
+    >>> @plumbing(UUIDAttributeAware)
+    ... class UUIDNode(BaseNode):
+    ...     pass
 
     >>> node = UUIDNode()
     >>> node.uuid
@@ -316,9 +316,9 @@ UUIDAsName
 ::
 
     >>> from cone.app.model import UUIDAsName
-    >>> class UUIDAsNameNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = UUIDAsName
+    >>> @plumbing(UUIDAsName)
+    ... class UUIDAsNameNode(BaseNode):
+    ...     pass
 
     >>> node = UUIDAsNameNode()
     >>> node.uuid

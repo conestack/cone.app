@@ -130,14 +130,14 @@ ACLRegistry::
 
 OwnerSupport::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from cone.app.interfaces import IOwnerSupport
     >>> from cone.app.model import BaseNode
     >>> from cone.app.security import OwnerSupport
 
-    >>> class OwnerSupportNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = OwnerSupport
+    >>> @plumbing(OwnerSupport)
+    ... class OwnerSupportNode(BaseNode):
+    ...     pass
 
     >>> ownersupportnode = OwnerSupportNode()
     >>> ownersupportnode.owner
@@ -176,9 +176,8 @@ OwnerSupport::
     >>> has_permission('delete', ownersupportnode, layer.current_request)
     <ACLAllowed instance ...
 
-    >>> class NoOwnerACLOnBaseNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = OwnerSupport
+    >>> @plumbing(OwnerSupport)
+    ... class NoOwnerACLOnBaseNode(BaseNode):
     ...     @property
     ...     def __acl__(self):
     ...         return [('Allow', 'role:viewer', ['view'])]
@@ -200,9 +199,9 @@ PrincipalACL::
 
 PrincipalACL is an abstract class. Directly mixing in causes an error on use::
 
-    >>> class PrincipalACLNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = PrincipalACL
+    >>> @plumbing(PrincipalACL)
+    ... class PrincipalACLNode(BaseNode):
+    ...     pass
 
     >>> node = PrincipalACLNode()
     >>> node.__acl__
@@ -220,9 +219,9 @@ Concrete PrincipalACL implementation. Implements principal_roles property::
     ...     def principal_roles(self):
     ...         return dict()
 
-    >>> class MyPrincipalACLNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = MyPrincipalACL
+    >>> @plumbing(MyPrincipalACL)
+    ... class MyPrincipalACLNode(BaseNode):
+    ...     pass
 
     >>> node = MyPrincipalACLNode()
     >>> IPrincipalACL.providedBy(node)

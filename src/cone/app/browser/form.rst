@@ -172,13 +172,12 @@ Submit with ajax flag::
 
 Same form as above using ``yafowil.yaml``::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from cone.app.browser.form import YAMLForm
 
     >>> @tile('yamlsubscriptionform')
+    ... @plumbing(YAMLForm)
     ... class YAMLSubscriptionForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = YAMLForm
     ...     action_resource = 'yamlsubscriptionform'
     ...     form_template = 'cone.app.testing:dummy_form.yaml'
 
@@ -209,9 +208,8 @@ ProtectedAttributesForm plumbing behavior::
 
     >>> from cone.app.browser.form import ProtectedAttributesForm
     >>> @tile('protectedattributesform')
+    ... @plumbing(ProtectedAttributesForm)
     ... class ProtectedAttributesForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = ProtectedAttributesForm
     ...     
     ...     attribute_permissions = {
     ...         'protectedfield': ('manage', 'edit')

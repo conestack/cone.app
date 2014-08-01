@@ -43,6 +43,7 @@ class WorkflowState(Behavior):
 
     This implementation persists to self.attrs['state']
     """
+    workflow_id = default(None)
 
     @plumb
     def __init__(_next, self, *args, **kw):

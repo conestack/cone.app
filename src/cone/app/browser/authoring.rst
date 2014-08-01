@@ -64,7 +64,7 @@ Create another dummy node inheriting from AdapterNode::
 
 Create and register an ``addform`` named form tile::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from yafowil import loader
     >>> from yafowil.base import factory
     >>> from cone.tile import tile
@@ -75,9 +75,8 @@ Create and register an ``addform`` named form tile::
     >>> from webob.exc import HTTPFound
 
     >>> @tile('addform', interface=ITestAddingNode)
+    ... @plumbing(ContentAddForm)
     ... class MyAddForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = ContentAddForm
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
@@ -222,9 +221,8 @@ Create and register an ``editform`` named form tile::
     >>> from cone.app.browser.authoring import ContentEditForm
 
     >>> @tile('editform', interface=MyNode)
+    ... @plumbing(ContentEditForm)
     ... class MyEditForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = ContentEditForm
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',

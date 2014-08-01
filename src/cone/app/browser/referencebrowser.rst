@@ -240,7 +240,7 @@ ActionAddReference
 
 ::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from node.behaviors import UUIDAware
     >>> from cone.app.model import BaseNode
     >>> from cone.app.browser.referencebrowser import ActionAddReference
@@ -259,9 +259,8 @@ ActionAddReference
     >>> action(model, request)
     u''
 
-    >>> class UUIDNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = UUIDAware
+    >>> @plumbing(UUIDAware)
+    ... class UUIDNode(BaseNode):
     ...     node_info_name = 'dummy'
 
     >>> model = UUIDNode(name='model')

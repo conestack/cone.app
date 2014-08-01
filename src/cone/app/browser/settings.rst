@@ -72,15 +72,14 @@ Settings Form Behavior
 Settings behavior for settings forms. Provides a default ``next`` function
 hooking form to correct tab::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from yafowil.base import factory
     >>> from cone.app.browser.form import Form
     >>> from cone.app.browser.settings import SettingsBehavior
 
     >>> @tile('editform', interface=SomeSettings)
+    ... @plumbing(SettingsBehavior)
     ... class SomeSettingsForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = SettingsBehavior
     ... 
     ...     def prepare(self):
     ...         form = factory(u'form',

@@ -1,4 +1,4 @@
-from plumber import plumber
+from plumber import plumbing
 from node.behaviors import (
     Adopt,
     Nodespaces,
@@ -30,9 +30,8 @@ from ..security import (
 )
 
 
+@plumbing(WorkflowState, WorkflowACL)
 class WorkflowNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = WorkflowState, WorkflowACL
 
     @property
     def properties(self):
@@ -73,18 +72,16 @@ class StateACLWorkflowNode(WorkflowNode):
     }
 
 
+@plumbing(
+    PrincipalACL,
+    AppNode,
+    Adopt,
+    Nodespaces,
+    Attributes,
+    DefaultInit,
+    Nodify,
+    OdictStorage)
 class SharingNode(object):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        PrincipalACL,
-        AppNode,
-        Adopt,
-        Nodespaces,
-        Attributes,
-        DefaultInit,
-        Nodify,
-        OdictStorage,
-    )
 
     @property
     def __acl__(self):
@@ -95,9 +92,8 @@ class SharingNode(object):
         return dict()
 
 
+@plumbing(CopySupport)
 class CopySupportNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = CopySupport
 
     def __call__(self):
         print 'Called: %s' % self.name

@@ -5,7 +5,7 @@ import logging
 import ConfigParser
 from odict import odict
 from plumber import (
-    plumber,
+    plumbing,
     Behavior,
     default,
     finalize,
@@ -152,29 +152,27 @@ class AppNode(Behavior):
         return info
 
 
+@plumbing(
+    AppNode,
+    AsAttrAccess,
+    NodeChildValidate,
+    Adopt,
+    Nodespaces,
+    Attributes,
+    DefaultInit,
+    Nodify,
+    Lifecycle,
+    OdictStorage)
 class BaseNode(object):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        AppNode,
-        AsAttrAccess,
-        NodeChildValidate,
-        Adopt,
-        Nodespaces,
-        Attributes,
-        DefaultInit,
-        Nodify,
-        Lifecycle,
-        OdictStorage,
-    )
+    pass
 
 
 @implementer(IFactoryNode)
+@plumbing(
+    VolatileStorageInvalidate,
+    ChildFactory)
 class FactoryNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        VolatileStorageInvalidate,
-        ChildFactory,
-    )
+    pass
 
 
 class AppRoot(FactoryNode):

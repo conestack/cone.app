@@ -37,34 +37,34 @@ Coverage Report
 ::
 
     lines   cov%   module
-      194    98%   cone.app.__init__
-       32   100%   cone.app.browser.__init__
-      283    99%   cone.app.browser.actions
-      170   100%   cone.app.browser.ajax
-      219    95%   cone.app.browser.authoring
+      204   100%   cone.app.__init__
+       29    96%   cone.app.browser.__init__
+      275   100%   cone.app.browser.actions
+      175    98%   cone.app.browser.ajax
+      239    94%   cone.app.browser.authoring
       101   100%   cone.app.browser.batch
-      144    94%   cone.app.browser.contents
-       72    91%   cone.app.browser.contextmenu
+      151    94%   cone.app.browser.contents
+       72    94%   cone.app.browser.contextmenu
       111   100%   cone.app.browser.copysupport
        24   100%   cone.app.browser.exception
        81    96%   cone.app.browser.form
       229    96%   cone.app.browser.layout
        58   100%   cone.app.browser.login
-      205    95%   cone.app.browser.referencebrowser
+      212    95%   cone.app.browser.referencebrowser
        69    78%   cone.app.browser.resources
-       43   100%   cone.app.browser.settings
-      150    98%   cone.app.browser.sharing
-      136   100%   cone.app.browser.table
-       80    98%   cone.app.browser.utils
-       48   100%   cone.app.browser.workflow
-       53   100%   cone.app.interfaces
-      339    97%   cone.app.model
-      172   100%   cone.app.security
+       40   100%   cone.app.browser.settings
+      149    98%   cone.app.browser.sharing
+      140   100%   cone.app.browser.table
+       69    98%   cone.app.browser.utils
+       44   100%   cone.app.browser.workflow
+       69   100%   cone.app.interfaces
+      367    94%   cone.app.model
+      177   100%   cone.app.security
        88   100%   cone.app.testing.__init__
-       50   100%   cone.app.testing.mock
+       48   100%   cone.app.testing.mock
        44   100%   cone.app.tests
        47   100%   cone.app.utils
-       60   100%   cone.app.workflow
+       63   100%   cone.app.workflow
 
 
 Changes
@@ -72,6 +72,9 @@ Changes
 
 1.0.dev0 (unreleased)
 ---------------------
+
+- Use ``plumbing`` decorator instead of ``plumber`` metaclass.
+  [rnix, 2014-08-01]
 
 - Introduce ``list`` permission, bind ``listing`` and ``contents`` tile to it
   and adopt default ACL's.

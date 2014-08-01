@@ -103,6 +103,7 @@ class INavigationLeaf(ILeaf):
 class IWorkflowState(INode, IAttributes):
     """Workflow support on nodes.
     """
+    workflow_id = Attribute(u'Id of registered workflow.')
     state = Attribute(u"Current workflow state.")
 
 
