@@ -32,17 +32,13 @@ from ..security import (
 
 @plumbing(WorkflowState, WorkflowACL)
 class WorkflowNode(BaseNode):
+    workflow_name = u'dummy'
+    workflow_tsf = None
 
     @property
     def properties(self):
         props = Properties()
         props.in_navtree = True
-        props.wf_name = u'dummy'
-        # XXX: check in repoze.workflow the intended way for naming
-        #      transitions
-        props.wf_transition_names = {
-            'initial_2_final': 'Finalize',
-        }
         return props
 
     def __call__(self):
@@ -50,12 +46,8 @@ class WorkflowNode(BaseNode):
 
 
 class InexistentWorkflowNode(WorkflowNode):
-
-    @property
-    def properties(self):
-        props = super(InexistentWorkflowNode, self).properties
-        props.wf_name = u'inexistent'
-        return props
+    workflow_name = u'inexistent'
+    workflow_tsf = None
 
 
 class StateACLWorkflowNode(WorkflowNode):

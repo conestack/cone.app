@@ -100,10 +100,12 @@ class INavigationLeaf(ILeaf):
     """
 
 
-class IWorkflowState(INode, IAttributes):
+class IWorkflowState(INode):
     """Workflow support on nodes.
     """
-    workflow_id = Attribute(u'Id of registered workflow.')
+    workflow_name = Attribute(u'Name of registered workflow.')
+    workflow_tsf = Attribute(u'Translation string factory used to translate '
+                             u'states and transitions')
     state = Attribute(u"Current workflow state.")
 
 

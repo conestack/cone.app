@@ -73,6 +73,11 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Adopt ``IWorkflowState`` interface. Workflow name is now set directly
+  on node. Optional a trnaslation string factory can be set for workflow
+  state and transision translations.
+  [rnix, 2014-08-01]
+
 - Use ``plumbing`` decorator instead of ``plumber`` metaclass.
   [rnix, 2014-08-01]
 

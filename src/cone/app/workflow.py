@@ -20,8 +20,7 @@ logger = logging.getLogger('cone.workflow')
 
 
 def initialize_workflow(node, force=False):
-    wf_name = node.properties.wf_name
-    workflow = get_workflow(node.__class__, wf_name)
+    workflow = get_workflow(node.__class__, node.workflow_name)
     if not workflow:
         return
     if force or not node.state:
@@ -43,7 +42,8 @@ class WorkflowState(Behavior):
 
     This implementation persists to self.attrs['state']
     """
-    workflow_id = default(None)
+    workflow_tsf = default(None)
+    workflow_name = default(None)
 
     @plumb
     def __init__(_next, self, *args, **kw):

@@ -22,14 +22,6 @@ class WfDropdown(Tile):
 
     If ``do_transition`` is found in ``request.params``, perform given
     transition on ``self.model`` immediately before dropdown gets rendered.
-
-    Configuration expected on ``self.model.properties``:
-
-    wf_name
-        Registration name of workflow.
-
-    wf_transition_names
-        transition id to transition title mapping. XXX: get rid of
     """
 
     def do_transition(self):
@@ -48,8 +40,7 @@ class WfDropdown(Tile):
 
     @property
     def workflow(self):
-        return get_workflow(self.model.__class__,
-                            self.model.properties.wf_name)
+        return get_workflow(self.model.__class__, self.model.workflow_name)
 
     @property
     def transitions(self):
@@ -62,14 +53,13 @@ class WfDropdown(Tile):
         except (WorkflowError, AttributeError), e:
             logger.error("transitions error: %s" % str(e))
             return ret
-        # XXX: check in repoze.workflow the intended way for naming
-        #      transitions
-        transition_names = self.model.properties.wf_transition_names
+        workflow_tsf = self.model.workflow_tsf
         for transition in transitions:
             query = make_query(do_transition=transition['name'])
             target = make_url(self.request, node=self.model, query=query)
             props = Properties()
             props.target = target
-            props.title = transition_names[transition['name']]
+            props.title = workflow_tsf is not None \
+                and workflow_tsf(transition['name']) or transition['name']
             ret.append(props)
         return ret

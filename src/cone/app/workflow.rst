@@ -20,7 +20,7 @@ Dummy workflow is registered for ``WorkflowNode``::
 
 Workflow name is set on node properties for lookup::
 
-    >>> node.properties.wf_name
+    >>> node.workflow_name
     u'dummy'
 
 Initial workflow state gets set at node creation time if not set yet::
@@ -81,10 +81,10 @@ Test ``state_acls``::
 
     >>> from cone.app.testing.mock import StateACLWorkflowNode
     >>> node = StateACLWorkflowNode()
-    >>> get_workflow(node.__class__, node.properties.wf_name)
+    >>> get_workflow(node.__class__, node.workflow_name)
     <repoze.workflow.workflow.Workflow object at ...>
 
-    >>> node.properties.wf_name
+    >>> node.workflow_name
     u'dummy'
 
     >>> IWorkflowState.providedBy(node)
@@ -98,7 +98,7 @@ Test ``state_acls``::
     >>> layer.login('manager')
 
     >>> request = layer.new_request()
-    >>> wf = get_workflow(node.__class__, node.properties.wf_name)
+    >>> wf = get_workflow(node.__class__, node.workflow_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state
     u'final'

@@ -452,7 +452,7 @@ ActionState
     <a href="#"\n             
     ajax:bind="click"\n             
     ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"\n             
-    ajax:action="wf_dropdown:NONE:NONE">Finalize</a>...'
+    ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...'
 
     >>> layer.logout()
 
