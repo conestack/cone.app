@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Add example ``twisted.cfg`` buildout configuration and ``cone.tac`` twisted
+  configuration file for running cone with twisted WSGI.
+  [rnix, 2014-08-02]
+
 - Adopt ``IWorkflowState`` interface. Workflow name is now set directly
   on node. Optional a trnaslation string factory can be set for workflow
   state and transision translations.

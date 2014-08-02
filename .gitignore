@@ -5,6 +5,7 @@
 /.pydevproject
 /.pydevproject.bak
 /.settings/
+/twistd.pid
 /src/cone.app.egg-info/
 /bin/
 /env/
