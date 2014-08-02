@@ -1,8 +1,8 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
-  <div class="box">
-    <tal:contextmenu replace="structure tile('contextmenu')" />
-    <tal:listing replace="structure tile('local_acl')" />
-  </div>
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <tal:listing replace="structure tile('local_acl')" />
+
 </tal:block>

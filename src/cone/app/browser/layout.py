@@ -4,7 +4,6 @@ from pyramid.security import (
     has_permission,
     authenticated_userid,
 )
-from pyramid.view import view_config
 from pyramid.i18n import TranslationStringFactory
 from cone.tile import (
     tile,
@@ -16,15 +15,30 @@ from cone.tile import (
 from ..interfaces import IWorkflowState
 from ..model import AppRoot
 from ..utils import principal_data
-from . import render_main_template
+from .actions import (
+    get_action_context,
+    LinkAction,
+)
+from .ajax import (
+    AjaxPath,
+    ajax_continue,
+)
 from .utils import (
     nodepath,
     make_url,
+    make_query,
     format_date,
-    node_icon_url,
+    node_icon,
 )
 
+
 _ = TranslationStringFactory('cone.app')
+
+
+registerTile('unauthorized', 'templates/unauthorized.pt', permission='login')
+registerTile('logo', 'templates/logo.pt', permission='login')
+registerTile('livesearch', 'templates/livesearch.pt', permission='login')
+registerTile('footer', 'templates/footer.pt', permission='login')
 
 
 class ProtectedContentTile(Tile):
@@ -41,25 +55,60 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
-registerTile('livesearch',
-             'cone.app:browser/templates/livesearch.pt',
-             permission='view',
-             strict=False)
+@tile('layout', 'templates/layout.pt', permission='login')
+class Layout(Tile):
+    """Main layout tile.
+    """
+
+    @property
+    def contenttile(self):
+        path = '/'.join([it for it in self.model.path if it])
+        ajax_continue(self.request, [AjaxPath(path)])
+        return get_action_context(self.request).scope
 
 
-def logout_link(model, request):
-    return (make_url(request, resource='logout'), _('logout', 'Logout'))
+class ViewSettingsAction(LinkAction):
+    text = _('settings', default='Settings')
+    icon = 'ion-ios7-gear'
+    event = 'contextchanged:#layout'
+
+    @property
+    def settings(self):
+        root = self.model.root
+        return root and root.get('settings') or None
+
+    @property
+    def target(self):
+        return make_url(self.request, node=self.settings)
+
+    href = target
+
+    @property
+    def display(self):
+        settings = self.settings
+        if not settings:
+            return False
+        return has_permission('view', settings, self.request)
+
+
+class LogoutAction(LinkAction):
+    text = _('logout', default='Logout')
+    icon = 'ion-log-out'
+
+    @property
+    def href(self):
+        return make_url(self.request, resource='logout')
+
 
 personal_tools = odict()
-personal_tools['logout'] = logout_link
+personal_tools['settings'] = ViewSettingsAction()
+personal_tools['logout'] = LogoutAction()
 
 
 @tile('personaltools', 'templates/personaltools.pt',
       permission='view', strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
-
-    XXX: extend by items, currently only 'logout' link hardcoded in template
     """
 
     @property
@@ -73,10 +122,12 @@ class PersonalTools(Tile):
         return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
-@tile('mainmenu', 'templates/mainmenu.pt',
-      permission='view', strict=False)
+@tile('mainmenu', 'templates/mainmenu.pt', permission='view', strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
+
+    * set ``skip_mainmenu`` on ``model.properties`` to ``True`` if node should
+      not be displayed in mainmenu.
 
     * set ``mainmenu_empty_title`` on ``model.root.properties`` to ``True``
       if you want to render empty links in mainmenu for setting icons via css.
@@ -89,7 +140,6 @@ class MainMenu(Tile):
     @property
     def menuitems(self):
         ret = list()
-        count = 0
         path = nodepath(self.model)
         if path:
             curpath = path[0]
@@ -103,8 +153,11 @@ class MainMenu(Tile):
             curpath = root.properties.default_child
         # check wether to render mainmenu item title
         empty_title = root.properties.mainmenu_empty_title
+        # XXX: icons
         for key in root.keys():
             child = root[key]
+            if child.properties.skip_mainmenu:
+                continue
             if not has_permission('view', child, self.request):
                 continue
             item = dict()
@@ -116,27 +169,36 @@ class MainMenu(Tile):
                 item['title'] = child.metadata.title
                 item['description'] = child.metadata.description
             item['url'] = make_url(self.request, path=[key])
+            query = make_query(
+                contenttile=child.properties.default_content_tile)
+            item['target'] = make_url(self.request, path=[key], query=query)
             item['selected'] = curpath == key
-            item['first'] = count == 0
+            item['icon'] = node_icon(self.request, child)
             ret.append(item)
-            count += 1
         return ret
 
 
-@tile('pathbar', 'templates/pathbar.pt',
-      permission='view', strict=False)
+@tile('pathbar', 'templates/pathbar.pt', permission='view', strict=False)
 class PathBar(Tile):
 
     @property
     def items(self):
         return self.items_for(self.model)
 
-    def items_for(self, model, breakpoint=None, query=None):
+    def item_url(self, node):
+        return make_url(self.request, node=node)
+
+    def item_target(self, node):
+        query = make_query(contenttile=node.properties.default_content_tile)
+        return make_url(self.request, node=node, query=query)
+
+    def items_for(self, model, breakpoint=None):
         items = list()
         for node in LocationIterator(model):
             items.append({
                 'title': node.metadata.title,
-                'url': make_url(self.request, node=node, query=query),
+                'url': self.item_url(node),
+                'target': self.item_target(node),
                 'selected': False,
                 'id': node.name,
                 'default_child': node.properties.default_child,
@@ -162,16 +224,16 @@ class PathBar(Tile):
         return ret
 
 
-@tile('navtree', 'templates/navtree.pt',
-      permission='view', strict=False)
+@tile('navtree', 'templates/navtree.pt', permission='view', strict=False)
 class NavTree(Tile):
     """Navigation tree tile.
     """
 
-    def navtreeitem(self, title, url, path, icon, css=''):
+    def navtreeitem(self, title, url, target, path, icon, css=''):
         item = dict()
         item['title'] = title
         item['url'] = url
+        item['target'] = target
         item['selected'] = False
         item['path'] = path
         item['icon'] = icon
@@ -208,12 +270,15 @@ class NavTree(Tile):
                 continue
             title = node.metadata.title
             url = make_url(self.request, node=node)
+            query = make_query(contenttile=node.properties.default_content_tile)
+            target = make_url(self.request, node=node, query=query)
             curnode = curpath == key and True or False
-            icon = node_icon_url(self.request, node)
+            icon = node_icon(self.request, node)
             css = ''
             if IWorkflowState.providedBy(node):
                 css = 'state-%s' % node.state
-            child = self.navtreeitem(title, url, nodepath(node), icon, css)
+            child = self.navtreeitem(
+                title, url, target, nodepath(node), icon, css)
             child['showchildren'] = curnode
             if curnode:
                 child['selected'] = True
@@ -232,7 +297,7 @@ class NavTree(Tile):
             tree['children'].append(child)
 
     def navtree(self):
-        root = self.navtreeitem(None, None, '', None)
+        root = self.navtreeitem(None, None, None, '', None)
         model = self.model.root
         # XXX: default child
         path = nodepath(self.model)
@@ -249,33 +314,13 @@ class NavTree(Tile):
             level=level)
 
 
-@tile('byline', 'templates/byline.pt',
-      permission='view', strict=False)
+@tile('byline', 'templates/byline.pt', permission='view', strict=False)
 class Byline(Tile):
     """Byline tile.
     """
 
     def format_date(self, dt):
         return format_date(dt)
-
-
-registerTile('footer',
-             'templates/footer.pt',
-             permission='login',
-             strict=False)
-
-
-registerTile('listing',
-             'templates/listing.pt',
-             class_=ProtectedContentTile,
-             permission='login')
-
-
-@view_config('listing', permission='view')
-def listing(model, request):
-    """Listing view
-    """
-    return render_main_template(model, request, 'listing')
 
 
 @tile('content', interface=AppRoot, permission='login')

@@ -1,0 +1,31 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           omit-tag="True">
+
+  <div class="dropdown">
+
+    <a href="#"
+       class="dropdown-toggle ${context.css}"
+       data-toggle="dropdown">
+      <span class="${context.icon|nothing}"></span>
+      <span tal:content="context.title">Title</span>
+      <span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+      <li  role="presentation" tal:repeat="item context.items">
+        <a href="${item.url|nothing}"
+           role="menuitem"
+           tabindex="-1"
+           ajax:bind="click"
+           ajax:target="${item.target}"
+           ajax:action="${item.action}">
+          <span class="${item.icon}"></span>
+          <span tal:content="item.title">Title</span>
+        </a>
+      </li>
+    </ul>
+
+  </div>
+
+</tal:block>

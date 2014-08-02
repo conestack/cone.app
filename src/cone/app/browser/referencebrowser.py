@@ -17,7 +17,10 @@ from .actions import (
     Toolbar,
     LinkAction,
 )
-from .utils import make_query
+from .utils import (
+    make_url,
+    make_query,
+)
 from yafowil.base import (
     factory,
     UNSET,
@@ -44,16 +47,18 @@ tag = Tag(lambda x: x)
 
 
 registerTile('referencebrowser',
-             'cone.app:browser/templates/referencebrowser.pt',
+             'templates/referencebrowser.pt',
              permission='view')
 
 
-def make_refbrowser_query(request):
-    return make_query(**{
+def make_refbrowser_query(request, **kw):
+    params = {
         'root': request.params['root'],
         'referencable': request.params['referencable'],
         'selected': request.params['selected'],
-    })
+    }
+    params.update(kw)
+    return make_query(**params)
 
 
 @tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt',
@@ -69,9 +74,16 @@ class ReferenceBrowserPathBar(PathBar):
             if path == root:
                 breakpoint = node
                 break
-        return self.items_for(self.model,
-                              breakpoint,
-                              make_refbrowser_query(self.request))
+        return self.items_for(self.model, breakpoint)
+
+    def item_url(self, node):
+        query = make_refbrowser_query(self.request)
+        return make_url(self.request, node=node, query=query)
+
+    def item_target(self, node):
+        query = make_refbrowser_query(
+            self.request, contenttile=node.properties.default_content_tile)
+        return make_url(self.request, node=node, query=query)
 
 
 class ReferenceAction(LinkAction):
@@ -105,8 +117,9 @@ class ReferenceAction(LinkAction):
 
 
 class ActionAddReference(ReferenceAction):
-    css = 'add_small16_16 addreference'
-    title = _('add_reference', 'Add reference')
+    css = 'addreference'
+    title = _('add_reference', default='Add reference')
+    icon = 'ion-plus-round'
 
     @property
     def enabled(self):
@@ -116,8 +129,9 @@ class ActionAddReference(ReferenceAction):
 
 
 class ActionRemoveReference(ReferenceAction):
-    css = 'remove16_16 removereference'
-    title = _('remove_reference', 'Remove reference')
+    css = 'removereference'
+    title = _('remove_reference', default='Remove reference')
+    icon = 'ion-minus-round'
 
     @property
     def enabled(self):
@@ -164,31 +178,17 @@ class ReferenceListing(ContentsTile):
     col_defs = [
         {
             'id': 'actions',
-            'title': _('table_actions', 'Actions'),
+            'title': _('table_actions', default='Actions'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',
         },
         {
             'id': 'title',
-            'title': _('title', 'Title'),
+            'title': _('title', default='Title'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure',
-        },
-        {
-            'id': 'created',
-            'title': _('created', 'Created'),
-            'sort_key': None,
-            'sort_title': None,
-            'content': 'datetime',
-        },
-        {
-            'id': 'modified',
-            'title': _('modified', 'Modified'),
-            'sort_key': None,
-            'sort_title': None,
-            'content': 'datetime',
         },
     ]
     query_whitelist = ['root', 'referencable', 'selected']
@@ -212,8 +212,6 @@ class ReferenceListing(ContentsTile):
             row_data['actions'] = self.row_actions(child, self.request)
             row_data['title'] = \
                 self.referencable_children_link(child, self.request)
-            row_data['created'] = child.metadata.get('created')
-            row_data['modified'] = child.metadata.get('modified')
             rows.append(row_data)
         return rows
 
@@ -294,6 +292,7 @@ def reference_edit_renderer(widget, data):
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
         'class_': cssclasses(widget, data),
+        'readonly': 'readonly',
     }
     hidden_attrs = {
         'type': 'hidden',

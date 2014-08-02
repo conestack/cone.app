@@ -10,39 +10,42 @@ from ..interfaces import (
     IPrincipalACL,
     ICopySupport,
 )
-from .utils import make_url
+from .utils import (
+    make_url,
+    make_query,
+)
+
 
 _ = TranslationStringFactory('cone.app')
 
 
+def get_action_context(request):
+    return request.environ['action_context']
+
+
 class ActionContext(object):
-    """The action context is used to calculate action scopes. The action scope
-    is used by browser actions to calculate it's own state, i.e. if it is
-    selected, displayed or disabled.
-
-    The action scope is bound to either the content tile name used in main
-    template, or to the requested ajax action name if ajax request.
-
-    XXX: Better class name.
+    """The action context is used to determine action scopes. The action scope
+    is used by browser actions to check it's own state, e.g. if action button
+    is selected, disabled or displayed at all.
     """
 
     def __init__(self, model, request, tilename):
-        """Created by ``render_mail_template`` and ``ajax_action``.
-
-        Instance is written to request.environ['action_context'].
-        """
-        request.environ['action_context'] = self
         self.model = model
         self.request = request
         self.tilename = tilename
+        request.environ['action_context'] = self
 
     @property
     def scope(self):
-        scope = self.tilename
-        # if bdajax.action found on request, return it as current scope
-        if self.request.params.get('bdajax.action'):
-            scope = self.request.params.get('bdajax.action')
         model = self.model
+        request = self.request
+        scope = self.tilename
+        # if ``bdajax.action`` found on request, use it as current scope
+        if 'bdajax.action' in request.params:
+            scope = request.params['bdajax.action']
+        # if action is ``layout``, content tile name is passed
+        if scope == 'layout':
+            scope = request.params.get('contenttile', 'content')
         # change model if default child defined
         if model.properties.default_child:
             model = model[model.properties.default_child]
@@ -57,15 +60,26 @@ class Toolbar(odict):
     """A toolbar rendering actions.
     """
     display = True
+    css = None
+
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
 
     def __call__(self, model, request):
         if not self.display:
             return u''
-        ret = u'\n'.join([action(model, request) for action in self.values()])
-        ret = ret.strip()
-        if not ret:
-            return ret
-        return u'<div class="toolbar">%s</div>' % ret
+        rendered_actions = list()
+        for action in self.values():
+            rendered = action(model, request)
+            if not rendered:
+                continue
+            rendered_actions.append(rendered)
+        if not rendered_actions:
+            return u''
+        rendered_actions = u'\n'.join(rendered_actions)
+        if not self.css:
+            return u'<div>%s</div>' % rendered_actions
+        return u'<div class="%s">%s</div>' % (self.css, rendered_actions)
 
 
 class Action(object):
@@ -119,7 +133,7 @@ class TemplateAction(Action):
 class DropdownAction(TemplateAction):
     """Action rendering a dropdown.
     """
-    template = u'cone.app.browser:templates/dropdown_action.pt'
+    template = u'cone.app.browser:templates/action_dropdown.pt'
     href = None
     css = None
     title = None
@@ -139,7 +153,7 @@ class LinkAction(TemplateAction):
     template = 'cone.app.browser:templates/link_action.pt'
     bind = 'click'    # ajax:bind attribute
     id = None         # id attribute
-    href = None       # href attribute
+    href = '#'        # href attribute
     css = None        # in addition for computed class attribute
     title = None      # title attribute
     action = None     # ajax:action attribute
@@ -149,12 +163,15 @@ class LinkAction(TemplateAction):
     text = None       # link text
     enabled = True    # if false, link gets 'disabled' css class
     selected = False  # if true, link get 'selected' css class
+    icon = None       # if set, render <i> tag with value as CSS class on link
+
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
 
     @property
     def css_class(self):
         css = not self.enabled and 'disabled' or ''
         css = self.selected and '%s selected' % css or css
-        css = css.strip()
         if self.css:
             css = '%s %s' % (self.css, css)
         css = css.strip()
@@ -168,16 +185,10 @@ class LinkAction(TemplateAction):
 class ActionUp(LinkAction):
     """One level up action.
     """
-    css = 'up16_16'
-    title = _('action_one_level_up', 'One level up')
-    event = 'contextchanged:.contextsensitiv'
-
-    @property
-    def action(self):
-        action = self.model.properties.action_up_tile
-        if not action:
-            action = 'listing'
-        return '%s:#content:inner' % action
+    id = 'toolbaraction-up'
+    icon = 'glyphicon glyphicon-arrow-up'
+    event = 'contextchanged:#layout'
+    text = _('action_one_level_up', default='One level up')
 
     @property
     def display(self):
@@ -191,16 +202,19 @@ class ActionUp(LinkAction):
         default_child = container.properties.default_child
         if default_child and self.model.name == default_child:
             container = container.parent
-        return make_url(self.request, node=container)
-
-    href = target
+        contenttile = self.model.properties.action_up_tile
+        if not contenttile:
+            contenttile = 'listing'
+        query = make_query(contenttile=contenttile)
+        return make_url(self.request, node=container, query=query)
 
 
 class ActionView(LinkAction):
     """View action.
     """
-    css = 'view16_16'
-    title = _('action_view', 'View')
+    id = 'toolbaraction-view'
+    icon = 'glyphicon glyphicon-eye-open'
+    text = _('action_view', default='View')
     href = LinkAction.target
 
     @property
@@ -225,6 +239,7 @@ class ViewLink(ActionView):
     """View link
     """
     css = None
+    icon = None
 
     @property
     def text(self):
@@ -238,9 +253,10 @@ class ViewLink(ActionView):
 class ActionList(LinkAction):
     """Contents listing action.
     """
-    css = 'listing16_16'
-    title = _('action_listing', 'Listing')
+    id = 'toolbaraction-list'
+    icon = 'glyphicon glyphicon-th-list'
     action = 'listing:#content:inner'
+    text = _('action_listing', default='Listing')
 
     @property
     def href(self):
@@ -258,9 +274,10 @@ class ActionList(LinkAction):
 class ActionSharing(LinkAction):
     """Sharing action.
     """
-    css = 'sharing16_16'
-    title = _('action_sharing', 'Sharing')
+    id = 'toolbaraction-share'
+    icon = 'glyphicon glyphicon-share'
     action = 'sharing:#content:inner'
+    text = _('action_sharing', default='Sharing')
 
     @property
     def href(self):
@@ -294,17 +311,16 @@ class ActionAdd(TileAction):
 
     @property
     def display(self):
-        return self.permitted('add') \
-            and self.model.nodeinfo.addables \
-            and self.action_scope == 'listing'
+        return self.permitted('add') and self.model.nodeinfo.addables
 
 
 class ActionEdit(LinkAction):
     """Edit action.
     """
-    css = 'edit16_16'
-    title = _('action_edit', 'Edit')
+    id = 'toolbaraction-edit'
+    icon = 'glyphicon glyphicon-pencil'
     action = 'edit:#content:inner'
+    text = _('action_edit', default='Edit')
 
     @property
     def href(self):
@@ -322,15 +338,12 @@ class ActionEdit(LinkAction):
 class ActionDelete(LinkAction):
     """Delete action.
     """
-    css = 'delete16_16'
-    title = _('action_delete', 'Delete')
+    id = 'toolbaraction-delete'
+    icon = 'ion-trash-a'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
-                'Do you really want to delete this Item?')
-
-    @property
-    def href(self):
-        return '%s/delete' % self.target
+                default='Do you really want to delete this Item?')
+    text = _('action_delete', default='Delete')
 
     @property
     def display(self):
@@ -347,15 +360,13 @@ class ActionDelete(LinkAction):
 class ActionDeleteChildren(LinkAction):
     """Delete children action.
     """
-    css = 'delete16_16'
-    title = _('action_delete_selected_children', 'Delete selected children')
+    id = 'toolbaraction-delete-children'
+    icon = 'ion-trash-a'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
-                'Do you really want to delete selected Items?')
-
-    @property
-    def href(self):
-        return '%s/delete_children' % self.target
+                default='Do you really want to delete selected Items?')
+    text = _('action_delete_selected_children',
+             default='Delete selected children')
 
     @property
     def display(self):
@@ -370,13 +381,10 @@ class ActionDeleteChildren(LinkAction):
 class ActionCut(LinkAction):
     """Cut children action.
     """
-    css = 'cut16_16'
-    title = _('action_cut', 'Cut')
+    id = 'toolbaraction-cut'
+    icon = 'ion-scissors'
+    text = _('action_cut', default='Cut')
     bind = None
-
-    @property
-    def href(self):
-        return '%s/cut' % self.target
 
     @property
     def display(self):
@@ -389,13 +397,10 @@ class ActionCut(LinkAction):
 class ActionCopy(LinkAction):
     """Copy children action.
     """
-    css = 'copy16_16'
-    title = _('action_copy', 'Copy')
+    id = 'toolbaraction-copy'
+    icon = 'ion-ios7-copy-outline'
+    text = _('action_copy', default='Copy')
     bind = None
-
-    @property
-    def href(self):
-        return '%s/copy' % self.target
 
     @property
     def display(self):
@@ -408,13 +413,10 @@ class ActionCopy(LinkAction):
 class ActionPaste(LinkAction):
     """Paste children action.
     """
-    css = 'paste16_16'
-    title = _('action_paste', 'Paste')
+    id = 'toolbaraction-paste'
+    icon = 'ion-clipboard'
+    text = _('action_paste', default='Paste')
     bind = None
-
-    @property
-    def href(self):
-        return '%s/paste' % self.target
 
     @property
     def display(self):

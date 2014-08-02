@@ -3,10 +3,7 @@ from cone.tile import (
     Tile,
 )
 from ..model import Properties
-from .ajax import (
-    AjaxAction,
-    AjaxEvent,
-)
+from .ajax import AjaxEvent
 from .utils import (
     make_query,
     make_url,
@@ -25,14 +22,6 @@ class WfDropdown(Tile):
 
     If ``do_transition`` is found in ``request.params``, perform given
     transition on ``self.model`` immediately before dropdown gets rendered.
-
-    Configuration expected on ``self.model.properties``:
-
-    wf_name
-        Registration name of workflow.
-
-    wf_transition_names
-        transition id to transition title mapping. XXX: get rid of
     """
 
     def do_transition(self):
@@ -46,16 +35,19 @@ class WfDropdown(Tile):
         workflow.transition(self.model, self.request, transition)
         self.model()
         url = make_url(self.request, node=self.model)
-        continuation = [
-            AjaxAction(url, 'content', 'inner', '#content'),
-            AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
-        ]
+        continuation = [AjaxEvent(url, 'contextchanged', '#layout')]
         self.request.environ['cone.app.continuation'] = continuation
 
     @property
     def workflow(self):
-        return get_workflow(self.model.__class__,
-                            self.model.properties.wf_name)
+        return get_workflow(self.model.__class__, self.model.workflow_name)
+
+    @property
+    def state_name(self):
+        workflow_tsf = self.model.workflow_tsf
+        if workflow_tsf:
+            return workflow_tsf(self.model.state)
+        return self.model.state
 
     @property
     def transitions(self):
@@ -68,17 +60,15 @@ class WfDropdown(Tile):
         except (WorkflowError, AttributeError), e:
             logger.error("transitions error: %s" % str(e))
             return ret
-        # XXX: check in repoze.workflow the intended way for naming
-        #      transitions
-        transition_names = self.model.properties.wf_transition_names
+        workflow_tsf = self.model.workflow_tsf
         for transition in transitions:
             query = make_query(do_transition=transition['name'])
-            url = make_url(self.request, node=self.model,
-                           resource='dotransition', query=query)
             target = make_url(self.request, node=self.model, query=query)
             props = Properties()
-            props.url = url
             props.target = target
-            props.title = transition_names[transition['name']]
+            if workflow_tsf:
+                props.title = workflow_tsf(transition['name'])
+            else:
+                props.title = transition['name']
             ret.append(props)
         return ret

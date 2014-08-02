@@ -1,4 +1,4 @@
-/* Stolen from plone */
+/* Taken from Plone */
 
 function createCookie(name, value, days) {
     var date,

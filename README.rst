@@ -31,11 +31,150 @@ Contributors
 - Georg Gogo. BERNHARD <gogo [at] bluedynamics [dot] com>
 
 
+Coverage Report
+===============
+
+::
+
+    lines   cov%   module
+      204   100%   cone.app.__init__
+       29    96%   cone.app.browser.__init__
+      275   100%   cone.app.browser.actions
+      175    98%   cone.app.browser.ajax
+      239    94%   cone.app.browser.authoring
+      101   100%   cone.app.browser.batch
+      151    94%   cone.app.browser.contents
+       72    94%   cone.app.browser.contextmenu
+      111   100%   cone.app.browser.copysupport
+       24   100%   cone.app.browser.exception
+       81    96%   cone.app.browser.form
+      229    96%   cone.app.browser.layout
+       58   100%   cone.app.browser.login
+      212    95%   cone.app.browser.referencebrowser
+       69    78%   cone.app.browser.resources
+       40   100%   cone.app.browser.settings
+      149    98%   cone.app.browser.sharing
+      140   100%   cone.app.browser.table
+       69    98%   cone.app.browser.utils
+       44   100%   cone.app.browser.workflow
+       69   100%   cone.app.interfaces
+      367    94%   cone.app.model
+      177   100%   cone.app.security
+       88   100%   cone.app.testing.__init__
+       48   100%   cone.app.testing.mock
+       44   100%   cone.app.tests
+       47   100%   cone.app.utils
+       63   100%   cone.app.workflow
+
+
 Changes
 =======
 
-0.9.6.dev0 (unreleased)
------------------------
+1.0.dev0 (unreleased)
+---------------------
+
+- Add example ``twisted.cfg`` buildout configuration and ``cone.tac`` twisted
+  configuration file for running cone with twisted WSGI.
+  [rnix, 2014-08-02]
+
+- Adopt ``IWorkflowState`` interface. Workflow name is now set directly
+  on node. Optional a trnaslation string factory can be set for workflow
+  state and transision translations.
+  [rnix, 2014-08-01]
+
+- Use ``plumbing`` decorator instead of ``plumber`` metaclass.
+  [rnix, 2014-08-01]
+
+- Introduce ``list`` permission, bind ``listing`` and ``contents`` tile to it
+  and adopt default ACL's.
+  [rnix, 2014-07-26]
+
+- Improve forbidden view, renders unauthorized tile in case user is
+  authenticated, otherwise redirect to login form.
+  [rnix, 2014-07-26]
+
+- All Authoring forms are no longer derived from ``ProtectedContentTile``.
+  [rnix, 2014-07-26]
+
+- ``OverlayForm`` now renders by default to ``#ajax-overlay`` instead of
+  ``#ajax-form``. Latter is supposed to be used if overlay form should be
+  rendered above an already opened overlay.
+  [rnix, 2014-07-25]
+
+- Introduce ``OverlayAddForm`` and ``OverlayEditForm``.
+  [rnix, 2014-07-24]
+
+- ``OverlayForm`` renders ``overlayform`` form tile instead of
+  ``overlayeditform``.
+  [rnix, 2014-07-24]
+
+- Authoring forms cleanup. Rename ``AddBehavior`` to ``ContentAddForm``,
+  ``EditBehavior`` to ``ContentEditForm`` and ``OverlayBehavior`` to
+  ``OverlayForm``.
+  [rnix, 2014-07-24]
+
+- Introduce ``ILiveSearch`` adapter interface and remove
+  ``cone.app.browser.ajax.LIVESEARCH_CALLBACK``.
+  [rnix, 2014-07-15]
+
+- Move over to ``typeahead.js`` for livesearch.
+  [rnix, 2014-07-14]
+
+- ``cone.app.cfg.layout`` not exists any longer. Register ``ILayout`` providing
+  adapter for application nodes in order to customize layout configuration.
+  [rnix, 2014-07-14]
+
+- Add ``node_info`` decorator.
+  [rnix, 2014-07-11]
+
+- Trigger ``contextchanged`` to ``#layout`` rather than ``.contextsensitiv``
+  in ``mainmenu``, ``logo``, ``pathbar``, ``navtree``.
+  [rnix, 2014-07-11]
+
+- Introduce ``layout`` tile.
+  [rnix, 2014-07-11]
+
+- Provide Layout configuration via ``AppNode``.
+  [rnix, 2014-07-11]
+
+- Remove ``cone.app.util.AppUtil``.
+  [rnix, 2014-07-11]
+
+- Workflow state only gets initialized at node creation time if not set at
+  corresponding data yet. Needed for non persisting application nodes.
+  [rnix, 2014-07-09]
+
+- Content forms are now wrapped by a bs3 panel element.
+  [rnix, 2014-07-09]
+
+- Introduce ``skip_mainmenu`` in ``model.properties``. Gets considered in
+  mainmenu.
+  [rnix, 2014-07-09]
+
+- Settings are displayed in personaltools menu rather than navtree and
+  mainmenu.
+  [rnix, 2014-07-09]
+
+- ``personaltools`` tile now renders ``cone.app.browser.actions.LinkAction``
+  based items.
+  [rnix, 2014-07-09]
+
+- Use bootstrap 3 related resources for bdajax integration.
+  [rnix, 2014-07-04]
+
+- Remove custom dropdown from ``cone.app.js``. Boostrap dropdown is used all
+  over the place.
+  [rnix, 2014-07-03]
+
+- Introduce ``cone.app.browser.batch.BATCH_RANGE`` which can be used for
+  default batch range configuration.
+  [rnix, 2014-07-03]
+
+- Remove ``cone.app.utils.node_icon_url``.
+  [rnix, 2014-07-03]
+
+- Include ionicons.
+  [rnix, 2014-07-02]
 
 - Introduce ``cone.app.is_remote_resource``.
   [rnix, 2014-06-27]
@@ -53,6 +192,16 @@ Changes
 - Update jQuery, jQuery-UI and remove jQuery Tools.
   [rnix, 2013-08-13]
 
+- ``cone.app.model.Properties`` now supports ``__setitem__`` and setting file
+  ``path`` manually.
+  [rnix, 2013-08-06]
+
+- No more generic tabs binder, refactor settings tabs.
+  [rnix, 2013-08-06]
+
+- Change base styles to twitter bootstrap 3.
+  [rnix, 2013-08-05]
+
 
 0.9.5
 -----
@@ -62,6 +211,19 @@ Changes
 
 - Factory node can be invalidated now.
   [rnix, 2014-01-15]
+
+- Update jQuery, jQuery-UI and remove jQuery Tools.
+  [rnix, 2013-08-13]
+
+- ``cone.app.model.Properties`` now supports ``__setitem__`` and setting file
+  ``path`` manually.
+  [rnix, 2013-08-06]
+
+- No more generic tabs binder, refactor settings tabs.
+  [rnix, 2013-08-06]
+
+- Change base styles to twitter bootstrap.
+  [rnix, 2013-08-05]
 
 - Test request can be flagged as XHR request.
   [rnix, 2013-03-23]

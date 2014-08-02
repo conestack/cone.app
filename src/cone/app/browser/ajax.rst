@@ -13,7 +13,7 @@ Create test environ::
     >>> from cone.tile import tile, Tile
     >>> from cone.app import root
     >>> from cone.app.browser.ajax import ajax_tile
-    
+
     >>> @tile('testtile')
     ... class TestTile(Tile):
     ...     def render(self):
@@ -60,7 +60,7 @@ AjaxAction object::
     >>> action = AjaxAction(target, actionname, mode, selector)
     >>> action
     <cone.app.browser.ajax.AjaxAction object at ...>
-    
+
     >>> action.name, action.selector, action.mode, action.target
     ('tilename', '.someselector', 'replace', 'http://example.com')
 
@@ -72,7 +72,7 @@ AjaxEvent object::
     >>> event = AjaxEvent(target, eventname, selector)
     >>> event
     <cone.app.browser.ajax.AjaxEvent object at ...>
-    
+
     >>> event.name, event.selector, event.target
     ('contextchanged', '.contextsensitiv', 'http://example.com')
 
@@ -85,7 +85,7 @@ AjaxMessage object::
     >>> message = AjaxMessage(payload, flavor, selector)
     >>> message
     <cone.app.browser.ajax.AjaxMessage object at ...>
-    
+
     >>> message.payload, message.flavor, message.selector
     ('Some info message', 'info', 'None')
 
@@ -104,14 +104,14 @@ list of instances to set continuation actions::
     ...     ajax_continue,
     ...     AjaxAction,
     ... )
-    
+
     >>> @tile('testtile2')
     ... class TestTile(Tile):
     ...     def render(self):
     ...         ajax_continue(self.request,
     ...                       AjaxAction('target', 'name', 'mode', 'selector'))
     ...         return u''
-    
+
     >>> request.params['bdajax.action'] = 'testtile2'
     >>> ajax_tile(root, request)
     {'continuation': 
@@ -123,7 +123,7 @@ list of instances to set continuation actions::
     'payload': u'', 
     'mode': 'replace', 
     'selector': '.foo'}
-    
+
     >>> layer.logout()
 
 Use ``ajax_message`` as shortcut for settings continuation message::
@@ -175,7 +175,7 @@ AjaxFormContinue object. This object is used by ``render_ajax_form``::
     >>> afc = AjaxFormContinue(result, continuation)
     >>> afc.form
     ''
-    
+
     >>> afc.next
     'false'
 
@@ -193,7 +193,7 @@ If no continuation definitions, ``form`` returns result and ``next`` returns
 If continuation definitions and result, ``form`` returns empty string, because
 form processing was successful. ``next`` returns a JSON dump of given actions,
 which gets interpreted and executed on client side::
-    
+
     >>> continuation = [action, event, message, overlay]
     >>> afc = AjaxFormContinue(result, continuation)
     >>> afc.form
@@ -244,7 +244,7 @@ Test ``render_ajax_form``. Provide a dummy Form::
     >>> from webob.exc import HTTPFound
     >>> from yafowil.base import factory
     >>> from cone.app.browser.form import Form
-    
+
     >>> @tile('ajaxtestform')
     ... class AjaxTestForm(Form):
     ...     
@@ -291,7 +291,7 @@ Test unauthorized::
     '<div id="ajaxform">\n    \n</div>\n<script language="javascript" 
     ...HTTPForbidden: Unauthorized: tile <AjaxTestForm object at ...> 
     failed permission check...
-    
+
 Test authorized with form extraction failure::
 
     >>> layer.login('max')
@@ -300,16 +300,16 @@ Test authorized with form extraction failure::
     >>> request.params['action.ajaxtestform.save'] = 1
     >>> response = render_ajax_form(root, request, 'ajaxtestform')
     >>> result = str(response)
-    
+
     >>> result.find('<div class="errormessage">') != -1
     True
-    
+
     >>> result.find('<script language="javascript"') != -1
     True
-    
+
     >>> result.find('parent.bdajax.render_ajax_form(child, ') != -1
     True
-    
+
     >>> result.find('parent.bdajax.continuation(false)') != -1
     True
 
@@ -321,33 +321,41 @@ Test with form perocessing passing::
     >>> expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\')'
     >>> result.find(expected) != -1
     True
-    
+
     >>> expected = 'parent.bdajax.continuation([{"'
     >>> result.find(expected) != -1
     True
-    
+
     >>> layer.logout()
 
 
 Livesearch
 ----------
 
-Cone provides a livesearch, but no callback implementation for it.
-
-The callback could be set by overwriting
-``cone.app.browser.ajax.LIVESEARCH_CALLBACK``
-
-For testing purposes a dummy_livesearch_callback is bound which always return
-one item::
-
-    >>> from cone.app.browser.ajax import LIVESEARCH_CALLBACK
-    >>> LIVESEARCH_CALLBACK
-    <function dummy_livesearch_callback at ...>
-
-The livesearch view calls the livesearch callback::
+Cone provides a livesearch view, but no referring ``ILiveSearch`` implementing
+adapter for it::
 
     >>> from cone.app.browser.ajax import livesearch
     >>> request = layer.new_request()
     >>> request.params['term'] = 'foo'
     >>> livesearch(root, request)
-    [{'target': 'http://example.com', 'value': 'foo', 'label': 'Root'}]
+    []
+
+Provide dummy adapter::
+
+    >>> from zope.interface import Interface, implementer
+    >>> from zope.component import adapter
+    >>> from cone.app.interfaces import ILiveSearch
+    >>> @implementer(ILiveSearch)
+    ... @adapter(Interface)
+    ... class LiveSearch(object):
+    ...     def __init__(self, model):
+    ...         self.model = model
+    ...     def search(self, request, query):
+    ...         return [{'value': 'Value'}]
+
+    >>> registry = request.registry
+    >>> registry.registerAdapter(LiveSearch)
+
+    >>> livesearch(root, request)
+    [{'value': 'Value'}]

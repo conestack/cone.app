@@ -5,7 +5,7 @@ import logging
 import ConfigParser
 from odict import odict
 from plumber import (
-    plumber,
+    plumbing,
     Behavior,
     default,
     finalize,
@@ -30,7 +30,10 @@ from node.behaviors import (
 )
 from node.utils import instance_property
 from zope.interface import implementer
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import (
+    get_current_request,
+    get_current_registry,
+)
 from pyramid.security import (
     has_permission,
     Everyone,
@@ -45,6 +48,7 @@ from .interfaces import (
     IAdapterNode,
     ICopySupport,
     IProperties,
+    ILayout,
     IMetadata,
     INodeInfo,
     IUUIDAsName,
@@ -55,6 +59,7 @@ from .utils import (
     app_config,
 )
 
+
 logger = logging.getLogger('cone.app')
 
 try:
@@ -63,7 +68,9 @@ except ImportError:
     logger.warning('``lxml`` not present. ``cone.app.model.XMLProperties`` '
                    'will not work')
 
+
 _ = TranslationStringFactory('cone.app')
+
 
 _node_info_registry = dict()
 
@@ -77,16 +84,44 @@ def getNodeInfo(name):
         return _node_info_registry[name]
 
 
+class node_info(object):
+    """Node info decorator.
+    """
+
+    def __init__(self, name, title=None,
+                 description=None, icon=None,
+                 addables=[]):
+        self.name = name
+        self.title = title
+        self.description = description
+        self.icon = icon
+        self.addables = addables
+
+    def __call__(self, cls):
+        cls.node_info_name = self.name
+        info = NodeInfo()
+        info.title = self.title
+        info.description = self.description
+        info.node = cls
+        info.addables = self.addables
+        info.icon = self.icon
+        registerNodeInfo(cls.node_info_name, info)
+        return cls
+
+
 @implementer(IApplicationNode)
 class AppNode(Behavior):
-
-    # set this to name of registered node info on deriving class
     node_info_name = default('')
 
     @default
     @property
     def __acl__(self):
         return acl_registry.lookup(self.__class__, self.node_info_name)
+
+    @default
+    @property
+    def layout(self):
+        return get_current_registry().getAdapter(self, ILayout)
 
     @default
     @instance_property
@@ -100,7 +135,7 @@ class AppNode(Behavior):
     def metadata(self):
         name = self.name
         if not name:
-            name = _('no_title', 'No Title')
+            name = _('no_title', default='No Title')
         metadata = Metadata()
         metadata.title = name
         return metadata
@@ -117,29 +152,27 @@ class AppNode(Behavior):
         return info
 
 
+@plumbing(
+    AppNode,
+    AsAttrAccess,
+    NodeChildValidate,
+    Adopt,
+    Nodespaces,
+    Attributes,
+    DefaultInit,
+    Nodify,
+    Lifecycle,
+    OdictStorage)
 class BaseNode(object):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        AppNode,
-        AsAttrAccess,
-        NodeChildValidate,
-        Adopt,
-        Nodespaces,
-        Attributes,
-        DefaultInit,
-        Nodify,
-        Lifecycle,
-        OdictStorage,
-    )
+    pass
 
 
 @implementer(IFactoryNode)
+@plumbing(
+    VolatileStorageInvalidate,
+    ChildFactory)
 class FactoryNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        VolatileStorageInvalidate,
-        ChildFactory,
-    )
+    pass
 
 
 class AppRoot(FactoryNode):
@@ -169,14 +202,15 @@ class AppSettings(FactoryNode):
     @instance_property
     def properties(self):
         props = Properties()
-        props.in_navtree = True
-        props.icon = 'static/images/settings16_16.png'
+        props.in_navtree = False
+        props.skip_mainmenu = True
+        props.icon = 'ion-ios7-gear'
         return props
 
     @instance_property
     def metadata(self):
         metadata = Metadata()
-        metadata.title = _("settings", "Settings")
+        metadata.title = _('settings', default='Settings')
         return metadata
 
 
@@ -259,6 +293,9 @@ class Properties(object):
     def _get_data(self):
         return object.__getattribute__(self, '_data')
 
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
     def __getitem__(self, key):
         return self._get_data()[key]
 
@@ -268,11 +305,11 @@ class Properties(object):
     def __contains__(self, key):
         return key in self._get_data()
 
-    def __getattr__(self, name):
-        return self._get_data().get(name)
+    def __getattr__(self, key):
+        return self._get_data().get(key)
 
-    def __setattr__(self, name, value):
-        self._get_data()[name] = value
+    def __setattr__(self, key, value):
+        self._get_data()[key] = value
 
     def keys(self):
         return self._get_data().keys()
@@ -331,6 +368,11 @@ class ProtectedProperties(Properties):
         return keys
 
 
+@implementer(ILayout)
+class Layout(Properties):
+    pass
+
+
 @implementer(IMetadata)
 class Metadata(Properties):
     pass
@@ -361,6 +403,12 @@ class XMLProperties(Properties):
             del data[name]
         else:
             raise KeyError(u"property %s does not exist" % name)
+
+    def get_path(self):
+        return object.__getattribute__(self, '_path')
+
+    def set_path(self, path):
+        object.__setattr__(self, '_path', path)
 
     def _init(self):
         dth = DatetimeHelper()

@@ -4,6 +4,7 @@
 
   <!-- javascripts -->
   <script src="${request.application_url}/cone.js"></script>
+
   <tal:public repeat="res js">
     <script src="${res}"></script>
   </tal:public>
@@ -13,6 +14,7 @@
         rel="stylesheet" type="text/css" media="all" />
   <link href="${request.application_url}/print.css"
         rel="stylesheet" type="text/css" media="print" />
+
   <tal:public repeat="res css">
     <link href="${res}"
           rel="stylesheet" type="text/css" media="all" />

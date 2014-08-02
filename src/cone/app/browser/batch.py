@@ -4,6 +4,9 @@ from cone.tile import (
 )
 
 
+BATCH_RANGE = 8
+
+
 class Batch(Tile):
     """An abstract batch tile.
 
@@ -34,7 +37,7 @@ class Batch(Tile):
 
     @property
     def batchrange(self):
-        return 10
+        return BATCH_RANGE
 
     @property
     def currentpage(self):

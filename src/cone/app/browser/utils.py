@@ -2,7 +2,11 @@ import re
 import datetime
 import types
 from pyramid.security import authenticated_userid
+from pyramid.i18n import TranslationStringFactory
 from ..utils import app_config
+
+
+_ = TranslationStringFactory('cone.app')
 
 
 def authenticated(request):
@@ -26,7 +30,9 @@ def make_query(**kw):
             param = [str(param)]
         for p in param:
             query.append('%s=%s' % (name, p))
-    return '?%s' % '&'.join(query)
+    query = '&'.join(query)
+    if query:
+        return '?%s' % query
 
 
 def make_url(request, path=None, node=None, resource=None, query=None):
@@ -61,17 +67,17 @@ def choose_name(container, name):
 
 def format_date(dt, long=True):
     if not isinstance(dt, datetime.datetime):
-        return 'unknown'
+        return _('unknown', default='Unknown')
     return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
 
 
-def node_icon_url(request, node):
+def node_icon(request, node):
     if node.properties.icon:
-        return make_url(request, resource=node.properties.icon)
+        return node.properties.icon
     info = node.nodeinfo
     if not info.icon:
-        return make_url(request, resource=app_config().default_node_icon)
-    return make_url(request, resource=info.icon)
+        return app_config().default_node_icon
+    return info.icon
 
 
 def request_property(func):
@@ -93,26 +99,3 @@ def request_property(func):
             return val
     wrapper.__doc__ = func.__doc__
     return property(wrapper)
-
-
-class AppUtil(object):
-    """Instance of this object gets Passed to main template when rendering.
-    """
-
-    def authenticated(self, request):
-        return authenticated(request)
-
-    def nodepath(self, node):
-        return nodepath(node)
-
-    def make_url(self, request, path=None, node=None, resource=None,
-        query=None):
-        if path is None:
-            path = []
-        return make_url(request, path, node, resource, query)
-
-    def make_query(self, **kw):
-        return make_query(**kw)
-
-    def format_date(self, dt, long=True):
-        return format_date(dt, long)

@@ -4,25 +4,27 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <div class="dropdown">
-    <div class="icon">
-      <a href="${context.nodeurl}/adding"
-         class="add16_16"
-         title="Add Item"
-         i18n:attributes="title add_item">&nbsp;</a>
-    </div>
-    <ul class="dropdown_items" style="display:none;">
+  <li class="dropdown">
+
+    <a href="#"
+       class="dropdown-toggle"
+       data-toggle="dropdown">
+      <span i18n:translate="add">Add</span>
+      <span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="addmenu">
       <li tal:repeat="item context.items">
-        <img src="${item.icon}" alt="..." />
         <a href="${item.url}"
            ajax:bind="click"
            ajax:target="${item.target}"
-           ajax:action="add:#content:inner"
-           tal:content="item.title">
-          Item title
+           ajax:action="add:#content:inner">
+          <span class="${item.icon}"></span>
+          <tal:title replace="item.title" />
         </a>
       </li>
     </ul>
-  </div>
+
+  </li>
 
 </tal:block>

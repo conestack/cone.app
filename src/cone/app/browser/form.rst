@@ -24,7 +24,7 @@ responsible to create the yafowil form on ``self.form``::
     >>> from cone.app.browser.utils import make_url
     >>> from cone.app.browser.ajax import AjaxAction
     >>> from webob.exc import HTTPFound
-    
+
     >>> @tile('subscriptionform')
     ... class SubscriptionForm(Form):
     ...     _ajax = False # test flag
@@ -93,20 +93,20 @@ Set show to True::
     >>> SubscriptionForm._show = True
 
 Render form. no action is triggered and no input is given::
-    
+
     >>> rendered = render_tile(model, request, 'subscriptionform')
     >>> expected = 'action="http://example.com/dummymodel"'
     >>> rendered.find(expected) != -1
     True
-    
+
     >>> expected = 'id="form-subscriptionform"'
     >>> rendered.find(expected) != -1
     True
-    
+
     >>> expected = 'name="subscriptionform.email"'
     >>> rendered.find(expected) != -1
     True
-    
+
     >>> expected = 'name="action.subscriptionform.subscribe"'
     >>> rendered.find(expected) != -1
     True
@@ -126,7 +126,7 @@ Trigger subscribe action and set valid email value. Now the action handler and
 next handler are triggered::
 
     >>> request.params['subscriptionform.email'] = 'john.doe@example.com'
-    
+
     >>> rendered = render_tile(model, request, 'subscriptionform')
     subscribe on "dummymodel"
 
@@ -135,7 +135,7 @@ request::
 
     >>> request.environ['redirect']
     <HTTPFound at ... 302 Found>
-    
+
     >>> del request.environ['redirect']
 
 Even if we commit as ajax form, it is treaten as normal form since ajax flag
@@ -144,10 +144,10 @@ is set to False (defaults to True)::
     >>> request.params['ajax'] = '1'
     >>> rendered = render_tile(model, request, 'subscriptionform')
     subscribe on "dummymodel"
-    
+
     >>> request.environ['redirect']
     <HTTPFound at ... 302 Found>
-    
+
     >>> del request.environ['redirect']
     >>> del request.params['ajax']
 
@@ -157,31 +157,30 @@ HTTPFound instance::
     >>> SubscriptionForm._ajax = True
     >>> rendered = render_tile(model, request, 'subscriptionform')
     subscribe on "dummymodel"
-    
+
     >>> request.environ['redirect']
     <HTTPFound at ... 302 Found>
 
 Submit with ajax flag::
-    
+
     >>> request.params['ajax'] = '1'
     >>> rendered = render_tile(model, request, 'subscriptionform')
     subscribe on "dummymodel"
-    
+
     >>> request.environ['cone.app.continuation']
     [<cone.app.browser.ajax.AjaxAction object at ...>]
 
 Same form as above using ``yafowil.yaml``::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from cone.app.browser.form import YAMLForm
-    
+
     >>> @tile('yamlsubscriptionform')
+    ... @plumbing(YAMLForm)
     ... class YAMLSubscriptionForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = YAMLForm
     ...     action_resource = 'yamlsubscriptionform'
     ...     form_template = 'cone.app.testing:dummy_form.yaml'
-    
+
     >>> request = layer.new_request()
     >>> from cone.tile import render_tile
     >>> res = render_tile(model, request, 'yamlsubscriptionform')
@@ -198,7 +197,7 @@ backward compatibility::
     ...     action_resource = 'yamlsubscriptionform2'
     ...     form_template = None
     ...     form_template_path = 'cone.app.testing:dummy_form.yaml'
-    
+
     >>> res = render_tile(model, request, 'yamlsubscriptionform2')
     >>> expected = \
     ...     'action="http://example.com/dummymodel/yamlsubscriptionform2"'
@@ -209,9 +208,8 @@ ProtectedAttributesForm plumbing behavior::
 
     >>> from cone.app.browser.form import ProtectedAttributesForm
     >>> @tile('protectedattributesform')
+    ... @plumbing(ProtectedAttributesForm)
     ... class ProtectedAttributesForm(Form):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = ProtectedAttributesForm
     ...     
     ...     attribute_permissions = {
     ...         'protectedfield': ('manage', 'edit')
@@ -230,13 +228,13 @@ ProtectedAttributesForm plumbing behavior::
     ...             mode=self.mode_for('protectedfield')
     ...         )
     ...         self.form = form
-    
+
     >>> from pyramid.security import has_permission
     >>> layer.login('viewer')
     >>> request = layer.new_request()
     >>> has_permission('edit', model, request)
     <ACLDenied ...
-    
+
     >>> render_tile(model, request, 'protectedattributesform')
     u'<form 
     action="http://example.com/dummymodel" 
@@ -245,27 +243,27 @@ ProtectedAttributesForm plumbing behavior::
     id="form-protectedattributesform" 
     method="post" 
     novalidate="novalidate"></form>'
-    
+
     >>> layer.login('editor')
     >>> request = layer.new_request()
     >>> has_permission('edit', model, request)
     <ACLAllowed ...
-    
+
     >>> render_tile(model, request, 'protectedattributesform')
     u'<form ...<div class="display-text" 
     id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>'
-    
+
     >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> has_permission('manage', model, request)
     <ACLAllowed ...
-    
+
     >>> render_tile(model, request, 'protectedattributesform')
     u'<form ...<input class="text" 
     id="input-protectedattributesform-protectedfield" 
     name="protectedattributesform.protectedfield" 
     type="text" value="Protectedfield" /></div></form>'
-    
+
     >>> layer.logout()
 
 Provide another form tile for testing remaining aspects of ``Form`` class::
@@ -301,17 +299,17 @@ Provide another form tile for testing remaining aspects of ``Form`` class::
     ...             return [AjaxAction(url, 'content', 'inner', '#content')]
     ...         # return anything else to be rendered
     ...         return '<div>foo</div>'
-    
+
     >>> layer.login('max')
     >>> request = layer.new_request()
     >>> request.params['action.otherform.save'] = '1'
     >>> render_tile(model, request, 'otherform')
     '<div>foo</div>'
-    
+
     >>> request.params['ajax'] = '1'
     >>> render_tile(model, request, 'otherform')
     u''
-    
+
     >>> request.environ['cone.app.continuation']
     [<cone.app.browser.ajax.AjaxAction object at ...>]
 

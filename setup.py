@@ -1,10 +1,15 @@
-from setuptools import setup, find_packages
-import sys, os
+import os
+from setuptools import (
+    setup,
+    find_packages,
+)
 
-version = '0.9.6.dev0'
+
+version = '1.0.dev0'
 shortdesc = 'Web application stub'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
+
 
 setup(name='cone.app',
       version=version,
@@ -27,8 +32,6 @@ setup(name='cone.app',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Babel',
-          'lingua',
           'Chameleon',
           'node',
           'node.ext.ugm',
@@ -39,9 +42,10 @@ setup(name='cone.app',
           'yafowil',
           'yafowil.yaml',
           'yafowil.webob',
+          'yafowil.bootstrap',
           'repoze.workflow',
       ],
-      extras_require = dict(
+      extras_require=dict(
           lxml=[
               'lxml',
           ],
@@ -61,12 +65,6 @@ setup(name='cone.app',
           'unittest2',
       ],
       test_suite = "cone.app.tests.test_app.test_suite",
-      message_extractors={
-          '.': [
-              ('**.py', 'lingua_python', None),
-              ('**.pt', 'lingua_xml', None),
-          ]
-      },
       entry_points="""\
       [paste.app_factory]
       main = cone.app:main

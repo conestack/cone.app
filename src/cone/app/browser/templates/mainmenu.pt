@@ -1,27 +1,35 @@
 <tal:mainmenu xmlns:tal="http://xml.zope.org/namespaces/tal"
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
+
   <ul id="mainmenu"
-      class="contextsensitiv"
+      class="nav navbar-nav contextsensitiv"
       ajax:bind="contextchanged"
-      ajax:action="mainmenu:#mainmenu:replace">
+      ajax:action="mainmenu:#mainmenu:replace"
+      tal:define="layout model.layout">
+
     <tal:item repeat="item context.menuitems">
-      <li tal:attributes="class 'node-%s' % item['id']">
-        <a href=""
+
+      <li tal:define="css item['selected'] and 'active' or '';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="${item['url']}"
            ajax:bind="click"
-           ajax:target="${item['url']}"
-           ajax:event="contextchanged:.contextsensitiv
-                       contextchanged:#content"
-           tal:define="css item['first'] and 'first' or '';
-                       css item['selected']
-                           and ' '.join([css, 'current_page_item'])
-                           or css;
-                       css ' '.join([css, 'mainmenulink']);"
-           tal:attributes="class css;
-                           href item['url'];
-                           title item['description'];"
-           tal:content="item['title'] | string:'&nbsp;'">Title</a>
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           tal:attributes="title item['description'];"
+          ><span class="${item['icon']|nothing}"></span>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
+
       </li>
+
     </tal:item>
+
+    <tal:personaltools
+      condition="layout.personaltools"
+      replace="structure tile('personaltools')" />
+
   </ul>
+
 </tal:mainmenu>

@@ -1,19 +1,15 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-           i18n:domain="cone.app"
            omit-tag="True">
 
   <div class="referencebrowser">
-  
-    <h3 i18n:translate="add_reference">Add Reference</h3>
-  
+
     <div id="referencebrowser_pathbar" class="pathbar">
       <tal:mainmenu replace="structure tile('referencebrowser_pathbar')" />
     </div>
-    
+
     <tal:referencelisting replace="structure tile('referencelisting')" />
-  
+
   </div>
 
 </tal:block>

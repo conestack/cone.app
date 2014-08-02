@@ -1,4 +1,4 @@
-from plumber import plumber
+from plumber import plumbing
 from node.behaviors import (
     Adopt,
     Nodespaces,
@@ -30,20 +30,15 @@ from ..security import (
 )
 
 
+@plumbing(WorkflowState, WorkflowACL)
 class WorkflowNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = WorkflowState, WorkflowACL
+    workflow_name = u'dummy'
+    workflow_tsf = None
 
     @property
     def properties(self):
         props = Properties()
         props.in_navtree = True
-        props.wf_name = u'dummy'
-        # XXX: check in repoze.workflow the intended way for naming
-        #      transitions
-        props.wf_transition_names = {
-            'initial_2_final': 'Finalize',
-        }
         return props
 
     def __call__(self):
@@ -51,12 +46,8 @@ class WorkflowNode(BaseNode):
 
 
 class InexistentWorkflowNode(WorkflowNode):
-
-    @property
-    def properties(self):
-        props = super(InexistentWorkflowNode, self).properties
-        props.wf_name = u'inexistent'
-        return props
+    workflow_name = u'inexistent'
+    workflow_tsf = None
 
 
 class StateACLWorkflowNode(WorkflowNode):
@@ -73,18 +64,16 @@ class StateACLWorkflowNode(WorkflowNode):
     }
 
 
+@plumbing(
+    PrincipalACL,
+    AppNode,
+    Adopt,
+    Nodespaces,
+    Attributes,
+    DefaultInit,
+    Nodify,
+    OdictStorage)
 class SharingNode(object):
-    __metaclass__ = plumber
-    __plumbing__ = (
-        PrincipalACL,
-        AppNode,
-        Adopt,
-        Nodespaces,
-        Attributes,
-        DefaultInit,
-        Nodify,
-        OdictStorage,
-    )
 
     @property
     def __acl__(self):
@@ -95,9 +84,8 @@ class SharingNode(object):
         return dict()
 
 
+@plumbing(CopySupport)
 class CopySupportNode(BaseNode):
-    __metaclass__ = plumber
-    __plumbing__ = CopySupport
 
     def __call__(self):
         print 'Called: %s' % self.name

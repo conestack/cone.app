@@ -1,4 +1,3 @@
-from zope.deprecation import deprecated
 from plumber import (
     Behavior,
     default,
@@ -28,7 +27,6 @@ from ..utils import app_config
 from . import render_main_template
 from .actions import ActionContext
 from .ajax import (
-    AjaxAction,
     AjaxEvent,
     AjaxOverlay,
     ajax_continue,
@@ -36,7 +34,6 @@ from .ajax import (
     ajax_form_fiddle,
     render_ajax_form,
 )
-from .layout import ProtectedContentTile
 from .utils import (
     make_url,
     make_query,
@@ -44,6 +41,10 @@ from .utils import (
 
 _ = TranslationStringFactory('cone.app')
 
+
+###############################################################################
+# general
+###############################################################################
 
 def is_ajax(request):
     return bool(request.params.get('ajax'))
@@ -59,15 +60,25 @@ def render_form(model, request, tilename):
     XXX: move to cone.app.browser.form
     """
     if is_ajax(request):
-        # XXX: ActionContext centralized
-        action_context = ActionContext(model, request, tilename)
-        request.environ['action_context'] = action_context
+        ActionContext(model, request, tilename)
         return render_ajax_form(model, request, tilename)
-    return render_main_template(model, request, contenttilename=tilename)
+    return render_main_template(model, request, contenttile=tilename)
 
+
+class _FormRenderingTile(Tile):
+    form_tile_name = ''
+
+    def render(self):
+        return render_tile(self.model, self.request, self.form_tile_name)
+
+
+###############################################################################
+# form continuation control
+###############################################################################
 
 class CameFromNext(Behavior):
-    """Behavior for form tiles considering 'came_from' parameter on request.
+    """Form behavior for form tiles considering 'came_from' parameter on
+    request for continuation purposes.
     """
 
     @plumb
@@ -96,77 +107,37 @@ class CameFromNext(Behavior):
         else:
             url = make_url(request.request, node=self.model)
         if self.ajax_request:
-            return [
-                AjaxAction(url, 'content', 'inner', '#content'),
-                AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-            ]
+            return [AjaxEvent(url, 'contextchanged', '#layout')]
         return HTTPFound(location=url)
 
 
-@view_config('add', permission='add')
-def add(model, request):
-    """Add view.
-    """
-    return render_form(model, request, 'add')
+###############################################################################
+# form heading
+###############################################################################
 
+class FormHeading(Behavior):
 
-def default_addmodel_factory(parent, nodeinfo):
-    """Default addmodel factory.
-
-    The addmodel factory is responsible to create a model suitable for
-    rendering addforms refering to node info.
-
-    parent
-        The parent in which the new item should be added
-    nodeinfo
-        The nodeinfo instance
-    """
-    if AdapterNode in nodeinfo.node.__bases__:
-        addmodel = nodeinfo.node(BaseNode(), None, None)
-    else:
-        addmodel = nodeinfo.node()
-    addmodel.__parent__ = parent
-    return addmodel
-
-
-@tile('add', permission='add')
-class AddTile(ProtectedContentTile):
-    """The add tile is responsible to render add forms depending on given
-    factory name. Factory information is fetched from NodeInfo implementation
-    registered by factory name.
-    """
-    form_tile_name = 'addform'
-
-    def render(self):
-        nodeinfo = self.info
-        if not nodeinfo:
-            return _('unknown_factory', 'Unknown factory')
-        factory = nodeinfo.factory
-        if not factory:
-            factory = default_addmodel_factory
-        addmodel = factory(self.model, nodeinfo)
-        return render_tile(addmodel, self.request, self.form_tile_name)
-
+    @default
     @property
-    def info(self):
-        factory = self.request.params.get('factory')
-        allowed = self.model.nodeinfo.addables
-        if not factory or not allowed or not factory in allowed:
-            return None
-        return getNodeInfo(factory)
+    def form_heading(self):
+        raise NotImplementedError(u'Abstract ``FormHeading`` does not '
+                                  u'implement ``form_heading``')
 
 
-class ContentForm(Behavior):
+###############################################################################
+# content area related forms
+###############################################################################
+
+class ContentForm(FormHeading):
     """Form behavior rendering to content area.
     """
-
     show_heading = default(True)
     show_contextmenu = default(True)
 
     @default
     @property
     def form_heading(self):
-        return _('content_form_heading', 'Content Form Heading')
+        return _('content_form_heading', default='Content Form Heading')
 
     @default
     @property
@@ -187,113 +158,25 @@ class ContentForm(Behavior):
             path, request=request, model=model, context=self)
 
 
-class AddBehavior(CameFromNext, ContentForm):
-    """form behavior hooking the hidden field 'factory' to self.form on
-    __call__.
-    """
-    action_resource = override('add')
-
-    @default
-    @property
-    def form_heading(self):
-        localizer = get_localizer(self.request)
-        title = localizer.translate(
-            getNodeInfo(self.model.node_info_name).title)
-        heading = localizer.translate(
-            _('add_form_heading',
-              default='Add: ${title}',
-              mapping={'title': title}))
-        return heading
-
-    @default
-    @property
-    def rendered_contextmenu(self):
-        return render_tile(self.model.parent, self.request, 'contextmenu')
-
-    @plumb
-    def prepare(_next, self):
-        """Hook after prepare and set 'factory' as proxy field to ``self.form``
-        """
-        _next(self)
-        self.form['factory'] = factory(
-            'proxy',
-            value=self.request.params.get('factory'),
-        )
-
-
-AddPart = AddBehavior  # B/C
-deprecated('AddPart', """
-``cone.app.browser.authoring.AddPart`` is deprecated as of cone.app 0.9.4 and
-will be removed in cone.app 1.0. Use ``cone.app.browser.authoring.AddBehavior``
-instead.""")
-
-
-@view_config('edit', permission='edit')
-def edit(model, request):
-    """Edit view.
-    """
-    return render_form(model, request, 'edit')
-
-
-@tile('edit', permission='edit')
-class EditTile(ProtectedContentTile):
-    """The edit tile is responsible to render edit forms on given model.
-    """
-    form_tile_name = 'editform'
-
-    def render(self):
-        return render_tile(self.model, self.request, self.form_tile_name)
-
-
-class EditBehavior(CameFromNext, ContentForm):
-    """form behavior hooking the hidden field 'came_from' to self.form on
-    __call__.
-    """
-    action_resource = override('edit')
-
-    @default
-    @property
-    def form_heading(self):
-        info = getNodeInfo(self.model.node_info_name)
-        if info is None:
-            return _('edit', 'Edit')
-        localizer = get_localizer(self.request)
-        heading = localizer.translate(
-            _('edit_form_heading',
-              default='Edit: ${title}',
-              mapping={'title': localizer.translate(_(info.title))}))
-        return heading
-
-
-EditPart = EditBehavior  # B/C
-deprecated('EditPart', """
-``cone.app.browser.authoring.EditPart`` is deprecated as of cone.app 0.9.4 and
-will be removed in cone.app 1.0. Use
-``cone.app.browser.authoring.EditBehavior`` instead.""")
-
+###############################################################################
+# overlay forms
+###############################################################################
 
 @view_config('overlayform', permission='view')
 def overlayform(model, request):
-    """Overlay form.
-    """
-    return render_form(model, request, 'overlayform')
+    return render_form(model, request, 'overlayformtile')
 
 
-@tile('overlayform', permission='view')
-class OverlayFormTile(ProtectedContentTile):
-    """The overlayform tile is responsible to render forms on given model.
-    """
-    form_tile_name = 'overlayeditform'
-
-    def render(self):
-        return render_tile(self.model, self.request, self.form_tile_name)
+@tile('overlayformtile', permission='view')
+class OverlayFormTile(_FormRenderingTile):
+    form_tile_name = 'overlayform'
 
 
-class OverlayBehavior(Behavior):
+class OverlayForm(Behavior):
     """Form behavior rendering to overlay.
     """
     action_resource = override('overlayform')
-    overlay_selector = override('#ajax-form')
+    overlay_selector = override('#ajax-overlay')
     overlay_content_selector = override('.overlay_content')
 
     @plumb
@@ -308,50 +191,32 @@ class OverlayBehavior(Behavior):
     def next(self, request):
         return [AjaxOverlay(selector=self.overlay_selector, close=True)]
 
-
-OverlayPart = OverlayBehavior  # B/C
-deprecated('OverlayPart', """
-``cone.app.browser.authoring.OverlayPart`` is deprecated as of cone.app 0.9.4
-and will be removed in cone.app 1.0. Use
-``cone.app.browser.authoring.OverlayBehavior`` instead.""")
+# B/C
+# deprecated: will be removed in cone.app 1.1
+OverlayBehavior = OverlayForm
 
 
-@tile('delete', permission="delete")
-class DeleteAction(Tile):
+###############################################################################
+# adding
+###############################################################################
 
-    def continuation(self, url, content_tile):
-        return [
-            AjaxAction(url, content_tile, 'inner', '#content'),
-            AjaxEvent(url, 'contextchanged', '.contextsensitiv'),
-        ]
+def default_addmodel_factory(parent, nodeinfo):
+    """Default addmodel factory.
 
-    def render(self):
-        model = self.model
-        title = model.metadata.get('title', model.name)
-        if not model.properties.action_delete:
-            ts = _('object_not_deletable',
-                   default='Object "${title}" not deletable',
-                   mapping={'title': title})
-            localizer = get_localizer(self.request)
-            message = localizer.translate(ts)
-            ajax_message(self.request, message, 'error')
-            return u''
-        content_tile = model.properties.action_delete_tile
-        if not content_tile:
-            content_tile = 'content'
-        parent = model.parent
-        del parent[model.name]
-        if hasattr(parent, '__call__'):
-            parent()
-        url = make_url(self.request, node=parent)
-        ajax_continue(self.request, self.continuation(url, content_tile))
-        ts = _('deleted_object',
-               default='Deleted: ${title}',
-               mapping={'title': title})
-        localizer = get_localizer(self.request)
-        message = localizer.translate(ts)
-        ajax_message(self.request, message, 'info')
-        return u''
+    The addmodel factory is responsible to create a model suitable for
+    rendering addforms refering to node info.
+
+    parent
+        The parent in which the new item should be added
+    nodeinfo
+        The nodeinfo instance
+    """
+    if AdapterNode in nodeinfo.node.__bases__:
+        addmodel = nodeinfo.node(BaseNode(), None, None)
+    else:
+        addmodel = nodeinfo.node()
+    addmodel.__parent__ = parent
+    return addmodel
 
 
 @tile('add_dropdown', 'templates/add_dropdown.pt',
@@ -379,6 +244,212 @@ class AddDropdown(Tile):
             icon = info.icon
             if not icon:
                 icon = app_config().default_node_icon
-            props.icon = make_url(self.request, resource=icon)
+            props.icon = icon
             ret.append(props)
         return ret
+
+
+@view_config('add', permission='add')
+def add(model, request):
+    return render_form(model, request, 'add')
+
+
+@tile('add', permission='add')
+class AddTile(_FormRenderingTile):
+    """The add tile is responsible to render add forms depending on given
+    factory name. Factory information is fetched from NodeInfo implementation
+    registered by factory name.
+    """
+    form_tile_name = 'addform'
+
+    def render(self):
+        nodeinfo = self.info
+        if not nodeinfo:
+            return _('unknown_factory', default='Unknown factory')
+        factory = nodeinfo.factory
+        if not factory:
+            factory = default_addmodel_factory
+        addmodel = factory(self.model, nodeinfo)
+        return render_tile(addmodel, self.request, self.form_tile_name)
+
+    @property
+    def info(self):
+        factory = self.request.params.get('factory')
+        allowed = self.model.nodeinfo.addables
+        if not factory or not allowed or not factory in allowed:
+            return None
+        return getNodeInfo(factory)
+
+
+class AddFactoryProxy(Behavior):
+    """Form behavior for add forms hooking the hidden field 'factory' to
+    request parameters.
+    """
+
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set 'factory' as proxy field to form.
+        """
+        _next(self)
+        self.form['factory'] = factory(
+            'proxy',
+            value=self.request.params.get('factory'),
+        )
+
+
+class AddFormHeading(FormHeading):
+
+    @default
+    @property
+    def form_heading(self):
+        localizer = get_localizer(self.request)
+        title = localizer.translate(
+            getNodeInfo(self.model.node_info_name).title)
+        heading = localizer.translate(
+            _('add_form_heading',
+              default='Add: ${title}',
+              mapping={'title': title}))
+        return heading
+
+
+class ContentAddForm(AddFactoryProxy,
+                     AddFormHeading,
+                     ContentForm,
+                     CameFromNext):
+    """Form behavior rendering add form to content area.
+    """
+    action_resource = override('add')
+
+    @default
+    @property
+    def rendered_contextmenu(self):
+        return render_tile(self.model.parent, self.request, 'contextmenu')
+
+# B/C
+# deprecated: will be removed in cone.app 1.1
+AddBehavior = ContentAddForm
+
+
+###############################################################################
+# overlay adding
+###############################################################################
+
+@view_config('overlayadd', permission='add')
+def overlayadd(model, request):
+    return render_form(model, request, 'overlayadd')
+
+
+@tile('overlayadd', permission='add')
+class OverlayAddTile(AddTile):
+    form_tile_name = 'overlayaddform'
+
+
+class OverlayAddForm(OverlayForm,
+                     AddFactoryProxy,
+                     AddFormHeading):
+    """Add form behavior rendering to overlay.
+    """
+    action_resource = override('overlayadd')
+
+
+###############################################################################
+# editing
+###############################################################################
+
+@view_config('edit', permission='edit')
+def edit(model, request):
+    return render_form(model, request, 'edit')
+
+
+@tile('edit', permission='edit')
+class EditTile(_FormRenderingTile):
+    form_tile_name = 'editform'
+
+
+class EditFormHeading(FormHeading):
+
+    @default
+    @property
+    def form_heading(self):
+        info = getNodeInfo(self.model.node_info_name)
+        if info is None:
+            return _('edit', default='Edit')
+        localizer = get_localizer(self.request)
+        heading = localizer.translate(
+            _('edit_form_heading',
+              default='Edit: ${title}',
+              mapping={'title': localizer.translate(_(info.title))}))
+        return heading
+
+
+class ContentEditForm(EditFormHeading,
+                      ContentForm,
+                      CameFromNext):
+    """Form behavior rendering edit form to content area.
+    """
+    action_resource = override('edit')
+
+# B/C
+# deprecated: will be removed in cone.app 1.1
+EditBehavior = ContentEditForm
+
+
+###############################################################################
+# overlay editing
+###############################################################################
+
+@view_config('overlayedit', permission='edit')
+def overlayform(model, request):
+    return render_form(model, request, 'overlayedit')
+
+
+@tile('overlayedit', permission='edit')
+class OverlayFormTile(_FormRenderingTile):
+    form_tile_name = 'overlayeditform'
+
+
+class OverlayEditForm(OverlayForm,
+                      EditFormHeading):
+    """Edit form behavior rendering to overlay.
+    """
+    action_resource = override('overlayedit')
+
+
+###############################################################################
+# deleting
+###############################################################################
+
+@tile('delete', permission="delete")
+class DeleteAction(Tile):
+
+    def continuation(self, url):
+        return [AjaxEvent(url, 'contextchanged', '#layout')]
+
+    def render(self):
+        model = self.model
+        title = model.metadata.get('title', model.name)
+        if not model.properties.action_delete:
+            ts = _('object_not_deletable',
+                   default='Object "${title}" not deletable',
+                   mapping={'title': title})
+            localizer = get_localizer(self.request)
+            message = localizer.translate(ts)
+            ajax_message(self.request, message, 'error')
+            return u''
+        content_tile = model.properties.action_delete_tile
+        if not content_tile:
+            content_tile = 'content'
+        parent = model.parent
+        del parent[model.name]
+        if hasattr(parent, '__call__'):
+            parent()
+        query = make_query(contenttile=content_tile)
+        url = make_url(self.request, node=parent, query=query)
+        ajax_continue(self.request, self.continuation(url))
+        ts = _('deleted_object',
+               default='Deleted: ${title}',
+               mapping={'title': title})
+        localizer = get_localizer(self.request)
+        message = localizer.translate(ts)
+        ajax_message(self.request, message, 'info')
+        return u''

@@ -11,9 +11,10 @@ from cone.tile import (
 )
 from .actions import ActionContext
 from .exception import format_traceback
+from ..interfaces import ILiveSearch
 
 
-registerTile('bdajax', 'bdajax:bdajax.pt', permission='login')
+registerTile('bdajax', 'bdajax:bdajax_bs3.pt', permission='login')
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
@@ -26,9 +27,9 @@ def ajax_tile(model, request):
       for continuation definitions.
     """
     try:
-        name = request.params.get('bdajax.action')
-        action_context = ActionContext(model, request, name)
-        rendered = render_tile(model, request, action_context.scope)
+        name = request.params['bdajax.action']
+        ActionContext(model, request, name)
+        rendered = render_tile(model, request, name)
         continuation = request.environ.get('cone.app.continuation')
         if continuation:
             continuation = AjaxContinue(continuation).definitions
@@ -81,6 +82,15 @@ def ajax_status_message(request, payload):
     definitions.
     """
     ajax_continue(request, AjaxMessage(payload, None, '#status_message'))
+
+
+class AjaxPath(object):
+    """Ajax path configuration. Used to define continuation path for
+    client side.
+    """
+
+    def __init__(self, path):
+        self.path = path
 
 
 class AjaxAction(object):
@@ -147,6 +157,11 @@ class AjaxContinue(object):
             return
         continuation = list()
         for definition in self.continuation:
+            if isinstance(definition, AjaxPath):
+                continuation.append({
+                    'type': 'path',
+                    'path': definition.path,
+                })
             if isinstance(definition, AjaxAction):
                 continuation.append({
                     'type': 'action',
@@ -273,32 +288,9 @@ def render_ajax_form(model, request, name):
         return Response(rendered)
 
 
-def dummy_livesearch_callback(model, request):
-    """Dummy callback for Livesearch. Set as default.
-
-    We receive the search term at ``request.params['term']``.
-
-    Livesearch expects a list of dicts with keys:
-        ``label`` - Label of found item
-        ``value`` - The value re-inserted in input. This is normally ``term``
-        ``target`` - The target URL for rendering the content tile.
-    """
-    term = request.params['term']
-    return [
-        {
-            'label': 'Root',
-            'value': term,
-            'target': request.application_url,
-        },
-    ]
-
-
-# Overwrite this with your own implementation on application startup
-LIVESEARCH_CALLBACK = dummy_livesearch_callback
-
-
 @view_config(name='livesearch', accept='application/json', renderer='json')
 def livesearch(model, request):
-    """Call ``LIVESEARCH_CALLBACK`` and return its results.
-    """
-    return LIVESEARCH_CALLBACK(model, request)
+    adapter = request.registry.queryAdapter(model, ILiveSearch)
+    if not adapter:
+        return list()
+    return adapter.search(request, request.params['term'])

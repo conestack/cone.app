@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax">
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+
   <head>
     <title tal:content="model.root.metadata.title"></title>
 
@@ -14,67 +13,12 @@
 
     <tal:resources replace="structure tile('resources')" />
   </head>
-  <body>
-    <tal:bdajax replace="structure tile('bdajax')" />
-  
-    <div id="wrapper">
-    
-      <div id="header">
-        
-        <h1 id="logo">
-          <a class="logolink"
-             href="${request.application_url}"
-             ajax:bind="click"
-             ajax:target="${request.application_url}"
-             ajax:event="contextchanged:.contextsensitiv
-                         contextchanged:#content"
-             tal:content="model.root.metadata.title">Title</a>
-        </h1>
-        
-        <tal:personaltools
-          condition="layout.personaltools"
-          replace="structure tile('personaltools')" />
-        
-        <tal:livesearch
-          condition="layout.livesearch"
-          replace="structure tile('livesearch')" />
-        
-        <tal:enabled condition="layout.mainmenu">
-          <div id="menu">
-            <tal:mainmenu replace="structure tile('mainmenu')" />
-          </div>
-        </tal:enabled>
-      
-      </div>
-      
-      <tal:enabled condition="layout.pathbar">
-        <div id="pathbar" class="pathbar">
-          <tal:mainmenu replace="structure tile('pathbar')" />
-        </div>
-      </tal:enabled>
 
-      <div id="content_wrapper">
-          
-        <tal:enabled condition="layout.sidebar_left">
-          <div id="sidebar_left">
-            <tal:tiles repeat="tilename layout.sidebar_left">
-              <tal:tile replace="structure tile(tilename)" />
-            </tal:tiles>
-          </div>
-        </tal:enabled>
-        
-        <div id="content"
-             ajax:bind="contextchanged"
-             ajax:action="content:#content:inner">
-          <tal:content replace="structure tile(contenttilename)" />
-        </div>
-          
-        <div style="clear: both;">&nbsp;</div>
-          
-      </div>
-      
-      <tal:footer replace="structure tile('footer')" />
-      
-    </div>
+  <body role="document">
+
+    <tal:bdajax replace="structure tile('bdajax')" />
+
+    <tal:layout replace="structure tile('layout')" />
+
   </body>
 </html>

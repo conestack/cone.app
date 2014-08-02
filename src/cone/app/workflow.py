@@ -19,10 +19,11 @@ from .interfaces import IWorkflowState
 logger = logging.getLogger('cone.workflow')
 
 
-def initialize_workflow(node):
-    wf_name = node.properties.wf_name
-    workflow = get_workflow(node.__class__, wf_name)
-    if workflow:
+def initialize_workflow(node, force=False):
+    workflow = get_workflow(node.__class__, node.workflow_name)
+    if not workflow:
+        return
+    if force or not node.state:
         workflow.initialize(node)
 
 
@@ -41,6 +42,8 @@ class WorkflowState(Behavior):
 
     This implementation persists to self.attrs['state']
     """
+    workflow_tsf = default(None)
+    workflow_name = default(None)
 
     @plumb
     def __init__(_next, self, *args, **kw):
@@ -53,10 +56,9 @@ class WorkflowState(Behavior):
         ``cone.app.interfaces.IWorkflowState``.
         """
         ret = _next(self)
-
         def recursiv_initial_state(node):
             if IWorkflowState.providedBy(node):
-                initialize_workflow(node)
+                initialize_workflow(node, force=True)
                 for child in node.values():
                     recursiv_initial_state(child)
         recursiv_initial_state(ret)

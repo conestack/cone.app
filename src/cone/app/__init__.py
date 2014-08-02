@@ -2,15 +2,21 @@ import os
 import logging
 import model
 import pyramid_zcml
-from zope.deprecation import __show__
+from zope.interface import (
+    Interface,
+    implementer,
+)
+from zope.component import adapter
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.static import static_view
 from zope.component import getGlobalSiteManager
+from .interfaces import ILayout
 from .model import (
     AppRoot,
     AppSettings,
+    Layout,
     Properties,
 )
 from .browser import (
@@ -19,6 +25,7 @@ from .browser import (
 )
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
+
 
 logger = logging.getLogger('cone.app')
 
@@ -32,40 +39,68 @@ cfg.auth = None
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
-cfg.default_node_icon = 'static/images/default_node_icon.png'
+cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
     '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
+    '++resource++bdajax/bdajax_bs3.js',
+    'static/public.js',
 ]
 cfg.js.protected = [
-    'static/cone.app.js',
+    'static/protected.js',
 ]
 
 # CSS Resources
 cfg.css = Properties()
+
+# dev
 cfg.css.public = [
-    '++resource++bdajax/bdajax.css',
-    'static/jqueryui/jquery-ui-1.10.0.custom.css',
+    'static/jqueryui/jquery-ui-1.10.3.custom.css',
+    'static/bootstrap/css/bootstrap.css',
+    'static/bootstrap/css/bootstrap-theme.css',
+    'static/ionicons/css/ionicons.css',
+    'static/typeahead/typeahead.css',
+    '++resource++bdajax/bdajax_bs3.css',
     'static/styles.css',
 ]
+
+# production
+# cfg.css.public = [
+#     'static/jqueryui/jquery-ui-1.10.3.custom.css',
+#     'static/bootstrap/css/bootstrap.min.css',
+#     'static/bootstrap/css/bootstrap-theme.min.css',
+#     'static/ionicons/css/ionicons.css',
+#     '++resource++bdajax/bdajax_bootstrap_3.css',
+#     'static/styles.css',
+# ]
 cfg.css.protected = list()
 
 # JS and CSS Assets to publish merged
 cfg.merged = Properties()
 cfg.merged.js = Properties()
+
+# dev
 cfg.merged.js.public = [
     (static_resources, 'jquery-1.9.1.js'),
-#    (static_resources, 'jquery-1.9.1.min.js'),
     (static_resources, 'jquery.migrate-1.2.1.js'),
-#    (static_resources, 'jquery.migrate-1.2.1.min.js'),
-    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
-]
-cfg.merged.js.protected = [
+    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
+    (static_resources, 'bootstrap/js/bootstrap.js'),
+    (static_resources, 'typeahead/typeahead.bundle.js'),
     (static_resources, 'cookie_functions.js'),
 ]
+
+# production
+# cfg.merged.js.public = [
+#     (static_resources, 'jquery-1.9.1.min.js'),
+#     (static_resources, 'jquery.migrate-1.2.1.min.js'),
+#     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
+#     (static_resources, 'bootstrap/js/bootstrap.min.js'),
+# ]
+
+cfg.merged.js.protected = list()
 
 cfg.merged.css = Properties()
 cfg.merged.css.public = list()
@@ -77,16 +112,25 @@ cfg.merged.print_css.public = [
 ]
 cfg.merged.print_css.protected = list()
 
-# cfg.layout used to enable/disable tiles in main template
-cfg.layout = Properties()
-cfg.layout.livesearch = True
-cfg.layout.personaltools = True
-cfg.layout.mainmenu = True
-cfg.layout.pathbar = True
-cfg.layout.sidebar_left = ['navtree']
-
+# root node
 root = AppRoot()
 root.factories['settings'] = AppSettings
+
+
+@implementer(ILayout)
+@adapter(Interface)
+def default_layout(context):
+    layout = Layout()
+    layout.mainmenu = True
+    layout.mainmenu_fluid = False
+    layout.livesearch = True
+    layout.personaltools = True
+    layout.columns_fluid = False
+    layout.pathbar = True
+    layout.sidebar_left = ['navtree']
+    layout.sidebar_left_grid_width = 3
+    layout.content_grid_width = 9
+    return layout
 
 
 def configure_root(settings):
@@ -141,6 +185,10 @@ def acl_factory(**kwargs):
 cfg.yafowil = Properties()
 cfg.yafowil.js_skip = set()
 cfg.yafowil.css_skip = set()
+
+# ignore bootstrap dependencies delivered by yafowil.bootstrap
+cfg.yafowil.js_skip.add('bootstrap.dependencies')
+cfg.yafowil.css_skip.add('bootstrap.dependencies')
 
 
 def is_remote_resource(resource):
@@ -244,20 +292,17 @@ def main(global_config, **settings):
     config.include(pyramid_zcml)
     config.begin()
 
+    # default layout adapter
+    config.registry.registerAdapter(default_layout)
+
     # add translation
     config.add_translation_dirs('cone.app:locale/')
 
     # static resources
     config.add_view('cone.app.browser.static_resources', name='static')
 
-    # supress deprecation warning during scan phase
-    __show__.off()
-
     # scan browser package
     config.scan('cone.app.browser')
-
-    # re-enable deprecation warning
-    __show__.on()
 
     # load zcml
     config.load_zcml('configure.zcml')

@@ -3,67 +3,89 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
+
   <div id="${context.table_id}"
        class="${context.table_id}batchsensitiv
               ${context.table_id}sortingheadsensitiv
-              pretty_table_wrapper
-              box_shadow"
-       role="grid"
+              panel panel-default"
        ajax:bind="${context.wrapper_binding}"
        ajax:target="${context.nodeurl}"
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
-  
-    <div class="pretty_table_toolbar pretty_table_toolbar_top"
+
+    <div class="panel-heading content-heading"
          tal:condition="context.display_table_header">
-      
-      <label class="pretty_table_title"
-           tal:condition="context.show_title"
-           tal:content="context.table_title">Title</label>
-      
-      <div class="pretty_table_length"
+
+      <h4 class="col-xs-4 pull-left">
+        <span class="label label-primary"
+              tal:condition="context.show_title"
+              tal:content="context.table_title">Title</span>
+      </h4>
+
+      <div class="table_length
+                  pull-right
+                  input-group
+                  input-group-sm
+                  ${context.table_length_size}"
            tal:condition="context.show_slicesize">
-        <label>
-          <span i18n:translate="show">Show</span>
-          <select name="size"
-                  size="1"
-                  ajax:target="${context.slice_target}"
-                  ajax:event="batchclicked:.${context.table_id}batchsensitiv"
-                  aria-controls="${context.table_id}_table">
-            <tal:option repeat="size context.slicesizes">
-              <option value="${size}"
-                      tal:content="size"
-                      tal:define="current context.slicesize == size"
-                      tal:attributes="selected current and 'selected' or None">15</option>
-            </tal:option>
-          </select>
-          <span i18n:translate="entries">entries</span>
-        </label>
+
+        <span i18n:translate="show"
+              class="input-group-addon">Show</span>
+
+        <select name="size"
+                size="1"
+                class="form-control"
+                ajax:target="${context.slice_target}"
+                ajax:event="batchclicked:.${context.table_id}batchsensitiv"
+                aria-controls="${context.table_id}_table">
+
+          <tal:option repeat="size context.slicesizes">
+            <option value="${size}"
+                    tal:content="size"
+                    tal:define="current context.slicesize == size"
+                    tal:attributes="selected current and 'selected' or None">15</option>
+          </tal:option>
+
+        </select>
+
+        <span i18n:translate="entries"
+              class="input-group-addon">entries</span>
+
       </div>
-      
-      <div class="pretty_table_filter"
+
+      <div class="table_filter
+                  pull-right
+                  input-group
+                  input-group-sm
+                  ${context.table_filter_size}"
            tal:condition="context.show_filter">
-        <label>
-          <span i18n:translate="search">Search</span>:
-          <input type="text"
-                 name="term"
-                 ajax:target="${context.filter_target}"
-                 ajax:event="batchclicked:.${context.table_id}batchsensitiv"
-                 aria-controls="${context.table_id}_table"
-                 tal:attributes="value context.filter_term">
-        </label>
+
+        <span i18n:translate="search"
+              class="input-group-addon">Search</span>
+
+        <input type="text"
+               name="term"
+               class="form-control"
+               ajax:target="${context.filter_target}"
+               ajax:event="batchclicked:.${context.table_id}batchsensitiv"
+               aria-controls="${context.table_id}_table"
+               tal:attributes="value context.filter_term">
+
       </div>
-      
-      <div class="pretty_table_additional"
+
+      <div class="table_additional pull-right"
            tal:define="additional context.head_additional"
            tal:condition="additional"
            tal:content="structure additional">
         Additional Header Markup.
       </div>
-      
+
+      <div class="clearfix"></div>
+
     </div>
-  
-    <table class="pretty_table" id="${context.table_id}_table">
-        
+
+    <table class="table table-striped table-condensed"
+           id="${context.table_id}_table">
+
       <thead>
         <tr role="row">
           <tal:th repeat="col_def context.col_defs">
@@ -73,12 +95,12 @@
                 colspan="1"
                 tabindex="0"
                 aria-controls="${context.table_id}_table">
-              
+
               <div tal:content="col_def['title']">
                 Title
               </div>
             </th>
-            
+
             <th tal:condition="col_def['sort_key']"
                 tal:define="defs context.th_defs(col_def['sort_key']);
                             order defs[0] and defs[0] or ''"
@@ -88,11 +110,17 @@
                 colspan="1"
                 tabindex="0"
                 aria-controls="${context.table_id}_table">
-              
+
               <div ajax:bind="click"
                    ajax:target="${defs[1]}"
                    ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv">
-                
+
+                <span tal:define="css order == '' and 'glyphicon glyphicon-stop' or '';
+                                  css order == 'asc' and 'glyphicon glyphicon-chevron-up' or css;
+                                  css order == 'desc' and 'glyphicon glyphicon-chevron-down' or css;
+                                  css 'table_sort %s' % css"
+                      tal:attributes="class css"></span>
+
                 <a href="${defs[1]}"
                    title="${col_def['sort_title']}"
                    ajax:bind="click"
@@ -101,78 +129,79 @@
                    tal:content="col_def['title']">
                     Title
                 </a>
-                <span tal:define="css order == '' and 'ui-icon-carat-2-n-s' or '';
-                                  css order == 'asc' and 'ui-icon-triangle-1-n' or css;
-                                  css order == 'desc' and 'ui-icon-triangle-1-s' or css;
-                                  css 'pretty_table_sort ui-icon %s' % css"
-                      tal:attributes="class css"></span>
+
               </div>
-              
+
             </th>
           </tal:th>
         </tr>
       <thead>
-      
-      <tbody role="alert"
-             aria-live="polite"
-             aria-relevant="all"
-             tal:define="sort_index context.sort_index">
+
+      <tbody tal:define="sort_index context.sort_index">
         <tal:row repeat="row_data context.slice.rows">
-        
-          <tr tal:define="css repeat.row_data.even and 'even' or 'odd';
-                          css ' '.join([css, row_data.selectable and 'selectable' or '']).strip();
+
+          <tr tal:define="css row_data.selectable and 'selectable' or '';
                           css ' '.join([css, row_data.css]).strip()"
-              class="${css}"
+              class="${css|nothing}"
               ajax:target="${row_data.target and row_data.target or None}">
-            
+
             <tal:td repeat="col_def context.col_defs">
-              
+
               <td tal:define="current_index repeat.col_def.index;
                               is_string col_def['content'] == 'string';
                               is_structure col_def['content'] == 'structure';
                               is_datetime col_def['content'] == 'datetime';
                               value row_data[col_def['id']];
-                              value is_datetime and context.format_date(value) or value;"
-                  tal:attributes="class sort_index == current_index and 'sorted_col' or None">
-                
+                              value is_datetime and context.format_date(value) or value;
+                              css sort_index == current_index and col_def['id'] + ' sorted_col' or col_def['id'];"
+                  tal:attributes="class css">
+
                 <div class="col">
-                
+
                   <tal:string condition="is_string or is_datetime">
                     <span tal:replace="value">Value</span>
                   </tal:string>
-                
+
                   <tal:structure condition="is_structure">
                     <span tal:replace="structure value">Value</span>
                   </tal:structure>
-                
+
                 </div>
-              
+
               </td>
-            
+
             </tal:td>
-          
+
           </tr>
         </tal:row>
       </tbody>
     </table> 
-    
-    <div class="pretty_table_toolbar pretty_table_toolbar_bottom"
+
+    <div class="panel-footer table-footer"
          tal:condition="context.display_table_footer">
-      
-      <div class="pretty_table_info"
+
+      <div class="table_info pull-left"
            tal:define="slice context.slice.slice">
         <span i18n:translate="showing">Showing</span>
-        <span tal:replace="slice[0] + 1">1</span>
+        <span tal:content="slice[0] + 1"
+              class="badge">1</span>
         <span i18n:translate="to">to</span>
-        <span tal:replace="slice[1] > context.item_count and context.item_count or slice[1]">10</span>
+        <span tal:content="slice[1] > context.item_count and context.item_count or slice[1]"
+              class="badge">10</span>
         <span i18n:translate="of">of</span>
-        <span tal:replace="context.item_count">35</span>
+        <span tal:content="context.item_count"
+              class="badge">35</span>
         <span i18n:translate="entries">entries</span>
       </div>
-      
-      <tal:batch replace="structure context.batch" />
-      
+
+      <div class="pull-right">
+        <tal:batch replace="structure context.batch" />
+      </div>
+
+      <div class="clearfix"></div>
+
     </div>
-    
+
   </div>
+
 </tal:block>

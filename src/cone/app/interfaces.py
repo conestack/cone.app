@@ -21,6 +21,7 @@ class ISecured(Interface):
 class IApplicationNode(ISecured, INode, IAttributes):
     """Application Node interface.
     """
+    layout = Attribute(u"cone.app.interfaces.ILayout providing object")
     properties = Attribute(u"cone.app.interfaces.IProperties providing object")
     metadata = Attribute(u"cone.app.interfaces.IMetadata implementation")
     nodeinfo = Attribute(u"cone.app.interfaces.INodeInfo providing object")
@@ -64,6 +65,20 @@ class IProperties(IReadMapping):
         """
 
 
+class ILayout(IProperties):
+    """Layout configuration.
+    """
+    mainmenu = Attribute(u"Flag whether to display mainmenu")
+    mainmenu_fluid = Attribute(u"Flag whether mainmenu is fluid")
+    livesearch = Attribute(u"Flag whether to display livesearch")
+    personaltools = Attribute(u"Flag whether to display personaltools")
+    columns_fluid = Attribute(u"Flag whether columns are fluid")
+    pathbar = Attribute(u"Flag whether to display pathbar")
+    sidebar_left = Attribute(u"Tiles which should be rendered in sidebar")
+    sidebar_left_grid_width = Attribute(u"Sidebar grid width")
+    content_grid_width = Attribute(u"Content grid width")
+
+
 class IMetadata(IProperties):
     """Interface for providing metadata for application nodes.
     """
@@ -85,9 +100,12 @@ class INavigationLeaf(ILeaf):
     """
 
 
-class IWorkflowState(INode, IAttributes):
+class IWorkflowState(INode):
     """Workflow support on nodes.
     """
+    workflow_name = Attribute(u'Name of registered workflow.')
+    workflow_tsf = Attribute(u'Translation string factory used to translate '
+                             u'states and transitions')
     state = Attribute(u"Current workflow state.")
 
 
@@ -127,3 +145,17 @@ class IUUIDAsName(IUUIDAware):
     """Exposes ``self.uuid`` as ``self.__name__``. Considers key changes in
     node trees at copy time.
     """
+
+
+class ILiveSearch(Interface):
+    """Livesearch adapter.
+    """
+
+    def search(request, query):
+        """Return search result for query.
+
+        Return value is a list of dicts. Each result dict must contain at least
+        the key ``value`` which contains the display value for the suggestions
+        dropdown. Any other keys are optional, they are accessible in the JS
+        callback when ``typeahead:selected`` gets triggered.
+        """

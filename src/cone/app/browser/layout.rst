@@ -10,7 +10,7 @@ To change the default layout, change the main template::
     >>> import cone.app
     >>> cone.app.cfg.main_template
     '...'
-    
+
     >>> main = 'cone.app.testing:dummy_main.pt'
     >>> cone.app.cfg.main_template = main
 
@@ -28,49 +28,37 @@ Dummy environ::
     >>> request = layer.new_request()
     >>> model = BaseNode()
 
-Render main template. The function accepts an optional ``contenttilename``
+Render main template. The function accepts an optional ``contenttile``
 argument. if omitted, reserved name 'content' is used::
 
     >>> from cone.app.browser import render_main_template
     >>> res = render_main_template(model, request)
     >>> res.body
-    '<...
-    <body>\n    <div>Content</div>\n  
-    </body>\n</html>'
+    '<!DOCTYPE html...<div>Content</div>...</html>'
 
     >>> registerTile('othername', class_=ContentTile, permission='login')
-    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body
-    '<...
-    <body>\n    <div>Content</div>\n  
-    </body>\n</html>'
+    '<!DOCTYPE html...<div>Content</div>...</html>'
 
 Switch back to default main template::
 
     >>> main = 'cone.app.browser:templates/main.pt'
     >>> cone.app.cfg.main_template = main
 
-Reset possible layout changes from plugin for tests::
-
-    >>> cone.app.cfg.layout.livesearch = True
-    >>> cone.app.cfg.layout.personaltools = True
-    >>> cone.app.cfg.layout.mainmenu = True
-    >>> cone.app.cfg.layout.pathbar = True
-    >>> cone.app.cfg.layout.sidebar_left = ['navtree']
-
 Non authenticated users only gets unprotected content tile, no controls like
 navtree, mainmenu, etc::
 
-    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body.find('id="mainmenu"') > -1
     False
-    
+
     >>> res.body.find('id="navtree"') > -1
     False
-    
+
     >>> res.body.find('id="personaltools"') > -1
     False
-    
+
     >>> res.body.find('<div>Content</div>') > -1
     True
 
@@ -81,13 +69,13 @@ Authenticate non privileged::
 
 All tiles protected by 'view' permission are now available to the user::
 
-    >>> res = render_main_template(model, request, contenttilename='othername')
+    >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body.find('id="mainmenu"') > -1
     True
-    
+
     >>> res.body.find('id="navtree"') > -1
     True
-    
+
     >>> res.body.find('id="personaltools"') > -1
     True
 
@@ -104,9 +92,9 @@ Class ``cone.app.browser.layout.ProtectedContentTile`` provides this behavior::
     >>> class ProtectedContent(ProtectedContentTile):
     ...     def render(self):
     ...         return '<div>Content</div>'
-    
+
     >>> class ProtectedModel(BaseNode): pass
-    
+
     >>> registerTile('content',
     ...              interface=ProtectedModel,
     ...              class_=ProtectedContent,
@@ -115,25 +103,28 @@ Class ``cone.app.browser.layout.ProtectedContentTile`` provides this behavior::
 Render protected tile.::
 
     >>> from cone.tile import render_tile
-    
+
     >>> layer.logout()
     >>> request = layer.new_request()
     >>> render_tile(ProtectedModel(), request, 'content')
     u'<form action="http://example.com/login" 
+    class="form-horizontal" 
     enctype="multipart/form-data" id="form-loginform" method="post" 
-    novalidate="novalidate">...
-    
+    novalidate="novalidate">...'
+
     >>> layer.login('max')
     >>> result = render_tile(ProtectedModel(), request, 'content')
     >>> result.find('<div>Content</div>') > -1
     True
-    
+
     >>> layer.logout()
 
 
 Main menu
 ---------
+
 ::
+
     >>> root = BaseNode()
     >>> root['1'] = BaseNode()
     >>> root['2'] = BaseNode()
@@ -145,7 +136,7 @@ Unauthorized::
     >>> res = render_tile(root, request, 'mainmenu')
     >>> res.find('href="http://example.com/1"') > -1
     False
-    
+
     >>> res.find('href="http://example.com/2"') > -1
     False
 
@@ -153,16 +144,22 @@ Authorized::
 
     >>> layer.login('max')
     >>> res = render_tile(root, request, 'mainmenu')
+    >>> res.find('ajax:target="http://example.com/1"') > -1
+    True
+
+    >>> res.find('ajax:target="http://example.com/2"') > -1
+    True
+
     >>> res.find('href="http://example.com/1"') > -1
     True
-    
+
     >>> res.find('href="http://example.com/2"') > -1
     True
 
 Render main menu at child. Child is marked selected::
 
     >>> res = render_tile(root['1'], request, 'mainmenu')
-    >>> res.find('class="first current_page_item mainmenulink"') > -1
+    >>> res.find('<li class="active node-1">') > -1
     True
 
 Render main menu with default child::
@@ -172,16 +169,16 @@ Render main menu with default child::
     >>> model['2'] = BaseNode()
     >>> model.properties.default_child = '2'
     >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('current_page_item mainmenulink">2</a>') > -1
+    >>> res.find('<li class="active node-2">') > -1
     True
 
 Render main menu on child '1' and check if '2' is unselected now::
 
     >>> res = render_tile(model['1'], request, 'mainmenu')
-    >>> res.find('current_page_item mainmenulink">2</a>') > -1
+    >>> res.find('<li class="active node-2">') > -1
     False
-    
-    >>> res.find('current_page_item mainmenulink">1</a>') > -1
+
+    >>> res.find('<li class="active node-1">') > -1
     True
 
 Check rendering of main menu with empty title. This is needed if main menu
@@ -189,37 +186,42 @@ items are supposed to be displayed as icons via CSS::
 
     >>> model.properties.mainmenu_empty_title = True
     >>> res = render_tile(model, request, 'mainmenu')
-    
-    >>> res.find('<li class="node-1">') > -1
-    True
-    
-    >>> res.find('<li class="node-2">') > -1
-    True
-    
-    >>> res.find('mainmenulink" title="1">') > -1
-    True
-    
-    >>> res.find('mainmenulink" title="2">') > -1
-    True
+    >>> res
+    u'...<li class=" node-1">\n\n        
+    <a href="http://example.com/1"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/1"\n           
+    ajax:event="contextchanged:#layout" title="1"\n          
+    ><span class="glyphicon glyphicon-asterisk"></span>\n          
+    <span></span></a>\n\n      
+    </li>\n\n    \n\n      
+    <li class="active node-2">\n\n        
+    <a href="http://example.com/2"\n           
+    ajax:bind="click"\n           
+    ajax:target="http://example.com/2"\n           
+    ajax:event="contextchanged:#layout" title="2"\n          
+    ><span class="glyphicon glyphicon-asterisk"></span>\n          
+    <span></span></a>\n\n      
+    </li>...'
 
 Child nodes which do not grant permission 'view' are skipped::
 
     >>> from cone.app.security import DEFAULT_SETTINGS_ACL
     >>> class InvisibleNode(BaseNode):
     ...     __acl__ =  DEFAULT_SETTINGS_ACL
-    
+
     >>> model['3'] = InvisibleNode()
     >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class="node-3">') > -1
+    >>> res.find('<li class=" node-3">') > -1
     False
-    
+
     >>> layer.login('manager')
     >>> request = layer.current_request
-    
+
     >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class="node-3">') > -1
+    >>> res.find('<li class=" node-3">') > -1
     True
-    
+
     >>> layer.logout()
 
 
@@ -241,14 +243,14 @@ Empty navtree, no items are marked to be displayed::
     >>> res = render_tile(root, request, 'navtree')
     >>> res.find('id="navtree"') != -1
     True
-    
+
     >>> res.find('ajax:bind="contextchanged"') != -1
     True
-    
+
     >>> res.find('ajax:action="navtree:#navtree:replace"') != -1
     True
-    
-    >>> res.find('class="contextsensitiv navtree"') != -1
+
+    >>> res.find('class="contextsensitiv"') != -1
     True
 
 Node's which are in navtree::
@@ -266,29 +268,35 @@ Node's which are in navtree::
 with the navtree tile::
 
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/1"') > -1
+    >>> res.find('ajax:target="http://example.com/1"') > -1
     True
 
 Render navtree on ``root['1']``, must be selected::
 
     >>> res = render_tile(root['1'], request, 'navtree')
-    >>> res.find('class="selected navtreelevel_1">1</a>') > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1"\n         
+    ajax:event="contextchanged:#layout">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
+    </a>...'
 
 Child nodes which do not grant permission 'view' are skipped::
 
     >>> class InvisibleNavNode(BaseNode):
     ...     __acl__ =  DEFAULT_SETTINGS_ACL
-    
+
     >>> root['3'] = InvisibleNavNode()
     >>> root['3'].properties.in_navtree = True
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/3"') > -1
+    >>> res.find('ajax:target="http://example.com/3"') > -1
     False
-    
+
     >>> layer.login('manager')
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/3"') > -1
+    >>> res.find('ajax:target="http://example.com/3"') > -1
     True
 
 Default child behavior of navtree. Default children objects are displayed in 
@@ -296,12 +304,24 @@ navtree.::
 
     >>> root.properties.default_child = '1'
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('class="selected navtreelevel_1">1</a>') > -1
-    True
-    
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1"\n         
+    ajax:event="contextchanged:#layout">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
+    </a>...'
+
     >>> res = render_tile(root['1'], request, 'navtree')
-    >>> res.find('class="selected navtreelevel_1">1</a>') > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1"\n         
+    ajax:event="contextchanged:#layout">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
+    </a>...'
 
 If default child should not be displayed it navtree,
 ``node.properties.hide_if_default`` must be set to 'True'::
@@ -312,13 +332,13 @@ In this case, also children context gets switched. Instead of remaining non
 default children, children of default node are displayed.::
 
     >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('href="http://example.com/1"') > -1
+    >>> res.find('ajax:target="http://example.com/1"') > -1
     False
-    
-    >>> res.find('href="http://example.com/2"') > -1
+
+    >>> res.find('ajax:target="http://example.com/2"') > -1
     False
-    
-    >>> res.find('href="http://example.com/1/11"') > -1
+
+    >>> res.find('ajax:target="http://example.com/1/11"') > -1
     True
 
 Check whether children subrendering works on nodes which have set
@@ -339,29 +359,35 @@ Check whether children subrendering works on nodes which have set
           <class 'cone.app.model.BaseNode'>: b
       <class 'cone.app.model.BaseNode'>: 2
       <class 'InvisibleNavNode'>: 3
-    
+
     >>> res = render_tile(root['1']['11'], request, 'navtree')
-    >>> res.find('href="http://example.com/1/11/a"') > -1
+    >>> res.find('ajax:target="http://example.com/1/11/a"') > -1
     True
-    
-    >>> res.find('href="http://example.com/1/11/b"') > -1
+
+    >>> res.find('ajax:target="http://example.com/1/11/b"') > -1
     True
-    
+
     >>> res = render_tile(root['1']['11']['a'], request, 'navtree')
-    
-    >>> res.find('href="http://example.com/1/11/a/aa"') > -1
+
+    >>> res.find('ajax:target="http://example.com/1/11/a/aa"') > -1
     True
-    
+
     >>> res = render_tile(root['1']['11']['a']['aa'], request, 'navtree')
-    
-    >>> res.find('href="http://example.com/1/11/a/aa"') > -1
+
+    >>> res.find('ajax:target="http://example.com/1/11/a/aa"') > -1
     True
 
 Render navtree on ``root['1']['11']``, check selected::
 
     >>> res = render_tile(root['1']['11'], request, 'navtree')
-    >>> res.find('class="selected navtreelevel_1">11</a>') > -1
-    True
+    >>> res
+    u'...<li class="active navtreelevel_1">\n\n      
+    <a href="http://example.com/1/11"\n         
+    ajax:bind="click"\n         
+    ajax:target="http://example.com/1/11"\n         
+    ajax:event="contextchanged:#layout">\n        
+    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        11\n      
+    </a>...'
 
     >>> layer.logout()
 
@@ -382,10 +408,10 @@ Authorized::
     >>> res = render_tile(root, request, 'personaltools')
     >>> res.find('id="personaltools"') != -1
     True
-    
+
     >>> res.find('href="http://example.com/logout"') != -1
     True
-    
+
     >>> layer.logout()
 
 
@@ -398,62 +424,62 @@ Unauthorized::
     >>> res = render_tile(root, request, 'pathbar')
     >>> res.find('pathbaritem') != -1
     False
-    
+
     >>> layer.login('max')
     >>> res = render_tile(root['1'], request, 'pathbar')
-    >>> res.find('pathbaritem') != -1
+    >>> res.find('id="pathbar"') != -1
     True
-    
+
 Default child behavior of pathbar::
 
     >>> root = BaseNode()
     >>> root['1'] = BaseNode()
     >>> root['2'] = BaseNode()
-    
+
     >>> res = render_tile(root, request, 'pathbar')
     >>> res.find('<strong>Home</strong>') > -1
     True
-    
+
     >>> res = render_tile(root['1'], request, 'pathbar')
     >>> res.find('>Home</a>') > -1
     True
-    
+
     >>> res.find('<strong>1</strong>') > -1
     True
-    
+
     >>> res = render_tile(root['2'], request, 'pathbar')
     >>> res.find('>Home</a>') > -1
     True
-    
+
     >>> res.find('<strong>2</strong>') > -1
     True
-    
+
     >>> root.properties.default_child = '1'
     >>> res = render_tile(root['1'], request, 'pathbar')
     >>> res.find('<strong>Home</strong>') > -1
     True
-    
+
     >>> res.find('<strong>1</strong>') > -1
     False
-    
+
     >>> res = render_tile(root['2'], request, 'pathbar')
     >>> res.find('>Home</a>') > -1
     True
-    
+
     >>> res.find('<strong>2</strong>') > -1
     True
-    
+
     >>> root['1'].properties.default_child = '12'
     >>> root['1']['11'] = BaseNode()
     >>> root['1']['12'] = BaseNode()
     >>> res = render_tile(root['1']['11'], request, 'pathbar')
     >>> res.find('<strong>11</strong>') > -1
     True
-    
+
     >>> res = render_tile(root['1']['12'], request, 'pathbar')
     >>> res.find('<strong>Home</strong>') > -1
     True
-    
+
     >>> layer.logout()
 
 
@@ -468,7 +494,7 @@ Byline renders ``model.metadata.creator``, `model.metadata.created`` and
     >>> root.metadata.created = dt
     >>> root.metadata.modified = dt
     >>> root.metadata.creator = 'max'
-    
+
 Unauthenticated::
 
     >>> request = layer.new_request()
@@ -491,7 +517,7 @@ Authenticated::
         <strong>14.03.2011 00:00</strong>
       </p>
     <BLANKLINE>
-    
+
     >>> layer.logout()
 
 
@@ -499,7 +525,6 @@ Test default root content tile
 ------------------------------
 
 ::
-
     >>> from cone.app.model import AppRoot
     >>> root = AppRoot()
     >>> layer.login('max')
@@ -508,11 +533,11 @@ Test default root content tile
     <div>
         Default Root
     </div>
-    
+
     >>> root.factories['1'] = BaseNode
     >>> root.properties.default_child = '1'
     >>> res = render_tile(root, request, 'content')
     >>> print res
     <div>Content</div>
-    
+
     >>> layer.logout()

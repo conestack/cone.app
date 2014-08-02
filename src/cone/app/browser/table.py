@@ -1,3 +1,4 @@
+import urllib2
 from cone.tile import Tile
 from .batch import Batch
 from .utils import (
@@ -38,6 +39,9 @@ class Table(Tile):
     display_table_header = True
     display_table_footer = True
 
+    table_length_size = 'col-xs-4 col-sm3'
+    table_filter_size = 'col-xs-3'
+
     @property
     def slice(self):
         return TableSlice(self, self.model, self.request)
@@ -76,7 +80,10 @@ class Table(Tile):
 
     @property
     def filter_term(self):
-        return self.request.params.get('term')
+        term = self.request.params.get('term')
+        if term:
+            term = urllib2.unquote(str(term)).decode('utf-8')
+        return term
 
     @property
     def sort_column(self):

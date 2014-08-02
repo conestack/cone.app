@@ -73,22 +73,21 @@ tiles documentation, ``wf_name`` contains the workflow ID, and
 ``wf_transition_names`` contains a mapping "transition ID -> transition Title"
 (needed due to the lack of transition titles in repoze.workflow)::
 
-    >>> from plumber import plumber
+    >>> from plumber import plumbing
     >>> from node.utils import instance_property
-    
+
     >>> from cone.app.model import (
     ...     BaseNode,
     ...     Properties,
     ... )
-    
+
     >>> from cone.app.workflow import (
     ...     WorkflowState,
     ...     WorkflowACL,
     ... )
-    
-    >>> class WorkflowNode(BaseNode):
-    ...     __metaclass__ = plumber
-    ...     __plumbing__ = WorkflowState, WorkflowACL
+
+    >>> @plumbing(WorkflowState, WorkflowACL)
+    ... class WorkflowNode(BaseNode):
     ...     
     ...     @instance_property
     ...     def properties(self):

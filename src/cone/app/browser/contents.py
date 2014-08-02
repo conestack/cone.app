@@ -2,7 +2,11 @@ import datetime
 from node.utils import instance_property
 from pyramid.security import has_permission
 from pyramid.i18n import TranslationStringFactory
-from cone.tile import tile
+from pyramid.view import view_config
+from cone.tile import (
+    tile,
+    registerTile,
+)
 from ..interfaces import (
     ICopySupport,
     IWorkflowState,
@@ -19,24 +23,43 @@ from .actions import (
     ActionEdit,
     ActionDelete,
 )
-from .utils import make_url
+from .utils import (
+    make_url,
+    make_query,
+)
+from . import render_main_template
+
 
 _ = TranslationStringFactory('cone.app')
+
 
 FAR_PAST = datetime.datetime(2000, 1, 1)
 
 
 class ContentsActionView(ActionView):
-    event = 'contextchanged:.contextsensitiv'
+    title = ActionView.text
+    text = None
+    action = None
+    event = 'contextchanged:#layout'
 
 
 class ContentsActionEdit(ActionEdit):
-    event = 'contextchanged:.contextsensitiv'
+    title = ActionEdit.text
+    text = None
+    action = None
+    event = 'contextchanged:#layout'
+
+    @property
+    def target(self):
+        query = make_query(contenttile='edit')
+        return make_url(self.request, node=self.model, query=query)
 
 
 class ContentsActionDelete(ActionDelete):
     """Delete action for contents table.
     """
+    title = ActionDelete.text
+    text = None
 
     @property
     def display(self):
@@ -46,52 +69,49 @@ class ContentsActionDelete(ActionDelete):
 
 
 class ContentsViewLink(ViewLink):
-    """Ciew link for contents table.
+    """View link for contents table.
     """
     css = 'title'
-    event = 'contextchanged:.contextsensitiv'
-
-    @property
-    def action(self):
-        contenttile = 'content'
-        if self.model.properties.default_content_tile:
-            contenttile = self.model.properties.default_content_tile
-        return '%s:#content:inner' % contenttile
+    event = 'contextchanged:#layout'
+    action = None
 
 
-@tile('contents', 'templates/table.pt', permission='view')
+@tile('contents', 'templates/table.pt', permission='list')
 class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'
     col_defs = [{
             'id': 'actions',
-            'title': _('actions', 'Actions'),
+            'title': _('actions', default='Actions'),
             'sort_key': None,
             'sort_title': None,
             'content': 'structure'
         }, {
             'id': 'title',
-            'title': _('title', 'Title'),
+            'title': _('title', default='Title'),
             'sort_key': 'title',
-            'sort_title': _('sort_on_title', 'Sort on title'),
-            'content': 'structure'}, {
+            'sort_title': _('sort_on_title', default='Sort on title'),
+            'content': 'structure'
+        }, {
             'id': 'creator',
-            'title': _('creator', 'Creator'),
+            'title': _('creator', default='Creator'),
             'sort_key': 'creator',
-            'sort_title': _('sort_on_creator', 'Sort on creator'),
+            'sort_title': _('sort_on_creator', default='Sort on creator'),
             'content': 'string'
         }, {
             'id': 'created',
-            'title': _('created', 'Created'),
+            'title': _('created', default='Created'),
             'sort_key': 'created',
-            'sort_title': _('sort_on_created', 'Sort on created'),
+            'sort_title': _('sort_on_created', default='Sort on created'),
             'content': 'datetime'
         }, {
             'id': 'modified',
-            'title': _('modified', 'Modified'),
+            'title': _('modified', default='Modified'),
             'sort_key': 'modified',
-            'sort_title': _('sort_on_modified', 'Sort on modified'),
-            'content': 'datetime'}]
+            'sort_title': _('sort_on_modified', default='Sort on modified'),
+            'content': 'datetime'
+        }
+    ]
     default_sort = 'created'
     default_order = 'desc'
     sort_keys = {
@@ -180,3 +200,13 @@ class ContentsTile(Table):
             if order == 'asc':
                 children.reverse()
         return children
+
+
+registerTile('listing', 'templates/listing.pt', permission='list')
+
+
+@view_config('listing', permission='list')
+def listing(model, request):
+    """Listing view
+    """
+    return render_main_template(model, request, 'listing')

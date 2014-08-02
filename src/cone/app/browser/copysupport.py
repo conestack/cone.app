@@ -51,7 +51,7 @@ class PasteAction(Tile):
         localizer = get_localizer(self.request)
         if not cut and not copy:
             message = localizer.translate(
-                _('nothing_to_paste', 'Nothing to paste'))
+                _('nothing_to_paste', default='Nothing to paste'))
             ajax_message(self.request, message)
             return u''
         urls = copy and copy or cut

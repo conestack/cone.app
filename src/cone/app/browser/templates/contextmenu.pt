@@ -1,19 +1,21 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
-  
-  <div class="contextmenu_wrapper"
+
+  <div id="contextmenu"
+       role="contextmenu"
+       class="navbar navbar-default"
        ajax:bind="contextactionschanged"
-       ajax:action="contextmenu:.contextmenu_wrapper:replace">
-    
-    <div class="contextmenu">
-    
+       ajax:action="contextmenu:#contextmenu:replace">
+
+    <div class="container-fluid">
+
       <tal:toolbars repeat="toolbar context.toolbars">
-        <div tal:replace="structure toolbar(model, request)"></div>
+        <tal:toolbar replace="structure toolbar(model, request)" />
       </tal:toolbars>
-    
+
     </div>
-  
+
   </div>
-  
+
 </tal:block>

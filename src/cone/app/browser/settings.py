@@ -1,4 +1,3 @@
-from zope.deprecation import deprecated
 from plumber import (
     Behavior,
     default,
@@ -21,6 +20,8 @@ from .ajax import (
     AjaxAction,
     ajax_form_fiddle,
 )
+from .exception import format_traceback
+
 
 _ = TranslationStringFactory('cone.app')
 
@@ -33,8 +34,8 @@ def settings_tab_content(model, request):
         rendered = render_tile(model, request, 'content')
     except Exception, e:
         localizer = get_localizer(request)
-        error = localizer.translate(_('error', 'Error'))
-        rendered = '<div class="box">%s: %s</div>' % (error, str(e))
+        error = localizer.translate(_('error', default='Error'))
+        rendered = '<div>%s: %s</div>' % (error, format_traceback())
     return Response('<div class="%s">%s</div>' % (model.name, rendered))
 
 
@@ -69,13 +70,4 @@ class SettingsBehavior(Behavior):
     def next(self, request):
         url = make_url(request.request, node=self.model)
         selector = '.%s' % self.model.name
-        return [
-            AjaxAction(url, 'content', 'inner', selector),
-        ]
-
-
-SettingsPart = SettingsBehavior  # B/C
-deprecated('SettingsPart', """
-``cone.app.browser.settings.SettingsPart`` is deprecated as of cone.app 0.9.4
-and will be removed in cone.app 1.0. Use
-``cone.app.browser.settings.SettingsBehavior`` instead.""")
+        return [AjaxAction(url, 'content', 'inner', selector)]

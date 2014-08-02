@@ -8,27 +8,36 @@ Cone workflow behaviors::
 Test env provides mock node with workflow behaviors configured::
 
     >>> from cone.app.testing.mock import WorkflowNode
-    
+
+Dummy workflow is registered for ``WorkflowNode``::
+
+    >>> get_workflow(WorkflowNode, u'dummy')
+    <repoze.workflow.workflow.Workflow object at ...>
+
     >>> node = WorkflowNode()
     >>> IWorkflowState.providedBy(node)
     True
-    
-    >>> get_workflow(node.__class__, node.properties.wf_name)
-    <repoze.workflow.workflow.Workflow object at ...>
-    
+
+Workflow name is set on node properties for lookup::
+
+    >>> node.workflow_name
+    u'dummy'
+
+Initial workflow state gets set at node creation time if not set yet::
+
     >>> node.state
     u'initial'
-    
-    >>> node.state = 'foo'
+
+    >>> node.state = u'final'
     >>> node.attrs['state']
-    'foo'
-    
+    u'final'
+
     >>> node.attrs['state'] is node.state
     True
-    
+
     >>> initialize_workflow(node)
     >>> node.state
-    u'initial'
+    u'final'
 
 Test copy::
 
@@ -36,17 +45,20 @@ Test copy::
     >>> child = root['child'] = WorkflowNode()
     >>> root.state == child.state == u'initial'
     True
-    
+
     >>> root.state = child.state = u'final'
     >>> root.state == child.state == u'final'
     True
-    
+
+Workflow state gets set to initial state on copied nodes::
+
     >>> copied = root.copy()
-    >>> copied.state == copied['child'].state == 'initial'
+    >>> copied.state == copied['child'].state == u'initial'
     True
 
 Default workflow state ACL::
 
+    >>> node = WorkflowNode()
     >>> node.__acl__
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view']), 
@@ -69,30 +81,30 @@ Test ``state_acls``::
 
     >>> from cone.app.testing.mock import StateACLWorkflowNode
     >>> node = StateACLWorkflowNode()
-    >>> get_workflow(node.__class__, node.properties.wf_name)
+    >>> get_workflow(node.__class__, node.workflow_name)
     <repoze.workflow.workflow.Workflow object at ...>
-    
-    >>> node.properties.wf_name
+
+    >>> node.workflow_name
     u'dummy'
-    
+
     >>> IWorkflowState.providedBy(node)
     True
-    
+
     >>> node.__acl__
     [('Allow', 'role:manager', ['manage', 'edit', 'change_state']), 
     ('Allow', 'system.Everyone', ['login']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-    
+
     >>> layer.login('manager')
-    
+
     >>> request = layer.new_request()
-    >>> wf = get_workflow(node.__class__, node.properties.wf_name)
+    >>> wf = get_workflow(node.__class__, node.workflow_name)
     >>> wf.transition(node, request, u'initial_2_final')
     >>> node.state
     u'final'
-    
+
     >>> layer.logout()
-    
+
     >>> node.__acl__
     [('Allow', 'role:manager', ['view', 'edit', 'change_state']), 
     ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
