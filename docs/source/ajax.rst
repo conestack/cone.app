@@ -130,7 +130,7 @@ Use this part in form tile.::
 
     >>> @tile('someform', interface=ExampleApp, permission='edit')
     ... @plumbing(EditPart, FormFiddle)
-    >>> class SomeForm(Form):
+    ... class SomeForm(Form):
     ...     pass
 
 
