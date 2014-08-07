@@ -23,8 +23,7 @@ from .browser import (
     forbidden_view,
     static_resources,
 )
-from yafowil.base import factory
-from yafowil.utils import get_plugin_names
+from yafowil.resources import YafowilResources as YafowilResourcesBase
 
 
 logger = logging.getLogger('cone.app')
@@ -191,48 +190,41 @@ cfg.yafowil.js_skip.add('bootstrap.dependencies')
 cfg.yafowil.css_skip.add('bootstrap.dependencies')
 
 
-def is_remote_resource(resource):
-    return resource.startswith('http://') \
-        or resource.startswith('https://') \
-        or resource.startswith('//')
+class YafowilResources(YafowilResourcesBase):
 
+    def __init__(self, js_skip=[], css_skip=[], config=None):
+        self.config = config
+        super(YafowilResources, self).__init__(
+            js_skip=js_skip,
+            css_skip=css_skip
+        )
 
-def configure_yafowil_addon_resources(config):
-    import cone.app
-    all_js = list()
-    all_css = list()
-    for plugin_name in get_plugin_names():
-        resources = factory.resources_for(plugin_name)
-        if not resources:
-            continue
-        resources_view = static_view(resources['resourcedir'],
+    def configure_resource_directory(self, plugin_name, resourc_edir):
+        import cone.app
+        resources_view = static_view(resourc_edir,
                                      use_subpath=True)
         view_name = '%s_resources' % plugin_name.replace('.', '_')
         setattr(cone.app, view_name, resources_view)
         view_path = 'cone.app.%s' % view_name
-        resource_name = '++resource++%s' % plugin_name
-        config.add_view(view_path, name=resource_name)
-        for js in resources['js']:
-            if js['group'] in cone.app.cfg.yafowil.js_skip:
-                continue
-            if not is_remote_resource(js['resource']):
-                js['resource'] = resource_name + '/' + js['resource']
-            all_js.append(js)
-        for css in resources['css']:
-            if css['group'] in cone.app.cfg.yafowil.css_skip:
-                continue
-            if not is_remote_resource(css['resource']):
-                css['resource'] = resource_name + '/' + css['resource']
-            all_css.append(css)
-    all_js = sorted(all_js, key=lambda x: x['order'])
-    all_css = sorted(all_css, key=lambda x: x['order'])
-    for js in reversed(all_js):
+        resource_base = '++resource++%s' % plugin_name
+        self.config.add_view(view_path, name=resource_base)
+        return resource_base
+
+
+def configure_yafowil_addon_resources(config):
+    import cone.app
+    resources = YafowilResources(
+        js_skip=cone.app.cfg.yafowil.js_skip,
+        css_skip=cone.app.cfg.yafowil.css_skip,
+        config=config
+    )
+    for js in reversed(resources.js_resources):
         # bdajax needs to be loaded first in order to avoid double binding on
         # document ready
         idx = cone.app.cfg.js.public.index('++resource++bdajax/bdajax.js') + 1
-        cone.app.cfg.js.public.insert(idx, js['resource'])
-    for css in all_css:
-        cone.app.cfg.css.public.insert(0, css['resource'])
+        cone.app.cfg.js.public.insert(idx, js)
+    for css in resources.css_resources:
+        cone.app.cfg.css.public.insert(0, css)
 
 
 def main(global_config, **settings):

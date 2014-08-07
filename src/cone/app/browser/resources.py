@@ -10,8 +10,13 @@ from cone.tile import (
     tile,
     Tile,
 )
-from cone.app import is_remote_resource
 from cone.app.utils import app_config
+
+
+def is_remote_resource(resource):
+    return resource.startswith('http://') \
+        or resource.startswith('https://') \
+        or resource.startswith('//')
 
 
 class MergedAssets(object):
