@@ -201,8 +201,7 @@ class YafowilResources(YafowilResourcesBase):
 
     def configure_resource_directory(self, plugin_name, resourc_edir):
         import cone.app
-        resources_view = static_view(resourc_edir,
-                                     use_subpath=True)
+        resources_view = static_view(resourc_edir, use_subpath=True)
         view_name = '%s_resources' % plugin_name.replace('.', '_')
         setattr(cone.app, view_name, resources_view)
         view_path = 'cone.app.%s' % view_name
