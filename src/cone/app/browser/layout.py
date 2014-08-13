@@ -88,7 +88,11 @@ class ViewSettingsAction(LinkAction):
         settings = self.settings
         if not settings:
             return False
-        return has_permission('view', settings, self.request)
+        if not has_permission('view', settings, self.request):
+            return False
+        if not len(settings):
+            return False
+        return True
 
 
 class LogoutAction(LinkAction):

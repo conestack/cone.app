@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Settings link in personaltools gets skipped if there are no settings nodes
+  registered.
+  [rnix, 2014-08-13]
+
 - Add example ``twisted.cfg`` buildout configuration and ``cone.tac`` twisted
   configuration file for running cone with twisted WSGI.
   [rnix, 2014-08-02]
