@@ -370,7 +370,10 @@ class ProtectedProperties(Properties):
 
 @implementer(ILayout)
 class Layout(Properties):
-    pass
+
+    def __init__(self, model=None):
+        super(Layout, self).__init__()
+        self.model = model
 
 
 @implementer(IMetadata)

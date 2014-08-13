@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Default layout lookup mechanism is done via ZCA adapter. Provide default
+  ``__init__`` function on ``cone.app.model.Layout``.
+  [rnix, 2014-08-13]
+
 - Deprecate ``cone.app.register_plugin``. Use ``cone.app.register_entry``
   instead.
   [rnix, 2014-08-13]
