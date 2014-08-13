@@ -73,6 +73,14 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Deprecate ``cone.app.register_plugin``. Use ``cone.app.register_entry``
+  instead.
+  [rnix, 2014-08-13]
+
+- Deprecate ``cone.app.register_plugin_config``. Use
+  ``cone.app.register_config`` instead.
+  [rnix, 2014-08-13]
+
 - Settings link in personaltools gets skipped if there are no settings nodes
   registered.
   [rnix, 2014-08-13]

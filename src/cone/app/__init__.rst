@@ -46,7 +46,7 @@ Settings is displayed in navtree by default::
     >>> cone.app.register_plugin('dummy', BaseNode)
     Traceback (most recent call last):
       ...
-    ValueError: Plugin with name 'dummy' already registered.
+    ValueError: Entry with name 'dummy' already registered.
 
 ``register_plugin_config``::
 

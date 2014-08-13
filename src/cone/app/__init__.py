@@ -144,18 +144,24 @@ def configure_root(settings):
     root.properties.in_navtree = False
 
 
-def register_plugin_config(key, factory):
+def register_config(key, factory):
     factories = root['settings'].factories
     if key in factories:
         raise ValueError(u"Config with name '%s' already registered." % key)
     factories[key] = factory
 
+# B/C - will be removed as of cone.app 1.1
+register_plugin_config = register_config
 
-def register_plugin(key, factory):
+
+def register_entry(key, factory):
     factories = root.factories
     if key in factories:
-        raise ValueError(u"Plugin with name '%s' already registered." % key)
+        raise ValueError(u"Entry with name '%s' already registered." % key)
     root.factories[key] = factory
+
+# B/C - will be removed as of cone.app 1.1
+register_plugin = register_entry
 
 
 main_hooks = list()
