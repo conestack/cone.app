@@ -8,13 +8,9 @@ from pyramid.security import (
 )
 from pyramid.static import static_view
 from pyramid.view import view_config
-from cone.tile import (
-    render_template_to_response,
-    render_tile,
-    registerTile,
-)
-import cone.app
+from cone.tile import render_template_to_response
 from .actions import ActionContext
+import cone.app
 
 
 static_resources = static_view('static', use_subpath=True)
