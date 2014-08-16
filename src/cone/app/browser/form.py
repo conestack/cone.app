@@ -102,11 +102,11 @@ class Form(Tile):
         """
         if not self.ajax:
             return
-        if self.form.attrs.get('class') \
-          and self.form.attrs['class'].find('ajax') == -1:
-            self.form.attrs['class'] += ' ajax'
+        if self.form.attrs.get('class_add') \
+          and self.form.attrs['class_add'].find('ajax') == -1:
+            self.form.attrs['class_add'] += ' ajax'
         else:
-            self.form.attrs['class'] = 'ajax'
+            self.form.attrs['class_add'] = 'ajax'
 
     @property
     def ajax_request(self):

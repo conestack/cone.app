@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Modify ``class_add`` instead of ``class`` property in
+  ``cone.app.browser.form.Form.prepare_ajax``.
+  [rnix, 2014-08-16]
+
 - Default layout lookup mechanism is done via ZCA adapter. Provide default
   ``__init__`` function on ``cone.app.model.Layout``.
   [rnix, 2014-08-13]
