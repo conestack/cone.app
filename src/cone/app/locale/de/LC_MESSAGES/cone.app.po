@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-30 16:24+0200\n"
+"POT-Creation-Date: 2014-08-18 09:32+0200\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid "role_manager"
 msgstr "Superuser"
 
 #. Default: Settings
-#: src/cone/app/model.py:215 src/cone/app/browser/layout.py:71
+#: src/cone/app/model.py:213 src/cone/app/browser/layout.py:71
 msgid "settings"
 msgstr "Einstellungen"
 
@@ -297,7 +297,7 @@ msgid "object_not_deletable"
 msgstr "Objekt \"${title}\" kann nicht gelöscht werden"
 
 #. Default: Logout
-#: src/cone/app/browser/layout.py:95
+#: src/cone/app/browser/layout.py:99
 msgid "logout"
 msgstr "Abmelden"
 

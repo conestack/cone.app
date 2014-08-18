@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2014-07-30 16:24+0200\n"
+"POT-Creation-Date: 2014-08-18 09:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,7 @@ msgid "role_manager"
 msgstr ""
 
 #. Default: Settings
-#: ./src/cone/app/model.py:215 ./src/cone/app/browser/layout.py:71
+#: ./src/cone/app/model.py:213 ./src/cone/app/browser/layout.py:71
 msgid "settings"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgid "object_not_deletable"
 msgstr ""
 
 #. Default: Logout
-#: ./src/cone/app/browser/layout.py:95
+#: ./src/cone/app/browser/layout.py:99
 msgid "logout"
 msgstr ""
 
