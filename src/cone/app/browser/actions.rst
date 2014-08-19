@@ -464,13 +464,13 @@ ActionAdd
 
     >>> from cone.app.model import (
     ...     NodeInfo,
-    ...     registerNodeInfo,
+    ...     register_node_info,
     ... )
 
     >>> info = NodeInfo()
     >>> info.title = 'Addable'
     >>> info.addables = ['addable']
-    >>> registerNodeInfo('addable', info)
+    >>> register_node_info('addable', info)
 
     >>> from cone.app.browser.actions import ActionAdd
     >>> action = ActionAdd()

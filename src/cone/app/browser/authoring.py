@@ -18,7 +18,7 @@ from cone.tile import (
     render_template,
 )
 from ..model import (
-    getNodeInfo,
+    get_node_info,
     Properties,
     BaseNode,
     AdapterNode,
@@ -230,7 +230,7 @@ class AddDropdown(Tile):
         if not addables:
             return ret
         for addable in addables:
-            info = getNodeInfo(addable)
+            info = get_node_info(addable)
             if not info:
                 continue
             query = make_query(factory=addable)
@@ -278,7 +278,7 @@ class AddTile(_FormRenderingTile):
         allowed = self.model.nodeinfo.addables
         if not factory or not allowed or not factory in allowed:
             return None
-        return getNodeInfo(factory)
+        return get_node_info(factory)
 
 
 class AddFactoryProxy(Behavior):
@@ -304,7 +304,7 @@ class AddFormHeading(FormHeading):
     def form_heading(self):
         localizer = get_localizer(self.request)
         title = localizer.translate(
-            getNodeInfo(self.model.node_info_name).title)
+            get_node_info(self.model.node_info_name).title)
         heading = localizer.translate(
             _('add_form_heading',
               default='Add: ${title}',
@@ -371,7 +371,7 @@ class EditFormHeading(FormHeading):
     @default
     @property
     def form_heading(self):
-        info = getNodeInfo(self.model.node_info_name)
+        info = get_node_info(self.model.node_info_name)
         if info is None:
             return _('edit', default='Edit')
         localizer = get_localizer(self.request)

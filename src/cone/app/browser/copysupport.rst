@@ -3,7 +3,7 @@ Copysupport::
     >>> from cone.app.testing.mock import CopySupportNode
     >>> from cone.app.model import (
     ...     NodeInfo,
-    ...     registerNodeInfo,
+    ...     register_node_info,
     ... )
 
     >>> class CopySupportNodeA(CopySupportNode):
@@ -11,14 +11,14 @@ Copysupport::
     >>> info = NodeInfo()
     >>> info.title = 'CopySupportNodeA'
     >>> info.addables = ['copy_support_node_a', 'copy_support_node_b']
-    >>> registerNodeInfo('copy_support_node_a', info)
+    >>> register_node_info('copy_support_node_a', info)
 
     >>> class CopySupportNodeB(CopySupportNode):
     ...     node_info_name = 'copy_support_node_b'
     >>> info = NodeInfo()
     >>> info.title = 'CopySupportNodeB'
     >>> info.addables = ['copy_support_node_b']
-    >>> registerNodeInfo('copy_support_node_b', info)
+    >>> register_node_info('copy_support_node_b', info)
 
     >>> root = CopySupportNodeA()
     >>> source = root['source'] = CopySupportNodeA()

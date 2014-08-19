@@ -248,20 +248,20 @@ for authoring purposes.::
 
     >>> from cone.app.model import (
     ...     NodeInfo,
-    ...     registerNodeInfo,
+    ...     register_node_info,
     ... )
     >>> info = NodeInfo()
     >>> info.title = 'Node meta title'
     >>> info.description = 'Node meta description'
     >>> info.node = SomeNode
     >>> info.addables = ['node_info_name_b', 'node_info_name_c']
-    >>> registerNodeInfo('node_info_name_a', info)
+    >>> register_node_info('node_info_name_a', info)
 
 The refering application model node must provide ``node_info_name`` attribute,
 which is used to lookup the related NodeInfo instance.::
 
-    >>> from cone.app.model import getNodeInfo
-    >>> info = getNodeInfo('node_info_name_a')
+    >>> from cone.app.model import get_node_info
+    >>> info = get_node_info('node_info_name_a')
 
 See forms documentation for more details.
 

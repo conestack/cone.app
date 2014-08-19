@@ -259,12 +259,12 @@ node.::
 
 Register node info.::
 
-    >>> from cone.app.model import registerNodeInfo, getNodeInfo
-    >>> registerNodeInfo('basenode', nodeinfo)
+    >>> from cone.app.model import register_node_info, get_node_info
+    >>> register_node_info('basenode', nodeinfo)
 
 Lookup Node info.::
 
-    >>> nodeinfo = getNodeInfo('basenode')
+    >>> nodeinfo = get_node_info('basenode')
     >>> nodeinfo.title
     'Base Node'
 

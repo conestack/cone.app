@@ -31,7 +31,7 @@ Provide a node interface needed for different node style binding to test form::
 Create dummy node::
 
     >>> from cone.app.model import BaseNode
-    >>> from cone.app.model import getNodeInfo
+    >>> from cone.app.model import get_node_info
 
     >>> @implementer(ITestAddingNode)
     ... class MyNode(BaseNode):
@@ -39,13 +39,13 @@ Create dummy node::
 
 Provide NodeInfo for our Application node::
 
-    >>> from cone.app.model import NodeInfo, registerNodeInfo
+    >>> from cone.app.model import NodeInfo, register_node_info
     >>> mynodeinfo = NodeInfo()
     >>> mynodeinfo.title = 'My Node'
     >>> mynodeinfo.description = 'This is My node.'
     >>> mynodeinfo.node = MyNode
     >>> mynodeinfo.addables = ['mynode'] # self containment
-    >>> registerNodeInfo('mynode', mynodeinfo)
+    >>> register_node_info('mynode', mynodeinfo)
 
 Create another dummy node inheriting from AdapterNode::
 
@@ -60,7 +60,7 @@ Create another dummy node inheriting from AdapterNode::
     >>> myadapternodeinfo.description = 'This is My adapter node.'
     >>> myadapternodeinfo.node = MyAdapterNode
     >>> myadapternodeinfo.addables = ['myadapternode'] # self containment
-    >>> registerNodeInfo('myadapternode', myadapternodeinfo)
+    >>> register_node_info('myadapternode', myadapternodeinfo)
 
 Create and register an ``addform`` named form tile::
 
@@ -425,8 +425,8 @@ Allow another node type as child::
     >>> nodeinfo.description = 'This is another node.'
     >>> nodeinfo.node = BaseNode
     >>> nodeinfo.addables = []
-    >>> registerNodeInfo('anothernode', nodeinfo)
-    >>> getNodeInfo('mynode').addables = ['mynode', 'anothernode']
+    >>> register_node_info('anothernode', nodeinfo)
+    >>> get_node_info('mynode').addables = ['mynode', 'anothernode']
     >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
 
 Non JS links to add form::
@@ -460,7 +460,7 @@ XXX: discuss whether to hide entire widget if no items::
     >>> nodeinfo.description = 'This is a no child containing node.'
     >>> nodeinfo.node = NoChildAddingNode
     >>> nodeinfo.addables = []
-    >>> registerNodeInfo('nochildaddingnode', nodeinfo)
+    >>> register_node_info('nochildaddingnode', nodeinfo)
     >>> rendered = render_tile(NoChildAddingNode(), request, 'add_dropdown')
     
     >>> rendered
@@ -485,7 +485,7 @@ XXX: discuss whether to hide entire widget if no items::
     >>> nodeinfo.description = 'This is a node with an invalid child node info.'
     >>> nodeinfo.node = InvalidChildNodeInfoNode
     >>> nodeinfo.addables = ['invalid']
-    >>> registerNodeInfo('invalidchildnodeinfo', nodeinfo)
+    >>> register_node_info('invalidchildnodeinfo', nodeinfo)
     >>> rendered = render_tile(InvalidChildNodeInfoNode(),
     ...                        request,
     ...                        'add_dropdown')

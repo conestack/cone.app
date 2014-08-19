@@ -73,6 +73,15 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Rename ``cone.app.model.registerNodeInfo`` to
+  ``cone.app.model.register_node_info``. B/C import avaiable as of ``cone.app``
+  1.1.
+  [rnix, 2014-08-19]
+
+- Rename ``cone.app.model.getNodeInfo`` to ``cone.app.model.get_node_info``.
+  B/C import avaiable as of ``cone.app`` 1.1.
+  [rnix, 2014-08-19]
+
 - Modify ``class_add`` instead of ``class`` property in
   ``cone.app.browser.form.Form.prepare_ajax``.
   [rnix, 2014-08-16]

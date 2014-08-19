@@ -75,13 +75,19 @@ _ = TranslationStringFactory('cone.app')
 _node_info_registry = dict()
 
 
-def registerNodeInfo(name, info):
+def register_node_info(name, info):
     _node_info_registry[name] = info
 
+# B/C removed as of cone.app 1.1
+registerNodeInfo = register_node_info
 
-def getNodeInfo(name):
+
+def get_node_info(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
+
+# B/C removed as of cone.app 1.1
+getNodeInfo = get_node_info
 
 
 class node_info(object):
@@ -105,7 +111,7 @@ class node_info(object):
         info.node = cls
         info.addables = self.addables
         info.icon = self.icon
-        registerNodeInfo(cls.node_info_name, info)
+        register_node_info(cls.node_info_name, info)
         return cls
 
 
@@ -143,7 +149,7 @@ class AppNode(Behavior):
     @default
     @property
     def nodeinfo(self):
-        info = getNodeInfo(self.node_info_name)
+        info = get_node_info(self.node_info_name)
         if not info:
             info = NodeInfo()
             info.title = str(self.__class__)
