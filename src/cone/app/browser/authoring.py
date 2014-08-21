@@ -223,6 +223,22 @@ def default_addmodel_factory(parent, nodeinfo):
       permission='add', strict=False)
 class AddDropdown(Tile):
 
+    def make_item(self, info_name, info):
+        model = self.model
+        request = self.request
+        props = Properties()
+        query = make_query(factory=info_name)
+        url = make_url(request, node=model, resource='add', query=query)
+        props.url = url
+        target = make_url(request, node=model, query=query)
+        props.target = target
+        props.title = info.title
+        icon = info.icon
+        if not icon:
+            icon = app_config().default_node_icon
+        props.icon = icon
+        return props
+
     @property
     def items(self):
         ret = list()
@@ -233,19 +249,7 @@ class AddDropdown(Tile):
             info = get_node_info(addable)
             if not info:
                 continue
-            query = make_query(factory=addable)
-            url = make_url(self.request, node=self.model,
-                           resource='add', query=query)
-            target = make_url(self.request, node=self.model, query=query)
-            props = Properties()
-            props.url = url
-            props.target = target
-            props.title = info.title
-            icon = info.icon
-            if not icon:
-                icon = app_config().default_node_icon
-            props.icon = icon
-            ret.append(props)
+            ret.append(self.make_item(addable, info))
         return ret
 
 
