@@ -94,21 +94,22 @@ class node_info(object):
     """Node info decorator.
     """
 
-    def __init__(self, name, title=None,
-                 description=None, icon=None,
-                 addables=[]):
+    def __init__(self, name, title=None, description=None,
+                 factory=None, icon=None, addables=[]):
         self.name = name
         self.title = title
         self.description = description
+        self.factory = factory
         self.icon = icon
         self.addables = addables
 
     def __call__(self, cls):
         cls.node_info_name = self.name
         info = NodeInfo()
+        info.node = cls
         info.title = self.title
         info.description = self.description
-        info.node = cls
+        info.factory = self.factory
         info.addables = self.addables
         info.icon = self.icon
         register_node_info(cls.node_info_name, info)
