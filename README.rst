@@ -73,6 +73,9 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Remove ``yafowil.yaml`` dependency.
+  [rnix, 2014-08-26]
+
 - Refactor ``cone.app.browser.AddDropdown``. It provides now a ``make_item``
   for better customizability.
   [rnix, 2014-08-21]
