@@ -1,3 +1,4 @@
+import logging
 from plumber import (
     Behavior,
     default,
@@ -6,13 +7,24 @@ from plumber import (
 from webob.exc import HTTPFound
 from pyramid.security import has_permission
 from yafowil.controller import Controller
-from yafowil.yaml import parse_from_YAML
+
 from cone.tile import Tile
 from .ajax import (
     AjaxAction,
     AjaxEvent,
 )
 from .utils import make_url
+
+
+logger = logging.getLogger('cone.app')
+
+
+try:
+    from yafowil.yaml import parse_from_YAML
+except ImportError:
+    logger.warning(
+        '``yafowil.yaml`` not present. ``cone.app.browser.form.YAMLForm`` '
+        'will not work')
 
 
 class YAMLForm(Behavior):
