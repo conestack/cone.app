@@ -73,6 +73,9 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Default model layout lookup considers ``default_child`` property.
+  [rnix, 2014-08-28]
+
 - Remove ``yafowil.yaml`` dependency.
   [rnix, 2014-08-26]
 

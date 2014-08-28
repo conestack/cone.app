@@ -128,6 +128,10 @@ class AppNode(Behavior):
     @default
     @property
     def layout(self):
+        props = self.properties
+        if props.default_child:
+            return self[props.default_child].layout
+        # XXX: consider adding and return add model layout here?
         return get_current_registry().getAdapter(self, ILayout)
 
     @default
