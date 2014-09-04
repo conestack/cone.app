@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Add login form actions to form compound. Thus login form actions can be
+  extended keeping UI rednering sane.
+  [rnix, 2014-09-04]
+
 - Default model layout lookup considers ``default_child`` property.
   [rnix, 2014-08-28]
 

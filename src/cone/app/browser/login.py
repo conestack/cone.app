@@ -45,8 +45,14 @@ class LoginForm(Form):
             custom={
                 'credentials': ([self.login], [], [], []),
             })
-        form['login'] = factory(
-            'field:div:submit',
+        actions = form['form_actions'] = factory(
+            'field:div',
+            props={
+                'div.class_add': 'col-sm-offset-2 col-sm-5',
+                'structural': True,
+            })
+        actions['login'] = factory(
+            'submit',
             props={
                 'action': 'login',
                 'expression': True,
