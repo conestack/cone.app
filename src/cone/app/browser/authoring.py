@@ -382,7 +382,7 @@ class EditFormHeading(FormHeading):
         heading = localizer.translate(
             _('edit_form_heading',
               default='Edit: ${title}',
-              mapping={'title': localizer.translate(_(info.title))}))
+              mapping={'title': localizer.translate(info.title)}))
         return heading
 
 
