@@ -10,7 +10,9 @@
 
     <tal:item repeat="item context.menuitems">
 
-      <li tal:define="css item['selected'] and 'active' or '';
+      <tal:comment replace="None">Main menu item as link</tal:comment>
+      <li tal:condition="not item['children']"
+          tal:define="css item['selected'] and 'active' or '';
                       css ' '.join([css, 'node-%s' % item['id']]);"
           tal:attributes="class css">
 
@@ -22,6 +24,34 @@
           ><span class="${item['icon']|nothing}"></span>
           <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
 
+      </li>
+
+      <tal:comment replace="None">Main menu item as dropdown</tal:comment>
+      <li tal:condition="item['children']"
+          tal:define="css item['selected'] and 'dropdown active' or 'dropdown';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="#"
+           class="dropdown-toggle"
+           data-toggle="dropdown"
+          ><span class="${item['icon']|nothing}"></span>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
+
+        <ul class="dropdown-menu">
+          <tal:li repeat="child item['children']">
+            <li tal:define="css child['selected'] and 'active' or '';"
+                tal:attributes="class css">
+              <a href="${child['url']}"
+                 ajax:bind="click"
+                 ajax:target="${child['target']}"
+                 ajax:event="contextchanged:#layout"
+                 tal:attributes="title child['description'];"
+                ><span class="${child['icon']|nothing}"></span>
+                <span tal:content="child['title'] | string:'&nbsp;'">Title</span></a>
+            </li>
+          </tal:li>
+        </ul>
       </li>
 
     </tal:item>

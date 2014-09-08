@@ -133,9 +133,11 @@ class MainMenu(Tile):
     * set ``skip_mainmenu`` on ``model.properties`` to ``True`` if node should
       not be displayed in mainmenu.
 
+    * set ``mainmenu_display_children`` on ``model.properties`` to ``True`` if
+      child nodes should be rendered as dropdown menu.
+
     * set ``mainmenu_empty_title`` on ``model.root.properties`` to ``True``
-      if you want to render empty links in mainmenu for setting icons via css.
-      Therefor 'node-nodeid' gets rendered as CSS class on ``li`` DOM element.
+      if you want to render empty links in mainmenu.
 
     * If ``default_child`` is set on ``model.root.properties``, it is marked
       selected if no other current path is found.
@@ -152,34 +154,67 @@ class MainMenu(Tile):
         # work with ``self.model.root.keys()``, ``values()`` propably not works
         # due to the use of factory node.
         root = self.model.root
+        root_props = root.properties
         # check for default child id if no curpath
-        if not curpath and root.properties.default_child:
-            curpath = root.properties.default_child
+        if not curpath and root_props.default_child:
+            curpath = root_props.default_child
         # check wether to render mainmenu item title
-        empty_title = root.properties.mainmenu_empty_title
+        empty_title = root_props.mainmenu_empty_title
         # XXX: icons
         for key in root.keys():
             child = root[key]
-            if child.properties.skip_mainmenu:
+            props = child.properties
+            if self.ignore_node(child, props):
                 continue
-            if not has_permission('view', child, self.request):
-                continue
-            item = dict()
-            item['id'] = key
-            if empty_title:
-                item['title'] = ''
-                item['description'] = child.metadata.title
+            selected = curpath == key
+            item = self.create_item(child, props, empty_title, selected)
+            if props.mainmenu_display_children:
+                item['children'] = self.create_children(child, selected)
             else:
-                item['title'] = child.metadata.title
-                item['description'] = child.metadata.description
-            item['url'] = make_url(self.request, path=[key])
-            query = make_query(
-                contenttile=child.properties.default_content_tile)
-            item['target'] = make_url(self.request, path=[key], query=query)
-            item['selected'] = curpath == key
-            item['icon'] = node_icon(self.request, child)
+                item['children'] = None
             ret.append(item)
         return ret
+
+    def create_children(self, node, selected):
+        children = list()
+        path = nodepath(self.model)
+        if path and len(path) > 1 and path[0] == node.name:
+            curpath = path[1]
+        else:
+            curpath = ''
+        for key in node.keys():
+            child = node[key]
+            props = child.properties
+            if self.ignore_node(child, props):
+                continue
+            selected = curpath == key
+            item = self.create_item(child, props, False, selected)
+            children.append(item)
+        return children
+
+    def ignore_node(self, node, props):
+        if props.skip_mainmenu:
+            return True
+        if not has_permission('view', node, self.request):
+            return True
+        return False
+
+    def create_item(self, node, props, empty_title, selected):
+        md = node.metadata
+        item = dict()
+        item['id'] = node.name
+        if empty_title:
+            item['title'] = ''
+            item['description'] = md.title
+        else:
+            item['title'] = md.title
+            item['description'] = md.description
+        item['url'] = make_url(self.request, node=node)
+        query = make_query(contenttile=props.default_content_tile)
+        item['target'] = make_url(self.request, node=node, query=query)
+        item['selected'] = selected
+        item['icon'] = node_icon(self.request, node)
+        return item
 
 
 @tile('pathbar', 'templates/pathbar.pt', permission='view', strict=False)

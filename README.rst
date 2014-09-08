@@ -73,6 +73,10 @@ Changes
 1.0.dev0 (unreleased)
 ---------------------
 
+- Main menu can display first level children in dropdown menu if
+  ``model.properties.mainmenu_display_children`` is set to ``True``.
+  [rnix, 2014-09-08]
+
 - Add login form actions to form compound. Thus login form actions can be
   extended keeping UI rednering sane.
   [rnix, 2014-09-04]

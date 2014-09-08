@@ -194,7 +194,7 @@ items are supposed to be displayed as icons via CSS::
     ajax:event="contextchanged:#layout" title="1"\n          
     ><span class="glyphicon glyphicon-asterisk"></span>\n          
     <span></span></a>\n\n      
-    </li>\n\n    \n\n      
+    </li>\n\n      \n      \n\n    \n\n      \n      
     <li class="active node-2">\n\n        
     <a href="http://example.com/2"\n           
     ajax:bind="click"\n           
