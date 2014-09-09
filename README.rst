@@ -70,8 +70,8 @@ Coverage Report
 Changes
 =======
 
-1.0.dev0 (unreleased)
----------------------
+1.0 (unreleased)
+----------------
 
 - Main menu can display first level children in dropdown menu if
   ``model.properties.mainmenu_display_children`` is set to ``True``.
