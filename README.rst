@@ -73,6 +73,9 @@ Changes
 1.0 (unreleased)
 ----------------
 
+- No default values for admin user and password from ini file if not set.
+  [rnix, 2014-12-01]
+
 - Main menu can display first level children in dropdown menu if
   ``model.properties.mainmenu_display_children`` is set to ``True``.
   [rnix, 2014-09-08]

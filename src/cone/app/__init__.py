@@ -237,8 +237,8 @@ def main(global_config, **settings):
     """
     # set authentication related application properties
     import cone.app.security as security
-    security.ADMIN_USER = settings.get('cone.admin_user', 'admin')
-    security.ADMIN_PASSWORD = settings.get('cone.admin_password', 'admin')
+    security.ADMIN_USER = settings.get('cone.admin_user')
+    security.ADMIN_PASSWORD = settings.get('cone.admin_password')
 
     auth_secret = settings.get('cone.auth_secret', 'secret')
     auth_cookie_name = settings.get('cone.auth_cookie_name', 'auth_tkt')

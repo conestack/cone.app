@@ -97,8 +97,9 @@ ADMIN_PASSWORD = None
 
 
 def authenticate(request, login, password):
-    if login == ADMIN_USER and password == ADMIN_PASSWORD:
-        return remember(request, login)
+    if ADMIN_USER and ADMIN_PASSWORD:
+        if login == ADMIN_USER and password == ADMIN_PASSWORD:
+            return remember(request, login)
     ugm = app_config().auth
     try:
         if ugm.users.authenticate(login, password):
