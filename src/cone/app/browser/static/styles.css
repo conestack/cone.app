@@ -32,10 +32,9 @@ body {
     font-weight:bold;
 }
 #navtree li.navtreelevel_1 {
-    font-size:130%;
+    padding-left:0px;
 }
 #navtree li.navtreelevel_2 {
-    font-size:95%;
     margin-left:6px;
     border-left:#cdcdcd 3px solid;
 }
@@ -43,7 +42,6 @@ body {
     padding:5px 10px 5px 0px;
 }
 #navtree li.navtreelevel_3 {
-    font-size:95%;
     margin-left:5px;
     border-left:#dddddd 3px solid;
 }
@@ -51,7 +49,6 @@ body {
     padding:4px 10px 4px 0px;
 }
 #navtree li.navtreelevel_4 {
-    font-size:95%;
     margin-left:4px;
     border-left:#dedede 3px solid;
 }
