@@ -250,7 +250,7 @@ Empty navtree, no items are marked to be displayed::
     >>> res.find('ajax:action="navtree:#navtree:replace"') != -1
     True
 
-    >>> res.find('class="contextsensitiv"') != -1
+    >>> res.find('class="contextsensitiv list-group"') != -1
     True
 
 Node's which are in navtree::
