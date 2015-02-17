@@ -73,6 +73,10 @@ Changes
 1.0 (unreleased)
 ----------------
 
+- Application nodes can be marked as root for navigation tree by setting
+  ``is_navroot`` property to True.
+  [rnix, 2015-02-17]
+
 - No default values for admin user and password from ini file if not set.
   [rnix, 2014-12-01]
 

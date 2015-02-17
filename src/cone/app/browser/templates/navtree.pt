@@ -8,7 +8,7 @@
        ajax:action="navtree:#navtree:replace">
 
     <div class="list-group-item active"
-         i18n:translate="navigation">
+         tal:content="context.title">
       Navigation
     </div>
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-08-18 09:32+0200\n"
+"POT-Creation-Date: 2015-02-17 10:23+0100\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -39,17 +39,17 @@ msgid "role_manager"
 msgstr "Superuser"
 
 #. Default: Settings
-#: src/cone/app/model.py:213 src/cone/app/browser/layout.py:71
+#: src/cone/app/model.py:224 src/cone/app/browser/layout.py:71
 msgid "settings"
 msgstr "Einstellungen"
 
 #. Default: No Title
-#: src/cone/app/model.py:138
+#: src/cone/app/model.py:149
 msgid "no_title"
 msgstr "Kein Titel"
 
 #. Default: Invalid Credentials
-#: src/cone/app/browser/login.py:70
+#: src/cone/app/browser/login.py:76
 msgid "invalid_credentials"
 msgstr "Anmeldung fehlgeschlagen"
 
@@ -74,7 +74,7 @@ msgid "password"
 msgstr "Passwort"
 
 #. Default: Login
-#: src/cone/app/browser/login.py:55
+#: src/cone/app/browser/login.py:61
 msgid "login"
 msgstr "Anmelden"
 
@@ -259,7 +259,7 @@ msgstr "Einfügen"
 #. Default: Display
 #: src/cone/app/browser/contextmenu.py:91
 msgid "display"
-msgstr ""
+msgstr "Anzeigen"
 
 #. Default: Content Form Heading
 #: src/cone/app/browser/authoring.py:140
@@ -267,32 +267,32 @@ msgid "content_form_heading"
 msgstr "Content Formular Überschrift"
 
 #. Default: Deleted: ${title}
-#: src/cone/app/browser/authoring.py:449
+#: src/cone/app/browser/authoring.py:453
 msgid "deleted_object"
 msgstr "Gelöscht: ${title}"
 
 #. Default: Unknown factory
-#: src/cone/app/browser/authoring.py:268
+#: src/cone/app/browser/authoring.py:272
 msgid "unknown_factory"
 msgstr "Unbekannt"
 
 #. Default: Add: ${title}
-#: src/cone/app/browser/authoring.py:309
+#: src/cone/app/browser/authoring.py:313
 msgid "add_form_heading"
 msgstr "Hinzufügen: ${title}"
 
 #. Default: Edit
-#: src/cone/app/browser/authoring.py:376
+#: src/cone/app/browser/authoring.py:380
 msgid "edit"
 msgstr "Editieren"
 
 #. Default: Edit: ${title}
-#: src/cone/app/browser/authoring.py:379
+#: src/cone/app/browser/authoring.py:383
 msgid "edit_form_heading"
 msgstr "Editieren: ${title}"
 
 #. Default: Object "${title}" not deletable
-#: src/cone/app/browser/authoring.py:432
+#: src/cone/app/browser/authoring.py:436
 msgid "object_not_deletable"
 msgstr "Objekt \"${title}\" kann nicht gelöscht werden"
 
@@ -300,6 +300,11 @@ msgstr "Objekt \"${title}\" kann nicht gelöscht werden"
 #: src/cone/app/browser/layout.py:99
 msgid "logout"
 msgstr "Abmelden"
+
+#. Default: Navigation
+#: src/cone/app/browser/layout.py:274
+msgid "navigation"
+msgstr "Navigation"
 
 #. Default: Unknown
 #: src/cone/app/browser/utils.py:70

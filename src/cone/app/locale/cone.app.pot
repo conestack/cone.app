@@ -1,19 +1,19 @@
 # 
 # SOME DESCRIPTIVE TITLE
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2014-08-18 09:32+0200\n"
+"POT-Creation-Date: 2015-02-17 10:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 
 #. Default: Viewer
 #: ./src/cone/app/security.py:30
@@ -36,17 +36,17 @@ msgid "role_manager"
 msgstr ""
 
 #. Default: Settings
-#: ./src/cone/app/model.py:213 ./src/cone/app/browser/layout.py:71
+#: ./src/cone/app/model.py:224 ./src/cone/app/browser/layout.py:71
 msgid "settings"
 msgstr ""
 
 #. Default: No Title
-#: ./src/cone/app/model.py:138
+#: ./src/cone/app/model.py:149
 msgid "no_title"
 msgstr ""
 
 #. Default: Invalid Credentials
-#: ./src/cone/app/browser/login.py:70
+#: ./src/cone/app/browser/login.py:76
 msgid "invalid_credentials"
 msgstr ""
 
@@ -71,7 +71,7 @@ msgid "password"
 msgstr ""
 
 #. Default: Login
-#: ./src/cone/app/browser/login.py:55
+#: ./src/cone/app/browser/login.py:61
 msgid "login"
 msgstr ""
 
@@ -265,38 +265,43 @@ msgid "content_form_heading"
 msgstr ""
 
 #. Default: Deleted: ${title}
-#: ./src/cone/app/browser/authoring.py:449
+#: ./src/cone/app/browser/authoring.py:453
 msgid "deleted_object"
 msgstr ""
 
 #. Default: Unknown factory
-#: ./src/cone/app/browser/authoring.py:268
+#: ./src/cone/app/browser/authoring.py:272
 msgid "unknown_factory"
 msgstr ""
 
 #. Default: Add: ${title}
-#: ./src/cone/app/browser/authoring.py:309
+#: ./src/cone/app/browser/authoring.py:313
 msgid "add_form_heading"
 msgstr ""
 
 #. Default: Edit
-#: ./src/cone/app/browser/authoring.py:376
+#: ./src/cone/app/browser/authoring.py:380
 msgid "edit"
 msgstr ""
 
 #. Default: Edit: ${title}
-#: ./src/cone/app/browser/authoring.py:379
+#: ./src/cone/app/browser/authoring.py:383
 msgid "edit_form_heading"
 msgstr ""
 
 #. Default: Object "${title}" not deletable
-#: ./src/cone/app/browser/authoring.py:432
+#: ./src/cone/app/browser/authoring.py:436
 msgid "object_not_deletable"
 msgstr ""
 
 #. Default: Logout
 #: ./src/cone/app/browser/layout.py:99
 msgid "logout"
+msgstr ""
+
+#. Default: Navigation
+#: ./src/cone/app/browser/layout.py:274
+msgid "navigation"
 msgstr ""
 
 #. Default: Unknown

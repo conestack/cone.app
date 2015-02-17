@@ -268,6 +268,24 @@ class NavTree(Tile):
     """Navigation tree tile.
     """
 
+    @property
+    def title(self):
+        navroot = self.navroot
+        default = _('navigation', default='Navigation')
+        if self.model.root is navroot:
+            return default
+        return navroot.metadata.get('title', default)
+
+    @property
+    def navroot(self):
+        model = self.model
+        root = model.root
+        while model is not root:
+            if model.properties.is_navroot:
+                return model
+            model = model.parent
+        return root
+
     def navtreeitem(self, title, url, target, path, icon, css=''):
         item = dict()
         item['title'] = title
@@ -337,9 +355,9 @@ class NavTree(Tile):
 
     def navtree(self):
         root = self.navtreeitem(None, None, None, '', None)
-        model = self.model.root
+        model = self.navroot
         # XXX: default child
-        path = nodepath(self.model)
+        path = nodepath(self.model)[len(nodepath(model)):]
         self.fillchildren(model, path, root)
         return root
 
