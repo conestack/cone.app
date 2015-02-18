@@ -1,6 +1,7 @@
 import re
 import datetime
 import types
+import urllib2
 from pyramid.security import authenticated_userid
 from pyramid.i18n import TranslationStringFactory
 from ..utils import app_config
@@ -15,8 +16,20 @@ def authenticated(request):
     return authenticated_userid(request)
 
 
+def safe_encode(value):
+    if isinstance(value, unicode):
+        value = value.encode('utf-8')
+    return value
+
+
+def safe_decode(value):
+    if not isinstance(value, unicode):
+        value = value.decode('utf-8')
+    return value
+
+
 def nodepath(node):
-    return [p for p in node.path if p is not None]
+    return [safe_decode(p) for p in node.path if p is not None]
 
 
 def make_query(**kw):
@@ -29,10 +42,10 @@ def make_query(**kw):
         if type(param) is types.IntType:
             param = [str(param)]
         for p in param:
-            query.append('%s=%s' % (name, p))
+            query.append('{0}={1}'.format(name, p))
     query = '&'.join(query)
     if query:
-        return '?%s' % query
+        return '?{0}'.format(query)
 
 
 def make_url(request, path=None, node=None, resource=None, query=None):
@@ -46,10 +59,11 @@ def make_url(request, path=None, node=None, resource=None, query=None):
         path = nodepath(node)
     if resource is not None:
         path.append(resource)
-    url = '%s/%s' % (request.application_url, '/'.join(path))
+    path = [urllib2.quote(safe_encode(it)) for it in path]
+    url = '{0}/{1}'.format(request.application_url, '/'.join(path))
     if not query:
         return url
-    return '%s%s' % (url, query)
+    return '{0}{1}'.format(url, query)
 
 
 def choose_name(container, name):
@@ -90,8 +104,11 @@ def request_property(func):
     Works only on instances providing a request attribute.
     """
     def wrapper(self):
-        cache_key = '%s.%s.%s' \
-            % (str(id(self)), self.__class__.__name__, func.__name__)
+        cache_key = '{0}.{1}.{2}'.format(
+            str(id(self)),
+            self.__class__.__name__,
+            func.__name__
+        )
         try:
             return self.request.environ[cache_key]
         except KeyError:

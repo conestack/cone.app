@@ -24,6 +24,7 @@ from .ajax import (
     ajax_continue,
 )
 from .utils import (
+    safe_decode,
     nodepath,
     make_url,
     make_query,
@@ -62,7 +63,7 @@ class Layout(Tile):
 
     @property
     def contenttile(self):
-        path = '/'.join([it for it in self.model.path if it])
+        path = u'/'.join([safe_decode(it) for it in self.model.path if it])
         ajax_continue(self.request, [AjaxPath(path)])
         return get_action_context(self.request).scope
 
@@ -234,8 +235,11 @@ class PathBar(Tile):
     def items_for(self, model, breakpoint=None):
         items = list()
         for node in LocationIterator(model):
+            title = node.metadata.title
+            if title:
+                title = safe_decode(title)
             items.append({
-                'title': node.metadata.title,
+                'title': title,
                 'url': self.item_url(node),
                 'target': self.item_target(node),
                 'selected': False,
@@ -326,6 +330,8 @@ class NavTree(Tile):
             if not node.properties.get('in_navtree'):
                 continue
             title = node.metadata.title
+            if title:
+                title = safe_decode(title)
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
             target = make_url(self.request, node=node, query=query)
