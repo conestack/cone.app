@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-17 10:23+0100\n"
+"POT-Creation-Date: 2015-02-23 17:07+0100\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid "role_manager"
 msgstr "Manager"
 
 #. Default: Settings
-#: src/cone/app/model.py:224 src/cone/app/browser/layout.py:71
+#: src/cone/app/model.py:224 src/cone/app/browser/layout.py:72
 msgid "settings"
 msgstr "Settings"
 
@@ -297,17 +297,17 @@ msgid "object_not_deletable"
 msgstr "Object \"${title}\" not deletable"
 
 #. Default: Logout
-#: src/cone/app/browser/layout.py:99
+#: src/cone/app/browser/layout.py:100
 msgid "logout"
 msgstr "Logout"
 
 #. Default: Navigation
-#: src/cone/app/browser/layout.py:274
+#: src/cone/app/browser/layout.py:278
 msgid "navigation"
 msgstr "Navigation"
 
 #. Default: Unknown
-#: src/cone/app/browser/utils.py:70
+#: src/cone/app/browser/utils.py:84
 msgid "unknown"
 msgstr "Unknown"
 
