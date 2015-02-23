@@ -89,7 +89,7 @@
       <thead>
         <tr role="row">
           <tal:th repeat="col_def context.col_defs">
-            <th tal:condition="not col_def['sort_key']"
+            <th tal:condition="not col_def.get('sort_key')"
                 role="columnheader"
                 rowspan="1"
                 colspan="1"
@@ -101,8 +101,8 @@
               </div>
             </th>
 
-            <th tal:condition="col_def['sort_key']"
-                tal:define="defs context.th_defs(col_def['sort_key']);
+            <th tal:condition="col_def.get('sort_key')"
+                tal:define="defs context.th_defs(col_def.get('sort_key'));
                             order defs[0] and defs[0] or ''"
                 class="head_sortable"
                 role="columnheader"

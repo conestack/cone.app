@@ -73,6 +73,9 @@ Changes
 1.0 (unreleased)
 ----------------
 
+- ``sort_key`` not mandatory on column definitions any longer in tables.
+  [rnix, 2015-02-23]
+
 - URL's may contain umlaute.
   [rnix, 2015-02-18]
 
