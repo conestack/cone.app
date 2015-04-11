@@ -120,7 +120,8 @@ class PersonalTools(Tile):
     def user(self):
         userid = authenticated_userid(self.request)
         data = principal_data(userid)
-        return data.get('fullname', userid)
+        fullname = data.get('fullname', userid)
+        return fullname or userid
 
     @property
     def items(self):

@@ -73,6 +73,9 @@ Changes
 1.0 (unreleased)
 ----------------
 
+- Display ``userid`` in peronal tools if ``fullname`` found but empty.
+  [rnix, 2015-04-11]
+
 - ``sort_key`` not mandatory on column definitions any longer in tables.
   [rnix, 2015-02-23]
 
