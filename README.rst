@@ -37,31 +37,31 @@ Coverage Report
 ::
 
     lines   cov%   module
-      204   100%   cone.app.__init__
+      199   100%   cone.app.__init__
        29    96%   cone.app.browser.__init__
       275   100%   cone.app.browser.actions
       175    98%   cone.app.browser.ajax
-      239    94%   cone.app.browser.authoring
+      242    95%   cone.app.browser.authoring
       101   100%   cone.app.browser.batch
       151    94%   cone.app.browser.contents
        72    94%   cone.app.browser.contextmenu
       111   100%   cone.app.browser.copysupport
        24   100%   cone.app.browser.exception
-       81    96%   cone.app.browser.form
-      229    96%   cone.app.browser.layout
-       58   100%   cone.app.browser.login
+       87    90%   cone.app.browser.form
+      280    90%   cone.app.browser.layout
+       63   100%   cone.app.browser.login
       212    95%   cone.app.browser.referencebrowser
-       69    78%   cone.app.browser.resources
+       73    79%   cone.app.browser.resources
        40   100%   cone.app.browser.settings
       149    98%   cone.app.browser.sharing
       140   100%   cone.app.browser.table
-       69    98%   cone.app.browser.utils
-       44   100%   cone.app.browser.workflow
-       69   100%   cone.app.interfaces
-      367    94%   cone.app.model
-      177   100%   cone.app.security
+       81    98%   cone.app.browser.utils
+       50    96%   cone.app.browser.workflow
+       70   100%   cone.app.interfaces
+      375    93%   cone.app.model
+      178   100%   cone.app.security
        88   100%   cone.app.testing.__init__
-       48   100%   cone.app.testing.mock
+       45    93%   cone.app.testing.mock
        44   100%   cone.app.tests
        47   100%   cone.app.utils
        63   100%   cone.app.workflow
@@ -72,6 +72,19 @@ Changes
 
 1.0 (unreleased)
 ----------------
+
+- Display ``userid`` in peronal tools if ``fullname`` found but empty.
+  [rnix, 2015-04-11]
+
+- ``sort_key`` not mandatory on column definitions any longer in tables.
+  [rnix, 2015-02-23]
+
+- URL's may contain umlaute.
+  [rnix, 2015-02-18]
+
+- Application nodes can be marked as root for navigation tree by setting
+  ``is_navroot`` property to True.
+  [rnix, 2015-02-17]
 
 - No default values for admin user and password from ini file if not set.
   [rnix, 2014-12-01]

@@ -3,11 +3,16 @@
            omit-tag="True">
 
   <div id="navtree"
-       class="contextsensitiv"
+       class="contextsensitiv list-group"
        ajax:bind="contextchanged"
        ajax:action="navtree:#navtree:replace">
 
-    <ul class="nav">
+    <div class="list-group-item active"
+         tal:content="context.title">
+      Navigation
+    </div>
+
+    <ul class="nav list-group-item">
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
     </ul>
 

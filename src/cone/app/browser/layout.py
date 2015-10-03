@@ -24,6 +24,7 @@ from .ajax import (
     ajax_continue,
 )
 from .utils import (
+    safe_decode,
     nodepath,
     make_url,
     make_query,
@@ -62,7 +63,7 @@ class Layout(Tile):
 
     @property
     def contenttile(self):
-        path = '/'.join([it for it in self.model.path if it])
+        path = u'/'.join([safe_decode(it) for it in self.model.path if it])
         ajax_continue(self.request, [AjaxPath(path)])
         return get_action_context(self.request).scope
 
@@ -119,7 +120,8 @@ class PersonalTools(Tile):
     def user(self):
         userid = authenticated_userid(self.request)
         data = principal_data(userid)
-        return data.get('fullname', userid)
+        fullname = data.get('fullname', userid)
+        return fullname or userid
 
     @property
     def items(self):
@@ -234,8 +236,11 @@ class PathBar(Tile):
     def items_for(self, model, breakpoint=None):
         items = list()
         for node in LocationIterator(model):
+            title = node.metadata.title
+            if title:
+                title = safe_decode(title)
             items.append({
-                'title': node.metadata.title,
+                'title': title,
                 'url': self.item_url(node),
                 'target': self.item_target(node),
                 'selected': False,
@@ -267,6 +272,24 @@ class PathBar(Tile):
 class NavTree(Tile):
     """Navigation tree tile.
     """
+
+    @property
+    def title(self):
+        navroot = self.navroot
+        default = _('navigation', default='Navigation')
+        if self.model.root is navroot:
+            return default
+        return navroot.metadata.get('title', default)
+
+    @property
+    def navroot(self):
+        model = self.model
+        root = model.root
+        while model is not root:
+            if model.properties.is_navroot:
+                return model
+            model = model.parent
+        return root
 
     def navtreeitem(self, title, url, target, path, icon, css=''):
         item = dict()
@@ -308,6 +331,8 @@ class NavTree(Tile):
             if not node.properties.get('in_navtree'):
                 continue
             title = node.metadata.title
+            if title:
+                title = safe_decode(title)
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
             target = make_url(self.request, node=node, query=query)
@@ -337,9 +362,9 @@ class NavTree(Tile):
 
     def navtree(self):
         root = self.navtreeitem(None, None, None, '', None)
-        model = self.model.root
+        model = self.navroot
         # XXX: default child
-        path = nodepath(self.model)
+        path = nodepath(self.model)[len(nodepath(model)):]
         self.fillchildren(model, path, root)
         return root
 

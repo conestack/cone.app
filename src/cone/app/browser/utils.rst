@@ -23,7 +23,7 @@ path.::
     >>> root = BaseNode()
     >>> root['child'] = BaseNode()
     >>> nodepath(root['child'])
-    ['child']
+    [u'child']
 
 ``make_url`` - create URL's.::
 

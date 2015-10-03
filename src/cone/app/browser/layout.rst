@@ -250,7 +250,7 @@ Empty navtree, no items are marked to be displayed::
     >>> res.find('ajax:action="navtree:#navtree:replace"') != -1
     True
 
-    >>> res.find('class="contextsensitiv"') != -1
+    >>> res.find('class="contextsensitiv list-group"') != -1
     True
 
 Node's which are in navtree::
@@ -388,6 +388,32 @@ Render navtree on ``root['1']['11']``, check selected::
     ajax:event="contextchanged:#layout">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        11\n      
     </a>...'
+
+Nodes can be marked as navigation root::
+
+    >>> from cone.app.browser.layout import NavTree
+
+    >>> class TestNavTree(NavTree):
+    ...     def __init__(self, model, request):
+    ...         self.model = model
+    ...         self.request = request
+
+    >>> ignored_root = BaseNode(name='ignored_root')
+    >>> ignored_root.properties.in_navtree = True
+    >>> ignored_root['navroot'] = BaseNode()
+    >>> ignored_root['navroot'].properties.in_navtree = True
+    >>> ignored_root['navroot'].properties.is_navroot = True
+    >>> ignored_root['navroot']['child_1'] = BaseNode()
+    >>> ignored_root['navroot']['child_1'].properties.in_navtree = True
+    >>> ignored_root['navroot']['child_2'] = BaseNode()
+    >>> ignored_root['navroot']['child_2'].properties.in_navtree = True
+
+    >>> navtree = TestNavTree(ignored_root['navroot'], request)
+    >>> navtree.navroot
+    <BaseNode object 'navroot' at ...>
+
+    >>> len(navtree.navtree()['children'])
+    2
 
     >>> layer.logout()
 
