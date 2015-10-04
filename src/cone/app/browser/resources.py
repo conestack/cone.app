@@ -1,16 +1,14 @@
-import os
-import pkg_resources
-import cone.app
-from webob import Response
+from cone.app.utils import app_config
+from cone.tile import Tile
+from cone.tile import tile
 from paste.urlparser import StaticURLParser
+from pyramid.security import authenticated_userid
 from pyramid.static import PackageURLParser
 from pyramid.view import view_config
-from pyramid.security import authenticated_userid
-from cone.tile import (
-    tile,
-    Tile,
-)
-from cone.app.utils import app_config
+from webob import Response
+import cone.app
+import os
+import pkg_resources
 
 
 def is_remote_resource(resource):

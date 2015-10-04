@@ -1,25 +1,19 @@
-import logging
-from plumber import (
-    Behavior,
-    default,
-    plumb,
-)
-from zope.interface import implementer
-from pyramid.threadlocal import get_current_request
-from pyramid.security import (
-    Everyone,
-    Allow,
-    Deny,
-    ALL_PERMISSIONS,
-    remember,
-    authenticated_userid,
-)
+from cone.app.interfaces import IOwnerSupport
+from cone.app.interfaces import IPrincipalACL
+from cone.app.utils import app_config
+from plumber import Behavior
+from plumber import default
+from plumber import plumb
 from pyramid.i18n import TranslationStringFactory
-from .interfaces import (
-    IOwnerSupport,
-    IPrincipalACL,
-)
-from .utils import app_config
+from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import Allow
+from pyramid.security import Deny
+from pyramid.security import Everyone
+from pyramid.security import authenticated_userid
+from pyramid.security import remember
+from pyramid.threadlocal import get_current_request
+from zope.interface import implementer
+import logging
 
 
 logger = logging.getLogger('cone.app')

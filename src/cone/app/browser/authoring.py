@@ -1,43 +1,32 @@
-from plumber import (
-    Behavior,
-    default,
-    override,
-    plumb,
-)
-from webob.exc import HTTPFound
+from cone.app.browser import render_main_template
+from cone.app.browser.actions import ActionContext
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import AjaxOverlay
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import ajax_form_fiddle
+from cone.app.browser.ajax import ajax_message
+from cone.app.browser.ajax import render_ajax_form
+from cone.app.browser.utils import make_query
+from cone.app.browser.utils import make_url
+from cone.app.model import AdapterNode
+from cone.app.model import BaseNode
+from cone.app.model import Properties
+from cone.app.model import get_node_info
+from cone.app.utils import app_config
+from cone.tile import Tile
+from cone.tile import render_template
+from cone.tile import render_tile
+from cone.tile import tile
+from plumber import Behavior
+from plumber import default
+from plumber import override
+from plumber import plumb
+from pyramid.i18n import TranslationStringFactory
+from pyramid.i18n import get_localizer
 from pyramid.view import view_config
-from pyramid.i18n import (
-    TranslationStringFactory,
-    get_localizer,
-)
+from webob.exc import HTTPFound
 from yafowil.base import factory
-from cone.tile import (
-    Tile,
-    tile,
-    render_tile,
-    render_template,
-)
-from ..model import (
-    get_node_info,
-    Properties,
-    BaseNode,
-    AdapterNode,
-)
-from ..utils import app_config
-from . import render_main_template
-from .actions import ActionContext
-from .ajax import (
-    AjaxEvent,
-    AjaxOverlay,
-    ajax_continue,
-    ajax_message,
-    ajax_form_fiddle,
-    render_ajax_form,
-)
-from .utils import (
-    make_url,
-    make_query,
-)
+
 
 _ = TranslationStringFactory('cone.app')
 

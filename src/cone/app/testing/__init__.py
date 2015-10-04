@@ -1,10 +1,10 @@
-import os
-import cone.app
+from cone.app.security import authenticate
+from plone.testing import Layer
 from pyramid.testing import DummyRequest as BaseDummyRequest
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
-from plone.testing import Layer
-from cone.app.security import authenticate
+import cone.app
+import os
 
 
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')

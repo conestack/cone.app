@@ -1,8 +1,8 @@
-import sys
-import json
-import traceback
 from pyramid.response import Response
 from pyramid.view import view_config
+import json
+import sys
+import traceback
 
 
 def format_traceback():

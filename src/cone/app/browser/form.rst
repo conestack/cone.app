@@ -11,6 +11,7 @@ A subclass of a form tile must implement ``prepare``. This function is
 responsible to create the yafowil form on ``self.form``::
 
     >>> from cone.app.browser.form import Form
+
     >>> formtile = Form(None, None, 'plainform')
     >>> formtile.prepare()
     Traceback (most recent call last):

@@ -1,19 +1,15 @@
-import logging
-from plumber import (
-    Behavior,
-    default,
-    override,
-    plumb,
-)
-from zope.interface import implementer
-from pyramid.security import (
-    Everyone,
-    Allow,
-    Deny,
-    ALL_PERMISSIONS,
-)
+from cone.app.interfaces import IWorkflowState
+from plumber import Behavior
+from plumber import default
+from plumber import override
+from plumber import plumb
+from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import Allow
+from pyramid.security import Deny
+from pyramid.security import Everyone
 from repoze.workflow import get_workflow
-from .interfaces import IWorkflowState
+from zope.interface import implementer
+import logging
 
 
 logger = logging.getLogger('cone.workflow')

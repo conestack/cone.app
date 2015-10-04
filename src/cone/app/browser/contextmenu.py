@@ -1,26 +1,23 @@
+from cone.app.browser.actions import ActionAdd
+from cone.app.browser.actions import ActionCopy
+from cone.app.browser.actions import ActionCut
+from cone.app.browser.actions import ActionDelete
+from cone.app.browser.actions import ActionDeleteChildren
+from cone.app.browser.actions import ActionEdit
+from cone.app.browser.actions import ActionList
+from cone.app.browser.actions import ActionPaste
+from cone.app.browser.actions import ActionSharing
+from cone.app.browser.actions import ActionState
+from cone.app.browser.actions import ActionUp
+from cone.app.browser.actions import ActionView
+from cone.app.browser.actions import LinkAction
+from cone.app.browser.actions import Toolbar
+from cone.tile import Tile
+from cone.tile import render_template
+from cone.tile import tile
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
-from cone.tile import (
-    tile,
-    Tile,
-    render_template,
-)
-from .actions import (
-    Toolbar,
-    LinkAction,
-    ActionUp,
-    ActionView,
-    ActionList,
-    ActionSharing,
-    ActionState,
-    ActionAdd,
-    ActionEdit,
-    ActionDelete,
-    ActionDeleteChildren,
-    ActionCut,
-    ActionCopy,
-    ActionPaste,
-)
+
 
 _ = TranslationStringFactory('cone.app')
 

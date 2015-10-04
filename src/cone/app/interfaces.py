@@ -1,15 +1,11 @@
-from zope.interface import (
-    Interface,
-    Attribute,
-)
+from node.interfaces import IAttributes
+from node.interfaces import IChildFactory
+from node.interfaces import ILeaf
+from node.interfaces import INode
+from node.interfaces import IUUIDAware
+from zope.interface import Attribute
+from zope.interface import Interface
 from zope.interface.common.mapping import IReadMapping
-from node.interfaces import (
-    INode,
-    ILeaf,
-    IAttributes,
-    IChildFactory,
-    IUUIDAware,
-)
 
 
 class ISecured(Interface):

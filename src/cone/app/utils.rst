@@ -80,11 +80,8 @@ Timestamp::
 
 Creation metadata::
 
-    >>> from cone.app.utils import (
-    ...     add_creation_metadata,
-    ...     update_creation_metadata,
-    ... )
-
+    >>> from cone.app.utils import add_creation_metadata
+    >>> from cone.app.utils import update_creation_metadata
     >>> from cone.app.model import BaseNode
     >>> node = BaseNode()
     >>> layer.login('editor')

@@ -3,18 +3,14 @@ Actions
 
 ::
 
-    >>> from cone.app.model import (
-    ...     BaseNode,
-    ...     Properties,
-    ... )
-    >>> from cone.app.browser.actions import (
-    ...     get_action_context,
-    ...     ActionContext,
-    ...     Toolbar,
-    ...     Action,
-    ...     TileAction,
-    ...     TemplateAction,
-    ... )
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.model import Properties
+    >>> from cone.app.browser.actions import get_action_context
+    >>> from cone.app.browser.actions import ActionContext
+    >>> from cone.app.browser.actions import Toolbar
+    >>> from cone.app.browser.actions import Action
+    >>> from cone.app.browser.actions import TileAction
+    >>> from cone.app.browser.actions import TemplateAction
 
 
 ActionContext
@@ -462,10 +458,8 @@ ActionAdd
 
 ::
 
-    >>> from cone.app.model import (
-    ...     NodeInfo,
-    ...     register_node_info,
-    ... )
+    >>> from cone.app.model import NodeInfo
+    >>> from cone.app.model import register_node_info
 
     >>> info = NodeInfo()
     >>> info.title = 'Addable'

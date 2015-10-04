@@ -1,19 +1,13 @@
+from cone.app.browser.utils import make_query
+from cone.app.browser.utils import make_url
+from cone.app.interfaces import ICopySupport
+from cone.app.interfaces import IPrincipalACL
+from cone.app.interfaces import IWorkflowState
+from cone.tile import render_template
+from cone.tile import render_tile
 from odict import odict
-from pyramid.security import has_permission
 from pyramid.i18n import TranslationStringFactory
-from cone.tile import (
-    render_template,
-    render_tile,
-)
-from ..interfaces import (
-    IWorkflowState,
-    IPrincipalACL,
-    ICopySupport,
-)
-from .utils import (
-    make_url,
-    make_query,
-)
+from pyramid.security import has_permission
 
 
 _ = TranslationStringFactory('cone.app')

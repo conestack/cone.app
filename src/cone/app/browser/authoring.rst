@@ -22,10 +22,9 @@ Adding
 
 Provide a node interface needed for different node style binding to test form::
 
-    >>> from zope.interface import (
-    ...     Interface,
-    ...     implementer,
-    ... )
+    >>> from zope.interface import Interface
+    >>> from zope.interface import implementer
+
     >>> class ITestAddingNode(Interface): pass
 
 Create dummy node::
@@ -39,7 +38,9 @@ Create dummy node::
 
 Provide NodeInfo for our Application node::
 
-    >>> from cone.app.model import NodeInfo, register_node_info
+    >>> from cone.app.model import NodeInfo
+    >>> from cone.app.model import register_node_info
+
     >>> mynodeinfo = NodeInfo()
     >>> mynodeinfo.title = 'My Node'
     >>> mynodeinfo.description = 'This is My node.'
@@ -71,7 +72,8 @@ Create and register an ``addform`` named form tile::
     >>> from cone.app.browser.utils import make_url
     >>> from cone.app.browser.form import Form
     >>> from cone.app.browser.authoring import ContentAddForm
-    >>> from cone.app.browser.ajax import AjaxAction, AjaxEvent
+    >>> from cone.app.browser.ajax import AjaxAction
+    >>> from cone.app.browser.ajax import AjaxEvent
     >>> from webob.exc import HTTPFound
 
     >>> @tile('addform', interface=ITestAddingNode)

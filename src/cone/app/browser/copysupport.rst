@@ -1,10 +1,8 @@
 Copysupport::
 
     >>> from cone.app.testing.mock import CopySupportNode
-    >>> from cone.app.model import (
-    ...     NodeInfo,
-    ...     register_node_info,
-    ... )
+    >>> from cone.app.model import NodeInfo
+    >>> from cone.app.model import register_node_info
 
     >>> class CopySupportNodeA(CopySupportNode):
     ...     node_info_name = 'copy_support_node_a'
@@ -35,11 +33,13 @@ Copysupport::
 
     >>> import urllib
     >>> from cone.app.browser.utils import make_url
+
     >>> request = layer.new_request()
     >>> copy_url = urllib.quote(make_url(request, node=source['a_child']))
     >>> request.cookies['cone.app.copysupport.copy'] = copy_url
 
     >>> from cone.app.browser.copysupport import PasteAction
+
     >>> paste_tile = PasteAction(None, 'render', '')
     >>> res = paste_tile(target, request)
 
@@ -148,6 +148,7 @@ Copysupport::
         <class 'CopySupportNodeB'>: b_child-2
 
     >>> from cone.app.model import BaseNode
+
     >>> root['unknown_source'] = BaseNode()
     >>> root['unknown_target'] = BaseNode()
 

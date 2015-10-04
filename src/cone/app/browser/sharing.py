@@ -1,22 +1,17 @@
-import logging
-from cone.tile import (
-    tile,
-    registerTile,
-    Tile,
-)
+from cone.app import security
+from cone.app.browser import render_main_template
+from cone.app.browser.ajax import ajax_message
+from cone.app.browser.table import RowData
+from cone.app.browser.table import Table
+from cone.tile import Tile
+from cone.tile import registerTile
+from cone.tile import tile
+from pyramid.i18n import TranslationStringFactory
+from pyramid.i18n import get_localizer
 from pyramid.view import view_config
-from pyramid.i18n import (
-    TranslationStringFactory,
-    get_localizer,
-)
-from .. import security
-from . import render_main_template
-from .ajax import ajax_message
-from .table import (
-    Table,
-    RowData,
-)
 from yafowil.base import factory
+import logging
+
 
 logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')

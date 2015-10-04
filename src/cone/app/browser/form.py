@@ -1,19 +1,14 @@
-import logging
-from plumber import (
-    Behavior,
-    default,
-    override,
-)
-from webob.exc import HTTPFound
-from pyramid.security import has_permission
-from yafowil.controller import Controller
-
+from cone.app.browser.ajax import AjaxAction
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.utils import make_url
 from cone.tile import Tile
-from .ajax import (
-    AjaxAction,
-    AjaxEvent,
-)
-from .utils import make_url
+from plumber import Behavior
+from plumber import default
+from plumber import override
+from pyramid.security import has_permission
+from webob.exc import HTTPFound
+from yafowil.controller import Controller
+import logging
 
 
 logger = logging.getLogger('cone.app')

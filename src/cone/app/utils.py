@@ -1,6 +1,6 @@
-import logging
 from datetime import datetime
 from pyramid.security import authenticated_userid
+import logging
 
 
 logger = logging.getLogger('cone.app')

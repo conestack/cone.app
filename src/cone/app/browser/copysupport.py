@@ -1,24 +1,17 @@
+from cone.app.browser.ajax import AjaxAction
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import ajax_message
+from cone.app.browser.utils import choose_name
+from cone.app.browser.utils import make_url
+from cone.tile import Tile
+from cone.tile import tile
+from node.utils import LocationIterator
+from pyramid.i18n import TranslationStringFactory
+from pyramid.i18n import get_localizer
 import urllib
 import urlparse
-from node.utils import LocationIterator
-from pyramid.i18n import (
-    TranslationStringFactory,
-    get_localizer,
-)
-from cone.tile import (
-    tile,
-    Tile,
-)
-from .ajax import (
-    ajax_message,
-    ajax_continue,
-    AjaxAction,
-    AjaxEvent,
-)
-from .utils import (
-    choose_name,
-    make_url,
-)
+
 
 _ = TranslationStringFactory('cone.app')
 

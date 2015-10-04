@@ -6,6 +6,7 @@ ContextMenu
     >>> from cone.tile import render_tile
     >>> from cone.app.model import BaseNode
     >>> from cone.app.testing.mock import SharingNode
+
     >>> parent = BaseNode('root')
     >>> model = parent['model'] = SharingNode()
     >>> model.properties.action_up = True
@@ -44,6 +45,7 @@ ContextMenu
     True
 
     >>> from cone.app.testing.mock import CopySupportNode
+
     >>> model = CopySupportNode()
 
     >>> ac = ActionContext(model, request, 'listing')

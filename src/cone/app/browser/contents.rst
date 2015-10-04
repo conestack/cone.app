@@ -8,7 +8,9 @@ Imports and dummy context::
 
     >>> from cone.app.model import BaseNode
 
-    >>> from datetime import datetime, timedelta
+    >>> from datetime import datetime
+    >>> from datetime import timedelta
+
     >>> created = datetime(2011, 3, 14)
     >>> delta = timedelta(1)
     >>> modified = created + delta
@@ -25,11 +27,9 @@ Imports and dummy context::
     ...     created = created + delta
     ...     modified = modified + delta
 
-    >>> from pyramid.security import (
-    ...     Everyone,
-    ...     Deny,
-    ...     ALL_PERMISSIONS,
-    ... )
+    >>> from pyramid.security import Everyone
+    >>> from pyramid.security import Deny
+    >>> from pyramid.security import ALL_PERMISSIONS
 
     >>> class NeverShownChild(BaseNode):
     ...     __acl__ = [(Deny, Everyone, ALL_PERMISSIONS)]
@@ -37,6 +37,7 @@ Imports and dummy context::
     >>> model['nevershown'] = NeverShownChild()
 
     >>> from cone.app.browser.contents import ContentsTile
+
     >>> contents = ContentsTile('cone.app:browser/templates/table.pt',
     ...                         None, 'contents')
 
@@ -175,6 +176,7 @@ Rendering fails unauthorized, 'view' permission is required::
     >>> layer.logout()
     >>> request = layer.new_request()
     >>> from cone.tile import render_tile
+
     >>> render_tile(model, request, 'contents')
     Traceback (most recent call last):
       ...
@@ -197,6 +199,7 @@ Render authenticated::
 Copysupport Attributes::
 
     >>> from cone.app.testing.mock import CopySupportNode
+
     >>> model = CopySupportNode()
     >>> model['child'] = CopySupportNode()
     >>> request = layer.new_request()
@@ -207,6 +210,7 @@ Copysupport Attributes::
 
     >>> import urllib
     >>> from cone.app.browser.utils import make_url
+
     >>> request = layer.new_request()
     >>> cut_url = urllib.quote(make_url(request, node=model['child']))
     >>> request.cookies['cone.app.copysupport.cut'] = cut_url

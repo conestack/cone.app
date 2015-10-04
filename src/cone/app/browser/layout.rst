@@ -16,7 +16,10 @@ To change the default layout, change the main template::
 
 An unprotected tile named 'content' registered for all sorts of node::
 
-    >>> from cone.tile import registerTile, tile, Tile
+    >>> from cone.tile import registerTile
+    >>> from cone.tile import tile
+    >>> from cone.tile import Tile
+
     >>> @tile('content', permission='login')
     ... class ContentTile(Tile):
     ...     def render(self):

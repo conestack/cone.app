@@ -4,10 +4,10 @@ Exceptions
 When requests are performed, and an uncaught exception is raised,
 ``internal_server_error`` view is invoked. Response either represents an
 error page or a JSON response containing bdajax continuation definitions which
-display the traceback in an error dialog if request was a bdajax action.
+display the traceback in an error dialog if request was a bdajax action::
 
-::
     >>> from cone.app.browser.exception import internal_server_error
+
     >>> request = layer.new_request()
     >>> str(internal_server_error(request))
     '200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length: 

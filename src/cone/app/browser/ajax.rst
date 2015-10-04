@@ -100,10 +100,8 @@ AjaxOverlay object::
 Use ``ajax_continue`` in your tile passing the request and an instance or a
 list of instances to set continuation actions::
 
-    >>> from cone.app.browser.ajax import (
-    ...     ajax_continue,
-    ...     AjaxAction,
-    ... )
+    >>> from cone.app.browser.ajax import ajax_continue
+    >>> from cone.app.browser.ajax import AjaxAction
 
     >>> @tile('testtile2')
     ... class TestTile(Tile):
@@ -343,7 +341,8 @@ adapter for it::
 
 Provide dummy adapter::
 
-    >>> from zope.interface import Interface, implementer
+    >>> from zope.interface import Interface
+    >>> from zope.interface import implementer
     >>> from zope.component import adapter
     >>> from cone.app.interfaces import ILiveSearch
     >>> @implementer(ILiveSearch)

@@ -1,30 +1,24 @@
 # -*- coding: utf-8 -*-
-import os
-import logging
-import model
-import pyramid_zcml
-from zope.interface import (
-    Interface,
-    implementer,
-)
-from zope.component import adapter
-from pyramid.config import Configurator
+from cone.app.browser import forbidden_view
+from cone.app.browser import static_resources
+from cone.app.interfaces import ILayout
+from cone.app.model import AppRoot
+from cone.app.model import AppSettings
+from cone.app.model import Layout
+from cone.app.model import Properties
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.config import Configurator
 from pyramid.static import static_view
-from zope.component import getGlobalSiteManager
-from .interfaces import ILayout
-from .model import (
-    AppRoot,
-    AppSettings,
-    Layout,
-    Properties,
-)
-from .browser import (
-    forbidden_view,
-    static_resources,
-)
 from yafowil.resources import YafowilResources as YafowilResourcesBase
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
+from zope.interface import Interface
+from zope.interface import implementer
+import logging
+import model
+import os
+import pyramid_zcml
 
 
 logger = logging.getLogger('cone.app')

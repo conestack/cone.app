@@ -1,12 +1,10 @@
-import os
+from pyramid.paster import get_app
+from twisted.application import internet
+from twisted.application import service
+from twisted.internet import reactor
 from twisted.web.server import Site
 from twisted.web.wsgi import WSGIResource
-from twisted.internet import reactor
-from twisted.application import (
-    internet,
-    service,
-)
-from pyramid.paster import get_app
+import os
 
 
 config='./cone.ini'

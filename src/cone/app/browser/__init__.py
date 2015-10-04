@@ -1,16 +1,14 @@
-import yafowil.webob
-import yafowil.loader
-from webob.exc import HTTPFound
+from cone.app.browser.actions import ActionContext
+from cone.tile import render_template_to_response
 from pyramid.httpexceptions import HTTPForbidden
-from pyramid.security import (
-    forget,
-    authenticated_userid,
-)
+from pyramid.security import authenticated_userid
+from pyramid.security import forget
 from pyramid.static import static_view
 from pyramid.view import view_config
-from cone.tile import render_template_to_response
-from .actions import ActionContext
+from webob.exc import HTTPFound
 import cone.app
+import yafowil.loader
+import yafowil.webob
 
 
 static_resources = static_view('static', use_subpath=True)

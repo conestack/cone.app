@@ -14,12 +14,10 @@ Imports and dummy context::
     >>> model = BaseNode()
     >>> request = layer.new_request()
 
-    >>> from cone.app.browser.table import (
-    ...     RowData,
-    ...     Table,
-    ...     TableSlice,
-    ...     TableBatch,
-    ... )
+    >>> from cone.app.browser.table import RowData
+    >>> from cone.app.browser.table import Table
+    >>> from cone.app.browser.table import TableSlice
+    >>> from cone.app.browser.table import TableBatch
 
 ``item_count`` and ``sorted_rows`` are not implemented::
 

@@ -3,13 +3,11 @@ Browser Utils
 
 Common browser utils.::
 
-    >>> from cone.app.browser.utils import (
-    ...     authenticated,
-    ...     nodepath,
-    ...     make_query,
-    ...     make_url,
-    ...     format_date,
-    ... )
+    >>> from cone.app.browser.utils import authenticated
+    >>> from cone.app.browser.utils import nodepath
+    >>> from cone.app.browser.utils import make_query
+    >>> from cone.app.browser.utils import make_url
+    >>> from cone.app.browser.utils import format_date
 
 ``authenticated`` - Will be removed.::
 

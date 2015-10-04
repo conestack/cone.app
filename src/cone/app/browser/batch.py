@@ -1,7 +1,5 @@
-from cone.tile import (
-    Tile,
-    render_template,
-)
+from cone.tile import Tile
+from cone.tile import render_template
 
 
 BATCH_RANGE = 8
