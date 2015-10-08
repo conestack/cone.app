@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 
 
-version = '1.0.dev4'
+version = '1.0.dev5'
 shortdesc = 'Web application stub'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
