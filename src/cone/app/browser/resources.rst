@@ -80,14 +80,14 @@ Merged Assets::
 
     >>> static = assets[0][0]
     >>> resource = assets[0][1]
-    >>> static.app.package_name
+    >>> static.package_name
     'cone.app.browser'
 
-    >>> static.app.resource_name
+    >>> static.docroot
     'static'
 
-    >>> subpath = os.path.join(static.app.resource_name, resource)
-    >>> path = pkg_resources.resource_filename(static.app.package_name, subpath)
+    >>> subpath = os.path.join(static.docroot, resource)
+    >>> path = pkg_resources.resource_filename(static.package_name, subpath)
     >>> path
     '/.../cone/app/browser/static/jquery-1.9.1.js'
 

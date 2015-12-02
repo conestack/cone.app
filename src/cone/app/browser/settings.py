@@ -18,7 +18,7 @@ from webob import Response
 _ = TranslationStringFactory('cone.app')
 
 
-@view_config('settings_tab_content', xhr=True, permission='manage')
+@view_config(name='settings_tab_content', xhr=True, permission='manage')
 def settings_tab_content(model, request):
     """Used by jquerytools tabs plugin to get settings section content.
     """

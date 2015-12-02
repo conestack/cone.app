@@ -1,6 +1,7 @@
 from cone.app.security import authenticate
 from plone.testing import Layer
 from pyramid.testing import DummyRequest as BaseDummyRequest
+from pyramid.security import AuthenticationAPIMixin
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 import cone.app
@@ -10,7 +11,7 @@ import os
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
-class DummyRequest(BaseDummyRequest):
+class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
 
     @property
     def is_xhr(self):
@@ -30,25 +31,30 @@ class Security(Layer):
         res = authenticate(request, login, 'secret')
         if res:
             request.environ['HTTP_COOKIE'] = res[0][1]
+            cookie = res[0][1].split(';')[0].split('=')
+            request.cookies[cookie[0]] = cookie[1]
 
     auth_env_keys = [
-        'HTTP_COOKIE',
-        'paste.cookies',
         'REMOTE_USER_TOKENS',
         'REMOTE_USER_DATA',
+        'HTTP_COOKIE',
         'cone.app.user.roles',
     ]
 
     def logout(self):
         request = self.current_request
         if request:
+            request.cookies.clear()
             environ = request.environ
             for key in self.auth_env_keys:
                 if key in environ:
                     del environ[key]
 
     def defaults(self):
-        return {'request': self.current_request, 'registry': self.registry}
+        return {
+            'request': self.current_request,
+            'registry': self.registry
+        }
 
     @property
     def registry(self):
@@ -57,12 +63,15 @@ class Security(Layer):
     def new_request(self, type=None, xhr=False):
         request = self.current_request
         auth = dict()
+        cookies = dict()
         if request:
+            cookies = request.cookies
             environ = request.environ
             for key in self.auth_env_keys:
                 if key in environ:
                     auth[key] = environ[key]
         request = DummyRequest()
+        request.cookies.update(cookies)
         request.environ['SERVER_NAME'] = 'testcase'
         request.environ['AUTH_TYPE'] = 'cookie'
         request.environ.update(auth)

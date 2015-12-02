@@ -195,7 +195,7 @@ class ContentsTile(Table):
 registerTile('listing', 'templates/listing.pt', permission='list')
 
 
-@view_config('listing', permission='list')
+@view_config(name='listing', permission='list')
 def listing(model, request):
     """Listing view
     """

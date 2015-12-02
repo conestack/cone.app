@@ -146,6 +146,9 @@ OwnerSupport::
     [('Allow', 'system.Authenticated', ['view']), ...]
 
     >>> layer.login('sepp')
+    >>> authenticated_userid(layer.current_request)
+    'sepp'
+
     >>> ownersupportnode = OwnerSupportNode()
     >>> ownersupportnode.owner
     'sepp'

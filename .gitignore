@@ -23,3 +23,7 @@
 /docs/source/conf.py
 /docs/cone.app.zip
 /docs/latex/
+include/
+/lib/
+/local/
+/pip-selfcheck.json

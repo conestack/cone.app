@@ -18,6 +18,7 @@ from zope.interface import implementer
 import logging
 import model
 import os
+import pyramid_chameleon
 import pyramid_zcml
 
 
@@ -281,6 +282,7 @@ def main(global_config, **settings):
             authentication_policy=auth_policy,
             authorization_policy=acl_factory())
 
+    config.include(pyramid_chameleon)
     config.include(pyramid_zcml)
     config.begin()
 

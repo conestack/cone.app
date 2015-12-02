@@ -30,12 +30,12 @@ def main_view(model, request):
     return render_main_template(model, request)
 
 
-@view_config('login')
+@view_config(name='login')
 def login_view(model, request):
     return render_main_template(model, request, contenttile='loginform')
 
 
-@view_config('logout')
+@view_config(name='logout')
 def logout_view(model, request):
     headers = forget(request)
     location = request.params.get('came_from', request.application_url)

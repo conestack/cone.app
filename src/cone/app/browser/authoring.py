@@ -151,7 +151,7 @@ class ContentForm(FormHeading):
 # overlay forms
 ###############################################################################
 
-@view_config('overlayform', permission='view')
+@view_config(name='overlayform', permission='view')
 def overlayform(model, request):
     return render_form(model, request, 'overlayformtile')
 
@@ -242,7 +242,7 @@ class AddDropdown(Tile):
         return ret
 
 
-@view_config('add', permission='add')
+@view_config(name='add', permission='add')
 def add(model, request):
     return render_form(model, request, 'add')
 
@@ -327,7 +327,7 @@ AddBehavior = ContentAddForm
 # overlay adding
 ###############################################################################
 
-@view_config('overlayadd', permission='add')
+@view_config(name='overlayadd', permission='add')
 def overlayadd(model, request):
     return render_form(model, request, 'overlayadd')
 
@@ -349,7 +349,7 @@ class OverlayAddForm(OverlayForm,
 # editing
 ###############################################################################
 
-@view_config('edit', permission='edit')
+@view_config(name='edit', permission='edit')
 def edit(model, request):
     return render_form(model, request, 'edit')
 
@@ -391,7 +391,7 @@ EditBehavior = ContentEditForm
 # overlay editing
 ###############################################################################
 
-@view_config('overlayedit', permission='edit')
+@view_config(name='overlayedit', permission='edit')
 def overlayform(model, request):
     return render_form(model, request, 'overlayedit')
 

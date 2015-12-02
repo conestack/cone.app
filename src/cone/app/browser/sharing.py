@@ -22,7 +22,7 @@ registerTile('sharing',
              permission='manage_permissions')
 
 
-@view_config('sharing', permission='manage_permissions')
+@view_config(name='sharing', permission='manage_permissions')
 def sharing(model, request):
     """Sharing view
     """

@@ -134,7 +134,7 @@ def search_for_principals(term):
     for user in ugm.users.search(criteria=criteria, or_search=True):
         ret.append(user)
     for group in ugm.groups.search(criteria=criteria, or_search=True):
-        ret.append('group:%s' % group)
+        ret.append(u'group:%s' % group)
     return ret
 
 
@@ -169,6 +169,10 @@ def groups_callback(name, request):
             for role in group.roles:
                 aggregated.add('role:%s' % role)
         roles = environ[ROLES_CACHE_KEY] = list(aggregated)
+    # XXX: this function is expected to return None if no roles...???
+    #      owner support not works if None returned
+    #if not roles:
+    #    return None
     return roles
 
 
