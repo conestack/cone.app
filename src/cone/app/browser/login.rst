@@ -1,10 +1,14 @@
 Login form tile
 ===============
 
-Render login form::
+Imports::
 
     >>> from cone.app import root
+    >>> from cone.app import security
     >>> from cone.tile import render_tile
+
+Render login form::
+
     >>> request = layer.new_request()
     >>> res = render_tile(root, request, 'loginform')
     >>> res.find('<form action="http://example.com/login"') > -1
@@ -19,7 +23,6 @@ Authenticate with wrong credentials::
     >>> res.find('class="errormessage">Invalid Credentials') > -1
     True
 
-    >>> from cone.app import security
     >>> request.params['loginform.user'] = security.ADMIN_USER
     >>> request.params['loginform.password'] = security.ADMIN_PASSWORD
     >>> request.params['action.loginform.login'] = '1'

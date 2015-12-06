@@ -1,4 +1,5 @@
 from cone.app.browser.actions import ActionContext
+from cone.tile import register_tile
 from cone.tile import render_template_to_response
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.security import authenticated_userid
@@ -48,3 +49,43 @@ def forbidden_view(request):
     if not authenticated_userid(request):
         return login_view(model, request)
     return render_main_template(model, request, contenttile='unauthorized')
+
+
+def includeme(config):
+    # static resources
+    config.add_view(static_resources, name='static')
+
+    # tiles with specific subclass
+    # XXX: turn into specific subclasses and register with tile decorator
+    register_tile(
+        'bdajax',
+        'bdajax:bdajax_bs3.pt',
+        permission='login')
+    register_tile(
+        'listing',
+        'templates/listing.pt',
+        permission='list')
+    register_tile(
+        'unauthorized',
+        'templates/unauthorized.pt',
+        permission='login')
+    register_tile(
+        'logo',
+        'templates/logo.pt',
+        permission='login')
+    register_tile(
+        'livesearch',
+        'templates/livesearch.pt',
+        permission='login')
+    register_tile(
+        'footer',
+        'templates/footer.pt',
+        permission='login')
+    register_tile(
+        'referencebrowser',
+        'templates/referencebrowser.pt',
+        permission='view')
+    register_tile(
+        'sharing',
+        'templates/sharing.pt',
+        permission='manage_permissions')

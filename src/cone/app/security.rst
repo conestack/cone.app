@@ -1,16 +1,40 @@
 cone.app.security
 -----------------
 
+Imports::
+
+    >>> from cone.app import security
+    >>> from cone.app.interfaces import IOwnerSupport
+    >>> from cone.app.interfaces import IPrincipalACL
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.security import DEFAULT_ACL
+    >>> from cone.app.security import OwnerSupport
+    >>> from cone.app.security import PrincipalACL
+    >>> from cone.app.security import acl_registry
+    >>> from cone.app.security import authenticate
+    >>> from cone.app.security import authenticated_user
+    >>> from cone.app.security import groups_callback
+    >>> from cone.app.security import logger
+    >>> from cone.app.security import principal_by_id
+    >>> from cone.app.security import search_for_principals
+    >>> from node.utils import instance_property
+    >>> from plumber import default
+    >>> from plumber import plumbing
+    >>> from pyramid.interfaces import IAuthenticationPolicy
+    >>> from pyramid.security import authenticated_userid
+    >>> from pyramid.security import has_permission
+    >>> from pyramid.threadlocal import get_current_registry
+    >>> import cone.app
+    >>> import logging
+
 Superuser credentials are set on application startup by main function in
 cone.app.__init__::
 
-    >>> from cone.app import security
     >>> security.ADMIN_USER = 'user'
     >>> security.ADMIN_PASSWORD = 'secret'
 
 ``authenticated_user``::
 
-    >>> from cone.app.security import authenticated_user
     >>> authenticated_user(layer.current_request)
 
     >>> layer.login('manager')
@@ -21,7 +45,6 @@ cone.app.__init__::
 
 ``principal_by_id``::
 
-    >>> from cone.app.security import principal_by_id
     >>> principal_by_id('manager')
     <User object 'manager' at ...>
 
@@ -32,7 +55,6 @@ cone.app.__init__::
 
 ``search_for_principals``::
 
-    >>> from cone.app.security import search_for_principals
     >>> search_for_principals('viewer')
     [u'viewer']
 
@@ -56,8 +78,6 @@ The default ACL::
 
 Base security tests::
 
-    >>> from pyramid.interfaces import IAuthenticationPolicy
-    >>> from pyramid.threadlocal import get_current_registry
     >>> get_current_registry().queryUtility(IAuthenticationPolicy)
     <pyramid.authentication.AuthTktAuthenticationPolicy object at ...>
 
@@ -68,13 +88,10 @@ Base security tests::
     <BaseGlobalComponents base>
 
     >>> layer.login('inexistent')
-    >>> from pyramid.security import authenticated_userid
     >>> authenticated_userid(layer.current_request)
 
 Create some security context for testing::
 
-    >>> from pyramid.security import has_permission
-    >>> from cone.app.security import DEFAULT_ACL
     >>> class ACLTest(object):
     ...     __acl__ = DEFAULT_ACL
     >>> context = ACLTest()
@@ -103,8 +120,6 @@ Authenticate as default user::
 
 ACLRegistry::
 
-    >>> from cone.app.security import acl_registry
-
     >>> class SomeModel(object): pass
 
     >>> acl = [('Allow', 'role:viewer', ['view'])]
@@ -129,11 +144,6 @@ ACLRegistry::
     [('Allow', 'role:viewer', ['delete'])]
 
 OwnerSupport::
-
-    >>> from plumber import plumbing
-    >>> from cone.app.interfaces import IOwnerSupport
-    >>> from cone.app.model import BaseNode
-    >>> from cone.app.security import OwnerSupport
 
     >>> @plumbing(OwnerSupport)
     ... class OwnerSupportNode(BaseNode):
@@ -194,13 +204,8 @@ OwnerSupport::
 
     >>> layer.logout()
 
-PrincipalACL::
-
-    >>> from plumber import default
-    >>> from cone.app.interfaces import IPrincipalACL
-    >>> from cone.app.security import PrincipalACL
-
-PrincipalACL is an abstract class. Directly mixing in causes an error on use::
+PrincipalACL. PrincipalACL is an abstract class. Directly mixing in causes an
+error on use::
 
     >>> @plumbing(PrincipalACL)
     ... class PrincipalACLNode(BaseNode):
@@ -215,7 +220,6 @@ PrincipalACL is an abstract class. Directly mixing in causes an error on use::
 
 Concrete PrincipalACL implementation. Implements principal_roles property::
 
-    >>> from node.utils import instance_property
     >>> class MyPrincipalACL(PrincipalACL):
     ...     @default
     ...     @instance_property
@@ -302,22 +306,18 @@ role does not grant any permissions::
 If an authentication plugin raises an error when calling ``authenticate``, an
 error message is logged::
 
-    >>> import logging
     >>> class TestHandler(logging.StreamHandler):
     ...     def handle(self, record):
     ...         print record
 
     >>> handler = TestHandler()
 
-    >>> from cone.app.security import logger
     >>> logger.addHandler(handler)
     >>> logger.setLevel(logging.DEBUG)
 
-    >>> import cone.app
     >>> old_ugm = cone.app.cfg.auth
     >>> cone.app.cfg.auth = object()
 
-    >>> from cone.app.security import authenticate
     >>> request = layer.current_request
 
     >>> authenticate(request, 'foo', 'foo')
@@ -327,7 +327,6 @@ error message is logged::
 
 Test Group callback, also logs if an error occurs::
 
-    >>> from cone.app.security import groups_callback
     >>> layer.login('user')
     >>> request = layer.current_request
     >>> groups_callback('user', request)

@@ -11,7 +11,6 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
-from cone.tile import registerTile
 from cone.tile import tile
 from node.utils import instance_property
 from pyramid.i18n import TranslationStringFactory
@@ -107,10 +106,10 @@ class ContentsTile(Table):
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),
         'creator': lambda x: x.metadata.creator.lower(),
-        'created': lambda x: x.metadata.created \
-                      and x.metadata.created or FAR_PAST,
-        'modified': lambda x: x.metadata.modified \
-                      and x.metadata.modified or FAR_PAST,
+        'created': lambda x: x.metadata.created and
+                             x.metadata.created or FAR_PAST,
+        'modified': lambda x: x.metadata.modified and
+                              x.metadata.modified or FAR_PAST,
     }
     show_filter = True
 
@@ -190,9 +189,6 @@ class ContentsTile(Table):
             if order == 'asc':
                 children.reverse()
         return children
-
-
-registerTile('listing', 'templates/listing.pt', permission='list')
 
 
 @view_config(name='listing', permission='list')

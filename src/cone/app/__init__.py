@@ -232,24 +232,24 @@ def main(global_config, **settings):
     """Returns WSGI application.
     """
     # set authentication related application properties
-    import cone.app.security as security
-    security.ADMIN_USER = settings.get('cone.admin_user')
-    security.ADMIN_PASSWORD = settings.get('cone.admin_password')
+    import cone.app
+    cone.app.security.ADMIN_USER = settings.get('cone.admin_user')
+    cone.app.security.ADMIN_PASSWORD = settings.get('cone.admin_password')
 
-    auth_secret = settings.get('cone.auth_secret', 'secret')
-    auth_cookie_name = settings.get('cone.auth_cookie_name', 'auth_tkt')
-    auth_secure = settings.get('cone.auth_secure', False)
-    auth_include_ip = settings.get('cone.auth_include_ip', False)
-    auth_timeout = settings.get('cone.auth_timeout', None)
-    auth_reissue_time = settings.get('cone.auth_reissue_time', None)
+    auth_secret = settings.pop('cone.auth_secret', 'secret')
+    auth_cookie_name = settings.pop('cone.auth_cookie_name', 'auth_tkt')
+    auth_secure = settings.pop('cone.auth_secure', False)
+    auth_include_ip = settings.pop('cone.auth_include_ip', False)
+    auth_timeout = settings.pop('cone.auth_timeout', None)
+    auth_reissue_time = settings.pop('cone.auth_reissue_time', None)
     if auth_reissue_time is not None:
         auth_reissue_time = int(auth_reissue_time)
-    auth_max_age = settings.get('cone.auth_max_age', None)
+    auth_max_age = settings.pop('cone.auth_max_age', None)
     if auth_max_age is not None:
         auth_max_age = int(auth_max_age)
-    auth_http_only = settings.get('cone.auth_http_only', False)
-    auth_path = settings.get('cone.auth_path', "/")
-    auth_wild_domain = settings.get('cone.auth_wild_domain', True)
+    auth_http_only = settings.pop('cone.auth_http_only', False)
+    auth_path = settings.pop('cone.auth_path', "/")
+    auth_wild_domain = settings.pop('cone.auth_wild_domain', True)
 
     auth_policy = auth_tkt_factory(
         secret=auth_secret,
@@ -269,34 +269,31 @@ def main(global_config, **settings):
     if settings.get('testing.hook_global_registry'):
         globalreg = getGlobalSiteManager()
         config = Configurator(registry=globalreg)
-        config.setup_registry(
-            root_factory=get_root,
-            settings=settings,
-            authentication_policy=auth_policy,
-            authorization_policy=acl_factory())
-        config.hook_zca()
+        config.setup_registry(root_factory=get_root, settings=settings)
     else:
-        config = Configurator(
-            root_factory=get_root,
-            settings=settings,
-            authentication_policy=auth_policy,
-            authorization_policy=acl_factory())
+        config = Configurator(root_factory=get_root, settings=settings)
 
-    config.include(pyramid_chameleon)
-    config.include(pyramid_zcml)
+    # set authentication and authorization policies
+    config.set_authentication_policy(auth_policy)
+    config.set_authorization_policy(acl_factory())
+    config.commit()
+
+    # begin configuration
     config.begin()
 
-    # default layout adapter
+    # include general dependencies
+    config.include(pyramid_chameleon)
+    config.include(pyramid_zcml)
+
+    # register default layout adapter
     config.registry.registerAdapter(default_layout)
 
     # add translation
     config.add_translation_dirs('cone.app:locale/')
 
-    # static resources
-    config.add_view('cone.app.browser.static_resources', name='static')
-
-    # scan browser package
-    config.scan('cone.app.browser')
+    # include and scan browser package
+    config.include(cone.app.browser)
+    config.scan(cone.app.browser)
 
     # load zcml
     config.load_zcml('configure.zcml')

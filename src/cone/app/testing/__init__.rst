@@ -1,5 +1,7 @@
 Test layer::
 
+    >>> from pyramid.security import authenticated_userid
+
     >>> layer
     <Layer 'cone.app.testing.Security'>
 
@@ -9,7 +11,6 @@ Test layer::
     >>> req
     <cone.app.testing.DummyRequest object at ...>
 
-    >>> from pyramid.security import authenticated_userid
     >>> authenticated_userid(req)
 
     >>> layer.current_request is req

@@ -4,7 +4,6 @@ from cone.app.browser.ajax import ajax_message
 from cone.app.browser.table import RowData
 from cone.app.browser.table import Table
 from cone.tile import Tile
-from cone.tile import registerTile
 from cone.tile import tile
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
@@ -15,11 +14,6 @@ import logging
 
 logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
-
-
-registerTile('sharing',
-             'templates/sharing.pt',
-             permission='manage_permissions')
 
 
 @view_config(name='sharing', permission='manage_permissions')

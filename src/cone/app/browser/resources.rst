@@ -11,9 +11,16 @@ CSS and JS resources are currently defined in ``cone.app.cfg.css`` and
 XXX: Use either resources providing middleware or resource management lib
      in application directly
 
+Imports::
+
+    >>> from cone.app.browser.resources import MergedAssets
+    >>> from cone.tile import render_tile
+    >>> import cone.app
+    >>> import os
+    >>> import pkg_resources
+
 CSS Resource::
 
-    >>> import cone.app
     >>> cone.app.cfg.css
     <cone.app.model.Properties object at ...>
 
@@ -50,7 +57,6 @@ Contain CSS resource for all users::
 
 Render resources tile unauthorized::
 
-    >>> from cone.tile import render_tile
     >>> request = layer.new_request()
     >>> result = render_tile(cone.app.root, request, 'resources')
     >>> result
@@ -69,8 +75,6 @@ Render resources tile authorized::
 
 Merged Assets::
 
-    >>> import os
-    >>> import pkg_resources
     >>> assets = cone.app.cfg.merged.js.public
     >>> assets
     [(<pyramid.static.static_view object at ...>, 'jquery-1.9.1.js'), 
@@ -98,7 +102,6 @@ Merged Assets::
     >>> data
     '...\n\n'
 
-    >>> from cone.app.browser.resources import MergedAssets
     >>> request = layer.new_request()
     >>> assets = MergedAssets(request)
     >>> len(assets.merged_js) > 0

@@ -12,7 +12,6 @@ from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.utils import principal_data
 from cone.tile import Tile
-from cone.tile import registerTile
 from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import tile
@@ -24,12 +23,6 @@ from pyramid.security import has_permission
 
 
 _ = TranslationStringFactory('cone.app')
-
-
-registerTile('unauthorized', 'templates/unauthorized.pt', permission='login')
-registerTile('logo', 'templates/logo.pt', permission='login')
-registerTile('livesearch', 'templates/livesearch.pt', permission='login')
-registerTile('footer', 'templates/footer.pt', permission='login')
 
 
 class ProtectedContentTile(Tile):

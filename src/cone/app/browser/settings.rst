@@ -2,10 +2,21 @@ Browser settings
 ----------------
 
 The 'content' tile for ``AppSettings`` object renders all registered settings
-objects inside tabs::
+objects inside tabs.
 
+Imports::
+
+    >>> from cone.app import get_root
     >>> from cone.app import register_plugin_config
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.settings import SettingsBehavior
+    >>> from cone.app.browser.settings import settings_tab_content
     >>> from cone.app.model import BaseNode
+    >>> from cone.tile import Tile
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
+    >>> from plumber import plumbing
+    >>> from yafowil.base import factory
 
 Create and register some settings node::
 
@@ -17,22 +28,20 @@ Create and register some settings node::
 
 Create 'content' tile for settings node::
 
-    >>> from cone.tile import tile
-    >>> from cone.tile import Tile
+    >>> layer.hook_tile_reg()
 
     >>> @tile('content', interface=SomeSettings)
     ... class SomeSettingsTile(Tile):
     ...     def render(self):
     ...         return '<div>Settings Contents</div>'
 
-    >>> from cone.tile import render_tile
+    >>> layer.unhook_tile_reg()
 
 Login and render settings::
 
     >>> layer.login('manager')
     >>> request = layer.new_request()
 
-    >>> from cone.app import get_root
     >>> res = render_tile(get_root()['settings'], request, 'content')
     >>> res.find('foo</a>') > -1
     True
@@ -49,11 +58,15 @@ Another settings node::
 
 Tile for ``OtherSettings`` which raises an exception at render time:: 
 
+    >>> layer.hook_tile_reg()
+
     >>> @tile('content', interface=OtherSettings)
     ... class OtherSettingsTile(Tile):
     ...     def render(self):
     ...         raise Exception(u"This tile can not be rendered for some "
     ...                         u"reason")
+
+    >>> layer.unhook_tile_reg()
 
 Check if error raised by ``OtherSettingsTile``::
 
@@ -72,10 +85,7 @@ Settings Form Behavior
 Settings behavior for settings forms. Provides a default ``next`` function
 hooking form to correct tab::
 
-    >>> from plumber import plumbing
-    >>> from yafowil.base import factory
-    >>> from cone.app.browser.form import Form
-    >>> from cone.app.browser.settings import SettingsBehavior
+    >>> layer.hook_tile_reg()
 
     >>> @tile('editform', interface=SomeSettings)
     ... @plumbing(SettingsBehavior)
@@ -101,6 +111,8 @@ hooking form to correct tab::
     ...             })
     ...         self.form = form
 
+    >>> layer.unhook_tile_reg()
+
     >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> request.params['action.editform.save'] = '1'
@@ -119,7 +131,6 @@ hooking form to correct tab::
 
 Ajax View for tabs::
 
-    >>> from cone.app.browser.settings import settings_tab_content
     >>> request = layer.new_request()
     >>> response = settings_tab_content(get_root()['settings']['foo'], request)
     >>> response.body

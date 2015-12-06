@@ -8,20 +8,42 @@ Bdajax support
 ``ajax_tile`` is the server side bdajax implementation for cone.
 Using ``bdajax.action`` with cone renders tiles by action name.
 
-Create test environ::
+Test related imports::
 
-    >>> from cone.tile import tile, Tile
     >>> from cone.app import root
+    >>> from cone.app.browser.ajax import AjaxAction
+    >>> from cone.app.browser.ajax import AjaxEvent
+    >>> from cone.app.browser.ajax import AjaxFormContinue
+    >>> from cone.app.browser.ajax import AjaxMessage
+    >>> from cone.app.browser.ajax import AjaxOverlay
+    >>> from cone.app.browser.ajax import ajax_continue
+    >>> from cone.app.browser.ajax import ajax_form_template
+    >>> from cone.app.browser.ajax import ajax_message
+    >>> from cone.app.browser.ajax import ajax_status_message
     >>> from cone.app.browser.ajax import ajax_tile
+    >>> from cone.app.browser.ajax import livesearch
+    >>> from cone.app.browser.ajax import render_ajax_form
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.interfaces import ILiveSearch
+    >>> from cone.tile import Tile
+    >>> from cone.tile import tile
+    >>> from webob.exc import HTTPFound
+    >>> from yafowil.base import factory
+    >>> from zope.component import adapter
+    >>> from zope.interface import Interface
+    >>> from zope.interface import implementer
+
+Test ``ajax_tile``::
+
+    >>> layer.hook_tile_reg()
 
     >>> @tile('testtile')
     ... class TestTile(Tile):
     ...     def render(self):
     ...         return 'rendered test tile'
 
-Test ``ajax_tile``::
+    >>> layer.unhook_tile_reg()
 
-    >>> from cone.app.browser.ajax import ajax_tile
     >>> request = layer.new_request()
     >>> request.params['bdajax.action'] = 'testtile'
     >>> request.params['bdajax.mode'] = 'replace'
@@ -52,7 +74,6 @@ XHR returns. Different actions are ``AjaxAction``, ``AjaxEvent`` and
 
 AjaxAction object::
 
-    >>> from cone.app.browser.ajax import AjaxAction
     >>> target = 'http://example.com'
     >>> actionname = 'tilename'
     >>> mode = 'replace'
@@ -66,7 +87,6 @@ AjaxAction object::
 
 AjaxEvent object::
 
-    >>> from cone.app.browser.ajax import AjaxEvent
     >>> eventname = 'contextchanged'
     >>> selector = '.contextsensitiv'
     >>> event = AjaxEvent(target, eventname, selector)
@@ -78,7 +98,6 @@ AjaxEvent object::
 
 AjaxMessage object::
 
-    >>> from cone.app.browser.ajax import AjaxMessage
     >>> payload = 'Some info message'
     >>> flavor = 'info'
     >>> selector = 'None'
@@ -91,7 +110,6 @@ AjaxMessage object::
 
 AjaxOverlay object::
 
-    >>> from cone.app.browser.ajax import AjaxOverlay
     >>> overlay = AjaxOverlay('#ajax-overlay', 'someaction',
     ...     'http://example.com', False, '.overlay_content')
     >>> overlay
@@ -100,8 +118,7 @@ AjaxOverlay object::
 Use ``ajax_continue`` in your tile passing the request and an instance or a
 list of instances to set continuation actions::
 
-    >>> from cone.app.browser.ajax import ajax_continue
-    >>> from cone.app.browser.ajax import AjaxAction
+    >>> layer.hook_tile_reg()
 
     >>> @tile('testtile2')
     ... class TestTile(Tile):
@@ -109,6 +126,8 @@ list of instances to set continuation actions::
     ...         ajax_continue(self.request,
     ...                       AjaxAction('target', 'name', 'mode', 'selector'))
     ...         return u''
+
+    >>> layer.unhook_tile_reg()
 
     >>> request.params['bdajax.action'] = 'testtile2'
     >>> ajax_tile(root, request)
@@ -127,7 +146,6 @@ list of instances to set continuation actions::
 Use ``ajax_message`` as shortcut for settings continuation message::
 
     >>> request = layer.new_request()
-    >>> from cone.app.browser.ajax import ajax_message
     >>> ajax_message(request, 'payload')
     >>> request.environ['cone.app.continuation']
     [<cone.app.browser.ajax.AjaxMessage object at ...>]
@@ -136,7 +154,6 @@ Use ``ajax_status_message`` as shortcut for settings continuation statu
 message::
 
     >>> request = layer.new_request()
-    >>> from cone.app.browser.ajax import ajax_status_message
     >>> ajax_status_message(request, 'payload')
     >>> request.environ['cone.app.continuation']
     [<cone.app.browser.ajax.AjaxMessage object at ...>]
@@ -167,7 +184,6 @@ places.
 
 AjaxFormContinue object. This object is used by ``render_ajax_form``::
 
-    >>> from cone.app.browser.ajax import AjaxFormContinue
     >>> result = ''
     >>> continuation = []
     >>> afc = AjaxFormContinue(result, continuation)
@@ -221,7 +237,6 @@ which gets interpreted and executed on client side::
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::
 
-    >>> from cone.app.browser.ajax import ajax_form_template
     >>> print ajax_form_template.split('\n')
     ['<div id="ajaxform">', 
     '    %(form)s', 
@@ -239,9 +254,7 @@ the response::
 
 Test ``render_ajax_form``. Provide a dummy Form::
 
-    >>> from webob.exc import HTTPFound
-    >>> from yafowil.base import factory
-    >>> from cone.app.browser.form import Form
+    >>> layer.hook_tile_reg()
 
     >>> @tile('ajaxtestform')
     ... class AjaxTestForm(Form):
@@ -280,9 +293,10 @@ Test ``render_ajax_form``. Provide a dummy Form::
     ...             ]
     ...         return HTTPFound(location=url)
 
+    >>> layer.unhook_tile_reg()
+
 Test unauthorized::
 
-    >>> from cone.app.browser.ajax import render_ajax_form
     >>> request = layer.new_request()
     >>> res = render_ajax_form(root, request, 'ajaxtestform')
     >>> res.body
@@ -333,7 +347,6 @@ Livesearch
 Cone provides a livesearch view, but no referring ``ILiveSearch`` implementing
 adapter for it::
 
-    >>> from cone.app.browser.ajax import livesearch
     >>> request = layer.new_request()
     >>> request.params['term'] = 'foo'
     >>> livesearch(root, request)
@@ -341,10 +354,6 @@ adapter for it::
 
 Provide dummy adapter::
 
-    >>> from zope.interface import Interface
-    >>> from zope.interface import implementer
-    >>> from zope.component import adapter
-    >>> from cone.app.interfaces import ILiveSearch
     >>> @implementer(ILiveSearch)
     ... @adapter(Interface)
     ... class LiveSearch(object):

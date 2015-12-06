@@ -1,14 +1,19 @@
 Referencebrowser
 ================
 
-Load requirements::
+Imports::
 
-    >>> import yafowil.loader
-    >>> import cone.app.browser.referencebrowser
-
-Test widget::
-
+    >>> from cone.app.browser.referencebrowser import ActionAddReference
+    >>> from cone.app.browser.referencebrowser import ReferencableChildrenLink
+    >>> from cone.app.model import BaseNode
+    >>> from cone.tile import render_tile
+    >>> from datetime import datetime
+    >>> from datetime import timedelta
+    >>> from node.behaviors import UUIDAware
+    >>> from plumber import plumbing
     >>> from yafowil.base import factory
+    >>> import cone.app.browser.referencebrowser
+    >>> import yafowil.loader
 
 
 Single valued
@@ -240,11 +245,6 @@ ActionAddReference
 
 ::
 
-    >>> from plumber import plumbing
-    >>> from node.behaviors import UUIDAware
-    >>> from cone.app.model import BaseNode
-    >>> from cone.app.browser.referencebrowser import ActionAddReference
-
     >>> model = BaseNode()
     >>> request = layer.new_request()
     >>> request.params['referencable'] = 'dummy'
@@ -285,7 +285,6 @@ ReferencableChildrenLink
 
 ::
 
-    >>> from cone.app.browser.referencebrowser import ReferencableChildrenLink
     >>> action = ReferencableChildrenLink('tabletile', 'tableid')
     >>> action(model, request)
     u''
@@ -307,7 +306,6 @@ Reference Pathbar
 
 ::
 
-    >>> from cone.tile import render_tile
     >>> model = UUIDNode()
     >>> model['a'] = UUIDNode()
     >>> model['a']['b'] = UUIDNode()
@@ -354,9 +352,6 @@ Reference listing tile
 ----------------------
 
 Create dummy environ::
-
-    >>> from datetime import datetime
-    >>> from datetime import timedelta
 
     >>> created = datetime(2011, 3, 15)
     >>> delta = timedelta(1)

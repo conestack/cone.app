@@ -7,17 +7,22 @@ A subclass of this tile must be registered under the same name as defined
 at ``self.table_tile_name``, normally bound to template
 ``cone.app:browser/templates/table.pt``
 
-Imports and dummy context::
+Imports::
 
+    >>> from cone.app.browser.actions import ViewLink
+    >>> from cone.app.browser.table import RowData
+    >>> from cone.app.browser.table import Table
+    >>> from cone.app.browser.table import TableBatch
+    >>> from cone.app.browser.table import TableSlice
     >>> from cone.app.model import BaseNode
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
+    >>> from datetime import datetime
+
+Dummy context::
 
     >>> model = BaseNode()
     >>> request = layer.new_request()
-
-    >>> from cone.app.browser.table import RowData
-    >>> from cone.app.browser.table import Table
-    >>> from cone.app.browser.table import TableSlice
-    >>> from cone.app.browser.table import TableBatch
 
 ``item_count`` and ``sorted_rows`` are not implemented::
 
@@ -154,10 +159,9 @@ A column definition consists of:
 
 A complete example::
 
-    >>> from cone.tile import tile
-    >>> from datetime import datetime
-    >>> from cone.app.browser.actions import ViewLink
     >>> view_link = ViewLink()
+
+    >>> layer.hook_tile_reg()
 
     >>> @tile('mytabletile', 'cone.app:browser/templates/table.pt',
     ...       permission='view')
@@ -218,9 +222,10 @@ A complete example::
     ... 
     ...         return rows[start:end]
 
+    >>> layer.unhook_tile_reg()
+
 Rendering fails unauthorized, 'view' permission is required::
 
-    >>> from cone.tile import render_tile
     >>> render_tile(model, request, 'mytabletile')
     Traceback (most recent call last):
       ...

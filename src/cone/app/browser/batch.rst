@@ -13,13 +13,15 @@ following keys:
 
 - ``url`` - Target url.
 
-Required imports.::
+Imports.::
 
-    >>> from cone.tile import tile, render_tile
     >>> from cone.app.browser.batch import Batch
-    >>> from cone.app.browser.utils import nodepath
     >>> from cone.app.browser.utils import make_query
     >>> from cone.app.browser.utils import make_url
+    >>> from cone.app.browser.utils import nodepath
+    >>> from cone.app.model import BaseNode
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
 
 Instanciate directly, base tests::
 
@@ -368,6 +370,8 @@ Batchrange between start and end::
 
 Register batch tile::
 
+    >>> layer.hook_tile_reg()
+
     >>> @tile('testbatch')
     ... class TestBatch(Batch):
     ... 
@@ -387,9 +391,10 @@ Register batch tile::
     ...             })
     ...         return ret
 
+    >>> layer.unhook_tile_reg()
+
 Create dummy model::
 
-    >>> from cone.app.model import BaseNode
     >>> model = BaseNode()
 
 Authenticate::

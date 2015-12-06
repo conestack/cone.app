@@ -1,18 +1,12 @@
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.exception import format_traceback
 from cone.app.interfaces import ILiveSearch
-from cone.tile import registerTile
 from cone.tile import render_tile
 from pyramid.response import Response
 from pyramid.view import view_config
 import json
 import logging
-import sys
-import traceback
 import types
-
-
-registerTile('bdajax', 'bdajax:bdajax_bs3.pt', permission='login')
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')

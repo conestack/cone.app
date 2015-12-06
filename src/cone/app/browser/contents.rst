@@ -4,12 +4,22 @@ Contents listing
 A tile named ``contents`` is available which renders the given model's children
 in a sortable, batched table.
 
-Imports and dummy context::
+Imports::
 
+    >>> from cone.app.browser.contents import ContentsTile
+    >>> from cone.app.browser.utils import make_url
     >>> from cone.app.model import BaseNode
-
+    >>> from cone.app.testing.mock import CopySupportNode
+    >>> from cone.tile import render_tile
     >>> from datetime import datetime
     >>> from datetime import timedelta
+    >>> from pyramid.security import ALL_PERMISSIONS
+    >>> from pyramid.security import Deny
+    >>> from pyramid.security import Everyone
+    >>> from pyramid.security import has_permission
+    >>> import urllib
+
+Dummy context::
 
     >>> created = datetime(2011, 3, 14)
     >>> delta = timedelta(1)
@@ -27,16 +37,10 @@ Imports and dummy context::
     ...     created = created + delta
     ...     modified = modified + delta
 
-    >>> from pyramid.security import Everyone
-    >>> from pyramid.security import Deny
-    >>> from pyramid.security import ALL_PERMISSIONS
-
     >>> class NeverShownChild(BaseNode):
     ...     __acl__ = [(Deny, Everyone, ALL_PERMISSIONS)]
 
     >>> model['nevershown'] = NeverShownChild()
-
-    >>> from cone.app.browser.contents import ContentsTile
 
     >>> contents = ContentsTile('cone.app:browser/templates/table.pt',
     ...                         None, 'contents')
@@ -171,11 +175,13 @@ Change sort and order. Sort is proxied by batch::
     >>> rendered.find('http://example.com/?sort=modified&amp;order=desc&amp;b_page=0&amp;size=15') != -1
     True
 
-Rendering fails unauthorized, 'view' permission is required::
+Rendering fails unauthorized, 'list' permission is required::
 
     >>> layer.logout()
     >>> request = layer.new_request()
-    >>> from cone.tile import render_tile
+
+    >>> has_permission('list', model, request)
+    <ACLDenied instance at ... with msg "...">
 
     >>> render_tile(model, request, 'contents')
     Traceback (most recent call last):
@@ -198,8 +204,6 @@ Render authenticated::
 
 Copysupport Attributes::
 
-    >>> from cone.app.testing.mock import CopySupportNode
-
     >>> model = CopySupportNode()
     >>> model['child'] = CopySupportNode()
     >>> request = layer.new_request()
@@ -207,9 +211,6 @@ Copysupport Attributes::
     >>> expected = 'class="selectable copysupportitem"'
     >>> rendered.find(expected) > -1
     True
-
-    >>> import urllib
-    >>> from cone.app.browser.utils import make_url
 
     >>> request = layer.new_request()
     >>> cut_url = urllib.quote(make_url(request, node=model['child']))

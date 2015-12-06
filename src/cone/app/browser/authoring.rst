@@ -16,30 +16,46 @@ The default implementations of ``add`` and ``edit`` just proxy the form
 rendering tiles as is, which are expected to be registered as ``addform``
 respective ``editform``.
 
+Imports::
+
+    >>> from cone.app.browser.actions import ActionContext
+    >>> from cone.app.browser.ajax import AjaxAction
+    >>> from cone.app.browser.ajax import AjaxEvent
+    >>> from cone.app.browser.authoring import ContentAddForm
+    >>> from cone.app.browser.authoring import ContentEditForm
+    >>> from cone.app.browser.authoring import add
+    >>> from cone.app.browser.authoring import edit
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.utils import make_url
+    >>> from cone.app.model import AdapterNode
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.model import NodeInfo
+    >>> from cone.app.model import get_node_info
+    >>> from cone.app.model import register_node_info
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
+    >>> from plumber import plumbing
+    >>> from webob.exc import HTTPFound
+    >>> from yafowil import loader
+    >>> from yafowil.base import factory
+    >>> from zope.interface import Interface
+    >>> from zope.interface import implementer
+
 
 Adding
 ------
 
 Provide a node interface needed for different node style binding to test form::
 
-    >>> from zope.interface import Interface
-    >>> from zope.interface import implementer
-
     >>> class ITestAddingNode(Interface): pass
 
 Create dummy node::
-
-    >>> from cone.app.model import BaseNode
-    >>> from cone.app.model import get_node_info
 
     >>> @implementer(ITestAddingNode)
     ... class MyNode(BaseNode):
     ...     node_info_name = 'mynode'
 
 Provide NodeInfo for our Application node::
-
-    >>> from cone.app.model import NodeInfo
-    >>> from cone.app.model import register_node_info
 
     >>> mynodeinfo = NodeInfo()
     >>> mynodeinfo.title = 'My Node'
@@ -49,8 +65,6 @@ Provide NodeInfo for our Application node::
     >>> register_node_info('mynode', mynodeinfo)
 
 Create another dummy node inheriting from AdapterNode::
-
-    >>> from cone.app.model import AdapterNode
 
     >>> @implementer(ITestAddingNode)
     ... class MyAdapterNode(AdapterNode):
@@ -65,16 +79,7 @@ Create another dummy node inheriting from AdapterNode::
 
 Create and register an ``addform`` named form tile::
 
-    >>> from plumber import plumbing
-    >>> from yafowil import loader
-    >>> from yafowil.base import factory
-    >>> from cone.tile import tile
-    >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.form import Form
-    >>> from cone.app.browser.authoring import ContentAddForm
-    >>> from cone.app.browser.ajax import AjaxAction
-    >>> from cone.app.browser.ajax import AjaxEvent
-    >>> from webob.exc import HTTPFound
+    >>> layer.hook_tile_reg()
 
     >>> @tile('addform', interface=ITestAddingNode)
     ... @plumbing(ContentAddForm)
@@ -112,6 +117,8 @@ Create and register an ``addform`` named form tile::
     ...         self.model.__parent__[fetch('addform.id')] = child
     ...         self.model = child
 
+    >>> layer.unhook_tile_reg()
+
 Create dummy container::
 
     >>> root = MyNode()
@@ -123,13 +130,10 @@ Authenticate::
 Render without factory::
 
     >>> request = layer.new_request()
-    >>> from cone.tile import render_tile
     >>> render_tile(root, request, 'add')
     u'unknown_factory'
 
 Render with valid factory::
-
-    >>> from cone.app.browser.actions import ActionContext
 
     >>> ac = ActionContext(root, request, 'content')
 
@@ -198,8 +202,6 @@ Check the modified model::
 
 Add view::
 
-    >>> from cone.app.browser.authoring import add
-
     >>> layer.login('manager')
     >>> request = layer.new_request()
     >>> request.params['factory'] = 'mynode'
@@ -220,7 +222,7 @@ Editing
 
 Create and register an ``editform`` named form tile::
 
-    >>> from cone.app.browser.authoring import ContentEditForm
+    >>> layer.hook_tile_reg()
 
     >>> @tile('editform', interface=MyNode)
     ... @plumbing(ContentEditForm)
@@ -250,6 +252,8 @@ Create and register an ``editform`` named form tile::
     ...     def update(self, widget, data):
     ...         fetch = self.request.params.get
     ...         self.model.attrs.title = fetch('editform.title')
+
+    >>> layer.unhook_tile_reg()
 
 Render form with value from model::
 
@@ -333,7 +337,6 @@ Check the updated node::
 
 Edit view::
 
-    >>> from cone.app.browser.authoring import edit
     >>> request = layer.new_request()
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'

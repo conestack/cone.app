@@ -1,13 +1,28 @@
 cone.app layout
 ===============
 
+Imports::
+
+    >>> from cone.app.browser import render_main_template
+    >>> from cone.app.browser.layout import NavTree
+    >>> from cone.app.browser.layout import ProtectedContentTile
+    >>> from cone.app.model import AppRoot
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.security import DEFAULT_SETTINGS_ACL
+    >>> from cone.tile import Tile
+    >>> from cone.tile import register_tile
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
+    >>> from datetime import datetime
+    >>> import cone.app
+    >>> import cone.app.browser.login
+
 
 Default Layout
 --------------
 
 To change the default layout, change the main template::
 
-    >>> import cone.app
     >>> cone.app.cfg.main_template
     '...'
 
@@ -16,30 +31,28 @@ To change the default layout, change the main template::
 
 An unprotected tile named 'content' registered for all sorts of node::
 
-    >>> from cone.tile import registerTile
-    >>> from cone.tile import tile
-    >>> from cone.tile import Tile
+    >>> layer.hook_tile_reg()
 
     >>> @tile('content', permission='login')
     ... class ContentTile(Tile):
     ...     def render(self):
     ...         return '<div>Content</div>'
 
+    >>> layer.unhook_tile_reg()
+
 Dummy environ::
 
-    >>> from cone.app.model import BaseNode
     >>> request = layer.new_request()
     >>> model = BaseNode()
 
 Render main template. The function accepts an optional ``contenttile``
 argument. if omitted, reserved name 'content' is used::
 
-    >>> from cone.app.browser import render_main_template
     >>> res = render_main_template(model, request)
     >>> res.body
     '<!DOCTYPE html...<div>Content</div>...</html>'
 
-    >>> registerTile('othername', class_=ContentTile, permission='login')
+    >>> register_tile('othername', class_=ContentTile, permission='login')
     >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body
     '<!DOCTYPE html...<div>Content</div>...</html>'
@@ -90,22 +103,19 @@ A login form should be rendered instead of the content for anonymous users.
 
 Class ``cone.app.browser.layout.ProtectedContentTile`` provides this behavior::
 
-    >>> import cone.app.browser.login
-    >>> from cone.app.browser.layout import ProtectedContentTile
     >>> class ProtectedContent(ProtectedContentTile):
     ...     def render(self):
     ...         return '<div>Content</div>'
 
     >>> class ProtectedModel(BaseNode): pass
 
-    >>> registerTile('content',
-    ...              interface=ProtectedModel,
-    ...              class_=ProtectedContent,
-    ...              permission='login')
+    >>> register_tile(
+    ...     'content',
+    ...     interface=ProtectedModel,
+    ...     class_=ProtectedContent,
+    ...     permission='login')
 
 Render protected tile.::
-
-    >>> from cone.tile import render_tile
 
     >>> layer.logout()
     >>> request = layer.new_request()
@@ -209,7 +219,6 @@ items are supposed to be displayed as icons via CSS::
 
 Child nodes which do not grant permission 'view' are skipped::
 
-    >>> from cone.app.security import DEFAULT_SETTINGS_ACL
     >>> class InvisibleNode(BaseNode):
     ...     __acl__ =  DEFAULT_SETTINGS_ACL
 
@@ -394,8 +403,6 @@ Render navtree on ``root['1']['11']``, check selected::
 
 Nodes can be marked as navigation root::
 
-    >>> from cone.app.browser.layout import NavTree
-
     >>> class TestNavTree(NavTree):
     ...     def __init__(self, model, request):
     ...         self.model = model
@@ -518,7 +525,6 @@ Byline
 Byline renders ``model.metadata.creator``, `model.metadata.created`` and
 `model.metadata.modified``::
 
-    >>> from datetime import datetime
     >>> dt = datetime(2011, 3, 14)
     >>> root.metadata.created = dt
     >>> root.metadata.modified = dt
@@ -554,7 +560,7 @@ Test default root content tile
 ------------------------------
 
 ::
-    >>> from cone.app.model import AppRoot
+
     >>> root = AppRoot()
     >>> layer.login('max')
     >>> res = render_tile(root, request, 'content')

@@ -1,11 +1,15 @@
 ContextMenu
 -----------
-::
-    >>> layer.login('manager')
 
-    >>> from cone.tile import render_tile
+::
+
+    >>> from cone.app.browser.actions import ActionContext
     >>> from cone.app.model import BaseNode
+    >>> from cone.app.testing.mock import CopySupportNode
     >>> from cone.app.testing.mock import SharingNode
+    >>> from cone.tile import render_tile
+
+    >>> layer.login('manager')
 
     >>> parent = BaseNode('root')
     >>> model = parent['model'] = SharingNode()
@@ -17,8 +21,6 @@ ContextMenu
     >>> model.properties.action_delete = True
 
     >> model.properties.action_delete_children = True
-
-    >>> from cone.app.browser.actions import ActionContext
 
     >>> request = layer.new_request()
 
@@ -43,8 +45,6 @@ ContextMenu
 
     >>> rendered.find('toolbaraction-share') > -1
     True
-
-    >>> from cone.app.testing.mock import CopySupportNode
 
     >>> model = CopySupportNode()
 

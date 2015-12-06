@@ -1,13 +1,11 @@
-Cone workflow behaviors::
+Imports::
 
+    >>> from cone.app.interfaces import IWorkflowState
+    >>> from cone.app.testing.mock import StateACLWorkflowNode
+    >>> from cone.app.testing.mock import WorkflowNode
+    >>> from cone.app.workflow import initialize_workflow
     >>> from plumber import plumber
     >>> from repoze.workflow import get_workflow
-    >>> from cone.app.interfaces import IWorkflowState
-    >>> from cone.app.workflow import initialize_workflow
-
-Test env provides mock node with workflow behaviors configured::
-
-    >>> from cone.app.testing.mock import WorkflowNode
 
 Dummy workflow is registered for ``WorkflowNode``::
 
@@ -79,7 +77,6 @@ If not set, and ACL not found in ``state_acls``, raise on access::
 
 Test ``state_acls``::
 
-    >>> from cone.app.testing.mock import StateACLWorkflowNode
     >>> node = StateACLWorkflowNode()
     >>> get_workflow(node.__class__, node.workflow_name)
     <repoze.workflow.workflow.Workflow object at ...>

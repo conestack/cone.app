@@ -4,10 +4,13 @@ Browser Utils
 Common browser utils.::
 
     >>> from cone.app.browser.utils import authenticated
-    >>> from cone.app.browser.utils import nodepath
+    >>> from cone.app.browser.utils import format_date
     >>> from cone.app.browser.utils import make_query
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.utils import format_date
+    >>> from cone.app.browser.utils import nodepath
+    >>> from cone.app.browser.utils import request_property
+    >>> from cone.app.model import BaseNode
+    >>> from datetime import datetime
 
 ``authenticated`` - Will be removed.::
 
@@ -17,7 +20,6 @@ Common browser utils.::
 ``nodepath`` - Propably will be implemented in ``BaseNode``. Just skips root in
 path.::
 
-    >>> from cone.app.model import BaseNode
     >>> root = BaseNode()
     >>> root['child'] = BaseNode()
     >>> nodepath(root['child'])
@@ -52,7 +54,6 @@ path.::
 
 ``format_date``::
 
-    >>> from datetime import datetime
     >>> dt = datetime(2011, 3, 15)
     >>> format_date(dt)
     '15.03.2011 00:00'
@@ -65,7 +66,6 @@ path.::
 
 ``request_property``::
 
-    >>> from cone.app.browser.utils import request_property
     >>> class RequestPropertyUsingClass(object):
     ...     def __init__(self, request):
     ...         self.request = request

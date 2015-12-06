@@ -10,7 +10,19 @@ yafowil forms and provides needed hooks to ``cona.app``.
 A subclass of a form tile must implement ``prepare``. This function is 
 responsible to create the yafowil form on ``self.form``::
 
+    >>> from cone.app.browser.ajax import AjaxAction
     >>> from cone.app.browser.form import Form
+    >>> from cone.app.browser.form import ProtectedAttributesForm
+    >>> from cone.app.browser.form import YAMLForm
+    >>> from cone.app.browser.utils import make_url
+    >>> from cone.app.model import BaseNode
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
+    >>> from plumber import plumbing
+    >>> from pyramid.security import has_permission
+    >>> from webob.exc import HTTPFound
+    >>> from yafowil import loader
+    >>> from yafowil.base import factory
 
     >>> formtile = Form(None, None, 'plainform')
     >>> formtile.prepare()
@@ -19,12 +31,7 @@ responsible to create the yafowil form on ``self.form``::
     NotImplementedError: ``prepare`` function must be provided by 
     deriving object.
 
-    >>> from yafowil import loader
-    >>> from yafowil.base import factory
-    >>> from cone.tile import tile
-    >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.ajax import AjaxAction
-    >>> from webob.exc import HTTPFound
+    >>> layer.hook_tile_reg()
 
     >>> @tile('subscriptionform')
     ... class SubscriptionForm(Form):
@@ -72,9 +79,10 @@ responsible to create the yafowil form on ``self.form``::
     ...             return AjaxAction(url, 'content', 'inner', '#content')
     ...         return HTTPFound(url)
 
+    >>> layer.unhook_tile_reg()
+
 Create dummy model::
 
-    >>> from cone.app.model import BaseNode
     >>> model = BaseNode()
     >>> model.__name__ = 'dummymodel'
 
@@ -85,7 +93,6 @@ Authenticate::
 
 Render form. ``form.show`` returns false, render empty string::
 
-    >>> from cone.tile import render_tile
     >>> render_tile(model, request, 'subscriptionform')
     u''
 
@@ -173,8 +180,7 @@ Submit with ajax flag::
 
 Same form as above using ``yafowil.yaml``::
 
-    >>> from plumber import plumbing
-    >>> from cone.app.browser.form import YAMLForm
+    >>> layer.hook_tile_reg()
 
     >>> @tile('yamlsubscriptionform')
     ... @plumbing(YAMLForm)
@@ -182,8 +188,9 @@ Same form as above using ``yafowil.yaml``::
     ...     action_resource = 'yamlsubscriptionform'
     ...     form_template = 'cone.app.testing:dummy_form.yaml'
 
+    >>> layer.unhook_tile_reg()
+
     >>> request = layer.new_request()
-    >>> from cone.tile import render_tile
     >>> res = render_tile(model, request, 'yamlsubscriptionform')
     >>> expected = \
     ...     'action="http://example.com/dummymodel/yamlsubscriptionform"'
@@ -193,11 +200,15 @@ Same form as above using ``yafowil.yaml``::
 Instead of ``form_template`` attribute, ``form_template_path`` can be used for
 backward compatibility::
 
+    >>> layer.hook_tile_reg()
+
     >>> @tile('yamlsubscriptionform2')
     ... class YAMLSubscriptionForm2(YAMLSubscriptionForm):
     ...     action_resource = 'yamlsubscriptionform2'
     ...     form_template = None
     ...     form_template_path = 'cone.app.testing:dummy_form.yaml'
+
+    >>> layer.unhook_tile_reg()
 
     >>> res = render_tile(model, request, 'yamlsubscriptionform2')
     >>> expected = \
@@ -207,7 +218,8 @@ backward compatibility::
 
 ProtectedAttributesForm plumbing behavior::
 
-    >>> from cone.app.browser.form import ProtectedAttributesForm
+    >>> layer.hook_tile_reg()
+
     >>> @tile('protectedattributesform')
     ... @plumbing(ProtectedAttributesForm)
     ... class ProtectedAttributesForm(Form):
@@ -230,7 +242,8 @@ ProtectedAttributesForm plumbing behavior::
     ...         )
     ...         self.form = form
 
-    >>> from pyramid.security import has_permission
+    >>> layer.unhook_tile_reg()
+
     >>> layer.login('viewer')
     >>> request = layer.new_request()
     >>> has_permission('edit', model, request)
@@ -269,6 +282,8 @@ ProtectedAttributesForm plumbing behavior::
 
 Provide another form tile for testing remaining aspects of ``Form`` class::
 
+    >>> layer.hook_tile_reg()
+
     >>> @tile('otherform')
     ... class OtherForm(Form):
     ...     
@@ -300,6 +315,8 @@ Provide another form tile for testing remaining aspects of ``Form`` class::
     ...             return [AjaxAction(url, 'content', 'inner', '#content')]
     ...         # return anything else to be rendered
     ...         return '<div>foo</div>'
+
+    >>> layer.unhook_tile_reg()
 
     >>> layer.login('max')
     >>> request = layer.new_request()

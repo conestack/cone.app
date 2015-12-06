@@ -1,13 +1,23 @@
+Imports::
+
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.utils import DatetimeHelper
+    >>> from cone.app.utils import add_creation_metadata
+    >>> from cone.app.utils import app_config
+    >>> from cone.app.utils import principal_data
+    >>> from cone.app.utils import timestamp
+    >>> from cone.app.utils import update_creation_metadata
+    >>> from datetime import datetime
+    >>> import cone.app
+
 Fetch application configuration::
 
-    >>> from cone.app.utils import app_config
     >>> cfg = app_config()
     >>> cfg
     <cone.app.model.Properties object at ...>
 
 Fetch principal data::
 
-    >>> from cone.app.utils import principal_data
     >>> principal_data('manager').items()
     [(u'fullname', u'Manager User'), (u'email', u'manager@bar.com')]
 
@@ -17,7 +27,6 @@ Fetch principal data::
 If UGM implementation raises an exception when trying to fetch the principal
 it get logged::
 
-    >>> import cone.app
     >>> old_ugm = cone.app.cfg.auth
     >>> cone.app.cfg.auth = None
     >>> principal_data('inexistent')
@@ -27,8 +36,6 @@ it get logged::
 
 Helper object for read/write operations with datetime values::
 
-    >>> from datetime import datetime
-    >>> from cone.app.utils import DatetimeHelper
     >>> helper = DatetimeHelper()
     >>> dt = datetime(2010, 1, 1, 10, 15)
 
@@ -74,15 +81,11 @@ Helper object for read/write operations with datetime values::
 
 Timestamp::
 
-    >>> from cone.app.utils import timestamp
     >>> timestamp()
     datetime.datetime(..., ..., ..., ..., ..., ..., ...)
 
 Creation metadata::
 
-    >>> from cone.app.utils import add_creation_metadata
-    >>> from cone.app.utils import update_creation_metadata
-    >>> from cone.app.model import BaseNode
     >>> node = BaseNode()
     >>> layer.login('editor')
 

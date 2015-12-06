@@ -1,16 +1,41 @@
 Actions
 =======
 
-::
+Imports::
 
-    >>> from cone.app.model import BaseNode
-    >>> from cone.app.model import Properties
-    >>> from cone.app.browser.actions import get_action_context
-    >>> from cone.app.browser.actions import ActionContext
-    >>> from cone.app.browser.actions import Toolbar
     >>> from cone.app.browser.actions import Action
-    >>> from cone.app.browser.actions import TileAction
+    >>> from cone.app.browser.actions import ActionAdd
+    >>> from cone.app.browser.actions import ActionContext
+    >>> from cone.app.browser.actions import ActionCopy
+    >>> from cone.app.browser.actions import ActionCut
+    >>> from cone.app.browser.actions import ActionDelete
+    >>> from cone.app.browser.actions import ActionDeleteChildren
+    >>> from cone.app.browser.actions import ActionEdit
+    >>> from cone.app.browser.actions import ActionList
+    >>> from cone.app.browser.actions import ActionPaste
+    >>> from cone.app.browser.actions import ActionSharing
+    >>> from cone.app.browser.actions import ActionState
+    >>> from cone.app.browser.actions import ActionUp
+    >>> from cone.app.browser.actions import ActionView
+    >>> from cone.app.browser.actions import DropdownAction
+    >>> from cone.app.browser.actions import LinkAction
     >>> from cone.app.browser.actions import TemplateAction
+    >>> from cone.app.browser.actions import TileAction
+    >>> from cone.app.browser.actions import Toolbar
+    >>> from cone.app.browser.actions import ViewLink
+    >>> from cone.app.browser.actions import get_action_context
+    >>> from cone.app.interfaces import ICopySupport
+    >>> from cone.app.interfaces import IPrincipalACL
+    >>> from cone.app.interfaces import IWorkflowState
+    >>> from cone.app.model import BaseNode
+    >>> from cone.app.model import NodeInfo
+    >>> from cone.app.model import Properties
+    >>> from cone.app.model import register_node_info
+    >>> from cone.app.testing.mock import CopySupportNode
+    >>> from cone.app.testing.mock import SharingNode
+    >>> from cone.app.testing.mock import WorkflowNode
+    >>> from cone.tile import register_tile
+    >>> from pyramid.security import has_permission
 
 
 ActionContext
@@ -103,8 +128,7 @@ Dummy actions
     >>> DummyTemplateAction()(model, request)
     u'<a href="">dummy template action</a>'
 
-    >>> from cone.tile import registerTile
-    >>> registerTile('dummy_action_tile', 'cone.app.testing:dummy_action.pt')
+    >>> register_tile('dummy_action_tile', 'cone.app.testing:dummy_action.pt')
     >>> class DummyTileAction(TileAction):
     ...     tile = u'dummy_action_tile'
 
@@ -121,7 +145,6 @@ Toolbar
 
 ::
 
-    >>> from cone.app.browser.actions import Toolbar
     >>> tb = Toolbar()
     >>> tb['a'] = DummyAction()
     >>> tb['b'] = DummyTemplateAction()
@@ -152,7 +175,6 @@ Abstract Dropdown
 
 ::
 
-    >>> from cone.app.browser.actions import DropdownAction
     >>> DropdownAction()(model, request)
     Traceback (most recent call last):
       ...
@@ -165,7 +187,6 @@ LinkAction
 
 ::
 
-    >>> from cone.app.browser.actions import LinkAction
     >>> LinkAction()(model, request)
     u'...<a\n...ajax:bind="click"\n...ajax:target="http://example.com/"\n...></a>...'
 
@@ -206,7 +227,6 @@ ActionUp
 
 ::
 
-    >>> from cone.app.browser.actions import ActionUp
     >>> parent = BaseNode(name='root')
     >>> model = parent['model'] = BaseNode()
 
@@ -261,9 +281,6 @@ ActionView
 
 ::
 
-    >>> from cone.app.browser.actions import ActionView
-    >>> from cone.app.browser.actions import ActionContext
-
     >>> ac = ActionContext(model, request, 'content')
 
     >>> action = ActionView()
@@ -306,7 +323,6 @@ ViewLink
 
 ::
 
-    >>> from cone.app.browser.actions import ViewLink
     >>> action = ViewLink()
     >>> action(model, request)
     u''
@@ -334,7 +350,6 @@ ActionList
 
 ::
 
-    >>> from cone.app.browser.actions import ActionList
     >>> action = ActionList()
     >>> action(model, request)
     u''
@@ -362,10 +377,6 @@ ActionSharing
 
 ::
 
-    >>> from pyramid.security import has_permission
-    >>> from cone.app.interfaces import IPrincipalACL
-    >>> from cone.app.testing.mock import SharingNode
-    >>> from cone.app.browser.actions import ActionSharing
     >>> action = ActionSharing()
 
     >>> IPrincipalACL.providedBy(model)
@@ -412,9 +423,6 @@ ActionState
 
 ::
 
-    >>> from cone.app.interfaces import IWorkflowState
-    >>> from cone.app.testing.mock import WorkflowNode
-    >>> from cone.app.browser.actions import ActionState
     >>> action = ActionState()
 
     >>> IWorkflowState.providedBy(model)
@@ -458,15 +466,11 @@ ActionAdd
 
 ::
 
-    >>> from cone.app.model import NodeInfo
-    >>> from cone.app.model import register_node_info
-
     >>> info = NodeInfo()
     >>> info.title = 'Addable'
     >>> info.addables = ['addable']
     >>> register_node_info('addable', info)
 
-    >>> from cone.app.browser.actions import ActionAdd
     >>> action = ActionAdd()
 
     >>> addmodel = BaseNode()
@@ -523,7 +527,6 @@ ActionEdit
 
     >>> ac = ActionContext(model, request, 'listing')
 
-    >>> from cone.app.browser.actions import ActionEdit
     >>> action = ActionEdit()
     >>> action(model, request)
     u''
@@ -557,7 +560,6 @@ ActionDelete
 
     >>> ac = ActionContext(model, request, 'content')
 
-    >>> from cone.app.browser.actions import ActionDelete
     >>> action = ActionDelete()
     >>> action(model, request)
     u''
@@ -594,7 +596,6 @@ ActionDeleteChildren
 
 ::
 
-    >>> from cone.app.browser.actions import ActionDeleteChildren
     >>> action = ActionDeleteChildren()
     >>> action(model, request)
     u''
@@ -641,8 +642,6 @@ ActionCut
 
 ::
 
-    >>> from cone.app.interfaces import ICopySupport
-    >>> from cone.app.testing.mock import CopySupportNode
     >>> model = CopySupportNode('copysupport')
 
     >>> ac = ActionContext(model, request, 'listing')
@@ -653,7 +652,6 @@ ActionCut
     >>> model.supports_cut
     True
 
-    >>> from cone.app.browser.actions import ActionCut
     >>> action = ActionCut()
     >>> action(model, request)
     u''
@@ -686,7 +684,6 @@ ActionCopy
     >>> model.supports_copy
     True
 
-    >>> from cone.app.browser.actions import ActionCopy
     >>> action = ActionCopy()
     >>> action(model, request)
     u''
@@ -719,7 +716,6 @@ ActionPaste
     >>> model.supports_paste
     True
 
-    >>> from cone.app.browser.actions import ActionPaste
     >>> action = ActionPaste()
     >>> action(model, request)
     u''

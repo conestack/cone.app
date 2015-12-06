@@ -6,7 +6,6 @@ from cone.app.browser.table import RowData
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import INavigationLeaf
-from cone.tile import registerTile
 from cone.tile import tile
 from node.interfaces import IUUIDAware
 from node.utils import LocationIterator
@@ -31,11 +30,6 @@ _ = TranslationStringFactory('cone.app')
 
 # XXX: define i18n translation callback for app
 tag = Tag(lambda x: x)
-
-
-registerTile('referencebrowser',
-             'templates/referencebrowser.pt',
-             permission='view')
 
 
 def make_refbrowser_query(request, **kw):

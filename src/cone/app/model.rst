@@ -1,13 +1,32 @@
 BaseNode
 --------
 
-::
+Imports::
 
+    >>> from cone.app.model import AdapterNode
     >>> from cone.app.model import BaseNode
-    >>> root = BaseNode()
+    >>> from cone.app.model import ConfigProperties
+    >>> from cone.app.model import FactoryNode
+    >>> from cone.app.model import Metadata
+    >>> from cone.app.model import NodeInfo
+    >>> from cone.app.model import Properties
+    >>> from cone.app.model import ProtectedProperties
+    >>> from cone.app.model import UUIDAsName
+    >>> from cone.app.model import UUIDAttributeAware
+    >>> from cone.app.model import XMLProperties
+    >>> from cone.app.model import get_node_info
+    >>> from cone.app.model import register_node_info
+    >>> from datetime import datetime
+    >>> from node.interfaces import IInvalidate
+    >>> from odict import odict
+    >>> from plumber import plumbing
+    >>> import os
+    >>> import shutil
+    >>> import tempfile
 
 Default permissions.::
 
+    >>> root = BaseNode()
     >>> root.__acl__
     [('Allow', 'system.Authenticated', ['view']), 
     ('Allow', 'role:viewer', ['view', 'list']), 
@@ -92,7 +111,6 @@ FactoryNode
 
 ::
 
-    >>> from cone.app.model import FactoryNode
     >>> class Root(FactoryNode):
     ...     factories = {
     ...         'foo': BaseNode,
@@ -114,7 +132,6 @@ FactoryNode
     >>> [_ for _ in root]
     ['foo', 'bar']
 
-    >>> from node.interfaces import IInvalidate
     >>> IInvalidate.providedBy(root)
     True
 
@@ -140,9 +157,6 @@ AdapterNode
 -----------
 
 ::
-
-    >>> from cone.app.model import BaseNode
-    >>> from cone.app.model import AdapterNode
 
     >>> toadapt = BaseNode()
     >>> toadapt['foo'] = BaseNode()
@@ -205,7 +219,6 @@ used by the application for displaying metadata information.
 
 The default implementation accepts a dict like object on ``__init__``.::
 
-    >>> from cone.app.model import Metadata
     >>> data = {
     ...     'title': 'some title',
     ...     'description': 'some description',
@@ -251,7 +264,6 @@ NodeInfo
 The ``INodeInfo`` providing object holds information about the application
 node.::
 
-    >>> from cone.app.model import NodeInfo
     >>> nodeinfo = NodeInfo()
     >>> nodeinfo.node = BaseNode
     >>> nodeinfo.addables = ['basenode']
@@ -259,7 +271,6 @@ node.::
 
 Register node info.::
 
-    >>> from cone.app.model import register_node_info, get_node_info
     >>> register_node_info('basenode', nodeinfo)
 
 Lookup Node info.::
@@ -296,8 +307,6 @@ UUIDAttributeAware
 
 ::
 
-    >>> from plumber import plumbing
-    >>> from cone.app.model import UUIDAttributeAware
     >>> @plumbing(UUIDAttributeAware)
     ... class UUIDNode(BaseNode):
     ...     pass
@@ -315,7 +324,6 @@ UUIDAsName
 
 ::
 
-    >>> from cone.app.model import UUIDAsName
     >>> @plumbing(UUIDAsName)
     ... class UUIDAsNameNode(BaseNode):
     ...     pass
@@ -375,7 +383,6 @@ Properties
 
 You can use the ``Properties`` object for any kind of mapping.::
 
-    >>> from cone.app.model import Properties
     >>> p1 = Properties()
     >>> p1.prop = 'Foo'
 
@@ -391,7 +398,6 @@ ProtectedProperties
 
 Protected properties checks against permission for properties::
 
-    >>> from cone.app.model import ProtectedProperties
     >>> context = BaseNode()
 
 'viewprotected' property gets protected by 'view' permission::
@@ -469,13 +475,10 @@ There's a convenience object for XML input and output.
 
 Dummy environment.::
 
-    >>> import os
-    >>> import tempfile
     >>> tempdir = tempfile.mkdtemp()
 
 Create XML properties with path and optional data.::
 
-    >>> from cone.app.model import XMLProperties
     >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'),
     ...                       data={'foo': u'äöüß'})
 
@@ -489,7 +492,6 @@ Testing helper functions.::
 
 XML properties could be datetime objects.::
 
-    >>> from datetime import datetime
     >>> props.effective = datetime(2010, 1, 1, 10, 15)
     >>> props.empty = ''
 
@@ -499,7 +501,6 @@ XML properties could be multi valued...::
 
 ...or dict/odict instance::
 
-    >>> from odict import odict
     >>> props.dictlike = odict([('a', 'foo'), ('b', 'bar'), ('c', '')])
 
 Nothing added yet.::
@@ -673,7 +674,6 @@ ConfigProperties
 A Properties implementation exists for Config files used by python
 configparser.:: 
 
-    >>> from cone.app.model import ConfigProperties
     >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'),
     ...                          data={'foo': 1})
 
@@ -758,5 +758,4 @@ Call and check results.::
     ...     file.read()
     '[properties]\nbar = bar\n\n'
 
-    >>> import shutil
     >>> shutil.rmtree(tempdir)

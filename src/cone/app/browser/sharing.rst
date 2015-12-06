@@ -1,7 +1,10 @@
 Imports::
 
-    >>> from cone.tile import render_tile
+    >>> from cone.app.browser.actions import ActionContext
+    >>> from cone.app.browser.ajax import ajax_tile
+    >>> from cone.app.model import BaseNode
     >>> from cone.app.testing.mock import SharingNode
+    >>> from cone.tile import render_tile
 
 Create model root::
 
@@ -12,12 +15,8 @@ Create model root::
 Render sharing tile::
 
     >>> layer.login('manager')
-
     >>> request = layer.new_request()
-
-    >>> from cone.app.browser.actions import ActionContext
     >>> ac = ActionContext(root, request, 'content')
-
     >>> res = render_tile(root, request, 'sharing')
 
 Render sharing tile with search term.
@@ -92,8 +91,6 @@ could happen if user was deleted but principal roles were not::
 
 Add role for user::
 
-    >>> from cone.app.browser.ajax import ajax_tile
-
     >>> request.params['id'] = 'viewer'
     >>> request.params['role'] = 'manager'
     >>> request.params['bdajax.action'] = 'add_principal_role'
@@ -133,7 +130,6 @@ Add role for user not added yet::
 
 If an error occurs, a message gets displayed::
 
-    >>> from cone.app.model import BaseNode
     >>> invalid_node = BaseNode()
     >>> request.params['id'] = 'viewer'
     >>> ajax_tile(invalid_node, request)

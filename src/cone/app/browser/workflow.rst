@@ -3,10 +3,10 @@ Workflow dropdown
 
 ::
 
-    >>> from cone.tile import render_tile
     >>> from cone.app import root
-    >>> from cone.app.testing.mock import WorkflowNode
     >>> from cone.app.testing.mock import InexistentWorkflowNode
+    >>> from cone.app.testing.mock import WorkflowNode
+    >>> from cone.tile import render_tile
     >>> import cone.app.browser.workflow
 
     >>> request = layer.new_request()

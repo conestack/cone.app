@@ -5,10 +5,18 @@ from pyramid.security import AuthenticationAPIMixin
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 import cone.app
+import cone.tile
 import os
+import venusian
 
 
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
+
+
+class DummyVenusian(object):
+    def attach(self, wrapped, callback, category=None, depth=1):
+        callback(None, None, wrapped)
+        return None
 
 
 class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
@@ -21,19 +29,7 @@ class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
 class Security(Layer):
     """Test layer with dummy authentication for security testing.
     """
-
-    def login(self, login):
-        request = self.current_request
-        if not request:
-            request = self.new_request()
-        else:
-            self.logout()
-        res = authenticate(request, login, 'secret')
-        if res:
-            request.environ['HTTP_COOKIE'] = res[0][1]
-            cookie = res[0][1].split(';')[0].split('=')
-            request.cookies[cookie[0]] = cookie[1]
-
+    current_request = None
     auth_env_keys = [
         'REMOTE_USER_TOKENS',
         'REMOTE_USER_DATA',
@@ -41,14 +37,9 @@ class Security(Layer):
         'cone.app.user.roles',
     ]
 
-    def logout(self):
-        request = self.current_request
-        if request:
-            request.cookies.clear()
-            environ = request.environ
-            for key in self.auth_env_keys:
-                if key in environ:
-                    del environ[key]
+    @property
+    def registry(self):
+        return getGlobalSiteManager()
 
     def defaults(self):
         return {
@@ -56,9 +47,11 @@ class Security(Layer):
             'registry': self.registry
         }
 
-    @property
-    def registry(self):
-        return getGlobalSiteManager()
+    def hook_tile_reg(self):
+        cone.tile.tile.venusian = DummyVenusian()
+
+    def unhook_tile_reg(self):
+        cone.tile.tile.venusian = venusian
 
     def new_request(self, type=None, xhr=False):
         request = self.current_request
@@ -84,7 +77,30 @@ class Security(Layer):
         self.current_request = request
         return request
 
+    def login(self, login):
+        request = self.current_request
+        if not request:
+            request = self.new_request()
+        else:
+            self.logout()
+        res = authenticate(request, login, 'secret')
+        if res:
+            request.environ['HTTP_COOKIE'] = res[0][1]
+            cookie = res[0][1].split(';')[0].split('=')
+            request.cookies[cookie[0]] = cookie[1]
+
+    def logout(self):
+        request = self.current_request
+        if request:
+            request.cookies.clear()
+            environ = request.environ
+            for key in self.auth_env_keys:
+                if key in environ:
+                    del environ[key]
+
     def make_app(self, **kw):
+        import pyramid.threadlocal
+        pyramid.threadlocal.manager.default = self.defaults
         settings = {
             'default_locale_name': 'en',
             'cone.admin_user': 'superuser',
@@ -105,8 +121,6 @@ class Security(Layer):
         settings.update(**kw)
         self.app = cone.app.main({}, **settings)
         self.current_request = None
-        import pyramid.threadlocal
-        pyramid.threadlocal.manager.default = self.defaults
 
     def setUp(self, args=None):
         self.make_app()

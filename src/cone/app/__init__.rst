@@ -1,13 +1,15 @@
 cone main
 ---------
 
-::
+Imports::
 
+    >>> from cone.app import make_remote_addr_middleware
+    >>> from cone.app.model import BaseNode
     >>> import cone.app
+    >>> import os
 
 ``get_root``::
 
-    >>> import os
     >>> root = cone.app.get_root()
     >>> root
     <AppRoot object 'None' at ...>
@@ -38,7 +40,6 @@ Settings is displayed in navtree by default::
 
 ``register_plugin``::
 
-    >>> from cone.app.model import BaseNode
     >>> cone.app.register_plugin('dummy', BaseNode)
     >>> 'dummy' in root.factories.keys()
     True
@@ -85,13 +86,12 @@ Settings is displayed in navtree by default::
     ...     'cone.auth_reissue_time': '300',
     ...     'cone.auth_max_age': '600',
     ... }
+
     >>> cone.app.main({}, **settings)
     Custom main hook called
     <pyramid.router.Router object at ...>
 
 Remote address middleware::
-
-    >>> from cone.app import make_remote_addr_middleware
 
     >>> class DummyApp(object):
     ...     def __call__(self, environ, start_response):
