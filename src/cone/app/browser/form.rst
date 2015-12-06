@@ -33,7 +33,7 @@ responsible to create the yafowil form on ``self.form``::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('subscriptionform')
+    >>> @tile(name='subscriptionform')
     ... class SubscriptionForm(Form):
     ...     _ajax = False # test flag
     ...     _show = False # test flag
@@ -182,7 +182,7 @@ Same form as above using ``yafowil.yaml``::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('yamlsubscriptionform')
+    >>> @tile(name='yamlsubscriptionform')
     ... @plumbing(YAMLForm)
     ... class YAMLSubscriptionForm(Form):
     ...     action_resource = 'yamlsubscriptionform'
@@ -202,7 +202,7 @@ backward compatibility::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('yamlsubscriptionform2')
+    >>> @tile(name='yamlsubscriptionform2')
     ... class YAMLSubscriptionForm2(YAMLSubscriptionForm):
     ...     action_resource = 'yamlsubscriptionform2'
     ...     form_template = None
@@ -220,7 +220,7 @@ ProtectedAttributesForm plumbing behavior::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('protectedattributesform')
+    >>> @tile(name='protectedattributesform')
     ... @plumbing(ProtectedAttributesForm)
     ... class ProtectedAttributesForm(Form):
     ...     
@@ -284,7 +284,7 @@ Provide another form tile for testing remaining aspects of ``Form`` class::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('otherform')
+    >>> @tile(name='otherform')
     ... class OtherForm(Form):
     ...     
     ...     def prepare(self):

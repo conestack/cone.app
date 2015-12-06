@@ -35,7 +35,7 @@ def paths_from_urls(urls):
     return ret
 
 
-@tile('paste', permission="paste")
+@tile(name='paste', permission="paste")
 class PasteAction(Tile):
 
     def render(self):

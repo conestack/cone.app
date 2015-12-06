@@ -12,8 +12,10 @@ import logging
 logger = logging.getLogger('cone.app')
 
 
-@tile('wf_dropdown', 'templates/wf_dropdown.pt',
-      permission='change_state', strict=False)
+@tile(name='wf_dropdown',
+      path='templates/wf_dropdown.pt',
+      permission='change_state',
+      strict=False)
 class WfDropdown(Tile):
     """Transition dropdown.
 

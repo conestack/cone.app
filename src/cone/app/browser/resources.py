@@ -70,7 +70,7 @@ def print_css(model, request):
     return response
 
 
-@tile('resources', 'templates/resources.pt', permission='login')
+@tile(name='resources', path='templates/resources.pt', permission='login')
 class Resources(Tile):
     """Resources tile.
 

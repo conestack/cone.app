@@ -128,7 +128,9 @@ Dummy actions
     >>> DummyTemplateAction()(model, request)
     u'<a href="">dummy template action</a>'
 
-    >>> register_tile('dummy_action_tile', 'cone.app.testing:dummy_action.pt')
+    >>> register_tile(
+    ...     name='dummy_action_tile',
+    ...     path='cone.app.testing:dummy_action.pt')
     >>> class DummyTileAction(TileAction):
     ...     tile = u'dummy_action_tile'
 

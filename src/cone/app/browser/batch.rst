@@ -372,7 +372,7 @@ Register batch tile::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('testbatch')
+    >>> @tile(name='testbatch')
     ... class TestBatch(Batch):
     ... 
     ...     @property

@@ -37,7 +37,7 @@ Test ``ajax_tile``::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('testtile')
+    >>> @tile(name='testtile')
     ... class TestTile(Tile):
     ...     def render(self):
     ...         return 'rendered test tile'
@@ -120,7 +120,7 @@ list of instances to set continuation actions::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('testtile2')
+    >>> @tile(name='testtile2')
     ... class TestTile(Tile):
     ...     def render(self):
     ...         ajax_continue(self.request,
@@ -256,7 +256,7 @@ Test ``render_ajax_form``. Provide a dummy Form::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('ajaxtestform')
+    >>> @tile(name='ajaxtestform')
     ... class AjaxTestForm(Form):
     ...     
     ...     def prepare(self):

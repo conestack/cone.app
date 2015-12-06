@@ -65,7 +65,7 @@ class ContentsViewLink(ViewLink):
     action = None
 
 
-@tile('contents', 'templates/table.pt', permission='list')
+@tile(name='contents', path='templates/table.pt', permission='list')
 class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'

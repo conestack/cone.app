@@ -11,7 +11,7 @@ from yafowil.base import factory
 _ = TranslationStringFactory('cone.app')
 
 
-@tile('loginform', permission='login')
+@tile(name='loginform', permission='login')
 class LoginForm(Form):
     ajax = False
 

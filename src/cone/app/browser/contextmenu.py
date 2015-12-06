@@ -105,7 +105,7 @@ context_menu['contextactions']['add'] = ActionAdd()
 context_menu['contextactions']['delete'] = ActionDelete()
 
 
-@tile('contextmenu', 'templates/contextmenu.pt', permission='view')
+@tile(name='contextmenu', path='templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
 
     @property

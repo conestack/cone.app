@@ -30,7 +30,7 @@ Create 'content' tile for settings node::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('content', interface=SomeSettings)
+    >>> @tile(name='content', interface=SomeSettings)
     ... class SomeSettingsTile(Tile):
     ...     def render(self):
     ...         return '<div>Settings Contents</div>'
@@ -60,7 +60,7 @@ Tile for ``OtherSettings`` which raises an exception at render time::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('content', interface=OtherSettings)
+    >>> @tile(name='content', interface=OtherSettings)
     ... class OtherSettingsTile(Tile):
     ...     def render(self):
     ...         raise Exception(u"This tile can not be rendered for some "
@@ -87,7 +87,7 @@ hooking form to correct tab::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('editform', interface=SomeSettings)
+    >>> @tile(name='editform', interface=SomeSettings)
     ... @plumbing(SettingsBehavior)
     ... class SomeSettingsForm(Form):
     ... 

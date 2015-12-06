@@ -33,7 +33,7 @@ An unprotected tile named 'content' registered for all sorts of node::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('content', permission='login')
+    >>> @tile(name='content', permission='login')
     ... class ContentTile(Tile):
     ...     def render(self):
     ...         return '<div>Content</div>'
@@ -52,7 +52,10 @@ argument. if omitted, reserved name 'content' is used::
     >>> res.body
     '<!DOCTYPE html...<div>Content</div>...</html>'
 
-    >>> register_tile('othername', class_=ContentTile, permission='login')
+    >>> register_tile(
+    ...     name='othername',
+    ...     class_=ContentTile,
+    ...     permission='login')
     >>> res = render_main_template(model, request, contenttile='othername')
     >>> res.body
     '<!DOCTYPE html...<div>Content</div>...</html>'
@@ -110,7 +113,7 @@ Class ``cone.app.browser.layout.ProtectedContentTile`` provides this behavior::
     >>> class ProtectedModel(BaseNode): pass
 
     >>> register_tile(
-    ...     'content',
+    ...     name='content',
     ...     interface=ProtectedModel,
     ...     class_=ProtectedContent,
     ...     permission='login')

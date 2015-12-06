@@ -31,8 +31,10 @@ def settings_tab_content(model, request):
     return Response('<div class="%s">%s</div>' % (model.name, rendered))
 
 
-@tile('content', 'templates/settings.pt',
-      interface=AppSettings, permission='manage')
+@tile(name='content',
+      path='templates/settings.pt',
+      interface=AppSettings,
+      permission='manage')
 class AppSettings(Tile):
 
     @property

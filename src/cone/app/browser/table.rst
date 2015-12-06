@@ -163,7 +163,8 @@ A complete example::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('mytabletile', 'cone.app:browser/templates/table.pt',
+    >>> @tile(name='mytabletile',
+    ...       path='cone.app:browser/templates/table.pt',
     ...       permission='view')
     ... class MyTable(Table):
     ... 

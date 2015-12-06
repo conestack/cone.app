@@ -23,10 +23,10 @@ def sharing(model, request):
     return render_main_template(model, request, 'sharing')
 
 
-@tile('local_acl', 'templates/table.pt',
+@tile(name='local_acl',
+      path='templates/table.pt',
       permission='manage_permissions')
 class SharingTable(Table):
-
     table_id = 'localacltable'
     table_tile_name = 'local_acl'
     default_sort = 'principal'
@@ -126,7 +126,7 @@ class SharingTable(Table):
         return ret
 
 
-@tile('add_principal_role', permission='manage_permissions')
+@tile(name='add_principal_role', permission='manage_permissions')
 class AddPrincipalRole(Tile):
 
     def render(self):
@@ -153,7 +153,7 @@ class AddPrincipalRole(Tile):
         return u''
 
 
-@tile('remove_principal_role', permission='manage_permissions')
+@tile(name='remove_principal_role', permission='manage_permissions')
 class RemovePrincipalRole(Tile):
 
     def render(self):

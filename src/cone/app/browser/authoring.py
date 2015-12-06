@@ -156,7 +156,7 @@ def overlayform(model, request):
     return render_form(model, request, 'overlayformtile')
 
 
-@tile('overlayformtile', permission='view')
+@tile(name='overlayformtile', permission='view')
 class OverlayFormTile(_FormRenderingTile):
     form_tile_name = 'overlayform'
 
@@ -208,7 +208,8 @@ def default_addmodel_factory(parent, nodeinfo):
     return addmodel
 
 
-@tile('add_dropdown', 'templates/add_dropdown.pt',
+@tile(name='add_dropdown',
+      path='templates/add_dropdown.pt',
       permission='add', strict=False)
 class AddDropdown(Tile):
 
@@ -247,7 +248,7 @@ def add(model, request):
     return render_form(model, request, 'add')
 
 
-@tile('add', permission='add')
+@tile(name='add', permission='add')
 class AddTile(_FormRenderingTile):
     """The add tile is responsible to render add forms depending on given
     factory name. Factory information is fetched from NodeInfo implementation
@@ -332,7 +333,7 @@ def overlayadd(model, request):
     return render_form(model, request, 'overlayadd')
 
 
-@tile('overlayadd', permission='add')
+@tile(name='overlayadd', permission='add')
 class OverlayAddTile(AddTile):
     form_tile_name = 'overlayaddform'
 
@@ -354,7 +355,7 @@ def edit(model, request):
     return render_form(model, request, 'edit')
 
 
-@tile('edit', permission='edit')
+@tile(name='edit', permission='edit')
 class EditTile(_FormRenderingTile):
     form_tile_name = 'editform'
 
@@ -396,7 +397,7 @@ def overlayform(model, request):
     return render_form(model, request, 'overlayedit')
 
 
-@tile('overlayedit', permission='edit')
+@tile(name='overlayedit', permission='edit')
 class OverlayFormTile(_FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
@@ -412,7 +413,7 @@ class OverlayEditForm(OverlayForm,
 # deleting
 ###############################################################################
 
-@tile('delete', permission="delete")
+@tile(name='delete', permission="delete")
 class DeleteAction(Tile):
 
     def continuation(self, url):

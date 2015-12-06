@@ -81,7 +81,7 @@ Create and register an ``addform`` named form tile::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('addform', interface=ITestAddingNode)
+    >>> @tile(name='addform', interface=ITestAddingNode)
     ... @plumbing(ContentAddForm)
     ... class MyAddForm(Form):
     ... 
@@ -224,7 +224,7 @@ Create and register an ``editform`` named form tile::
 
     >>> layer.hook_tile_reg()
 
-    >>> @tile('editform', interface=MyNode)
+    >>> @tile(name='editform', interface=MyNode)
     ... @plumbing(ContentEditForm)
     ... class MyEditForm(Form):
     ... 

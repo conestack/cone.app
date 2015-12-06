@@ -39,7 +39,7 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
-@tile('layout', 'templates/layout.pt', permission='login')
+@tile(name='layout', path='templates/layout.pt', permission='login')
 class Layout(Tile):
     """Main layout tile.
     """
@@ -93,8 +93,10 @@ personal_tools['settings'] = ViewSettingsAction()
 personal_tools['logout'] = LogoutAction()
 
 
-@tile('personaltools', 'templates/personaltools.pt',
-      permission='view', strict=False)
+@tile(name='personaltools',
+      path='templates/personaltools.pt',
+      permission='view',
+      strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
     """
@@ -111,7 +113,10 @@ class PersonalTools(Tile):
         return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
-@tile('mainmenu', 'templates/mainmenu.pt', permission='view', strict=False)
+@tile(name='mainmenu',
+      path='templates/mainmenu.pt',
+      permission='view',
+      strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
 
@@ -202,7 +207,10 @@ class MainMenu(Tile):
         return item
 
 
-@tile('pathbar', 'templates/pathbar.pt', permission='view', strict=False)
+@tile(name='pathbar',
+      path='templates/pathbar.pt',
+      permission='view',
+      strict=False)
 class PathBar(Tile):
 
     @property
@@ -251,7 +259,10 @@ class PathBar(Tile):
         return ret
 
 
-@tile('navtree', 'templates/navtree.pt', permission='view', strict=False)
+@tile(name='navtree',
+      path='templates/navtree.pt',
+      permission='view',
+      strict=False)
 class NavTree(Tile):
     """Navigation tree tile.
     """
@@ -361,7 +372,10 @@ class NavTree(Tile):
             level=level)
 
 
-@tile('byline', 'templates/byline.pt', permission='view', strict=False)
+@tile(name='byline',
+      path='templates/byline.pt',
+      permission='view',
+      strict=False)
 class Byline(Tile):
     """Byline tile.
     """
@@ -370,7 +384,7 @@ class Byline(Tile):
         return format_date(dt)
 
 
-@tile('content', interface=AppRoot, permission='login')
+@tile(name='content', interface=AppRoot, permission='login')
 class RootContent(ProtectedContentTile):
 
     def render(self):

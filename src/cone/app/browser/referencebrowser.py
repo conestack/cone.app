@@ -42,7 +42,8 @@ def make_refbrowser_query(request, **kw):
     return make_query(**params)
 
 
-@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt',
+@tile(name='referencebrowser_pathbar',
+      path='templates/referencebrowser_pathbar.pt',
       permission='view')
 class ReferenceBrowserPathBar(PathBar):
 
@@ -151,7 +152,7 @@ class ReferencableChildrenLink(LinkAction):
         return LinkAction.render(self)
 
 
-@tile('referencelisting', 'templates/table.pt', permission='view')
+@tile(name='referencelisting', path='templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
 
     table_id = 'referencebrowser'

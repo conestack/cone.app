@@ -58,34 +58,34 @@ def includeme(config):
     # tiles with specific subclass
     # XXX: turn into specific subclasses and register with tile decorator
     register_tile(
-        'bdajax',
-        'bdajax:bdajax_bs3.pt',
+        name='bdajax',
+        path='bdajax:bdajax_bs3.pt',
         permission='login')
     register_tile(
-        'listing',
-        'templates/listing.pt',
+        name='listing',
+        path='templates/listing.pt',
         permission='list')
     register_tile(
-        'unauthorized',
-        'templates/unauthorized.pt',
+        name='unauthorized',
+        path='templates/unauthorized.pt',
         permission='login')
     register_tile(
-        'logo',
-        'templates/logo.pt',
+        name='logo',
+        path='templates/logo.pt',
         permission='login')
     register_tile(
-        'livesearch',
-        'templates/livesearch.pt',
+        name='livesearch',
+        path='templates/livesearch.pt',
         permission='login')
     register_tile(
-        'footer',
-        'templates/footer.pt',
+        name='footer',
+        path='templates/footer.pt',
         permission='login')
     register_tile(
-        'referencebrowser',
-        'templates/referencebrowser.pt',
+        name='referencebrowser',
+        path='templates/referencebrowser.pt',
         permission='view')
     register_tile(
-        'sharing',
-        'templates/sharing.pt',
+        name='sharing',
+        path='templates/sharing.pt',
         permission='manage_permissions')
