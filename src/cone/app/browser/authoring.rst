@@ -21,10 +21,15 @@ Imports::
     >>> from cone.app.browser.actions import ActionContext
     >>> from cone.app.browser.ajax import AjaxAction
     >>> from cone.app.browser.ajax import AjaxEvent
+    >>> from cone.app.browser.authoring import _FormRenderingTile
+    >>> from cone.app.browser.authoring import CameFromNext
     >>> from cone.app.browser.authoring import ContentAddForm
     >>> from cone.app.browser.authoring import ContentEditForm
+    >>> from cone.app.browser.authoring import FormHeading
     >>> from cone.app.browser.authoring import add
     >>> from cone.app.browser.authoring import edit
+    >>> from cone.app.browser.authoring import is_ajax
+    >>> from cone.app.browser.authoring import render_form
     >>> from cone.app.browser.form import Form
     >>> from cone.app.browser.utils import make_url
     >>> from cone.app.model import AdapterNode
@@ -40,6 +45,185 @@ Imports::
     >>> from yafowil.base import factory
     >>> from zope.interface import Interface
     >>> from zope.interface import implementer
+
+
+General
+-------
+
+Helper for detecting ajax forms::
+
+    >>> request = layer.new_request()
+    >>> is_ajax(request)
+    False
+
+    >>> request.params['ajax'] = '1'
+    >>> is_ajax(request)
+    True
+
+Form rendering helper::
+
+    >>> layer.hook_tile_reg()
+
+    >>> @tile(name='someform', permission='login')
+    ... class SomeForm(Form):
+    ...     def prepare(self):
+    ...         self.form = form = factory('form', name='someform')
+    ...         form['somefield'] = factory('text', props = {'label': 'Field'})
+
+    >>> layer.unhook_tile_reg()
+
+Regular page view, render 'someform' tile as content area in main template::
+
+    >>> model = BaseNode()
+    >>> request = layer.new_request()
+    >>> res = render_form(model, request, 'someform')
+    >>> res.body.find('<!DOCTYPE html PUBLIC') > -1
+    True
+
+    >>> res.body.find('<form class="ajax"') > -1
+    True
+
+    >>> res.body.find('id="form-someform"') > -1
+    True
+
+Ajax flag set, form has been submitted to hidden iframe. Form gets rendered to
+dedicated container and hooked up to parent frame in browser via some JS::
+
+    >>> request.params['ajax'] = '1'
+    >>> res = render_form(model, request, 'someform')
+    >>> res.body.find('<div id="ajaxform">') > -1
+    True
+
+    >>> res.body.find('parent.bdajax.render_ajax_form') > -1
+    True
+
+Form rendering tile. Has been introduced to handle node information in add
+forms and is used in overlay and edit forms as mixin as well. Simply renders
+another tile as form on ``render``. XXX: Feels superfluous. Should be
+refactored and removed somwhen::
+
+    >>> layer.hook_tile_reg()
+
+    >>> @tile(name='someformrenderingtile', permission='login')
+    ... class SomeFormTileRenderingTile(_FormRenderingTile):
+    ...     form_tile_name = 'someform'
+
+    >>> layer.unhook_tile_reg()
+
+    >>> request = layer.new_request()
+    >>> render_tile(model, request, 'someformrenderingtile')
+    u'<form class="ajax" ... id="form-someform" ...</form>'
+
+
+CameFromNext
+------------
+
+Plumbing behavior to hook up redirection after successful form processing::
+
+    >>> layer.hook_tile_reg()
+
+    >>> @tile(name='camefromnextform', permission='login')
+    ... @plumbing(CameFromNext)
+    ... class CameFromNextForm(Form):
+    ...     def prepare(self):
+    ...         self.form = form = factory(
+    ...             'form',
+    ...             name='camefromnextform',
+    ...             props={'action': self.nodeurl})
+    ...         form['submit'] = factory(
+    ...             'submit',
+    ...             props = {
+    ...                 'action': 'submit',
+    ...                 'expression': True,
+    ...                 'next': self.next,
+    ...                 'label': 'Submit',
+    ...             })
+
+    >>> layer.unhook_tile_reg()
+
+    >>> parent = BaseNode(name='parent_node')
+    >>> model = parent['child_node'] = BaseNode()
+
+Came from not set::
+
+    >>> request = layer.new_request()
+    >>> render_tile(model, request, 'camefromnextform')
+    u'<form ... id="form-camefromnextform" ...
+    name="action.camefromnextform.submit" type="submit" ...
+    name="came_from" type="hidden" /></form>'
+
+    >>> request.params['ajax'] = '1'
+    >>> request.params['action.camefromnextform.submit'] = '1'
+    >>> render_tile(model, request, 'camefromnextform')
+    u''
+
+    >>> continuation = request.environ['cone.app.continuation']
+    >>> continuation
+    [<cone.app.browser.ajax.AjaxEvent object at ...>]
+
+    >>> event = continuation[0]
+    >>> event.target
+    'http://example.com/parent_node/child_node'
+
+Came from parent::
+
+    >>> request = layer.new_request()
+    >>> request.params['came_from'] = 'parent'
+    >>> render_tile(model, request, 'camefromnextform')
+    u'... name="came_from" type="hidden" value="parent" /></form>'
+
+    >>> request.params['ajax'] = '1'
+    >>> request.params['action.camefromnextform.submit'] = '1'
+    >>> render_tile(model, request, 'camefromnextform')
+    u''
+
+    >>> continuation = request.environ['cone.app.continuation']
+    >>> continuation
+    [<cone.app.browser.ajax.AjaxEvent object at ...>]
+
+    >>> event = continuation[0]
+    >>> event.target
+    'http://example.com/parent_node'
+
+Came from dedicated URL::
+
+    >>> request = layer.new_request()
+    >>> request.params['came_from'] = 'http://example.com/came_from_node'
+    >>> render_tile(model, request, 'camefromnextform')
+    u'... name="came_from" ... value="http://example.com/came_from_node" ...'
+
+    >>> request.params['ajax'] = '1'
+    >>> request.params['action.camefromnextform.submit'] = '1'
+    >>> render_tile(model, request, 'camefromnextform')
+    u''
+
+    >>> continuation = request.environ['cone.app.continuation']
+    >>> continuation
+    [<cone.app.browser.ajax.AjaxEvent object at ...>]
+
+    >>> event = continuation[0]
+    >>> event.target
+    'http://example.com/came_from_node'
+
+XXX: for some reason tests with non ajax forms fail. Investigate...
+     (too late right now)
+
+
+FormHeading
+-----------
+
+Abstract form heading::
+
+    >>> @plumbing(FormHeading)
+    ... class FormWithHeading(object):
+    ...     pass
+
+    >>> form_with_heading = FormWithHeading()
+    >>> form_with_heading.form_heading
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Abstract ``FormHeading`` does not 
+    implement ``form_heading``
 
 
 Adding
@@ -84,7 +268,6 @@ Create and register an ``addform`` named form tile::
     >>> @tile(name='addform', interface=ITestAddingNode)
     ... @plumbing(ContentAddForm)
     ... class MyAddForm(Form):
-    ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='addform',
@@ -227,7 +410,6 @@ Create and register an ``editform`` named form tile::
     >>> @tile(name='editform', interface=MyNode)
     ... @plumbing(ContentEditForm)
     ... class MyEditForm(Form):
-    ... 
     ...     def prepare(self):
     ...         form = factory(u'form',
     ...                        name='editform',

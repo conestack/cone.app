@@ -270,7 +270,7 @@ class AddTile(_FormRenderingTile):
     def info(self):
         factory = self.request.params.get('factory')
         allowed = self.model.nodeinfo.addables
-        if not factory or not allowed or not factory in allowed:
+        if not factory or not allowed or factory not in allowed:
             return None
         return get_node_info(factory)
 
@@ -393,12 +393,12 @@ EditBehavior = ContentEditForm
 ###############################################################################
 
 @view_config(name='overlayedit', permission='edit')
-def overlayform(model, request):
+def overlayedit(model, request):
     return render_form(model, request, 'overlayedit')
 
 
 @tile(name='overlayedit', permission='edit')
-class OverlayFormTile(_FormRenderingTile):
+class OverlayEditTile(_FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
 

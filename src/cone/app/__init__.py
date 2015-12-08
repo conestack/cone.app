@@ -133,7 +133,7 @@ def configure_root(settings):
     root.properties.default_child = settings.get('cone.root.default_child')
     root.properties.mainmenu_empty_title = \
         settings.get('cone.root.mainmenu_empty_title', 'false') \
-            in ['True', 'true', '1']
+        in ['True', 'true', '1']
     default_content_tile = settings.get('cone.root.default_content_tile')
     if default_content_tile:
         root.properties.default_content_tile = default_content_tile
