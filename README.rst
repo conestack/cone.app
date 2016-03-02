@@ -18,17 +18,15 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2015 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2016 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
 ============
 
-- Robert Niederreiter <rnix [at] squarewave [dot] at>
-    
-- Jens Klein <jens [at] bluedynamics [dot] com>
-    
-- Georg Gogo. BERNHARD <gogo [at] bluedynamics [dot] com>
+- Robert Niederreiter (Author)
+- Jens Klein
+- Georg Gogo. BERNHARD
 
 
 Coverage Report
@@ -70,8 +68,9 @@ Coverage Report
 Changes
 =======
 
-1.0 (unreleased)
-----------------
+
+1.0a1
+-----
 
 - Display ``userid`` in peronal tools if ``fullname`` found but empty.
   [rnix, 2015-04-11]
