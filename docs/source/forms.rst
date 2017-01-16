@@ -140,7 +140,7 @@ non AJAX request.
 
 Default ajax continuation definitions are an ``AjaxAction`` to render the
 ``content`` tile to main content area of the page and an ``AjaxEvent``
-triggering the contxt change event, both on target URL resulting by 'came_from'.
+triggering the context change event, both on target URL resulting by 'came_from'.
 
 Define ``self.next``, respective ``context.next`` if YAML form, in save widget
 of form as ``next`` property and add ``CameFromNext`` part to plumbing parts on
@@ -160,7 +160,7 @@ Add part
 
 As described in tiles documentation, tiles named ``addform`` are reserved
 for application node add forms. They are invoked by the ``add`` tile for the
-context returen by the referring node info ``factory``, which could be a vessel
+context returned by the referring node info ``factory``, which could be a vessel
 object or a "real life" node - consider this at tile registration. The default
 add model factory returns an instance of the class defined in node info
 ``node`` with adding context set as ``__parent__``.
@@ -205,7 +205,7 @@ form if ``show_heading`` on form tile is set to ``True``, which is default.::
     ... class ExampleAppEditForm(Form):
     ...     pass
 
-For add and edit forms it propably makes sence to write one base class
+For add and edit forms it probably makes sense to write one base class
 providing the ``prepare`` function.
 
 
@@ -236,7 +236,7 @@ Extending forms
 ===============
 
 The plumbing mechanism could also be used for generic form extension. This is
-interresting in cases where a set of different nodes partly contain the same
+interesting in cases where a set of different nodes partly contain the same
 set of data.
 
 To achieve this, write a plumbing part which hooks to the ``prepare`` function,

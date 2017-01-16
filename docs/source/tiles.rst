@@ -57,7 +57,7 @@ Livesearch
 ----------
 
 Renders the live search widget. The client side is implemented while on the
-server side a callback function has to be provided in order to get a senceful
+server side a callback function has to be provided in order to get a reasonable
 result.
 
 **Registration name**
@@ -65,8 +65,8 @@ result.
 
 **Customization**
 
-The callback gets the model and request as arguments.The search term is at
-``request.params['term']``.
+The callback gets the model and request as arguments.
+The search term is at ``request.params['term']``.
 
 A list of dicts must be returned with these keys:
 
