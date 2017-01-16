@@ -12,10 +12,10 @@ General contracts
 Some tiles of the application (like ``mainmenu`` and ``navtree``)
 are using ``bdajax`` to notify each other about changes of the application
 context. The custom JS event ``contextchanged`` gets triggered on DOM elements
-with CSS class ``contextsensitiv`` set. The main content area is seperatly
+with CSS class ``contextsensitiv`` set. The main content area is separately
 bound to this event by ID ``content``.
 
-If some action changes the application context it's usally desired to render 
+If some action changes the application context it's usually desired to render 
 navigation tree, main menu and main content area. Thus, trigger the 
 ``contextchanged`` event from your markup on user interaction. Defined 
 target is the new application context.
@@ -33,7 +33,7 @@ target is the new application context.
 For a custom tile, i.e. rendering some node metadata which should be
 re-rendered every time the context changes, bind the DOM element to
 event ``contextchanged``, add ``contextsensitiv`` CSS class and define the
-desired ajax action.
+desired AJAX action.
 
 The tile registered by name ``myfancytile`` is re-rendering itself each time 
 application context changes::
@@ -49,14 +49,14 @@ application context changes::
 Actions
 -------
 
-``bdajax``  does not ship with server implementation performing ajax actions. 
+``bdajax``  does not ship with server implementation performing AJAX actions. 
 For details follow up to the bdajax-documentation  
 
 Server side implementation is located at
 ``cone.app.browser.ajax.ajax_tile``. It renders the tile registered by action
 name. AJAX continuation definitions are read from
 ``request.environ['cone.app.continuation']``. If an uncaught exception is
-thrown during ajax action processing, the traceback gets displayed in a
+thrown during AJAX action processing, the traceback gets displayed in a
 ``bdajax.error`` message.
 
 
@@ -72,7 +72,7 @@ Available continuation objects on the server side are
 ``cone.app.browser.ajax.AjaxAction``, ``cone.app.browser.ajax.AjaxEvent`` and
 ``cone.app.browser.ajax.AjaxMessage``.
 
-To trigger AJAX continuation, instanciate the desired definition(s) and call
+To trigger AJAX continuation, instantiate the desired definition(s) and call
 ``cone.app.browser.ajax.ajax_continue``. It expects the request and a
 continuation definition or a list of continuation definitions as arguments::
 
@@ -101,12 +101,12 @@ A shortcut for continuation messages is located at
 Forms
 -----
 
-AJAX forms are automatically detected and computed properly as long as they
-are rendered via ``cone.app.browser.authoring.render_form``. Default rendering 
-location is the main content area of the page. If DOM element on client side 
-containing the form is not default, re-rendering definitions of form must 
-also change in order to make validation error form re-rendering do the right 
-thing.
+AJAX forms are automatically detected and computed properly as long as they are
+rendered via ``cone.app.browser.authoring.render_form``. The default rendering
+location is the main content area of the page. If a DOM element on the client
+side containing the form is not default, re-rendering definitions of the form
+must also change in order to make validation error form re-rendering do the
+right thing.
 
 The rendering target of a form can be changed with
 ``cone.app.browser.ajax.ajax_form_fiddle``. Provide a plumbing part hooking to
@@ -138,10 +138,10 @@ JavaScript
 ----------
 
 Using ``bdajax`` dispatching is supposed to be used for very general contracts.
-Often, it's faster or even required to provide a snippet of Javascript code
+Often, it's faster or even required to provide a snippet of JavaScript code
 doing something specific.
 
-To make custom JS work propably in combination with the dispatching system,
+To make custom JS work properly in combination with the dispatching system,
 define a "binder" function and register it in ``bdajax.binders``::
 
     (function($) {
