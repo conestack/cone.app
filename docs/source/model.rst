@@ -162,7 +162,7 @@ provide an ``IProperties`` implementation. A properties object never raises an
 AttributeError on attribute access, instead ``None`` is returned if property is
 inexistent. Available properties are provided by ``keys``.
 
-.. code-block:: pydoc
+.. code-block:: pycon
 
     >>> from cone.app.model import Properties
 

@@ -306,7 +306,7 @@ Install and run application
 
 To install and run the application, run buildout and then start paster server.
 
-.. code-block:: bash
+.. code-block:: sh
 
     python bootstrap.py
     ./bin/buildout
