@@ -91,6 +91,10 @@ Settings is displayed in navtree by default::
     Custom main hook called
     <pyramid.router.Router object at ...>
 
+Remove custom main hook after testing::
+
+    >>> cone.app.main_hooks.remove(custom_main_hook)
+
 Remote address middleware::
 
     >>> class DummyApp(object):
