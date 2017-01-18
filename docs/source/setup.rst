@@ -50,7 +50,9 @@ But let's first create the config files before we start and try to run it.
 Buildout
 --------
 
-Edit ``buildout.cfg`` and add::
+Edit ``buildout.cfg`` and add.
+
+.. code-block:: ini
 
     [buildout]
     parts = instance
@@ -67,7 +69,9 @@ Edit ``buildout.cfg`` and add::
 INI configuration
 -----------------
 
-Create ``example.ini`` and add::
+Create ``example.ini`` and add.
+
+.. code-block:: ini
 
     [DEFAULT]
     debug = true
@@ -217,16 +221,23 @@ inherits from ``node.interfaces.INode`` and extends it by:
     provides cardinality information and general node information which is
     primary needed for authoring operations.
 
-Create plugin root node in ``example/app/model.py``::
+Create plugin root node in ``example/app/model.py``.
 
-    >>> from cone.app.model import BaseNode
-    >>> class ExampleApp(BaseNode): pass
+.. code-block:: python
 
-Hook this application node to ``cone.app`` in ``example.app.__init__``::
+    from cone.app.model import BaseNode
 
-    >>> import cone.app
-    >>> import my.app.model import MyApp
-    >>> cone.app.register_plugin('example', ExampleApp)
+    class ExampleApp(BaseNode):
+        pass
+
+Hook this application node to ``cone.app`` in ``example.app.__init__``.
+
+.. code-block:: python
+
+    import cone.app
+    import my.app.model import MyApp
+
+    cone.app.register_plugin('example', ExampleApp)
 
 
 Views
@@ -257,25 +268,31 @@ application node it provides in order to display it in the layout.
 
 Create a package named ``browser`` in ``example.app``. Define the root content
 tile in ``__init__.py`` of the browser package and register it for the plugin
-root node::
+root node.
 
-    >>> from cone.tile import registerTile
-    >>> from cone.app.browser.layout import ProtectedContentTile
-    >>> from example.app.model import ExampleApp
+.. code-block:: python
 
-    >>> registerTile('content',
-    ...              'your.app:browser/templates/exampleapp.pt',
-    ...              interface=ExampleApp,
-    ...              class_=ProtectedContentTile,
-    ...              permission='login')
+    from cone.tile import registerTile
+    from cone.app.browser.layout import ProtectedContentTile
+    from example.app.model import ExampleApp
 
-Also create the page template named ``exampleapp.pt`` at the indicated location::
+    registerTile('content',
+                 'your.app:browser/templates/exampleapp.pt',
+                 interface=ExampleApp,
+                 class_=ProtectedContentTile,
+                 permission='login')
+
+Also create the page template named ``exampleapp.pt`` at the indicated location.
+
+.. code-block:: html
 
     <div>
        Example app content.
     </div>
 
-Tell your plugin to scan the available views in ``configure.zcml``::
+Tell your plugin to scan the available views in ``configure.zcml``.
+
+.. code-block:: xml
 
     <?xml version="1.0" encoding="utf-8" ?>
     <configure xmlns="http://pylonshq.com/pyramid">
@@ -287,7 +304,9 @@ Tell your plugin to scan the available views in ``configure.zcml``::
 Install and run application
 ---------------------------
 
-To install and run the application, run buildout and then start paster server::
+To install and run the application, run buildout and then start paster server.
+
+.. code-block:: sh
 
     python bootstrap.py
     ./bin/buildout

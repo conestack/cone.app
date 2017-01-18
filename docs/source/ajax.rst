@@ -20,7 +20,7 @@ navigation tree, main menu and main content area. Thus, trigger the
 ``contextchanged`` event from your markup on user interaction. Defined 
 target is the new application context.
 
-::
+.. code-block:: html
 
     <a href=""
        ajax:bind="click"
@@ -36,7 +36,9 @@ event ``contextchanged``, add ``contextsensitiv`` CSS class and define the
 desired AJAX action.
 
 The tile registered by name ``myfancytile`` is re-rendering itself each time 
-application context changes::
+application context changes.
+
+.. code-block:: html
 
     <div id="myfancytile"
          class="contextsensitiv"
@@ -74,28 +76,30 @@ Available continuation objects on the server side are
 
 To trigger AJAX continuation, instantiate the desired definition(s) and call
 ``cone.app.browser.ajax.ajax_continue``. It expects the request and a
-continuation definition or a list of continuation definitions as arguments::
+continuation definition or a list of continuation definitions as arguments.
 
-    >>> from cone.app.browser.ajax import (
-    ...     ajax_continue,
-    ...     AjaxAction,
-    ...     AjaxEvent,
-    ...     AjaxMessage,
-    ... )
-    
-    >>> action = AjaxAction(target, name, mode, selector)
-    >>> ajax_continue(request, action)
-    
-    >>> event = AjaxEvent(target, name, selector)
-    >>> message = AjaxMessage(payload, flavor, selector)
-    >>> ajax_continue(request, [event, message])
+.. code-block:: python
+
+    from cone.app.browser.ajax import ajax_continue
+    from cone.app.browser.ajax import AjaxAction
+    from cone.app.browser.ajax import AjaxEvent
+    from cone.app.browser.ajax import AjaxMessage
+
+    action = AjaxAction(target, name, mode, selector)
+    ajax_continue(request, action)
+
+    event = AjaxEvent(target, name, selector)
+    message = AjaxMessage(payload, flavor, selector)
+    ajax_continue(request, [event, message])
 
 A shortcut for continuation messages is located at
 ``cone.app.browser.ajax.ajax_message``. Possible flavors are ``message``,
-``info`` ``warning`` and ``error``::
+``info`` ``warning`` and ``error``.
 
-    >>> payload = '<div>Message</div>'
-    >>> ajax_message(request, payload, flavor='message')
+.. code-block:: python
+
+    payload = '<div>Message</div>'
+    ajax_message(request, payload, flavor='message')
 
 
 Forms
@@ -110,28 +114,30 @@ right thing.
 
 The rendering target of a form can be changed with
 ``cone.app.browser.ajax.ajax_form_fiddle``. Provide a plumbing part hooking to
-``__call__`` function.::
+``__call__`` function.
 
-    >>> from plumber import (
-    ...     plumbing,
-    ...     plumb,
-    ...     Part,
-    ... )
-    >>> from cone.app.browser.ajax import ajax_form_fiddle
-    
-    >>> class FormFiddle(Part):
-    ...     
-    ...     @plumb
-    ...     def __call__(_next, self, model, request):
-    ...         ajax_form_fiddle(request, '.some_selector', 'inner')
-    ...         return _next(self, model, request)
+.. code-block:: python
 
-Use this part in form tile.::
+    from plumber import plumbing
+    from plumber import plumb
+    from plumber import Part
+    from cone.app.browser.ajax import ajax_form_fiddle
 
-    >>> @tile('someform', interface=ExampleApp, permission='edit')
-    ... @plumbing(EditPart, FormFiddle)
-    ... class SomeForm(Form):
-    ...     pass
+    class FormFiddle(Part):
+
+        @plumb
+        def __call__(_next, self, model, request):
+            ajax_form_fiddle(request, '.some_selector', 'inner')
+            return _next(self, model, request)
+
+Use this part in form tile.
+
+.. code-block:: python
+
+    @tile('someform', interface=ExampleApp, permission='edit')
+    @plumbing(EditPart, FormFiddle)
+    class SomeForm(Form):
+        pass
 
 
 JavaScript
@@ -142,7 +148,9 @@ Often, it's faster or even required to provide a snippet of JavaScript code
 doing something specific.
 
 To make custom JS work properly in combination with the dispatching system,
-define a "binder" function and register it in ``bdajax.binders``::
+define a "binder" function and register it in ``bdajax.binders``.
+
+.. code-block:: js
 
     (function($) {
     

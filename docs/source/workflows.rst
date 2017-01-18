@@ -17,12 +17,14 @@ nodes this workflow can be used for.
 As ``permission_checker``, ``pyramid.security.has_permission`` is used.
 
 In ``transition`` directives ``cone.app.workflow.persist_state`` is defined
-as ``callback``, which sets the ``state`` attribute of the node.::
+as ``callback``, which sets the ``state`` attribute of the node.
+
+.. code-block:: xml
 
     <configure xmlns="http://namespaces.repoze.org/bfg">
-    
+
       <include package="repoze.workflow" file="meta.zcml"/>
-    
+
       <workflow type="example"
                 name="Example workflow"
                 state_attr="state"
@@ -34,12 +36,12 @@ as ``callback``, which sets the ``state`` attribute of the node.::
           <key name="title" value="Initial state" />
           <key name="description" value="Initial state" />
         </state>
-    
+
         <state name="final">
           <key name="title" value="Final state"/>
           <key name="description" value="Final state" />
         </state>
-    
+
         <transition
            name="initial_2_final"
            callback="cone.app.workflow.persist_state"
@@ -47,9 +49,9 @@ as ``callback``, which sets the ``state`` attribute of the node.::
            to_state="final"
            permission="change_state"
         />
-        
+
       </workflow>
-    
+
     </configure>
 
 
@@ -71,50 +73,47 @@ permits 'change_state' for roles owner and manager by default.
 Also workflow tile related node ``properties`` must be set. As described in
 tiles documentation, ``wf_name`` contains the workflow ID, and
 ``wf_transition_names`` contains a mapping "transition ID -> transition Title"
-(needed due to the lack of transition titles in repoze.workflow)::
+(needed due to the lack of transition titles in repoze.workflow).
 
-    >>> from plumber import plumbing
-    >>> from node.utils import instance_property
+.. code-block:: python
 
-    >>> from cone.app.model import (
-    ...     BaseNode,
-    ...     Properties,
-    ... )
+    from plumber import plumbing
+    from node.utils import instance_property
+    from cone.app.model import BaseNode
+    from cone.app.model import Properties
+    from cone.app.workflow import WorkflowState
+    from cone.app.workflow import WorkflowACL
 
-    >>> from cone.app.workflow import (
-    ...     WorkflowState,
-    ...     WorkflowACL,
-    ... )
+    @plumbing(WorkflowState, WorkflowACL)
+    class WorkflowNode(BaseNode):
 
-    >>> @plumbing(WorkflowState, WorkflowACL)
-    ... class WorkflowNode(BaseNode):
-    ...     
-    ...     @instance_property
-    ...     def properties(self):
-    ...         props = Properties()
-    ...         props.wf_name = u'example'
-    ...         props.wf_transition_names = {
-    ...             'initial_2_final': 'Finalize',
-    ...         }
-    ...         return props
+        @instance_property
+        def properties(self):
+            props = Properties()
+            props.wf_name = u'example'
+            props.wf_transition_names = {
+                'initial_2_final': 'Finalize',
+            }
+            return props
 
 
 State specific access control
 -----------------------------
 
 ACL's defined for specific workflow states are defined in ``state_acls``
-attribute of the node by state id::
+attribute of the node by state id.
 
-    >>> class WorkflowNodeWithStateACLs(WorkflowNode):
-    ... 
-    ...     state_acls = {
-    ...         'initial': [
-    ...             (Allow, 'role:manager', ['manage', 'edit', 'change_state']),
-    ...             (Allow, Everyone, ['login']),
-    ...             (Deny, Everyone, ALL_PERMISSIONS),
-    ...         ],
-    ...         'final': [
-    ...             (Allow, 'role:manager', ['view', 'edit', 'change_state']),
-    ...             (Deny, Everyone, ALL_PERMISSIONS),
-    ...         ],
-    ...     }
+.. code-block:: python
+
+    class WorkflowNodeWithStateACLs(WorkflowNode):
+        state_acls = {
+            'initial': [
+                (Allow, 'role:manager', ['manage', 'edit', 'change_state']),
+                (Allow, Everyone, ['login']),
+                (Deny, Everyone, ALL_PERMISSIONS),
+            ],
+            'final': [
+                (Allow, 'role:manager', ['view', 'edit', 'change_state']),
+                (Deny, Everyone, ALL_PERMISSIONS),
+            ],
+        }
