@@ -50,7 +50,7 @@ Features
 * Workflows
 * Common UI widgets
 * AJAX helpers
-* Application extensions are organized as plugins.
+* Application extensions are organized as plugins
 
 
 Contents
@@ -58,9 +58,10 @@ Contents
 
 .. toctree::
    :maxdepth: 3
-   
+
    Quickstart <quickstart>
    Plugins <plugins>
+   Layout <layout>
    Application Model <model>
    Tiles <tiles>
    Forms <forms>

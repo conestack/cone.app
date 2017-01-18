@@ -1,3 +1,5 @@
+.. _quickstart:
+
 =================
 Quick Start Guide
 =================
@@ -23,8 +25,8 @@ plugin code and the application configuration.
 Create the package
 ------------------
 
-Create a python egg named ``example.app`` with a folder structure like this
-providing the following files. Instructions follow::
+Create a python egg named ``example.app`` with the following file system
+structure::
 
     example.app/
         buildout.cfg
@@ -36,23 +38,42 @@ providing the following files. Instructions follow::
                 app/
                     __init__.py
                     browser/
-                    templates/
-                        example.pt
+                        templates/
+                            example.pt
                     configure.zcml
                     model.py
 
-
 The package must depend on ``cone.app`` as installation dependency.
-``bootstrap.py`` and ``setup.py`` must be copied from somewhere or reinvented,
-see http://docs.python.org/distutils/setupscript.html#writing-the-setup-script
-and wget http://python-distribute.org/bootstrap.py .
-But let's first create the config files before we start and try to run it.
+
+Create a ``setup.py`` containing:
+
+.. code-block:: python
+
+    from setuptools import find_packages
+    from setuptools import setup
+
+    version = '0.1'
+    shortdesc = 'Example cone plugin'
+
+    setup(
+        name='example.app',
+        version=version,
+        description=shortdesc,
+        packages=find_packages('src'),
+        package_dir={'': 'src'},
+        namespace_packages=['example'],
+        include_package_data=True,
+        zip_safe=False,
+        install_requires=[
+            'cone.app'
+        ]
+    )
 
 
 Buildout
 --------
 
-Edit ``buildout.cfg`` and add.
+Add ``buildout.cfg`` configuration containing:
 
 .. code-block:: ini
 
@@ -71,7 +92,7 @@ Edit ``buildout.cfg`` and add.
 INI configuration
 -----------------
 
-Create ``example.ini`` and add.
+Create ``example.ini`` and add:
 
 .. code-block:: ini
 
@@ -116,16 +137,10 @@ Create ``example.ini`` and add.
     # plugins to be loaded
     cone.plugins = example.app
 
-    # application title
+    # application root node settings
     cone.root.title = example
-
-    # default child of cone.app root model node
     cone.root.default_child = example
-
-    # root model node default content tile to render
     #cone.root.default_content_tile = 
-
-    # flag whether to suppress rendering main menu titles
     cone.root.mainmenu_empty_title = false
 
     [pipeline:main]
@@ -204,7 +219,7 @@ Available INI configuration parameters
     Flag whether to suppress rendering main menu titles.
 
 
-Application model
+Application Model
 -----------------
 
 The application model consists of nodes providing the application hierarchy,
@@ -236,7 +251,7 @@ being a node:
     provides cardinality information and general node information which is
     primary needed for authoring operations.
 
-Create plugin root node in ``example/app/model.py``.
+Create plugin root node in ``src/example/app/model.py``.
 
 .. code-block:: python
 
@@ -245,14 +260,20 @@ Create plugin root node in ``example/app/model.py``.
     class ExampleApp(BaseNode):
         pass
 
-Hook this application node to ``cone.app`` in ``example.app.__init__``.
+Plugin initialization code goes into the main hook function. Hook the
+application node to the application model in ``src/example/app/__init__.py``.
 
 .. code-block:: python
 
-    import cone.app
-    import my.app.model import MyApp
+    from cone.app import register_entry
+    from cone.app import register_main_hook
+    import example.app.model import ExampleApp
 
-    cone.app.register_entry('example', ExampleApp)
+    def example_main_hook(config, global_config, local_config):
+        # register plugin entry node
+        register_entry('example', ExampleApp)
+
+    register_main_hook(example_main_hook)
 
 
 Views
@@ -270,21 +291,19 @@ The use of tiles has the following advantages:
 - Abstraction of the site to several "subapplications" which act as
   views, widgets and/or controllers.
 
-- The possibility to create generic tiles by the contract of
-  ``cone.app.interfaces.IApplicationNode``.
+- The possibility to create generic tiles expecting model nodes providing the
+  contract of ``cone.app.interfaces.IApplicationNode``.
 
 - AJAX is easily integrateable.
 
-
 In ``cone.app`` some reserved tile names exist. One of this is ``content``,
-which is reserved for rendering the "content area" of the page.
+which is reserved for rendering the *Content Area* of the page.
 
 Each application node must at least register a tile named ``content`` for each
 application node it provides in order to display it in the layout.
 
-Create a package named ``browser`` in ``example.app``. Define the root content
-tile in ``__init__.py`` of the browser package and register it for the plugin
-root node.
+To provide the ``content`` tile for the ``ExampleApp`` node, create
+``src/example/app/browser/__init__.py`` and register it like so:
 
 .. code-block:: python
 
@@ -293,13 +312,13 @@ root node.
     from example.app.model import ExampleApp
 
     registerTile(name='content',
-                 'your.app:browser/templates/exampleapp.pt',
+                 'example.app:browser/templates/exampleapp.pt',
                  interface=ExampleApp,
                  class_=ProtectedContentTile,
                  permission='login')
 
-Also create the page template named ``exampleapp.pt`` at the appropriate
-location.
+Also create the corresponding page template in
+``src/example/app/browser/templates/exampleapp.pt`` and add:
 
 .. code-block:: html
 
@@ -307,21 +326,24 @@ location.
        Example app content.
     </div>
 
-Tell your plugin to scan the available views in ``configure.zcml``.
+Tell your plugin to scan the browser package in the main hook function to
+ensure tile registration gets executed.
 
-.. code-block:: xml
+.. code-block:: python
 
-    <?xml version="1.0" encoding="utf-8" ?>
-    <configure xmlns="http://pylonshq.com/pyramid">
-      <include package="pyramid_zcml"/>
-      <scan package=".browser" />
-    </configure>
+    def example_main_hook(config, global_config, local_config):
+        # register plugin entry node
+        register_entry('example', ExampleApp)
+
+        # scan browser package
+        config.scan('example.app.browser')
 
 
 Install and run application
 ---------------------------
 
-To install and run the application, run buildout and then start paster server.
+To install and run the application, create a virtualenv, run buildout and then
+start paster server.
 
 .. code-block:: sh
 
