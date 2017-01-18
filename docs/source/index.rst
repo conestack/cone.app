@@ -59,10 +59,10 @@ Contents
 .. toctree::
    :maxdepth: 3
    
-   setup
-   plugins
-   model
-   tiles
-   forms
-   workflows
-   ajax
+   Quickstart <quickstart>
+   Plugins <plugins>
+   Application Model <model>
+   Tiles <tiles>
+   Forms <forms>
+   Workflows <workflows>
+   AJAX <ajax>
