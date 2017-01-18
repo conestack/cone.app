@@ -2,8 +2,8 @@
 Layout
 ======
 
-UI
---
+Main Template
+-------------
 
 The main template of ``cone.app`` can be altered by overriding
 ``cone.app.cfg.main_template``.
@@ -14,37 +14,64 @@ The main template of ``cone.app`` can be altered by overriding
 
     cone.app.cfg.main_template = 'example.app.browser:templates/main.pt'
 
-When using the default main template, some tiles can be disabled globally
-by settings some properties on ``cone.app.cfg.layout``.
 
-Hide livesearch.
+Application Layout
+------------------
 
-.. code-block:: python
+The main layout of the application is implemented as tile with name ``layout``.
 
-    import cone.app
-    cone.app.cfg.layout.livesearch = False
-
-Hide personaltools.
+The layout can be configured for each application node. Layout configuration
+is described in ``cone.app.interfaces.ILayout`` and expected via application
+model node on property ``layout``.
 
 .. code-block:: python
 
-    cone.app.cfg.layout.personaltools = False
+    from cone.app.model import BaseNode
+    from cone.app.model import Layout
 
-Hide main menu.
+    class ExampleApp(BaseNode):
 
-.. code-block:: python
+        @property
+        def layout(self):
+            layout = Layout()
+            layout.mainmenu = True
+            layout.mainmenu_fluid = False
+            layout.livesearch = True
+            layout.personaltools = True
+            layout.columns_fluid = False
+            layout.pathbar = True
+            layout.sidebar_left = ['navtree']
+            layout.sidebar_left_grid_width = 3
+            layout.content_grid_width = 9
+            return layout
 
-    cone.app.cfg.layout.mainmenu = False
 
-Hide pathbar.
+Provided layout settings
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+*mainmenu*
+    Flag whether to display mainmenu.
 
-    cone.app.cfg.layout.pathbar = False
+*mainmenu_fluid*
+    Flag whether mainmenu is fluid.
 
-The contents of the left sidebar can be modified. Each string in the list is
-a tile name.
+*livesearch*
+    Flag whether to display livesearch.
 
-.. code-block:: python
+*personaltools*
+    Flag whether to display personaltools.
 
-    cone.app.cfg.layout.sidebar_left = ['navtree']
+*columns_fluid*
+    Flag whether columns are fluid.
+
+*pathbar*
+    Flag whether to display pathbar.
+
+*sidebar_left*
+    List of tiles by name which should be rendered in sidebar.
+
+*sidebar_left_grid_width*
+    Sidebar grid width as integer, total grid width is 12.
+
+*content_grid_width*
+    Content grid width as integer, total grid width is 12.
