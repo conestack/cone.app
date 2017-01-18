@@ -1,6 +1,9 @@
-=====
-Setup
-=====
+=================
+Quick Start Guide
+=================
+
+Overview
+========
 
 In order to use ``cone.app``, an integration package is created. This package
 contains the buildout and application configuration.
@@ -10,7 +13,7 @@ package might directly contain the plugin code, or the plugin is created in
 a seperate package.
 
 
-Hello world
+Hello World
 ===========
 
 In this example a package named ``example.app`` is created, which contains the
@@ -20,11 +23,10 @@ plugin code and the application configuration.
 Create the package
 ------------------
 
-Create a python egg named ``example.app`` with a folder structure like this and
-featuring the following files. Instructions follow :-) ::
+Create a python egg named ``example.app`` with a folder structure like this
+providing the following files. Instructions follow::
 
     example.app/
-        bootstrap.py
         buildout.cfg
         example.ini
         setup.py
@@ -83,6 +85,7 @@ Create ``example.ini`` and add.
 
     [app:example]
     use = egg:cone.app#main
+
     reload_templates = true
 
     # paster debugging flags
@@ -90,6 +93,7 @@ Create ``example.ini`` and add.
     debug_notfound = false
     debug_routematch = false
     debug_templates = true
+
     default_locale_name = en
 
     # cone.app admin user and password
@@ -118,6 +122,9 @@ Create ``example.ini`` and add.
     # default child of cone.app root model node
     cone.root.default_child = example
 
+    # root model node default content tile to render
+    #cone.root.default_content_tile = 
+
     # flag whether to suppress rendering main menu titles
     cone.root.mainmenu_empty_title = false
 
@@ -130,19 +137,19 @@ Available INI configuration parameters
 ......................................
 
 *cone.admin_user*
-    Login name of Superuser
+    Login name of superuser.
 
 *cone.admin_password*
-    Password of Superuser
+    Password of superuser.
 
 *cone.auth_secret*
-    Cookie encryption password
+    Cookie encryption password.
 
 *cone.auth_cookie_name*
-    Default: ``auth_tkt``. The cookie name used
+    Default: ``auth_tkt``. The name used for auth cookie.
 
 *cone.auth_secure*
-    Default: ``False``. Only send the cookie back over a secure conn.
+    Default: ``False``. Only send the cookie back over a secure connection.
 
 *cone.auth_include_ip*
     Default: ``False``.  Make the requesting IP address part of the
@@ -167,31 +174,34 @@ Available INI configuration parameters
     flag.
 
 *cone.auth_path*
-    Default: ``/``. The path for which the auth_tkt cookie is valid.
+    Default: ``/``. The path for which the authentication cookie is valid.
 
 *cone.auth_wild_domain*
-    Default: ``True``. An auth_tkt cookie will be generated for the wildcard
-    domain.
+    Default: ``True``. An authentication cookie will be generated for the
+    wildcard domain.
 
 *cone.auth_impl*
     UGM implementation to use for authentication and principal authorization.
     If not set, only ``cone.admin_user`` is available. It's recommended
     to avoid setting a global superuser via ini file for live deployments.
-    ``cone.auth_impl`` is not considered at any place in cone.app. This is left
-    to the UGM implementation creating application hook callback.
+    ``cone.auth_impl`` is not considered at any place in ``cone.app``. This is
+    left to the UGM implementation creating application hook callback.
 
 *cone.plugins*
-    List of eggs plugging to ``cone.app``. Plugins are included by invoking the
+    List of ``cone.app`` plugin packages. Plugins are included by invoking the
     plugin package ``configure.zcml``.
 
 *cone.root.title*
-    Title of the Application
+    Title of the application.
 
 *cone.root.default_child*
-    Default child of cone.app root model node
+    Default child of root model node.
+
+*cone.root.default_content_tile*
+    Default content tile for root model node.
 
 *cone.root.mainmenu_empty_title*
-    Flag whether to suppress rendering main menu titles
+    Flag whether to suppress rendering main menu titles.
 
 
 Application model
@@ -201,12 +211,17 @@ The application model consists of nodes providing the application hierarchy,
 security declarations, UI configuration and node type information for authoring.
 
 The base application node utilizes `node <http://pypi.python.org/pypi/node>`_
-and is described in ``cone.app.interfaces.IApplicationNode``. This interface
-inherits from ``node.interfaces.INode`` and extends it by:
+and implements ``cone.app.interfaces.IApplicationNode``. Concrete model
+implementations must implement the following additional properties apart from
+being a node:
 
 *__acl__*
     Property defining security. See documentation of ``pyramid.security`` for
     details.
+
+*layout*
+    Property containing ``cone.app.interfaces.ILayout`` implementing object.
+    The layout object contains main layout configuration information.
 
 *properties*
     Property containing ``cone.app.IProperties`` implementing object. This
@@ -237,17 +252,18 @@ Hook this application node to ``cone.app`` in ``example.app.__init__``.
     import cone.app
     import my.app.model import MyApp
 
-    cone.app.register_plugin('example', ExampleApp)
+    cone.app.register_entry('example', ExampleApp)
 
 
 Views
 -----
 
-``cone.app`` follows the concept of tiles. Each part of the application is
-represented by a tile, i.e. main menu, navigation tree, site content area, etc.
+``cone.app`` follows the concept of tiles in it's UI. Each part of the
+application is represented by a tile, i.e. main menu, navigation tree, site
+content area, etc.
 
-The implementation and more documentation of tiles can be found here
-`cone.tile <http://pypi.python.org/pypi/cone.tile>`_.
+The implementation and more documentation about tiles can be found
+`here <http://pypi.python.org/pypi/cone.tile>`_.
 
 The use of tiles has the following advantages:
 
@@ -272,17 +288,18 @@ root node.
 
 .. code-block:: python
 
-    from cone.tile import registerTile
     from cone.app.browser.layout import ProtectedContentTile
+    from cone.tile import registerTile
     from example.app.model import ExampleApp
 
-    registerTile('content',
+    registerTile(name='content',
                  'your.app:browser/templates/exampleapp.pt',
                  interface=ExampleApp,
                  class_=ProtectedContentTile,
                  permission='login')
 
-Also create the page template named ``exampleapp.pt`` at the indicated location.
+Also create the page template named ``exampleapp.pt`` at the appropriate
+location.
 
 .. code-block:: html
 
@@ -308,7 +325,8 @@ To install and run the application, run buildout and then start paster server.
 
 .. code-block:: sh
 
-    python bootstrap.py
+    virtualenv .
+    ./bin/pip install buildout
     ./bin/buildout
     ./bin/paster serve example.ini
 
