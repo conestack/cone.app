@@ -20,7 +20,9 @@ For delivering CSS and JS resources.
 **Registration name**
     *resources*
 
-When providing your own main template, add to HTML header::
+When providing your own main template, add to HTML header.
+
+.. code-block:: html
 
     <head>
       ...
@@ -80,21 +82,23 @@ A list of dicts must be returned with these keys:
     The target URL for rendering the content tile.
 
 To set the callback, ``cone.app.browser.ajax.LIVESEARCH_CALLBACK`` must be
-set::
+set.
 
-    >>> from cone.app.browser import ajax
-    
-    >>> def example_livesearch_callback(model, request):
-    ...     term = request.params['term']
-    ...     return [
-    ...         {
-    ...             'label': 'Root',
-    ...             'value': term,
-    ...             'target': request.application_url,
-    ...         },
-    ...     ]
-    
-    >>> ajax.LIVESEARCH_CALLBACK = example_livesearch_callback
+.. code-block:: python
+
+    from cone.app.browser import ajax
+
+    def example_livesearch_callback(model, request):
+        term = request.params['term']
+        return [
+            {
+                'label': 'Root',
+                'value': term,
+                'target': request.application_url,
+            },
+        ]
+
+    ajax.LIVESEARCH_CALLBACK = example_livesearch_callback
 
 
 Personal Tools
@@ -111,15 +115,17 @@ default, only the logout link is provided.
 
 To add more items in the dropdown, set a callback function on  
 ``cone.app.browser.layout.personal_tools``. The callback gets the model and
-request as arguments and must return a 2-tuple containing URL and title.::
+request as arguments and must return a 2-tuple containing URL and title.
 
-    >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.layout import personal_tools
-    
-    >>> def settings_link(model, request):
-    ...     return (make_url(request, resource='settings'), 'Settings')
-    
-    >>> personal_tools['settings'] = settings_link
+.. code-block:: python
+
+    from cone.app.browser.utils import make_url
+    from cone.app.browser.layout import personal_tools
+
+    def settings_link(model, request):
+        return (make_url(request, resource='settings'), 'Settings')
+
+    personal_tools['settings'] = settings_link
 
 
 Main menu
@@ -220,19 +226,23 @@ When providing tiles for displaying node content, normally it's desired to
 render the login form if access is forbidden. Therefor class
 ``cone.app.browser.layout.ProtectedContentTile`` is available. Use it as
 tile class if registering the tile with ``cone.tile.registerTile`` or inherit
-from it when working with the ``cone.tile.tile`` decorator.::
+from it when working with the ``cone.tile.tile`` decorator.
 
-    >>> from cone.tile import tile, registerTile
-    >>> from cone.app.browser.layout import ProtectedContentTile
-    >>> registerTile('protected_tile',
-    ...      'example.app:browser/templates/protected_tile.pt',
-    ...      class_=ProtectedContentTile,
-    ...      permission='login')
-    
-    >>> @tile('other_protected_tile', permission='login')
-    ... class ProtectedTile(ProtectedContentTile):
-    ...     def render(self):
-    ...         return '<div>protected stuff</div>'
+.. code-block:: python
+
+    from cone.tile import registerTile
+    from cone.tile import tile
+    from cone.app.browser.layout import ProtectedContentTile
+
+    registerTile('protected_tile',
+         'example.app:browser/templates/protected_tile.pt',
+         class_=ProtectedContentTile,
+         permission='login')
+
+    @tile('other_protected_tile', permission='login')
+    class ProtectedTile(ProtectedContentTile):
+        def render(self):
+            return '<div>protected stuff</div>'
 
 
 Model structure related

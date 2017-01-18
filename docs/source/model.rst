@@ -14,48 +14,50 @@ BaseNode
 
 ``cone.app.model.BaseNode`` plumbs together all required aspects for
 representing an application node. It's probably a good idea to inherit from it
-if none of the ongoing objects fit desired behavior.::
+if none of the ongoing objects fit desired behavior.
 
-    >>> from cone.app.model import BaseNode
-    
-    >>> class MyNode(BaseNode):
-    ...     """Model related code goes here
-    ...     """
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+
+    class MyNode(BaseNode):
+        """Model related code goes here
+        """
 
 Note: A more advanced technique is to use the mechanisms provided by
 `plumber <http://pypi.python.org/pypi/plumber>`_ package directly for combining
 different node behaviors. The ``IApplicationNode`` related interface extensions
 are also implemented as plumbing part (see documentation of plumber package to
 get a clue), and the ``BaseNode`` class is just a combination of plumbing parts
-without extending anything on the class directly.::
+without extending anything on the class directly.
 
-    >>> from plumber import plumbing
-    >>> from node.parts import (
-    ...     AsAttrAccess,
-    ...     NodeChildValidate,
-    ...     Adopt,
-    ...     Nodespaces,
-    ...     Attributes,
-    ...     DefaultInit,
-    ...     Nodify,
-    ...     Lifecycle,
-    ...     OdictStorage,
-    ... )
-    >>> from cone.app.model import AppNode
+.. code-block:: python
 
-    >>> @plumbing(
-    ...     AppNode,
-    ...     AsAttrAccess,
-    ...     NodeChildValidate,
-    ...     Adopt,
-    ...     Nodespaces,
-    ...     Attributes,
-    ...     DefaultInit,
-    ...     Nodify,
-    ...     Lifecycle,
-    ...     OdictStorage)
-    ... class MyAdvancedNode(object)
-    ...     pass
+    from plumber import plumbing
+    from node.parts import AsAttrAccess
+    from node.parts import NodeChildValidate
+    from node.parts import Adopt
+    from node.parts import Nodespaces
+    from node.parts import Attributes
+    from node.parts import DefaultInit
+    from node.parts import Nodify
+    from node.parts import Lifecycle
+    from node.parts import OdictStorage
+    from cone.app.model import AppNode
+
+    @plumbing(
+        AppNode,
+        AsAttrAccess,
+        NodeChildValidate,
+        Adopt,
+        Nodespaces,
+        Attributes,
+        DefaultInit,
+        Nodify,
+        Lifecycle,
+        OdictStorage)
+    class MyAdvancedNode(object)
+        pass
 
 
 FactoryNode
@@ -65,16 +67,19 @@ A ``cone.app.model.FactoryNode`` can be used to serve static children. The
 factory node provides a ``factory`` attribute containing a dict, where the keys
 represent the available child keys, and the values are simply callables which
 act as factory for given key on first access. I.e., a factory callable could be
-used to initialize database related entry nodes.::
+used to initialize database related entry nodes.
 
-    >>> from cone.app.model import FactoryNode
-    >>> class MyFactoryNode(FactoryNode):
-    ...     factories = {
-    ...         'child_by_factory_function': self.child_factory,
-    ...         'child_by_node_init_as_factory': BaseNode,
-    ...     }
-    ...     def child_factory(self):
-    ...         return BaseNode()
+.. code-block:: python
+
+    from cone.app.model import FactoryNode
+
+    class MyFactoryNode(FactoryNode):
+        factories = {
+            'child_by_factory_function': self.child_factory,
+            'child_by_node_init_as_factory': BaseNode,
+        }
+        def child_factory(self):
+            return BaseNode()
 
 
 AdapterNode
@@ -86,20 +91,22 @@ where the hierarchy differs from the one of the application model.
 The adapter node by default acts as proxy for ``__iter__`` and ``attrs``, all
 other functions map to the used ``OdictStorage``. If an adapter node provides
 children itself, it may be needed to adapted them as well, thus ``__getitem__``
-must be overwritten.::
+must be overwritten.
 
-    >>> from cone.app.model import AdapterNode
-    
-    >>> class MyAdapterNode(AdapterNode):
-    ...     def __getitem__(self, key):
-    ...         try:
-    ...             return self.storage[key]
-    ...         except KeyError:
-    ...             # raises KeyError directly if inexistent
-    ...             child_context = self.model[key]
-    ...             child = AdapterNode(child_context, key, self)
-    ...             self.storage[key] = child
-    ...             return child
+.. code-block:: python
+
+    from cone.app.model import AdapterNode
+
+    class MyAdapterNode(AdapterNode):
+        def __getitem__(self, key):
+            try:
+                return self.storage[key]
+            except KeyError:
+                # raises KeyError directly if inexistent
+                child_context = self.model[key]
+                child = AdapterNode(child_context, key, self)
+                self.storage[key] = child
+                return child
 
 
 AppRoot
@@ -111,10 +118,13 @@ startup time. Every plugin root factory registered by
 attribute. Also application related settings from the INI file are written to 
 ``properties`` respective ``metadata`` of app root node. The root node can be
 accessed either by calling ``node.root`` if ``node`` is child of application
-model or by using ``cone.app.get_root``.::
+model or by using ``cone.app.get_root``.
 
-    >>> from cone.app import get_root
-    >>> root = get_root()
+.. code-block:: python
+
+    from cone.app import get_root
+
+    root = get_root()
 
 
 AppSettings
@@ -126,9 +136,11 @@ initialized at application startup. Every settings node factory registered by
 attribute. The settings node also provides relevant properties and metadata.
 The settings node can be accessed either by calling ``node.root['settings']``
 if ``node`` is child of application model or again by using
-``cone.app.get_root`` and access 'settings' child.::
+``cone.app.get_root`` and access 'settings' child.
 
-    >>> settings = get_root()['settings']
+.. code-block:: python
+
+    settings = get_root()['settings']
 
 
 CopySupport
@@ -148,18 +160,21 @@ The contract is described in ``cone.app.interfaces.IProperties``. The
 application node attributes ``properties`` and ``metadata`` promise to
 provide an ``IProperties`` implementation. A properties object never raises an
 AttributeError on attribute access, instead ``None`` is returned if property is
-inexistent. Available properties are provided by ``keys``.::
+inexistent. Available properties are provided by ``keys``.
+
+.. code-block:: pydoc
 
     >>> from cone.app.model import Properties
+
     >>> props = Properties
     >>> props.a = '1'
     >>> props.b = '2'
     >>> props.keys()
     ['a', 'b']
-    
+
     >>> props.a
     '1'
-    
+
     >>> props.c
 
 
@@ -167,34 +182,44 @@ ProtectedProperties
 -------------------
 
 ``cone.app.model.ProtectedProperties`` object can be used to secure property
-access by permissions. Properties with no permissions are always returned::
+access by permissions. Properties with no permissions are always returned.
 
-    >>> from cone.app.model import ProtectedProperties
+.. code-block:: python
+
+    from cone.app.model import ProtectedProperties
 
 Define the permission map. In this example, permission 'view' is required to
 access property 'a', and permission 'edit' is required to access property
-'b'.:: 
+'b'.
 
-    >>> permissions = {
-    ...     'a': ['view'],
-    ...     'b': ['edit'],
-    ... }
+.. code-block:: python
 
-The model to check the permissions against.::
+    permissions = {
+        'a': ['view'],
+        'b': ['edit'],
+    }
 
-    >>> model = BaseNode()
+The model to check the permissions against.
 
-Property data.::
+.. code-block:: python
 
-    >>> data = {
-    ...     'a': '1', # 'view' permission protected
-    ...     'b': '2', # 'edit' permission protected
-    ...     'c': '3', # unprotected
-    ... }
+    model = BaseNode()
 
-Initialize properties.::
+Property data.
 
-    >>> props = ProtectedProperties(model, permissions, data)
+.. code-block:: python
+
+    data = {
+        'a': '1', # 'view' permission protected
+        'b': '2', # 'edit' permission protected
+        'c': '3', # unprotected
+    }
+
+Initialize properties.
+
+.. code-block:: python
+
+    props = ProtectedProperties(model, permissions, data)
 
 If a user does not have the respective permission granted to access a specific
 property, ``ProtectedProperties`` behaves as if this property is inexistent.
@@ -215,13 +240,16 @@ XMLProperties
 
 ``cone.app.model.XMLProperties`` is an ``IProperties`` implementation which
 can be used to serialize/deserialze properties to XML files. Supported value
-types are ``string``, ``list``, ``tuple``, ``dict`` and ``datetime.datetime``::
+types are ``string``, ``list``, ``tuple``, ``dict`` and ``datetime.datetime``.
 
-    >>> from cone.app.model import XMLProperties
-    >>> file = '/path/to/file.xml'
-    >>> props = XMLProperties(file)
-    >>> props.a = '1'
-    >>> props() # persist to file
+.. code-block:: python
+
+    from cone.app.model import XMLProperties
+
+    file = '/path/to/file.xml'
+    props = XMLProperties(file)
+    props.a = '1'
+    props() # persist to file
   
 
 ConfigProperties
@@ -229,13 +257,16 @@ ConfigProperties
 
 ``cone.app.model.ConfigProperties`` is an ``IProperties`` implementation which
 can be used to serialize/deserialze properties to INI file. Supports value
-type ``string`` only.::
+type ``string`` only.
 
-    >>> from cone.app.model import ConfigProperties
-    >>> file = '/path/to/file.ini'
-    >>> props = ConfigProperties(file)
-    >>> props.a = '1'
-    >>> props() # persist to file
+.. code-block:: python
+
+    from cone.app.model import ConfigProperties
+
+    file = '/path/to/file.ini'
+    props = ConfigProperties(file)
+    props.a = '1'
+    props() # persist to file
 
 
 NodeInfo
@@ -244,24 +275,27 @@ NodeInfo
 ``cone.app.model.NodeInfo`` class inherits from ``cone.app.model.Properties``
 and adds the marker interface ``cone.app.interfaces.INodeInfo``. A NodeInfo
 object contains meta information of application nodes and are basically used
-for authoring purposes.::
+for authoring purposes.
 
-    >>> from cone.app.model import (
-    ...     NodeInfo,
-    ...     register_node_info,
-    ... )
-    >>> info = NodeInfo()
-    >>> info.title = 'Node meta title'
-    >>> info.description = 'Node meta description'
-    >>> info.node = SomeNode
-    >>> info.addables = ['node_info_name_b', 'node_info_name_c']
-    >>> register_node_info('node_info_name_a', info)
+.. code-block:: python
+
+    from cone.app.model import NodeInfo
+    from cone.app.model import register_node_info
+
+    info = NodeInfo()
+    info.title = 'Node meta title'
+    info.description = 'Node meta description'
+    info.node = SomeNode
+    info.addables = ['node_info_name_b', 'node_info_name_c']
+    register_node_info('node_info_name_a', info)
 
 The refering application model node must provide ``node_info_name`` attribute,
-which is used to lookup the related NodeInfo instance.::
+which is used to lookup the related NodeInfo instance.
 
-    >>> from cone.app.model import get_node_info
-    >>> info = get_node_info('node_info_name_a')
+.. code-block:: python
+
+    from cone.app.model import get_node_info
+    info = get_node_info('node_info_name_a')
 
 See forms documentation for more details.
 
@@ -304,25 +338,25 @@ In many applications it's required to grant access for specific parts of the
 application model to specific users and groups. ``cone.app`` ships with a
 plumbing part providing principal related roles. It's an abstract
 implementation leaving the persistence apart. A concrete shareable node looks
-like::
+like.
 
-    >>> from node.utils import instance_property
-    >>> from cone.app.model import BaseNode
-    >>> from cone.app.security import (
-    ...     PrincipalACL,
-    ...     DEFAULT_ACL,
-    ... )
-    >>> class SharingNode(BaseNode):
-    ... 
-    ...     role_inheritance = True
-    ... 
-    ...     @property
-    ...     def __acl__(self):
-    ...         return DEFAULT_ACL
-    ... 
-    ...     @instance_property
-    ...     def principal_roles(self):
-    ...         return dict()
+.. code-block:: python
+
+    from node.utils import instance_property
+    from cone.app.model import BaseNode
+    from cone.app.security import PrincipalACL
+    from cone.app.security import DEFAULT_ACL
+
+    class SharingNode(BaseNode):
+        role_inheritance = True
+
+        @property
+        def __acl__(self):
+            return DEFAULT_ACL
+
+        @instance_property
+        def principal_roles(self):
+            return dict()
 
 The ``role_inheritance`` attribute defines whether to aggregate roles from
 parent nodes. It's important for shareable nodes that the ``__acl__`` attribute

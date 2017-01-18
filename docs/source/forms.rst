@@ -19,58 +19,61 @@ The base class for all form tiles is located at ``cone.app.browser.form.Form``.
 This tile is responsible to build the widget tree and to do form processing.
 
 Building the widget tree is done at ``prepare`` time, and form processing is
-done when the tile gets called.::
+done when the tile gets called.
 
-    >>> from yafowil.base import factory
-    >>> from cone.tile import tile
-    >>> from cone.app.browser.form import Form
-    >>> from cone.app.browser.utils import make_url
-    >>> from example.app.model import ExampleApp
+.. code-block:: python
+
+    from yafowil.base import factory
+    from cone.tile import tile
+    from cone.app.browser.form import Form
+    from cone.app.browser.utils import make_url
+    from example.app.model import ExampleApp
+
+    @tile('someform', interface=ExampleApp, permission="edit")
+    class SomeForm(Form):
+
+        def prepare(self):
+            """Prepare YAFOWIL widget tree and set it to ``self.form``
+            """
+            action = make_url(
+                self.request, node=self.model, resource='someform')
+            form = factory(
+                'form',
+                name='someform',
+                props={
+                    'action': action,
+                })
+            form['title'] = factory(
+                'field:text'
+                value=self.model.attrs['title'])
+            form['save'] = factory(
+                'submit',
+                props = {
+                    'action': 'save',
+                    'expression': True,
+                    'handler': self.save,
+                    'next': None,
+                    'label': 'Save',
+                })
+            self.form = form
     
-    >>> @tile('someform', interface=ExampleApp, permission="edit")
-    ... class SomeForm(Form):
-    ... 
-    ...     def prepare(self):
-    ...         """Prepare YAFOWIL widget tree and set it to ``self.form``
-    ...         """
-    ...         action = make_url(
-    ...             self.request, node=self.model, resource='someform')
-    ...         form = factory(
-    ...             'form',
-    ...             name='someform',
-    ...             props={
-    ...                 'action': action,
-    ...             })
-    ...         form['title'] = factory(
-    ...             'field:text'
-    ...             value=self.model.attrs['title']
-    ...             )
-    ...         form['save'] = factory(
-    ...             'submit',
-    ...             props = {
-    ...                 'action': 'save',
-    ...                 'expression': True,
-    ...                 'handler': self.save,
-    ...                 'next': None,
-    ...                 'label': 'Save',
-    ...             })
-    ...         self.form = form
-    ... 
-    ...     def save(self, widget, data):
-    ...         value = data.fetch('someform.title').extracted
-    ...         self.model.attrs['title'] = value
+        def save(self, widget, data):
+            value = data.fetch('someform.title').extracted
+            self.model.attrs['title'] = value
 
 Forms are AJAX forms by default. If it's desired that a specific form is also
 available via traversal, a pyramid view with the name given as ``resource``
 parameter when calling ``make_url`` for the form action in the example above
-must be provided.::
+must be provided.
 
-    >>> from pyramid.view import view_config
-    >>> from cone.app.browser.authoring import render_form
-    
-    >>> @view_config('someform', context=ExampleApp, permission='edit')
-    ... def someform(model, request):
-    ...     return render_form(model, request, 'someform')
+.. code-block:: python
+
+    from pyramid.view import view_config
+    from cone.app.browser.authoring import render_form
+
+    @view_config('someform', context=ExampleApp, permission='edit')
+    def someform(model, request):
+        return render_form(model, request, 'someform')
 
 
 YAMLForm part
@@ -78,23 +81,26 @@ YAMLForm part
 
 ``cone.app.browser.form.YAMLForm`` is a plumbing part which hooks the
 ``prepare`` function to the form tile building the YAFOWIL form from YAML
-definitions. The form implementation from above now looks like::
+definitions. The form implementation from above now looks like.
 
-    >>> from plumber import plumbing
-    >>> from cone.app.browser.form import YAMLForm
-    
-    >>> @tile('someyamlform', interface=ExampleApp, permission="edit")
-    ... @plumbing(YAMLForm)
-    ... class SomeYAMLForm(Form):
-    ... 
-    ...     action_resource = u'someyamlform'
-    ...     form_template = 'example.app.browser:forms/some_form.yaml'
-    ... 
-    ...     def save(self, widget, data):
-    ...         value = data.fetch('someform.title').extracted
-    ...         self.model.attrs['title'] = value
+.. code-block:: python
 
-The YAML file which must be present at the given location contains::
+    from plumber import plumbing
+    from cone.app.browser.form import YAMLForm
+
+    @tile('someyamlform', interface=ExampleApp, permission="edit")
+    @plumbing(YAMLForm)
+    class SomeYAMLForm(Form):
+        action_resource = u'someyamlform'
+        form_template = 'example.app.browser:forms/some_form.yaml'
+
+        def save(self, widget, data):
+            value = data.fetch('someform.title').extracted
+            self.model.attrs['title'] = value
+
+The YAML file which must be present at the given location contains.
+
+.. code-block:: yaml
 
     factory: form
     name: someyamlform
@@ -144,12 +150,14 @@ triggering the context change event, both on target URL resulting by 'came_from'
 
 Define ``self.next``, respective ``context.next`` if YAML form, in save widget
 of form as ``next`` property and add ``CameFromNext`` part to plumbing parts on
-form tile class.::
+form tile class.
 
-    >>> @tile('someyamlform', interface=ExampleApp, permission="edit")
-    ... @plumbing(YAMLForm, CameFromNext)
-    ... class SomeYAMLForm(Form):
-    ...     pass
+.. code-block:: python
+
+    @tile('someyamlform', interface=ExampleApp, permission="edit")
+    @plumbing(YAMLForm, CameFromNext)
+    class SomeYAMLForm(Form):
+        pass
 
 
 Add forms
@@ -172,14 +180,16 @@ The ``prepare`` function is plumbed in order to extend the form with a
 'factory' proxy widget, which passes the node info name.
 
 The ``__call__`` function gets also plumbed, and renders a heading prior to
-form if ``show_heading`` on form tile is set to ``True``, which is default.::
+form if ``show_heading`` on form tile is set to ``True``, which is default.
 
-    >>> from cone.app.browser.authoring import AddPart
+.. code-block:: python
+
+    from cone.app.browser.authoring import AddPart
     
-    >>> @tile('addform', interface=ExampleApp, permission="add")
-    ... @plumbing(AddPart)
-    ... class ExampleAppAddForm(Form):
-    ...     pass
+    @tile('addform', interface=ExampleApp, permission="add")
+    @plumbing(AddPart)
+    class ExampleAppAddForm(Form):
+        pass
 
 
 Edit forms
@@ -196,14 +206,16 @@ For creating edit form tiles, ``cone.app.browser.authoring.EditPart`` provides
 the required plumbings. It derives from ``CameFromNext``.
 
 The ``__call__`` function gets plumbed, and renders a heading prior to
-form if ``show_heading`` on form tile is set to ``True``, which is default.::
+form if ``show_heading`` on form tile is set to ``True``, which is default.
 
-    >>> from cone.app.browser.authoring import EditPart
+.. code-block:: python
+
+    from cone.app.browser.authoring import EditPart
     
-    >>> @tile('editform', interface=ExampleApp, permission="edit")
-    ... @plumbing(EditPart)
-    ... class ExampleAppEditForm(Form):
-    ...     pass
+    @tile('editform', interface=ExampleApp, permission="edit")
+    @plumbing(EditPart)
+    class ExampleAppEditForm(Form):
+        pass
 
 For add and edit forms it probably makes sense to write one base class
 providing the ``prepare`` function.
@@ -222,14 +234,16 @@ define which of the rendered forms on client side should be altered.
 
 The settings form tile gets extended by a ``next`` function, which handles
 form continuation similar to ``CameFromNext`` part, without the consideration
-of 'came_from'.::
+of 'came_from'.
 
-    >>> from cone.app.browser.settings import SettingsPart
-    
-    >>> @tile('editform', interface=AppSettings, permission="manage")
-    ... @plumbing(SettingsPart)
-    ... class ServerSettingsForm(Form):
-    ...     pass
+.. code-block:: python
+
+    from cone.app.browser.settings import SettingsPart
+
+    @tile('editform', interface=AppSettings, permission="manage")
+    @plumbing(SettingsPart)
+    class ServerSettingsForm(Form):
+        pass
 
 
 Extending forms
@@ -243,35 +257,40 @@ To achieve this, write a plumbing part which hooks to the ``prepare`` function,
 which adds form widgets to ``self.form`` after processing ``_next`` downstream
 function, which in case is the following ``prepare`` function in the plumbing
 pipeline. Also hook to the ``save`` function (the one defined as form action
-``handler`` property) and add the related persisting code.::
+``handler`` property) and add the related persisting code.
 
-    >>> from plumber import Part, plumb
-    
-    >>> class FormExtension(Part):
-    ... 
-    ...     @plumb
-    ...     def prepare(_next, self):
-    ...         # downstream ``prepare`` function, after this self.form must
-    ...         # be present
-    ...         _next(self)
-    ...         # extension widget
-    ...         widget = factory(
-    ...             'field:text',
-    ...             value=self.model.attrs['generic'])
-    ...         # add new widget before save widget
-    ...         save_widget = self.form['save']
-    ...         self.form.insertbefore(roles_widget, save_widget)
-    ... 
-    ...     @plumb
-    ...     def save(_next, self, widget, data):
-    ...         value = data.fetch('%s.generic' % self.form_name).extracted
-    ...         self.model.attrs['generic'] = value
-    ...         _next(self, widget, data)
+.. code-block:: python
+
+    from plumber import Part
+    from plumber import plumb
+
+    class FormExtension(Part):
+
+        @plumb
+        def prepare(_next, self):
+            # downstream ``prepare`` function, after this self.form must
+            # be present
+            _next(self)
+            # extension widget
+            widget = factory(
+                'field:text',
+                value=self.model.attrs['generic'])
+            # add new widget before save widget
+            save_widget = self.form['save']
+            self.form.insertbefore(roles_widget, save_widget)
+
+        @plumb
+        def save(_next, self, widget, data):
+            value = data.fetch('%s.generic' % self.form_name).extracted
+            self.model.attrs['generic'] = value
+            _next(self, widget, data)
 
 This part can now be used like any other plumbing part for extending form
-tiles.::
+tiles.
 
-    >>> @tile('editform', interface=ExampleApp, permission="edit")
-    >>> @plumbing(EditPart, FormExtension)
-    ... class ServerSettingsForm(Form):
-    ...     pass
+.. code-block:: python
+
+    @tile('editform', interface=ExampleApp, permission="edit")
+    @plumbing(EditPart, FormExtension)
+    class ServerSettingsForm(Form):
+        pass
