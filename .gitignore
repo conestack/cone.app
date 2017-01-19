@@ -8,6 +8,10 @@
 /buildout.cfg
 /twistd.pid
 /src/cone.app.egg-info/
+/include/
+/lib/
+/local/
+/pip-selfcheck.json
 /bin/
 /env/
 /develop-eggs/
