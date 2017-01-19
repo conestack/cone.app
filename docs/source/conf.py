@@ -32,7 +32,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'cone.app'
-copyright = u'2009-2017, BlueDynamics Alliance et al'
+copyright = u'2009-2017, Robert Niederreiter'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,17 +164,17 @@ htmlhelp_basename = 'cone_doc'
 # -- Options for LaTeX output --------------------------------------------------
 
 # The paper size ('letter' or 'a4').
-latex_paper_size = 'a4'
+# latex_paper_size = 'a4'
 
 # The font size ('10pt', '11pt' or '12pt').
-latex_font_size = '10pt'
+# latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [
-  ('index', 'cone.tex', u'cone documentation',
-   u'BDA', 'manual'),
-]
+# latex_documents = [
+#   ('index', 'cone.tex', u'cone documentation',
+#    u'BDA', 'manual'),
+# ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.

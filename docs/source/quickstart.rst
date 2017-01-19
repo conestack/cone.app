@@ -1,11 +1,9 @@
-.. _quickstart:
-
 =================
 Quick Start Guide
 =================
 
 Overview
-========
+--------
 
 In order to use ``cone.app``, an integration package is created. This package
 contains the buildout and application configuration.
@@ -14,20 +12,17 @@ contains the buildout and application configuration.
 package might directly contain the plugin code, or the plugin is created in
 a seperate package.
 
-
-Getting Started
-===============
-
-In this example a package named ``cone.example`` is created, which contains the
-plugin code and the application configuration.
+In this documentation a package named ``cone.example`` is created, which
+contains the plugin code and the application configuration.
 
 .. note::
 
     The final example plugin created during this documentation can be found
-    `here <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
+    in the `Github repository
+    <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 
-Create file system structure
+Create File System Structure
 ----------------------------
 
 Create a python egg named ``cone.example`` with the following file system
@@ -50,8 +45,8 @@ structure::
                     model.py
 
 
-Setup
------
+Package Setup
+-------------
 
 The package must depend on ``cone.app`` as installation dependency.
 
@@ -80,8 +75,8 @@ Create a ``setup.py`` containing:
     )
 
 
-Bootstrap
----------
+Bootstrap Script
+----------------
 
 Add ``bootstrap.sh`` containing:
 
@@ -100,8 +95,8 @@ Make this file executable.
     chmod +x bootstrap.sh
 
 
-Buildout
---------
+Buildout Configuration
+----------------------
 
 Add ``buildout.cfg`` configuration containing:
 
@@ -127,7 +122,7 @@ Add ``buildout.cfg`` configuration containing:
         cone.example
 
 
-Application INI configuration
+Application INI Configuration
 -----------------------------
 
 Create ``example.ini`` and add:
@@ -186,7 +181,7 @@ Create ``example.ini`` and add:
         example
 
 
-Available INI configuration parameters
+Available INI Configuration Parameters
 ......................................
 
 *cone.admin_user*
@@ -394,8 +389,8 @@ ensure tile registration gets executed.
         config.scan('cone.example.browser')
 
 
-Install
--------
+Installation
+------------
 
 To install the application, run bootstrap.sh.
 
