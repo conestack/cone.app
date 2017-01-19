@@ -5,7 +5,7 @@ from cone.example.model import ExamplePlugin
 
 registerTile(
     name='content',
-    'cone.example:browser/templates/example.pt',
+    path='cone.example:browser/templates/example.pt',
     interface=ExamplePlugin,
     class_=ProtectedContentTile,
     permission='login')

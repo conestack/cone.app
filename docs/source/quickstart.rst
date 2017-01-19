@@ -15,8 +15,8 @@ package might directly contain the plugin code, or the plugin is created in
 a seperate package.
 
 
-Hello World
-===========
+Getting Started
+===============
 
 In this example a package named ``cone.example`` is created, which contains the
 plugin code and the application configuration.
@@ -27,13 +27,14 @@ plugin code and the application configuration.
     `here <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 
-Create the package
-------------------
+Create file system structure
+----------------------------
 
 Create a python egg named ``cone.example`` with the following file system
 structure::
 
     cone.example/
+        bootstrap.sh
         buildout.cfg
         example.ini
         setup.py
@@ -47,6 +48,10 @@ structure::
                             example.pt
                     configure.zcml
                     model.py
+
+
+Setup
+-----
 
 The package must depend on ``cone.app`` as installation dependency.
 
@@ -75,6 +80,26 @@ Create a ``setup.py`` containing:
     )
 
 
+Bootstrap
+---------
+
+Add ``bootstrap.sh`` containing:
+
+.. code-block:: sh
+
+    #!/bin/sh
+    rm -r ./lib ./include ./local ./bin
+    virtualenv --clear --no-site-packages .
+    ./bin/pip install --upgrade pip setuptools zc.buildout
+    ./bin/buildout -N
+
+Make this file executable.
+
+.. code-block:: sh
+
+    chmod +x bootstrap.sh
+
+
 Buildout
 --------
 
@@ -86,6 +111,14 @@ Add ``buildout.cfg`` configuration containing:
     parts = instance
     eggs-directory = ${buildout:directory}/eggs
     develop = .
+    versions = versions
+
+    [versions]
+    zc.buildout = 
+    setuptools = 
+    pyramid = 1.1.3
+    pyramid-zcml = 0.9.2
+    cone.app = 1.0a1
 
     [instance]
     recipe = zc.recipe.egg:scripts
@@ -94,8 +127,8 @@ Add ``buildout.cfg`` configuration containing:
         cone.example
 
 
-INI configuration
------------------
+Application INI configuration
+-----------------------------
 
 Create ``example.ini`` and add:
 
@@ -143,10 +176,10 @@ Create ``example.ini`` and add:
     cone.plugins = cone.example
 
     # application root node settings
-    cone.root.title = example
+    cone.root.title = cone.example
     cone.root.default_child = example
     #cone.root.default_content_tile = 
-    cone.root.mainmenu_empty_title = false
+    #cone.root.mainmenu_empty_title = false
 
     [pipeline:main]
     pipeline =
@@ -222,6 +255,22 @@ Available INI configuration parameters
 
 *cone.root.mainmenu_empty_title*
     Flag whether to suppress rendering main menu titles.
+
+
+ZCML Configuration
+------------------
+
+Add ``src/cone/example/configure.zcml`` containing:
+
+.. code-block:: xml
+
+    <?xml version="1.0" encoding="utf-8" ?>
+    <configure xmlns="http://pylonshq.com/pyramid">
+    </configure>
+
+.. note::
+
+    Right now this file is mandatory, but it will be optional in future.
 
 
 Application Model
@@ -318,7 +367,7 @@ To provide the ``content`` tile for the ``ExamplePlugin`` node, create
 
     registerTile(
         name='content',
-        'cone.example:browser/templates/example.pt',
+        path='cone.example:browser/templates/example.pt',
         interface=ExamplePlugin,
         class_=ProtectedContentTile,
         permission='login')
@@ -345,17 +394,28 @@ ensure tile registration gets executed.
         config.scan('cone.example.browser')
 
 
-Install and run application
----------------------------
+Install
+-------
 
-To install and run the application, create a virtualenv, run buildout and then
-start paster server.
+To install the application, run bootstrap.sh.
 
 .. code-block:: sh
 
-    virtualenv .
-    ./bin/pip install buildout
+    ./bootstrap.sh
+
+If you have changes in setup dependencies of buildout config, run buildout to
+update.
+
+.. code-block:: sh
+
     ./bin/buildout
+
+
+Run Application
+---------------
+
+.. code-block:: sh
+
     ./bin/paster serve example.ini
 
 The application is now available at ``localhost:8081``.

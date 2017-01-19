@@ -1,0 +1,10 @@
+/.installed.cfg
+/bin/
+/develop-eggs/
+/eggs/
+/include/
+/lib/
+/local/
+/pip-selfcheck.json
+/src/cone.example.egg-info/
+
