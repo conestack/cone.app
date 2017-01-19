@@ -18,24 +18,29 @@ a seperate package.
 Hello World
 ===========
 
-In this example a package named ``example.app`` is created, which contains the
+In this example a package named ``cone.example`` is created, which contains the
 plugin code and the application configuration.
+
+.. note::
+
+    The final example plugin created during this documentation can be found
+    `here <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 
 Create the package
 ------------------
 
-Create a python egg named ``example.app`` with the following file system
+Create a python egg named ``cone.example`` with the following file system
 structure::
 
-    example.app/
+    cone.example/
         buildout.cfg
         example.ini
         setup.py
         src/
-            example/
+            cone/
                 __init__.py
-                app/
+                example/
                     __init__.py
                     browser/
                         templates/
@@ -56,12 +61,12 @@ Create a ``setup.py`` containing:
     shortdesc = 'Example cone plugin'
 
     setup(
-        name='example.app',
+        name='cone.example',
         version=version,
         description=shortdesc,
         packages=find_packages('src'),
         package_dir={'': 'src'},
-        namespace_packages=['example'],
+        namespace_packages=['cone'],
         include_package_data=True,
         zip_safe=False,
         install_requires=[
@@ -86,7 +91,7 @@ Add ``buildout.cfg`` configuration containing:
     recipe = zc.recipe.egg:scripts
     dependent-scripts = true
     eggs =
-        example.app
+        cone.example
 
 
 INI configuration
@@ -135,7 +140,7 @@ Create ``example.ini`` and add:
     #cone.auth_impl =
 
     # plugins to be loaded
-    cone.plugins = example.app
+    cone.plugins = cone.example
 
     # application root node settings
     cone.root.title = example
@@ -251,27 +256,27 @@ being a node:
     provides cardinality information and general node information which is
     primary needed for authoring operations.
 
-Create plugin root node in ``src/example/app/model.py``.
+Create plugin root node in ``src/cone/example/model.py``.
 
 .. code-block:: python
 
     from cone.app.model import BaseNode
 
-    class ExampleApp(BaseNode):
+    class ExamplePlugin(BaseNode):
         pass
 
 Plugin initialization code goes into the main hook function. Hook the
-application node to the application model in ``src/example/app/__init__.py``.
+application node to the application model in ``src/cone/example/__init__.py``.
 
 .. code-block:: python
 
     from cone.app import register_entry
     from cone.app import register_main_hook
-    import example.app.model import ExampleApp
+    from cone.example.model import ExamplePlugin
 
     def example_main_hook(config, global_config, local_config):
         # register plugin entry node
-        register_entry('example', ExampleApp)
+        register_entry('example', ExamplePlugin)
 
     register_main_hook(example_main_hook)
 
@@ -302,23 +307,24 @@ which is reserved for rendering the *Content Area* of the page.
 Each application node must at least register a tile named ``content`` for each
 application node it provides in order to display it in the layout.
 
-To provide the ``content`` tile for the ``ExampleApp`` node, create
-``src/example/app/browser/__init__.py`` and register it like so:
+To provide the ``content`` tile for the ``ExamplePlugin`` node, create
+``src/cone/example/browser/__init__.py`` and register it like so:
 
 .. code-block:: python
 
     from cone.app.browser.layout import ProtectedContentTile
     from cone.tile import registerTile
-    from example.app.model import ExampleApp
+    from cone.example.model import ExamplePlugin
 
-    registerTile(name='content',
-                 'example.app:browser/templates/exampleapp.pt',
-                 interface=ExampleApp,
-                 class_=ProtectedContentTile,
-                 permission='login')
+    registerTile(
+        name='content',
+        'cone.example:browser/templates/example.pt',
+        interface=ExamplePlugin,
+        class_=ProtectedContentTile,
+        permission='login')
 
 Also create the corresponding page template in
-``src/example/app/browser/templates/exampleapp.pt`` and add:
+``src/cone/example/browser/templates/example.pt`` and add:
 
 .. code-block:: html
 
@@ -333,10 +339,10 @@ ensure tile registration gets executed.
 
     def example_main_hook(config, global_config, local_config):
         # register plugin entry node
-        register_entry('example', ExampleApp)
+        register_entry('example', ExamplePlugin)
 
         # scan browser package
-        config.scan('example.app.browser')
+        config.scan('cone.example.browser')
 
 
 Install and run application

@@ -79,7 +79,7 @@ The static view gets registered in the plugin main hook.
 
         # static resources
         config.add_view(
-            'example.app.browser.static_resources',
+            'cone.example.browser.static_resources',
             name='example-static')
 
 This configuration makes the resources available to the browser by URL, but no
@@ -88,6 +88,16 @@ published for authenticated users only or for all users.
 
 For delivering CSS and JS resources, register them ``cone.app.cfg.css``
 respective ``cone.app.cfg.js``.
+
+.. note::
+
+    If you need to depend on resources delivered by another plugin make sure to
+    register the resources inside the main hook function and that the plugin
+    containing the dependencies is placed before your plugin is loaded at
+    ``cone.plugins`` in the ini configuration.
+
+    If you provide a plugin which is desired to be used as dependency for other
+    plugins this also applies.
 
 .. code-block:: python
 
@@ -115,11 +125,11 @@ Plugin root node factoies are registered to the application via
 .. code-block:: python
 
     from cone.app import register_entry
-    import example.app.model import ExampleApp
+    import cone.example.model import ExamplePlugin
 
     def example_main_hook(config, global_config, local_config):
         # register plugin entry node
-        register_entry('example', ExampleApp)
+        register_entry('example', ExamplePlugin)
 
 This makes the plugin model available to the browser via traversal.
 

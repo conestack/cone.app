@@ -12,7 +12,7 @@ The main template of ``cone.app`` can be altered by overriding
 
     import cone.app
 
-    cone.app.cfg.main_template = 'example.app.browser:templates/main.pt'
+    cone.app.cfg.main_template = 'cone.example.browser:templates/main.pt'
 
 
 Application Layout
