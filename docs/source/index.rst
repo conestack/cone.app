@@ -3,7 +3,7 @@
 .. image:: _static/cone.app.png
 
 ===========================================
-cone - a comprehensive Web Application Stub
+cone - A Comprehensive Web Application Stub
 ===========================================
 
 Introduction
@@ -16,11 +16,9 @@ The authors of this package are coming from `Zope <https://zope.org>`_ and
 `Plone <https://plone.org>`_ development, thus a developer originating those
 domains will be familiar with lots of the concepts used.
 
-The package does not aim to provide another CMS.
-
-``cone.app`` aims to provide an environment for building Web Applications used
-to publish and modify `node <http://pypi.python.org/pypi/node>`_ based data
-structures.
+The package does not aim to provide another CMS. ``cone.app`` aims to provide
+an environment for building Web Applications used to publish and modify
+`node <http://pypi.python.org/pypi/node>`_ based data models.
 
 Nodes describes a unified contract the data model must follow, regardless of
 the physical data storage backend.
@@ -28,9 +26,9 @@ the physical data storage backend.
 By depending on the node contracts, we ensure that data models are traversable
 by Pyramid and can be published.
 
-The same contracts makes it possibe to build generic reusable User Interface
-components. This components are primarily implemented as Tiles provided
-by `cone.tile <http://pypi.python.org/pypi/cone.tile>`_.
+The same contracts make it possibe to build generic reusable User Interface
+components. This components are primarily implemented as Tiles utilizing
+`cone.tile <http://pypi.python.org/pypi/cone.tile>`_.
 
 For AJAX operations `bdajax <http://pypi.python.org/pypi/bdajax>`_ is utilized.
 
@@ -73,6 +71,7 @@ Contents
 
    Getting Started <quickstart>
    Plugins <plugins>
+   Application Configuration <config>
    Layout <layout>
    Application Model <model>
    Tiles <tiles>

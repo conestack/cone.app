@@ -22,11 +22,10 @@ contains both the integration and plugin code.
     <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 
-Create File System Structure
-----------------------------
+Create Package Structure
+------------------------
 
-Create a python egg named ``cone.example`` with the following file system
-structure::
+Create a directory named ``cone.example`` with the following structure::
 
     cone.example/
         bootstrap.sh
@@ -45,12 +44,12 @@ structure::
                     model.py
 
 
-Package Setup
--------------
+Python Package Setup
+--------------------
 
 The package must depend on ``cone.app`` as installation dependency.
 
-Create a ``setup.py`` containing:
+Add a ``setup.py`` containing:
 
 .. code-block:: python
 
@@ -118,8 +117,7 @@ Add ``buildout.cfg`` configuration containing:
     [instance]
     recipe = zc.recipe.egg:scripts
     dependent-scripts = true
-    eggs =
-        cone.example
+    eggs = cone.example
 
 
 Application INI Configuration
