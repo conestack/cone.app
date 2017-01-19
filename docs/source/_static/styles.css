@@ -1,0 +1,39 @@
+#navbar {
+    border-radius: 0;
+    border-width: 0 0 1px;
+}
+#navtree .list-group-item.active {
+    color:#fff;
+}
+#navtree ul {
+    padding:0;
+}
+#navtree .toctree-l1 {
+    background-color:#fff;
+    border:1px solid #ddd;
+    display:block;
+    margin-bottom:-1px;
+    padding:10px 15px;
+    position:relative;
+}
+#navtree .toctree-l1 ul {
+    list-style: none outside none;
+    padding-left: 0;
+    margin-left: 1em;
+    margin-top: 0.4em;
+}
+#navtree .toctree-l1 ul li {
+    padding-bottom: 0.25em;
+}
+#navtree .toctree-l1.current {
+    background-color:#fcf8e3;
+    color:#8a6d3b;
+}
+table td strong {
+    padding-top:8px;
+    display:block;
+}
+table td ul {
+    padding-left:1em;
+    margin-bottom:0;
+}

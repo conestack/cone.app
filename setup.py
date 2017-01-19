@@ -55,6 +55,8 @@ setup(name='cone.app',
           ],
           docs=[
               'Sphinx',
+              'sphinx_bootstrap_theme',
+              'repoze.sphinx.autointerface',
           ],
       ),
       tests_require=[
