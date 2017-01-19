@@ -1,24 +1,24 @@
-=================
-Quick Start Guide
-=================
+===============
+Getting Started
+===============
 
 Overview
 --------
 
-In order to use ``cone.app``, an integration package is created. This package
-contains the buildout and application configuration.
+In order to use ``cone.app``, an integration package must be created. This
+package contains the buildout and application configuration.
 
-``cone.app`` based applications are organized by plugins. Thus, the integration
-package might directly contain the plugin code, or the plugin is created in
-a seperate package.
+``cone.app`` extensions are organized as Plugins. Thus, the integration
+package may contain the Plugin code directly, or the Plugin is created as
+seperate package.
 
 In this documentation a package named ``cone.example`` is created, which
-contains the plugin code and the application configuration.
+contains both the integration and plugin code.
 
 .. note::
 
-    The final example plugin created during this documentation can be found
-    in the `Github repository
+    The example package created in this documentation can be found in the
+    `Github repository
     <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 

@@ -2,8 +2,8 @@
 Plugins
 =======
 
-As explained in the :doc:`Quickstart <quickstart>` documentation, application
-extensions are organized by plugins, shipping with related application models,
+As explained in the :doc:`Getting Started <quickstart>` documentation,
+applications are organized by plugins, shipping with related application models,
 tiles and resources.
 
 ``cone.app`` provides a set of hooks for plugins to extend and customize the
