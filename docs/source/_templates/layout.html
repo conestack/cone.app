@@ -1,0 +1,30 @@
+{% extends "!layout.html" %}
+
+{% set bootswatch_css_custom = ['_static/styles.css'] %}
+
+{%- block content %}
+<a href="https://github.com/bluedynamics/yafowil.documentation">
+  <img title="Fork yafowil.documentation on GitHub"
+       alt="Fork me on GitHub"
+       src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+       style="position:absolute; top:40px; right:0; border:0;">
+</a>
+
+{{ navBar() }}
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <ul id="navtree"
+          class="list-group">
+        <li class="list-group-item active">
+          Navigation
+        </li>
+        {{ toctree(maxdepth=2) }}
+      </ul>
+    </div>
+    <div class="col-md-9">
+      {% block body %}{% endblock %}
+    </div>
+  </div>
+</div>
+{%- endblock %}

@@ -1,5 +1,7 @@
 .. cone.app documentation master file
 
+.. image:: _static/cone.app.png
+
 ===================================================
 cone.app - Build Web Applications on top of pyramid
 ===================================================

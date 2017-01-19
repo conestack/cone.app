@@ -3,3 +3,6 @@ include *.mo
 include *.po
 recursive-include src *
 recursive-exclude src *.pyc *.pyo
+prune docs
+prune artwork
+prune examples
