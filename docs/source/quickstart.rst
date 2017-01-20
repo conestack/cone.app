@@ -1,56 +1,54 @@
-=================
-Quick Start Guide
-=================
+===============
+Getting Started
+===============
 
 Overview
 --------
 
-In order to use ``cone.app``, an integration package is created. This package
-contains the buildout and application configuration.
+In order to use ``cone.app``, an integration package must be created. This
+package contains the buildout and application configuration.
 
-``cone.app`` based applications are organized by plugins. Thus, the integration
-package might directly contain the plugin code, or the plugin is created in
-a seperate package.
+``cone.app`` extensions are organized as Plugins. Thus, the integration
+package may contain the Plugin code directly, or the Plugin is created as
+seperate package.
 
 In this documentation a package named ``cone.example`` is created, which
-contains the plugin code and the application configuration.
+contains both the integration and plugin code.
 
 .. note::
 
-    The final example plugin created during this documentation can be found
-    in the `Github repository
+    The example package created in this documentation can be found in the
+    `Github repository
     <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 
-Create File System Structure
-----------------------------
+Create Python Package
+---------------------
 
-Create a python egg named ``cone.example`` with the following file system
-structure::
+First thing to do is to create a
+`Python Package <https://python-packaging.readthedocs.io/en/latest/>`_.
 
-    cone.example/
-        bootstrap.sh
-        buildout.cfg
-        example.ini
-        setup.py
-        src/
-            cone/
-                __init__.py
-                example/
-                    __init__.py
-                    browser/
-                        templates/
-                            example.pt
-                    configure.zcml
-                    model.py
+Create a directory named ``cone.example`` with the following structure::
 
+    cone.example
+    ├── bootstrap.sh
+    ├── buildout.cfg
+    ├── example.ini
+    ├── setup.py
+    └── src
+        └── cone
+            ├── example
+            │   ├── browser
+            │   │   ├── __init__.py
+            │   │   └── templates
+            │   │       └── example.pt
+            │   ├── configure.zcml
+            │   ├── __init__.py
+            │   └── model.py
+            └── __init__.py
 
-Package Setup
--------------
-
-The package must depend on ``cone.app`` as installation dependency.
-
-Create a ``setup.py`` containing:
+Add ``setup.py``. The package must depend on ``cone.app`` as installation
+dependency:
 
 .. code-block:: python
 
@@ -74,11 +72,21 @@ Create a ``setup.py`` containing:
         ]
     )
 
+The package hooks up to the `namespace package <http://setuptools.readthedocs.io/en/latest/setuptools.html#namespace-packages>`_
+``cone``, so ``src/cone/__init__.py`` must contain:
+
+.. code-block:: python
+
+    __import__('pkg_resources').declare_namespace(__name__)
+
 
 Bootstrap Script
 ----------------
 
-Add ``bootstrap.sh`` containing:
+`Virtualenv <https://virtualenv.pypa.io/en/stable>`_ and
+`Buildout <https://pypi.python.org/pypi/zc.buildout>`_ are used to setup the
+application. Add a ``bootstrap.sh`` script, which creates the isolated python
+environment, installs ``zc.buildout`` and invokes the installation.
 
 .. code-block:: sh
 
@@ -88,7 +96,7 @@ Add ``bootstrap.sh`` containing:
     ./bin/pip install --upgrade pip setuptools zc.buildout
     ./bin/buildout -N
 
-Make this file executable.
+Make this script executable.
 
 .. code-block:: sh
 
@@ -98,7 +106,8 @@ Make this file executable.
 Buildout Configuration
 ----------------------
 
-Add ``buildout.cfg`` configuration containing:
+Buildout configuration is contained in ``buildout.cfg``. The minimal
+configuration for properly setting up the application looks like:
 
 .. code-block:: ini
 
@@ -118,12 +127,15 @@ Add ``buildout.cfg`` configuration containing:
     [instance]
     recipe = zc.recipe.egg:scripts
     dependent-scripts = true
-    eggs =
-        cone.example
+    eggs = cone.example
 
 
-Application INI Configuration
------------------------------
+Application Configuration
+-------------------------
+
+``cone.app`` uses `PasteDeploy <pythonpaste.org/deploy>`_ for application
+configuration. PasteDeploy defines a way to declare WSGI application
+configuration in an ``.ini`` file.
 
 Create ``example.ini`` and add:
 
@@ -140,14 +152,15 @@ Create ``example.ini`` and add:
     [app:example]
     use = egg:cone.app#main
 
+    # pyramid related configuration useful for development
     reload_templates = true
 
-    # paster debugging flags
     debug_authorization = false
     debug_notfound = false
     debug_routematch = false
     debug_templates = true
 
+    # default language
     default_locale_name = en
 
     # cone.app admin user and password
@@ -180,127 +193,40 @@ Create ``example.ini`` and add:
     pipeline =
         example
 
-
-Available INI Configuration Parameters
-......................................
-
-*cone.admin_user*
-    Login name of superuser.
-
-*cone.admin_password*
-    Password of superuser.
-
-*cone.auth_secret*
-    Cookie encryption password.
-
-*cone.auth_cookie_name*
-    Default: ``auth_tkt``. The name used for auth cookie.
-
-*cone.auth_secure*
-    Default: ``False``. Only send the cookie back over a secure connection.
-
-*cone.auth_include_ip*
-    Default: ``False``.  Make the requesting IP address part of the
-    authentication data in the cookie.
-
-*cone.auth_timeout*
-    Default: ``None``.  Maximum number of seconds which a newly issued ticket
-    will be considered valid.
-
-*cone.auth_reissue_time*
-    Default: ``None``.  If this parameter is set, it represents the number of
-    seconds that must pass before an authentication token cookie is reissued.
-
-*cone.auth_max_age*
-    Default: ``None``.  The max age of the auth_tkt cookie, in seconds. This
-    differs from ``timeout`` inasmuch as ``timeout`` represents the lifetime
-    of the ticket contained in the cookie, while this value represents the
-    lifetime of the cookie itself.
-
-*cone.auth_http_only*
-    Default: ``False``. Hide cookie from JavaScript by setting the HttpOnly
-    flag.
-
-*cone.auth_path*
-    Default: ``/``. The path for which the authentication cookie is valid.
-
-*cone.auth_wild_domain*
-    Default: ``True``. An authentication cookie will be generated for the
-    wildcard domain.
-
-*cone.auth_impl*
-    UGM implementation to use for authentication and principal authorization.
-    If not set, only ``cone.admin_user`` is available. It's recommended
-    to avoid setting a global superuser via ini file for live deployments.
-    ``cone.auth_impl`` is not considered at any place in ``cone.app``. This is
-    left to the UGM implementation creating application hook callback.
-
-*cone.plugins*
-    List of ``cone.app`` plugin packages. Plugins are included by invoking the
-    plugin package ``configure.zcml``.
-
-*cone.root.title*
-    Title of the application.
-
-*cone.root.default_child*
-    Default child of root model node.
-
-*cone.root.default_content_tile*
-    Default content tile for root model node.
-
-*cone.root.mainmenu_empty_title*
-    Flag whether to suppress rendering main menu titles.
+Details about the available ``cone.app`` dedicated configuration options can be
+found in the :doc:`Application Configuration <configuration>` documentation.
 
 
 ZCML Configuration
 ------------------
 
-Add ``src/cone/example/configure.zcml`` containing:
+Plugins are expected to contain a :ref:`ZCML <plugin_zcml>` configuration which
+may contain configuration directives. Add ``src/cone/example/configure.zcml``
+containing:
 
 .. code-block:: xml
 
     <?xml version="1.0" encoding="utf-8" ?>
     <configure xmlns="http://pylonshq.com/pyramid">
+
     </configure>
-
-.. note::
-
-    Right now this file is mandatory, but it will be optional in future.
 
 
 Application Model
 -----------------
 
-The application model consists of nodes providing the application hierarchy,
-security declarations, UI configuration and node type information for authoring.
+``cone.app`` uses the traversal mechanism of Pyramid and utilize
+`node <http://pypi.python.org/pypi/node>`_ package for publishing.
 
-The base application node utilizes `node <http://pypi.python.org/pypi/node>`_
-and implements ``cone.app.interfaces.IApplicationNode``. Concrete model
-implementations must implement the following additional properties apart from
-being a node:
+Publishable nodes are expected to implement
+``cone.app.interfaces.IApplicationNode``. A basic application node is shipped
+with ``cone.app`` which can be used to start implementing the application model
+from.
 
-*__acl__*
-    Property defining security. See documentation of ``pyramid.security`` for
-    details.
+Detailed information about the application model can be found in the
+:doc:`Application Model <model>` documentation.
 
-*layout*
-    Property containing ``cone.app.interfaces.ILayout`` implementing object.
-    The layout object contains main layout configuration information.
-
-*properties*
-    Property containing ``cone.app.IProperties`` implementing object. This
-    properties usually hold UI configuration information.
-
-*metadata*
-    Property containing ``cone.app.IMetadata`` implementing object. Metadata
-    are used by different UI widgets to display node metadata.
-
-*nodeinfo*
-    Property containing ``cone.app.INodeInfo`` implementing object. NodeInfo
-    provides cardinality information and general node information which is
-    primary needed for authoring operations.
-
-Create plugin root node in ``src/cone/example/model.py``.
+Create plugin entry node in ``src/cone/example/model.py``.
 
 .. code-block:: python
 
@@ -309,8 +235,12 @@ Create plugin root node in ``src/cone/example/model.py``.
     class ExamplePlugin(BaseNode):
         pass
 
-Plugin initialization code goes into the main hook function. Hook the
-application node to the application model in ``src/cone/example/__init__.py``.
+The application needs to know about the application model entry node. This is
+done by registering it with ``register_entry`` inside the
+:ref:`Plugin main hook function <plugin_main_hook>`.
+
+Add the Plugin main hook function and register the model in
+``src/cone/example/__init__.py``.
 
 .. code-block:: python
 
@@ -319,9 +249,13 @@ application node to the application model in ``src/cone/example/__init__.py``.
     from cone.example.model import ExamplePlugin
 
     def example_main_hook(config, global_config, local_config):
+        """Function which gets called at application startup to initialize
+        this plugin.
+        """
         # register plugin entry node
         register_entry('example', ExamplePlugin)
 
+    # register the main hook for this plugin
     register_main_hook(example_main_hook)
 
 

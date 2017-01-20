@@ -2,22 +2,23 @@
 Plugins
 =======
 
-As explained in the :doc:`Quickstart <quickstart>` documentation, application
-extensions are organized by plugins, shipping with related application models,
-tiles and resources.
+As explained in the :doc:`Getting Started <quickstart>` documentation,
+applications are organized by Plugins, shipping with related application Models,
+Tiles and Resources.
 
 ``cone.app`` provides a set of hooks for plugins to extend and customize the
 application which are explained in the following sections.
 
 
-
+.. _plugin_zcml:
 
 ZCML
 ----
 
-For each plugin registered in the application configuration ini file, a
-``configure.zcml`` file must be provided which may contain package includes,
-package scans and other ZCML directives, e.g.
+For each plugin registered in the
+:doc:`Application Configuration <configuration>` ``.ini`` file, a
+``configure.zcml`` file must be provided which may contain ZCML directives,
+e.g.
 
 .. code-block:: xml
 
@@ -31,21 +32,50 @@ package scans and other ZCML directives, e.g.
 ZCML Configuration of plugins are loaded after ``cone.app`` basics are
 initialized properly at application creation time.
 
+For more Information about ZCML take a look at the
+`ZCML Documentation <http://zopetoolkit.readthedocs.io/en/latest/codingstyle/zcml-style.html>`_
+and the
+`Pramid ZCML Integration <http://docs.pylonsproject.org/projects/pyramid_zcml/en/latest/>`_
+
+.. note::
+
+    Right now the ``configure.zcml`` file is mandatory even if it containes no
+    directives, but it will be optional in future.
+
+
+.. _plugin_main_hook:
 
 Plugin Main Hook
 ----------------
 
 Plugin initialization code goes into the main hook function.
 
-The main hook function of all plugins is executed after all plugin ZCML files
-are loaded.
+The main hook function of all plugins is executed after all ZCML files
+are loaded. This happens in defined plugin registration order in application
+``.ini`` file.
 
-The hook gets passed the ``pyramid.config.Configurator`` object and the
-``global_config`` and ``local_config`` dictionaries.
+The hook gets passed the
+`pyramid.config.Configurator <http://docs.pylonsproject.org/projects/pyramid/en/latest/api/config.html>`_
+object and the ``global_config`` and ``local_config`` dictionaries.
 
-Configuration ini file contents are contained in ``local_config``. Thus you can
-add plugin related custom settings to the application ini file and read them
-inside the main hook.
+Configuration ``.ini`` file settings are contained in ``local_config``. Thus
+plugin related custom settings can be added to the application ``.ini`` file
+and read inside the main hook.
+
+Following tasks shall be implemented in the main hook function:
+
+- Register application model entry nodes.
+
+- Register application settings nodes.
+
+- Register static resources.
+
+- Register translations.
+
+- Working with the Pyramid configurator object.
+
+The main hook function is normally implemented and registered in the plugin
+package ``__init__.py`` module.
 
 .. code-block:: python
 
@@ -116,10 +146,12 @@ respective ``cone.app.cfg.js``.
     cone.app.cfg.js.protected.append('example-static/protected.js')
 
 
+.. _plugins_application_model:
+
 Application Model
 -----------------
 
-Plugin root node factoies are registered to the application via
+Plugin root node factories are registered to the application via
 ``cone.app.register_entry`` inside the main hook function.
 
 .. code-block:: python
@@ -133,6 +165,8 @@ Plugin root node factoies are registered to the application via
 
 This makes the plugin model available to the browser via traversal.
 
+
+.. _plugins_application_settings:
 
 Application Settings
 --------------------

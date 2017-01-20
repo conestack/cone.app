@@ -1,49 +1,81 @@
-=====
-Model
-=====
+=================
+Application Model
+=================
 
-``cone.app`` uses the traversal mechanism of pyramid. Model nodes utilize the
-`node <http://pypi.python.org/pypi/node>`_ package. The nodes shipped with
-``cone.app`` extend ``node.interfaces.INode`` by security declarations,
-UI properties, metadata information and meta information of the node. See
-``cone.app.interfaces`` for detailed information of the contract.
+Overview
+--------
+
+The application model consists of nodes providing the application hierarchy,
+security declarations, UI configuration and node type information for authoring.
+
+The base application node utilizes `node <http://pypi.python.org/pypi/node>`_
+and implements the following contracts:
+
+- **node.interfaces.INode** defines the basic tree information and containment
+  API used for application model traversal.
+
+- **node.interfaces.IAttributes** extends the node by an ``attrs`` property
+  which holds the node data. We use a dedicated object holding the attributes
+  in order to separate node hierarchy information from actual node data in a
+  clean way.
+
+- **cone.app.interfaces.ISecured** extends the node by the ``__acl__``
+  property. It is used by Pyramid at publishing time to manage access to views.
+
+- **cone.app.interfaces.IApplicationNode** extends the node by application
+  specific contracts.
+
+    - **layout**: Property containing ``cone.app.interfaces.ILayout`` implementing
+      object. The layout object contains settings for the main layout. See
+      :doc:`Application Layout <layout>` for details.
+
+    - **properties**: Property containing ``cone.app.IProperties`` implementing
+      object. The properties are supposed to provide UI configuration settings.
+      :doc:`UI widgets <widgets>` for details.
+
+    - **metadata**: Property containing ``cone.app.IMetadata`` implementing object.
+      Metadata is used by different UI widgets to display node metadata.
+
+    - **nodeinfo**: Property containing ``cone.app.INodeInfo`` implementing object.
+      NodeInfo provides cardinality information and general node information which
+      is primary needed for authoring operations.
 
 
 BaseNode
 --------
 
-``cone.app.model.BaseNode`` plumbs together all required aspects for
-representing an application node. It's probably a good idea to inherit from it
-if none of the ongoing objects fit desired behavior.
+The ``cone.app.model.BaseNode`` implements all required aspects for
+representing an application node. It can be used as starting point when writing
+application models.
 
 .. code-block:: python
 
     from cone.app.model import BaseNode
 
-    class MyNode(BaseNode):
-        """Model related code goes here
+    class CustomNode(BaseNode):
+        """Model related code goes here.
         """
 
-Note: A more advanced technique is to use the mechanisms provided by
-`plumber <http://pypi.python.org/pypi/plumber>`_ package directly for combining
-different node behaviors. The ``IApplicationNode`` related interface extensions
-are also implemented as plumbing part (see documentation of plumber package to
-get a clue), and the ``BaseNode`` class is just a combination of plumbing parts
-without extending anything on the class directly.
+A more advanced technique is to use the mechanisms provided by
+`plumber <http://pypi.python.org/pypi/plumber>`_ package directly for defining
+different behaviors of a node. The ``IApplicationNode`` related interface
+extensions are implemented as plumbing behaviors as well, and the ``BaseNode``
+class is just a combination of plumbing behaviors without extending anything on
+the class directly.
 
 .. code-block:: python
 
-    from plumber import plumbing
-    from node.parts import AsAttrAccess
-    from node.parts import NodeChildValidate
-    from node.parts import Adopt
-    from node.parts import Nodespaces
-    from node.parts import Attributes
-    from node.parts import DefaultInit
-    from node.parts import Nodify
-    from node.parts import Lifecycle
-    from node.parts import OdictStorage
     from cone.app.model import AppNode
+    from node.behaviors import Adopt
+    from node.behaviors import AsAttrAccess
+    from node.behaviors import Attributes
+    from node.behaviors import DefaultInit
+    from node.behaviors import Lifecycle
+    from node.behaviors import NodeChildValidate
+    from node.behaviors import Nodespaces
+    from node.behaviors import Nodify
+    from node.behaviors import OdictStorage
+    from plumber import plumbing
 
     @plumbing(
         AppNode,
@@ -56,69 +88,88 @@ without extending anything on the class directly.
         Nodify,
         Lifecycle,
         OdictStorage)
-    class MyAdvancedNode(object)
-        pass
+    class AdvancedNode(object)
+        """The used plumbing behaviors on this class are the same as for
+        ``cone.app.model.BaseNode``
+        """
 
+.. _model_factory_node:
 
 FactoryNode
 -----------
 
-A ``cone.app.model.FactoryNode`` can be used to serve static children. The
+The ``cone.app.model.FactoryNode`` can be used to serve fixed children. The
 factory node provides a ``factory`` attribute containing a dict, where the keys
-represent the available child keys, and the values are simply callables which
-act as factory for given key on first access. I.e., a factory callable could be
-used to initialize database related entry nodes.
+represent the available children keys, and the values are callables which act
+as factory for given key on first access.
+
+E.g., the :ref:`AppRoot <model_app_root>` node inherits from ``FactoryNode`` and is
+used to serve the entry nodes of the application.
 
 .. code-block:: python
 
     from cone.app.model import FactoryNode
 
-    class MyFactoryNode(FactoryNode):
+    class CustomFactoryNode(FactoryNode):
         factories = {
-            'child_by_factory_function': self.child_factory,
+            'child_by_factory_function': self.child_factory_function,
             'child_by_node_init_as_factory': BaseNode,
         }
-        def child_factory(self):
+
+        def child_factory_function(self):
             return BaseNode()
 
 
 AdapterNode
 -----------
 
-``cone.app.AdapterNode`` is intended to be used for publishing nodes of models
-where the hierarchy differs from the one of the application model.
+The ``cone.app.AdapterNode`` can be used for publishing nodes of models where
+the hierarchy differs from the one of the application model.
 
 The adapter node by default acts as proxy for ``__iter__`` and ``attrs``, all
-other functions map to the used ``OdictStorage``. If an adapter node provides
-children itself, it may be needed to adapted them as well, thus ``__getitem__``
-must be overwritten.
+other functions refer to the underlying ``OdictStorage`` of the adapter node.
+
+If an adapter node wants to publish the children of the adapted node, it must
+not do this by just returning the children of the adapted node because the
+application node hierarchy would get invalid. Thus it is required to adapt
+them as well. Do this by overrwriting ``__getitem__``.
 
 .. code-block:: python
 
     from cone.app.model import AdapterNode
 
-    class MyAdapterNode(AdapterNode):
+    class AdaptedChildNode(AdapterNode):
+        pass
+
+    class CustomAdapterNode(AdapterNode):
+
         def __getitem__(self, key):
             try:
                 return self.storage[key]
             except KeyError:
-                # raises KeyError directly if inexistent
                 child_context = self.model[key]
-                child = AdapterNode(child_context, key, self)
+                child = AdaptedChildNode(child_context, key, self)
                 self.storage[key] = child
                 return child
 
 
+.. _model_app_root:
+
 AppRoot
 -------
 
-``cone.app.model.AppRoot`` is a factory node instanciated at application
-startup time. Every plugin root factory registered by
-``cone.app.register_plugin`` is written to app root's ``factories``
-attribute. Also application related settings from the INI file are written to 
-``properties`` respective ``metadata`` of app root node. The root node can be
-accessed either by calling ``node.root`` if ``node`` is child of application
-model or by using ``cone.app.get_root``.
+``cone.app.model.AppRoot`` derives from :ref:`FactoryNode <model_factory_node>`
+and represents the application model root node.
+
+This node gets instanciated only once on application startup. Every plugin
+entry point registered with :ref:`register_entry <plugins_application_model>`
+gets written to the ``factories`` attribute of the root node.
+
+Root node related settings from the ``.ini`` file are written to ``properties``
+respective ``metadata`` objects of the application root node.
+
+The root node can be accessed either by calling ``self.root`` on application
+model nodes or by using ``cone.app.get_root()`` utility.
 
 .. code-block:: python
 
@@ -130,13 +181,15 @@ model or by using ``cone.app.get_root``.
 AppSettings
 -----------
 
-``cone.app.model.AppSettings`` is - like app root - also a factory node
-initialized at application startup. Every settings node factory registered by
-``cone.app.register_plugin_config`` is written to settings node ``factories``
-attribute. The settings node also provides relevant properties and metadata.
-The settings node can be accessed either by calling ``node.root['settings']``
-if ``node`` is child of application model or again by using
-``cone.app.get_root`` and access 'settings' child.
+``cone.app.model.AppSettings`` is like application root a factory node
+initialized at application startup. Every settings node factory registered with
+:ref:`register_config <plugins_application_settings>` gets written to the
+``factories`` attribute of the settings node.
+
+The settings node provides relevant ``properties`` and ``metadata`` objects and
+an ``__acl__`` restricting access to the ``manager <link to security>`` role.
+
+The settings node is available at ``settings`` on application model root.
 
 .. code-block:: python
 
@@ -146,10 +199,38 @@ if ``node`` is child of application model or again by using
 CopySupport
 -----------
 
-``cone.app.model.CopySupport`` is a plumbing part for application model nodes
-indicating that children of nodes can be cut and copied, and that nodes can be
-pasted. cut, copy and paste can be disabled explicitly by setting
-``supports_cut``, ``supports_copy`` respective ``supports_paste``.
+``cone.app.model.CopySupport`` is a plumbing behavior for application model
+nodes indicating that it's children can be cut and copied, and that nodes from
+another subtree can be pasted. Cut, copy and paste features are controlled by
+``supports_cut``, ``supports_copy`` respective ``supports_paste`` flags. They
+all default to ``True``.
+
+
+UUIDAttributeAware
+------------------
+
+.. warning::
+
+    EXPERIMENTAL - Subject to change.
+
+``cone.app.model.UUIDAttributeAware`` is a plumbing behavior and supposed to be
+used to expose ``self.attrs['uuid']`` at ``self.uuid``.
+
+
+UUIDAsName
+----------
+
+.. warning::
+
+    EXPERIMENTAL - Subject to change.
+
+``cone.app.model.UUIDAsName`` is a plumbing behavior which provides
+``self.uuid`` at ``self.name``. In conjunction with ``UUIDAttributeAware`` it
+is possible to create application models where nodes are traversable by
+persistent UUID.
+
+``self.set_uuid_for(node, override=False, recursiv=False)`` can be used to
+recursively update UUID's on copies of a node.
 
 
 Properties
@@ -158,9 +239,33 @@ Properties
 ``cone.app.model.Properties`` can be used for any kind of property mapping.
 The contract is described in ``cone.app.interfaces.IProperties``. The
 application node attributes ``properties`` and ``metadata`` promise to
-provide an ``IProperties`` implementation. A properties object never raises an
-AttributeError on attribute access, instead ``None`` is returned if property is
-inexistent. Available properties are provided by ``keys``.
+provide an ``IProperties`` implementation.
+
+Properties are accessed via python attribute access, but never raise an
+``AttributeError`` if property not exists, instead ``None`` is returned.
+
+Available properties are provided by ``keys`` function.
+
+.. note::
+
+    Although one Python ZEN rule says "Explicit is better than implicit", the
+    behavior is desired.
+
+    The reason is that ``IProperties`` objects are used to expect UI element
+    settings or metadata on application nodes.
+
+    When writing new UI elements supporting custom settings it's not necessary
+    to extend the properties objects all the time but just add the desired new
+    setting to it.
+
+    The other way around a UI element accessing a missing setting property can
+    consider the UI element unconfigured/unavailable if expected setting is
+    ``None``.
+
+    The downside of this strategy is that it's necessary to be careful when
+    defining setting names. They need to be explicit enough to avoid namespace
+    clashes between UI widgets. A good practice is to prefix widget related
+    settings by the related ``tile <link to tiles>`` name.
 
 .. code-block:: pycon
 
@@ -172,10 +277,8 @@ inexistent. Available properties are provided by ``keys``.
     >>> props.keys()
     ['a', 'b']
 
-    >>> props.a
-    '1'
-
-    >>> props.c
+    >>> assert(props.a == '1')
+    >>> assert(props.not_exists is None)
 
 
 ProtectedProperties
@@ -336,7 +439,7 @@ PrincipalACL
 
 In many applications it's required to grant access for specific parts of the
 application model to specific users and groups. ``cone.app`` ships with a
-plumbing part providing principal related roles. It's an abstract
+plumbing behavior providing principal related roles. It's an abstract
 implementation leaving the persistence apart. A concrete shareable node looks
 like.
 
