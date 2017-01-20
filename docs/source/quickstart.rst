@@ -198,17 +198,16 @@ found in the :doc:`Application Configuration <configuration>` documentation.
 ZCML Configuration
 ------------------
 
-Add ``src/cone/example/configure.zcml`` containing:
+Plugins are expected to contain a :ref:`ZCML<plugin_zcml>` configuration which
+may contain configuration directives. Add ``src/cone/example/configure.zcml``
+containing:
 
 .. code-block:: xml
 
     <?xml version="1.0" encoding="utf-8" ?>
     <configure xmlns="http://pylonshq.com/pyramid">
+
     </configure>
-
-.. note::
-
-    Right now this file is mandatory, but it will be optional in future.
 
 
 Application Model

@@ -3,8 +3,8 @@ Plugins
 =======
 
 As explained in the :doc:`Getting Started <quickstart>` documentation,
-applications are organized by plugins, shipping with related application models,
-tiles and resources.
+applications are organized by Plugins, shipping with related application Models,
+Tiles and Resources.
 
 ``cone.app`` provides a set of hooks for plugins to extend and customize the
 application which are explained in the following sections.
@@ -15,9 +15,10 @@ application which are explained in the following sections.
 ZCML
 ----
 
-For each plugin registered in the application configuration ini file, a
-``configure.zcml`` file must be provided which may contain package includes,
-package scans and other ZCML directives, e.g.
+For each plugin registered in the
+:doc:`Application Configuration <configuration>` ``.ini`` file, a
+``configure.zcml`` file must be provided which may contain ZCML directives,
+e.g.
 
 .. code-block:: xml
 
@@ -30,6 +31,16 @@ package scans and other ZCML directives, e.g.
 
 ZCML Configuration of plugins are loaded after ``cone.app`` basics are
 initialized properly at application creation time.
+
+For more Information about ZCML take a look at the
+`ZCML Documentation <http://zopetoolkit.readthedocs.io/en/latest/codingstyle/zcml-style.html>`_
+and the
+`Pramid ZCML Integration <http://docs.pylonsproject.org/projects/pyramid_zcml/en/latest/>`_
+
+.. note::
+
+    Right now the ``configure.zcml`` file is mandatory even if it containes no
+    directives, but it will be optional in future.
 
 
 .. _plugin_main_hook:
