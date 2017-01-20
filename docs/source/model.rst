@@ -1,12 +1,44 @@
-=====
-Model
-=====
+=================
+Application Model
+=================
 
-``cone.app`` uses the traversal mechanism of pyramid. Model nodes utilize the
-`node <http://pypi.python.org/pypi/node>`_ package. The nodes shipped with
-``cone.app`` extend ``node.interfaces.INode`` by security declarations,
-UI properties, metadata information and meta information of the node. See
-``cone.app.interfaces`` for detailed information of the contract.
+Overview
+--------
+
+The application model consists of nodes providing the application hierarchy,
+security declarations, UI configuration and node type information for authoring.
+
+The base application node utilizes `node <http://pypi.python.org/pypi/node>`_
+and implements the following contracts:
+
+- **node.interfaces.INode** defines the basic tree information and containment
+  API used for application model traversal.
+
+- **node.interfaces.IAttributes** extends the node by an ``attrs`` property
+  which holds the node data. We use a dedicated object holding the attributes
+  in order to separate node hierarchy information from actual node data in a
+  clean way.
+
+- **cone.app.interfaces.ISecured** extends the node by the ``__acl__``
+  property. It is used by Pyramid at publishing time to manage access to views.
+
+- **cone.app.interfaces.IApplicationNode** extends the node by application
+  specific contracts.
+
+    - **layout**: Property containing ``cone.app.interfaces.ILayout`` implementing
+      object. The layout object contains settings for the main layout. See
+      :doc:`Application Layout <layout>` for details.
+
+    - **properties**: Property containing ``cone.app.IProperties`` implementing
+      object. The properties are supposed to provide UI configuration settings.
+      :doc:`UI widgets <widgets>` for details.
+
+    - **metadata**: Property containing ``cone.app.IMetadata`` implementing object.
+      Metadata is used by different UI widgets to display node metadata.
+
+    - **nodeinfo**: Property containing ``cone.app.INodeInfo`` implementing object.
+      NodeInfo provides cardinality information and general node information which
+      is primary needed for authoring operations.
 
 
 BaseNode

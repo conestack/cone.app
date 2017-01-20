@@ -74,7 +74,7 @@ Contents
    Plugins <plugins>
    Layout <layout>
    Application Model <model>
-   Tiles <tiles>
+   UI Widgets <widgets>
    Forms <forms>
    Workflows <workflows>
    AJAX <ajax>

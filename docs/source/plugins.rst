@@ -50,15 +50,32 @@ Plugin Main Hook
 
 Plugin initialization code goes into the main hook function.
 
-The main hook function of all plugins is executed after all plugin ZCML files
-are loaded.
+The main hook function of all plugins is executed after all ZCML files
+are loaded. This happens in defined plugin registration order in application
+``.ini`` file.
 
-The hook gets passed the ``pyramid.config.Configurator`` object and the
-``global_config`` and ``local_config`` dictionaries.
+The hook gets passed the
+`pyramid.config.Configurator <http://docs.pylonsproject.org/projects/pyramid/en/latest/api/config.html>`_
+object and the ``global_config`` and ``local_config`` dictionaries.
 
-Configuration ini file contents are contained in ``local_config``. Thus you can
-add plugin related custom settings to the application ini file and read them
-inside the main hook.
+Configuration ``.ini`` file settings are contained in ``local_config``. Thus
+plugin related custom settings can be added to the application ``.ini`` file
+and read inside the main hook.
+
+Following tasks shall be implemented in the main hook function:
+
+- Register application model entry nodes.
+
+- Register application settings nodes.
+
+- Register static resources.
+
+- Register translations.
+
+- Working with the Pyramid configurator object.
+
+The main hook function is normally implemented and registered in the plugin
+package ``__init__.py`` module.
 
 .. code-block:: python
 

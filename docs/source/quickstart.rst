@@ -25,7 +25,8 @@ contains both the integration and plugin code.
 Create Python Package
 ---------------------
 
-First thing to do is to create a python package.
+First thing to do is to create a
+`Python Package <https://python-packaging.readthedocs.io/en/latest/>`_.
 
 Create a directory named ``cone.example`` with the following structure::
 
@@ -71,7 +72,7 @@ dependency:
     )
 
 The package hooks up to the `namespace package <http://setuptools.readthedocs.io/en/latest/setuptools.html#namespace-packages>`_
- ``cone``, so ``src/cone/__init__.py`` must contain:
+``cone``, so ``src/cone/__init__.py`` must contain:
 
 .. code-block:: python
 
@@ -213,36 +214,18 @@ containing:
 Application Model
 -----------------
 
-The application model consists of nodes providing the application hierarchy,
-security declarations, UI configuration and node type information for authoring.
+``cone.app`` uses the traversal mechanism of Pyramid and utilize
+`node <http://pypi.python.org/pypi/node>`_ package for publishing.
 
-The base application node utilizes `node <http://pypi.python.org/pypi/node>`_
-and implements ``cone.app.interfaces.IApplicationNode``. Concrete model
-implementations must implement the following additional properties apart from
-being a node:
+Publishable nodes are expected to implement
+``cone.app.interfaces.IApplicationNode``. A basic application node is shipped
+with ``cone.app`` which can be used to start implementing the application model
+from.
 
-*__acl__*
-    Property defining security. See documentation of ``pyramid.security`` for
-    details.
+Detailed information about the application model can be found in the
+:doc:`Application Model <model>` documentation.
 
-*layout*
-    Property containing ``cone.app.interfaces.ILayout`` implementing object.
-    The layout object contains main layout configuration information.
-
-*properties*
-    Property containing ``cone.app.IProperties`` implementing object. This
-    properties usually hold UI configuration information.
-
-*metadata*
-    Property containing ``cone.app.IMetadata`` implementing object. Metadata
-    are used by different UI widgets to display node metadata.
-
-*nodeinfo*
-    Property containing ``cone.app.INodeInfo`` implementing object. NodeInfo
-    provides cardinality information and general node information which is
-    primary needed for authoring operations.
-
-Create plugin root node in ``src/cone/example/model.py``.
+Create plugin entry node in ``src/cone/example/model.py``.
 
 .. code-block:: python
 
@@ -251,8 +234,12 @@ Create plugin root node in ``src/cone/example/model.py``.
     class ExamplePlugin(BaseNode):
         pass
 
-Plugin initialization code goes into the main hook function. Hook the
-application node to the application model in ``src/cone/example/__init__.py``.
+The application needs to know about the application model entry node. This is
+done by registering it with ``register_entry`` inside the
+:ref:`Plugin main hook function <plugin_main_hook>`.
+
+Add the Plugin main hook function and register the model in
+``src/cone/example/__init__.py``.
 
 .. code-block:: python
 
@@ -261,9 +248,13 @@ application node to the application model in ``src/cone/example/__init__.py``.
     from cone.example.model import ExamplePlugin
 
     def example_main_hook(config, global_config, local_config):
+        """Function which gets called at application startup to initialize
+        this plugin.
+        """
         # register plugin entry node
         register_entry('example', ExamplePlugin)
 
+    # register the main hook for this plugin
     register_main_hook(example_main_hook)
 
 
