@@ -10,7 +10,7 @@ tiles and resources.
 application which are explained in the following sections.
 
 
-
+.. _plugin_zcml:
 
 ZCML
 ----
@@ -31,6 +31,8 @@ package scans and other ZCML directives, e.g.
 ZCML Configuration of plugins are loaded after ``cone.app`` basics are
 initialized properly at application creation time.
 
+
+.. _plugin_main_hook:
 
 Plugin Main Hook
 ----------------

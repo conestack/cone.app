@@ -16,7 +16,7 @@ The authors of this package are coming from `Zope <https://zope.org>`_ and
 `Plone <https://plone.org>`_ development, thus a developer originating those
 domains will be familiar with lots of the concepts used.
 
-The package does not aim to provide another CMS. ``cone.app`` aims to provide
+The package does not aim to provide another CMS. ``cone.app`` provides
 an environment for building Web Applications used to publish and modify
 `node <http://pypi.python.org/pypi/node>`_ based data models.
 
@@ -70,8 +70,8 @@ Contents
    :maxdepth: 3
 
    Getting Started <quickstart>
+   Application Configuration <configuration>
    Plugins <plugins>
-   Application Configuration <config>
    Layout <layout>
    Application Model <model>
    Tiles <tiles>

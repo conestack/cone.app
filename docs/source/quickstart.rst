@@ -22,8 +22,10 @@ contains both the integration and plugin code.
     <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
 
 
-Create Package Structure
-------------------------
+Create Python Package
+---------------------
+
+First thing to do is to create a python package.
 
 Create a directory named ``cone.example`` with the following structure::
 
@@ -43,13 +45,8 @@ Create a directory named ``cone.example`` with the following structure::
                     configure.zcml
                     model.py
 
-
-Python Package Setup
---------------------
-
-The package must depend on ``cone.app`` as installation dependency.
-
-Add a ``setup.py`` containing:
+Add ``setup.py``. The package must depend on ``cone.app`` as installation
+dependency:
 
 .. code-block:: python
 
@@ -73,11 +70,21 @@ Add a ``setup.py`` containing:
         ]
     )
 
+The package hooks up to the `namespace package <http://setuptools.readthedocs.io/en/latest/setuptools.html#namespace-packages>`_
+ ``cone``, so ``src/cone/__init__.py`` must contain:
+
+.. code-block:: python
+
+    __import__('pkg_resources').declare_namespace(__name__)
+
 
 Bootstrap Script
 ----------------
 
-Add ``bootstrap.sh`` containing:
+`Virtualenv <https://virtualenv.pypa.io/en/stable>`_ and
+`Buildout <https://pypi.python.org/pypi/zc.buildout>`_ are used to setup the
+application. Add a ``bootstrap.sh`` script, which creates the isolated python
+environment, installs ``zc.buildout`` and invokes the installation.
 
 .. code-block:: sh
 
@@ -87,7 +94,7 @@ Add ``bootstrap.sh`` containing:
     ./bin/pip install --upgrade pip setuptools zc.buildout
     ./bin/buildout -N
 
-Make this file executable.
+Make this script executable.
 
 .. code-block:: sh
 
@@ -97,7 +104,8 @@ Make this file executable.
 Buildout Configuration
 ----------------------
 
-Add ``buildout.cfg`` configuration containing:
+Buildout configuration is contained in ``buildout.cfg``. The minimal
+configuration for properly setting up the application looks like:
 
 .. code-block:: ini
 
@@ -120,8 +128,12 @@ Add ``buildout.cfg`` configuration containing:
     eggs = cone.example
 
 
-Application INI Configuration
------------------------------
+Application Configuration
+-------------------------
+
+``cone.app`` uses `PasteDeploy <pythonpaste.org/deploy>`_ for application
+configuration. PasteDeploy defines a way to declare WSGI application
+configuration in an ``.ini`` file.
 
 Create ``example.ini`` and add:
 
@@ -138,14 +150,15 @@ Create ``example.ini`` and add:
     [app:example]
     use = egg:cone.app#main
 
+    # pyramid related configuration useful for development
     reload_templates = true
 
-    # paster debugging flags
     debug_authorization = false
     debug_notfound = false
     debug_routematch = false
     debug_templates = true
 
+    # default language
     default_locale_name = en
 
     # cone.app admin user and password
@@ -178,76 +191,8 @@ Create ``example.ini`` and add:
     pipeline =
         example
 
-
-Available INI Configuration Parameters
-......................................
-
-*cone.admin_user*
-    Login name of superuser.
-
-*cone.admin_password*
-    Password of superuser.
-
-*cone.auth_secret*
-    Cookie encryption password.
-
-*cone.auth_cookie_name*
-    Default: ``auth_tkt``. The name used for auth cookie.
-
-*cone.auth_secure*
-    Default: ``False``. Only send the cookie back over a secure connection.
-
-*cone.auth_include_ip*
-    Default: ``False``.  Make the requesting IP address part of the
-    authentication data in the cookie.
-
-*cone.auth_timeout*
-    Default: ``None``.  Maximum number of seconds which a newly issued ticket
-    will be considered valid.
-
-*cone.auth_reissue_time*
-    Default: ``None``.  If this parameter is set, it represents the number of
-    seconds that must pass before an authentication token cookie is reissued.
-
-*cone.auth_max_age*
-    Default: ``None``.  The max age of the auth_tkt cookie, in seconds. This
-    differs from ``timeout`` inasmuch as ``timeout`` represents the lifetime
-    of the ticket contained in the cookie, while this value represents the
-    lifetime of the cookie itself.
-
-*cone.auth_http_only*
-    Default: ``False``. Hide cookie from JavaScript by setting the HttpOnly
-    flag.
-
-*cone.auth_path*
-    Default: ``/``. The path for which the authentication cookie is valid.
-
-*cone.auth_wild_domain*
-    Default: ``True``. An authentication cookie will be generated for the
-    wildcard domain.
-
-*cone.auth_impl*
-    UGM implementation to use for authentication and principal authorization.
-    If not set, only ``cone.admin_user`` is available. It's recommended
-    to avoid setting a global superuser via ini file for live deployments.
-    ``cone.auth_impl`` is not considered at any place in ``cone.app``. This is
-    left to the UGM implementation creating application hook callback.
-
-*cone.plugins*
-    List of ``cone.app`` plugin packages. Plugins are included by invoking the
-    plugin package ``configure.zcml``.
-
-*cone.root.title*
-    Title of the application.
-
-*cone.root.default_child*
-    Default child of root model node.
-
-*cone.root.default_content_tile*
-    Default content tile for root model node.
-
-*cone.root.mainmenu_empty_title*
-    Flag whether to suppress rendering main menu titles.
+Details about the available ``cone.app`` dedicated configuration options can be
+found in the :doc:`Application Configuration <configuration>` documentation.
 
 
 ZCML Configuration
