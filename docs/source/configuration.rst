@@ -14,7 +14,7 @@ A complete list of Pyramid related Settings can be found in the
 
 :doc:`Plugin <plugins>` configuration can also be implemented using the ``.ini``
 file. The settings are passed to the
-:ref:`Plugin main hook functions<plugin_main_hook>`.
+:ref:`Plugin main hook functions <plugin_main_hook>`.
 
 Basic application related configuration parameters can be found below.
 
@@ -96,8 +96,8 @@ Plugin Loading
 Application Plugins needs to be defined in the application configuration in
 order to be included. Plugins are included in defined order.
 
-First the :ref:`ZCML<plugin_zcml>` configuration of all Plugins is invoked.
-Then all :ref:`Plugin main hook functions<plugin_main_hook>` are called.
+First the :ref:`ZCML <plugin_zcml>` configuration of all Plugins is invoked.
+Then all :ref:`Plugin main hook functions <plugin_main_hook>` are called.
 
 
 - **cone.plugins**: List of plugin package names.

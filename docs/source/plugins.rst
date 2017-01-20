@@ -146,10 +146,12 @@ respective ``cone.app.cfg.js``.
     cone.app.cfg.js.protected.append('example-static/protected.js')
 
 
+.. _plugins_application_model:
+
 Application Model
 -----------------
 
-Plugin root node factoies are registered to the application via
+Plugin root node factories are registered to the application via
 ``cone.app.register_entry`` inside the main hook function.
 
 .. code-block:: python
@@ -163,6 +165,8 @@ Plugin root node factoies are registered to the application via
 
 This makes the plugin model available to the browser via traversal.
 
+
+.. _plugins_application_settings:
 
 Application Settings
 --------------------

@@ -30,21 +30,22 @@ First thing to do is to create a
 
 Create a directory named ``cone.example`` with the following structure::
 
-    cone.example/
-        bootstrap.sh
-        buildout.cfg
-        example.ini
-        setup.py
-        src/
-            cone/
-                __init__.py
-                example/
-                    __init__.py
-                    browser/
-                        templates/
-                            example.pt
-                    configure.zcml
-                    model.py
+    cone.example
+    ├── bootstrap.sh
+    ├── buildout.cfg
+    ├── example.ini
+    ├── setup.py
+    └── src
+        └── cone
+            ├── example
+            │   ├── browser
+            │   │   ├── __init__.py
+            │   │   └── templates
+            │   │       └── example.pt
+            │   ├── configure.zcml
+            │   ├── __init__.py
+            │   └── model.py
+            └── __init__.py
 
 Add ``setup.py``. The package must depend on ``cone.app`` as installation
 dependency:
@@ -199,7 +200,7 @@ found in the :doc:`Application Configuration <configuration>` documentation.
 ZCML Configuration
 ------------------
 
-Plugins are expected to contain a :ref:`ZCML<plugin_zcml>` configuration which
+Plugins are expected to contain a :ref:`ZCML <plugin_zcml>` configuration which
 may contain configuration directives. Add ``src/cone/example/configure.zcml``
 containing:
 
