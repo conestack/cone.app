@@ -40,6 +40,9 @@ Create a directory named ``cone.example`` with the following structure::
             ├── example
             │   ├── browser
             │   │   ├── __init__.py
+            │   │   ├── static
+            │   │   │   ├── example.css
+            │   │   │   └── example.js
             │   │   └── templates
             │   │       └── example.pt
             │   ├── configure.zcml
@@ -47,8 +50,8 @@ Create a directory named ``cone.example`` with the following structure::
             │   └── model.py
             └── __init__.py
 
-Add ``setup.py``. The package must depend on ``cone.app`` as installation
-dependency:
+The package must depend on ``cone.app`` as installation, dependency.
+Add the following to ``setup.py``.
 
 .. code-block:: python
 
@@ -212,6 +215,54 @@ containing:
     </configure>
 
 
+Static Resources
+----------------
+
+Delivering :ref:`static resources <plugin_static_resources>` is done by
+registering a directory for serving the assets and telling the application
+which files to deliver to the browser.
+
+Create ``src/cone/example/browser/static`` directory containing ``example.css``
+and ``example.js``.
+
+Create a static view for the ``static`` directory in
+``src/cone/example/browser/__init__.py``:
+
+.. code-block:: python
+
+    from pyramid.static import static_view
+
+    static_resources = static_view('static', use_subpath=True)
+
+Register the static view and tell the application to deliver the
+CSS and JS file to the browser. This is done inside the
+:ref:`Plugin main hook function <plugin_main_hook>`.
+
+Add the plugin main hook function in ``src/cone/example/__init__.py``
+containing.
+
+.. code-block:: python
+
+    from cone.app import register_main_hook
+    import cone.app
+
+    def example_main_hook(config, global_config, local_config):
+        """Function which gets called at application startup to initialize
+        this plugin.
+        """
+        # register static resources view
+        config.add_view(
+            'cone.example.browser.static_resources',
+            name='example-static')
+
+        # register static resources to be delivered
+        cone.app.cfg.css.public.append('example-static/example.css')
+        cone.app.cfg.js.public.append('example-static/example.js')
+
+    # register the main hook for this plugin
+    register_main_hook(example_main_hook)
+
+
 Application Model
 -----------------
 
@@ -239,28 +290,21 @@ The application needs to know about the application model entry node. This is
 done by registering it with ``register_entry`` inside the
 :ref:`Plugin main hook function <plugin_main_hook>`.
 
-Add the Plugin main hook function and register the model in
-``src/cone/example/__init__.py``.
+Extend the main hook function in ``src/cone/example/__init__.py`` and register
+the model.
 
 .. code-block:: python
 
     from cone.app import register_entry
-    from cone.app import register_main_hook
     from cone.example.model import ExamplePlugin
 
     def example_main_hook(config, global_config, local_config):
-        """Function which gets called at application startup to initialize
-        this plugin.
-        """
         # register plugin entry node
         register_entry('example', ExamplePlugin)
 
-    # register the main hook for this plugin
-    register_main_hook(example_main_hook)
 
-
-Views
------
+UI Widgets
+----------
 
 ``cone.app`` follows the concept of tiles in it's UI. Each part of the
 application is represented by a tile, i.e. main menu, navigation tree, site
@@ -269,24 +313,12 @@ content area, etc.
 The implementation and more documentation about tiles can be found
 `here <http://pypi.python.org/pypi/cone.tile>`_.
 
-The use of tiles has the following advantages:
+Detailed information about the available UI elements can be found in the
+:doc:`UI Widgets <widgets>` documentation.
 
-- Abstraction of the site to several "subapplications" which act as
-  views, widgets and/or controllers.
-
-- The possibility to create generic tiles expecting model nodes providing the
-  contract of ``cone.app.interfaces.IApplicationNode``.
-
-- AJAX is easily integrateable.
-
-In ``cone.app`` some reserved tile names exist. One of this is ``content``,
-which is reserved for rendering the *Content Area* of the page.
-
-Each application node must at least register a tile named ``content`` for each
-application node it provides in order to display it in the layout.
-
-To provide the ``content`` tile for the ``ExamplePlugin`` node, create
-``src/cone/example/browser/__init__.py`` and register it like so:
+To render the *Content Area* of the UI for the ``ExamplePlugin`` node, a tile
+named ``content`` must be created. Add ``src/cone/example/browser/__init__.py``
+and register it like so:
 
 .. code-block:: python
 
@@ -302,7 +334,7 @@ To provide the ``content`` tile for the ``ExamplePlugin`` node, create
         permission='login')
 
 Also create the corresponding page template in
-``src/cone/example/browser/templates/example.pt`` and add:
+``src/cone/example/browser/templates/example.pt`` containing:
 
 .. code-block:: html
 
@@ -310,15 +342,13 @@ Also create the corresponding page template in
        Example app content.
     </div>
 
-Tell your plugin to scan the browser package in the main hook function to
-ensure tile registration gets executed.
+Tell your plugin to scan the browser package inside the
+:ref:`Plugin main hook function <plugin_main_hook>` to ensure tile registration
+gets executed.
 
 .. code-block:: python
 
     def example_main_hook(config, global_config, local_config):
-        # register plugin entry node
-        register_entry('example', ExamplePlugin)
-
         # scan browser package
         config.scan('cone.example.browser')
 

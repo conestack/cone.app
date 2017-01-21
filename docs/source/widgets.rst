@@ -1,12 +1,31 @@
-=====
-Tiles
-=====
+==========
+UI Widgets
+==========
 
-As explained in the "setup" documentation, the UI elements of ``cone.app`` are
-organized as tiles. Following sections explain the tiles shipped with this
-package. Some of them are abstract and can be used as base classes for custom
-tiles, while others are already registered and ready to be used. Also some tile
-names are used by plugins as UI hooks.
+As mentioned in the :doc:`Getting Started <quickstart>` documentation, most UI
+Elements of ``cone.app`` are organized as
+`tiles <http://pypi.python.org/pypi/cone.tile>`_.
+
+The use of tiles has the following advantages:
+
+- Abstraction of the site to several "subapplications" which act as
+  views, widgets and/or controllers.
+
+- The possibility to create generic tiles expecting model nodes providing the
+  contract of ``cone.app.interfaces.IApplicationNode``.
+
+- AJAX is easily integrateable.
+
+``cone.app`` ships with several commonly needed tiles. One of this is
+registered by name ``content``, which is reserved for rendering the
+*Content Area* of the page. A plugin must at least register a ``content`` tile
+for each application node it provides in order to display it in the layout.
+
+The following sections explain the tiles shipped with this package. Some of
+them are abstract and can be used as base classes for custom tiles, while
+others are already registered and ready to be used.
+
+### ??? Also some tile names are used by plugins as UI hooks.
 
 
 Integration related
