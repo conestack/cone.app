@@ -32,9 +32,9 @@ Integration related
 Static Resources
 ----------------
 
-For delivering CSS and JS resources.
-
 **Tile registration name**: resources
+
+For delivering CSS and JS resources.
 
 When providing your own main template, add to HTML header.
 
@@ -47,12 +47,12 @@ When providing your own main template, add to HTML header.
     </head>
 
 
-Bdajax
-------
-
-Renders ``bdajax`` related markup.
+Bdajax Integration
+------------------
 
 **Tile registration name**: bdajax
+
+Renders `bdajax <http://pypi.python.org/pypi/bdajax>`_ related markup.
 
 When providing your own main template, add to HTML body.
 
@@ -71,9 +71,9 @@ Authentication related
 Login form
 ----------
 
-Renders login form and performs authentication.
-
 **Tile registration name**: loginform
+
+Renders login form and performs authentication.
 
 
 Main layout related
@@ -158,7 +158,7 @@ URL.
         example = {
 
             binder: function(context) {
-                // listen to typeahead ``typeahead:selected`` event.
+                var input = $('input#search-text', context);
                 var event = 'typeahead:selected';
                 input.off(event).on(event, function(e, suggestion, dataset) {
                     // trigger layout rendering on target URL
@@ -172,9 +172,7 @@ URL.
 
             // render livesearch suggestion
             render_livesearch_suggestion: function (suggestion) {
-                return '<span class="' +
-                       suggestion.icon +
-                       '"></span> ' +
+                return '<span class="' + suggestion.icon + '"></span> ' +
                        suggestion.value;
             }
         };
@@ -191,63 +189,97 @@ URL.
 Personal Tools
 --------------
 
-Renders a dropdown if user is authenticated. It is titled with the
-authenticated user name and contains a set of links to personal stuff. By
-default, only the logout link is provided.
-
 **Tile registration name**: personaltools
 
-**Customization**
+Renders a dropdown if user is authenticated. It is titled with the
+authenticated user name and contains a set of links to personal stuff. By
+default, a link to application settings and the logout link are rendered in the
+dropdown.
 
-To add more items in the dropdown, set a callback function on  
-``cone.app.browser.layout.personal_tools``. The callback gets the model and
-request as arguments and must return a 2-tuple containing URL and title.
+To add more items to the dropdown, set a callable on
+``cone.app.browser.layout.personal_tools``. The callable gets passed the model
+and request as arguments and returns the rendered markup.
 
 .. code-block:: python
 
-    from cone.app.browser.utils import make_url
+    from cone.app.browser.actions import LinkAction
     from cone.app.browser.layout import personal_tools
+    from cone.app.browser.utils import make_url
 
-    def settings_link(model, request):
-        return (make_url(request, resource='settings'), 'Settings')
+    class ExampleAction(LinkAction):
+        text = 'Example'
+        icon = 'ion-ios7-gear'
+        event = 'contextchanged:#layout'
 
-    personal_tools['settings'] = settings_link
+        @property
+        def target(self):
+            return make_url(self.request, node=self.model.root['example'])
+
+        href = target
+
+    personal_tools['example'] = ExampleAction()
 
 
 Main menu
 ---------
 
-Renders the first level of children below root as main menu.
-
 **Tile registration name**: mainmenu
 
-**Expected metadata**
+Renders root children as main menu. Optionally render first level children of
+main menu node as dropdown.
 
-*title*
-    Node title.
+Expected ``metadata``:
 
-*description*
-    Node description.
+- **title**: Node title.
 
-**Considered properties**
+- **description**: Node description.
 
-*mainmenu_empty_title*
-    if set on ``model.root.properties`` with value ``True`` links are rendered
-    empty instead containing the title. Use this if main menu actions use
-    icons styled with CSS. As CSS selector 'node-nodeid' gets rendered as
-    class attribute on ``li`` DOM element.
+Considered ``properties``:
 
-*default_child*
-    If set on ``model.root.properties``, default child is marked selected if
-    no other child was selected explicitly.
+- **skip_mainmenu**: Set to ``True`` if node should not be displayed in
+  mainmenu.
+
+- **mainmenu_empty_title**: If set to ``True``, links are rendered
+  as icon only without the title.
+
+- **mainmenu_display_children**: Set to ``True`` if children nodes of main menu
+  node should be rendered as dropdown menu.
+
+- **default_child**: If set on root, referring child is marked selected if no
+  other current path is found.
+
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+    from cone.app.model import Metadata
+    from cone.app.model import Properties
+    from node.utils import instance_property
+
+    class ExamplePlugin(BaseNode):
+
+        @instance_property
+        def properties(self):
+            props = Properties()
+            props.skip_mainmenu = False
+            props.mainmenu_empty_title = False
+            props.mainmenu_display_children = False
+            props.icon = 'ion-ios7-gear'
+            return props
+
+        @instance_property
+        def metadata(self):
+            metadata = Metadata()
+            metadata.title = 'Example'
+            metadata.description = 'Example Plugin'
+            return metadata
 
 
 Pathbar
 -------
 
-Renders a breadcrumb navigation.
-
 **Tile registration name**: pathbar
+
+Renders a breadcrumb navigation.
 
 **Expected metadata**
 
@@ -263,10 +295,10 @@ Renders a breadcrumb navigation.
 Navigation tree
 ---------------
 
+**Tile registration name**: navtree
+
 Renders a navigation tree. Nodes which do not grant  permission 'view' are
 skipped.
-
-**Tile registration name**: navtree
 
 **Expected metadata**
 
@@ -296,11 +328,11 @@ skipped.
 Page Content Area
 -----------------
 
+**Tile registration name**: content
+
 Content area for node. ``cone.app`` expects a tile registered by name content
 to render the default content view of a node. The plugin code is responsible
 to provide a content tile for model nodes.
-
-**Tile registration name**: content
 
 **ProtectedContentTile**
 
@@ -333,9 +365,9 @@ Model structure related
 Contents
 --------
 
-Model child nodes in batched, sortable table.
-
 **Tile registration name**: contents
+
+Model child nodes in batched, sortable table.
 
 **Expected metadata**
 
@@ -355,10 +387,10 @@ Model child nodes in batched, sortable table.
 Listing
 -------
 
+**Tile registration name**: listing
+
 Renders node title, ``contextmenu`` tile, node description and ``contents``
 tile.
-
-**Tile registration name**: listing
 
 **Expected metadata**
 
@@ -375,9 +407,9 @@ Authoring related
 Byline
 ------
 
-Renders node creation, modification and author information.
-
 **Tile registration name**: byline
+
+Renders node creation, modification and author information.
 
 **Expected metadata**
 
@@ -394,21 +426,21 @@ Renders node creation, modification and author information.
 Context menu
 ------------
 
+**Tile registration name**: contextmenu
+
 User actions for a node. The context menu consists of toolbars containing
 actions. toolbars and actions can be added to
 ``cone.app.browser.contextmenu.context_menu``.
-
-**Tile registration name**: contextmenu
 
 
 Add dropdown
 ------------
 
+**Tile registration name**: add_dropdown
+
 Adding dropdown menu contains addable node types. Renders the ``add`` tile to
 main content area passing desired ``cone.app.model.NodeInfo`` registration name
 as param.
-
-**Tile registration name**: add_dropdown
 
 **Considered node information**
 
@@ -420,11 +452,11 @@ as param.
 Workflow transitions dropdown
 -----------------------------
 
+**Tile registration name**: wf_dropdown
+
 Renders dropdown menu containing available workflow transitions for node.
 Performs workflow transition if ``do_transition`` is passed to request
 containing the transition id.
-
-**Tile registration name**: wf_dropdown
 
 **Considered properties**
 
@@ -438,11 +470,11 @@ containing the transition id.
 Delete
 ------
 
+**Tile registration name**: delete
+
 Delete node from model. Does not render directly but uses bdajax continuation
 mechanism. Triggers rendering main content area with ``contents`` tile.
 Triggers ``contextchanged`` event. Displays info dialog.
-
-**Tile registration name**: delete
 
 **Considered metadata**
 
@@ -459,41 +491,41 @@ Triggers ``contextchanged`` event. Displays info dialog.
 Add
 ---
 
+**Tile registration name**: add
+
 Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
 rendering ``addform`` tile. It is used by ajax calls and by generic ``add``
 view. If ajax request, render ``cone.app.browser.ajax.render_ajax_form``. If
 not, render main template with ``add`` tile in main content area.
 
-**Tile registration name**: add
-
 
 Edit
 ----
+
+**Tile registration name**: edit
 
 Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
 rendering ``editform`` tile. Is is used by ajax calls and by generic ``edit``
 view. If ajax request, render ``cone.app.browser.ajax.render_ajax_form``. If
 not, render main template with ``edit`` tile in main content area.
 
-**Tile registration name**: edit
-
 
 Add form
 --------
 
+**Tile registration name**: addform
+
 Add form for node. The plugin code is responsible to provide the addform tile
 for nodes. See documentation of forms for more details.
-
-**Tile registration name**: addform
 
 
 Edit form
 ---------
 
+**Tile registration name**: editform
+
 Edit form for node. The plugin code is responsible to provide the editform tile
 for nodes. See documentation of forms for more details.
-
-**Tile registration name**: editform
 
 
 Form widget related
@@ -502,29 +534,29 @@ Form widget related
 Reference browser
 -----------------
 
+**Tile registration name**: referencebrowser
+
 Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
 
 This tile gets rendered in an overlay and is used by the ``referencebrowser``
 YAFOWIL widget provided by ``cone.app``.
 
-**Tile registration name**: referencebrowser
-
 
 Reference browser pathbar
 -------------------------
 
-Referencebrowser specific pathbar.
-
 **Tile registration name**: referencebrowser_pathbar
+
+Referencebrowser specific pathbar.
 
 
 Reference listing
 -----------------
 
+**Tile registration name**: referencelisting
+
 Like ``contents`` tile, but with less table columns and reference browser
 specific actions.
-
-**Tile registration name**: referencelisting
 
 **Expected metadata**
 
@@ -580,14 +612,12 @@ at ``table_tile_name``, normally bound to template
 Actions
 =======
 
-Actions are used to render action user action triggers. They are used in
-contexmenu and contents table by default, but you can use them elsewhere to
-render user actions for nodes.
+Action are no tiles but behave similar. They get called with context and
+request as arguments, are responsible to read action related information from
+node and request and render an appropriate action (or not).
 
-Action are no "real" tiles, but behave similar that they get normally called
-with context and request as arguments, are responsible to read related
-information from given node and request and render some appropriate 
-action (or not).
+Actions are used in contexmenu and contents table by default, but they can be
+used elsewhere to render user actions for nodes.
 
 There exist base objects ``Action``, ``TileAction``, ``TemplateAction`` and
 ``LinkAction`` in ``cone.app.browser.actions`` which can be used as base class
