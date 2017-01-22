@@ -46,32 +46,24 @@ model node on property ``layout``.
             return layout
 
 
-Provided layout settings
-~~~~~~~~~~~~~~~~~~~~~~~~
+Provided layout settings:
 
-*mainmenu*
-    Flag whether to display mainmenu.
+- **mainmenu**: Flag whether to display mainmenu.
 
-*mainmenu_fluid*
-    Flag whether mainmenu is fluid.
+- **mainmenu_fluid**: Flag whether mainmenu is fluid.
 
-*livesearch*
-    Flag whether to display livesearch.
+- **livesearch**: Flag whether to display livesearch.
 
-*personaltools*
-    Flag whether to display personaltools.
+- **personaltools**: Flag whether to display personaltools.
 
-*columns_fluid*
-    Flag whether columns are fluid.
+- **columns_fluid**: Flag whether columns are fluid.
 
-*pathbar*
-    Flag whether to display pathbar.
+- **pathbar**: Flag whether to display pathbar.
 
-*sidebar_left*
-    List of tiles by name which should be rendered in sidebar.
+- **sidebar_left**: List of tiles by name which should be rendered in sidebar.
 
-*sidebar_left_grid_width*
-    Sidebar grid width as integer, total grid width is 12.
+- **sidebar_left_grid_width**: Sidebar grid width as integer, total grid width
+  is 12.
 
-*content_grid_width*
-    Content grid width as integer, total grid width is 12.
+- **content_grid_width**: Content grid width as integer, total grid width
+  is 12.

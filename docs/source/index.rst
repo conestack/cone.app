@@ -38,6 +38,9 @@ library.
 For authentication and authorization
 `node.ext.ugm <http://pypi.python.org/pypi/node.ext.ugm>`_ contract is expected.
 
+`Bootstrap <http://getbootstrap.com>`_ is used for a pretty, modern and
+responsive look and feel.
+
 .. note::
 
     ``cone.app`` currently requires Pyramid 1.1

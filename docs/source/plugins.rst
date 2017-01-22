@@ -88,6 +88,8 @@ package ``__init__.py`` module.
     register_main_hook(example_main_hook)
 
 
+.. _plugin_static_resources:
+
 Static Resources
 ----------------
 
@@ -116,8 +118,20 @@ This configuration makes the resources available to the browser by URL, but no
 CSS or JS files are delivered yet on page load. CSS and JS files can be
 published for authenticated users only or for all users.
 
-For delivering CSS and JS resources, register them ``cone.app.cfg.css``
+Resource registries are simple lists on the global application config object
+``cone.app.cfg``. Resources can be delivered either as is, or merged with
+other resources in one file.
+
+For delivering resources as is, register them in ``cone.app.cfg.css``
 respective ``cone.app.cfg.js``.
+
+Resources which can be merged to one file are registered in
+``cone.app.cfg.merged.css`` respective ``cone.app.cfg.merged.js``.
+
+To register the resources for all users of site, authenticated or not, add them
+to the ``public`` resources list, e.g. ``cone.app.cfg.css.public``. If
+resources should only be delevered for authenticated users, add them to the
+``protected`` list, e.g. ``cone.app.cfg.css.protected``.
 
 .. note::
 
@@ -133,17 +147,18 @@ respective ``cone.app.cfg.js``.
 
     import cone.app
 
-    # public CSS
-    cone.app.cfg.css.public.append('example-static/public.css')
+    def example_main_hook(config, global_config, local_config):
+        # public CSS
+        cone.app.cfg.css.public.append('example-static/public.css')
 
-    # protected CSS
-    cone.app.cfg.css.protected.append('example-static/protected.css')
+        # protected CSS
+        cone.app.cfg.css.protected.append('example-static/protected.css')
 
-    # public Javascript
-    cone.app.cfg.js.public.append('example-static/public.js')
+        # public JavaScript
+        cone.app.cfg.js.public.append('example-static/public.js')
 
-    # protected javascript
-    cone.app.cfg.js.protected.append('example-static/protected.js')
+        # protected javaScript
+        cone.app.cfg.js.protected.append('example-static/protected.js')
 
 
 .. _plugins_application_model:

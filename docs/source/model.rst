@@ -66,28 +66,20 @@ the class directly.
 .. code-block:: python
 
     from cone.app.model import AppNode
-    from node.behaviors import Adopt
-    from node.behaviors import AsAttrAccess
-    from node.behaviors import Attributes
-    from node.behaviors import DefaultInit
-    from node.behaviors import Lifecycle
-    from node.behaviors import NodeChildValidate
-    from node.behaviors import Nodespaces
-    from node.behaviors import Nodify
-    from node.behaviors import OdictStorage
+    from node import behaviors
     from plumber import plumbing
 
     @plumbing(
-        AppNode,
-        AsAttrAccess,
-        NodeChildValidate,
-        Adopt,
-        Nodespaces,
-        Attributes,
-        DefaultInit,
-        Nodify,
-        Lifecycle,
-        OdictStorage)
+        behaviors.AppNode,
+        behaviors.AsAttrAccess,
+        behaviors.NodeChildValidate,
+        behaviors.Adopt,
+        behaviors.Nodespaces,
+        behaviors.Attributes,
+        behaviors.DefaultInit,
+        behaviors.Nodify,
+        behaviors.Lifecycle,
+        behaviors.OdictStorage)
     class AdvancedNode(object)
         """The used plumbing behaviors on this class are the same as for
         ``cone.app.model.BaseNode``
@@ -127,7 +119,8 @@ The ``cone.app.AdapterNode`` can be used for publishing nodes of models where
 the hierarchy differs from the one of the application model.
 
 The adapter node by default acts as proxy for ``__iter__`` and ``attrs``, all
-other functions refer to the underlying ``OdictStorage`` of the adapter node.
+other functions refer to the underlying ``node.behaviors.OdictStorage`` of the
+adapter node.
 
 If an adapter node wants to publish the children of the adapted node, it must
 not do this by just returning the children of the adapted node because the
@@ -313,9 +306,9 @@ Property data.
 .. code-block:: python
 
     data = {
-        'a': '1', # 'view' permission protected
-        'b': '2', # 'edit' permission protected
-        'c': '3', # unprotected
+        'a': '1',  # 'view' permission protected
+        'b': '2',  # 'edit' permission protected
+        'c': '3',  # unprotected
     }
 
 Initialize properties.
@@ -324,10 +317,12 @@ Initialize properties.
 
     props = ProtectedProperties(model, permissions, data)
 
-If a user does not have the respective permission granted to access a specific
+If a user does not have the resquired permission granted to access a specific
 property, ``ProtectedProperties`` behaves as if this property is inexistent.
 
-Write access to properties is not protected at all.
+.. note::
+
+    Write access to properties is not protected at all.
 
 
 Metadata
@@ -335,7 +330,7 @@ Metadata
 
 ``cone.app.model.Metadada`` class inherits from ``cone.app.model.Properties``
 and adds the marker interface ``cone.app.interfaces.IMetadata``. This object
-is supposed to be used for ``cone.app.interfaces.IApplicationNode.metadata``.
+is for ``cone.app.interfaces.IApplicationNode.metadata``.
 
 
 XMLProperties
@@ -352,15 +347,15 @@ types are ``string``, ``list``, ``tuple``, ``dict`` and ``datetime.datetime``.
     file = '/path/to/file.xml'
     props = XMLProperties(file)
     props.a = '1'
-    props() # persist to file
-  
+    props()  # persist to file
+
 
 ConfigProperties
 ----------------
 
 ``cone.app.model.ConfigProperties`` is an ``IProperties`` implementation which
-can be used to serialize/deserialze properties to INI file. Supports value
-type ``string`` only.
+can be used to serialize/deserialze properties to ``.ini`` files. Supports
+value type ``string`` only.
 
 .. code-block:: python
 
@@ -369,36 +364,71 @@ type ``string`` only.
     file = '/path/to/file.ini'
     props = ConfigProperties(file)
     props.a = '1'
-    props() # persist to file
+    props()  # persist to file
 
 
 NodeInfo
 --------
 
 ``cone.app.model.NodeInfo`` class inherits from ``cone.app.model.Properties``
-and adds the marker interface ``cone.app.interfaces.INodeInfo``. A NodeInfo
-object contains meta information of application nodes and are basically used
-for authoring purposes.
+and adds the marker interface ``cone.app.interfaces.INodeInfo``.
+
+``NodeInfo`` provides cardinality information and general node information
+which is primary needed for authoring operations. The following properties are
+used:
+
+- **name**: Unique name as string of node type.
+
+- **title**: Title of this node type.
+
+- **description**: Description of this node type.
+
+- **factory**: Add model factory. Function used to instanciate a non persistent
+  instance of node type used to render add forms. Defaults to
+  ``cone.app.browser.authoring.default_addmodel_factory``.
+
+- **addables**: List of node info names. Defines which node types are allowed
+  as children in this node.
+
+- **icon**: Icon for node type. Icon support is implemented using icon fonts.
+  Ionicons <link to ionicons> are shipped and delivered with ``cone.app`` by
+  default.
+
+``NodeInfo`` objects are not instanciated directly, instead the
+``cone.app.model.node_info`` decorator is used to register node types.
 
 .. code-block:: python
 
-    from cone.app.model import NodeInfo
-    from cone.app.model import register_node_info
+    from cone.app.model import BaseNode
+    from cone.app.model import node_info
 
-    info = NodeInfo()
-    info.title = 'Node meta title'
-    info.description = 'Node meta description'
-    info.node = SomeNode
-    info.addables = ['node_info_name_b', 'node_info_name_c']
-    register_node_info('node_info_name_a', info)
+    @node_info(
+        name='custom_node',
+        title='Custom Node',
+        description='A Custom Node',
+        factory=None,
+        icon='ion-ios7-gear',
+        addables=['other_node'])
+    class CustomNode(BaseNode):
+        pass
 
-The refering application model node must provide ``node_info_name`` attribute,
-which is used to lookup the related NodeInfo instance.
+The ``NodeInfo`` instance can be accessed either on the application model
+nodes or with ``cone.app.model.get_node_info``.
+
+``get_node_info`` returns ``None`` if node info by name not exists while
+``model.nodeinfo`` always returns a ``NodeInfo`` instance, regardless whether
+there has been registered a dedicated one or not.
 
 .. code-block:: python
 
     from cone.app.model import get_node_info
-    info = get_node_info('node_info_name_a')
+
+    # lookup node info by utility function
+    info = get_node_info('custom_node')
+
+    # lookup node info from model
+    model = CustomNode()
+    info = model.nodeinfo
 
 See forms documentation for more details.
 
