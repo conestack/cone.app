@@ -323,8 +323,8 @@ and register it like so:
 .. code-block:: python
 
     from cone.app.browser.layout import ProtectedContentTile
-    from cone.tile import registerTile
     from cone.example.model import ExamplePlugin
+    from cone.tile import registerTile
 
     registerTile(
         name='content',

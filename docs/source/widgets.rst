@@ -32,7 +32,7 @@ Integration related
 Static Resources
 ----------------
 
-**Tile registration name**: resources
+**Tile registration name**: ``resources``
 
 For delivering CSS and JS resources.
 
@@ -50,7 +50,7 @@ When providing your own main template, add to HTML header.
 Bdajax Integration
 ------------------
 
-**Tile registration name**: bdajax
+**Tile registration name**: ``bdajax``
 
 Renders `bdajax <http://pypi.python.org/pypi/bdajax>`_ related markup.
 
@@ -71,7 +71,7 @@ Authentication related
 Login form
 ----------
 
-**Tile registration name**: loginform
+**Tile registration name**: ``loginform``
 
 Renders login form and performs authentication.
 
@@ -82,7 +82,7 @@ Main layout related
 Livesearch
 ----------
 
-**Tile registration name**: livesearch
+**Tile registration name**: ``livesearch``
 
 Renders the live search widget. Cone provides a serverside ``livesearch`` JSON
 view, which is expecting an ``ILiveSearch`` implementing adapter for model
@@ -189,7 +189,7 @@ URL.
 Personal Tools
 --------------
 
-**Tile registration name**: personaltools
+**Tile registration name**: ``personaltools``
 
 Renders a dropdown if user is authenticated. It is titled with the
 authenticated user name and contains a set of links to personal stuff. By
@@ -223,7 +223,7 @@ and request as arguments and returns the rendered markup.
 Main menu
 ---------
 
-**Tile registration name**: mainmenu
+**Tile registration name**: ``mainmenu``
 
 Renders root children as main menu. Optionally render first level children of
 main menu node as dropdown.
@@ -281,7 +281,7 @@ Considered ``properties``:
 Path Bar
 --------
 
-**Tile registration name**: pathbar
+**Tile registration name**: ``pathbar``
 
 Renders the path bar navigation.
 
@@ -320,7 +320,7 @@ Considered ``properties``:
 Navigation tree
 ---------------
 
-**Tile registration name**: navtree
+**Tile registration name**: ``navtree``
 
 Renders a navigation tree. Nodes which do not grant  permission 'view' are
 skipped.
@@ -375,35 +375,46 @@ Considered ``properties``:
 Page Content Area
 -----------------
 
-**Tile registration name**: content
+**Tile registration name**: ``content``
 
-Content area for node. ``cone.app`` expects a tile registered by name content
-to render the default content view of a node. The plugin code is responsible
-to provide a content tile for model nodes.
+Content area for node. ``cone.app`` expects a tile registered by name
+``content`` to render the default *Content area* of a node. The plugin code is
+responsible to provide a content tile for model nodes.
 
-**ProtectedContentTile**
-
-When providing tiles for displaying node content, normally it's desired to
+When providing tiles for displaying node content, it's normally desired to
 render the login form if access is forbidden. Therefor class
-``cone.app.browser.layout.ProtectedContentTile`` is available. Use it as
-tile class if registering the tile with ``cone.tile.registerTile`` or inherit
-from it when working with the ``cone.tile.tile`` decorator.
+``cone.app.browser.layout.ProtectedContentTile`` is available.
+
+If a ``content`` tile require a template only, use ``ProtectedContentTile`` as
+``class_``.
 
 .. code-block:: python
 
-    from cone.tile import registerTile
-    from cone.tile import tile
     from cone.app.browser.layout import ProtectedContentTile
+    from cone.example.model import ExamplePlugin
+    from cone.tile import registerTile
 
-    registerTile('protected_tile',
-         'example.app:browser/templates/protected_tile.pt',
-         class_=ProtectedContentTile,
-         permission='login')
+    registerTile(
+        name='content',
+        path='cone.example:browser/templates/example.pt',
+        interface=ExamplePlugin,
+        class_=ProtectedContentTile,
+        permission='login')
 
-    @tile('other_protected_tile', permission='login')
-    class ProtectedTile(ProtectedContentTile):
+If a ``content`` tile requires a related python class to perform some view or
+controller logic, use ``ProtectedContentTile`` as base.
+
+.. code-block:: python
+
+    from cone.app.browser.layout import ProtectedContentTile
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+
+    @tile(name='content', interface=ExamplePlugin, permission='login')
+    class ExamplePluginContentTile(ProtectedContentTile):
+
         def render(self):
-            return '<div>protected stuff</div>'
+            return '<div>Example Plugin Content</div>'
 
 
 Model structure related
@@ -412,40 +423,34 @@ Model structure related
 Contents
 --------
 
-**Tile registration name**: contents
+**Tile registration name**: ``contents``
 
 Model child nodes in batched, sortable table.
 
-**Expected metadata**
+Expected ``metadata``:
 
-*title*
-    Node title.
+- **title**: Node title.
 
-*creator*
-    Node creator name as string.
+- **creator**: Node creator name as string.
 
-*created*
-    Node creation date as ``datetime.datetime`` instance.
+- **created**: Node creation date as ``datetime.datetime`` instance.
 
-*modified*
-    Node last modification date as ``datetime.datetime`` instance.
+- **modified**: Node last modification date as ``datetime.datetime`` instance.
 
 
 Listing
 -------
 
-**Tile registration name**: listing
+**Tile registration name**: ``listing``
 
 Renders node title, ``contextmenu`` tile, node description and ``contents``
 tile.
 
-**Expected metadata**
+Expected ``metadata``:
 
-*title*
-    Node title.
+- **title**: Node title.
 
-*description*
-    Node description.
+- **description**: Node description.
 
 
 Authoring related
@@ -454,26 +459,23 @@ Authoring related
 Byline
 ------
 
-**Tile registration name**: byline
+**Tile registration name**: ``byline``
 
 Renders node creation, modification and author information.
 
-**Expected metadata**
+Expected ``metadata``:
 
-*creator*
-    Node creator name as string.
+- **creator**: Node creator name as string.
 
-*created*
-    Node creation date as ``datetime.datetime`` instance.
+- **created**: Node creation date as ``datetime.datetime`` instance.
 
-*modified*
-    Node last modification date as ``datetime.datetime`` instance.
+- **modified**: Node last modification date as ``datetime.datetime`` instance.
 
 
 Context menu
 ------------
 
-**Tile registration name**: contextmenu
+**Tile registration name**: ``contextmenu``
 
 User actions for a node. The context menu consists of toolbars containing
 actions. toolbars and actions can be added to
@@ -483,62 +485,57 @@ actions. toolbars and actions can be added to
 Add dropdown
 ------------
 
-**Tile registration name**: add_dropdown
+**Tile registration name**: ``add_dropdown``
 
 Adding dropdown menu contains addable node types. Renders the ``add`` tile to
 main content area passing desired ``cone.app.model.NodeInfo`` registration name
 as param.
 
-**Considered node information**
+Considered ``nodeinfo``:
 
-*addables*
-    Build addable dropdown by ``cone.app.model.NodeInfo`` instances registered
-    by names defined in ``node.nodeinfo.addables``.
+- **addables**: Build addable dropdown by ``cone.app.model.NodeInfo`` instances
+  registered by names defined in ``node.nodeinfo.addables``.
 
 
 Workflow transitions dropdown
 -----------------------------
 
-**Tile registration name**: wf_dropdown
+**Tile registration name**: ``wf_dropdown``
 
 Renders dropdown menu containing available workflow transitions for node.
 Performs workflow transition if ``do_transition`` is passed to request
 containing the transition id.
 
-**Considered properties**
+Considered ``properties``:
 
-*wf_name*
-    Registration name of workflow.
+- **wf_name**: Registration name of workflow.
 
-*wf_transition_names*
-    transition id to transition title mapping.
+- **wf_transition_names**: Transition id to transition title mapping.
 
 
 Delete
 ------
 
-**Tile registration name**: delete
+**Tile registration name**: ``delete``
 
 Delete node from model. Does not render directly but uses bdajax continuation
 mechanism. Triggers rendering main content area with ``contents`` tile.
 Triggers ``contextchanged`` event. Displays info dialog.
 
-**Considered metadata**
+Expected ``metadata``:
 
-*title*
-    Used for message creation.
+- **title**: Used for message creation.
 
-**Considered properties**
+Considered ``properties``:
 
-*action_delete*
-    Flag whether node can be deleted. If not, a bdajax error message gets
-    displayed.
+- **action_delete**: Flag whether node can be deleted. If not, a bdajax error
+  message gets displayed.
 
 
 Add
 ---
 
-**Tile registration name**: add
+**Tile registration name**: ``add``
 
 Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
 rendering ``addform`` tile. It is used by ajax calls and by generic ``add``
@@ -549,7 +546,7 @@ not, render main template with ``add`` tile in main content area.
 Edit
 ----
 
-**Tile registration name**: edit
+**Tile registration name**: ``edit``
 
 Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
 rendering ``editform`` tile. Is is used by ajax calls and by generic ``edit``
@@ -560,7 +557,7 @@ not, render main template with ``edit`` tile in main content area.
 Add form
 --------
 
-**Tile registration name**: addform
+**Tile registration name**: ``addform``
 
 Add form for node. The plugin code is responsible to provide the addform tile
 for nodes. See documentation of forms for more details.
@@ -569,7 +566,7 @@ for nodes. See documentation of forms for more details.
 Edit form
 ---------
 
-**Tile registration name**: editform
+**Tile registration name**: ``editform``
 
 Edit form for node. The plugin code is responsible to provide the editform tile
 for nodes. See documentation of forms for more details.
@@ -592,7 +589,7 @@ YAFOWIL widget provided by ``cone.app``.
 Reference browser pathbar
 -------------------------
 
-**Tile registration name**: referencebrowser_pathbar
+**Tile registration name**: ``referencebrowser_pathbar``
 
 Referencebrowser specific pathbar.
 
@@ -600,32 +597,25 @@ Referencebrowser specific pathbar.
 Reference listing
 -----------------
 
-**Tile registration name**: referencelisting
+**Tile registration name**: ``referencelisting``
 
 Like ``contents`` tile, but with less table columns and reference browser
 specific actions.
 
-**Expected metadata**
+Expected ``metadata``:
 
-*title*
-    Node title.
+- **title**: Node title.
 
-*created*
-    Node creation date as ``datetime.datetime`` instance.
+- **created**: Node creation date as ``datetime.datetime`` instance.
 
-*modified*
-    Node last modification date as ``datetime.datetime`` instance.
+- **modified**: Node last modification date as ``datetime.datetime`` instance.
 
-XXX: outdated
+Considered ``properties`` (XXX: outdated):
 
-**Considered properties**
+- **leaf**: Whether node contains children. Used to check rendering of
+  navigational links.
 
-*leaf*
-    Whether node contains children. Used to check rendering of navigational
-    links.
-
-*action_add_reference*
-    Flag whether to render add reference link for node.
+- **action_add_reference**: Flag whether to render add reference link for node.
 
 
 Abstract tiles
@@ -636,8 +626,6 @@ Batch
 
 A tile for rendering batches is contained at ``cone.app.browser.batch.Batch``.
 
-**Customization**
-
 A subclass has to implement ``vocab`` and may override ``batchrange``,
 ``display`` and ``batchname``.   
 
@@ -647,8 +635,6 @@ Table
 
 A tile for rendering sortable, batched tables is contained at
 ``cone.app.browser.table.Table``.
-
-**Customization**
 
 A subclass of this tile must be registered under the same name as defined
 at ``table_tile_name``, normally bound to template
@@ -678,14 +664,12 @@ ActionUp
 
 Renders content area tile on parent node to main content area.
 
-**Considered properties**
+Considered ``properties``:
 
-*action_up*
-    Flag whether to render "One level up" action.
+- **action_up**: Flag whether to render "One level up" action.
 
-*action_up_tile*
-    Considered if ``action_up`` is true. Defines the tilename used for
-    rendering parent content area. Defaults to ``listing`` if undefined.
+- **action_up_tile**: Considered if ``action_up`` is true. Defines the tilename
+  used for rendering parent content area. Defaults to ``listing`` if undefined.
 
 
 ActionView
@@ -693,10 +677,9 @@ ActionView
 
 Renders ``content`` tile on node to main content area.
 
-**Considered properties**
+Considered ``properties``:
 
-*action_view*
-    Flag whether to render view action.
+- **action_view**: Flag whether to render view action.
 
 
 ViewLink
@@ -710,10 +693,9 @@ ActionList
 
 Renders ``listing`` tile on node to main content area.
 
-**Considered properties**
+Considered ``properties``:
 
-*action_list*
-    Flag whether to render list action.
+- **action_list**: Flag whether to render list action.
 
 
 ActionAdd
@@ -721,10 +703,9 @@ ActionAdd
 
 Renders add dropdown menu.
 
-**Considered node information**
+Considered ``nodeinfo``:
 
-*addables*
-    Addable children defined for node.
+- **addables**: Addable children defined for node.
 
 
 ActionEdit
@@ -732,10 +713,9 @@ ActionEdit
 
 Renders ``edit`` tile to main content area.
 
-**Considered properties**
+Considered ``nodeinfo``:
 
-*action_edit*
-    Flag whether to render edit action.
+- **action_edit**: Flag whether to render edit action.
 
 
 ActionDelete
@@ -743,10 +723,9 @@ ActionDelete
 
 Invokes ``delete`` tile on node after confirming action.
 
-**Considered properties**
+Considered ``nodeinfo``:
 
-*action_delete*
-    Flag whether to render delete action.
+- **action_delete**: Flag whether to render delete action.
 
 
 ActionCut
