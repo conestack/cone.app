@@ -245,51 +245,76 @@ Considered ``properties``:
 - **mainmenu_display_children**: Set to ``True`` if children nodes of main menu
   node should be rendered as dropdown menu.
 
-- **default_child**: If set on root, referring child is marked selected if no
-  other current path is found.
+- **default_child**: If set, referring child is marked selected if no other
+  current path is found.
+
+- **default_content_tile**: If set, it is considered in target link creation.
+
+- **icon**: If set, used to render the node icon. As fallback, the icon defined
+  in ``@node_info`` decorator is used.
 
 .. code-block:: python
 
-    from cone.app.model import BaseNode
-    from cone.app.model import Metadata
-    from cone.app.model import Properties
+    from cone.app import model
     from node.utils import instance_property
 
-    class ExamplePlugin(BaseNode):
+    class ExamplePlugin(model.BaseNode):
 
         @instance_property
         def properties(self):
-            props = Properties()
+            props = model.Properties()
             props.skip_mainmenu = False
             props.mainmenu_empty_title = False
             props.mainmenu_display_children = False
+            props.default_content_tile = 'examplecontent'
             props.icon = 'ion-ios7-gear'
             return props
 
         @instance_property
         def metadata(self):
-            metadata = Metadata()
+            metadata = model.Metadata()
             metadata.title = 'Example'
             metadata.description = 'Example Plugin'
             return metadata
 
 
-Pathbar
--------
+Path Bar
+--------
 
 **Tile registration name**: pathbar
 
-Renders a breadcrumb navigation.
+Renders the path bar navigation.
 
-**Expected metadata**
+Expected ``metadata``:
 
-*title*
-    Node title.
+- **title**: Node title.
 
-**Considered properties**
+Considered ``properties``:
 
-*default_child*
-    Render default child instead of current node in pathbar if selected.
+- **default_child**: Render default child instead of current node in pathbar
+  if selected.
+
+- **default_content_tile**: If set, it is considered in target link creation.
+
+.. code-block:: python
+
+    from cone.app import model
+    from node.utils import instance_property
+
+    class ExampleNode(model.BaseNode):
+
+        @instance_property
+        def properties(self):
+            props = model.Properties()
+            props.default_child = 'child'
+            props.default_content_tile = 'examplecontent'
+            return props
+
+        @instance_property
+        def metadata(self):
+            metadata = model.Metadata()
+            metadata.title = 'Example'
+            return metadata
 
 
 Navigation tree
@@ -300,29 +325,51 @@ Navigation tree
 Renders a navigation tree. Nodes which do not grant  permission 'view' are
 skipped.
 
-**Expected metadata**
+Expected ``metadata``:
 
-*title*
-    Node title.
+- **title**: Node title.
 
-**Considered properties**
+Considered ``properties``:
 
-*in_navtree*
-    Flag whether to display the node in navtree at all.
+- **in_navtree**: Flag whether to display the node in navigation tree.
 
-*default_child*
-    Default child nodes are displayed in navtree.
+- **is_navroot**: Flag whether this node should be used as navigation root in
+  navigation tree.
 
-*hide_if_default*
-    If default child should not be displayed it navtree, ``hide_if_default``
-    must be set to 'True'. In this case, also children scope gets switched.
-    Instead of remaining non default children, children of default node are 
-    rendered.
+- **default_child**: Default child nodes are displayed in navigation tree.
 
-*icon*
-    Relative resource path to node icon. if not found on ``node.properties``,
-    lookup registered ``cone.app.NodeInfo`` instance. If this also does not
-    provide the ``icon`` property, ``cone.app.cfg.default_node_icon`` is used.
+- **hide_if_default**: If default child should not be displayed it navtree,
+  ``hide_if_default`` must be ``True``. In this case, also children scope
+  switches. Instead of siblings, children of default child node are rendered.
+
+- **default_content_tile**: If set, it is considered in target link creation.
+
+- **icon**: If set, used to render the node icon. As fallback, the icon defined
+  in ``@node_info`` decorator is used.
+
+.. code-block:: python
+
+    from cone.app import model
+    from node.utils import instance_property
+
+    class ExampleNode(model.BaseNode):
+
+        @instance_property
+        def properties(self):
+            props = model.Properties()
+            props.in_navtree = True
+            props.is_navroot = False
+            props.default_child = 'child'
+            props.hide_if_default = False
+            props.default_content_tile = 'examplecontent'
+            props.icon = 'ion-ios7-gear'
+            return props
+
+        @instance_property
+        def metadata(self):
+            metadata = model.Metadata()
+            metadata.title = 'Example'
+            return metadata
 
 
 Page Content Area

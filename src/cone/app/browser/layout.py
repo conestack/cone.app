@@ -133,6 +133,9 @@ class MainMenu(Tile):
 
     * If ``default_child`` is set on ``model.root.properties``, it is marked
       selected if no other current path is found.
+
+    * If ``default_content_tile`` is set on ``model.root.properties``, it is
+      considered in target link creation.
     """
 
     @property
