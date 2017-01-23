@@ -51,6 +51,32 @@ model node on property ``layout``.
             layout.content_grid_width = 9
             return layout
 
+Alternatively to overwriting the ``layout`` property on model node, an
+``ILayout`` implementing adapter can be provided. Default ``layout`` property
+implementation on ``AppNode`` tries to find an ``ILayout`` adapter for
+``self``.
+
+.. code-block:: python
+
+    from cone.app.interfaces import IApplicationNode
+    from cone.app.model import Layout
+    from zope.component import adapter
+
+    @adapter(IApplicationNode)
+    class ExampleLayout(Layout):
+
+        def __init__(self, model):
+            super(ExampleLayout, self).__init__()
+            self.model = model
+            self.mainmenu = True
+            self.mainmenu_fluid = False
+            self.livesearch = True
+            self.personaltools = True
+            self.columns_fluid = False
+            self.pathbar = True
+            self.sidebar_left = ['navtree']
+            self.sidebar_left_grid_width = 3
+            self.content_grid_width = 9
 
 Provided layout settings:
 
