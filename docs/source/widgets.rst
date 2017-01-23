@@ -425,9 +425,9 @@ Contents
 
 **Tile registration name**: ``contents``
 
-Model child nodes in batched, sortable table.
+Model children nodes in batched, sortable table.
 
-Expected ``metadata``:
+Expected ``metadata`` on children:
 
 - **title**: Node title.
 
@@ -437,20 +437,52 @@ Expected ``metadata``:
 
 - **modified**: Node last modification date as ``datetime.datetime`` instance.
 
+Considered ``properties`` on children:
+
+- **default_content_tile**: Content tile name for view action.
+
+- **action_view**: Flag whether to render view action.
+
+- **action_edit**: Flag whether to render edit action.
+
+- **action_delete**: Flag whether to render delete action.
+
+.. code-block:: python
+
+    from cone.app import model
+    from datetime import datetime
+    from node.utils import instance_property
+
+    class ListingChildNode(model.BaseNode):
+
+        @instance_property
+        def properties(self):
+            props = model.Properties()
+            props.default_content_tile = 'examplecontent'
+            props.action_view = True
+            props.action_edit = True
+            props.action_delete = True
+            return props
+
+        @instance_property
+        def metadata(self):
+            metadata = model.Metadata()
+            metadata.title = 'Example Child Node'
+            metadata.creator = 'admin'
+            metadata.created = datetime(2017, 1, 1, 0, 0)
+            metadata.modified = datetime(2017, 1, 1, 0, 0)
+            return metadata
+
 
 Listing
 -------
 
 **Tile registration name**: ``listing``
 
-Renders node title, ``contextmenu`` tile, node description and ``contents``
-tile.
+*Content Area* tile rendering ``contextmenu`` and ``contents`` tiles.
 
-Expected ``metadata``:
-
-- **title**: Node title.
-
-- **description**: Node description.
+A pyramid view named ``listing`` is registered rendering the main template
+with ``listing`` tile as content tile.
 
 
 Authoring related
@@ -461,7 +493,7 @@ Byline
 
 **Tile registration name**: ``byline``
 
-Renders node creation, modification and author information.
+Renders node creator, and creation and modification dates.
 
 Expected ``metadata``:
 
@@ -471,6 +503,23 @@ Expected ``metadata``:
 
 - **modified**: Node last modification date as ``datetime.datetime`` instance.
 
+.. code-block:: python
+
+    from cone.app import model
+    from datetime import datetime
+    from node.utils import instance_property
+
+    class ExampleNode(model.BaseNode):
+
+        @instance_property
+        def metadata(self):
+            metadata = model.Metadata()
+            metadata.title = 'Example Node'
+            metadata.creator = 'admin'
+            metadata.created = datetime(2017, 1, 1, 0, 0)
+            metadata.modified = datetime(2017, 1, 1, 0, 0)
+            return metadata
+
 
 Context menu
 ------------
@@ -478,8 +527,92 @@ Context menu
 **Tile registration name**: ``contextmenu``
 
 User actions for a node. The context menu consists of toolbars containing
-actions. toolbars and actions can be added to
+context related actions. Toolbars and actions are configured at
 ``cone.app.browser.contextmenu.context_menu``.
+
+Navigation related actions are placed in the ``navigation`` toolbar.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import LinkAction
+    from cone.app.browser.contextmenu import context_menu
+    from cone.app.browser.utils import make_query
+    from cone.app.browser.utils import make_url
+
+    class LinkToSomewhereAction(LinkAction):
+        id = 'toolbaraction-link-to-somewhere'
+        icon = 'glyphicon glyphicon-arrow-down'
+        event = 'contextchanged:#layout'
+        text = 'Link to somewhere'
+
+        @property
+        def target(self):
+            model = self.model.root['somewhere']
+            query = make_query(contenttile='content')
+            return make_url(self.request, node=model, query=query)
+
+    context_menu['navigation']['link_to_somewhere'] = LinkToSomewhereAction()
+
+Context related content views are placed in ``contentviews`` toolbar.
+
+.. code-block:: python
+
+    from cone.app.browser import render_main_template
+    from cone.app.browser.actions import LinkAction
+    from cone.app.browser.contextmenu import context_menu
+    from cone.example.interfaces import IMyFeature
+    from cone.tile import registerTile
+    from pyramid.view import view_config
+
+    # content tile rendering my feature
+    registerTile('myfeature', 'templates/myfeature.pt', permission='view')
+
+    # view rendering main template with my feature content tile
+    @view_config('myfeature', permission='view')
+    def myfeature(model, request):
+        return render_main_template(model, request, 'myfeature')
+
+    class ActionMyFeature(LinkAction):
+        id = 'toolbaraction-myfeature'
+        action = 'myfeature:#content:inner'
+        text = 'My Feature'
+
+        @property
+        def href(self):
+            # link to myfeature view
+            return '{}/myfeature'.format(self.target)
+
+        @property
+        def display(self):
+            # check whether my feature is provided by current model
+            return IMyFeature.providedBy(self.model)
+
+        @property
+        def selected(self):
+            # check whether myfeature tile is current scope to highlight action
+            return self.action_scope == 'myfeature'
+
+    context_menu['contentviews']['myfeature'] = ActionSharing()
+
+Context related children actions are placed in ``childactions`` toolbar. This
+toolbar by default contains ``ICopySupport`` support related cut, copy and
+paste actions. Children actions are supposed to be rendered if ``listing``
+tile is shown. The children actions may rely on the selected items in the
+table.
+
+Context related actions ar placed in ``contextactions`` toolbar. Context
+related actions are e.g. the add dropdown, workflow transition dropdown or
+other custom actions performing a task on current model node.
+
+A plugin can extend the contextmenu by entire toolbars like so.
+
+.. code-block:: python
+
+    from cone.app.browser.contextmenu import ContextMenuToolbar
+    from cone.app.browser.contextmenu import context_menu
+
+    context_menu['mytoolbar'] = ContextMenuToolbar()
+    context_menu['mytoolbar']['myaction'] = MyAction()
 
 
 Add dropdown
