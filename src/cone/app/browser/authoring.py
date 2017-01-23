@@ -392,12 +392,12 @@ EditBehavior = ContentEditForm
 ###############################################################################
 
 @view_config('overlayedit', permission='edit')
-def overlayform(model, request):
+def overlayedit(model, request):
     return render_form(model, request, 'overlayedit')
 
 
 @tile('overlayedit', permission='edit')
-class OverlayFormTile(_FormRenderingTile):
+class OverlayEditTile(_FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
 

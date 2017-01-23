@@ -620,14 +620,34 @@ Add dropdown
 
 **Tile registration name**: ``add_dropdown``
 
-Adding dropdown menu contains addable node types. Renders the ``add`` tile to
-main content area passing desired ``cone.app.model.NodeInfo`` registration name
-as param.
+Add dropdown menu containing addable node types. Renders the ``add`` tile to
+content area passing desired ``cone.app.model.NodeInfo`` registration name
+which is used to create a proper add model and add form.
 
 Considered ``nodeinfo``:
 
 - **addables**: Build addable dropdown by ``cone.app.model.NodeInfo`` instances
   registered by names defined in ``node.nodeinfo.addables``.
+
+In the following example the add dropdown shows an add link for ``ChildNode``
+if rendered on ``ContainerNode``.
+
+.. code-block:: python
+
+    from cone.app import model
+
+    @model.node_info(
+        name='container',
+        title='Container Node',
+        addables=['child'])
+    class ContainerNode(model.BaseNode):
+        pass
+
+    @model.node_info(
+        name='child',
+        title='Child Node')
+    class ChildNode(model.BaseNode):
+        pass
 
 
 Workflow transitions dropdown
@@ -639,11 +659,16 @@ Renders dropdown menu containing available workflow transitions for node.
 Performs workflow transition if ``do_transition`` is passed to request
 containing the transition id.
 
-Considered ``properties``:
+.. code-block:: python
 
-- **wf_name**: Registration name of workflow.
+    from cone.app import model
+    from cone.app import workflow
+    from node.utils import instance_property
+    from plumber import plumbing
 
-- **wf_transition_names**: Transition id to transition title mapping.
+    @plumbing(workflow.WorkflowState)
+    class WorkflowNode(model.BaseNode):
+        workflow_name = 'example_workflow'
 
 
 Delete
@@ -651,18 +676,23 @@ Delete
 
 **Tile registration name**: ``delete``
 
-Delete node from model. Does not render directly but uses bdajax continuation
-mechanism. Triggers rendering main content area with ``contents`` tile.
-Triggers ``contextchanged`` event. Displays info dialog.
+Triggered via ``ActionDelete``.
+
+Deletes node from model. Uses bdajax continuation mechanism. Triggers rendering
+layout on containing node and displays info message after performing delete
+action.
 
 Expected ``metadata``:
 
-- **title**: Used for message creation.
+- **title**: Used for info message creation.
 
 Considered ``properties``:
 
-- **action_delete**: Flag whether node can be deleted. If not, a bdajax error
-  message gets displayed.
+- **action_delete**: Flag whether node can be deleted. If not, a error
+  message gets displayed when delete action gets performed.
+
+- **action_delete_tile**: Content tile which should be rendered on parent after
+  node has been deleted. Defaults to ``content``.
 
 
 Add
@@ -670,10 +700,12 @@ Add
 
 **Tile registration name**: ``add``
 
-Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
-rendering ``addform`` tile. It is used by ajax calls and by generic ``add``
-view. If ajax request, render ``cone.app.browser.ajax.render_ajax_form``. If
-not, render main template with ``add`` tile in main content area.
+Tile for rendering add forms. Looks up node info, creates add model and renders
+add form on it which is expected as tile under name ``addform``.
+
+``add`` tile is used by ajax calls and by generic ``add`` view.
+
+See :doc:`forms documentation <forms>` for more details.
 
 
 Edit
@@ -681,28 +713,12 @@ Edit
 
 **Tile registration name**: ``edit``
 
-Generic tile deriving from ``cone.app.browser.layout.ProtectedContentTile``
-rendering ``editform`` tile. Is is used by ajax calls and by generic ``edit``
-view. If ajax request, render ``cone.app.browser.ajax.render_ajax_form``. If
-not, render main template with ``edit`` tile in main content area.
+Tile for rendering edit forms. Edit form is expected as tile under name
+``editform``.
 
+``edit`` tile is used by ajax calls and by generic ``edit`` view.
 
-Add form
---------
-
-**Tile registration name**: ``addform``
-
-Add form for node. The plugin code is responsible to provide the addform tile
-for nodes. See documentation of forms for more details.
-
-
-Edit form
----------
-
-**Tile registration name**: ``editform``
-
-Edit form for node. The plugin code is responsible to provide the editform tile
-for nodes. See documentation of forms for more details.
+See :doc:`forms documentation <forms>` for more details.
 
 
 Form widget related
@@ -711,7 +727,7 @@ Form widget related
 Reference browser
 -----------------
 
-**Tile registration name**: referencebrowser
+**Tile registration name**: ``referencebrowser``
 
 Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
 
