@@ -5,8 +5,8 @@ TODO
 Docs
 ----
 
-[ ] - complete layout docs
-[ ] - overhaul UI Widgets docs
+[X] - complete layout docs
+[X] - overhaul UI Widgets docs
 [ ] - overhaul forms docs
 [ ] - overhaul workflows docs
 [ ] - overhaul AJAX docs
@@ -16,6 +16,7 @@ Docs
 [ ] - create twisted integration documentation
 [ ] - create websocket integration documentation
 [ ] - create tutorial extending cone.example
+[ ] - proper cross linking all over the place
 
 Code
 ----

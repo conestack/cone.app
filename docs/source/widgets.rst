@@ -954,11 +954,11 @@ Action are no tiles but behave similar. They get called with context and
 request as arguments, are responsible to read action related information from
 node and request and render an appropriate action (or not).
 
-Actions are used in ``contexmenu`` and ``contents`` table by default, but they
+Actions are used in ``contexmenu`` and ``contents`` tiles by default, but they
 can be used elsewhere to render user actions for nodes.
 
 There exist base objects ``Action``, ``TileAction``, ``TemplateAction``,
-``DropdownAction``and ``LinkAction`` in ``cone.app.browser.actions`` which can
+``DropdownAction`` and ``LinkAction`` in ``cone.app.browser.actions`` which can
 be used as base classes for custom actions.
 
 Class ``Toolbar`` can be used to render a set of actions.
@@ -1062,6 +1062,21 @@ enabled and selected state and optionally rendering an icon.
         enabled = True    # if ``False``, link gets 'disabled' CSS class
         selected = False  # if ``True``, link get 'selected' CSS class
         icon = None       # if set, render span tag with value as CSS class in link
+
+``Toolbar`` can be used to create a set of actions.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import Toolbar
+    from cone.app.browser.actions import ActionView
+    from cone.app.browser.actions import ActionEdit
+
+    toolbar = Toolbar()
+    toolbar['view'] = ActionView()
+    toolbar['edit'] = ActionEdit()
+
+    # render toolbar with model and request
+    markup = toolbar(model, request)
 
 ``cone.app`` ships with concrete ``Action`` implementations which are described
 in the following sections.
