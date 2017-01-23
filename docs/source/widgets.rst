@@ -749,22 +749,42 @@ Reference listing
 **Tile registration name**: ``referencelisting``
 
 Like ``contents`` tile, but with less table columns and reference browser
-specific actions.
+specific actions for adding and removing references.
 
-Expected ``metadata``:
+Nodes must implement ``IUUIDAware`` and provide a node info in order to be
+referencable.
 
-- **title**: Node title.
+Reference browser can be used as YAFOWIL widget.
 
-- **created**: Node creation date as ``datetime.datetime`` instance.
+.. code-block:: python
 
-- **modified**: Node last modification date as ``datetime.datetime`` instance.
+    from cone.app.browser.utils import make_url
+    from yafowil.base import factory
 
-Considered ``properties`` (XXX: outdated):
+    reference_field = factory(
+        'field:error:reference',
+        props={
+            target: make_url(request, node=node)
+            referencable: 'referencable_node'
+        })
 
-- **leaf**: Whether node contains children. Used to check rendering of
-  navigational links.
+Expected widget ``props``:
 
-- **action_add_reference**: Flag whether to render add reference link for node.
+- **multivalued**: Flag whether reference field is multivalued. Defaults to
+  ``False``.
+
+- **vocabulary**: If multivalued, provide a vocabulary mapping uids to node
+  names.
+
+- **target**: Ajax target used for rendering reference browser.
+
+- **root**: Path of reference browser root. Defaults to '/'
+
+- **referencable**: List of node info names which are referencable. Defaults
+  to '' which means all objects are referencable, given they implement
+  ``IUUIDAware`` and a node info.
+
+See :doc:`forms documentation <forms>` for more details.
 
 
 Abstract tiles
@@ -775,8 +795,57 @@ Batch
 
 A tile for rendering batches is contained at ``cone.app.browser.batch.Batch``.
 
-A subclass has to implement ``vocab`` and may override ``batchrange``,
-``display`` and ``batchname``.   
+A subclass must at least implement ``vocab``. The example below renders a batch
+for all children of model node.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import Batch
+    from cone.app.browser.utils import make_query
+    from cone.app.browser.utils import make_url
+    from cone.tile import tile
+
+    @tile('examplebatch')
+    class ExampleBatch(Batch):
+        slicesize = 10
+
+        @property
+        def vocab(self):
+            count = len(self.model)
+            pages = count / self.slicesize
+            if count % self.slicesize != 0:
+                pages += 1
+            current = self.request.params.get('b_page', '0')
+            for i in range(pages):
+                query = make_query(b_page=str(i))
+                url = make_url(self.request, path=path, query=query)
+                ret.append({
+                    'page': '{}'.format(i + 1),
+                    'current': current == str(i),
+                    'visible': True,
+                    'url': url,
+                })
+            return ret
+
+More customization options on ``Batch`` class:
+
+- **display**: Flag whether to display the batch.
+
+- **batchrange**: Number of batch pages displayed.
+
+- **ellipsis**: Ellipsis is number of pages exceeds ``batchrange``.
+
+- **firstpage**: Overwrite with property returning ``None`` to suppress
+  rendering first page link.
+
+- **lastpage**: Overwrite with property returning ``None`` to suppress
+  rendering last page link.
+
+- **prevpage**: Overwrite with property returning ``None`` to suppress
+  rendering previous page link.
+
+- **nextpage**: Overwrite with property returning ``None`` to suppress
+  rendering next page link.
 
 
 Table
@@ -786,9 +855,99 @@ A tile for rendering sortable, batched tables is contained at
 ``cone.app.browser.table.Table``.
 
 A subclass of this tile must be registered under the same name as defined
-at ``table_tile_name``, normally bound to template
-``cone.app:browser/templates/table.pt``. A subclass has to provide ``col_defs``,
-``item_count`` and ``sorted_rows``.
+at ``table_tile_name`` and is normally bound to template
+``cone.app:browser/templates/table.pt``.
+
+Futher the implementation must provide ``col_defs``, ``item_count`` and
+``sorted_rows``.
+
+.. code-block:: python
+
+    from cone.app.browser.table import RowData
+    from cone.app.browser.table import Table
+
+    @tile(name='example_table', path='cone.app:browser/templates/table.pt')
+    class ExampleTable(Table):
+        table_id = 'example_table'
+        table_tile_name = 'example_table'
+        col_defs = [{
+            'id': 'column_a',
+            'title': 'Column A',
+            'sort_key': None,
+            'sort_title': None,
+            'content': 'string'
+        }, {
+            'id': 'column_b',
+            'title': 'Column B',
+            'sort_key': None,
+            'sort_title': None,
+            'content': 'string'
+        }]
+
+        @property
+        def item_count(self):
+            return len(self.model)
+
+        def sorted_rows(self, start, end, sort, order):
+            # ``sort`` and ``order`` must be considered when creating the
+            # sorted results.
+            rows = list()
+            for child in self.model.values()[start:end]:
+                row_data = RowData()
+                row_data['column_a'] = child.attrs['attr_a']
+                row_data['title'] = child.attrs['attr_b']
+                rows.append(row_data)
+            return rows
+
+Column definitions:
+
+- **id**: Column ID
+
+- **title**: Column Title
+
+- **sort_key**: Key used for sorting this column.
+
+- **sort_title**: Sort Title
+
+- **content**: Column content format:
+
+    - ``string``: Renders column content as is.
+
+    - ``datetime``: Expects datetime as column value and formats datetime.
+
+    - ``structure``: Renders column content as Markup.
+
+More customization options on ``Table`` class:
+
+- **default_sort**: Default sort column by ID. Defaults to ``None``.
+
+- **default_order**: Default sort order. Can be ``'asc'`` or ``'desc'``.
+  Defaults to ``None``.
+
+- **default_slicesize**: Default table content slize size. Defaults to ``15``
+
+- **query_whitelist**: List of URL query parameters considered when creating
+  Links. Defaults to ``[]`
+
+- **show_title**: Flag whether to display table title. Defaults to ``True``.
+
+- **table_title**: Title of the table. Defaults to
+  ``self.model.metadata.title``.
+
+- **show_filter**: Flag whether to display table filter search field. Defaults
+  to ``False``. If used, server side implementation must consider
+  ``self.filter_term`` when creating results.
+
+- **show_slicesize**: Flag whether to display the slize size selection.
+  Defaults to ``True``
+
+- **head_additional**: Additional table header markup. Defaults to ``None``
+
+- **display_table_header**: Flag whether to display table header. Defaults
+  to ``True``.
+
+- **display_table_footer**: Flag whether to display table footer. Defaults
+  to ``True``.
 
 
 Actions
