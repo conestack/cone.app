@@ -77,7 +77,8 @@ Regular page view, render 'someform' tile as content area in main template::
     >>> model = BaseNode()
     >>> request = layer.new_request()
     >>> res = render_form(model, request, 'someform')
-    >>> res.body.find('<!DOCTYPE html PUBLIC') > -1
+
+    >>> res.body.find('<!DOCTYPE html>') > -1
     True
 
     >>> res.body.find('<form class="ajax"') > -1

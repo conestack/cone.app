@@ -15,8 +15,13 @@ display the traceback in an error dialog if request was a bdajax action::
     <hr />\n</p>\n<pre>Traceback (most recent call last):\nNone\n</pre>\n'
 
     >>> request = layer.new_request(xhr=1)
-    >>> str(internal_server_error(request))
-    '200 OK\r\nContent-Length: 195\r\nContent-Type: application/json; 
-    charset=UTF-8\r\n\r\n{"continuation": [{"flavor": "error", "type": "message", 
-    "payload": "<pre>Traceback (most recent call last):\\nNone\\n</pre>", 
-    "selector": null}], "payload": "", "mode": "NONE", "selector": "NONE"}'
+    >>> res = str(internal_server_error(request))
+    >>> assert(res.find('200 OK') > -1)
+    >>> assert(res.find('Content-Type: application/json') > -1)
+    >>> assert(res.find('"continuation"') > -1)
+    >>> assert(res.find('"type": "message"') > -1)
+    >>> assert(res.find('"payload": "<pre>Traceback (most recent call last):\\nNone\\n</pre>"') > -1)
+    >>> assert(res.find('"selector": null') > -1)
+    >>> assert(res.find('"payload": ""') > -1)
+    >>> assert(res.find('"mode": "NONE"') > -1)
+    >>> assert(res.find('"selector": "NONE"') > -1)
