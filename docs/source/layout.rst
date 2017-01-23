@@ -20,6 +20,12 @@ Application Layout
 
 The main layout of the application is implemented as tile with name ``layout``.
 
+The referring template lives in ``cone.app.browser:templates/layout.pt`` and
+is structured as follows.
+
+.. figure:: ../../artwork/layout.svg
+    :width: 100%
+
 The layout can be configured for each application node. Layout configuration
 is described in ``cone.app.interfaces.ILayout`` and expected via application
 model node on property ``layout``.

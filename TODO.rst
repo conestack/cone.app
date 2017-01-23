@@ -5,7 +5,7 @@ TODO
 Docs
 ----
 
-[ ] - complete layout docs
+[X] - complete layout docs
 [X] - overhaul UI Widgets docs
 [ ] - overhaul forms docs
 [ ] - overhaul workflows docs
