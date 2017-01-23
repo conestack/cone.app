@@ -157,7 +157,7 @@ class LinkAction(TemplateAction):
     text = None       # link text
     enabled = True    # if false, link gets 'disabled' css class
     selected = False  # if true, link get 'selected' css class
-    icon = None       # if set, render <i> tag with value as CSS class on link
+    icon = None       # if set, render span tag with value as CSS class in link
 
     def __init__(self, **kw):
         self.__dict__.update(kw)

@@ -749,22 +749,42 @@ Reference listing
 **Tile registration name**: ``referencelisting``
 
 Like ``contents`` tile, but with less table columns and reference browser
-specific actions.
+specific actions for adding and removing references.
 
-Expected ``metadata``:
+Nodes must implement ``IUUIDAware`` and provide a node info in order to be
+referencable.
 
-- **title**: Node title.
+Reference browser can be used as YAFOWIL widget.
 
-- **created**: Node creation date as ``datetime.datetime`` instance.
+.. code-block:: python
 
-- **modified**: Node last modification date as ``datetime.datetime`` instance.
+    from cone.app.browser.utils import make_url
+    from yafowil.base import factory
 
-Considered ``properties`` (XXX: outdated):
+    reference_field = factory(
+        'field:error:reference',
+        props={
+            target: make_url(request, node=node)
+            referencable: 'referencable_node'
+        })
 
-- **leaf**: Whether node contains children. Used to check rendering of
-  navigational links.
+Expected widget ``props``:
 
-- **action_add_reference**: Flag whether to render add reference link for node.
+- **multivalued**: Flag whether reference field is multivalued. Defaults to
+  ``False``.
+
+- **vocabulary**: If multivalued, provide a vocabulary mapping uids to node
+  names.
+
+- **target**: Ajax target used for rendering reference browser.
+
+- **root**: Path of reference browser root. Defaults to '/'
+
+- **referencable**: List of node info names which are referencable. Defaults
+  to '' which means all objects are referencable, given they implement
+  ``IUUIDAware`` and a node info.
+
+See :doc:`forms documentation <forms>` for more details.
 
 
 Abstract tiles
@@ -775,8 +795,57 @@ Batch
 
 A tile for rendering batches is contained at ``cone.app.browser.batch.Batch``.
 
-A subclass has to implement ``vocab`` and may override ``batchrange``,
-``display`` and ``batchname``.   
+A subclass must at least implement ``vocab``. The example below renders a batch
+for all children of model node.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import Batch
+    from cone.app.browser.utils import make_query
+    from cone.app.browser.utils import make_url
+    from cone.tile import tile
+
+    @tile('examplebatch')
+    class ExampleBatch(Batch):
+        slicesize = 10
+
+        @property
+        def vocab(self):
+            count = len(self.model)
+            pages = count / self.slicesize
+            if count % self.slicesize != 0:
+                pages += 1
+            current = self.request.params.get('b_page', '0')
+            for i in range(pages):
+                query = make_query(b_page=str(i))
+                url = make_url(self.request, path=path, query=query)
+                ret.append({
+                    'page': '{}'.format(i + 1),
+                    'current': current == str(i),
+                    'visible': True,
+                    'url': url,
+                })
+            return ret
+
+More customization options on ``Batch`` class:
+
+- **display**: Flag whether to display the batch.
+
+- **batchrange**: Number of batch pages displayed.
+
+- **ellipsis**: Ellipsis is number of pages exceeds ``batchrange``.
+
+- **firstpage**: Overwrite with property returning ``None`` to suppress
+  rendering first page link.
+
+- **lastpage**: Overwrite with property returning ``None`` to suppress
+  rendering last page link.
+
+- **prevpage**: Overwrite with property returning ``None`` to suppress
+  rendering previous page link.
+
+- **nextpage**: Overwrite with property returning ``None`` to suppress
+  rendering next page link.
 
 
 Table
@@ -786,9 +855,96 @@ A tile for rendering sortable, batched tables is contained at
 ``cone.app.browser.table.Table``.
 
 A subclass of this tile must be registered under the same name as defined
-at ``table_tile_name``, normally bound to template
-``cone.app:browser/templates/table.pt``. A subclass has to provide ``col_defs``,
-``item_count`` and ``sorted_rows``.
+at ``table_tile_name`` and is normally bound to template
+``cone.app:browser/templates/table.pt``.
+
+Futher the implementation must provide ``col_defs``, ``item_count`` and
+``sorted_rows``.
+
+.. code-block:: python
+
+    from cone.app.browser.table import RowData
+    from cone.app.browser.table import Table
+
+    @tile(name='example_table', path='cone.app:browser/templates/table.pt')
+    class ExampleTable(Table):
+        table_id = 'example_table'
+        table_tile_name = 'example_table'
+        col_defs = [{
+            'id': 'column_a',
+            'title': 'Column A',
+            'sort_key': None,
+            'sort_title': None,
+            'content': 'string'
+        }, {
+            'id': 'column_b',
+            'title': 'Column B',
+            'sort_key': None,
+            'sort_title': None,
+            'content': 'string'
+        }]
+
+        @property
+        def item_count(self):
+            return len(self.model)
+
+        def sorted_rows(self, start, end, sort, order):
+            # ``sort`` and ``order`` must be considered when creating the
+            # sorted results.
+            rows = list()
+            for child in self.model.values()[start:end]:
+                row_data = RowData()
+                row_data['column_a'] = child.attrs['attr_a']
+                row_data['column_b'] = child.attrs['attr_b']
+                rows.append(row_data)
+            return rows
+
+Column definitions:
+
+- **id**: Column ID.
+
+- **title**: Column Title.
+
+- **sort_key**: Key used for sorting this column.
+
+- **sort_title**: Sort Title.
+
+- **content**: Column content format:
+    - ``string``: Renders column content as is.
+    - ``datetime``: Expects datetime as column value and formats datetime.
+    - ``structure``: Renders column content as Markup.
+
+More customization options on ``Table`` class:
+
+- **default_sort**: Default sort column by ID. Defaults to ``None``.
+
+- **default_order**: Default sort order. Can be ``'asc'`` or ``'desc'``.
+  Defaults to ``None``.
+
+- **default_slicesize**: Default table content slize size. Defaults to ``15``.
+
+- **query_whitelist**: List of URL query parameters considered when creating
+  Links. Defaults to ``[]``.
+
+- **show_title**: Flag whether to display table title. Defaults to ``True``.
+
+- **table_title**: Title of the table. Defaults to
+  ``self.model.metadata.title``.
+
+- **show_filter**: Flag whether to display table filter search field. Defaults
+  to ``False``. If used, server side implementation must consider
+  ``self.filter_term`` when creating results.
+
+- **show_slicesize**: Flag whether to display the slize size selection.
+  Defaults to ``True``.
+
+- **head_additional**: Additional table header markup. Defaults to ``None``.
+
+- **display_table_header**: Flag whether to display table header. Defaults
+  to ``True``.
+
+- **display_table_footer**: Flag whether to display table footer. Defaults
+  to ``True``.
 
 
 Actions
@@ -798,14 +954,117 @@ Action are no tiles but behave similar. They get called with context and
 request as arguments, are responsible to read action related information from
 node and request and render an appropriate action (or not).
 
-Actions are used in contexmenu and contents table by default, but they can be
-used elsewhere to render user actions for nodes.
+Actions are used in ``contexmenu`` and ``contents`` table by default, but they
+can be used elsewhere to render user actions for nodes.
 
-There exist base objects ``Action``, ``TileAction``, ``TemplateAction`` and
-``LinkAction`` in ``cone.app.browser.actions`` which can be used as base class
-for custom actions.
+There exist base objects ``Action``, ``TileAction``, ``TemplateAction``,
+``DropdownAction``and ``LinkAction`` in ``cone.app.browser.actions`` which can
+be used as base classes for custom actions.
 
 Class ``Toolbar`` can be used to render a set of actions.
+
+Class ``ActionContext`` provides information about the current execution
+scope. The scope is a tile name and used by actions to check it's own state,
+e.g. if action is selected, disabled or should be displayed at all. The scope
+gets calculated by a set of rules.
+
+- If ``bdajax.action`` found on request, use it as current scope.
+  ``bdajax.action`` is always a tile name in ``cone.app`` context.
+
+- If tile name is ``layout``, content tile name is used. The layout tile
+  renders the entire page, thus the user is normally interested in the content
+  tile name rather than the rendered tile name.
+
+- If tile name is ``content`` and model defines
+  ``properties.default_content_tile``, this one is used instead of ``content``
+  to ensure a user can detect the correct content tile currently rendered.
+
+When inheriting from ``Action`` directly, class must provide a ``render``
+function returning HTML markup.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import Action
+
+    class ExampleAction(Action):
+
+        @property
+        def display(self):
+            return self.permitted('view') and self.action_scope == 'content'
+
+        def render(self):
+            return '<a href="http://example.com">Example</a>'
+
+When inheriting from ``TileAction``, a tile by name is renderd.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import TileAction
+    from cone.tile import registerTile
+
+    registerTile(
+        name='example_action',
+        path='cone.example:browser/templates/example_action.pt',
+        permission='view')
+
+    class ExampleAction(TileAction):
+        tile = 'example_action'
+
+When inheriting from ``TemplateAction``, a template is rendered.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import TemplateAction
+
+    class ExampleAction(TemplateAction):
+        template = 'cone.example:browser/templates/example_action.pt'
+
+When inheriting from ``DropdownAction``, class must implement ``items`` which
+are used as dropdown menu items.
+
+.. code-block:: python
+
+    from cone.app import model
+    from cone.app.browser.actions import DropdownAction
+    from cone.app.browser.utils import make_url
+
+    class ExampleAction(DropdownAction):
+        css = 'example_css_class'
+        title = 'Example Dropdown'
+
+        @property
+        def items(self):
+            item = model.Properties()
+            item.icon = 'ion-ios7-gear'
+            item.url = item.target = make_url(self.request, node=self.model)
+            item.action = 'example_action:NONE:NONE'
+            item.title = 'Example Action'
+            return [item]
+
+``LinkAction`` represents a HTML link offering integration to ``bdajax``,
+enabled and selected state and optionally rendering an icon.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import LinkAction
+
+    class ExampleAction(LinkAction):
+        bind = 'click'    # ``ajax:bind`` attribute
+        id = None         # ``id`` attribute
+        href = '#'        # ``href`` attribute
+        css = None        # in addition for computed ``class`` attribute
+        title = None      # ``title`` attribute
+        action = None     # ``ajax:action`` attribute
+        event = None      # ``ajax:event`` attribute
+        confirm = None    # ``ajax:confirm`` attribute
+        overlay = None    # ``ajax:overlay`` attribute
+        text = None       # link text
+        enabled = True    # if ``False``, link gets 'disabled' CSS class
+        selected = False  # if ``True``, link get 'selected' CSS class
+        icon = None       # if set, render span tag with value as CSS class in link
+
+``cone.app`` ships with concrete ``Action`` implementations which are described
+in the following sections.
 
 
 ActionUp
@@ -820,6 +1079,8 @@ Considered ``properties``:
 - **action_up_tile**: Considered if ``action_up`` is true. Defines the tilename
   used for rendering parent content area. Defaults to ``listing`` if undefined.
 
+- **default_child**: If set, use ``model.parent`` for ``target`` link creation.
+
 
 ActionView
 ----------
@@ -830,11 +1091,13 @@ Considered ``properties``:
 
 - **action_view**: Flag whether to render view action.
 
+- **default_content_tile**: If set, it is considered in target link creation.
+
 
 ViewLink
 --------
 
-Renders ``content`` tile on node to main content area.
+Like ``ActionView`` but renders text only link.
 
 
 ActionList
@@ -876,12 +1139,17 @@ Considered ``nodeinfo``:
 
 - **action_delete**: Flag whether to render delete action.
 
+- **default_content_tile**: If set, used to check if scope is ``view`` when
+  calculating whether to display action.
+
 
 ActionCut
 ---------
 
 Writes selected elements contained in ``cone.selectable.selected`` to cookie
 on client.
+
+Action related node must implement ``cone.app.interfaces.ICopySupport``.
 
 
 ActionCopy
@@ -890,22 +1158,28 @@ ActionCopy
 Writes selected elements contained in ``cone.selectable.selected`` to cookie
 on client.
 
+Action related node must implement ``cone.app.interfaces.ICopySupport``.
+
 
 ActionPaste
 -----------
 
 Invokes ``paste`` tile on node.
 
+Action related node must implement ``cone.app.interfaces.ICopySupport``.
+
 
 ActionShare
 -----------
 
-Renders ``sharing`` tile on node to main content area. Only renders for
-nodes with ``cone.app.security.PrincipalACL`` behavior.
+Renders ``sharing`` tile on node to main content area.
+
+Action related node must implement ``cone.app.interfaces.IPrincipalACL``.
 
 
 ActionState
 -----------
 
-Renders workflow state dropdown menu. Only renders for nodes with
-``cone.app.workflow.WorkflowState`` behavior.
+Renders workflow state dropdown menu.
+
+Action related node must implement ``cone.app.interfaces.IWorkflowState``.
