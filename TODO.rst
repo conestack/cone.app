@@ -7,8 +7,8 @@ Docs
 
 [X] - complete layout docs
 [X] - overhaul UI Widgets docs
-[ ] - overhaul forms docs
-[ ] - overhaul workflows docs
+[X] - overhaul forms docs
+[X] - overhaul workflows docs
 [ ] - overhaul AJAX docs
 [ ] - document expected permissions for tiles and actions
 [ ] - create security docs
@@ -26,3 +26,4 @@ Code
 [ ] - Overhaul settings rendering. available settings should be rendered in
       the navtree. ``SettingsBehavior`` for settings forms probably superfluous
       then.
+[ ] - set ``ISecured`` on ``cone.app.workflow.WorkflowACL``
