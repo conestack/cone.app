@@ -702,12 +702,12 @@ Add
 
 **Tile registration name**: ``add``
 
-Tile for rendering add forms. Looks up node info, creates add model and renders
-add form on it which is expected as tile under name ``addform``.
+Tile for rendering add forms to content area. Looks up node info, creates add
+model and renders add form on it which is expected as tile under name
+``addform``.
 
-``add`` tile is used by ajax calls and by generic ``add`` view.
-
-See :doc:`forms documentation <forms>` for more details.
+See :ref:`Add and Edit Forms <forms_add_and_edit_forms>` documentation for more
+details.
 
 
 .. _widgets_authoring_edit_tile:
@@ -717,12 +717,11 @@ Edit
 
 **Tile registration name**: ``edit``
 
-Tile for rendering edit forms. Edit form is expected as tile under name
-``editform``.
+Tile for rendering edit forms to content area. Edit form is expected as tile
+under name ``editform``.
 
-``edit`` tile is used by ajax calls and by generic ``edit`` view.
-
-See :doc:`forms documentation <forms>` for more details.
+See :ref:`Add and Edit Forms <forms_add_and_edit_forms>` documentation for more
+details.
 
 
 Form widget related

@@ -440,83 +440,194 @@ Implemented as action this looks like.
         overlay = 'overlayform'
 
 
+.. _forms_add_and_edit_forms:
+
+Add and Edit Forms
+------------------
+
 Add Forms
----------
+~~~~~~~~~
+
+Plumbing bahaviors to render add forms to page *Content Area* or as overlay
+form named ``ContentAddForm`` and ``OverlayAddForm`` exists in module
+``cone.app.browser.authoring``.
 
 As described in the :ref:`Add Tile <widgets_authoring_add_tile>` documentation,
-tiles named ``addform`` are reserved for application node add forms.
+tiles named ``addform`` are reserved for application node content add forms.
+Add form tiles refer to the ``add`` view for submission.
 
-For creating add form tiles, ``cone.app.browser.authoring.Add`` provides
-the required plumbings. It derives from ``CameFromNext``.
+Overlay add forms are registered by name ``overlayaddform``. Overlay add form
+tiles refer to the ``overlayadd`` view for submission.
 
-The ``prepare`` function is plumbed in order to extend the form with a
-'factory' proxy widget, which passes the node info name.
-
-The ``__call__`` function gets also plumbed, and renders a heading prior to
-form if ``show_heading`` on form tile is set to ``True``, which is default.
-
-.. code-block:: python
-
-    from cone.app.browser.authoring import AddPart
-    
-    @tile('addform', interface=ExampleApp, permission="add")
-    @plumbing(AddPart)
-    class ExampleAppAddForm(Form):
-        pass
+Add forms expect the request parameter ``factory`` to be present containing a
+``NodeInfo`` registration name for creating the add model and rendering the
+corrsponding add form tile on it when being invoked.
 
 
-Edit forms
-----------
+Edit Forms
+~~~~~~~~~~
+
+Plumbing bahaviors to render edit forms to page *Content Area* or as overlay
+form named ``ContentEditForm`` and ``OverlayEditForm`` exists in module
+``cone.app.browser.authoring``.
 
 As described in the :ref:`Edit Tile <widgets_authoring_edit_tile>`
-documentation,
+documentation, tiles named ``editform`` are reserved for application node
+content edit forms. Edit form tiles refer to the ``edit`` view for submission.
 
-As described in tiles documentation, tiles named ``editform`` are reserved
-for application node edit forms. They are invoked by the ``edit`` tile for
-node.
+Overlay edit forms are registered by name ``overlayeditform``. Overlay edit
+form tiles refer to the ``overlayedit`` view for submission.
 
-For creating edit form tiles, ``cone.app.browser.authoring.EditPart`` provides
-the required plumbings. It derives from ``CameFromNext``.
 
-The ``__call__`` function gets plumbed, and renders a heading prior to
-form if ``show_heading`` on form tile is set to ``True``, which is default.
+Authoring Forms Example
+~~~~~~~~~~~~~~~~~~~~~~~
+
+A complete implementation of add and edit forms for page *Content Area* and
+overlay versions may look like so.
 
 .. code-block:: python
 
-    from cone.app.browser.authoring import EditPart
-    
-    @tile('editform', interface=ExampleApp, permission="edit")
-    @plumbing(EditPart)
-    class ExampleAppEditForm(Form):
-        pass
+    from cone.app.browser.authoring import ContentAddForm
+    from cone.app.browser.authoring import ContentEditForm
+    from cone.app.browser.authoring import OverlayAddForm
+    from cone.app.browser.authoring import OverlayEditForm
+    from cone.app.browser.form import Form
+    from cone.app.browser.utils import make_url
+    from cone.app.utils import add_creation_metadata
+    from cone.app.utils import update_creation_metadata
+    from cone.example.model import ExampleNode
+    from cone.tile import tile
+    from plumber import plumbing
+    from yafowil.base import factory
+    from yafowil.persistence import node_attribute_writer
 
-For add and edit forms it probably makes sense to write one base class
-providing the ``prepare`` function.
+    class ExampleForm(Form):
+        """Basic form for ExampleNode.
+        """
+
+        def prepare(self):
+            # ``action_resource`` is provided by add end edit plumbing behaviors
+            action = make_url(
+                self.request,
+                node=self.model,
+                resource=self.action_resource)
+            # create form and set reference to ``self.form``
+            self.form = form = factory(
+                'form',
+                name='exampleform',
+                props={
+                    'action': action,
+                    'persist_writer': node_attribute_writer
+                })
+            # add title field
+            form['title'] = factory(
+                'field:label:text',
+                value=self.model.attrs['title'],
+                props={
+                    'label': 'Title'
+                })
+            # add save button
+            form['save'] = factory(
+                'submit',
+                props = {
+                    'action': 'save',
+                    'expression': True,
+                    'handler': self.save,
+                    'next': self.next,
+                    'label': 'Save'
+                })
+            # add cancel button
+            form['cancel'] = factory(
+                'submit',
+                props = {
+                    'action': 'cancel',
+                    'expression': True,
+                    'skip': True,
+                    'next': self.next,
+                    'label': 'Cancel'
+                })
+
+        def save(self, widget, data):
+            # Use YAFOWIL persistence mechanism to write form data to the model
+            # can be done manually as well. See YAFOWIL documentation for
+            # details.
+            data.write(self.model)
 
 
-Settings Forms
---------------
+    class ExampleAdding(ExampleForm):
+        """Basic add form for ExampleNode.
+        """
+
+        def save(self, widget, data):
+            # add creation metadata if desired
+            add_creation_metadata(self.request, self.model.attrs)
+            # call superclass handling form data persistence
+            super(ExampleAdding, self).save(widget, data)
+            # in add forms model is no part of application model yet,
+            # so we need to hook it up
+            self.model.parent[self.model.attrs['title']] = self.model
+            # persist model
+            self.model()
+
+
+    class ExampleEditing(ExampleForm):
+        """Basic edit form for ExampleNode.
+        """
+
+        def save(self, widget, data):
+            # update creation metadata if desired
+            update_creation_metadata(self.request, self.model.attrs)
+            # call superclass handling form data persistence
+            super(ExampleEditing, self).save(widget, data)
+            # persist model
+            self.model()
+
+
+    @tile(name='addform', interface=ExampleNode, permission="add")
+    @plumbing(ContentAddForm)
+    class ExampleAddForm(ExampleAdding):
+        """Content add form for ExampleNode.
+        """
+
+    @tile(name='editform', interface=ExampleNode, permission="edit")
+    @plumbing(ContentEditForm)
+    class ExampleEditForm(ExampleEditing):
+        """Content edit form for ExampleNode.
+        """
+
+    @tile(name='overlayaddform', interface=ExampleNode, permission="add")
+    @plumbing(OverlayAddForm)
+    class ExampleOverlayAddForm(ExampleAdding):
+        """Overlay add form for ExampleNode.
+        """
+
+    @tile(name='overlayeditform', interface=ExampleNode, permission="edit")
+    @plumbing(OverlayEditForm)
+    class ExampleOverlayEditForm(ExampleEditing):
+        """Overlay edit form for ExampleNode.
+        """
+
+
+Settings Model Forms
+--------------------
 
 ``cone.app`` renders forms for application settings in tabs, all at once.
 To provide a edit form for your settings node,
-``cone.app.browser.settings.SettingsPart`` should be used.
-
-The ``prepare`` function gets plumbed which calls
-``cone.app.browser.ajax.ajax_form_fiddle`` with form selector in order to
-define which of the rendered forms on client side should be altered.
-
-The settings form tile gets extended by a ``next`` function, which handles
-form continuation similar to ``CameFromNext`` part, without the consideration
-of 'came_from'.
+``cone.app.browser.settings.SettingsBehavior`` shall be used.
 
 .. code-block:: python
 
-    from cone.app.browser.settings import SettingsPart
+    from cone.app.browser.form import Form
+    from cone.app.browser.settings import SettingsBehavior
+    from cone.example.model import ExampleSettings
+    from cone.tile import tile
+    from plumber import plumbing
 
-    @tile('editform', interface=AppSettings, permission="manage")
-    @plumbing(SettingsPart)
-    class ServerSettingsForm(Form):
-        pass
+    @tile(name='editform', interface=ExampleSettings, permission="manage")
+    @plumbing(SettingsBehavior)
+    class ExampleSettingsForm(Form):
+        """Form for ExampleSettings node.
+        """
 
 
 Extending Forms

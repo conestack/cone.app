@@ -23,3 +23,6 @@ Code
 
 [ ] - test ``cone.app.browser.actions.DropdownAction`` with BS3
 [ ] - ``cone.app.browser.authoring.OverlayFormTile`` is superfluous.
+[ ] - Overhaul settings rendering. available settings should be rendered in
+      the navtree. ``SettingsBehavior`` for settings forms probably superfluous
+      then.
