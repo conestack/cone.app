@@ -630,51 +630,72 @@ To provide a edit form for your settings node,
         """
 
 
-Extending Forms
----------------
+Extending Forms with Plumbing Behaviors
+---------------------------------------
 
-The plumbing mechanism could also be used for generic form extension. This is
+The plumbing mechanism can be used for generic form extension. This is
 interesting in cases where a set of different nodes partly contain the same
-set of data.
+set of data or a form should be extended by a generic behavior.
 
-To achieve this, write a plumbing part which hooks to the ``prepare`` function,
-which adds form widgets to ``self.form`` after processing ``_next`` downstream
-function, which in case is the following ``prepare`` function in the plumbing
-pipeline. Also hook to the ``save`` function (the one defined as form action
-``handler`` property) and add the related persisting code.
+A plumbing behavior can hook up to existing functions to perform some code
+before or after the actual function gets processed or extend an object by
+properties and functions. See `plumber <http://pypi.python.org/pypi/plumber>`_
+documentations for a detailed documentation about the plumbing system and it's
+motivation.
+
+Here we will write a plumbing behavior which hooks some form widget at
+``prepare`` time and handles persistence of this widget by hooking up to the
+form's ``save`` function.
 
 .. code-block:: python
 
-    from plumber import Part
+    from plumber import Behavior
     from plumber import plumb
 
-    class FormExtension(Part):
+    class FormExtension(Behavior):
+        """Plumbing behavior used as form extension.
+
+        Hooks ``generic`` field to form.
+        """
 
         @plumb
         def prepare(_next, self):
-            # downstream ``prepare`` function, after this self.form must
-            # be present
+            # call downstream ``prepare`` function, ``self.form`` must be
+            # present after calling
             _next(self)
             # extension widget
             widget = factory(
-                'field:text',
-                value=self.model.attrs['generic'])
+                'field:label:text',
+                value=self.model.attrs['generic'],
+                props={
+                    'label': 'Generic Field'
+                })
             # add new widget before save widget
             save_widget = self.form['save']
             self.form.insertbefore(roles_widget, save_widget)
 
         @plumb
         def save(_next, self, widget, data):
+            # fetch extension field value from form data
             value = data.fetch('%s.generic' % self.form_name).extracted
+            # set extracted value to model attributes
             self.model.attrs['generic'] = value
+            # call downstream ``save`` function
             _next(self, widget, data)
 
-This part can now be used like any other plumbing part for extending form
-tiles.
+This behavior can now be used like any other plumbing behavior for extending
+form tiles.
 
 .. code-block:: python
 
-    @tile('editform', interface=ExampleApp, permission="edit")
-    @plumbing(EditPart, FormExtension)
-    class ServerSettingsForm(Form):
-        pass
+    from cone.app.browser.authoring import ContentEditForm
+    from cone.app.browser.form import Form
+    from cone.example.model import ExampleNode
+    from cone.tile import tile
+    from plumber import plumbing
+
+    @tile(name='editform', interface=ExampleNode, permission="edit")
+    @plumbing(ContentEditForm, FormExtension)
+    class ExampleEditForm(Form):
+        """Content edit form using our generic form extension.
+        """
