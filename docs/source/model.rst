@@ -2,9 +2,6 @@
 Application Model
 =================
 
-Overview
---------
-
 The application model consists of nodes providing the application hierarchy,
 security declarations, UI configuration and node type information for authoring.
 
