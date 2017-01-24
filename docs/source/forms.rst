@@ -2,49 +2,53 @@
 Forms
 =====
 
-Form basics
-===========
+``cone.app`` uses `YAFOWIL <http://pypi.python.org/pypi/yafowil>`_  as form
+processing library.
 
-``cone.app`` uses YAFOWIL as form library.
-
-Forms are implemented as tiles, registered for specific model nodes. Adding
-behavior and form extension of different forms is done with plumbing parts,
-see ``plumber`` package for details about the plumbing system.
+Forms are implemented as `tiles <http://pypi.python.org/pypi/cone.tile>`_,
+registered for specific model nodes. Different flavours of forms are
+implemented as `plumbing <http://pypi.python.org/pypi/plumber>`_ behaviors.
 
 
-Form tile
----------
+Form Basics
+-----------
 
 The base class for all form tiles is located at ``cone.app.browser.form.Form``.
-This tile is responsible to build the widget tree and to do form processing.
+This tile is responsible to build the widget tree and to handle form
+processing.
 
 Building the widget tree is done at ``prepare`` time, and form processing is
-done when the tile gets called.
+performed when the tile gets called.
 
 .. code-block:: python
 
-    from yafowil.base import factory
-    from cone.tile import tile
     from cone.app.browser.form import Form
     from cone.app.browser.utils import make_url
-    from example.app.model import ExampleApp
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from yafowil.base import factory
+    from yafowil.persistence import node_attribute_writer
 
-    @tile('someform', interface=ExampleApp, permission="edit")
-    class SomeForm(Form):
+    @tile(name='exampleform', interface=ExamplePlugin, permission='edit')
+    class ExampleForm(Form):
 
         def prepare(self):
             """Prepare YAFOWIL widget tree and set it to ``self.form``
             """
             action = make_url(
-                self.request, node=self.model, resource='someform')
-            form = factory(
+                self.request,
+                node=self.model,
+                resource='exampleform'
+            )
+            self.form = form = factory(
                 'form',
-                name='someform',
+                name='exampleform',
                 props={
                     'action': action,
+                    'persist_writer': node_attribute_writer
                 })
             form['title'] = factory(
-                'field:text'
+                'field:text',
                 value=self.model.attrs['title'])
             form['save'] = factory(
                 'submit',
@@ -53,60 +57,70 @@ done when the tile gets called.
                     'expression': True,
                     'handler': self.save,
                     'next': None,
-                    'label': 'Save',
+                    'label': 'Save'
                 })
-            self.form = form
     
         def save(self, widget, data):
-            value = data.fetch('someform.title').extracted
-            self.model.attrs['title'] = value
+            data.write(self.model)
 
-Forms are AJAX forms by default. If it's desired that a specific form is also
-available via traversal, a pyramid view with the name given as ``resource``
-parameter when calling ``make_url`` for the form action in the example above
-must be provided.
+The above form submits to ``exampleform``, thus a view needs to be provided
+by this name as well.
 
 .. code-block:: python
 
-    from pyramid.view import view_config
     from cone.app.browser.authoring import render_form
+    from pyramid.view import view_config
 
-    @view_config('someform', context=ExampleApp, permission='edit')
-    def someform(model, request):
-        return render_form(model, request, 'someform')
+    @view_config(name='exampleform', context=ExamplePlugin, permission='edit')
+    def exampleform(model, request):
+        return render_form(model, request, tilename='exampleform')
+
+Forms are performed AJAXified by default. This can be changed by setting
+``ajax`` flag to ``False`` on form tile. The ``render_form`` function handles
+both AJAX an non AJAX form submission. If form is submitted without AJAX
+configured, the main template gets rendered with tile ``tilename`` as content
+tile, otherwise ``render_ajax_form`` is called, which renders the tile wrapped
+by some JavaScript calls into a script tag. The AJAX response will be rendered
+to a hidden iframe on client side, from where continuation is processed.
 
 
-YAMLForm part
--------------
+YAML Forms
+----------
 
-``cone.app.browser.form.YAMLForm`` is a plumbing part which hooks the
-``prepare`` function to the form tile building the YAFOWIL form from YAML
-definitions. The form implementation from above now looks like.
+``cone.app.browser.form.YAMLForm`` is a plumbing behavior for building the
+form from YAML definitions. The above form tile implementation using YAML looks
+like so.
 
 .. code-block:: python
 
-    from plumber import plumbing
+    from cone.app.browser.form import Form
     from cone.app.browser.form import YAMLForm
+    from cone.app.browser.utils import make_url
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from plumber import plumbing
+    from yafowil.base import factory
+    from yafowil.persistence import node_attribute_writer
 
-    @tile('someyamlform', interface=ExampleApp, permission="edit")
+    @tile(name='exampleform', interface=ExamplePlugin, permission='edit')
     @plumbing(YAMLForm)
-    class SomeYAMLForm(Form):
-        action_resource = u'someyamlform'
-        form_template = 'example.app.browser:forms/some_form.yaml'
+    class ExampleForm(Form):
+        action_resource = 'exampleform'
+        form_template = 'cone.example.browser:forms/example.yaml'
+        persist_writer = node_attribute_writer
 
         def save(self, widget, data):
-            value = data.fetch('someform.title').extracted
-            self.model.attrs['title'] = value
+            data.write(self.model)
 
-The YAML file which must be present at the given location contains.
+The YAML file containing the form declarations looks like so.
 
 .. code-block:: yaml
 
     factory: form
-    name: someyamlform
+    name: exampleform
     props:
         action: context.form_action
-        class: ajax
+        persist_writer: context.persist_writer
     widgets:
     - title:
         factory: field:text
@@ -119,6 +133,84 @@ The YAML file which must be present at the given location contains.
             handler: context.save
             next: None
             label: Save
+
+
+Protected Model Attributes
+--------------------------
+
+As soon as applications get more complex, it's a common usecase that different
+roles of users have different level of data access. A user might be permitted
+to edit some data, just be allowed to see it, or not even this so the data
+must be hidden from the user. YAFOWIL supports this cases on form widget level
+by the widget ``mode``, which is either ``edit``, ``display`` or ``skip``.
+
+For ``cone.app`` forms, the plumbing behavior
+``cone.app.browser.form.ProtectedAttributesForm`` is supposed to be used for
+calculating widget modes based on security checks.
+
+Security declarations for model attributes are defined on
+``attribute_permissions`` containing the attribute names as key, and a 2-tuple
+containing required edit and view permission which must be granted on the model
+in order to edit or view the corresponding attribute. If no attribute
+permissions are found for attribute name, ``attribute_default_permissions`` are
+used for security checks. Default permissions are ``('edit', 'view')``.
+
+.. code-block:: python
+
+    from cone.app.browser.form import Form
+    from cone.app.browser.form import ProtectedAttributesForm
+    from cone.app.browser.utils import make_url
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from yafowil.base import factory
+    from yafowil.persistence import node_attribute_writer
+
+    @tile(name='exampleform', interface=ExamplePlugin, permission='edit')
+    @plumbing(ProtectedAttributesForm)
+    class ExampleForm(Form):
+        attribute_permissions = {
+            'field_b': ('manage', 'edit')
+        }
+
+        def prepare(self):
+            action = make_url(
+                self.request,
+                node=self.model,
+                resource='exampleform'
+            )
+            self.form = form = factory(
+                'form',
+                name='exampleform',
+                props={
+                    'action': action,
+                    'persist_writer': node_attribute_writer
+                })
+            form['field_a'] = factory(
+                'field:label:text',
+                value=self.model.attrs['field_a'],
+                props={
+                    'label': 'Field A',
+                },
+                mode=self.mode_for('field_a'))
+            form['field_b'] = factory(
+                'field:label:text',
+                value=self.model.attrs['field_b'],
+                props={
+                    'label': 'Field B',
+                },
+                mode=self.mode_for('field_b'))
+            form['save'] = factory(
+                'submit',
+                props = {
+                    'action': 'save',
+                    'expression': True,
+                    'handler': self.save,
+                    'next': None,
+                    'label': 'Save'
+                })
+
+        def save(self, widget, data):
+            data.write(self.model)
 
 
 CameFromNext part

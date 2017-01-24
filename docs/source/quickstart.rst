@@ -2,9 +2,6 @@
 Getting Started
 ===============
 
-Overview
---------
-
 In order to use ``cone.app``, an integration package must be created. This
 package contains the buildout and application configuration.
 

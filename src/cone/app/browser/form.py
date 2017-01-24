@@ -78,8 +78,8 @@ class ProtectedAttributesForm(Behavior):
         """Calculate mode by checking permission defined in
         ``self.attribute_permissions`` for attribute ``name`` against model.
 
-        If no permissions defined for attribute name, return
-        ``self.attribute_default_mode``
+        If no permissions defined for attribute name,
+        ``self.attribute_default_permissions`` is used.
         """
         permissions = self.attribute_permissions.get(name)
         if not permissions:
