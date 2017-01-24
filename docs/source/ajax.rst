@@ -2,108 +2,143 @@
 AJAX
 ====
 
-``cone.app`` uses ``jQuery``, ``jquery tools`` and ``bdajax`` for AJAX support.
-Please see related documentation for detailed documentation.
+``cone.app`` uses ``bdajax`` for AJAXification of it's User Interface.
+
+Detailed documentation about the features provided by ``bdajax`` can be found
+in it's `Documentation <http://pypi.python.org/pypi/bdajax>`_.
+
+Related client contracts and the ``bdajax`` related server side implementation
+are described in the following sections.
 
 
-General contracts
------------------
+Client Contracts
+----------------
 
-Some tiles of the application (like ``mainmenu`` and ``navtree``)
-are using ``bdajax`` to notify each other about changes of the application
-context. The custom JS event ``contextchanged`` gets triggered on DOM elements
-with CSS class ``contextsensitiv`` set. The main content area is separately
-bound to this event by ID ``content``.
+Context Changed Event
+~~~~~~~~~~~~~~~~~~~~~
 
-If some action changes the application context it's usually desired to render 
-navigation tree, main menu and main content area. Thus, trigger the 
-``contextchanged`` event from your markup on user interaction. Defined 
-target is the new application context.
+``cone.app`` uses a custom JavaScript event named ``contextchanged`` to
+notify the UI about a changed traversal context.
+
+If some action changes the application context it's usually desired to render
+the entire ``layout`` on the new context. To achieve this, trigger
+``contextchanged`` event to ``#layout`` DOM element. The target must contain
+the new traversal path without a trailing view name but including request
+parameters if desired.
 
 .. code-block:: html
 
     <a href=""
        ajax:bind="click"
-       ajax:target="http://example.com/path/to/node/without/trailing/view"
-       ajax:event="contextchanged:.contextsensitiv
-                   contextchanged:#content">
+       ajax:target="http://example.com/path/to/node/without/trailing/view?a=1"
+       ajax:event="contextchanged:#layout">
       Trigger context change.
     </a>
 
-For a custom tile, i.e. rendering some node metadata which should be
-re-rendered every time the context changes, bind the DOM element to
-event ``contextchanged``, add ``contextsensitiv`` CSS class and define the
-desired AJAX action.
 
-The tile registered by name ``myfancytile`` is re-rendering itself each time 
-application context changes.
+Server Side Implementation
+--------------------------
 
-.. code-block:: html
+Markup
+~~~~~~
 
-    <div id="myfancytile"
-         class="contextsensitiv"
-         ajax:bind="contextchanged"
-         ajax:action="myfancytile:#myfancytile:replace">
-      ...
-    </div>
+``bdajax`` related markup gets delivered by a tile with name ``bdajax`` and is
+included in :ref:`main template <layout_main_template>`.
 
 
-Actions
--------
+AJAX Actions
+~~~~~~~~~~~~
 
-``bdajax``  does not ship with server implementation performing AJAX actions. 
-For details follow up to the bdajax-documentation  
+``bdajax`` expects a server side implemented JSON view for performing
+actions by name ``ajaxaction``.
 
-Server side implementation is located at
-``cone.app.browser.ajax.ajax_tile``. It renders the tile registered by action
-name. AJAX continuation definitions are read from
-``request.environ['cone.app.continuation']``. If an uncaught exception is
-thrown during AJAX action processing, the traceback gets displayed in a
-``bdajax.error`` message.
+The implementation is located at ``cone.app.browser.ajax.ajax_tile``. It
+renders a tile registered by action name and returns a JSON reponse in the
+format expected by ``bdajax``.
+
+If an uncaught exception is thrown during action processing, the traceback is
+delivered to the client and gets displayed as error message.
 
 
 Continuation
-------------
+~~~~~~~~~~~~
 
-``bdajax`` supports AJAX continuation. This is useful i.e. if a data
-manipulating tile needs to finish it's job before anything can be re-rendered,
-or if user should get a message displayed after action processing. Several
-other use cases are applying.
+``bdajax`` supports AJAX continuation. This can be useful if data manipulating
+actions need to finish it's job before anything can be re-rendered,
+or if user should get a message displayed after action processing just to name
+a few usecases.
 
-Available continuation objects on the server side are
-``cone.app.browser.ajax.AjaxAction``, ``cone.app.browser.ajax.AjaxEvent`` and
-``cone.app.browser.ajax.AjaxMessage``.
+AJAX continuation definitions are collected during request execution and
+translated via ``cone.app.browser.ajax.AjaxContinue`` to the format
+expected by ``bdajax`` on the client side in the ``ajaxaction`` JSON view.
 
-To trigger AJAX continuation, instantiate the desired definition(s) and call
-``cone.app.browser.ajax.ajax_continue``. It expects the request and a
-continuation definition or a list of continuation definitions as arguments.
+The Available continuation definitions are located in module
+``cone.app.browser.ajax`` and represented by the following classes:
+
+- **AjaxPath**: Set browser path. Accepted arguments:
+    - ``path``: Browser path to be set.
+
+- **AjaxAction**: Execute action. Accepted arguments:
+    - ``target``: Traversable target URL without trailing server view
+    - ``name``: Action name.
+    - ``mode``: DOM modification mode. Either ``inner`` and ``replace``.
+    - ``selector``: DOM modification selector.
+
+- **AjaxEvent**: Trigger event. Accepted arguments:
+    - ``target``: Traversable target URL without trailing server view
+    - ``name``: Event name.
+    - ``selector``: Selector of DOM elements on which to trigger the event
+
+- **AjaxMessage**: Display message. Accepted arguments:
+    - ``payload``: Message payload as text or markup.
+    - ``flavor``: XOR with ``selector``. One out of ``message``, ``info``,
+      ``warning`` or ``error``.
+    - ``selector``: XOR with ``flavor``. If given, render message to DOM
+      element found by selector.
+
+- **AjaxOverlay**: Display or close overlay. Accepted arguments:
+    - ``selector``: selector of overlay DOM element. Defaults to
+      ``#ajax-overlay``.
+    - ``action``: Name of action which should be displayed in overlay.
+    - ``target``: Traversable target URL without trailing server view
+    - ``close``: Flag whether to close an open overlay.
+    - ``content_selector``: Optional overlay content selector. Defaults to
+      ``.overlay_content``.
+
+AJAX continuation can be queued by passing continuation definition objects
+to ``cone.app.browser.ajax.ajax_continue``, which expects the request and
+a single or a list of continuation definitions.
 
 .. code-block:: python
 
-    from cone.app.browser.ajax import ajax_continue
-    from cone.app.browser.ajax import AjaxAction
     from cone.app.browser.ajax import AjaxEvent
-    from cone.app.browser.ajax import AjaxMessage
+    from cone.app.browser.ajax import AjaxOverlay
+    from cone.app.browser.ajax import ajax_continue
 
-    action = AjaxAction(target, name, mode, selector)
-    ajax_continue(request, action)
-
-    event = AjaxEvent(target, name, selector)
-    message = AjaxMessage(payload, flavor, selector)
-    ajax_continue(request, [event, message])
+    # close overlay if open
+    overlay = AjaxOverlay(close=True)
+    # trigger changed context to layout
+    event = AjaxEvent(
+        target=make_url(request, node=model),
+        name='contextchanged',
+        selector='#layout'
+    )
+    # queue continuation definitions
+    ajax_continue(request, [overlay, event])
 
 A shortcut for continuation messages is located at
-``cone.app.browser.ajax.ajax_message``. Possible flavors are ``message``,
-``info`` ``warning`` and ``error``.
+``cone.app.browser.ajax.ajax_message``.
 
 .. code-block:: python
+
+    from cone.app.browser.ajax import ajax_message
 
     payload = '<div>Message</div>'
     ajax_message(request, payload, flavor='message')
 
 
 Forms
------
+~~~~~
 
 AJAX forms are automatically detected and computed properly as long as they are
 rendered via ``cone.app.browser.authoring.render_form``. The default rendering
@@ -113,29 +148,29 @@ must also change in order to make validation error form re-rendering do the
 right thing.
 
 The rendering target of a form can be changed with
-``cone.app.browser.ajax.ajax_form_fiddle``. Provide a plumbing part hooking to
-``__call__`` function.
+``cone.app.browser.ajax.ajax_form_fiddle``. Provide a plumbing behavior
+hooking to ``__call__`` function.
 
 .. code-block:: python
 
     from plumber import plumbing
     from plumber import plumb
-    from plumber import Part
+    from plumber import Behavior
     from cone.app.browser.ajax import ajax_form_fiddle
 
-    class FormFiddle(Part):
+    class FormFiddle(Behavior):
 
         @plumb
         def __call__(_next, self, model, request):
             ajax_form_fiddle(request, '.some_selector', 'inner')
             return _next(self, model, request)
 
-Use this part in form tile.
+Use this behavior in form tile.
 
 .. code-block:: python
 
     @tile('someform', interface=ExampleApp, permission='edit')
-    @plumbing(EditPart, FormFiddle)
+    @plumbing(ContentEditForm, FormFiddle)
     class SomeForm(Form):
         pass
 

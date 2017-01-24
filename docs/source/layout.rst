@@ -2,6 +2,8 @@
 Layout
 ======
 
+.. _layout_main_template:
+
 Main Template
 -------------
 
