@@ -195,32 +195,26 @@ An implementation integrating the publication workflow as described in
     admin_permissions = editor_permissions + ['delete', 'change_state']
     manager_permissions = admin_permissions + ['manage']
 
-    # publication workflow state related ACL's
-    publication_state_acls = dict()
-    publication_state_acls['draft'] = [
+    # state ACLs for authenticated users
+    authenticated_state_acls = [
         (Allow, 'system.Authenticated', authenticated_permissions),
         (Allow, 'role:viewer', viewer_permissions),
         (Allow, 'role:editor', editor_permissions),
         (Allow, 'role:admin', admin_permissions),
-        (Allow, 'role:manager', manager_permissions),
+        (Allow, 'role:manager', manager_permissions)
+    ]
+
+    # publication workflow state related ACL's
+    publication_state_acls = dict()
+    publication_state_acls['draft'] = authenticated_state_acls + [
         (Allow, Everyone, ['login']),
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
-    publication_state_acls['published'] = [
-        (Allow, 'system.Authenticated', authenticated_permissions),
-        (Allow, 'role:viewer', viewer_permissions),
-        (Allow, 'role:editor', editor_permissions),
-        (Allow, 'role:admin', admin_permissions),
-        (Allow, 'role:manager', manager_permissions),
+    publication_state_acls['published'] = authenticated_state_acls + [
         (Allow, Everyone, ['login', 'view']),
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
-    publication_state_acls['declined'] = [
-        (Allow, 'system.Authenticated', authenticated_permissions),
-        (Allow, 'role:viewer', viewer_permissions),
-        (Allow, 'role:editor', editor_permissions),
-        (Allow, 'role:admin', admin_permissions),
-        (Allow, 'role:manager', manager_permissions),
+    publication_state_acls['declined'] = authenticated_state_acls + [
         (Allow, Everyone, ['login']),
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
