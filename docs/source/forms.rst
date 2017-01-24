@@ -38,8 +38,7 @@ performed when the tile gets called.
             action = make_url(
                 self.request,
                 node=self.model,
-                resource='exampleform'
-            )
+                resource='exampleform')
             self.form = form = factory(
                 'form',
                 name='exampleform',
@@ -59,7 +58,7 @@ performed when the tile gets called.
                     'next': None,
                     'label': 'Save'
                 })
-    
+
         def save(self, widget, data):
             data.write(self.model)
 
@@ -162,6 +161,7 @@ used for security checks. Default permissions are ``('edit', 'view')``.
     from cone.app.browser.utils import make_url
     from cone.example.model import ExamplePlugin
     from cone.tile import tile
+    from plumber import plumbing
     from yafowil.base import factory
     from yafowil.persistence import node_attribute_writer
 
@@ -176,8 +176,7 @@ used for security checks. Default permissions are ``('edit', 'view')``.
             action = make_url(
                 self.request,
                 node=self.model,
-                resource='exampleform'
-            )
+                resource='exampleform')
             self.form = form = factory(
                 'form',
                 name='exampleform',
@@ -213,59 +212,241 @@ used for security checks. Default permissions are ``('edit', 'view')``.
             data.write(self.model)
 
 
-CameFromNext part
------------------
+Redirecting after Form processing
+---------------------------------
 
-In the examples above we've seen how forms are created, form submission are
-processed and forms are rendered. However, a mechanism to handle what happens
-after a form actions has been processed successfully is also needed.
+Forms are processed as follows:
 
-This is provided by the plumbing part
-``cone.app.browser.authoring.CameFromNext``.
+- If no action submitted, render from.
 
-It plumbs to the prepare function and adds a 'came_from' proxy widget to the
-already processed form, which can contain either 'parent' or a URL from where
-the form was triggered from. If 'came_from' is not found on request, the
-application node URL is used.
+- If action gets submitted, process form.
 
-It extends the form tile by a ``next`` function, which can be defined in form
-action definitions as ``next`` property. It also considers 'came_from' on the
-request for building the appropriate next URL.
+- If form extraction succeeds without errors, action referenced ``handler``
+  callback is executed.
 
-If form was submitted by AJAX call, the ``next`` function returns the desired
-AJAX continuation definitions, or an HTTPFound instance used to redirect if
-non AJAX request.
+- If action references a ``next`` callback, it is used to calculate the
+  target to redirect to after form processing. If no ``next`` callback is set
+  the form ist rendered again.
 
-Default ajax continuation definitions are an ``AjaxAction`` to render the
-``content`` tile to main content area of the page and an ``AjaxEvent``
-triggering the context change event, both on target URL resulting by 'came_from'.
+``cone.app`` ships the plumbing behavior
+``cone.app.browser.authoring.CameFromNext`` which can be used to provide
+redirect target calculations on form tiles.
 
-Define ``self.next``, respective ``context.next`` if YAML form, in save widget
-of form as ``next`` property and add ``CameFromNext`` part to plumbing parts on
-form tile class.
+It plumbs to the prepare function and adds a ``came_from`` proxy widget to the
+form. ``came_from`` gets read from request parameters, thus the user can define
+the redirect target when invoking the form. The target can either be ``parent``
+of a URL.
+
+It further extends the form tile by a ``next`` function, which is supposed to
+be used as form action ``next`` callback. The next function computes the
+redirect target by value from ``came_from`` parameter on request.
+
+- If parameter value is ``parent``, application model parent node is used as
+  redirect target.
+
+- If URL is found as value, this one is used as redirect target.
+
+- If empty value is found, application model node is used as redirect target.
+
+If the form was submitted by AJAX call, the ``next`` function returns the
+appropriate AJAX continuation definitions to render the application layout on
+new target, otherwise a ``HTTPFound`` instance used to perform a regular
+browser redirect.
 
 .. code-block:: python
 
-    @tile('someyamlform', interface=ExampleApp, permission="edit")
-    @plumbing(YAMLForm, CameFromNext)
-    class SomeYAMLForm(Form):
-        pass
+    from cone.app.browser.authoring import CameFromNext
+    from cone.app.browser.form import Form
+    from cone.app.browser.utils import make_url
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from plumber import plumbing
+    from yafowil.base import factory
+    from yafowil.persistence import node_attribute_writer
+
+    @tile(name='exampleform', interface=ExamplePlugin, permission='edit')
+    @plumbing(CameFromNext)
+    class ExampleForm(Form):
+
+        def prepare(self):
+            action = make_url(
+                self.request,
+                node=self.model,
+                resource='exampleform')
+            self.form = form = factory(
+                'form',
+                name='exampleform',
+                props={
+                    'action': action,
+                    'persist_writer': node_attribute_writer
+                })
+            form['title'] = factory(
+                'field:text',
+                value=self.model.attrs['title'])
+            form['save'] = factory(
+                'submit',
+                props = {
+                    'action': 'save',
+                    'expression': True,
+                    'handler': self.save,
+                    # reference to ``next`` callback provided by CameFromNext
+                    'next': self.next,
+                    'label': 'Save'
+                })
+
+        def save(self, widget, data):
+            data.write(self.model)
 
 
-Add forms
-=========
+Content Area Forms
+------------------
 
-Add part
---------
+The most common usecase when integrating forms is to render them in the
+*Content Area* of the page.
 
-As described in tiles documentation, tiles named ``addform`` are reserved
-for application node add forms. They are invoked by the ``add`` tile for the
-context returned by the referring node info ``factory``, which could be a vessel
-object or a "real life" node - consider this at tile registration. The default
-add model factory returns an instance of the class defined in node info
-``node`` with adding context set as ``__parent__``.
+The plumbing behavior ``cone.app.browser.authoring.ContentForm`` implements the
+required integration code and shall be used for form tiles rendering to the
+*Content Area*.
 
-For creating add form tiles, ``cone.app.browser.authoring.AddPart`` provides
+Following customization attributes are considered:
+
+- **show_contextmenu**: Flag whether to render the context menu.
+  Defaults to ``True``
+
+- **show_heading**: Flag whether to render a form heading.
+  Defaults to ``True``.
+
+- **form_heading**: Form heading text.
+
+.. code-block:: python
+
+    from cone.app.browser.authoring import ContentForm
+    from cone.app.browser.form import Form
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from plumber import plumbing
+
+    @tile(name='exampleform', interface=ExamplePlugin, permission='edit')
+    @plumbing(ContentForm)
+    class ExampleContentForm(Form):
+        show_contextmenu = True
+        show_heading = True
+
+        @property
+        def form_heading(self):
+            return 'Content Form for {}'.format(self.model.metadata.title)
+
+        def prepare(self):
+            """Form preperation goes here.
+            """
+
+
+Overlay Forms
+-------------
+
+Another usecase is to render forms in an overlay. This is useful when it's
+desired to edit some entities without loosing the form triggering UI context.
+
+The plumbing behavior ``cone.app.browser.authoring.OverlayForm`` implements the
+required integration code and shall be used for form tiles rendering to an
+overlay.
+
+The ``OverlayForm`` plumbs the ``__call__`` function where hooking the form
+to the overlay happens, and extends the form tile by a ``next`` handler
+callback, which actually return an event for closing the overlay on the client
+side.
+
+Needless to say that overlay forms only works for AJAXified form tiles.
+
+When providing an overlay form for a specific model, it is expected under
+tile registration name ``overlayform``.
+
+.. code-block:: python
+
+    from cone.app.browser.authoring import OverlayForm
+    from cone.app.browser.form import Form
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from plumber import plumbing
+
+    @tile(name='overlayform', interface=ExamplePlugin, permission='edit')
+    @plumbing(OverlayForm)
+    class ExampleOverlayForm(Form):
+
+        def prepare(self):
+            """Form preperation goes here.
+            """
+
+If it's necessary to deal with several overlay forms for the same model,
+buildin tile ``overlayform`` name cannot be used, so corresponding views need
+to be provided as well.
+
+.. code-block:: python
+
+    from cone.app.browser.authoring import OverlayForm
+    from cone.app.browser.authoring import render_form
+    from cone.app.browser.form import Form
+    from cone.example.model import ExamplePlugin
+    from cone.tile import tile
+    from plumber import plumbing
+    from pyramid.view import view_config
+
+    @tile(name='otheroverlayform', interface=ExamplePlugin, permission='edit')
+    @plumbing(OverlayForm)
+    class OtherOverlayForm(Form):
+
+        def prepare(self):
+            """Form preperation goes here.
+            """
+
+    @view_config(
+        name='otheroverlayform',
+        context=ExamplePlugin,
+        permission='edit')
+    def otheroverlayform(model, request):
+        return render_form(model, request, tilename='otheroverlayform')
+
+Overlay form invocation happens via ``bdajax`` overlay integration.
+
+In markup this looks like.
+
+.. code-block:: html
+
+    <a href="http://fubar.com/baz?a=a"
+       ajax:bind="click"
+       ajax:target="http://fubar.com/baz?a=a"
+       ajax:overlay="overlayform">
+      fubar
+    </a>
+
+In JavaScript this looks like.
+
+.. code-block:: js
+
+    var overlay_api = bdajax.overlay({
+        action: 'overlayform',
+        target: 'http://fubar.com/baz?a=a'
+    });
+
+Implemented as action this looks like.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import LinkAction
+
+    class OverlayFormTriggerAction(LinkAction):
+        text = 'Show Overlay Form'
+        target = 'http://fubar.com/baz?a=a'
+        overlay = 'overlayform'
+
+
+Add Forms
+---------
+
+As described in the :ref:`Add Tile <widgets_authoring_add_tile>` documentation,
+tiles named ``addform`` are reserved for application node add forms.
+
+For creating add form tiles, ``cone.app.browser.authoring.Add`` provides
 the required plumbings. It derives from ``CameFromNext``.
 
 The ``prepare`` function is plumbed in order to extend the form with a
@@ -285,10 +466,10 @@ form if ``show_heading`` on form tile is set to ``True``, which is default.
 
 
 Edit forms
-==========
+----------
 
-Edit part
----------
+As described in the :ref:`Edit Tile <widgets_authoring_edit_tile>`
+documentation,
 
 As described in tiles documentation, tiles named ``editform`` are reserved
 for application node edit forms. They are invoked by the ``edit`` tile for
@@ -313,8 +494,8 @@ For add and edit forms it probably makes sense to write one base class
 providing the ``prepare`` function.
 
 
-Settings part
--------------
+Settings Forms
+--------------
 
 ``cone.app`` renders forms for application settings in tabs, all at once.
 To provide a edit form for your settings node,
@@ -338,8 +519,8 @@ of 'came_from'.
         pass
 
 
-Extending forms
-===============
+Extending Forms
+---------------
 
 The plumbing mechanism could also be used for generic form extension. This is
 interesting in cases where a set of different nodes partly contain the same

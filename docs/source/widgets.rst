@@ -695,6 +695,8 @@ Considered ``properties``:
   node has been deleted. Defaults to ``content``.
 
 
+.. _widgets_authoring_add_tile:
+
 Add
 ---
 
@@ -707,6 +709,8 @@ add form on it which is expected as tile under name ``addform``.
 
 See :doc:`forms documentation <forms>` for more details.
 
+
+.. _widgets_authoring_edit_tile:
 
 Edit
 ----
