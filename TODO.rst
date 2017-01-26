@@ -11,7 +11,7 @@ Docs
 [X] - Overhaul workflows docs
 [X] - Overhaul AJAX docs
 [X] - Create translations documentation
-[ ] - Create security docs
+[X] - Create security docs
 [ ] - Document expected permissions for tiles and actions
 [ ] - Create writing tests documenatation
 [ ] - Create twisted integration documentation
@@ -44,6 +44,7 @@ Roadmap
 [ ] - Fix lookup in ACL registry. First node by class or base class and node
       info name if given, Then by class or base class only if not found, then
       by node info name only if no class given at lookup. Or so...
+[ ] - Create and use constants for all default roles and permissions.
 
 1.0b1
 -----
