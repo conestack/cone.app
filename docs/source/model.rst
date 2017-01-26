@@ -17,7 +17,8 @@ and implements the following contracts:
   clean way.
 
 - **cone.app.interfaces.ISecured** extends the node by the ``__acl__``
-  property. It is used by Pyramid at publishing time to manage access to views.
+  property. It is used by Pyramid at publishing time to manage access.
+  See :doc:`Security <security>` documentation for more details.
 
 - **cone.app.interfaces.IApplicationNode** extends the node by application
   specific contracts.
@@ -199,10 +200,6 @@ all default to ``True``.
 UUIDAttributeAware
 ------------------
 
-.. warning::
-
-    EXPERIMENTAL - Subject to change.
-
 ``cone.app.model.UUIDAttributeAware`` is a plumbing behavior and supposed to be
 used to expose ``self.attrs['uuid']`` at ``self.uuid``.
 
@@ -276,6 +273,8 @@ ProtectedProperties
 
 ``cone.app.model.ProtectedProperties`` object can be used to secure property
 access by permissions. Properties with no permissions are always returned.
+See :doc:`Security <security>` documentation for more details about
+permissions.
 
 .. code-block:: python
 
@@ -427,69 +426,4 @@ there has been registered a dedicated one or not.
     model = CustomNode()
     info = model.nodeinfo
 
-See forms documentation for more details.
-
-
-Security
---------
-
-In ``cone.app``, security declarations on models and authorization is done with
-``pyramid.security``. As authorization policy
-``pyramid.authorization.ACLAuthorizationPolicy`` is used.
-
-For authentication, users, groups and roles, the contract of ``node.ext.ugm``
-is used. As authentication policy
-``pyramid.authentication.AuthTktAuthenticationPolicy`` with
-``cone.app.security.groups_callback`` is used, which bridges roles and group
-membership.
-
-The desired ``node.ext.ugm`` instance is created in application main hook
-and set to ``cone.app.cfg.auth``.
-
-If no authentication implementation is registered, the only user which can
-authenticate is the admin user defined in application configuration INI file.
-
-By default, anonymous access to all application model nodes is prohibited.
-
-Default ACL for application nodes is located at
-``cone.app.security.DEFAULT_ACL``.
-
-Default ACL for settings nodes is located at
-``cone.app.security.DEFAULT_SETTINGS_ACL``.
-
-Default vocab for available roles is located at
-``cone.app.security.DEFAULT_ROLES``.
-
-
-PrincipalACL
-------------
-
-In many applications it's required to grant access for specific parts of the
-application model to specific users and groups. ``cone.app`` ships with a
-plumbing behavior providing principal related roles. It's an abstract
-implementation leaving the persistence apart. A concrete shareable node looks
-like.
-
-.. code-block:: python
-
-    from node.utils import instance_property
-    from cone.app.model import BaseNode
-    from cone.app.security import PrincipalACL
-    from cone.app.security import DEFAULT_ACL
-
-    class SharingNode(BaseNode):
-        role_inheritance = True
-
-        @property
-        def __acl__(self):
-            return DEFAULT_ACL
-
-        @instance_property
-        def principal_roles(self):
-            return dict()
-
-The ``role_inheritance`` attribute defines whether to aggregate roles from
-parent nodes. It's important for shareable nodes that the ``__acl__`` attribute
-is implemented as property function to make sure plumber can hook in correctly.
-``principal_roles`` returns a persistent dict like object containing the stored
-or computed local roles for this node.
+See :doc:`Forms <forms>` documentation for more details.

@@ -10,9 +10,9 @@ Docs
 [X] - Overhaul forms docs
 [X] - Overhaul workflows docs
 [X] - Overhaul AJAX docs
+[X] - Create translations documentation
+[X] - Create security docs
 [ ] - Document expected permissions for tiles and actions
-[ ] - Create security docs
-[ ] - Create translations documentation
 [ ] - Create writing tests documenatation
 [ ] - Create twisted integration documentation
 [ ] - Create websocket integration documentation
@@ -37,6 +37,14 @@ Roadmap
 [ ] - Get rid of remaining ``contextsensitiv`` CSS class related bdajax
       bindings and remove ``contextsensitiv`` CSS class entirly from markup and
       tests.
+[ ] - Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
+[ ] - Consolidate ``cone.app.model.AppSettings.__acl__```and
+      ``cone.app.security.DEFAULT_SETTINGS_ACL`` which is not used yet in
+      ``cone.app``.
+[ ] - Fix lookup in ACL registry. First node by class or base class and node
+      info name if given, Then by class or base class only if not found, then
+      by node info name only if no class given at lookup. Or so...
+[ ] - Create and use constants for all default roles and permissions.
 
 1.0b1
 -----

@@ -55,6 +55,23 @@ A best practice JS stub for a plugin looks like so.
     })(jQuery);
 
 
+Using bdajax in Page Templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When working with ``bdajax`` in page templates, the related XML namespace
+must be defined.
+
+.. code-block:: xml
+
+    <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+               omit-tag="True">
+
+      <!-- bdajax using markup goes here -->
+
+    </tal:block>
+
+
 Context Changed Event
 ~~~~~~~~~~~~~~~~~~~~~
 
