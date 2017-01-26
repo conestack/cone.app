@@ -43,27 +43,26 @@ Roadmap
 [ ] ``cone.app.browser.authoring.OverlayFormTile`` is superfluous.
 
 [ ] Overhaul settings rendering. available settings should be rendered in
-    the navtree. ``SettingsBehavior`` for settings forms probably superfluous
-    then.
+the navtree. ``SettingsBehavior`` for settings forms probably superfluous then.
 
 [ ] Set ``ISecured`` on ``cone.app.workflow.WorkflowACL``
 
 [ ] ``cone.app.browser.copysupport:124``: trigger ``contextchanged`` on
-    ``#layout`` instead of ``.contextsensitiv``.
+``#layout`` instead of ``.contextsensitiv``.
 
 [ ] Get rid of remaining ``contextsensitiv`` CSS class related bdajax
-    bindings and remove ``contextsensitiv`` CSS class entirly from markup and
-    tests.
+bindings and remove ``contextsensitiv`` CSS class entirly from markup and
+tests.
 
 [ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
 
 [ ] Consolidate ``cone.app.model.AppSettings.__acl__```and
-    ``cone.app.security.DEFAULT_SETTINGS_ACL`` which is not used yet in
-    ``cone.app``.
+``cone.app.security.DEFAULT_SETTINGS_ACL`` which is not used yet in
+``cone.app``.
 
 [ ] Fix lookup in ACL registry. First node by class or base class and node
-    info name if given, Then by class or base class only if not found, then
-    by node info name only if no class given at lookup. Or so...
+info name if given, Then by class or base class only if not found, then
+by node info name only if no class given at lookup. Or so...
 
 [ ] Create and use constants for all default roles and permissions.
 
@@ -74,7 +73,7 @@ Roadmap
 [ ] Adopt docs for using ``waitress`` instead of ``paster``.
 
 [ ] Adopt livesearch JS intergration to provide hooks for passing typeahead
-    options and datasets instead of just datasets.
+options and datasets instead of just datasets.
 
 1.0b1
 -----
@@ -92,8 +91,8 @@ Roadmap
 ---
 
 [ ] Overhaul resource registration and delivery keeping B/C.
-    - Think about using fanstatic
-    - Add resource export as JSON if 3rd party build tool is preferred.
+- Think about using fanstatic
+- Add resource export as JSON if 3rd party build tool is preferred.
 
 [ ] Overhaul plugin entry hooks staying closer to pyramid if possible.
 
