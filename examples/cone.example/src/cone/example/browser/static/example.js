@@ -14,7 +14,7 @@
     example = {
 
         // plugin binder function. gets called on initial page load and
-        // every time bdajax hooks up some markup to the dom tree.
+        // every time bdajax modifies the DOM tree.
         binder: function(context) {
             // event binding code goes here. context is the modified
             // part of the DOM tree if called by bdajax.

@@ -354,36 +354,8 @@ Working with JavaScript
 -----------------------
 
 ``cone.app`` utilizes `bdajax <http://pypi.python.org/pypi/bdajax>`_ for it's
-user interface. The plugin needs to provide a binder function which gets
-registered to ``bdajax`` in order to ensure proper event binding on
-dynamically loaded tiles. A best practice JS stub for a plugin looks like so.
-
-.. code-block:: js
-
-    (function($) {
-
-        $(document).ready(function() {
-            // register binder function to bdajax.
-            $.extend(bdajax.binders, {
-                example_binder: example.binder
-            });
-
-            // call binder function on initial page load.
-            example.binder();
-        });
-
-        // plugin namespace
-        example = {
-
-            // plugin binder function. gets called on initial page load and
-            // every time bdajax hooks up some markup to the dom tree.
-            binder: function(context) {
-                // event binding code goes here. context is the modified
-                // part of the DOM tree if called by bdajax.
-            }
-        };
-
-    })(jQuery);
+user interface. The documentation how to properly integrate custom JavaScript
+can be found :ref:`here <ajax_custom_javascript>`.
 
 
 Installation

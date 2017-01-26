@@ -2,118 +2,230 @@
 Workflows
 =========
 
-``cone.app`` uses ``repoze.workflow`` for state based workflows.
+.. _workflows_defining_a_workflow:
 
+Defining a Workflow
+-------------------
 
-Define workflow
----------------
+``cone.app`` utilizes `repoze.workflow <http://docs.repoze.org/workflow>`_ for
+state based workflows.
 
-Workflows are described in ZCML. See documentation of ``repoze.workflow`` for
-details.
+Workflows are described in ZCML files.
 
-In the ``workflow`` directive, the ``content_types`` attribute contains the
-nodes this workflow can be used for.
+``repoze.workflow`` is wired to ``cone.app`` as follows:
 
-As ``permission_checker``, ``pyramid.security.has_permission`` is used.
+- The ``content_types`` attribute in the ``workflow`` directive contains the
+  nodes this workflow can be used for.
 
-In ``transition`` directives ``cone.app.workflow.persist_state`` is defined
-as ``callback``, which sets the ``state`` attribute of the node.
+- The ``permission_checker`` attribute in the ``workflow`` directive points
+  to ``pyramid.security.has_permission``, which is used to check whether
+  permissions are granted on model node.
+
+- The ``callback`` attribute in ``transition`` directives points to
+  ``cone.app.workflow.persist_state``, which is used to write the new state
+  to the ``state`` attribute and persists the model node by calling it.
+
+A typical publication workflow would end up in a file named
+``publication.zcml`` looks like so.
 
 .. code-block:: xml
 
-    <configure xmlns="http://namespaces.repoze.org/bfg">
+    <configure xmlns="http://namespaces.repoze.org/bfg"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.example">
 
       <include package="repoze.workflow" file="meta.zcml"/>
 
-      <workflow type="example"
-                name="Example workflow"
+      <workflow type="publication"
+                name="Publication workflow"
                 state_attr="state"
-                initial_state="initial"
-                content_types="example.app.model.WorkflowNode"
+                initial_state="draft"
+                content_types="cone.example.model.ExampleNode
+                               cone.example.model.AnotherNode"
                 permission_checker="pyramid.security.has_permission">
-    
-        <state name="initial">
-          <key name="title" value="Initial state" />
-          <key name="description" value="Initial state" />
+
+        <state name="draft"
+               i18n:attributes="name">
+          <key name="title" value="Draft"/>
+          <key name="description" value="Item is not visible to the public" />
         </state>
 
-        <state name="final">
-          <key name="title" value="Final state"/>
-          <key name="description" value="Final state" />
+        <state name="published"
+               i18n:attributes="name">
+          <key name="title" value="Published"/>
+          <key name="description" value="Item is visible to the public" />
+        </state>
+
+        <state name="declined"
+               i18n:attributes="name">
+          <key name="title" value="Declined"/>
+          <key name="description" value="Item has been declined" />
         </state>
 
         <transition
-           name="initial_2_final"
+           name="draft_2_published"
            callback="cone.app.workflow.persist_state"
-           from_state="initial"
-           to_state="final"
+           from_state="draft"
+           to_state="published"
            permission="change_state"
-        />
+           i18n:attributes="name" />
+
+        <transition
+           name="draft_2_declined"
+           callback="cone.app.workflow.persist_state"
+           from_state="draft"
+           to_state="declined"
+           permission="change_state"
+           i18n:attributes="name" />
+
+        <transition
+           name="published_2_draft"
+           callback="cone.app.workflow.persist_state"
+           from_state="published"
+           to_state="draft"
+           permission="change_state"
+           i18n:attributes="name" />
+
+        <transition
+           name="published_2_declined"
+           callback="cone.app.workflow.persist_state"
+           from_state="published"
+           to_state="declined"
+           permission="change_state"
+           i18n:attributes="name" />
+
+        <transition
+           name="declined_2_draft"
+           callback="cone.app.workflow.persist_state"
+           from_state="declined"
+           to_state="draft"
+           permission="change_state"
+           i18n:attributes="name" />
+
+        <transition
+           name="declined_2_published"
+           callback="cone.app.workflow.persist_state"
+           from_state="declined"
+           to_state="published"
+           permission="change_state"
+           i18n:attributes="name" />
 
       </workflow>
 
     </configure>
 
+In order to load the workflow it must be included in the plugin
+``configure.zcml``.
 
-Use workflow
-------------
+.. code-block:: xml
 
-To use workflows on application model nodes, two plumbing parts are provided.
+    <?xml version="1.0" encoding="utf-8" ?>
+    <configure xmlns="http://pylonshq.com/pyramid">
 
-The first one is ``cone.app.workflow.WorkflowState``, hooking the ``state``
-property to node which reads and writes the workflow state to
-``node.attrs['state']``.
+      <include file="publication.zcml" />
 
-The second one is ``cone.app.workflow.WorkflowACL``, which alters the
-``__acl__`` property of the node. The property computing code first tries to
-lookup an ACL explicitly defined for current workflow state. If no ACL for
-state is found, the ACL defined in ``default_acl`` is returned. This ACL
-permits 'change_state' for roles owner and manager by default.
+    </configure>
 
-Also workflow tile related node ``properties`` must be set. As described in
-tiles documentation, ``wf_name`` contains the workflow ID, and
-``wf_transition_names`` contains a mapping "transition ID -> transition Title"
-(needed due to the lack of transition titles in repoze.workflow).
+
+Using a Workflow
+----------------
+
+To use workflows on application model nodes, two plumbing behaviors are
+provided.
+
+
+WorkflowState
+~~~~~~~~~~~~~
+
+The ``cone.app.workflow.WorkflowState`` plumbing behavior extends the model
+node by the ``state`` property which reads and writes the workflow state to
+``node.attrs['state']`` by default.
+
+Further it plumbs to the ``__init__`` function to initialize the workflow on
+node instanciation time.
+
+The ``copy`` function also gets plumbed to set initial state for copy of node
+and all children of it implementing ``cone.app.interfaces.IWorkflowState``.
+
+A model node plumbed by ``WorkflowState`` must provide the name of the workflow
+it uses at ``workflow_name`` which refers to the ``type`` attribute of the
+``workflow`` directive in the workflow ZCML file.
+
+A translation string factory can be provided via ``workflow_tsf`` property in
+order to provide translations for the workflow.
+
+
+WorkflowACL
+~~~~~~~~~~~
+
+The ``cone.app.workflow.WorkflowACL`` plumbing behavior extends the model by
+the ``__acl__`` property. This property first tries to lookup an explicitly
+defined ACL for current workflow state. If no ACL for state is found, the ACL
+defined in ``default_acl`` is returned. This ACL permits ``change_state`` for
+roles ``owner`` and ``manager`` by default.
+
+Workflow related states are expected at ``state_acls`` property.
+
+
+Integrating the Workflow
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+An implementation integrating the publication workflow as described in
+:ref:`Defining a Workflow <workflows_defining_a_workflow>` looks like so.
 
 .. code-block:: python
 
-    from plumber import plumbing
-    from node.utils import instance_property
     from cone.app.model import BaseNode
-    from cone.app.model import Properties
-    from cone.app.workflow import WorkflowState
     from cone.app.workflow import WorkflowACL
+    from cone.app.workflow import WorkflowState
+    from plumber import plumbing
+    from pyramid.i18n import TranslationStringFactory
+    from pyramid.security import ALL_PERMISSIONS
+    from pyramid.security import Allow
+    from pyramid.security import Deny
+    from pyramid.security import Everyone
+
+    # translation string factory used for workflow translations
+    _ = TranslationStringFactory('cone.example')
+
+    # user role related permission sets
+    authenticated_permissions = ['view']
+    viewer_permissions = authenticated_permissions + ['list']
+    editor_permissions = viewer_permissions + ['add', 'edit']
+    admin_permissions = editor_permissions + ['delete', 'change_state']
+    manager_permissions = admin_permissions + ['manage']
+
+    # state ACLs for authenticated users
+    authenticated_state_acls = [
+        (Allow, 'system.Authenticated', authenticated_permissions),
+        (Allow, 'role:viewer', viewer_permissions),
+        (Allow, 'role:editor', editor_permissions),
+        (Allow, 'role:admin', admin_permissions),
+        (Allow, 'role:manager', manager_permissions)
+    ]
+
+    # publication workflow state related ACL's
+    publication_state_acls = dict()
+    publication_state_acls['draft'] = authenticated_state_acls + [
+        (Allow, Everyone, ['login']),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+    publication_state_acls['published'] = authenticated_state_acls + [
+        (Allow, Everyone, ['login', 'view']),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+    publication_state_acls['declined'] = authenticated_state_acls + [
+        (Allow, Everyone, ['login']),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
 
     @plumbing(WorkflowState, WorkflowACL)
-    class WorkflowNode(BaseNode):
-
-        @instance_property
-        def properties(self):
-            props = Properties()
-            props.wf_name = u'example'
-            props.wf_transition_names = {
-                'initial_2_final': 'Finalize',
-            }
-            return props
-
-
-State specific access control
------------------------------
-
-ACL's defined for specific workflow states are defined in ``state_acls``
-attribute of the node by state id.
-
-.. code-block:: python
-
-    class WorkflowNodeWithStateACLs(WorkflowNode):
-        state_acls = {
-            'initial': [
-                (Allow, 'role:manager', ['manage', 'edit', 'change_state']),
-                (Allow, Everyone, ['login']),
-                (Deny, Everyone, ALL_PERMISSIONS),
-            ],
-            'final': [
-                (Allow, 'role:manager', ['view', 'edit', 'change_state']),
-                (Deny, Everyone, ALL_PERMISSIONS),
-            ],
-        }
+    class ExampleNode(BaseNode):
+        """Application model node using the publication workflow.
+        """
+        # workflow registration name
+        workflow_name = 'publication'
+        # translation string factory used to translate workflow
+        workflow_tsf = _
+        # workflow state specific ACL's
+        state_acls = publication_state_acls

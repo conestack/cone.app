@@ -38,12 +38,11 @@ library.
 For authentication and authorization
 `node.ext.ugm <http://pypi.python.org/pypi/node.ext.ugm>`_ contract is expected.
 
+`plumber <http://pypi.python.org/pypi/plumber>`_ is utilized
+for providing several application model and UI related behaviors.
+
 `Bootstrap <http://getbootstrap.com>`_ is used for a pretty, modern and
 responsive look and feel.
-
-.. note::
-
-    ``cone.app`` currently requires Pyramid 1.1
 
 
 Features
