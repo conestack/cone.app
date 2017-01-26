@@ -78,5 +78,6 @@ Contents
    Application Model <model>
    UI Widgets <widgets>
    Forms <forms>
+   Translations <translations>
    Workflows <workflows>
    AJAX <ajax>

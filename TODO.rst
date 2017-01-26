@@ -10,9 +10,9 @@ Docs
 [X] - Overhaul forms docs
 [X] - Overhaul workflows docs
 [X] - Overhaul AJAX docs
-[ ] - Document expected permissions for tiles and actions
+[X] - Create translations documentation
 [ ] - Create security docs
-[ ] - Create translations documentation
+[ ] - Document expected permissions for tiles and actions
 [ ] - Create writing tests documenatation
 [ ] - Create twisted integration documentation
 [ ] - Create websocket integration documentation
