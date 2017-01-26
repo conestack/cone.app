@@ -50,9 +50,9 @@ Features
 
 * Base Application UI
 
-* Authentication Integration
+* Authentication and Authorization
 
-* Application Model Basics
+* Basic Application Model
 
 * CRUD
 
