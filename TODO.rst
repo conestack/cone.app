@@ -9,7 +9,7 @@ Docs
 [X] - Overhaul UI Widgets docs
 [X] - Overhaul forms docs
 [X] - Overhaul workflows docs
-[ ] - Overhaul AJAX docs
+[X] - Overhaul AJAX docs
 [ ] - Document expected permissions for tiles and actions
 [ ] - Create security docs
 [ ] - Create translations documentation
