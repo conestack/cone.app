@@ -91,13 +91,14 @@ options and datasets instead of just datasets.
 ---
 
 [ ] Overhaul resource registration and delivery keeping B/C.
+
 - Think about using fanstatic
 - Add resource export as JSON if 3rd party build tool is preferred.
 
 [ ] Overhaul plugin entry hooks staying closer to pyramid if possible.
 
 [ ] Pyramid request wrapper for autobahn websocket requests to enable proper
-    security integration.
+security integration.
 
 1.2
 ---
