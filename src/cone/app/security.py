@@ -195,8 +195,9 @@ class OwnerSupport(Behavior):
     @plumb
     def __init__(_next, self, *args, **kw):
         _next(self, *args, **kw)
-        request = get_current_request()
-        self.owner = authenticated_userid(request)
+        if not self.owner:
+            request = get_current_request()
+            self.owner = authenticated_userid(request)
 
     @plumb
     @property
