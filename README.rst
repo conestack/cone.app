@@ -71,6 +71,9 @@ Changes
 1.0a2 (unreleased)
 ------------------
 
+- Section name for ``cone.app.model.ConfigProperties`` can be customized.
+  [rnix, 2017-02-06]
+
 - Check whether owner already has been set in
   ``cone.app.security.OwnerSupport.__init__`` and skip setting it if so.
   [rnix, 2017-01-29]

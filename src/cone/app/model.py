@@ -476,6 +476,7 @@ class XMLProperties(Properties):
 
 
 class ConfigProperties(Properties):
+    properties_section = 'properties'
 
     def __init__(self, path, data=None):
         object.__setattr__(self, '_path', path)
@@ -492,39 +493,39 @@ class ConfigProperties(Properties):
 
     def __getitem__(self, key):
         try:
-            return self.config().get('properties', key)
+            return self.config().get(self.properties_section, key)
         except ConfigParser.NoOptionError:
             raise KeyError(key)
 
     def get(self, key, default=None):
         try:
-            return self.config().get('properties', key)
+            return self.config().get(self.properties_section, key)
         except ConfigParser.NoOptionError:
             return default
 
     def __contains__(self, key):
         try:
-            self.config().get('properties', key)
+            self.config().get(self.properties_section, key)
             return True
         except ConfigParser.NoOptionError:
             return False
 
     def __getattr__(self, name):
         try:
-            return self.config().get('properties', name)
+            return self.config().get(self.properties_section, name)
         except ConfigParser.NoOptionError:
             return
 
     def __setattr__(self, name, value):
-        self.config().set('properties', name, value)
+        self.config().set(self.properties_section, name, value)
 
     def __delitem__(self, name):
         config = self.config()
         try:
-            config.get('properties', name)
+            config.get(self.properties_section, name)
         except ConfigParser.NoOptionError:
             raise KeyError(u"property %s does not exist" % name)
-        config.remove_option('properties', name)
+        config.remove_option(self.properties_section, name)
 
     def config(self):
         try:
@@ -536,7 +537,7 @@ class ConfigProperties(Properties):
         if os.path.exists(path):
             config.read(path)
         else:
-            config.add_section('properties')
+            config.add_section(self.properties_section)
         object.__setattr__(self, '_config', config)
         return object.__getattribute__(self, '_config')
 
@@ -544,4 +545,4 @@ class ConfigProperties(Properties):
         data = object.__getattribute__(self, '_data')
         config = self.config()
         for key, value in data.items():
-            config.set('properties', key, value)
+            config.set(self.properties_section, key, value)
