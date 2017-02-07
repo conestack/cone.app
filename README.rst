@@ -71,6 +71,9 @@ Changes
 1.0a2 (unreleased)
 ------------------
 
+- Handle unicode properly in ``cone.app.model.ConfigProperties``.
+  [rnix, 2017-02-07]
+
 - Move ``safe_encode`` and ``safe_decode`` utility functions from
   ``cone.app.browser.utils`` to ``cone.app.utils``.
   [rnix, 2017-02-07]
