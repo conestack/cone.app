@@ -71,6 +71,18 @@ Changes
 1.0a2 (unreleased)
 ------------------
 
+- Provide ``icon`` on ``ReferencableChildrenLink`` to render node icons in
+  ``referencelisting`` tile.
+  [rnix, 2017-02-07]
+
+- Fix referencebrowser navigation root lookup and render
+  ``referencebrowser_pathbar`` and ``referencelisting`` tiles on proper
+  context in ``referencebrowser`` tile.
+  [rnix, 2017-02-07]
+
+- Add ``cone.app.browser.referencebrowser.ReferenceBrowserModelMixin``.
+  [rnix, 2017-02-07]
+
 - Handle unicode properly in ``cone.app.model.ConfigProperties``.
   [rnix, 2017-02-07]
 

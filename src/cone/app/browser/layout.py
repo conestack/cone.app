@@ -230,8 +230,7 @@ class PathBar(Tile):
         items = list()
         for node in LocationIterator(model):
             title = node.metadata.title
-            if title:
-                title = safe_decode(title)
+            title = safe_decode(title) if title else title
             items.append({
                 'title': title,
                 'url': self.item_url(node),
