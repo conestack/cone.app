@@ -34,6 +34,24 @@ it get logged::
 
     >>> cone.app.cfg.auth = old_ugm
 
+Test safe_encode::
+
+    >>> from cone.app.utils import safe_encode
+    >>> safe_encode(u'\xc3\xa4\xc3\xb6\xc3\xbc')
+    '\xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc'
+
+    >>> safe_encode('already_string')
+    'already_string'
+
+Test safe_decode::
+
+    >>> from cone.app.utils import safe_decode
+    >>> safe_decode('\xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc')
+    u'\xc3\xa4\xc3\xb6\xc3\xbc'
+
+    >>> safe_decode(u'already_unicode')
+    u'already_unicode'
+
 Helper object for read/write operations with datetime values::
 
     >>> helper = DatetimeHelper()

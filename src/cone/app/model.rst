@@ -696,29 +696,38 @@ Check file contents.::
 
 Overwrite ``foo`` and add ``bar`` properties.::
 
-    >>> props.foo = 'foo'
-    >>> props.bar = 'bar'
-    
+    >>> props.foo = u'foo'
+    >>> props.bar = u'bar'
+    >>> props.baz = u'\xc3\xa4\xc3\xb6\xc3\xbc'
+
 Call props and check result.::
 
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
-    ...     file.read()
-    '[properties]\nfoo = foo\nbar = bar\n\n'
+    ...     file.read().split('\n')
+    ['[properties]', 
+    'foo = foo', 
+    'bar = bar', 
+    'baz = \xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc', 
+    '', 
+    '']
 
 Create config properties from existing file.::
 
     >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
     >>> props.foo
-    'foo'
+    u'foo'
 
     >>> props.bar
-    'bar'
+    u'bar'
+
+    >>> props.baz
+    u'\xc3\xa4\xc3\xb6\xc3\xbc'
 
 Test ``__getitem__``::
 
     >>> props['foo']
-    'foo'
+    u'foo'
 
     >>> props['inexistent']
     Traceback (most recent call last):
@@ -728,10 +737,10 @@ Test ``__getitem__``::
 Test ``get``::
 
     >>> props.get('foo')
-    'foo'
+    u'foo'
 
-    >>> props.get('inexistent', 'default')
-    'default'
+    >>> props.get('inexistent', u'default')
+    u'default'
 
 Test ``__contains__``::
 
@@ -755,7 +764,11 @@ Call and check results.::
 
     >>> props()
     >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
-    ...     file.read()
-    '[properties]\nbar = bar\n\n'
+    ...     file.read().split('\n')
+    ['[properties]', 
+    'bar = bar', 
+    'baz = \xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc', 
+    '', 
+    '']
 
     >>> shutil.rmtree(tempdir)

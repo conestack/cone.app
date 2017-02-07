@@ -10,6 +10,8 @@ from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
 from cone.app.utils import DatetimeHelper
 from cone.app.utils import app_config
+from cone.app.utils import safe_decode
+from cone.app.utils import safe_encode
 from node.behaviors import Adopt
 from node.behaviors import AsAttrAccess
 from node.behaviors import Attributes
@@ -477,6 +479,7 @@ class XMLProperties(Properties):
 
 class ConfigProperties(Properties):
     properties_section = 'properties'
+    encoding = 'utf-8'
 
     def __init__(self, path, data=None):
         object.__setattr__(self, '_path', path)
@@ -493,13 +496,15 @@ class ConfigProperties(Properties):
 
     def __getitem__(self, key):
         try:
-            return self.config().get(self.properties_section, key)
+            value = self.config().get(self.properties_section, key)
+            return safe_decode(value, encoding=self.encoding)
         except ConfigParser.NoOptionError:
             raise KeyError(key)
 
     def get(self, key, default=None):
         try:
-            return self.config().get(self.properties_section, key)
+            value = self.config().get(self.properties_section, key)
+            return safe_decode(value, encoding=self.encoding)
         except ConfigParser.NoOptionError:
             return default
 
@@ -512,11 +517,13 @@ class ConfigProperties(Properties):
 
     def __getattr__(self, name):
         try:
-            return self.config().get(self.properties_section, name)
+            value = self.config().get(self.properties_section, name)
+            return safe_decode(value, encoding=self.encoding)
         except ConfigParser.NoOptionError:
-            return
+            return None
 
     def __setattr__(self, name, value):
+        value = safe_encode(value, encoding=self.encoding)
         self.config().set(self.properties_section, name, value)
 
     def __delitem__(self, name):
@@ -545,4 +552,5 @@ class ConfigProperties(Properties):
         data = object.__getattribute__(self, '_data')
         config = self.config()
         for key, value in data.items():
+            value = safe_encode(value, encoding=self.encoding)
             config.set(self.properties_section, key, value)

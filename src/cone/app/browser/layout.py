@@ -7,10 +7,10 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
 from cone.app.browser.utils import nodepath
-from cone.app.browser.utils import safe_decode
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.utils import principal_data
+from cone.app.utils import safe_decode
 from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
