@@ -350,16 +350,27 @@ ConfigProperties
 ----------------
 
 ``cone.app.model.ConfigProperties`` is an ``IProperties`` implementation which
-can be used to serialize/deserialze properties to ``.ini`` files. Supports
-value type ``string`` only.
+can be used to serialize/deserialze properties to ``.ini`` files.
+
+Property values are handeled as unicode strings and get UTF-8 encoded. It's
+possible to change the encoding by settings the ``encoding`` attribute.
+
+By default the propertied are stored in the ``properties`` section of the
+``.ini`` file. This can be configured by setting the ``properties_section``
+attribute.
+
+The constructor expects the file path and an optional data dictionary
+containing initial properties as arguments.
 
 .. code-block:: python
 
     from cone.app.model import ConfigProperties
 
-    file = '/path/to/file.ini'
-    props = ConfigProperties(file)
-    props.a = '1'
+    props = ConfigProperties(
+        path='/path/to/file.ini',
+        data=dict(a=u'a')
+    )
+    props.b = u'b'
     props()  # persist to file
 
 
