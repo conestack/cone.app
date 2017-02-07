@@ -1,4 +1,6 @@
 from cone.app.utils import app_config
+from cone.app.utils import safe_encode
+from cone.app.utils import safe_decode
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import authenticated_userid
 import datetime
@@ -14,18 +16,6 @@ def authenticated(request):
     """XXX: remove this. use ``authenticated_userid`` directly.
     """
     return authenticated_userid(request)
-
-
-def safe_encode(value):
-    if isinstance(value, unicode):
-        value = value.encode('utf-8')
-    return value
-
-
-def safe_decode(value):
-    if not isinstance(value, unicode):
-        value = value.decode('utf-8')
-    return value
 
 
 def nodepath(node):

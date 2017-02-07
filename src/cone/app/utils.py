@@ -24,6 +24,18 @@ def principal_data(principal_id):
     return data
 
 
+def safe_encode(value, encoding='utf-8'):
+    if isinstance(value, unicode):
+        value = value.encode(encoding)
+    return value
+
+
+def safe_decode(value, encoding='utf-8'):
+    if not isinstance(value, unicode):
+        value = value.decode(encoding)
+    return value
+
+
 def timestamp():
     return datetime.now()
 

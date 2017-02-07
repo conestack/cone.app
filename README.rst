@@ -71,6 +71,10 @@ Changes
 1.0a2 (unreleased)
 ------------------
 
+- Move ``safe_encode`` and ``safe_decode`` utility functions from
+  ``cone.app.browser.utils`` to ``cone.app.utils``.
+  [rnix, 2017-02-07]
+
 - Section name for ``cone.app.model.ConfigProperties`` can be customized.
   [rnix, 2017-02-06]
 

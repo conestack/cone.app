@@ -38,6 +38,8 @@ Roadmap
 1.0a2
 -----
 
+[ ] Test referencebrowser.
+
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
 [ ] ``cone.app.browser.authoring.OverlayFormTile`` is superfluous.
