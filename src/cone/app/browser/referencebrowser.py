@@ -4,12 +4,17 @@ from cone.app.browser.contents import ContentsTile
 from cone.app.browser.layout import PathBar
 from cone.app.browser.table import RowData
 from cone.app.browser.utils import make_query
+from cone.app.browser.utils import request_property
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import INavigationLeaf
+from cone.tile import Tile
+from cone.tile import registerTile
+from cone.tile import render_tile
 from cone.tile import tile
 from node.interfaces import IUUIDAware
 from node.utils import LocationIterator
 from node.utils import instance_property
+from node.utils import node_by_path
 from pyramid.i18n import TranslationStringFactory
 from yafowil.base import UNSET
 from yafowil.base import factory
@@ -42,21 +47,43 @@ def make_refbrowser_query(request, **kw):
     return make_query(**params)
 
 
+class ReferenceBrowserModelMixin(object):
+
+    @request_property
+    def referencable_root(self):
+        return node_by_path(
+            self.model.root,
+            self.request.params['root'].strip('/')
+        )
+
+    @request_property
+    def referencebrowser_model(self):
+        root = self.referencable_root
+        if root in LocationIterator(self.model):
+            return self.model
+        return root
+
+
+@tile(name='referencebrowser',
+      path='templates/referencebrowser.pt',
+      permission='view')
+class ReferenceBrowser(Tile, ReferenceBrowserModelMixin):
+
+    def render_tile(self, name):
+        return render_tile(self.referencebrowser_model, self.request, name)
+
+
 @tile(name='referencebrowser_pathbar',
       path='templates/referencebrowser_pathbar.pt',
       permission='view')
-class ReferenceBrowserPathBar(PathBar):
+class ReferenceBrowserPathBar(PathBar, ReferenceBrowserModelMixin):
 
     @property
     def items(self):
-        root = self.request.params['root'].split('/')
-        breakpoint = None
-        for node in LocationIterator(self.model):
-            path = [_ for _ in node.path if _]
-            if path == root:
-                breakpoint = node
-                break
-        return self.items_for(self.model, breakpoint)
+        return self.items_for(
+            self.referencebrowser_model,
+            breakpoint=self.referencable_root
+        )
 
     def item_url(self, node):
         query = make_refbrowser_query(self.request)
@@ -145,6 +172,10 @@ class ReferencableChildrenLink(LinkAction):
     @property
     def display(self):
         return self.permitted('view')
+
+    @property
+    def icon(self):
+        return self.model.nodeinfo.icon
 
     def render(self):
         if INavigationLeaf.providedBy(self.model):

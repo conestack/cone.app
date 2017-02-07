@@ -296,7 +296,9 @@ ReferencableChildrenLink
     ajax:bind="click"\n     
     ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"\n     
     ajax:event="contextchanged:.refbrowsersensitiv"\n     
-    ajax:action="tabletile:#tableid:replace"\n    >&nbsp;model</a>\n\n  \n\n\n'
+    ajax:action="tabletile:#tableid:replace"\n    
+    ><span class="glyphicon glyphicon-asterisk"></span\n    \n    
+    >&nbsp;model</a>...'
 
     >>> layer.logout()
 
@@ -309,12 +311,15 @@ Reference Pathbar
     >>> model = UUIDNode()
     >>> model['a'] = UUIDNode()
     >>> model['a']['b'] = UUIDNode()
+    >>> model['z'] = UUIDNode()
     >>> node = model['a']['b']['c'] = UUIDNode()
 
     >>> request = layer.new_request()
     >>> request.params['referencable'] = 'dummy'
     >>> request.params['selected'] = ''
     >>> request.params['root'] = '/'
+
+Case Unauthorized::
 
     >>> res = render_tile(node, request, 'referencebrowser_pathbar')
     Traceback (most recent call last):
@@ -323,8 +328,17 @@ Reference Pathbar
     <cone.app.browser.referencebrowser.ReferenceBrowserPathBar object at ...> 
     failed permission check
 
+Case reference root is application root::
+
     >>> layer.login('max')
+
+    >>> request = layer.new_request()
+    >>> request.params['referencable'] = 'dummy'
+    >>> request.params['selected'] = ''
+    >>> request.params['root'] = '/'
+
     >>> res = render_tile(node, request, 'referencebrowser_pathbar')
+
     >>> res.find('"http://example.com/?') > -1
     True
 
@@ -334,6 +348,11 @@ Reference Pathbar
     >>> res.find('"http://example.com/a/b?') > -1
     True
 
+Case reference root is in current sub tree::
+
+    >>> request = layer.new_request()
+    >>> request.params['referencable'] = 'dummy'
+    >>> request.params['selected'] = ''
     >>> request.params['root'] = 'a'
     >>> res = render_tile(node, request, 'referencebrowser_pathbar')
     >>> res.find('"http://example.com/?') > -1
@@ -343,6 +362,25 @@ Reference Pathbar
     True
 
     >>> res.find('"http://example.com/a/b?') > -1
+    True
+
+Case reference root is in sibling sub tree::
+
+    >>> request = layer.new_request()
+    >>> request.params['referencable'] = 'dummy'
+    >>> request.params['selected'] = ''
+    >>> request.params['root'] = '/z'
+    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
+    >>> res.find('"http://example.com/?') > -1
+    False
+
+    >>> res.find('"http://example.com/a?') > -1
+    False
+
+    >>> res.find('"http://example.com/a/b?') > -1
+    False
+
+    >>> res.find('<strong>z</strong>') > -1
     True
 
     >>> layer.logout()
