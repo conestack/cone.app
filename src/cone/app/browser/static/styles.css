@@ -125,6 +125,23 @@ tr.selectable.selected td {
 #referencebrowser_table td.actions {
     width:100px;
 }
+.modal-body div.referencebrowser {
+    margin:-15px;
+}
+div#referencebrowser_pathbar ol.breadcrumb {
+    border-radius:0px;
+}
+div#referencebrowser {
+    margin-bottom:0px;
+    border-radius:0px;
+    border-left:none;
+    border-right:none;
+    border-bottom:none;
+}
+div#referencebrowser .panel-heading,
+div#referencebrowser .panel-footer {
+    border-radius:0px;
+}
 
 /* settings */
 .settingstabpane {
