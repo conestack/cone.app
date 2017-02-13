@@ -5,12 +5,10 @@
   <div class="referencebrowser">
 
     <div id="referencebrowser_pathbar" class="pathbar">
-      <tal:mainmenu
-        replace="structure context.render_tile('referencebrowser_pathbar')" />
+      <tal:mainmenu replace="structure context.referencebrowser_pathbar" />
     </div>
 
-    <tal:referencelisting
-      replace="structure context.render_tile('referencelisting')" />
+    <tal:referencelisting replace="structure context.referencelisting" />
 
   </div>
 
