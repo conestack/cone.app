@@ -69,8 +69,21 @@ class ReferenceBrowserModelMixin(object):
       permission='view')
 class ReferenceBrowser(Tile, ReferenceBrowserModelMixin):
 
-    def render_tile(self, name):
-        return render_tile(self.referencebrowser_model, self.request, name)
+    @property
+    def referencebrowser_pathbar(self):
+        return render_tile(
+            self.referencebrowser_model,
+            self.request,
+            'referencebrowser_pathbar'
+        )
+
+    @property
+    def referencelisting(self):
+        return render_tile(
+            self.referencebrowser_model,
+            self.request,
+            'referencelisting'
+        )
 
 
 @tile(name='referencebrowser_pathbar',
