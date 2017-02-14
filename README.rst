@@ -18,7 +18,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2016 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2017 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
@@ -67,6 +67,12 @@ Coverage Report
 
 Changes
 =======
+
+1.0a3 (unreleased)
+------------------
+
+- No changes yet.
+
 
 1.0a2
 -----
