@@ -73,7 +73,7 @@ class PasteAction(Tile):
             if not node.node_info_name in self.model.nodeinfo.addables:
                 message = localizer.translate(
                     _('cannot_paste_cardinality_violation',
-                      default="Violation. '${target}' is not allowed to " +\
+                      default="Violation. '${target}' is not allowed to "
                               "contain '${source}'"),
                       mapping={
                           'target': self.model.nodeinfo.title,
@@ -89,7 +89,7 @@ class PasteAction(Tile):
                     if parent is node:
                         message = localizer.translate(
                             _('cannot_paste_self_containment',
-                              default="Cannot paste cut object to child " +\
+                              default="Cannot paste cut object to child "
                                       "of it: ${name}"),
                               mapping={'name': parent.name})
                         errors.append(message)

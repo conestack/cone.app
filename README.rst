@@ -68,8 +68,8 @@ Coverage Report
 Changes
 =======
 
-1.0a2 (unreleased)
-------------------
+1.0a2
+-----
 
 - Provide ``icon`` on ``ReferencableChildrenLink`` to render node icons in
   ``referencelisting`` tile.

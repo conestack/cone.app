@@ -5,20 +5,6 @@ TODO
 Docs
 ====
 
-[X] Complete layout docs
-
-[X] Overhaul UI Widgets docs
-
-[X] Overhaul forms docs
-
-[X] Overhaul workflows docs
-
-[X] Overhaul AJAX docs
-
-[X] Create translations documentation
-
-[X] Create security docs
-
 [ ] Document expected permissions for tiles and actions
 
 [ ] Create writing tests documenatation
@@ -35,10 +21,8 @@ Docs
 Roadmap
 =======
 
-1.0a2
+1.0a3
 -----
-
-[ ] Test referencebrowser.
 
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
