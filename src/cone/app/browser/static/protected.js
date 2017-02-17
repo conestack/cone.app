@@ -24,6 +24,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         // add binders to bdajax binding callbacks
         $.extend(bdajax.binders, {
             settingstabsbinder: cone.settingstabsbinder,
+            batcheditemsbinder: cone.batcheditemsbinder,
             tabletoolbarbinder: cone.tabletoolbarbinder,
             sharingbinder: cone.sharingbinder,
             selectablebinder: cone.selectable.binder,
@@ -87,6 +88,39 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     }
                 });
             }).first().trigger('click');
+        },
+
+        batcheditemsbinder: function(context) {
+            var selection = $('.batched_items_slice_size select', context);
+            selection.unbind('change').bind('change', function(event) {
+                var option = $('option:selected', $(this)).first();
+                var size = option.text();
+                var evt = selection.attr('ajax:event').split(':');
+                var target = selection.attr('ajax:target') + '&size=' + size;
+                bdajax.trigger(evt[0], evt[1], target);
+            });
+            var trigger_search = function(input) {
+                var term = input.attr('value');
+                var evt = input.attr('ajax:event').split(':');
+                var target = input.attr('ajax:target') + '&term=' + term;
+                bdajax.trigger(evt[0], evt[1], target);
+            };
+            var searchfield = $('.batched_items_filter input', context);
+            searchfield.unbind('keypress').bind('keypress', function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                }
+            });
+            searchfield.unbind('keyup').bind('keyup', function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    trigger_search($(this));
+                }
+            });
+            searchfield.unbind('change').bind('change', function(event) {
+                event.preventDefault();
+                trigger_search($(this));
+            });
         },
 
         tabletoolbarbinder: function(context) {

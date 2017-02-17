@@ -61,6 +61,11 @@ by node info name only if no class given at lookup. Or so...
 [ ] Adopt livesearch JS intergration to provide hooks for passing typeahead
 options and datasets instead of just datasets.
 
+[ ] Use ``BatchedItems`` as base for ``Table``.
+
+[ ] ``cone.tile.Tile`` should point to template at ``template`` instead of
+``path``.
+
 1.0b1
 -----
 
@@ -85,6 +90,9 @@ options and datasets instead of just datasets.
 
 [ ] Pyramid request wrapper for autobahn websocket requests to enable proper
 security integration.
+
+[ ] Rename ``cone.app.browser.batch.Batch`` to
+``cone.app.browser.batch.Pagination`` provoding B/C.
 
 1.2
 ---
