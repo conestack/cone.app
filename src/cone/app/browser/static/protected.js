@@ -96,13 +96,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var option = $('option:selected', $(this)).first();
                 var size = option.text();
                 var evt = selection.attr('ajax:event').split(':');
-                var target = selection.attr('ajax:target') + '&size=' + size;
+                var target = bdajax.parsetarget(selection.attr('ajax:target'));
+                target.params.size = size;
                 bdajax.trigger(evt[0], evt[1], target);
             });
             var trigger_search = function(input) {
                 var term = input.attr('value');
                 var evt = input.attr('ajax:event').split(':');
-                var target = input.attr('ajax:target') + '&term=' + term;
+                var target = bdajax.parsetarget(input.attr('ajax:target'));
+                target.params.term = term;
                 bdajax.trigger(evt[0], evt[1], target);
             };
             var searchfield = $('.batched_items_filter input', context);
