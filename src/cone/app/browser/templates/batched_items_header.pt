@@ -54,8 +54,8 @@
       <span i18n:translate="search"
             class="input-group-addon">Search</span>
 
-      <input type="text"
-             name="term"
+      <input name="term"
+             type="text"
              class="form-control"
              ajax:target="${context.filter_target}"
              ajax:event="batchclicked:.${context.items_id}batchsensitiv"

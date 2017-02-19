@@ -160,30 +160,41 @@ class BatchedItems(Tile):
 
     @property
     def rendered_header(self):
-        return BatchedItemsHeader(self)(self.model, self.request)
+        if not self.display_header:
+            return u''
+        return BatchedItemsHeader(parent=self)(
+            model=self.model,
+            request=self.request
+        )
 
     @property
     def rendered_slice(self):
-        return self.slice(self.model, self.request)
+        return self.slice(
+            model=self.model,
+            request=self.request
+        )
 
     @property
     def rendered_footer(self):
-        return BatchedItemsFooter(self)(self.model, self.request)
+        if not self.display_footer:
+            return u''
+        return BatchedItemsFooter(parent=self)(
+            model=self.model,
+            request=self.request
+        )
 
     @request_property
     def slice(self):
-        return BatchedItemsSlice(self)
+        return BatchedItemsSlice(parent=self)
 
     @request_property
     def pagination(self):
-        return BatchedItemsPagination(self)
+        return BatchedItemsPagination(parent=self)
 
     @request_property
     def filter_term(self):
         term = self.request.params.get('term')
-        if term:
-            term = urllib2.unquote(str(term)).decode('utf-8')
-        return term
+        return urllib2.unquote(str(term)).decode('utf-8') if term else term
 
     def make_url(self, params):
         for param in self.query_whitelist:
@@ -231,13 +242,13 @@ class BatchedItemsHeader(Tile):
     @property
     def slice_target(self):
         return self.parent.make_url({
-            'term': self.parent.filter_term,
+            'term': self.filter_term,
         })
 
     @property
     def filter_target(self):
         return self.parent.make_url({
-            'size': self.parent.slice.size,
+            'size': self.slice_size,
         })
 
     @property
@@ -257,7 +268,10 @@ class BatchedItemsFooter(Tile):
 
     @property
     def rendered_pagination(self):
-        return self.parent.pagination(self.model, self.request)
+        return self.parent.pagination(
+            model=self.model,
+            request=self.request
+        )
 
     @property
     def slice(self):
