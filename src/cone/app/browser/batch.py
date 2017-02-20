@@ -147,62 +147,6 @@ class Batch(Tile):
         return -1                                           #pragma NO COVERAGE
 
 
-class BatchedItems(Tile):
-    """Base tile for displaying searchable, batched items.
-    """
-    path = 'cone.app.browser:templates/batched_items.pt'
-    items_id = 'batched_items'
-    items_css = 'batched_items panel panel-default'
-    bind_events = 'batchclicked'
-    query_whitelist = []
-    display_header = True
-    display_footer = True
-
-    @property
-    def rendered_header(self):
-        if not self.display_header:
-            return u''
-        return BatchedItemsHeader(parent=self)(
-            model=self.model,
-            request=self.request
-        )
-
-    @property
-    def rendered_slice(self):
-        return self.slice(
-            model=self.model,
-            request=self.request
-        )
-
-    @property
-    def rendered_footer(self):
-        if not self.display_footer:
-            return u''
-        return BatchedItemsFooter(parent=self)(
-            model=self.model,
-            request=self.request
-        )
-
-    @request_property
-    def slice(self):
-        return BatchedItemsSlice(parent=self)
-
-    @request_property
-    def pagination(self):
-        return BatchedItemsPagination(parent=self)
-
-    @request_property
-    def filter_term(self):
-        term = self.request.params.get('term')
-        return urllib2.unquote(str(term)).decode('utf-8') if term else term
-
-    def make_url(self, params):
-        for param in self.query_whitelist:
-            params[param] = self.request.params.get(param, '')
-        query = make_query(**params)
-        return make_url(self.request, node=self.model, query=query)
-
-
 class BatchedItemsHeader(Tile):
     """Displayed above the actual item slice. Contains title, search field and
     slice size selection.
@@ -362,3 +306,63 @@ class BatchedItemsPagination(Batch):
                 'url': url,
             })
         return ret
+
+
+class BatchedItems(Tile):
+    """Base tile for displaying searchable, batched items.
+    """
+    path = 'cone.app.browser:templates/batched_items.pt'
+    items_id = 'batched_items'
+    items_css = 'batched_items panel panel-default'
+    bind_events = 'batchclicked'
+    query_whitelist = []
+    display_header = True
+    display_footer = True
+    header_factory = BatchedItemsHeader
+    footer_factory = BatchedItemsFooter
+    slice_factory = BatchedItemsSlice
+    pagination_factory = BatchedItemsPagination
+
+    @property
+    def rendered_header(self):
+        if not self.display_header:
+            return u''
+        return self.header_factory(parent=self)(
+            model=self.model,
+            request=self.request
+        )
+
+    @property
+    def rendered_slice(self):
+        return self.slice(
+            model=self.model,
+            request=self.request
+        )
+
+    @property
+    def rendered_footer(self):
+        if not self.display_footer:
+            return u''
+        return self.footer_factory(parent=self)(
+            model=self.model,
+            request=self.request
+        )
+
+    @request_property
+    def slice(self):
+        return self.slice_factory(parent=self)
+
+    @request_property
+    def pagination(self):
+        return self.pagination_factory(parent=self)
+
+    @request_property
+    def filter_term(self):
+        term = self.request.params.get('term')
+        return urllib2.unquote(str(term)).decode('utf-8') if term else term
+
+    def make_url(self, params):
+        for param in self.query_whitelist:
+            params[param] = self.request.params.get(param, '')
+        query = make_query(**params)
+        return make_url(self.request, node=self.model, query=query)

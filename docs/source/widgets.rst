@@ -793,6 +793,8 @@ See :doc:`forms documentation <forms>` for more details.
 Abstract tiles
 ==============
 
+.. _widgets_batch:
+
 Batch
 -----
 
@@ -849,6 +851,255 @@ More customization options on ``Batch`` class:
 
 - **nextpage**: Overwrite with property returning ``None`` to suppress
   rendering next page link.
+
+
+Batched Items
+-------------
+
+A tile for creating batched, searchable listings is contained at
+``cone.app.browser.batch``.
+
+It consists of a listing header which displays a search field and a slice size
+selection, the actual listing slice and a listing footer which displays
+information about the currently displayed slice and the pagination
+:ref:`Batch <widgets_batch>`.
+
+The listing slice is abstract and must be implemented use case specific
+while the listing header, footer and pagination batch are generic
+implementations, which may be customized though.
+
+Create a template for rendering the slice, e.g. at
+``cone.example.browser:templates/example_slice.pt``:
+
+.. code-block:: xml
+
+    <tal:example_slice
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        omit-tag="True">
+
+      <div class="${context.slice_id}">
+        <div tal:repeat="item context.items">
+          <span tal:content="item.metadata.title">Title</span>
+        </div>
+      </div>
+
+    </tal:example_slice>
+
+Create the concrete slice implementation and the concrete batched items
+implementation referencing the slice.
+
+On ``BatchedItemsSlice`` subclass, ``item_count`` and ``items`` are the
+expected contracts. ``filtered_items`` computes the overall items filtered by
+search term, which is not part of the slice contract, but illustrates that
+search term and possible other custom request parameters needs to be considered
+manually in the implementation. The ``path`` property points to the slice
+rendering template.
+
+The subclass of ``BatchedItems`` gets registered under desired tile name and
+references the slice implementation at ``slice_factory``. ``items_id`` is set
+as CSS id of the tile element and is used to bind on the client side for
+rerendering the tile.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import BatchedItems
+    from cone.app.browser.batch import BatchedItemsSlice
+
+    class ExampleBatchedItemsSlice(BatchedItemsSlice):
+        path = 'cone.example.browser:templates/example_slice.pt'
+
+        @property
+        def item_count(self):
+            return len(self.filtered_items)
+
+        @property
+        def items(self):
+            start, end = self.slice
+            return self.filtered_items[start:end]
+
+        @property
+        def filtered_items(self):
+            items = list()
+            term = self.parent.filter_term
+            term = term.lower() if term else term
+            for node in self.model.values():
+                if term and node.name.find(term) == -1:
+                    continue
+                items.append(node)
+            return items
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+        items_id = 'example_items'
+        slice_factory = ExampleBatchedItemsSlice
+
+
+More customization options on ``BatchedItems`` class:
+
+- **path**: Path to template used for rendering the tile. Defaults to
+  ``cone.app.browser:templates/batched_items.pt``. Can also be set by passing
+  it as ``path`` keyword argument to ``tile`` decorator.
+
+- **items_id**: CSS id used to identify the tile on the client.
+
+- **items_css**: CSS classes set on the tile root element
+
+- **bind_events**: Javascript events to listen to for rerendering the tile.
+  Defaults to ``batchclicked``
+
+- **query_whitelist**: List of URL query parameters considered when creating
+  Links. Defaults to ``[]``.
+
+- **display_header**: Flag whether to display the listing header. Defaults to
+  ``True``
+
+- **display_footer**: Flag whether to display the listing footer. Defaults to
+  ``True``
+
+- **header_factory**: Factory used to create the listing header tile. Defaults
+  to ``cone.app.browser.batch.BatchedItemsHeader``.
+
+- **footer_factory**: Factory used to create the listing footer tile. Defaults
+  to ``cone.app.browser.batch.BatchedItemsFooter``.
+
+- **slice_factory**: Factory used to create the listing slice.
+
+- **pagination_factory**: Factory used to create the pagination tile displayed
+  in listing footer tile. Defaults to
+  ``cone.app.browser.batch.BatchedItemsPagination``.
+
+
+Customizing the listing header
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Basic settings of the listing header can be customized by passing them as
+keyword arguments to the constructor. In this case we define a custom
+``header_factory`` on the ``BatchedItems`` implementation.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import BatchedItemsHeader
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+
+        def header_factory(self, parent):
+            return BatchedItemsHeader(
+                parent=parent,
+                show_title=False
+            )
+
+Valid settings in ``BatchedItemsHeader.__init__`` class:
+
+- **path**: Template used to render the listing header. Defaults to
+  ``cone.app.browser:templates/batched_items_header.pt``.
+
+- **show_title**: Flag whether to show the title. Defaults to ``True``.
+
+- **show_slice_size**: Flag whether to show the slice size. Defaults to
+  ``True``.
+
+- **slice_size_css**: CSS classes rendered on slice size selection wrapper
+  element. Defaults to ``col-xs-4 col-sm3``. Can be used to change the size
+  of the slice size selection.
+
+- **show_filter**: Flag whether to show the search filter input. Defaults to
+  ``True``.
+
+- **filter_css**: CSS classes rendered on search filter input wrapper element.
+  Defaults to ``col-xs-3``. Can be used to change the size
+  of the search filter input.
+
+- **head_additional**: Additional arbitrary markup rendered in header. Can be
+  used to add additional listing filter aspects or similar.
+
+More complex customizations require subclassing of the ``BatchedItemsHeader``
+class.
+
+.. code-block:: python
+
+    class ExampleBatchedItemsHeader(BatchedItemsHeader):
+        """Header customizations are implemented here.
+        """
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+        header_factory = ExampleBatchedItemsHeader
+
+
+Customizing the listing footer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Customizing the listing footer works the same way as customizing the header.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import BatchedItemsFooter
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+
+        def footer_factory(self, parent):
+            return BatchedItemsFooter(
+                parent=parent,
+                path='cone.example.browser:templates/example_listing_footer.pt'
+            )
+
+Valid settings in ``BatchedItemsFooter.__init__`` class:
+
+- **path**: Template used to render the listing header. Defaults to
+  ``cone.app.browser:templates/batched_items_footer.pt``.
+
+More complex customizations require subclassing of the ``BatchedItemsFooter``
+class.
+
+.. code-block:: python
+
+    class ExampleBatchedItemsFooter(BatchedItemsFooter):
+        """Footer customizations are implemented here.
+        """
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+        footer_factory = BatchedItemsFooter
+
+
+Customizing the pagination batch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Customizing the pagination batch works the same way as customizing the header
+and the footer.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import BatchedItemsPagination
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+
+        def pagination_factory(self, parent):
+            return BatchedItemsPagination(
+                parent=parent,
+                default_slice_size=10
+            )
+
+Valid settings in ``BatchedItemsPagination.__init__`` class:
+
+- **default_slice_size**: Default number of items displayed in slice. Defaults
+  to ``15``.
+
+More complex customizations require subclassing of the
+``BatchedItemsPagination`` class.
+
+.. code-block:: python
+
+    class ExampleBatchedItemsPagination(BatchedItemsPagination):
+        """Pagination customizations are implemented here.
+        """
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+        pagination_factory = ExampleBatchedItemsPagination
 
 
 Table

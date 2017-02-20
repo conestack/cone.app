@@ -76,18 +76,18 @@ body {
 }
 
 /* batched items */
-.batched_items .batched_items_slice_size {
+.batched_items_slice_size {
     margin-top: 2px;
 }
-.batched_items .batched_items_filter {
+.batched_items_filter {
     margin-right:8px;
     margin-top:2px;
 }
-.batched_items .batched_items_footer .pagination {
+.batched_items_footer .pagination {
     margin-top:0;
     margin-bottom:0;
 }
-.batched_items .batched_items_info {
+.batched_items_info {
     margin-top:4px;
     margin-bottom:4px;
 }
