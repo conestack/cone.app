@@ -11,6 +11,7 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
+from cone.tile import Tile
 from cone.tile import tile
 from node.utils import instance_property
 from pyramid.i18n import TranslationStringFactory
@@ -191,8 +192,14 @@ class ContentsTile(Table):
         return children
 
 
+@tile(name='listing', path='templates/listing.pt', permission='list')
+class ListingTile(Tile):
+    """Tile rendering the listing.
+    """
+
+
 @view_config(name='listing', permission='list')
 def listing(model, request):
-    """Listing view
+    """Listing view.
     """
     return render_main_template(model, request, 'listing')

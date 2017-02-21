@@ -71,7 +71,9 @@ Changes
 1.0a3 (unreleased)
 ------------------
 
-- No changes yet.
+- Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
+  classes and use ``cone.tile.tile`` all over the place.
+  [rnix, 2017-02-21]
 
 
 1.0a2

@@ -25,6 +25,32 @@ from pyramid.security import has_permission
 _ = TranslationStringFactory('cone.app')
 
 
+@tile(name='unauthorized',
+      path='templates/unauthorized.pt',
+      permission='login')
+class UnauthorizedTile(Tile):
+    """Unauthorized tile.
+    """
+
+
+@tile(name='logo', path='templates/logo.pt', permission='login')
+class LogoTile(Tile):
+    """Tile rendering the logo.
+    """
+
+
+@tile(name='livesearch', path='templates/livesearch.pt', permission='login')
+class LivesearchTile(Tile):
+    """Tile rendering the live search.
+    """
+
+
+@tile(name='footer', path='templates/footer.pt', permission='login')
+class FooterTile(Tile):
+    """Tile rendering the page footer.
+    """
+
+
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.

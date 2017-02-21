@@ -21,9 +21,11 @@ def render_main_template(model, request, contenttile='content'):
     As main content the tile with name contenttile is rendered.
     """
     ActionContext(model, request, contenttile)
-    return render_template_to_response(cone.app.cfg.main_template,
-                                       request=request,
-                                       model=model)
+    return render_template_to_response(
+        cone.app.cfg.main_template,
+        request=request,
+        model=model
+    )
 
 
 @view_config(permission='login')
@@ -49,43 +51,3 @@ def forbidden_view(request):
     if not authenticated_userid(request):
         return login_view(model, request)
     return render_main_template(model, request, contenttile='unauthorized')
-
-
-def includeme(config):
-    # static resources
-    config.add_view(static_resources, name='static')
-
-    # tiles with specific subclass
-    # XXX: turn into specific subclasses and register with tile decorator
-    register_tile(
-        name='bdajax',
-        path='bdajax:bdajax_bs3.pt',
-        permission='login')
-    register_tile(
-        name='listing',
-        path='templates/listing.pt',
-        permission='list')
-    register_tile(
-        name='unauthorized',
-        path='templates/unauthorized.pt',
-        permission='login')
-    register_tile(
-        name='logo',
-        path='templates/logo.pt',
-        permission='login')
-    register_tile(
-        name='livesearch',
-        path='templates/livesearch.pt',
-        permission='login')
-    register_tile(
-        name='footer',
-        path='templates/footer.pt',
-        permission='login')
-    register_tile(
-        name='referencebrowser',
-        path='templates/referencebrowser.pt',
-        permission='view')
-    register_tile(
-        name='sharing',
-        path='templates/sharing.pt',
-        permission='manage_permissions')

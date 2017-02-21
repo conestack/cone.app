@@ -33,7 +33,7 @@ the navtree. ``SettingsBehavior`` for settings forms probably superfluous then.
 
 [ ] Set ``ISecured`` on ``cone.app.workflow.WorkflowACL``
 
-[ ] ``cone.app.browser.copysupport:124``: trigger ``contextchanged`` on
+[ ] ``cone.app.browser.copysupport#124``: trigger ``contextchanged`` on
 ``#layout`` instead of ``.contextsensitiv``.
 
 [ ] Get rid of remaining ``contextsensitiv`` CSS class related bdajax

@@ -16,9 +16,17 @@ logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
 
 
+@tile(name='sharing',
+      path='templates/sharing.pt',
+      permission='manage_permissions')
+class SharingTile(Tile):
+    """Tile rendering the sharing table.
+    """
+
+
 @view_config(name='sharing', permission='manage_permissions')
 def sharing(model, request):
-    """Sharing view
+    """Sharing view.
     """
     return render_main_template(model, request, 'sharing')
 

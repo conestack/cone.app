@@ -1,12 +1,20 @@
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.exception import format_traceback
 from cone.app.interfaces import ILiveSearch
+from cone.tile import Tile
 from cone.tile import render_tile
+from cone.tile import tile
 from pyramid.response import Response
 from pyramid.view import view_config
 import json
 import logging
 import types
+
+
+@tile(name='bdajax', path='bdajax:bdajax_bs3.pt', permission='login')
+class BDAjaxTile(Tile):
+    """Tile rendering bdajax markup.
+    """
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')

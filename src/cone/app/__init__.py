@@ -291,8 +291,10 @@ def main(global_config, **settings):
     # add translation
     config.add_translation_dirs('cone.app:locale/')
 
-    # include and scan browser package
-    config.include(cone.app.browser)
+    # register static resources
+    config.add_view(static_resources, name='static')
+
+    # scan browser package
     config.scan(cone.app.browser)
 
     # load zcml
