@@ -16,7 +16,7 @@
         <a href="#"
            ajax:bind="click"
            ajax:target="${firstpage['url']}"
-           ajax:event="batchclicked:.${context.name}sensitiv"
+           ajax:event="${context.trigger_event}:${context.trigger_selector}"
            tal:attributes="href firstpage['url']"
            i18n:translate="first">First</a>
       </li>
@@ -38,7 +38,7 @@
         <a href="#"
            ajax:bind="click"
            ajax:target="${prevpage['url']}"
-           ajax:event="batchclicked:.${context.name}sensitiv"
+           ajax:event="${context.trigger_event}:${context.trigger_selector}"
            tal:attributes="href prevpage['url']"
            i18n:translate="previous">Previous</a>
       </li>
@@ -60,7 +60,7 @@
           <a href="#"
              ajax:bind="click"
              ajax:target="${page['url']}"
-             ajax:event="batchclicked:.${context.name}sensitiv"
+             ajax:event="${context.trigger_event}:${context.trigger_selector}"
              tal:attributes="href page['url']"
              tal:content="page['page']">X</a>
         </li>
@@ -85,7 +85,7 @@
         <a href="#"
            ajax:bind="click"
            ajax:target="${nextpage['url']}"
-           ajax:event="batchclicked:.${context.name}sensitiv"
+           ajax:event="${context.trigger_event}:${context.trigger_selector}"
            tal:attributes="href nextpage['url']"
            i18n:translate="next">Next</a>
       </li>
@@ -107,7 +107,7 @@
         <a href="#"
            ajax:bind="click"
            ajax:target="${lastpage['url']}"
-           ajax:event="batchclicked:.${context.name}sensitiv"
+           ajax:event="${context.trigger_event}:${context.trigger_selector}"
            tal:attributes="href lastpage['url']"
            i18n:translate="last">Last</a>
       </li>

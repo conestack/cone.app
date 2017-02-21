@@ -26,6 +26,11 @@ class Batch(Tile):
         'url': '',
     }
     ellipsis = u'...'
+    trigger_event = 'batchclicked'
+
+    @property
+    def trigger_selector(self):
+        return '.{}sensitiv'.format(self.name)
 
     @property
     def vocab(self):
