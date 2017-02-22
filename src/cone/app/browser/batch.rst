@@ -445,8 +445,7 @@ rendering on it's own or using a custom template for the entire
     NotImplementedError: Abstract ``BatchedItems`` does not implement 
     ``item_count``
 
-    >>> start, end = batched_items.current_slice
-    >>> batched_items.slice_items(start, end)
+    >>> batched_items.slice_items
     Traceback (most recent call last):
       ...
     NotImplementedError: Abstract ``BatchedItems`` does not implement 
@@ -483,7 +482,9 @@ and set ``slice_factory`` to ``BatchedItems``.::
     ...     def item_count(self):
     ...         return len(self.filtered_items)
     ... 
-    ...     def slice_items(self, start, end):
+    ...     @property
+    ...     def slice_items(self):
+    ...         start, end = self.current_slice
     ...         return self.filtered_items[start:end]
     ... 
     ...     @property

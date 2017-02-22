@@ -224,7 +224,7 @@ class BatchedItemsSlice(Tile):
     def items(self):
         """Current slice items.
         """
-        return self.parent.slice_items(*self.slice)
+        return self.parent.slice_items
 
 
 class BatchedItemsBatch(Batch):
@@ -510,7 +510,8 @@ class BatchedItems(Tile):
         raise NotImplementedError(
             "Abstract ``BatchedItems`` does not implement ``item_count``")
 
-    def slice_items(self, start, end):
+    @property
+    def slice_items(self):
         """Current slice items.
         """
         raise NotImplementedError(
