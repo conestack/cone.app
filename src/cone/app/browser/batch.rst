@@ -758,7 +758,7 @@ Default template path::
     'cone.app.browser:templates/batched_items_header.pt'
 
     >>> batched_items.rendered_header
-    u'...<div class="panel-heading batched_items-heading">...'
+    u'...<div class="panel-heading batched_items_header">...'
 
 Customizing the header is done by overriding the ``rendered_header`` peoperty
 on the batched items class. A lot of the settings can be customized by passing
@@ -1027,18 +1027,12 @@ Check ``bind_events`` on batched items.::
     >>> batched_items(model=model, request=layer.new_request())
     u'...ajax:bind="batchclicked"...'
 
-    >>> batched_items.bind_events = 'batchclicked sortclicked'
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...ajax:bind="batchclicked sortclicked"...'
-
-    >>> batched_items.bind_events = 'batchclicked'
-
 Check ``display_header`` on batched items.::
 
     >>> batched_items.display_header
     True
 
-    >>> expected = '<div class="panel-heading batched_items-heading">'
+    >>> expected = '<div class="panel-heading batched_items_header">'
     >>> rendered = batched_items(model=model, request=layer.new_request())
     >>> rendered.find(expected) > -1
     True

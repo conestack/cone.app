@@ -1,9 +1,8 @@
-<tal:batched_items_footer
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    i18n:domain="cone.app"
-    omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
 
   <div class="panel-footer batched_items_footer">
 
@@ -22,11 +21,11 @@
     </div>
 
     <div class="pull-right">
-      <tal:pagination replace="structure context.rendered_pagination" />
+      <tal:pagination replace="structure context.batch" />
     </div>
 
     <div class="clearfix"></div>
 
   </div>
 
-</tal:batched_items_footer>
+</tal:block>

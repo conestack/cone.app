@@ -32,7 +32,6 @@ def sharing(model, request):
 @tile('local_acl', 'templates/table.pt',
       permission='manage_permissions')
 class SharingTable(Table):
-
     table_id = 'localacltable'
     table_tile_name = 'local_acl'
     default_sort = 'principal'

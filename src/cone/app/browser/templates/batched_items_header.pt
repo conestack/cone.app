@@ -1,11 +1,10 @@
-<tal:batched_items_header
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    i18n:domain="cone.app"
-    omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
 
-  <div class="panel-heading batched_items-heading">
+  <div class="panel-heading batched_items_header">
 
     <h4 class="col-xs-4 pull-left">
       <span class="label label-primary"
@@ -27,7 +26,7 @@
               size="1"
               class="form-control"
               ajax:target="${context.slice_target}"
-              ajax:event="batchclicked:.${context.items_id}batchsensitiv"
+              ajax:event="${context.trigger_event}:${context.trigger_selector}"
               aria-controls="${context.slice_id}">
 
         <tal:option repeat="size context.slice_sizes">
@@ -58,7 +57,7 @@
              type="text"
              class="form-control"
              ajax:target="${context.filter_target}"
-             ajax:event="batchclicked:.${context.items_id}batchsensitiv"
+             ajax:event="${context.trigger_event}:${context.trigger_selector}"
              aria-controls="${context.slice_id}"
              tal:attributes="value context.filter_term">
 
@@ -75,4 +74,4 @@
 
   </div>
 
-</tal:batched_items_header>
+</tal:block>

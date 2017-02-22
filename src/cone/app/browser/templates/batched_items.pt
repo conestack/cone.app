@@ -1,12 +1,11 @@
-<tal:batched_items
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    i18n:domain="cone.app"
-    omit-tag="True">
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
 
   <div id="${context.items_id}"
-       class="${context.items_id}batchsensitiv
+       class="${context.bind_selectors}
               ${context.items_css}"
        ajax:bind="${context.bind_events}"
        ajax:target="${context.nodeurl}"
@@ -20,4 +19,4 @@
 
   </div>
 
-</tal:batched_items>
+</tal:block>
