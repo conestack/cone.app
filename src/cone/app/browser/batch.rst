@@ -417,20 +417,11 @@ Logout::
 BatchedItems
 ------------
 
-``BatchedItems`` tile can be used to create views displaying a batched listing
-of items. It renders a header with a search field and a slice size selection,
-followed by the slice and a footer with a summary about the current slice
-and pagination.
-
 Imports::
 
     >>> from cone.app.browser.batch import BatchedItems
 
-A concrete implementation of ``BatchedItems`` must at least implement
-``item_count`` and ``slice_items``. To render the slice a template can be
-provided at ``slice_template``. Another option is to use a custom template for
-the entire ``BatchedItems`` implementation based on
-``cone.app.browser:templates/batched_items.pt`` and render the slice there.::
+Abstract contracts::
 
     >>> batched_items = BatchedItems()
     >>> batched_items.model = BaseNode()
@@ -450,16 +441,7 @@ the entire ``BatchedItems`` implementation based on
 
     >>> assert(batched_items.slice_template is None)
 
-``item_count`` returns the overall item count, ``slice_items`` returns the
-current items to display.
-
-``filtered_items`` is used to compute the overall items based on given
-search term. This function is no part of the contract, but illustrates that
-filter criteria and current slice needs to be considered by the concrete
-``BatchedItems`` implementation.
-
-``rendered_slice`` normally renders ``slice_template`` but we overwrite this
-property for simplicity reasons.::
+Concrete ``BatchedItems`` implementation.::
 
     >>> class MyBatchedItems(BatchedItems):
     ... 
@@ -493,7 +475,7 @@ property for simplicity reasons.::
     ...             items.append(node)
     ...         return items
 
-Create a model::
+Create model::
 
     >>> model = BaseNode(name='container')
     >>> for i in range(35):
@@ -541,8 +523,7 @@ Number of available slice slizes::
     >>> batched_items.num_slice_sizes
     4
 
-Available slice sizes for slice size selection. Calculated from
-``default_slice_size`` and ``num_slice_sizes``::
+Available slice sizes for slice size selection.::
 
     >>> batched_items.slice_sizes
     [15, 30, 45, 60]
@@ -555,10 +536,7 @@ Available slice sizes for slice size selection. Calculated from
     >>> batched_items.default_slice_size = 15
     >>> batched_items.num_slice_sizes = 4
 
-``slice_target`` is used to create the target URL passed as ajax target when
-triggering the event to rerender the batched items DOM element with a changed
-slice size. ``query_whitelist`` and search filter ``term`` request parameters
-are considered.::
+Test ``slice_target``.::
 
     >>> batched_items.query_whitelist
     ['a', 'b']
@@ -574,10 +552,7 @@ are considered.::
     >>> batched_items.slice_target
     'http://example.com/container?a=a&term=Hello&b=b'
 
-``filter_target`` is used to create the target URL passed as ajax target when
-triggering the event to rerender the batched items DOM element with a changed
-search term. ``query_whitelist`` and current slice ``size`` request parameters
-are considered.::
+Test ``filter_target``.::
 
     >>> batched_items.filter_target
     'http://example.com/container?a=a&b=b&size=15'
@@ -772,9 +747,7 @@ Default template path::
     >>> batched_items.rendered_footer
     u'...<div class="panel-footer batched_items_footer">...'
 
-Slice ID. Rendering the slice shall set the slice ID on it's root element,
-it gets referenced by search field and slice size selection in header as
-``aria-controls`` attribute::
+Slice ID.::
 
     >>> batched_items.slice_id
     'batched_items_slice'
