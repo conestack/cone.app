@@ -196,13 +196,11 @@ class BatchedItemsSlice(Tile):
     """Parent tile, usually ``BatchedItems`` instance.
     """
 
-    def __init__(self, parent, path):
+    def __init__(self, parent):
         """Create batched items slice.
         """
         self.parent = parent
-        self.path = path
-        self.model = parent.model
-        self.request = parent.request
+        self.path = parent.slice_template
 
     @property
     def slice_id(self):
@@ -220,15 +218,13 @@ class BatchedItemsSlice(Tile):
     def slice(self):
         """Current slice as (start, end) tuple.
         """
-        start = self.parent.current_page * self.size
-        end = start + self.size
-        return start, end
+        return self.parent.current_slice
 
     @property
     def items(self):
         """Current slice items.
         """
-        return self.parent.slize_items(*self.slice)
+        return self.parent.slice_items(*self.slice)
 
 
 class BatchedItemsBatch(Batch):
@@ -260,7 +256,7 @@ class BatchedItemsBatch(Batch):
             pages += 1
         current = self.parent.current_page
         for i in range(pages):
-            url = self.parent.page_target(str(i), path)
+            url = self.parent.page_target(path, str(i))
             ret.append({
                 'page': '%i' % (i + 1),
                 'current': current == i,
@@ -284,6 +280,10 @@ class BatchedItems(Tile):
 
     footer_template = 'cone.app.browser:templates/batched_items_footer.pt'
     """Template rendering the slice footer.
+    """
+
+    slice_template = None
+    """Template rendering the slice items. Passed to ``slice_factory``.
     """
 
     items_id = 'batched_items'
@@ -352,7 +352,7 @@ class BatchedItems(Tile):
     def bind_selectors(self):
         """CSS selector to bind the batched items container DOM element to.
         """
-        return self.pagination.trigger_selector
+        return '{}sensitiv'.format(self.pagination.name)
 
     @property
     def bind_events(self):
@@ -361,7 +361,21 @@ class BatchedItems(Tile):
         return self.pagination.trigger_event
 
     @property
-    def header(self):
+    def trigger_selector(self):
+        """CSS selector to trigger JS event to when changing slice size or
+        entering search filter term.
+        """
+        return self.pagination.trigger_selector
+
+    @property
+    def trigger_event(self):
+        """JS event triggered when changing slice size or entering search
+        filter term.
+        """
+        return self.pagination.trigger_event
+
+    @property
+    def rendered_header(self):
         """Rendered slice header.
         """
         if not self.display_header:
@@ -374,7 +388,7 @@ class BatchedItems(Tile):
         )
 
     @property
-    def footer(self):
+    def rendered_footer(self):
         """Rendered slice footer.
         """
         if not self.display_footer:
@@ -387,13 +401,19 @@ class BatchedItems(Tile):
         )
 
     @property
-    def batch(self):
+    def rendered_pagination(self):
         """Rendered pagination batch.
         """
-        return BatchedItemsBatch(parent=self)(
+        return self.pagination(
             model=self.model,
             request=self.request
         )
+
+    @property
+    def rendered_slice(self):
+        """Rendered slice.
+        """
+        return self.slice(model=self.model, request=self.request)
 
     @request_property
     def slice(self):
@@ -401,13 +421,19 @@ class BatchedItems(Tile):
         """
         return self.slice_factory(parent=self)
 
+    @request_property
+    def pagination(self):
+        """``BatchedItemsBatch`` instance.
+        """
+        return BatchedItemsBatch(parent=self)
+
     @property
     def current_page(self):
         """Current batch page.
         """
         return int(self.request.params.get('b_page', '0'))
 
-    def page_target(self, page, path):
+    def page_target(self, path, page):
         """Create page target.
         """
         params = {
@@ -435,6 +461,14 @@ class BatchedItems(Tile):
         """
         return [i * self.default_slice_size
             for i in range(1, self.num_slice_sizes + 1)]
+
+    @property
+    def current_slice(self):
+        """Current slice as (start, end) tuple.
+        """
+        start = self.current_page * self.slice_size
+        end = start + self.slice_size
+        return start, end
 
     @property
     def slice_target(self):
