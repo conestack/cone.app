@@ -228,19 +228,24 @@ class BatchedItems(Tile):
     """
 
     path = 'cone.app.browser:templates/batched_items.pt'
-    """Template rendering the batched items tile.
+    """Path to template used for rendering the tile. Defaults to
+    ``cone.app.browser:templates/batched_items.pt``. Can also be set by passing
+    it as ``path`` keyword argument to ``tile`` decorator.
     """
 
     header_template = 'cone.app.browser:templates/batched_items_header.pt'
-    """Template rendering the slice header.
+    """Template rendering the slice header. Defaults to
+    ``cone.app.browser:templates/batched_items_header.pt``.
     """
 
     footer_template = 'cone.app.browser:templates/batched_items_footer.pt'
-    """Template rendering the slice footer.
+    """Template rendering the slice footer. Defaults to
+    ``cone.app.browser:templates/batched_items_footer.pt``.
     """
 
     slice_template = None
-    """Template rendering the slice items. Passed to ``slice_factory``.
+    """Template rendering the slice items. Defaults to ``None``. Shall be set
+    by subclass.
     """
 
     items_id = 'batched_items'
@@ -253,22 +258,23 @@ class BatchedItems(Tile):
 
     query_whitelist = []
     """Additional incoming request parameters to consider when creating URL's.
+    Defaults to ``[]``.
     """
 
     display_header = True
-    """Flag whether to display the slice header.
+    """Flag whether to display the listing header. Defaults to ``True``.
     """
 
     display_footer = True
-    """Flag whether to display the slice footer.
+    """Flag whether to display the listing footer. Defaults to ``True``.
     """
 
     show_title = True
-    """Flag whether to show title in slice header.
+    """Flag whether to show title in the listing header. Defaults to ``True``.
     """
 
     default_slice_size = 15
-    """Default slice size.
+    """Default number of items displayed in slice. Defaults to ``15``.
     """
 
     num_slice_sizes = 4
@@ -276,23 +282,29 @@ class BatchedItems(Tile):
     """
 
     show_slice_size = True
-    """Flag whether to display the slice size selection in slice header.
+    """Flag whether to display the slice size selection in listing header.
+     Defaults to ``True``.
     """
 
     slice_size_css = 'col-xs-4 col-sm3'
     """CSS classes to set on slice size selection container DOM element.
+    Defaults to ``col-xs-4 col-sm3``. Can be used to change the size of the
+    slice size selection.
     """
 
     show_filter = True
-    """Flag whether to display the search filter input in slice header.
+    """Flag whether to display the search filter input in listing header.
     """
 
     filter_css = 'col-xs-3'
     """CSS classes to set on search filter input container DOM element.
+    Defaults to ``col-xs-3``. Can be used to change the size of the search
+    filter input.
     """
 
     head_additional = None
-    """Additional markup to render in slice header.
+    """Additional arbitrary markup rendered in listing header. Can be used to
+    add additional listing filter aspects or similar.
     """
 
     @property
@@ -386,7 +398,7 @@ class BatchedItems(Tile):
         return int(self.request.params.get('b_page', '0'))
 
     def page_target(self, path, page):
-        """Create page target.
+        """Pagination batch page target.
         """
         params = {
             'b_page': page,
