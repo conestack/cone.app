@@ -184,49 +184,6 @@ class Batch(Tile):
         return -1                                           #pragma NO COVERAGE
 
 
-class BatchedItemsSlice(Tile):
-    """Recent batched items slice.
-    """
-
-    path = None
-    """Path to slice template.
-    """
-
-    parent = None
-    """Parent tile, usually ``BatchedItems`` instance.
-    """
-
-    def __init__(self, parent):
-        """Create batched items slice.
-        """
-        self.parent = parent
-        self.path = parent.slice_template
-
-    @property
-    def slice_id(self):
-        """CSS ID of the slice container DOM element.
-        """
-        return self.parent.slice_id
-
-    @property
-    def size(self):
-        """Current slice size.
-        """
-        return self.parent.slice_size
-
-    @property
-    def slice(self):
-        """Current slice as (start, end) tuple.
-        """
-        return self.parent.current_slice
-
-    @property
-    def items(self):
-        """Current slice items.
-        """
-        return self.parent.slice_items
-
-
 class BatchedItemsBatch(Batch):
     """Displays batched items pagination.
     """
@@ -250,7 +207,7 @@ class BatchedItemsBatch(Batch):
         ret = list()
         path = nodepath(self.model)
         count = self.parent.item_count
-        slice_size = self.parent.slice.size
+        slice_size = self.parent.slice_size
         pages = count / slice_size
         if count % slice_size != 0:
             pages += 1
@@ -306,12 +263,16 @@ class BatchedItems(Tile):
     """Flag whether to display the slice footer.
     """
 
+    show_title = True
+    """Flag whether to show title in slice header.
+    """
+
     default_slice_size = 15
     """Default slice size.
     """
 
-    show_title = True
-    """Flag whether to show title in slice header.
+    num_slice_sizes = 4
+    """Number of available slice sizes in slice size selection.
     """
 
     show_slice_size = True
@@ -332,14 +293,6 @@ class BatchedItems(Tile):
 
     head_additional = None
     """Additional markup to render in slice header.
-    """
-
-    num_slice_sizes = 4
-    """Number of available slice sizes in slice size selection.
-    """
-
-    slice_factory = BatchedItemsSlice
-    """Factory to instantiate the ``BatchedItemsSlice`` object.
     """
 
     @property
@@ -376,7 +329,7 @@ class BatchedItems(Tile):
 
     @property
     def rendered_header(self):
-        """Rendered slice header.
+        """Rendered header by ``header_template``.
         """
         if not self.display_header:
             return u''
@@ -389,12 +342,23 @@ class BatchedItems(Tile):
 
     @property
     def rendered_footer(self):
-        """Rendered slice footer.
+        """Rendered footer by ``footer_template``.
         """
         if not self.display_footer:
             return u''
         return render_template(
             self.footer_template,
+            request=self.request,
+            model=self.model,
+            context=self
+        )
+
+    @property
+    def rendered_slice(self):
+        """Rendered slice by ``slice_template``.
+        """
+        return render_template(
+            self.slice_template,
             request=self.request,
             model=self.model,
             context=self
@@ -408,18 +372,6 @@ class BatchedItems(Tile):
             model=self.model,
             request=self.request
         )
-
-    @property
-    def rendered_slice(self):
-        """Rendered slice.
-        """
-        return self.slice(model=self.model, request=self.request)
-
-    @request_property
-    def slice(self):
-        """``BatchedItemsSlice`` instance.
-        """
-        return self.slice_factory(parent=self)
 
     @request_property
     def pagination(self):
@@ -478,6 +430,13 @@ class BatchedItems(Tile):
             'term': self.filter_term,
         })
 
+    @request_property
+    def filter_term(self):
+        """Current search filter term.
+        """
+        term = self.request.params.get('term')
+        return urllib2.unquote(str(term)).decode('utf-8') if term else term
+
     @property
     def filter_target(self):
         """Search filter input target URL.
@@ -485,13 +444,6 @@ class BatchedItems(Tile):
         return self.make_url({
             'size': self.slice_size,
         })
-
-    @request_property
-    def filter_term(self):
-        """Current search filter term.
-        """
-        term = self.request.params.get('term')
-        return urllib2.unquote(str(term)).decode('utf-8') if term else term
 
     def make_url(self, params, path=None):
         """Create URL considering ``query_whitelist``.

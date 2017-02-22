@@ -425,15 +425,12 @@ and pagination.
 Imports::
 
     >>> from cone.app.browser.batch import BatchedItems
-    >>> from cone.app.browser.batch import BatchedItemsSlice
 
-A concrete implementation of ``BatchedItems`` must implement ``item_count``
-and ``items``. To render the slice a template can be provided at
-``slice_template`` which is used to render ``BatchedItemsSlice``. Other options
-are to provide a custom ``BatchedItemsSlice`` implementation handling the
-rendering on it's own or using a custom template for the entire
-``BatchedItems`` implementation based on
-``cone.app.browser:templates/batched_items.pt``.::
+A concrete implementation of ``BatchedItems`` must at least implement
+``item_count`` and ``slice_items``. To render the slice a template can be
+provided at ``slice_template``. Another option is to use a custom template for
+the entire ``BatchedItems`` implementation based on
+``cone.app.browser:templates/batched_items.pt`` and render the slice there.::
 
     >>> batched_items = BatchedItems()
     >>> batched_items.model = BaseNode()
@@ -453,30 +450,28 @@ rendering on it's own or using a custom template for the entire
 
     >>> assert(batched_items.slice_template is None)
 
-``item_count`` returns the overall item count, ``items`` returns the items
-to display in current slice by ``start`` and ``end``.
+``item_count`` returns the overall item count, ``slice_items`` returns the
+current items to display.
 
 ``filtered_items`` is used to compute the overall items based on given
 search term. This function is no part of the contract, but illustrates that
-filter criteria needs to be considered by the concrete ``BatchedItems``
-implementation.
+filter criteria and current slice needs to be considered by the concrete
+``BatchedItems`` implementation.
 
-By default the slice is rendered by ``BatchedItemsSlice`` with template defined
-at ``slice_template``. It's also possible to subclass ``BatchedItemsSlice``
-and set ``slice_factory`` to ``BatchedItems``.::
+``rendered_slice`` normally renders ``slice_template`` but we overwrite this
+property for simplicity reasons.::
 
-    >>> class MyBatchedItemsSlice(BatchedItemsSlice):
+    >>> class MyBatchedItems(BatchedItems):
     ... 
-    ...     def render(self):
+    ...     @property
+    ...     def rendered_slice(self):
     ...         return u'<div id="{}">\n{}\n</div>'.format(
     ...             self.slice_id,
     ...             u'\n'.join([
-    ...                 u'  <div>{}</div>'.format(it.name) for it in self.items
+    ...                 u'  <div>{}</div>'.format(it.name)
+    ...                     for it in self.slice_items
     ...             ])
     ...         )
-
-    >>> class MyBatchedItems(BatchedItems):
-    ...     slice_factory = MyBatchedItemsSlice
     ... 
     ...     @property
     ...     def item_count(self):
@@ -784,17 +779,9 @@ it gets referenced by search field and slice size selection in header as
     >>> batched_items.slice_id
     'batched_items_slice'
 
-The slice object::
-
-    >>> batched_items.slice
-    <MyBatchedItemsSlice object at ...>
-
 Current slice to display as tuple:: 
 
     >>> batched_items.current_slice
-    (0, 15)
-
-    >>> batched_items.slice.slice
     (0, 15)
 
 Overall item count::
@@ -804,7 +791,7 @@ Overall item count::
 
 Current slice items::
 
-    >>> batched_items.slice.items
+    >>> batched_items.slice_items
     [<BaseNode object 'child_0' at ...>, 
     ...
     <BaseNode object 'child_14' at ...>]
@@ -813,10 +800,10 @@ Chage current page and check again::
 
     >>> request = batched_items.request = layer.new_request()
     >>> request.params['b_page'] = '1'
-    >>> batched_items.slice.slice
+    >>> batched_items.current_slice
     (15, 30)
 
-    >>> batched_items.slice.items
+    >>> batched_items.slice_items
     [<BaseNode object 'child_15' at ...>, 
     ...
     <BaseNode object 'child_29' at ...>]
@@ -825,13 +812,13 @@ Change the slice size::
 
     >>> request = batched_items.request = layer.new_request()
     >>> request.params['size'] = '10'
-    >>> batched_items.slice.size
+    >>> batched_items.slice_size
     10
 
-    >>> batched_items.slice.slice
+    >>> batched_items.current_slice
     (0, 10)
 
-    >>> batched_items.slice.items
+    >>> batched_items.slice_items
     [<BaseNode object 'child_0' at ...>, 
     ...
     <BaseNode object 'child_9' at ...>]
@@ -859,10 +846,10 @@ Change the filter term::
     <BaseNode object 'child_21' at ...>, 
     <BaseNode object 'child_31' at ...>]
 
-    >>> batched_items.slice.slice
+    >>> batched_items.current_slice
     (0, 5)
 
-    >>> batched_items.slice.items
+    >>> batched_items.slice_items
     [<BaseNode object 'child_1' at ...>, 
     <BaseNode object 'child_10' at ...>, 
     <BaseNode object 'child_11' at ...>, 
@@ -870,10 +857,10 @@ Change the filter term::
     <BaseNode object 'child_13' at ...>]
 
     >>> request.params['b_page'] = '1'
-    >>> batched_items.slice.slice
+    >>> batched_items.current_slice
     (5, 10)
 
-    >>> batched_items.slice.items
+    >>> batched_items.slice_items
     [<BaseNode object 'child_14' at ...>, 
     <BaseNode object 'child_15' at ...>, 
     <BaseNode object 'child_16' at ...>, 
