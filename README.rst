@@ -71,7 +71,12 @@ Changes
 1.0a3 (unreleased)
 ------------------
 
-- No changes yet.
+- Add ``BatchedItems`` tile to ``cone.app.browser.batch``.
+  [rnix, 2017-02-21]
+
+- Add ``trigger_event`` and ``trigger_selector`` to ``cone.app.browser.Batch``
+  to make ajax JS event and selector customizble.
+  [rnix, 2017-02-21]
 
 
 1.0a2

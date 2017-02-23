@@ -1,0 +1,31 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <div class="panel-footer batched_items_footer">
+
+    <div class="batched_items_info pull-left"
+         tal:define="slice context.current_slice">
+      <span i18n:translate="showing">Showing</span>
+      <span tal:content="slice[0] + 1"
+            class="badge">1</span>
+      <span i18n:translate="to">to</span>
+      <span tal:content="slice[1] > context.item_count and context.item_count or slice[1]"
+            class="badge">10</span>
+      <span i18n:translate="of">of</span>
+      <span tal:content="context.item_count"
+            class="badge">35</span>
+      <span i18n:translate="entries">entries</span>
+    </div>
+
+    <div class="pull-right">
+      <tal:pagination replace="structure context.rendered_pagination" />
+    </div>
+
+    <div class="clearfix"></div>
+
+  </div>
+
+</tal:block>

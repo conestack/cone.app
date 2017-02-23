@@ -167,8 +167,6 @@ class TableBatch(Batch):
     def __init__(self, table_tile):
         self.table_tile = table_tile
         self.name = table_tile.table_id + 'batch'
-        self.path = None
-        self.attribute = 'render'
 
     @property
     def display(self):
