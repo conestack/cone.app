@@ -864,9 +864,8 @@ selection, the actual listing slice and a listing footer which displays
 information about the currently displayed slice and the pagination
 :ref:`Batch <widgets_batch>`.
 
-The listing slice is abstract and must be implemented use case specific
-while the listing header, footer and pagination batch are generic
-implementations.
+The listing slice is abstract and must be implemented while the listing header,
+footer and pagination batch are generic implementations.
 
 Create a template for rendering the slice, e.g. at
 ``cone.example.browser:templates/example_slice.pt``:
@@ -890,7 +889,7 @@ implement ``item_count`` and ``slice_items``. To render the slice a template
 is provided at ``slice_template``. Another option to render the slice is to
 overwrite ``rendered_slice`` or using a custom template for the entire
 ``BatchedItems`` implementation based on
-``cone.app.browser:templates/batched_items.pt`` and render the slice there.::
+``cone.app.browser:templates/batched_items.pt`` and render the slice there.
 
 ``item_count`` returns the overall item count, ``slice_items`` returns the
 current items to display in the slice.
