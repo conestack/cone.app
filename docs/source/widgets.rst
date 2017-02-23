@@ -963,6 +963,9 @@ More customization options on ``BatchedItems`` class:
 - **show_title**: Flag whether to show title in the listing header. Defaults
   to ``True``.
 
+- **title_css**: CSS classes to set on title container DOM element. Defaults
+  to ``col-xs-4``. Can be used to change the size of the title area.
+
 - **default_slice_size**: Default number of items displayed in slice. Defaults
   to ``15``.
 

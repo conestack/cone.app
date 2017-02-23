@@ -6,9 +6,9 @@
 
   <div class="panel-heading batched_items_header">
 
-    <h4 class="col-xs-4 pull-left">
+    <h4 class="${context.title_css} pull-left"
+        tal:condition="context.show_title">
       <span class="label label-primary"
-            tal:condition="context.show_title"
             tal:content="context.title">Title</span>
     </h4>
 
@@ -63,12 +63,11 @@
 
     </div>
 
-    <div class="table_additional pull-right"
-         tal:define="additional context.head_additional"
-         tal:condition="additional"
-         tal:content="structure additional">
+    <tal:additional define="additional context.head_additional"
+                    condition="additional"
+                    replace="structure additional">
       Additional Header Markup.
-    </div>
+    </tal:additional>
 
     <div class="clearfix"></div>
 

@@ -273,6 +273,11 @@ class BatchedItems(Tile):
     """Flag whether to show title in the listing header. Defaults to ``True``.
     """
 
+    title_css = 'col-xs-4'
+    """CSS classes to set on title container DOM element.
+    Defaults to ``col-xs-4``. Can be used to change the size of the title area.
+    """
+
     default_slice_size = 15
     """Default number of items displayed in slice. Defaults to ``15``.
     """
