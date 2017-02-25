@@ -793,6 +793,8 @@ See :doc:`forms documentation <forms>` for more details.
 Abstract tiles
 ==============
 
+.. _widgets_batch:
+
 Batch
 -----
 
@@ -849,6 +851,166 @@ More customization options on ``Batch`` class:
 
 - **nextpage**: Overwrite with property returning ``None`` to suppress
   rendering next page link.
+
+
+Batched Items
+-------------
+
+A tile for creating batched, searchable listings is contained at
+``cone.app.browser.batch``.
+
+It consists of a listing header which displays a search field and a slice size
+selection, the actual listing slice and a listing footer which displays
+information about the currently displayed slice and the pagination
+:ref:`Batch <widgets_batch>`.
+
+The listing slice is abstract and must be implemented while the listing header,
+footer and pagination batch are generic implementations.
+
+Create a template for rendering the slice, e.g. at
+``cone.example.browser:templates/example_slice.pt``:
+
+.. code-block:: xml
+
+    <tal:example_slice
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        omit-tag="True">
+
+      <div class="${context.slice_id}">
+        <div tal:repeat="item context.slice_items">
+          <span tal:content="item.metadata.title">Title</span>
+        </div>
+      </div>
+
+    </tal:example_slice>
+
+The concrete tile implementation subclasses ``BatchedItems`` and must at least
+implement ``item_count`` and ``slice_items``. To render the slice a template
+is provided at ``slice_template``. Another option to render the slice is to
+overwrite ``rendered_slice`` or using a custom template for the entire
+``BatchedItems`` implementation based on
+``cone.app.browser:templates/batched_items.pt`` and render the slice there.
+
+``item_count`` returns the overall item count, ``slice_items`` returns the
+current items to display in the slice.
+
+The subclass of ``BatchedItems`` gets registered under desired tile name.
+``items_id`` is set as CSS id of the tile element and is used to bind JS events
+on the client side for rerendering the tile.
+
+In the following example, ``filtered_items`` is used to compute the overall
+items based on given search term. This function is no part of the contract,
+but illustrates that filter criteria and current slice needs to be considered
+by the concrete ``BatchedItems`` implementation.
+
+.. code-block:: python
+
+    from cone.app.browser.batch import BatchedItems
+
+    @tile(name='example_items')
+    class ExampleBatchedItems(BatchedItems):
+        items_id = 'example_items'
+        slice_template = 'cone.example.browser:templates/example_slice.pt'
+
+        @property
+        def item_count(self):
+            return len(self.filtered_items)
+
+        @property
+        def slice_items(self):
+            start, end = self.current_slice
+            return self.filtered_items[start:end]
+
+        @property
+        def filtered_items(self):
+            items = list()
+            term = self.filter_term
+            term = term.lower() if term else term
+            for node in self.model.values():
+                if term and node.name.find(term) == -1:
+                    continue
+                items.append(node)
+            return items
+
+More customization options on ``BatchedItems`` class:
+
+- **path**: Path to template used for rendering the tile. Defaults to
+  ``cone.app.browser:templates/batched_items.pt``. Can also be set by passing
+  it as ``path`` keyword argument to ``tile`` decorator.
+
+- **header_template**: Template rendering the slice header. Defaults to
+  ``cone.app.browser:templates/batched_items_header.pt``.
+
+- **footer_template**: Template rendering the slice footer. Defaults to
+  ``cone.app.browser:templates/batched_items_footer.pt``.
+
+- **slice_template**: Template rendering the slice items. Defaults to ``None``.
+  Shall be set by subclass.
+
+- **items_id**: CSS ID of the batched items container DOM element.
+
+- **items_css**: CSS classes of the batched items container DOM element.
+
+- **query_whitelist**: Additional incoming request parameters to consider when
+  creating URL's. Defaults to ``[]``.
+
+- **display_header**: Flag whether to display the listing header. Defaults to
+  ``True``.
+
+- **display_footer**: Flag whether to display the listing footer. Defaults to
+  ``True``.
+
+- **show_title**: Flag whether to show title in the listing header. Defaults
+  to ``True``.
+
+- **title_css**: CSS classes to set on title container DOM element. Defaults
+  to ``col-xs-4``. Can be used to change the size of the title area.
+
+- **default_slice_size**: Default number of items displayed in slice. Defaults
+  to ``15``.
+
+- **num_slice_sizes**: Number of available slice sizes in slice size selection.
+
+- **show_slice_size**: Flag whether to display the slice size selection in
+  listing header. Defaults to ``True``.
+
+- **slice_size_css**: CSS classes to set on slice size selection container DOM
+  element. Defaults to ``col-xs-4 col-sm3``. Can be used to change the size
+  of the slice size selection.
+
+- **show_filter**: Flag whether to display the search filter input in listing
+  header. Defaults to ``True``.
+
+- **filter_css**: CSS classes to set on search filter input container DOM
+  element. Defaults to ``col-xs-3``. Can be used to change the size
+  of the search filter input.
+
+- **head_additional**: Additional arbitrary markup rendered in listing header.
+  Can be used to add additional listing filter aspects or similar.
+
+- **title**: Title in the listing header. Defaults to ``model.metadata.title``.
+
+- **bind_selectors**: CSS selector to bind the batched items container DOM
+  element to.
+
+- **bind_events**: JS events to bind the batched items container DOM
+  element to.
+
+- **trigger_selector**: CSS selector to trigger JS event to when changing slice
+  size or entering search filter term.
+
+- **trigger_event**: JS event triggered when changing slice size or entering
+  search filter term.
+
+- **pagination**: ``BatchedItemsBatch`` instance.
+
+- **page_target**: Pagination batch page target.
+
+- **slice_id**: CSS ID of the slice container DOM element.
+
+- **slice_target**: Slice size selection target URL.
+
+- **filter_target**: Search filter input target URL.
 
 
 Table

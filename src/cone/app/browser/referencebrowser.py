@@ -201,7 +201,6 @@ class ReferencableChildrenLink(LinkAction):
 
 @tile(name='referencelisting', path='templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
-
     table_id = 'referencebrowser'
     table_tile_name = 'referencelisting'
     col_defs = [

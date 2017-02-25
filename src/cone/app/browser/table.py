@@ -3,6 +3,7 @@ from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import nodepath
+from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
 import urllib2
 
@@ -79,9 +80,8 @@ class Table(Tile):
     @property
     def filter_term(self):
         term = self.request.params.get('term')
-        if term:
-            term = urllib2.unquote(str(term)).decode('utf-8')
-        return term
+        return urllib2.unquote(
+            term.encode('utf-8')).decode('utf-8') if term else term
 
     @property
     def sort_column(self):
@@ -107,7 +107,7 @@ class Table(Tile):
         for param in self.query_whitelist:
             params[param] = self.request.params.get(param, '')
         query = make_query(**params)
-        return make_url(self.request, node=self.model, query=query)
+        return safe_decode(make_url(self.request, node=self.model, query=query))
 
     def format_date(self, dt):
         return format_date(dt)
@@ -167,8 +167,6 @@ class TableBatch(Batch):
     def __init__(self, table_tile):
         self.table_tile = table_tile
         self.name = table_tile.table_id + 'batch'
-        self.path = None
-        self.attribute = 'render'
 
     @property
     def display(self):

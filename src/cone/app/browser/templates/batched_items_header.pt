@@ -1,0 +1,76 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <div class="panel-heading batched_items_header">
+
+    <h4 class="${context.title_css} pull-left"
+        tal:condition="context.show_title">
+      <span class="label label-primary"
+            tal:content="context.title">Title</span>
+    </h4>
+
+    <div class="batched_items_slice_size
+                pull-right
+                input-group
+                input-group-sm
+                ${context.slice_size_css}"
+         tal:condition="context.show_slice_size">
+
+      <span i18n:translate="show"
+            class="input-group-addon">Show</span>
+
+      <select name="size"
+              size="1"
+              class="form-control"
+              ajax:target="${context.slice_target}"
+              ajax:event="${context.trigger_event}:${context.trigger_selector}"
+              aria-controls="${context.slice_id}">
+
+        <tal:option repeat="size context.slice_sizes">
+          <option value="${size}"
+                  tal:content="size"
+                  tal:define="current context.slice_size == size"
+                  tal:attributes="selected current and 'selected' or None">15</option>
+        </tal:option>
+
+      </select>
+
+      <span i18n:translate="entries"
+            class="input-group-addon">entries</span>
+
+    </div>
+
+    <div class="batched_items_filter
+                pull-right
+                input-group
+                input-group-sm
+                ${context.filter_css}"
+         tal:condition="context.show_filter">
+
+      <span i18n:translate="search"
+            class="input-group-addon">Search</span>
+
+      <input name="term"
+             type="text"
+             class="form-control"
+             ajax:target="${context.filter_target}"
+             ajax:event="${context.trigger_event}:${context.trigger_selector}"
+             aria-controls="${context.slice_id}"
+             tal:attributes="value context.filter_term">
+
+    </div>
+
+    <tal:additional define="additional context.head_additional"
+                    condition="additional"
+                    replace="structure additional">
+      Additional Header Markup.
+    </tal:additional>
+
+    <div class="clearfix"></div>
+
+  </div>
+
+</tal:block>

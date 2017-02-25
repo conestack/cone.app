@@ -1,0 +1,22 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <div id="${context.items_id}"
+       class="${context.bind_selectors}
+              ${context.items_css}"
+       ajax:bind="${context.bind_events}"
+       ajax:target="${context.nodeurl}"
+       ajax:action="${context.name}:#${context.items_id}:replace">
+
+    <tal:header replace="structure context.rendered_header" />
+
+    <tal:slice replace="structure context.rendered_slice" />
+
+    <tal:footer replace="structure context.rendered_footer" />
+
+  </div>
+
+</tal:block>

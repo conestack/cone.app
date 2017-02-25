@@ -175,7 +175,7 @@
           </tr>
         </tal:row>
       </tbody>
-    </table> 
+    </table>
 
     <div class="panel-footer table-footer"
          tal:condition="context.display_table_footer">
