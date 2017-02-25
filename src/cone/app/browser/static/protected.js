@@ -94,7 +94,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             var selection = $('.batched_items_slice_size select', context);
             selection.unbind('change').bind('change', function(event) {
                 var option = $('option:selected', $(this)).first();
-                var size = option.text();
+                var size = option.val();
                 var evt = selection.attr('ajax:event').split(':');
                 var target = bdajax.parsetarget(selection.attr('ajax:target'));
                 target.params.size = size;
