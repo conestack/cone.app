@@ -496,7 +496,7 @@ URL creation within batched items implementation.::
     >>> batched_items.query_whitelist = ['a', 'b']
     >>> batched_items.request.params['a'] = 'a'
     >>> batched_items.make_url(dict(c='c'))
-    'http://example.com/container?a=a&c=c&b='
+    u'http://example.com/container?a=a&c=c&b='
 
 It's also possible to pass a model path to ``make_url`` to avoid multiple
 computing of model path::
@@ -504,7 +504,7 @@ computing of model path::
     >>> from cone.app.browser.utils import nodepath
     >>> path = nodepath(model)
     >>> batched_items.make_url(dict(c='c'), path=path)
-    'http://example.com/container?a=a&c=c&b='
+    u'http://example.com/container?a=a&c=c&b='
 
     >>> request = batched_items.request = layer.new_request()
 
@@ -550,16 +550,16 @@ Test ``slice_target``.::
     u'Hello'
 
     >>> batched_items.slice_target
-    'http://example.com/container?a=a&term=Hello&b=b'
+    u'http://example.com/container?a=a&term=Hello&b=b'
 
 Test ``filter_target``.::
 
     >>> batched_items.filter_target
-    'http://example.com/container?a=a&b=b&size=15'
+    u'http://example.com/container?a=a&b=b&size=15'
 
     >>> request.params['size'] = '30'
     >>> batched_items.filter_target
-    'http://example.com/container?a=a&b=b&size=30'
+    u'http://example.com/container?a=a&b=b&size=30'
 
 Header template path::
 
@@ -670,7 +670,7 @@ computing.::
     >>> path = nodepath(batched_items.model)
     >>> page = '1'
     >>> batched_items.page_target(path, page)
-    'http://example.com/container?b_page=1&size=15'
+    u'http://example.com/container?b_page=1&size=15'
 
 Pagination batch name is created from batched items ``items_id``::
 
@@ -713,19 +713,19 @@ Pagination batch only gets displayed if there are batched items.::
     >>> sorted(vocab[0].items())
     [('current', False), 
     ('page', '1'), 
-    ('url', 'http://example.com/container?b_page=0&size=15'), 
+    ('url', u'http://example.com/container?b_page=0&size=15'), 
     ('visible', True)]
 
     >>> sorted(vocab[1].items())
     [('current', True), 
     ('page', '2'), 
-    ('url', 'http://example.com/container?b_page=1&size=15'), 
+    ('url', u'http://example.com/container?b_page=1&size=15'), 
     ('visible', True)]
 
     >>> sorted(vocab[2].items())
     [('current', False), 
     ('page', '3'), 
-    ('url', 'http://example.com/container?b_page=2&size=15'), 
+    ('url', u'http://example.com/container?b_page=2&size=15'), 
     ('visible', True)]
 
 Rendered pagination.::

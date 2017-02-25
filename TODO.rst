@@ -66,6 +66,9 @@ options and datasets instead of just datasets.
 [ ] ``cone.tile.Tile`` should point to template at ``template`` instead of
 ``path``.
 
+[ ] Return unicode in ``cone.app.browser.utils.make_url`` and
+``cone.app.browser.utils.make_query``.
+
 1.0b1
 -----
 

@@ -2,6 +2,7 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import nodepath
 from cone.app.browser.utils import request_property
+from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
 from cone.tile import render_template
 import urllib2
@@ -452,7 +453,8 @@ class BatchedItems(Tile):
         """Current search filter term.
         """
         term = self.request.params.get('term')
-        return urllib2.unquote(str(term)).decode('utf-8') if term else term
+        return urllib2.unquote(
+            term.encode('utf-8')).decode('utf-8') if term else term
 
     @property
     def filter_target(self):
@@ -469,8 +471,8 @@ class BatchedItems(Tile):
             params[param] = self.request.params.get(param, '')
         query = make_query(**params)
         if path:
-            return make_url(self.request, path=path, query=query)
-        return make_url(self.request, node=self.model, query=query)
+            return safe_decode(make_url(self.request, path=path, query=query))
+        return safe_decode(make_url(self.request, node=self.model, query=query))
 
     @property
     def item_count(self):

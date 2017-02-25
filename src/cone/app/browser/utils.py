@@ -32,7 +32,7 @@ def make_query(**kw):
         if type(param) is types.IntType:
             param = [str(param)]
         for p in param:
-            query.append('{0}={1}'.format(name, p))
+            query.append('{0}={1}'.format(name, safe_encode(p)))
     query = '&'.join(query)
     if query:
         return '?{0}'.format(query)
