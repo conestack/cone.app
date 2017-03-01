@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2017-02-14 10:43+0100\n"
+"POT-Creation-Date: 2017-02-27 09:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,12 +57,12 @@ msgid "remove_reference"
 msgstr ""
 
 #. Default: Actions
-#: ./src/cone/app/browser/referencebrowser.py:207
+#: ./src/cone/app/browser/referencebrowser.py:206
 msgid "table_actions"
 msgstr ""
 
 #. Default: Title
-#: ./src/cone/app/browser/referencebrowser.py:214
+#: ./src/cone/app/browser/referencebrowser.py:213
 #: ./src/cone/app/browser/contents.py:81
 msgid "title"
 msgstr ""
@@ -243,27 +243,27 @@ msgid "unknown"
 msgstr ""
 
 #. Default: Principal
-#: ./src/cone/app/browser/sharing.py:47
+#: ./src/cone/app/browser/sharing.py:46
 msgid "principal"
 msgstr ""
 
 #. Default: Sort by principal
-#: ./src/cone/app/browser/sharing.py:49
+#: ./src/cone/app/browser/sharing.py:48
 msgid "sort_by_principal"
 msgstr ""
 
 #. Default: Sharing: ${title}
-#: ./src/cone/app/browser/sharing.py:68
+#: ./src/cone/app/browser/sharing.py:67
 msgid "sharing_table_title"
 msgstr ""
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: ./src/cone/app/browser/sharing.py:155
+#: ./src/cone/app/browser/sharing.py:154
 msgid "cannot_add_role_for_principal"
 msgstr ""
 
 #. Default: Can not remove role '${role}' for principal '${pid}'
-#: ./src/cone/app/browser/sharing.py:184
+#: ./src/cone/app/browser/sharing.py:183
 msgid "cannot_remove_role_for_principal"
 msgstr ""
 
@@ -367,35 +367,42 @@ msgstr ""
 msgid "you_are_here"
 msgstr ""
 
-#. Default: Show
-#: ./src/cone/app/browser/templates/table.pt:32
-msgid "show"
-msgstr ""
-
-#. Default: entries
-#: ./src/cone/app/browser/templates/table.pt:51
-#: ./src/cone/app/browser/templates/table.pt:194
-msgid "entries"
-msgstr ""
-
-#. Default: Search
-#: ./src/cone/app/browser/templates/table.pt:63
-msgid "search"
-msgstr ""
-
 #. Default: Showing
+#: ./src/cone/app/browser/templates/batched_items_footer.pt:11
 #: ./src/cone/app/browser/templates/table.pt:185
 msgid "showing"
 msgstr ""
 
 #. Default: to
+#: ./src/cone/app/browser/templates/batched_items_footer.pt:14
 #: ./src/cone/app/browser/templates/table.pt:188
 msgid "to"
 msgstr ""
 
 #. Default: of
+#: ./src/cone/app/browser/templates/batched_items_footer.pt:17
 #: ./src/cone/app/browser/templates/table.pt:191
 msgid "of"
+msgstr ""
+
+#. Default: entries
+#: ./src/cone/app/browser/templates/batched_items_footer.pt:20
+#: ./src/cone/app/browser/templates/table.pt:51
+#: ./src/cone/app/browser/templates/table.pt:194
+#: ./src/cone/app/browser/templates/batched_items_header.pt:42
+msgid "entries"
+msgstr ""
+
+#. Default: Show
+#: ./src/cone/app/browser/templates/table.pt:32
+#: ./src/cone/app/browser/templates/batched_items_header.pt:23
+msgid "show"
+msgstr ""
+
+#. Default: Search
+#: ./src/cone/app/browser/templates/table.pt:63
+#: ./src/cone/app/browser/templates/batched_items_header.pt:54
+msgid "search"
 msgstr ""
 
 #. Default: Created by

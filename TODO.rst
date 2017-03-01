@@ -21,7 +21,7 @@ Docs
 Roadmap
 =======
 
-1.0a3
+1.0a4
 -----
 
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.

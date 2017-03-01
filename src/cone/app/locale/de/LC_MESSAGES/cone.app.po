@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-02-14 10:43+0100\n"
+"POT-Creation-Date: 2017-02-27 09:48+0100\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -59,12 +59,12 @@ msgid "remove_reference"
 msgstr "Referenz entfernen"
 
 #. Default: Actions
-#: src/cone/app/browser/referencebrowser.py:207
+#: src/cone/app/browser/referencebrowser.py:206
 msgid "table_actions"
 msgstr "Aktionen"
 
 #. Default: Title
-#: src/cone/app/browser/referencebrowser.py:214
+#: src/cone/app/browser/referencebrowser.py:213
 #: src/cone/app/browser/contents.py:81
 msgid "title"
 msgstr "Titel"
@@ -245,27 +245,27 @@ msgid "unknown"
 msgstr "Unbekannt"
 
 #. Default: Principal
-#: src/cone/app/browser/sharing.py:47
+#: src/cone/app/browser/sharing.py:46
 msgid "principal"
 msgstr "Benutzer/Gruppe"
 
 #. Default: Sort by principal
-#: src/cone/app/browser/sharing.py:49
+#: src/cone/app/browser/sharing.py:48
 msgid "sort_by_principal"
 msgstr "Sortiere nach Benutzer/Gruppe"
 
 #. Default: Sharing: ${title}
-#: src/cone/app/browser/sharing.py:68
+#: src/cone/app/browser/sharing.py:67
 msgid "sharing_table_title"
 msgstr "Freigabe: ${title}"
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:155
+#: src/cone/app/browser/sharing.py:154
 msgid "cannot_add_role_for_principal"
 msgstr "Rolle '${role}' kann für '${pid}' nicht gesetzt werden"
 
 #. Default: Can not remove role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:184
+#: src/cone/app/browser/sharing.py:183
 msgid "cannot_remove_role_for_principal"
 msgstr "Rolle '${role}' kann von '${pid}' nicht gelöscht werden"
 
@@ -370,36 +370,43 @@ msgstr "Hinzufügen"
 msgid "you_are_here"
 msgstr "Sie sind hier"
 
-#. Default: Show
-#: src/cone/app/browser/templates/table.pt:32
-msgid "show"
-msgstr "zeige"
-
-#. Default: entries
-#: src/cone/app/browser/templates/table.pt:51
-#: src/cone/app/browser/templates/table.pt:194
-msgid "entries"
-msgstr "Einträge"
-
-#. Default: Search
-#: src/cone/app/browser/templates/table.pt:63
-msgid "search"
-msgstr "Suche"
-
 #. Default: Showing
+#: src/cone/app/browser/templates/batched_items_footer.pt:11
 #: src/cone/app/browser/templates/table.pt:185
 msgid "showing"
 msgstr "zeige"
 
 #. Default: to
+#: src/cone/app/browser/templates/batched_items_footer.pt:14
 #: src/cone/app/browser/templates/table.pt:188
 msgid "to"
 msgstr "bis"
 
 #. Default: of
+#: src/cone/app/browser/templates/batched_items_footer.pt:17
 #: src/cone/app/browser/templates/table.pt:191
 msgid "of"
 msgstr "von"
+
+#. Default: entries
+#: src/cone/app/browser/templates/batched_items_footer.pt:20
+#: src/cone/app/browser/templates/table.pt:51
+#: src/cone/app/browser/templates/table.pt:194
+#: src/cone/app/browser/templates/batched_items_header.pt:42
+msgid "entries"
+msgstr "Einträge"
+
+#. Default: Show
+#: src/cone/app/browser/templates/table.pt:32
+#: src/cone/app/browser/templates/batched_items_header.pt:23
+msgid "show"
+msgstr "zeige"
+
+#. Default: Search
+#: src/cone/app/browser/templates/table.pt:63
+#: src/cone/app/browser/templates/batched_items_header.pt:54
+msgid "search"
+msgstr "Suche"
 
 #. Default: Created by
 #: src/cone/app/browser/templates/byline.pt:7
