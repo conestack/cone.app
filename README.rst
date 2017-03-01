@@ -68,6 +68,12 @@ Coverage Report
 Changes
 =======
 
+1.0a4 (unreleased)
+------------------
+
+- No changes yet.
+
+
 1.0a3
 -----
 
