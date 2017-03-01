@@ -68,8 +68,8 @@ Coverage Report
 Changes
 =======
 
-1.0a3 (unreleased)
-------------------
+1.0a3
+-----
 
 - Add ``BatchedItems`` tile to ``cone.app.browser.batch``.
   [rnix, 2017-02-21]
