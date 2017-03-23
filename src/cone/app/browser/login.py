@@ -1,14 +1,57 @@
+from cone.app.browser import render_main_template
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.form import Form
 from cone.app.browser.utils import make_url
 from cone.app.security import authenticate
+from cone.tile import Tile
 from cone.tile import tile
+from pyramid.httpexceptions import HTTPForbidden
 from pyramid.i18n import TranslationStringFactory
+from pyramid.security import authenticated_userid
+from pyramid.security import forget
+from pyramid.view import view_config
 from webob.exc import HTTPFound
 from yafowil.base import ExtractionError
 from yafowil.base import factory
 
 
 _ = TranslationStringFactory('cone.app')
+
+
+@view_config(name='login')
+def login_view(model, request):
+    return render_main_template(model, request, contenttile='loginform')
+
+
+@view_config(context=HTTPForbidden)
+def forbidden_view(request):
+    model = request.context
+    if not authenticated_userid(request):
+        return login_view(model, request)
+    return render_main_template(model, request, contenttile='unauthorized')
+
+
+@view_config(name='logout')
+def logout_view(model, request):
+    headers = forget(request)
+    location = request.params.get('came_from', request.application_url)
+    return HTTPFound(location=location, headers=headers)
+
+
+@tile(name='logout')
+class Logout(Tile):
+
+    def render(self):
+        request = self.request
+        request.response.headers = forget(request)
+        location = request.params.get('came_from', request.application_url)
+        ajax_continue(self.request, AjaxEvent(
+            target=location,
+            name='contextchanged',
+            selector='#layout'
+        ))
+        return u''
 
 
 @tile(name='loginform', permission='login')

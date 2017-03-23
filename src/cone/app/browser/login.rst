@@ -1,11 +1,49 @@
-Login form tile
-===============
+Login
+=====
 
-Imports::
+Prepare::
 
-    >>> from cone.app import root
+    >>> from cone.app import get_root
     >>> from cone.app import security
+    >>> from cone.app.browser.login import forbidden_view
+    >>> from cone.app.browser.login import login_view
+    >>> from cone.app.browser.login import logout_view
+    >>> from cone.app.model import BaseNode
     >>> from cone.tile import render_tile
+
+    >>> root = get_root()
+    >>> request = layer.new_request()
+
+Test login view callable::
+
+    >>> login_view(root, request)
+    <Response at ... 200 OK>
+
+Test logout view callable::
+
+    >>> logout_view(root, request)
+    <HTTPFound at ... 302 Found>
+
+Test logout tile::
+
+    >>> layer.login('admin')
+    >>> request = layer.new_request()
+    >>> res = render_tile(root, request, 'logout')
+    >>> request.response.headers
+    ResponseHeaders([('Set-Cookie', 
+    'auth_tkt=; Max-Age=0; Path=/; expires=...'), 
+    ('Set-Cookie', 'auth_tkt=; Domain=example.com; Max-Age=0; Path=/; expires=...'), 
+    ('Set-Cookie', 'auth_tkt=; Domain=.example.com; Max-Age=0; Path=/; expires=...')])
+
+    >>> layer.logout()
+
+Test forbidden view::
+
+    >>> request = layer.new_request()
+    >>> request.context = BaseNode()
+    >>> res = forbidden_view(request).body
+    >>> res.find('id="input-loginform-login"') > -1
+    True
 
 Render login form::
 

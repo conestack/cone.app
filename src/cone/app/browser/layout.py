@@ -105,6 +105,7 @@ class ViewSettingsAction(LinkAction):
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
     icon = 'ion-log-out'
+    action = 'logout:NONE:NONE'
     path_action = ''
     path_event = ''
 
@@ -114,7 +115,7 @@ class LogoutAction(LinkAction):
 
     @property
     def path(self):
-        return self.request.application_url
+        return '/'
 
 
 personal_tools = odict()
