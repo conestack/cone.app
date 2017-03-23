@@ -4,6 +4,13 @@ Changes
 1.0a4 (unreleased)
 ------------------
 
+- Introduce ``logout`` tile.
+  [rnix, 2017-03-23]
+
+- Move ``login_view``, ``logout_view`` and ``forbidden_view`` from
+  ``cone.app.browser`` to ``cone.app.browser.login``.
+  [rnix, 2017-03-23]
+
 - Catch ``Forbidden`` exception explicitely in ``ajaxaction`` JSON view and
   set 403 response status in order to ensure bdajax redirects to login view
   properly.

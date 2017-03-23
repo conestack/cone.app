@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from cone.app.browser import forbidden_view
 from cone.app.browser import static_resources
 from cone.app.interfaces import ILayout
 from cone.app.model import AppRoot
@@ -16,8 +15,6 @@ from zope.component import getGlobalSiteManager
 from zope.interface import Interface
 from zope.interface import implementer
 import logging
-import model
-import os
 import pyramid_zcml
 
 
