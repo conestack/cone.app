@@ -19,6 +19,7 @@
            ajax:bind="click"
            ajax:target="${item['target']}"
            ajax:event="contextchanged:#layout"
+           ajax:path="href"
            tal:content="item['title']"
            tal:condition="not item['selected']">
           Title

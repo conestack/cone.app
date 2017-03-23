@@ -178,6 +178,10 @@ LinkAction
     >>> action.event = 'contextchanged:.contextsensitiv'
     >>> action.confirm = 'Do you want to perform?'
     >>> action.overlay = 'someaction'
+    >>> action.path = '/foo'
+    >>> action.path_target = 'target'
+    >>> action.path_action = action.action
+    >>> action.path_event = action.event
     >>> action.text = 'Foo'
     >>> action(model, request)
     u'...<a\n     
@@ -190,7 +194,11 @@ LinkAction
     ajax:event="contextchanged:.contextsensitiv"\n     
     ajax:action="actionname:#content:replace"\n     
     ajax:confirm="Do you want to perform?"\n     
-    ajax:overlay="someaction"\n    >&nbsp;Foo</a>...'
+    ajax:overlay="someaction"\n     
+    ajax:path="/foo"\n     
+    ajax:path-target="target"\n     
+    ajax:path-action="actionname:#content:replace"\n     
+    ajax:path-event="contextchanged:.contextsensitiv"\n    >&nbsp;Foo</a>...'
 
     >>> action.enabled = False
     >>> action(model, request).find('class="link_action disabled"') > -1
@@ -282,7 +290,8 @@ ActionView
     class="selected"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="content:#content:inner"\n    
+    ajax:action="content:#content:inner"\n     
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-eye-open"></span\n    \n    
     >&nbsp;View</a>...'
 
@@ -294,6 +303,7 @@ ActionView
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="view:#content:inner"\n    
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-eye-open"></span\n    \n    
     >&nbsp;View</a>...'
 
@@ -324,6 +334,7 @@ ViewLink
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="content:#content:inner"\n    
+    ajax:path="href"\n    
     >&nbsp;model</a>...'
 
     >>> layer.logout()
@@ -351,6 +362,7 @@ ActionList
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
     ajax:action="listing:#content:inner"\n    
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-th-list"></span\n    \n    
     >&nbsp;Listing</a>...'
 
@@ -401,6 +413,7 @@ ActionSharing
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/sharingmodel"\n     
     ajax:action="sharing:#content:inner"\n    
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-share"></span\n    \n    
     >&nbsp;Sharing</a>...'
 
@@ -543,7 +556,8 @@ ActionEdit
     href="http://example.com/root/model/edit"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root/model"\n     
-    ajax:action="edit:#content:inner"\n    
+    ajax:action="edit:#content:inner"\n     
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-pencil"></span\n    \n    
     >&nbsp;Edit</a>...'
 

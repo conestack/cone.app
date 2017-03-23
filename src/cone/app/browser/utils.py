@@ -18,8 +18,12 @@ def authenticated(request):
     return authenticated_userid(request)
 
 
-def nodepath(node):
+def node_path(node):
     return [safe_decode(p) for p in node.path if p is not None]
+
+
+# B/C, removed as of cone.app 1.1
+nodepath = node_path
 
 
 def make_query(**kw):
@@ -46,7 +50,7 @@ def make_url(request, path=None, node=None, resource=None, query=None):
     if path is None:
         path = []
     if node is not None:
-        path = nodepath(node)
+        path = node_path(node)
     if resource is not None:
         path.append(resource)
     path = [urllib2.quote(safe_encode(it)) for it in path]

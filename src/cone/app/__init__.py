@@ -290,6 +290,10 @@ def main(global_config, **settings):
     # add translation
     config.add_translation_dirs('cone.app:locale/')
 
+    # XXX: register yafowil and all yafowil addon widget locales.
+    #      provide locales either in yafowil resources or as entry points in
+    #      all yafowil packages providing translations
+
     # static resources
     config.add_view('cone.app.browser.static_resources', name='static')
 

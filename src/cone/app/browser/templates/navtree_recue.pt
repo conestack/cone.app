@@ -12,7 +12,8 @@
       <a href="${item['url']}"
          ajax:bind="click"
          ajax:target="${item['target']}"
-         ajax:event="contextchanged:#layout">
+         ajax:event="contextchanged:#layout"
+         ajax:path="href">
         <i class="${item['icon']}" alt="..."></i>
         <span tal:replace="item['title']">Title</span>
       </a>

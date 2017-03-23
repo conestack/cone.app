@@ -2,7 +2,7 @@ from cone.app.browser.batch import Batch
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
-from cone.app.browser.utils import nodepath
+from cone.app.browser.utils import node_path
 from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
 import urllib2
@@ -175,7 +175,7 @@ class TableBatch(Batch):
     @property
     def vocab(self):
         ret = list()
-        path = nodepath(self.model)
+        path = node_path(self.model)
         count = self.table_tile.item_count
         slicesize = self.table_tile.slicesize
         pages = count / slicesize

@@ -30,12 +30,10 @@ Test ``ajax_tile``::
 Fails unauthenticated, since default permission for tiles is 'view'::
 
     >>> ajax_tile(root, request)
-    {'continuation': 
-    [{'flavor': 'error', 'type': 'message', 'payload': 
-    '<pre>Traceback ...</pre>', 'selector': None}], 
-    'payload': '', 
-    'mode': 'NONE', 
-    'selector': 'NONE'}
+    {}
+
+    >>> request.response.status
+    '403 Forbidden'
 
 Authenticate and test again::
 

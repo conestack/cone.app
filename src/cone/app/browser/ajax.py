@@ -3,6 +3,7 @@ from cone.app.browser.exception import format_traceback
 from cone.app.interfaces import ILiveSearch
 from cone.tile import registerTile
 from cone.tile import render_tile
+from pyramid.exceptions import Forbidden
 from pyramid.response import Response
 from pyramid.view import view_config
 import json
@@ -39,6 +40,9 @@ def ajax_tile(model, request):
             'payload': rendered,
             'continuation': continuation,
         }
+    except Forbidden:
+        request.response.status = 403
+        return {}
     except Exception:
         logging.exception('Error within ajax tile')
         tb = format_traceback()
@@ -87,8 +91,11 @@ class AjaxPath(object):
     client side.
     """
 
-    def __init__(self, path):
+    def __init__(self, path, target=None, action=None, event=None):
         self.path = path
+        self.target = target
+        self.action = action
+        self.event = event
 
 
 class AjaxAction(object):
@@ -159,6 +166,9 @@ class AjaxContinue(object):
                 continuation.append({
                     'type': 'path',
                     'path': definition.path,
+                    'target': definition.target,
+                    'action': definition.action,
+                    'event': definition.event
                 })
             if isinstance(definition, AjaxAction):
                 continuation.append({

@@ -7,6 +7,7 @@
      ajax:bind="click"
      ajax:target="${request.application_url}"
      ajax:event="contextchanged:#layout"
+     ajax:path="href"
      tal:content="model.root.metadata.title">
     Cone
   </a>

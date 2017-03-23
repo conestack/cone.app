@@ -253,6 +253,7 @@ Structure content::
     ajax:bind="click"\n     
     ajax:target="http://example.com/"\n     
     ajax:action="content:#content:inner"\n    
+    ajax:path="href"\n    
     >&nbsp;Foo</a>...'
 
 String::

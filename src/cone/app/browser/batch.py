@@ -1,6 +1,6 @@
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
-from cone.app.browser.utils import nodepath
+from cone.app.browser.utils import node_path
 from cone.app.browser.utils import request_property
 from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
@@ -206,7 +206,7 @@ class BatchedItemsBatch(Batch):
         """Batch vocabulary.
         """
         ret = list()
-        path = nodepath(self.model)
+        path = node_path(self.model)
         count = self.parent.item_count
         slice_size = self.parent.slice_size
         pages = count / slice_size
