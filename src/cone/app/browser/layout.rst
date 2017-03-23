@@ -205,17 +205,21 @@ items are supposed to be displayed as icons via CSS::
     >>> res
     u'...<li class=" node-1">\n\n        
     <a href="http://example.com/1"\n           
+    title="1"\n          
     ajax:bind="click"\n           
     ajax:target="http://example.com/1"\n           
-    ajax:event="contextchanged:#layout" title="1"\n          
+    ajax:event="contextchanged:#layout"\n          
+    ajax:path="href"\n          
     ><span class="glyphicon glyphicon-asterisk"></span>\n          
     <span></span></a>\n\n      
     </li>\n\n      \n      \n\n    \n\n      \n      
     <li class="active node-2">\n\n        
     <a href="http://example.com/2"\n           
+    title="2"\n          
     ajax:bind="click"\n           
     ajax:target="http://example.com/2"\n           
-    ajax:event="contextchanged:#layout" title="2"\n          
+    ajax:event="contextchanged:#layout"\n           
+    ajax:path="href"\n           
     ><span class="glyphicon glyphicon-asterisk"></span>\n          
     <span></span></a>\n\n      
     </li>...'
@@ -294,7 +298,8 @@ Render navtree on ``root['1']``, must be selected::
     <a href="http://example.com/1"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:#layout">\n        
+    ajax:event="contextchanged:#layout"\n        
+    ajax:path="href">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
     </a>...'
 
@@ -324,7 +329,8 @@ navtree.::
     <a href="http://example.com/1"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:#layout">\n        
+    ajax:event="contextchanged:#layout"\n        
+    ajax:path="href">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
     </a>...'
 
@@ -334,7 +340,8 @@ navtree.::
     <a href="http://example.com/1"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:#layout">\n        
+    ajax:event="contextchanged:#layout"\n        
+    ajax:path="href">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
     </a>...'
 
@@ -400,7 +407,8 @@ Render navtree on ``root['1']['11']``, check selected::
     <a href="http://example.com/1/11"\n         
     ajax:bind="click"\n         
     ajax:target="http://example.com/1/11"\n         
-    ajax:event="contextchanged:#layout">\n        
+    ajax:event="contextchanged:#layout"\n        
+    ajax:path="href">\n        
     <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        11\n      
     </a>...'
 

@@ -19,9 +19,9 @@ following keys:
 Imports.::
 
     >>> from cone.app.browser.batch import Batch
+    >>> from cone.app.browser.utils import node_path
     >>> from cone.app.browser.utils import make_query
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.utils import nodepath
     >>> from cone.app.model import BaseNode
     >>> from cone.tile import render_tile
     >>> from cone.tile import tile
@@ -381,7 +381,7 @@ Register batch tile::
     ...     @property
     ...     def vocab(self):
     ...         ret = list()
-    ...         path = nodepath(self.model)
+    ...         path = node_path(self.model)
     ...         current = self.request.params.get('b_page', '0')
     ...         for i in range(10):
     ...             query = make_query(b_page=str(i))
@@ -506,8 +506,8 @@ URL creation within batched items implementation.::
 It's also possible to pass a model path to ``make_url`` to avoid multiple
 computing of model path::
 
-    >>> from cone.app.browser.utils import nodepath
-    >>> path = nodepath(model)
+    >>> from cone.app.browser.utils import node_path
+    >>> path = node_path(model)
     >>> batched_items.make_url(dict(c='c'), path=path)
     u'http://example.com/container?a=a&c=c&b='
 
@@ -672,7 +672,7 @@ property on ``BatchedItems``::
 Pagination batch uses ``page_target`` on ``BatchedItems`` for target URL
 computing.::
 
-    >>> path = nodepath(batched_items.model)
+    >>> path = node_path(batched_items.model)
     >>> page = '1'
     >>> batched_items.page_target(path, page)
     u'http://example.com/container?b_page=1&size=15'

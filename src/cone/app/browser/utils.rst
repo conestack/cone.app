@@ -5,6 +5,7 @@ Common browser utils.::
 
     >>> from cone.app.browser.utils import authenticated
     >>> from cone.app.browser.utils import format_date
+    >>> from cone.app.browser.utils import node_path
     >>> from cone.app.browser.utils import make_query
     >>> from cone.app.browser.utils import make_url
     >>> from cone.app.browser.utils import nodepath
@@ -17,12 +18,12 @@ Common browser utils.::
     >>> request = layer.new_request()
     >>> authenticated(request)
 
-``nodepath`` - Propably will be implemented in ``BaseNode``. Just skips root in
-path.::
+``node_path`` - Propably will be implemented in ``BaseNode``. Just skips root
+in path.::
 
     >>> root = BaseNode()
     >>> root['child'] = BaseNode()
-    >>> nodepath(root['child'])
+    >>> node_path(root['child'])
     [u'child']
 
 ``make_url`` - create URL's.::

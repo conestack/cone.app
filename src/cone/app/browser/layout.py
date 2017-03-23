@@ -1,12 +1,10 @@
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import get_action_context
-from cone.app.browser.ajax import AjaxPath
-from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
-from cone.app.browser.utils import nodepath
+from cone.app.browser.utils import node_path
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.utils import principal_data
@@ -72,8 +70,6 @@ class Layout(Tile):
 
     @property
     def contenttile(self):
-        path = u'/'.join([safe_decode(it) for it in self.model.path if it])
-        ajax_continue(self.request, [AjaxPath(path)])
         return get_action_context(self.request).scope
 
 
@@ -81,6 +77,7 @@ class ViewSettingsAction(LinkAction):
     text = _('settings', default='Settings')
     icon = 'ion-ios7-gear'
     event = 'contextchanged:#layout'
+    path = 'href'
 
     @property
     def settings(self):
@@ -108,10 +105,16 @@ class ViewSettingsAction(LinkAction):
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
     icon = 'ion-log-out'
+    path_action = ''
+    path_event = ''
 
     @property
     def href(self):
         return make_url(self.request, resource='logout')
+
+    @property
+    def path(self):
+        return self.request.application_url
 
 
 personal_tools = odict()
@@ -165,7 +168,7 @@ class MainMenu(Tile):
     @property
     def menuitems(self):
         ret = list()
-        path = nodepath(self.model)
+        path = node_path(self.model)
         if path:
             curpath = path[0]
         else:
@@ -196,7 +199,7 @@ class MainMenu(Tile):
 
     def create_children(self, node, selected):
         children = list()
-        path = nodepath(self.model)
+        path = node_path(self.model)
         if path and len(path) > 1 and path[0] == node.name:
             curpath = path[1]
         else:
@@ -364,7 +367,7 @@ class NavTree(Tile):
             if IWorkflowState.providedBy(node):
                 css = 'state-%s' % node.state
             child = self.navtreeitem(
-                title, url, target, nodepath(node), icon, css)
+                title, url, target, node_path(node), icon, css)
             child['showchildren'] = curnode
             if curnode:
                 child['selected'] = True
@@ -373,11 +376,11 @@ class NavTree(Tile):
                 else:
                     self.fillchildren(node, path[1:], child)
             else:
-                selected_path = nodepath(self.model)
+                selected_path = node_path(self.model)
                 if default_child:
                     selected_path.append(default_child.name)
                 selected = False
-                if selected_path == nodepath(node):
+                if selected_path == node_path(node):
                     selected = True
                 child['selected'] = selected
             tree['children'].append(child)
@@ -386,7 +389,7 @@ class NavTree(Tile):
         root = self.navtreeitem(None, None, None, '', None)
         model = self.navroot
         # XXX: default child
-        path = nodepath(self.model)[len(nodepath(model)):]
+        path = node_path(self.model)[len(node_path(model)):]
         self.fillchildren(model, path, root)
         return root
 

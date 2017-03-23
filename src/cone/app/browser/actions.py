@@ -118,10 +118,12 @@ class TemplateAction(Action):
     template = u''
 
     def render(self):
-        return render_template(self.template,
-                               request=self.request,
-                               model=self.model,
-                               context=self)
+        return render_template(
+            self.template,
+            request=self.request,
+            model=self.model,
+            context=self
+        )
 
 
 class DropdownAction(TemplateAction):
@@ -145,19 +147,23 @@ class LinkAction(TemplateAction):
     """Action rendering a HTML link, optional with bdajax attributes.
     """
     template = 'cone.app.browser:templates/link_action.pt'
-    bind = 'click'    # ajax:bind attribute
-    id = None         # id attribute
-    href = '#'        # href attribute
-    css = None        # in addition for computed class attribute
-    title = None      # title attribute
-    action = None     # ajax:action attribute
-    event = None      # ajax:event attribute
-    confirm = None    # ajax:confirm attribute
-    overlay = None    # ajax:overlay attribute
-    text = None       # link text
-    enabled = True    # if false, link gets 'disabled' css class
-    selected = False  # if true, link get 'selected' css class
-    icon = None       # if set, render span tag with value as CSS class in link
+    bind = 'click'      # ajax:bind attribute
+    id = None           # id attribute
+    href = '#'          # href attribute
+    css = None          # in addition for computed class attribute
+    title = None        # title attribute
+    action = None       # ajax:action attribute
+    event = None        # ajax:event attribute
+    confirm = None      # ajax:confirm attribute
+    overlay = None      # ajax:overlay attribute
+    path = None         # ajax:path attribute
+    path_target = None  # ajax:path-target attribute
+    path_action = None  # ajax:path-action attribute
+    path_event = None   # ajax:path-event attribute
+    text = None         # link text
+    enabled = True      # if false, link gets 'disabled' css class
+    selected = False    # if true, link get 'selected' css class
+    icon = None         # if set, add span tag with value as CSS class in link
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
@@ -210,6 +216,7 @@ class ActionView(LinkAction):
     icon = 'glyphicon glyphicon-eye-open'
     text = _('action_view', default='View')
     href = LinkAction.target
+    path = 'href'
 
     @property
     def action(self):
@@ -250,6 +257,7 @@ class ActionList(LinkAction):
     id = 'toolbaraction-list'
     icon = 'glyphicon glyphicon-th-list'
     action = 'listing:#content:inner'
+    path = 'href'
     text = _('action_listing', default='Listing')
 
     @property
@@ -271,6 +279,7 @@ class ActionSharing(LinkAction):
     id = 'toolbaraction-share'
     icon = 'glyphicon glyphicon-share'
     action = 'sharing:#content:inner'
+    path = 'href'
     text = _('action_sharing', default='Sharing')
 
     @property
@@ -314,6 +323,7 @@ class ActionEdit(LinkAction):
     id = 'toolbaraction-edit'
     icon = 'glyphicon glyphicon-pencil'
     action = 'edit:#content:inner'
+    path = 'href'
     text = _('action_edit', default='Edit')
 
     @property

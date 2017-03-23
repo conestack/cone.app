@@ -53,12 +53,10 @@ Test ``ajax_tile``::
 Fails unauthenticated, since default permission for tiles is 'view'::
 
     >>> ajax_tile(root, request)
-    {'continuation': 
-    [{'flavor': 'error', 'type': 'message', 'payload': 
-    '<pre>Traceback ...</pre>', 'selector': None}], 
-    'payload': '', 
-    'mode': 'NONE', 
-    'selector': 'NONE'}
+    {}
+
+    >>> request.response.status
+    '403 Forbidden'
 
 Authenticate and test again::
 
@@ -118,7 +116,13 @@ AjaxOverlay object::
 
 AjaxPath object::
 
-    >>> path = AjaxPath('foo/bar')
+    >>> path = AjaxPath(
+    ...     'foo/bar',
+    ...     target='http://example.com/foo/bar',
+    ...     action='layout:#layout:replace',
+    ...     event='contextchanged:#someid'
+    ... )
+
     >>> path
     <cone.app.browser.ajax.AjaxPath object at ...>
 
@@ -238,10 +242,12 @@ which gets interpreted and executed on client side::
     "content_selector": ".overlay_content", 
     "selector": "#ajax-overlay", 
     "action": "someaction", 
-    "close": false, 
-    "type": "overlay"}, 
-    {"path": "foo/bar", 
-    "type": "path"}]'
+    "close": false, "type": "overlay"}, 
+    {"action": "layout:#layout:replace", 
+    "path": "foo/bar", 
+    "type": "path", 
+    "target": "http://example.com/foo/bar", 
+    "event": "contextchanged:#someid"}]'
 
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::
