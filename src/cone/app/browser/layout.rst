@@ -533,8 +533,8 @@ Default child behavior of pathbar::
 Byline
 ------
 
-Byline renders ``model.metadata.creator``, `model.metadata.created`` and
-`model.metadata.modified``::
+Byline renders ``model.metadata.creator``, ``model.metadata.created`` and
+``model.metadata.modified``::
 
     >>> dt = datetime(2011, 3, 14)
     >>> root.metadata.created = dt
