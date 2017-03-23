@@ -8,7 +8,6 @@ Common browser utils.::
     >>> from cone.app.browser.utils import node_path
     >>> from cone.app.browser.utils import make_query
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.utils import nodepath
     >>> from cone.app.browser.utils import request_property
     >>> from cone.app.model import BaseNode
     >>> from datetime import datetime
