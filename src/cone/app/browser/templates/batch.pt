@@ -13,11 +13,11 @@
         condition="firstpage">
 
       <li tal:condition="not invisible">
-        <a href="#"
+        <a href="${firstpage['url']}"
            ajax:bind="click"
            ajax:target="${firstpage['url']}"
            ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           tal:attributes="href firstpage['url']"
+           ajax:path="href"
            i18n:translate="first">First</a>
       </li>
 
@@ -35,11 +35,11 @@
         condition="prevpage">
 
       <li tal:condition="not invisible">
-        <a href="#"
+        <a href="${prevpage['url']}"
            ajax:bind="click"
            ajax:target="${prevpage['url']}"
            ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           tal:attributes="href prevpage['url']"
+           ajax:path="href"
            i18n:translate="previous">Previous</a>
       </li>
 
@@ -57,11 +57,11 @@
                   current page['current']">
 
         <li tal:condition="not invisible and not current">
-          <a href="#"
+          <a href="${page['url']}"
              ajax:bind="click"
              ajax:target="${page['url']}"
              ajax:event="${context.trigger_event}:${context.trigger_selector}"
-             tal:attributes="href page['url']"
+             ajax:path="href"
              tal:content="page['page']">X</a>
         </li>
 
@@ -82,11 +82,11 @@
         condition="nextpage">
 
       <li tal:condition="not invisible">
-        <a href="#"
+        <a href="${nextpage['url']}"
            ajax:bind="click"
            ajax:target="${nextpage['url']}"
            ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           tal:attributes="href nextpage['url']"
+           ajax:path="href"
            i18n:translate="next">Next</a>
       </li>
 
@@ -104,11 +104,11 @@
         condition="lastpage">
 
       <li tal:condition="not invisible">
-        <a href="#"
+        <a href="${lastpage['url']}"
            ajax:bind="click"
            ajax:target="${lastpage['url']}"
            ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           tal:attributes="href lastpage['url']"
+           ajax:path="href"
            i18n:translate="last">Last</a>
       </li>
 
