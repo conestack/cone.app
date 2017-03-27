@@ -93,11 +93,13 @@ class AjaxPath(object):
     client side.
     """
 
-    def __init__(self, path, target=None, action=None, event=None):
+    def __init__(self, path, target=None,
+                 action=None, event=None, overlay=None):
         self.path = path
         self.target = target
         self.action = action
         self.event = event
+        self.overlay = overlay
 
 
 class AjaxAction(object):
@@ -170,7 +172,8 @@ class AjaxContinue(object):
                     'path': definition.path,
                     'target': definition.target,
                     'action': definition.action,
-                    'event': definition.event
+                    'event': definition.event,
+                    'overlay': definition.overlay
                 })
             if isinstance(definition, AjaxAction):
                 continuation.append({

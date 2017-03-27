@@ -32,8 +32,8 @@ Changes
   ``path_target``, ``path_action`` and ``path_event``.
   [rnix, 2017-03-23]
 
-- ``cone.app.browser.ajax.AjaxPath`` now supports ``target``, ``action``
-  and ``event``.
+- ``cone.app.browser.ajax.AjaxPath`` now supports ``target``, ``action``,
+  ``event`` and ``overlay``.
   [rnix, 2017-03-23]
 
 - Update to ``bdajax`` 1.7 which supports browser history handling for ajax
