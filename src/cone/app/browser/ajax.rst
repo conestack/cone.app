@@ -67,9 +67,9 @@ Authenticate and test again::
     'mode': 'replace', 
     'selector': '.foo'}
 
-It is possible to define continuation actions to be performed as soon as
-XHR returns. Different actions are ``AjaxAction``, ``AjaxEvent`` and
-``AjaxMessage``.
+It is possible to define continuation tasks to be performed as soon as
+XHR returns. Available task definitions are ``AjaxAction``, ``AjaxEvent``,
+``AjaxMessage``, ``AjaxOverlay`` and ``AjaxPath``.
 
 AjaxAction object::
 
@@ -120,7 +120,8 @@ AjaxPath object::
     ...     'foo/bar',
     ...     target='http://example.com/foo/bar',
     ...     action='layout:#layout:replace',
-    ...     event='contextchanged:#someid'
+    ...     event='contextchanged:#someid',
+    ...     overlay='acionname:#custom-overlay:.custom_overlay_content'
     ... )
 
     >>> path
@@ -243,10 +244,11 @@ which gets interpreted and executed on client side::
     "selector": "#ajax-overlay", 
     "action": "someaction", 
     "close": false, "type": "overlay"}, 
-    {"action": "layout:#layout:replace", 
+    {"target": "http://example.com/foo/bar", 
+    "overlay": "acionname:#custom-overlay:.custom_overlay_content", 
+    "action": "layout:#layout:replace", 
     "path": "foo/bar", 
     "type": "path", 
-    "target": "http://example.com/foo/bar", 
     "event": "contextchanged:#someid"}]'
 
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
