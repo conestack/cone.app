@@ -182,6 +182,7 @@ LinkAction
     >>> action.path_target = 'target'
     >>> action.path_action = action.action
     >>> action.path_event = action.event
+    >>> action.path_overlay = action.overlay
     >>> action.text = 'Foo'
     >>> action(model, request)
     u'...<a\n     
@@ -198,7 +199,8 @@ LinkAction
     ajax:path="/foo"\n     
     ajax:path-target="target"\n     
     ajax:path-action="actionname:#content:replace"\n     
-    ajax:path-event="contextchanged:.contextsensitiv"\n    >&nbsp;Foo</a>...'
+    ajax:path-event="contextchanged:.contextsensitiv"\n    
+    ajax:path-overlay="someaction"\n    >&nbsp;Foo</a>...'
 
     >>> action.enabled = False
     >>> action(model, request).find('class="link_action disabled"') > -1
@@ -230,21 +232,23 @@ ActionUp
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
-    href="#"\n     
+    href="http://example.com/root"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root?contenttile=listing"\n     
-    ajax:event="contextchanged:#layout"\n    
+    ajax:event="contextchanged:#layout"\n     
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
-    >&nbsp;One level up</a>\n\n  \n\n\n'
+    >&nbsp;One level up</a>...'
 
     >>> model.properties.action_up_tile = 'otherparentcontent'
     >>> action(model, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
-    href="#"\n     
+    href="http://example.com/root"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root?contenttile=otherparentcontent"\n     
-    ajax:event="contextchanged:#layout"\n    
+    ajax:event="contextchanged:#layout"\n     
+    ajax:path="href"\n    
     ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
 
@@ -254,11 +258,12 @@ ActionUp
     >>> action(default, request)
     u'...<a\n     
     id="toolbaraction-up"\n     
-    href="#"\n     
+    href="http://example.com/root"\n     
     ajax:bind="click"\n     
     ajax:target="http://example.com/root?contenttile=listing"\n     
-    ajax:event="contextchanged:#layout"\n    ><span 
-    class="glyphicon glyphicon-arrow-up"></span\n    \n    
+    ajax:event="contextchanged:#layout"\n     
+    ajax:path="href"\n    
+    ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
     >&nbsp;One level up</a>...'
 
     >>> layer.logout()

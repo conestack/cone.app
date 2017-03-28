@@ -175,9 +175,12 @@ class ContentsTile(Table):
             if not has_permission('view', node, self.request):
                 continue
             if term:
-                md = node.metadata
-                if md.get('title', '').lower().find(term) == -1 and \
-                  md.get('creator', 'unknown').lower().find(term) == -1:
+                metadata = node.metadata
+                title = metadata.get('title')
+                title = title.lower() if title else ''
+                creator = metadata.get('creator')
+                creator = creator.lower() if creator else ''
+                if title.find(term) == -1 and creator.find(term) == -1:
                     continue
             children.append(node)
         self.request.environ['_filtered_children'] = children
