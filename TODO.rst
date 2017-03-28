@@ -24,6 +24,8 @@ Roadmap
 1.0a5
 -----
 
+[ ] Adopt docs with bdajax update changes.
+
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
 [ ] ``cone.app.browser.authoring.OverlayFormTile`` is superfluous.
