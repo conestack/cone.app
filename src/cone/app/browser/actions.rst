@@ -527,7 +527,8 @@ ActionAdd
     <a href="http://example.com/add?factory=addable"\n           
     ajax:bind="click"\n           
     ajax:target="http://example.com/?factory=addable"\n           
-    ajax:action="add:#content:inner">\n          
+    ajax:action="add:#content:inner"\n           
+    ajax:path="href">\n          
     <span class="glyphicon glyphicon-asterisk"></span>\n          
     Addable\n        </a>\n      </li>\n    </ul>\n\n  </li>...'
 
