@@ -18,7 +18,8 @@
         <a href="${item.url}"
            ajax:bind="click"
            ajax:target="${item.target}"
-           ajax:action="add:#content:inner">
+           ajax:action="add:#content:inner"
+           ajax:path="href">
           <span class="${item.icon}"></span>
           <tal:title replace="item.title" />
         </a>
