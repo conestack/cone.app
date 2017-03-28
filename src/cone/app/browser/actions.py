@@ -147,23 +147,24 @@ class LinkAction(TemplateAction):
     """Action rendering a HTML link, optional with bdajax attributes.
     """
     template = 'cone.app.browser:templates/link_action.pt'
-    bind = 'click'      # ajax:bind attribute
-    id = None           # id attribute
-    href = '#'          # href attribute
-    css = None          # in addition for computed class attribute
-    title = None        # title attribute
-    action = None       # ajax:action attribute
-    event = None        # ajax:event attribute
-    confirm = None      # ajax:confirm attribute
-    overlay = None      # ajax:overlay attribute
-    path = None         # ajax:path attribute
-    path_target = None  # ajax:path-target attribute
-    path_action = None  # ajax:path-action attribute
-    path_event = None   # ajax:path-event attribute
-    text = None         # link text
-    enabled = True      # if false, link gets 'disabled' css class
-    selected = False    # if true, link get 'selected' css class
-    icon = None         # if set, add span tag with value as CSS class in link
+    bind = 'click'       # ajax:bind attribute
+    id = None            # id attribute
+    href = '#'           # href attribute
+    css = None           # in addition for computed class attribute
+    title = None         # title attribute
+    action = None        # ajax:action attribute
+    event = None         # ajax:event attribute
+    confirm = None       # ajax:confirm attribute
+    overlay = None       # ajax:overlay attribute
+    path = None          # ajax:path attribute
+    path_target = None   # ajax:path-target attribute
+    path_action = None   # ajax:path-action attribute
+    path_event = None    # ajax:path-event attribute
+    path_overlay = None  # ajax:path-overlay attribute
+    text = None          # link text
+    enabled = True       # if false, link gets 'disabled' css class
+    selected = False     # if true, link get 'selected' css class
+    icon = None          # if set, add span tag with value as CSS class in link
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
@@ -189,6 +190,7 @@ class ActionUp(LinkAction):
     icon = 'glyphicon glyphicon-arrow-up'
     event = 'contextchanged:#layout'
     text = _('action_one_level_up', default='One level up')
+    path = 'href'
 
     @property
     def display(self):
@@ -197,16 +199,24 @@ class ActionUp(LinkAction):
             and self.permitted('view')
 
     @property
+    def href(self):
+        return make_url(self.request, node=self.container)
+
+    @property
     def target(self):
-        container = self.model.parent
-        default_child = container.properties.default_child
-        if default_child and self.model.name == default_child:
-            container = container.parent
         contenttile = self.model.properties.action_up_tile
         if not contenttile:
             contenttile = 'listing'
         query = make_query(contenttile=contenttile)
-        return make_url(self.request, node=container, query=query)
+        return make_url(self.request, node=self.container, query=query)
+
+    @property
+    def container(self):
+        container = self.model.parent
+        default_child = container.properties.default_child
+        if default_child and self.model.name == default_child:
+            container = container.parent
+        return container
 
 
 class ActionView(LinkAction):
@@ -262,7 +272,7 @@ class ActionList(LinkAction):
 
     @property
     def href(self):
-        return '%s/listing' % self.target
+        return '{}/listing'.format(make_url(self.request, node=self.model))
 
     @property
     def display(self):
@@ -284,7 +294,7 @@ class ActionSharing(LinkAction):
 
     @property
     def href(self):
-        return '%s/sharing' % self.target
+        return '{}/sharing'.format(make_url(self.request, node=self.model))
 
     @property
     def display(self):
@@ -328,7 +338,7 @@ class ActionEdit(LinkAction):
 
     @property
     def href(self):
-        return '%s/edit' % self.target
+        return '{}/edit'.format(make_url(self.request, node=self.model))
 
     @property
     def display(self):

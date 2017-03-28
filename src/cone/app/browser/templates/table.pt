@@ -126,6 +126,7 @@
                    ajax:bind="click"
                    ajax:target="${defs[1]}"
                    ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
+                   ajax:path="href"
                    tal:content="col_def['title']">
                     Title
                 </a>

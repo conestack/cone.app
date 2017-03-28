@@ -12,6 +12,22 @@ Changes
 1.0a4 (unreleased)
 ------------------
 
+- Fix children filtering in ``cone.app.browser.contents.ContentsTile`` if
+  title or creator from metadata is ``None``.
+  [rnix, 2017-03-28]
+
+- Fix ``href`` link creation of ``ActionList``, ``ActionSharing`` and
+  ``ActionEdit`` in ``cone.app.browser.actions`` to ensure correct links if
+  ``target`` gets overwritten on subclass.
+  [rnix, 2017-03-28]
+
+- Consolidate ``batcheditemsbinder`` and ``tabletoolbarbinder`` in
+  ``protected.js``.
+  [rnix, 2017-03-28]
+
+- ``cone.app.browser.actions.ActionUp`` sets ``href`` properly.
+  [rnix, 2017-03-28]
+
 - Introduce ``logout`` tile.
   [rnix, 2017-03-23]
 
@@ -29,7 +45,7 @@ Changes
   [rnix, 2017-03-23]
 
 - ``cone.app.browser.actions.LinkAction`` now supports ``path``,
-  ``path_target``, ``path_action`` and ``path_event``.
+  ``path_target``, ``path_action``, ``path_event`` and ``path_overlay``.
   [rnix, 2017-03-23]
 
 - ``cone.app.browser.ajax.AjaxPath`` now supports ``target``, ``action``,
