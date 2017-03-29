@@ -9,7 +9,7 @@ Changes
   [rnix, 2017-02-21]
 
 
-1.0a4 (unreleased)
+1.0a4 (2017-03-28)
 ------------------
 
 - Fix children filtering in ``cone.app.browser.contents.ContentsTile`` if
