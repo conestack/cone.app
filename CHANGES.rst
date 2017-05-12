@@ -4,7 +4,9 @@ Changes
 1.0a5 (unreleased)
 ------------------
 
-- No changes yet.
+- Add ajax overlay additional CSS class support which has been introduced in
+  ``bdajax`` 1.8
+  [rnix, 2017-05-12]
 
 
 1.0a4 (2017-03-28)

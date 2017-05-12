@@ -91,7 +91,8 @@ AjaxOverlay object::
 
     >>> from cone.app.browser.ajax import AjaxOverlay
     >>> overlay = AjaxOverlay('#ajax-overlay', 'someaction',
-    ...     'http://example.com', False, '.overlay_content')
+    ...     'http://example.com', False, '.overlay_content',
+    ...     'additional-css-class')
     >>> overlay
     <cone.app.browser.ajax.AjaxOverlay object at ...>
 
@@ -214,7 +215,8 @@ which gets interpreted and executed on client side::
     "selector": "#ajax-overlay", 
     "action": "someaction", 
     "close": false, 
-    "type": "overlay"}]'
+    "type": "overlay", 
+    "css": "additional-css-class"}]'
 
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::
