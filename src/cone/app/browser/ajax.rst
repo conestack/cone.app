@@ -110,7 +110,8 @@ AjaxMessage object::
 AjaxOverlay object::
 
     >>> overlay = AjaxOverlay('#ajax-overlay', 'someaction',
-    ...     'http://example.com', False, '.overlay_content')
+    ...     'http://example.com', False, '.overlay_content',
+    ...     'additional-css-class')
     >>> overlay
     <cone.app.browser.ajax.AjaxOverlay object at ...>
 
@@ -121,7 +122,8 @@ AjaxPath object::
     ...     target='http://example.com/foo/bar',
     ...     action='layout:#layout:replace',
     ...     event='contextchanged:#someid',
-    ...     overlay='acionname:#custom-overlay:.custom_overlay_content'
+    ...     overlay='acionname:#custom-overlay:.custom_overlay_content',
+    ...     overlay_css='additional-overlay-css-class'
     ... )
 
     >>> path
@@ -243,8 +245,11 @@ which gets interpreted and executed on client side::
     "content_selector": ".overlay_content", 
     "selector": "#ajax-overlay", 
     "action": "someaction", 
-    "close": false, "type": "overlay"}, 
-    {"target": "http://example.com/foo/bar", 
+    "close": false, 
+    "type": "overlay", 
+    "css": "additional-css-class"}, 
+    {"overlay_css": "additional-overlay-css-class", 
+    "target": "http://example.com/foo/bar", 
     "overlay": "acionname:#custom-overlay:.custom_overlay_content", 
     "action": "layout:#layout:replace", 
     "path": "foo/bar", 

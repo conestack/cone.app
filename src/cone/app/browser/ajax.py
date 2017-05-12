@@ -94,12 +94,14 @@ class AjaxPath(object):
     """
 
     def __init__(self, path, target=None,
-                 action=None, event=None, overlay=None):
+                 action=None, event=None,
+                 overlay=None, overlay_css=None):
         self.path = path
         self.target = target
         self.action = action
         self.event = event
         self.overlay = overlay
+        self.overlay_css = overlay_css
 
 
 class AjaxAction(object):
@@ -142,9 +144,10 @@ class AjaxOverlay(object):
     """
 
     def __init__(self, selector='#ajax-overlay', action=None, target=None,
-                 close=False, content_selector='.overlay_content'):
+                 close=False, content_selector='.overlay_content', css=None):
         self.selector = selector
         self.content_selector = content_selector
+        self.css = css
         self.action = action
         self.target = target
         self.close = close
@@ -173,7 +176,8 @@ class AjaxContinue(object):
                     'target': definition.target,
                     'action': definition.action,
                     'event': definition.event,
-                    'overlay': definition.overlay
+                    'overlay': definition.overlay,
+                    'overlay_css': definition.overlay_css
                 })
             if isinstance(definition, AjaxAction):
                 continuation.append({
@@ -202,6 +206,7 @@ class AjaxContinue(object):
                     'type': 'overlay',
                     'selector': definition.selector,
                     'content_selector': definition.content_selector,
+                    'css': definition.css,
                     'action': definition.action,
                     'target': definition.target,
                     'close': definition.close,
