@@ -21,10 +21,8 @@ Docs
 Roadmap
 =======
 
-1.0a5
+1.0a6
 -----
-
-[ ] Adopt docs with bdajax update changes.
 
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
