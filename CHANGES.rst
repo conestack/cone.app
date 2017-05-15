@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a5 (unreleased)
+1.0a5 (2017-05-15)
 ------------------
 
 - Add ajax overlay additional CSS class support which has been introduced in
