@@ -1,16 +1,20 @@
 Changes
 =======
 
-1.0a5 (pyramid_upgrade branch)
+1.0a6 (pyramid_upgrade branch)
 ------------------------------
-
-- Add ajax overlay additional CSS class support which has been introduced in
-  ``bdajax`` 1.8
-  [rnix, 2017-05-12]
 
 - Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
+
+
+1.0a5 (2017-05-15)
+------------------
+
+- Add ajax overlay additional CSS class support which has been introduced in
+  ``bdajax`` 1.8
+  [rnix, 2017-05-12]
 
 
 1.0a4 (2017-03-28)

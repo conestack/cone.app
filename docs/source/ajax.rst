@@ -136,6 +136,11 @@ The Available continuation definitions are located in module
 - **AjaxPath**: Set browser path. Accepted arguments
 
     - ``path``: Browser path to be set.
+    - ``target``: Traversable target URL without trailing server view.
+    - ``action``: Name of action which should be performed.
+    - ``event``: Event to trigger.
+    - ``overlay``: Overlay to display.
+    - ``overlay_css``: Additional overlay CSS class.
 
 - **AjaxAction**: Execute action. Accepted arguments
 
@@ -167,6 +172,7 @@ The Available continuation definitions are located in module
     - ``close``: Flag whether to close an open overlay.
     - ``content_selector``: Optional overlay content selector. Defaults to
       ``.overlay_content``.
+    - ``css``: Additional overlay CSS class.
 
 AJAX continuation can be queued by passing continuation definition objects
 to ``cone.app.browser.ajax.ajax_continue``, which expects the request and
