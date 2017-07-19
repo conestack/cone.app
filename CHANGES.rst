@@ -4,7 +4,11 @@ Changes
 1.0a6 (unreleased)
 ------------------
 
-- No changes yet.
+- Include query when setting browser path in ``cone.batcheditemsbinder`` JS.
+  [rnix, 2017-07-19]
+
+- Update to bdajax 1.9 and adopt bdajax binder function registration.
+  [rnix, 2017-07-19]
 
 
 1.0a5 (2017-05-15)

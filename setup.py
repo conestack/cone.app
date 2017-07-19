@@ -44,7 +44,7 @@ setup(
         'node.ext.ugm',
         'pyramid',
         'pyramid_zcml',
-        'bdajax',
+        'bdajax>1.8.999',
         'cone.tile',
         'yafowil',
         'yafowil.webob',

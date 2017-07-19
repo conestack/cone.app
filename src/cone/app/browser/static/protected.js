@@ -14,27 +14,25 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // initial binding
         cone.key_binder();
-        cone.settingstabsbinder();
-        cone.tabletoolbarbinder();
-        cone.sharingbinder();
-        cone.selectable.binder();
-        cone.copysupportbinder();
-        yafowil.referencebrowser.browser_binder();
 
         // add binders to bdajax binding callbacks
-        $.extend(bdajax.binders, {
-            settingstabsbinder: cone.settingstabsbinder,
-            batcheditemsbinder: cone.batcheditemsbinder,
-            tabletoolbarbinder: cone.tabletoolbarbinder,
-            sharingbinder: cone.sharingbinder,
-            selectablebinder: cone.selectable.binder,
-            copysupportbinder: cone.copysupportbinder,
-            refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
-            refbrowser_add_reference_binder:
-                yafowil.referencebrowser.add_reference_binder,
-            refbrowser_remove_reference_binder:
-                yafowil.referencebrowser.remove_reference_binder
-        });
+        bdajax.register(cone.settingstabsbinder.bind(cone), true);
+        bdajax.register(cone.batcheditemsbinder.bind(cone), true);
+        bdajax.register(cone.tabletoolbarbinder.bind(cone), true);
+        bdajax.register(cone.sharingbinder.bind(cone), true);
+        bdajax.register(cone.selectable.binder.bind(cone.selectable), true);
+        bdajax.register(cone.copysupportbinder.bind(cone), true);
+        var referencebrowser = yafowil.referencebrowser;
+        bdajax.register(
+            referencebrowser.browser_binder.bind(referencebrowser),
+            true
+        );
+        bdajax.register(
+            referencebrowser.add_reference_binder.bind(referencebrowser)
+        );
+        bdajax.register(
+            referencebrowser.remove_reference_binder.bind(referencebrowser)
+        );
     });
 
     cone = {
@@ -102,7 +100,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var target = bdajax.parsetarget(selection.attr('ajax:target'));
                 target.params.size = size;
                 bdajax.path({
-                    path: target.path,
+                    path: target.path + target.query + '&size=' + size,
                     event: selection.attr('ajax:event'),
                     target: target
                 });
@@ -114,7 +112,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 var target = bdajax.parsetarget(input.attr('ajax:target'));
                 target.params.term = term;
                 bdajax.path({
-                    path: target.path,
+                    path: target.path + target.query + '&term=' + term,
                     event: input.attr('ajax:event'),
                     target: target
                 });
