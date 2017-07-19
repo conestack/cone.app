@@ -2,12 +2,14 @@ from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxOverlay
+from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import ajax_form_fiddle
 from cone.app.browser.ajax import ajax_message
 from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
+from cone.app.browser.utils import node_path
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import Properties
@@ -24,10 +26,14 @@ from plumber import plumb
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
 from pyramid.view import view_config
+from urllib2 import urlparse
 from webob.exc import HTTPFound
 from yafowil.base import factory
+import logging
+import urllib2
 
 
+logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
 
 
@@ -66,13 +72,23 @@ class _FormRenderingTile(Tile):
 ###############################################################################
 
 class CameFromNext(Behavior):
-    """Form behavior for form tiles considering 'came_from' parameter on
-    request for continuation purposes.
+    """Form behavior for form tiles considering ``came_from`` parameter on
+    request for form continuation.
+    """
+
+    default_came_from = default(None)
+    """Default ``came_from`` value considered in ``next`` if no ``came_from``
+    parameter given on request.
+    """
+
+    write_history_on_next = default(False)
+    """Flag whether to write browser history on ``next`` via ``AjaxPath``
+    continuation if ajax request.
     """
 
     @plumb
     def prepare(_next, self):
-        """Hook after prepare and set 'came_from' as proxy field to
+        """Hook after prepare and set ``came_from`` as proxy field to
         ``self.form``.
         """
         _next(self)
@@ -83,20 +99,69 @@ class CameFromNext(Behavior):
 
     @default
     def next(self, request):
-        """Read 'came_from' parameter from request and compute next url.
+        """Read ``came_from`` parameter from request and compute next URL.
 
-        If came_from is 'parent', URL of node parent is computed.
-        If came_from is set but not 'parent', it is considered as URL to use
-        If no came_from is set, return URL of node
+        If ``came_from`` not found on request, ``default_came_from`` is
+        used.
+
+        If ``came_from`` is special value ``parent``, URL of model parent is
+        computed.
+
+        If ``came_from`` is set, it is considered as URL to use. The given URL
+        must match the basic application URL, otherwise an error gets logged
+        and URL of current model is computed.
+
+        If no ``came_from`` is set, URL of current model is computed.
         """
-        if request.get('came_from') == 'parent':
-            url = make_url(request.request, node=self.model.parent)
-        elif request.get('came_from'):
-            url = request.get('came_from')
-        else:
+        # read came_from from request
+        came_from = request.get('came_from')
+        # fall back to default_came_from if came_from not passed on request
+        if came_from is None:
+            came_from = self.default_came_from
+        # use model URL and path if no came_from
+        if not came_from:
             url = make_url(request.request, node=self.model)
+            path = '/'.join(node_path(self.model))
+        # use model parent URL and path if came_from is 'parent'
+        elif came_from == 'parent':
+            url = make_url(request.request, node=self.model.parent)
+            path = '/'.join(node_path(self.model.parent))
+        # consider came_from a URL
+        else:
+            url = urllib2.unquote(came_from)
+            parsed = urlparse.urlparse(url)
+            app_loc = urlparse.urlparse(self.request.application_url).netloc
+            # behave as if no came_from given if application location not
+            # matches came_from location
+            if app_loc != parsed.netloc:
+                logger.error((
+                    'CameFromNext.next(): Application location "{}" does not '
+                    'match came_from location "{}". Use model for URL '
+                    'computing instead'
+                ).format(app_loc, parsed.netloc))
+                url = make_url(request.request, node=self.model)
+                path = '/'.join(node_path(self.model))
+            # include query to path
+            elif parsed.query:
+                path = '{}?{}'.format(parsed.path, parsed.query)
+            # query without path
+            else:
+                path = '{}'.format(parsed.path)
+        # ajax continuation definitions if ajax request
         if self.ajax_request:
-            return [AjaxEvent(url, 'contextchanged', '#layout')]
+            event = AjaxEvent(url, 'contextchanged', '#layout')
+            # return continuation path and event if browser history should be
+            # written
+            if self.write_history_on_next:
+                cpath = AjaxPath(
+                    path,
+                    target=url,
+                    event='contextchanged:#layout'
+                )
+                return [cpath, event]
+            # return event only if writing browser history should be skipped
+            return [event]
+        # regular redirection if no ajax request
         return HTTPFound(location=url)
 
 

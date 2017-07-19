@@ -17,7 +17,7 @@ display the traceback in an error dialog if request was a bdajax action::
     >>> request = layer.new_request(xhr=1)
     >>> str(internal_server_error(request))
     '200 OK\r\nContent-Length: 195\r\nContent-Type: 
-    application/json\r\n\r\n{"continuation": 
+    application/json...\r\n\r\n{"continuation": 
     [{"flavor": "error", "type": "message", 
     "payload": "<pre>Traceback (most recent call last):\\nNone\\n</pre>", 
     "selector": null}], "payload": "", "mode": "NONE", "selector": "NONE"}'

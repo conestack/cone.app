@@ -33,13 +33,13 @@ def make_query(**kw):
             continue
         if isinstance(param, basestring):
             param = [param]
-        if type(param) is types.IntType:
+        if type(param) in (types.IntType, types.FloatType):
             param = [str(param)]
         for p in param:
-            query.append('{0}={1}'.format(name, safe_encode(p)))
+            query.append('{}={}'.format(name, urllib2.quote(safe_encode(p))))
     query = '&'.join(query)
     if query:
-        return '?{0}'.format(query)
+        return '?{}'.format(query)
 
 
 def make_url(request, path=None, node=None, resource=None, query=None):
@@ -54,10 +54,10 @@ def make_url(request, path=None, node=None, resource=None, query=None):
     if resource is not None:
         path.append(resource)
     path = [urllib2.quote(safe_encode(it)) for it in path]
-    url = '{0}/{1}'.format(request.application_url, '/'.join(path))
+    url = '{}/{}'.format(request.application_url, '/'.join(path))
     if not query:
         return url
-    return '{0}{1}'.format(url, query)
+    return '{}{}'.format(url, query)
 
 
 def choose_name(container, name):
@@ -98,7 +98,7 @@ def request_property(func):
     Works only on instances providing a request attribute.
     """
     def wrapper(self):
-        cache_key = '{0}.{1}.{2}'.format(
+        cache_key = '{}.{}.{}'.format(
             str(id(self)),
             self.__class__.__name__,
             func.__name__

@@ -17,6 +17,305 @@ rendering tiles as is, which are expected to be registered as ``addform``
 respective ``editform``.
 
 
+CameFromNext
+------------
+
+Imports::
+
+    >>> from cone.tile import tile
+    >>> from cone.app.browser.ajax import AjaxEvent
+    >>> from cone.app.browser.ajax import AjaxPath
+    >>> from cone.app.browser.authoring import CameFromNext
+    >>> from cone.app.browser.form import Form
+    >>> from cone.app.model import BaseNode
+    >>> from plumber import plumbing
+    >>> from yafowil import loader
+    >>> from yafowil.base import factory
+    >>> from cone.tile import render_tile
+    >>> from cone.tile import tile
+    >>> import urllib2
+
+Create form tile with ``CameFromNext`` behavior::
+
+    >>> @tile('camefromnextform')
+    ... @plumbing(CameFromNext)
+    ... class CameFromNextForm(Form):
+    ... 
+    ...     def prepare(self):
+    ...         form = factory(u'form',
+    ...                        name='camefromnextform',
+    ...                        props={'action': self.nodeurl})
+    ...         form['next'] = factory(
+    ...             'submit',
+    ...             props = {
+    ...                 'action': 'next',
+    ...                 'expression': True,
+    ...                 'handler': None,
+    ...                 'next': self.next,
+    ...                 'label': 'Next',
+    ...             })
+    ...         self.form = form
+
+Check behavior config defaults::
+
+    >>> assert(CameFromNextForm.default_came_from is None)
+    >>> assert(CameFromNextForm.write_history_on_next is False)
+
+Create a test model and login::
+
+    >>> root = BaseNode()
+    >>> model = root['child'] = BaseNode()
+
+    >>> layer.login('manager')
+
+Check whether ``came_from`` is rendered on form as proxy field::
+
+    >>> request = layer.new_request()
+    >>> came_from = urllib2.quote('http://example.com/some/path?foo=bar')
+    >>> request.params['came_from'] = came_from
+    >>> render_tile(model, request, 'camefromnextform')
+    u'...<input id="input-camefromnextform-came_from" 
+    name="came_from" type="hidden" 
+    value="http%3A//example.com/some/path%3Ffoo%3Dbar" />...'
+
+No ``came_from`` on request, no ``default_came_from``, no ajax request::
+
+    >>> request = layer.new_request()
+    >>> request.params['action.camefromnextform.next'] = '1'
+    >>> res = render_tile(model, request, 'camefromnextform')
+
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/child'
+
+No ``came_from`` on request, ``default_came_from`` set to ``parent``, no ajax
+request::
+
+    >>> CameFromNextForm.default_came_from = 'parent'
+    >>> res = render_tile(model, request, 'camefromnextform')
+
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/'
+
+No ``came_from`` on request, ``default_came_from`` set to URL, no ajax
+request::
+
+    >>> came_from = urllib2.quote('http://example.com/foo/bar?baz=1')
+    >>> CameFromNextForm.default_came_from = came_from
+    >>> res = render_tile(model, request, 'camefromnextform')
+
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/foo/bar?baz=1'
+
+No ``came_from`` on request, ``default_came_from`` set to wrong domain, no
+ajax request::
+
+    >>> CameFromNextForm.default_came_from = 'http://other.com'
+    >>> res = render_tile(model, request, 'camefromnextform')
+
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/child'
+
+``came_from`` set to empty value on request, overrules ``default_came_from``,
+no ajax request::
+
+    >>> CameFromNextForm.default_came_from = 'parent'
+
+    >>> request.params['came_from'] = ''
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/child'
+
+``came_from`` set to ``parent`` on request, overrules ``default_came_from``,
+no ajax request::
+
+    >>> CameFromNextForm.default_came_from = None
+
+    >>> request.params['came_from'] = 'parent'
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/'
+
+``came_from`` set to URL on request, overrules ``default_came_from``,
+no ajax request::
+
+    >>> came_from = urllib2.quote('http://example.com/default')
+    >>> CameFromNextForm.default_came_from = came_from
+
+    >>> came_from = urllib2.quote('http://example.com/other')
+    >>> request.params['came_from'] = came_from
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> request.environ['redirect']
+    <HTTPFound at ... 302 Found>
+
+    >>> request.environ['redirect'].location
+    'http://example.com/other'
+
+Reset ``default_came_from``::
+
+    >>> CameFromNextForm.default_came_from = None
+
+``came_from`` set to empty value on request, ajax request, no ajax path
+continuation::
+
+    >>> request = layer.new_request()
+    >>> request.params['ajax'] = '1'
+    >>> request.params['action.camefromnextform.next'] = '1'
+    >>> request.params['came_from'] = ''
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 1)
+    >>> continuation = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(continuation, AjaxEvent))
+    >>> continuation.target, continuation.name, continuation.selector
+    ('http://example.com/child', 'contextchanged', '#layout')
+
+``came_from`` set to ``parent`` on request, ajax request, no ajax path
+continuation::
+
+    >>> request.params['came_from'] = 'parent'
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 1)
+    >>> continuation = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(continuation, AjaxEvent))
+    >>> continuation.target, continuation.name, continuation.selector
+    ('http://example.com/', 'contextchanged', '#layout')
+
+``came_from`` set to URL on request, ajax request, no ajax path
+continuation::
+
+    >>> came_from = urllib2.quote('http://example.com/some/path?foo=bar')
+    >>> request.params['came_from'] = came_from
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 1)
+    >>> continuation = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(continuation, AjaxEvent))
+    >>> continuation.target, continuation.name, continuation.selector
+    ('http://example.com/some/path?foo=bar', 'contextchanged', '#layout')
+
+``came_from`` set to wrong domain on request, ajax request, no ajax path
+continuation::
+
+    >>> came_from = urllib2.quote('http://other.com')
+    >>> request.params['came_from'] = came_from
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 1)
+    >>> continuation = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(continuation, AjaxEvent))
+    >>> continuation.target, continuation.name, continuation.selector
+    ('http://example.com/child', 'contextchanged', '#layout')
+
+``came_from`` set to empty value on request, ajax request, setting browser
+history configured::
+
+    >>> CameFromNextForm.write_history_on_next = True
+
+    >>> request = layer.new_request()
+    >>> request.params['ajax'] = '1'
+    >>> request.params['action.camefromnextform.next'] = '1'
+    >>> request.params['came_from'] = ''
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 2)
+
+    >>> path = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(path, AjaxPath))
+    >>> path.path, path.target, path.event
+    (u'child', 'http://example.com/child', 'contextchanged:#layout')
+
+    >>> event = request.environ['cone.app.continuation'][1]
+    >>> assert(isinstance(event, AjaxEvent))
+    >>> event.target, continuation.name, continuation.selector
+    ('http://example.com/child', 'contextchanged', '#layout')
+
+
+``came_from`` set to ``parent`` on request, ajax request, setting browser
+history configured::
+
+    >>> request.params['came_from'] = 'parent'
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 2)
+
+    >>> path = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(path, AjaxPath))
+    >>> path.path, path.target, path.event
+    ('', 'http://example.com/', 'contextchanged:#layout')
+
+    >>> event = request.environ['cone.app.continuation'][1]
+    >>> assert(isinstance(event, AjaxEvent))
+    >>> event.target, continuation.name, continuation.selector
+    ('http://example.com/', 'contextchanged', '#layout')
+
+``came_from`` set to URL on request, ajax request, setting browser
+history configured::
+
+    >>> came_from = urllib2.quote('http://example.com/some/path')
+    >>> request.params['came_from'] = came_from
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 2)
+
+    >>> path = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(path, AjaxPath))
+    >>> path.path, path.target, path.event
+    ('/some/path', 
+    'http://example.com/some/path', 
+    'contextchanged:#layout')
+
+    >>> event = request.environ['cone.app.continuation'][1]
+    >>> assert(isinstance(event, AjaxEvent))
+    >>> event.target, continuation.name, continuation.selector
+    ('http://example.com/some/path', 'contextchanged', '#layout')
+
+``came_from`` set to to wrong on request, ajax request, setting browser
+history configured::
+
+    >>> came_from = urllib2.quote('http://other.com')
+    >>> request.params['came_from'] = came_from
+
+    >>> res = render_tile(model, request, 'camefromnextform')
+    >>> assert(len(request.environ['cone.app.continuation']) == 2)
+
+    >>> path = request.environ['cone.app.continuation'][0]
+    >>> assert(isinstance(path, AjaxPath))
+    >>> path.path, path.target, path.event
+    (u'child', 'http://example.com/child', 'contextchanged:#layout')
+
+    >>> event = request.environ['cone.app.continuation'][1]
+    >>> assert(isinstance(event, AjaxEvent))
+    >>> event.target, continuation.name, continuation.selector
+    ('http://example.com/child', 'contextchanged', '#layout')
+
+Reset ``write_history_on_next``::
+
+    >>> CameFromNextForm.write_history_on_next = False
+
+Logout::
+
+    >>> layer.logout()
+
+
 Adding
 ------
 
@@ -29,7 +328,6 @@ Provide a node interface needed for different node style binding to test form::
 
 Create dummy node::
 
-    >>> from cone.app.model import BaseNode
     >>> from cone.app.model import get_node_info
 
     >>> @implementer(ITestAddingNode)
@@ -65,16 +363,10 @@ Create another dummy node inheriting from AdapterNode::
 
 Create and register an ``addform`` named form tile::
 
-    >>> from plumber import plumbing
-    >>> from yafowil import loader
-    >>> from yafowil.base import factory
-    >>> from cone.tile import tile
     >>> from cone.app.browser.utils import make_url
-    >>> from cone.app.browser.form import Form
     >>> from cone.app.browser.authoring import ContentAddForm
     >>> from cone.app.browser.ajax import AjaxAction
     >>> from cone.app.browser.ajax import AjaxEvent
-    >>> from webob.exc import HTTPFound
 
     >>> @tile('addform', interface=ITestAddingNode)
     ... @plumbing(ContentAddForm)
@@ -123,7 +415,6 @@ Authenticate::
 Render without factory::
 
     >>> request = layer.new_request()
-    >>> from cone.tile import render_tile
     >>> render_tile(root, request, 'add')
     u'unknown_factory'
 
@@ -175,10 +466,11 @@ Render with 'came_from' set::
     'http://example.com/'
 
     >>> del request.environ['redirect']
-    >>> request.params['came_from'] = 'http://foobarbaz.com'
+    >>> came_from = urllib2.quote('http://example.com/foo/bar?baz=1')
+    >>> request.params['came_from'] = came_from
     >>> res = render_tile(root, request, 'add')
     >>> request.environ['redirect'].location
-    'http://foobarbaz.com'
+    'http://example.com/foo/bar?baz=1'
 
 Render with ajax flag::
 
@@ -272,7 +564,7 @@ node::
     >>> request.environ['redirect'].location
     'http://example.com/somechild'
 
-Check next URL with 'came_from' 'parent'::
+Check next URL with ``parent`` as ``came_from`` value::
 
     >>> request = layer.new_request()
 
@@ -285,12 +577,13 @@ Check next URL with 'came_from' 'parent'::
     >>> request.environ['redirect'].location
     'http://example.com/'
 
-Check next URL with 'came_from' 'some_URL'::
+Check next URL with URL as ``came_from`` value::
 
     >>> request = layer.new_request()
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
-    >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'
+    >>> came_from = urllib2.quote('http://example.com/other/node/in/tree')
+    >>> request.params['came_from'] = came_from
     >>> res = render_tile(root['somechild'], request, 'edit')
     >>> request.environ['redirect'].location
     'http://example.com/other/node/in/tree'
@@ -308,8 +601,8 @@ Render with ajax flag::
     >>> request.environ['cone.app.continuation']
     [<cone.app.browser.ajax.AjaxEvent object at ...>]
 
-URL computing is the same as if HTTPFound instances are returned. In Ajax case,
-this URL is used as ajax target::
+URL computing is the same as if ``HTTPFound`` instance is returned. In Ajax
+case, the URL is used as ajax target::
 
     >>> request.environ['cone.app.continuation'][0].target
     'http://example.com/somechild'
@@ -320,7 +613,8 @@ this URL is used as ajax target::
 
     >>> request.params['action.editform.update'] = '1'
     >>> request.params['editform.title'] = 'Changed title'
-    >>> request.params['came_from'] = 'http://example.com/other/node/in/tree'
+    >>> came_from = urllib2.quote('http://example.com/other/node/in/tree')
+    >>> request.params['came_from'] = came_from
     >>> request.params['ajax'] = '1'
     >>> res = render_tile(root['somechild'], request, 'edit')
     >>> request.environ['cone.app.continuation'][0].target

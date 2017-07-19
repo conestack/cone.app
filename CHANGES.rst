@@ -4,10 +4,14 @@ Changes
 1.0a6 (unreleased)
 ------------------
 
+- Use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to quote
+  query parameter values.
+  [rnix, 2017-07-19]
+
 - Include query when setting browser path in ``cone.batcheditemsbinder`` JS.
   [rnix, 2017-07-19]
 
-- Update to bdajax 1.9 and adopt bdajax binder function registration.
+- Update to ``bdajax`` 1.9 and adopt bdajax binder function registration.
   [rnix, 2017-07-19]
 
 
