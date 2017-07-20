@@ -101,8 +101,8 @@ class CameFromNext(Behavior):
     def next(self, request):
         """Read ``came_from`` parameter from request and compute next URL.
 
-        If ``came_from`` not found on request, ``default_came_from`` is
-        used.
+        If ``came_from`` not found on request, ``default_came_from`` property
+        is used.
 
         If ``came_from`` is special value ``parent``, URL of model parent is
         computed.
@@ -111,7 +111,8 @@ class CameFromNext(Behavior):
         must match the basic application URL, otherwise an error gets logged
         and URL of current model is computed.
 
-        If no ``came_from`` is set, URL of current model is computed.
+        If ``came_from`` is set to empty value, URL of current model is
+        computed.
         """
         # read came_from from request
         came_from = request.get('came_from')

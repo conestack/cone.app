@@ -248,7 +248,6 @@ history configured::
     >>> event.target, continuation.name, continuation.selector
     ('http://example.com/child', 'contextchanged', '#layout')
 
-
 ``came_from`` set to ``parent`` on request, ajax request, setting browser
 history configured::
 
