@@ -88,6 +88,26 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             }).first().trigger('click');
         },
 
+        batcheditems_handle_filter: function(elem, param, val) {
+            var target = bdajax.parsetarget(elem.attr('ajax:target')),
+                event = elem.attr('ajax:event');
+            target.params[param] = val;
+            if (elem.attr('ajax:path')) {
+                var path_event = elem.attr('ajax:path-event');
+                if (!path_event) {
+                    path_event = event;
+                }
+                // path always gets calculated from target
+                bdajax.path({
+                    path: target.path + target.query + '&' + param + '=' + val,
+                    event: path_event,
+                    target: target
+                });
+            }
+            var defs = event.split(':');
+            bdajax.trigger(defs[0], defs[1], target);
+        },
+
         batcheditemsbinder: function(context, size_selector, filter_selector) {
             if (!size_selector) {
                 size_selector = '.batched_items_slice_size select';
@@ -96,27 +116,11 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             selection.unbind('change').bind('change', function(event) {
                 var option = $('option:selected', $(this)).first();
                 var size = option.val();
-                var evt = selection.attr('ajax:event').split(':');
-                var target = bdajax.parsetarget(selection.attr('ajax:target'));
-                target.params.size = size;
-                bdajax.path({
-                    path: target.path + target.query + '&size=' + size,
-                    event: selection.attr('ajax:event'),
-                    target: target
-                });
-                bdajax.trigger(evt[0], evt[1], target);
+                cone.batcheditems_handle_filter(selection, 'size', size);
             });
             var trigger_search = function(input) {
                 var term = input.attr('value');
-                var evt = input.attr('ajax:event').split(':');
-                var target = bdajax.parsetarget(input.attr('ajax:target'));
-                target.params.term = term;
-                bdajax.path({
-                    path: target.path + target.query + '&term=' + term,
-                    event: input.attr('ajax:event'),
-                    target: target
-                });
-                bdajax.trigger(evt[0], evt[1], target);
+                cone.batcheditems_handle_filter(input, 'term', term);
             };
             if (!filter_selector) {
                 filter_selector = '.batched_items_filter input';

@@ -22,7 +22,7 @@ class Batch(Tile):
         'page': '',
         'current': False,
         'visible': False,
-        'url': '',
+        'url': ''
     }
 
     path = 'cone.app.browser:templates/batch.pt'
@@ -31,6 +31,14 @@ class Batch(Tile):
 
     ellipsis = u'...'
     """Ellipsis string if number of pages exceeds batch range.
+    """
+
+    ajax_path = None
+    """Ajax path to set if batch link gets clicked.
+    """
+
+    ajax_path_event = None
+    """Ajax path event to set if batch link gets clicked.
     """
 
     trigger_event = 'batchclicked'
@@ -42,6 +50,10 @@ class Batch(Tile):
         """CSS selector to trigger JS event to.
         """
         return '.{}sensitiv'.format(self.name)
+
+    @property
+    def ajax_event(self):
+        return '{}:{}'.format(self.trigger_event, self.trigger_selector)
 
     @property
     def vocab(self):
@@ -194,6 +206,8 @@ class BatchedItemsBatch(Batch):
         """
         self.parent = parent
         self.name = parent.items_id + 'batch'
+        self.ajax_path = parent.ajax_path
+        self.ajax_path_event = parent.ajax_path_event
 
     @property
     def display(self):
@@ -313,6 +327,18 @@ class BatchedItems(Tile):
     add additional listing filter aspects or similar.
     """
 
+    ajax_path = None
+    """Ajax path to set if batched items contents changes.
+    """
+
+    ajax_path_event = None
+    """Ajax path event to set if items contents changes.
+    """
+
+    view_name = None
+    """View name to include in pagination link URL's.
+    """
+
     @property
     def title(self):
         """Batched items title.
@@ -344,6 +370,10 @@ class BatchedItems(Tile):
         filter term.
         """
         return self.pagination.trigger_event
+
+    @property
+    def ajax_event(self):
+        return '{}:{}'.format(self.trigger_event, self.trigger_selector)
 
     @property
     def rendered_header(self):
@@ -471,8 +501,16 @@ class BatchedItems(Tile):
             params[param] = self.request.params.get(param, '')
         query = make_query(**params)
         if path:
-            return safe_decode(make_url(self.request, path=path, query=query))
-        return safe_decode(make_url(self.request, node=self.model, query=query))
+            return safe_decode(make_url(
+                self.request,
+                path=path,
+                #resource=self.view_name,
+                query=query))
+        return safe_decode(make_url(
+            self.request,
+            node=self.model,
+            #resource=self.view_name,
+            query=query))
 
     @property
     def item_count(self):

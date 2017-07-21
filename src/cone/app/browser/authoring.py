@@ -92,10 +92,15 @@ class CameFromNext(Behavior):
         ``self.form``.
         """
         _next(self)
-        self.form['came_from'] = factory(
-            'proxy',
-            value=self.request.params.get('came_from'),
-        )
+        # read came_from from request
+        came_from = self.request.get('came_from')
+        # fall back to default_came_from if came_from not passed on request
+        if came_from is None:
+            came_from = self.default_came_from
+        # came_from might be None, set to empty string
+        if not came_from:
+            came_from = ''
+        self.form['came_from'] = factory('proxy', value=came_from)
 
     @default
     def next(self, request):
