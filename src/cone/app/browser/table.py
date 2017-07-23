@@ -1,3 +1,4 @@
+from cone.app.browser import RelatedViewConsumer
 from cone.app.browser.batch import Batch
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
@@ -5,6 +6,7 @@ from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_path
 from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
+from plumber import plumbing
 import urllib2
 
 
@@ -16,6 +18,7 @@ class RowData(dict):
         self.css = css
 
 
+@plumbing(RelatedViewConsumer)
 class Table(Tile):
     """Abstract table tile. Provides rendering of sortable, batched tables.
 
@@ -39,7 +42,6 @@ class Table(Tile):
     display_table_footer = True
     ajax_path = None
     ajax_path_event = None
-    view_name = None
 
     table_length_size = 'col-xs-4 col-sm3'
     table_filter_size = 'col-xs-3'
@@ -113,7 +115,7 @@ class Table(Tile):
         return safe_decode(make_url(
             self.request,
             node=self.model,
-            #resource=self.view_name,
+            #resource=self.related_view,
             query=query))
 
     def format_date(self, dt):
@@ -174,7 +176,7 @@ class TableBatch(Batch):
     def __init__(self, table_tile):
         self.table_tile = table_tile
         self.name = table_tile.table_id + 'batch'
-        self.view_name = table_tile.view_name
+        self.related_view = table_tile.related_view
         self.ajax_path = self.ajax_path
         self.ajax_path_event = self.ajax_path_event
 
@@ -206,7 +208,7 @@ class TableBatch(Batch):
             url = make_url(
                 self.request,
                 path=path,
-                #resource=self.view_name,
+                #resource=self.related_view,
                 query=query
             )
             ret.append({

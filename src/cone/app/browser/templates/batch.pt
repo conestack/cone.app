@@ -13,9 +13,9 @@
         condition="firstpage">
 
       <li tal:condition="not invisible">
-        <a href="${firstpage['url']}"
+        <a href="${firstpage.get('href', firstpage.get('url'))}"
            ajax:bind="click"
-           ajax:target="${firstpage['url']}"
+           ajax:target="${firstpage.get('target', firstpage.get('url'))}"
            ajax:event="${context.ajax_event}"
            ajax:path="${context.ajax_path|nothing}"
            ajax:path-event="${context.ajax_path_event|nothing}"
@@ -36,9 +36,9 @@
         condition="prevpage">
 
       <li tal:condition="not invisible">
-        <a href="${prevpage['url']}"
+        <a href="${prevpage.get('href', prevpage.get('url'))}"
            ajax:bind="click"
-           ajax:target="${prevpage['url']}"
+           ajax:target="${prevpage.get('target', prevpage.get('url'))}"
            ajax:event="${context.ajax_event}"
            ajax:path="${context.ajax_path|nothing}"
            ajax:path-event="${context.ajax_path_event|nothing}"
@@ -59,9 +59,9 @@
                   current page['current']">
 
         <li tal:condition="not invisible and not current">
-          <a href="${page['url']}"
+          <a href="${page.get('href', page.get('url'))}"
              ajax:bind="click"
-             ajax:target="${page['url']}"
+             ajax:target="${page.get('target', page.get('url'))}"
              ajax:event="${context.ajax_event}"
              ajax:path="${context.ajax_path|nothing}"
              ajax:path-event="${context.ajax_path_event|nothing}"
@@ -85,9 +85,9 @@
         condition="nextpage">
 
       <li tal:condition="not invisible">
-        <a href="${nextpage['url']}"
+        <a href="${nextpage.get('href', nextpage.get('url'))}"
            ajax:bind="click"
-           ajax:target="${nextpage['url']}"
+           ajax:target="${nextpage.get('target', nextpage.get('url'))}"
            ajax:event="${context.ajax_event}"
            ajax:path="${context.ajax_path|nothing}"
            ajax:path-event="${context.ajax_path_event|nothing}"
@@ -108,9 +108,9 @@
         condition="lastpage">
 
       <li tal:condition="not invisible">
-        <a href="${lastpage['url']}"
+        <a href="${lastpage.get('href', lastpage.get('url'))}"
            ajax:bind="click"
-           ajax:target="${lastpage['url']}"
+           ajax:target="${lastpage.get('target', lastpage.get('url'))}"
            ajax:event="${context.ajax_event}"
            ajax:path="${context.ajax_path|nothing}"
            ajax:path-event="${context.ajax_path_event|nothing}"

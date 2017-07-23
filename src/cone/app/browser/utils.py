@@ -3,6 +3,7 @@ from cone.app.utils import safe_encode
 from cone.app.utils import safe_decode
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import authenticated_userid
+import copy
 import datetime
 import re
 import types
@@ -49,6 +50,8 @@ def make_url(request, path=None, node=None, resource=None, query=None):
     # time. mutable values should not be in function signatures to avoid this.
     if path is None:
         path = []
+    else:
+        path = copy.copy(path)
     if node is not None:
         path = node_path(node)
     if resource is not None:

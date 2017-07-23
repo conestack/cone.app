@@ -8,6 +8,27 @@ Changes
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
 
+- Use ``RelatedViewConsumer`` on ``cone.app.browser.batch.BatchedItems``
+  and ``cone.app.browser.table.Table``.
+  [rnix, 2017-07-23]
+
+- Use ``RelatedViewProvider``  on ``listing`` and ``sharing`` tile.
+  [rnix, 2017-07-23]
+
+- Add related view support. This includes ``set_related_view``,
+  ``get_related_view``, ``RelatedViewProvider`` and ``RelatedViewConsumer``
+  in ``cone.app.browser``.
+  [rnix, 2017-07-23]
+
+- Introduce dedicated ``href`` and ``target`` keys for batch vocab
+  pages. Makes it possible to consider view names. ``url`` key still works
+  as B/C, but will be removed as of ``cone.app`` 1.1.
+  [rnix, 2017-07-23]
+
+- Copy passed ``path`` in ``cone.app.browser.utils.make_url`` to avoid
+  modification of given argument.
+  [rnix, 2017-07-23]
+
 - Use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to quote
   query parameter values.
   [rnix, 2017-07-19]

@@ -1,3 +1,4 @@
+from cone.app.browser import RelatedViewConsumer
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_path
@@ -5,6 +6,7 @@ from cone.app.browser.utils import request_property
 from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
 from cone.tile import render_template
+from plumber import plumbing
 import urllib2
 
 
@@ -22,7 +24,9 @@ class Batch(Tile):
         'page': '',
         'current': False,
         'visible': False,
-        'url': ''
+        'href': '',
+        'target': '',
+        'url': '',  # B/C
     }
 
     path = 'cone.app.browser:templates/batch.pt'
@@ -228,16 +232,19 @@ class BatchedItemsBatch(Batch):
             pages += 1
         current = self.parent.current_page
         for i in range(pages):
-            url = self.parent.page_target(path, str(i))
+            href = self.parent.page_target(path, str(i), include_resource=True)
+            target = self.parent.page_target(path, str(i))
             ret.append({
                 'page': '%i' % (i + 1),
                 'current': current == i,
                 'visible': True,
-                'url': url,
+                'href': href,
+                'target': target
             })
         return ret
 
 
+@plumbing(RelatedViewConsumer)
 class BatchedItems(Tile):
     """Base tile for displaying searchable, batched items.
     """
@@ -335,10 +342,6 @@ class BatchedItems(Tile):
     """Ajax path event to set if items contents changes.
     """
 
-    view_name = None
-    """View name to include in pagination link URL's.
-    """
-
     @property
     def title(self):
         """Batched items title.
@@ -433,7 +436,7 @@ class BatchedItems(Tile):
         """
         return int(self.request.params.get('b_page', '0'))
 
-    def page_target(self, path, page):
+    def page_target(self, path, page, include_resource=False):
         """Pagination batch page target.
         """
         params = {
@@ -441,7 +444,10 @@ class BatchedItems(Tile):
             'size': self.slice_size,
             'term': self.filter_term,
         }
-        return self.make_url(params, path=path)
+        return self.make_url(
+            params,
+            path=path,
+            include_resource=include_resource)
 
     @property
     def slice_id(self):
@@ -494,23 +500,17 @@ class BatchedItems(Tile):
             'size': self.slice_size,
         })
 
-    def make_url(self, params, path=None):
+    def make_url(self, params, path=None, include_resource=False):
         """Create URL considering ``query_whitelist``.
         """
         for param in self.query_whitelist:
             params[param] = self.request.params.get(param, '')
-        query = make_query(**params)
-        if path:
-            return safe_decode(make_url(
-                self.request,
-                path=path,
-                #resource=self.view_name,
-                query=query))
         return safe_decode(make_url(
             self.request,
-            node=self.model,
-            #resource=self.view_name,
-            query=query))
+            path=path,
+            node=None if path else self.model,
+            resource=self.related_view if include_resource else None,
+            query=make_query(**params)))
 
     @property
     def item_count(self):

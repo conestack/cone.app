@@ -1,10 +1,12 @@
 from cone.app import security
+from cone.app.browser import RelatedViewProvider
 from cone.app.browser import render_main_template
 from cone.app.browser.ajax import ajax_message
 from cone.app.browser.table import RowData
 from cone.app.browser.table import Table
 from cone.tile import Tile
 from cone.tile import tile
+from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
 from pyramid.view import view_config
@@ -19,9 +21,11 @@ _ = TranslationStringFactory('cone.app')
 @tile(name='sharing',
       path='templates/sharing.pt',
       permission='manage_permissions')
+@plumbing(RelatedViewProvider)
 class SharingTile(Tile):
     """Tile rendering the sharing table.
     """
+    related_view = 'sharing'
 
 
 @view_config(name='sharing', permission='manage_permissions')
