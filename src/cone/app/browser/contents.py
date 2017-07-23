@@ -1,3 +1,4 @@
+from cone.app.browser import RelatedViewProvider
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit
@@ -11,9 +12,10 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
-from cone.tile import registerTile
+from cone.tile import Tile
 from cone.tile import tile
 from node.utils import instance_property
+from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import has_permission
 from pyramid.view import view_config
@@ -195,7 +197,12 @@ class ContentsTile(Table):
         return children
 
 
-registerTile('listing', 'templates/listing.pt', permission='list')
+@tile(name='listing', path='templates/listing.pt', permission='list')
+@plumbing(RelatedViewProvider)
+class ListingTile(Tile):
+    """Tile rendering the listing.
+    """
+    related_view = 'listing'
 
 
 @view_config('listing', permission='list')
