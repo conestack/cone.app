@@ -16,8 +16,9 @@
         <a href="${firstpage['url']}"
            ajax:bind="click"
            ajax:target="${firstpage['url']}"
-           ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           ajax:path="href"
+           ajax:event="${context.ajax_event}"
+           ajax:path="${context.ajax_path|nothing}"
+           ajax:path-event="${context.ajax_path_event|nothing}"
            i18n:translate="first">First</a>
       </li>
 
@@ -38,8 +39,9 @@
         <a href="${prevpage['url']}"
            ajax:bind="click"
            ajax:target="${prevpage['url']}"
-           ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           ajax:path="href"
+           ajax:event="${context.ajax_event}"
+           ajax:path="${context.ajax_path|nothing}"
+           ajax:path-event="${context.ajax_path_event|nothing}"
            i18n:translate="previous">Previous</a>
       </li>
 
@@ -60,8 +62,9 @@
           <a href="${page['url']}"
              ajax:bind="click"
              ajax:target="${page['url']}"
-             ajax:event="${context.trigger_event}:${context.trigger_selector}"
-             ajax:path="href"
+             ajax:event="${context.ajax_event}"
+             ajax:path="${context.ajax_path|nothing}"
+             ajax:path-event="${context.ajax_path_event|nothing}"
              tal:content="page['page']">X</a>
         </li>
 
@@ -85,8 +88,9 @@
         <a href="${nextpage['url']}"
            ajax:bind="click"
            ajax:target="${nextpage['url']}"
-           ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           ajax:path="href"
+           ajax:event="${context.ajax_event}"
+           ajax:path="${context.ajax_path|nothing}"
+           ajax:path-event="${context.ajax_path_event|nothing}"
            i18n:translate="next">Next</a>
       </li>
 
@@ -107,8 +111,9 @@
         <a href="${lastpage['url']}"
            ajax:bind="click"
            ajax:target="${lastpage['url']}"
-           ajax:event="${context.trigger_event}:${context.trigger_selector}"
-           ajax:path="href"
+           ajax:event="${context.ajax_event}"
+           ajax:path="${context.ajax_path|nothing}"
+           ajax:path-event="${context.ajax_path_event|nothing}"
            i18n:translate="last">Last</a>
       </li>
 

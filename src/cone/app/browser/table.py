@@ -37,6 +37,9 @@ class Table(Tile):
     head_additional = None
     display_table_header = True
     display_table_footer = True
+    ajax_path = None
+    ajax_path_event = None
+    view_name = None
 
     table_length_size = 'col-xs-4 col-sm3'
     table_filter_size = 'col-xs-3'
@@ -107,7 +110,11 @@ class Table(Tile):
         for param in self.query_whitelist:
             params[param] = self.request.params.get(param, '')
         query = make_query(**params)
-        return safe_decode(make_url(self.request, node=self.model, query=query))
+        return safe_decode(make_url(
+            self.request,
+            node=self.model,
+            #resource=self.view_name,
+            query=query))
 
     def format_date(self, dt):
         return format_date(dt)
@@ -167,6 +174,9 @@ class TableBatch(Batch):
     def __init__(self, table_tile):
         self.table_tile = table_tile
         self.name = table_tile.table_id + 'batch'
+        self.view_name = table_tile.view_name
+        self.ajax_path = self.ajax_path
+        self.ajax_path_event = self.ajax_path_event
 
     @property
     def display(self):
@@ -193,7 +203,12 @@ class TableBatch(Batch):
         for i in range(pages):
             params['b_page'] = str(i)
             query = make_query(**params)
-            url = make_url(self.request, path=path, query=query)
+            url = make_url(
+                self.request,
+                path=path,
+                #resource=self.view_name,
+                query=query
+            )
             ret.append({
                 'page': '%i' % (i + 1),
                 'current': current == str(i),

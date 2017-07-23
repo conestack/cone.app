@@ -44,13 +44,27 @@ in path.::
 
 ``make_query`` - create query strings.::
 
-    >>> make_query(**{
-    ...     'foo': None,
-    ...     'bar': '123',
-    ...     'baz': [],
-    ...     'bam': ['456', '789'],
-    ... })
-    '?bar=123&bam=456&bam=789'
+    >>> make_query(foo=None)
+
+    >>> make_query(foo=[])
+
+    >>> make_query(foo='123')
+    '?foo=123'
+
+    >>> make_query(foo=['456', '789'])
+    '?foo=456&foo=789'
+
+    >>> make_query(foo=1)
+    '?foo=1'
+
+    >>> make_query(foo=1.)
+    '?foo=1.0'
+
+    >>> make_query(foo='http://example.com?param=value')
+    '?foo=http%3A//example.com%3Fparam%3Dvalue'
+
+    >>> make_query(foo='foo', bar='bar')
+    '?foo=foo&bar=bar'
 
 ``format_date``::
 

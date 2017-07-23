@@ -234,24 +234,34 @@ redirect target calculations on form tiles.
 
 It plumbs to the prepare function and adds a ``came_from`` proxy widget to the
 form. ``came_from`` gets read from request parameters, thus the user can define
-the redirect target when invoking the form. The target can either be ``parent``
-of a URL.
+the redirect target when invoking the form.
 
-It further extends the form tile by a ``next`` function, which is supposed to
-be used as form action ``next`` callback. The next function computes the
-redirect target by value from ``came_from`` parameter on request.
+The target can either be empty string, ``parent`` or a URL.
 
-- If parameter value is ``parent``, application model parent node is used as
-  redirect target.
+It extends the form tile by a ``next`` function, which is supposed to be used
+as form action ``next`` callback. The next function computes the redirect
+target as follows:
 
-- If URL is found as value, this one is used as redirect target.
+- If ``came_from`` not found on request, ``default_came_from`` property is
+  used.
 
-- If empty value is found, application model node is used as redirect target.
+- If ``came_from`` is special value ``parent``, URL of model parent is
+  computed.
+
+- If ``came_from`` is set, it is considered as URL to use. The given URL must
+  match the basic application URL, otherwise an error gets logged and URL of
+  current model is computed.
+
+- If ``came_from`` is set to empty value, URL of current model is computed.
 
 If the form was submitted by AJAX call, the ``next`` function returns the
 appropriate AJAX continuation definitions to render the application layout on
 new target, otherwise a ``HTTPFound`` instance used to perform a regular
 browser redirect.
+
+By setting ``write_history_on_next`` to ``True`` on AJAX forms, an ``AjaxPath``
+continuation definition gets returned as well writing the browser history on
+the client.
 
 .. code-block:: python
 
@@ -267,6 +277,8 @@ browser redirect.
     @tile(name='exampleform', interface=ExamplePlugin, permission='edit')
     @plumbing(CameFromNext)
     class ExampleForm(Form):
+        default_came_from = 'parent'
+        write_history_on_next = True
 
         def prepare(self):
             action = make_url(

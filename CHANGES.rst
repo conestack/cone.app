@@ -8,6 +8,16 @@ Changes
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
 
+- Use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to quote
+  query parameter values.
+  [rnix, 2017-07-19]
+
+- Include query when setting browser path in ``cone.batcheditemsbinder`` JS.
+  [rnix, 2017-07-19]
+
+- Update to ``bdajax`` 1.9 and adopt bdajax binder function registration.
+  [rnix, 2017-07-19]
+
 
 1.0a5 (2017-05-15)
 ------------------

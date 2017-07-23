@@ -14,27 +14,25 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // initial binding
         cone.key_binder();
-        cone.settingstabsbinder();
-        cone.tabletoolbarbinder();
-        cone.sharingbinder();
-        cone.selectable.binder();
-        cone.copysupportbinder();
-        yafowil.referencebrowser.browser_binder();
 
         // add binders to bdajax binding callbacks
-        $.extend(bdajax.binders, {
-            settingstabsbinder: cone.settingstabsbinder,
-            batcheditemsbinder: cone.batcheditemsbinder,
-            tabletoolbarbinder: cone.tabletoolbarbinder,
-            sharingbinder: cone.sharingbinder,
-            selectablebinder: cone.selectable.binder,
-            copysupportbinder: cone.copysupportbinder,
-            refbrowser_browser_binder: yafowil.referencebrowser.browser_binder,
-            refbrowser_add_reference_binder:
-                yafowil.referencebrowser.add_reference_binder,
-            refbrowser_remove_reference_binder:
-                yafowil.referencebrowser.remove_reference_binder
-        });
+        bdajax.register(cone.settingstabsbinder.bind(cone), true);
+        bdajax.register(cone.batcheditemsbinder.bind(cone), true);
+        bdajax.register(cone.tabletoolbarbinder.bind(cone), true);
+        bdajax.register(cone.sharingbinder.bind(cone), true);
+        bdajax.register(cone.selectable.binder.bind(cone.selectable), true);
+        bdajax.register(cone.copysupportbinder.bind(cone), true);
+        var referencebrowser = yafowil.referencebrowser;
+        bdajax.register(
+            referencebrowser.browser_binder.bind(referencebrowser),
+            true
+        );
+        bdajax.register(
+            referencebrowser.add_reference_binder.bind(referencebrowser)
+        );
+        bdajax.register(
+            referencebrowser.remove_reference_binder.bind(referencebrowser)
+        );
     });
 
     cone = {
@@ -90,6 +88,26 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             }).first().trigger('click');
         },
 
+        batcheditems_handle_filter: function(elem, param, val) {
+            var target = bdajax.parsetarget(elem.attr('ajax:target')),
+                event = elem.attr('ajax:event');
+            target.params[param] = val;
+            if (elem.attr('ajax:path')) {
+                var path_event = elem.attr('ajax:path-event');
+                if (!path_event) {
+                    path_event = event;
+                }
+                // path always gets calculated from target
+                bdajax.path({
+                    path: target.path + target.query + '&' + param + '=' + val,
+                    event: path_event,
+                    target: target
+                });
+            }
+            var defs = event.split(':');
+            bdajax.trigger(defs[0], defs[1], target);
+        },
+
         batcheditemsbinder: function(context, size_selector, filter_selector) {
             if (!size_selector) {
                 size_selector = '.batched_items_slice_size select';
@@ -98,27 +116,11 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             selection.unbind('change').bind('change', function(event) {
                 var option = $('option:selected', $(this)).first();
                 var size = option.val();
-                var evt = selection.attr('ajax:event').split(':');
-                var target = bdajax.parsetarget(selection.attr('ajax:target'));
-                target.params.size = size;
-                bdajax.path({
-                    path: target.path,
-                    event: selection.attr('ajax:event'),
-                    target: target
-                });
-                bdajax.trigger(evt[0], evt[1], target);
+                cone.batcheditems_handle_filter(selection, 'size', size);
             });
             var trigger_search = function(input) {
                 var term = input.attr('value');
-                var evt = input.attr('ajax:event').split(':');
-                var target = bdajax.parsetarget(input.attr('ajax:target'));
-                target.params.term = term;
-                bdajax.path({
-                    path: target.path,
-                    event: input.attr('ajax:event'),
-                    target: target
-                });
-                bdajax.trigger(evt[0], evt[1], target);
+                cone.batcheditems_handle_filter(input, 'term', term);
             };
             if (!filter_selector) {
                 filter_selector = '.batched_items_filter input';

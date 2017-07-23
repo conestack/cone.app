@@ -45,7 +45,7 @@ setup(
         'pyramid',
         'pyramid_zcml',
         'pyramid_chameleon',
-        'bdajax',
+        'bdajax>1.8.999',
         'cone.tile',
         'yafowil',
         'yafowil.webob',

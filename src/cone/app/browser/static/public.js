@@ -13,13 +13,7 @@ var livesearch_options = new Object();
 (function($) {
 
     $(document).ready(function() {
-        // initial binding
-        livesearch.binder();
-
-        // add binders to bdajax binding callbacks
-        $.extend(bdajax.binders, {
-            livesearchbinder: livesearch.binder
-        });
+        bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
     livesearch = {

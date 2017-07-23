@@ -36,6 +36,8 @@
                 class="form-control"
                 ajax:target="${context.slice_target}"
                 ajax:event="batchclicked:.${context.table_id}batchsensitiv"
+                ajax:path="${context.ajax_path|nothing}"
+                ajax:path-event="${context.ajax_path_event|nothing}"
                 aria-controls="${context.table_id}_table">
 
           <tal:option repeat="size context.slicesizes">
@@ -67,6 +69,8 @@
                class="form-control"
                ajax:target="${context.filter_target}"
                ajax:event="batchclicked:.${context.table_id}batchsensitiv"
+               ajax:path="${context.ajax_path|nothing}"
+               ajax:path-event="${context.ajax_path_event|nothing}"
                aria-controls="${context.table_id}_table"
                tal:attributes="value context.filter_term">
 
