@@ -232,8 +232,8 @@ class BatchedItemsBatch(Batch):
             pages += 1
         current = self.parent.current_page
         for i in range(pages):
-            href = self.parent.page_target(path, str(i), include_resource=True)
-            target = self.parent.page_target(path, str(i))
+            href = self.parent.make_page_url(path, str(i), include_view=True)
+            target = self.parent.make_page_url(path, str(i))
             ret.append({
                 'page': '%i' % (i + 1),
                 'current': current == i,
@@ -436,7 +436,7 @@ class BatchedItems(Tile):
         """
         return int(self.request.params.get('b_page', '0'))
 
-    def page_target(self, path, page, include_resource=False):
+    def make_page_url(self, path, page, include_view=False):
         """Pagination batch page target.
         """
         params = {
@@ -444,10 +444,10 @@ class BatchedItems(Tile):
             'size': self.slice_size,
             'term': self.filter_term,
         }
-        return self.make_url(
-            params,
-            path=path,
-            include_resource=include_resource)
+        return self.make_url(params, path=path, include_view=include_view)
+
+    # B/C, remove as of cone.app 1.1
+    page_target = make_page_url
 
     @property
     def slice_id(self):
@@ -500,17 +500,34 @@ class BatchedItems(Tile):
             'size': self.slice_size,
         })
 
-    def make_url(self, params, path=None, include_resource=False):
-        """Create URL considering ``query_whitelist``.
+    def make_query(self, params):
+        """Create query considering ``query_whitelist``.
+
+        :param params: Dictionary with query parameters.
+        :return: Query as string.
         """
+        p = dict()
         for param in self.query_whitelist:
-            params[param] = self.request.params.get(param, '')
+            p[param] = self.request.params.get(param, '')
+        p.update(params)
+        return make_query(**p)
+
+    def make_url(self, params, path=None, include_view=False):
+        """Create URL considering ``query_whitelist``.
+
+        :param params: Dictionary with query parameters.
+        :param path: Optional model path, if ``None``, path gets taken from
+            ``self.model``
+        :param include_view: Boolean whether to include
+            ``self.related_view`` to URL.
+        :return: URL as string.
+        """
         return safe_decode(make_url(
             self.request,
             path=path,
             node=None if path else self.model,
-            resource=self.related_view if include_resource else None,
-            query=make_query(**params)))
+            resource=self.related_view if include_view else None,
+            query=self.make_query(params)))
 
     @property
     def item_count(self):
