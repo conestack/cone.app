@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a6 (unreleased)
+1.0a6 (2017-08-28)
 ------------------
 
 - Use ``RelatedViewConsumer`` on ``cone.app.browser.batch.BatchedItems``
