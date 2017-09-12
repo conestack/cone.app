@@ -232,8 +232,7 @@ the response::
     '    while(child != null && child.nodeType == 3) {', 
     '        child = child.nextSibling;', 
     '    }', 
-    "    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s');", 
-    '    parent.bdajax.continuation(%(next)s);', 
+    "    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s', %(next)s);", 
     '</script>', 
     '']
 
@@ -308,19 +307,12 @@ Test authorized with form extraction failure::
     >>> result.find('parent.bdajax.render_ajax_form(child, ') != -1
     True
 
-    >>> result.find('parent.bdajax.continuation(false)') != -1
-    True
-
 Test with form perocessing passing::
 
     >>> request.params['ajaxtestform.foo'] = 'foo'
     >>> response = render_ajax_form(root, request, 'ajaxtestform')
     >>> result = str(response)
-    >>> expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\')'
-    >>> result.find(expected) != -1
-    True
-
-    >>> expected = 'parent.bdajax.continuation([{"'
+    >>> expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\', [{'
     >>> result.find(expected) != -1
     True
 

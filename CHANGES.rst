@@ -4,7 +4,8 @@ Changes
 1.0a7 (unreleased)
 ------------------
 
-- No changes yet.
+- Update to ``bdajax`` 1.10 and adopt server side ajax form processing code.
+  [rnix, 2017-09-12]
 
 
 1.0a6 (2017-08-28)
