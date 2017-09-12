@@ -1,12 +1,19 @@
 Changes
 =======
 
-1.0a6 (pyramid_upgrade branch)
+1.0a7 (pyramid_upgrade branch)
 ------------------------------
 
 - Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
+
+- Update to ``bdajax`` 1.10 and adopt server side ajax form processing code.
+  [rnix, 2017-09-12]
+
+
+1.0a6 (2017-08-28)
+------------------
 
 - Use ``RelatedViewConsumer`` on ``cone.app.browser.batch.BatchedItems``
   and ``cone.app.browser.table.Table``.

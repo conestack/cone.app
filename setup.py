@@ -8,7 +8,7 @@ def read_file(name):
         return f.read()
 
 
-version = '1.0a6.dev0'
+version = '1.0a7.dev0'
 shortdesc = 'Web application stub'
 longdesc = '\n\n'.join([read_file(name) for name in [
     'README.rst',
@@ -45,7 +45,7 @@ setup(
         'pyramid',
         'pyramid_zcml',
         'pyramid_chameleon',
-        'bdajax>1.8.999',
+        'bdajax>1.9.999',
         'cone.tile',
         'yafowil',
         'yafowil.webob',

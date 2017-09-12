@@ -108,15 +108,34 @@ class Table(Tile):
                 return idx
             idx += 1
 
-    def make_url(self, params):
+    def make_query(self, params):
+        """Create query considering ``query_whitelist``.
+
+        :param params: Dictionary with query parameters.
+        :return: Query as string.
+        """
+        p = dict()
         for param in self.query_whitelist:
-            params[param] = self.request.params.get(param, '')
-        query = make_query(**params)
+            p[param] = self.request.params.get(param, '')
+        p.update(params)
+        return make_query(**p)
+
+    def make_url(self, params, path=None, include_view=False):
+        """Create URL considering ``query_whitelist``.
+
+        :param params: Dictionary with query parameters.
+        :param path: Optional model path, if ``None``, path gets taken from
+            ``self.model``
+        :param include_view: Boolean whether to include
+            ``self.related_view`` to URL.
+        :return: URL as string.
+        """
         return safe_decode(make_url(
             self.request,
-            node=self.model,
-            #resource=self.related_view,
-            query=query))
+            path=path,
+            node=None if path else self.model,
+            resource=self.related_view if include_view else None,
+            query=self.make_query(params)))
 
     def format_date(self, dt):
         return format_date(dt)
