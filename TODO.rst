@@ -21,8 +21,8 @@ Docs
 Roadmap
 =======
 
-1.0a7
------
+1.0 beta
+--------
 
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
@@ -69,13 +69,6 @@ options and datasets instead of just datasets.
 [ ] Return unicode in ``cone.app.browser.utils.make_url`` and
 ``cone.app.browser.utils.make_query``.
 
-1.0b1
------
-
-[ ] Update to jQuery 2.0.
-
-[ ] Add template for creating ``cone.app`` plugins.
-
 1.0
 ---
 
@@ -83,6 +76,10 @@ options and datasets instead of just datasets.
 
 1.1
 ---
+
+[ ] Update to jQuery 2.0.
+
+[ ] Add template for creating ``cone.app`` plugins.
 
 [ ] Overhaul resource registration and delivery keeping B/C.
 

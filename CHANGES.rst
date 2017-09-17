@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a7 (unreleased)
+1.0a7 (2017-09-17)
 ------------------
 
 - Update to ``bdajax`` 1.10 and adopt server side ajax form processing code.
