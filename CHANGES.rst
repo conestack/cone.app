@@ -15,7 +15,7 @@ Changes
   and ``cone.app.browser.table.Table``.
   [rnix, 2017-07-23]
 
-- Use ``RelatedViewProvider``  on ``listing`` and ``sharing`` tile.
+- Use ``RelatedViewProvider`` on ``listing`` and ``sharing`` tile.
   [rnix, 2017-07-23]
 
 - Add related view support. This includes ``set_related_view``,

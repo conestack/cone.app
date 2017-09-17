@@ -1119,6 +1119,73 @@ More customization options on ``Table`` class:
   to ``True``.
 
 
+Related View Support
+====================
+
+When writing generic tiles it's desired to avoid "binding" the tiles to static
+pyramid view names. E.g., a generic batch might be used inside a view named
+``listing`` and a view named ``sharing``. We want to include the view name
+in generated URLs and when writing the browser history to ensure the expected
+result gets displayed when reloading the browser URL or navigating via
+browser back and next buttons.
+
+Therefor, ``cone.app`` provides the concept of related views, implemented via
+``cone.app.browser.RelatedViewProvider`` and
+``cone.app.browser.RelatedViewConsumer`` plumbing behaviors.
+
+The related view provider is supposed to be used on content view tiles.
+
+.. code-block:: python
+
+    from cone.app.browser import RelatedViewProvider
+    from cone.app.browser import render_main_template
+    from cone.tile import Tile
+    from cone.tile import tile
+    from plumber import plumbing
+    from pyramid.view import view_config
+
+    @tile(name='viewtile', path='templates/view.pt')
+    @plumbing(RelatedViewProvider)
+    class ViewTile(Tile):
+        """Content rendering tile.
+        """
+        # related view name corresponds to pyramid view name below
+        related_view = 'viewname'
+
+    @view_config('viewname')
+    def view(model, request):
+        """Pyramid view.
+        """
+        return render_main_template(model, request, 'viewtile')
+
+When using related view consumer it's possible to access the related view set
+in the "entry tile" above for URL generation.
+
+.. code-block:: python
+
+    from cone.app.browser import RelatedViewConsumer
+    from cone.app.browser.utils import make_url
+    from cone.tile import Tile
+    from plumber import plumbing
+
+    @plumbing(RelatedViewConsumer)
+    class GenericTile(Tile):
+        """A generic tile supposed to be used as nested tile inside a content
+        view tile.
+        """
+
+        @property
+        def someurl(self):
+            # Use ``self.related_view`` for URL generation. If this tile is
+            # used as nested tile inside ``viewtile``, this will return
+            # ``viewname``
+            return make_url(
+                self.request,
+                node=self.model,
+                resource=self.related_view
+            )
+
+
 Actions
 =======
 
