@@ -823,12 +823,19 @@ for all children of model node.
             current = self.request.params.get('b_page', '0')
             for i in range(pages):
                 query = make_query(b_page=str(i))
-                url = make_url(self.request, path=path, query=query)
+                href = make_url(
+                    self.request,
+                    path=path,
+                    resource='viewname',
+                    query=query
+                )
+                target = make_url(self.request, path=path, query=query)
                 ret.append({
                     'page': '{}'.format(i + 1),
                     'current': current == str(i),
                     'visible': True,
-                    'url': url,
+                    'href': href,
+                    'target': target,
                 })
             return ret
 
