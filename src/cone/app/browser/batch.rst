@@ -558,14 +558,27 @@ Create batched items with model::
     >>> batched_items.model = model
     >>> batched_items.request = layer.new_request()
 
-The helper function ``make_url`` considers ``query_whitelist`` and is used for
-URL creation within batched items implementation.::
+The helper function ``make_query`` considers ``query_whitelist`` and is used
+for query creation within batched items implementation.::
 
     >>> batched_items.query_whitelist
     []
 
     >>> batched_items.query_whitelist = ['a', 'b']
     >>> batched_items.request.params['a'] = 'a'
+
+    >>> batched_items.make_query({'c': 'c'})
+    '?a=a&c=c&b='
+
+A query parameter which already exists on request gets overwritten::
+
+    >>> batched_items.make_query({'a': 'b'})
+    '?a=b&b='
+
+The helper function ``make_url`` uses ``make_query``, thus considers
+``query_whitelist`` as well and is used for URL creation within batched items
+implementation.::
+
     >>> batched_items.make_url(dict(c='c'))
     u'http://example.com/container?a=a&c=c&b='
 
@@ -577,7 +590,7 @@ computing of model path::
     u'http://example.com/container?a=a&c=c&b='
 
 ``BatchedItems`` plumbs ``RelatedViewConsumer`` and considers ``related_view``
-if ``include_resource`` passed to ``make_url``::
+if ``include_view`` passed to ``make_url``::
 
     >>> request = batched_items.request = layer.new_request()
     >>> set_related_view(request, 'someview')
@@ -585,13 +598,13 @@ if ``include_resource`` passed to ``make_url``::
     >>> batched_items.make_url(dict(c='c'))
     u'http://example.com/container?a=&c=c&b='
 
-    >>> batched_items.make_url(dict(c='c'), include_resource=True)
+    >>> batched_items.make_url(dict(c='c'), include_view=True)
     u'http://example.com/container/someview?a=&c=c&b='
 
     >>> batched_items.make_url(dict(c='c'), path=path)
     u'http://example.com/container?a=&c=c&b='
 
-    >>> batched_items.make_url(dict(c='c'), path=path, include_resource=True)
+    >>> batched_items.make_url(dict(c='c'), path=path, include_view=True)
     u'http://example.com/container/someview?a=&c=c&b='
 
 Default slice size::

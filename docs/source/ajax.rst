@@ -32,17 +32,14 @@ A best practice JS stub for a plugin looks like so.
     (function($) {
 
         $(document).ready(function() {
-            // register binder function to bdajax.
-            $.extend(bdajax.binders, {
-                example_binder: example.binder
-            });
-
-            // call binder function on initial page load.
-            example.binder();
+            // register binder function to bdajax. The register function takes
+            // a function and a boolean flag whether to immediately execute
+            // this function as arguments.
+            bdajax.register(example.binder, true);
         });
 
         // plugin namespace
-        example = {
+        var example = {
 
             // plugin binder function. gets called on initial page load and
             // every time bdajax modifies the DOM tree.
