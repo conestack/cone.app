@@ -122,13 +122,12 @@ html_title = "cone - pyramid based web apps"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+def setup(app):
+    app.add_stylesheet('styles.css')
+
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
 #html_last_updated_fmt = '%b %d, %Y'
-
-# If true, SmartyPants will be used to convert quotes and dashes to
-# typographically correct entities.
-html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
@@ -159,7 +158,6 @@ html_use_smartypants = True
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'cone_doc'
-
 
 # -- Options for LaTeX output --------------------------------------------------
 
