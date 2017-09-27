@@ -332,7 +332,7 @@ class NavTree(Tile):
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
             target = make_url(self.request, node=node, query=query)
-            curnode = curpath == key and True or False
+            curnode = curpath == safe_decode(key) and True or False
             icon = node_icon(self.request, node)
             css = ''
             if IWorkflowState.providedBy(node):
