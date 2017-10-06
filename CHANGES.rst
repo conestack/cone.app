@@ -8,6 +8,9 @@ Changes
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
 
+- ``safe_decode`` keys to check for current node in ``NavTree.fillchildren``.
+  [rnix, 2017-09-27]
+
 
 1.0a7 (2017-09-17)
 ------------------
