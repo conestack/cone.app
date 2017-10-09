@@ -4,6 +4,10 @@ Changes
 1.0a8 (unreleased)
 ------------------
 
+- Revert use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to
+  quote query parameter values.
+  [rnix, 2017-10-09]
+
 - ``safe_decode`` keys to check for current node in ``NavTree.fillchildren``.
   [rnix, 2017-09-27]
 

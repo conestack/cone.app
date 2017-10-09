@@ -66,6 +66,7 @@ class ContentsViewLink(ViewLink):
     css = 'title'
     event = 'contextchanged:#layout'
     action = None
+    # XXX: related view
 
 
 @tile('contents', 'templates/table.pt', permission='list')

@@ -7,6 +7,7 @@ import copy
 import datetime
 import re
 import types
+import urllib
 import urllib2
 
 
@@ -37,7 +38,7 @@ def make_query(**kw):
         if type(param) in (types.IntType, types.FloatType):
             param = [str(param)]
         for p in param:
-            query.append('{}={}'.format(name, urllib2.quote(safe_encode(p))))
+            query.append('{}={}'.format(name, safe_encode(p)))
     query = '&'.join(query)
     if query:
         return '?{}'.format(query)

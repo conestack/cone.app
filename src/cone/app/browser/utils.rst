@@ -59,7 +59,7 @@ in path.::
     '?foo=1.0'
 
     >>> make_query(foo='http://example.com?param=value')
-    '?foo=http%3A//example.com%3Fparam%3Dvalue'
+    '?foo=http://example.com?param=value'
 
     >>> make_query(foo='foo', bar='bar')
     '?foo=foo&bar=bar'

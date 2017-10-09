@@ -134,6 +134,7 @@ class CameFromNext(Behavior):
             path = '/'.join(node_path(self.model.parent))
         # consider came_from a URL
         else:
+            # XXX: check whether unquote still needed
             url = urllib2.unquote(came_from)
             parsed = urlparse.urlparse(url)
             app_loc = urlparse.urlparse(self.request.application_url).netloc
