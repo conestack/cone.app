@@ -1,4 +1,5 @@
 from cone.app.browser import RelatedViewProvider
+from cone.app.browser import get_related_view
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit
@@ -14,6 +15,7 @@ from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
 from cone.tile import Tile
 from cone.tile import tile
+from node.interfaces import ILeaf
 from node.utils import instance_property
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
@@ -66,7 +68,14 @@ class ContentsViewLink(ViewLink):
     css = 'title'
     event = 'contextchanged:#layout'
     action = None
-    # XXX: related view
+
+    @property
+    def target(self):
+        related_view = get_related_view(self.request)
+        if related_view and not ILeaf.providedBy(self.model):
+            query = make_query(contenttile=related_view)
+            return make_url(self.request, node=self.model, query=query)
+        return super(ContentsViewLink, self).target
 
 
 @tile('contents', 'templates/table.pt', permission='list')

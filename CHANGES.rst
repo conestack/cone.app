@@ -4,6 +4,10 @@ Changes
 1.0a8 (unreleased)
 ------------------
 
+- Include related view in ``cone.app.browser.contents.ContentsViewLink.target``
+  if present and node is container, otherwise ``target`` of superclass.
+  [rnix, 2017-10-09]
+
 - Revert use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to
   quote query parameter values.
   [rnix, 2017-10-09]
