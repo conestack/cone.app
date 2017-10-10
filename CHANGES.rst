@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a8 (unreleased)
+1.0a8 (2017-10-10)
 ------------------
 
 - Include related view in ``cone.app.browser.contents.ContentsViewLink.target``
