@@ -230,6 +230,8 @@ class ActionView(LinkAction):
 
     @property
     def action(self):
+        # XXX: use layout:#layout:replace
+        # XXX: consider related view if set?
         contenttile = 'content'
         if self.model.properties.default_content_tile:
             contenttile = 'view'

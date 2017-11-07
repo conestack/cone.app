@@ -1,12 +1,30 @@
 Changes
 =======
 
-1.0a8 (pyramid_upgrade branch)
+1.0a9 (pyramid_upgrade branch)
 ------------------------------
 
 - Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
+
+- Add ``quote_params`` keyword argument to ``cone.app.browser.utils.make_query``
+  to control explicitely if some request paramater values should be URL quoted.
+  Needed to make ``cone.app.browser.authoring.CameFromNext`` work properly if
+  ``came_from`` URL contains a query on it's own.
+  [rnix, 2017-11-07]
+
+
+1.0a8 (2017-10-10)
+------------------
+
+- Include related view in ``cone.app.browser.contents.ContentsViewLink.target``
+  if present and node is container, otherwise ``target`` of superclass.
+  [rnix, 2017-10-09]
+
+- Revert use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to
+  quote query parameter values.
+  [rnix, 2017-10-09]
 
 - ``safe_decode`` keys to check for current node in ``NavTree.fillchildren``.
   [rnix, 2017-09-27]
