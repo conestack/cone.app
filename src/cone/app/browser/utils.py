@@ -7,7 +7,6 @@ import copy
 import datetime
 import re
 import types
-import urllib
 import urllib2
 
 
@@ -28,7 +27,11 @@ def node_path(node):
 nodepath = node_path
 
 
-def make_query(**kw):
+# default query parameters to quote
+QUOTE_PARAMS = ('came_from',)
+
+
+def make_query(quote_params=QUOTE_PARAMS, **kw):
     query = list()
     for name, param in kw.items():
         if param is None:
@@ -37,8 +40,10 @@ def make_query(**kw):
             param = [param]
         if type(param) in (types.IntType, types.FloatType):
             param = [str(param)]
+        quote = name in quote_params
         for p in param:
-            query.append('{}={}'.format(name, safe_encode(p)))
+            p = safe_encode(p)
+            query.append('{}={}'.format(name, urllib2.quote(p) if quote else p))
     query = '&'.join(query)
     if query:
         return '?{}'.format(query)

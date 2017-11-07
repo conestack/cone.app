@@ -4,7 +4,11 @@ Changes
 1.0a9 (unreleased)
 ------------------
 
-- No changes yet.
+- Add ``quote_params`` keyword argument to ``cone.app.browser.utils.make_query``
+  to control explicitely if some request paramater values should be URL quoted.
+  Needed to make ``cone.app.browser.authoring.CameFromNext`` work properly if
+  ``came_from`` URL contains a query on it's own.
+  [rnix, 2017-11-07]
 
 
 1.0a8 (2017-10-10)

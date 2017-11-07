@@ -58,11 +58,14 @@ in path.::
     >>> make_query(foo=1.)
     '?foo=1.0'
 
-    >>> make_query(foo='http://example.com?param=value')
-    '?foo=http://example.com?param=value'
-
     >>> make_query(foo='foo', bar='bar')
     '?foo=foo&bar=bar'
+
+    >>> make_query(quote_params=('foo',), foo='http://example.com?param=value')
+    '?foo=http%3A//example.com%3Fparam%3Dvalue'
+
+    >>> make_query(came_from='http://example.com?param=value')
+    '?came_from=http%3A//example.com%3Fparam%3Dvalue'
 
 ``format_date``::
 
