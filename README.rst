@@ -29,10 +29,13 @@ Contributors
 - Georg Gogo. BERNHARD
 
 
-Coverage Report
-===============
+Test coverage
+=============
 
-::
+.. image :: https://secure.travis-ci.org/bluedynamics/cone.app.png
+  :target:  https://secure.travis-ci.org/bluedynamics/cone.app
+
+Summary of the test coverage report::
 
     lines   cov%   module   (path)
       200    94%   cone.app.__init__
