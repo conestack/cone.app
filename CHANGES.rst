@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a9 (unreleased)
+1.0a9 (2017-11-13)
 ------------------
 
 - Add ``quote_params`` keyword argument to ``cone.app.browser.utils.make_query``
