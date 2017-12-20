@@ -4,7 +4,14 @@ Changes
 1.0a10 (unreleased)
 -------------------
 
-- No changes yet.
+- Batched items filter input fields may provide a prefilled text which gets
+  emptied on first focus. Use ``empty_filter`` CSS class on input field for
+  this.
+  [rnix, 2017-12-20]
+
+- Introduce ``cone.batcheditems_size_binder`` and
+  ``cone.batcheditems_filter_binder`` helper functions in ``protected.js``.
+  [rnix, 2017-12-20]
 
 
 1.0a9 (2017-11-13)
