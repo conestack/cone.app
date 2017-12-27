@@ -88,6 +88,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             }).first().trigger('click');
         },
 
+        // XXX: better naming
         batcheditems_handle_filter: function(elem, param, val) {
             var target = bdajax.parsetarget(elem.attr('ajax:target')),
                 event = elem.attr('ajax:event');
@@ -108,39 +109,69 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             bdajax.trigger(defs[0], defs[1], target);
         },
 
-        batcheditemsbinder: function(context, size_selector, filter_selector) {
+        batcheditems_size_binder: function(context, size_selector) {
+            // use default selector if not passed
             if (!size_selector) {
                 size_selector = '.batched_items_slice_size select';
             }
+            // lookup selection field by selector
             var selection = $(size_selector, context);
+            // handle filter on selection change
             selection.unbind('change').bind('change', function(event) {
                 var option = $('option:selected', $(this)).first();
                 var size = option.val();
                 cone.batcheditems_handle_filter(selection, 'size', size);
             });
-            var trigger_search = function(input) {
-                var term = input.attr('value');
-                cone.batcheditems_handle_filter(input, 'term', term);
-            };
+        },
+
+        batcheditems_filter_binder: function(context,
+                                             filter_selector,
+                                             filter_name) {
+            // use default selector if not passed
             if (!filter_selector) {
                 filter_selector = '.batched_items_filter input';
             }
+            // use default filter name if not passed
+            if (!filter_name) {
+                filter_name = 'term';
+            }
+            // lookup search field by selector
             var searchfield = $(filter_selector, context);
+            // trigger search function
+            var trigger_search = function(input) {
+                var term = input.attr('value');
+                cone.batcheditems_handle_filter(input, filter_name, term);
+            };
+            // reset filter input field if marked as empty filter
+            if (searchfield.hasClass('empty_filter')) {
+                searchfield.bind('focus', function() {
+                    this.value = '';
+                    $(this).removeClass('empty_filter');
+                });
+            }
+            // prevent default action when pressing enter
             searchfield.unbind('keypress').bind('keypress', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
                 }
             });
+            // trigger search when releasing enter
             searchfield.unbind('keyup').bind('keyup', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
                     trigger_search($(this));
                 }
             });
+            // trigger search on input change
             searchfield.unbind('change').bind('change', function(event) {
                 event.preventDefault();
                 trigger_search($(this));
             });
+        },
+
+        batcheditemsbinder: function(context, size_selector, filter_selector) {
+            cone.batcheditems_size_binder(context, size_selector);
+            cone.batcheditems_filter_binder(context, filter_selector);
         },
 
         tabletoolbarbinder: function(context) {

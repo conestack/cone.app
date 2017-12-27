@@ -1,12 +1,25 @@
 Changes
 =======
 
-1.0a9 (pyramid_upgrade branch)
+1.0a10 (pyramid_upgrade branch)
 ------------------------------
 
 - Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
+
+- Batched items filter input fields may provide a prefilled text which gets
+  emptied on first focus. Use ``empty_filter`` CSS class on input field for
+  this.
+  [rnix, 2017-12-20]
+
+- Introduce ``cone.batcheditems_size_binder`` and
+  ``cone.batcheditems_filter_binder`` helper functions in ``protected.js``.
+  [rnix, 2017-12-20]
+
+
+1.0a9 (2017-11-13)
+------------------
 
 - Add ``quote_params`` keyword argument to ``cone.app.browser.utils.make_query``
   to control explicitely if some request paramater values should be URL quoted.
