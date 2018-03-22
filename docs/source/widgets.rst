@@ -378,14 +378,14 @@ Page Content Area
 **Tile registration name**: ``content``
 
 Content area for node. ``cone.app`` expects a tile registered by name
-``content`` to render the default *Content area* of a node. The plugin code is
+``content`` to render the default *Content Area* of a node. The plugin code is
 responsible to provide a content tile for model nodes.
 
 When providing tiles for displaying node content, it's normally desired to
 render the login form if access is forbidden. Therefor class
 ``cone.app.browser.layout.ProtectedContentTile`` is available.
 
-If a ``content`` tile require a template only, use ``ProtectedContentTile`` as
+If a ``content`` tile requires a template only, use ``ProtectedContentTile`` as
 ``class_``.
 
 .. code-block:: python
@@ -600,7 +600,7 @@ paste actions. Children actions are supposed to be rendered if ``listing``
 tile is shown. The children actions may rely on the selected items in the
 table.
 
-Context related actions ar placed in ``contextactions`` toolbar. Context
+Context related actions are placed in ``contextactions`` toolbar. Context
 related actions are e.g. the add dropdown, workflow transition dropdown or
 other custom actions performing a task on current model node.
 
@@ -755,7 +755,7 @@ Like ``contents`` tile, but with less table columns and reference browser
 specific actions for adding and removing references.
 
 Nodes must implement ``IUUIDAware`` and provide a node info in order to be
-referencable.
+referenceable.
 
 Reference browser can be used as YAFOWIL widget.
 
@@ -784,7 +784,7 @@ Expected widget ``props``:
 - **root**: Path of reference browser root. Defaults to '/'
 
 - **referencable**: List of node info names which are referencable. Defaults
-  to '' which means all objects are referencable, given they implement
+  to '' which means all objects are referenceable, given they implement
   ``IUUIDAware`` and a node info.
 
 See :doc:`forms documentation <forms>` for more details.
@@ -1234,7 +1234,7 @@ function returning HTML markup.
         def render(self):
             return '<a href="http://example.com">Example</a>'
 
-When inheriting from ``TileAction``, a tile by name is renderd.
+When inheriting from ``TileAction``, a tile by name is rendered.
 
 .. code-block:: python
 

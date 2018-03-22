@@ -35,7 +35,7 @@ initialized properly at application creation time.
 For more Information about ZCML take a look at the
 `ZCML Documentation <http://zopetoolkit.readthedocs.io/en/latest/codingstyle/zcml-style.html>`_
 and the
-`Pramid ZCML Integration <http://docs.pylonsproject.org/projects/pyramid_zcml/en/latest/>`_
+`Pyramid ZCML Integration <http://docs.pylonsproject.org/projects/pyramid_zcml/en/latest/>`_
 
 .. note::
 
@@ -128,16 +128,16 @@ respective ``cone.app.cfg.js``.
 Resources which can be merged to one file are registered in
 ``cone.app.cfg.merged.css`` respective ``cone.app.cfg.merged.js``.
 
-To register the resources for all users of site, authenticated or not, add them
+To register the resources for all users of the site, authenticated or not, add them
 to the ``public`` resources list, e.g. ``cone.app.cfg.css.public``. If
-resources should only be delevered for authenticated users, add them to the
+resources should only be delivered for authenticated users, add them to the
 ``protected`` list, e.g. ``cone.app.cfg.css.protected``.
 
 .. note::
 
     If you need to depend on resources delivered by another plugin make sure to
     register the resources inside the main hook function and that the plugin
-    containing the dependencies is placed before your plugin is loaded at
+    containing the dependencies are placed before your plugin is loaded at
     ``cone.plugins`` in the ini configuration.
 
     If you provide a plugin which is desired to be used as dependency for other
@@ -206,7 +206,7 @@ at ``app_root['settings']`` and can be registered to the application via
 Authentication
 --------------
 
-``cone.app`` provides pluggable authentication as long as the authentication
+``cone.app`` provides plugable authentication as long as the authentication
 implementation follows the contract described in ``node.ext.ugm.interfaces``.
 
 If a UGM implementation is provided, it makes sense to initialize it inside

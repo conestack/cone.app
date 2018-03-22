@@ -2,7 +2,7 @@
 Application Configuration
 =========================
 
-``cone.app`` uses `PasteDeploy <pythonpaste.org/deploy>`_ for application
+``cone.app`` uses `PasteDeploy <http://pastedeploy.readthedocs.io/en/latest/>`_ for application
 configuration. PasteDeploy defines a way to declare WSGI application
 configuration in an ``.ini`` file.
 
@@ -85,8 +85,8 @@ It is used for authentication and principal authorization. If not set, only
 ``cone.admin_user`` is available.
 
 - **cone.auth_impl**: UGM implementation package name. Used for authentication
-  and principal authorization. If not set, only ``cone.admin_user``is
-  available. This setting is not considered at any place directly in ``cone.app``.
+  and principal authorization. If not set, only ``cone.admin_user`` is
+  available. This setting is not considered at any place directly in ``cone.app`` .
   This is left to the UGM implementation creating application hook callback.
 
 

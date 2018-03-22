@@ -28,7 +28,7 @@ and implements the following contracts:
       :doc:`Application Layout <layout>` for details.
 
     - **properties**: Property containing ``cone.app.IProperties`` implementing
-      object. The properties are supposed to provide UI configuration settings.
+      object. The properties are supposed to provide UI configuration settings. See
       :doc:`UI widgets <widgets>` for details.
 
     - **metadata**: Property containing ``cone.app.IMetadata`` implementing object.
@@ -178,7 +178,7 @@ initialized at application startup. Every settings node factory registered with
 ``factories`` attribute of the settings node.
 
 The settings node provides relevant ``properties`` and ``metadata`` objects and
-an ``__acl__`` restricting access to the ``manager <link to security>`` role.
+an ``__acl__`` restricting access to the :doc:`manager <security>` role.
 
 The settings node is available at ``settings`` on application model root.
 
@@ -252,7 +252,7 @@ Available properties are provided by ``keys`` function.
     The downside of this strategy is that it's necessary to be careful when
     defining setting names. They need to be explicit enough to avoid namespace
     clashes between UI widgets. A good practice is to prefix widget related
-    settings by the related ``tile <link to tiles>`` name.
+    settings by the related :doc:`tile <widgets>` name.
 
 .. code-block:: pycon
 
@@ -313,7 +313,7 @@ Initialize properties.
 
     props = ProtectedProperties(model, permissions, data)
 
-If a user does not have the resquired permission granted to access a specific
+If a user does not have the required permission granted to access a specific
 property, ``ProtectedProperties`` behaves as if this property is inexistent.
 
 .. note::
@@ -333,7 +333,7 @@ XMLProperties
 -------------
 
 ``cone.app.model.XMLProperties`` is an ``IProperties`` implementation which
-can be used to serialize/deserialze properties to XML files. Supported value
+can be used to serialize/deserialize properties to XML files. Supported value
 types are ``string``, ``list``, ``tuple``, ``dict`` and ``datetime.datetime``.
 
 .. code-block:: python
@@ -350,12 +350,12 @@ ConfigProperties
 ----------------
 
 ``cone.app.model.ConfigProperties`` is an ``IProperties`` implementation which
-can be used to serialize/deserialze properties to ``.ini`` files.
+can be used to serialize/deserialize properties to ``.ini`` files.
 
-Property values are handeled as unicode strings and get UTF-8 encoded. It's
+Property values are handled as unicode strings and get UTF-8 encoded. It's
 possible to change the encoding by settings the ``encoding`` attribute.
 
-By default the propertied are stored in the ``properties`` section of the
+By default the properties are stored in the ``properties`` section of the
 ``.ini`` file. This can be configured by setting the ``properties_section``
 attribute.
 
@@ -398,7 +398,7 @@ used:
   as children in this node.
 
 - **icon**: Icon for node type. Icon support is implemented using icon fonts.
-  Ionicons <link to ionicons> are shipped and delivered with ``cone.app`` by
+  `Ionicons <http://ionicons.com>`_ are shipped and delivered with ``cone.app`` by
   default.
 
 ``NodeInfo`` objects are not instanciated directly, instead the
