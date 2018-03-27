@@ -116,7 +116,7 @@ translation strings.
 Page Templates
 ~~~~~~~~~~~~~~
 
-Defining translation string in page templates. The ``i18n`` namespace and
+Defining translation strings in page templates. The ``i18n`` namespace and
 the correct ``i18n:domain`` must be defined.
 
 .. code-block:: xml
