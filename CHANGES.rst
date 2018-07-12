@@ -4,6 +4,11 @@ Changes
 1.0a10 (unreleased)
 -------------------
 
+- Modify response body of ``request.response`` and return this one instead of
+  creating a new response in ``cone.app.browser.render_ajax_form`` to ensure
+  response header modifications gets delivered properly.
+  [rnix, 2018-07-12]
+
 - Batched items filter input fields may provide a prefilled text which gets
   emptied on first focus. Use ``empty_filter`` CSS class on input field for
   this.

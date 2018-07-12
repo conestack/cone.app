@@ -286,7 +286,8 @@ def render_ajax_form(model, request, name):
             'mode': mode,
             'next': form_continue.next,
         }
-        return Response(rendered)
+        request.response.body = rendered
+        return request.response
     except Exception:
         result = '<div>Form rendering error</div>'
         selector = request.environ.get('cone.app.form.selector', '#content')
