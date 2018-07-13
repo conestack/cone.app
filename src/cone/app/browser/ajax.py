@@ -1,6 +1,7 @@
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.exception import format_traceback
 from cone.app.interfaces import ILiveSearch
+from cone.app.utils import safe_encode
 from cone.tile import registerTile
 from cone.tile import render_tile
 from pyramid.exceptions import Forbidden
@@ -286,7 +287,7 @@ def render_ajax_form(model, request, name):
             'mode': mode,
             'next': form_continue.next,
         }
-        request.response.body = rendered
+        request.response.body = safe_encode(rendered)
         return request.response
     except Exception:
         result = '<div>Form rendering error</div>'
