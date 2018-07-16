@@ -91,6 +91,9 @@ body {
     margin-top:4px;
     margin-bottom:4px;
 }
+input.empty_filter {
+    color:#ccc !important;
+}
 
 /* table */
 .table_length {

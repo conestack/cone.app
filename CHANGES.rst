@@ -1,12 +1,59 @@
 Changes
 =======
 
-1.0a7 (pyramid_upgrade branch)
-------------------------------
+1.0a?? (pyramid_upgrade branch)
+-------------------------------
 
 - Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
   classes and use ``cone.tile.tile`` all over the place.
   [rnix, 2017-02-21]
+
+
+1.0a10 (unreleased)
+-------------------
+
+- Modify response body of ``request.response`` and return this one instead of
+  creating a new response in ``cone.app.browser.render_ajax_form`` to ensure
+  response header modifications gets delivered properly.
+  [rnix, 2018-07-12]
+
+- Batched items filter input fields may provide a prefilled text which gets
+  emptied on first focus. Use ``empty_filter`` CSS class on input field for
+  this.
+  [rnix, 2017-12-20]
+
+- Introduce ``cone.batcheditems_size_binder`` and
+  ``cone.batcheditems_filter_binder`` helper functions in ``protected.js``.
+  [rnix, 2017-12-20]
+
+
+1.0a9 (2017-11-13)
+------------------
+
+- Add ``quote_params`` keyword argument to ``cone.app.browser.utils.make_query``
+  to control explicitely if some request paramater values should be URL quoted.
+  Needed to make ``cone.app.browser.authoring.CameFromNext`` work properly if
+  ``came_from`` URL contains a query on it's own.
+  [rnix, 2017-11-07]
+
+
+1.0a8 (2017-10-10)
+------------------
+
+- Include related view in ``cone.app.browser.contents.ContentsViewLink.target``
+  if present and node is container, otherwise ``target`` of superclass.
+  [rnix, 2017-10-09]
+
+- Revert use ``urllib2.quote`` in ``cone.app.browser.utils.make_query`` to
+  quote query parameter values.
+  [rnix, 2017-10-09]
+
+- ``safe_decode`` keys to check for current node in ``NavTree.fillchildren``.
+  [rnix, 2017-09-27]
+
+
+1.0a7 (2017-09-17)
+------------------
 
 - Update to ``bdajax`` 1.10 and adopt server side ajax form processing code.
   [rnix, 2017-09-12]
@@ -19,7 +66,7 @@ Changes
   and ``cone.app.browser.table.Table``.
   [rnix, 2017-07-23]
 
-- Use ``RelatedViewProvider``  on ``listing`` and ``sharing`` tile.
+- Use ``RelatedViewProvider`` on ``listing`` and ``sharing`` tile.
   [rnix, 2017-07-23]
 
 - Add related view support. This includes ``set_related_view``,
