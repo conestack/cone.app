@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a10 (unreleased)
+1.0a10 (2018-07-17)
 -------------------
 
 - Modify response body of ``request.response`` and return this one instead of
