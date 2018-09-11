@@ -24,7 +24,6 @@ from pyramid.security import has_permission
 _ = TranslationStringFactory('cone.app')
 
 
-registerTile('unauthorized', 'templates/unauthorized.pt', permission='login')
 registerTile('logo', 'templates/logo.pt', permission='login')
 registerTile('livesearch', 'templates/livesearch.pt', permission='login')
 registerTile('footer', 'templates/footer.pt', permission='login')

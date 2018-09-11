@@ -4,7 +4,20 @@ Changes
 1.0a11 (unreleased)
 -------------------
 
-- No changes yet.
+- Add ``cone.light.browser.exception.not_found_view`` and ``not_found`` tile.
+  [rnix, 2018-09-11]
+
+- Move ``cone.light.browser.login.forbidden_view`` to
+  ``cone.app.browser.exception``.
+  [rnix, 2018-09-11]
+
+- Move registration of ``unauthorized`` tile from ``cone.app.browser.layout``
+  to ``cone.app.browser.exception``.
+  [rnix, 2018-09-11]
+
+- Move ``cone.app.browser.exception.format_traceback`` to
+  ``cone.app.browser.utils``.
+  [rnix, 2018-09-11]
 
 
 1.0a10 (2018-07-17)

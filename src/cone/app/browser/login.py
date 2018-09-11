@@ -6,9 +6,7 @@ from cone.app.browser.utils import make_url
 from cone.app.security import authenticate
 from cone.tile import Tile
 from cone.tile import tile
-from pyramid.httpexceptions import HTTPForbidden
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import authenticated_userid
 from pyramid.security import forget
 from pyramid.view import view_config
 from webob.exc import HTTPFound
@@ -22,14 +20,6 @@ _ = TranslationStringFactory('cone.app')
 @view_config('login')
 def login_view(model, request):
     return render_main_template(model, request, contenttile='loginform')
-
-
-@view_config(context=HTTPForbidden)
-def forbidden_view(request):
-    model = request.context
-    if not authenticated_userid(request):
-        return login_view(model, request)
-    return render_main_template(model, request, contenttile='unauthorized')
 
 
 @view_config('logout')

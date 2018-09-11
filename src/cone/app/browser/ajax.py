@@ -1,5 +1,5 @@
 from cone.app.browser.actions import ActionContext
-from cone.app.browser.exception import format_traceback
+from cone.app.browser.utils import format_traceback
 from cone.app.interfaces import ILiveSearch
 from cone.app.utils import safe_encode
 from cone.tile import registerTile
