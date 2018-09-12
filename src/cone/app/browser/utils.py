@@ -6,6 +6,8 @@ from pyramid.security import authenticated_userid
 import copy
 import datetime
 import re
+import sys
+import traceback
 import types
 import urllib2
 
@@ -119,3 +121,9 @@ def request_property(func):
             return val
     wrapper.__doc__ = func.__doc__
     return property(wrapper)
+
+
+def format_traceback():
+    etype, value, tb = sys.exc_info()
+    ret = ''.join(traceback.format_exception(etype, value, tb))
+    return '<pre>%s</pre>' % ret

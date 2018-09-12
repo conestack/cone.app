@@ -23,14 +23,6 @@ from pyramid.security import has_permission
 _ = TranslationStringFactory('cone.app')
 
 
-@tile(name='unauthorized',
-      path='templates/unauthorized.pt',
-      permission='login')
-class UnauthorizedTile(Tile):
-    """Unauthorized tile.
-    """
-
-
 @tile(name='logo', path='templates/logo.pt', permission='login')
 class LogoTile(Tile):
     """Tile rendering the logo.

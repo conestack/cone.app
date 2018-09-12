@@ -5,10 +5,8 @@ Prepare::
 
     >>> from cone.app import get_root
     >>> from cone.app import security
-    >>> from cone.app.browser.login import forbidden_view
     >>> from cone.app.browser.login import login_view
     >>> from cone.app.browser.login import logout_view
-    >>> from cone.app.model import BaseNode
     >>> from cone.tile import render_tile
 
     >>> root = get_root()
@@ -36,14 +34,6 @@ Test logout tile::
     ('Set-Cookie', 'auth_tkt=; Domain=.example.com; Max-Age=0; Path=/; expires=...')])
 
     >>> layer.logout()
-
-Test forbidden view::
-
-    >>> request = layer.new_request()
-    >>> request.context = BaseNode()
-    >>> res = forbidden_view(request).body
-    >>> res.find('id="input-loginform-login"') > -1
-    True
 
 Render login form::
 

@@ -1,6 +1,6 @@
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import ajax_form_fiddle
-from cone.app.browser.exception import format_traceback
+from cone.app.browser.utils import format_traceback
 from cone.app.browser.utils import make_url
 from cone.app.model import AppSettings
 from cone.tile import Tile
