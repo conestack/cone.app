@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a11 (unreleased)
+1.0a11 (2018-11-07)
 -------------------
 
 - Add ``cone.light.browser.exception.not_found_view`` and ``not_found`` tile.
