@@ -18,7 +18,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2017 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2018 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
