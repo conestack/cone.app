@@ -4,7 +4,8 @@ Changes
 1.0a12 (unreleased)
 -------------------
 
-- No changes yet.
+- Add default favicon.ico.
+  [rnix, 2018-11-19]
 
 
 1.0a11 (2018-11-07)
