@@ -4,6 +4,11 @@ Changes
 1.0a12 (unreleased)
 -------------------
 
+- Introduce ``show_confirm_deleted`` on
+  ``cone.app.browser.authoring.DeleteAction`` which can be used to prevent
+  "Item has been deleted" ajax continuation message.
+  [rnix, 2018-11-20]
+
 - Add default favicon.ico.
   [rnix, 2018-11-19]
 
