@@ -268,97 +268,67 @@ class TestModel(NodeTestCase):
         self.assertEqual(len(copy.values()), 2)
         self.assertTrue(copy[copy.keys()[0]].name == copy.keys()[0])
 
+    def test_Properties(self):
+        # ``Properties`` object can be used for any kind of mapping.
+        p1 = Properties()
+        p1.prop = 'Foo'
+
+        p2 = Properties()
+        p2.prop = 'Bar'
+
+        self.assertEqual((p1.prop, p2.prop), ('Foo', 'Bar'))
+
+    def test_ProtectedProperties(self):
+        # Protected properties checks against permission for properties
+        context = BaseNode()
+
+        # 'viewprotected' property gets protected by 'view' permission
+        permissions = {
+            'viewprotected': ['view'],
+        }
+        props = ProtectedProperties(context, permissions)
+
+        # Setting properties works always
+        props.viewprotected = True
+        props.unprotected = True
+
+        # Unauthorized just permits access to unprotected property
+        self.layer.new_request()
+
+        self.assertTrue(props.viewprotected is None)
+        self.assertTrue(props.unprotected)
+
+        self.assertFalse('viewprotected' in props)
+        self.assertTrue('unprotected' in props)
+
+        self.assertEqual(props.keys(), ['unprotected'])
+        self.assertTrue(props.get('viewprotected') is None)
+        self.assertTrue(props.get('unprotected'))
+
+        err = self.expect_error(KeyError, lambda: props['viewprotected'])
+        expected = 'u"No permission to access \'viewprotected\'"'
+        self.assertEqual(str(err), expected)
+
+        self.assertTrue(props['unprotected'])
+
+        # Authenticate, both properties are now available
+        self.layer.login('viewer')
+        self.layer.new_request()
+
+        self.assertTrue(props['viewprotected'])
+        self.assertTrue(props.viewprotected)
+        self.assertTrue(props.unprotected)
+
+        self.assertEqual(props.keys(), ['unprotected', 'viewprotected'])
+        self.assertTrue(props.get('viewprotected'))
+        self.assertTrue(props.get('unprotected'))
+
+        props.viewprotected = False
+        self.assertFalse(props.viewprotected)
+
+        self.layer.logout()
+
 """
-Properties
-----------
-
-You can use the ``Properties`` object for any kind of mapping.::
-
-    >>> p1 = Properties()
-    >>> p1.prop = 'Foo'
-
-    >>> p2 = Properties()
-    >>> p2.prop = 'Bar'
-
-    >>> p1.prop, p2.prop
-    ('Foo', 'Bar')
-
-
-ProtectedProperties
--------------------
-
-Protected properties checks against permission for properties::
-
-    >>> context = BaseNode()
-
-'viewprotected' property gets protected by 'view' permission::
-
-    >>> permissions = {
-    ...     'viewprotected': ['view'],
-    ... }
-    >>> props = ProtectedProperties(context, permissions)
-
-Setting properties works always::
-
-    >>> props.viewprotected = True
-    >>> props.unprotected = True
-
-Unauthorized just permits access to unprotected property::
-
-    >>> props.viewprotected
-    >>> props.unprotected
-    True
-
-    >>> 'viewprotected' in props
-    False
-
-    >>> 'unprotected' in props
-    True
-
-    >>> props.keys()
-    ['unprotected']
-
-    >>> props.get('viewprotected')
-    >>> props.get('unprotected')
-    True
-
-    >>> props['viewprotected']
-    Traceback (most recent call last):
-      ...
-    KeyError: u"No permission to access 'viewprotected'"
-
-    >>> props['unprotected']
-    True
-
-Authenticate, both properties are now available::
-
-    >>> layer.login('viewer')
-
-    >>> props['viewprotected']
-    True
-
-    >>> props.viewprotected
-    True
-
-    >>> props.unprotected
-    True
-
-    >>> props.keys()
-    ['unprotected', 'viewprotected']
-
-    >>> props.get('viewprotected')
-    True
-
-    >>> props.get('unprotected')
-    True
-
-    >>> props.viewprotected = False
-    >>> props.viewprotected
-    False
-
-    >>> layer.logout()
-
-
 XML Properties
 --------------
 
