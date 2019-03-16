@@ -363,66 +363,75 @@ class SecurityTest(NodeTestCase):
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
         )
 
-"""
-Principal roles get inherited even if some parent does not provide principal
-roles::
+        # Principal roles get inherited even if some parent does not provide
+        # principal roles
+        child = node['no_principal_roles'] = BaseNode()
+        subchild = child['no_principal_roles'] = MyPrincipalACLNode()
+        self.assertEqual(
+            subchild.aggregated_roles_for('group:some_group'),
+            ['manager', 'editor']
+        )
 
-    >>> child = node['no_principal_roles'] = BaseNode()
-    >>> subchild = child['no_principal_roles'] =  MyPrincipalACLNode()
-    >>> subchild.aggregated_roles_for('group:some_group')
-    ['manager', 'editor']
+        # If principal role found which is not provided by plumbing endpoint
+        # acl, this role does not grant any permissions
+        node = MyPrincipalACLNode()
+        node.principal_roles['someuser'] = ['inexistent_role']
+        self.assertEqual(
+            node.__acl__[0],
+            ('Allow', 'someuser', [])
+        )
+        self.assertEqual(
+            node.__acl__[1],
+            ('Allow', 'system.Authenticated', ['view'])
+        )
+        self.assertEqual(
+            node.__acl__[2],
+            ('Allow', 'role:viewer', ['view', 'list'])
+        )
+        self.assertEqual(
+            node.__acl__[-1],
+            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
+        )
 
-If principal role found which is not provided by plumbing endpoint acl, this
-role does not grant any permissions::
+    def test_authentication_logging(self):
+        # If an authentication plugin raises an error when calling
+        # ``authenticate``, an error message is logged
+        class TestHandler(logging.StreamHandler):
+            record = None
 
-    >>> node = MyPrincipalACLNode()
-    >>> node.principal_roles['someuser'] = ['inexistent_role']
-    >>> node.__acl__
-    [('Allow', 'someuser', []), 
-    ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view', 'list']), 
-    ...
-    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
+            def handle(self, record):
+                self.record = record
 
-If an authentication plugin raises an error when calling ``authenticate``, an
-error message is logged::
+        handler = TestHandler()
 
-    >>> class TestHandler(logging.StreamHandler):
-    ...     def handle(self, record):
-    ...         print record
+        logger.addHandler(handler)
+        logger.setLevel(logging.DEBUG)
 
-    >>> handler = TestHandler()
+        old_ugm = cone.app.cfg.auth
+        cone.app.cfg.auth = object()
 
-    >>> logger.addHandler(handler)
-    >>> logger.setLevel(logging.DEBUG)
+        authenticate(self.layer.new_request(), 'foo', 'foo')
+        self.check_output("""
+        <LogRecord: cone.app, 30, ...security.py, ...,
+        "Authentication plugin <type 'object'> raised an Exception while trying
+        to authenticate: 'object' object has no attribute 'users'">
+        """, str(handler.record))
 
-    >>> old_ugm = cone.app.cfg.auth
-    >>> cone.app.cfg.auth = object()
+        # Test Group callback, also logs if an error occurs
+        self.layer.login('superuser', 'superuser')
+        self.assertEqual(
+            groups_callback('superuser', self.layer.new_request()),
+            [u'role:manager']
+        )
+        self.layer.logout()
 
-    >>> request = layer.current_request
+        groups_callback('foo', self.layer.new_request())
+        self.check_output("""
+        <LogRecord: cone.app, 40,
+        ...security.py, ..., "'object' object has no attribute 'users'">
+        """, str(handler.record))
 
-    >>> authenticate(request, 'foo', 'foo')
-    <LogRecord: cone.app, 30, ...security.py, ..., 
-    "Authentication plugin <type 'object'> raised an Exception while trying 
-    to authenticate: 'object' object has no attribute 'users'">
-
-Test Group callback, also logs if an error occurs::
-
-    >>> layer.login('user')
-    >>> request = layer.current_request
-    >>> groups_callback('user', request)
-    [u'role:manager']
-
-    >>> layer.logout()
-
-    >>> groups_callback('foo', layer.new_request())
-    <LogRecord: cone.app, 40, 
-    ...security.py, ..., "'object' object has no attribute 'users'">
-    []
-
-Cleanup::
-
-    >>> logger.setLevel(logging.INFO)
-    >>> logger.removeHandler(handler)
-    >>> cone.app.cfg.auth = old_ugm
-"""
+        # Cleanup
+        logger.setLevel(logging.INFO)
+        logger.removeHandler(handler)
+        cone.app.cfg.auth = old_ugm
