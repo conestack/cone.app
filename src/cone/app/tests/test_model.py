@@ -27,6 +27,7 @@ from pyramid.security import ALL_PERMISSIONS
 import os
 import shutil
 import tempfile
+import uuid
 
 
 class TestModel(NodeTestCase):
@@ -219,83 +220,55 @@ class TestModel(NodeTestCase):
         # ``get``
         self.assertTrue(nodeinfo.get('node') is BaseNode)
 
+    def test_UUIDAttributeAware(self):
+        @plumbing(UUIDAttributeAware)
+        class UUIDNode(BaseNode):
+            pass
+
+        node = UUIDNode()
+        self.assertTrue(isinstance(node.uuid, uuid.UUID))
+        self.assertTrue(node.attrs['uuid'] is node.uuid)
+
+    def test_UUIDAsName(self):
+        @plumbing(UUIDAsName)
+        class UUIDAsNameNode(BaseNode):
+            pass
+
+        node = UUIDAsNameNode()
+        self.assertTrue(isinstance(node.uuid, uuid.UUID))
+        self.assertTrue(str(node.uuid) == node.name)
+
+        child = UUIDAsNameNode()
+        node[child.name] = child
+        sub = UUIDAsNameNode()
+        node[child.name][sub.name] = sub
+        sub = UUIDAsNameNode()
+        node[child.name][sub.name] = sub
+        self.check_output("""\
+        <class '...UUIDAsNameNode'>: ...
+          <class '...UUIDAsNameNode'>: ...
+            <class '...UUIDAsNameNode'>: ...
+            <class '...UUIDAsNameNode'>: ...
+        """, node.treerepr())
+
+        err = self.expect_error(RuntimeError, node[child.name].copy)
+        expected = 'Shallow copy useless on UUID aware node trees, use deepcopy.'
+        self.assertEqual(str(err), expected)
+
+        copy = child.deepcopy()
+        self.check_output("""\
+        <class '...UUIDAsNameNode'>: ...
+          <class '...UUIDAsNameNode'>: ...
+          <class '...UUIDAsNameNode'>: ...
+        """, copy.treerepr())
+
+        self.assertFalse(copy.uuid == child.uuid)
+        self.assertFalse(sorted(copy.keys()) == sorted(child.keys()))
+        self.assertEqual(len(copy.keys()), 2)
+        self.assertEqual(len(copy.values()), 2)
+        self.assertTrue(copy[copy.keys()[0]].name == copy.keys()[0])
+
 """
-UUIDAttributeAware
-------------------
-
-::
-
-    >>> @plumbing(UUIDAttributeAware)
-    ... class UUIDNode(BaseNode):
-    ...     pass
-
-    >>> node = UUIDNode()
-    >>> node.uuid
-    UUID('...')
-
-    >>> node.attrs['uuid']
-    UUID('...')
-
-
-UUIDAsName
-----------
-
-::
-
-    >>> @plumbing(UUIDAsName)
-    ... class UUIDAsNameNode(BaseNode):
-    ...     pass
-
-    >>> node = UUIDAsNameNode()
-    >>> node.uuid
-    UUID('...')
-
-    >>> node.name
-    '...'
-
-    >>> str(node.uuid) == node.name
-    True
-
-    >>> child = UUIDAsNameNode()
-    >>> node[child.name] = child
-    >>> sub = UUIDAsNameNode()
-    >>> node[child.name][sub.name] = sub
-    >>> sub = UUIDAsNameNode()
-    >>> node[child.name][sub.name] = sub
-    >>> node.printtree()
-    <class 'UUIDAsNameNode'>: ...
-      <class 'UUIDAsNameNode'>: ...
-        <class 'UUIDAsNameNode'>: ...
-        <class 'UUIDAsNameNode'>: ...
-
-    >>> copy = node[child.name].copy()
-    Traceback (most recent call last):
-      ...
-    RuntimeError: Shallow copy useless on UUID aware node trees, use deepcopy.
-
-    >>> copy = child.deepcopy()
-    >>> copy.printtree()
-    <class 'UUIDAsNameNode'>: ...
-      <class 'UUIDAsNameNode'>: ...
-      <class 'UUIDAsNameNode'>: ...
-
-    >>> copy.uuid == child.uuid
-    False
-
-    >>> sorted(copy.keys()) == sorted(child.keys())
-    False
-
-    >>> copy.keys()
-    ['...', '...']
-
-    >>> copy.values()
-    [<UUIDAsNameNode object '...' at ...>, 
-    <UUIDAsNameNode object '...' at ...>]
-
-    >>> copy[copy.keys()[0]].name == copy.keys()[0]
-    True
-
-
 Properties
 ----------
 
