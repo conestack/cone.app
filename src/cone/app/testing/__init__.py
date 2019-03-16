@@ -77,13 +77,14 @@ class Security(Layer):
         self.current_request = request
         return request
 
-    def login(self, login):
+    def login(self, login, password=None):
         request = self.current_request
         if not request:
             request = self.new_request()
         else:
             self.logout()
-        res = authenticate(request, login, 'secret')
+        password = password if password else 'secret'
+        res = authenticate(request, login, password)
         if res:
             request.environ['HTTP_COOKIE'] = res[0][1]
             cookie = res[0][1].split(';')[0].split('=')
