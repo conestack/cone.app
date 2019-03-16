@@ -2,10 +2,12 @@ import unittest
 
 
 def test_suite():
+    from cone.app.tests import test_app
     from cone.app.tests import test_model
 
     suite = unittest.TestSuite()
 
+    suite.addTest(unittest.findTestCases(test_app))
     suite.addTest(unittest.findTestCases(test_model))
 
     return suite
