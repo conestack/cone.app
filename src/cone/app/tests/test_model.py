@@ -29,13 +29,6 @@ import shutil
 import tempfile
 
 
-class TestFactoryNode(FactoryNode):
-    factories = {
-        'foo': BaseNode,
-        'bar': BaseNode,
-    }
-
-
 class TestModel(NodeTestCase):
     layer = testing.security
 
@@ -104,6 +97,11 @@ class TestModel(NodeTestCase):
         self.assertTrue(info.inexistent is None)
 
     def test_FactoryNode(self):
+        class TestFactoryNode(FactoryNode):
+            factories = {
+                'foo': BaseNode,
+                'bar': BaseNode,
+            }
         node = TestFactoryNode()
 
         # static factories
@@ -123,112 +121,76 @@ class TestModel(NodeTestCase):
         node.invalidate('foo')
         self.assertEqual(node.storage.values(), [node['bar']])
 
+    def test_AdapterNode(self):
+        toadapt = BaseNode()
+        toadapt['foo'] = BaseNode()
+        toadapt['bar'] = BaseNode()
+        toadapt.attrs.title = 'Some title'
+        toadapt.attrs.description = 'Some description'
+
+        # Adapt created node structure
+        adapter = AdapterNode(toadapt, 'name', None)
+
+        # Check ``AdapterNode``
+        expected = "<BaseNode object 'foo' at"
+        self.assertTrue(str(adapter.model['foo']).startswith(expected))
+
+        # ``attrs``
+        self.assertEqual(adapter.attrs.title, 'Some title')
+
+        # The adapter node is responsible to return other adapter node or
+        # application nodes on ``__getitem__`` if application hierarchy
+        # continues. It's possible to do key aliasing as well at this place.
+        # This dummy class does a static mapping on ``__getitem__``.
+        class TestAdapterNode(AdapterNode):
+            def __getitem__(self, key):
+                return AdapterNode(self.model['bar'], key, self)
+
+        node = TestAdapterNode(toadapt, 'adapter', None)
+        child = node['aliased']
+        expected = "<AdapterNode object 'aliased' at"
+        self.assertTrue(str(child).startswith(expected))
+
+        self.assertTrue(child.model is toadapt['bar'])
+        self.assertEqual([key for key in node], ['foo', 'bar'])
+
+        # The application node path differs from the adapted node path. This is
+        # essential to keep the application path sane while not violating the
+        # adapted node's structure
+        self.assertEqual(child.path, ['adapter', 'aliased'])
+        self.assertEqual(child.model.path, [None, 'bar'])
+
+    def test_Metadata(self):
+        # The ``IMetadata`` implementation returned by
+        # ``IApplicationNode.metadata`` is used by the application for
+        # displaying metadata information. The default implementation accepts a
+        # dict like object on ``__init__``
+        data = {
+            'title': 'some title',
+            'description': 'some description',
+            'creator': 'john doe',
+        }
+
+        # Check ``INodeAdapter`` interface
+        metadata = Metadata(data)
+
+        # ``__getattr__``. No AttributeError is raised if attribute is
+        # inexistent
+        self.assertEqual(metadata.title, 'some title')
+        self.assertEqual(metadata.description, 'some description')
+        self.assertEqual(metadata.creator, 'john doe')
+        self.assertTrue(metadata.inexistent is None)
+
+        # ``__getitem__``
+        self.assertEqual(metadata['title'], 'some title')
+
+        # ``__contains__``
+        self.assertTrue('description' in metadata)
+
+        # ``get``
+        self.assertEqual(metadata.get('creator'), 'john doe')
+
 """
-
-AdapterNode
------------
-
-::
-
-    >>> toadapt = BaseNode()
-    >>> toadapt['foo'] = BaseNode()
-    >>> toadapt['bar'] = BaseNode()
-    >>> toadapt.attrs.title = 'Some title'
-    >>> toadapt.attrs.description = 'Some description'
-
-Adapt created node structure.::
-
-    >>> adapter = AdapterNode(toadapt, 'name', None)
-
-Check ``AdapterNode``.::
-
-    >>> adapter.model['foo']
-    <BaseNode object 'foo' at ...>
-
-``attrs``::
-
-    >>> adapter.attrs.title
-    'Some title'
-
-The adapter node is responsible to return other adapter node or application
-nodes on ``__getitem__`` if application hierarchy continues.
-
-You can do key aliasing as well at this place.::
-
-    >>> class MyAdapterNode(AdapterNode):
-    ...     def __getitem__(self, key):
-    ...         return AdapterNode(self.model['bar'], key, self)
-
-This dummy class does a static mapping on __getitem__.::
-
-    >>> node = MyAdapterNode(toadapt, 'adapter', None)
-    >>> child = node['aliased']
-    >>> child
-    <AdapterNode object 'aliased' at ...>
-
-    >>> child.model
-    <BaseNode object 'bar' at ...>
-
-    >>> [key for key in node]
-    ['foo', 'bar']
-
-The application node path differs from the adapted node path. This is essential
-to keep the application path sane while not violating the adapted node's
-structure.::
-
-    >>> child.path
-    ['adapter', 'aliased']
-
-    >>> child.model.path
-    [None, 'bar']
-
-
-Metadata
---------
-
-The ``IMetadata`` implementation returned by ``IApplicationNode.metadata`` is
-used by the application for displaying metadata information.
-
-The default implementation accepts a dict like object on ``__init__``.::
-
-    >>> data = {
-    ...     'title': 'some title',
-    ...     'description': 'some description',
-    ...     'creator': 'john doe',
-    ... }
-
-Check ``INodeAdapter`` interface.::
-
-    >>> metadata = Metadata(data)
-
-``__getattr__``. No AttributeError is raised if attribute is inexistent.::
-
-    >>> metadata.title
-    'some title'
-
-    >>> metadata.description
-    'some description'
-
-    >>> metadata.creator
-    'john doe'
-
-    >>> metadata.inexistent
-
-``__getitem__``::
-
-    >>> metadata['title']
-    'some title'
-
-``__contains__``::
-
-    >>> 'description' in metadata
-    True
-
-``get``::
-
-    >>> metadata.get('creator')
-    'john doe'
-
 
 NodeInfo
 --------
