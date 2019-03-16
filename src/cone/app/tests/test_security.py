@@ -111,7 +111,7 @@ class SecurityTest(NodeTestCase):
             __acl__ = DEFAULT_ACL
         context = ACLTest()
 
-        # Authenticate as default user
+        # Authenticate several users and check permission
         self.layer.login('superuser', 'superuser')
         userid = authenticated_userid(self.layer.current_request)
         self.assertEqual(userid, 'superuser')
@@ -133,93 +133,111 @@ class SecurityTest(NodeTestCase):
         rule = has_permission('manage', context, self.layer.current_request)
         self.assertTrue(isinstance(rule, ACLDenied))
 
+    def test_ACLRegistry(self):
+        class SomeModel(object):
+            pass
+
+        acl = [('Allow', 'role:viewer', ['view'])]
+        acl_registry.register(acl, SomeModel)
+
+        acl = [('Allow', 'role:viewer', ['edit'])]
+        acl_registry.register(acl, node_info_name='some_model')
+
+        acl = [('Allow', 'role:viewer', ['delete'])]
+        acl_registry.register(acl, SomeModel, 'some_model')
+
+        self.assertEqual(
+            acl_registry.lookup(None, None, [('Allow', 'role:viewer', ['add'])]),
+            [('Allow', 'role:viewer', ['add'])]
+        )
+        self.assertEqual(
+            acl_registry.lookup(SomeModel),
+            [('Allow', 'role:viewer', ['view'])]
+        )
+        self.assertEqual(
+            acl_registry.lookup(node_info_name='some_model'),
+            [('Allow', 'role:viewer', ['edit'])]
+        )
+        self.assertEqual(
+            acl_registry.lookup(SomeModel, 'some_model'),
+            [('Allow', 'role:viewer', ['delete'])]
+        )
+
+    def test_OwnerSupport(self):
+        @plumbing(OwnerSupport)
+        class OwnerSupportNode(BaseNode):
+            pass
+
+        ownersupportnode = OwnerSupportNode()
+        ownersupportnode.owner
+        self.assertEqual(
+            ownersupportnode.__acl__[0],
+            ('Allow', 'system.Authenticated', ['view'])
+        )
+
+        self.layer.login('sepp')
+        userid = authenticated_userid(self.layer.current_request)
+        self.assertEqual(userid, 'sepp')
+
+        ownersupportnode = OwnerSupportNode()
+        self.assertEqual(ownersupportnode.owner, 'sepp')
+        self.assertEqual(ownersupportnode.attrs['owner'], 'sepp')
+        self.assertEqual(ownersupportnode.__acl__, [
+            ('Allow', 'sepp', [
+                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                'paste', 'manage_permissions', 'change_state'
+            ]),
+            ('Allow', 'system.Authenticated', ['view']),
+            ('Allow', 'role:viewer', ['view', 'list']),
+            ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']),
+            ('Allow', 'role:admin', [
+                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                'paste', 'manage_permissions', 'change_state'
+            ]),
+            ('Allow', 'role:manager', [
+                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                'paste', 'manage_permissions', 'change_state', 'manage'
+            ]),
+            ('Allow', 'role:owner', [
+                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                'paste', 'manage_permissions', 'change_state'
+            ]),
+            ('Allow', 'system.Everyone', ['login']),
+            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
+        ])
+
+        self.layer.login('viewer')
+        rule = has_permission(
+            'delete',
+            ownersupportnode,
+            self.layer.current_request
+        )
+        self.assertTrue(isinstance(rule, ACLDenied))
+
+        self.layer.login('sepp')
+        rule = has_permission(
+            'delete',
+            ownersupportnode,
+            self.layer.current_request
+        )
+        self.assertTrue(isinstance(rule, ACLAllowed))
+
+        @plumbing(OwnerSupport)
+        class NoOwnerACLOnBaseNode(BaseNode):
+            @property
+            def __acl__(self):
+                return [('Allow', 'role:viewer', ['view'])]
+
+        ownersupportnode = NoOwnerACLOnBaseNode()
+        self.assertEqual(ownersupportnode.owner, 'sepp')
+        self.assertEqual(
+            ownersupportnode.__acl__,
+            [('Allow', 'role:viewer', ['view'])]
+        )
+
+        self.layer.logout()
+
 """
-ACLRegistry::
-
-    >>> class SomeModel(object): pass
-
-    >>> acl = [('Allow', 'role:viewer', ['view'])]
-    >>> acl_registry.register(acl, SomeModel)
-
-    >>> acl = [('Allow', 'role:viewer', ['edit'])]
-    >>> acl_registry.register(acl, node_info_name='some_model')
-
-    >>> acl = [('Allow', 'role:viewer', ['delete'])]
-    >>> acl_registry.register(acl, SomeModel, 'some_model')
-
-    >>> acl_registry.lookup(None, None, [('Allow', 'role:viewer', ['add'])])
-    [('Allow', 'role:viewer', ['add'])]
-
-    >>> acl_registry.lookup(SomeModel)
-    [('Allow', 'role:viewer', ['view'])]
-
-    >>> acl_registry.lookup(node_info_name='some_model')
-    [('Allow', 'role:viewer', ['edit'])]
-
-    >>> acl_registry.lookup(SomeModel, 'some_model')
-    [('Allow', 'role:viewer', ['delete'])]
-
-OwnerSupport::
-
-    >>> @plumbing(OwnerSupport)
-    ... class OwnerSupportNode(BaseNode):
-    ...     pass
-
-    >>> ownersupportnode = OwnerSupportNode()
-    >>> ownersupportnode.owner
-
-    >>> ownersupportnode.__acl__
-    [('Allow', 'system.Authenticated', ['view']), ...]
-
-    >>> layer.login('sepp')
-    >>> authenticated_userid(layer.current_request)
-    'sepp'
-
-    >>> ownersupportnode = OwnerSupportNode()
-    >>> ownersupportnode.owner
-    'sepp'
-
-    >>> ownersupportnode.attrs['owner']
-    'sepp'
-
-    >>> ownersupportnode.__acl__
-    [('Allow', 'sepp', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
-    'copy', 'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view', 'list']), 
-    ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']), 
-    ('Allow', 'role:admin', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
-    'copy', 'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'role:manager', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
-    'copy', 'paste', 'manage_permissions', 'change_state', 'manage']), 
-    ('Allow', 'role:owner', ['view', 'list', 'add', 'edit', 'delete', 'cut', 
-    'copy', 'paste', 'manage_permissions', 'change_state']), 
-    ('Allow', 'system.Everyone', ['login']), 
-    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-
-    >>> layer.login('viewer')
-    >>> has_permission('delete', ownersupportnode, layer.current_request)
-    <ACLDenied instance ...
-
-    >>> layer.login('sepp')
-    >>> has_permission('delete', ownersupportnode, layer.current_request)
-    <ACLAllowed instance ...
-
-    >>> @plumbing(OwnerSupport)
-    ... class NoOwnerACLOnBaseNode(BaseNode):
-    ...     @property
-    ...     def __acl__(self):
-    ...         return [('Allow', 'role:viewer', ['view'])]
-
-    >>> ownersupportnode = NoOwnerACLOnBaseNode()
-    >>> ownersupportnode.owner
-    'sepp'
-
-    >>> ownersupportnode.__acl__
-    [('Allow', 'role:viewer', ['view'])]
-
-    >>> layer.logout()
-
 PrincipalACL. PrincipalACL is an abstract class. Directly mixing in causes an
 error on use::
 
