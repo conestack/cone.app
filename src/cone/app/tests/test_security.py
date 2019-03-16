@@ -237,86 +237,133 @@ class SecurityTest(NodeTestCase):
 
         self.layer.logout()
 
+    def test_PrincipalACL(self):
+        # PrincipalACL is an abstract class. Directly use causes an error
+        @plumbing(PrincipalACL)
+        class PrincipalACLNode(BaseNode):
+            pass
+
+        node = PrincipalACLNode()
+        err = self.expect_error(NotImplementedError, lambda: node.__acl__)
+        expected = (
+            'Abstract ``PrincipalACL`` does not implement ``principal_roles``.'
+        )
+        self.assertEqual(str(err), expected)
+
+        # Concrete PrincipalACL implementation. Implements principal_roles
+        # property
+        class MyPrincipalACL(PrincipalACL):
+            @default
+            @instance_property
+            def principal_roles(self):
+                return dict()
+
+        @plumbing(MyPrincipalACL)
+        class MyPrincipalACLNode(BaseNode):
+            pass
+
+        node = MyPrincipalACLNode()
+        self.assertTrue(IPrincipalACL.providedBy(node))
+
+        node.principal_roles['someuser'] = ['manager']
+        node.principal_roles['otheruser'] = ['editor']
+        node.principal_roles['group:some_group'] = ['editor', 'manager']
+
+        self.assertEqual(
+            node.__acl__[0],
+            ('Allow', 'someuser', [
+                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+                'view', 'paste', 'manage_permissions', 'delete'
+            ])
+        )
+        self.assertEqual(
+            node.__acl__[1],
+            ('Allow', 'otheruser', ['edit', 'add', 'list', 'view'])
+        )
+        self.assertEqual(
+            node.__acl__[2],
+            ('Allow', 'group:some_group', [
+                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+                'view', 'paste', 'manage_permissions', 'delete'
+            ])
+        )
+        self.assertEqual(
+            node.__acl__[3],
+            ('Allow', 'system.Authenticated', ['view'])
+        )
+        self.assertEqual(
+            node.__acl__[4],
+            ('Allow', 'role:viewer', ['view', 'list'])
+        )
+        self.assertEqual(
+            node.__acl__[-1],
+            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
+        )
+
+        # PrincipalACL role inheritance
+        child = node['child'] = MyPrincipalACLNode()
+        child.principal_roles['someuser'] = ['editor']
+        self.assertEqual(
+            child.__acl__[0],
+            ('Allow', 'someuser', ['edit', 'add', 'list', 'view'])
+        )
+        self.assertEqual(
+            child.__acl__[1],
+            ('Allow', 'system.Authenticated', ['view'])
+        )
+        self.assertEqual(
+            child.__acl__[2],
+            ('Allow', 'role:viewer', ['view', 'list'])
+        )
+        self.assertEqual(
+            child.__acl__[-1],
+            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
+        )
+
+        subchild = child['child'] = MyPrincipalACLNode()
+        subchild.role_inheritance = True
+        subchild.principal_roles['otheruser'] = ['admin']
+        self.assertEqual(subchild.aggregated_roles_for('inexistent'), [])
+        self.assertEqual(
+            subchild.aggregated_roles_for('someuser'),
+            ['manager', 'editor']
+        )
+        self.assertEqual(
+            subchild.aggregated_roles_for('otheruser'),
+            ['admin', 'editor']
+        )
+
+        self.assertEqual(
+            subchild.__acl__[0],
+            ('Allow', 'someuser', [
+                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+                'view', 'paste', 'manage_permissions', 'delete'
+            ])
+        )
+        self.assertEqual(
+            subchild.__acl__[1],
+            ('Allow', 'otheruser', [
+                'cut', 'edit', 'copy', 'list', 'add', 'change_state', 'view',
+                'paste', 'manage_permissions', 'delete'
+            ])
+        )
+        self.assertEqual(
+            subchild.__acl__[2],
+            ('Allow', 'group:some_group', [
+                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+                'view', 'paste', 'manage_permissions', 'delete'
+            ])
+        )
+        self.assertEqual(
+            subchild.__acl__[3],
+            ('Allow', 'system.Authenticated', ['view'])
+        )
+        self.assertEqual(
+            subchild.__acl__[-1],
+            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
+        )
+
 """
-PrincipalACL. PrincipalACL is an abstract class. Directly mixing in causes an
-error on use::
-
-    >>> @plumbing(PrincipalACL)
-    ... class PrincipalACLNode(BaseNode):
-    ...     pass
-
-    >>> node = PrincipalACLNode()
-    >>> node.__acl__
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``PrincipalACL`` does not 
-    implement ``principal_roles``.
-
-Concrete PrincipalACL implementation. Implements principal_roles property::
-
-    >>> class MyPrincipalACL(PrincipalACL):
-    ...     @default
-    ...     @instance_property
-    ...     def principal_roles(self):
-    ...         return dict()
-
-    >>> @plumbing(MyPrincipalACL)
-    ... class MyPrincipalACLNode(BaseNode):
-    ...     pass
-
-    >>> node = MyPrincipalACLNode()
-    >>> IPrincipalACL.providedBy(node)
-    True
-
-    >>> node.principal_roles['someuser'] = ['manager']
-    >>> node.principal_roles['otheruser'] = ['editor']
-    >>> node.principal_roles['group:some_group'] = ['editor', 'manager']
-
-    >>> node.__acl__
-    [('Allow', 'someuser', ['cut', 'edit', 'copy', 'manage', 'list', 'add', 
-    'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'otheruser', ['edit', 'add', 'list', 'view']), 
-    ('Allow', 'group:some_group', ['cut', 'edit', 'copy', 'manage', 'list', 
-    'add', 'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view', 'list']), 
-    ...
-    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-
-PrincipalACL role inheritance::
-
-    >>> child = node['child'] = MyPrincipalACLNode()
-    >>> child.principal_roles['someuser'] = ['editor']
-    >>> child.__acl__
-    [('Allow', 'someuser', ['edit', 'add', 'list', 'view']), 
-    ('Allow', 'system.Authenticated', ['view']), 
-    ('Allow', 'role:viewer', ['view', 'list']), 
-    ...
-    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-
-    >>> subchild = child['child'] = MyPrincipalACLNode()
-    >>> subchild.role_inheritance = True
-    >>> subchild.principal_roles['otheruser'] = ['admin']
-    >>> subchild.aggregated_roles_for('inexistent')
-    []
-
-    >>> subchild.aggregated_roles_for('someuser')
-    ['manager', 'editor']
-
-    >>> subchild.aggregated_roles_for('otheruser')
-    ['admin', 'editor']
-
-    >>> subchild.__acl__
-    [('Allow', 'someuser', ['cut', 'edit', 'copy', 'manage', 'list', 'add', 
-    'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'otheruser', ['cut', 'edit', 'copy', 'list', 'add', 
-    'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'group:some_group', ['cut', 'edit', 'copy', 'manage', 'list', 
-    'add', 'change_state', 'view', 'paste', 'manage_permissions', 'delete']), 
-    ('Allow', 'system.Authenticated', ['view']), 
-    ...
-    ('Deny', 'system.Everyone', <pyramid.security.AllPermissionsList object at ...>)]
-
 Principal roles get inherited even if some parent does not provide principal
 roles::
 
