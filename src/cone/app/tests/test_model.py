@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
+from cone.app import testing
 from cone.app.interfaces import ILayout
 from cone.app.interfaces import IMetadata
-from cone.app.interfaces import IProperties
 from cone.app.interfaces import INodeInfo
-from cone.app import testing
-from cone.app.model import Layout
+from cone.app.interfaces import IProperties
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
 from cone.app.model import get_node_info
+from cone.app.model import Layout
 from cone.app.model import Metadata
 from cone.app.model import NodeInfo
 from cone.app.model import Properties
@@ -328,207 +328,204 @@ class TestModel(NodeTestCase):
 
         self.layer.logout()
 
+    def test_XMLProperties(self):
+        # There's a convenience object for XML input and output
+
+        # Dummy environment
+        tempdir = tempfile.mkdtemp()
+
+        # Create XML properties with path and optional data
+        props = XMLProperties(
+            os.path.join(tempdir, 'props.xml'),
+            data={'foo': u'äöüß'}
+        )
+
+        # Testing helper functions
+        self.assertEqual(props._keys(), ['foo'])
+        self.assertEqual(props._values(), [u'äöüß'])
+
+        # XML properties can be datetime objects
+        props.effective = datetime(2010, 1, 1, 10, 15)
+        props.empty = ''
+
+        # XML properties can be multi valued...
+        props.keywords = ['a', datetime(2010, 1, 1, 10, 15), '']
+
+        # ...or dict/odict instance
+        props.dictlike = odict([('a', 'foo'), ('b', 'bar'), ('c', '')])
+
+        # Nothing added yet
+        self.assertEqual(os.listdir(tempdir), [])
+
+        # Call props, file is now written to disk
+        props()
+        self.assertEqual(os.listdir(tempdir), ['props.xml'])
+
+        # Check file contents
+        with open(os.path.join(tempdir, 'props.xml')) as file:
+            lines = file.read().split('\n')
+        self.assertEqual(lines, [
+            '<properties>',
+            '  <foo>&#228;&#246;&#252;&#223;</foo>',
+            '  <effective>2010-01-01T10:15:00</effective>',
+            '  <empty></empty>',
+            '  <keywords>',
+            '    <item>a</item>',
+            '    <item>2010-01-01T10:15:00</item>',
+            '    <item></item>',
+            '  </keywords>',
+            '  <dictlike>',
+            '    <elem>',
+            '      <key>a</key>',
+            '      <value>foo</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>b</key>',
+            '      <value>bar</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>c</key>',
+            '      <value></value>',
+            '    </elem>',
+            '  </dictlike>',
+            '</properties>',
+            ''
+        ])
+
+        # Overwrite ``foo`` and add ``bar`` properties; Note that even markup
+        # can be used safely
+        props.foo = u'foo'
+        props.bar = u'<bar>äöü</bar>'
+
+        # Call props and check result
+        props()
+        with open(os.path.join(tempdir, 'props.xml')) as file:
+            lines = file.read().split('\n')
+        self.assertEqual(lines, [
+            '<properties>',
+            '  <foo>foo</foo>',
+            '  <effective>2010-01-01T10:15:00</effective>',
+            '  <empty></empty>',
+            '  <keywords>',
+            '    <item>a</item>',
+            '    <item>2010-01-01T10:15:00</item>',
+            '    <item></item>',
+            '  </keywords>',
+            '  <dictlike>',
+            '    <elem>',
+            '      <key>a</key>',
+            '      <value>foo</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>b</key>',
+            '      <value>bar</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>c</key>',
+            '      <value></value>',
+            '    </elem>',
+            '  </dictlike>',
+            '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
+            '</properties>',
+            ''
+        ])
+
+        # Create XML properties from existing file
+        props = XMLProperties(os.path.join(tempdir, 'props.xml'))
+        self.assertEqual(
+            props._keys(),
+            ['foo', 'effective', 'empty', 'keywords', 'dictlike', 'bar']
+        )
+
+        self.assertEqual(
+            props._values(),
+            [
+                u'foo',
+                datetime(2010, 1, 1, 10, 15),
+                u'',
+                [u'a', datetime(2010, 1, 1, 10, 15), u''],
+                odict([('a', 'foo'), ('b', 'bar'), ('c', None)]),
+                u'<bar>äöü</bar>'
+            ]
+        )
+
+        # Delete property
+        del props['foo']
+        self.assertEqual(
+            props._keys(),
+            ['effective', 'empty', 'keywords', 'dictlike', 'bar']
+        )
+
+        err = self.expect_error(
+            KeyError,
+            lambda: props.__delitem__('inexistent')
+        )
+        self.assertEqual(str(err), "u'property inexistent does not exist'")
+
+        # Call and check results
+        props()
+        with open(os.path.join(tempdir, 'props.xml')) as file:
+            lines = file.read().split('\n')
+        self.assertEqual(lines, [
+            '<properties>',
+            '  <effective>2010-01-01T10:15:00</effective>',
+            '  <empty></empty>',
+            '  <keywords>',
+            '    <item>a</item>',
+            '    <item>2010-01-01T10:15:00</item>',
+            '    <item></item>',
+            '  </keywords>',
+            '  <dictlike>',
+            '    <elem>',
+            '      <key>a</key>',
+            '      <value>foo</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>b</key>',
+            '      <value>bar</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>c</key>',
+            '      <value>None</value>',
+            '    </elem>',
+            '  </dictlike>',
+            '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
+            '</properties>',
+            ''
+        ])
+
+        # Change order of odict and check results
+        props.dictlike = odict([('b', 'bar'), ('a', 'foo')])
+        props()
+        with open(os.path.join(tempdir, 'props.xml')) as file:
+            lines = file.read().split('\n')
+        self.assertEqual(lines, [
+            '<properties>',
+            '  <effective>2010-01-01T10:15:00</effective>',
+            '  <empty></empty>',
+            '  <keywords>',
+            '    <item>a</item>',
+            '    <item>2010-01-01T10:15:00</item>',
+            '    <item></item>',
+            '  </keywords>',
+            '  <dictlike>',
+            '    <elem>',
+            '      <key>b</key>',
+            '      <value>bar</value>',
+            '    </elem>',
+            '    <elem>',
+            '      <key>a</key>',
+            '      <value>foo</value>',
+            '    </elem>',
+            '  </dictlike>',
+            '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
+            '</properties>',
+            ''
+        ])
+
+        os.remove(os.path.join(tempdir, 'props.xml'))
+
 """
-XML Properties
---------------
-
-There's a convenience object for XML input and output.
-
-Dummy environment.::
-
-    >>> tempdir = tempfile.mkdtemp()
-
-Create XML properties with path and optional data.::
-
-    >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'),
-    ...                       data={'foo': u'äöüß'})
-
-Testing helper functions.::
-
-    >>> props._keys()
-    ['foo']
-
-    >>> props._values()
-    [u'\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f']
-
-XML properties could be datetime objects.::
-
-    >>> props.effective = datetime(2010, 1, 1, 10, 15)
-    >>> props.empty = ''
-
-XML properties could be multi valued...::
-
-    >>> props.keywords = ['a', datetime(2010, 1, 1, 10, 15), '']
-
-...or dict/odict instance::
-
-    >>> props.dictlike = odict([('a', 'foo'), ('b', 'bar'), ('c', '')])
-
-Nothing added yet.::
-
-    >>> os.listdir(tempdir)
-    []
-
-Call props, file is now written to disk.::
-
-    >>> props()
-    >>> os.listdir(tempdir)
-    ['props.xml']
-
-Check file contents.::
-
-    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
-    ...     file.read().split('\n')
-    ['<properties>', 
-    '  <foo>&#195;&#164;&#195;&#182;&#195;&#188;&#195;&#159;</foo>', 
-    '  <effective>2010-01-01T10:15:00</effective>', 
-    '  <empty></empty>', 
-    '  <keywords>', 
-    '    <item>a</item>', 
-    '    <item>2010-01-01T10:15:00</item>', 
-    '    <item></item>', 
-    '  </keywords>', 
-    '  <dictlike>', 
-    '    <elem>', 
-    '      <key>a</key>', 
-    '      <value>foo</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>b</key>', 
-    '      <value>bar</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>c</key>', 
-    '      <value></value>', 
-    '    </elem>', 
-    '  </dictlike>', 
-    '</properties>', 
-    '']
-
-Overwrite ``foo`` and add ``bar`` properties; Note that even markup can be 
-used safely.::
-
-    >>> props.foo = 'foo'
-    >>> props.bar = '<bar>äöü</bar>'
-
-Call props and check result.::
-
-    >>> props()
-    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
-    ...     file.read().split('\n')
-    ['<properties>', 
-    '  <foo>foo</foo>', 
-    '  <effective>2010-01-01T10:15:00</effective>', 
-    '  <empty></empty>', 
-    '  <keywords>', 
-    '    <item>a</item>', 
-    '    <item>2010-01-01T10:15:00</item>', 
-    '    <item></item>', 
-    '  </keywords>', 
-    '  <dictlike>', 
-    '    <elem>', 
-    '      <key>a</key>', 
-    '      <value>foo</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>b</key>', 
-    '      <value>bar</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>c</key>', 
-    '      <value></value>', 
-    '    </elem>', 
-    '  </dictlike>', 
-    '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
-    '</properties>', 
-    '']
-
-Create XML properties from existing file.::
-
-    >>> props = XMLProperties(os.path.join(tempdir, 'props.xml'))
-    >>> props._keys()
-    ['foo', 'effective', 'empty', 'keywords', 'dictlike', 'bar']
-
-    >>> props._values()
-    [u'foo', 
-    datetime.datetime(2010, 1, 1, 10, 15), 
-    u'', 
-    [u'a', datetime.datetime(2010, 1, 1, 10, 15), u''], 
-    odict([('a', 'foo'), ('b', 'bar'), ('c', None)]), 
-    u'<bar>\xe4\xf6\xfc</bar>']
-
-Delete property.::
-
-    >>> del props['foo']
-    >>> props._keys()
-    ['effective', 'empty', 'keywords', 'dictlike', 'bar']
-
-    >>> del props['inexistent']
-    Traceback (most recent call last):
-      ...
-    KeyError: u'property inexistent does not exist'
-
-Call and check results.::
-
-    >>> props()
-    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
-    ...     file.read().split('\n')
-    ['<properties>', 
-    '  <effective>2010-01-01T10:15:00</effective>', 
-    '  <empty></empty>', 
-    '  <keywords>', 
-    '    <item>a</item>', 
-    '    <item>2010-01-01T10:15:00</item>', 
-    '    <item></item>', 
-    '  </keywords>', 
-    '  <dictlike>', 
-    '    <elem>', 
-    '      <key>a</key>', 
-    '      <value>foo</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>b</key>', 
-    '      <value>bar</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>c</key>', 
-    '      <value>None</value>', 
-    '    </elem>', 
-    '  </dictlike>', 
-    '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
-    '</properties>', 
-    '']
-
-Change order of odict and check results::
-
-    >>> props.dictlike = odict([('b', 'bar'), ('a', 'foo')])
-    >>> props()
-    >>> with open(os.path.join(tempdir, 'props.xml')) as file:
-    ...     file.read().split('\n')
-    ['<properties>', 
-    '  <effective>2010-01-01T10:15:00</effective>', 
-    '  <empty></empty>', 
-    '  <keywords>', 
-    '    <item>a</item>', 
-    '    <item>2010-01-01T10:15:00</item>', 
-    '    <item></item>', 
-    '  </keywords>', 
-    '  <dictlike>', 
-    '    <elem>', 
-    '      <key>b</key>', 
-    '      <value>bar</value>', 
-    '    </elem>', 
-    '    <elem>', 
-    '      <key>a</key>', 
-    '      <value>foo</value>', 
-    '    </elem>', 
-    '  </dictlike>', 
-    '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>', 
-    '</properties>', 
-    '']
-
-    >>> os.remove(os.path.join(tempdir, 'props.xml'))
-
 ConfigProperties
 ----------------
 
