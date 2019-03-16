@@ -1,32 +1,32 @@
-from node.tests import NodeTestCase
-from cone.app import testing
 from cone.app import security
+from cone.app import testing
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
 from cone.app.model import BaseNode
-from cone.app.security import DEFAULT_ACL
-from cone.app.security import OwnerSupport
-from cone.app.security import PrincipalACL
 from cone.app.security import acl_registry
 from cone.app.security import authenticate
 from cone.app.security import authenticated_user
+from cone.app.security import DEFAULT_ACL
 from cone.app.security import groups_callback
 from cone.app.security import logger
+from cone.app.security import OwnerSupport
 from cone.app.security import principal_by_id
+from cone.app.security import PrincipalACL
 from cone.app.security import search_for_principals
-from node.ext.ugm.interfaces import IUser
 from node.ext.ugm.interfaces import IGroup
+from node.ext.ugm.interfaces import IUser
+from node.tests import NodeTestCase
 from node.utils import instance_property
 from plumber import default
 from plumber import plumbing
+from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.interfaces import IAuthenticationPolicy
-from pyramid.security import authenticated_userid
-from pyramid.security import has_permission
-from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
+from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import authenticated_userid
+from pyramid.security import has_permission
 from pyramid.threadlocal import get_current_registry
-from pyramid.authentication import AuthTktAuthenticationPolicy
 from zope.component.globalregistry import BaseGlobalComponents
 import cone.app
 import logging
@@ -169,7 +169,8 @@ class SecurityTest(NodeTestCase):
             pass
 
         ownersupportnode = OwnerSupportNode()
-        ownersupportnode.owner
+        self.assertTrue(IOwnerSupport.providedBy(ownersupportnode))
+        self.assertTrue(ownersupportnode.owner is None)
         self.assertEqual(
             ownersupportnode.__acl__[0],
             ('Allow', 'system.Authenticated', ['view'])
