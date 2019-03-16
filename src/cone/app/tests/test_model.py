@@ -190,52 +190,36 @@ class TestModel(NodeTestCase):
         # ``get``
         self.assertEqual(metadata.get('creator'), 'john doe')
 
+    def test_NodeInfo(self):
+        # The ``INodeInfo`` providing object holds information about the
+        # application node
+        nodeinfo = NodeInfo()
+        nodeinfo.node = BaseNode
+        nodeinfo.addables = ['basenode']
+        nodeinfo.title = 'Base Node'
+
+        # Register node info
+        register_node_info('basenode', nodeinfo)
+
+        # Lookup Node info
+        nodeinfo = get_node_info('basenode')
+        self.assertEqual(nodeinfo.title, 'Base Node')
+
+        # ``__getattr__``. No AttributeError is raised if attribute is
+        # inexistent
+        self.assertEqual(nodeinfo.addables, ['basenode'])
+        self.assertTrue(nodeinfo.inexistent is None)
+
+        # ``__getitem__``
+        self.assertEqual(nodeinfo['addables'], ['basenode'])
+
+        # ``__contains__``
+        self.assertTrue('node' in nodeinfo)
+
+        # ``get``
+        self.assertTrue(nodeinfo.get('node') is BaseNode)
+
 """
-
-NodeInfo
---------
-
-The ``INodeInfo`` providing object holds information about the application
-node.::
-
-    >>> nodeinfo = NodeInfo()
-    >>> nodeinfo.node = BaseNode
-    >>> nodeinfo.addables = ['basenode']
-    >>> nodeinfo.title = 'Base Node'
-
-Register node info.::
-
-    >>> register_node_info('basenode', nodeinfo)
-
-Lookup Node info.::
-
-    >>> nodeinfo = get_node_info('basenode')
-    >>> nodeinfo.title
-    'Base Node'
-
-``__getattr__``. No AttributeError is raised if attribute is inexistent.::
-
-    >>> nodeinfo.addables
-    ['basenode']
-
-    >>> nodeinfo.inexistent
-
-``__getitem__``::
-
-    >>> nodeinfo['addables']
-    ['basenode']
-
-``__contains__``::
-
-    >>> 'node' in nodeinfo
-    True
-
-``get``::
-
-    >>> nodeinfo.get('node')
-    <class 'cone.app.model.BaseNode'>
-
-
 UUIDAttributeAware
 ------------------
 
