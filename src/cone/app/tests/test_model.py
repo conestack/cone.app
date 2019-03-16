@@ -331,7 +331,7 @@ class TestModel(NodeTestCase):
     def test_XMLProperties(self):
         # There's a convenience object for XML input and output
 
-        # Dummy environment
+        # Create temp directory
         tempdir = tempfile.mkdtemp()
 
         # Create XML properties with path and optional data
@@ -523,112 +523,88 @@ class TestModel(NodeTestCase):
             ''
         ])
 
-        os.remove(os.path.join(tempdir, 'props.xml'))
+        # Cleanup
+        shutil.rmtree(tempdir)
 
-"""
-ConfigProperties
-----------------
+    def test_ConfigProperties(self):
+        # A Properties implementation exists for Config files used by python
+        # configparser
 
-A Properties implementation exists for Config files used by python
-configparser.:: 
+        # Create temp directory
+        tempdir = tempfile.mkdtemp()
 
-    >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'),
-    ...                          data={'foo': 1})
+        props = ConfigProperties(
+            os.path.join(tempdir, 'props.cfg'),
+            data={'foo': 1}
+        )
 
-Nothing added yet.::
+        # Nothing added yet
+        self.assertEqual(os.listdir(tempdir), [])
 
-    >>> os.listdir(tempdir)
-    []
+        # Call props, file is now written to disk
+        props()
+        self.assertEqual(os.listdir(tempdir), ['props.cfg'])
 
-Call props, file is now written to disk.::
+        # Check file contents
+        with open(os.path.join(tempdir, 'props.cfg')) as file:
+            data = file.read()
+        self.assertEqual(data, '[properties]\nfoo = 1\n\n')
 
-    >>> props()
-    >>> os.listdir(tempdir)
-    ['props.cfg']
+        # Overwrite ``foo`` and add ``bar`` properties
+        props.foo = u'foo'
+        props.bar = u'bar'
+        props.baz = u'äöü'
 
-Check file contents.::
+        # Call props and check result
+        props()
+        with open(os.path.join(tempdir, 'props.cfg')) as file:
+            lines = file.read().split('\n')
+        self.assertEqual(lines, [
+            '[properties]',
+            'foo = foo',
+            'bar = bar',
+            'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
+            '',
+            ''
+        ])
 
-    >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
-    ...     file.read()
-    '[properties]\nfoo = 1\n\n'
+        # Create config properties from existing file
+        props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
+        self.assertEqual(props.foo, u'foo')
+        self.assertEqual(props.bar, u'bar')
+        self.assertEqual(props.baz, u'äöü')
 
-Overwrite ``foo`` and add ``bar`` properties.::
+        # Test ``__getitem__``
+        self.assertEqual(props['foo'], u'foo')
+        self.expect_error(KeyError, lambda: props['inexistent'])
 
-    >>> props.foo = u'foo'
-    >>> props.bar = u'bar'
-    >>> props.baz = u'\xc3\xa4\xc3\xb6\xc3\xbc'
+        # Test ``get``
+        self.assertEqual(props.get('foo'), u'foo')
+        self.assertEqual(props.get('inexistent', u'default'), u'default')
 
-Call props and check result.::
+        # Test ``__contains__``
+        self.assertTrue('foo' in props)
+        self.assertFalse('inexistent' in props)
 
-    >>> props()
-    >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
-    ...     file.read().split('\n')
-    ['[properties]', 
-    'foo = foo', 
-    'bar = bar', 
-    'baz = \xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc', 
-    '', 
-    '']
+        # Delete property
+        err = self.expect_error(KeyError, lambda: props.__delitem__('inexistent'))
+        expected = "u'property inexistent does not exist'"
+        self.assertEqual(str(err), expected)
 
-Create config properties from existing file.::
+        del props['foo']
+        self.assertTrue(props.foo is None)
 
-    >>> props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
-    >>> props.foo
-    u'foo'
+        # Call and check results
+        props()
+        with open(os.path.join(tempdir, 'props.cfg')) as file:
+            lines = file.read().split('\n')
+        self.assertEqual(lines, [
+            '[properties]',
+            'bar = bar',
+            'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
+            '',
+            ''
+        ])
 
-    >>> props.bar
-    u'bar'
-
-    >>> props.baz
-    u'\xc3\xa4\xc3\xb6\xc3\xbc'
-
-Test ``__getitem__``::
-
-    >>> props['foo']
-    u'foo'
-
-    >>> props['inexistent']
-    Traceback (most recent call last):
-      ...
-    KeyError: 'inexistent'
-
-Test ``get``::
-
-    >>> props.get('foo')
-    u'foo'
-
-    >>> props.get('inexistent', u'default')
-    u'default'
-
-Test ``__contains__``::
-
-    >>> 'foo' in props
-    True
-
-    >>> 'inexistent' in props
-    False
-
-Delete property.::
-
-    >>> del props['inexistent']
-    Traceback (most recent call last):
-      ...
-    KeyError: u'property inexistent does not exist'
-
-    >>> del props['foo']
-    >>> props.foo
-
-Call and check results.::
-
-    >>> props()
-    >>> with open(os.path.join(tempdir, 'props.cfg')) as file:
-    ...     file.read().split('\n')
-    ['[properties]', 
-    'bar = bar', 
-    'baz = \xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\xc3\x83\xc2\xbc', 
-    '', 
-    '']
-
-    >>> shutil.rmtree(tempdir)
-
-"""
+        # Cleanup
+        shutil.rmtree(tempdir)
