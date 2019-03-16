@@ -9,7 +9,25 @@ Changes
   [rnix, 2017-02-21]
 
 
-1.0a11 (unreleased)
+1.0a13 (unreleased)
+-------------------
+
+- No changes yet.
+
+
+1.0a12 (2018-11-20)
+-------------------
+
+- Introduce ``show_confirm_deleted`` on
+  ``cone.app.browser.authoring.DeleteAction`` which can be used to prevent
+  "Item has been deleted" ajax continuation message.
+  [rnix, 2018-11-20]
+
+- Add default favicon.ico.
+  [rnix, 2018-11-19]
+
+
+1.0a11 (2018-11-07)
 -------------------
 
 - Add ``cone.light.browser.exception.not_found_view`` and ``not_found`` tile.

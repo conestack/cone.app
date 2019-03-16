@@ -3,9 +3,11 @@ from cone.tile import render_template_to_response
 from plumber import Behavior
 from plumber import default
 from plumber import plumb
+from pyramid.response import Response
 from pyramid.static import static_view
 from pyramid.view import view_config
 import cone.app
+import os
 import yafowil.loader
 import yafowil.webob
 
@@ -31,6 +33,18 @@ def main_view(model, request):
     """Default view.
     """
     return render_main_template(model, request)
+
+
+FAVICON_FILE = os.path.join(os.path.dirname(__file__), 'static', 'favicon.ico')
+
+
+@view_config(route_name='favicon')
+def favicon_view(request):
+    response = Response()
+    with open(FAVICON_FILE, 'r') as f:
+        response.body = f.read()
+    response.headers['Content-Type'] = 'image/vnd.microsoft.icon'
+    return response
 
 
 ###############################################################################

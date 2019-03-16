@@ -292,6 +292,11 @@ def main(global_config, **settings):
     #      provide locales either in yafowil resources or as entry points in
     #      all yafowil packages providing translations
 
+    # static routes
+    config.add_route("favicon", "/favicon.ico")
+    # XXX: robots.txt
+    # XXX: humans.txt
+
     # register static resources
     config.add_view(static_resources, name='static')
 

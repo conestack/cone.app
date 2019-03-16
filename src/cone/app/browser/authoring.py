@@ -486,6 +486,7 @@ class OverlayEditForm(OverlayForm,
 
 @tile(name='delete', permission="delete")
 class DeleteAction(Tile):
+    show_confirm_deleted = True
 
     def continuation(self, url):
         return [AjaxEvent(url, 'contextchanged', '#layout')]
@@ -511,10 +512,11 @@ class DeleteAction(Tile):
         query = make_query(contenttile=content_tile)
         url = make_url(self.request, node=parent, query=query)
         ajax_continue(self.request, self.continuation(url))
-        ts = _('deleted_object',
-               default='Deleted: ${title}',
-               mapping={'title': title})
-        localizer = get_localizer(self.request)
-        message = localizer.translate(ts)
-        ajax_message(self.request, message, 'info')
+        if self.show_confirm_deleted:
+            ts = _('deleted_object',
+                   default='Deleted: ${title}',
+                   mapping={'title': title})
+            localizer = get_localizer(self.request)
+            message = localizer.translate(ts)
+            ajax_message(self.request, message, 'info')
         return u''
