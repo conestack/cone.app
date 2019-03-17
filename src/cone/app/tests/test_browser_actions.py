@@ -32,6 +32,8 @@ from cone.app.testing.mock import SharingNode
 from cone.app.testing.mock import WorkflowNode
 from cone.tile import register_tile
 from cone.tile.tests import TileTestCase
+from pyramid.security import ACLAllowed
+from pyramid.security import ACLDenied
 from pyramid.security import has_permission
 
 
@@ -374,54 +376,42 @@ class TestBrowserActions(TileTestCase):
             >&nbsp;Listing</a>...
             """, rendered)
 
+    def test_ActionSharing(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = ActionSharing()
+        self.assertFalse(IPrincipalACL.providedBy(model))
+        self.assertEqual(action(model, request), u'')
+
+        sharingmodel = parent['sharingmodel'] = SharingNode()
+        self.assertTrue(IPrincipalACL.providedBy(sharingmodel))
+        self.assertEqual(action(sharingmodel, request), u'')
+
+        with self.layer.authenticated('editor'):
+            rule = has_permission('manage_permissions', sharingmodel, request)
+            self.assertTrue(isinstance(rule, ACLDenied))
+            self.assertEqual(action(sharingmodel, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rule = has_permission('manage_permissions', sharingmodel, request)
+            self.assertTrue(isinstance(rule, ACLAllowed))
+
+            rendered = action(sharingmodel, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-share"
+                href="http://example.com/root/sharingmodel/sharing"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/sharingmodel"
+                ajax:action="sharing:#content:inner"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-share"></span
+            >&nbsp;Sharing</a>...
+            """, rendered)
+
 """
-ActionSharing
--------------
-
-::
-
-    >>> action = ActionSharing()
-
-    >>> IPrincipalACL.providedBy(model)
-    False
-
-    >>> action(model, request)
-    u''
-
-    >>> sharingmodel = parent['sharingmodel'] = SharingNode()
-    >>> IPrincipalACL.providedBy(sharingmodel)
-    True
-
-    >>> action(sharingmodel, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> has_permission('manage_permissions', sharingmodel, request)
-    <ACLDenied instance at ... with msg 
-    "ACLDenied permission 'manage_permissions' via ACE ...
-
-    >>> action(sharingmodel, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> has_permission('manage_permissions', sharingmodel, request)
-    <ACLAllowed instance at ... with msg 
-    "ACLAllowed permission 'manage_permissions' via ACE ...
-
-    >>> action(sharingmodel, request)
-    u'...<a\n     
-    id="toolbaraction-share"\n     
-    href="http://example.com/root/sharingmodel/sharing"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/sharingmodel"\n     
-    ajax:action="sharing:#content:inner"\n    
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-share"></span\n    \n    
-    >&nbsp;Sharing</a>...'
-
-    >>> layer.logout()
-
-
 ActionState
 -----------
 
