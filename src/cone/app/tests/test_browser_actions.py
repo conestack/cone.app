@@ -199,21 +199,21 @@ class TestBrowserActions(TileTestCase):
         rendered = action(model, request)
         self.checkOutput("""
         ...<a
-            id="link_id"
-            href="http://example.com/foo"
-            class="link_action"
-            title="Foo"
-            ajax:bind="click"
-            ajax:target="http://example.com/"
-            ajax:event="contextchanged:.contextsensitiv"
-            ajax:action="actionname:#content:replace"
-            ajax:confirm="Do you want to perform?"
-            ajax:overlay="someaction"
-            ajax:path="/foo"
-            ajax:path-target="target"
-            ajax:path-action="actionname:#content:replace"
-            ajax:path-event="contextchanged:.contextsensitiv"
-            ajax:path-overlay="someaction"
+        id="link_id"
+        href="http://example.com/foo"
+        class="link_action"
+        title="Foo"
+        ajax:bind="click"
+        ajax:target="http://example.com/"
+        ajax:event="contextchanged:.contextsensitiv"
+        ajax:action="actionname:#content:replace"
+        ajax:confirm="Do you want to perform?"
+        ajax:overlay="someaction"
+        ajax:path="/foo"
+        ajax:path-target="target"
+        ajax:path-action="actionname:#content:replace"
+        ajax:path-event="contextchanged:.contextsensitiv"
+        ajax:path-overlay="someaction"
         >&nbsp;Foo</a>...
         """, rendered)
 
@@ -240,13 +240,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-up"
-                href="http://example.com/root"
-                ajax:bind="click"
-                ajax:target="http://example.com/root?contenttile=listing"
-                ajax:event="contextchanged:#layout"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-arrow-up"></span
+            id="toolbaraction-up"
+            href="http://example.com/root"
+            ajax:bind="click"
+            ajax:target="http://example.com/root?contenttile=listing"
+            ajax:event="contextchanged:#layout"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-arrow-up"></span
             >&nbsp;One level up</a>...
             """, rendered)
 
@@ -254,13 +254,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-up"
-                href="http://example.com/root"
-                ajax:bind="click"
-                ajax:target="http://example.com/root?contenttile=otherparentcontent"
-                ajax:event="contextchanged:#layout"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-arrow-up"></span
+            id="toolbaraction-up"
+            href="http://example.com/root"
+            ajax:bind="click"
+            ajax:target="http://example.com/root?contenttile=otherparentcontent"
+            ajax:event="contextchanged:#layout"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-arrow-up"></span
             >&nbsp;One level up</a>...
             """, rendered)
 
@@ -270,13 +270,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(default, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-up"
-                href="http://example.com/root"
-                ajax:bind="click"
-                ajax:target="http://example.com/root?contenttile=listing"
-                ajax:event="contextchanged:#layout"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-arrow-up"></span
+            id="toolbaraction-up"
+            href="http://example.com/root"
+            ajax:bind="click"
+            ajax:target="http://example.com/root?contenttile=listing"
+            ajax:event="contextchanged:#layout"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-arrow-up"></span
             >&nbsp;One level up</a>...
             """, rendered)
 
@@ -297,14 +297,14 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-view"
-                href="http://example.com/root/model"
-                class="selected"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="content:#content:inner"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-eye-open"></span
+            id="toolbaraction-view"
+            href="http://example.com/root/model"
+            class="selected"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="content:#content:inner"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-eye-open"></span
             >&nbsp;View</a>...
             """, rendered)
 
@@ -312,13 +312,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-view"
-                href="http://example.com/root/model"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="view:#content:inner"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-eye-open"></span
+            id="toolbaraction-view"
+            href="http://example.com/root/model"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="view:#content:inner"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-eye-open"></span
             >&nbsp;View</a>...
             """, rendered)
 
@@ -341,13 +341,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-view"
-                href="http://example.com/root/model"
-                class="selected"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="content:#content:inner"
-                ajax:path="href"
+            id="toolbaraction-view"
+            href="http://example.com/root/model"
+            class="selected"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="content:#content:inner"
+            ajax:path="href"
             >&nbsp;model</a>...
             """, rendered)
 
@@ -366,13 +366,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-list"
-                href="http://example.com/root/model/listing"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="listing:#content:inner"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-th-list"></span
+            id="toolbaraction-list"
+            href="http://example.com/root/model/listing"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="listing:#content:inner"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-th-list"></span
             >&nbsp;Listing</a>...
             """, rendered)
 
@@ -401,13 +401,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(sharingmodel, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-share"
-                href="http://example.com/root/sharingmodel/sharing"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/sharingmodel"
-                ajax:action="sharing:#content:inner"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-share"></span
+            id="toolbaraction-share"
+            href="http://example.com/root/sharingmodel/sharing"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/sharingmodel"
+            ajax:action="sharing:#content:inner"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-share"></span
             >&nbsp;Sharing</a>...
             """, rendered)
 
@@ -436,10 +436,10 @@ class TestBrowserActions(TileTestCase):
             rendered = action(wfmodel, request)
             self.checkOutput("""
             ...<li class="dropdown">...
-                <a href="#"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"
-                ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
+            <a href="#"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"
+            ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
             """, rendered)
 
     def test_ActionAdd(self):
@@ -470,22 +470,26 @@ class TestBrowserActions(TileTestCase):
 
             rendered = action(addmodel, request)
             self.checkOutput("""
-            ...<li class="dropdown">\n\n
-            <a href="#"\n
-            class="dropdown-toggle"\n
-            data-toggle="dropdown">\n
-            <span>Add</span>\n
-            <span class="caret"></span>\n
-            </a>\n\n
-            <ul class="dropdown-menu" role="addmenu">\n
-            <li>\n
-            <a href="http://example.com/add?factory=addable"\n
-            ajax:bind="click"\n
-            ajax:target="http://example.com/?factory=addable"\n
-            ajax:action="add:#content:inner"\n
-            ajax:path="href">\n
-            <span class="glyphicon glyphicon-asterisk"></span>\n
-            Addable\n        </a>\n      </li>\n    </ul>\n\n  </li>...
+            ...<li class="dropdown">
+            <a href="#"
+            class="dropdown-toggle"
+            data-toggle="dropdown">
+            <span>Add</span>
+            <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="addmenu">
+            <li>
+            <a href="http://example.com/add?factory=addable"
+            ajax:bind="click"
+            ajax:target="http://example.com/?factory=addable"
+            ajax:action="add:#content:inner"
+            ajax:path="href">
+            <span class="glyphicon glyphicon-asterisk"></span>
+            Addable
+            </a>
+            </li>
+            </ul>
+            </li>...
             """, rendered)
 
     def test_ActionEdit(self):
@@ -508,13 +512,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-edit"
-                href="http://example.com/root/model/edit"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="edit:#content:inner"
-                ajax:path="href"
-                ><span class="glyphicon glyphicon-pencil"></span
+            id="toolbaraction-edit"
+            href="http://example.com/root/model/edit"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="edit:#content:inner"
+            ajax:path="href"
+            ><span class="glyphicon glyphicon-pencil"></span
             >&nbsp;Edit</a>...
             """, rendered)
 
@@ -538,13 +542,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-delete"
-                href="#"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="delete:NONE:NONE"
-                ajax:confirm="Do you really want to delete this Item?"
-                ><span class="ion-trash-a"></span
+            id="toolbaraction-delete"
+            href="#"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="delete:NONE:NONE"
+            ajax:confirm="Do you really want to delete this Item?"
+            ><span class="ion-trash-a"></span
             >&nbsp;Delete</a>...
             """, rendered)
 
@@ -569,14 +573,14 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-delete-children"
-                href="#"
-                class="disabled"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="delete_children:NONE:NONE"
-                ajax:confirm="Do you really want to delete selected Items?"
-                ><span class="ion-trash-a"></span
+            id="toolbaraction-delete-children"
+            href="#"
+            class="disabled"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="delete_children:NONE:NONE"
+            ajax:confirm="Do you really want to delete selected Items?"
+            ><span class="ion-trash-a"></span
             >&nbsp;Delete selected children</a>...
             """, rendered)
 
@@ -584,13 +588,13 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-delete-children"
-                href="#"
-                ajax:bind="click"
-                ajax:target="http://example.com/root/model"
-                ajax:action="delete_children:NONE:NONE"
-                ajax:confirm="Do you really want to delete selected Items?"
-                ><span class="ion-trash-a"></span
+            id="toolbaraction-delete-children"
+            href="#"
+            ajax:bind="click"
+            ajax:target="http://example.com/root/model"
+            ajax:action="delete_children:NONE:NONE"
+            ajax:confirm="Do you really want to delete selected Items?"
+            ><span class="ion-trash-a"></span
             >&nbsp;Delete selected children</a>...
             """, rendered)
 
@@ -614,10 +618,10 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-cut"
-                href="#"
-                ajax:target="http://example.com/copysupport"
-                ><span class="ion-scissors"></span
+            id="toolbaraction-cut"
+            href="#"
+            ajax:target="http://example.com/copysupport"
+            ><span class="ion-scissors"></span
             >&nbsp;Cut</a>...
             """, rendered)
 
@@ -641,10 +645,10 @@ class TestBrowserActions(TileTestCase):
             rendered = action(model, request)
             self.checkOutput("""
             ...<a
-                id="toolbaraction-copy"
-                href="#"
-                ajax:target="http://example.com/copysupport"
-                ><span class="ion-ios7-copy-outline"></span
+            id="toolbaraction-copy"
+            href="#"
+            ajax:target="http://example.com/copysupport"
+            ><span class="ion-ios7-copy-outline"></span
             >&nbsp;Copy</a>...
             """, rendered)
 
