@@ -223,64 +223,62 @@ class TestBrowserActions(TileTestCase):
         action.display = False
         self.assertEqual(action(model, request), u'')
 
+    def test_ActionUp(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = ActionUp()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_up = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('viewer'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-up"
+                href="http://example.com/root"
+                ajax:bind="click"
+                ajax:target="http://example.com/root?contenttile=listing"
+                ajax:event="contextchanged:#layout"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-arrow-up"></span
+            >&nbsp;One level up</a>...
+            """, rendered)
+
+            model.properties.action_up_tile = 'otherparentcontent'
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-up"
+                href="http://example.com/root"
+                ajax:bind="click"
+                ajax:target="http://example.com/root?contenttile=otherparentcontent"
+                ajax:event="contextchanged:#layout"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-arrow-up"></span
+            >&nbsp;One level up</a>...
+            """, rendered)
+
+            default = model['default'] = BaseNode()
+            default.properties.action_up = True
+            model.properties.default_child = 'default'
+            rendered = action(default, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-up"
+                href="http://example.com/root"
+                ajax:bind="click"
+                ajax:target="http://example.com/root?contenttile=listing"
+                ajax:event="contextchanged:#layout"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-arrow-up"></span
+            >&nbsp;One level up</a>...
+            """, rendered)
+
 """
-ActionUp
---------
-
-::
-
-    >>> parent = BaseNode(name='root')
-    >>> model = parent['model'] = BaseNode()
-
-    >>> action = ActionUp()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_up = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('viewer')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-up"\n     
-    href="http://example.com/root"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root?contenttile=listing"\n     
-    ajax:event="contextchanged:#layout"\n     
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
-    >&nbsp;One level up</a>...'
-
-    >>> model.properties.action_up_tile = 'otherparentcontent'
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-up"\n     
-    href="http://example.com/root"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root?contenttile=otherparentcontent"\n     
-    ajax:event="contextchanged:#layout"\n     
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
-    >&nbsp;One level up</a>...'
-
-    >>> default = model['default'] = BaseNode()
-    >>> default.properties.action_up = True
-    >>> model.properties.default_child = 'default'
-    >>> action(default, request)
-    u'...<a\n     
-    id="toolbaraction-up"\n     
-    href="http://example.com/root"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root?contenttile=listing"\n     
-    ajax:event="contextchanged:#layout"\n     
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-arrow-up"></span\n    \n    
-    >&nbsp;One level up</a>...'
-
-    >>> layer.logout()
-
-
 ActionView
 ----------
 
