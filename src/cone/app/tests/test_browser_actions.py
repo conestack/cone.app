@@ -624,39 +624,34 @@ class TestBrowserActions(TileTestCase):
             model.supports_cut = False
             self.assertEqual(action(model, request), u'')
 
+    def test_ActionCopy(self):
+        model = CopySupportNode('copysupport')
+        request = self.layer.new_request()
+
+        ActionContext(model, request, 'listing')
+        self.assertTrue(model.supports_copy)
+
+        action = ActionCopy()
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('editor'):
+            self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-copy"
+                href="#"
+                ajax:target="http://example.com/copysupport"
+                ><span class="ion-ios7-copy-outline"></span
+            >&nbsp;Copy</a>...
+            """, rendered)
+
+            model.supports_copy = False
+            self.assertEqual(action(model, request), u'')
+
 """
-ActionCopy
-----------
-
-::
-
-    >>> model.supports_copy
-    True
-
-    >>> action = ActionCopy()
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-copy"\n     
-    href="#"\n     
-    ajax:target="http://example.com/copysupport"\n    
-    ><span class="ion-ios7-copy-outline"></span\n    \n    
-    >&nbsp;Copy</a>...'
-
-    >>> model.supports_copy = False
-    >>> action(model, request)
-    u''
-
-    >>> layer.logout()
-
-
 ActionPaste
 -----------
 
