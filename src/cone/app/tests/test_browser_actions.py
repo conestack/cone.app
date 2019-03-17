@@ -651,58 +651,55 @@ class TestBrowserActions(TileTestCase):
             model.supports_copy = False
             self.assertEqual(action(model, request), u'')
 
-"""
-ActionPaste
------------
+    def test_ActionPaste(self):
+        model = CopySupportNode('copysupport')
+        request = self.layer.new_request()
 
-::
+        ActionContext(model, request, 'listing')
+        self.assertTrue(model.supports_paste)
 
-    >>> model.supports_paste
-    True
+        action = ActionPaste()
+        self.assertEqual(action(model, request), u'')
 
-    >>> action = ActionPaste()
-    >>> action(model, request)
-    u''
+        with self.layer.authenticated('editor'):
+            self.assertEqual(action(model, request), u'')
 
-    >>> layer.login('editor')
-    >>> action(model, request)
-    u''
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+            id="toolbaraction-paste"
+            href="#"
+            class="disabled"
+            ajax:target="http://example.com/copysupport"
+            ><span class="ion-clipboard"></span
+            >&nbsp;Paste</a>...
+            """, rendered)
 
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-paste"\n     
-    href="#"\n     
-    class="disabled"\n     
-    ajax:target="http://example.com/copysupport"\n    
-    ><span class="ion-clipboard"></span\n    \n    
-    >&nbsp;Paste</a>...'
+            request.cookies['cone.app.copysupport.cut'] = ['foo']
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+            id="toolbaraction-paste"
+            href="#"
+            ajax:target="http://example.com/copysupport"
+            ><span class="ion-clipboard"></span
+            >&nbsp;Paste</a>...
+            """, rendered)
 
-    >>> request.cookies['cone.app.copysupport.cut'] = ['foo']
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-paste"\n     
-    href="#"\n     
-    ajax:target="http://example.com/copysupport"\n    
-    ><span class="ion-clipboard"></span\n    \n    
-    >&nbsp;Paste</a>...'
+            del request.cookies['cone.app.copysupport.cut']
+            request.cookies['cone.app.copysupport.copy'] = ['foo']
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+            id="toolbaraction-paste"
+            href="#"
+            ajax:target="http://example.com/copysupport"
+            ><span class="ion-clipboard"></span
+            >&nbsp;Paste</a>...
+            """, rendered)
 
-    >>> del request.cookies['cone.app.copysupport.cut']
-    >>> request.cookies['cone.app.copysupport.copy'] = ['foo']
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-paste"\n     
-    href="#"\n     
-    ajax:target="http://example.com/copysupport"\n    
-    ><span class="ion-clipboard"></span\n    \n    
-    >&nbsp;Paste</a>...'
+            del request.cookies['cone.app.copysupport.copy']
 
-    >>> del request.cookies['cone.app.copysupport.copy']
-
-    >>> model.supports_paste = False
-    >>> action(model, request)
-    u''
-
-    >>> layer.logout()
-
-"""
+            model.supports_paste = False
+            self.assertEqual(action(model, request), u'')
