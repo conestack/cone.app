@@ -488,41 +488,38 @@ class TestBrowserActions(TileTestCase):
             Addable\n        </a>\n      </li>\n    </ul>\n\n  </li>...
             """, rendered)
 
+    def test_ActionEdit(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        ActionContext(model, request, 'listing')
+
+        action = ActionEdit()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_edit = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('viewer'):
+            self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('editor'):
+            rendered = action(model, request)
+
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-edit"
+                href="http://example.com/root/model/edit"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="edit:#content:inner"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-pencil"></span
+            >&nbsp;Edit</a>...
+            """, rendered)
+
 """
-ActionEdit
-----------
-
-::
-
-    >>> ac = ActionContext(model, request, 'listing')
-
-    >>> action = ActionEdit()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_edit = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('viewer')
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-edit"\n     
-    href="http://example.com/root/model/edit"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="edit:#content:inner"\n     
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-pencil"></span\n    \n    
-    >&nbsp;Edit</a>...'
-
-    >>> layer.logout()
-
-
 ActionDelete
 ------------
 
