@@ -349,35 +349,32 @@ class TestBrowserActions(TileTestCase):
             >&nbsp;model</a>...
             """, rendered)
 
+    def test_ActionList(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = ActionList()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_list = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('viewer'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-list"
+                href="http://example.com/root/model/listing"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="listing:#content:inner"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-th-list"></span
+            >&nbsp;Listing</a>...
+            """, rendered)
+
 """
-ActionList
-----------
-
-::
-
-    >>> action = ActionList()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_list = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('viewer')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-list"\n     
-    href="http://example.com/root/model/listing"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="listing:#content:inner"\n    
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-th-list"></span\n    \n    
-    >&nbsp;Listing</a>...'
-
-    >>> layer.logout()
-
-
 ActionSharing
 -------------
 
