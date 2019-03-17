@@ -322,35 +322,34 @@ class TestBrowserActions(TileTestCase):
 
             model.properties.default_content_tile = None
 
+    def test_ViewLink(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        ActionContext(model, request, 'content')
+
+        action = ViewLink()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_view = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('viewer'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-view"
+                href="http://example.com/root/model"
+                class="selected"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="content:#content:inner"
+                ajax:path="href"
+            >&nbsp;model</a>...
+            """, rendered)
+
 """
-ViewLink
---------
-
-::
-
-    >>> action = ViewLink()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_view = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('viewer')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-view"\n     
-    href="http://example.com/root/model"\n     
-    class="selected"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="content:#content:inner"\n    
-    ajax:path="href"\n    
-    >&nbsp;model</a>...'
-
-    >>> layer.logout()
-
-
 ActionList
 ----------
 
