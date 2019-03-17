@@ -442,67 +442,53 @@ class TestBrowserActions(TileTestCase):
                 ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
             """, rendered)
 
+    def test_ActionAdd(self):
+        info = NodeInfo()
+        info.title = 'Addable'
+        info.addables = ['addable']
+        register_node_info('addable', info)
+
+        action = ActionAdd()
+        addmodel = BaseNode()
+        request = self.layer.new_request()
+        ActionContext(addmodel, request, 'listing')
+
+        self.assertEqual(action(addmodel, request), u'')
+
+        with self.layer.authenticated('viewer'):
+            rule = has_permission('add', addmodel, request)
+            self.assertTrue(isinstance(rule, ACLDenied))
+            self.assertEqual(action(addmodel, request), u'')
+
+        with self.layer.authenticated('editor'):
+            rule = has_permission('add', addmodel, request)
+            self.assertTrue(isinstance(rule, ACLAllowed))
+            self.assertEqual(action(addmodel, request), u'')
+
+            addmodel.node_info_name = 'addable'
+            self.assertTrue(addmodel.nodeinfo is info)
+
+            rendered = action(addmodel, request)
+            self.checkOutput("""
+            ...<li class="dropdown">\n\n
+            <a href="#"\n
+            class="dropdown-toggle"\n
+            data-toggle="dropdown">\n
+            <span>Add</span>\n
+            <span class="caret"></span>\n
+            </a>\n\n
+            <ul class="dropdown-menu" role="addmenu">\n
+            <li>\n
+            <a href="http://example.com/add?factory=addable"\n
+            ajax:bind="click"\n
+            ajax:target="http://example.com/?factory=addable"\n
+            ajax:action="add:#content:inner"\n
+            ajax:path="href">\n
+            <span class="glyphicon glyphicon-asterisk"></span>\n
+            Addable\n        </a>\n      </li>\n    </ul>\n\n  </li>...
+            """, rendered)
+
 """
-ActionAdd
----------
-
-::
-
-    >>> info = NodeInfo()
-    >>> info.title = 'Addable'
-    >>> info.addables = ['addable']
-    >>> register_node_info('addable', info)
-
-    >>> action = ActionAdd()
-
-    >>> addmodel = BaseNode()
-
-    >>> ac = ActionContext(addmodel, request, 'listing')
-
-    >>> action(addmodel, request)
-    u''
-
-    >>> layer.login('viewer')
-    >>> has_permission('add', addmodel, request)
-    <ACLDenied instance at ... with msg 
-    "ACLDenied permission 'add' via ACE ...
-
-    >>> action(addmodel, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> has_permission('add', addmodel, request)
-    <ACLAllowed instance at ... with msg 
-    "ACLAllowed permission 'add' via ACE ...
-
-    >>> action(addmodel, request)
-    u''
-
-    >>> addmodel.node_info_name = 'addable'
-    >>> addmodel.nodeinfo
-    <cone.app.model.NodeInfo object at ...>
-
-    >>> action(addmodel, request)
-    u'...<li class="dropdown">\n\n    
-    <a href="#"\n       
-    class="dropdown-toggle"\n       
-    data-toggle="dropdown">\n      
-    <span>Add</span>\n      
-    <span class="caret"></span>\n    
-    </a>\n\n    
-    <ul class="dropdown-menu" role="addmenu">\n      
-    <li>\n        
-    <a href="http://example.com/add?factory=addable"\n           
-    ajax:bind="click"\n           
-    ajax:target="http://example.com/?factory=addable"\n           
-    ajax:action="add:#content:inner"\n           
-    ajax:path="href">\n          
-    <span class="glyphicon glyphicon-asterisk"></span>\n          
-    Addable\n        </a>\n      </li>\n    </ul>\n\n  </li>...'
-
-    >>> layer.logout()
-
-
 ActionEdit
 ----------
 
