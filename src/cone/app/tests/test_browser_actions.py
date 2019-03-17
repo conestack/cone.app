@@ -71,61 +71,69 @@ class TestBrowserActions(TileTestCase):
         ac = ActionContext(node, request, 'content')
         self.assertEqual(ac.scope, 'default')
 
+    def test_abstract_actions(self):
+        model = BaseNode()
+        request = self.layer.new_request()
+
+        err = self.expectError(
+            NotImplementedError,
+            Action(),
+            model,
+            request
+        )
+        self.assertEqual(
+            str(err),
+            'Abstract ``Action`` does not implement render.'
+        )
+
+        result = TileAction()(model, request)
+        self.checkOutput("""
+        Tile with name '' not found:...
+        """, result)
+
+        err = self.expectError(
+            ValueError,
+            TemplateAction(),
+            model,
+            request
+        )
+        self.assertEqual(str(err), 'Relative path not supported: ')
+
+        # Dummy actions
+        class DummyAction(Action):
+            def render(self):
+                return '<a href="">dummy action</a>'
+
+        self.assertEqual(
+            DummyAction()(model, request),
+            '<a href="">dummy action</a>'
+        )
+
+        class DummyTemplateAction(TemplateAction):
+            template = u'cone.app.testing:dummy_action.pt'
+
+        self.assertEqual(
+            DummyTemplateAction()(model, request),
+            u'<a href="">dummy template action</a>'
+        )
+
+        register_tile(
+            name='dummy_action_tile',
+            path='cone.app.testing:dummy_action.pt')
+
+        class DummyTileAction(TileAction):
+            tile = u'dummy_action_tile'
+
+        self.layer.login('viewer')
+
+        self.assertEqual(
+            DummyTileAction()(model, request),
+            u'<a href="">dummy template action</a>'
+        )
+
+        self.layer.logout()
+
 """
-Abstract actions
-----------------
-
-::
-
-    >>> model = BaseNode()
-    >>> request = layer.new_request()
-
-    >>> Action()(model, request)
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``Action`` does not implement render.
-
-    >>> TileAction()(model, request)
-    u"Tile with name '' not found:..."
-
-    >>> TemplateAction()(model, request)
-    Traceback (most recent call last):
-      ...
-    ValueError: Relative path not supported:
-
-
-Dummy actions
--------------
-
-::
-
-    >>> class DummyAction(Action):
-    ...     def render(self):
-    ...         return '<a href="">dummy action</a>'
-
-    >>> DummyAction()(model, request)
-    '<a href="">dummy action</a>'
-
-    >>> class DummyTemplateAction(TemplateAction):
-    ...     template = u'cone.app.testing:dummy_action.pt'
-
-    >>> DummyTemplateAction()(model, request)
-    u'<a href="">dummy template action</a>'
-
-    >>> register_tile(
-    ...     name='dummy_action_tile',
-    ...     path='cone.app.testing:dummy_action.pt')
-    >>> class DummyTileAction(TileAction):
-    ...     tile = u'dummy_action_tile'
-
-    >>> layer.login('viewer')
-
-    >>> DummyTileAction()(model, request)
-    u'<a href="">dummy template action</a>'
-
-    >>> layer.logout()
-
-
 Toolbar
 -------
 
