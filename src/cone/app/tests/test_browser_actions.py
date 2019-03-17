@@ -411,50 +411,38 @@ class TestBrowserActions(TileTestCase):
             >&nbsp;Sharing</a>...
             """, rendered)
 
+    def test_ActionState(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = ActionState()
+        self.assertFalse(IWorkflowState.providedBy(model))
+        self.assertEqual(action(model, request), u'')
+
+        wfmodel = parent['wfmodel'] = WorkflowNode()
+        self.assertTrue(IWorkflowState.providedBy(wfmodel))
+        self.assertEqual(action(wfmodel, request), u'')
+
+        with self.layer.authenticated('editor'):
+            rule = has_permission('change_state', wfmodel, request)
+            self.assertTrue(isinstance(rule, ACLDenied))
+            self.assertEqual(action(wfmodel, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rule = has_permission('change_state', wfmodel, request)
+            self.assertTrue(isinstance(rule, ACLAllowed))
+
+            rendered = action(wfmodel, request)
+            self.checkOutput("""
+            ...<li class="dropdown">...
+                <a href="#"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"
+                ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
+            """, rendered)
+
 """
-ActionState
------------
-
-::
-
-    >>> action = ActionState()
-
-    >>> IWorkflowState.providedBy(model)
-    False
-
-    >>> action(model, request)
-    u''
-
-    >>> wfmodel = parent['wfmodel'] = WorkflowNode()
-    >>> IWorkflowState.providedBy(wfmodel)
-    True
-
-    >>> action(wfmodel, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> has_permission('change_state', wfmodel, request)
-    <ACLDenied instance at ... with msg 
-    "ACLDenied permission 'change_state' via ACE ...
-
-    >>> action(wfmodel, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> has_permission('change_state', wfmodel, request)
-    <ACLAllowed instance at ... with msg 
-    "ACLAllowed permission 'change_state' via ACE ...
-
-    >>> action(wfmodel, request)
-    u'...<li class="dropdown">...      
-    <a href="#"\n             
-    ajax:bind="click"\n             
-    ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"\n             
-    ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...'
-
-    >>> layer.logout()
-
-
 ActionAdd
 ---------
 
