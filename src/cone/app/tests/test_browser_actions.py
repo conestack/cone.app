@@ -596,46 +596,35 @@ class TestBrowserActions(TileTestCase):
 
             del request.cookies['cone.app.selected']
 
+    def test_ActionCut(self):
+        model = CopySupportNode('copysupport')
+        request = self.layer.new_request()
+
+        ActionContext(model, request, 'listing')
+        self.assertTrue(ICopySupport.providedBy(model))
+        self.assertTrue(model.supports_cut)
+
+        action = ActionCut()
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('editor'):
+            self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-cut"
+                href="#"
+                ajax:target="http://example.com/copysupport"
+                ><span class="ion-scissors"></span
+            >&nbsp;Cut</a>...
+            """, rendered)
+
+            model.supports_cut = False
+            self.assertEqual(action(model, request), u'')
+
 """
-ActionCut
----------
-
-::
-
-    >>> model = CopySupportNode('copysupport')
-
-    >>> ac = ActionContext(model, request, 'listing')
-
-    >>> ICopySupport.providedBy(model)
-    True
-
-    >>> model.supports_cut
-    True
-
-    >>> action = ActionCut()
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-cut"\n     
-    href="#"\n     
-    ajax:target="http://example.com/copysupport"\n    
-    ><span class="ion-scissors"></span\n    \n    
-    >&nbsp;Cut</a>...'
-
-    >>> model.supports_cut = False
-    >>> action(model, request)
-    u''
-
-    >>> layer.logout()
-
-
 ActionCopy
 ----------
 
