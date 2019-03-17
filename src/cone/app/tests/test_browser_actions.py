@@ -551,53 +551,52 @@ class TestBrowserActions(TileTestCase):
             model.properties.default_content_tile = 'othertile'
             self.assertEqual(action(model, request), u'')
 
+    def test_ActionDeleteChildren(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = ActionDeleteChildren()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_delete_children = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('editor'):
+            self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-delete-children"
+                href="#"
+                class="disabled"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="delete_children:NONE:NONE"
+                ajax:confirm="Do you really want to delete selected Items?"
+                ><span class="ion-trash-a"></span
+            >&nbsp;Delete selected children</a>...
+            """, rendered)
+
+            request.cookies['cone.app.selected'] = ['foo']
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-delete-children"
+                href="#"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="delete_children:NONE:NONE"
+                ajax:confirm="Do you really want to delete selected Items?"
+                ><span class="ion-trash-a"></span
+            >&nbsp;Delete selected children</a>...
+            """, rendered)
+
+            del request.cookies['cone.app.selected']
+
 """
-ActionDeleteChildren
---------------------
-
-::
-
-    >>> action = ActionDeleteChildren()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_delete_children = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-delete-children"\n     
-    href="#"\n     
-    class="disabled"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="delete_children:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete selected Items?"\n    
-    ><span class="ion-trash-a"></span\n    \n    
-    >&nbsp;Delete selected children</a>...'
-
-    >>> request.cookies['cone.app.selected'] = ['foo']
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-delete-children"\n     
-    href="#"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="delete_children:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete selected Items?"\n    
-    ><span class="ion-trash-a"></span\n    \n    
-    >&nbsp;Delete selected children</a>...'
-
-    >>> del request.cookies['cone.app.selected']
-    >>> layer.logout()
-
-
 ActionCut
 ---------
 
