@@ -71,7 +71,7 @@ class TestBrowserActions(TileTestCase):
         ac = ActionContext(node, request, 'content')
         self.assertEqual(ac.scope, 'default')
 
-    def test_abstract_actions(self):
+    def test_Action_and_Toolbar(self):
         model = BaseNode()
         request = self.layer.new_request()
 
@@ -133,37 +133,33 @@ class TestBrowserActions(TileTestCase):
 
         self.layer.logout()
 
+        # Test toolbar
+        tb = Toolbar()
+        tb['a'] = DummyAction()
+        tb['b'] = DummyTemplateAction()
+        tb['c'] = DummyTileAction()
+
+        self.layer.login('viewer')
+
+        self.assertEqual(tb(model, request).split('\n'), [
+            u'<div><a href="">dummy action</a>',
+            u'<a href="">dummy template action</a>',
+            u'<a href="">dummy template action</a></div>'
+        ])
+
+        tb.css = 'someclass'
+        self.assertEqual(tb(model, request).split('\n'), [
+            u'<div class="someclass"><a href="">dummy action</a>',
+            u'<a href="">dummy template action</a>',
+            u'<a href="">dummy template action</a></div>'
+        ])
+
+        tb.display = False
+        self.assertEqual(tb(model, request), u'')
+
+        self.layer.logout()
+
 """
-Toolbar
--------
-
-::
-
-    >>> tb = Toolbar()
-    >>> tb['a'] = DummyAction()
-    >>> tb['b'] = DummyTemplateAction()
-    >>> tb['c'] = DummyTileAction()
-
-    >>> layer.login('viewer')
-
-    >>> tb(model, request).split('\n')
-    [u'<div><a href="">dummy action</a>', 
-    u'<a href="">dummy template action</a>', 
-    u'<a href="">dummy template action</a></div>']
-
-    >>> tb.css = 'someclass'
-    >>> tb(model, request).split('\n')
-    [u'<div class="someclass"><a href="">dummy action</a>', 
-    u'<a href="">dummy template action</a>', 
-    u'<a href="">dummy template action</a></div>']
-
-    >>> tb.display = False
-    >>> tb(model, request)
-    u''
-
-    >>> layer.logout()
-
-
 Abstract Dropdown
 -----------------
 
