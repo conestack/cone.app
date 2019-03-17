@@ -1,9 +1,10 @@
 from cone.app.security import authenticate
 from plone.testing import Layer
-from pyramid.testing import DummyRequest as BaseDummyRequest
 from pyramid.security import AuthenticationAPIMixin
+from pyramid.testing import DummyRequest as BaseDummyRequest
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
+from zope.configuration.xmlconfig import XMLConfig
 import cone.app
 import cone.tile
 import os
@@ -14,6 +15,7 @@ DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
 class DummyVenusian(object):
+
     def attach(self, wrapped, callback, category=None, depth=1):
         callback(None, None, wrapped)
         return None
@@ -125,13 +127,15 @@ class Security(Layer):
 
     def setUp(self, args=None):
         self.make_app()
-        print "Security set up."
+        XMLConfig('testing/dummy_workflow.zcml', cone.app)()
+        print("Security set up.")
 
     def tearDown(self):
         # XXX: something is wrong here.
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         resetHooks()
-        print "Security torn down."
+        print("Security torn down.")
+
 
 security = Security()
