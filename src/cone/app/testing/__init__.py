@@ -28,6 +28,20 @@ class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
         return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
 
+class Authenticated(object):
+
+    def __init__(self, layer, login, password):
+        self.layer = layer
+        self.login = login
+        self.password = password
+
+    def __enter__(self):
+        self.layer.login(self.login, password=self.password)
+
+    def __exit__(self, *exc):
+        self.layer.logout()
+
+
 class Security(Layer):
     """Test layer with dummy authentication for security testing.
     """
@@ -100,6 +114,9 @@ class Security(Layer):
             for key in self.auth_env_keys:
                 if key in environ:
                     del environ[key]
+
+    def authenticated(self, login, password=None):
+        return Authenticated(self, login, password=password)
 
     def make_app(self, **kw):
         import pyramid.threadlocal

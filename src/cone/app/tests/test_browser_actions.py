@@ -99,7 +99,6 @@ class TestBrowserActions(TileTestCase):
         )
         self.assertEqual(str(err), 'Relative path not supported: ')
 
-        # Dummy actions
         class DummyAction(Action):
             def render(self):
                 return '<a href="">dummy action</a>'
@@ -124,104 +123,107 @@ class TestBrowserActions(TileTestCase):
         class DummyTileAction(TileAction):
             tile = u'dummy_action_tile'
 
-        self.layer.login('viewer')
+        with self.layer.authenticated('viewer'):
+            self.assertEqual(
+                DummyTileAction()(model, request),
+                u'<a href="">dummy template action</a>'
+            )
 
-        self.assertEqual(
-            DummyTileAction()(model, request),
-            u'<a href="">dummy template action</a>'
-        )
+    def test_Toolbar(self):
+        model = BaseNode()
+        request = self.layer.new_request()
 
-        self.layer.logout()
+        class DummyAction(Action):
+            def render(self):
+                return '<a href="">dummy action</a>'
 
-        # Test toolbar
         tb = Toolbar()
         tb['a'] = DummyAction()
-        tb['b'] = DummyTemplateAction()
-        tb['c'] = DummyTileAction()
 
-        self.layer.login('viewer')
+        with self.layer.authenticated('viewer'):
+            self.assertEqual(
+                tb(model, request),
+                u'<div><a href="">dummy action</a></div>'
+            )
 
-        self.assertEqual(tb(model, request).split('\n'), [
-            u'<div><a href="">dummy action</a>',
-            u'<a href="">dummy template action</a>',
-            u'<a href="">dummy template action</a></div>'
-        ])
+            tb.css = 'someclass'
+            self.assertEqual(
+                tb(model, request),
+                u'<div class="someclass"><a href="">dummy action</a></div>'
+            )
 
-        tb.css = 'someclass'
-        self.assertEqual(tb(model, request).split('\n'), [
-            u'<div class="someclass"><a href="">dummy action</a>',
-            u'<a href="">dummy template action</a>',
-            u'<a href="">dummy template action</a></div>'
-        ])
+            tb.display = False
+            self.assertEqual(tb(model, request), u'')
 
-        tb.display = False
-        self.assertEqual(tb(model, request), u'')
+    def test_abstract_dropdown(self):
+        model = BaseNode()
+        request = self.layer.new_request()
 
-        self.layer.logout()
+        err = self.expectError(
+            NotImplementedError,
+            DropdownAction(),
+            model,
+            request
+        )
+        self.assertEqual(
+            err.message,
+            'Abstract ``DropdownAction`` does not implement  ``items``'
+        )
+
+    def test_LinkAction(self):
+        model = BaseNode()
+        request = self.layer.new_request()
+
+        rendered = LinkAction()(model, request)
+        self.checkOutput("""
+        ...<a\n...ajax:bind="click"\n...ajax:target="http://example.com/"\n...></a>...
+        """, rendered)
+
+        action = LinkAction()
+        action.id = 'link_id'
+        action.href = 'http://example.com/foo'
+        action.css = 'link_action'
+        action.title = 'Foo'
+        action.action = 'actionname:#content:replace'
+        action.event = 'contextchanged:.contextsensitiv'
+        action.confirm = 'Do you want to perform?'
+        action.overlay = 'someaction'
+        action.path = '/foo'
+        action.path_target = 'target'
+        action.path_action = action.action
+        action.path_event = action.event
+        action.path_overlay = action.overlay
+        action.text = 'Foo'
+        rendered = action(model, request)
+        self.checkOutput("""
+        ...<a
+            id="link_id"
+            href="http://example.com/foo"
+            class="link_action"
+            title="Foo"
+            ajax:bind="click"
+            ajax:target="http://example.com/"
+            ajax:event="contextchanged:.contextsensitiv"
+            ajax:action="actionname:#content:replace"
+            ajax:confirm="Do you want to perform?"
+            ajax:overlay="someaction"
+            ajax:path="/foo"
+            ajax:path-target="target"
+            ajax:path-action="actionname:#content:replace"
+            ajax:path-event="contextchanged:.contextsensitiv"
+            ajax:path-overlay="someaction"
+        >&nbsp;Foo</a>...
+        """, rendered)
+
+        action.enabled = False
+        self.assertTrue(
+            action(model, request).find('class="link_action disabled"') > -1
+        )
+
+        action.display = False
+        self.assertEqual(action(model, request), u'')
 
 """
-Abstract Dropdown
------------------
-
-::
-
-    >>> DropdownAction()(model, request)
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``DropdownAction`` does not implement  ``items``
-    ...
-
-
-LinkAction
-----------
-
-::
-
-    >>> LinkAction()(model, request)
-    u'...<a\n...ajax:bind="click"\n...ajax:target="http://example.com/"\n...></a>...'
-
-    >>> action = LinkAction()
-    >>> action.id = 'link_id'
-    >>> action.href = 'http://example.com/foo'
-    >>> action.css = 'link_action'
-    >>> action.title = 'Foo'
-    >>> action.action = 'actionname:#content:replace'
-    >>> action.event = 'contextchanged:.contextsensitiv'
-    >>> action.confirm = 'Do you want to perform?'
-    >>> action.overlay = 'someaction'
-    >>> action.path = '/foo'
-    >>> action.path_target = 'target'
-    >>> action.path_action = action.action
-    >>> action.path_event = action.event
-    >>> action.path_overlay = action.overlay
-    >>> action.text = 'Foo'
-    >>> action(model, request)
-    u'...<a\n     
-    id="link_id"\n     
-    href="http://example.com/foo"\n     
-    class="link_action"\n     
-    title="Foo"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/"\n     
-    ajax:event="contextchanged:.contextsensitiv"\n     
-    ajax:action="actionname:#content:replace"\n     
-    ajax:confirm="Do you want to perform?"\n     
-    ajax:overlay="someaction"\n     
-    ajax:path="/foo"\n     
-    ajax:path-target="target"\n     
-    ajax:path-action="actionname:#content:replace"\n     
-    ajax:path-event="contextchanged:.contextsensitiv"\n    
-    ajax:path-overlay="someaction"\n    >&nbsp;Foo</a>...'
-
-    >>> action.enabled = False
-    >>> action(model, request).find('class="link_action disabled"') > -1
-    True
-
-    >>> action.display = False
-    >>> action(model, request)
-    u''
-
-
 ActionUp
 --------
 
