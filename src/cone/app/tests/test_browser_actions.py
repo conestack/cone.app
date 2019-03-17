@@ -278,51 +278,51 @@ class TestBrowserActions(TileTestCase):
             >&nbsp;One level up</a>...
             """, rendered)
 
+    def test_ActionView(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        ActionContext(model, request, 'content')
+
+        action = ActionView()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_view = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('viewer'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-view"
+                href="http://example.com/root/model"
+                class="selected"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="content:#content:inner"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-eye-open"></span
+            >&nbsp;View</a>...
+            """, rendered)
+
+            model.properties.default_content_tile = 'otherdefault'
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-view"
+                href="http://example.com/root/model"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="view:#content:inner"
+                ajax:path="href"
+                ><span class="glyphicon glyphicon-eye-open"></span
+            >&nbsp;View</a>...
+            """, rendered)
+
+            model.properties.default_content_tile = None
+
 """
-ActionView
-----------
-
-::
-
-    >>> ac = ActionContext(model, request, 'content')
-
-    >>> action = ActionView()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_view = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('viewer')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-view"\n     
-    href="http://example.com/root/model"\n     
-    class="selected"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="content:#content:inner"\n     
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-eye-open"></span\n    \n    
-    >&nbsp;View</a>...'
-
-    >>> model.properties.default_content_tile = 'otherdefault'
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-view"\n     
-    href="http://example.com/root/model"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="view:#content:inner"\n    
-    ajax:path="href"\n    
-    ><span class="glyphicon glyphicon-eye-open"></span\n    \n    
-    >&nbsp;View</a>...'
-
-    >>> model.properties.default_content_tile = None
-    >>> layer.logout()
-
-
 ViewLink
 --------
 
