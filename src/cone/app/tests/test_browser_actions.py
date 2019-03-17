@@ -506,7 +506,6 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('editor'):
             rendered = action(model, request)
-
             self.checkOutput("""
             ...<a
                 id="toolbaraction-edit"
@@ -519,45 +518,40 @@ class TestBrowserActions(TileTestCase):
             >&nbsp;Edit</a>...
             """, rendered)
 
+    def test_ActionDelete(self):
+        parent = BaseNode(name='root')
+        model = parent['model'] = BaseNode()
+        request = self.layer.new_request()
+
+        ActionContext(model, request, 'content')
+
+        action = ActionDelete()
+        self.assertEqual(action(model, request), u'')
+
+        model.properties.action_delete = True
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('editor'):
+            self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+            self.checkOutput("""
+            ...<a
+                id="toolbaraction-delete"
+                href="#"
+                ajax:bind="click"
+                ajax:target="http://example.com/root/model"
+                ajax:action="delete:NONE:NONE"
+                ajax:confirm="Do you really want to delete this Item?"
+                ><span class="ion-trash-a"></span
+            >&nbsp;Delete</a>...
+            """, rendered)
+
+            model.properties.default_content_tile = 'othertile'
+            self.assertEqual(action(model, request), u'')
+
 """
-ActionDelete
-------------
-
-::
-
-    >>> ac = ActionContext(model, request, 'content')
-
-    >>> action = ActionDelete()
-    >>> action(model, request)
-    u''
-
-    >>> model.properties.action_delete = True
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('editor')
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u'...<a\n     
-    id="toolbaraction-delete"\n     
-    href="#"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/root/model"\n     
-    ajax:action="delete:NONE:NONE"\n     
-    ajax:confirm="Do you really want to delete this Item?"\n    
-    ><span class="ion-trash-a"></span\n    \n    
-    >&nbsp;Delete</a>...'
-
-    >>> model.properties.default_content_tile = 'othertile'
-    >>> action(model, request)
-    u''
-
-    >>> layer.logout()
-
-
 ActionDeleteChildren
 --------------------
 
