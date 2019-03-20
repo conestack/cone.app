@@ -109,7 +109,12 @@ class TestBrowserAjax(TileTestCase):
         content_selector = '.overlay_content'
         css = 'additional-css-class'
         overlay = AjaxOverlay(
-            selector, action, target, close, content_selector, css
+            selector=selector,
+            action=action,
+            target=target,
+            close=close,
+            content_selector=content_selector,
+            css=css
         )
         self.assertEqual(
             (
@@ -157,35 +162,35 @@ class TestBrowserAjax(TileTestCase):
             (path, target, action, event, overlay, overlay_css)
         )
 
+    def test_ajax_continue(self):
+        with self.layer.hook_tile_reg():
+            @tile(name='testtile2')
+            class TestTile(Tile):
+                def render(self):
+                    ajax_continue(self.request,
+                                  AjaxAction('target', 'name', 'mode', 'selector'))
+                    return u''
+
+        request = self.layer.new_request()
+        request.params['bdajax.action'] = 'testtile2'
+        request.params['bdajax.mode'] = 'replace'
+        request.params['bdajax.selector'] = '.foo'
+
+        with self.layer.authenticated('max'):
+            self.assertEqual(ajax_tile(root, request), {
+                'continuation': [{
+                    'mode': 'mode',
+                    'selector': 'selector',
+                    'type': 'action',
+                    'target': 'target',
+                    'name': 'name'
+                }],
+                'payload': u'',
+                'mode': 'replace',
+                'selector': '.foo'
+            })
+
 """
-Use ``ajax_continue`` in your tile passing the request and an instance or a
-list of instances to set continuation actions::
-
-    >>> layer.hook_tile_reg()
-
-    >>> @tile(name='testtile2')
-    ... class TestTile(Tile):
-    ...     def render(self):
-    ...         ajax_continue(self.request,
-    ...                       AjaxAction('target', 'name', 'mode', 'selector'))
-    ...         return u''
-
-    >>> layer.unhook_tile_reg()
-
-    >>> request.params['bdajax.action'] = 'testtile2'
-    >>> ajax_tile(root, request)
-    {'continuation': 
-    [{'mode': 'mode', 
-    'selector': 'selector', 
-    'type': 'action', 
-    'target': 'target', 
-    'name': 'name'}], 
-    'payload': u'', 
-    'mode': 'replace', 
-    'selector': '.foo'}
-
-    >>> layer.logout()
-
 Use ``ajax_message`` as shortcut for settings continuation message::
 
     >>> request = layer.new_request()
