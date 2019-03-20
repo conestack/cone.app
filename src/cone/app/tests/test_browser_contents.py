@@ -8,7 +8,9 @@ from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
+from pyramid.exceptions import HTTPForbidden
 from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import ACLDenied
 from pyramid.security import Deny
 from pyramid.security import Everyone
 from pyramid.security import has_permission
@@ -147,81 +149,105 @@ class TestBrowserContents(TileTestCase):
 
             del request.params['b_page']
             del request.params['sort']
-"""
-Test batch::
 
-    >>> rendered = contents.batch
-    >>> rendered = contents.batch
-    >>> expected = '<li class="active">\n          <a href="javascript:void(0)">1</a>'
-    >>> rendered.find(expected) != -1
-    True
+    def test_batch(self):
+        tmpl = 'cone.app:browser/templates/table.pt'
+        contents = ContentsTile(tmpl, None, 'contents')
+        contents.model = self.create_dummy_model()
+        request = contents.request = self.layer.new_request()
 
-    >>> rendered.find('http://example.com/?sort=created&amp;order=desc&amp;b_page=1&amp;size=15') != -1
-    True
+        with self.layer.authenticated('manager'):
+            rendered = contents.batch
 
-Change page::
+        expected = (
+            '<li class="active">\n          '
+            '<a href="javascript:void(0)">1</a>'
+        )
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> request.params['b_page'] = '1'
-    >>> rendered = contents.batch
-    >>> expected = '<li class="active">\n          <a href="javascript:void(0)">2</a>'
-    >>> rendered.find(expected) != -1
-    True
+        expected = (
+            'http://example.com/?sort=created&amp;'
+            'order=desc&amp;b_page=1&amp;size=15'
+        )
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> rendered.find('http://example.com/?sort=created&amp;order=desc&amp;b_page=0&amp;size=15') != -1
-    True
+        # Change page
+        request.params['b_page'] = '1'
+        with self.layer.authenticated('manager'):
+            rendered = contents.batch
 
-Change sort and order. Sort is proxied by batch::
+        expected = (
+            '<li class="active">\n          '
+            '<a href="javascript:void(0)">2</a>'
+        )
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> request.params['sort'] = 'modified'
-    >>> rendered = contents.batch
-    >>> rendered.find('http://example.com/?sort=modified&amp;order=desc&amp;b_page=0&amp;size=15') != -1
-    True
+        expected = (
+            'http://example.com/?sort=created&amp;'
+            'order=desc&amp;b_page=0&amp;size=15'
+        )
+        self.assertTrue(rendered.find(expected) != -1)
 
-Rendering fails unauthorized, 'list' permission is required::
+        # Change sort and order. Sort is proxied by batch
+        request.params['sort'] = 'modified'
+        with self.layer.authenticated('manager'):
+            rendered = contents.batch
 
-    >>> layer.logout()
-    >>> request = layer.new_request()
+        expected = (
+            'http://example.com/?sort=modified&amp;'
+            'order=desc&amp;b_page=0&amp;size=15'
+        )
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> has_permission('list', model, request)
-    <ACLDenied instance at ... with msg "...">
+    def test_authenticated(self):
+        model = self.create_dummy_model()
+        request = self.layer.new_request()
 
-    >>> render_tile(model, request, 'contents')
-    Traceback (most recent call last):
-      ...
-    HTTPForbidden: Unauthorized: tile 
-    <cone.app.browser.contents.ContentsTile object at ...> failed 
-    permission check
+        # Rendering fails unauthorized, 'list' permission is required
+        rule = has_permission('list', model, request)
+        self.assertTrue(isinstance(rule, ACLDenied))
 
-Render authenticated::
+        err = self.expectError(
+            HTTPForbidden,
+            render_tile,
+            model,
+            request,
+            'contents'
+        )
+        self.checkOutput("""
+        Unauthorized: tile
+        <cone.app.browser.contents.ContentsTile object at ...> failed
+        permission check
+        """, str(err))
 
-    >>> layer.login('manager')
-    >>> request = layer.new_request()
-    >>> request.params['sort'] = 'modified'
-    >>> request.params['b_page'] = '1'
-    >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = \
-    ... '<a href="http://example.com/?sort=title&amp;order=desc&amp;b_page=1&amp;size=15"'
-    >>> rendered.find(expected) != -1
-    True
+        # Render authenticated
+        with self.layer.authenticated('manager'):
+            request.params['sort'] = 'modified'
+            request.params['b_page'] = '1'
+            rendered = render_tile(model, request, 'contents')
+            expected = (
+                '<a href="http://example.com/?sort=title&amp;'
+                'order=desc&amp;b_page=1&amp;size=15"'
+            )
+            self.assertTrue(rendered.find(expected) != -1)
 
-Copysupport Attributes::
+    def test_copysupport(self):
+        # Copysupport Attributes
+        model = CopySupportNode()
+        model['child'] = CopySupportNode()
+        request = self.layer.new_request()
 
-    >>> model = CopySupportNode()
-    >>> model['child'] = CopySupportNode()
-    >>> request = layer.new_request()
-    >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = 'class="selectable copysupportitem"'
-    >>> rendered.find(expected) > -1
-    True
+        with self.layer.authenticated('manager'):
+            rendered = render_tile(model, request, 'contents')
 
-    >>> request = layer.new_request()
-    >>> cut_url = urllib.quote(make_url(request, node=model['child']))
-    >>> request.cookies['cone.app.copysupport.cut'] = cut_url
-    >>> rendered = render_tile(model, request, 'contents')
-    >>> expected = 'class="selectable copysupportitem copysupport_cut"'
-    >>> rendered.find(expected) > -1
-    True
+        expected = 'class="selectable copysupportitem"'
+        self.assertTrue(rendered.find(expected) > -1)
 
-    >>> layer.logout()
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            cut_url = urllib.quote(make_url(request, node=model['child']))
+            request.cookies['cone.app.copysupport.cut'] = cut_url
+            rendered = render_tile(model, request, 'contents')
 
-"""
+        expected = 'class="selectable copysupportitem copysupport_cut"'
+        self.assertTrue(rendered.find(expected) > -1)
