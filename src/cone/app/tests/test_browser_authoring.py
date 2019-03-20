@@ -383,199 +383,190 @@ class TestBrowserAuthoring(TileTestCase):
         # Reset ``write_history_on_next``
         CameFromNextForm.write_history_on_next = False
 
+    def test_FormHeading(self):
+        # Abstract form heading
+        @plumbing(FormHeading)
+        class FormWithHeading(object):
+            pass
+
+        form_with_heading = FormWithHeading()
+        err = self.expectError(
+            NotImplementedError,
+            lambda: form_with_heading.form_heading
+        )
+        expected = 'Abstract ``FormHeading`` does not implement ``form_heading``'
+        self.assertEqual(str(err), expected)
+
+    def test_Adding(self):
+        # Provide a node interface needed for different node style binding to
+        # test form
+        class ITestAddingNode(Interface):
+            pass
+
+        # Create dummy node
+        @implementer(ITestAddingNode)
+        class MyNode(BaseNode):
+            node_info_name = 'mynode'
+
+        # Provide NodeInfo for our Application node
+        mynodeinfo = NodeInfo()
+        mynodeinfo.title = 'My Node'
+        mynodeinfo.description = 'This is My node.'
+        mynodeinfo.node = MyNode
+        mynodeinfo.addables = ['mynode']  # self containment
+        register_node_info('mynode', mynodeinfo)
+
+        # Create another dummy node inheriting from AdapterNode
+        @implementer(ITestAddingNode)
+        class MyAdapterNode(AdapterNode):
+            node_info_name = 'myadapternode'
+
+        myadapternodeinfo = NodeInfo()
+        myadapternodeinfo.title = 'My Adapter Node'
+        myadapternodeinfo.description = 'This is My adapter node.'
+        myadapternodeinfo.node = MyAdapterNode
+        myadapternodeinfo.addables = ['myadapternode']  # self containment
+        register_node_info('myadapternode', myadapternodeinfo)
+
+        # Create and register an ``addform`` named form tile
+        with self.layer.hook_tile_reg():
+            @tile(name='addform', interface=ITestAddingNode)
+            @plumbing(ContentAddForm)
+            class MyAddForm(Form):
+                def prepare(self):
+                    form = factory(u'form',
+                                   name='addform',
+                                   props={'action': self.nodeurl})
+                    form['id'] = factory(
+                        'field:label:text',
+                        props={
+                            'label': 'Id',
+                        })
+                    form['title'] = factory(
+                        'field:label:text',
+                        props={
+                            'label': 'Title',
+                        })
+                    form['add'] = factory(
+                        'submit',
+                        props={
+                            'action': 'add',
+                            'expression': True,
+                            'handler': self.add,
+                            'next': self.next,
+                            'label': 'Add',
+                        })
+                    self.form = form
+
+                def add(self, widget, data):
+                    fetch = self.request.params.get
+                    child = MyNode()
+                    child.attrs.title = fetch('addform.title')
+                    self.model.__parent__[fetch('addform.id')] = child
+                    self.model = child
+
+        # Create dummy container
+        root = MyNode()
+
+        # Render without factory
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(
+                render_tile(root, request, 'add'),
+                u'unknown_factory'
+            )
+
+        ActionContext(root, request, 'content')
+
+        # Render with valid factory
+        with self.layer.authenticated('manager'):
+            request.params['factory'] = 'mynode'
+            result = render_tile(root, request, 'add')
+
+        self.assertTrue(result.find(u'<form action="http://example.com"') != -1)
+
+        # Render with valid factory on adapter node
+        with self.layer.authenticated('manager'):
+            adapterroot = MyAdapterNode(None, None, None)
+            request.params['factory'] = 'myadapternode'
+            result = render_tile(adapterroot, request, 'add')
+
+        self.assertTrue(result.find(u'<form action="http://example.com"') != -1)
+
+        # Render with submitted data
+        with self.layer.authenticated('manager'):
+            request = self.layer.current_request
+            request.params['factory'] = 'mynode'
+            request.params['action.addform.add'] = '1'
+            request.params['addform.id'] = 'somechild'
+            request.params['addform.title'] = 'Some Child'
+            render_tile(root, request, 'add')
+
+        self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
+        self.checkOutput("""
+        <class '...MyNode'>: None
+          <class '...MyNode'>: somechild
+        """, root.treerepr())
+
+        self.assertEqual(
+            request.environ['redirect'].location,
+            'http://example.com/somechild'
+        )
+        del request.environ['redirect']
+
+        # Render with 'came_from' set
+        with self.layer.authenticated('manager'):
+            request.params['came_from'] = 'parent'
+            render_tile(root, request, 'add')
+
+        self.assertEqual(
+            request.environ['redirect'].location,
+            'http://example.com/'
+        )
+        del request.environ['redirect']
+
+        with self.layer.authenticated('manager'):
+            came_from = urllib2.quote('http://example.com/foo/bar?baz=1')
+            request.params['came_from'] = came_from
+            render_tile(root, request, 'add')
+
+        self.assertEqual(
+            request.environ['redirect'].location,
+            'http://example.com/foo/bar?baz=1'
+        )
+
+        # Render with ajax flag
+        with self.layer.authenticated('manager'):
+            request.params['ajax'] = '1'
+            render_tile(root, request, 'add')
+
+        self.assertTrue(isinstance(
+            request.environ['cone.app.continuation'][0],
+            AjaxEvent
+        ))
+
+        # Check the modified model
+        self.assertEqual(root.keys(), ['somechild'])
+        self.assertEqual(root['somechild'].attrs.title, 'Some Child')
+
+        # Add view
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            request.params['factory'] = 'mynode'
+            request.params['action.addform.add'] = '1'
+            request.params['addform.id'] = 'somechild'
+            request.params['addform.title'] = 'Some Child'
+            res = add(root, request)
+
+        self.assertTrue(isinstance(res, HTTPFound))
+
+        with self.layer.authenticated('manager'):
+            request.params['ajax'] = '1'
+            res = str(add(root, request))
+
+        self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
+
 """
-FormHeading
------------
-
-Abstract form heading::
-
-    >>> @plumbing(FormHeading)
-    ... class FormWithHeading(object):
-    ...     pass
-
-    >>> form_with_heading = FormWithHeading()
-    >>> form_with_heading.form_heading
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``FormHeading`` does not 
-    implement ``form_heading``
-
-
-Adding
-------
-
-Provide a node interface needed for different node style binding to test form::
-
-    >>> class ITestAddingNode(Interface): pass
-
-Create dummy node::
-
-    >>> @implementer(ITestAddingNode)
-    ... class MyNode(BaseNode):
-    ...     node_info_name = 'mynode'
-
-Provide NodeInfo for our Application node::
-
-    >>> mynodeinfo = NodeInfo()
-    >>> mynodeinfo.title = 'My Node'
-    >>> mynodeinfo.description = 'This is My node.'
-    >>> mynodeinfo.node = MyNode
-    >>> mynodeinfo.addables = ['mynode'] # self containment
-    >>> register_node_info('mynode', mynodeinfo)
-
-Create another dummy node inheriting from AdapterNode::
-
-    >>> @implementer(ITestAddingNode)
-    ... class MyAdapterNode(AdapterNode):
-    ...     node_info_name = 'myadapternode'
-
-    >>> myadapternodeinfo = NodeInfo()
-    >>> myadapternodeinfo.title = 'My Adapter Node'
-    >>> myadapternodeinfo.description = 'This is My adapter node.'
-    >>> myadapternodeinfo.node = MyAdapterNode
-    >>> myadapternodeinfo.addables = ['myadapternode'] # self containment
-    >>> register_node_info('myadapternode', myadapternodeinfo)
-
-Create and register an ``addform`` named form tile::
-
-    >>> layer.hook_tile_reg()
-
-    >>> @tile(name='addform', interface=ITestAddingNode)
-    ... @plumbing(ContentAddForm)
-    ... class MyAddForm(Form):
-    ...     def prepare(self):
-    ...         form = factory(u'form',
-    ...                        name='addform',
-    ...                        props={'action': self.nodeurl})
-    ...         form['id'] = factory(
-    ...             'field:label:text',
-    ...             props = {
-    ...                 'label': 'Id',
-    ...             })
-    ...         form['title'] = factory(
-    ...             'field:label:text',
-    ...             props = {
-    ...                 'label': 'Title',
-    ...             })
-    ...         form['add'] = factory(
-    ...             'submit',
-    ...             props = {
-    ...                 'action': 'add',
-    ...                 'expression': True,
-    ...                 'handler': self.add,
-    ...                 'next': self.next,
-    ...                 'label': 'Add',
-    ...             })
-    ...         self.form = form
-    ... 
-    ...     def add(self, widget, data):
-    ...         fetch = self.request.params.get
-    ...         child = MyNode()
-    ...         child.attrs.title = fetch('addform.title')
-    ...         self.model.__parent__[fetch('addform.id')] = child
-    ...         self.model = child
-
-    >>> layer.unhook_tile_reg()
-
-Create dummy container::
-
-    >>> root = MyNode()
-
-Authenticate::
-
-    >>> layer.login('manager')
-
-Render without factory::
-
-    >>> request = layer.new_request()
-    >>> render_tile(root, request, 'add')
-    u'unknown_factory'
-
-Render with valid factory::
-
-    >>> ac = ActionContext(root, request, 'content')
-
-    >>> request.params['factory'] = 'mynode'
-    >>> result = render_tile(root, request, 'add')
-    >>> result.find(u'<form action="http://example.com"') != -1
-    True
-
-Render with valid factory on adapter node::
-
-    >>> adapterroot = MyAdapterNode(None, None, None)
-    >>> request.params['factory'] = 'myadapternode'
-    >>> result = render_tile(adapterroot, request, 'add')
-    >>> result.find(u'<form action="http://example.com"') != -1
-    True
-
-Render with submitted data::
-
-    >>> layer.login('manager')
-    >>> request = layer.current_request
-    >>> request.params['factory'] = 'mynode'
-    >>> request.params['action.addform.add'] = '1'
-    >>> request.params['addform.id'] = 'somechild'
-    >>> request.params['addform.title'] = 'Some Child'
-
-    >>> res = render_tile(root, request, 'add')
-    >>> request.environ['redirect']
-    <HTTPFound at ... 302 Found>
-
-    >>> root.printtree()
-    <class 'MyNode'>: None
-      <class 'MyNode'>: somechild
-
-    >>> request.environ['redirect'].location
-    'http://example.com/somechild'
-
-Render with 'came_from' set::
-
-    >>> del request.environ['redirect']
-    >>> request.params['came_from'] = 'parent'
-    >>> res = render_tile(root, request, 'add')
-    >>> request.environ['redirect'].location
-    'http://example.com/'
-
-    >>> del request.environ['redirect']
-    >>> came_from = urllib2.quote('http://example.com/foo/bar?baz=1')
-    >>> request.params['came_from'] = came_from
-    >>> res = render_tile(root, request, 'add')
-    >>> request.environ['redirect'].location
-    'http://example.com/foo/bar?baz=1'
-
-Render with ajax flag::
-
-    >>> layer.login('manager')
-    >>> request.params['ajax'] = '1'
-    >>> res = render_tile(root, request, 'add')
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxEvent object at ...>]
-
-Check the modified model::
-
-    >>> root.keys()
-    ['somechild']
-
-    >>> root['somechild'].attrs.title
-    'Some Child'
-
-Add view::
-
-    >>> layer.login('manager')
-    >>> request = layer.new_request()
-    >>> request.params['factory'] = 'mynode'
-    >>> request.params['action.addform.add'] = '1'
-    >>> request.params['addform.id'] = 'somechild'
-    >>> request.params['addform.title'] = 'Some Child'
-    >>> add(root, request)
-    <HTTPFound at ... 302 Found>
-
-    >>> request.params['ajax'] = '1'
-    >>> result = str(add(root, request))
-    >>> result.find('parent.bdajax.render_ajax_form') != -1
-    True
-
-
 Editing
 -------
 
