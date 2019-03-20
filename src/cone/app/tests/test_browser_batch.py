@@ -96,360 +96,342 @@ class TestBrowserBatch(TileTestCase):
             ('target', 'http://example.com/'),
             ('visible', False)
         ])
+
+        # If no visible page, ``lastpage`` returns last page from vocab
+        self.assertEqual(sorted(batch.lastpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '2'),
+            ('target', 'http://example.com/'),
+            ('visible', False)
+        ])
+
+        # No visible pages in vocab return ``dummypage`` on prevpage and
+        # nextpage
+        self.assertTrue(batch.prevpage == batch.dummypage)
+        self.assertTrue(batch.nextpage == batch.dummypage)
+
+        # Test with visible pages
+        batch._vocab = list()
+        for i in range(5):
+            batch._vocab.append({
+                'current': False,
+                'visible': True,
+                'href': 'http://example.com/someview',
+                'target': 'http://example.com/',
+                'page': str(i),
+            })
+        batch._vocab[1]['visible'] = False
+        batch._vocab[3]['visible'] = False
+
+        # Set first page current
+        batch._vocab[0]['current'] = True
+
+        # First vocab item is visible, ``firstpage`` returns it
+        self.assertEqual(sorted(batch.firstpage.items()), [
+            ('current', True),
+            ('href', 'http://example.com/someview'),
+            ('page', '0'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Last vocab item is visible, ``lastpage`` returns it
+        self.assertEqual(sorted(batch.lastpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '4'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # First item is selected, ``prevpage`` returns dummy page
+        self.assertEqual(sorted(batch.prevpage.items()), [
+            ('current', False),
+            ('href', ''),
+            ('page', ''),
+            ('target', ''),
+            ('url', ''),
+            ('visible', False)
+        ])
+
+        # ``nextpage`` returns next visible page, vocab[1] is skipped
+        self.assertEqual(sorted(batch.nextpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '2'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Set last page current
+        batch._vocab[0]['current'] = False
+        batch._vocab[-1]['current'] = True
+
+        # ``prevpage`` returns next visible page, vocab[3] is skipped
+        self.assertEqual(sorted(batch.prevpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '2'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Last item is selected, ``nextpage`` returns dummy page
+        self.assertEqual(sorted(batch.nextpage.items()), [
+            ('current', False),
+            ('href', ''),
+            ('page', ''),
+            ('target', ''),
+            ('url', ''),
+            ('visible', False)
+        ])
+
+        # Set third page current
+        batch._vocab[-1]['current'] = False
+        batch._vocab[2]['current'] = True
+
+        # ``prevpage`` returns next visible page, vocab[1] is skipped
+        self.assertEqual(sorted(batch.prevpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '0'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # ``nextpage`` returns next visible page, vocab[3] is skipped
+        self.assertEqual(sorted(batch.nextpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '4'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Inverse visible flags
+        batch._vocab[0]['visible'] = False
+        batch._vocab[1]['visible'] = True
+        batch._vocab[2]['visible'] = False
+        batch._vocab[3]['visible'] = True
+        batch._vocab[4]['visible'] = False
+
+        # Set second item selected
+        batch._vocab[2]['current'] = False
+        batch._vocab[1]['current'] = True
+
+        # ``firstpage`` returns first visible page
+        self.assertEqual(sorted(batch.firstpage.items()), [
+            ('current', True),
+            ('href', 'http://example.com/someview'),
+            ('page', '1'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # ``lastpage`` returns last visible page
+        self.assertEqual(sorted(batch.lastpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '3'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Selected page is first visible page, ``prevpage`` returns dummypage
+        self.assertEqual(sorted(batch.prevpage.items()), [
+            ('current', False),
+            ('href', ''),
+            ('page', ''),
+            ('target', ''),
+            ('url', ''),
+            ('visible', False)
+        ])
+
+        # Next visible page
+        self.assertEqual(sorted(batch.nextpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '3'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Set fourth item selected
+        batch._vocab[1]['current'] = False
+        batch._vocab[3]['current'] = True
+
+        # Previous visible page
+        self.assertEqual(sorted(batch.prevpage.items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '1'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        # Selected page is last visible page, ``nextpage`` returns dummypage
+        self.assertEqual(sorted(batch.nextpage.items()), [
+            ('current', False),
+            ('href', ''),
+            ('page', ''),
+            ('target', ''),
+            ('url', ''),
+            ('visible', False)
+        ])
+
+        # set ``batchrange`` smaller than vocab size
+        batch._batchrange = 3
+        self.assertEqual(len(batch.pages), 3)
+
+        # Batchrange ends
+        self.assertEqual(sorted(batch.pages[0].items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '2'),
+            ('target', 'http://example.com/'),
+            ('visible', False)
+        ])
+
+        self.assertEqual(sorted(batch.pages[-1].items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '4'),
+            ('target', 'http://example.com/'),
+            ('visible', False)
+        ])
+
+        self.assertEqual(batch.leftellipsis, u'...')
+        self.assertEqual(batch.rightellipsis, u'')
+
+        # Batchrange starts
+        batch._vocab[1]['current'] = True
+        batch._vocab[3]['current'] = False
+
+        self.assertEqual(sorted(batch.pages[0].items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '0'),
+            ('target', 'http://example.com/'),
+            ('visible', False)
+        ])
+
+        self.assertEqual(sorted(batch.pages[-1].items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '2'),
+            ('target', 'http://example.com/'),
+            ('visible', False)
+        ])
+
+        self.assertEqual(batch.leftellipsis, u'')
+        self.assertEqual(batch.rightellipsis, u'...')
+
+        # Batchrange between start and end
+        batch._vocab[0]['visible'] = True
+        batch._vocab[2]['visible'] = True
+        batch._vocab[4]['visible'] = True
+
+        batch._vocab[1]['current'] = False
+        batch._vocab[2]['current'] = True
+
+        self.assertEqual(sorted(batch.pages[0].items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '1'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+        self.assertEqual(sorted(batch.pages[-1].items()), [
+            ('current', False),
+            ('href', 'http://example.com/someview'),
+            ('page', '3'),
+            ('target', 'http://example.com/'),
+            ('visible', True)
+        ])
+
+        self.assertEqual(batch.leftellipsis, u'...')
+        self.assertEqual(batch.rightellipsis, u'...')
+
+    def test_batch_tile(self):
+        # Register batch tile
+        with self.layer.hook_tile_reg():
+            @tile(name='testbatch')
+            class TestBatch(Batch):
+                @property
+                def vocab(self):
+                    ret = list()
+                    path = node_path(self.model)
+                    current = self.request.params.get('b_page', '0')
+                    for i in range(10):
+                        query = make_query(b_page=str(i))
+                        href = make_url(
+                            self.request,
+                            path=path,
+                            resource='someview',
+                            query=query
+                        )
+                        target = make_url(self.request, path=path, query=query)
+                        ret.append({
+                            'page': '%i' % i,
+                            'current': current == str(i),
+                            'visible': True,
+                            'href': href,
+                            'target': target,
+                        })
+                    return ret
+
+        with self.layer.authenticated('max'):
+            model = BaseNode()
+            request = self.layer.new_request()
+            res = render_tile(model, request, 'testbatch')
+
+        expected = 'href="http://example.com/someview?b_page=1"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'ajax:target="http://example.com/?b_page=1"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'href="http://example.com/someview?b_page=2"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'ajax:target="http://example.com/?b_page=2"'
+        self.assertTrue(res.find(expected) > -1)
+
+    def test_bc_batch_tile(self):
+        # Test B/C batch vocab rendering::
+
+        with self.layer.hook_tile_reg():
+            @tile('bc_testbatch')
+            class BCTestBatch(Batch):
+                @property
+                def vocab(self):
+                    ret = list()
+                    path = node_path(self.model)
+                    current = self.request.params.get('b_page', '0')
+                    for i in range(10):
+                        query = make_query(b_page=str(i))
+                        url = make_url(self.request, path=path, query=query)
+                        ret.append({
+                            'page': '%i' % i,
+                            'current': current == str(i),
+                            'visible': True,
+                            'url': url
+                        })
+                    return ret
+
+        with self.layer.authenticated('max'):
+            model = BaseNode()
+            request = self.layer.new_request()
+            res = render_tile(model, request, 'bc_testbatch')
+
+        expected = 'href="http://example.com/?b_page=1"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'ajax:target="http://example.com/?b_page=1"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'href="http://example.com/?b_page=2"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'ajax:target="http://example.com/?b_page=2"'
+        self.assertTrue(res.find(expected) > -1)
+
 """
-If no visible page, ``lastpage`` returns last page from vocab::
-
-    >>> sorted(batch.lastpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '2'), 
-    ('target', 'http://example.com/'), 
-    ('visible', False)]
-
-No visible pages in vocab return ``dummypage`` on prevpage and nextpage:: 
-
-    >>> assert(batch.prevpage == batch.dummypage)
-    >>> assert(batch.nextpage == batch.dummypage)
-
-Test with visible pages::
-
-    >>> batch._vocab = list()
-    >>> for i in range(5):
-    ...     batch._vocab.append({
-    ...         'current': False,
-    ...         'visible': True,
-    ...         'href': 'http://example.com/someview',
-    ...         'target': 'http://example.com/',
-    ...         'page': str(i),
-    ...     })
-    >>> batch._vocab[1]['visible'] = False
-    >>> batch._vocab[3]['visible'] = False
-
-Set first page current::
-
-    >>> batch._vocab[0]['current'] = True
-
-First vocab item is visible, ``firstpage`` returns it::
-
-    >>> sorted(batch.firstpage.items())
-    [('current', True), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '0'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Last vocab item is visible, ``lastpage`` returns it::
-
-    >>> sorted(batch.lastpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '4'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-First item is selected, ``prevpage`` returns dummy page::
-
-    >>> sorted(batch.prevpage.items())
-    [('current', False), 
-    ('href', ''), 
-    ('page', ''), 
-    ('target', ''), 
-    ('url', ''), 
-    ('visible', False)]
-
-``nextpage`` returns next visible page, vocab[1] is skipped::
-
-    >>> sorted(batch.nextpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '2'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Set last page current::
-
-    >>> batch._vocab[0]['current'] = False
-    >>> batch._vocab[-1]['current'] = True
-
-``prevpage`` returns next visible page, vocab[3] is skipped::
-
-    >>> sorted(batch.prevpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '2'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Last item is selected, ``nextpage`` returns dummy page::
-
-    >>> sorted(batch.nextpage.items())
-    [('current', False), 
-    ('href', ''), 
-    ('page', ''), 
-    ('target', ''), 
-    ('url', ''), 
-    ('visible', False)]
-
-Set third page current::
-
-    >>> batch._vocab[-1]['current'] = False
-    >>> batch._vocab[2]['current'] = True
-
-``prevpage`` returns next visible page, vocab[1] is skipped::
-
-    >>> sorted(batch.prevpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '0'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-``nextpage`` returns next visible page, vocab[3] is skipped::
-
-    >>> sorted(batch.nextpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '4'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Inverse visible flags::
-
-    >>> batch._vocab[0]['visible'] = False
-    >>> batch._vocab[1]['visible'] = True
-    >>> batch._vocab[2]['visible'] = False
-    >>> batch._vocab[3]['visible'] = True
-    >>> batch._vocab[4]['visible'] = False
-
-Set second item selected::
-
-    >>> batch._vocab[2]['current'] = False
-    >>> batch._vocab[1]['current'] = True
-
-``firstpage`` returns first visible page::
-
-    >>> sorted(batch.firstpage.items())
-    [('current', True), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '1'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-``lastpage`` returns last visible page::
-
-    >>> sorted(batch.lastpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '3'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Selected page is first visible page, ``prevpage`` returns dummypage::
-
-    >>> sorted(batch.prevpage.items())
-    [('current', False), 
-    ('href', ''), 
-    ('page', ''), 
-    ('target', ''), 
-    ('url', ''), 
-    ('visible', False)]
-
-Next visible page::
-
-    >>> sorted(batch.nextpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '3'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Set fourth item selected::
-
-    >>> batch._vocab[1]['current'] = False
-    >>> batch._vocab[3]['current'] = True
-
-Previous visible page::
-
-    >>> sorted(batch.prevpage.items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '1'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-Selected page is last visible page, ``nextpage`` returns dummypage::
-
-    >>> sorted(batch.nextpage.items())
-    [('current', False), 
-    ('href', ''), 
-    ('page', ''), 
-    ('target', ''), 
-    ('url', ''), 
-    ('visible', False)]
-
-set ``batchrange`` smaller than vocab size::
-
-    >>> batch._batchrange = 3
-    >>> len(batch.pages)
-    3
-
-Batchrange ends::
-
-    >>> sorted(batch.pages[0].items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '2'), 
-    ('target', 'http://example.com/'), 
-    ('visible', False)]
-
-    >>> sorted(batch.pages[-1].items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '4'), 
-    ('target', 'http://example.com/'), 
-    ('visible', False)]
-
-    >>> batch.leftellipsis
-    u'...'
-
-    >>> batch.rightellipsis
-    u''
-
-Batchrange starts::
-
-    >>> batch._vocab[1]['current'] = True
-    >>> batch._vocab[3]['current'] = False
-
-    >>> sorted(batch.pages[0].items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '0'), 
-    ('target', 'http://example.com/'), 
-    ('visible', False)]
-
-    >>> sorted(batch.pages[-1].items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '2'), 
-    ('target', 'http://example.com/'), 
-    ('visible', False)]
-
-    >>> batch.leftellipsis
-    u''
-
-    >>> batch.rightellipsis
-    u'...'
-
-Batchrange between start and end::
-
-    >>> batch._vocab[0]['visible'] = True
-    >>> batch._vocab[2]['visible'] = True
-    >>> batch._vocab[4]['visible'] = True
-
-    >>> batch._vocab[1]['current'] = False
-    >>> batch._vocab[2]['current'] = True
-
-    >>> sorted(batch.pages[0].items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '1'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-    >>> sorted(batch.pages[-1].items())
-    [('current', False), 
-    ('href', 'http://example.com/someview'), 
-    ('page', '3'), 
-    ('target', 'http://example.com/'), 
-    ('visible', True)]
-
-    >>> batch.leftellipsis
-    u'...'
-
-    >>> batch.rightellipsis
-    u'...'
-
-Register batch tile::
-
-    >>> layer.hook_tile_reg()
-
-    >>> @tile(name='testbatch')
-    ... class TestBatch(Batch):
-    ... 
-    ...     @property
-    ...     def vocab(self):
-    ...         ret = list()
-    ...         path = node_path(self.model)
-    ...         current = self.request.params.get('b_page', '0')
-    ...         for i in range(10):
-    ...             query = make_query(b_page=str(i))
-    ...             href = make_url(self.request, path=path,
-    ...                             resource='someview', query=query)
-    ...             target = make_url(self.request, path=path, query=query)
-    ...             ret.append({
-    ...                 'page': '%i' % i,
-    ...                 'current': current == str(i),
-    ...                 'visible': True,
-    ...                 'href': href,
-    ...                 'target': target,
-    ...             })
-    ...         return ret
-
-    >>> layer.unhook_tile_reg()
-
-Create dummy model::
-
-    >>> model = BaseNode()
-
-Authenticate::
-
-    >>> layer.login('max')
-    >>> request = layer.new_request()
-
-Render batch::
-
-    >>> res = render_tile(model, request, 'testbatch')
-    >>> assert(res.find('href="http://example.com/someview?b_page=1"') > -1)
-    >>> assert(res.find('ajax:target="http://example.com/?b_page=1"') > -1)
-    >>> assert(res.find('href="http://example.com/someview?b_page=2"') > -1)
-    >>> assert(res.find('ajax:target="http://example.com/?b_page=2"') > -1)
-
-Test B/C batch vocab rendering::
-
-    >>> layer.hook_tile_reg()
-
-    >>> @tile('bc_testbatch')
-    ... class BCTestBatch(Batch):
-    ... 
-    ...     @property
-    ...     def vocab(self):
-    ...         ret = list()
-    ...         path = node_path(self.model)
-    ...         current = self.request.params.get('b_page', '0')
-    ...         for i in range(10):
-    ...             query = make_query(b_page=str(i))
-    ...             url = make_url(self.request, path=path, query=query)
-    ...             ret.append({
-    ...                 'page': '%i' % i,
-    ...                 'current': current == str(i),
-    ...                 'visible': True,
-    ...                 'url': url
-    ...             })
-    ...         return ret
-
-    >>> layer.unhook_tile_reg()
-
-    >>> res = render_tile(model, request, 'bc_testbatch')
-    >>> assert(res.find('href="http://example.com/?b_page=1"') > -1)
-    >>> assert(res.find('ajax:target="http://example.com/?b_page=1"') > -1)
-    >>> assert(res.find('href="http://example.com/?b_page=2"') > -1)
-    >>> assert(res.find('ajax:target="http://example.com/?b_page=2"') > -1)
-
-Logout::
-
-    >>> layer.logout()
-
-
 BatchedItems
 ------------
 
