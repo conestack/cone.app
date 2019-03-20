@@ -781,143 +781,138 @@ class TestBrowserBatch(TileTestCase):
         ...
         <BaseNode object 'child_9' at ...>]
         """, str(batched_items.slice_items))
-"""
-Change the filter term::
 
-    >>> request = batched_items.request = layer.new_request()
-    >>> request.params['term'] = '1'
-    >>> request.params['size'] = '5'
-    >>> batched_items.filter_term
-    u'1'
+        # Change the filter term
+        request = batched_items.request = self.layer.new_request()
+        request.params['term'] = '1'
+        request.params['size'] = '5'
+        self.assertEqual(batched_items.filter_term, u'1')
 
-    >>> batched_items.filtered_items
-    [<BaseNode object 'child_1' at ...>, 
-    <BaseNode object 'child_10' at ...>, 
-    <BaseNode object 'child_11' at ...>, 
-    <BaseNode object 'child_12' at ...>, 
-    <BaseNode object 'child_13' at ...>, 
-    <BaseNode object 'child_14' at ...>, 
-    <BaseNode object 'child_15' at ...>, 
-    <BaseNode object 'child_16' at ...>, 
-    <BaseNode object 'child_17' at ...>, 
-    <BaseNode object 'child_18' at ...>, 
-    <BaseNode object 'child_19' at ...>, 
-    <BaseNode object 'child_21' at ...>, 
-    <BaseNode object 'child_31' at ...>]
+        self.checkOutput("""
+        [<BaseNode object 'child_1' at ...>,
+        <BaseNode object 'child_10' at ...>,
+        <BaseNode object 'child_11' at ...>,
+        <BaseNode object 'child_12' at ...>,
+        <BaseNode object 'child_13' at ...>,
+        <BaseNode object 'child_14' at ...>,
+        <BaseNode object 'child_15' at ...>,
+        <BaseNode object 'child_16' at ...>,
+        <BaseNode object 'child_17' at ...>,
+        <BaseNode object 'child_18' at ...>,
+        <BaseNode object 'child_19' at ...>,
+        <BaseNode object 'child_21' at ...>,
+        <BaseNode object 'child_31' at ...>]
+        """, str(batched_items.filtered_items))
 
-    >>> batched_items.current_slice
-    (0, 5)
+        self.assertEqual(batched_items.current_slice, (0, 5))
 
-    >>> batched_items.slice_items
-    [<BaseNode object 'child_1' at ...>, 
-    <BaseNode object 'child_10' at ...>, 
-    <BaseNode object 'child_11' at ...>, 
-    <BaseNode object 'child_12' at ...>, 
-    <BaseNode object 'child_13' at ...>]
+        self.checkOutput("""
+        [<BaseNode object 'child_1' at ...>,
+        <BaseNode object 'child_10' at ...>,
+        <BaseNode object 'child_11' at ...>,
+        <BaseNode object 'child_12' at ...>,
+        <BaseNode object 'child_13' at ...>]
+        """, str(batched_items.slice_items))
 
-    >>> request.params['b_page'] = '1'
-    >>> batched_items.current_slice
-    (5, 10)
+        request.params['b_page'] = '1'
+        self.assertEqual(batched_items.current_slice, (5, 10))
 
-    >>> batched_items.slice_items
-    [<BaseNode object 'child_14' at ...>, 
-    <BaseNode object 'child_15' at ...>, 
-    <BaseNode object 'child_16' at ...>, 
-    <BaseNode object 'child_17' at ...>, 
-    <BaseNode object 'child_18' at ...>]
+        self.checkOutput("""
+        [<BaseNode object 'child_14' at ...>,
+        <BaseNode object 'child_15' at ...>,
+        <BaseNode object 'child_16' at ...>,
+        <BaseNode object 'child_17' at ...>,
+        <BaseNode object 'child_18' at ...>]
+        """, str(batched_items.slice_items))
 
-Test ``rendered_slice``::
+        # Test ``rendered_slice``
+        request = batched_items.request = self.layer.new_request()
+        self.checkOutput("""
+        <div id="batched_items_slice">
+          <div>child_0</div>
+          ...
+          <div>child_14</div>
+        </div>
+        """, batched_items.rendered_slice)
 
-    >>> request = batched_items.request = layer.new_request()
-    >>> print batched_items.rendered_slice
-    <div id="batched_items_slice">
-      <div>child_0</div>
-      ...
-      <div>child_14</div>
-    </div>
+        # ``BatchItems`` rendering default template
+        self.assertEqual(
+            batched_items.path,
+            'cone.app.browser:templates/batched_items.pt'
+        )
 
-``BatchItems`` rendering default template.::
+        # Batched items DOM element ID. Used for bdajax binding.
+        self.assertEqual(batched_items.items_id, 'batched_items')
 
-    >>> batched_items.path
-    'cone.app.browser:templates/batched_items.pt'
+        self.checkOutput("""
+        ...<div id="batched_items"...
+        """, batched_items(model=model, request=self.layer.new_request()))
 
-Batched items DOM element ID. Used for bdajax binding.::
+        batched_items.items_id = 'my_batched_items'
 
-    >>> batched_items.items_id
-    'batched_items'
+        self.checkOutput("""
+        ...<div id="my_batched_items"...
+        """, batched_items(model=model, request=self.layer.new_request()))
 
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...<div id="batched_items"...'
+        batched_items.items_id = 'batched_items'
 
-    >>> batched_items.items_id = 'my_batched_items'
+        # Test ``items_css``
+        self.assertEqual(
+            batched_items.items_css,
+            'batched_items panel panel-default'
+        )
 
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...<div id="my_batched_items"...'
+        self.checkOutput("""
+        ...class="...batched_items ...
+        """, batched_items(model=model, request=self.layer.new_request()))
 
-    >>> batched_items.items_id = 'batched_items'
+        batched_items.items_css = (
+            'my_batched_items batched_items panel panel-default'
+        )
 
-Test ``items_css``.::
+        self.checkOutput("""
+        ...class="...my_batched_items batched_items ...
+        """, batched_items(model=model, request=self.layer.new_request()))
 
-    >>> batched_items.items_css
-    'batched_items panel panel-default'
+        batched_items.items_css = 'batched_items panel panel-default'
 
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...class="...batched_items ...'
+        # Test ``bind_events``
+        self.assertEqual(batched_items.bind_events, 'batchclicked')
 
-    >>> batched_items.items_css = \
-    ...     'my_batched_items batched_items panel panel-default'
+        self.checkOutput("""
+        ...ajax:bind="batchclicked"...
+        """, batched_items(model=model, request=self.layer.new_request()))
 
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...class="...my_batched_items batched_items ...'
+        # Test ``bind_selectors``
+        self.assertEqual(
+            batched_items.bind_selectors,
+            'batched_itemsbatchsensitiv'
+        )
 
-    >>> batched_items.items_css = 'batched_items panel panel-default'
+        self.checkOutput("""
+        ...class="batched_itemsbatchsensitiv...
+        """, batched_items(model=model, request=self.layer.new_request()))
 
-Test ``bind_events``.::
+        # Test ``display_header``
+        self.assertTrue(batched_items.display_header)
 
-    >>> batched_items.bind_events
-    'batchclicked'
+        expected = '<div class="panel-heading batched_items_header">'
+        rendered = batched_items(model=model, request=self.layer.new_request())
+        self.assertTrue(rendered.find(expected) > -1)
 
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...ajax:bind="batchclicked"...'
+        batched_items.display_header = False
+        rendered = batched_items(model=model, request=self.layer.new_request())
+        self.assertFalse(rendered.find(expected) > -1)
 
-Test ``bind_selectors``.::
+        batched_items.display_header = True
 
-    >>> batched_items.bind_selectors
-    'batched_itemsbatchsensitiv'
+        # Test ``display_footer``
+        self.assertTrue(batched_items.display_header)
 
-    >>> batched_items(model=model, request=layer.new_request())
-    u'...class="batched_itemsbatchsensitiv...'
+        expected = '<div class="panel-footer batched_items_footer">'
+        rendered = batched_items(model=model, request=self.layer.new_request())
+        self.assertTrue(rendered.find(expected) > -1)
 
-Test ``display_header``.::
-
-    >>> batched_items.display_header
-    True
-
-    >>> expected = '<div class="panel-heading batched_items_header">'
-    >>> rendered = batched_items(model=model, request=layer.new_request())
-    >>> rendered.find(expected) > -1
-    True
-
-    >>> batched_items.display_header = False
-    >>> rendered = batched_items(model=model, request=layer.new_request())
-    >>> rendered.find(expected) > -1
-    False
-
-    >>> batched_items.display_header = True
-
-Test ``display_footer``.::
-
-    >>> batched_items.display_header
-    True
-
-    >>> expected = '<div class="panel-footer batched_items_footer">'
-    >>> rendered = batched_items(model=model, request=layer.new_request())
-    >>> rendered.find(expected) > -1
-    True
-
-    >>> batched_items.display_footer = False
-    >>> rendered = batched_items(model=model, request=layer.new_request())
-    >>> rendered.find(expected) > -1
-    False
-
-"""
+        batched_items.display_footer = False
+        rendered = batched_items(model=model, request=self.layer.new_request())
+        self.assertFalse(rendered.find(expected) > -1)
