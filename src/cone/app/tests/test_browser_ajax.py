@@ -23,6 +23,7 @@ from yafowil.base import factory
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
+import json
 
 
 class TestBrowserAjax(TileTestCase):
@@ -147,7 +148,7 @@ class TestBrowserAjax(TileTestCase):
         overlay = 'acionname:#custom-overlay:.custom_overlay_content'
         overlay_css = 'additional-overlay-css-class'
         apath = AjaxPath(
-            'foo/bar',
+            path,
             target=target,
             action=action,
             event=event,
@@ -196,104 +197,121 @@ class TestBrowserAjax(TileTestCase):
         # ``ajax_message`` is a shortcut for settings continuation message
         request = self.layer.new_request()
         ajax_message(request, 'payload')
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxMessage
-        ))
+        messages = request.environ['cone.app.continuation']
+        self.assertTrue(len(messages) == 1)
+        message = messages[0]
+        self.assertTrue(isinstance(message, AjaxMessage))
+        self.assertEqual(
+            (message.payload, message.flavor, message.selector),
+            ('payload', 'message', None)
+        )
+
+    def test_ajax_status_message(self):
+        # ``ajax_status_message`` is a shortcut for settings continuation
+        # status message
+        request = self.layer.new_request()
+        ajax_status_message(request, 'payload')
+        messages = request.environ['cone.app.continuation']
+        self.assertTrue(len(messages) == 1)
+        message = messages[0]
+        self.assertTrue(isinstance(message, AjaxMessage))
+        self.assertEqual(
+            (message.payload, message.flavor, message.selector),
+            ('payload', None, '#status_message')
+        )
+
+    def test_AjaxFormContinue(self):
+        # AjaxFormContinue object. This object is used by ``render_ajax_form``
+        result = ''
+        continuation = []
+        afc = AjaxFormContinue(result, continuation)
+        self.assertEqual(afc.form, '')
+        self.assertEqual(afc.next, 'false')
+
+        # If no continuation definitions, ``form`` returns result and ``next``
+        # returns 'false'
+        result = 'rendered form'
+        afc = AjaxFormContinue(result, [])
+        self.assertEqual(afc.form, 'rendered form')
+        self.assertEqual(afc.next, 'false')
+
+        # If continuation definitions and result, ``form`` returns empty
+        # string, because form processing was successful. ``next`` returns a
+        # JSON dump of given actions, which gets interpreted and executed on
+        # client side
+        action = AjaxAction(
+            'http://example.com',
+            'tilename',
+            'replace',
+            '.someselector'
+        )
+        event = AjaxEvent(
+            'http://example.com',
+            'contextchanged',
+            '.contextsensitiv'
+        )
+        message = AjaxMessage(
+            'Some info message',
+            'info',
+            'None'
+        )
+        overlay = AjaxOverlay(
+            selector='#ajax-overlay',
+            action='someaction',
+            target='http://example.com',
+            close=False,
+            content_selector='.overlay_content',
+            css='additional-css-class'
+        )
+        path = AjaxPath(
+            'foo/bar',
+            target='http://example.com/foo/bar',
+            action='layout:#layout:replace',
+            event='contextchanged:#someid',
+            overlay='acionname:#custom-overlay:.custom_overlay_content',
+            overlay_css='additional-overlay-css-class'
+        )
+
+        continuation = [action, event, message, overlay, path]
+        afc = AjaxFormContinue(result, continuation)
+        self.assertEqual(afc.form, '')
+
+        afc_next = json.loads(afc.next)
+        self.assertEqual(afc_next, [{
+            "mode": "replace",
+            "selector": ".someselector",
+            "type": "action",
+            "target": "http://example.com",
+            "name": "tilename"
+        }, {
+            "selector": ".contextsensitiv",
+            "type": "event",
+            "target": "http://example.com",
+            "name": "contextchanged"
+        }, {
+            "flavor": "info",
+            "type": "message",
+            "payload": "Some info message",
+            "selector": "None"
+        }, {
+            "target": "http://example.com",
+            "content_selector": ".overlay_content",
+            "selector": "#ajax-overlay",
+            "action": "someaction",
+            "close": False,
+            "type": "overlay",
+            "css": "additional-css-class"
+        }, {
+            "overlay_css": "additional-overlay-css-class",
+            "target": "http://example.com/foo/bar",
+            "overlay": "acionname:#custom-overlay:.custom_overlay_content",
+            "action": "layout:#layout:replace",
+            "path": "foo/bar",
+            "type": "path",
+            "event": "contextchanged:#someid"
+        }])
 
 """
-Use ``ajax_status_message`` as shortcut for settings continuation statu 
-message::
-
-    >>> request = layer.new_request()
-    >>> ajax_status_message(request, 'payload')
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxMessage object at ...>]
-
-
-Ajax form support
------------------
-
-Ajax form support is done with a hidden iframe, where forms are committed to
-if an ajax form is detected. On server side we have to consider this at some 
-places.
-
-- The view mapping to submitted form action must check whether ajax flag is set
-  on request and return results of ``render_ajax_form`` if so. If not, return
-  results of ``render_main_template``.
-  XXX: really ``render_main_template`` in all cases?
-
-- The view mapping to submitted form action must call ``ajax_form_fiddle``,
-  which defines ajax mode and selector to use when re-rendering forms if form
-  controller ``next`` returns nothing.
-
-- The form implementing tiles have to return a list of ``AjaxAction`` and or
-  ``AjaxEvent`` and or ``AjaxMessage`` instances by ``next`` function if ajax 
-  flag is set. ``AjaxAction``, ``AjaxEvent`` and ``AjaxMessage`` each represent
-  either a ``bdajax.action``, a ``bdajax.trigger`` or a ``bdajax.message`` call
-  on the client side, and are executed in order. If no ajax flag is set, the
-  form's next function normally returns a ``HTTPFound`` instance.
-
-AjaxFormContinue object. This object is used by ``render_ajax_form``::
-
-    >>> result = ''
-    >>> continuation = []
-    >>> afc = AjaxFormContinue(result, continuation)
-    >>> afc.form
-    ''
-
-    >>> afc.next
-    'false'
-
-If no continuation definitions, ``form`` returns result and ``next`` returns 
-'false'::
-
-    >>> result = 'rendered form'
-    >>> afc = AjaxFormContinue(result, [])
-    >>> afc.form
-    'rendered form'
-
-    >>> afc.next
-    'false'
-
-If continuation definitions and result, ``form`` returns empty string, because
-form processing was successful. ``next`` returns a JSON dump of given actions,
-which gets interpreted and executed on client side::
-
-    >>> continuation = [action, event, message, overlay, path]
-    >>> afc = AjaxFormContinue(result, continuation)
-    >>> afc.form
-    ''
-
-    >>> afc.next
-    '[{"mode": "replace", 
-    "selector": ".someselector", 
-    "type": "action", 
-    "target": "http://example.com", 
-    "name": "tilename"}, 
-    {"selector": ".contextsensitiv", 
-    "type": "event", 
-    "target": "http://example.com", 
-    "name": "contextchanged"}, 
-    {"flavor": "info", 
-    "type": "message", 
-    "payload": "Some info message", 
-    "selector": "None"}, 
-    {"target": "http://example.com", 
-    "content_selector": ".overlay_content", 
-    "selector": "#ajax-overlay", 
-    "action": "someaction", 
-    "close": false, 
-    "type": "overlay", 
-    "css": "additional-css-class"}, 
-    {"overlay_css": "additional-overlay-css-class", 
-    "target": "http://example.com/foo/bar", 
-    "overlay": "acionname:#custom-overlay:.custom_overlay_content", 
-    "action": "layout:#layout:replace", 
-    "path": "foo/bar", 
-    "type": "path", 
-    "event": "contextchanged:#someid"}]'
-
 AjaxFormContinue information is used by ``render_ajax_form`` for rendering
 the response::
 
