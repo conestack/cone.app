@@ -28,7 +28,7 @@ def test_suite():
     suite.addTest(unittest.findTestCases(test_browser))
     suite.addTest(unittest.findTestCases(test_browser_actions))
     suite.addTest(unittest.findTestCases(test_browser_ajax))
-    suite.addTest(unittest.findTestCases(test_browser_authoring)
+    suite.addTest(unittest.findTestCases(test_browser_authoring))
 
     return suite
 
