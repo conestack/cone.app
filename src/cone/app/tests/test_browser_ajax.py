@@ -395,32 +395,24 @@ class TestBrowserAjax(TileTestCase):
         expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\', [{'
         self.assertTrue(result.find(expected) != -1)
 
-"""
-Livesearch
-----------
+    def test_livesearch(self):
+        # Cone provides a livesearch view, but no referring ``ILiveSearch``
+        # implementing adapter for it
+        request = self.layer.new_request()
+        request.params['term'] = 'foo'
+        self.assertEqual(livesearch(root, request), [])
 
-Cone provides a livesearch view, but no referring ``ILiveSearch`` implementing
-adapter for it::
+        # Provide dummy adapter
+        @implementer(ILiveSearch)
+        @adapter(Interface)
+        class LiveSearch(object):
+            def __init__(self, model):
+                self.model = model
 
-    >>> request = layer.new_request()
-    >>> request.params['term'] = 'foo'
-    >>> livesearch(root, request)
-    []
+            def search(self, request, query):
+                return [{'value': 'Value'}]
 
-Provide dummy adapter::
+        registry = request.registry
+        registry.registerAdapter(LiveSearch)
 
-    >>> @implementer(ILiveSearch)
-    ... @adapter(Interface)
-    ... class LiveSearch(object):
-    ...     def __init__(self, model):
-    ...         self.model = model
-    ...     def search(self, request, query):
-    ...         return [{'value': 'Value'}]
-
-    >>> registry = request.registry
-    >>> registry.registerAdapter(LiveSearch)
-
-    >>> livesearch(root, request)
-    [{'value': 'Value'}]
-
-"""
+        self.assertEqual(livesearch(root, request), [{'value': 'Value'}])
