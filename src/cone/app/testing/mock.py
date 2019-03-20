@@ -77,5 +77,9 @@ class SharingNode(object):
 @plumbing(CopySupport)
 class CopySupportNode(BaseNode):
 
+    def __init__(self, name=None, parent=None):
+        super(CopySupportNode, self).__init__(name=name, parent=parent)
+        self.messages = []
+
     def __call__(self):
-        print 'Called: %s' % self.name
+        self.messages.append('Called: {}'.format(self.name))

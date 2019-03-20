@@ -17,6 +17,7 @@ def test_suite():
     from cone.app.tests import test_browser_batch
     from cone.app.tests import test_browser_contents
     from cone.app.tests import test_browser_contextmenu
+    from cone.app.tests import test_browser_copysupport
 
     suite = unittest.TestSuite()
 
@@ -35,6 +36,7 @@ def test_suite():
     suite.addTest(unittest.findTestCases(test_browser_batch))
     suite.addTest(unittest.findTestCases(test_browser_contents))
     suite.addTest(unittest.findTestCases(test_browser_contextmenu))
+    suite.addTest(unittest.findTestCases(test_browser_copysupport))
 
     return suite
 
