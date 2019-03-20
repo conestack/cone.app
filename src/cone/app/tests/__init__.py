@@ -14,6 +14,7 @@ def test_suite():
     from cone.app.tests import test_browser_actions
     from cone.app.tests import test_browser_ajax
     from cone.app.tests import test_browser_authoring
+    from cone.app.tests import test_browser_batch
 
     suite = unittest.TestSuite()
 
@@ -29,6 +30,7 @@ def test_suite():
     suite.addTest(unittest.findTestCases(test_browser_actions))
     suite.addTest(unittest.findTestCases(test_browser_ajax))
     suite.addTest(unittest.findTestCases(test_browser_authoring))
+    suite.addTest(unittest.findTestCases(test_browser_batch))
 
     return suite
 
