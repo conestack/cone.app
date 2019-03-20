@@ -55,47 +55,37 @@ class TestBrowserAjax(TileTestCase):
                 'selector': '.foo'
             })
 
+    def test_AjaxAction(self):
+        target = 'http://example.com'
+        actionname = 'tilename'
+        mode = 'replace'
+        selector = '.someselector'
+        action = AjaxAction(target, actionname, mode, selector)
+        self.assertEqual(
+            (action.name, action.selector, action.mode, action.target),
+            ('tilename', '.someselector', 'replace', 'http://example.com')
+        )
+
+    def test_AjaxEvent(self):
+        eventname = 'contextchanged'
+        selector = '.contextsensitiv'
+        event = AjaxEvent(target, eventname, selector)
+        self.assertEqual(
+            (event.name, event.selector, event.target),
+            ('contextchanged', '.contextsensitiv', 'http://example.com')
+        )
+
+    def test_AjaxMessage(self):
+        payload = 'Some info message'
+        flavor = 'info'
+        selector = 'None'
+        message = AjaxMessage(payload, flavor, selector)
+        self.assertEqual(
+            (message.payload, message.flavor, message.selector),
+            ('Some info message', 'info', 'None')
+        )
+
 """
-It is possible to define continuation tasks to be performed as soon as
-XHR returns. Available task definitions are ``AjaxAction``, ``AjaxEvent``,
-``AjaxMessage``, ``AjaxOverlay`` and ``AjaxPath``.
-
-AjaxAction object::
-
-    >>> target = 'http://example.com'
-    >>> actionname = 'tilename'
-    >>> mode = 'replace'
-    >>> selector = '.someselector'
-    >>> action = AjaxAction(target, actionname, mode, selector)
-    >>> action
-    <cone.app.browser.ajax.AjaxAction object at ...>
-
-    >>> action.name, action.selector, action.mode, action.target
-    ('tilename', '.someselector', 'replace', 'http://example.com')
-
-AjaxEvent object::
-
-    >>> eventname = 'contextchanged'
-    >>> selector = '.contextsensitiv'
-    >>> event = AjaxEvent(target, eventname, selector)
-    >>> event
-    <cone.app.browser.ajax.AjaxEvent object at ...>
-
-    >>> event.name, event.selector, event.target
-    ('contextchanged', '.contextsensitiv', 'http://example.com')
-
-AjaxMessage object::
-
-    >>> payload = 'Some info message'
-    >>> flavor = 'info'
-    >>> selector = 'None'
-    >>> message = AjaxMessage(payload, flavor, selector)
-    >>> message
-    <cone.app.browser.ajax.AjaxMessage object at ...>
-
-    >>> message.payload, message.flavor, message.selector
-    ('Some info message', 'info', 'None')
-
 AjaxOverlay object::
 
     >>> overlay = AjaxOverlay('#ajax-overlay', 'someaction',
