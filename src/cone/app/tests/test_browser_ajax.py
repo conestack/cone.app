@@ -311,106 +311,91 @@ class TestBrowserAjax(TileTestCase):
             "event": "contextchanged:#someid"
         }])
 
+    def test_render_ajax_form(self):
+        self.assertEqual(ajax_form_template.split('\n'), [
+            '<div id="ajaxform">',
+            '    %(form)s',
+            '</div>',
+            '<script language="javascript" type="text/javascript">',
+            "    var container = document.getElementById('ajaxform');",
+            '    var child = container.firstChild;',
+            '    while(child != null && child.nodeType == 3) {',
+            '        child = child.nextSibling;',
+            '    }',
+            "    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s', %(next)s);",
+            '</script>',
+            ''
+        ])
+
+        # Provide a dummy Form
+        with self.layer.hook_tile_reg():
+            @tile(name='ajaxtestform')
+            class AjaxTestForm(Form):
+                def prepare(self):
+                    self.form = factory(
+                        'form',
+                        name='ajaxtestform',
+                        props={
+                            'action': 'http://example.com/foo',
+                        })
+                    self.form['foo'] = factory(
+                        'field:error:text',
+                        props={
+                            'required': 1,
+                        })
+                    self.form['save'] = factory(
+                        'submit',
+                        props={
+                            'action': 'save',
+                            'expression': True,
+                            'handler': self.save,
+                            'next': self.next,
+                            'label': 'Save',
+                        })
+
+                def save(self, widget, data):
+                    pass
+
+                def next(self, request):
+                    url = 'http://example.com'
+                    if self.ajax_request:
+                        return [
+                            AjaxAction(url, 'content', 'inner', '#content'),
+                            AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+                        ]
+                    return HTTPFound(location=url)
+
+        # Test unauthorized
+        request = self.layer.new_request()
+        res = render_ajax_form(root, request, 'ajaxtestform')
+        self.checkOutput("""
+        <div id="ajaxform">\n    \n</div>\n<script language="javascript"
+        ...HTTPForbidden: Unauthorized: tile <...AjaxTestForm object at ...>
+        failed permission check...
+        """, res.body)
+
+        # Test authorized with form extraction failure
+        with self.layer.authenticated('max'):
+            request.params['ajax'] = '1'
+            request.params['ajaxtestform.foo'] = ''
+            request.params['action.ajaxtestform.save'] = 1
+            response = render_ajax_form(root, request, 'ajaxtestform')
+            result = str(response)
+
+        self.assertTrue(result.find('<div class="errormessage">') != -1)
+        self.assertTrue(result.find('<script language="javascript"') != -1)
+        self.assertTrue(result.find('parent.bdajax.render_ajax_form(child, ') != -1)
+
+        # Test with form processing passing
+        with self.layer.authenticated('max'):
+            request.params['ajaxtestform.foo'] = 'foo'
+            response = render_ajax_form(root, request, 'ajaxtestform')
+            result = str(response)
+
+        expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\', [{'
+        self.assertTrue(result.find(expected) != -1)
+
 """
-AjaxFormContinue information is used by ``render_ajax_form`` for rendering
-the response::
-
-    >>> print ajax_form_template.split('\n')
-    ['<div id="ajaxform">', 
-    '    %(form)s', 
-    '</div>', 
-    '<script language="javascript" type="text/javascript">', 
-    "    var container = document.getElementById('ajaxform');", 
-    '    var child = container.firstChild;', 
-    '    while(child != null && child.nodeType == 3) {', 
-    '        child = child.nextSibling;', 
-    '    }', 
-    "    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s', %(next)s);", 
-    '</script>', 
-    '']
-
-Test ``render_ajax_form``. Provide a dummy Form::
-
-    >>> layer.hook_tile_reg()
-
-    >>> @tile(name='ajaxtestform')
-    ... class AjaxTestForm(Form):
-    ...     
-    ...     def prepare(self):
-    ...         self.form = factory(
-    ...             'form',
-    ...             name='ajaxtestform',
-    ...             props={
-    ...                 'action': 'http://example.com/foo',
-    ...             })
-    ...         self.form['foo'] = factory(
-    ...             'field:error:text',
-    ...             props={
-    ...                 'required': 1,
-    ...             })
-    ...         self.form['save'] = factory(
-    ...             'submit',
-    ...             props = {
-    ...                 'action': 'save',
-    ...                 'expression': True,
-    ...                 'handler': self.save,
-    ...                 'next': self.next,
-    ...                 'label': 'Save',
-    ...             })
-    ...     
-    ...     def save(self, widget, data):
-    ...         pass
-    ...     
-    ...     def next(self, request):
-    ...         url = 'http://example.com'
-    ...         if self.ajax_request:
-    ...             return [
-    ...                 AjaxAction(url, 'content', 'inner', '#content'),
-    ...                 AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-    ...             ]
-    ...         return HTTPFound(location=url)
-
-    >>> layer.unhook_tile_reg()
-
-Test unauthorized::
-
-    >>> request = layer.new_request()
-    >>> res = render_ajax_form(root, request, 'ajaxtestform')
-    >>> res.body
-    '<div id="ajaxform">\n    \n</div>\n<script language="javascript" 
-    ...HTTPForbidden: Unauthorized: tile <AjaxTestForm object at ...> 
-    failed permission check...
-
-Test authorized with form extraction failure::
-
-    >>> layer.login('max')
-    >>> request.params['ajax'] = '1'
-    >>> request.params['ajaxtestform.foo'] = ''
-    >>> request.params['action.ajaxtestform.save'] = 1
-    >>> response = render_ajax_form(root, request, 'ajaxtestform')
-    >>> result = str(response)
-
-    >>> result.find('<div class="errormessage">') != -1
-    True
-
-    >>> result.find('<script language="javascript"') != -1
-    True
-
-    >>> result.find('parent.bdajax.render_ajax_form(child, ') != -1
-    True
-
-Test with form perocessing passing::
-
-    >>> request.params['ajaxtestform.foo'] = 'foo'
-    >>> response = render_ajax_form(root, request, 'ajaxtestform')
-    >>> result = str(response)
-    >>> expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\', [{'
-    >>> result.find(expected) != -1
-    True
-
-    >>> layer.logout()
-
-
 Livesearch
 ----------
 
