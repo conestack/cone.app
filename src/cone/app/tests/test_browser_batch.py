@@ -2,9 +2,9 @@ from cone.app import testing
 from cone.app.browser import set_related_view
 from cone.app.browser.batch import Batch
 from cone.app.browser.batch import BatchedItems
+from cone.app.browser.batch import BatchedItemsBatch
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
-from cone.app.browser.utils import node_path
 from cone.app.browser.utils import node_path
 from cone.app.model import BaseNode
 from cone.tile import render_tile
@@ -431,417 +431,357 @@ class TestBrowserBatch(TileTestCase):
         expected = 'ajax:target="http://example.com/?b_page=2"'
         self.assertTrue(res.find(expected) > -1)
 
+    def test_abstract_BatchedItems(self):
+        # Abstract contracts
+        batched_items = BatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = self.layer.new_request()
+
+        err = self.expectError(
+            NotImplementedError,
+            lambda: batched_items.item_count
+        )
+        expected = (
+            'Abstract ``BatchedItems`` does not implement ``item_count``'
+        )
+        self.assertEqual(str(err), expected)
+
+        err = self.expectError(
+            NotImplementedError,
+            lambda: batched_items.slice_items
+        )
+        expected = (
+            'Abstract ``BatchedItems`` does not implement ``items``'
+        )
+        self.assertEqual(str(err), expected)
+
+        self.assertTrue(batched_items.slice_template is None)
+
+    def test_BatchedItems(self):
+        # Concrete ``BatchedItems`` implementation.
+        class MyBatchedItems(BatchedItems):
+            @property
+            def rendered_slice(self):
+                return u'<div id="{}">\n{}\n</div>'.format(
+                    self.slice_id,
+                    u'\n'.join([
+                        u'  <div>{}</div>'.format(it.name)
+                        for it in self.slice_items
+                    ])
+                )
+
+            @property
+            def item_count(self):
+                return len(self.filtered_items)
+
+            @property
+            def slice_items(self):
+                start, end = self.current_slice
+                return self.filtered_items[start:end]
+
+            @property
+            def filtered_items(self):
+                items = list()
+                term = self.filter_term
+                term = term.lower() if term else term
+                for node in self.model.values():
+                    if term and node.name.find(term) == -1:
+                        continue
+                    items.append(node)
+                return items
+
+        # Create model
+        model = BaseNode(name='container')
+        for i in range(35):
+            model['child_{}'.format(i)] = BaseNode()
+
+        # Create batched items with model
+        batched_items = MyBatchedItems()
+        batched_items.model = model
+        batched_items.request = self.layer.new_request()
+
+        # The helper function ``make_query`` considers ``query_whitelist`` and
+        # is used for query creation within batched items implementation.
+        self.assertEqual(batched_items.query_whitelist, [])
+
+        batched_items.query_whitelist = ['a', 'b']
+        batched_items.request.params['a'] = 'a'
+
+        self.assertEqual(batched_items.make_query({'c': 'c'}), '?a=a&c=c&b=')
+
+        # A query parameter which already exists on request gets overwritten
+        self.assertEqual(batched_items.make_query({'a': 'b'}), '?a=b&b=')
+
+        # The helper function ``make_url`` uses ``make_query``, thus considers
+        # ``query_whitelist`` as well and is used for URL creation within
+        # batched items implementation.
+        self.assertEqual(
+            batched_items.make_url(dict(c='c')),
+            u'http://example.com/container?a=a&c=c&b='
+        )
+
+        # It's also possible to pass a model path to ``make_url`` to avoid
+        # multiple computing of model path
+        path = node_path(model)
+        self.assertEqual(
+            batched_items.make_url(dict(c='c'), path=path),
+            u'http://example.com/container?a=a&c=c&b='
+        )
+
+        # ``BatchedItems`` plumbs ``RelatedViewConsumer`` and considers
+        # ``related_view`` if ``include_view`` passed to ``make_url``
+        request = batched_items.request = self.layer.new_request()
+        set_related_view(request, 'someview')
+
+        self.assertEqual(
+            batched_items.make_url(dict(c='c')),
+            u'http://example.com/container?a=&c=c&b='
+        )
+        self.assertEqual(
+            batched_items.make_url(dict(c='c'), include_view=True),
+            u'http://example.com/container/someview?a=&c=c&b='
+        )
+        self.assertEqual(
+            batched_items.make_url(dict(c='c'), path=path),
+            u'http://example.com/container?a=&c=c&b='
+        )
+        self.assertEqual(
+            batched_items.make_url(dict(c='c'), path=path, include_view=True),
+            u'http://example.com/container/someview?a=&c=c&b='
+        )
+
+        # Default slice size
+        self.assertEqual(batched_items.default_slice_size, 15)
+        # Current slice size
+        self.assertEqual(batched_items.slice_size, 15)
+        # Number of available slice slizes
+        self.assertEqual(batched_items.num_slice_sizes, 4)
+        # Available slice sizes for slice size selection
+        self.assertEqual(batched_items.slice_sizes, [15, 30, 45, 60])
+
+        batched_items.default_slice_size = 10
+        batched_items.num_slice_sizes = 5
+        self.assertEqual(batched_items.slice_sizes, [10, 20, 30, 40, 50])
+
+        batched_items.default_slice_size = 15
+        batched_items.num_slice_sizes = 4
+
+        # Test ``slice_target``
+        self.assertEqual(batched_items.query_whitelist, ['a', 'b'])
+
+        request = batched_items.request = self.layer.new_request()
+        request.params['a'] = 'a'
+        request.params['b'] = 'b'
+        request.params['term'] = 'Hello'
+
+        self.assertEqual(batched_items.filter_term, u'Hello')
+        self.assertEqual(
+            batched_items.slice_target,
+            u'http://example.com/container?a=a&term=Hello&b=b'
+        )
+
+        # Test ``filter_target``
+        self.assertEqual(
+            batched_items.filter_target,
+            u'http://example.com/container?a=a&b=b&size=15'
+        )
+
+        request.params['size'] = '30'
+        self.assertEqual(
+            batched_items.filter_target,
+            u'http://example.com/container?a=a&b=b&size=30'
+        )
+
+        # Header template path
+        self.assertEqual(
+            batched_items.header_template,
+            'cone.app.browser:templates/batched_items_header.pt'
+        )
+
+        # Rendered header
+        self.checkOutput("""
+        ...<div class="panel-heading batched_items_header">...
+        """, batched_items.rendered_header)
+
+        # Header title. Taken from ``model.metadata`` by default
+        self.assertEqual(batched_items.title, 'container')
+
+        # Title can be skipped by setting ``show_title`` to False
+        expected = '<span class="label label-primary">container</span>'
+        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.show_title = False
+        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.show_title = True
+
+        # Slice size can be skipped by setting ``show_slice_size`` to False
+        expected = '<select name="size"'
+        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.show_slice_size = False
+        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.show_slice_size = True
+
+        # CSS class set on slice size selection wrapper
+        expected = 'col-xs-4 col-sm3'
+        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.slice_size_css = 'col-xs-3 col-sm2'
+        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.slice_size_css = 'col-xs-4 col-sm3'
+
+        # Flag whether to show search filter
+        expected = '<input name="term"'
+        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.show_filter = False
+        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.show_filter = True
+
+        # CSS class set on slice search filter
+        expected = 'col-xs-3'
+        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.filter_css = 'col-xs-4'
+        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.filter_css = 'col-xs-3'
+
+        # Additional markup displayed in header
+        expected = '<div class="additional">Additional</div>'
+        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.head_additional = expected
+        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
+
+        batched_items.head_additional = None
+
+        # Batched items pagination. Pagination object is provided by
+        # ``pagination`` property on ``BatchedItems``
+        request = self.layer.new_request()
+        set_related_view(request, 'someview')
+
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode(name='container')
+        batched_items.request = request
+
+        pagination = batched_items.pagination
+        self.assertTrue(isinstance(pagination, BatchedItemsBatch))
+
+        pagination.model = batched_items.model
+        pagination.request = batched_items.request
+
+        # Pagination batch uses ``page_target`` on ``BatchedItems`` for target
+        # URL computing.
+        path = node_path(batched_items.model)
+        page = '1'
+        self.assertEqual(
+            batched_items.page_target(path, page),
+            u'http://example.com/container?b_page=1&size=15'
+        )
+
+        # Pagination batch name is created from batched items ``items_id``
+        self.assertEqual(batched_items.items_id, 'batched_items')
+        self.assertEqual(pagination.name, 'batched_itemsbatch')
+
+        # Pagination batch only gets displayed if there are batched items.
+        self.assertEqual(batched_items.item_count, 0)
+        self.assertFalse(pagination.display)
+        self.assertEqual(pagination.vocab, [])
+
+        batched_items.model = pagination.model = model
+        self.assertEqual(batched_items.item_count, 35)
+        self.assertTrue(pagination.display)
+        self.assertEqual(batched_items.current_page, 0)
+
+        request.params['b_page'] = '1'
+        self.assertEqual(batched_items.current_page, 1)
+
+        vocab = pagination.vocab
+        self.assertEqual(len(vocab), 3)
+
+        self.assertEqual(sorted(vocab[0].items()), [
+            ('current', False),
+            ('href', u'http://example.com/container/someview?b_page=0&size=15'),
+            ('page', '1'),
+            ('target', u'http://example.com/container?b_page=0&size=15'),
+            ('visible', True)
+        ])
+        self.assertEqual(sorted(vocab[1].items()), [
+            ('current', True),
+            ('href', u'http://example.com/container/someview?b_page=1&size=15'),
+            ('page', '2'),
+            ('target', u'http://example.com/container?b_page=1&size=15'),
+            ('visible', True)
+        ])
+        self.assertEqual(sorted(vocab[2].items()), [
+            ('current', False),
+            ('href', u'http://example.com/container/someview?b_page=2&size=15'),
+            ('page', '3'),
+            ('target', u'http://example.com/container?b_page=2&size=15'),
+            ('visible', True)
+        ])
+
+        # Rendered pagination
+        self.checkOutput("""
+        ...<ul class="pagination pagination-sm">...
+        """, batched_items.rendered_pagination)
+
+        # Batched items footer
+        batched_items = MyBatchedItems()
+        batched_items.model = model
+        batched_items.request = self.layer.new_request()
+
+        # Default template path
+        self.assertEqual(
+            batched_items.footer_template,
+            'cone.app.browser:templates/batched_items_footer.pt'
+        )
+        self.checkOutput("""
+        ...<div class="panel-footer batched_items_footer">...
+        """, batched_items.rendered_footer)
+
+        # Slice ID
+        self.assertEqual(batched_items.slice_id, 'batched_items_slice')
+
+        # Current slice to display as tuple
+        self.assertEqual(batched_items.current_slice, (0, 15))
+
+        # Overall item count
+        self.assertEqual(batched_items.item_count, 35)
+
+        # Current slice items
+        self.checkOutput("""
+        [<BaseNode object 'child_0' at ...>,
+        ...
+        <BaseNode object 'child_14' at ...>]
+        """, str(batched_items.slice_items))
+
+        # Chage current page and check again
+        request = batched_items.request = self.layer.new_request()
+        request.params['b_page'] = '1'
+        self.assertEqual(batched_items.current_slice, (15, 30))
+        self.checkOutput("""
+        [<BaseNode object 'child_15' at ...>,
+        ...
+        <BaseNode object 'child_29' at ...>]
+        """, str(batched_items.slice_items))
+
+        # Change the slice size
+        request = batched_items.request = self.layer.new_request()
+        request.params['size'] = '10'
+        self.assertEqual(batched_items.slice_size, 10)
+        self.assertEqual(batched_items.current_slice, (0, 10))
+        self.checkOutput("""
+        [<BaseNode object 'child_0' at ...>,
+        ...
+        <BaseNode object 'child_9' at ...>]
+        """, str(batched_items.slice_items))
 """
-BatchedItems
-------------
-
-Abstract contracts::
-
-    >>> batched_items = BatchedItems()
-    >>> batched_items.model = BaseNode()
-    >>> batched_items.request = layer.new_request()
-
-    >>> batched_items.item_count
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``BatchedItems`` does not implement 
-    ``item_count``
-
-    >>> batched_items.slice_items
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: Abstract ``BatchedItems`` does not implement 
-    ``items``
-
-    >>> assert(batched_items.slice_template is None)
-
-Concrete ``BatchedItems`` implementation.::
-
-    >>> class MyBatchedItems(BatchedItems):
-    ... 
-    ...     @property
-    ...     def rendered_slice(self):
-    ...         return u'<div id="{}">\n{}\n</div>'.format(
-    ...             self.slice_id,
-    ...             u'\n'.join([
-    ...                 u'  <div>{}</div>'.format(it.name)
-    ...                     for it in self.slice_items
-    ...             ])
-    ...         )
-    ... 
-    ...     @property
-    ...     def item_count(self):
-    ...         return len(self.filtered_items)
-    ... 
-    ...     @property
-    ...     def slice_items(self):
-    ...         start, end = self.current_slice
-    ...         return self.filtered_items[start:end]
-    ... 
-    ...     @property
-    ...     def filtered_items(self):
-    ...         items = list()
-    ...         term = self.filter_term
-    ...         term = term.lower() if term else term
-    ...         for node in self.model.values():
-    ...             if term and node.name.find(term) == -1:
-    ...                 continue
-    ...             items.append(node)
-    ...         return items
-
-Create model::
-
-    >>> model = BaseNode(name='container')
-    >>> for i in range(35):
-    ...     model['child_{}'.format(i)] = BaseNode()
-
-Create batched items with model::
-
-    >>> batched_items = MyBatchedItems()
-    >>> batched_items.model = model
-    >>> batched_items.request = layer.new_request()
-
-The helper function ``make_query`` considers ``query_whitelist`` and is used
-for query creation within batched items implementation.::
-
-    >>> batched_items.query_whitelist
-    []
-
-    >>> batched_items.query_whitelist = ['a', 'b']
-    >>> batched_items.request.params['a'] = 'a'
-
-    >>> batched_items.make_query({'c': 'c'})
-    '?a=a&c=c&b='
-
-A query parameter which already exists on request gets overwritten::
-
-    >>> batched_items.make_query({'a': 'b'})
-    '?a=b&b='
-
-The helper function ``make_url`` uses ``make_query``, thus considers
-``query_whitelist`` as well and is used for URL creation within batched items
-implementation.::
-
-    >>> batched_items.make_url(dict(c='c'))
-    u'http://example.com/container?a=a&c=c&b='
-
-It's also possible to pass a model path to ``make_url`` to avoid multiple
-computing of model path::
-
-    >>> path = node_path(model)
-    >>> batched_items.make_url(dict(c='c'), path=path)
-    u'http://example.com/container?a=a&c=c&b='
-
-``BatchedItems`` plumbs ``RelatedViewConsumer`` and considers ``related_view``
-if ``include_view`` passed to ``make_url``::
-
-    >>> request = batched_items.request = layer.new_request()
-    >>> set_related_view(request, 'someview')
-
-    >>> batched_items.make_url(dict(c='c'))
-    u'http://example.com/container?a=&c=c&b='
-
-    >>> batched_items.make_url(dict(c='c'), include_view=True)
-    u'http://example.com/container/someview?a=&c=c&b='
-
-    >>> batched_items.make_url(dict(c='c'), path=path)
-    u'http://example.com/container?a=&c=c&b='
-
-    >>> batched_items.make_url(dict(c='c'), path=path, include_view=True)
-    u'http://example.com/container/someview?a=&c=c&b='
-
-Default slice size::
-
-    >>> batched_items.default_slice_size
-    15
-
-Current slice size.::
-
-    >>> batched_items.slice_size
-    15
-
-Number of available slice slizes::
-
-    >>> batched_items.num_slice_sizes
-    4
-
-Available slice sizes for slice size selection.::
-
-    >>> batched_items.slice_sizes
-    [15, 30, 45, 60]
-
-    >>> batched_items.default_slice_size = 10
-    >>> batched_items.num_slice_sizes = 5
-    >>> batched_items.slice_sizes
-    [10, 20, 30, 40, 50]
-
-    >>> batched_items.default_slice_size = 15
-    >>> batched_items.num_slice_sizes = 4
-
-Test ``slice_target``.::
-
-    >>> batched_items.query_whitelist
-    ['a', 'b']
-
-    >>> request = batched_items.request = layer.new_request()
-    >>> request.params['a'] = 'a'
-    >>> request.params['b'] = 'b'
-    >>> request.params['term'] = 'Hello'
-
-    >>> batched_items.filter_term
-    u'Hello'
-
-    >>> batched_items.slice_target
-    u'http://example.com/container?a=a&term=Hello&b=b'
-
-Test ``filter_target``.::
-
-    >>> batched_items.filter_target
-    u'http://example.com/container?a=a&b=b&size=15'
-
-    >>> request.params['size'] = '30'
-    >>> batched_items.filter_target
-    u'http://example.com/container?a=a&b=b&size=30'
-
-Header template path::
-
-    >>> batched_items.header_template
-    'cone.app.browser:templates/batched_items_header.pt'
-
-Rendered header::
-
-    >>> batched_items.rendered_header
-    u'...<div class="panel-heading batched_items_header">...'
-
-Header title. Taken from ``model.metadata`` by default::
-
-    >>> batched_items.title
-    'container'
-
-Title can be skipped by setting ``show_title`` to False.::
-
-    >>> expected = '<span class="label label-primary">container</span>'
-    >>> batched_items.rendered_header.find(expected) > -1
-    True
-
-    >>> batched_items.show_title = False
-    >>> batched_items.rendered_header.find(expected) > -1
-    False
-
-    >>> batched_items.show_title = True
-
-Slice size can be skipped by setting ``show_slice_size`` to False.::
-
-    >>> expected = '<select name="size"'
-    >>> batched_items.rendered_header.find(expected) > -1
-    True
-
-    >>> batched_items.show_slice_size = False
-    >>> batched_items.rendered_header.find(expected) > -1
-    False
-
-    >>> batched_items.show_slice_size = True
-
-CSS class set on slice size selection wrapper::
-
-    >>> expected = 'col-xs-4 col-sm3'
-    >>> batched_items.rendered_header.find(expected) > -1
-    True
-
-    >>> batched_items.slice_size_css = 'col-xs-3 col-sm2'
-    >>> batched_items.rendered_header.find(expected) > -1
-    False
-
-    >>> batched_items.slice_size_css = 'col-xs-4 col-sm3'
-
-Flag whether to show search filter::
-
-    >>> expected = '<input name="term"'
-    >>> batched_items.rendered_header.find(expected) > -1
-    True
-
-    >>> batched_items.show_filter = False
-    >>> batched_items.rendered_header.find(expected) > -1
-    False
-
-    >>> batched_items.show_filter = True
-
-CSS class set on slice search filter::
-
-    >>> expected = 'col-xs-3'
-    >>> batched_items.rendered_header.find(expected) > -1
-    True
-
-    >>> batched_items.filter_css = 'col-xs-4'
-    >>> batched_items.rendered_header.find(expected) > -1
-    False
-
-    >>> batched_items.filter_css = 'col-xs-3'
-
-Additional markup displayed in header::
-
-    >>> expected = '<div class="additional">Additional</div>'
-    >>> batched_items.rendered_header.find(expected) > -1
-    False
-
-    >>> batched_items.head_additional = expected
-    >>> batched_items.rendered_header.find(expected) > -1
-    True
-
-    >>> batched_items.head_additional = None
-
-Batched items pagination. Pagination object is provided by ``pagination``
-property on ``BatchedItems``::
-
-    >>> request = layer.new_request()
-    >>> set_related_view(request, 'someview')
-
-    >>> batched_items = MyBatchedItems()
-    >>> batched_items.model = BaseNode(name='container')
-    >>> batched_items.request = request
-
-    >>> pagination = batched_items.pagination
-    >>> pagination
-    <cone.app.browser.batch.BatchedItemsBatch object at ...>
-
-    >>> pagination.model = batched_items.model
-    >>> pagination.request = batched_items.request
-
-Pagination batch uses ``page_target`` on ``BatchedItems`` for target URL
-computing.::
-
-    >>> path = node_path(batched_items.model)
-    >>> page = '1'
-    >>> batched_items.page_target(path, page)
-    u'http://example.com/container?b_page=1&size=15'
-
-Pagination batch name is created from batched items ``items_id``::
-
-    >>> batched_items.items_id
-    'batched_items'
-
-    >>> pagination.name
-    'batched_itemsbatch'
-
-Pagination batch only gets displayed if there are batched items.::
-
-    >>> batched_items.item_count
-    0
-
-    >>> pagination.display
-    False
-
-    >>> pagination.vocab
-    []
-
-    >>> batched_items.model = pagination.model = model
-
-    >>> batched_items.item_count
-    35
-
-    >>> pagination.display
-    True
-
-    >>> batched_items.current_page
-    0
-
-    >>> request.params['b_page'] = '1'
-    >>> batched_items.current_page
-    1
-
-    >>> vocab = pagination.vocab
-    >>> len(vocab)
-    3
-
-    >>> sorted(vocab[0].items())
-    [('current', False), 
-    ('href', u'http://example.com/container/someview?b_page=0&size=15'), 
-    ('page', '1'), 
-    ('target', u'http://example.com/container?b_page=0&size=15'), 
-    ('visible', True)]
-
-    >>> sorted(vocab[1].items())
-    [('current', True), 
-    ('href', u'http://example.com/container/someview?b_page=1&size=15'), 
-    ('page', '2'), 
-    ('target', u'http://example.com/container?b_page=1&size=15'), 
-    ('visible', True)]
-
-    >>> sorted(vocab[2].items())
-    [('current', False), 
-    ('href', u'http://example.com/container/someview?b_page=2&size=15'), 
-    ('page', '3'), 
-    ('target', u'http://example.com/container?b_page=2&size=15'), 
-    ('visible', True)]
-
-Rendered pagination.::
-
-    >>> batched_items.rendered_pagination
-    u'...<ul class="pagination pagination-sm">...'
-
-Batched items footer::
-
-    >>> batched_items = MyBatchedItems()
-    >>> batched_items.model = model
-    >>> batched_items.request = layer.new_request()
-
-Default template path::
-
-    >>> batched_items.footer_template
-    'cone.app.browser:templates/batched_items_footer.pt'
-
-    >>> batched_items.rendered_footer
-    u'...<div class="panel-footer batched_items_footer">...'
-
-Slice ID.::
-
-    >>> batched_items.slice_id
-    'batched_items_slice'
-
-Current slice to display as tuple:: 
-
-    >>> batched_items.current_slice
-    (0, 15)
-
-Overall item count::
-
-    >>> batched_items.item_count
-    35
-
-Current slice items::
-
-    >>> batched_items.slice_items
-    [<BaseNode object 'child_0' at ...>, 
-    ...
-    <BaseNode object 'child_14' at ...>]
-
-Chage current page and check again::
-
-    >>> request = batched_items.request = layer.new_request()
-    >>> request.params['b_page'] = '1'
-    >>> batched_items.current_slice
-    (15, 30)
-
-    >>> batched_items.slice_items
-    [<BaseNode object 'child_15' at ...>, 
-    ...
-    <BaseNode object 'child_29' at ...>]
-
-Change the slice size::
-
-    >>> request = batched_items.request = layer.new_request()
-    >>> request.params['size'] = '10'
-    >>> batched_items.slice_size
-    10
-
-    >>> batched_items.current_slice
-    (0, 10)
-
-    >>> batched_items.slice_items
-    [<BaseNode object 'child_0' at ...>, 
-    ...
-    <BaseNode object 'child_9' at ...>]
-
 Change the filter term::
 
     >>> request = batched_items.request = layer.new_request()
