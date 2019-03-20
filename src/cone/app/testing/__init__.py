@@ -1,4 +1,6 @@
 from cone.app.security import authenticate
+from cone.tile.tests import DummyVenusian
+from contextlib import contextmanager
 from plone.testing import Layer
 from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
@@ -14,32 +16,11 @@ import venusian
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
-class DummyVenusian(object):
-
-    def attach(self, wrapped, callback, category=None, depth=1):
-        callback(None, None, wrapped)
-        return None
-
-
 class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
 
     @property
     def is_xhr(self):
         return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
-
-
-class Authenticated(object):
-
-    def __init__(self, layer, login, password):
-        self.layer = layer
-        self.login = login
-        self.password = password
-
-    def __enter__(self):
-        self.layer.login(self.login, password=self.password)
-
-    def __exit__(self, *exc):
-        self.layer.logout()
 
 
 class Security(Layer):
@@ -62,12 +43,6 @@ class Security(Layer):
             'request': self.current_request,
             'registry': self.registry
         }
-
-    def hook_tile_reg(self):
-        cone.tile.tile.venusian = DummyVenusian()
-
-    def unhook_tile_reg(self):
-        cone.tile.tile.venusian = venusian
 
     def new_request(self, type=None, xhr=False):
         request = self.current_request
@@ -115,8 +90,21 @@ class Security(Layer):
                 if key in environ:
                     del environ[key]
 
+    @contextmanager
     def authenticated(self, login, password=None):
-        return Authenticated(self, login, password=password)
+        try:
+            self.login(login, password=password)
+            yield
+        finally:
+            self.logout()
+
+    @contextmanager
+    def hook_tile_reg(self):
+        try:
+            cone.tile.tile.venusian = DummyVenusian()
+            yield
+        finally:
+            cone.tile.tile.venusian = venusian
 
     def make_app(self, **kw):
         import pyramid.threadlocal
