@@ -167,8 +167,10 @@ class TestBrowserAjax(TileTestCase):
             @tile(name='testtile2')
             class TestTile(Tile):
                 def render(self):
-                    ajax_continue(self.request,
-                                  AjaxAction('target', 'name', 'mode', 'selector'))
+                    ajax_continue(
+                        self.request,
+                        AjaxAction('target', 'name', 'mode', 'selector')
+                    )
                     return u''
 
         request = self.layer.new_request()
@@ -190,14 +192,16 @@ class TestBrowserAjax(TileTestCase):
                 'selector': '.foo'
             })
 
+    def test_ajax_message(self):
+        # ``ajax_message`` is a shortcut for settings continuation message
+        request = self.layer.new_request()
+        ajax_message(request, 'payload')
+        self.assertTrue(isinstance(
+            request.environ['cone.app.continuation'][0],
+            AjaxMessage
+        ))
+
 """
-Use ``ajax_message`` as shortcut for settings continuation message::
-
-    >>> request = layer.new_request()
-    >>> ajax_message(request, 'payload')
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxMessage object at ...>]
-
 Use ``ajax_status_message`` as shortcut for settings continuation statu 
 message::
 
