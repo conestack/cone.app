@@ -476,8 +476,6 @@ class TestBrowserAuthoring(TileTestCase):
                 u'unknown_factory'
             )
 
-        ActionContext(root, request, 'content')
-
         # Render with valid factory
         with self.layer.authenticated('manager'):
             request.params['factory'] = 'mynode'
@@ -566,144 +564,151 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
 
+    def test_Editing(self):
+        class MyNode(BaseNode):
+            node_info_name = 'mynode'
+
+        # Create and register an ``editform`` named form tile
+        with self.layer.hook_tile_reg():
+            @tile(name='editform', interface=MyNode)
+            @plumbing(ContentEditForm)
+            class MyEditForm(Form):
+                def prepare(self):
+                    form = factory(u'form',
+                                   name='editform',
+                                   props={'action': self.nodeurl})
+                    form['title'] = factory(
+                        'field:label:text',
+                        value=self.model.attrs.title,
+                        props={
+                            'label': 'Title',
+                        })
+                    form['update'] = factory(
+                        'submit',
+                        props={
+                            'action': 'update',
+                            'expression': True,
+                            'handler': self.update,
+                            'next': self.next,
+                            'label': 'Update',
+                        })
+                    self.form = form
+
+                def update(self, widget, data):
+                    fetch = self.request.params.get
+                    self.model.attrs.title = fetch('editform.title')
+
+        # Dummy model
+        root = MyNode()
+        child = root['somechild'] = MyNode()
+        child.attrs.title = 'My Node'
+
+        # Render form with value from model
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            res = render_tile(root['somechild'], request, 'edit')
+
+        self.checkOutput("""
+        ...<span class="label label-primary">Edit: My Node</span>...
+        <form action="http://example.com/somechild"...
+        """, res)
+
+        # Render with submitted data. Default next URL of EditForm is the
+        # edited node
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            res = render_tile(root['somechild'], request, 'edit')
+
+        self.assertEqual(
+            request.environ['redirect'].location,
+            'http://example.com/somechild'
+        )
+
+        # Check next URL with ``parent`` as ``came_from`` value
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            request.params['came_from'] = 'parent'
+            res = render_tile(root['somechild'], request, 'edit')
+
+        self.assertEqual(
+            request.environ['redirect'].location,
+            'http://example.com/'
+        )
+
+        # Check next URL with URL as ``came_from`` value
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            came_from = urllib2.quote('http://example.com/other/node/in/tree')
+            request.params['came_from'] = came_from
+            res = render_tile(root['somechild'], request, 'edit')
+
+        self.assertEqual(
+            request.environ['redirect'].location,
+            'http://example.com/other/node/in/tree'
+        )
+
+        # Render with ajax flag
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            request.params['ajax'] = '1'
+            res = render_tile(root['somechild'], request, 'edit')
+
+        self.assertTrue(isinstance(
+            request.environ['cone.app.continuation'][0],
+            AjaxEvent
+        ))
+
+        # URL computing is the same as if ``HTTPFound`` instance is returned.
+        # In Ajax case, the URL is used as ajax target
+        self.assertEqual(
+            request.environ['cone.app.continuation'][0].target,
+            'http://example.com/somechild'
+        )
+
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            came_from = urllib2.quote('http://example.com/other/node/in/tree')
+            request.params['came_from'] = came_from
+            request.params['ajax'] = '1'
+            res = render_tile(root['somechild'], request, 'edit')
+
+        self.assertEqual(
+            request.environ['cone.app.continuation'][0].target,
+            'http://example.com/other/node/in/tree'
+        )
+        # Check the updated node
+        self.assertEqual(root['somechild'].attrs.title, 'Changed title')
+
+        # Edit view
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            root.attrs.title = 'Foo'
+            res = edit(root, request)
+
+        self.assertTrue(isinstance(res, HTTPFound))
+
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            request.params['action.editform.update'] = '1'
+            request.params['editform.title'] = 'Changed title'
+            request.params['ajax'] = '1'
+            res = str(edit(root, request))
+
+        self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
+
 """
-Editing
--------
-
-Create and register an ``editform`` named form tile::
-
-    >>> layer.hook_tile_reg()
-
-    >>> @tile(name='editform', interface=MyNode)
-    ... @plumbing(ContentEditForm)
-    ... class MyEditForm(Form):
-    ...     def prepare(self):
-    ...         form = factory(u'form',
-    ...                        name='editform',
-    ...                        props={'action': self.nodeurl})
-    ...         form['title'] = factory(
-    ...             'field:label:text',
-    ...             value = self.model.attrs.title,
-    ...             props = {
-    ...                 'label': 'Title',
-    ...             })
-    ...         form['update'] = factory(
-    ...             'submit',
-    ...             props = {
-    ...                 'action': 'update',
-    ...                 'expression': True,
-    ...                 'handler': self.update,
-    ...                 'next': self.next,
-    ...                 'label': 'Update',
-    ...             })
-    ...         self.form = form
-    ... 
-    ...     def update(self, widget, data):
-    ...         fetch = self.request.params.get
-    ...         self.model.attrs.title = fetch('editform.title')
-
-    >>> layer.unhook_tile_reg()
-
-Render form with value from model::
-
-    >>> layer.login('editor')
-    >>> request = layer.new_request()
-
-    >>> ac = ActionContext(root['somechild'], request, 'content')
-
-    >>> render_tile(root['somechild'], request, 'edit')
-    u'...<span class="label label-primary">Edit: My Node</span>...
-    <form action="http://example.com/somechild"...'
-
-Render with submitted data. Default next URL of EditForm is the edited
-node::
-
-    >>> request = layer.new_request()
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> res = render_tile(root['somechild'], request, 'edit')
-    >>> request.environ['redirect'].location
-    'http://example.com/somechild'
-
-Check next URL with ``parent`` as ``came_from`` value::
-
-    >>> request = layer.new_request()
-
-    >>> ac = ActionContext(root['somechild'], request, 'content')
-
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> request.params['came_from'] = 'parent'
-    >>> res = render_tile(root['somechild'], request, 'edit')
-    >>> request.environ['redirect'].location
-    'http://example.com/'
-
-Check next URL with URL as ``came_from`` value::
-
-    >>> request = layer.new_request()
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> came_from = urllib2.quote('http://example.com/other/node/in/tree')
-    >>> request.params['came_from'] = came_from
-    >>> res = render_tile(root['somechild'], request, 'edit')
-    >>> request.environ['redirect'].location
-    'http://example.com/other/node/in/tree'
-
-Render with ajax flag::
-
-    >>> request = layer.new_request()
-
-    >>> ac = ActionContext(root['somechild'], request, 'content')
-
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> request.params['ajax'] = '1'
-    >>> res = render_tile(root['somechild'], request, 'edit')
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxEvent object at ...>]
-
-URL computing is the same as if ``HTTPFound`` instance is returned. In Ajax
-case, the URL is used as ajax target::
-
-    >>> request.environ['cone.app.continuation'][0].target
-    'http://example.com/somechild'
-
-    >>> request = layer.new_request()
-
-    >>> ac = ActionContext(root['somechild'], request, 'content')
-
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> came_from = urllib2.quote('http://example.com/other/node/in/tree')
-    >>> request.params['came_from'] = came_from
-    >>> request.params['ajax'] = '1'
-    >>> res = render_tile(root['somechild'], request, 'edit')
-    >>> request.environ['cone.app.continuation'][0].target
-    'http://example.com/other/node/in/tree'
-
-Check the updated node::
-
-    >>> root['somechild'].attrs.title
-    'Changed title'
-
-Edit view::
-
-    >>> request = layer.new_request()
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> root.attrs.title = 'Foo'
-    >>> edit(root, request)
-    <HTTPFound at ... 302 Found>
-
-    >>> request = layer.new_request()
-    >>> request.params['action.editform.update'] = '1'
-    >>> request.params['editform.title'] = 'Changed title'
-    >>> request.params['ajax'] = '1'
-    >>> result = str(edit(root, request))
-    >>> result.find('parent.bdajax.render_ajax_form') != -1
-    True
-
-
 Deleting
 --------
 
