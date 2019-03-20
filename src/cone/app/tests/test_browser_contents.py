@@ -9,8 +9,8 @@ from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
 from pyramid.exceptions import HTTPForbidden
-from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import ACLDenied
+from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Deny
 from pyramid.security import Everyone
 from pyramid.security import has_permission
