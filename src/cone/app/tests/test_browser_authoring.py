@@ -1,7 +1,6 @@
 from cone.app import testing
-from cone.app.browser.actions import ActionContext
-from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import AjaxMessage
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.authoring import _FormRenderingTile
 from cone.app.browser.authoring import add
@@ -13,7 +12,6 @@ from cone.app.browser.authoring import FormHeading
 from cone.app.browser.authoring import is_ajax
 from cone.app.browser.authoring import render_form
 from cone.app.browser.form import Form
-from cone.app.browser.utils import make_url
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
@@ -24,11 +22,11 @@ from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from plumber import plumbing
 from webob.exc import HTTPFound
-from yafowil import loader
 from yafowil.base import factory
 from zope.interface import implementer
 from zope.interface import Interface
 import urllib2
+import yafowil.loader
 
 
 class TestBrowserAuthoring(TileTestCase):
@@ -397,7 +395,7 @@ class TestBrowserAuthoring(TileTestCase):
         expected = 'Abstract ``FormHeading`` does not implement ``form_heading``'
         self.assertEqual(str(err), expected)
 
-    def test_Adding(self):
+    def test_adding(self):
         # Provide a node interface needed for different node style binding to
         # test form
         class ITestAddingNode(Interface):
@@ -564,7 +562,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
 
-    def test_Editing(self):
+    def test_editing(self):
         class MyNode(BaseNode):
             node_info_name = 'mynode'
 
@@ -708,161 +706,170 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
 
-"""
-Deleting
---------
+    def test_deleting(self):
+        class CallableNode(BaseNode):
+            def __call__(self):
+                pass
 
-::
+        node = CallableNode()
+        node['child'] = CallableNode()
+        self.checkOutput("""
+        <class '...CallableNode'>: None
+          <class '...CallableNode'>: child
+        """, node.treerepr())
 
-    >>> class CallableNode(BaseNode):
-    ...     def __call__(self):
-    ...         pass
+        del node['child']
+        self.checkOutput("""
+        <class '...CallableNode'>: None
+        """, node.treerepr())
 
-    >>> node = CallableNode()
-    >>> node['child'] = CallableNode()
-    >>> node.printtree()
-    <class 'CallableNode'>: None
-      <class 'CallableNode'>: child
+        node['child'] = CallableNode()
 
-    >>> del node['child']
-    >>> node.printtree()
-    <class 'CallableNode'>: None
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(render_tile(node['child'], request, 'delete'), u'')
 
-    >>> node['child'] = CallableNode()
+        self.assertEqual(
+            request.environ['cone.app.continuation'][0].payload,
+            u'Object "child" not deletable'
+        )
 
-    >>> layer.login('manager')
-    >>> request = layer.new_request()
-    >>> render_tile(node['child'], request, 'delete')
-    u''
+        node['child'].properties.action_delete = True
 
-    >>> request.environ['cone.app.continuation'][0].payload
-    u'Object "child" not deletable'
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(render_tile(node['child'], request, 'delete'), u'')
 
-    >>> node['child'].properties.action_delete = True
+        self.assertTrue(isinstance(
+            request.environ['cone.app.continuation'][0],
+            AjaxEvent
+        ))
+        self.assertTrue(isinstance(
+            request.environ['cone.app.continuation'][1],
+            AjaxMessage
+        ))
+        self.checkOutput("""
+        <class '...CallableNode'>: None
+        """, node.treerepr())
 
-    >>> request = layer.new_request()
-    >>> render_tile(node['child'], request, 'delete')
-    u''
+    def test_add_items_dropdown(self):
+        class MyNode(BaseNode):
+            node_info_name = 'mynode'
 
-    >>> request.environ['cone.app.continuation']
-    [<cone.app.browser.ajax.AjaxEvent object at ...>, 
-    <cone.app.browser.ajax.AjaxMessage object at ...>]
+        # Provide NodeInfo for our Application node
+        mynodeinfo = NodeInfo()
+        mynodeinfo.title = 'My Node'
+        mynodeinfo.description = 'This is My node.'
+        mynodeinfo.node = MyNode
+        mynodeinfo.addables = ['mynode']  # self containment
+        register_node_info('mynode', mynodeinfo)
 
-    >>> node.printtree()
-    <class 'CallableNode'>: None
+        # Dummy model
+        root = MyNode()
+        root['somechild'] = MyNode()
+        # child.attrs.title = 'My Node'
 
+        # Dropdown menu containing links to the addforms of allowed child nodes
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            rendered = render_tile(root['somechild'], request, 'add_dropdown')
 
-Add Items Dropdown Widget
--------------------------
+        # Non JS link to add form
+        expected = 'href="http://example.com/somechild/add?factory=mynode"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-Dropdown menu containing links to the addforms of allowed child nodes::
+        # Ajax target for add form
+        expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> layer.login('manager')
-    >>> request = layer.new_request()
-    >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
+        # Ajax action rule for add form
+        expected = 'ajax:action="add:#content:inner"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-Non JS link to add form::
+        # Allow another node type as child
+        nodeinfo = NodeInfo()
+        nodeinfo.title = 'Another Node'
+        nodeinfo.description = 'This is another node.'
+        nodeinfo.node = BaseNode
+        nodeinfo.addables = []
+        register_node_info('anothernode', nodeinfo)
+        get_node_info('mynode').addables = ['mynode', 'anothernode']
 
-    >>> expected = 'href="http://example.com/somechild/add?factory=mynode"'
-    >>> rendered.find(expected) != -1
-    True
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            rendered = render_tile(root['somechild'], request, 'add_dropdown')
 
-Ajax target for add form::
+        # Non JS links to add form
+        expected = 'href="http://example.com/somechild/add?factory=mynode"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
-    >>> rendered.find(expected) != -1
-    True
+        expected = 'href="http://example.com/somechild/add?factory=anothernode"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-Ajax action rule for add form::
+        # Ajax targets for add form
+        expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-    >>> expected = 'ajax:action="add:#content:inner"'
-    >>> rendered.find(expected) != -1
-    True
+        expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
+        self.assertTrue(rendered.find(expected) != -1)
 
-Allow another node type as child::
+        # Test node without addables, results in empty listing.
+        # XXX: discuss whether to hide entire widget if no items
+        class NoChildAddingNode(BaseNode):
+            node_info_name = 'nochildaddingnode'
 
-    >>> nodeinfo = NodeInfo()
-    >>> nodeinfo.title = 'Another Node'
-    >>> nodeinfo.description = 'This is another node.'
-    >>> nodeinfo.node = BaseNode
-    >>> nodeinfo.addables = []
-    >>> register_node_info('anothernode', nodeinfo)
-    >>> get_node_info('mynode').addables = ['mynode', 'anothernode']
-    >>> rendered = render_tile(root['somechild'], request, 'add_dropdown')
+        nodeinfo = NodeInfo()
+        nodeinfo.title = 'No child adding Node'
+        nodeinfo.description = 'This is a no child containing node.'
+        nodeinfo.node = NoChildAddingNode
+        nodeinfo.addables = []
+        register_node_info('nochildaddingnode', nodeinfo)
 
-Non JS links to add form::
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            rendered = render_tile(NoChildAddingNode(), request, 'add_dropdown')
 
-    >>> expected = 'href="http://example.com/somechild/add?factory=mynode"'
-    >>> rendered.find(expected) != -1
-    True
+        self.checkOutput("""
+        ...<li class="dropdown">
+        <a href="#"
+        class="dropdown-toggle"
+        data-toggle="dropdown">
+        <span>Add</span>
+        <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" role="addmenu">
+        </ul>
+        </li>...
+        """, rendered)
 
-    >>> expected = 'href="http://example.com/somechild/add?factory=anothernode"'
-    >>> rendered.find(expected) != -1
-    True
+        # Test node with invalid addable, results in empty listing
+        # XXX: discuss whether to hide entire widget if no items::
+        class InvalidChildNodeInfoNode(BaseNode):
+            node_info_name = 'invalidchildnodeinfo'
 
-Ajax targets for add form::
+        nodeinfo = NodeInfo()
+        nodeinfo.title = 'Invalid Child NodeInfo Node'
+        nodeinfo.description = 'This is a node with an invalid child node info.'
+        nodeinfo.node = InvalidChildNodeInfoNode
+        nodeinfo.addables = ['invalid']
+        register_node_info('invalidchildnodeinfo', nodeinfo)
 
-    >>> expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
-    >>> rendered.find(expected) != -1
-    True
-
-    >>> expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
-    >>> rendered.find(expected) != -1
-    True
-
-Test node without addables, results in empty listing.
-XXX: discuss whether to hide entire widget if no items::
-
-    >>> class NoChildAddingNode(BaseNode):
-    ...     node_info_name = 'nochildaddingnode'
-
-    >>> nodeinfo = NodeInfo()
-    >>> nodeinfo.title = 'No child adding Node'
-    >>> nodeinfo.description = 'This is a no child containing node.'
-    >>> nodeinfo.node = NoChildAddingNode
-    >>> nodeinfo.addables = []
-    >>> register_node_info('nochildaddingnode', nodeinfo)
-    >>> rendered = render_tile(NoChildAddingNode(), request, 'add_dropdown')
-    
-    >>> rendered
-    u'...<li class="dropdown">\n\n    
-    <a href="#"\n       
-    class="dropdown-toggle"\n       
-    data-toggle="dropdown">\n      
-    <span>Add</span>\n      
-    <span class="caret"></span>\n    
-    </a>\n\n    
-    <ul class="dropdown-menu" role="addmenu">\n      \n    
-    </ul>\n\n  </li>...'
-
-Test node with invalid addable, results in empty listing
-XXX: discuss whether to hide entire widget if no items::
-
-    >>> class InvalidChildNodeInfoNode(BaseNode):
-    ...     node_info_name = 'invalidchildnodeinfo'
-
-    >>> nodeinfo = NodeInfo()
-    >>> nodeinfo.title = 'Invalid Child NodeInfo Node'
-    >>> nodeinfo.description = 'This is a node with an invalid child node info.'
-    >>> nodeinfo.node = InvalidChildNodeInfoNode
-    >>> nodeinfo.addables = ['invalid']
-    >>> register_node_info('invalidchildnodeinfo', nodeinfo)
-    >>> rendered = render_tile(InvalidChildNodeInfoNode(),
-    ...                        request,
-    ...                        'add_dropdown')
-    >>> rendered
-    u'...<li class="dropdown">\n\n    
-    <a href="#"\n       
-    class="dropdown-toggle"\n       
-    data-toggle="dropdown">\n      
-    <span>Add</span>\n      
-    <span class="caret"></span>\n    
-    </a>\n\n    
-    <ul class="dropdown-menu" role="addmenu">\n      \n    
-    </ul>\n\n  </li>...'
-
-Logout::
-
-    >>> layer.logout()
-
-"""
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            rendered = render_tile(
+                InvalidChildNodeInfoNode(),
+                request,
+                'add_dropdown'
+            )
+        self.checkOutput("""
+        ...<li class="dropdown">
+        <a href="#"
+        class="dropdown-toggle"
+        data-toggle="dropdown">
+        <span>Add</span>
+        <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" role="addmenu">
+        </ul>
+        </li>...
+        """, rendered)
