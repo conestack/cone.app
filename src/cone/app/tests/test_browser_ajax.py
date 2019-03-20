@@ -63,16 +63,17 @@ class TestBrowserAjax(TileTestCase):
         action = AjaxAction(target, actionname, mode, selector)
         self.assertEqual(
             (action.name, action.selector, action.mode, action.target),
-            ('tilename', '.someselector', 'replace', 'http://example.com')
+            (actionname, selector, mode, target)
         )
 
     def test_AjaxEvent(self):
+        target = 'http://example.com'
         eventname = 'contextchanged'
         selector = '.contextsensitiv'
         event = AjaxEvent(target, eventname, selector)
         self.assertEqual(
             (event.name, event.selector, event.target),
-            ('contextchanged', '.contextsensitiv', 'http://example.com')
+            (eventname, selector, target)
         )
 
     def test_AjaxMessage(self):
@@ -82,32 +83,81 @@ class TestBrowserAjax(TileTestCase):
         message = AjaxMessage(payload, flavor, selector)
         self.assertEqual(
             (message.payload, message.flavor, message.selector),
-            ('Some info message', 'info', 'None')
+            (payload, flavor, selector)
+        )
+
+    def test_AjaxOverlay(self):
+        selector = '#ajax-overlay'
+        action = None
+        target = None
+        close = False
+        content_selector = '.overlay_content'
+        css = None
+        overlay = AjaxOverlay()
+        self.assertEqual(
+            (
+                overlay.selector, overlay.action, overlay.target,
+                overlay.close, overlay.content_selector, overlay.css
+            ),
+            (selector, action, target, close, content_selector, css),
+        )
+
+        selector = '#ajax-overlay'
+        action = 'someaction'
+        target = 'http://example.com'
+        close = False
+        content_selector = '.overlay_content'
+        css = 'additional-css-class'
+        overlay = AjaxOverlay(
+            selector, action, target, close, content_selector, css
+        )
+        self.assertEqual(
+            (
+                overlay.selector, overlay.action, overlay.target,
+                overlay.close, overlay.content_selector, overlay.css
+            ),
+            (selector, action, target, close, content_selector, css),
+        )
+
+    def test_AjaxPath(self):
+        path = 'foo/bar'
+        target = None
+        action = None
+        event = None
+        overlay = None
+        overlay_css = None
+        apath = AjaxPath(path)
+        self.assertEqual(
+            (
+                apath.path, apath.target, apath.action, apath.event,
+                apath.overlay, apath.overlay_css
+            ),
+            (path, target, action, event, overlay, overlay_css)
+        )
+
+        path = 'foo/bar'
+        target = 'http://example.com/foo/bar'
+        action = 'layout:#layout:replace'
+        event = 'contextchanged:#someid'
+        overlay = 'acionname:#custom-overlay:.custom_overlay_content'
+        overlay_css = 'additional-overlay-css-class'
+        apath = AjaxPath(
+            'foo/bar',
+            target=target,
+            action=action,
+            event=event,
+            overlay=overlay,
+            overlay_css=overlay_css
+        )
+        self.assertEqual(
+            (
+                apath.path, apath.target, apath.action, apath.event,
+                apath.overlay, apath.overlay_css
+            ),
+            (path, target, action, event, overlay, overlay_css)
         )
 
 """
-AjaxOverlay object::
-
-    >>> overlay = AjaxOverlay('#ajax-overlay', 'someaction',
-    ...     'http://example.com', False, '.overlay_content',
-    ...     'additional-css-class')
-    >>> overlay
-    <cone.app.browser.ajax.AjaxOverlay object at ...>
-
-AjaxPath object::
-
-    >>> path = AjaxPath(
-    ...     'foo/bar',
-    ...     target='http://example.com/foo/bar',
-    ...     action='layout:#layout:replace',
-    ...     event='contextchanged:#someid',
-    ...     overlay='acionname:#custom-overlay:.custom_overlay_content',
-    ...     overlay_css='additional-overlay-css-class'
-    ... )
-
-    >>> path
-    <cone.app.browser.ajax.AjaxPath object at ...>
-
 Use ``ajax_continue`` in your tile passing the request and an instance or a
 list of instances to set continuation actions::
 
