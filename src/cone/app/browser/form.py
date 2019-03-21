@@ -5,7 +5,6 @@ from cone.tile import Tile
 from plumber import Behavior
 from plumber import default
 from plumber import override
-from pyramid.security import has_permission
 from webob.exc import HTTPFound
 from yafowil.controller import Controller
 import logging
@@ -84,9 +83,9 @@ class ProtectedAttributesForm(Behavior):
         permissions = self.attribute_permissions.get(name)
         if not permissions:
             permissions = self.attribute_default_permissions
-        if has_permission(permissions[0], self.model, self.request):
+        if self.request.has_permission(permissions[0], self.model):
             return 'edit'
-        if has_permission(permissions[1], self.model, self.request):
+        if self.request.has_permission(permissions[1], self.model):
             return 'display'
         return 'skip'
 

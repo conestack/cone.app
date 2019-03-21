@@ -42,7 +42,7 @@ setup(
         'Chameleon',
         'node',
         'node.ext.ugm',
-        'pyramid',  # >= 1.5, <= 1.8
+        'pyramid>1.4.999',
         'pyramid_zcml',
         'pyramid_chameleon',
         'bdajax>1.9.999',

@@ -16,8 +16,6 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import authenticated_userid
-from pyramid.security import has_permission
 
 
 _ = TranslationStringFactory('cone.app')
@@ -50,7 +48,7 @@ class ProtectedContentTile(Tile):
     """
 
     def __call__(self, model, request):
-        if not authenticated_userid(request):
+        if not request.authenticated_userid:
             return render_tile(model, request, 'loginform')
         return Tile.__call__(self, model, request)
 
@@ -87,7 +85,7 @@ class ViewSettingsAction(LinkAction):
         settings = self.settings
         if not settings:
             return False
-        if not has_permission('view', settings, self.request):
+        if not self.request.has_permission('view', settings):
             return False
         if not len(settings):
             return False
@@ -125,7 +123,7 @@ class PersonalTools(Tile):
 
     @property
     def user(self):
-        userid = authenticated_userid(self.request)
+        userid = self.request.authenticated_userid
         data = principal_data(userid)
         fullname = data.get('fullname', userid)
         return fullname or userid
@@ -210,7 +208,7 @@ class MainMenu(Tile):
     def ignore_node(self, node, props):
         if props.skip_mainmenu:
             return True
-        if not has_permission('view', node, self.request):
+        if not self.request.has_permission('view', node):
             return True
         return False
 
@@ -344,7 +342,7 @@ class NavTree(Tile):
                 curpath = model.properties.default_child
         for key in model:
             node = model[key]
-            if not has_permission('view', node, self.request):
+            if not self.request.has_permission('view', node):
                 continue
             if not node.properties.get('in_navtree'):
                 continue

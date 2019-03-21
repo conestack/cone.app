@@ -24,8 +24,6 @@ from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import authenticated_userid
-from pyramid.security import has_permission
 from pyramid.threadlocal import get_current_registry
 from zope.component.globalregistry import BaseGlobalComponents
 import cone.app
@@ -100,7 +98,7 @@ class SecurityTest(NodeTestCase):
         ))
 
         with self.layer.authenticated('inexistent'):
-            userid = authenticated_userid(self.layer.current_request)
+            userid = self.layer.current_request.authenticated_userid
             self.assertTrue(userid is None)
 
         # Create some security context for testing
@@ -110,23 +108,23 @@ class SecurityTest(NodeTestCase):
 
         # Authenticate several users and check permission
         with self.layer.authenticated('superuser', 'superuser'):
-            userid = authenticated_userid(self.layer.current_request)
+            userid = self.layer.current_request.authenticated_userid
             self.assertEqual(userid, 'superuser')
 
-            rule = has_permission('manage', context, self.layer.current_request)
+            rule = self.layer.current_request.has_permission('manage', context)
             self.assertTrue(isinstance(rule, ACLAllowed))
 
         with self.layer.authenticated('viewer'):
-            userid = authenticated_userid(self.layer.current_request)
+            userid = self.layer.current_request.authenticated_userid
             self.assertEqual(userid, 'viewer')
 
-            rule = has_permission('manage', context, self.layer.current_request)
+            rule = self.layer.current_request.has_permission('manage', context)
             self.assertTrue(isinstance(rule, ACLDenied))
 
-        userid = authenticated_userid(self.layer.current_request)
+        userid = self.layer.current_request.authenticated_userid
         self.assertTrue(userid is None)
 
-        rule = has_permission('manage', context, self.layer.current_request)
+        rule = self.layer.current_request.has_permission('manage', context)
         self.assertTrue(isinstance(rule, ACLDenied))
 
     def test_ACLRegistry(self):
@@ -173,7 +171,7 @@ class SecurityTest(NodeTestCase):
         )
 
         with self.layer.authenticated('sepp'):
-            userid = authenticated_userid(self.layer.current_request)
+            userid = self.layer.current_request.authenticated_userid
             self.assertEqual(userid, 'sepp')
 
             ownersupportnode = OwnerSupportNode()
@@ -204,18 +202,16 @@ class SecurityTest(NodeTestCase):
             ])
 
         with self.layer.authenticated('viewer'):
-            rule = has_permission(
+            rule = self.layer.current_request.has_permission(
                 'delete',
-                ownersupportnode,
-                self.layer.current_request
+                ownersupportnode
             )
             self.assertTrue(isinstance(rule, ACLDenied))
 
         with self.layer.authenticated('sepp'):
-            rule = has_permission(
+            rule = self.layer.current_request.has_permission(
                 'delete',
-                ownersupportnode,
-                self.layer.current_request
+                ownersupportnode
             )
             self.assertTrue(isinstance(rule, ACLAllowed))
 

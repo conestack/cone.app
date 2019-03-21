@@ -37,7 +37,6 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.security import has_permission
 from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
@@ -339,7 +338,7 @@ class ProtectedProperties(Properties):
             return True
         request = get_current_request()
         for permission in required:
-            if has_permission(permission, context, request):
+            if request.has_permission(permission, context):
                 return True
         return False
 

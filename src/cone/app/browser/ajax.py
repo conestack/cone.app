@@ -10,7 +10,6 @@ from pyramid.response import Response
 from pyramid.view import view_config
 import json
 import logging
-import types
 
 
 @tile(name='bdajax', path='bdajax:bdajax_bs3.pt', permission='login')

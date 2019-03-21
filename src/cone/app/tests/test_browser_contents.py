@@ -13,7 +13,6 @@ from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.security import has_permission
 import urllib
 
 
@@ -204,7 +203,7 @@ class TestBrowserContents(TileTestCase):
         request = self.layer.new_request()
 
         # Rendering fails unauthorized, 'list' permission is required
-        rule = has_permission('list', model, request)
+        rule = request.has_permission('list', model)
         self.assertTrue(isinstance(rule, ACLDenied))
 
         err = self.expectError(

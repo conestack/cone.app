@@ -8,7 +8,7 @@
             initial_state="initial"
             content_types="cone.app.testing.mock.WorkflowNode
                            cone.app.testing.mock.StateACLWorkflowNode"
-            permission_checker="pyramid.security.has_permission">
+            permission_checker="cone.app.workflow.permission_checker">
 
     <state name="initial">
       <key name="title" value="Initial state" />

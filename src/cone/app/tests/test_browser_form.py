@@ -10,7 +10,6 @@ from cone.tile.tests import TileTestCase
 from plumber import plumbing
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
-from pyramid.security import has_permission
 from webob.exc import HTTPFound
 from yafowil.base import factory
 
@@ -236,7 +235,7 @@ class TestBrowserForm(TileTestCase):
         request = self.layer.new_request()
 
         with self.layer.authenticated('viewer'):
-            rule = has_permission('edit', model, request)
+            rule = request.has_permission('edit', model)
             self.assertTrue(isinstance(rule, ACLDenied))
             rendered = render_tile(model, request, 'protectedattributesform')
 
@@ -251,7 +250,7 @@ class TestBrowserForm(TileTestCase):
         """, rendered)
 
         with self.layer.authenticated('editor'):
-            rule = has_permission('edit', model, request)
+            rule = request.has_permission('edit', model)
             self.assertTrue(isinstance(rule, ACLAllowed))
             rendered = render_tile(model, request, 'protectedattributesform')
 
@@ -261,7 +260,7 @@ class TestBrowserForm(TileTestCase):
         """, rendered)
 
         with self.layer.authenticated('manager'):
-            rule = has_permission('manage', model, request)
+            rule = request.has_permission('manage', model)
             self.assertTrue(isinstance(rule, ACLAllowed))
             rendered = render_tile(model, request, 'protectedattributesform')
 

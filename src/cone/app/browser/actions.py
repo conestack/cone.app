@@ -7,7 +7,6 @@ from cone.tile import render_template
 from cone.tile import render_tile
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import has_permission
 
 
 _ = TranslationStringFactory('cone.app')
@@ -96,7 +95,7 @@ class Action(object):
         return action_context.scope
 
     def permitted(self, permission):
-        return has_permission(permission, self.model, self.request)
+        return self.request.has_permission(permission, self.model)
 
     def render(self):
         raise NotImplementedError(u"Abstract ``Action`` does not implement "
@@ -195,7 +194,7 @@ class ActionUp(LinkAction):
     @property
     def display(self):
         return self.model.properties.action_up \
-            and has_permission('view', self.model.parent, self.request) \
+            and self.request.has_permission('view', self.model.parent) \
             and self.permitted('view')
 
     @property
@@ -368,7 +367,7 @@ class ActionDelete(LinkAction):
         if self.model.properties.default_content_tile:
             scope = self.action_scope == 'view'
         return self.model.properties.action_delete \
-            and has_permission('delete', self.model.parent, self.request) \
+            and self.request.has_permission('delete', self.model.parent) \
             and self.permitted('delete') \
             and scope
 

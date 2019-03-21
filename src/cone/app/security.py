@@ -9,7 +9,6 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.security import authenticated_userid
 from pyramid.security import remember
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
@@ -107,7 +106,7 @@ def authenticate(request, login, password):
 
 
 def authenticated_user(request):
-    user_id = authenticated_userid(request)
+    user_id = request.authenticated_userid
     return principal_by_id(user_id)
 
 
@@ -198,7 +197,7 @@ class OwnerSupport(Behavior):
         _next(self, *args, **kw)
         if not self.owner:
             request = get_current_request()
-            self.owner = authenticated_userid(request)
+            self.owner = request.authenticated_userid
 
     @plumb
     @property

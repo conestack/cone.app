@@ -35,7 +35,6 @@ from cone.tile import Tile
 from cone.tile.tests import TileTestCase
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
-from pyramid.security import has_permission
 
 
 class TestBrowserActions(TileTestCase):
@@ -170,10 +169,9 @@ class TestBrowserActions(TileTestCase):
             model,
             request
         )
-        self.assertEqual(
-            err.message,
-            'Abstract ``DropdownAction`` does not implement  ``items``'
-        )
+        self.checkOutput("""
+        ...Abstract ``DropdownAction`` does not implement  ``items``...
+        """, str(err))
 
     def test_LinkAction(self):
         model = BaseNode()
@@ -393,12 +391,12 @@ class TestBrowserActions(TileTestCase):
         self.assertEqual(action(sharingmodel, request), u'')
 
         with self.layer.authenticated('editor'):
-            rule = has_permission('manage_permissions', sharingmodel, request)
+            rule = request.has_permission('manage_permissions', sharingmodel)
             self.assertTrue(isinstance(rule, ACLDenied))
             self.assertEqual(action(sharingmodel, request), u'')
 
         with self.layer.authenticated('manager'):
-            rule = has_permission('manage_permissions', sharingmodel, request)
+            rule = request.has_permission('manage_permissions', sharingmodel)
             self.assertTrue(isinstance(rule, ACLAllowed))
 
             rendered = action(sharingmodel, request)
@@ -428,12 +426,12 @@ class TestBrowserActions(TileTestCase):
         self.assertEqual(action(wfmodel, request), u'')
 
         with self.layer.authenticated('editor'):
-            rule = has_permission('change_state', wfmodel, request)
+            rule = request.has_permission('change_state', wfmodel)
             self.assertTrue(isinstance(rule, ACLDenied))
             self.assertEqual(action(wfmodel, request), u'')
 
         with self.layer.authenticated('manager'):
-            rule = has_permission('change_state', wfmodel, request)
+            rule = request.has_permission('change_state', wfmodel)
             self.assertTrue(isinstance(rule, ACLAllowed))
 
             rendered = action(wfmodel, request)
@@ -459,12 +457,12 @@ class TestBrowserActions(TileTestCase):
         self.assertEqual(action(addmodel, request), u'')
 
         with self.layer.authenticated('viewer'):
-            rule = has_permission('add', addmodel, request)
+            rule = request.has_permission('add', addmodel)
             self.assertTrue(isinstance(rule, ACLDenied))
             self.assertEqual(action(addmodel, request), u'')
 
         with self.layer.authenticated('editor'):
-            rule = has_permission('add', addmodel, request)
+            rule = request.has_permission('add', addmodel)
             self.assertTrue(isinstance(rule, ACLAllowed))
             self.assertEqual(action(addmodel, request), u'')
 

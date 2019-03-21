@@ -2,7 +2,6 @@ from cone.app.utils import app_config
 from cone.app.utils import safe_encode
 from cone.app.utils import safe_decode
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import authenticated_userid
 import copy
 import datetime
 import re
@@ -18,7 +17,7 @@ _ = TranslationStringFactory('cone.app')
 def authenticated(request):
     """XXX: remove this. use ``authenticated_userid`` directly.
     """
-    return authenticated_userid(request)
+    return request.authenticated_userid
 
 
 def node_path(node):

@@ -1,7 +1,6 @@
 from cone.app.utils import app_config
 from cone.tile import Tile
 from cone.tile import tile
-from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 from webob import Response
 import cone.app
@@ -21,7 +20,7 @@ class MergedAssets(object):
         self.request = request
 
     def merged_assets(self, assets):
-        if authenticated_userid(self.request):
+        if self.request.authenticated_userid:
             assets = assets.public + assets.protected
         else:
             assets = assets.public
@@ -80,7 +79,7 @@ class Resources(Tile):
 
     @property
     def authenticated(self):
-        return authenticated_userid(self.request)
+        return self.request.authenticated_userid
 
     @property
     def js(self):

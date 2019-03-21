@@ -19,7 +19,6 @@ from node.interfaces import ILeaf
 from node.utils import instance_property
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import has_permission
 from pyramid.view import view_config
 import datetime
 
@@ -58,7 +57,7 @@ class ContentsActionDelete(ActionDelete):
     @property
     def display(self):
         return self.model.properties.action_delete \
-            and has_permission('delete', self.model.parent, self.request) \
+            and self.request.has_permission('delete', self.model.parent) \
             and self.permitted('delete')
 
 
@@ -185,7 +184,7 @@ class ContentsTile(Table):
         if term:
             term = term.lower()
         for node in self.listable_children:
-            if not has_permission('view', node, self.request):
+            if not self.request.has_permission('view', node):
                 continue
             if term:
                 metadata = node.metadata

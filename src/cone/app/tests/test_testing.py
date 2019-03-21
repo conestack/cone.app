@@ -1,7 +1,6 @@
 from cone.app.testing import DummyRequest
 from cone.app.testing import Security
 from cone.app.testing import security
-from pyramid.security import authenticated_userid
 import unittest
 
 
@@ -16,7 +15,7 @@ class TestTesting(unittest.TestCase):
         with self.layer.authenticated('inexistent'):
             req = self.layer.new_request()
             self.assertTrue(isinstance(req, DummyRequest))
-            self.assertTrue(authenticated_userid(req) is None)
+            self.assertTrue(req.authenticated_userid is None)
             self.assertTrue(self.layer.current_request is req)
             self.assertEqual(req.environ.keys(), ['AUTH_TYPE', 'SERVER_NAME'])
 
@@ -31,7 +30,7 @@ class TestTesting(unittest.TestCase):
             self.assertEqual(req.environ['SERVER_NAME'], 'testcase')
 
             self.assertTrue(self.layer.current_request is req)
-            self.assertEqual(authenticated_userid(req), 'max')
+            self.assertEqual(req.authenticated_userid, 'max')
             self.assertEqual(req.environ.keys(), [
                 'AUTH_TYPE', 'REMOTE_USER_TOKENS', 'SERVER_NAME', 'HTTP_COOKIE',
                 'REMOTE_USER_DATA', 'cone.app.user.roles'
@@ -40,7 +39,7 @@ class TestTesting(unittest.TestCase):
         # Logged out
         self.assertTrue(self.layer.current_request is req)
         self.assertEqual(req.environ.keys(), ['AUTH_TYPE', 'SERVER_NAME'])
-        self.assertTrue(authenticated_userid(req) is None)
+        self.assertTrue(req.authenticated_userid is None)
 
         # Create new request and check if instance changed
         old = req

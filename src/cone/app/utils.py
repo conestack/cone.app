@@ -1,5 +1,4 @@
 from datetime import datetime
-from pyramid.security import authenticated_userid
 import logging
 
 
@@ -69,7 +68,7 @@ class DatetimeHelper(object):
 
 # XXX: move somewhere else, probably plumbing behavior for node
 def add_creation_metadata(request, mapping):
-    mapping['creator'] = authenticated_userid(request)
+    mapping['creator'] = request.authenticated_userid
     mapping['created'] = timestamp()
     mapping['modified'] = mapping['created']
 

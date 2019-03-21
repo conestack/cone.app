@@ -6,7 +6,6 @@ from cone.tile import tile
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
-from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 import json
 
@@ -63,7 +62,7 @@ def forbidden_view(request):
     """Unauthorized view.
     """
     model = request.context
-    if not authenticated_userid(request):
+    if not request.authenticated_userid:
         return login_view(model, request)
     return render_main_template(model, request, contenttile='unauthorized')
 

@@ -4,6 +4,20 @@ Changes
 1.0a13 (unreleased)
 -------------------
 
+- Minimum pyramid version is 1.5 now.
+
+- Add ``cone.app.workflow.permission_checker`` for use with ``repoze.workflow``
+  to make it wirk with pyramid >= 1.8.
+  [rnix, 2019-03-21]
+
+- Use ``request.has_permission`` instead of deprecated
+  ``pyramid.security.has_permission``.
+  [rnix, 2019-03-21]
+
+- Use ``request.authenticated_userid`` instead of deprecated
+  ``pyramid.security.authenticated_userid``.
+  [rnix, 2019-03-21]
+
 - Convert doctests to unittests.
   [rnix, 2019-03-21]
 
