@@ -115,7 +115,7 @@ class SharingTable(Table):
             local_roles = principal_roles.get(principal_id, list())
             if inheritance:
                 for role in model.aggregated_roles_for(principal_id):
-                    if not role in local_roles:
+                    if role not in local_roles:
                         ugm_roles.append(role)
             for role in security.DEFAULT_ROLES:
                 inherited = role[0] in ugm_roles
@@ -148,7 +148,7 @@ class AddPrincipalRole(Tile):
             principal_id = request.params['id']
             role = request.params['role']
             roles = model.principal_roles
-            if not principal_id in roles:
+            if principal_id not in roles:
                 model.principal_roles[principal_id] = [role]
                 return u''
             existing = set(model.principal_roles[principal_id])
@@ -158,9 +158,12 @@ class AddPrincipalRole(Tile):
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(
-                _('cannot_add_role_for_principal',
-                  default="Can not add role '${role}' for principal '${pid}'"),
-                  mapping={'role': role, 'pid': principal_id})
+                _(
+                    'cannot_add_role_for_principal',
+                    default="Can not add role '${role}' for principal '${pid}'"
+                ),
+                mapping={'role': role, 'pid': principal_id}
+            )
             ajax_message(self.request, message, 'error')
         return u''
 
@@ -175,7 +178,7 @@ class RemovePrincipalRole(Tile):
             principal_id = request.params['id']
             role = request.params['role']
             roles = model.principal_roles
-            if not principal_id in roles:
+            if principal_id not in roles:
                 raise
             existing = model.principal_roles[principal_id]
             existing.remove(role)
@@ -187,9 +190,14 @@ class RemovePrincipalRole(Tile):
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(
-                _('cannot_remove_role_for_principal',
-                  default="Can not remove role '${role}' for "
-                          "principal '${pid}'"),
-                  mapping={'role': role, 'pid': principal_id})
+                _(
+                    'cannot_remove_role_for_principal',
+                    default=(
+                        "Can not remove role '${role}' for "
+                        "principal '${pid}'"
+                    )
+                ),
+                mapping={'role': role, 'pid': principal_id}
+            )
             ajax_message(self.request, message, 'error')
         return u''

@@ -25,6 +25,7 @@ def test_suite():
     from cone.app.tests import test_browser_referencebrowser
     from cone.app.tests import test_browser_resources
     from cone.app.tests import test_browser_settings
+    from cone.app.tests import test_browser_sharing
 
     suite = unittest.TestSuite()
 
@@ -51,6 +52,7 @@ def test_suite():
     suite.addTest(unittest.findTestCases(test_browser_referencebrowser))
     suite.addTest(unittest.findTestCases(test_browser_resources))
     suite.addTest(unittest.findTestCases(test_browser_settings))
+    suite.addTest(unittest.findTestCases(test_browser_sharing))
 
     return suite
 
