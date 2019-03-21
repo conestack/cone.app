@@ -49,12 +49,36 @@ class TestBrowserAjax(TileTestCase):
 
         # Authenticate and test again
         with self.layer.authenticated('max'):
-            self.assertEqual(ajax_tile(root, request), {
-                'continuation': False,
-                'payload': 'rendered test tile',
-                'mode': 'replace',
-                'selector': '.foo'
-            })
+            res = ajax_tile(root, request)
+        self.assertEqual(res, {
+            'continuation': False,
+            'payload': 'rendered test tile',
+            'mode': 'replace',
+            'selector': '.foo'
+        })
+
+        # Test with error raising tile
+        with self.layer.hook_tile_reg():
+            @tile(name='errortile')
+            class ErrorTile(Tile):
+                def render(self):
+                    raise Exception('Error while rendering')
+
+        request = self.layer.new_request()
+        request.params['bdajax.action'] = 'errortile'
+        request.params['bdajax.mode'] = 'replace'
+        request.params['bdajax.selector'] = '.foo'
+
+        with self.layer.authenticated('max'):
+            res = ajax_tile(root, request)
+        self.assertEqual(res['payload'], '')
+        self.assertEqual(res['mode'], 'NONE')
+        self.assertEqual(res['selector'], 'NONE')
+        self.assertEqual(res['continuation'][0]['flavor'], 'error')
+        self.assertEqual(res['continuation'][0]['type'], 'message')
+        self.assertEqual(res['continuation'][0]['selector'], None)
+        expected = 'Exception: Error while rendering'
+        self.assertTrue(res['continuation'][0]['payload'].find(expected) > -1)
 
     def test_AjaxAction(self):
         target = 'http://example.com'
