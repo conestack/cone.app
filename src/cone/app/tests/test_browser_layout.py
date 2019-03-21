@@ -103,115 +103,88 @@ class TestBrowserLayout(TileTestCase):
 
         self.assertTrue(result.find('<div>Content</div>') > -1)
 
+    def test_mainmenu(self):
+        root = BaseNode()
+        root['1'] = BaseNode()
+        root['2'] = BaseNode()
+
+        request = self.layer.new_request()
+
+        # Render main menu at root unauthorized
+        res = render_tile(root, request, 'mainmenu')
+        self.assertFalse(res.find('href="http://example.com/1"') > -1)
+        self.assertFalse(res.find('href="http://example.com/2"') > -1)
+
+        # Render main menu at root authorized
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'mainmenu')
+        self.assertTrue(res.find('ajax:target="http://example.com/1"') > -1)
+        self.assertTrue(res.find('ajax:target="http://example.com/2"') > -1)
+        self.assertTrue(res.find('href="http://example.com/1"') > -1)
+        self.assertTrue(res.find('href="http://example.com/2"') > -1)
+
+        # Render main menu at child. Child is marked selected
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1'], request, 'mainmenu')
+        self.assertTrue(res.find('<li class="active node-1">') > -1)
+
+        # Render main menu with default child
+        model = BaseNode()
+        model['1'] = BaseNode()
+        model['2'] = BaseNode()
+        model.properties.default_child = '2'
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'mainmenu')
+        self.assertTrue(res.find('<li class="active node-2">') > -1)
+
+        # Render main menu on child '1' and check if '2' is unselected now
+        with self.layer.authenticated('max'):
+            res = render_tile(model['1'], request, 'mainmenu')
+        self.assertFalse(res.find('<li class="active node-2">') > -1)
+        self.assertTrue(res.find('<li class="active node-1">') > -1)
+
+        # Check rendering of main menu with empty title. This is needed if main
+        # menu items are supposed to be displayed as icons via CSS
+        model.properties.mainmenu_empty_title = True
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'mainmenu')
+        self.checkOutput("""
+        ...<li class=" node-1">
+        <a href="http://example.com/1"
+        title="1"
+        ajax:bind="click"
+        ajax:target="http://example.com/1"
+        ajax:event="contextchanged:#layout"
+        ajax:path="href"
+        ><span class="glyphicon glyphicon-asterisk"></span>
+        <span></span></a>
+        </li>
+        <li class="active node-2">
+        <a href="http://example.com/2"
+        title="2"
+        ajax:bind="click"
+        ajax:target="http://example.com/2"
+        ajax:event="contextchanged:#layout"
+        ajax:path="href"
+        ><span class="glyphicon glyphicon-asterisk"></span>
+        <span></span></a>
+        </li>...
+        """, res)
+
+        # Child nodes which do not grant permission 'view' are skipped
+        class InvisibleNode(BaseNode):
+            __acl__ = DEFAULT_SETTINGS_ACL
+
+        model['3'] = InvisibleNode()
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'mainmenu')
+        self.assertFalse(res.find('<li class=" node-3">') > -1)
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(model, request, 'mainmenu')
+        self.assertTrue(res.find('<li class=" node-3">') > -1)
+
 """
-Main menu
----------
-
-::
-
-    >>> root = BaseNode()
-    >>> root['1'] = BaseNode()
-    >>> root['2'] = BaseNode()
-
-Render main menu at root.
-
-Unauthorized::
-
-    >>> res = render_tile(root, request, 'mainmenu')
-    >>> res.find('href="http://example.com/1"') > -1
-    False
-
-    >>> res.find('href="http://example.com/2"') > -1
-    False
-
-Authorized::
-
-    >>> layer.login('max')
-    >>> res = render_tile(root, request, 'mainmenu')
-    >>> res.find('ajax:target="http://example.com/1"') > -1
-    True
-
-    >>> res.find('ajax:target="http://example.com/2"') > -1
-    True
-
-    >>> res.find('href="http://example.com/1"') > -1
-    True
-
-    >>> res.find('href="http://example.com/2"') > -1
-    True
-
-Render main menu at child. Child is marked selected::
-
-    >>> res = render_tile(root['1'], request, 'mainmenu')
-    >>> res.find('<li class="active node-1">') > -1
-    True
-
-Render main menu with default child::
-
-    >>> model = BaseNode()
-    >>> model['1'] = BaseNode()
-    >>> model['2'] = BaseNode()
-    >>> model.properties.default_child = '2'
-    >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class="active node-2">') > -1
-    True
-
-Render main menu on child '1' and check if '2' is unselected now::
-
-    >>> res = render_tile(model['1'], request, 'mainmenu')
-    >>> res.find('<li class="active node-2">') > -1
-    False
-
-    >>> res.find('<li class="active node-1">') > -1
-    True
-
-Check rendering of main menu with empty title. This is needed if main menu
-items are supposed to be displayed as icons via CSS::
-
-    >>> model.properties.mainmenu_empty_title = True
-    >>> res = render_tile(model, request, 'mainmenu')
-    >>> res
-    u'...<li class=" node-1">\n\n        
-    <a href="http://example.com/1"\n           
-    title="1"\n          
-    ajax:bind="click"\n           
-    ajax:target="http://example.com/1"\n           
-    ajax:event="contextchanged:#layout"\n          
-    ajax:path="href"\n          
-    ><span class="glyphicon glyphicon-asterisk"></span>\n          
-    <span></span></a>\n\n      
-    </li>\n\n      \n      \n\n    \n\n      \n      
-    <li class="active node-2">\n\n        
-    <a href="http://example.com/2"\n           
-    title="2"\n          
-    ajax:bind="click"\n           
-    ajax:target="http://example.com/2"\n           
-    ajax:event="contextchanged:#layout"\n           
-    ajax:path="href"\n           
-    ><span class="glyphicon glyphicon-asterisk"></span>\n          
-    <span></span></a>\n\n      
-    </li>...'
-
-Child nodes which do not grant permission 'view' are skipped::
-
-    >>> class InvisibleNode(BaseNode):
-    ...     __acl__ =  DEFAULT_SETTINGS_ACL
-
-    >>> model['3'] = InvisibleNode()
-    >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class=" node-3">') > -1
-    False
-
-    >>> layer.login('manager')
-    >>> request = layer.current_request
-
-    >>> res = render_tile(model, request, 'mainmenu')
-    >>> res.find('<li class=" node-3">') > -1
-    True
-
-    >>> layer.logout()
-
-
 Navtree
 -------
 
