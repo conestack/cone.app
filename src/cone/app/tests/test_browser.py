@@ -1,5 +1,6 @@
 from cone.app import get_root
 from cone.app import testing
+from cone.app.browser import favicon_view
 from cone.app.browser import get_related_view
 from cone.app.browser import main_view
 from cone.app.browser import RelatedViewConsumer
@@ -28,6 +29,15 @@ class BrowserTest(TileTestCase):
         request = self.layer.new_request()
         response = main_view(root, request)
         self.assertTrue(isinstance(response, Response))
+
+    def test_favicon_view(self):
+        request = self.layer.new_request()
+        response = favicon_view(request)
+        self.assertTrue(isinstance(response, Response))
+        self.assertEqual(
+            response.headers['Content-Type'],
+            'image/vnd.microsoft.icon'
+        )
 
     def test_related_view_support(self):
         # Test ``set_related_view``
