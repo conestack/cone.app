@@ -358,98 +358,76 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             self.assertEqual(len(navtree.navtree()['children']), 2)
 
+    def test_personaltools(self):
+        root = BaseNode()
+        request = self.layer.new_request()
+
+        # Unauthorized
+        res = render_tile(root, request, 'personaltools')
+        self.assertFalse(res.find('id="personaltools"') != -1)
+
+        # Authorized
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'personaltools')
+        self.assertTrue(res.find('id="personaltools"') != -1)
+        self.assertTrue(res.find('href="http://example.com/logout"') != -1)
+
+    def test_pathbar(self):
+        root = BaseNode()
+        root['1'] = BaseNode()
+        request = self.layer.new_request()
+
+        # Unauthorized
+        res = render_tile(root, request, 'pathbar')
+        self.assertFalse(res.find('pathbaritem') != -1)
+
+        # Authorized
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1'], request, 'pathbar')
+        self.assertTrue(res.find('id="pathbar"') != -1)
+
+        # Default child behavior of pathbar
+        root = BaseNode()
+        root['1'] = BaseNode()
+        root['2'] = BaseNode()
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'pathbar')
+        self.assertTrue(res.find('<strong>Home</strong>') > -1)
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1'], request, 'pathbar')
+        self.assertTrue(res.find('>Home</a>') > -1)
+        self.assertTrue(res.find('<strong>1</strong>') > -1)
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root['2'], request, 'pathbar')
+        self.assertTrue(res.find('>Home</a>') > -1)
+        self.assertTrue(res.find('<strong>2</strong>') > -1)
+
+        root.properties.default_child = '1'
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1'], request, 'pathbar')
+        self.assertTrue(res.find('<strong>Home</strong>') > -1)
+        self.assertFalse(res.find('<strong>1</strong>') > -1)
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root['2'], request, 'pathbar')
+        self.assertTrue(res.find('>Home</a>') > -1)
+        self.assertTrue(res.find('<strong>2</strong>') > -1)
+
+        root['1'].properties.default_child = '12'
+        root['1']['11'] = BaseNode()
+        root['1']['12'] = BaseNode()
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1']['11'], request, 'pathbar')
+        self.assertTrue(res.find('<strong>11</strong>') > -1)
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1']['12'], request, 'pathbar')
+        self.assertTrue(res.find('<strong>Home</strong>') > -1)
 """
-Personal Tools
---------------
-
-Unauthorized::
-
-    >>> request = layer.new_request()
-    >>> res = render_tile(root, request, 'personaltools')
-    >>> res.find('id="personaltools"') != -1
-    False
-
-Authorized::
-
-    >>> layer.login('max')
-    >>> res = render_tile(root, request, 'personaltools')
-    >>> res.find('id="personaltools"') != -1
-    True
-
-    >>> res.find('href="http://example.com/logout"') != -1
-    True
-
-    >>> layer.logout()
-
-
-Pathbar
--------
-
-Unauthorized::
-
-    >>> request = layer.new_request()
-    >>> res = render_tile(root, request, 'pathbar')
-    >>> res.find('pathbaritem') != -1
-    False
-
-    >>> layer.login('max')
-    >>> res = render_tile(root['1'], request, 'pathbar')
-    >>> res.find('id="pathbar"') != -1
-    True
-
-Default child behavior of pathbar::
-
-    >>> root = BaseNode()
-    >>> root['1'] = BaseNode()
-    >>> root['2'] = BaseNode()
-
-    >>> res = render_tile(root, request, 'pathbar')
-    >>> res.find('<strong>Home</strong>') > -1
-    True
-
-    >>> res = render_tile(root['1'], request, 'pathbar')
-    >>> res.find('>Home</a>') > -1
-    True
-
-    >>> res.find('<strong>1</strong>') > -1
-    True
-
-    >>> res = render_tile(root['2'], request, 'pathbar')
-    >>> res.find('>Home</a>') > -1
-    True
-
-    >>> res.find('<strong>2</strong>') > -1
-    True
-
-    >>> root.properties.default_child = '1'
-    >>> res = render_tile(root['1'], request, 'pathbar')
-    >>> res.find('<strong>Home</strong>') > -1
-    True
-
-    >>> res.find('<strong>1</strong>') > -1
-    False
-
-    >>> res = render_tile(root['2'], request, 'pathbar')
-    >>> res.find('>Home</a>') > -1
-    True
-
-    >>> res.find('<strong>2</strong>') > -1
-    True
-
-    >>> root['1'].properties.default_child = '12'
-    >>> root['1']['11'] = BaseNode()
-    >>> root['1']['12'] = BaseNode()
-    >>> res = render_tile(root['1']['11'], request, 'pathbar')
-    >>> res.find('<strong>11</strong>') > -1
-    True
-
-    >>> res = render_tile(root['1']['12'], request, 'pathbar')
-    >>> res.find('<strong>Home</strong>') > -1
-    True
-
-    >>> layer.logout()
-
-
 Byline
 ------
 
