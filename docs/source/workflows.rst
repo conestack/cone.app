@@ -18,7 +18,7 @@ Workflows are described in ZCML files.
   nodes this workflow can be used for.
 
 - The ``permission_checker`` attribute in the ``workflow`` directive points
-  to ``pyramid.security.has_permission``, which is used to check whether
+  to ``cone.app.workflow.permission_checker``, which is used to check whether
   permissions are granted on model node.
 
 - The ``callback`` attribute in ``transition`` directives points to
@@ -42,7 +42,7 @@ A typical publication workflow would end up in a file named
                 initial_state="draft"
                 content_types="cone.example.model.ExampleNode
                                cone.example.model.AnotherNode"
-                permission_checker="pyramid.security.has_permission">
+                permission_checker="cone.app.workflow.permission_checker">
 
         <state name="draft"
                i18n:attributes="name">
