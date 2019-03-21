@@ -74,44 +74,36 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.body.find('id="navtree"') > -1)
         self.assertTrue(res.body.find('id="personaltools"') > -1)
 
+    def test_ProtectedContentTile(self):
+        # A login form should be rendered instead of the content for anonymous
+        # users. Class ``cone.app.browser.layout.ProtectedContentTile``
+        # provides this behavior
+        class ProtectedModel(BaseNode):
+            pass
+
+        with self.layer.hook_tile_reg():
+            @tile(name='content', interface=ProtectedModel, permission='login')
+            class ProtectedContent(ProtectedContentTile):
+                def render(self):
+                    return '<div>Content</div>'
+
+        model = ProtectedModel()
+        request = self.layer.new_request()
+
+        # Render protected tile.
+        self.checkOutput("""
+        <form action="http://example.com/login"
+        class="form-horizontal"
+        enctype="multipart/form-data" id="form-loginform" method="post"
+        novalidate="novalidate">...
+        """, render_tile(model, request, 'content'))
+
+        with self.layer.authenticated('max'):
+            result = render_tile(model, request, 'content')
+
+        self.assertTrue(result.find('<div>Content</div>') > -1)
+
 """
-Protected content tile
-----------------------
-
-A login form should be rendered instead of the content for anonymous users.
-
-Class ``cone.app.browser.layout.ProtectedContentTile`` provides this behavior::
-
-    >>> class ProtectedContent(ProtectedContentTile):
-    ...     def render(self):
-    ...         return '<div>Content</div>'
-
-    >>> class ProtectedModel(BaseNode): pass
-
-    >>> register_tile(
-    ...     name='content',
-    ...     interface=ProtectedModel,
-    ...     class_=ProtectedContent,
-    ...     permission='login')
-
-Render protected tile.::
-
-    >>> layer.logout()
-    >>> request = layer.new_request()
-    >>> render_tile(ProtectedModel(), request, 'content')
-    u'<form action="http://example.com/login" 
-    class="form-horizontal" 
-    enctype="multipart/form-data" id="form-loginform" method="post" 
-    novalidate="novalidate">...'
-
-    >>> layer.login('max')
-    >>> result = render_tile(ProtectedModel(), request, 'content')
-    >>> result.find('<div>Content</div>') > -1
-    True
-
-    >>> layer.logout()
-
-
 Main menu
 ---------
 
