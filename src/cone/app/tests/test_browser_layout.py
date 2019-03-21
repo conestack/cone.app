@@ -427,63 +427,58 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root['1']['12'], request, 'pathbar')
         self.assertTrue(res.find('<strong>Home</strong>') > -1)
-"""
-Byline
-------
 
-Byline renders ``model.metadata.creator``, ``model.metadata.created`` and
-``model.metadata.modified``::
+    def test_byline(self):
+        # Byline renders ``model.metadata.creator``, ``model.metadata.created``
+        # and ``model.metadata.modified``
+        dt = datetime(2011, 3, 14)
+        root = BaseNode()
+        root.metadata.created = dt
+        root.metadata.modified = dt
+        root.metadata.creator = 'max'
+        request = self.layer.new_request()
 
-    >>> dt = datetime(2011, 3, 14)
-    >>> root.metadata.created = dt
-    >>> root.metadata.modified = dt
-    >>> root.metadata.creator = 'max'
+        # Unauthenticated
+        res = render_tile(root, request, 'byline')
+        self.assertEqual(res, u'')
 
-Unauthenticated::
+        # Authenticated
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'byline')
+        self.checkOutput("""
+        <p class="byline">
+          <span>Created by</span>:
+          <strong>max</strong>,
+          <span>on</span>
+          <strong>14.03.2011 00:00</strong>.
+          <span>Last modified</span>:
+          <strong>14.03.2011 00:00</strong>
+        </p>
+        """, res)
 
-    >>> request = layer.new_request()
-    >>> res = render_tile(root, request, 'byline')
-    >>> res
-    u''
+    def test_default_root_content(self):
+        root = AppRoot()
+        request = self.layer.new_request()
 
-Authenticated::
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'content')
+        self.checkOutput("""
+        <div>
+            Default Root
+        </div>
+        """, res)
 
-    >>> layer.login('max')
-    >>> res = render_tile(root, request, 'byline')
-    >>> print res
-    <BLANKLINE>
-      <p class="byline">
-        <span>Created by</span>:
-        <strong>max</strong>,
-        <span>on</span>
-        <strong>14.03.2011 00:00</strong>.
-        <span>Last modified</span>:
-        <strong>14.03.2011 00:00</strong>
-      </p>
-    <BLANKLINE>
+        root.factories['1'] = BaseNode
+        root.properties.default_child = '1'
 
-    >>> layer.logout()
+        with self.layer.hook_tile_reg():
+            @tile(name='content', interface=AppRoot, permission='view')
+            class RootContentTile(Tile):
+                def render(self):
+                    return '<div>Root Content</div>'
 
-
-Test default root content tile
-------------------------------
-
-::
-
-    >>> root = AppRoot()
-    >>> layer.login('max')
-    >>> res = render_tile(root, request, 'content')
-    >>> print res
-    <div>
-        Default Root
-    </div>
-
-    >>> root.factories['1'] = BaseNode
-    >>> root.properties.default_child = '1'
-    >>> res = render_tile(root, request, 'content')
-    >>> print res
-    <div>Content</div>
-
-    >>> layer.logout()
-
-"""
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'content')
+        self.checkOutput("""
+        <div>Root Content</div>
+        """, res)
