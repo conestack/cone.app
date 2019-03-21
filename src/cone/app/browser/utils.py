@@ -22,6 +22,7 @@ def authenticated(request):
 
 
 def node_path(node):
+    # XXX: implement in ``BaseNode``.
     return [safe_decode(p) for p in node.path if p is not None]
 
 
