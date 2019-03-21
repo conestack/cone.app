@@ -184,202 +184,181 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(model, request, 'mainmenu')
         self.assertTrue(res.find('<li class=" node-3">') > -1)
 
+    def test_navtree(self):
+        root = BaseNode()
+        request = self.layer.new_request()
+
+        # Unauthorized
+        res = render_tile(root, request, 'navtree')
+        self.assertFalse(res.find('id="navtree"') != -1)
+
+        # Empty navtree, no items are marked to be displayed
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'navtree')
+        self.assertTrue(res.find('id="navtree"') != -1)
+        self.assertTrue(res.find('ajax:bind="contextchanged"') != -1)
+        self.assertTrue(res.find('ajax:action="navtree:#navtree:replace"') != -1)
+        self.assertTrue(res.find('class="contextsensitiv list-group"') != -1)
+
+        # Node's which are in navtree
+        root = BaseNode()
+        root.properties.in_navtree = True
+        root['1'] = BaseNode()
+        root['1']['11'] = BaseNode()
+        root['1']['11'].properties.in_navtree = True
+        root['1'].properties.in_navtree = True
+        root['2'] = BaseNode()
+        root['2'].properties.in_navtree = True
+
+        # ``in_navtree`` is read from ``node.properties`` and defines display
+        # UI contract with the navtree tile
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/1"') > -1)
+
+        # Render navtree on ``root['1']``, must be selected
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1'], request, 'navtree')
+        self.checkOutput("""
+        ...<li class="active navtreelevel_1">
+        <a href="http://example.com/1"
+        ajax:bind="click"
+        ajax:target="http://example.com/1"
+        ajax:event="contextchanged:#layout"
+        ajax:path="href">
+        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
+        1
+        </a>...
+        """, res)
+
+        # Child nodes which do not grant permission 'view' are skipped
+        class InvisibleNavNode(BaseNode):
+            __acl__ = DEFAULT_SETTINGS_ACL
+
+        root['3'] = InvisibleNavNode()
+        root['3'].properties.in_navtree = True
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'navtree')
+        self.assertFalse(res.find('ajax:target="http://example.com/3"') > -1)
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/3"') > -1)
+
+        # Default child behavior of navtree. Default children objects are
+        # displayed in navtree.
+        root.properties.default_child = '1'
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'navtree')
+        self.checkOutput("""
+        ...<li class="active navtreelevel_1">
+        <a href="http://example.com/1"
+        ajax:bind="click"
+        ajax:target="http://example.com/1"
+        ajax:event="contextchanged:#layout"
+        ajax:path="href">
+        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
+        1
+        </a>...
+        """, res)
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['1'], request, 'navtree')
+        self.checkOutput("""
+        ...<li class="active navtreelevel_1">
+        <a href="http://example.com/1"
+        ajax:bind="click"
+        ajax:target="http://example.com/1"
+        ajax:event="contextchanged:#layout"
+        ajax:path="href">
+        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
+        1
+        </a>...
+        """, res)
+
+        # If default child should not be displayed it navtree,
+        # ``node.properties.hide_if_default`` must be set to 'True'
+        root['1'].properties.hide_if_default = True
+
+        # In this case, also children context gets switched. Instead of
+        # remaining non default children, children of default node are
+        # displayed.
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'navtree')
+        self.assertFalse(res.find('ajax:target="http://example.com/1"') > -1)
+        self.assertFalse(res.find('ajax:target="http://example.com/2"') > -1)
+        self.assertTrue(res.find('ajax:target="http://example.com/1/11"') > -1)
+
+        # Check whether children subrendering works on nodes which have set
+        # ``hide_if_default``
+        root['1']['11']['a'] = BaseNode()
+        root['1']['11']['a'].properties.in_navtree = True
+        root['1']['11']['a']['aa'] = BaseNode()
+        root['1']['11']['a']['aa'].properties.in_navtree = True
+        root['1']['11']['b'] = BaseNode()
+        root['1']['11']['b'].properties.in_navtree = True
+        self.checkOutput("""
+        <class 'cone.app.model.BaseNode'>: None
+          <class 'cone.app.model.BaseNode'>: 1
+            <class 'cone.app.model.BaseNode'>: 11
+              <class 'cone.app.model.BaseNode'>: a
+                <class 'cone.app.model.BaseNode'>: aa
+              <class 'cone.app.model.BaseNode'>: b
+          <class 'cone.app.model.BaseNode'>: 2
+          <class '...InvisibleNavNode'>: 3
+        """, root.treerepr())
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['1']['11'], request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/1/11/a"') > -1)
+        self.assertTrue(res.find('ajax:target="http://example.com/1/11/b"') > -1)
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['1']['11']['a'], request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/1/11/a/aa"') > -1)
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['1']['11']['a']['aa'], request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/1/11/a/aa"') > -1)
+
+        # Render navtree on ``root['1']['11']``, check selected
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['1']['11'], request, 'navtree')
+        self.checkOutput("""
+        ...<li class="active navtreelevel_1">
+        <a href="http://example.com/1/11"
+        ajax:bind="click"
+        ajax:target="http://example.com/1/11"
+        ajax:event="contextchanged:#layout"
+        ajax:path="href">
+        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
+        11
+        </a>...
+        """, res)
+
+        # Nodes can be marked as navigation root
+        class TestNavTree(NavTree):
+            def __init__(self, model, request):
+                self.model = model
+                self.request = request
+
+        ignored_root = BaseNode(name='ignored_root')
+        ignored_root.properties.in_navtree = True
+        ignored_root['navroot'] = BaseNode()
+        ignored_root['navroot'].properties.in_navtree = True
+        ignored_root['navroot'].properties.is_navroot = True
+        ignored_root['navroot']['child_1'] = BaseNode()
+        ignored_root['navroot']['child_1'].properties.in_navtree = True
+        ignored_root['navroot']['child_2'] = BaseNode()
+        ignored_root['navroot']['child_2'].properties.in_navtree = True
+
+        navtree = TestNavTree(ignored_root['navroot'], request)
+        self.assertEqual(navtree.navroot.name, 'navroot')
+
+        with self.layer.authenticated('manager'):
+            self.assertEqual(len(navtree.navtree()['children']), 2)
+
 """
-Navtree
--------
-
-Test navigation tree tile.
-
-Unauthorized::
-
-    >>> request = layer.new_request()
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('id="navtree"') != -1
-    False
-
-Empty navtree, no items are marked to be displayed::
-
-    >>> layer.login('max')
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('id="navtree"') != -1
-    True
-
-    >>> res.find('ajax:bind="contextchanged"') != -1
-    True
-
-    >>> res.find('ajax:action="navtree:#navtree:replace"') != -1
-    True
-
-    >>> res.find('class="contextsensitiv list-group"') != -1
-    True
-
-Node's which are in navtree::
-
-    >>> root = BaseNode()
-    >>> root.properties.in_navtree = True
-    >>> root['1'] = BaseNode()
-    >>> root['1']['11'] = BaseNode()
-    >>> root['1']['11'].properties.in_navtree = True
-    >>> root['1'].properties.in_navtree = True
-    >>> root['2'] = BaseNode()
-    >>> root['2'].properties.in_navtree = True
-
-``in_navtree`` is read from ``node.properties`` and defines display UI contract
-with the navtree tile::
-
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('ajax:target="http://example.com/1"') > -1
-    True
-
-Render navtree on ``root['1']``, must be selected::
-
-    >>> res = render_tile(root['1'], request, 'navtree')
-    >>> res
-    u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1"\n         
-    ajax:bind="click"\n         
-    ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:#layout"\n        
-    ajax:path="href">\n        
-    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
-    </a>...'
-
-Child nodes which do not grant permission 'view' are skipped::
-
-    >>> class InvisibleNavNode(BaseNode):
-    ...     __acl__ =  DEFAULT_SETTINGS_ACL
-
-    >>> root['3'] = InvisibleNavNode()
-    >>> root['3'].properties.in_navtree = True
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('ajax:target="http://example.com/3"') > -1
-    False
-
-    >>> layer.login('manager')
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('ajax:target="http://example.com/3"') > -1
-    True
-
-Default child behavior of navtree. Default children objects are displayed in 
-navtree.::
-
-    >>> root.properties.default_child = '1'
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res
-    u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1"\n         
-    ajax:bind="click"\n         
-    ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:#layout"\n        
-    ajax:path="href">\n        
-    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
-    </a>...'
-
-    >>> res = render_tile(root['1'], request, 'navtree')
-    >>> res
-    u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1"\n         
-    ajax:bind="click"\n         
-    ajax:target="http://example.com/1"\n         
-    ajax:event="contextchanged:#layout"\n        
-    ajax:path="href">\n        
-    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        1\n      
-    </a>...'
-
-If default child should not be displayed it navtree,
-``node.properties.hide_if_default`` must be set to 'True'::
-
-    >>> root['1'].properties.hide_if_default = True
-
-In this case, also children context gets switched. Instead of remaining non
-default children, children of default node are displayed.::
-
-    >>> res = render_tile(root, request, 'navtree')
-    >>> res.find('ajax:target="http://example.com/1"') > -1
-    False
-
-    >>> res.find('ajax:target="http://example.com/2"') > -1
-    False
-
-    >>> res.find('ajax:target="http://example.com/1/11"') > -1
-    True
-
-Check whether children subrendering works on nodes which have set
-``hide_if_default``::
-
-    >>> root['1']['11']['a'] = BaseNode()
-    >>> root['1']['11']['a'].properties.in_navtree = True
-    >>> root['1']['11']['a']['aa'] = BaseNode()
-    >>> root['1']['11']['a']['aa'].properties.in_navtree = True
-    >>> root['1']['11']['b'] = BaseNode()
-    >>> root['1']['11']['b'].properties.in_navtree = True
-    >>> root.printtree()
-    <class 'cone.app.model.BaseNode'>: None
-      <class 'cone.app.model.BaseNode'>: 1
-        <class 'cone.app.model.BaseNode'>: 11
-          <class 'cone.app.model.BaseNode'>: a
-            <class 'cone.app.model.BaseNode'>: aa
-          <class 'cone.app.model.BaseNode'>: b
-      <class 'cone.app.model.BaseNode'>: 2
-      <class 'InvisibleNavNode'>: 3
-
-    >>> res = render_tile(root['1']['11'], request, 'navtree')
-    >>> res.find('ajax:target="http://example.com/1/11/a"') > -1
-    True
-
-    >>> res.find('ajax:target="http://example.com/1/11/b"') > -1
-    True
-
-    >>> res = render_tile(root['1']['11']['a'], request, 'navtree')
-
-    >>> res.find('ajax:target="http://example.com/1/11/a/aa"') > -1
-    True
-
-    >>> res = render_tile(root['1']['11']['a']['aa'], request, 'navtree')
-
-    >>> res.find('ajax:target="http://example.com/1/11/a/aa"') > -1
-    True
-
-Render navtree on ``root['1']['11']``, check selected::
-
-    >>> res = render_tile(root['1']['11'], request, 'navtree')
-    >>> res
-    u'...<li class="active navtreelevel_1">\n\n      
-    <a href="http://example.com/1/11"\n         
-    ajax:bind="click"\n         
-    ajax:target="http://example.com/1/11"\n         
-    ajax:event="contextchanged:#layout"\n        
-    ajax:path="href">\n        
-    <i class="glyphicon glyphicon-asterisk" alt="..."></i>\n        11\n      
-    </a>...'
-
-Nodes can be marked as navigation root::
-
-    >>> class TestNavTree(NavTree):
-    ...     def __init__(self, model, request):
-    ...         self.model = model
-    ...         self.request = request
-
-    >>> ignored_root = BaseNode(name='ignored_root')
-    >>> ignored_root.properties.in_navtree = True
-    >>> ignored_root['navroot'] = BaseNode()
-    >>> ignored_root['navroot'].properties.in_navtree = True
-    >>> ignored_root['navroot'].properties.is_navroot = True
-    >>> ignored_root['navroot']['child_1'] = BaseNode()
-    >>> ignored_root['navroot']['child_1'].properties.in_navtree = True
-    >>> ignored_root['navroot']['child_2'] = BaseNode()
-    >>> ignored_root['navroot']['child_2'].properties.in_navtree = True
-
-    >>> navtree = TestNavTree(ignored_root['navroot'], request)
-    >>> navtree.navroot
-    <BaseNode object 'navroot' at ...>
-
-    >>> len(navtree.navtree()['children'])
-    2
-
-    >>> layer.logout()
-
-
 Personal Tools
 --------------
 
