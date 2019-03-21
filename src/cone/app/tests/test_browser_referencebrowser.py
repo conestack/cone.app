@@ -8,6 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 from node.behaviors import UUIDAware
 from plumber import plumbing
+from pyramid.httpexceptions import HTTPForbidden
 from yafowil.base import ExtractionError
 from yafowil.base import factory
 import cone.app.browser.referencebrowser
@@ -281,151 +282,121 @@ class TestBrowserReferenceBrowser(TileTestCase):
         >&nbsp;model</a>...
         """, rendered)
 
-"""
-Reference Pathbar
------------------
+    def test_reference_pathbar(self):
+        model = UUIDNode()
+        model['a'] = UUIDNode()
+        model['a']['b'] = UUIDNode()
+        model['z'] = UUIDNode()
+        node = model['a']['b']['c'] = UUIDNode()
 
-::
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
 
-    >>> model = UUIDNode()
-    >>> model['a'] = UUIDNode()
-    >>> model['a']['b'] = UUIDNode()
-    >>> model['z'] = UUIDNode()
-    >>> node = model['a']['b']['c'] = UUIDNode()
+        # Case Unauthorized
+        err = self.expectError(
+            HTTPForbidden,
+            render_tile,
+            node,
+            request,
+            'referencebrowser_pathbar'
+        )
+        self.checkOutput("""
+        Unauthorized: tile
+        <cone.app.browser.referencebrowser.ReferenceBrowserPathBar object at ...>
+        failed permission check
+        """, str(err))
 
-    >>> request = layer.new_request()
-    >>> request.params['referencable'] = 'dummy'
-    >>> request.params['selected'] = ''
-    >>> request.params['root'] = '/'
+        # Case reference root is application root
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
+        with self.layer.authenticated('max'):
+            res = render_tile(node, request, 'referencebrowser_pathbar')
+        self.assertTrue(res.find('"http://example.com/?') > -1)
+        self.assertTrue(res.find('"http://example.com/a?') > -1)
+        self.assertTrue(res.find('"http://example.com/a/b?') > -1)
 
-Case Unauthorized::
+        # Case reference root is in current sub tree
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = 'a'
+        with self.layer.authenticated('max'):
+            res = render_tile(node, request, 'referencebrowser_pathbar')
+        self.assertFalse(res.find('"http://example.com/?') > -1)
+        self.assertTrue(res.find('"http://example.com/a?') > -1)
+        self.assertTrue(res.find('"http://example.com/a/b?') > -1)
 
-    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
-    Traceback (most recent call last):
-      ...
-    HTTPForbidden: Unauthorized: tile 
-    <cone.app.browser.referencebrowser.ReferenceBrowserPathBar object at ...> 
-    failed permission check
+        # Case reference root is in sibling sub tree
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = '/z'
+        with self.layer.authenticated('max'):
+            res = render_tile(node, request, 'referencebrowser_pathbar')
+        self.assertFalse(res.find('"http://example.com/?') > -1)
+        self.assertFalse(res.find('"http://example.com/a?') > -1)
+        self.assertFalse(res.find('"http://example.com/a/b?') > -1)
+        self.assertTrue(res.find('<strong>z</strong>') > -1)
 
-Case reference root is application root::
+    def test_reference_listing(self):
+        created = datetime(2011, 3, 15)
+        delta = timedelta(1)
+        modified = created + delta
 
-    >>> layer.login('max')
+        model = UUIDNode()
+        for i in range(20):
+            model[str(i)] = UUIDNode()
+            # set listing display metadata
+            model[str(i)].metadata.title = str(i)
+            model[str(i)].metadata.created = created
+            model[str(i)].metadata.modified = modified
+            if i % 2 == 0:
+                # make node referencable
+                model[str(i)].properties.action_add_reference = True
+                # do not render link to children
+                model[str(i)].properties.leaf = True
+            created = created + delta
+            modified = modified + delta
 
-    >>> request = layer.new_request()
-    >>> request.params['referencable'] = 'dummy'
-    >>> request.params['selected'] = ''
-    >>> request.params['root'] = '/'
+        # Unauthorized fails
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
 
-    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
+        err = self.expectError(
+            HTTPForbidden,
+            render_tile,
+            model,
+            request,
+            'referencelisting'
+        )
+        self.checkOutput("""
+            Unauthorized: tile
+            <cone.app.browser.referencebrowser.ReferenceListing object at ...>
+            failed permission check
+        """, str(err))
 
-    >>> res.find('"http://example.com/?') > -1
-    True
+        # Authorized
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'referencelisting')
+        self.assertTrue(res.find('id="referencebrowser"') > -1)
+        self.checkOutput('...<div id="referencebrowser"...', res)
 
-    >>> res.find('"http://example.com/a?') > -1
-    True
-
-    >>> res.find('"http://example.com/a/b?') > -1
-    True
-
-Case reference root is in current sub tree::
-
-    >>> request = layer.new_request()
-    >>> request.params['referencable'] = 'dummy'
-    >>> request.params['selected'] = ''
-    >>> request.params['root'] = 'a'
-    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
-    >>> res.find('"http://example.com/?') > -1
-    False
-
-    >>> res.find('"http://example.com/a?') > -1
-    True
-
-    >>> res.find('"http://example.com/a/b?') > -1
-    True
-
-Case reference root is in sibling sub tree::
-
-    >>> request = layer.new_request()
-    >>> request.params['referencable'] = 'dummy'
-    >>> request.params['selected'] = ''
-    >>> request.params['root'] = '/z'
-    >>> res = render_tile(node, request, 'referencebrowser_pathbar')
-    >>> res.find('"http://example.com/?') > -1
-    False
-
-    >>> res.find('"http://example.com/a?') > -1
-    False
-
-    >>> res.find('"http://example.com/a/b?') > -1
-    False
-
-    >>> res.find('<strong>z</strong>') > -1
-    True
-
-    >>> layer.logout()
-
-
-Reference listing tile
-----------------------
-
-Create dummy environ::
-
-    >>> created = datetime(2011, 3, 15)
-    >>> delta = timedelta(1)
-    >>> modified = created + delta
-
-    >>> model = UUIDNode()
-    >>> for i in range(20):
-    ...     model[str(i)] = UUIDNode()
-    ...     # set listing display metadata
-    ...     model[str(i)].metadata.title = str(i)
-    ...     model[str(i)].metadata.created = created
-    ...     model[str(i)].metadata.modified = modified
-    ...     if i % 2 == 0:
-    ...         # make node referencable
-    ...         model[str(i)].properties.action_add_reference = True
-    ...         # do not render link to children
-    ...         model[str(i)].properties.leaf = True
-    ...     created = created + delta
-    ...     modified = modified + delta
-
-Unauthorized fails::
-
-    >>> request = layer.new_request()
-    >>> request.params['referencable'] = 'dummy'
-    >>> request.params['selected'] = ''
-    >>> request.params['root'] = '/'
-
-    >>> res = render_tile(model, request, 'referencelisting')
-    Traceback (most recent call last):
-      ...
-    HTTPForbidden: Unauthorized: tile 
-    <cone.app.browser.referencebrowser.ReferenceListing object at ...> 
-    failed permission check
-
-Authorized::
-
-    >>> layer.login('max')
-    >>> res = render_tile(model, request, 'referencelisting')
-    >>> res.find('id="referencebrowser"') > -1
-    True
-
-    >>> res
-    u'...<div id="referencebrowser"...'
-
-Referencable nodes renders add reference action related markup::
-
-    >>> res
-    u'...
-    <a\n     
-    id="ref-..."\n     
-    href="http://example.com/1"\n     
-    class="addreference"\n     
-    title="Add reference"\n     
-    data-toggle="tooltip"\n     
-    data-placement="top"\n     
-    ajax:bind="click"\n    ><span class="ion-plus-round"></span></a>...'
-
-    >>> layer.logout()
-
-"""
+        # Referencable nodes renders add reference action related markup
+        self.checkOutput("""
+        ...
+        <a
+        id="ref-..."
+        href="http://example.com/1"
+        class="addreference"
+        title="Add reference"
+        data-toggle="tooltip"
+        data-placement="top"
+        ajax:bind="click"
+        ><span class="ion-plus-round"></span></a>...
+        """, res)
