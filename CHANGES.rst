@@ -18,6 +18,10 @@ Changes
   ``pyramid.security.authenticated_userid``.
   [rnix, 2019-03-21]
 
+- Add ``cone.app.main_hook`` decorator. ``cone.app.register_main_hook`` is
+  deprecated and will be removed as of ``cone.app`` version 1.1.
+  [rnix, 2019-03-21]
+
 - Convert doctests to unittests.
   [rnix, 2019-03-21]
 

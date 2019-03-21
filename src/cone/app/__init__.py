@@ -164,8 +164,19 @@ main_hooks = list()
 
 def register_main_hook(callback):
     """Register function to get called on application startup.
+
+    # B/C - will be removed as of cone.app 1.1
     """
     main_hooks.append(callback)
+
+
+def main_hook(func):
+    """decorator to register main hook.
+
+    Decorated function gets called on application startup.
+    """
+    main_hooks.append(func)
+    return func
 
 
 def get_root(environ=None):

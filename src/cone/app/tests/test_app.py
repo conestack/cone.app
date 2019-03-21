@@ -1,3 +1,4 @@
+from cone.app import main_hook
 from cone.app import make_remote_addr_middleware
 from cone.app.model import BaseNode
 from node.tests import NodeTestCase
@@ -56,16 +57,16 @@ class TestApp(NodeTestCase):
 
     def test_main(self):
         # main hook
-        class CustomMainHook(object):
-            called = False
+        hooks = dict(called=0)
 
-            # normally a function
-            def __call__(self, configurator, global_config, settings):
-                self.called = True
-
-        custom_main_hook = CustomMainHook()
+        def custom_main_hook(configurator, global_config, settings):
+            hooks['called'] += 1
 
         cone.app.register_main_hook(custom_main_hook)
+
+        @main_hook
+        def decorated_main_hook(configurator, global_config, settings):
+            hooks['called'] += 1
 
         # set auth tkt factory``
         factory = cone.app.auth_tkt_factory(secret='12345')
@@ -87,10 +88,11 @@ class TestApp(NodeTestCase):
         # main
         router = cone.app.main({}, **settings)
         self.assertTrue(isinstance(router, Router))
-        self.assertTrue(custom_main_hook.called)
+        self.assertEqual(hooks['called'], 2)
 
         # Remove custom main hook after testing
         cone.app.main_hooks.remove(custom_main_hook)
+        cone.app.main_hooks.remove(decorated_main_hook)
 
     def test_remote_addr_middleware(self):
         # Remote address middleware
