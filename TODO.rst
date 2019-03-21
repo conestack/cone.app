@@ -24,6 +24,10 @@ Roadmap
 1.0 beta
 --------
 
+[X] Migrate Doctests to Unittests where appropriate.
+
+[ ] Python 3 support.
+
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
 [ ] ``cone.app.browser.authoring.OverlayFormTile`` is superfluous.
@@ -93,10 +97,3 @@ security integration.
 
 [ ] Rename ``cone.app.browser.batch.Batch`` to
 ``cone.app.browser.batch.Pagination`` provoding B/C.
-
-1.2
----
-
-[ ] Migrate Doctests to Unittests where appropriate.
-
-[ ] Python 3 support.
