@@ -90,31 +90,28 @@ class TestUtils(NodeTestCase):
     def test_creation_metadata(self):
         # Creation metadata
         node = BaseNode()
-        self.layer.login('editor')
+        with self.layer.authenticated('editor'):
+            self.assertFalse('creator' in node.attrs)
+            self.assertFalse('created' in node.attrs)
+            self.assertFalse('modified' in node.attrs)
 
-        self.assertFalse('creator' in node.attrs)
-        self.assertFalse('created' in node.attrs)
-        self.assertFalse('modified' in node.attrs)
+            add_creation_metadata(self.layer.new_request(), node.attrs)
 
-        add_creation_metadata(self.layer.new_request(), node.attrs)
+            self.assertTrue('creator' in node.attrs)
+            self.assertTrue('created' in node.attrs)
+            self.assertTrue('modified' in node.attrs)
 
-        self.assertTrue('creator' in node.attrs)
-        self.assertTrue('created' in node.attrs)
-        self.assertTrue('modified' in node.attrs)
+            self.assertEqual(node.attrs['creator'], 'editor')
+            created = node.attrs['created']
+            modified = node.attrs['modified']
 
-        self.assertEqual(node.attrs['creator'], 'editor')
-        created = node.attrs['created']
-        modified = node.attrs['modified']
+            self.assertTrue(isinstance(created, datetime))
+            self.assertTrue(isinstance(modified, datetime))
+            self.assertTrue(created == modified)
 
-        self.assertTrue(isinstance(created, datetime))
-        self.assertTrue(isinstance(modified, datetime))
-        self.assertTrue(created == modified)
+            update_creation_metadata(self.layer.new_request(), node.attrs)
 
-        update_creation_metadata(self.layer.new_request(), node.attrs)
-
-        self.assertTrue(isinstance(node.attrs['created'], datetime))
-        self.assertTrue(isinstance(node.attrs['modified'], datetime))
-        self.assertTrue(created == node.attrs['created'])
-        self.assertFalse(created == node.attrs['modified'])
-
-        self.layer.logout()
+            self.assertTrue(isinstance(node.attrs['created'], datetime))
+            self.assertTrue(isinstance(node.attrs['modified'], datetime))
+            self.assertTrue(created == node.attrs['created'])
+            self.assertFalse(created == node.attrs['modified'])

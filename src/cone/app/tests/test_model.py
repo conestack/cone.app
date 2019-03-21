@@ -312,21 +312,19 @@ class TestModel(NodeTestCase):
         self.assertTrue(props['unprotected'])
 
         # Authenticate, both properties are now available
-        self.layer.login('viewer')
-        self.layer.new_request()
+        with self.layer.authenticated('viewer'):
+            self.layer.new_request()
 
-        self.assertTrue(props['viewprotected'])
-        self.assertTrue(props.viewprotected)
-        self.assertTrue(props.unprotected)
+            self.assertTrue(props['viewprotected'])
+            self.assertTrue(props.viewprotected)
+            self.assertTrue(props.unprotected)
 
-        self.assertEqual(props.keys(), ['unprotected', 'viewprotected'])
-        self.assertTrue(props.get('viewprotected'))
-        self.assertTrue(props.get('unprotected'))
+            self.assertEqual(props.keys(), ['unprotected', 'viewprotected'])
+            self.assertTrue(props.get('viewprotected'))
+            self.assertTrue(props.get('unprotected'))
 
-        props.viewprotected = False
-        self.assertFalse(props.viewprotected)
-
-        self.layer.logout()
+            props.viewprotected = False
+            self.assertFalse(props.viewprotected)
 
     def test_XMLProperties(self):
         # There's a convenience object for XML input and output

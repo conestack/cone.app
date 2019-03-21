@@ -47,13 +47,10 @@ class SecurityTest(NodeTestCase):
         self.layer.new_request()
         self.assertTrue(authenticated_user(self.layer.current_request) is None)
 
-        self.layer.login('manager')
-
-        user = authenticated_user(self.layer.current_request)
-        self.assertTrue(IUser.providedBy(user))
-        self.assertEqual(user.name, 'manager')
-
-        self.layer.logout()
+        with self.layer.authenticated('manager'):
+            user = authenticated_user(self.layer.current_request)
+            self.assertTrue(IUser.providedBy(user))
+            self.assertEqual(user.name, 'manager')
 
     def test_principal_by_id(self):
         user = principal_by_id('manager')
@@ -102,9 +99,9 @@ class SecurityTest(NodeTestCase):
             BaseGlobalComponents
         ))
 
-        self.layer.login('inexistent')
-        userid = authenticated_userid(self.layer.current_request)
-        self.assertTrue(userid is None)
+        with self.layer.authenticated('inexistent'):
+            userid = authenticated_userid(self.layer.current_request)
+            self.assertTrue(userid is None)
 
         # Create some security context for testing
         class ACLTest(object):
@@ -112,21 +109,20 @@ class SecurityTest(NodeTestCase):
         context = ACLTest()
 
         # Authenticate several users and check permission
-        self.layer.login('superuser', 'superuser')
-        userid = authenticated_userid(self.layer.current_request)
-        self.assertEqual(userid, 'superuser')
+        with self.layer.authenticated('superuser', 'superuser'):
+            userid = authenticated_userid(self.layer.current_request)
+            self.assertEqual(userid, 'superuser')
 
-        rule = has_permission('manage', context, self.layer.current_request)
-        self.assertTrue(isinstance(rule, ACLAllowed))
+            rule = has_permission('manage', context, self.layer.current_request)
+            self.assertTrue(isinstance(rule, ACLAllowed))
 
-        self.layer.login('viewer')
-        userid = authenticated_userid(self.layer.current_request)
-        self.assertEqual(userid, 'viewer')
+        with self.layer.authenticated('viewer'):
+            userid = authenticated_userid(self.layer.current_request)
+            self.assertEqual(userid, 'viewer')
 
-        rule = has_permission('manage', context, self.layer.current_request)
-        self.assertTrue(isinstance(rule, ACLDenied))
+            rule = has_permission('manage', context, self.layer.current_request)
+            self.assertTrue(isinstance(rule, ACLDenied))
 
-        self.layer.logout()
         userid = authenticated_userid(self.layer.current_request)
         self.assertTrue(userid is None)
 
@@ -176,52 +172,52 @@ class SecurityTest(NodeTestCase):
             ('Allow', 'system.Authenticated', ['view'])
         )
 
-        self.layer.login('sepp')
-        userid = authenticated_userid(self.layer.current_request)
-        self.assertEqual(userid, 'sepp')
+        with self.layer.authenticated('sepp'):
+            userid = authenticated_userid(self.layer.current_request)
+            self.assertEqual(userid, 'sepp')
 
-        ownersupportnode = OwnerSupportNode()
-        self.assertEqual(ownersupportnode.owner, 'sepp')
-        self.assertEqual(ownersupportnode.attrs['owner'], 'sepp')
-        self.assertEqual(ownersupportnode.__acl__, [
-            ('Allow', 'sepp', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'system.Authenticated', ['view']),
-            ('Allow', 'role:viewer', ['view', 'list']),
-            ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']),
-            ('Allow', 'role:admin', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'role:manager', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state', 'manage'
-            ]),
-            ('Allow', 'role:owner', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'system.Everyone', ['login']),
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        ])
+            ownersupportnode = OwnerSupportNode()
+            self.assertEqual(ownersupportnode.owner, 'sepp')
+            self.assertEqual(ownersupportnode.attrs['owner'], 'sepp')
+            self.assertEqual(ownersupportnode.__acl__, [
+                ('Allow', 'sepp', [
+                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                    'paste', 'manage_permissions', 'change_state'
+                ]),
+                ('Allow', 'system.Authenticated', ['view']),
+                ('Allow', 'role:viewer', ['view', 'list']),
+                ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']),
+                ('Allow', 'role:admin', [
+                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                    'paste', 'manage_permissions', 'change_state'
+                ]),
+                ('Allow', 'role:manager', [
+                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                    'paste', 'manage_permissions', 'change_state', 'manage'
+                ]),
+                ('Allow', 'role:owner', [
+                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
+                    'paste', 'manage_permissions', 'change_state'
+                ]),
+                ('Allow', 'system.Everyone', ['login']),
+                ('Deny', 'system.Everyone', ALL_PERMISSIONS)
+            ])
 
-        self.layer.login('viewer')
-        rule = has_permission(
-            'delete',
-            ownersupportnode,
-            self.layer.current_request
-        )
-        self.assertTrue(isinstance(rule, ACLDenied))
+        with self.layer.authenticated('viewer'):
+            rule = has_permission(
+                'delete',
+                ownersupportnode,
+                self.layer.current_request
+            )
+            self.assertTrue(isinstance(rule, ACLDenied))
 
-        self.layer.login('sepp')
-        rule = has_permission(
-            'delete',
-            ownersupportnode,
-            self.layer.current_request
-        )
-        self.assertTrue(isinstance(rule, ACLAllowed))
+        with self.layer.authenticated('sepp'):
+            rule = has_permission(
+                'delete',
+                ownersupportnode,
+                self.layer.current_request
+            )
+            self.assertTrue(isinstance(rule, ACLAllowed))
 
         @plumbing(OwnerSupport)
         class NoOwnerACLOnBaseNode(BaseNode):
@@ -229,14 +225,13 @@ class SecurityTest(NodeTestCase):
             def __acl__(self):
                 return [('Allow', 'role:viewer', ['view'])]
 
-        ownersupportnode = NoOwnerACLOnBaseNode()
-        self.assertEqual(ownersupportnode.owner, 'sepp')
-        self.assertEqual(
-            ownersupportnode.__acl__,
-            [('Allow', 'role:viewer', ['view'])]
-        )
-
-        self.layer.logout()
+        with self.layer.authenticated('sepp'):
+            ownersupportnode = NoOwnerACLOnBaseNode()
+            self.assertEqual(ownersupportnode.owner, 'sepp')
+            self.assertEqual(
+                ownersupportnode.__acl__,
+                [('Allow', 'role:viewer', ['view'])]
+            )
 
     def test_PrincipalACL(self):
         # PrincipalACL is an abstract class. Directly use causes an error
@@ -419,12 +414,11 @@ class SecurityTest(NodeTestCase):
         """, str(handler.record))
 
         # Test Group callback, also logs if an error occurs
-        self.layer.login('superuser', 'superuser')
-        self.assertEqual(
-            groups_callback('superuser', self.layer.new_request()),
-            [u'role:manager']
-        )
-        self.layer.logout()
+        with self.layer.authenticated('superuser', 'superuser'):
+            self.assertEqual(
+                groups_callback('superuser', self.layer.new_request()),
+                [u'role:manager']
+            )
 
         groups_callback('foo', self.layer.new_request())
         self.check_output("""

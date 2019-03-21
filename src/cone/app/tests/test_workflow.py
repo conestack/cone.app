@@ -87,14 +87,11 @@ class TestWorkflow(NodeTestCase):
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
         ])
 
-        self.layer.login('manager')
-
-        request = self.layer.new_request()
-        wf = get_workflow(node.__class__, node.workflow_name)
-        wf.transition(node, request, u'initial_2_final')
-        self.assertEqual(node.state, u'final')
-
-        self.layer.logout()
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            wf = get_workflow(node.__class__, node.workflow_name)
+            wf.transition(node, request, u'initial_2_final')
+            self.assertEqual(node.state, u'final')
 
         self.assertEqual(node.__acl__, [
             ('Allow', 'role:manager', ['view', 'edit', 'change_state']),
