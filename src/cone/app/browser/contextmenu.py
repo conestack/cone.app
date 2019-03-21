@@ -2,7 +2,7 @@ from cone.app.browser.actions import ActionAdd
 from cone.app.browser.actions import ActionCopy
 from cone.app.browser.actions import ActionCut
 from cone.app.browser.actions import ActionDelete
-from cone.app.browser.actions import ActionDeleteChildren
+# from cone.app.browser.actions import ActionDeleteChildren
 from cone.app.browser.actions import ActionEdit
 from cone.app.browser.actions import ActionList
 from cone.app.browser.actions import ActionPaste
@@ -66,12 +66,14 @@ class ContextMenuDropdown(Toolbar):
         return False
 
     def __call__(self, model, request):
-        self.model= model
+        self.model = model
         self.request = request
-        return render_template(self.template,
-                               request=request,
-                               model=model,
-                               context=self)
+        return render_template(
+            self.template,
+            request=request,
+            model=model,
+            context=self
+        )
 
     def __setitem__(self, name, value):
         if not isinstance(value, LinkAction):
@@ -97,7 +99,7 @@ context_menu['childactions'] = ContextMenuDropdown(title=childactions_title)
 context_menu['childactions']['cut'] = ActionCut()
 context_menu['childactions']['copy'] = ActionCopy()
 context_menu['childactions']['paste'] = ActionPaste()
-#context_menu['childactions']['delete'] = ActionDeleteChildren()
+# context_menu['childactions']['delete'] = ActionDeleteChildren()
 
 context_menu['contextactions'] = ContextMenuToolbar()
 context_menu['contextactions']['change_state'] = ActionState()

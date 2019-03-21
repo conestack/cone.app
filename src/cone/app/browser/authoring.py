@@ -251,6 +251,7 @@ class OverlayForm(Behavior):
     def next(self, request):
         return [AjaxOverlay(selector=self.overlay_selector, close=True)]
 
+
 # B/C
 # deprecated: will be removed in cone.app 1.1
 OverlayBehavior = OverlayForm
@@ -390,6 +391,7 @@ class ContentAddForm(AddFactoryProxy,
     def rendered_contextmenu(self):
         return render_tile(self.model.parent, self.request, 'contextmenu')
 
+
 # B/C
 # deprecated: will be removed in cone.app 1.1
 AddBehavior = ContentAddForm
@@ -453,6 +455,7 @@ class ContentEditForm(EditFormHeading,
     """Form behavior rendering edit form to content area.
     """
     action_resource = override('edit')
+
 
 # B/C
 # deprecated: will be removed in cone.app 1.1

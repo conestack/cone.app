@@ -270,8 +270,8 @@ class PathBar(Tile):
         for i in range(count):
             default_child = items[i]['default_child']
             if default_child \
-              and i < count - 1 \
-              and default_child == items[i + 1]['id']:
+                    and i < count - 1 \
+                    and default_child == items[i + 1]['id']:
                 continue
             ret.append(items[i])
 

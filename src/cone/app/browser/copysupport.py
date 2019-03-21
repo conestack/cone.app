@@ -58,26 +58,38 @@ class PasteAction(Tile):
                 node = node[key]
             if not node.node_info_name:
                 message = localizer.translate(
-                    _('cannot_paste_unknown_source',
-                      default="Cannot paste '${name}'. Unknown source"),
-                      mapping={'name': node.name})
+                    _(
+                        'cannot_paste_unknown_source',
+                        default="Cannot paste '${name}'. Unknown source"
+                    ),
+                    mapping={'name': node.name}
+                )
                 errors.append(message)
                 continue
             if not self.model.node_info_name:
                 message = localizer.translate(
-                    _('cannot_paste_unknown_target',
-                      default="Cannot paste to '${name}'. Unknown target"),
-                      mapping={'name': self.model.name})
+                    _(
+                        'cannot_paste_unknown_target',
+                        default="Cannot paste to '${name}'. Unknown target"
+                    ),
+                    mapping={'name': self.model.name}
+                )
                 errors.append(message)
                 continue
-            if not node.node_info_name in self.model.nodeinfo.addables:
+            if node.node_info_name not in self.model.nodeinfo.addables:
                 message = localizer.translate(
-                    _('cannot_paste_cardinality_violation',
-                      default="Violation. '${target}' is not allowed to "
-                              "contain '${source}'"),
-                      mapping={
-                          'target': self.model.nodeinfo.title,
-                          'source': node.nodeinfo.title})
+                    _(
+                        'cannot_paste_cardinality_violation',
+                        default=(
+                            "Violation. '${target}' is not allowed to "
+                            "contain '${source}'"
+                        )
+                    ),
+                    mapping={
+                        'target': self.model.nodeinfo.title,
+                        'source': node.nodeinfo.title
+                    }
+                )
                 errors.append(message)
                 continue
             source = node.parent
@@ -88,10 +100,15 @@ class PasteAction(Tile):
                 for parent in LocationIterator(self.model):
                     if parent is node:
                         message = localizer.translate(
-                            _('cannot_paste_self_containment',
-                              default="Cannot paste cut object to child "
-                                      "of it: ${name}"),
-                              mapping={'name': parent.name})
+                            _(
+                                'cannot_paste_self_containment',
+                                default=(
+                                    "Cannot paste cut object to child "
+                                    "of it: ${name}"
+                                )
+                            ),
+                            mapping={'name': parent.name}
+                        )
                         errors.append(message)
                         in_model = True
                         break
@@ -108,14 +125,20 @@ class PasteAction(Tile):
         for source in call_sources:
             source()
         message = localizer.translate(
-            _('pasted_items',
-              default="Pasted ${count} items"),
-              mapping={'count': success})
+            _(
+                'pasted_items',
+                default="Pasted ${count} items"
+            ),
+            mapping={'count': success}
+        )
         if errors:
             failed = localizer.translate(
-                _('pasting_items_failed',
-                  default="Pasting of ${count} items failed"),
-                  mapping={'count': len(errors)})
+                _(
+                    'pasting_items_failed',
+                    default="Pasting of ${count} items failed"
+                ),
+                mapping={'count': len(errors)}
+            )
             failed = "<br /><strong>%s</strong>" % failed
             message += "<br />".join([failed] + errors)
         ajax_message(self.request, message)

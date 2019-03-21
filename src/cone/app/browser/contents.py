@@ -83,46 +83,47 @@ class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'
     col_defs = [{
-            'id': 'actions',
-            'title': _('actions', default='Actions'),
-            'sort_key': None,
-            'sort_title': None,
-            'content': 'structure'
-        }, {
-            'id': 'title',
-            'title': _('title', default='Title'),
-            'sort_key': 'title',
-            'sort_title': _('sort_on_title', default='Sort on title'),
-            'content': 'structure'
-        }, {
-            'id': 'creator',
-            'title': _('creator', default='Creator'),
-            'sort_key': 'creator',
-            'sort_title': _('sort_on_creator', default='Sort on creator'),
-            'content': 'string'
-        }, {
-            'id': 'created',
-            'title': _('created', default='Created'),
-            'sort_key': 'created',
-            'sort_title': _('sort_on_created', default='Sort on created'),
-            'content': 'datetime'
-        }, {
-            'id': 'modified',
-            'title': _('modified', default='Modified'),
-            'sort_key': 'modified',
-            'sort_title': _('sort_on_modified', default='Sort on modified'),
-            'content': 'datetime'
-        }
-    ]
+        'id': 'actions',
+        'title': _('actions', default='Actions'),
+        'sort_key': None,
+        'sort_title': None,
+        'content': 'structure'
+    }, {
+        'id': 'title',
+        'title': _('title', default='Title'),
+        'sort_key': 'title',
+        'sort_title': _('sort_on_title', default='Sort on title'),
+        'content': 'structure'
+    }, {
+        'id': 'creator',
+        'title': _('creator', default='Creator'),
+        'sort_key': 'creator',
+        'sort_title': _('sort_on_creator', default='Sort on creator'),
+        'content': 'string'
+    }, {
+        'id': 'created',
+        'title': _('created', default='Created'),
+        'sort_key': 'created',
+        'sort_title': _('sort_on_created', default='Sort on created'),
+        'content': 'datetime'
+    }, {
+        'id': 'modified',
+        'title': _('modified', default='Modified'),
+        'sort_key': 'modified',
+        'sort_title': _('sort_on_modified', default='Sort on modified'),
+        'content': 'datetime'
+    }]
     default_sort = 'created'
     default_order = 'desc'
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),
         'creator': lambda x: x.metadata.creator.lower(),
-        'created': lambda x: x.metadata.created and
-                             x.metadata.created or FAR_PAST,
-        'modified': lambda x: x.metadata.modified and
-                              x.metadata.modified or FAR_PAST,
+        'created': lambda x: (
+            x.metadata.created and x.metadata.created or FAR_PAST
+        ),
+        'modified': lambda x: (
+            x.metadata.modified and x.metadata.modified or FAR_PAST
+        )
     }
     show_filter = True
 

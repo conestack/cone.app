@@ -143,6 +143,7 @@ def register_config(key, factory):
         raise ValueError(u"Config with name '%s' already registered." % key)
     factories[key] = factory
 
+
 # B/C - will be removed as of cone.app 1.1
 register_plugin_config = register_config
 
@@ -152,6 +153,7 @@ def register_entry(key, factory):
     if key in factories:
         raise ValueError(u"Entry with name '%s' already registered." % key)
     root.factories[key] = factory
+
 
 # B/C - will be removed as of cone.app 1.1
 register_plugin = register_entry
@@ -312,7 +314,7 @@ def main(global_config, **settings):
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
         # XXX: check whether configure.zcml exists, skip loading if not found
-        config.load_zcml('%s:configure.zcml' % plugin)      #pragma NO COVERAGE
+        config.load_zcml('%s:configure.zcml' % plugin)
 
     # execute main hooks
     for hook in main_hooks:

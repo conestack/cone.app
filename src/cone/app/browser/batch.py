@@ -188,7 +188,7 @@ class Batch(Tile):
         return position + self._siderange - count + 1
 
     def _getPositionOfCurrentInVocab(self):
-        #TODO: wildcard handling
+        # XXX: wildcard handling
         current = self.currentpage
         if current is None:
             return -1
@@ -198,7 +198,7 @@ class Batch(Tile):
                 return pointer
             pointer += 1
         # reached if subclass implementation bug
-        return -1                                           #pragma NO COVERAGE
+        return -1
 
 
 class BatchedItemsBatch(Batch):
@@ -465,8 +465,10 @@ class BatchedItems(Tile):
     def slice_sizes(self):
         """Available slice sices as list.
         """
-        return [i * self.default_slice_size
-            for i in range(1, self.num_slice_sizes + 1)]
+        return [
+            i * self.default_slice_size
+            for i in range(1, self.num_slice_sizes + 1)
+        ]
 
     @property
     def current_slice(self):

@@ -169,10 +169,10 @@ def groups_callback(name, request):
             for role in group.roles:
                 aggregated.add('role:%s' % role)
         roles = environ[ROLES_CACHE_KEY] = list(aggregated)
-    # XXX: this function is expected to return None if no roles...???
+    # XXX: this function is expected to return None if no roles?
     #      owner support not works if None returned
-    #if not roles:
-    #    return None
+    # if not roles:
+    #     return None
     return roles
 
 
@@ -183,6 +183,7 @@ class ACLRegistry(dict):
 
     def lookup(self, obj=None, node_info_name='', default=DEFAULT_ACL):
         return self.get((obj, node_info_name), default)
+
 
 acl_registry = ACLRegistry()
 

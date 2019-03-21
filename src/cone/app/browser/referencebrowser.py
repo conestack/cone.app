@@ -8,7 +8,6 @@ from cone.app.browser.utils import request_property
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import INavigationLeaf
 from cone.tile import Tile
-from cone.tile import registerTile
 from cone.tile import render_tile
 from cone.tile import tile
 from node.interfaces import IUUIDAware

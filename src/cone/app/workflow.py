@@ -52,6 +52,7 @@ class WorkflowState(Behavior):
         ``cone.app.interfaces.IWorkflowState``.
         """
         ret = _next(self)
+
         def recursiv_initial_state(node):
             if IWorkflowState.providedBy(node):
                 initialize_workflow(node, force=True)

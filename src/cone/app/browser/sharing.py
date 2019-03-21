@@ -47,16 +47,14 @@ class SharingTable(Table):
 
     @property
     def col_defs(self):
-        col_defs = [
-            {
-                'id': 'principal',
-                'title': _('principal', default='Principal'),
-                'sort_key': 'principal',
-                'sort_title': _('sort_by_principal',
-                                default='Sort by principal'),
-                'content': 'string',
-            },
-        ]
+        col_defs = [{
+            'id': 'principal',
+            'title': _('principal', default='Principal'),
+            'sort_key': 'principal',
+            'sort_title': _('sort_by_principal',
+                            default='Sort by principal'),
+            'content': 'string'
+        }]
         for role in security.DEFAULT_ROLES:
             col_defs.append({
                 'id': role[0],

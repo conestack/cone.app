@@ -110,7 +110,7 @@ class Form(Tile):
         if not self.ajax:
             return
         if self.form.attrs.get('class_add') \
-          and self.form.attrs['class_add'].find('ajax') == -1:
+                and self.form.attrs['class_add'].find('ajax') == -1:
             self.form.attrs['class_add'] += ' ajax'
         else:
             self.form.attrs['class_add'] = 'ajax'
@@ -138,7 +138,7 @@ class Form(Tile):
             self.redirect(controller.next)
             return
         if isinstance(controller.next, AjaxAction) \
-          or isinstance(controller.next, AjaxEvent):
+                or isinstance(controller.next, AjaxEvent):
             self.request.environ['cone.app.continuation'] = [controller.next]
             return u''
         if isinstance(controller.next, list):

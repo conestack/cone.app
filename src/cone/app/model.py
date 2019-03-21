@@ -66,6 +66,7 @@ _node_info_registry = dict()
 def register_node_info(name, info):
     _node_info_registry[name] = info
 
+
 # B/C removed as of cone.app 1.1
 registerNodeInfo = register_node_info
 
@@ -73,6 +74,7 @@ registerNodeInfo = register_node_info
 def get_node_info(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
+
 
 # B/C removed as of cone.app 1.1
 getNodeInfo = get_node_info
@@ -458,7 +460,7 @@ class XMLProperties(Properties):
                 for item in value:
                     item_elem = etree.SubElement(sub, 'item')
                     item_elem.text = dth.w_value(item)
-            elif type(value) is types.DictType or isinstance(value, odict):
+            elif isinstance(value, dict) or isinstance(value, odict):
                 for key, val in value.items():
                     dict_entry_elem = etree.SubElement(sub, 'elem')
                     key_elem = etree.SubElement(dict_entry_elem, 'key')

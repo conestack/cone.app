@@ -137,7 +137,7 @@ class DropdownAction(TemplateAction):
     @property
     def items(self):
         """Return list of ``cone.app.model.Properties`` instances providing
-        attributes ``icon``, ``url``, ``target``, ``action`` and ``title``. 
+        attributes ``icon``, ``url``, ``target``, ``action`` and ``title``.
         """
         raise NotImplementedError(u"Abstract ``DropdownAction`` does not "
                                   u"implement  ``items``")
