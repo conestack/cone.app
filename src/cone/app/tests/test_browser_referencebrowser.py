@@ -14,6 +14,11 @@ import cone.app.browser.referencebrowser
 import yafowil.loader
 
 
+@plumbing(UUIDAware)
+class UUIDNode(BaseNode):
+    node_info_name = 'dummy'
+
+
 class TestBrowserReferenceBrowser(TileTestCase):
     layer = testing.security
 
@@ -139,166 +144,144 @@ class TestBrowserReferenceBrowser(TileTestCase):
             u'<div class="display-referencebrowser" id="display-ref">Label</div>'
         )
 
+    def test_multi_valued(self):
+        # Render without any value
+        widget = factory(
+            'reference',
+            'ref',
+            props={
+                'label': 'Reference',
+                'multivalued': True,
+                'target': 'http://example.com/foo',
+                'referencable': 'dummy',
+            })
+        self.checkOutput("""
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
+        class="referencebrowser" id="input-ref" multiple="multiple"
+        name="ref" /></span>
+        """, widget())
+
+        # Render required with empty value
+        widget = factory(
+            'reference',
+            'ref',
+            props={
+                'label': 'Reference',
+                'multivalued': True,
+                'required': 'Ref Required',
+                'target': 'http://example.com/foo',
+                'referencable': 'dummy',
+                'vocabulary': [
+                    ('uid1', 'Title1'),
+                    ('uid2', 'Title2'),
+                ],
+            })
+
+        request = self.layer.new_request()
+        request.params['ref'] = ''
+
+        data = widget.extract(request)
+        self.assertEqual(data.extracted, '')
+        self.assertEqual(data.errors, [ExtractionError('Ref Required',)])
+
+        self.checkOutput("""
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
+        class="referencebrowser required" id="input-ref" multiple="multiple"
+        name="ref" required="required"><option
+        id="input-ref-uid1" value="uid1">Title1</option><option
+        id="input-ref-uid2" value="uid2">Title2</option></select></span>
+        """, widget(data=data))
+
+        # Required with valid value
+        request.params['ref'] = ['uid1', 'uid2']
+        data = widget.extract(request)
+        self.assertEqual(data.extracted, ['uid1', 'uid2'])
+        self.assertEqual(data.errors, [])
+
+        self.checkOutput("""
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
+        class="referencebrowser required" id="input-ref"
+        multiple="multiple" name="ref" required="required"><option
+        id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option
+        id="input-ref-uid2" selected="selected"
+        value="uid2">Title2</option></select></span>
+        """, widget(data=data))
+
+        # Multi value display renderer
+        widget = factory(
+            'reference',
+            'ref',
+            value=['uid1', 'uid2'],
+            props={
+                'label': 'Reference',
+                'target': 'http://example.com/foo',
+                'referencable': 'dummy',
+                'multivalued': True,
+                'vocabulary': [
+                    ('uid1', 'Title1'),
+                    ('uid2', 'Title2'),
+                ],
+            },
+            mode='display')
+        self.checkOutput("""
+        <ul class="display-referencebrowser"
+        id="display-ref"><li>Title1</li><li>Title2</li></ul>
+        """, widget())
+
+    def test_ActionAddReference(self):
+        model = BaseNode()
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
+
+        action = ActionAddReference()
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            self.assertEqual(action(model, request), u'')
+
+        model = UUIDNode(name='model')
+        self.checkOutput("""
+        ...<a
+        id="ref-..."
+        href="http://example.com/model"
+        class="addreference"
+        title="Add reference"
+        data-toggle="tooltip"
+        data-placement="top"\
+        ajax:bind="click"
+        ><span class="ion-plus-round"></span></a>\n\n\n<span class="reftitle"
+        style="display:none;">model</span>
+        """, action(model, request))
+
+    def test_ReferencableChildrenLink(self):
+        model = UUIDNode(name='model')
+        request = self.layer.new_request()
+        request.params['referencable'] = 'dummy'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
+
+        action = ReferencableChildrenLink('tabletile', 'tableid')
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+        self.checkOutput("""
+        ...<a
+        href="#"
+        ajax:bind="click"
+        ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"
+        ajax:event="contextchanged:.refbrowsersensitiv"
+        ajax:action="tabletile:#tableid:replace"
+        ><span class="glyphicon glyphicon-asterisk"></span
+        >&nbsp;model</a>...
+        """, rendered)
+
 """
-Multi valued
-------------
-
-Render without any value::
-
-    >>> widget = factory(
-    ...     'reference',
-    ...     'ref',
-    ...     props = {
-    ...         'label': 'Reference',
-    ...         'multivalued': True,
-    ...         'target': 'http://example.com/foo',
-    ...         'referencable': 'dummy',
-    ...     })
-    >>> widget()
-    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
-    id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select 
-    class="referencebrowser" id="input-ref" multiple="multiple" 
-    name="ref" /></span>'
-
-Render required with empty value::
-
-    >>> widget = factory(
-    ...     'reference',
-    ...     'ref',
-    ...     props={
-    ...         'label': 'Reference',
-    ...         'multivalued': True,
-    ...         'required': 'Ref Required',
-    ...         'target': 'http://example.com/foo',
-    ...         'referencable': 'dummy',
-    ...         'vocabulary': [
-    ...             ('uid1', 'Title1'),
-    ...             ('uid2', 'Title2'),
-    ...         ],
-    ...     })
-
-    >>> request = layer.new_request()
-    >>> request.params['ref'] = ''
-
-    >>> data = widget.extract(request)
-    >>> data.extracted
-    ''
-
-    >>> data.errors
-    [ExtractionError('Ref Required',)]
-
-    >>> widget(data=data)
-    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
-    id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select 
-    class="referencebrowser required" id="input-ref" multiple="multiple" 
-    name="ref" required="required"><option 
-    id="input-ref-uid1" value="uid1">Title1</option><option 
-    id="input-ref-uid2" value="uid2">Title2</option></select></span>'
-
-Required with valid value::
-
-    >>> request.params['ref'] = ['uid1', 'uid2']
-    >>> data = widget.extract(request)
-    >>> data.extracted
-    ['uid1', 'uid2']
-
-    >>> data.errors
-    []
-
-    >>> widget(data=data)
-    u'<span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input 
-    id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select 
-    class="referencebrowser required" id="input-ref" 
-    multiple="multiple" name="ref" required="required"><option 
-    id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option 
-    id="input-ref-uid2" selected="selected" 
-    value="uid2">Title2</option></select></span>'
-
-Multi value display renderer::
-
-    >>> widget = factory(
-    ...     'reference',
-    ...     'ref',
-    ...     value=['uid1', 'uid2'],
-    ...     props={
-    ...         'label': 'Reference',
-    ...         'target': 'http://example.com/foo',
-    ...         'referencable': 'dummy',
-    ...         'multivalued': True,
-    ...         'vocabulary': [
-    ...             ('uid1', 'Title1'),
-    ...             ('uid2', 'Title2'),
-    ...         ],
-    ...     },
-    ...     mode='display')
-    >>> widget()
-    u'<ul class="display-referencebrowser" 
-    id="display-ref"><li>Title1</li><li>Title2</li></ul>'
-
-
-ActionAddReference
-------------------
-
-::
-
-    >>> model = BaseNode()
-    >>> request = layer.new_request()
-    >>> request.params['referencable'] = 'dummy'
-    >>> request.params['selected'] = ''
-    >>> request.params['root'] = '/'
-
-    >>> action = ActionAddReference()
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u''
-
-    >>> @plumbing(UUIDAware)
-    ... class UUIDNode(BaseNode):
-    ...     node_info_name = 'dummy'
-
-    >>> model = UUIDNode(name='model')
-
-    >>> action(model, request)
-    u'...<a\n     
-    id="ref-..."\n     
-    href="http://example.com/model"\n     
-    class="addreference"\n     
-    title="Add reference"\n     
-    data-toggle="tooltip"\n     
-    data-placement="top"\n     
-    ajax:bind="click"\n    
-    ><span class="ion-plus-round"></span></a>\n\n\n<span class="reftitle" 
-    style="display:none;">model</span>'
-
-    >>> layer.logout()
-
-
-ReferencableChildrenLink
-------------------------
-
-::
-
-    >>> action = ReferencableChildrenLink('tabletile', 'tableid')
-    >>> action(model, request)
-    u''
-
-    >>> layer.login('manager')
-    >>> action(model, request)
-    u'...<a\n     
-    href="#"\n     
-    ajax:bind="click"\n     
-    ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"\n     
-    ajax:event="contextchanged:.refbrowsersensitiv"\n     
-    ajax:action="tabletile:#tableid:replace"\n    
-    ><span class="glyphicon glyphicon-asterisk"></span\n    \n    
-    >&nbsp;model</a>...'
-
-    >>> layer.logout()
-
-
 Reference Pathbar
 -----------------
 
