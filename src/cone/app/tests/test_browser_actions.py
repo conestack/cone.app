@@ -30,7 +30,8 @@ from cone.app.model import register_node_info
 from cone.app.testing.mock import CopySupportNode
 from cone.app.testing.mock import SharingNode
 from cone.app.testing.mock import WorkflowNode
-from cone.tile import register_tile
+from cone.tile import tile
+from cone.tile import Tile
 from cone.tile.tests import TileTestCase
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
@@ -118,9 +119,11 @@ class TestBrowserActions(TileTestCase):
             u'<a href="">dummy template action</a>'
         )
 
-        register_tile(
-            name='dummy_action_tile',
-            path='cone.app.testing:dummy_action.pt')
+        with self.layer.hook_tile_reg():
+            @tile(name='dummy_action_tile',
+                  path='cone.app.testing:dummy_action.pt')
+            class DummyActionTile(Tile):
+                pass
 
         class DummyTileAction(TileAction):
             tile = u'dummy_action_tile'
