@@ -24,7 +24,7 @@ def settings_tab_content(model, request):
     """
     try:
         rendered = render_tile(model, request, 'content')
-    except Exception, e:
+    except Exception:
         localizer = get_localizer(request)
         error = localizer.translate(_('error', default='Error'))
         rendered = '<div>%s: %s</div>' % (error, format_traceback())
