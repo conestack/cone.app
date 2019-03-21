@@ -5,7 +5,6 @@ from cone.app.browser.layout import ProtectedContentTile
 from cone.app.model import AppRoot
 from cone.app.model import BaseNode
 from cone.app.security import DEFAULT_SETTINGS_ACL
-from cone.tile import register_tile
 from cone.tile import render_tile
 from cone.tile import Tile
 from cone.tile import tile

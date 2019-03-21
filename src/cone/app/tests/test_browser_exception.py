@@ -6,7 +6,6 @@ from cone.app.browser.exception import not_found_view
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
-import cone.app.browser.exception
 
 
 class TestBrowserException(TileTestCase):

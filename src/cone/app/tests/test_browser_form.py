@@ -12,7 +12,6 @@ from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 from pyramid.security import has_permission
 from webob.exc import HTTPFound
-from yafowil import loader
 from yafowil.base import factory
 
 

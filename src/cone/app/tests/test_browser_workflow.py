@@ -3,7 +3,6 @@ from cone.app.testing.mock import InexistentWorkflowNode
 from cone.app.testing.mock import WorkflowNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
-import cone.app.browser.workflow
 
 
 class TestBrowserWorkflow(TileTestCase):

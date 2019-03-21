@@ -26,7 +26,6 @@ from yafowil.base import factory
 from zope.interface import implementer
 from zope.interface import Interface
 import urllib2
-import yafowil.loader
 
 
 class TestBrowserAuthoring(TileTestCase):

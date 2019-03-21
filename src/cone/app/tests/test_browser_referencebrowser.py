@@ -11,8 +11,6 @@ from plumber import plumbing
 from pyramid.httpexceptions import HTTPForbidden
 from yafowil.base import ExtractionError
 from yafowil.base import factory
-import cone.app.browser.referencebrowser
-import yafowil.loader
 
 
 @plumbing(UUIDAware)
