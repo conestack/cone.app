@@ -24,7 +24,6 @@ except ImportError:
 class YAMLForm(Behavior):
     """Plumbing behavior for rendering yaml forms.
     """
-
     action_resource = default(u'')
 
     # B/C
@@ -68,7 +67,6 @@ class ProtectedAttributesForm(Behavior):
     ``self.attribute_permissions`` containing the attribute names as key, and
     a 2-tuple containing required edit and view permission for this attribute.
     """
-
     attribute_permissions = default(dict())
     attribute_default_permissions = default(('edit', 'view'))
 
@@ -93,7 +91,6 @@ class ProtectedAttributesForm(Behavior):
 class Form(Tile):
     """A form tile.
     """
-
     form = None  # yafowil compound expected.
     ajax = True  # render ajax form related by default.
 
@@ -135,7 +132,7 @@ class Form(Tile):
             return controller.rendered
         if isinstance(controller.next, HTTPFound):
             self.redirect(controller.next)
-            return
+            return u''
         if isinstance(controller.next, AjaxAction) \
                 or isinstance(controller.next, AjaxEvent):
             self.request.environ['cone.app.continuation'] = [controller.next]

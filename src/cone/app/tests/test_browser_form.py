@@ -31,23 +31,17 @@ class TestBrowserForm(TileTestCase):
         with self.layer.hook_tile_reg():
             @tile(name='subscriptionform')
             class SubscriptionForm(Form):
-                _ajax = False  # test flag
-                _show = False  # test flag
-
-                @property
-                def ajax(self):
-                    return self._ajax
-
-                @property
-                def show(self):
-                    return self._show
+                ajax = False
+                show = False
 
                 def prepare(self):
                     form = factory(
                         u'form',
                         name='subscriptionform',
                         props={
-                            'action': self.nodeurl
+                            'action': self.nodeurl,
+                            'class': 'foo',
+                            'class_add': 'bar'
                         })
                     form['email'] = factory(
                         'field:label:error:text',
@@ -87,10 +81,13 @@ class TestBrowserForm(TileTestCase):
             self.assertEqual(rendered, u'')
 
         # Set show to True
-        SubscriptionForm._show = True
+        SubscriptionForm.show = True
         # Render form. no action is triggered and no input is given
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
+
+        expected = 'class="bar foo"'
+        self.assertTrue(rendered.find(expected) != -1)
 
         expected = 'action="http://example.com/dummymodel"'
         self.assertTrue(rendered.find(expected) != -1)
@@ -106,6 +103,7 @@ class TestBrowserForm(TileTestCase):
 
         # Trigger subscribe action and set empty email value. Results in a form
         # with error message since email is required
+        request = self.layer.new_request()
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = ''
 
@@ -117,11 +115,14 @@ class TestBrowserForm(TileTestCase):
 
         # Trigger subscribe action and set valid email value. Now the action
         # handler and next handler are triggered
+        request = self.layer.new_request()
+        request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
 
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
 
+        self.assertEqual(rendered, '')
         self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
         subscriptions = []
 
@@ -129,38 +130,54 @@ class TestBrowserForm(TileTestCase):
         # instance on request
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
 
-        del request.environ['redirect']
-
         # Even if we commit as ajax form, it is treaten as normal form since
         # ajax flag is set to False (defaults to True)
+        request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['action.subscriptionform.subscribe'] = '1'
+        request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
 
+        self.assertEqual(rendered, '')
         self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
         subscriptions = []
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
 
-        del request.environ['redirect']
-        del request.params['ajax']
+        # Try with ajax True.
+        SubscriptionForm.ajax = True
 
-        # Try with ajax True. First if submitted without ajax flag, still
-        # expect HTTPFound instance
-        SubscriptionForm._ajax = True
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
 
+        expected = 'class="ajax bar foo"'
+        self.assertTrue(rendered.find(expected) != -1)
+
+        # If submitted without ajax flag on request, still get HTTPFound
+        request = self.layer.new_request()
+        request.params['action.subscriptionform.subscribe'] = '1'
+        request.params['subscriptionform.email'] = 'john.doe@example.com'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'subscriptionform')
+
+        self.assertEqual(rendered, '')
         self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
         subscriptions = []
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
 
         # Submit with ajax flag
+        request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['action.subscriptionform.subscribe'] = '1'
+        request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
 
+        self.assertEqual(rendered, '')
         self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
         subscriptions = []
 
@@ -203,6 +220,18 @@ class TestBrowserForm(TileTestCase):
 
         expected = (
             'action="http://example.com/dummymodel/yamlsubscriptionform2"'
+        )
+        self.assertTrue(rendered.find(expected) > -1)
+
+        # form flavor add renders form action URL on parent
+        root = BaseNode(name='root')
+        model = root['child'] = BaseNode()
+
+        YAMLSubscriptionForm.form_flavor = 'add'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'yamlsubscriptionform')
+        expected = (
+            'action="http://example.com/root/yamlsubscriptionform"'
         )
         self.assertTrue(rendered.find(expected) > -1)
 
@@ -271,6 +300,35 @@ class TestBrowserForm(TileTestCase):
         type="text" value="Protectedfield" /></div></form>
         """, rendered)
 
+        # Test default attribute permissions
+        MyProtectedAttributesForm.attribute_permissions = dict()
+        self.assertEqual(
+            MyProtectedAttributesForm.attribute_default_permissions,
+            ('edit', 'view')
+        )
+
+        with self.layer.authenticated('viewer'):
+            rule = request.has_permission('view', model)
+            self.assertTrue(isinstance(rule, ACLAllowed))
+            rendered = render_tile(model, request, 'protectedattributesform')
+
+        self.checkOutput("""
+        <form ...<div class="display-text"
+        id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>
+        """, rendered)
+
+        with self.layer.authenticated('editor'):
+            rule = request.has_permission('edit', model)
+            self.assertTrue(isinstance(rule, ACLAllowed))
+            rendered = render_tile(model, request, 'protectedattributesform')
+
+        self.checkOutput("""
+        <form ...<input class="text"
+        id="input-protectedattributesform-protectedfield"
+        name="protectedattributesform.protectedfield"
+        type="text" value="Protectedfield" /></div></form>
+        """, rendered)
+
     def test_form_misc(self):
         with self.layer.hook_tile_reg():
             @tile(name='otherform')
@@ -281,10 +339,7 @@ class TestBrowserForm(TileTestCase):
                         u'form',
                         name='otherform',
                         props={
-                            'action': self.nodeurl,
-                            # if class is set and ajax is true class 'ajax'
-                            # gets added to existing class
-                            'class': 'foo'
+                            'action': self.nodeurl
                         })
                     form['save'] = factory(
                         'submit',
@@ -309,17 +364,15 @@ class TestBrowserForm(TileTestCase):
         model.__name__ = 'dummymodel'
         request = self.layer.new_request()
 
+        request.params['action.otherform.save'] = '1'
         with self.layer.authenticated('max'):
-            request = self.layer.new_request()
-            request.params['action.otherform.save'] = '1'
-            self.assertEqual(
-                render_tile(model, request, 'otherform'),
-                '<div>foo</div>'
-            )
+            rendered = render_tile(model, request, 'otherform')
+        self.assertEqual(rendered, '<div>foo</div>')
 
-            request.params['ajax'] = '1'
-            self.assertEqual(render_tile(model, request, 'otherform'), u'')
-
+        request.params['ajax'] = '1'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'otherform')
+        self.assertEqual(rendered, u'')
         self.assertTrue(isinstance(
             request.environ['cone.app.continuation'][0],
             AjaxAction
