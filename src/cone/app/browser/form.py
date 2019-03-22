@@ -138,7 +138,8 @@ class Form(Tile):
             self.request.environ['cone.app.continuation'] = [controller.next]
             return u''
         if isinstance(controller.next, list):
-            # we assume a list of AjaxAction and/or AjaxEvent instances
+            # assume a list of ajax continuation definitions
             self.request.environ['cone.app.continuation'] = controller.next
             return u''
+        # assume some rendered markup
         return controller.next

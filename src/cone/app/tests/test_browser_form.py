@@ -33,6 +33,9 @@ class TestBrowserForm(TileTestCase):
             class SubscriptionForm(Form):
                 ajax = False
                 show = False
+                # test flags
+                next_as_redirect = True
+                continuation_as_list = False
 
                 def prepare(self):
                     form = factory(
@@ -68,8 +71,15 @@ class TestBrowserForm(TileTestCase):
                     url = 'http://example.com'
                     if self.ajax_request:
                         # return as single value, gets list on request.environ
-                        return AjaxAction(url, 'content', 'inner', '#content')
-                    return HTTPFound(url)
+                        cont = AjaxAction(url, 'content', 'inner', '#content')
+                        if self.continuation_as_list:
+                            return [cont]
+                        else:
+                            return cont
+                    if self.next_as_redirect:
+                        return HTTPFound(url)
+                    # return anything else to be rendered
+                    return '<div>success!</div>'
 
         model = BaseNode()
         model.__name__ = 'dummymodel'
@@ -145,6 +155,24 @@ class TestBrowserForm(TileTestCase):
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
 
+        # We can return markup insted of HTTPFound if we want to render inplace
+        # instead of redirection
+        SubscriptionForm.next_as_redirect = False
+
+        request = self.layer.new_request()
+        request.params['action.subscriptionform.subscribe'] = '1'
+        request.params['subscriptionform.email'] = 'john.doe@example.com'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'subscriptionform')
+
+        self.assertEqual(rendered, '<div>success!</div>')
+        self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
+        subscriptions = []
+
+        self.assertFalse('redirect' in request.environ)
+
+        SubscriptionForm.next_as_redirect = True
+
         # Try with ajax True.
         SubscriptionForm.ajax = True
 
@@ -170,6 +198,25 @@ class TestBrowserForm(TileTestCase):
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
 
         # Submit with ajax flag
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['action.subscriptionform.subscribe'] = '1'
+        request.params['subscriptionform.email'] = 'john.doe@example.com'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'subscriptionform')
+
+        self.assertEqual(rendered, '')
+        self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
+        subscriptions = []
+
+        self.assertTrue(isinstance(
+            request.environ['cone.app.continuation'][0],
+            AjaxAction
+        ))
+
+        # Ajax continuation may be returned as list
+        SubscriptionForm.continuation_as_list = True
+
         request = self.layer.new_request()
         request.params['ajax'] = '1'
         request.params['action.subscriptionform.subscribe'] = '1'
@@ -328,52 +375,3 @@ class TestBrowserForm(TileTestCase):
         name="protectedattributesform.protectedfield"
         type="text" value="Protectedfield" /></div></form>
         """, rendered)
-
-    def test_form_misc(self):
-        with self.layer.hook_tile_reg():
-            @tile(name='otherform')
-            class OtherForm(Form):
-
-                def prepare(self):
-                    form = factory(
-                        u'form',
-                        name='otherform',
-                        props={
-                            'action': self.nodeurl
-                        })
-                    form['save'] = factory(
-                        'submit',
-                        props={
-                            'action': 'save',
-                            'expression': True,
-                            'handler': None,
-                            'next': self.next,
-                            'label': 'Save',
-                        })
-                    self.form = form
-
-                def next(self, request):
-                    url = 'http://example.com'
-                    if self.ajax_request:
-                        # return as list
-                        return [AjaxAction(url, 'content', 'inner', '#content')]
-                    # return anything else to be rendered
-                    return '<div>foo</div>'
-
-        model = BaseNode()
-        model.__name__ = 'dummymodel'
-        request = self.layer.new_request()
-
-        request.params['action.otherform.save'] = '1'
-        with self.layer.authenticated('max'):
-            rendered = render_tile(model, request, 'otherform')
-        self.assertEqual(rendered, '<div>foo</div>')
-
-        request.params['ajax'] = '1'
-        with self.layer.authenticated('max'):
-            rendered = render_tile(model, request, 'otherform')
-        self.assertEqual(rendered, u'')
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxAction
-        ))
