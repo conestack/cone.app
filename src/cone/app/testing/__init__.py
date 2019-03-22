@@ -1,3 +1,4 @@
+from cone.app import model
 from cone.app.security import authenticate
 from cone.tile.tests import DummyVenusian
 from contextlib import contextmanager
@@ -13,7 +14,15 @@ import os
 import venusian
 
 
-DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
+def reset_node_info_registry(fn):
+    """Decorator for tests using node info registry
+    """
+    def wrapper(*a, **kw):
+        try:
+            fn(*a, **kw)
+        finally:
+            model._node_info_registry = dict()
+    return wrapper
 
 
 class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
@@ -21,6 +30,9 @@ class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
     @property
     def is_xhr(self):
         return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+
+DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
 class Security(Layer):

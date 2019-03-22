@@ -15,6 +15,7 @@ import urllib
 class TestBrowserCopysupport(TileTestCase):
     layer = testing.security
 
+    @testing.reset_node_info_registry
     def test_copysupport(self):
         class CopySupportNodeA(CopySupportNode):
             node_info_name = 'copy_support_node_a'

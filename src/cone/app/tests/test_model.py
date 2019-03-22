@@ -15,6 +15,7 @@ from cone.app.model import NodeInfo
 from cone.app.model import Properties
 from cone.app.model import ProtectedProperties
 from cone.app.model import register_node_info
+from cone.app.model import node_info
 from cone.app.model import UUIDAsName
 from cone.app.model import UUIDAttributeAware
 from cone.app.model import XMLProperties
@@ -191,6 +192,7 @@ class TestModel(NodeTestCase):
         # ``get``
         self.assertEqual(metadata.get('creator'), 'john doe')
 
+    @testing.reset_node_info_registry
     def test_NodeInfo(self):
         # The ``INodeInfo`` providing object holds information about the
         # application node
@@ -219,6 +221,27 @@ class TestModel(NodeTestCase):
 
         # ``get``
         self.assertTrue(nodeinfo.get('node') is BaseNode)
+
+    @testing.reset_node_info_registry
+    def test_node_info(self):
+        @node_info(
+            name='mynode',
+            title='My Node',
+            description='My Node Descriptrion',
+            factory=None,
+            icon='icon',
+            addables=['othernode'])
+        class MyNode(BaseNode):
+            pass
+
+        info = get_node_info('mynode')
+        self.assertTrue(info.node is MyNode)
+        self.assertEqual(info.title, 'My Node')
+        self.assertEqual(info.description, 'My Node Descriptrion')
+        self.assertEqual(info.factory, None)
+        self.assertEqual(info.addables, ['othernode'])
+        self.assertEqual(info.icon, 'icon')
+        self.assertEqual(MyNode.node_info_name, 'mynode')
 
     def test_UUIDAttributeAware(self):
         @plumbing(UUIDAttributeAware)

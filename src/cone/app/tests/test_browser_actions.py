@@ -443,6 +443,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
             """, rendered)
 
+    @testing.reset_node_info_registry
     def test_ActionAdd(self):
         info = NodeInfo()
         info.title = 'Addable'

@@ -7,6 +7,7 @@ from cone.app.browser.authoring import add
 from cone.app.browser.authoring import CameFromNext
 from cone.app.browser.authoring import ContentAddForm
 from cone.app.browser.authoring import ContentEditForm
+from cone.app.browser.authoring import ContentForm
 from cone.app.browser.authoring import edit
 from cone.app.browser.authoring import FormHeading
 from cone.app.browser.authoring import is_ajax
@@ -400,6 +401,39 @@ class TestBrowserAuthoring(TileTestCase):
         expected = 'Abstract ``FormHeading`` does not implement ``form_heading``'
         self.assertEqual(str(err), expected)
 
+    def test_ContentForm(self):
+        @plumbing(ContentForm)
+        class MyForm(Form):
+            def prepare(self):
+                form = factory(
+                    u'form',
+                    name='myform',
+                    props={
+                        'action': self.nodeurl
+                    })
+                self.form = form
+
+        model = BaseNode()
+        request = self.layer.new_request()
+        content_form = MyForm()
+        content_form.model = model
+        content_form.request = request
+
+        self.assertTrue(content_form.show_heading)
+        self.assertTrue(content_form.show_contextmenu)
+        # content_form.form_heading is supposed to be overwritten
+        self.assertEqual(content_form.form_heading, 'content_form_heading')
+
+        with self.layer.authenticated('max'):
+            res = content_form.rendered_contextmenu
+        self.assertTrue(res.find('<div id="contextmenu"') > -1)
+
+        with self.layer.authenticated('max'):
+            res = content_form(model, request)
+        expected = '<div class="panel-heading content-heading">'
+        self.assertTrue(res.find(expected) > -1)
+
+    @testing.reset_node_info_registry
     def test_adding(self):
         # Provide a node interface needed for different node style binding to
         # test form
@@ -570,9 +604,18 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
 
+    @testing.reset_node_info_registry
     def test_editing(self):
         class MyNode(BaseNode):
             node_info_name = 'mynode'
+
+        # Provide NodeInfo for our Application node
+        mynodeinfo = NodeInfo()
+        mynodeinfo.title = 'My Node'
+        mynodeinfo.description = 'This is My node.'
+        mynodeinfo.node = MyNode
+        mynodeinfo.addables = ['mynode']  # self containment
+        register_node_info('mynode', mynodeinfo)
 
         # Create and register an ``editform`` named form tile
         with self.layer.hook_tile_reg():
@@ -763,6 +806,7 @@ class TestBrowserAuthoring(TileTestCase):
         <class '...CallableNode'>: None
         """, node.treerepr())
 
+    @testing.reset_node_info_registry
     def test_add_items_dropdown(self):
         class MyNode(BaseNode):
             node_info_name = 'mynode'
@@ -982,6 +1026,7 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '"close": true,'
         self.assertTrue(res.body.find(expected) > -1)
 
+    @testing.reset_node_info_registry
     def test_overlay_add(self):
         class MyNode(BaseNode):
             node_info_name = 'mynode'
@@ -1100,6 +1145,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertEqual(root.keys(), ['new'])
         self.assertEqual(root['new'].attrs.title, 'Child')
 
+    @testing.reset_node_info_registry
     def test_overlay_edit(self):
         class MyNode(BaseNode):
             node_info_name = 'mynode'
