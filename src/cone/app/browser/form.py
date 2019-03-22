@@ -15,10 +15,10 @@ logger = logging.getLogger('cone.app')
 
 try:
     from yafowil.yaml import parse_from_YAML
-except ImportError:
-    logger.warning(
-        '``yafowil.yaml`` not present. ``cone.app.browser.form.YAMLForm`` '
-        'will not work')
+except ImportError:                                         #pragma NO COVERAGE
+    logger.warning(                                         #pragma NO COVERAGE
+        '``yafowil.yaml`` not present. '                    #pragma NO COVERAGE
+        '``cone.app.browser.form.YAMLForm`` will not work')
 
 
 class YAMLForm(Behavior):
