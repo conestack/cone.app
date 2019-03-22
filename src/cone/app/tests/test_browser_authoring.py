@@ -1073,7 +1073,6 @@ class TestBrowserAuthoring(TileTestCase):
             "child, '#ajax-overlay .overlay_content', 'inner', false);"
         )
         self.assertTrue(res.body.find(expected) > -1)
-
         self.assertEqual(root.keys(), [])
 
         # Case form success
@@ -1098,9 +1097,112 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.body.find(expected) > -1)
         expected = '"close": true,'
         self.assertTrue(res.body.find(expected) > -1)
-
         self.assertEqual(root.keys(), ['new'])
         self.assertEqual(root['new'].attrs.title, 'Child')
 
     def test_overlay_edit(self):
-        pass
+        class MyNode(BaseNode):
+            node_info_name = 'mynode'
+
+        with self.layer.hook_tile_reg():
+            @tile(name='overlayeditform', interface=MyNode)
+            @plumbing(OverlayEditForm)
+            class MyOverlayEditForm(Form):
+                def prepare(self):
+                    form = factory(
+                        u'form',
+                        name='overlayeditform',
+                        props={
+                            'action': self.nodeurl + '/' + self.action_resource
+                        })
+                    form['title'] = factory(
+                        'field:label:error:text',
+                        value=self.model.attrs.title,
+                        props={
+                            'label': 'Title',
+                            'required': 'Title is required'
+                        })
+                    form['update'] = factory(
+                        'submit',
+                        props={
+                            'action': 'update',
+                            'expression': True,
+                            'handler': self.update,
+                            'next': self.next,
+                            'label': 'Update',
+                        })
+                    self.form = form
+
+                def update(self, widget, data):
+                    fetch = self.request.params.get
+                    self.model.attrs.title = fetch('overlayeditform.title')
+
+        model = MyNode(name='model')
+        model.attrs.title = 'My Title'
+
+        # Overlay editform invocation happens via entry tile
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'overlayedit')
+
+        expected = '<form action="http://example.com/model/overlayedit"'
+        self.assertTrue(res.startswith(expected))
+        expected = 'class="ajax"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'value="My Title"'
+        self.assertTrue(res.find(expected) > -1)
+        self.assertEqual(
+            request.environ['cone.app.form.selector'],
+            '#ajax-overlay .overlay_content'
+        )
+        self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
+
+        # Overlay editform sumbmission happens via related pyramid view
+        # Case form error
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['overlayeditform.title'] = ''
+        request.params['action.overlayeditform.update'] = '1'
+
+        with self.layer.authenticated('max'):
+            res = overlayedit(model, request)
+
+        expected = '<div id="ajaxform">'
+        self.assertTrue(res.body.startswith(expected))
+        expected = '<form action="http://example.com/model/overlayedit"'
+        self.assertTrue(res.body.find(expected) > -1)
+        expected = '<div class="errormessage">Title is required</div>'
+        self.assertTrue(res.body.find(expected) > -1)
+        expected = '<script'
+        self.assertTrue(res.body.find(expected) > -1)
+        expected = (
+            "parent.bdajax.render_ajax_form("
+            "child, '#ajax-overlay .overlay_content', 'inner', false);"
+        )
+        self.assertTrue(res.body.find(expected) > -1)
+        self.assertEqual(model.attrs.title, 'My Title')
+
+        # Case form success
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['overlayeditform.title'] = 'New Title'
+        request.params['action.overlayeditform.update'] = '1'
+
+        with self.layer.authenticated('max'):
+            res = overlayedit(model, request)
+
+        expected = '<div id="ajaxform">'
+        self.assertTrue(res.body.startswith(expected))
+        self.assertFalse(res.body.find('<form') > -1)
+        expected = '<script'
+        self.assertTrue(res.body.find(expected) > -1)
+        expected = (
+            "parent.bdajax.render_ajax_form("
+            "child, '#ajax-overlay .overlay_content', 'inner', ["
+        )
+        self.assertTrue(res.body.find(expected) > -1)
+        expected = '"close": true,'
+        self.assertTrue(res.body.find(expected) > -1)
+        self.assertEqual(model.attrs.title, 'New Title')
