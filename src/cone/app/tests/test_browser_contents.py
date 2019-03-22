@@ -1,9 +1,14 @@
 from cone.app import testing
+from cone.app.browser import set_related_view
 from cone.app.browser.contents import ContentsTile
+from cone.app.browser.contents import ContentsViewLink
+from cone.app.browser.contents import listing
 from cone.app.browser.table import TableSlice
 from cone.app.browser.utils import make_url
 from cone.app.model import BaseNode
+from cone.app.model import node_info
 from cone.app.testing.mock import CopySupportNode
+from cone.app.testing.mock import WorkflowNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
@@ -250,3 +255,126 @@ class TestBrowserContents(TileTestCase):
 
         expected = 'class="selectable copysupportitem copysupport_cut"'
         self.assertTrue(rendered.find(expected) > -1)
+
+    def test_ContentsViewLink(self):
+        tmpl = 'cone.app:browser/templates/table.pt'
+        contents = ContentsTile(tmpl, None, 'contents')
+
+        model = BaseNode(name='root')
+        request = self.layer.new_request()
+
+        view_link = contents.view_link
+        self.assertTrue(isinstance(contents.view_link, ContentsViewLink))
+
+        with self.layer.authenticated('max'):
+            res = view_link(model, request)
+        expected = 'ajax:target="http://example.com/root"'
+        self.assertTrue(res.find(expected) > -1)
+
+        set_related_view(request, 'someview')
+        with self.layer.authenticated('max'):
+            res = view_link(model, request)
+        expected = 'ajax:target="http://example.com/root?contenttile=someview"'
+        self.assertTrue(res.find(expected) > -1)
+
+    def test_workflow_state(self):
+        root = BaseNode(name='root')
+        root['wf'] = WorkflowNode()
+        request = self.layer.new_request()
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        contents = ContentsTile(tmpl, None, 'contents')
+        contents.model = root
+        contents.request = request
+
+        with self.layer.authenticated('max'):
+            res = contents.sorted_rows(
+                0,
+                1,
+                contents.default_sort,
+                contents.default_order
+            )
+        self.assertEqual(res[0].css, ' state-initial')
+
+    @testing.reset_node_info_registry
+    def test_node_type(self):
+        @node_info(
+            name='mynode')
+        class MyNode(BaseNode):
+            pass
+
+        root = BaseNode()
+        root['child'] = MyNode()
+        request = self.layer.new_request()
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        contents = ContentsTile(tmpl, None, 'contents')
+        contents.model = root
+        contents.request = request
+
+        with self.layer.authenticated('max'):
+            res = contents.sorted_rows(
+                0,
+                1,
+                contents.default_sort,
+                contents.default_order
+            )
+        self.assertEqual(res[0].css, ' node-type-mynode')
+
+    def test_filtered_children(self):
+        root = BaseNode()
+
+        child_1 = root['1'] = BaseNode()
+        md_1 = child_1.metadata
+        md_1.title = 'Child 1'
+        md_1.creator = 'max'
+
+        child_2 = root['2'] = BaseNode()
+        md_2 = child_2.metadata
+        md_2.title = 'Child 2'
+        md_2.creator = 'sepp'
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        contents = ContentsTile(tmpl, None, 'contents')
+        contents.model = root
+        contents.request = self.layer.new_request()
+
+        res = contents.filtered_children
+        self.assertEqual(res, [])
+
+        contents.request = self.layer.new_request()
+        with self.layer.authenticated('max'):
+            res = contents.filtered_children
+        self.assertEqual(len(res), 2)
+
+        request = contents.request = self.layer.new_request()
+        request.params['term'] = 'sepp'
+        with self.layer.authenticated('max'):
+            res = contents.filtered_children
+        self.assertEqual(len(res), 1)
+
+        request = contents.request = self.layer.new_request()
+        request.params['term'] = 'Child 1'
+        with self.layer.authenticated('max'):
+            res = contents.filtered_children
+        self.assertEqual(len(res), 1)
+
+        request = contents.request = self.layer.new_request()
+        request.params['term'] = 'hild'
+        with self.layer.authenticated('max'):
+            res = contents.filtered_children
+        self.assertEqual(len(res), 2)
+
+        request = contents.request = self.layer.new_request()
+        request.params['term'] = 'foo'
+        with self.layer.authenticated('max'):
+            res = contents.filtered_children
+        self.assertEqual(len(res), 0)
+
+    def test_listing(self):
+        model = self.create_dummy_model()
+        request = self.layer.new_request()
+
+        with self.layer.authenticated('max'):
+            res = listing(model, request)
+        self.assertTrue(res.body.startswith('<!DOCTYPE html>'))
