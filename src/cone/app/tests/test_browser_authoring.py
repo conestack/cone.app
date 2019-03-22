@@ -23,6 +23,7 @@ from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
 from cone.app.model import NodeInfo
+from cone.app.model import node_info
 from cone.app.model import register_node_info
 from cone.tile import render_tile
 from cone.tile import tile
@@ -441,29 +442,24 @@ class TestBrowserAuthoring(TileTestCase):
             pass
 
         # Create dummy node
+        @node_info(
+            name='mynode',
+            title='My Node',
+            description='This is My node.',
+            addables=['mynode'])  # self containment
         @implementer(ITestAddingNode)
         class MyNode(BaseNode):
-            node_info_name = 'mynode'
-
-        # Provide NodeInfo for our Application node
-        mynodeinfo = NodeInfo()
-        mynodeinfo.title = 'My Node'
-        mynodeinfo.description = 'This is My node.'
-        mynodeinfo.node = MyNode
-        mynodeinfo.addables = ['mynode']  # self containment
-        register_node_info('mynode', mynodeinfo)
+            pass
 
         # Create another dummy node inheriting from AdapterNode
+        @node_info(
+            name='myadapternode',
+            title='My Adapter Node',
+            description='This is My adapter node.',
+            addables=['myadapternode'])  # self containment
         @implementer(ITestAddingNode)
         class MyAdapterNode(AdapterNode):
-            node_info_name = 'myadapternode'
-
-        myadapternodeinfo = NodeInfo()
-        myadapternodeinfo.title = 'My Adapter Node'
-        myadapternodeinfo.description = 'This is My adapter node.'
-        myadapternodeinfo.node = MyAdapterNode
-        myadapternodeinfo.addables = ['myadapternode']  # self containment
-        register_node_info('myadapternode', myadapternodeinfo)
+            pass
 
         # Create and register an ``addform`` named form tile
         with self.layer.hook_tile_reg():
@@ -606,16 +602,11 @@ class TestBrowserAuthoring(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_editing(self):
+        @node_info(
+            name='mynode',
+            title='My Node')
         class MyNode(BaseNode):
-            node_info_name = 'mynode'
-
-        # Provide NodeInfo for our Application node
-        mynodeinfo = NodeInfo()
-        mynodeinfo.title = 'My Node'
-        mynodeinfo.description = 'This is My node.'
-        mynodeinfo.node = MyNode
-        mynodeinfo.addables = ['mynode']  # self containment
-        register_node_info('mynode', mynodeinfo)
+            pass
 
         # Create and register an ``editform`` named form tile
         with self.layer.hook_tile_reg():
@@ -808,16 +799,11 @@ class TestBrowserAuthoring(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_add_items_dropdown(self):
+        @node_info(
+            name='mynode',
+            addables=['mynode'])
         class MyNode(BaseNode):
-            node_info_name = 'mynode'
-
-        # Provide NodeInfo for our Application node
-        mynodeinfo = NodeInfo()
-        mynodeinfo.title = 'My Node'
-        mynodeinfo.description = 'This is My node.'
-        mynodeinfo.node = MyNode
-        mynodeinfo.addables = ['mynode']  # self containment
-        register_node_info('mynode', mynodeinfo)
+            pass
 
         # Dummy model
         root = MyNode()
@@ -843,10 +829,6 @@ class TestBrowserAuthoring(TileTestCase):
 
         # Allow another node type as child
         nodeinfo = NodeInfo()
-        nodeinfo.title = 'Another Node'
-        nodeinfo.description = 'This is another node.'
-        nodeinfo.node = BaseNode
-        nodeinfo.addables = []
         register_node_info('anothernode', nodeinfo)
         get_node_info('mynode').addables = ['mynode', 'anothernode']
 
@@ -869,16 +851,10 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(rendered.find(expected) != -1)
 
         # Test node without addables, results in empty listing.
-        # XXX: discuss whether to hide entire widget if no items
+        # XXX: hide entire widget if no items
+        @node_info(name='nochildaddingnode')
         class NoChildAddingNode(BaseNode):
-            node_info_name = 'nochildaddingnode'
-
-        nodeinfo = NodeInfo()
-        nodeinfo.title = 'No child adding Node'
-        nodeinfo.description = 'This is a no child containing node.'
-        nodeinfo.node = NoChildAddingNode
-        nodeinfo.addables = []
-        register_node_info('nochildaddingnode', nodeinfo)
+            pass
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
@@ -898,16 +874,12 @@ class TestBrowserAuthoring(TileTestCase):
         """, rendered)
 
         # Test node with invalid addable, results in empty listing
-        # XXX: discuss whether to hide entire widget if no items::
+        # XXX: hide entire widget if no items
+        @node_info(
+            name='invalidchildnodeinfo',
+            addables=['invalid'])
         class InvalidChildNodeInfoNode(BaseNode):
-            node_info_name = 'invalidchildnodeinfo'
-
-        nodeinfo = NodeInfo()
-        nodeinfo.title = 'Invalid Child NodeInfo Node'
-        nodeinfo.description = 'This is a node with an invalid child node info.'
-        nodeinfo.node = InvalidChildNodeInfoNode
-        nodeinfo.addables = ['invalid']
-        register_node_info('invalidchildnodeinfo', nodeinfo)
+            pass
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
@@ -1028,16 +1000,11 @@ class TestBrowserAuthoring(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_overlay_add(self):
+        @node_info(
+            name='mynode',
+            addables=['mynode'])
         class MyNode(BaseNode):
-            node_info_name = 'mynode'
-
-        # Provide NodeInfo for our Application node
-        mynodeinfo = NodeInfo()
-        mynodeinfo.title = 'My Node'
-        mynodeinfo.description = 'This is My node.'
-        mynodeinfo.node = MyNode
-        mynodeinfo.addables = ['mynode']  # self containment
-        register_node_info('mynode', mynodeinfo)
+            pass
 
         with self.layer.hook_tile_reg():
             @tile(name='overlayaddform', interface=MyNode)
@@ -1148,7 +1115,7 @@ class TestBrowserAuthoring(TileTestCase):
     @testing.reset_node_info_registry
     def test_overlay_edit(self):
         class MyNode(BaseNode):
-            node_info_name = 'mynode'
+            pass
 
         with self.layer.hook_tile_reg():
             @tile(name='overlayeditform', interface=MyNode)

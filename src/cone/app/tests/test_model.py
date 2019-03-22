@@ -200,17 +200,29 @@ class TestModel(NodeTestCase):
         nodeinfo.node = BaseNode
         nodeinfo.addables = ['basenode']
         nodeinfo.title = 'Base Node'
+        nodeinfo.description = 'Base Node Description'
+        nodeinfo.factory = None
+        nodeinfo.icon = 'base-node-icon'
+
+        # check interface
+        self.assertTrue(INodeInfo.providedBy(nodeinfo))
+
+        # check superclass
+        self.assertTrue(isinstance(nodeinfo, Properties))
 
         # Register node info
         register_node_info('basenode', nodeinfo)
 
         # Lookup Node info
         nodeinfo = get_node_info('basenode')
-        self.assertEqual(nodeinfo.title, 'Base Node')
-
-        # ``__getattr__``. No AttributeError is raised if attribute is
-        # inexistent
+        self.assertTrue(nodeinfo.node is BaseNode)
         self.assertEqual(nodeinfo.addables, ['basenode'])
+        self.assertEqual(nodeinfo.title, 'Base Node')
+        self.assertEqual(nodeinfo.description, 'Base Node Description')
+        self.assertEqual(nodeinfo.factory, None)
+        self.assertEqual(nodeinfo.icon, 'base-node-icon')
+
+        # ``__getattr__``. No AttributeError is raised if attribute missing
         self.assertTrue(nodeinfo.inexistent is None)
 
         # ``__getitem__``

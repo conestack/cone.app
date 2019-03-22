@@ -285,6 +285,7 @@ class CopySupport(Behavior):
 
 @implementer(IProperties)
 class Properties(object):
+    # XXX: extend by schema
 
     def __init__(self, data=None):
         if data is None:

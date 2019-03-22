@@ -5,8 +5,7 @@ from cone.app.browser.ajax import AjaxMessage
 from cone.app.browser.copysupport import PasteAction
 from cone.app.browser.utils import make_url
 from cone.app.model import BaseNode
-from cone.app.model import NodeInfo
-from cone.app.model import register_node_info
+from cone.app.model import node_info
 from cone.app.testing.mock import CopySupportNode
 from cone.tile.tests import TileTestCase
 import urllib
@@ -17,21 +16,19 @@ class TestBrowserCopysupport(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_copysupport(self):
+        @node_info(
+            name='copy_support_node_a',
+            title='CopySupportNodeA',
+            addables=['copy_support_node_a', 'copy_support_node_b'])
         class CopySupportNodeA(CopySupportNode):
-            node_info_name = 'copy_support_node_a'
+            pass
 
-        info = NodeInfo()
-        info.title = 'CopySupportNodeA'
-        info.addables = ['copy_support_node_a', 'copy_support_node_b']
-        register_node_info('copy_support_node_a', info)
-
+        @node_info(
+            name='copy_support_node_b',
+            title='CopySupportNodeB',
+            addables=['copy_support_node_b'])
         class CopySupportNodeB(CopySupportNode):
-            node_info_name = 'copy_support_node_b'
-
-        info = NodeInfo()
-        info.title = 'CopySupportNodeB'
-        info.addables = ['copy_support_node_b']
-        register_node_info('copy_support_node_b', info)
+            pass
 
         root = CopySupportNodeA()
         source = root['source'] = CopySupportNodeA()
