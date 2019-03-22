@@ -360,8 +360,7 @@ Another usecase is to render forms in an overlay. This is useful when it's
 desired to edit some entities without loosing the form triggering UI context.
 
 The plumbing behavior ``cone.app.browser.authoring.OverlayForm`` implements the
-required integration code and shall be used for form tiles rendering to an
-overlay.
+required integration code and is used for form tiles rendering to an overlay.
 
 The ``OverlayForm`` plumbs the ``__call__`` function where hooking the form
 to the overlay happens, and extends the form tile by a ``next`` handler
@@ -389,13 +388,18 @@ tile registration name ``overlayform``.
             """Form preperation goes here.
             """
 
+
+Multiple overlay forms on same model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If it's necessary to deal with several overlay forms for the same model,
-buildin tile ``overlayform`` name cannot be used, so corresponding views need
-to be provided as well.
+builtin tile ``overlayform`` name cannot be used, so corresponding pyramid view
+and form entry tile needs to be provided as well.
 
 .. code-block:: python
 
     from cone.app.browser.authoring import OverlayForm
+    from cone.app.browser.authoring import OverlayFormTile
     from cone.app.browser.authoring import render_form
     from cone.app.browser.form import Form
     from cone.example.model import ExamplePlugin
@@ -403,20 +407,51 @@ to be provided as well.
     from plumber import plumbing
     from pyramid.view import view_config
 
-    @tile(name='otheroverlayform', interface=ExamplePlugin, permission='edit')
-    @plumbing(OverlayForm)
-    class OtherOverlayForm(Form):
-
-        def prepare(self):
-            """Form preperation goes here.
-            """
-
     @view_config(
         name='otheroverlayform',
         context=ExamplePlugin,
         permission='edit')
     def otheroverlayform(model, request):
-        return render_form(model, request, tilename='otheroverlayform')
+        """Pyramid view for posting overlay forms to.
+        """
+        return render_form(model, request, tilename='otheroverlayformtile')
+
+    @tile(
+        name='otheroverlayformtile',
+        permission='edit')
+    class OtherOverlayFormTile(OverlayFormTile):
+        """Entry tile for rendering forms in overlays.
+        """
+        form_tile_name = 'otheroverlayform'
+
+    @tile(
+        name='otheroverlayform',
+        interface=ExamplePlugin,
+        permission='edit')
+    @plumbing(OverlayForm)
+    class OtherOverlayForm(Form):
+        """Concrete form tile.
+        """
+        action_resource = 'otheroverlayform'
+
+        def prepare(self):
+            """Form preperation goes here.
+            """
+
+NOTE: The **entry** to overlay forms is always the intermediate tile, which then
+subsequently renders the actual form tile. Thus the name to invoke the custom
+overlay above is ``otheroverlayformtile``.
+
+NOTE: Overlay forms are processed by posting the form to a hidden iframe as
+form action target. This is needed to prevent POST request restrictions with
+XHR requests. Therefor we need the pyramid view ``otheroverlayform``, which
+defines the view entry for the form and is supposed to render the form entry
+tile. This view must also be defined as ``action_resource`` on
+concrete form implementation, in this case ``OtherOverlayForm``.
+
+
+Overlay form invocation
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Overlay form invocation happens via ``bdajax`` overlay integration.
 
