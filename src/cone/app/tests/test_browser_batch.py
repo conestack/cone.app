@@ -63,6 +63,13 @@ class TestBrowserBatch(TileTestCase):
         # No ``pages`` returned for empty vocab
         self.assertEqual(batch.pages, [])
 
+        # Test edge case ``_position_of_current_in_vocab``
+        class BuggyBatch(Batch):
+            @property
+            def currentpage(self):
+                return self.dummypage
+        self.assertEqual(BuggyBatch()._position_of_current_in_vocab, -1)
+
     def test_batch(self):
         # Dummy Batch implementation
         class DummyBatch(Batch):
@@ -460,15 +467,7 @@ class TestBrowserBatch(TileTestCase):
     def test_BatchedItems(self):
         # Concrete ``BatchedItems`` implementation.
         class MyBatchedItems(BatchedItems):
-            @property
-            def rendered_slice(self):
-                return u'<div id="{}">\n{}\n</div>'.format(
-                    self.slice_id,
-                    u'\n'.join([
-                        u'  <div>{}</div>'.format(it.name)
-                        for it in self.slice_items
-                    ])
-                )
+            slice_template = 'cone.app.testing:dummy_batched_items.pt'
 
             @property
             def item_count(self):

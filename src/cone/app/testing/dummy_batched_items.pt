@@ -1,0 +1,4 @@
+<div id="${context.slice_id}">
+  <tal:it repeat="it context.slice_items"><div tal:content="it.name"></div>
+  </tal:it>
+</div>
