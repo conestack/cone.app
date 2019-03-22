@@ -10,6 +10,10 @@ from cone.app.browser.authoring import ContentEditForm
 from cone.app.browser.authoring import edit
 from cone.app.browser.authoring import FormHeading
 from cone.app.browser.authoring import is_ajax
+from cone.app.browser.authoring import overlayadd
+from cone.app.browser.authoring import OverlayAddForm
+from cone.app.browser.authoring import overlayedit
+from cone.app.browser.authoring import OverlayEditForm
 from cone.app.browser.authoring import OverlayForm
 from cone.app.browser.authoring import overlayform
 from cone.app.browser.authoring import render_form
@@ -464,7 +468,7 @@ class TestBrowserAuthoring(TileTestCase):
                     fetch = self.request.params.get
                     child = MyNode()
                     child.attrs.title = fetch('addform.title')
-                    self.model.__parent__[fetch('addform.id')] = child
+                    self.model.parent[fetch('addform.id')] = child
                     self.model = child
 
         # Create dummy container
@@ -953,7 +957,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.checkOutput("""
         <div id="ajaxform">
             <form action="http://example.com/root/overlayform"
-              ...<div class="errormessage">Title is required</div>...
+                ...<div class="errormessage">Title is required</div>...
             ...</form>
         </div>
         <script language="javascript" type="text/javascript">
@@ -995,3 +999,137 @@ class TestBrowserAuthoring(TileTestCase):
                     "css": null}]);
         </script>
         """, res.body)
+
+    def test_overlay_add(self):
+        class MyNode(BaseNode):
+            node_info_name = 'mynode'
+
+        # Provide NodeInfo for our Application node
+        mynodeinfo = NodeInfo()
+        mynodeinfo.title = 'My Node'
+        mynodeinfo.description = 'This is My node.'
+        mynodeinfo.node = MyNode
+        mynodeinfo.addables = ['mynode']  # self containment
+        register_node_info('mynode', mynodeinfo)
+
+        with self.layer.hook_tile_reg():
+            @tile(name='overlayaddform', interface=MyNode)
+            @plumbing(OverlayAddForm)
+            class MyOverlayAddForm(Form):
+                def prepare(self):
+                    form = factory(
+                        u'form',
+                        name='overlayaddform',
+                        props={
+                            'action': self.nodeurl + '/' + self.action_resource
+                        })
+                    form['title'] = factory(
+                        'field:label:error:text',
+                        props={
+                            'label': 'Title',
+                            'required': 'Title is required'
+                        })
+                    form['add'] = factory(
+                        'submit',
+                        props={
+                            'action': 'add',
+                            'expression': True,
+                            'handler': self.add,
+                            'next': self.next,
+                            'label': 'Add',
+                        })
+                    self.form = form
+
+                def add(self, widget, data):
+                    fetch = self.request.params.get
+                    child = MyNode()
+                    child.attrs.title = fetch('overlayaddform.title')
+                    self.model.parent['new'] = child
+                    self.model = child
+
+        root = MyNode(name='root')
+
+        # Overlay addform invocation happens via entry tile
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['factory'] = 'mynode'
+
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'overlayadd')
+
+        self.checkOutput("""
+        <form action="http://example.com/root/overlayadd" class="ajax"
+        enctype="multipart/form-data" id="form-overlayaddform" method="post"
+        novalidate="novalidate"><div class="field"
+        id="field-overlayaddform-title"><label
+        for="input-overlayaddform-title">Title</label><input
+        class="required text" id="input-overlayaddform-title"
+        name="overlayaddform.title" required="required" type="text" value=""
+        /></div><input id="input-overlayaddform-add"
+        name="action.overlayaddform.add" type="submit" value="Add"
+        /><input id="input-overlayaddform-factory" name="factory" type="hidden"
+        value="mynode" /></form>
+        """, res)
+
+        # Overlay addform sumbmission happens via related pyramid view
+        # Case form error
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['factory'] = 'mynode'
+        request.params['overlayaddform.title'] = ''
+        request.params['action.overlayaddform.add'] = '1'
+
+        with self.layer.authenticated('max'):
+            res = overlayadd(root, request)
+
+        self.checkOutput("""
+        <div id="ajaxform">
+            <form action="http://example.com/root/overlayadd"
+                ...<div class="errormessage">Title is required</div>...
+            ...</form>
+        </div>
+        <script language="javascript" type="text/javascript">
+            var container = document.getElementById('ajaxform');
+            var child = container.firstChild;
+            while(child != null && child.nodeType == 3) {
+                child = child.nextSibling;
+            }
+            parent.bdajax.render_ajax_form(child,
+                '#ajax-overlay .overlay_content', 'inner', false);
+        </script>
+        """, res.body)
+
+        self.assertEqual(root.keys(), [])
+
+        # Case form success
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['factory'] = 'mynode'
+        request.params['overlayaddform.title'] = 'Child'
+        request.params['action.overlayaddform.add'] = '1'
+
+        with self.layer.authenticated('max'):
+            res = overlayadd(root, request)
+
+        self.checkOutput("""
+        <div id="ajaxform">
+        </div>
+        <script language="javascript" type="text/javascript">
+            var container = document.getElementById('ajaxform');
+            var child = container.firstChild;
+            while(child != null && child.nodeType == 3) {
+                child = child.nextSibling;
+            }
+            parent.bdajax.render_ajax_form(child,
+                '#ajax-overlay .overlay_content', 'inner', [{"target": null,
+                    "content_selector": ".overlay_content",
+                    "selector": "#ajax-overlay",
+                    "action": null,
+                    "close": true,
+                    "type": "overlay",
+                    "css": null}]);
+        </script>
+        """, res.body)
+
+        self.assertEqual(root.keys(), ['new'])
+        self.assertEqual(root['new'].attrs.title, 'Child')
