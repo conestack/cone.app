@@ -4,11 +4,13 @@ from cone.app.browser.ajax import AjaxMessage
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.authoring import _FormRenderingTile
 from cone.app.browser.authoring import add
+from cone.app.browser.authoring import AddFormHeading
 from cone.app.browser.authoring import CameFromNext
 from cone.app.browser.authoring import ContentAddForm
 from cone.app.browser.authoring import ContentEditForm
 from cone.app.browser.authoring import ContentForm
 from cone.app.browser.authoring import edit
+from cone.app.browser.authoring import EditFormHeading
 from cone.app.browser.authoring import FormHeading
 from cone.app.browser.authoring import is_ajax
 from cone.app.browser.authoring import overlayadd
@@ -22,8 +24,8 @@ from cone.app.browser.form import Form
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
-from cone.app.model import NodeInfo
 from cone.app.model import node_info
+from cone.app.model import NodeInfo
 from cone.app.model import register_node_info
 from cone.tile import render_tile
 from cone.tile import tile
@@ -435,6 +437,23 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
 
     @testing.reset_node_info_registry
+    def test_AddFormHeading(self):
+        @node_info(
+            name='addnode',
+            title='Add Node')
+        class AddNode(BaseNode):
+            pass
+
+        @plumbing(AddFormHeading)
+        class AddForm(Form):
+            pass
+
+        add_form = AddForm()
+        add_form.model = AddNode()
+        add_form.request = self.layer.new_request()
+        self.assertEqual(add_form.form_heading, 'Add: Add Node')
+
+    @testing.reset_node_info_registry
     def test_adding(self):
         # Provide a node interface needed for different node style binding to
         # test form
@@ -599,6 +618,31 @@ class TestBrowserAuthoring(TileTestCase):
             res = str(add(root, request))
 
         self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
+
+    @testing.reset_node_info_registry
+    def test_EditFormHeading(self):
+        @plumbing(EditFormHeading)
+        class EditForm(Form):
+            pass
+
+        self.assertEqual(BaseNode().node_info_name, '')
+        self.assertEqual(get_node_info(''), None)
+
+        edit_form = EditForm()
+        edit_form.model = BaseNode()
+        edit_form.request = self.layer.new_request()
+        self.assertEqual(edit_form.form_heading, 'edit')
+
+        @node_info(
+            name='editnode',
+            title='Edit Node')
+        class EditNode(BaseNode):
+            pass
+
+        edit_form = EditForm()
+        edit_form.model = EditNode()
+        edit_form.request = self.layer.new_request()
+        self.assertEqual(edit_form.form_heading, 'Edit: Edit Node')
 
     @testing.reset_node_info_registry
     def test_editing(self):
