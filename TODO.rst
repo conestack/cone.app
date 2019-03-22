@@ -28,6 +28,10 @@ Roadmap
 
 [ ] Python 3 support.
 
+[ ] Provide a ``form_action`` property on ``cone.app.browser.form.Form``
+considering ``action_resource`` attribute. Consolidate with
+``cone.app.browser.Form.YAMLForm.form_action``.
+
 [ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
 [ ] Overhaul settings rendering. available settings should be rendered in

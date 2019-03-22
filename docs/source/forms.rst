@@ -406,6 +406,7 @@ and form entry tile needs to be provided as well.
     from cone.tile import tile
     from plumber import plumbing
     from pyramid.view import view_config
+    from yafowil.base import factory
 
     @view_config(
         name='otheroverlayform',
@@ -437,6 +438,13 @@ and form entry tile needs to be provided as well.
         def prepare(self):
             """Form preperation goes here.
             """
+            form = factory(
+                u'form',
+                name='overlayform',
+                props={
+                    'action': self.nodeurl + '/' + self.action_resource
+                })
+            # ...
 
 NOTE: The **entry** to overlay forms is always the intermediate tile, which then
 subsequently renders the actual form tile. Thus the name to invoke the custom
@@ -446,8 +454,9 @@ NOTE: Overlay forms are processed by posting the form to a hidden iframe as
 form action target. This is needed to prevent POST request restrictions with
 XHR requests. Therefor we need the pyramid view ``otheroverlayform``, which
 defines the view entry for the form and is supposed to render the form entry
-tile. This view must also be defined as ``action_resource`` on
-concrete form implementation, in this case ``OtherOverlayForm``.
+tile. This view is also defined as ``action_resource`` on concrete form
+implementation, in this case ``OtherOverlayForm``. ``action_resource`` is then
+used to create form action string.
 
 
 Overlay form invocation

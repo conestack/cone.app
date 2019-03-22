@@ -224,11 +224,15 @@ class ContentForm(FormHeading):
 
 @view_config(name='overlayform', permission='view')
 def overlayform(model, request):
+    """View for posting overlay forms to.
+    """
     return render_form(model, request, 'overlayformtile')
 
 
 @tile(name='overlayformtile', permission='view')
 class OverlayFormTile(_FormRenderingTile):
+    """Entry tile for rendering forms in overlays.
+    """
     form_tile_name = 'overlayform'
 
 
