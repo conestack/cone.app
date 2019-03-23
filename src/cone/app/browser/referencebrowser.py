@@ -117,7 +117,7 @@ class ReferenceAction(LinkAction):
 
     @property
     def id(self):
-        return 'ref-%s' % self.model.uuid
+        return 'ref-{}'.format(self.model.uuid)
 
     @property
     def display(self):
@@ -170,8 +170,9 @@ class ReferencableChildrenLink(LinkAction):
 
     @property
     def target(self):
-        return '%s%s' % (super(ReferencableChildrenLink, self).target,
-                         make_refbrowser_query(self.request))
+        return '{}{}'.format(
+            super(ReferencableChildrenLink, self).target,
+            make_refbrowser_query(self.request))
 
     @property
     def text(self):
@@ -179,7 +180,7 @@ class ReferencableChildrenLink(LinkAction):
 
     @property
     def action(self):
-        return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
+        return '{}:#{}:replace'.format(self.table_tile_name, self.table_id)
 
     @property
     def display(self):
@@ -246,7 +247,7 @@ class ReferenceListing(ContentsTile):
 def reference_extractor(widget, data):
     if widget.attrs.get('multivalued'):
         return select_extractor(widget, data)
-    return data.request.get('%s.uid' % widget.dottedpath)
+    return data.request.get('{}.uid'.format(widget.dottedpath))
 
 
 def wrap_ajax_target(rendered, widget, data):
@@ -272,7 +273,7 @@ def wrap_ajax_target(rendered, widget, data):
             'referencable': referencable,
             'selected': selected,
         })
-        target = '%s%s' % (target, query)
+        target = '{}{}'.format(target, query)
         attrs = {
             'ajax:target': target,
         }
@@ -306,9 +307,9 @@ def reference_edit_renderer(widget, data):
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
-    elif data.request.get('%s.uid' % widget.dottedpath):
+    elif data.request.get('{}.uid'.format(widget.dottedpath)):
         value = [
-            data.request.get('%s.uid' % widget.dottedpath),
+            data.request.get('{}.uid'.format(widget.dottedpath)),
             data.request.get(widget.dottedpath),
         ]
     elif data.value is not UNSET and data.value is not None:
@@ -324,7 +325,7 @@ def reference_edit_renderer(widget, data):
     hidden_attrs = {
         'type': 'hidden',
         'value': value[0],
-        'name_': '%s.uid' % widget.dottedpath,
+        'name_': '{}.uid'.format(widget.dottedpath),
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     return wrap_ajax_target(rendered, widget, data)
@@ -340,7 +341,7 @@ def reference_display_renderer(widget, data):
         value = value[1]
     attrs = {
         'id': cssid(widget, 'display'),
-        'class_': 'display-%s' % widget.attrs['class'] or 'generic'
+        'class_': 'display-{}'.format(widget.attrs['class'] or 'generic')
     }
     return data.tag('div', value, **attrs)
 

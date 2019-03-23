@@ -1,5 +1,6 @@
 from cone.app import testing
 from cone.app.browser.referencebrowser import ActionAddReference
+from cone.app.browser.referencebrowser import ActionRemoveReference
 from cone.app.browser.referencebrowser import ReferencableChildrenLink
 from cone.app.model import BaseNode
 from cone.tile import render_tile
@@ -14,8 +15,13 @@ from yafowil.base import factory
 
 
 @plumbing(UUIDAware)
-class UUIDNode(BaseNode):
-    node_info_name = 'dummy'
+class RefNode(BaseNode):
+    node_info_name = 'ref_node'
+
+
+@plumbing(UUIDAware)
+class RefNode2(BaseNode):
+    node_info_name = 'ref_node_2'
 
 
 class TestBrowserReferenceBrowser(TileTestCase):
@@ -30,11 +36,11 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'label': 'Reference',
                 'multivalued': False,
                 'target': lambda: 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
             })
         self.checkOutput("""
         <span
-        ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
         class="referencebrowser" id="input-ref" name="ref" readonly="readonly"
         type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>
         """, widget())
@@ -48,7 +54,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'multivalued': False,
                 'required': 'Ref Required',
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
             })
 
         request = self.layer.new_request()
@@ -60,7 +66,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [ExtractionError('Ref Required')])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="" /><input name="ref.uid" type="hidden" value="" /></span>
         """, widget(data=data))
@@ -73,7 +79,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(data=data))
@@ -88,10 +94,10 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'multivalued': False,
                 'required': 'Ref Required',
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
             })
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=ref_node"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>
         """, widget())
@@ -99,14 +105,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Extract from request and render widget with data
         data = widget.extract(request)
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=ref_node"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(data=data))
 
         # Render widget with request
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=ref_node"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(request=request))
@@ -119,7 +125,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'label': 'Reference',
                 'multivalued': False,
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
             },
             mode='display')
         self.assertEqual(
@@ -135,7 +141,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'label': 'Reference',
                 'multivalued': False,
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
             },
             mode='display')
         self.assertEqual(
@@ -152,10 +158,10 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'label': 'Reference',
                 'multivalued': True,
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
             })
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="referencebrowser" id="input-ref" multiple="multiple"
         name="ref" /></span>
@@ -170,7 +176,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'multivalued': True,
                 'required': 'Ref Required',
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
                 'vocabulary': [
                     ('uid1', 'Title1'),
                     ('uid2', 'Title2'),
@@ -185,7 +191,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [ExtractionError('Ref Required',)])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="referencebrowser required" id="input-ref" multiple="multiple"
         name="ref" required="required"><option
@@ -200,7 +206,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=dummy"><input
+        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="referencebrowser required" id="input-ref"
         multiple="multiple" name="ref" required="required"><option
@@ -217,7 +223,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             props={
                 'label': 'Reference',
                 'target': 'http://example.com/foo',
-                'referencable': 'dummy',
+                'referencable': 'ref_node',
                 'multivalued': True,
                 'vocabulary': [
                     ('uid1', 'Title1'),
@@ -233,7 +239,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
     def test_ActionAddReference(self):
         model = BaseNode()
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/'
 
@@ -243,7 +249,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         with self.layer.authenticated('manager'):
             self.assertEqual(action(model, request), u'')
 
-        model = UUIDNode(name='model')
+        model = RefNode(name='model')
         self.checkOutput("""
         ...<a
         id="ref-..."
@@ -257,10 +263,37 @@ class TestBrowserReferenceBrowser(TileTestCase):
         style="display:none;">model</span>
         """, action(model, request))
 
-    def test_ReferencableChildrenLink(self):
-        model = UUIDNode(name='model')
+    def test_ActionRemoveReference(self):
+        model = BaseNode()
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
+
+        action = ActionRemoveReference()
+        self.assertEqual(action(model, request), u'')
+
+        with self.layer.authenticated('manager'):
+            self.assertEqual(action(model, request), u'')
+
+        model = RefNode(name='model')
+        self.checkOutput("""
+        ...<a
+        id="ref-..."
+        href="http://example.com/model"
+        class="removereference disabled"
+        title="Remove reference"
+        data-toggle="tooltip"
+        data-placement="top"\
+        ajax:bind="click"
+        ><span class="ion-minus-round"></span></a>\n\n\n<span class="reftitle"
+        style="display:none;">model</span>
+        """, action(model, request))
+
+    def test_ReferencableChildrenLink(self):
+        model = BaseNode(name='model')
+        request = self.layer.new_request()
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/'
 
@@ -273,7 +306,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         ...<a
         href="#"
         ajax:bind="click"
-        ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=dummy"
+        ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=ref_node"
         ajax:event="contextchanged:.refbrowsersensitiv"
         ajax:action="tabletile:#tableid:replace"
         ><span class="glyphicon glyphicon-asterisk"></span
@@ -281,14 +314,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         """, rendered)
 
     def test_reference_pathbar(self):
-        model = UUIDNode()
-        model['a'] = UUIDNode()
-        model['a']['b'] = UUIDNode()
-        model['z'] = UUIDNode()
-        node = model['a']['b']['c'] = UUIDNode()
+        model = BaseNode()
+        model['a'] = RefNode()
+        model['a']['b'] = RefNode()
+        model['z'] = RefNode()
+        node = model['a']['b']['c'] = RefNode()
 
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/'
 
@@ -308,7 +341,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         # Case reference root is application root
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/'
         with self.layer.authenticated('max'):
@@ -319,7 +352,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         # Case reference root is in current sub tree
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = 'a'
         with self.layer.authenticated('max'):
@@ -330,7 +363,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         # Case reference root is in sibling sub tree
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/z'
         with self.layer.authenticated('max'):
@@ -345,9 +378,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         delta = timedelta(1)
         modified = created + delta
 
-        model = UUIDNode()
+        model = BaseNode()
         for i in range(20):
-            model[str(i)] = UUIDNode()
+            model[str(i)] = RefNode()
             # set listing display metadata
             model[str(i)].metadata.title = str(i)
             model[str(i)].metadata.created = created
@@ -362,7 +395,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         # Unauthorized fails
         request = self.layer.new_request()
-        request.params['referencable'] = 'dummy'
+        request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/'
 
@@ -398,3 +431,33 @@ class TestBrowserReferenceBrowser(TileTestCase):
         ajax:bind="click"
         ><span class="ion-plus-round"></span></a>...
         """, res)
+
+    def test_referencebrowser(self):
+        model = BaseNode()
+        model['a'] = RefNode()
+
+        request = self.layer.new_request()
+        request.params['referencable'] = 'ref_node'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
+
+        # Case unauthorized
+        err = self.expectError(
+            HTTPForbidden,
+            render_tile,
+            model,
+            request,
+            'referencebrowser'
+        )
+        self.checkOutput("""
+            Unauthorized: tile
+            <cone.app.browser.referencebrowser.ReferenceBrowser object at ...>
+            failed permission check
+        """, str(err))
+
+        # Case authorized
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'referencebrowser')
+        self.assertTrue(res.find('<div class="referencebrowser">') > -1)
+        self.assertTrue(res.find('<div id="referencebrowser_pathbar"') > -1)
+        self.assertTrue(res.find('<div id="referencebrowser"') > -1)
