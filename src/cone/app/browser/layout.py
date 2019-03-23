@@ -352,7 +352,7 @@ class NavTree(Tile):
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
             target = make_url(self.request, node=node, query=query)
-            curnode = curpath == safe_decode(key) and True or False
+            curnode = curpath == safe_decode(key)
             icon = node_icon(self.request, node)
             css = ''
             if IWorkflowState.providedBy(node):
@@ -372,6 +372,7 @@ class NavTree(Tile):
                     selected_path.append(default_child.name)
                 selected = False
                 if selected_path == node_path(node):
+                    # XXX: condition never true?
                     selected = True
                 child['selected'] = selected
             tree['children'].append(child)

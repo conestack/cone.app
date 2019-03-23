@@ -5,6 +5,7 @@ from cone.app.browser.layout import ProtectedContentTile
 from cone.app.model import AppRoot
 from cone.app.model import BaseNode
 from cone.app.security import DEFAULT_SETTINGS_ACL
+from cone.app.testing.mock import WorkflowNode
 from cone.tile import render_tile
 from cone.tile import Tile
 from cone.tile import tile
@@ -216,9 +217,9 @@ class TestBrowserLayout(TileTestCase):
         root = BaseNode()
         root.properties.in_navtree = True
         root['1'] = BaseNode()
+        root['1'].properties.in_navtree = True
         root['1']['11'] = BaseNode()
         root['1']['11'].properties.in_navtree = True
-        root['1'].properties.in_navtree = True
         root['2'] = BaseNode()
         root['2'].properties.in_navtree = True
 
@@ -233,14 +234,15 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root['1'], request, 'navtree')
         self.checkOutput("""
         ...<li class="active navtreelevel_1">
-        <a href="http://example.com/1"
-        ajax:bind="click"
-        ajax:target="http://example.com/1"
-        ajax:event="contextchanged:#layout"
-        ajax:path="href">
-        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
-        1
-        </a>...
+        <a href="http://example.com/1"...
+        """, res)
+
+        # Render navtree on ``root['1']['11']``, must be selected
+        with self.layer.authenticated('max'):
+            res = render_tile(root['1']['11'], request, 'navtree')
+        self.checkOutput("""
+        ...<li class="active navtreelevel_2">
+        <a href="http://example.com/1/11"...
         """, res)
 
         # Child nodes which do not grant permission 'view' are skipped
@@ -257,6 +259,15 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root, request, 'navtree')
         self.assertTrue(res.find('ajax:target="http://example.com/3"') > -1)
 
+        # Workflow state
+        root['4'] = WorkflowNode()
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'navtree')
+        self.checkOutput("""
+        ...<li class="state-initial navtreelevel_1">
+        <a href="http://example.com/4"...
+        """, res)
+
         # Default child behavior of navtree. Default children objects are
         # displayed in navtree.
         root.properties.default_child = '1'
@@ -264,28 +275,14 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root, request, 'navtree')
         self.checkOutput("""
         ...<li class="active navtreelevel_1">
-        <a href="http://example.com/1"
-        ajax:bind="click"
-        ajax:target="http://example.com/1"
-        ajax:event="contextchanged:#layout"
-        ajax:path="href">
-        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
-        1
-        </a>...
+        <a href="http://example.com/1"...
         """, res)
 
         with self.layer.authenticated('manager'):
             res = render_tile(root['1'], request, 'navtree')
         self.checkOutput("""
         ...<li class="active navtreelevel_1">
-        <a href="http://example.com/1"
-        ajax:bind="click"
-        ajax:target="http://example.com/1"
-        ajax:event="contextchanged:#layout"
-        ajax:path="href">
-        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
-        1
-        </a>...
+        <a href="http://example.com/1"...
         """, res)
 
         # If default child should not be displayed it navtree,
@@ -309,16 +306,6 @@ class TestBrowserLayout(TileTestCase):
         root['1']['11']['a']['aa'].properties.in_navtree = True
         root['1']['11']['b'] = BaseNode()
         root['1']['11']['b'].properties.in_navtree = True
-        self.checkOutput("""
-        <class 'cone.app.model.BaseNode'>: None
-          <class 'cone.app.model.BaseNode'>: 1
-            <class 'cone.app.model.BaseNode'>: 11
-              <class 'cone.app.model.BaseNode'>: a
-                <class 'cone.app.model.BaseNode'>: aa
-              <class 'cone.app.model.BaseNode'>: b
-          <class 'cone.app.model.BaseNode'>: 2
-          <class '...InvisibleNavNode'>: 3
-        """, root.treerepr())
 
         with self.layer.authenticated('manager'):
             res = render_tile(root['1']['11'], request, 'navtree')
@@ -338,14 +325,7 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root['1']['11'], request, 'navtree')
         self.checkOutput("""
         ...<li class="active navtreelevel_1">
-        <a href="http://example.com/1/11"
-        ajax:bind="click"
-        ajax:target="http://example.com/1/11"
-        ajax:event="contextchanged:#layout"
-        ajax:path="href">
-        <i class="glyphicon glyphicon-asterisk" alt="..."></i>
-        11
-        </a>...
+        <a href="http://example.com/1/11"...
         """, res)
 
         # Nodes can be marked as navigation root
@@ -356,16 +336,18 @@ class TestBrowserLayout(TileTestCase):
 
         ignored_root = BaseNode(name='ignored_root')
         ignored_root.properties.in_navtree = True
-        ignored_root['navroot'] = BaseNode()
-        ignored_root['navroot'].properties.in_navtree = True
-        ignored_root['navroot'].properties.is_navroot = True
-        ignored_root['navroot']['child_1'] = BaseNode()
-        ignored_root['navroot']['child_1'].properties.in_navtree = True
-        ignored_root['navroot']['child_2'] = BaseNode()
-        ignored_root['navroot']['child_2'].properties.in_navtree = True
+        navroot = ignored_root['navroot'] = BaseNode()
+        navroot.properties.in_navtree = True
+        navroot.properties.is_navroot = True
+        navroot.metadata.title = 'Navigation Root'
+        navroot['child_1'] = BaseNode()
+        navroot['child_1'].properties.in_navtree = True
+        navroot['child_2'] = BaseNode()
+        navroot['child_2'].properties.in_navtree = True
 
-        navtree = TestNavTree(ignored_root['navroot'], request)
+        navtree = TestNavTree(navroot, request)
         self.assertEqual(navtree.navroot.name, 'navroot')
+        self.assertEqual(navtree.title, 'Navigation Root')
 
         with self.layer.authenticated('manager'):
             self.assertEqual(len(navtree.navtree()['children']), 2)
