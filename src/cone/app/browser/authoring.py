@@ -208,7 +208,7 @@ class ContentForm(FormHeading):
     def __call__(_next, self, model, request):
         ajax_form_fiddle(request, '#content', 'inner')
         form = _next(self, model, request)
-        if form is None:
+        if not form:
             form = u''
         self.rendered_form = form
         path = self.path
