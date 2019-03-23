@@ -464,28 +464,54 @@ class TestBrowserLayout(TileTestCase):
         """, res)
 
     def test_default_root_content(self):
+        # Default root
         root = AppRoot()
         request = self.layer.new_request()
-
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'content')
-        self.checkOutput("""
-        <div>
-            Default Root
-        </div>
-        """, res)
+        self.assertEqual(res, '<div>Default Root</div>')
 
-        root.factories['1'] = BaseNode
+        # Default child
+        class DefaultChild(BaseNode):
+            pass
+
+        with self.layer.hook_tile_reg():
+            @tile(name='content', interface=DefaultChild, permission='view')
+            class DefaultChildContentTile(Tile):
+                def render(self):
+                    return '<div>Default Child Content</div>'
+
+        root = AppRoot()
+        root.factories['1'] = DefaultChild
         root.properties.default_child = '1'
+        request = self.layer.new_request()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'content')
+        self.assertEqual(res, '<div>Default Child Content</div>')
 
+        # Default content tile
+        with self.layer.hook_tile_reg():
+            @tile(name='mycontent', interface=AppRoot, permission='view')
+            class MyRootContentTile(Tile):
+                def render(self):
+                    return '<div>My Root Content Tile</div>'
+
+        root = AppRoot()
+        root.properties.default_content_tile = 'mycontent'
+        request = self.layer.new_request()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'content')
+        self.assertEqual(res, '<div>My Root Content Tile</div>')
+
+        # Custom root content tile
         with self.layer.hook_tile_reg():
             @tile(name='content', interface=AppRoot, permission='view')
             class RootContentTile(Tile):
                 def render(self):
                     return '<div>Root Content</div>'
 
+        root = AppRoot()
+        request = self.layer.new_request()
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'content')
-        self.checkOutput("""
-        <div>Root Content</div>
-        """, res)
+        self.assertEqual(res, '<div>Root Content</div>')

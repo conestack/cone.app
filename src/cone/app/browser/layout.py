@@ -373,7 +373,7 @@ class NavTree(Tile):
                 selected = False
                 if selected_path == node_path(node):
                     # XXX: condition never true?
-                    selected = True
+                    selected = True                         #pragma NO COVERAGE
                 child['selected'] = selected
             tree['children'].append(child)
 
@@ -411,13 +411,13 @@ class Byline(Tile):
 class RootContent(ProtectedContentTile):
 
     def render(self):
-        if self.model.properties.default_child:
-            model = self.model[self.model.properties.default_child]
+        default_child = self.model.properties.default_child
+        if default_child:
+            model = self.model[default_child]
             return render_tile(model, self.request, 'content')
-        if self.model.properties.default_content_tile:
-            return render_tile(self.model,
-                               self.request,
-                               self.model.properties.default_content_tile)
+        default_content_tile = self.model.properties.default_content_tile
+        if default_content_tile:
+            return render_tile(self.model, self.request, default_content_tile)
         return render_template(
             'cone.app.browser:templates/default_root.pt',
             model=self.model,
