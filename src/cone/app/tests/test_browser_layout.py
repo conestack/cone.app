@@ -144,37 +144,22 @@ class TestBrowserLayout(TileTestCase):
 
         # Check rendering of main menu with empty title. This is needed if main
         # menu items are supposed to be displayed as icons via CSS
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'mainmenu')
+        expected = '<span></span></a>'
+        self.assertFalse(res.find(expected) > -1)
+
         model.properties.mainmenu_empty_title = True
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        self.checkOutput("""
-        ...<li class=" node-1">
-        <a href="http://example.com/1"
-        title="1"
-        ajax:bind="click"
-        ajax:target="http://example.com/1"
-        ajax:event="contextchanged:#layout"
-        ajax:path="href"
-        ><span class="glyphicon glyphicon-asterisk"></span>
-        <span></span></a>
-        </li>
-        <li class="active node-2">
-        <a href="http://example.com/2"
-        title="2"
-        ajax:bind="click"
-        ajax:target="http://example.com/2"
-        ajax:event="contextchanged:#layout"
-        ajax:path="href"
-        ><span class="glyphicon glyphicon-asterisk"></span>
-        <span></span></a>
-        </li>...
-        """, res)
+        expected = '<span></span></a>'
+        self.assertTrue(res.find(expected) > -1)
 
         # Child nodes which do not grant permission 'view' are skipped
-        class InvisibleNode(BaseNode):
+        class SettingsNode(BaseNode):
             __acl__ = DEFAULT_SETTINGS_ACL
 
-        model['3'] = InvisibleNode()
+        model['3'] = SettingsNode()
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
         self.assertFalse(res.find('<li class=" node-3">') > -1)
@@ -182,6 +167,34 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(model, request, 'mainmenu')
         self.assertTrue(res.find('<li class=" node-3">') > -1)
+
+        # Check mainmenu displays children
+        model = BaseNode()
+        child = model['child'] = BaseNode()
+        child.properties.mainmenu_display_children = True
+        child['1'] = BaseNode()
+        child['2'] = BaseNode()
+        child['3'] = BaseNode()
+        child['3'].properties.skip_mainmenu = True
+
+        with self.layer.authenticated('max'):
+            res = render_tile(model, request, 'mainmenu')
+        expected = '<li class="dropdown node-child">'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'href="http://example.com/child/1"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'href="http://example.com/child/2"'
+        self.assertTrue(res.find(expected) > -1)
+        expected = 'href="http://example.com/child/3"'
+        self.assertFalse(res.find(expected) > -1)
+
+        child['1']['1'] = BaseNode()
+        with self.layer.authenticated('max'):
+            res = render_tile(child['1']['1'], request, 'mainmenu')
+        self.checkOutput("""
+        ...<li class="active">
+        <a href="http://example.com/child/1"...
+        """, res)
 
     def test_navtree(self):
         root = BaseNode()
@@ -370,6 +383,19 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root, request, 'personaltools')
         self.assertTrue(res.find('id="personaltools"') != -1)
         self.assertTrue(res.find('href="http://example.com/logout"') != -1)
+        self.assertFalse(res.find('href="http://example.com/settings"') != -1)
+
+        # No settings link if empty settings
+        root['settings'] = BaseNode()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'personaltools')
+        self.assertFalse(res.find('href="http://example.com/settings"') != -1)
+
+        # Settings link if settings container contains children
+        root['settings']['mysettings'] = BaseNode()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'personaltools')
+        self.assertTrue(res.find('href="http://example.com/settings"') != -1)
 
     def test_pathbar(self):
         root = BaseNode()
