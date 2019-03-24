@@ -80,7 +80,7 @@ def choose_name(container, name):
     i = 0
     while n in container:
         i += 1
-        n = u'%s-%s' % (name, i)
+        n = u'{}-{}'.format(name, i)
     return n.replace('/', '-').lstrip('+@')
 
 
@@ -91,6 +91,7 @@ def format_date(dt, long=True):
 
 
 def node_icon(request, node):
+    # XXX: request not needed here
     if node.properties.icon:
         return node.properties.icon
     info = node.nodeinfo
