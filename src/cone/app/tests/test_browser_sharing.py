@@ -1,16 +1,37 @@
 from cone.app import testing
 from cone.app.browser.ajax import ajax_tile
+from cone.app.browser.sharing import sharing
 from cone.app.model import BaseNode
 from cone.app.testing.mock import SharingNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
+from pyramid.exceptions import HTTPForbidden
 
 
 class TestBrowserSharing(TileTestCase):
     layer = testing.security
 
+    def test_render_sharing_view(self):
+        model = SharingNode(name='root')
+        request = self.layer.new_request()
+
+        err = self.expectError(
+            HTTPForbidden,
+            sharing,
+            model,
+            request
+        )
+        self.checkOutput("""
+        Unauthorized: tile <cone.app.browser.sharing.SharingTile object at ...>
+        failed permission check...
+        """, str(err))
+
+        with self.layer.authenticated('manager'):
+            res = sharing(model, request)
+        self.assertTrue(res.body.find('<!DOCTYPE html>') > -1)
+
     def test_render_sharing_tile(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         request = self.layer.new_request()
 
         # Render sharing tile
@@ -22,17 +43,23 @@ class TestBrowserSharing(TileTestCase):
         """, res)
 
     def test_search_principal(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         request = self.layer.new_request()
 
         # Render sharing tile with search term
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
         self.assertFalse(res.find('Manager User') > -1)
+
         request.params['term'] = 'manager'
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
         self.assertTrue(res.find('Manager User') > -1)
+
+        request.params['term'] = 'group1'
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'sharing')
+        self.assertTrue(res.find('Group 1') > -1)
 
         # Existing principal roles are not rendered if term found on request
         root.principal_roles['viewer'] = ['editor']
@@ -52,7 +79,7 @@ class TestBrowserSharing(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
 
     def test_inherited_principal_roles(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         root.principal_roles['viewer'] = ['editor']
 
         child = root['child'] = SharingNode()
@@ -86,7 +113,7 @@ class TestBrowserSharing(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
 
     def test_table_sorting(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         child = root['child'] = SharingNode()
         child.principal_roles['viewer'] = ['admin']
         child.principal_roles['editor'] = ['admin']
@@ -106,7 +133,7 @@ class TestBrowserSharing(TileTestCase):
         del request.params['order']
 
     def test_skip_inexistent(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         child = root['child'] = SharingNode()
 
         # Users defined in ``principal_roles`` but not exists in ugm are
@@ -121,7 +148,7 @@ class TestBrowserSharing(TileTestCase):
         self.assertFalse(res.find('name="inexistent"') > -1)
 
     def test_add_role(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         child = root['child'] = SharingNode()
         child.principal_roles['viewer'] = ['admin']
         child.principal_roles['editor'] = ['admin']
@@ -186,7 +213,7 @@ class TestBrowserSharing(TileTestCase):
         })
 
     def test_remove_role(self):
-        root = SharingNode('root')
+        root = SharingNode(name='root')
         child = root['child'] = SharingNode()
         child.principal_roles['viewer'] = ['admin', 'manager']
         child.principal_roles['editor'] = ['admin']

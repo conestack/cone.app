@@ -35,6 +35,10 @@ def sharing(model, request):
     return render_main_template(model, request, 'sharing')
 
 
+GROUP_TITLE_ATTR = 'name'
+USER_TITLE_ATTR = 'fullname'
+
+
 @tile(name='local_acl',
       path='templates/table.pt',
       permission='manage_permissions')
@@ -106,7 +110,9 @@ class SharingTable(Table):
                 default = principal_id
                 if principal_id.startswith('group:'):
                     default = principal_id[6:]
-                title = principal.attrs.get('fullname', default)
+                    title = principal.attrs.get(GROUP_TITLE_ATTR, default)
+                else:
+                    title = principal.attrs.get(USER_TITLE_ATTR, default)
             row_data = RowData()
             row_data['principal'] = title
             ugm_roles = principal.roles
