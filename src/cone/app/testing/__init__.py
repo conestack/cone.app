@@ -2,7 +2,6 @@ from cone.app import model
 from cone.app.security import authenticate
 from cone.tile.tests import DummyVenusian
 from contextlib import contextmanager
-from plone.testing import Layer
 from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
 from zope.component import getGlobalSiteManager
@@ -35,7 +34,7 @@ class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
-class Security(Layer):
+class Security(object):
     """Test layer with dummy authentication for security testing.
     """
     current_request = None
@@ -45,6 +44,10 @@ class Security(Layer):
         'HTTP_COOKIE',
         'cone.app.user.roles',
     ]
+
+    def __init__(self):
+        self.__name__ = self.__class__.__name__
+        self.__bases__ = []
 
     @property
     def registry(self):

@@ -56,10 +56,13 @@ setup(
         lxml=[
             'lxml'
         ],
+        yaml=[
+            'yafowil.yaml'
+        ],
         test=[
             'lxml',
-            'plone.testing',
-            'yafowil.yaml'
+            'yafowil.yaml',
+            'zope.testrunner'
         ],
         docs=[
             'Sphinx',
@@ -68,7 +71,9 @@ setup(
         ],
     ),
     tests_require=[
-        'plone.testing'
+        'lxml',
+        'yafowil.yaml',
+        'zope.testrunner'
     ],
     test_suite='cone.app.tests.test_app.test_suite',
     entry_points="""\
