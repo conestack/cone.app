@@ -106,4 +106,4 @@ class Resources(Tile):
     def resource_url(self, resource):
         if is_remote_resource(resource):
             return resource
-        return '%s/%s' % (self.request.application_url, resource)
+        return '{}/{}'.format(self.request.application_url, resource)

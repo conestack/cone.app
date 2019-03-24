@@ -1,9 +1,10 @@
 from cone.app import testing
+from cone.app.browser.resources import cone_css
+from cone.app.browser.resources import cone_js
 from cone.app.browser.resources import is_remote_resource
 from cone.app.browser.resources import MergedAssets
-from cone.app.browser.resources import cone_js
-from cone.app.browser.resources import cone_css
 from cone.app.browser.resources import print_css
+from cone.app.browser.resources import Resources
 from cone.app.model import Properties
 from cone.app.testing.mock import static_resources
 from cone.tile import render_tile
@@ -77,6 +78,69 @@ class TestBrowserResources(TileTestCase):
         request = self.layer.new_request()
         res = print_css(model, request)
         self.assertEqual(res.headers['Content-Type'], 'text/css')
+
+    def test_Resources(self):
+        class DummyResources(Resources):
+            @property
+            def js(self):
+                js = Properties()
+                js.public = ['public.js', 'https://remote.foo/public.js']
+                js.protected = ['protected.js', 'https://remote.foo/protected.js']
+                return js
+
+            @property
+            def css(self):
+                css = Properties()
+                css.public = ['public.css', 'https://remote.foo/public.css']
+                css.protected = ['protected.css', 'https://remote.foo/protected.css']
+                return css
+
+        resources = DummyResources()
+        resources.model = cone.app.root
+        resources.request = self.layer.new_request()
+
+        self.assertEqual(resources.authenticated, None)
+        with self.layer.authenticated('max'):
+            self.assertEqual(resources.authenticated, 'max')
+
+        self.assertEqual(
+            resources.resource_url('foo.js'),
+            'http://example.com/foo.js'
+        )
+        self.assertEqual(
+            resources.resource_url('https://remote.foo/resource.js'),
+            'https://remote.foo/resource.js'
+        )
+
+        res = resources.resources(resources.js)
+        self.assertEqual(res, [
+            'http://example.com/public.js',
+            'https://remote.foo/public.js'
+        ])
+
+        with self.layer.authenticated('max'):
+            res = resources.resources(resources.js)
+        self.assertEqual(res, [
+            'http://example.com/public.js',
+            'https://remote.foo/public.js',
+            'http://example.com/protected.js',
+            'https://remote.foo/protected.js'
+        ])
+
+        res = resources.resources(resources.css)
+        self.assertEqual(res, [
+            'http://example.com/public.css',
+            'https://remote.foo/public.css'
+        ])
+
+        with self.layer.authenticated('max'):
+            res = resources.resources(resources.css)
+        self.assertEqual(res, [
+            'http://example.com/public.css',
+            'https://remote.foo/public.css',
+            'http://example.com/protected.css',
+            'https://remote.foo/protected.css'
+        ])
 
     def test_resources(self):
         # CSS Resource
