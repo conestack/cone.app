@@ -1,5 +1,6 @@
 from setuptools import find_packages
 from setuptools import setup
+from setuptools.command.test import test
 import os
 
 
@@ -8,13 +9,20 @@ def read_file(name):
         return f.read()
 
 
-version = '1.0a13.dev0'
+version = '1.0b1.dev0'
 shortdesc = 'Web application stub'
 longdesc = '\n\n'.join([read_file(name) for name in [
     'README.rst',
     'CHANGES.rst',
     'LICENSE.rst'
 ]])
+
+
+class Test(test):
+
+    def run_tests(self):
+        from cone.app import tests
+        tests.run_tests()
 
 
 setup(
@@ -75,7 +83,7 @@ setup(
         'yafowil.yaml',
         'zope.testrunner'
     ],
-    test_suite='cone.app.tests.test_app.test_suite',
+    cmdclass=dict(test=Test),
     entry_points="""\
     [paste.app_factory]
     main = cone.app:main

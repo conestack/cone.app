@@ -26,6 +26,10 @@ Roadmap
 
 [X] Migrate Doctests to Unittests where appropriate.
 
+[X] Merge ``pyramid_upgrade`` branches back to master.
+
+[ ] Adopt docs for using ``waitress`` instead of ``paster``.
+
 [ ] Python 3 support.
 
 [ ] Provide a ``form_action`` property on ``cone.app.browser.form.Form``
@@ -58,19 +62,8 @@ by node info name only if no class given at lookup. Or so...
 
 [ ] Create and use constants for all default roles and permissions.
 
-[ ] Merge ``pyramid_upgrade`` branches back to master.
-
-[ ] Restore B/C compatibility for pyramid < 1.5
-
-[ ] Adopt docs for using ``waitress`` instead of ``paster``.
-
 [ ] Adopt livesearch JS intergration to provide hooks for passing typeahead
 options and datasets instead of just datasets.
-
-[ ] Use ``BatchedItems`` as base for ``Table``.
-
-[ ] ``cone.tile.Tile`` should point to template at ``template`` instead of
-``path``.
 
 [ ] Return unicode in ``cone.app.browser.utils.make_url`` and
 ``cone.app.browser.utils.make_query``.
@@ -88,14 +81,18 @@ options and datasets instead of just datasets.
 [ ] Add template for creating ``cone.app`` plugins.
 
 [ ] Overhaul resource registration and delivery keeping B/C.
-
-- Think about using fanstatic
-- Add resource export as JSON if 3rd party build tool is preferred.
+    - Think about using fanstatic
+    - Add resource export as JSON if 3rd party build tool is preferred.
 
 [ ] Overhaul plugin entry hooks staying closer to pyramid if possible.
 
 [ ] Pyramid request wrapper for autobahn websocket requests to enable proper
 security integration.
+
+[ ] ``cone.tile.Tile`` should point to template at ``template`` instead of
+``path``.
+
+[ ] Use ``BatchedItems`` as base for ``Table``.
 
 [ ] Rename ``cone.app.browser.batch.Batch`` to
 ``cone.app.browser.batch.Pagination`` provoding B/C.

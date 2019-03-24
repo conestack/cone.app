@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0a13 (unreleased)
+1.0b1 (unreleased)
 -------------------
 
 - Minimum pyramid version is 1.5 now.
