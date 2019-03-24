@@ -1,6 +1,9 @@
 from cone.app import testing
 from cone.app.browser.resources import is_remote_resource
 from cone.app.browser.resources import MergedAssets
+from cone.app.browser.resources import cone_js
+from cone.app.browser.resources import cone_css
+from cone.app.browser.resources import print_css
 from cone.app.model import Properties
 from cone.app.testing.mock import static_resources
 from cone.tile import render_tile
@@ -56,6 +59,24 @@ class TestBrowserResources(TileTestCase):
             res = assets.merged_print_css
         expected = '.print1 { display: none; }\n\n.print2 { display: none; }\n\n'
         self.assertEqual(res, expected)
+
+    def test_cone_js(self):
+        model = cone.app.root
+        request = self.layer.new_request()
+        res = cone_js(model, request)
+        self.assertEqual(res.headers['Content-Type'], 'application/javascript')
+
+    def test_cone_css(self):
+        model = cone.app.root
+        request = self.layer.new_request()
+        res = cone_css(model, request)
+        self.assertEqual(res.headers['Content-Type'], 'text/css')
+
+    def test_print_css(self):
+        model = cone.app.root
+        request = self.layer.new_request()
+        res = print_css(model, request)
+        self.assertEqual(res.headers['Content-Type'], 'text/css')
 
     def test_resources(self):
         # CSS Resource

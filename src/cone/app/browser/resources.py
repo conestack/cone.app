@@ -53,7 +53,9 @@ class MergedAssets(object):
 @view_config(name='cone.js')
 def cone_js(model, request):
     assets = MergedAssets(request)
-    return Response(assets.merged_js)
+    response = Response(assets.merged_js)
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
 
 
 @view_config(name='cone.css')
