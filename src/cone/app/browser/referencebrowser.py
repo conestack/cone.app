@@ -113,7 +113,7 @@ class ReferenceAction(LinkAction):
 
     @property
     def selected_uids(self):
-        return self.request.params['selected'].split(',')
+        return [it for it in self.request.params['selected'].split(',') if it]
 
     @property
     def id(self):
@@ -122,10 +122,13 @@ class ReferenceAction(LinkAction):
     @property
     def display(self):
         referencable = self.request.params['referencable']
-        referencable = referencable.find(',') > -1 \
-            and referencable.split(',') or [referencable]
-        return IUUIDAware.providedBy(self.model) \
-            and self.model.node_info_name in referencable
+        referencable = [
+            it for it in self.request.params['referencable'].split(',') if it
+        ]
+        return (
+            IUUIDAware.providedBy(self.model) and
+            self.model.node_info_name in referencable
+        )
 
     def render(self):
         rendered = LinkAction.render(self)

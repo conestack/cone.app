@@ -1,7 +1,11 @@
 from cone.app import testing
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.referencebrowser import ActionAddReference
 from cone.app.browser.referencebrowser import ActionRemoveReference
 from cone.app.browser.referencebrowser import ReferencableChildrenLink
+from cone.app.browser.referencebrowser import ReferenceAction
+from cone.app.browser.referencebrowser import ReferenceBrowserModelMixin
+from cone.app.interfaces import INavigationLeaf
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
@@ -12,6 +16,7 @@ from plumber import plumbing
 from pyramid.httpexceptions import HTTPForbidden
 from yafowil.base import ExtractionError
 from yafowil.base import factory
+from zope.interface import implementer
 
 
 @plumbing(UUIDAware)
@@ -31,7 +36,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Render without any value
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             props={
                 'label': 'Reference',
                 'multivalued': False,
@@ -48,7 +53,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Render required with empty value
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             props={
                 'label': 'Reference',
                 'multivalued': False,
@@ -87,7 +92,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Single valued expects 2-tuple as value with (uid, label)
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             value=('uid', 'Label'),
             props={
                 'label': 'Reference',
@@ -120,7 +125,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Single value display renderer
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             props={
                 'label': 'Reference',
                 'multivalued': False,
@@ -135,7 +140,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             value=('uid', 'Label'),
             props={
                 'label': 'Reference',
@@ -153,7 +158,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Render without any value
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             props={
                 'label': 'Reference',
                 'multivalued': True,
@@ -170,7 +175,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Render required with empty value
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             props={
                 'label': 'Reference',
                 'multivalued': True,
@@ -218,7 +223,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Multi value display renderer
         widget = factory(
             'reference',
-            'ref',
+            name='ref',
             value=['uid1', 'uid2'],
             props={
                 'label': 'Reference',
@@ -236,6 +241,108 @@ class TestBrowserReferenceBrowser(TileTestCase):
         id="display-ref"><li>Title1</li><li>Title2</li></ul>
         """, widget())
 
+    def test_ReferenceBrowserModelMixin(self):
+        model = BaseNode()
+        a = model['a'] = BaseNode()
+        aa = model['a']['a'] = BaseNode()
+        b = model['b'] = BaseNode()
+
+        ref_model_mixin = ReferenceBrowserModelMixin()
+        ref_model_mixin.model = model
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = '/'
+        self.assertEqual(ref_model_mixin.referencable_root, model)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = ''
+        self.assertEqual(ref_model_mixin.referencable_root, model)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = '/a'
+        self.assertEqual(ref_model_mixin.referencable_root, a)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = '/a/a'
+        self.assertEqual(ref_model_mixin.referencable_root, aa)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = 'b'
+        self.assertEqual(ref_model_mixin.referencable_root, b)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = 'c'
+        self.expectError(
+            KeyError,
+            lambda: ref_model_mixin.referencable_root
+        )
+
+        ref_model_mixin.model = aa
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = 'a/a'
+        self.assertEqual(ref_model_mixin.referencebrowser_model, aa)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = 'a'
+        self.assertEqual(ref_model_mixin.referencebrowser_model, aa)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = ''
+        self.assertEqual(ref_model_mixin.referencebrowser_model, aa)
+
+        ref_model_mixin.model = b
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = ''
+        self.assertEqual(ref_model_mixin.referencebrowser_model, b)
+
+        request = ref_model_mixin.request = self.layer.new_request()
+        request.params['root'] = 'a'
+        self.assertEqual(ref_model_mixin.referencebrowser_model, a)
+
+    def test_ReferenceAction(self):
+        model = RefNode()
+        request = self.layer.new_request()
+
+        action = ReferenceAction()
+        action.model = model
+        action.request = request
+
+        request.params['selected'] = ''
+        self.assertEqual(action.selected_uids, [])
+        request.params['selected'] = 'foo'
+        self.assertEqual(action.selected_uids, ['foo'])
+        request.params['selected'] = 'foo,bar'
+        self.assertEqual(action.selected_uids, ['foo', 'bar'])
+
+        request.params['referencable'] = 'ref_node,ref_node_2'
+        self.assertTrue(action.display)
+        request.params['referencable'] = 'ref_node'
+        self.assertTrue(action.display)
+        request.params['referencable'] = 'ref_node_2'
+        self.assertFalse(action.display)
+        request.params['referencable'] = ''
+        self.assertFalse(action.display)
+
+        self.checkOutput('ref-...', action.id)
+        self.checkOutput("""
+        ...<a
+        id="ref-..."
+        href="http://example.com/"
+        data-toggle="tooltip"
+        data-placement="top"
+        ajax:bind="click"
+        ></a>...
+        """, action.render())
+
+        model = BaseNode()
+        model.node_info_name = 'nouuid'
+        request.params['referencable'] = 'nouuid'
+
+        action.model = model
+        self.assertFalse(action.display)
+
     def test_ActionAddReference(self):
         model = BaseNode()
         request = self.layer.new_request()
@@ -250,18 +357,25 @@ class TestBrowserReferenceBrowser(TileTestCase):
             self.assertEqual(action(model, request), u'')
 
         model = RefNode(name='model')
-        self.checkOutput("""
-        ...<a
-        id="ref-..."
-        href="http://example.com/model"
-        class="addreference"
-        title="Add reference"
-        data-toggle="tooltip"
-        data-placement="top"\
-        ajax:bind="click"
-        ><span class="ion-plus-round"></span></a>\n\n\n<span class="reftitle"
-        style="display:none;">model</span>
-        """, action(model, request))
+        rendered = action(model, request)
+        expected = 'class="addreference"'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = 'title="Add reference"'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = '<span class="ion-plus-round">'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = '<span class="reftitle" style="display:none;">model</span>'
+        self.assertTrue(rendered.find(expected) > -1)
+
+        request.params['selected'] = str(model.uuid)
+        rendered = action(model, request)
+        expected = 'class="addreference disabled"'
+        self.assertTrue(rendered.find(expected) > -1)
+
+        action = ActionAddReference()
+        action.model = BaseNode(name='model')
+        action.request = self.layer.new_request()
+        self.assertFalse(action.enabled)
 
     def test_ActionRemoveReference(self):
         model = BaseNode()
@@ -277,41 +391,80 @@ class TestBrowserReferenceBrowser(TileTestCase):
             self.assertEqual(action(model, request), u'')
 
         model = RefNode(name='model')
-        self.checkOutput("""
-        ...<a
-        id="ref-..."
-        href="http://example.com/model"
-        class="removereference disabled"
-        title="Remove reference"
-        data-toggle="tooltip"
-        data-placement="top"\
-        ajax:bind="click"
-        ><span class="ion-minus-round"></span></a>\n\n\n<span class="reftitle"
-        style="display:none;">model</span>
-        """, action(model, request))
+        rendered = action(model, request)
+        expected = 'class="removereference disabled"'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = 'title="Remove reference"'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = '<span class="ion-minus-round">'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = '<span class="reftitle" style="display:none;">model</span>'
+        self.assertTrue(rendered.find(expected) > -1)
+
+        request.params['selected'] = str(model.uuid)
+        rendered = action(model, request)
+        expected = 'class="removereference"'
+        self.assertTrue(rendered.find(expected) > -1)
+
+        action = ActionRemoveReference()
+        action.model = BaseNode(name='model')
+        action.request = self.layer.new_request()
+        self.assertFalse(action.enabled)
 
     def test_ReferencableChildrenLink(self):
         model = BaseNode(name='model')
+        model.metadata.title = 'My Node'
         request = self.layer.new_request()
         request.params['referencable'] = 'ref_node'
         request.params['selected'] = ''
         request.params['root'] = '/'
 
-        action = ReferencableChildrenLink('tabletile', 'tableid')
+        table_tile_name = 'tabletile'
+        table_id = 'tableid'
+
+        action = ReferencableChildrenLink(table_tile_name, table_id)
+        action.model = model
+        action.request = request
+
+        self.assertTrue(isinstance(action, LinkAction))
+
+        expected = 'http://example.com/model?selected=&root=/&referencable=ref_node'
+        self.assertEqual(action.target, expected)
+
+        expected = 'My Node'
+        self.assertEqual(action.text, expected)
+
+        expected = 'tabletile:#tableid:replace'
+        self.assertEqual(action.action, expected)
+
+        expected = 'contextchanged:.refbrowsersensitiv'
+        self.assertEqual(action.event, expected)
+
+        self.assertFalse(action.display)
+        with self.layer.authenticated('max'):
+            self.assertTrue(action.display)
+
+        expected = 'glyphicon glyphicon-asterisk'
+        self.assertEqual(action.icon, expected)
+
         self.assertEqual(action(model, request), u'')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-        self.checkOutput("""
-        ...<a
-        href="#"
-        ajax:bind="click"
-        ajax:target="http://example.com/model?selected=&amp;root=/&amp;referencable=ref_node"
-        ajax:event="contextchanged:.refbrowsersensitiv"
-        ajax:action="tabletile:#tableid:replace"
-        ><span class="glyphicon glyphicon-asterisk"></span
-        >&nbsp;model</a>...
-        """, rendered)
+        expected = '<a'
+        self.assertTrue(rendered.find(expected) > -1)
+        expected = '&nbsp;My Node</a>'
+        self.assertTrue(rendered.find(expected) > -1)
+
+        @implementer(INavigationLeaf)
+        class LeafNode(BaseNode):
+            pass
+
+        model = LeafNode(name='leaf')
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+        expected = '<span class="glyphicon glyphicon-asterisk" />&nbsp;<span>leaf</span>'
+        self.assertEqual(rendered, expected)
 
     def test_reference_pathbar(self):
         model = BaseNode()
