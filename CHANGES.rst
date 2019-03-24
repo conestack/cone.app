@@ -4,7 +4,30 @@ Changes
 1.0a13 (unreleased)
 -------------------
 
-- No changes yet.
+- Minimum pyramid version is 1.5 now.
+
+- Add ``cone.app.workflow.permission_checker`` for use with ``repoze.workflow``
+  to make it wirk with pyramid >= 1.8.
+  [rnix, 2019-03-21]
+
+- Use ``request.has_permission`` instead of deprecated
+  ``pyramid.security.has_permission``.
+  [rnix, 2019-03-21]
+
+- Use ``request.authenticated_userid`` instead of deprecated
+  ``pyramid.security.authenticated_userid``.
+  [rnix, 2019-03-21]
+
+- Add ``cone.app.main_hook`` decorator. ``cone.app.register_main_hook`` is
+  deprecated and will be removed as of ``cone.app`` version 1.1.
+  [rnix, 2019-03-21]
+
+- Convert doctests to unittests.
+  [rnix, 2019-03-21]
+
+- Do not use ``cone.tile.register_tile`` any more. Create dedicated tile
+  classes and use ``cone.tile.tile`` all over the place.
+  [rnix, 2017-02-21]
 
 
 1.0a12 (2018-11-20)

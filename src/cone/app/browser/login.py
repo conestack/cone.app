@@ -17,19 +17,19 @@ from yafowil.base import factory
 _ = TranslationStringFactory('cone.app')
 
 
-@view_config('login')
+@view_config(name='login')
 def login_view(model, request):
     return render_main_template(model, request, contenttile='loginform')
 
 
-@view_config('logout')
+@view_config(name='logout')
 def logout_view(model, request):
     headers = forget(request)
     location = request.params.get('came_from', request.application_url)
     return HTTPFound(location=location, headers=headers)
 
 
-@tile('logout')
+@tile(name='logout')
 class Logout(Tile):
 
     def render(self):
@@ -44,7 +44,7 @@ class Logout(Tile):
         return u''
 
 
-@tile('loginform', permission='login')
+@tile(name='loginform', permission='login')
 class LoginForm(Form):
     ajax = False
 

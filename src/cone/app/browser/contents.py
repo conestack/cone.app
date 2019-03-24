@@ -19,7 +19,6 @@ from node.interfaces import ILeaf
 from node.utils import instance_property
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import has_permission
 from pyramid.view import view_config
 import datetime
 
@@ -58,7 +57,7 @@ class ContentsActionDelete(ActionDelete):
     @property
     def display(self):
         return self.model.properties.action_delete \
-            and has_permission('delete', self.model.parent, self.request) \
+            and self.request.has_permission('delete', self.model.parent) \
             and self.permitted('delete')
 
 
@@ -78,51 +77,52 @@ class ContentsViewLink(ViewLink):
         return super(ContentsViewLink, self).target
 
 
-@tile('contents', 'templates/table.pt', permission='list')
+@tile(name='contents', path='templates/table.pt', permission='list')
 class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'
     col_defs = [{
-            'id': 'actions',
-            'title': _('actions', default='Actions'),
-            'sort_key': None,
-            'sort_title': None,
-            'content': 'structure'
-        }, {
-            'id': 'title',
-            'title': _('title', default='Title'),
-            'sort_key': 'title',
-            'sort_title': _('sort_on_title', default='Sort on title'),
-            'content': 'structure'
-        }, {
-            'id': 'creator',
-            'title': _('creator', default='Creator'),
-            'sort_key': 'creator',
-            'sort_title': _('sort_on_creator', default='Sort on creator'),
-            'content': 'string'
-        }, {
-            'id': 'created',
-            'title': _('created', default='Created'),
-            'sort_key': 'created',
-            'sort_title': _('sort_on_created', default='Sort on created'),
-            'content': 'datetime'
-        }, {
-            'id': 'modified',
-            'title': _('modified', default='Modified'),
-            'sort_key': 'modified',
-            'sort_title': _('sort_on_modified', default='Sort on modified'),
-            'content': 'datetime'
-        }
-    ]
+        'id': 'actions',
+        'title': _('actions', default='Actions'),
+        'sort_key': None,
+        'sort_title': None,
+        'content': 'structure'
+    }, {
+        'id': 'title',
+        'title': _('title', default='Title'),
+        'sort_key': 'title',
+        'sort_title': _('sort_on_title', default='Sort on title'),
+        'content': 'structure'
+    }, {
+        'id': 'creator',
+        'title': _('creator', default='Creator'),
+        'sort_key': 'creator',
+        'sort_title': _('sort_on_creator', default='Sort on creator'),
+        'content': 'string'
+    }, {
+        'id': 'created',
+        'title': _('created', default='Created'),
+        'sort_key': 'created',
+        'sort_title': _('sort_on_created', default='Sort on created'),
+        'content': 'datetime'
+    }, {
+        'id': 'modified',
+        'title': _('modified', default='Modified'),
+        'sort_key': 'modified',
+        'sort_title': _('sort_on_modified', default='Sort on modified'),
+        'content': 'datetime'
+    }]
     default_sort = 'created'
     default_order = 'desc'
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),
         'creator': lambda x: x.metadata.creator.lower(),
-        'created': lambda x: x.metadata.created \
-                      and x.metadata.created or FAR_PAST,
-        'modified': lambda x: x.metadata.modified \
-                      and x.metadata.modified or FAR_PAST,
+        'created': lambda x: (
+            x.metadata.created and x.metadata.created or FAR_PAST
+        ),
+        'modified': lambda x: (
+            x.metadata.modified and x.metadata.modified or FAR_PAST
+        )
     }
     show_filter = True
 
@@ -184,7 +184,7 @@ class ContentsTile(Table):
         if term:
             term = term.lower()
         for node in self.listable_children:
-            if not has_permission('view', node, self.request):
+            if not self.request.has_permission('view', node):
                 continue
             if term:
                 metadata = node.metadata
@@ -215,8 +215,8 @@ class ListingTile(Tile):
     related_view = 'listing'
 
 
-@view_config('listing', permission='list')
+@view_config(name='listing', permission='list')
 def listing(model, request):
-    """Listing view
+    """Listing view.
     """
     return render_main_template(model, request, 'listing')

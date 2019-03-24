@@ -227,7 +227,7 @@ class TableBatch(Batch):
             url = make_url(
                 self.request,
                 path=path,
-                #resource=self.related_view,
+                # resource=self.related_view,
                 query=query
             )
             ret.append({

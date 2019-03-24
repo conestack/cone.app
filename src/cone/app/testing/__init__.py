@@ -1,68 +1,73 @@
+from cone.app import model
 from cone.app.security import authenticate
+from cone.tile.tests import DummyVenusian
+from contextlib import contextmanager
 from plone.testing import Layer
+from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
+from zope.configuration.xmlconfig import XMLConfig
 import cone.app
+import cone.tile
 import os
+import venusian
 
 
-DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
+def reset_node_info_registry(fn):
+    """Decorator for tests using node info registry
+    """
+    def wrapper(*a, **kw):
+        try:
+            fn(*a, **kw)
+        finally:
+            model._node_info_registry = dict()
+    return wrapper
 
 
-class DummyRequest(BaseDummyRequest):
+class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
 
     @property
     def is_xhr(self):
         return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
 
+DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
+
+
 class Security(Layer):
     """Test layer with dummy authentication for security testing.
     """
-
-    def login(self, login):
-        request = self.current_request
-        if not request:
-            request = self.new_request()
-        else:
-            self.logout()
-        res = authenticate(request, login, 'secret')
-        if res:
-            request.environ['HTTP_COOKIE'] = res[0][1]
-
+    current_request = None
     auth_env_keys = [
-        'HTTP_COOKIE',
-        'paste.cookies',
         'REMOTE_USER_TOKENS',
         'REMOTE_USER_DATA',
+        'HTTP_COOKIE',
         'cone.app.user.roles',
     ]
-
-    def logout(self):
-        request = self.current_request
-        if request:
-            environ = request.environ
-            for key in self.auth_env_keys:
-                if key in environ:
-                    del environ[key]
-
-    def defaults(self):
-        return {'request': self.current_request, 'registry': self.registry}
 
     @property
     def registry(self):
         return getGlobalSiteManager()
 
+    def defaults(self):
+        return {
+            'request': self.current_request,
+            'registry': self.registry
+        }
+
     def new_request(self, type=None, xhr=False):
         request = self.current_request
         auth = dict()
+        cookies = dict()
         if request:
+            cookies = request.cookies
             environ = request.environ
             for key in self.auth_env_keys:
                 if key in environ:
                     auth[key] = environ[key]
         request = DummyRequest()
+        request.cookies.update(cookies)
         request.environ['SERVER_NAME'] = 'testcase'
         request.environ['AUTH_TYPE'] = 'cookie'
         request.environ.update(auth)
@@ -75,7 +80,47 @@ class Security(Layer):
         self.current_request = request
         return request
 
+    def login(self, login, password=None):
+        request = self.current_request
+        if not request:
+            request = self.new_request()
+        else:
+            self.logout()
+        password = password if password else 'secret'
+        res = authenticate(request, login, password)
+        if res:
+            request.environ['HTTP_COOKIE'] = res[0][1]
+            cookie = res[0][1].split(';')[0].split('=')
+            request.cookies[cookie[0]] = cookie[1]
+
+    def logout(self):
+        request = self.current_request
+        if request:
+            request.cookies.clear()
+            environ = request.environ
+            for key in self.auth_env_keys:
+                if key in environ:
+                    del environ[key]
+
+    @contextmanager
+    def authenticated(self, login, password=None):
+        try:
+            self.login(login, password=password)
+            yield
+        finally:
+            self.logout()
+
+    @contextmanager
+    def hook_tile_reg(self):
+        try:
+            cone.tile.tile.venusian = DummyVenusian()
+            yield
+        finally:
+            cone.tile.tile.venusian = venusian
+
     def make_app(self, **kw):
+        import pyramid.threadlocal
+        pyramid.threadlocal.manager.default = self.defaults
         settings = {
             'default_locale_name': 'en',
             'cone.admin_user': 'superuser',
@@ -96,18 +141,18 @@ class Security(Layer):
         settings.update(**kw)
         self.app = cone.app.main({}, **settings)
         self.current_request = None
-        import pyramid.threadlocal
-        pyramid.threadlocal.manager.default = self.defaults
 
     def setUp(self, args=None):
         self.make_app()
-        print "Security set up."
+        XMLConfig('testing/dummy_workflow.zcml', cone.app)()
+        print("Security set up.")
 
     def tearDown(self):
         # XXX: something is wrong here.
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         resetHooks()
-        print "Security torn down."
+        print("Security torn down.")
+
 
 security = Security()

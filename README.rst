@@ -18,7 +18,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2018 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2019 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
@@ -37,32 +37,57 @@ Test coverage
 
 Summary of the test coverage report::
 
-    lines   cov%   module
-      199   100%   cone.app.__init__
-       29    96%   cone.app.browser.__init__
-      275   100%   cone.app.browser.actions
-      175    98%   cone.app.browser.ajax
-      242    95%   cone.app.browser.authoring
-      101   100%   cone.app.browser.batch
-      151    94%   cone.app.browser.contents
-       72    94%   cone.app.browser.contextmenu
-      111   100%   cone.app.browser.copysupport
-       24   100%   cone.app.browser.exception
-       87    90%   cone.app.browser.form
-      280    90%   cone.app.browser.layout
-       63   100%   cone.app.browser.login
-      212    95%   cone.app.browser.referencebrowser
-       73    79%   cone.app.browser.resources
-       40   100%   cone.app.browser.settings
-      149    98%   cone.app.browser.sharing
-      140   100%   cone.app.browser.table
-       81    98%   cone.app.browser.utils
-       50    96%   cone.app.browser.workflow
-       70   100%   cone.app.interfaces
-      375    93%   cone.app.model
-      178   100%   cone.app.security
-       88   100%   cone.app.testing.__init__
-       45    93%   cone.app.testing.mock
-       44   100%   cone.app.tests
-       47   100%   cone.app.utils
-       63   100%   cone.app.workflow
+    lines   cov%   module   (path)
+      202   100%   cone.app.__init__
+       42   100%   cone.app.browser.__init__
+      293   100%   cone.app.browser.actions
+      196   100%   cone.app.browser.ajax
+      296   100%   cone.app.browser.authoring
+      256   100%   cone.app.browser.batch
+      175   100%   cone.app.browser.contents
+       87   100%   cone.app.browser.contextmenu
+      121   100%   cone.app.browser.copysupport
+       39   100%   cone.app.browser.exception
+       86   100%   cone.app.browser.form
+      308   100%   cone.app.browser.layout
+       87   100%   cone.app.browser.login
+      248   100%   cone.app.browser.referencebrowser
+       72   100%   cone.app.browser.resources
+       49   100%   cone.app.browser.settings
+      163   100%   cone.app.browser.sharing
+      159   100%   cone.app.browser.table
+       86   100%   cone.app.browser.utils
+       54   100%   cone.app.browser.workflow
+       75   100%   cone.app.interfaces
+      406   100%   cone.app.model
+      186   100%   cone.app.security
+      122   100%   cone.app.testing.__init__
+       63   100%   cone.app.testing.mock
+       57     5%   cone.app.tests.__init__
+       99   100%   cone.app.tests.test_app
+       69   100%   cone.app.tests.test_browser
+      397   100%   cone.app.tests.test_browser_actions
+      340   100%   cone.app.tests.test_browser_ajax
+      872   100%   cone.app.tests.test_browser_authoring
+      550   100%   cone.app.tests.test_browser_batch
+      263   100%   cone.app.tests.test_browser_contents
+       96   100%   cone.app.tests.test_browser_contextmenu
+      120   100%   cone.app.tests.test_browser_copysupport
+       80   100%   cone.app.tests.test_browser_exception
+      248   100%   cone.app.tests.test_browser_form
+      346   100%   cone.app.tests.test_browser_layout
+       43   100%   cone.app.tests.test_browser_login
+      467   100%   cone.app.tests.test_browser_referencebrowser
+      148   100%   cone.app.tests.test_browser_resources
+      135   100%   cone.app.tests.test_browser_settings
+      202   100%   cone.app.tests.test_browser_sharing
+      172   100%   cone.app.tests.test_browser_table
+      113   100%   cone.app.tests.test_browser_utils
+       34   100%   cone.app.tests.test_browser_workflow
+      461   100%   cone.app.tests.test_model
+      299   100%   cone.app.tests.test_security
+       39   100%   cone.app.tests.test_testing
+       81   100%   cone.app.tests.test_utils
+       69   100%   cone.app.tests.test_workflow
+       54   100%   cone.app.utils
+       71   100%   cone.app.workflow

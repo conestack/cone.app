@@ -28,14 +28,19 @@ class SharingTile(Tile):
     related_view = 'sharing'
 
 
-@view_config('sharing', permission='manage_permissions')
+@view_config(name='sharing', permission='manage_permissions')
 def sharing(model, request):
-    """Sharing view
+    """Sharing view.
     """
     return render_main_template(model, request, 'sharing')
 
 
-@tile('local_acl', 'templates/table.pt',
+GROUP_TITLE_ATTR = 'name'
+USER_TITLE_ATTR = 'fullname'
+
+
+@tile(name='local_acl',
+      path='templates/table.pt',
       permission='manage_permissions')
 class SharingTable(Table):
     table_id = 'localacltable'
@@ -46,16 +51,14 @@ class SharingTable(Table):
 
     @property
     def col_defs(self):
-        col_defs = [
-            {
-                'id': 'principal',
-                'title': _('principal', default='Principal'),
-                'sort_key': 'principal',
-                'sort_title': _('sort_by_principal',
-                                default='Sort by principal'),
-                'content': 'string',
-            },
-        ]
+        col_defs = [{
+            'id': 'principal',
+            'title': _('principal', default='Principal'),
+            'sort_key': 'principal',
+            'sort_title': _('sort_by_principal',
+                            default='Sort by principal'),
+            'content': 'string'
+        }]
         for role in security.DEFAULT_ROLES:
             col_defs.append({
                 'id': role[0],
@@ -107,14 +110,16 @@ class SharingTable(Table):
                 default = principal_id
                 if principal_id.startswith('group:'):
                     default = principal_id[6:]
-                title = principal.attrs.get('fullname', default)
+                    title = principal.attrs.get(GROUP_TITLE_ATTR, default)
+                else:
+                    title = principal.attrs.get(USER_TITLE_ATTR, default)
             row_data = RowData()
             row_data['principal'] = title
             ugm_roles = principal.roles
             local_roles = principal_roles.get(principal_id, list())
             if inheritance:
                 for role in model.aggregated_roles_for(principal_id):
-                    if not role in local_roles:
+                    if role not in local_roles:
                         ugm_roles.append(role)
             for role in security.DEFAULT_ROLES:
                 inherited = role[0] in ugm_roles
@@ -137,7 +142,7 @@ class SharingTable(Table):
         return ret
 
 
-@tile('add_principal_role', permission='manage_permissions')
+@tile(name='add_principal_role', permission='manage_permissions')
 class AddPrincipalRole(Tile):
 
     def render(self):
@@ -147,7 +152,7 @@ class AddPrincipalRole(Tile):
             principal_id = request.params['id']
             role = request.params['role']
             roles = model.principal_roles
-            if not principal_id in roles:
+            if principal_id not in roles:
                 model.principal_roles[principal_id] = [role]
                 return u''
             existing = set(model.principal_roles[principal_id])
@@ -157,14 +162,17 @@ class AddPrincipalRole(Tile):
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(
-                _('cannot_add_role_for_principal',
-                  default="Can not add role '${role}' for principal '${pid}'"),
-                  mapping={'role': role, 'pid': principal_id})
+                _(
+                    'cannot_add_role_for_principal',
+                    default="Can not add role '${role}' for principal '${pid}'"
+                ),
+                mapping={'role': role, 'pid': principal_id}
+            )
             ajax_message(self.request, message, 'error')
         return u''
 
 
-@tile('remove_principal_role', permission='manage_permissions')
+@tile(name='remove_principal_role', permission='manage_permissions')
 class RemovePrincipalRole(Tile):
 
     def render(self):
@@ -174,7 +182,7 @@ class RemovePrincipalRole(Tile):
             principal_id = request.params['id']
             role = request.params['role']
             roles = model.principal_roles
-            if not principal_id in roles:
+            if principal_id not in roles:
                 raise
             existing = model.principal_roles[principal_id]
             existing.remove(role)
@@ -186,9 +194,14 @@ class RemovePrincipalRole(Tile):
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(
-                _('cannot_remove_role_for_principal',
-                  default="Can not remove role '${role}' for "
-                          "principal '${pid}'"),
-                  mapping={'role': role, 'pid': principal_id})
+                _(
+                    'cannot_remove_role_for_principal',
+                    default=(
+                        "Can not remove role '${role}' for "
+                        "principal '${pid}'"
+                    )
+                ),
+                mapping={'role': role, 'pid': principal_id}
+            )
             ajax_message(self.request, message, 'error')
         return u''

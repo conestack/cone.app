@@ -120,7 +120,7 @@ class Batch(Tile):
         """Previous page in batch.
         """
         prevpage = None
-        position = self._getPositionOfCurrentInVocab() - 1
+        position = self._position_of_current_in_vocab - 1
         while position >= 0:
             page = self.vocab[position]
             if page['visible']:
@@ -136,7 +136,7 @@ class Batch(Tile):
         """Next page in batch.
         """
         nextpage = self.dummypage
-        position = self._getPositionOfCurrentInVocab() + 1
+        position = self._position_of_current_in_vocab + 1
         if position == 0 and self.vocab:
             return nextpage
         if position == 0 and not self.vocab:
@@ -153,22 +153,22 @@ class Batch(Tile):
     def leftellipsis(self):
         """Left ellipsis string.
         """
-        return self._leftOverDiff < 0 and self.ellipsis or u''
+        return self._left_over_diff < 0 and self.ellipsis or u''
 
     @property
     def rightellipsis(self):
         """Right ellipsis string.
         """
-        return self._rightOverDiff < 0 and self.ellipsis or u''
+        return self._right_over_diff < 0 and self.ellipsis or u''
 
     @property
     def pages(self):
         """Pages to display.
         """
-        pos = self._getPositionOfCurrentInVocab()
+        pos = self._position_of_current_in_vocab
         count = len(self.vocab)
-        start = max(pos - self._siderange - max(self._rightOverDiff, 0), 0)
-        end = min(pos + self._siderange + max(self._leftOverDiff, 0) + 1,
+        start = max(pos - self._siderange - max(self._right_over_diff, 0), 0)
+        end = min(pos + self._siderange + max(self._left_over_diff, 0) + 1,
                   count)
         return self.vocab[start:end]
 
@@ -177,18 +177,19 @@ class Batch(Tile):
         return self.batchrange / 2
 
     @property
-    def _leftOverDiff(self):
-        currentPosition = self._getPositionOfCurrentInVocab()
+    def _left_over_diff(self):
+        currentPosition = self._position_of_current_in_vocab
         return self._siderange - currentPosition
 
     @property
-    def _rightOverDiff(self):
-        position = self._getPositionOfCurrentInVocab()
+    def _right_over_diff(self):
+        position = self._position_of_current_in_vocab
         count = len(self.vocab)
         return position + self._siderange - count + 1
 
-    def _getPositionOfCurrentInVocab(self):
-        #TODO: wildcard handling
+    @property
+    def _position_of_current_in_vocab(self):
+        # XXX: wildcard handling
         current = self.currentpage
         if current is None:
             return -1
@@ -198,7 +199,7 @@ class Batch(Tile):
                 return pointer
             pointer += 1
         # reached if subclass implementation bug
-        return -1                                           #pragma NO COVERAGE
+        return -1
 
 
 class BatchedItemsBatch(Batch):
@@ -465,8 +466,10 @@ class BatchedItems(Tile):
     def slice_sizes(self):
         """Available slice sices as list.
         """
-        return [i * self.default_slice_size
-            for i in range(1, self.num_slice_sizes + 1)]
+        return [
+            i * self.default_slice_size
+            for i in range(1, self.num_slice_sizes + 1)
+        ]
 
     @property
     def current_slice(self):

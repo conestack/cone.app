@@ -2,19 +2,20 @@ from cone.app.browser.actions import ActionContext
 from cone.app.browser.utils import format_traceback
 from cone.app.interfaces import ILiveSearch
 from cone.app.utils import safe_encode
-from cone.tile import registerTile
+from cone.tile import Tile
 from cone.tile import render_tile
+from cone.tile import tile
 from pyramid.exceptions import Forbidden
 from pyramid.response import Response
 from pyramid.view import view_config
 import json
 import logging
-import sys
-import traceback
-import types
 
 
-registerTile('bdajax', 'bdajax:bdajax_bs3.pt', permission='login')
+@tile(name='bdajax', path='bdajax:bdajax_bs3.pt', permission='login')
+class BDAjaxTile(Tile):
+    """Tile rendering bdajax markup.
+    """
 
 
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
@@ -66,7 +67,7 @@ def ajax_continue(request, continuation):
     """
     if request.environ.get('cone.app.continuation', None) is None:
         request.environ['cone.app.continuation'] = list()
-    if type(continuation) is types.ListType:
+    if isinstance(continuation, list):
         existent = request.environ['cone.app.continuation']
         request.environ['cone.app.continuation'] = existent + continuation
     else:
@@ -184,21 +185,21 @@ class AjaxContinue(object):
                     'target': definition.target,
                     'name': definition.name,
                     'mode': definition.mode,
-                    'selector': definition.selector,
+                    'selector': definition.selector
                 })
             if isinstance(definition, AjaxEvent):
                 continuation.append({
                     'type': 'event',
                     'target': definition.target,
                     'name': definition.name,
-                    'selector': definition.selector,
+                    'selector': definition.selector
                 })
             if isinstance(definition, AjaxMessage):
                 continuation.append({
                     'type': 'message',
                     'payload': definition.payload,
                     'flavor': definition.flavor,
-                    'selector': definition.selector,
+                    'selector': definition.selector
                 })
             if isinstance(definition, AjaxOverlay):
                 continuation.append({
@@ -208,7 +209,7 @@ class AjaxContinue(object):
                     'css': definition.css,
                     'action': definition.action,
                     'target': definition.target,
-                    'close': definition.close,
+                    'close': definition.close
                 })
         return continuation
 
@@ -285,7 +286,7 @@ def render_ajax_form(model, request, name):
             'form': rendered_form,
             'selector': selector,
             'mode': mode,
-            'next': form_continue.next,
+            'next': form_continue.next
         }
         request.response.body = safe_encode(rendered)
         return request.response
@@ -300,7 +301,7 @@ def render_ajax_form(model, request, name):
             'form': form_continue.form.replace(u'\n', u' '),  # XXX: replace?
             'selector': selector,
             'mode': mode,
-            'next': form_continue.next,
+            'next': form_continue.next
         }
         return Response(rendered)
 

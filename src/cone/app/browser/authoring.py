@@ -93,7 +93,7 @@ class CameFromNext(Behavior):
         """
         _next(self)
         # read came_from from request
-        came_from = self.request.get('came_from')
+        came_from = self.request.params.get('came_from')
         # fall back to default_came_from if came_from not passed on request
         if came_from is None:
             came_from = self.default_came_from
@@ -208,7 +208,7 @@ class ContentForm(FormHeading):
     def __call__(_next, self, model, request):
         ajax_form_fiddle(request, '#content', 'inner')
         form = _next(self, model, request)
-        if form is None:
+        if not form:
             form = u''
         self.rendered_form = form
         path = self.path
@@ -222,13 +222,17 @@ class ContentForm(FormHeading):
 # overlay forms
 ###############################################################################
 
-@view_config('overlayform', permission='view')
+@view_config(name='overlayform', permission='view')
 def overlayform(model, request):
+    """View for posting overlay forms to.
+    """
     return render_form(model, request, 'overlayformtile')
 
 
-@tile('overlayformtile', permission='view')
+@tile(name='overlayformtile', permission='view')
 class OverlayFormTile(_FormRenderingTile):
+    """Entry tile for rendering forms in overlays.
+    """
     form_tile_name = 'overlayform'
 
 
@@ -250,6 +254,7 @@ class OverlayForm(Behavior):
     @default
     def next(self, request):
         return [AjaxOverlay(selector=self.overlay_selector, close=True)]
+
 
 # B/C
 # deprecated: will be removed in cone.app 1.1
@@ -279,7 +284,8 @@ def default_addmodel_factory(parent, nodeinfo):
     return addmodel
 
 
-@tile('add_dropdown', 'templates/add_dropdown.pt',
+@tile(name='add_dropdown',
+      path='templates/add_dropdown.pt',
       permission='add', strict=False)
 class AddDropdown(Tile):
 
@@ -313,12 +319,12 @@ class AddDropdown(Tile):
         return ret
 
 
-@view_config('add', permission='add')
+@view_config(name='add', permission='add')
 def add(model, request):
     return render_form(model, request, 'add')
 
 
-@tile('add', permission='add')
+@tile(name='add', permission='add')
 class AddTile(_FormRenderingTile):
     """The add tile is responsible to render add forms depending on given
     factory name. Factory information is fetched from NodeInfo implementation
@@ -340,7 +346,7 @@ class AddTile(_FormRenderingTile):
     def info(self):
         factory = self.request.params.get('factory')
         allowed = self.model.nodeinfo.addables
-        if not factory or not allowed or not factory in allowed:
+        if not factory or not allowed or factory not in allowed:
             return None
         return get_node_info(factory)
 
@@ -389,6 +395,7 @@ class ContentAddForm(AddFactoryProxy,
     def rendered_contextmenu(self):
         return render_tile(self.model.parent, self.request, 'contextmenu')
 
+
 # B/C
 # deprecated: will be removed in cone.app 1.1
 AddBehavior = ContentAddForm
@@ -398,12 +405,12 @@ AddBehavior = ContentAddForm
 # overlay adding
 ###############################################################################
 
-@view_config('overlayadd', permission='add')
+@view_config(name='overlayadd', permission='add')
 def overlayadd(model, request):
     return render_form(model, request, 'overlayadd')
 
 
-@tile('overlayadd', permission='add')
+@tile(name='overlayadd', permission='add')
 class OverlayAddTile(AddTile):
     form_tile_name = 'overlayaddform'
 
@@ -420,12 +427,12 @@ class OverlayAddForm(OverlayForm,
 # editing
 ###############################################################################
 
-@view_config('edit', permission='edit')
+@view_config(name='edit', permission='edit')
 def edit(model, request):
     return render_form(model, request, 'edit')
 
 
-@tile('edit', permission='edit')
+@tile(name='edit', permission='edit')
 class EditTile(_FormRenderingTile):
     form_tile_name = 'editform'
 
@@ -453,6 +460,7 @@ class ContentEditForm(EditFormHeading,
     """
     action_resource = override('edit')
 
+
 # B/C
 # deprecated: will be removed in cone.app 1.1
 EditBehavior = ContentEditForm
@@ -462,12 +470,12 @@ EditBehavior = ContentEditForm
 # overlay editing
 ###############################################################################
 
-@view_config('overlayedit', permission='edit')
+@view_config(name='overlayedit', permission='edit')
 def overlayedit(model, request):
     return render_form(model, request, 'overlayedit')
 
 
-@tile('overlayedit', permission='edit')
+@tile(name='overlayedit', permission='edit')
 class OverlayEditTile(_FormRenderingTile):
     form_tile_name = 'overlayeditform'
 
@@ -483,7 +491,7 @@ class OverlayEditForm(OverlayForm,
 # deleting
 ###############################################################################
 
-@tile('delete', permission="delete")
+@tile(name='delete', permission="delete")
 class DeleteAction(Tile):
     show_confirm_deleted = True
 

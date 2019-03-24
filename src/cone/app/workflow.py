@@ -32,6 +32,15 @@ def persist_state(node, info):
     node()
 
 
+def permission_checker(permission, node, request):
+    """Callback for repoze.workflow to check permissions.
+
+    Necessary since pyramid 1.8, where ``pyramid.security.has_permission``
+    has been removed
+    """
+    return request.has_permission(permission, node)
+
+
 @implementer(IWorkflowState)
 class WorkflowState(Behavior):
     """Behavior for nodes providing workflow states.
@@ -52,6 +61,7 @@ class WorkflowState(Behavior):
         ``cone.app.interfaces.IWorkflowState``.
         """
         ret = _next(self)
+
         def recursiv_initial_state(node):
             if IWorkflowState.providedBy(node):
                 initialize_workflow(node, force=True)

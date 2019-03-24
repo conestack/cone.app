@@ -9,7 +9,6 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.security import authenticated_userid
 from pyramid.security import remember
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
@@ -65,7 +64,7 @@ DEFAULT_ACL = [
 
 
 settings_manager_permissions = [
-     'view', 'edit', 'manage',
+    'view', 'edit', 'manage',
 ]
 DEFAULT_SETTINGS_ACL = [
     (Allow, 'role:manager', settings_manager_permissions),
@@ -107,7 +106,7 @@ def authenticate(request, login, password):
 
 
 def authenticated_user(request):
-    user_id = authenticated_userid(request)
+    user_id = request.authenticated_userid
     return principal_by_id(user_id)
 
 
@@ -134,7 +133,7 @@ def search_for_principals(term):
     for user in ugm.users.search(criteria=criteria, or_search=True):
         ret.append(user)
     for group in ugm.groups.search(criteria=criteria, or_search=True):
-        ret.append('group:%s' % group)
+        ret.append(u'group:%s' % group)
     return ret
 
 
@@ -169,6 +168,10 @@ def groups_callback(name, request):
             for role in group.roles:
                 aggregated.add('role:%s' % role)
         roles = environ[ROLES_CACHE_KEY] = list(aggregated)
+    # XXX: this function is expected to return None if no roles?
+    #      owner support not works if None returned
+    # if not roles:
+    #     return None
     return roles
 
 
@@ -179,6 +182,7 @@ class ACLRegistry(dict):
 
     def lookup(self, obj=None, node_info_name='', default=DEFAULT_ACL):
         return self.get((obj, node_info_name), default)
+
 
 acl_registry = ACLRegistry()
 
@@ -193,7 +197,7 @@ class OwnerSupport(Behavior):
         _next(self, *args, **kw)
         if not self.owner:
             request = get_current_request()
-            self.owner = authenticated_userid(request)
+            self.owner = request.authenticated_userid
 
     @plumb
     @property

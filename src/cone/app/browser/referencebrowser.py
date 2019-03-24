@@ -8,7 +8,6 @@ from cone.app.browser.utils import request_property
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import INavigationLeaf
 from cone.tile import Tile
-from cone.tile import registerTile
 from cone.tile import render_tile
 from cone.tile import tile
 from node.interfaces import IUUIDAware
@@ -64,7 +63,9 @@ class ReferenceBrowserModelMixin(object):
         return root
 
 
-@tile('referencebrowser', 'templates/referencebrowser.pt', permission='view')
+@tile(name='referencebrowser',
+      path='templates/referencebrowser.pt',
+      permission='view')
 class ReferenceBrowser(Tile, ReferenceBrowserModelMixin):
 
     @property
@@ -84,7 +85,8 @@ class ReferenceBrowser(Tile, ReferenceBrowserModelMixin):
         )
 
 
-@tile('referencebrowser_pathbar', 'templates/referencebrowser_pathbar.pt',
+@tile(name='referencebrowser_pathbar',
+      path='templates/referencebrowser_pathbar.pt',
       permission='view')
 class ReferenceBrowserPathBar(PathBar, ReferenceBrowserModelMixin):
 
@@ -111,19 +113,22 @@ class ReferenceAction(LinkAction):
 
     @property
     def selected_uids(self):
-        return self.request.params['selected'].split(',')
+        return [it for it in self.request.params['selected'].split(',') if it]
 
     @property
     def id(self):
-        return 'ref-%s' % self.model.uuid
+        return 'ref-{}'.format(self.model.uuid)
 
     @property
     def display(self):
         referencable = self.request.params['referencable']
-        referencable = referencable.find(',') > -1 \
-            and referencable.split(',') or [referencable]
-        return IUUIDAware.providedBy(self.model) \
-            and self.model.node_info_name in referencable
+        referencable = [
+            it for it in self.request.params['referencable'].split(',') if it
+        ]
+        return (
+            IUUIDAware.providedBy(self.model) and
+            self.model.node_info_name in referencable
+        )
 
     def render(self):
         rendered = LinkAction.render(self)
@@ -168,8 +173,9 @@ class ReferencableChildrenLink(LinkAction):
 
     @property
     def target(self):
-        return '%s%s' % (super(ReferencableChildrenLink, self).target,
-                         make_refbrowser_query(self.request))
+        return '{}{}'.format(
+            super(ReferencableChildrenLink, self).target,
+            make_refbrowser_query(self.request))
 
     @property
     def text(self):
@@ -177,7 +183,7 @@ class ReferencableChildrenLink(LinkAction):
 
     @property
     def action(self):
-        return '%s:#%s:replace' % (self.table_tile_name, self.table_id)
+        return '{}:#{}:replace'.format(self.table_tile_name, self.table_id)
 
     @property
     def display(self):
@@ -196,7 +202,7 @@ class ReferencableChildrenLink(LinkAction):
         return LinkAction.render(self)
 
 
-@tile('referencelisting', 'templates/table.pt', permission='view')
+@tile(name='referencelisting', path='templates/table.pt', permission='view')
 class ReferenceListing(ContentsTile):
     table_id = 'referencebrowser'
     table_tile_name = 'referencelisting'
@@ -244,22 +250,22 @@ class ReferenceListing(ContentsTile):
 def reference_extractor(widget, data):
     if widget.attrs.get('multivalued'):
         return select_extractor(widget, data)
-    return data.request.get('%s.uid' % widget.dottedpath)
+    return data.request.get('{}.uid'.format(widget.dottedpath))
 
 
 def wrap_ajax_target(rendered, widget, data):
     if widget.attrs.get('target'):
         target = widget.attrs.get('target')
         if callable(target):
-            target = target()
+            target = target(widget, data)
         referencable = widget.attrs['referencable']
         if callable(referencable):
-            referencable = referencable()
+            referencable = referencable(widget, data)
         if type(referencable) in [types.ListType, types.TupleType]:
             referencable = ','.join(referencable)
         root = widget.attrs['root']
         if callable(root):
-            root = root()
+            root = root(widget, data)
         selected = ''
         if widget.attrs['multivalued'] and data.value:
             selected = ','.join(data.value)
@@ -270,11 +276,13 @@ def wrap_ajax_target(rendered, widget, data):
             'referencable': referencable,
             'selected': selected,
         })
-        target = '%s%s' % (target, query)
+        target = '{}{}'.format(target, query)
         attrs = {
             'ajax:target': target,
         }
         return tag('span', rendered, **attrs)
+    # XXX: referencebrowser not works without target, check if case
+    #      necessary. raise error here?
     return rendered
 
 
@@ -304,9 +312,9 @@ def reference_edit_renderer(widget, data):
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
-    elif data.request.get('%s.uid' % widget.dottedpath):
+    elif data.request.get('{}.uid'.format(widget.dottedpath)):
         value = [
-            data.request.get('%s.uid' % widget.dottedpath),
+            data.request.get('{}.uid'.format(widget.dottedpath)),
             data.request.get(widget.dottedpath),
         ]
     elif data.value is not UNSET and data.value is not None:
@@ -322,7 +330,7 @@ def reference_edit_renderer(widget, data):
     hidden_attrs = {
         'type': 'hidden',
         'value': value[0],
-        'name_': '%s.uid' % widget.dottedpath,
+        'name_': '{}.uid'.format(widget.dottedpath),
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     return wrap_ajax_target(rendered, widget, data)
@@ -338,7 +346,7 @@ def reference_display_renderer(widget, data):
         value = value[1]
     attrs = {
         'id': cssid(widget, 'display'),
-        'class_': 'display-%s' % widget.attrs['class'] or 'generic'
+        'class_': 'display-{}'.format(widget.attrs['class'] or 'generic')
     }
     return data.tag('div', value, **attrs)
 

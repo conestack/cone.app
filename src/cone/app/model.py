@@ -37,7 +37,6 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.security import has_permission
 from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
@@ -52,9 +51,10 @@ logger = logging.getLogger('cone.app')
 
 try:
     from lxml import etree
-except ImportError:
-    logger.warning('``lxml`` not present. ``cone.app.model.XMLProperties`` '
-                   'will not work')
+except ImportError:                                        #pragma NO COVERAGE
+    logger.warning(                                        #pragma NO COVERAGE
+        '``lxml`` not present. '                           #pragma NO COVERAGE
+        '``cone.app.model.XMLProperties`` will not work')
 
 
 _ = TranslationStringFactory('cone.app')
@@ -66,6 +66,7 @@ _node_info_registry = dict()
 def register_node_info(name, info):
     _node_info_registry[name] = info
 
+
 # B/C removed as of cone.app 1.1
 registerNodeInfo = register_node_info
 
@@ -73,6 +74,7 @@ registerNodeInfo = register_node_info
 def get_node_info(name):
     if name in _node_info_registry:
         return _node_info_registry[name]
+
 
 # B/C removed as of cone.app 1.1
 getNodeInfo = get_node_info
@@ -283,6 +285,7 @@ class CopySupport(Behavior):
 
 @implementer(IProperties)
 class Properties(object):
+    # XXX: extend by schema
 
     def __init__(self, data=None):
         if data is None:
@@ -337,7 +340,7 @@ class ProtectedProperties(Properties):
             return True
         request = get_current_request()
         for permission in required:
-            if has_permission(permission, context, request):
+            if request.has_permission(permission, context):
                 return True
         return False
 
@@ -406,11 +409,13 @@ class XMLProperties(Properties):
         else:
             raise KeyError(u"property %s does not exist" % name)
 
-    def get_path(self):
-        return object.__getattribute__(self, '_path')
+    # XXX: probably superfluous. keep as of cone.app 1.1
+    # def get_path(self):
+    #     return object.__getattribute__(self, '_path')
 
-    def set_path(self, path):
-        object.__setattr__(self, '_path', path)
+    # XXX: probably superfluous. keep as of cone.app 1.1
+    # def set_path(self, path):
+    #     object.__setattr__(self, '_path', path)
 
     def _init(self):
         dth = DatetimeHelper()
@@ -458,7 +463,7 @@ class XMLProperties(Properties):
                 for item in value:
                     item_elem = etree.SubElement(sub, 'item')
                     item_elem.text = dth.w_value(item)
-            elif type(value) is types.DictType or isinstance(value, odict):
+            elif isinstance(value, dict) or isinstance(value, odict):
                 for key, val in value.items():
                     dict_entry_elem = etree.SubElement(sub, 'elem')
                     key_elem = etree.SubElement(dict_entry_elem, 'key')

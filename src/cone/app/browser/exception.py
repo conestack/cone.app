@@ -1,11 +1,11 @@
 from cone.app.browser import render_main_template
 from cone.app.browser.login import login_view
 from cone.app.browser.utils import format_traceback
-from cone.tile import registerTile
+from cone.tile import Tile
+from cone.tile import tile
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
-from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 import json
 
@@ -26,6 +26,8 @@ ERROR_PAGE = """
 
 @view_config(context=Exception)
 def internal_server_error(request):
+    """Internal server error view.
+    """
     tb = format_traceback()
     if not request.is_xhr:
         return Response(ERROR_PAGE % {'error': tb})
@@ -49,13 +51,18 @@ def internal_server_error(request):
 # Unauthorized
 ###############################################################################
 
-registerTile('unauthorized', 'templates/unauthorized.pt', permission='login')
+@tile(name='unauthorized', path='templates/unauthorized.pt', permission='login')
+class UnauthorizedTile(Tile):
+    """Unauthorized tile.
+    """
 
 
 @view_config(context=HTTPForbidden)
 def forbidden_view(request):
+    """Unauthorized view.
+    """
     model = request.context
-    if not authenticated_userid(request):
+    if not request.authenticated_userid:
         return login_view(model, request)
     return render_main_template(model, request, contenttile='unauthorized')
 
@@ -64,10 +71,15 @@ def forbidden_view(request):
 # Not Found
 ###############################################################################
 
-registerTile('not_found', 'templates/not_found.pt', permission='login')
+@tile(name='not_found', path='templates/not_found.pt', permission='login')
+class NotFoundTile(Tile):
+    """Not Found tile.
+    """
 
 
 @view_config(context=HTTPNotFound)
 def not_found_view(request):
+    """Not Found view.
+    """
     model = request.context
     return render_main_template(model, request, contenttile='not_found')

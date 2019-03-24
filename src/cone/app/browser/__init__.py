@@ -9,7 +9,6 @@ from pyramid.view import view_config
 import cone.app
 import os
 import yafowil.loader
-import yafowil.webob
 
 
 static_resources = static_view('static', use_subpath=True)

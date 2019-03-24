@@ -79,13 +79,12 @@ package ``__init__.py`` module.
 
 .. code-block:: python
 
-    from cone.app import register_main_hook
+    from cone.app import main_hook
 
+    @main_hook
     def example_main_hook(config, global_config, local_config):
         """Initialization code goes here.
         """
-
-    register_main_hook(example_main_hook)
 
 
 .. _plugin_static_resources:
@@ -107,6 +106,9 @@ The static view gets registered in the plugin main hook.
 
 .. code-block:: python
 
+    from cone.app import main_hook
+
+    @main_hook
     def example_main_hook(config, global_config, local_config):
 
         # static resources
@@ -145,8 +147,10 @@ resources should only be delevered for authenticated users, add them to the
 
 .. code-block:: python
 
+    from cone.app import main_hook
     import cone.app
 
+    @main_hook
     def example_main_hook(config, global_config, local_config):
         # public CSS
         cone.app.cfg.css.public.append('example-static/public.css')
@@ -171,9 +175,11 @@ Plugin root node factories are registered to the application via
 
 .. code-block:: python
 
+    from cone.app import main_hook
     from cone.app import register_entry
     import cone.example.model import ExamplePlugin
 
+    @main_hook
     def example_main_hook(config, global_config, local_config):
         # register plugin entry node
         register_entry('example', ExamplePlugin)
@@ -192,6 +198,7 @@ at ``app_root['settings']`` and can be registered to the application via
 
 .. code-block:: python
 
+    from cone.app import main_hook
     from cone.app import register_config
     from cone.app.model import BaseNode
 
@@ -199,6 +206,7 @@ at ``app_root['settings']`` and can be registered to the application via
         """Plugin settings are provided by this node.
         """
 
+    @main_hook
     def example_main_hook(config, global_config, local_config):
         register_config('example', ExampleSettings)
 

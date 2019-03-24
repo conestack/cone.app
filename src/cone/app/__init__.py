@@ -15,6 +15,7 @@ from zope.component import getGlobalSiteManager
 from zope.interface import Interface
 from zope.interface import implementer
 import logging
+import pyramid_chameleon
 import pyramid_zcml
 
 
@@ -129,7 +130,7 @@ def configure_root(settings):
     root.properties.default_child = settings.get('cone.root.default_child')
     root.properties.mainmenu_empty_title = \
         settings.get('cone.root.mainmenu_empty_title', 'false') \
-            in ['True', 'true', '1']
+        in ['True', 'true', '1']
     default_content_tile = settings.get('cone.root.default_content_tile')
     if default_content_tile:
         root.properties.default_content_tile = default_content_tile
@@ -142,6 +143,7 @@ def register_config(key, factory):
         raise ValueError(u"Config with name '%s' already registered." % key)
     factories[key] = factory
 
+
 # B/C - will be removed as of cone.app 1.1
 register_plugin_config = register_config
 
@@ -152,6 +154,7 @@ def register_entry(key, factory):
         raise ValueError(u"Entry with name '%s' already registered." % key)
     root.factories[key] = factory
 
+
 # B/C - will be removed as of cone.app 1.1
 register_plugin = register_entry
 
@@ -161,8 +164,19 @@ main_hooks = list()
 
 def register_main_hook(callback):
     """Register function to get called on application startup.
+
+    # B/C - will be removed as of cone.app 1.1
     """
     main_hooks.append(callback)
+
+
+def main_hook(func):
+    """decorator to register main hook.
+
+    Decorated function gets called on application startup.
+    """
+    main_hooks.append(func)
+    return func
 
 
 def get_root(environ=None):
@@ -228,24 +242,24 @@ def main(global_config, **settings):
     """Returns WSGI application.
     """
     # set authentication related application properties
-    import cone.app.security as security
-    security.ADMIN_USER = settings.get('cone.admin_user')
-    security.ADMIN_PASSWORD = settings.get('cone.admin_password')
+    import cone.app
+    cone.app.security.ADMIN_USER = settings.get('cone.admin_user')
+    cone.app.security.ADMIN_PASSWORD = settings.get('cone.admin_password')
 
-    auth_secret = settings.get('cone.auth_secret', 'secret')
-    auth_cookie_name = settings.get('cone.auth_cookie_name', 'auth_tkt')
-    auth_secure = settings.get('cone.auth_secure', False)
-    auth_include_ip = settings.get('cone.auth_include_ip', False)
-    auth_timeout = settings.get('cone.auth_timeout', None)
-    auth_reissue_time = settings.get('cone.auth_reissue_time', None)
+    auth_secret = settings.pop('cone.auth_secret', 'secret')
+    auth_cookie_name = settings.pop('cone.auth_cookie_name', 'auth_tkt')
+    auth_secure = settings.pop('cone.auth_secure', False)
+    auth_include_ip = settings.pop('cone.auth_include_ip', False)
+    auth_timeout = settings.pop('cone.auth_timeout', None)
+    auth_reissue_time = settings.pop('cone.auth_reissue_time', None)
     if auth_reissue_time is not None:
         auth_reissue_time = int(auth_reissue_time)
-    auth_max_age = settings.get('cone.auth_max_age', None)
+    auth_max_age = settings.pop('cone.auth_max_age', None)
     if auth_max_age is not None:
         auth_max_age = int(auth_max_age)
-    auth_http_only = settings.get('cone.auth_http_only', False)
-    auth_path = settings.get('cone.auth_path', "/")
-    auth_wild_domain = settings.get('cone.auth_wild_domain', True)
+    auth_http_only = settings.pop('cone.auth_http_only', False)
+    auth_path = settings.pop('cone.auth_path', "/")
+    auth_wild_domain = settings.pop('cone.auth_wild_domain', True)
 
     auth_policy = auth_tkt_factory(
         secret=auth_secret,
@@ -265,23 +279,23 @@ def main(global_config, **settings):
     if settings.get('testing.hook_global_registry'):
         globalreg = getGlobalSiteManager()
         config = Configurator(registry=globalreg)
-        config.setup_registry(
-            root_factory=get_root,
-            settings=settings,
-            authentication_policy=auth_policy,
-            authorization_policy=acl_factory())
-        config.hook_zca()
+        config.setup_registry(root_factory=get_root, settings=settings)
     else:
-        config = Configurator(
-            root_factory=get_root,
-            settings=settings,
-            authentication_policy=auth_policy,
-            authorization_policy=acl_factory())
+        config = Configurator(root_factory=get_root, settings=settings)
 
-    config.include(pyramid_zcml)
+    # set authentication and authorization policies
+    config.set_authentication_policy(auth_policy)
+    config.set_authorization_policy(acl_factory())
+    config.commit()
+
+    # begin configuration
     config.begin()
 
-    # default layout adapter
+    # include general dependencies
+    config.include(pyramid_chameleon)
+    config.include(pyramid_zcml)
+
+    # register default layout adapter
     config.registry.registerAdapter(default_layout)
 
     # add translation
@@ -296,11 +310,11 @@ def main(global_config, **settings):
     # XXX: robots.txt
     # XXX: humans.txt
 
-    # static resources
-    config.add_view('cone.app.browser.static_resources', name='static')
+    # register static resources
+    config.add_view(static_resources, name='static')
 
     # scan browser package
-    config.scan('cone.app.browser')
+    config.scan(cone.app.browser)
 
     # load zcml
     config.load_zcml('configure.zcml')
@@ -311,7 +325,11 @@ def main(global_config, **settings):
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
         # XXX: check whether configure.zcml exists, skip loading if not found
-        config.load_zcml('%s:configure.zcml' % plugin)      #pragma NO COVERAGE
+        try:
+            config.load_zcml('{}:configure.zcml'.format(plugin))
+        except IOError:                                     #pragma NO COVERAGE
+            msg = 'No configure.zcml in {}'.format(plugin)  #pragma NO COVERAGE
+            logger.info(msg)                                #pragma NO COVERAGE
 
     # execute main hooks
     for hook in main_hooks:

@@ -22,9 +22,14 @@
 /parts/
 /dist/
 /coverage/
+/share/
 /docs/Makefile
 /docs/doctrees/
 /docs/html/
 /docs/make.bat
 /docs/cone.app.zip
 /docs/latex/
+include/
+/lib/
+/local/
+/pip-selfcheck.json

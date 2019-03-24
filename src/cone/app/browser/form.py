@@ -5,7 +5,6 @@ from cone.tile import Tile
 from plumber import Behavior
 from plumber import default
 from plumber import override
-from pyramid.security import has_permission
 from webob.exc import HTTPFound
 from yafowil.controller import Controller
 import logging
@@ -16,16 +15,15 @@ logger = logging.getLogger('cone.app')
 
 try:
     from yafowil.yaml import parse_from_YAML
-except ImportError:
-    logger.warning(
-        '``yafowil.yaml`` not present. ``cone.app.browser.form.YAMLForm`` '
-        'will not work')
+except ImportError:                                         #pragma NO COVERAGE
+    logger.warning(                                         #pragma NO COVERAGE
+        '``yafowil.yaml`` not present. '                    #pragma NO COVERAGE
+        '``cone.app.browser.form.YAMLForm`` will not work')
 
 
 class YAMLForm(Behavior):
     """Plumbing behavior for rendering yaml forms.
     """
-
     action_resource = default(u'')
 
     # B/C
@@ -69,7 +67,6 @@ class ProtectedAttributesForm(Behavior):
     ``self.attribute_permissions`` containing the attribute names as key, and
     a 2-tuple containing required edit and view permission for this attribute.
     """
-
     attribute_permissions = default(dict())
     attribute_default_permissions = default(('edit', 'view'))
 
@@ -84,9 +81,9 @@ class ProtectedAttributesForm(Behavior):
         permissions = self.attribute_permissions.get(name)
         if not permissions:
             permissions = self.attribute_default_permissions
-        if has_permission(permissions[0], self.model, self.request):
+        if self.request.has_permission(permissions[0], self.model):
             return 'edit'
-        if has_permission(permissions[1], self.model, self.request):
+        if self.request.has_permission(permissions[1], self.model):
             return 'display'
         return 'skip'
 
@@ -94,7 +91,6 @@ class ProtectedAttributesForm(Behavior):
 class Form(Tile):
     """A form tile.
     """
-
     form = None  # yafowil compound expected.
     ajax = True  # render ajax form related by default.
 
@@ -110,7 +106,7 @@ class Form(Tile):
         if not self.ajax:
             return
         if self.form.attrs.get('class_add') \
-          and self.form.attrs['class_add'].find('ajax') == -1:
+                and self.form.attrs['class_add'].find('ajax') == -1:
             self.form.attrs['class_add'] += ' ajax'
         else:
             self.form.attrs['class_add'] = 'ajax'
@@ -136,13 +132,14 @@ class Form(Tile):
             return controller.rendered
         if isinstance(controller.next, HTTPFound):
             self.redirect(controller.next)
-            return
+            return u''
         if isinstance(controller.next, AjaxAction) \
-          or isinstance(controller.next, AjaxEvent):
+                or isinstance(controller.next, AjaxEvent):
             self.request.environ['cone.app.continuation'] = [controller.next]
             return u''
         if isinstance(controller.next, list):
-            # we assume a list of AjaxAction and/or AjaxEvent instances
+            # assume a list of ajax continuation definitions
             self.request.environ['cone.app.continuation'] = controller.next
             return u''
+        # assume some rendered markup
         return controller.next

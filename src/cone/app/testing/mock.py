@@ -18,6 +18,10 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
+from pyramid.static import static_view
+
+
+static_resources = static_view('static', use_subpath=True)
 
 
 @plumbing(WorkflowState, WorkflowACL)
@@ -77,5 +81,9 @@ class SharingNode(object):
 @plumbing(CopySupport)
 class CopySupportNode(BaseNode):
 
+    def __init__(self, name=None, parent=None):
+        super(CopySupportNode, self).__init__(name=name, parent=parent)
+        self.messages = []
+
     def __call__(self):
-        print 'Called: %s' % self.name
+        self.messages.append('Called: {}'.format(self.name))

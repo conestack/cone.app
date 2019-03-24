@@ -10,23 +10,33 @@ from cone.app.model import AppRoot
 from cone.app.utils import principal_data
 from cone.app.utils import safe_decode
 from cone.tile import Tile
-from cone.tile import registerTile
 from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import tile
 from node.utils import LocationIterator
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import authenticated_userid
-from pyramid.security import has_permission
 
 
 _ = TranslationStringFactory('cone.app')
 
 
-registerTile('logo', 'templates/logo.pt', permission='login')
-registerTile('livesearch', 'templates/livesearch.pt', permission='login')
-registerTile('footer', 'templates/footer.pt', permission='login')
+@tile(name='logo', path='templates/logo.pt', permission='login')
+class LogoTile(Tile):
+    """Tile rendering the logo.
+    """
+
+
+@tile(name='livesearch', path='templates/livesearch.pt', permission='login')
+class LivesearchTile(Tile):
+    """Tile rendering the live search.
+    """
+
+
+@tile(name='footer', path='templates/footer.pt', permission='login')
+class FooterTile(Tile):
+    """Tile rendering the page footer.
+    """
 
 
 class ProtectedContentTile(Tile):
@@ -38,12 +48,12 @@ class ProtectedContentTile(Tile):
     """
 
     def __call__(self, model, request):
-        if not authenticated_userid(request):
+        if not request.authenticated_userid:
             return render_tile(model, request, 'loginform')
         return Tile.__call__(self, model, request)
 
 
-@tile('layout', 'templates/layout.pt', permission='login')
+@tile(name='layout', path='templates/layout.pt', permission='login')
 class Layout(Tile):
     """Main layout tile.
     """
@@ -75,7 +85,7 @@ class ViewSettingsAction(LinkAction):
         settings = self.settings
         if not settings:
             return False
-        if not has_permission('view', settings, self.request):
+        if not self.request.has_permission('view', settings):
             return False
         if not len(settings):
             return False
@@ -103,15 +113,17 @@ personal_tools['settings'] = ViewSettingsAction()
 personal_tools['logout'] = LogoutAction()
 
 
-@tile('personaltools', 'templates/personaltools.pt',
-      permission='view', strict=False)
+@tile(name='personaltools',
+      path='templates/personaltools.pt',
+      permission='view',
+      strict=False)
 class PersonalTools(Tile):
     """Personal tool tile.
     """
 
     @property
     def user(self):
-        userid = authenticated_userid(self.request)
+        userid = self.request.authenticated_userid
         data = principal_data(userid)
         fullname = data.get('fullname', userid)
         return fullname or userid
@@ -121,7 +133,10 @@ class PersonalTools(Tile):
         return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
-@tile('mainmenu', 'templates/mainmenu.pt', permission='view', strict=False)
+@tile(name='mainmenu',
+      path='templates/mainmenu.pt',
+      permission='view',
+      strict=False)
 class MainMenu(Tile):
     """Main Menu tile.
 
@@ -193,7 +208,7 @@ class MainMenu(Tile):
     def ignore_node(self, node, props):
         if props.skip_mainmenu:
             return True
-        if not has_permission('view', node, self.request):
+        if not self.request.has_permission('view', node):
             return True
         return False
 
@@ -215,7 +230,10 @@ class MainMenu(Tile):
         return item
 
 
-@tile('pathbar', 'templates/pathbar.pt', permission='view', strict=False)
+@tile(name='pathbar',
+      path='templates/pathbar.pt',
+      permission='view',
+      strict=False)
 class PathBar(Tile):
 
     @property
@@ -250,8 +268,8 @@ class PathBar(Tile):
         for i in range(count):
             default_child = items[i]['default_child']
             if default_child \
-              and i < count - 1 \
-              and default_child == items[i + 1]['id']:
+                    and i < count - 1 \
+                    and default_child == items[i + 1]['id']:
                 continue
             ret.append(items[i])
 
@@ -263,7 +281,10 @@ class PathBar(Tile):
         return ret
 
 
-@tile('navtree', 'templates/navtree.pt', permission='view', strict=False)
+@tile(name='navtree',
+      path='templates/navtree.pt',
+      permission='view',
+      strict=False)
 class NavTree(Tile):
     """Navigation tree tile.
     """
@@ -321,7 +342,7 @@ class NavTree(Tile):
                 curpath = model.properties.default_child
         for key in model:
             node = model[key]
-            if not has_permission('view', node, self.request):
+            if not self.request.has_permission('view', node):
                 continue
             if not node.properties.get('in_navtree'):
                 continue
@@ -331,7 +352,7 @@ class NavTree(Tile):
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
             target = make_url(self.request, node=node, query=query)
-            curnode = curpath == safe_decode(key) and True or False
+            curnode = curpath == safe_decode(key)
             icon = node_icon(self.request, node)
             css = ''
             if IWorkflowState.providedBy(node):
@@ -350,8 +371,9 @@ class NavTree(Tile):
                 if default_child:
                     selected_path.append(default_child.name)
                 selected = False
-                if selected_path == node_path(node):
-                    selected = True
+                # XXX: probably superfluous. keep as of cone.app 1.1
+                # if selected_path == node_path(node):
+                #     selected = True
                 child['selected'] = selected
             tree['children'].append(child)
 
@@ -373,7 +395,10 @@ class NavTree(Tile):
             level=level)
 
 
-@tile('byline', 'templates/byline.pt', permission='view', strict=False)
+@tile(name='byline',
+      path='templates/byline.pt',
+      permission='view',
+      strict=False)
 class Byline(Tile):
     """Byline tile.
     """
@@ -382,17 +407,17 @@ class Byline(Tile):
         return format_date(dt)
 
 
-@tile('content', interface=AppRoot, permission='login')
+@tile(name='content', interface=AppRoot, permission='login')
 class RootContent(ProtectedContentTile):
 
     def render(self):
-        if self.model.properties.default_child:
-            model = self.model[self.model.properties.default_child]
+        default_child = self.model.properties.default_child
+        if default_child:
+            model = self.model[default_child]
             return render_tile(model, self.request, 'content')
-        if self.model.properties.default_content_tile:
-            return render_tile(self.model,
-                               self.request,
-                               self.model.properties.default_content_tile)
+        default_content_tile = self.model.properties.default_content_tile
+        if default_content_tile:
+            return render_tile(self.model, self.request, default_content_tile)
         return render_template(
             'cone.app.browser:templates/default_root.pt',
             model=self.model,

@@ -18,21 +18,23 @@ from webob import Response
 _ = TranslationStringFactory('cone.app')
 
 
-@view_config('settings_tab_content', xhr=True, permission='manage')
+@view_config(name='settings_tab_content', xhr=True, permission='manage')
 def settings_tab_content(model, request):
     """Used by jquerytools tabs plugin to get settings section content.
     """
     try:
         rendered = render_tile(model, request, 'content')
-    except Exception, e:
+    except Exception:
         localizer = get_localizer(request)
         error = localizer.translate(_('error', default='Error'))
-        rendered = '<div>%s: %s</div>' % (error, format_traceback())
-    return Response('<div class="%s">%s</div>' % (model.name, rendered))
+        rendered = '<div>{}: {}</div>'.format(error, format_traceback())
+    return Response('<div class="{}">{}</div>'.format(model.name, rendered))
 
 
-@tile('content', 'templates/settings.pt',
-      interface=AppSettings, permission='manage')
+@tile(name='content',
+      path='templates/settings.pt',
+      interface=AppSettings,
+      permission='manage')
 class AppSettings(Tile):
 
     @property
@@ -41,9 +43,10 @@ class AppSettings(Tile):
         for val in self.model.values():
             ret.append({
                 'title': val.metadata.title,
-                'target': make_url(self.request,
-                                   node=val,
-                                   resource='settings_tab_content'),
+                'target': make_url(
+                    self.request,
+                    node=val,
+                    resource='settings_tab_content'),
             })
         return ret
 
@@ -55,11 +58,11 @@ class SettingsBehavior(Behavior):
     @plumb
     def prepare(_next, self):
         _next(self)
-        selector = '#form-%s' % '-'.join(self.form.path)
+        selector = '#form-{}'.format('-'.join(self.form.path))
         ajax_form_fiddle(self.request, selector, 'replace')
 
     @default
     def next(self, request):
         url = make_url(request.request, node=self.model)
-        selector = '.%s' % self.model.name
+        selector = '.{}'.format(self.model.name)
         return [AjaxAction(url, 'content', 'inner', selector)]

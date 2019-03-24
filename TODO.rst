@@ -24,16 +24,22 @@ Roadmap
 1.0 beta
 --------
 
-[ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
+[X] Migrate Doctests to Unittests where appropriate.
 
-[ ] ``cone.app.browser.authoring.OverlayFormTile`` is superfluous.
+[ ] Python 3 support.
+
+[ ] Provide a ``form_action`` property on ``cone.app.browser.form.Form``
+considering ``action_resource`` attribute. Consolidate with
+``cone.app.browser.Form.YAMLForm.form_action``.
+
+[ ] Test ``cone.app.browser.actions.DropdownAction`` with BS3.
 
 [ ] Overhaul settings rendering. available settings should be rendered in
 the navtree. ``SettingsBehavior`` for settings forms probably superfluous then.
 
 [ ] Set ``ISecured`` on ``cone.app.workflow.WorkflowACL``
 
-[ ] ``cone.app.browser.copysupport:124``: trigger ``contextchanged`` on
+[ ] ``cone.app.browser.copysupport#124``: trigger ``contextchanged`` on
 ``#layout`` instead of ``.contextsensitiv``.
 
 [ ] Get rid of remaining ``contextsensitiv`` CSS class related bdajax
@@ -93,10 +99,3 @@ security integration.
 
 [ ] Rename ``cone.app.browser.batch.Batch`` to
 ``cone.app.browser.batch.Pagination`` provoding B/C.
-
-1.2
----
-
-[ ] Migrate Doctests to Unittests where appropriate.
-
-[ ] Python 3 support.

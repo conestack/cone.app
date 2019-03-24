@@ -28,7 +28,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
     keywords='node pyramid cone web',
-    author='BlueDynamics Alliance',
+    author='Robert Niederreiter',
     author_email='dev@bluedynamics.com',
     url=u'https://github.com/bluedynamics/cone.app',
     license='Simplified BSD',
@@ -42,8 +42,9 @@ setup(
         'Chameleon',
         'node',
         'node.ext.ugm',
-        'pyramid',
+        'pyramid>1.4.999',
         'pyramid_zcml',
+        'pyramid_chameleon',
         'bdajax>1.9.999',
         'cone.tile',
         'yafowil',
@@ -53,27 +54,23 @@ setup(
     ],
     extras_require=dict(
         lxml=[
-            'lxml',
+            'lxml'
         ],
         test=[
             'lxml',
-            'interlude',
             'plone.testing',
-            'unittest2',
-            'yafowil.yaml',
+            'yafowil.yaml'
         ],
         docs=[
             'Sphinx',
             'sphinx_bootstrap_theme',
-            'repoze.sphinx.autointerface',
+            'repoze.sphinx.autointerface'
         ],
     ),
     tests_require=[
-        'interlude',
-        'plone.testing',
-        'unittest2',
+        'plone.testing'
     ],
-    test_suite = "cone.app.tests.test_app.test_suite",
+    test_suite='cone.app.tests.test_app.test_suite',
     entry_points="""\
     [paste.app_factory]
     main = cone.app:main

@@ -2,7 +2,6 @@ from cone.app.utils import app_config
 from cone.app.utils import safe_encode
 from cone.app.utils import safe_decode
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import authenticated_userid
 import copy
 import datetime
 import re
@@ -18,10 +17,11 @@ _ = TranslationStringFactory('cone.app')
 def authenticated(request):
     """XXX: remove this. use ``authenticated_userid`` directly.
     """
-    return authenticated_userid(request)
+    return request.authenticated_userid
 
 
 def node_path(node):
+    # XXX: implement in ``BaseNode``.
     return [safe_decode(p) for p in node.path if p is not None]
 
 
@@ -80,7 +80,7 @@ def choose_name(container, name):
     i = 0
     while n in container:
         i += 1
-        n = u'%s-%s' % (name, i)
+        n = u'{}-{}'.format(name, i)
     return n.replace('/', '-').lstrip('+@')
 
 
@@ -91,6 +91,7 @@ def format_date(dt, long=True):
 
 
 def node_icon(request, node):
+    # XXX: request not needed here
     if node.properties.icon:
         return node.properties.icon
     info = node.nodeinfo
