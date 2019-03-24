@@ -98,7 +98,7 @@ def authenticate(request, login, password):
         if ugm.users.authenticate(login, password):
             id = ugm.users.id_for_login(login)
             return remember(request, id)
-    except Exception, e:
+    except Exception as e:
         msg = u"Authentication plugin %s raised an Exception while " + \
               u"trying to authenticate: %s"
         msg = msg % (str(ugm.__class__), str(e))
@@ -156,7 +156,7 @@ def groups_callback(name, request):
     user = None
     try:
         user = ugm.users.get(name)
-    except Exception, e:
+    except Exception as e:
         logger.error(str(e))
     roles = list()
     if user:

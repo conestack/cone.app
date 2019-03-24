@@ -18,7 +18,7 @@ def principal_data(principal_id):
         if not user:
             return data
         data = user.attrs
-    except Exception, e:
+    except Exception as e:
         logger.error(str(e))
     return data
 

@@ -158,7 +158,7 @@ class AddPrincipalRole(Tile):
             existing = set(model.principal_roles[principal_id])
             existing.add(role)
             model.principal_roles[principal_id] = list(existing)
-        except Exception, e:
+        except Exception as e:
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(
@@ -190,7 +190,7 @@ class RemovePrincipalRole(Tile):
                 del model.principal_roles[principal_id]
             else:
                 model.principal_roles[principal_id] = existing
-        except Exception, e:
+        except Exception as e:
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(

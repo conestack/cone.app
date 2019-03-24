@@ -56,7 +56,7 @@ class WfDropdown(Tile):
             workflow = self.workflow
             transitions = workflow.get_transitions(
                 self.model, self.request, from_state=self.model.state)
-        except (WorkflowError, AttributeError), e:
+        except (WorkflowError, AttributeError) as e:
             logger.error("transitions error: %s" % str(e))
             return ret
         workflow_tsf = self.model.workflow_tsf
