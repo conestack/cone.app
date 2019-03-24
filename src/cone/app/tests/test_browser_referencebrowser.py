@@ -5,6 +5,7 @@ from cone.app.browser.referencebrowser import ActionRemoveReference
 from cone.app.browser.referencebrowser import ReferencableChildrenLink
 from cone.app.browser.referencebrowser import ReferenceAction
 from cone.app.browser.referencebrowser import ReferenceBrowserModelMixin
+from cone.app.browser.referencebrowser import wrap_ajax_target
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import BaseNode
 from cone.tile import render_tile
@@ -16,17 +17,14 @@ from plumber import plumbing
 from pyramid.httpexceptions import HTTPForbidden
 from yafowil.base import ExtractionError
 from yafowil.base import factory
+from yafowil.base import RuntimeData
+from yafowil.base import Widget
 from zope.interface import implementer
 
 
 @plumbing(UUIDAware)
 class RefNode(BaseNode):
     node_info_name = 'ref_node'
-
-
-@plumbing(UUIDAware)
-class RefNode2(BaseNode):
-    node_info_name = 'ref_node_2'
 
 
 class TestBrowserReferenceBrowser(TileTestCase):
@@ -40,7 +38,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             props={
                 'label': 'Reference',
                 'multivalued': False,
-                'target': lambda: 'http://example.com/foo',
+                'target': 'http://example.com/foo',
                 'referencable': 'ref_node',
             })
         self.checkOutput("""
@@ -240,6 +238,81 @@ class TestBrowserReferenceBrowser(TileTestCase):
         <ul class="display-referencebrowser"
         id="display-ref"><li>Title1</li><li>Title2</li></ul>
         """, widget())
+
+    def test_wrap_ajax_target(self):
+        widget = Widget(
+            blueprints='dummy',
+            extractors=[],
+            edit_renderers=[],
+            display_renderers=[],
+            preprocessors=[],
+            uniquename='dummy')
+        data = RuntimeData()
+
+        # XXX: referencebrowser not works without target, check if case
+        #      necessary
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, 'rendered')
+
+        widget.attrs['multivalued'] = False
+        widget.attrs['target'] = 'http://example.com'
+        widget.attrs['referencable'] = 'ref_node'
+        widget.attrs['root'] = '/'
+        expected = (
+            '<span ajax:target='
+            '"http://example.com?selected=&root=/&referencable=ref_node"'
+            '>rendered</span>'
+        )
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
+
+        def callable_target(widget, data):
+            return 'http://example.com'
+        widget.attrs['target'] = callable_target
+
+        def callable_referencable(widget, data):
+            return 'ref_node'
+        widget.attrs['referencable'] = callable_referencable
+
+        def callable_root(widget, data):
+            return '/'
+        widget.attrs['root'] = callable_root
+
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
+
+        widget.attrs['referencable'] = ['ref_node']
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
+
+        widget.attrs['referencable'] = ['ref_node', 'ref_node_2']
+        expected = (
+            '<span ajax:target='
+            '"http://example.com?selected=&root=/&referencable=ref_node,ref_node_2"'
+            '>rendered</span>'
+        )
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
+
+        widget.attrs['referencable'] = 'ref_node'
+        data.value = ('sel_ref', 'Selected Reference')
+        expected = (
+            '<span ajax:target='
+            '"http://example.com?selected=sel_ref&root=/&referencable=ref_node"'
+            '>rendered</span>'
+        )
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
+
+        widget.attrs['multivalued'] = True
+        data.value = ('sel_ref', 'sel_ref_2')
+        expected = (
+            '<span ajax:target='
+            '"http://example.com?selected=sel_ref,sel_ref_2&root=/&referencable=ref_node"'
+            '>rendered</span>'
+        )
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
 
     def test_ReferenceBrowserModelMixin(self):
         model = BaseNode()

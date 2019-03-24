@@ -257,15 +257,15 @@ def wrap_ajax_target(rendered, widget, data):
     if widget.attrs.get('target'):
         target = widget.attrs.get('target')
         if callable(target):
-            target = target()
+            target = target(widget, data)
         referencable = widget.attrs['referencable']
         if callable(referencable):
-            referencable = referencable()
+            referencable = referencable(widget, data)
         if type(referencable) in [types.ListType, types.TupleType]:
             referencable = ','.join(referencable)
         root = widget.attrs['root']
         if callable(root):
-            root = root()
+            root = root(widget, data)
         selected = ''
         if widget.attrs['multivalued'] and data.value:
             selected = ','.join(data.value)
@@ -281,6 +281,8 @@ def wrap_ajax_target(rendered, widget, data):
             'ajax:target': target,
         }
         return tag('span', rendered, **attrs)
+    # XXX: referencebrowser not works without target, check if case
+    #      necessary. raise error here?
     return rendered
 
 
