@@ -9,7 +9,8 @@ python:
 #  - "pypy-5.3.1"
 
 install:
+  - pip install pyramid==1.9.4
   - pip install https://github.com/bluedynamics/cone.tile/archive/master.zip
   - pip install .[test]
 
-script: python -m cone.app.tests
+script: export TESTRUN_MARKER=True && python -m cone.app.tests.__init__
