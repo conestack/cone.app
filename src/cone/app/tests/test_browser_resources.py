@@ -1,6 +1,8 @@
 from cone.app import testing
+from cone.app.browser.resources import is_remote_resource
 from cone.app.browser.resources import MergedAssets
 from cone.app.model import Properties
+from cone.app.testing.mock import static_resources
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
 import cone.app
@@ -10,6 +12,50 @@ import pkg_resources
 
 class TestBrowserResources(TileTestCase):
     layer = testing.security
+
+    def test_is_remote_resource(self):
+        self.assertTrue(is_remote_resource('http://example.com/foo'))
+        self.assertTrue(is_remote_resource('https://example.com/foo'))
+        self.assertTrue(is_remote_resource('//foo'))
+        self.assertFalse(is_remote_resource('foo'))
+
+    def test_MergedAssets(self):
+        request = self.layer.new_request()
+        assets = MergedAssets(request)
+
+        assets.merged_js_assets = Properties()
+        assets.merged_js_assets.public = [(static_resources, 'script1.js')]
+        assets.merged_js_assets.protected = [(static_resources, 'script2.js')]
+
+        assets.merged_css_assets = Properties()
+        assets.merged_css_assets.public = [(static_resources, 'style1.css')]
+        assets.merged_css_assets.protected = [(static_resources, 'style2.css')]
+
+        assets.merged_print_css_assets = Properties()
+        assets.merged_print_css_assets.public = [(static_resources, 'print1.css')]
+        assets.merged_print_css_assets.protected = [(static_resources, 'print2.css')]
+
+        expected = 'console.log("script1");\n\n'
+        self.assertEqual(assets.merged_js, expected)
+        expected = '.style1 { display: block; }\n\n'
+        self.assertEqual(assets.merged_css, expected)
+        expected = '.print1 { display: none; }\n\n'
+        self.assertEqual(assets.merged_print_css, expected)
+
+        with self.layer.authenticated('max'):
+            res = assets.merged_js
+        expected = 'console.log("script1");\n\nconsole.log("script2");\n\n'
+        self.assertEqual(res, expected)
+
+        with self.layer.authenticated('max'):
+            res = assets.merged_css
+        expected = '.style1 { display: block; }\n\n.style2 { display: block; }\n\n'
+        self.assertEqual(res, expected)
+
+        with self.layer.authenticated('max'):
+            res = assets.merged_print_css
+        expected = '.print1 { display: none; }\n\n.print2 { display: none; }\n\n'
+        self.assertEqual(res, expected)
 
     def test_resources(self):
         # CSS Resource

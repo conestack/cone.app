@@ -18,6 +18,10 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
+from pyramid.static import static_view
+
+
+static_resources = static_view('static', use_subpath=True)
 
 
 @plumbing(WorkflowState, WorkflowACL)

@@ -18,6 +18,9 @@ class MergedAssets(object):
 
     def __init__(self, request):
         self.request = request
+        self.merged_js_assets = cone.app.cfg.merged.js
+        self.merged_css_assets = cone.app.cfg.merged.css
+        self.merged_print_css_assets = cone.app.cfg.merged.print_css
 
     def merged_assets(self, assets):
         if self.request.authenticated_userid:
@@ -36,15 +39,15 @@ class MergedAssets(object):
 
     @property
     def merged_js(self):
-        return self.merged_assets(cone.app.cfg.merged.js)
+        return self.merged_assets(self.merged_js_assets)
 
     @property
     def merged_css(self):
-        return self.merged_assets(cone.app.cfg.merged.css)
+        return self.merged_assets(self.merged_css_assets)
 
     @property
     def merged_print_css(self):
-        return self.merged_assets(cone.app.cfg.merged.print_css)
+        return self.merged_assets(self.merged_print_css_assets)
 
 
 @view_config(name='cone.js')
