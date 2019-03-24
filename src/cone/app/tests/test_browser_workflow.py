@@ -3,6 +3,7 @@ from cone.app.testing.mock import InexistentWorkflowNode
 from cone.app.testing.mock import WorkflowNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
+from pyramid.i18n import TranslationStringFactory
 
 
 class TestBrowserWorkflow(TileTestCase):
@@ -44,3 +45,19 @@ class TestBrowserWorkflow(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
         self.assertEqual(res, u'\n\n  \n\n\n')
+
+        tsf = TranslationStringFactory('cone.app.tests')
+        node = WorkflowNode()
+        node.workflow_tsf = tsf
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(node, request, 'wf_dropdown')
+        self.checkOutput("""
+        ...<a href="#"
+        class="state-initial dropdown-toggle"
+        title="Change state"
+        data-toggle="dropdown">
+        <span>State</span>:
+        <span>initial</span>
+        </a>...
+        """, res)
