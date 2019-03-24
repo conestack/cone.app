@@ -325,7 +325,11 @@ def main(global_config, **settings):
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
         # XXX: check whether configure.zcml exists, skip loading if not found
-        config.load_zcml('%s:configure.zcml' % plugin)
+        try:
+            config.load_zcml('{}:configure.zcml'.format(plugin))
+        except IOError:                                     #pragma NO COVERAGE
+            msg = 'No configure.zcml in {}'.format(plugin)  #pragma NO COVERAGE
+            logger.info(msg)                                #pragma NO COVERAGE
 
     # execute main hooks
     for hook in main_hooks:

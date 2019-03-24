@@ -5,21 +5,27 @@ from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
 from cone.app.model import AdapterNode
+from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
 from cone.app.model import get_node_info
 from cone.app.model import Layout
 from cone.app.model import Metadata
+from cone.app.model import node_info
 from cone.app.model import NodeInfo
 from cone.app.model import Properties
 from cone.app.model import ProtectedProperties
 from cone.app.model import register_node_info
-from cone.app.model import node_info
 from cone.app.model import UUIDAsName
 from cone.app.model import UUIDAttributeAware
 from cone.app.model import XMLProperties
 from datetime import datetime
+from node.behaviors import Adopt
+from node.behaviors import DefaultInit
+from node.behaviors import DictStorage
+from node.behaviors import NodeChildValidate
+from node.behaviors import Nodify
 from node.interfaces import IInvalidate
 from node.tests import NodeTestCase
 from odict import odict
@@ -303,15 +309,37 @@ class TestModel(NodeTestCase):
         self.assertEqual(len(copy.values()), 2)
         self.assertTrue(copy[copy.keys()[0]].name == copy.keys()[0])
 
+        @plumbing(
+            AppNode,
+            NodeChildValidate,
+            Adopt,
+            DefaultInit,
+            Nodify,
+            DictStorage,
+            UUIDAsName)
+        class UnorderedUUIDAsNameNode(object):
+            pass
+
+        node = UUIDAsNameNode()
+        child = UnorderedUUIDAsNameNode()
+        node[child.name] = child
+        copy = node.deepcopy()
+
+        self.assertFalse(copy.uuid == node.uuid)
+        self.assertFalse(copy[copy.keys()[0]] == child.uuid)
+
     def test_Properties(self):
         # ``Properties`` object can be used for any kind of mapping.
-        p1 = Properties()
-        p1.prop = 'Foo'
+        props = Properties()
 
-        p2 = Properties()
-        p2.prop = 'Bar'
+        props['foo'] = 'foo'
+        self.assertEqual(props['foo'], 'foo')
+        self.assertEqual(props.get('bar', default='default'), 'default')
 
-        self.assertEqual((p1.prop, p2.prop), ('Foo', 'Bar'))
+        props.bar = 'bar'
+        self.assertEqual(props.bar, 'bar')
+        self.assertTrue('bar' in props)
+        self.assertEqual(sorted(props.keys()), ['bar', 'foo'])
 
     def test_ProtectedProperties(self):
         # Protected properties checks against permission for properties

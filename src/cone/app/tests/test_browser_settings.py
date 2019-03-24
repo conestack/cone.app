@@ -51,23 +51,28 @@ class TestBrowserSettings(TileTestCase):
         register_plugin_config('bar', SomeSettings)
         register_plugin_config('baz', OtherSettings)
 
-        # Create 'content' tile for settings node
-        with self.layer.hook_tile_reg():
-            @tile(name='content', interface=SomeSettings)
-            class SomeSettingsTile(Tile):
-                def render(self):
-                    return '<div>Settings Contents</div>'
-
         request = self.layer.new_request()
 
-        # Login and render settings
+        # Login and render 'content' tile on ``Settings`` node
         with self.layer.authenticated('manager'):
             res = render_tile(settings, request, 'content')
         self.assertTrue(res.find('foo</a>') > -1)
         self.assertTrue(res.find('bar</a>') > -1)
         self.assertTrue(res.find('baz</a>') > -1)
 
-        # Tile for ``OtherSettings`` which raises an exception at render time
+        # 'content' tile for ``SomeSettings``
+        with self.layer.hook_tile_reg():
+            @tile(name='content', interface=SomeSettings)
+            class SomeSettingsTile(Tile):
+                def render(self):
+                    return '<div>Settings Contents</div>'
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(settings['foo'], request, 'content')
+        self.assertEqual(res, '<div>Settings Contents</div>')
+
+        # 'content' tile for ``OtherSettings`` which raises an exception at
+        # render time
         with self.layer.hook_tile_reg():
             @tile(name='content', interface=OtherSettings)
             class OtherSettingsTile(Tile):
@@ -75,7 +80,6 @@ class TestBrowserSettings(TileTestCase):
                     msg = 'This tile can not be rendered for some reason'
                     raise Exception(msg)
 
-        # Check if error raised by ``OtherSettingsTile``
         with self.layer.authenticated('manager'):
             err = self.expectError(
                 Exception,

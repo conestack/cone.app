@@ -51,10 +51,10 @@ logger = logging.getLogger('cone.app')
 
 try:
     from lxml import etree
-except ImportError:
-    logger.warning(
-        '``lxml`` not present. ``cone.app.model.XMLProperties`` will not work'
-    )
+except ImportError:                                        #pragma NO COVERAGE
+    logger.warning(                                        #pragma NO COVERAGE
+        '``lxml`` not present. '                           #pragma NO COVERAGE
+        '``cone.app.model.XMLProperties`` will not work')
 
 
 _ = TranslationStringFactory('cone.app')
@@ -409,11 +409,13 @@ class XMLProperties(Properties):
         else:
             raise KeyError(u"property %s does not exist" % name)
 
-    def get_path(self):
-        return object.__getattribute__(self, '_path')
+    # XXX: probably superfluous. keep as of cone.app 1.1
+    # def get_path(self):
+    #     return object.__getattribute__(self, '_path')
 
-    def set_path(self, path):
-        object.__setattr__(self, '_path', path)
+    # XXX: probably superfluous. keep as of cone.app 1.1
+    # def set_path(self, path):
+    #     object.__setattr__(self, '_path', path)
 
     def _init(self):
         dth = DatetimeHelper()

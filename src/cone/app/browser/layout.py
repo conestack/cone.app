@@ -371,9 +371,9 @@ class NavTree(Tile):
                 if default_child:
                     selected_path.append(default_child.name)
                 selected = False
-                if selected_path == node_path(node):
-                    # XXX: condition never true?
-                    selected = True                         #pragma NO COVERAGE
+                # XXX: probably superfluous. keep as of cone.app 1.1
+                # if selected_path == node_path(node):
+                #     selected = True
                 child['selected'] = selected
             tree['children'].append(child)
 

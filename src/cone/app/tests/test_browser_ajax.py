@@ -382,12 +382,10 @@ class TestBrowserAjax(TileTestCase):
 
                 def next(self, request):
                     url = 'http://example.com'
-                    if self.ajax_request:
-                        return [
-                            AjaxAction(url, 'content', 'inner', '#content'),
-                            AjaxEvent(url, 'contextchanged', '.contextsensitiv')
-                        ]
-                    return HTTPFound(location=url)
+                    return [
+                        AjaxAction(url, 'content', 'inner', '#content'),
+                        AjaxEvent(url, 'contextchanged', '.contextsensitiv')
+                    ]
 
         # Test unauthorized
         request = self.layer.new_request()

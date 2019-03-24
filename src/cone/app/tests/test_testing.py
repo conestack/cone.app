@@ -46,6 +46,12 @@ class TestTesting(unittest.TestCase):
         req = self.layer.new_request()
         self.assertFalse(old is req)
 
+        # Check auto request creation on login
+        self.layer.current_request = None
+        with self.layer.authenticated('max'):
+            req = self.layer.current_request
+            self.assertTrue(isinstance(req, DummyRequest))
+
         # Create JSON request
         req = self.layer.new_request(type='json')
         self.assertEqual(req.headers, {'X-Request': 'JSON'})
