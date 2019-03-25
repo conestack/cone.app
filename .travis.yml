@@ -25,7 +25,7 @@ install:
 script:
   - export TESTRUN_MARKER=True
   - python -m cone.app.tests.__init__
-  - coverage run --source ../src/cone/app ../src/cone/app/tests/__init__.py
+  - coverage run --source src/cone/app src/cone/app/tests/__init__.py
   - coverage report
 
 after_success:
