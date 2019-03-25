@@ -3,7 +3,7 @@ Getting Started
 ===============
 
 In order to use ``cone.app``, an integration package must be created. This
-package contains the buildout and application configuration.
+package contains the application code and configuration.
 
 ``cone.app`` extensions are organized as Plugins. Thus, the integration
 package may contain the Plugin code directly, or the Plugin is created as
@@ -29,7 +29,6 @@ Create a directory named ``cone.example`` with the following structure::
 
     cone.example
     ├── bootstrap.sh
-    ├── buildout.cfg
     ├── example.ini
     ├── setup.py
     └── src
@@ -47,8 +46,8 @@ Create a directory named ``cone.example`` with the following structure::
             │   └── model.py
             └── __init__.py
 
-The package must depend on ``cone.app`` as installation, dependency.
-Add the following to ``setup.py``.
+The package must depend on ``cone.app`` and ``waitress`` as installation
+dependency. Add the following to ``setup.py``.
 
 .. code-block:: python
 
@@ -68,6 +67,7 @@ Add the following to ``setup.py``.
         include_package_data=True,
         zip_safe=False,
         install_requires=[
+            'waitress',
             'cone.app'
         ]
     )
@@ -83,18 +83,19 @@ The package hooks up to the `namespace package <http://setuptools.readthedocs.io
 Bootstrap Script
 ----------------
 
-`Virtualenv <https://virtualenv.pypa.io/en/stable>`_ and
-`Buildout <https://pypi.python.org/pypi/zc.buildout>`_ are used to setup the
+`Virtualenv <https://virtualenv.pypa.io/en/stable>`_ is used to setup the
 application. Add a ``bootstrap.sh`` script, which creates the isolated python
-environment, installs ``zc.buildout`` and invokes the installation.
+environment, and installs the dependencies.
 
 .. code-block:: sh
 
     #!/bin/sh
-    rm -r ./lib ./include ./local ./bin
-    virtualenv --clear --no-site-packages .
-    ./bin/pip install --upgrade pip setuptools zc.buildout
-    ./bin/buildout -N
+    rm -r ./lib ./include ./local ./bin ./share
+    python3 -m venv.
+    ./bin/pip install pyramid==1.9.4
+    ./bin/pip install repoze.zcml==1.0b1
+    ./bin/pip install repoze.workflow==1.0b1
+    ./bin/pip install -e .
 
 Make this script executable.
 
@@ -103,39 +104,12 @@ Make this script executable.
     chmod +x bootstrap.sh
 
 
-Buildout Configuration
-----------------------
-
-Buildout configuration is contained in ``buildout.cfg``. The minimal
-configuration for properly setting up the application looks like:
-
-.. code-block:: ini
-
-    [buildout]
-    parts = instance
-    eggs-directory = ${buildout:directory}/eggs
-    develop = .
-    versions = versions
-
-    [versions]
-    zc.buildout = 
-    setuptools = 
-    pyramid = 1.1.3
-    pyramid-zcml = 0.9.2
-    cone.app = 1.0a1
-
-    [instance]
-    recipe = zc.recipe.egg:scripts
-    dependent-scripts = true
-    eggs = cone.example
-
-
 Application Configuration
 -------------------------
 
-``cone.app`` uses `PasteDeploy <http://pastedeploy.readthedocs.io/en/latest/>`_ for application
-configuration. PasteDeploy defines a way to declare WSGI application
-configuration in an ``.ini`` file.
+``cone.app`` uses `PasteDeploy <http://pastedeploy.readthedocs.io/en/latest/>`_
+for application configuration. PasteDeploy defines a way to declare WSGI
+application configuration in an ``.ini`` file.
 
 Create ``example.ini`` and add:
 
@@ -145,7 +119,7 @@ Create ``example.ini`` and add:
     debug = true
 
     [server:main]
-    use = egg:Paste#http
+    use = egg:waitress#http
     host = 0.0.0.0
     port = 8081
 
@@ -200,15 +174,15 @@ found in the :doc:`Application Configuration <configuration>` documentation.
 ZCML Configuration
 ------------------
 
-Plugins are expected to contain a :ref:`ZCML <plugin_zcml>` configuration which
-may contain configuration directives. Add ``src/cone/example/configure.zcml``
-containing:
+Plugins may contain a :ref:`ZCML <plugin_zcml>` configuration which
+contains ZCML configuration directives. If desired, add
+``src/cone/example/configure.zcml`` containing:
 
 .. code-block:: xml
 
     <?xml version="1.0" encoding="utf-8" ?>
     <configure xmlns="http://pylonshq.com/pyramid">
-
+      <!-- configuration directives goes here -->
     </configure>
 
 
@@ -290,9 +264,11 @@ the model.
 
 .. code-block:: python
 
+    from cone.app import main_hook
     from cone.app import register_entry
     from cone.example.model import ExamplePlugin
 
+    @main_hook
     def example_main_hook(config, global_config, local_config):
         # register plugin entry node
         register_entry('example', ExamplePlugin)
@@ -319,14 +295,14 @@ and register it like so:
 
     from cone.app.browser.layout import ProtectedContentTile
     from cone.example.model import ExamplePlugin
-    from cone.tile import registerTile
+    from cone.tile import tile
 
-    registerTile(
-        name='content',
-        path='cone.example:browser/templates/example.pt',
-        interface=ExamplePlugin,
-        class_=ProtectedContentTile,
-        permission='login')
+    @tile(name='content',
+          path='templates/example.pt',
+          interface=ExamplePlugin,
+          permission='login')
+    class ExamplePluginContent(ProtectedContentTile):
+        pass
 
 Also create the corresponding page template in
 ``src/cone/example/browser/templates/example.pt`` containing:
@@ -343,6 +319,9 @@ gets executed.
 
 .. code-block:: python
 
+    from cone.app import main_hook
+
+    @main_hook
     def example_main_hook(config, global_config, local_config):
         # scan browser package
         config.scan('cone.example.browser')
@@ -365,19 +344,12 @@ To install the application, run bootstrap.sh.
 
     ./bootstrap.sh
 
-If you have changes in setup dependencies of buildout config, run buildout to
-update.
-
-.. code-block:: sh
-
-    ./bin/buildout
-
 
 Run Application
 ---------------
 
 .. code-block:: sh
 
-    ./bin/paster serve example.ini
+    ./bin/pserve serve example.ini
 
 The application is now available at ``localhost:8081``.

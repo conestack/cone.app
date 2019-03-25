@@ -7,8 +7,8 @@ from cone.app.browser.table import Table
 from cone.tile import Tile
 from cone.tile import tile
 from plumber import plumbing
-from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
+from pyramid.i18n import TranslationStringFactory
 from pyramid.view import view_config
 from yafowil.base import factory
 import logging

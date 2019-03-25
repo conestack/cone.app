@@ -5,6 +5,7 @@
 /include/
 /lib/
 /local/
+/share/
 /pip-selfcheck.json
 /src/cone.example.egg-info/
 

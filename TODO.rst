@@ -13,7 +13,7 @@ Docs
 
 [ ] Create websocket integration documentation
 
-[ ] Create tutorial extending cone.example
+[ ] Create tutorial extending ``cone.example``
 
 [ ] Proper cross linking all over the place
 
@@ -21,23 +21,23 @@ Docs
 Roadmap
 =======
 
-1.0 beta
---------
+1.0b1
+-----
 
 [X] Migrate Doctests to Unittests where appropriate.
 
 [X] Merge ``pyramid_upgrade`` branches back to master.
 
-[ ] Python 3 support.
+[X] Python 3 support.
 
-[ ] Set ``ISecured`` on ``cone.app.workflow.WorkflowACL``
+[X] Adopt docs for using ``waitress`` instead of ``paster``.
 
-[ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
-
-[ ] Adopt docs for using ``waitress`` instead of ``paster``.
+[X] Adopt docs and remove buildout section.
 
 1.0
 ---
+
+[ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
 
 [ ] Add proper API docs to code and include in docs.
 
