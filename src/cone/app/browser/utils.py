@@ -89,8 +89,7 @@ def format_date(dt, long=True):
     return long and dt.strftime('%d.%m.%Y %H:%M') or dt.strftime('%d.%m.%Y')
 
 
-def node_icon(request, node):
-    # XXX: request not needed here
+def node_icon(node):
     if node.properties.icon:
         return node.properties.icon
     info = node.nodeinfo

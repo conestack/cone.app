@@ -48,14 +48,14 @@ setup(
     install_requires=[
         'setuptools',
         'Chameleon',
-        'node',
-        'node.ext.ugm',
-        'pyramid>1.4.999',
+        'node>=0.9.23',
+        'node.ext.ugm>=0.9.9',
+        'pyramid>=1.5',
         'pyramid_zcml',
         'pyramid_chameleon',
-        'bdajax>1.9.999',
-        'cone.tile',
-        'yafowil',
+        'bdajax>=1.11',
+        'cone.tile>0.999',  # XXX: >=1.0b1
+        'yafowil>2.3.1',  # XXX: >=2.3.2
         'yafowil.webob',
         'yafowil.bootstrap',
         'repoze.workflow',

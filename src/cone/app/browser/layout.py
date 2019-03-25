@@ -226,7 +226,7 @@ class MainMenu(Tile):
         query = make_query(contenttile=props.default_content_tile)
         item['target'] = make_url(self.request, node=node, query=query)
         item['selected'] = selected
-        item['icon'] = node_icon(self.request, node)
+        item['icon'] = node_icon(node)
         return item
 
 
@@ -353,7 +353,7 @@ class NavTree(Tile):
             query = make_query(contenttile=node.properties.default_content_tile)
             target = make_url(self.request, node=node, query=query)
             curnode = curpath == safe_decode(key)
-            icon = node_icon(self.request, node)
+            icon = node_icon(node)
             css = ''
             if IWorkflowState.providedBy(node):
                 css = 'state-%s' % node.state

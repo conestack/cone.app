@@ -87,11 +87,9 @@ class TestBrowserUtils(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_node_icon(self):
-        request = self.layer.new_request()
-
         model = BaseNode()
         model.properties.icon = 'my-icon'
-        self.assertEqual(node_icon(request, model), 'my-icon')
+        self.assertEqual(node_icon(model), 'my-icon')
 
         @node_info(
             name='mynode')
@@ -100,7 +98,7 @@ class TestBrowserUtils(TileTestCase):
 
         model = MyNode()
         self.assertEqual(
-            node_icon(request, model),
+            node_icon(model),
             'glyphicon glyphicon-asterisk'
         )
 
@@ -111,7 +109,7 @@ class TestBrowserUtils(TileTestCase):
             pass
 
         model = OtherNode()
-        self.assertEqual(node_icon(request, model), 'other-icon')
+        self.assertEqual(node_icon(model), 'other-icon')
 
     def test_request_property(self):
         counter = dict(computed=0)

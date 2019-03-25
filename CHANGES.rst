@@ -4,7 +4,39 @@ Changes
 1.0b1 (unreleased)
 -------------------
 
-- Minimum pyramid version is 1.5 now.
+- Python 3 support.
+  [rnix, 2019-03-25]
+
+- Drop support for pyramid < 1.5.
+  [rnix, 2019-03-25]
+
+- Remove ``request`` from ``cone.app.browser.utils.node_icon`` signature.
+  It was never used.
+  [rnix, 2019-03-25]
+
+- Make ``configure.zcml`` file in plugins optional.
+  [rnix, 2019-03-24]
+
+- Introduce ``cone.app.browser.sharing.GROUP_TITLE_ATTR`` and
+  ``cone.app.browser.sharing.USER_TITLE_ATTR``.
+  [rnix, 2019-03-24]
+
+- Add content type header to merged js file.
+  [rnix, 2019-03-24]
+
+- Change signature of referencebrowser yafowil widget callable attributes. Gets
+  passed ``widget`` and ``data`` as common in yafowil.
+  [rnix, 2019-03-24]
+
+- Prevent ``ComponentLookupError`` in
+  ``cone.app.browser.form.Form._process_form`` if ``controller.next`` returns
+  ``HTTPFound`` instance. This never had any effect due to a redirect, we want
+  to avoid the error anyway.
+  [rnix, 2019-03-22]
+
+- Add ``cone.app.main_hook`` decorator. ``cone.app.register_main_hook`` is
+  deprecated and will be removed as of ``cone.app`` version 1.1.
+  [rnix, 2019-03-21]
 
 - Add ``cone.app.workflow.permission_checker`` for use with ``repoze.workflow``
   to make it wirk with pyramid >= 1.8.
