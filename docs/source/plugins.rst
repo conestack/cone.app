@@ -107,14 +107,13 @@ The static view gets registered in the plugin main hook.
 .. code-block:: python
 
     from cone.app import main_hook
+    from cone.example.browser import static_resources
 
     @main_hook
     def example_main_hook(config, global_config, local_config):
 
         # static resources
-        config.add_view(
-            'cone.example.browser.static_resources',
-            name='example-static')
+        config.add_view(static_resources, name='example-static')
 
 This configuration makes the resources available to the browser by URL, but no
 CSS or JS files are delivered yet on page load. CSS and JS files can be

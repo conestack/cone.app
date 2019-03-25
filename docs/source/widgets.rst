@@ -149,10 +149,7 @@ URL.
     (function($) {
 
         $(document).ready(function() {
-            $.extend(bdajax.binders, {
-                example_binder: example.binder
-            });
-            example.binder();
+            bdajax.register(example.binder.bind(example), true);
         });
 
         example = {

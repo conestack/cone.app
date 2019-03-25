@@ -24,5 +24,5 @@ if [ -x "$(which python3)" ]; then
     ./py3/bin/pip install repoze.workflow==1.0b1
     ./py3/bin/pip install https://github.com/bluedynamics/yafowil/archive/master.zip
     ./py3/bin/pip install https://github.com/bluedynamics/cone.tile/archive/master.zip
-    ./py3/bin/pip install -e .[test]
+    ./py3/bin/pip install -e .[test,docs]
 fi
