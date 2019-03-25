@@ -26,7 +26,8 @@ script:
   - echo "$(pwd)"
   - export TESTRUN_MARKER=True
   - python -m cone.app.tests.__init__
-  - coverage run --source src/cone/app -m cone.app.tests.__init__
+  # - coverage run --source src/cone/app -m cone.app.tests.__init__
+  - coverage run -m cone.app.tests.__init__
   - coverage report
 
 after_success:
