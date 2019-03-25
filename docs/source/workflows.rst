@@ -45,20 +45,20 @@ A typical publication workflow would end up in a file named
                 permission_checker="cone.app.workflow.permission_checker">
 
         <state name="draft"
+               title="Draft"
                i18n:attributes="name">
-          <key name="title" value="Draft"/>
           <key name="description" value="Item is not visible to the public" />
         </state>
 
         <state name="published"
+               title="Published"
                i18n:attributes="name">
-          <key name="title" value="Published"/>
           <key name="description" value="Item is visible to the public" />
         </state>
 
         <state name="declined"
+               title="Declined"
                i18n:attributes="name">
-          <key name="title" value="Declined"/>
           <key name="description" value="Item has been declined" />
         </state>
 

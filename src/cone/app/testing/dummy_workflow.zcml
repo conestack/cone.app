@@ -10,13 +10,13 @@
                            cone.app.testing.mock.StateACLWorkflowNode"
             permission_checker="cone.app.workflow.permission_checker">
 
-    <state name="initial">
-      <key name="title" value="Initial state" />
+    <state name="initial"
+           title="Initial state">
       <key name="description" value="Foo" />
     </state>
 
-    <state name="final">
-      <key name="title" value="Final state"/>
+    <state name="final"
+           title="Final state">
       <key name="description" value="Bar" />
     </state>
 
