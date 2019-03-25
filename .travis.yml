@@ -7,15 +7,26 @@ python:
   - "3.6"
 
 install:
+  - pip install coverage
+  - pip install coveralls
   - pip install pyramid==1.9.4
   - |
     if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then
-        pip install repoze.zcml==0.4 repoze.workflow==0.6.1
+        pip install repoze.zcml==0.4
+        pip install repoze.workflow==0.6.1
     else
-        pip install repoze.zcml==1.0b1 repoze.workflow==1.0b1
+        pip install repoze.zcml==1.0b1
+        pip install repoze.workflow==1.0b1
     fi
   - pip install https://github.com/bluedynamics/yafowil/archive/master.zip
   - pip install https://github.com/bluedynamics/cone.tile/archive/master.zip
   - pip install .[test]
 
-script: export TESTRUN_MARKER=True && python -m cone.app.tests.__init__
+script:
+  - |
+    export TESTRUN_MARKER=True
+    bin/coverage run --source src/cone/app src/cone/app/tests/__init__.py
+    bin/coverage report
+
+after_success:
+  - bin/coveralls
