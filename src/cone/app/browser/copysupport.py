@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import ajax_continue
@@ -9,8 +10,6 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
-import urllib
-import urlparse
 
 
 _ = TranslationStringFactory('cone.app')
@@ -22,7 +21,7 @@ def cookie_name(name):
 
 def extract_copysupport_cookie(request, name):
     cookie = request.cookies.get(cookie_name(name), '')
-    cookie = urllib.unquote(cookie)
+    cookie = compat.unquote(cookie)
     paths = cookie.split('::')
     return [path for path in paths if path]
 
@@ -30,7 +29,7 @@ def extract_copysupport_cookie(request, name):
 def paths_from_urls(urls):
     ret = list()
     for url in urls:
-        splitted = urlparse.urlparse(url).path.split('/')
+        splitted = compat.urlparse.urlparse(url).path.split('/')
         ret.append([part for part in splitted if part])
     return ret
 

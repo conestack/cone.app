@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app.browser import RelatedViewConsumer
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -7,7 +8,6 @@ from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
 from cone.tile import render_template
 from plumber import plumbing
-import urllib2
 
 
 BATCH_RANGE = 8
@@ -492,7 +492,7 @@ class BatchedItems(Tile):
         """Current search filter term.
         """
         term = self.request.params.get('term')
-        return urllib2.unquote(
+        return compat.unquote(
             term.encode('utf-8')).decode('utf-8') if term else term
 
     @property

@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app.utils import app_config
 from cone.app.utils import safe_encode
 from cone.app.utils import safe_decode
@@ -8,7 +9,6 @@ import re
 import sys
 import traceback
 import types
-import urllib2
 
 
 _ = TranslationStringFactory('cone.app')
@@ -45,7 +45,7 @@ def make_query(quote_params=QUOTE_PARAMS, **kw):
         quote = name in quote_params
         for p in param:
             p = safe_encode(p)
-            query.append('{}={}'.format(name, urllib2.quote(p) if quote else p))
+            query.append('{}={}'.format(name, compat.quote(p) if quote else p))
     query = '&'.join(query)
     if query:
         return '?{}'.format(query)
@@ -64,7 +64,7 @@ def make_url(request, path=None, node=None, resource=None, query=None):
         path = node_path(node)
     if resource is not None:
         path.append(resource)
-    path = [urllib2.quote(safe_encode(it)) for it in path]
+    path = [compat.quote(safe_encode(it)) for it in path]
     url = '{}/{}'.format(request.application_url, '/'.join(path))
     if not query:
         return url

@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.ajax import AjaxEvent
@@ -26,11 +27,9 @@ from plumber import plumb
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
 from pyramid.view import view_config
-from urllib2 import urlparse
 from webob.exc import HTTPFound
 from yafowil.base import factory
 import logging
-import urllib2
 
 
 logger = logging.getLogger('cone.app')
@@ -134,9 +133,11 @@ class CameFromNext(Behavior):
             path = '/'.join(node_path(self.model.parent))
         # consider came_from a URL
         else:
-            url = urllib2.unquote(came_from)
-            parsed = urlparse.urlparse(url)
-            app_loc = urlparse.urlparse(self.request.application_url).netloc
+            url = compat.unquote(came_from)
+            parsed = compat.urlparse.urlparse(url)
+            app_loc = compat.urlparse.urlparse(
+                self.request.application_url
+            ).netloc
             # behave as if no came_from given if application location not
             # matches came_from location
             if app_loc != parsed.netloc:

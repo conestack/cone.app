@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app.browser import RelatedViewConsumer
 from cone.app.browser.batch import Batch
 from cone.app.browser.utils import format_date
@@ -7,7 +8,6 @@ from cone.app.browser.utils import node_path
 from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
 from plumber import plumbing
-import urllib2
 
 
 class RowData(dict):
@@ -85,7 +85,7 @@ class Table(Tile):
     @property
     def filter_term(self):
         term = self.request.params.get('term')
-        return urllib2.unquote(
+        return compat.unquote(
             term.encode('utf-8')).decode('utf-8') if term else term
 
     @property

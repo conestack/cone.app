@@ -1,3 +1,4 @@
+from cone.app.compat import configparser
 from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
@@ -40,7 +41,6 @@ from pyramid.security import Everyone
 from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
-import ConfigParser
 import logging
 import os
 import types
@@ -503,28 +503,28 @@ class ConfigProperties(Properties):
         try:
             value = self.config().get(self.properties_section, key)
             return safe_decode(value, encoding=self.encoding)
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             raise KeyError(key)
 
     def get(self, key, default=None):
         try:
             value = self.config().get(self.properties_section, key)
             return safe_decode(value, encoding=self.encoding)
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return default
 
     def __contains__(self, key):
         try:
             self.config().get(self.properties_section, key)
             return True
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return False
 
     def __getattr__(self, name):
         try:
             value = self.config().get(self.properties_section, name)
             return safe_decode(value, encoding=self.encoding)
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return None
 
     def __setattr__(self, name, value):
@@ -535,7 +535,7 @@ class ConfigProperties(Properties):
         config = self.config()
         try:
             config.get(self.properties_section, name)
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             raise KeyError(u"property %s does not exist" % name)
         config.remove_option(self.properties_section, name)
 
@@ -544,7 +544,7 @@ class ConfigProperties(Properties):
             return object.__getattribute__(self, '_config')
         except AttributeError:
             pass
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         path = object.__getattribute__(self, '_path')
         if os.path.exists(path):
             config.read(path)

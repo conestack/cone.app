@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app import testing
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxMessage
@@ -35,7 +36,6 @@ from webob.exc import HTTPFound
 from yafowil.base import factory
 from zope.interface import implementer
 from zope.interface import Interface
-import urllib2
 
 
 class TestBrowserAuthoring(TileTestCase):
@@ -128,7 +128,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Check whether ``came_from`` is rendered on form as proxy field
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            came_from = urllib2.quote('http://example.com/some/path?foo=bar')
+            came_from = compat.quote('http://example.com/some/path?foo=bar')
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -165,7 +165,7 @@ class TestBrowserAuthoring(TileTestCase):
         # No ``came_from`` on request, ``default_came_from`` set to URL, no
         # ajax request
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://example.com/foo/bar?baz=1')
+            came_from = compat.quote('http://example.com/foo/bar?baz=1')
             CameFromNextForm.default_came_from = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -216,10 +216,10 @@ class TestBrowserAuthoring(TileTestCase):
         # ``came_from`` set to URL on request, overrules ``default_came_from``,
         # no ajax request
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://example.com/default')
+            came_from = compat.quote('http://example.com/default')
             CameFromNextForm.default_came_from = came_from
 
-            came_from = urllib2.quote('http://example.com/other')
+            came_from = compat.quote('http://example.com/other')
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -266,7 +266,7 @@ class TestBrowserAuthoring(TileTestCase):
         # ``came_from`` set to URL on request, ajax request, no ajax path
         # continuation
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://example.com/some/path?foo=bar')
+            came_from = compat.quote('http://example.com/some/path?foo=bar')
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -281,7 +281,7 @@ class TestBrowserAuthoring(TileTestCase):
         # ``came_from`` set to wrong domain on request, ajax request, no ajax
         # path continuation
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://other.com')
+            came_from = compat.quote('http://other.com')
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -344,7 +344,7 @@ class TestBrowserAuthoring(TileTestCase):
         # ``came_from`` set to URL on request, ajax request, setting browser
         # history configured
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://example.com/some/path')
+            came_from = compat.quote('http://example.com/some/path')
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -367,7 +367,7 @@ class TestBrowserAuthoring(TileTestCase):
         # ``came_from`` set to to wrong on request, ajax request, setting
         # browser history configured
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://other.com')
+            came_from = compat.quote('http://other.com')
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
@@ -579,7 +579,7 @@ class TestBrowserAuthoring(TileTestCase):
         del request.environ['redirect']
 
         with self.layer.authenticated('manager'):
-            came_from = urllib2.quote('http://example.com/foo/bar?baz=1')
+            came_from = compat.quote('http://example.com/foo/bar?baz=1')
             request.params['came_from'] = came_from
             render_tile(root, request, 'add')
 
@@ -731,7 +731,7 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
-            came_from = urllib2.quote('http://example.com/other/node/in/tree')
+            came_from = compat.quote('http://example.com/other/node/in/tree')
             request.params['came_from'] = came_from
             res = render_tile(root['somechild'], request, 'edit')
 
@@ -764,7 +764,7 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
-            came_from = urllib2.quote('http://example.com/other/node/in/tree')
+            came_from = compat.quote('http://example.com/other/node/in/tree')
             request.params['came_from'] = came_from
             request.params['ajax'] = '1'
             res = render_tile(root['somechild'], request, 'edit')
