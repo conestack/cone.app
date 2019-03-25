@@ -25,8 +25,8 @@ install:
 script:
   - |
     export TESTRUN_MARKER=True
-    bin/coverage run --source src/cone/app src/cone/app/tests/__init__.py
-    bin/coverage report
+    bin/python -m coverage run --source src/cone/app src/cone/app/tests/__init__.py
+    bin/python -m report
 
 after_success:
   - bin/coveralls
