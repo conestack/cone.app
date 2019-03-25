@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app import testing
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
@@ -8,7 +9,6 @@ from cone.app.model import BaseNode
 from cone.app.model import node_info
 from cone.app.testing.mock import CopySupportNode
 from cone.tile.tests import TileTestCase
-import urllib
 
 
 class TestBrowserCopysupport(TileTestCase):
@@ -37,7 +37,7 @@ class TestBrowserCopysupport(TileTestCase):
         target = root['target'] = CopySupportNodeB()
 
         request = self.layer.new_request()
-        copy_url = urllib.quote(make_url(request, node=source['a_child']))
+        copy_url = compat.quote(make_url(request, node=source['a_child']))
         request.cookies['cone.app.copysupport.copy'] = copy_url
 
         paste_tile = PasteAction(None, 'render', '')
@@ -49,7 +49,7 @@ class TestBrowserCopysupport(TileTestCase):
         to contain 'CopySupportNodeA'
         """, request.environ['cone.app.continuation'][0].payload)
 
-        copy_url = urllib.quote(make_url(request, node=source['b_child']))
+        copy_url = compat.quote(make_url(request, node=source['b_child']))
         request.cookies['cone.app.copysupport.copy'] = copy_url
         del request.environ['cone.app.continuation']
 
@@ -97,7 +97,7 @@ class TestBrowserCopysupport(TileTestCase):
             <class '...CopySupportNodeB'>: b_child-1
         """, root.treerepr())
 
-        cut_url = urllib.quote(make_url(request, node=source['b_child']))
+        cut_url = compat.quote(make_url(request, node=source['b_child']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.cookies['cone.app.copysupport.copy']
         paste_tile(target, request)
@@ -120,7 +120,7 @@ class TestBrowserCopysupport(TileTestCase):
             <class '...CopySupportNodeB'>: b_child-2
         """, root.treerepr())
 
-        cut_url = urllib.quote(make_url(request, node=source['a_child']))
+        cut_url = compat.quote(make_url(request, node=source['a_child']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
         paste_tile(target, request)
@@ -140,7 +140,7 @@ class TestBrowserCopysupport(TileTestCase):
         allowed to contain 'CopySupportNodeA'
         """, request.environ['cone.app.continuation'][0].payload)
 
-        cut_url = urllib.quote(make_url(request, node=source))
+        cut_url = compat.quote(make_url(request, node=source))
         del request.environ['cone.app.continuation']
         request.cookies['cone.app.copysupport.cut'] = cut_url
         paste_tile(root['source']['a_child'], request)
@@ -151,8 +151,8 @@ class TestBrowserCopysupport(TileTestCase):
         """, request.environ['cone.app.continuation'][0].payload)
 
         cut_url = '::'.join([
-            urllib.quote(make_url(request, node=target['b_child'])),
-            urllib.quote(make_url(request, node=target['b_child-1'])),
+            compat.quote(make_url(request, node=target['b_child'])),
+            compat.quote(make_url(request, node=target['b_child-1'])),
         ])
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
@@ -175,7 +175,7 @@ class TestBrowserCopysupport(TileTestCase):
         root['unknown_source'] = BaseNode()
         root['unknown_target'] = BaseNode()
 
-        cut_url = urllib.quote(make_url(request, node=root['unknown_source']))
+        cut_url = compat.quote(make_url(request, node=root['unknown_source']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
         paste_tile(target, request)
@@ -185,7 +185,7 @@ class TestBrowserCopysupport(TileTestCase):
         failed</strong><br />Cannot paste 'unknown_source'. Unknown source
         """, request.environ['cone.app.continuation'][0].payload)
 
-        cut_url = urllib.quote(make_url(request, node=source['b_child']))
+        cut_url = compat.quote(make_url(request, node=source['b_child']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
         paste_tile(root['unknown_target'], request)

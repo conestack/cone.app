@@ -19,9 +19,17 @@ class TestBrowserException(TileTestCase):
         # was a bdajax action
         request = self.layer.new_request()
         self.checkOutput("""
-        200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:
-        120\r\n\r\n\n<h1>An error occured</h1>\n<p>\n  <a href="/">HOME</a>\n
-        <hr />\n</p>\n<pre>Traceback (most recent call last):\nNone\n</pre>\n
+        200 OK
+        Content-Type: text/html; charset=UTF-8
+        Content-Length: ...
+        <h1>An error occured</h1>
+        <p>
+          <a href="/">HOME</a>
+          <hr />
+        </p>
+        <pre>Traceback (most recent call last):
+          None...
+        </pre>
         """, str(internal_server_error(request)))
 
         request = self.layer.new_request(xhr=1)
@@ -30,10 +38,7 @@ class TestBrowserException(TileTestCase):
         self.assertTrue(res.find('Content-Type: application/json') > -1)
         self.assertTrue(res.find('"continuation"') > -1)
         self.assertTrue(res.find('"type": "message"') > -1)
-        expected = (
-            '"payload": "<pre>Traceback '
-            '(most recent call last):\\nNone\\n</pre>"'
-        )
+        expected = '"payload": "<pre>Traceback (most recent call last):'
         self.assertTrue(res.find(expected) > -1)
         self.assertTrue(res.find('"selector": null') > -1)
         self.assertTrue(res.find('"payload": ""') > -1)
@@ -44,9 +49,17 @@ class TestBrowserException(TileTestCase):
             request = self.layer.new_request()
 
             self.checkOutput("""
-            200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:
-            120\r\n\r\n\n<h1>An error occured</h1>\n<p>\n  <a href="/">HOME</a>\n
-            <hr />\n</p>\n<pre>Traceback (most recent call last):\nNone\n</pre>\n
+            200 OK
+            Content-Type: text/html; charset=UTF-8
+            Content-Length: ...
+            <h1>An error occured</h1>
+            <p>
+              <a href="/">HOME</a>
+              <hr />
+            </p>
+            <pre>Traceback (most recent call last):
+              None...
+            </pre>
             """, str(internal_server_error(request)))
 
             request = self.layer.new_request(xhr=1)
@@ -56,10 +69,7 @@ class TestBrowserException(TileTestCase):
         self.assertTrue(res.find('Content-Type: application/json') > -1)
         self.assertTrue(res.find('"continuation"') > -1)
         self.assertTrue(res.find('"type": "message"') > -1)
-        expected = (
-            '"payload": "<pre>Traceback '
-            '(most recent call last):\\nNone\\n</pre>"'
-        )
+        expected = '"payload": "<pre>Traceback (most recent call last):'
         self.assertTrue(res.find(expected) > -1)
         self.assertTrue(res.find('"selector": null') > -1)
         self.assertTrue(res.find('"payload": ""') > -1)
@@ -84,13 +94,13 @@ class TestBrowserException(TileTestCase):
         model = root['model'] = BaseNode()
         request = self.layer.new_request()
         request.context = model
-        res = forbidden_view(request).body
+        res = forbidden_view(request).text
         self.assertTrue(res.find('id="input-loginform-login"') > -1)
 
         with self.layer.authenticated('admin'):
             request = self.layer.new_request()
             request.context = model
-            res = forbidden_view(request).body
+            res = forbidden_view(request).text
             self.assertTrue(res.find('<h1>Unauthorized</h1>') > -1)
 
         del root['model']
@@ -113,13 +123,13 @@ class TestBrowserException(TileTestCase):
         model = root['model'] = BaseNode()
         request = self.layer.new_request()
         request.context = model
-        res = not_found_view(request).body
+        res = not_found_view(request).text
         self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
 
         with self.layer.authenticated('admin'):
             request = self.layer.new_request()
             request.context = model
-            res = not_found_view(request).body
+            res = not_found_view(request).text
             self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
 
         del root['model']
