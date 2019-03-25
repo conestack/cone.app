@@ -15,9 +15,9 @@ logger = logging.getLogger('cone.app')
 
 try:
     from yafowil.yaml import parse_from_YAML
-except ImportError:                                         #pragma NO COVERAGE
-    logger.warning(                                         #pragma NO COVERAGE
-        '``yafowil.yaml`` not present. '                    #pragma NO COVERAGE
+except ImportError:  # pragma: no cover
+    logger.warning(
+        '``yafowil.yaml`` not present. '
         '``cone.app.browser.form.YAMLForm`` will not work')
 
 

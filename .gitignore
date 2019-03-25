@@ -35,3 +35,5 @@ include/
 /pip-selfcheck.json
 /py2/
 /py3/
+/.coverage
+/htmlcov/

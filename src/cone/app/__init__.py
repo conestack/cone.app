@@ -327,9 +327,9 @@ def main(global_config, **settings):
         # XXX: check whether configure.zcml exists, skip loading if not found
         try:
             config.load_zcml('{}:configure.zcml'.format(plugin))
-        except IOError:                                     #pragma NO COVERAGE
-            msg = 'No configure.zcml in {}'.format(plugin)  #pragma NO COVERAGE
-            logger.info(msg)                                #pragma NO COVERAGE
+        except IOError:  # pragma: no cover
+            msg = 'No configure.zcml in {}'.format(plugin)
+            logger.info(msg)
 
     # execute main hooks
     for hook in main_hooks:
