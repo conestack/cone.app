@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 
@@ -68,6 +69,7 @@ def run_tests():
 
     runner = Runner(found_suites=[test_suite()])
     runner.run()
+    sys.exit(int(runner.failed))
 
 
 if __name__ == '__main__':
