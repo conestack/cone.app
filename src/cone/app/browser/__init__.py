@@ -40,7 +40,7 @@ FAVICON_FILE = os.path.join(os.path.dirname(__file__), 'static', 'favicon.ico')
 @view_config(route_name='favicon')
 def favicon_view(request):
     response = Response()
-    with open(FAVICON_FILE, 'r') as f:
+    with open(FAVICON_FILE, 'rb') as f:
         response.body = f.read()
     response.headers['Content-Type'] = 'image/vnd.microsoft.icon'
     return response

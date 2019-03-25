@@ -35,7 +35,7 @@ class TestBrowserUtils(TileTestCase):
         self.assertEqual(make_query(foo=['456', '789']), '?foo=456&foo=789')
         self.assertEqual(make_query(foo=1), '?foo=1')
         self.assertEqual(make_query(foo=1.), '?foo=1.0')
-        self.assertEqual(make_query(foo='foo', bar='bar'), '?foo=foo&bar=bar')
+        self.assertEqual(make_query(foo='foo', bar='bar'), '?bar=bar&foo=foo')
         self.assertEqual(
             make_query(
                 quote_params=('foo',),
@@ -143,6 +143,6 @@ class TestBrowserUtils(TileTestCase):
             <pre>Traceback (most recent call last):
               File "...", line ..., in test_format_traceback
                 raise MyException('Error!')
-              MyException: Error!
+              ...MyException: Error!
             </pre>
             """, format_traceback())

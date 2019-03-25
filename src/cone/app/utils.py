@@ -54,7 +54,7 @@ class DatetimeHelper(object):
     def r_value(self, val):
         try:
             return self.dt_from_iso(val)
-        except ValueError:
+        except (ValueError, TypeError):
             if not isinstance(val, compat.UNICODE_TYPE):
                 val = bytes(val).decode('utf-8')
             return val

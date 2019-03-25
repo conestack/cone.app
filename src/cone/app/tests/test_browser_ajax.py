@@ -18,7 +18,6 @@ from cone.app.interfaces import ILiveSearch
 from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
-from webob.exc import HTTPFound
 from yafowil.base import factory
 from zope.component import adapter
 from zope.interface import implementer
@@ -394,7 +393,7 @@ class TestBrowserAjax(TileTestCase):
         <div id="ajaxform">\n    \n</div>\n<script language="javascript"
         ...HTTPForbidden: Unauthorized: tile <...AjaxTestForm object at ...>
         failed permission check...
-        """, res.body)
+        """, res.text)
 
         # Test authorized with form extraction failure
         with self.layer.authenticated('max'):

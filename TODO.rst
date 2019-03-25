@@ -93,6 +93,3 @@ by node info name only if no class given at lookup. Or so...
 
 [ ] Adopt livesearch JS intergration to provide hooks for passing typeahead
 options and datasets instead of just datasets.
-
-[ ] Return unicode in ``cone.app.browser.utils.make_url`` and
-``cone.app.browser.utils.make_query``.

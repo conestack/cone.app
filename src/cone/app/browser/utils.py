@@ -8,7 +8,6 @@ import datetime
 import re
 import sys
 import traceback
-import types
 
 
 _ = TranslationStringFactory('cone.app')
@@ -35,16 +34,16 @@ QUOTE_PARAMS = ('came_from',)
 
 def make_query(quote_params=QUOTE_PARAMS, **kw):
     query = list()
-    for name, param in kw.items():
+    for name, param in sorted(kw.items()):
         if param is None:
             continue
-        if isinstance(param, basestring):
+        if isinstance(param, compat.STR_TYPE):
             param = [param]
-        if type(param) in (types.IntType, types.FloatType):
+        if type(param) in compat.NUMBER_TYPES:
             param = [str(param)]
         quote = name in quote_params
         for p in param:
-            p = safe_encode(p)
+            p = safe_encode(p) if compat.IS_PY2 else p
             query.append('{}={}'.format(name, compat.quote(p) if quote else p))
     query = '&'.join(query)
     if query:

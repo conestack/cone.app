@@ -18,3 +18,4 @@ STR_TYPE = basestring if IS_PY2 else str
 UNICODE_TYPE = unicode if IS_PY2 else str
 LONG_TYPE = long if IS_PY2 else int
 ITER_TYPES = (types.ListType, types.TupleType) if IS_PY2 else (list, tuple)
+NUMBER_TYPES = (types.IntType, types.FloatType) if IS_PY2 else (int, float)
