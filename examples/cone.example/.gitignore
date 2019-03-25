@@ -1,4 +1,4 @@
-/.installed.cfg
+/pyvenv.cfg
 /bin/
 /develop-eggs/
 /eggs/
@@ -6,6 +6,7 @@
 /lib/
 /local/
 /share/
+/lib64
 /pip-selfcheck.json
 /src/cone.example.egg-info/
 

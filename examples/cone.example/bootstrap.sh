@@ -1,5 +1,7 @@
 #!/bin/sh
-rm -r ./lib ./include ./local ./bin
-virtualenv --clear --no-site-packages .
-./bin/pip install --upgrade wheel pip setuptools zc.buildout
-./bin/buildout -N
+rm -r ./lib ./include ./local ./bin ./share
+python3 -m venv .
+./bin/pip install pyramid==1.9.4
+./bin/pip install repoze.zcml==1.0b1
+./bin/pip install repoze.workflow==1.0b1
+./bin/pip install -e .
