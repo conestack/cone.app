@@ -22,13 +22,13 @@ class TestBrowserSharing(TileTestCase):
             request
         )
         self.checkOutput("""
-        Unauthorized: tile <cone.app.browser.sharing.SharingTile object at ...>
+        ...Unauthorized: tile <cone.app.browser.sharing.SharingTile object at ...>
         failed permission check...
         """, str(err))
 
         with self.layer.authenticated('manager'):
             res = sharing(model, request)
-        self.assertTrue(res.body.find('<!DOCTYPE html>') > -1)
+        self.assertTrue(res.text.find('<!DOCTYPE html>') > -1)
 
     def test_render_sharing_tile(self):
         root = SharingNode(name='root')
@@ -123,12 +123,16 @@ class TestBrowserSharing(TileTestCase):
         # Sharing table sorting
         with self.layer.authenticated('manager'):
             res = render_tile(child, request, 'sharing')
-        self.assertTrue(res.find('Editor User') > res.find('Viewer User'))
+        self.assertTrue(res.find('Editor User') > -1)
+        self.assertTrue(res.find('Viewer User') > -1)
+        self.assertTrue(res.find('Editor User') < res.find('Viewer User'))
 
         request.params['order'] = 'desc'
         with self.layer.authenticated('manager'):
             res = render_tile(child, request, 'sharing')
-        self.assertFalse(res.find('Editor User') > res.find('Viewer User'))
+        self.assertTrue(res.find('Editor User') > -1)
+        self.assertTrue(res.find('Viewer User') > -1)
+        self.assertFalse(res.find('Editor User') < res.find('Viewer User'))
 
         del request.params['order']
 
@@ -172,10 +176,12 @@ class TestBrowserSharing(TileTestCase):
         })
 
         # Principal roles have changed
-        self.assertEqual(child.principal_roles, {
-            'viewer': ['admin', 'manager'],
-            'editor': ['admin']
-        })
+        self.assertEqual(len(child.principal_roles), 2)
+        self.assertEqual(
+            sorted(child.principal_roles['viewer']),
+            ['admin', 'manager']
+        )
+        self.assertEqual(child.principal_roles['editor'], ['admin'])
 
         # Add role for user not added yet
         request.params['id'] = 'otheruser'
@@ -189,11 +195,13 @@ class TestBrowserSharing(TileTestCase):
             'selector': 'NONE'
         })
 
-        self.assertEqual(child.principal_roles, {
-            'viewer': ['admin', 'manager'],
-            'editor': ['admin'],
-            'otheruser': ['manager']
-        })
+        self.assertEqual(len(child.principal_roles), 3)
+        self.assertEqual(
+            sorted(child.principal_roles['viewer']),
+            ['admin', 'manager']
+        )
+        self.assertEqual(child.principal_roles['editor'], ['admin'])
+        self.assertEqual(child.principal_roles['otheruser'], ['manager'])
 
         # If an error occurs, a message gets displayed
         invalid_node = BaseNode()

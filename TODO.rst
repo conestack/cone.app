@@ -93,3 +93,5 @@ by node info name only if no class given at lookup. Or so...
 
 [ ] Adopt livesearch JS intergration to provide hooks for passing typeahead
 options and datasets instead of just datasets.
+
+[ ] Sharing tile table sorting by principal title instead of principal id

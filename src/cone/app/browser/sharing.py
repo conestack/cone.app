@@ -98,7 +98,9 @@ class SharingTable(Table):
                 principal_ids = model.aggregated_roles.keys()
             else:
                 principal_ids = principal_roles.keys()
-        ids = principal_ids
+        # XXX: currently always sorted by principal id. Fix to sort by
+        #      principal title, needs some refactoring though
+        ids = sorted(principal_ids)
         if order == 'desc':
             ids.reverse()
         for principal_id in ids[start:end]:

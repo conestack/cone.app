@@ -145,7 +145,10 @@ class TestBrowserResources(TileTestCase):
     def test_resources(self):
         # CSS Resource
         self.assertTrue(isinstance(cone.app.cfg.css, Properties))
-        self.assertEqual(cone.app.cfg.css.keys(), ['protected', 'public'])
+        self.assertEqual(
+            sorted(cone.app.cfg.css.keys()),
+            ['protected', 'public']
+        )
 
         # Contain CSS resources for authenticated users
         self.checkOutput('[...]', str(cone.app.cfg.css.protected))
@@ -155,7 +158,10 @@ class TestBrowserResources(TileTestCase):
 
         # JS Resources
         self.assertTrue(isinstance(cone.app.cfg.js, Properties))
-        self.assertEqual(cone.app.cfg.js.keys(), ['protected', 'public'])
+        self.assertEqual(
+            sorted(cone.app.cfg.js.keys()),
+            ['protected', 'public']
+        )
 
         # Contain CSS resources for authenticated users
         self.checkOutput('[...]', str(cone.app.cfg.js.protected))

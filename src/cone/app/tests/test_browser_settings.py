@@ -163,7 +163,7 @@ class TestBrowserSettings(TileTestCase):
         with self.layer.authenticated('manager'):
             response = settings_tab_content(settings['foo'], request)
         self.assertEqual(
-            response.body,
+            response.text,
             '<div class="foo"><div>Settings Contents</div></div>'
         )
 
@@ -172,4 +172,4 @@ class TestBrowserSettings(TileTestCase):
         self.checkOutput("""
         <div class="baz">...Exception: This tile can not be rendered for some
         reason\n</pre></div></div>
-        """, response.body)
+        """, response.text)
