@@ -1,3 +1,5 @@
+**``cone.app`` - Build Web Applications on top of the pyramid framework.**
+
 .. image:: https://img.shields.io/pypi/v/cone.app.svg
     :target: https://pypi.python.org/pypi/cone.app
     :alt: Latest PyPI version
@@ -11,9 +13,6 @@
 
 .. image:: https://coveralls.io/repos/github/bluedynamics/cone.app/badge.svg?branch=master
     :target: https://coveralls.io/github/bluedynamics/cone.app?branch=master
-
-
-**``cone.app`` - Build Web Applications on top of the pyramid framework.**
 
 
 Detailed Documentation
