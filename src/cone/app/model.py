@@ -399,7 +399,7 @@ class XMLProperties(Properties):
         self._init()
 
     def __call__(self):
-        file = open(object.__getattribute__(self, '_path'), 'w')
+        file = open(object.__getattribute__(self, '_path'), 'wb')
         file.write(self._xml_repr())
         file.close()
 
@@ -497,7 +497,8 @@ class ConfigProperties(Properties):
     def __call__(self):
         path = object.__getattribute__(self, '_path')
         config = self.config()
-        with open(path, 'wb') as configfile:
+        mode = 'wb' if IS_PY2 else 'w'
+        with open(path, mode) as configfile:
             config.write(configfile)
 
     def __getitem__(self, key):
@@ -529,7 +530,7 @@ class ConfigProperties(Properties):
             return None
 
     def __setattr__(self, name, value):
-        value = safe_encode(value, encoding=self.encoding)
+        value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
         self.config().set(self.properties_section, name, value)
 
     def __delitem__(self, name):
@@ -558,5 +559,5 @@ class ConfigProperties(Properties):
         data = object.__getattribute__(self, '_data')
         config = self.config()
         for key, value in data.items():
-            value = safe_encode(value, encoding=self.encoding)
+            value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
             config.set(self.properties_section, key, value)

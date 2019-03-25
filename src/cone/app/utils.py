@@ -43,10 +43,12 @@ def timestamp():
 class DatetimeHelper(object):
 
     def w_value(self, val):
+        if val is None:
+            return 'None'
         if isinstance(val, datetime):
             return self.dt_to_iso(val)
         if not isinstance(val, compat.UNICODE_TYPE):
-            val = str(val).decode('utf-8')
+            val = bytes(val).decode('utf-8')
         return val
 
     def r_value(self, val):
@@ -54,7 +56,7 @@ class DatetimeHelper(object):
             return self.dt_from_iso(val)
         except ValueError:
             if not isinstance(val, compat.UNICODE_TYPE):
-                val = str(val).decode('utf-8')
+                val = bytes(val).decode('utf-8')
             return val
 
     def dt_from_iso(self, str):

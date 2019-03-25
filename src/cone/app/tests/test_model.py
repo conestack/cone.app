@@ -106,17 +106,16 @@ class TestModel(NodeTestCase):
 
     def test_FactoryNode(self):
         class TestFactoryNode(FactoryNode):
-            factories = {
-                'foo': BaseNode,
-                'bar': BaseNode,
-            }
+            factories = odict()
+            factories['foo'] = BaseNode
+            factories['bar'] = BaseNode
         node = TestFactoryNode()
 
         # static factories
         self.assertTrue(str(node['foo']).startswith("<BaseNode object 'foo' at"))
         self.assertTrue(str(node['bar']).startswith("<BaseNode object 'bar' at"))
         self.expect_error(KeyError, lambda: node['baz'])
-        self.assertEqual(sorted([it for it in node]), ['bar', 'foo'])
+        self.assertEqual(list([it for it in node]), ['foo', 'bar'])
         self.assertTrue(IInvalidate.providedBy(node))
         self.assertEqual(node.values(), [node['foo'], node['bar']])
 
@@ -524,7 +523,10 @@ class TestModel(NodeTestCase):
             KeyError,
             lambda: props.__delitem__('inexistent')
         )
-        self.assertEqual(str(err), "u'property inexistent does not exist'")
+        self.assertEqual(
+            str(err).strip('u'),
+            "'property inexistent does not exist'"
+        )
 
         # Call and check results
         props()
@@ -621,15 +623,15 @@ class TestModel(NodeTestCase):
 
         # Call props and check result
         props()
-        with open(os.path.join(tempdir, 'props.cfg')) as file:
-            lines = file.read().split('\n')
+        with open(os.path.join(tempdir, 'props.cfg'), 'rb') as file:
+            lines = file.read().split(b'\n')
         self.assertEqual(lines, [
-            '[properties]',
-            'foo = foo',
-            'bar = bar',
-            'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
-            '',
-            ''
+            b'[properties]',
+            b'foo = foo',
+            b'bar = bar',
+            b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
+            b'',
+            b''
         ])
 
         # Create config properties from existing file
@@ -652,22 +654,22 @@ class TestModel(NodeTestCase):
 
         # Delete property
         err = self.expect_error(KeyError, lambda: props.__delitem__('inexistent'))
-        expected = "u'property inexistent does not exist'"
-        self.assertEqual(str(err), expected)
+        expected = "'property inexistent does not exist'"
+        self.assertEqual(str(err).strip('u'), expected)
 
         del props['foo']
         self.assertTrue(props.foo is None)
 
         # Call and check results
         props()
-        with open(os.path.join(tempdir, 'props.cfg')) as file:
-            lines = file.read().split('\n')
+        with open(os.path.join(tempdir, 'props.cfg'), 'rb') as file:
+            lines = file.read().split(b'\n')
         self.assertEqual(lines, [
-            '[properties]',
-            'bar = bar',
-            'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
-            '',
-            ''
+            b'[properties]',
+            b'bar = bar',
+            b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
+            b'',
+            b''
         ])
 
         # Cleanup
