@@ -32,8 +32,8 @@ Contributors
 Test coverage
 =============
 
-.. image :: https://secure.travis-ci.org/bluedynamics/cone.app.png
-  :target:  https://secure.travis-ci.org/bluedynamics/cone.app
+.. image:: https://travis-ci.org/bluedynamics/cone.app.svg?branch=master
+    :target: https://travis-ci.org/bluedynamics/cone.app
 
 Summary of the test coverage report::
 
