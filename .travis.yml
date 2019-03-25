@@ -23,6 +23,7 @@ install:
   - pip install .[test]
 
 script:
+  - echo "$(pwd)"
   - export TESTRUN_MARKER=True
   - python -m cone.app.tests.__init__
   - coverage run --source src/cone/app src/cone/app/tests/__init__.py
