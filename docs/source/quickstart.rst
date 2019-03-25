@@ -133,7 +133,7 @@ configuration for properly setting up the application looks like:
 Application Configuration
 -------------------------
 
-``cone.app`` uses `PasteDeploy <pythonpaste.org/deploy>`_ for application
+``cone.app`` uses `PasteDeploy <http://pastedeploy.readthedocs.io/en/latest/>`_ for application
 configuration. PasteDeploy defines a way to declare WSGI application
 configuration in an ``.ini`` file.
 

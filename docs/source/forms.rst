@@ -323,10 +323,10 @@ required integration code and shall be used for form tiles rendering to the
 Following customization attributes are considered:
 
 - **show_contextmenu**: Flag whether to render the context menu.
-  Defaults to ``True``
+  defaults to ``True``
 
 - **show_heading**: Flag whether to render a form heading.
-  Defaults to ``True``.
+  defaults to ``True``.
 
 - **form_heading**: Form heading text.
 
@@ -504,7 +504,7 @@ Add and Edit Forms
 Add Forms
 ~~~~~~~~~
 
-Plumbing bahaviors to render add forms to page *Content Area* or as overlay
+Plumbing behaviors to render add forms to page *Content Area* or as overlay
 form named ``ContentAddForm`` and ``OverlayAddForm`` exists in module
 ``cone.app.browser.authoring``.
 
@@ -523,7 +523,7 @@ corrsponding add form tile on it when being invoked.
 Edit Forms
 ~~~~~~~~~~
 
-Plumbing bahaviors to render edit forms to page *Content Area* or as overlay
+Plumbing behaviors to render edit forms to page *Content Area* or as overlay
 form named ``ContentEditForm`` and ``OverlayEditForm`` exists in module
 ``cone.app.browser.authoring``.
 

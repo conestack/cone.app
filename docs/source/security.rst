@@ -143,12 +143,12 @@ ALC Registry
 ------------
 
 A less immersive way for providing ACLs for model nodes is to use the
-ALC registry. The plumbing behavior ``cone.app.model.AppNode`` only returns
+ACL registry. The plumbing behavior ``cone.app.model.AppNode`` only returns
 the ``cone.app.security.DEFAULT_ACL`` if no dedicated ALC for this node has
 been registered in the registry.
 
 Registering a custom ACL for application root which grants view access to the
-application root model node for unauthenticated uses kools like so:
+application root model node for unauthenticated uses looks like so:
 
 .. code-block:: python
 
@@ -210,7 +210,7 @@ exists which provides dedicated permissions for the current authenticated user
 on application model nodes.
 
 Owner support for application model nodes is implemented as plumbing behavior
-and must be enabled explicitely for every application model node by applying
+and must be enabled explicitly for every application model node by applying
 this behavior.
 
 The ``cone.app.security.OwnerSupport`` behavior extends the model node by an
@@ -243,7 +243,7 @@ The ``cone.app.security.PrincipalACL`` behavior extends the model node by
 the ``role_inheritance`` property, which is used to define whether principal
 related ACL should be inherited from parent nodes and defaults to ``False``.
 
-Further the behavior hooks up to the ``__acl__`` proptety where default model
+Further the behavior hooks up to the ``__acl__`` property where default model
 node ACL gets extended by the principal related ACL.
 
 The property ``principal_roles`` is a dict like mapping where keys represent
