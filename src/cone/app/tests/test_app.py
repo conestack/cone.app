@@ -21,13 +21,13 @@ class TestApp(NodeTestCase):
         self.assertTrue('settings' in root.factories.keys())
 
         # Settings contains metadata.title by default
-        self.assertEqual(root['settings'].metadata.keys(), ['title'])
+        self.assertEqual(list(root['settings'].metadata.keys()), ['title'])
         self.assertEqual(root['settings'].metadata.title, u'settings')
 
         # Settings is displayed in navtree by default
         self.assertEqual(
-            root['settings'].properties.keys(),
-            ['skip_mainmenu', 'in_navtree', 'icon']
+            sorted(root['settings'].properties.keys()),
+            ['icon', 'in_navtree', 'skip_mainmenu']
         )
         self.assertFalse(root['settings'].properties.in_navtree)
         self.assertTrue(root['settings'].properties.skip_mainmenu)

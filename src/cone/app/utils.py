@@ -1,3 +1,4 @@
+from cone.app import compat
 from datetime import datetime
 import logging
 
@@ -24,13 +25,13 @@ def principal_data(principal_id):
 
 
 def safe_encode(value, encoding='utf-8'):
-    if isinstance(value, unicode):
+    if isinstance(value, compat.UNICODE_TYPE):
         value = value.encode(encoding)
     return value
 
 
 def safe_decode(value, encoding='utf-8'):
-    if not isinstance(value, unicode):
+    if not isinstance(value, compat.UNICODE_TYPE):
         value = value.decode(encoding)
     return value
 
@@ -44,7 +45,7 @@ class DatetimeHelper(object):
     def w_value(self, val):
         if isinstance(val, datetime):
             return self.dt_to_iso(val)
-        if not isinstance(val, unicode):
+        if not isinstance(val, compat.UNICODE_TYPE):
             val = str(val).decode('utf-8')
         return val
 
@@ -52,7 +53,7 @@ class DatetimeHelper(object):
         try:
             return self.dt_from_iso(val)
         except ValueError:
-            if not isinstance(val, unicode):
+            if not isinstance(val, compat.UNICODE_TYPE):
                 val = str(val).decode('utf-8')
             return val
 

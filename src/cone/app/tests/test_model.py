@@ -116,7 +116,7 @@ class TestModel(NodeTestCase):
         self.assertTrue(str(node['foo']).startswith("<BaseNode object 'foo' at"))
         self.assertTrue(str(node['bar']).startswith("<BaseNode object 'bar' at"))
         self.expect_error(KeyError, lambda: node['baz'])
-        self.assertEqual([it for it in node], ['foo', 'bar'])
+        self.assertEqual(sorted([it for it in node]), ['bar', 'foo'])
         self.assertTrue(IInvalidate.providedBy(node))
         self.assertEqual(node.values(), [node['foo'], node['bar']])
 
@@ -369,8 +369,8 @@ class TestModel(NodeTestCase):
         self.assertTrue(props.get('unprotected'))
 
         err = self.expect_error(KeyError, lambda: props['viewprotected'])
-        expected = 'u"No permission to access \'viewprotected\'"'
-        self.assertEqual(str(err), expected)
+        expected = '"No permission to access \'viewprotected\'"'
+        self.assertEqual(str(err).strip('u'), expected)
 
         self.assertTrue(props['unprotected'])
 
@@ -382,7 +382,10 @@ class TestModel(NodeTestCase):
             self.assertTrue(props.viewprotected)
             self.assertTrue(props.unprotected)
 
-            self.assertEqual(props.keys(), ['unprotected', 'viewprotected'])
+            self.assertEqual(
+                sorted(props.keys()),
+                ['unprotected', 'viewprotected']
+            )
             self.assertTrue(props.get('viewprotected'))
             self.assertTrue(props.get('unprotected'))
 

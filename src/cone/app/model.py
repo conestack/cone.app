@@ -1,4 +1,6 @@
 from cone.app.compat import configparser
+from cone.app.compat import IS_PY2
+from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
@@ -9,8 +11,8 @@ from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
 from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
-from cone.app.utils import DatetimeHelper
 from cone.app.utils import app_config
+from cone.app.utils import DatetimeHelper
 from cone.app.utils import safe_decode
 from cone.app.utils import safe_encode
 from node.behaviors import Adopt
@@ -43,7 +45,6 @@ from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
 import logging
 import os
-import types
 import uuid
 
 
@@ -459,7 +460,7 @@ class XMLProperties(Properties):
         data = object.__getattribute__(self, '_data')
         for key, value in data.items():
             sub = etree.SubElement(root, key)
-            if type(value) in [types.ListType, types.TupleType]:
+            if type(value) in ITER_TYPES:
                 for item in value:
                     item_elem = etree.SubElement(sub, 'item')
                     item_elem.text = dth.w_value(item)
