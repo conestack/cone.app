@@ -23,10 +23,10 @@ install:
   - pip install .[test]
 
 script:
-  - |
-    export TESTRUN_MARKER=True
-    bin/python -m coverage run --source src/cone/app src/cone/app/tests/__init__.py
-    bin/python -m report
+  - export TESTRUN_MARKER=True
+  - python -m cone.app.tests.__init__
 
 after_success:
-  - bin/coveralls
+  - coverage run --source src/cone/app src/cone/app/tests/__init__.py
+  - coverage report
+  - coveralls
