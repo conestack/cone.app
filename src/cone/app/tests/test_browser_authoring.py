@@ -68,9 +68,9 @@ class TestBrowserAuthoring(TileTestCase):
         request = self.layer.new_request()
         res = render_form(model, request, 'someform')
 
-        self.assertTrue(res.body.find('<!DOCTYPE html>') > -1)
-        self.assertTrue(res.body.find('<form class="ajax"') > -1)
-        self.assertTrue(res.body.find('id="form-someform"') > -1)
+        self.assertTrue(res.text.find('<!DOCTYPE html>') > -1)
+        self.assertTrue(res.text.find('<form class="ajax"') > -1)
+        self.assertTrue(res.text.find('id="form-someform"') > -1)
 
         # Ajax flag set, form has been submitted to hidden iframe. Form gets
         # rendered to dedicated container and hooked up to parent frame in
@@ -78,8 +78,8 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax'] = '1'
         res = render_form(model, request, 'someform')
 
-        self.assertTrue(res.body.find('<div id="ajaxform">') > -1)
-        self.assertTrue(res.body.find('parent.bdajax.render_ajax_form') > -1)
+        self.assertTrue(res.text.find('<div id="ajaxform">') > -1)
+        self.assertTrue(res.text.find('parent.bdajax.render_ajax_form') > -1)
 
         # Form rendering tile. Has been introduced to handle node information
         # in add forms and is used in overlay and edit forms as mixin as well.
@@ -1008,18 +1008,18 @@ class TestBrowserAuthoring(TileTestCase):
             res = overlayform(model, request)
 
         expected = '<div id="ajaxform">'
-        self.assertTrue(res.body.startswith(expected))
+        self.assertTrue(res.text.startswith(expected))
         expected = '<form action="http://example.com/root/overlayform"'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '<div class="errormessage">Title is required</div>'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '<script'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = (
             "parent.bdajax.render_ajax_form("
             "child, '#ajax-overlay .overlay_content', 'inner', false);"
         )
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
 
         # Case form success
         request = self.layer.new_request()
@@ -1030,17 +1030,17 @@ class TestBrowserAuthoring(TileTestCase):
             res = overlayform(model, request)
 
         expected = '<div id="ajaxform">'
-        self.assertTrue(res.body.startswith(expected))
-        self.assertFalse(res.body.find('<form') > -1)
+        self.assertTrue(res.text.startswith(expected))
+        self.assertFalse(res.text.find('<form') > -1)
         expected = '<script'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = (
             "parent.bdajax.render_ajax_form("
             "child, '#ajax-overlay .overlay_content', 'inner', ["
         )
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '"close": true,'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
 
     @testing.reset_node_info_registry
     def test_overlay_add(self):
@@ -1117,18 +1117,18 @@ class TestBrowserAuthoring(TileTestCase):
             res = overlayadd(root, request)
 
         expected = '<div id="ajaxform">'
-        self.assertTrue(res.body.startswith(expected))
+        self.assertTrue(res.text.startswith(expected))
         expected = '<form action="http://example.com/root/overlayadd"'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '<div class="errormessage">Title is required</div>'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '<script'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = (
             "parent.bdajax.render_ajax_form("
             "child, '#ajax-overlay .overlay_content', 'inner', false);"
         )
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(root.keys(), [])
 
         # Case form success
@@ -1142,17 +1142,17 @@ class TestBrowserAuthoring(TileTestCase):
             res = overlayadd(root, request)
 
         expected = '<div id="ajaxform">'
-        self.assertTrue(res.body.startswith(expected))
-        self.assertFalse(res.body.find('<form') > -1)
+        self.assertTrue(res.text.startswith(expected))
+        self.assertFalse(res.text.find('<form') > -1)
         expected = '<script'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = (
             "parent.bdajax.render_ajax_form("
             "child, '#ajax-overlay .overlay_content', 'inner', ["
         )
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '"close": true,'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(root.keys(), ['new'])
         self.assertEqual(root['new'].attrs.title, 'Child')
 
@@ -1227,18 +1227,18 @@ class TestBrowserAuthoring(TileTestCase):
             res = overlayedit(model, request)
 
         expected = '<div id="ajaxform">'
-        self.assertTrue(res.body.startswith(expected))
+        self.assertTrue(res.text.startswith(expected))
         expected = '<form action="http://example.com/model/overlayedit"'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '<div class="errormessage">Title is required</div>'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '<script'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = (
             "parent.bdajax.render_ajax_form("
             "child, '#ajax-overlay .overlay_content', 'inner', false);"
         )
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(model.attrs.title, 'My Title')
 
         # Case form success
@@ -1251,15 +1251,15 @@ class TestBrowserAuthoring(TileTestCase):
             res = overlayedit(model, request)
 
         expected = '<div id="ajaxform">'
-        self.assertTrue(res.body.startswith(expected))
-        self.assertFalse(res.body.find('<form') > -1)
+        self.assertTrue(res.text.startswith(expected))
+        self.assertFalse(res.text.find('<form') > -1)
         expected = '<script'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = (
             "parent.bdajax.render_ajax_form("
             "child, '#ajax-overlay .overlay_content', 'inner', ["
         )
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         expected = '"close": true,'
-        self.assertTrue(res.body.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(model.attrs.title, 'New Title')
