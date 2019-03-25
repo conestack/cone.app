@@ -261,125 +261,155 @@ class SecurityTest(NodeTestCase):
         node.principal_roles['otheruser'] = ['editor']
         node.principal_roles['group:some_group'] = ['editor', 'manager']
 
-        self.assertEqual(
-            node.__acl__[0],
-            ('Allow', 'someuser', [
-                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-                'view', 'paste', 'manage_permissions', 'delete'
-            ])
-        )
-        self.assertEqual(
-            node.__acl__[1],
-            ('Allow', 'otheruser', ['edit', 'add', 'list', 'view'])
-        )
-        self.assertEqual(
-            node.__acl__[2],
-            ('Allow', 'group:some_group', [
-                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-                'view', 'paste', 'manage_permissions', 'delete'
-            ])
-        )
-        self.assertEqual(
-            node.__acl__[3],
-            ('Allow', 'system.Authenticated', ['view'])
-        )
-        self.assertEqual(
-            node.__acl__[4],
-            ('Allow', 'role:viewer', ['view', 'list'])
-        )
-        self.assertEqual(
-            node.__acl__[-1],
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        )
+        def find_rule(acl, who):
+            for rule in acl:
+                if rule[1] == who:
+                    return rule
+
+        rule = find_rule(node.__acl__, 'someuser')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'someuser')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+            'view', 'paste', 'manage_permissions', 'delete'
+        ]))
+
+        rule = find_rule(node.__acl__, 'otheruser')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'otheruser')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'edit', 'add', 'list', 'view'
+        ]))
+
+        rule = find_rule(node.__acl__, 'group:some_group')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'group:some_group')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+            'view', 'paste', 'manage_permissions', 'delete'
+        ]))
+
+        rule = find_rule(node.__acl__, 'system.Authenticated')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'system.Authenticated')
+        self.assertEqual(rule[2], ['view'])
+
+        rule = find_rule(node.__acl__, 'role:viewer')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'role:viewer')
+        self.assertEqual(sorted(rule[2]), sorted(['view', 'list']))
+
+        rule = node.__acl__[-1]
+        self.assertEqual(rule[0], 'Deny')
+        self.assertEqual(rule[1], 'system.Everyone')
+        self.assertEqual(rule[2], ALL_PERMISSIONS)
 
         # PrincipalACL role inheritance
         child = node['child'] = MyPrincipalACLNode()
         child.principal_roles['someuser'] = ['editor']
-        self.assertEqual(
-            child.__acl__[0],
-            ('Allow', 'someuser', ['edit', 'add', 'list', 'view'])
-        )
-        self.assertEqual(
-            child.__acl__[1],
-            ('Allow', 'system.Authenticated', ['view'])
-        )
-        self.assertEqual(
-            child.__acl__[2],
-            ('Allow', 'role:viewer', ['view', 'list'])
-        )
-        self.assertEqual(
-            child.__acl__[-1],
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        )
+
+        rule = find_rule(child.__acl__, 'someuser')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'someuser')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'edit', 'add', 'list', 'view'
+        ]))
+
+        rule = find_rule(child.__acl__, 'system.Authenticated')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'system.Authenticated')
+        self.assertEqual(rule[2], ['view'])
+
+        rule = find_rule(child.__acl__, 'role:viewer')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'role:viewer')
+        self.assertEqual(sorted(rule[2]), sorted(['view', 'list']))
+
+        rule = child.__acl__[-1]
+        self.assertEqual(rule[0], 'Deny')
+        self.assertEqual(rule[1], 'system.Everyone')
+        self.assertEqual(rule[2], ALL_PERMISSIONS)
 
         subchild = child['child'] = MyPrincipalACLNode()
         subchild.role_inheritance = True
         subchild.principal_roles['otheruser'] = ['admin']
         self.assertEqual(subchild.aggregated_roles_for('inexistent'), [])
         self.assertEqual(
-            subchild.aggregated_roles_for('someuser'),
-            ['manager', 'editor']
+            sorted(subchild.aggregated_roles_for('someuser')),
+            sorted(['manager', 'editor'])
         )
         self.assertEqual(
-            subchild.aggregated_roles_for('otheruser'),
-            ['admin', 'editor']
+            sorted(subchild.aggregated_roles_for('otheruser')),
+            sorted(['admin', 'editor'])
         )
 
-        self.assertEqual(
-            subchild.__acl__[0],
-            ('Allow', 'someuser', [
-                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-                'view', 'paste', 'manage_permissions', 'delete'
-            ])
-        )
-        self.assertEqual(
-            subchild.__acl__[1],
-            ('Allow', 'otheruser', [
-                'cut', 'edit', 'copy', 'list', 'add', 'change_state', 'view',
-                'paste', 'manage_permissions', 'delete'
-            ])
-        )
-        self.assertEqual(
-            subchild.__acl__[2],
-            ('Allow', 'group:some_group', [
-                'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-                'view', 'paste', 'manage_permissions', 'delete'
-            ])
-        )
-        self.assertEqual(
-            subchild.__acl__[3],
-            ('Allow', 'system.Authenticated', ['view'])
-        )
-        self.assertEqual(
-            subchild.__acl__[-1],
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        )
+        rule = find_rule(subchild.__acl__, 'someuser')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'someuser')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+            'view', 'paste', 'manage_permissions', 'delete'
+        ]))
+
+        rule = find_rule(subchild.__acl__, 'otheruser')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'otheruser')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'cut', 'edit', 'copy', 'list', 'add', 'change_state', 'view',
+            'paste', 'manage_permissions', 'delete'
+        ]))
+
+        rule = find_rule(subchild.__acl__, 'group:some_group')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'group:some_group')
+        self.assertEqual(sorted(rule[2]), sorted([
+            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
+            'view', 'paste', 'manage_permissions', 'delete'
+        ]))
+
+        rule = find_rule(subchild.__acl__, 'system.Authenticated')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'system.Authenticated')
+        self.assertEqual(rule[2], ['view'])
+
+        rule = subchild.__acl__[-1]
+        self.assertEqual(rule[0], 'Deny')
+        self.assertEqual(rule[1], 'system.Everyone')
+        self.assertEqual(rule[2], ALL_PERMISSIONS)
 
         # Principal roles get inherited even if some parent does not provide
         # principal roles
         child = node['no_principal_roles'] = BaseNode()
         subchild = child['no_principal_roles'] = MyPrincipalACLNode()
         self.assertEqual(
-            subchild.aggregated_roles_for('group:some_group'),
-            ['manager', 'editor']
+            sorted(subchild.aggregated_roles_for('group:some_group')),
+            sorted(['manager', 'editor'])
         )
 
         # If principal role found which is not provided by plumbing endpoint
         # acl, this role does not grant any permissions
         node = MyPrincipalACLNode()
         node.principal_roles['someuser'] = ['inexistent_role']
-        self.assertEqual(
-            node.__acl__[0],
-            ('Allow', 'someuser', [])
-        )
-        self.assertEqual(
-            node.__acl__[1],
-            ('Allow', 'system.Authenticated', ['view'])
-        )
-        self.assertEqual(
-            node.__acl__[2],
-            ('Allow', 'role:viewer', ['view', 'list'])
-        )
+
+        rule = find_rule(node.__acl__, 'someuser')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'someuser')
+        self.assertEqual(rule[2], [])
+
+        rule = find_rule(node.__acl__, 'system.Authenticated')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'system.Authenticated')
+        self.assertEqual(rule[2], ['view'])
+
+        rule = find_rule(node.__acl__, 'role:viewer')
+        self.assertEqual(rule[0], 'Allow')
+        self.assertEqual(rule[1], 'role:viewer')
+        self.assertEqual(sorted(rule[2]), sorted(['view', 'list']))
+
+        rule = node.__acl__[-1]
+        self.assertEqual(rule[0], 'Deny')
+        self.assertEqual(rule[1], 'system.Everyone')
+        self.assertEqual(rule[2], ALL_PERMISSIONS)
         self.assertEqual(
             node.__acl__[-1],
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
@@ -403,9 +433,10 @@ class SecurityTest(NodeTestCase):
         cone.app.cfg.auth = object()
 
         authenticate(self.layer.new_request(), 'foo', 'foo')
+
         self.check_output("""
-        <LogRecord: cone.app, 30, ...security.py, ...,
-        "Authentication plugin <type 'object'> raised an Exception while trying
+        <LogRecord: cone.app, ..., ...security.py, ...,
+        "Authentication plugin <... 'object'> raised an Exception while trying
         to authenticate: 'object' object has no attribute 'users'">
         """, str(handler.record))
 
