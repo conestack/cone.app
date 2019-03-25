@@ -40,7 +40,7 @@ class TestBrowserLayout(TileTestCase):
         res = render_main_template(model, request)
         self.checkOutput("""
         <!DOCTYPE html...<div>Content</div>...</html>
-        """, res.body)
+        """, res.text)
 
         with self.layer.hook_tile_reg():
             @tile(name='othername', permission='login')
@@ -51,7 +51,7 @@ class TestBrowserLayout(TileTestCase):
         res = render_main_template(model, request, contenttile='othername')
         self.checkOutput("""
         <!DOCTYPE html...<div>Content</div>...</html>
-        """, res.body)
+        """, res.text)
 
         # Switch back to default main template
         main = 'cone.app.browser:templates/main.pt'
@@ -60,19 +60,19 @@ class TestBrowserLayout(TileTestCase):
         # Non authenticated users only gets unprotected content tile, no
         # controls like navtree, mainmenu, etc
         res = render_main_template(model, request, contenttile='othername')
-        self.assertFalse(res.body.find('id="mainmenu"') > -1)
-        self.assertFalse(res.body.find('id="navtree"') > -1)
-        self.assertFalse(res.body.find('id="personaltools"') > -1)
-        self.assertTrue(res.body.find('<div>Content</div>') > -1)
+        self.assertFalse(res.text.find('id="mainmenu"') > -1)
+        self.assertFalse(res.text.find('id="navtree"') > -1)
+        self.assertFalse(res.text.find('id="personaltools"') > -1)
+        self.assertTrue(res.text.find('<div>Content</div>') > -1)
 
         # Authenticate non privileged
         with self.layer.authenticated('max'):
             res = render_main_template(model, request, contenttile='othername')
 
         # All tiles protected by 'view' permission are now available to the user
-        self.assertTrue(res.body.find('id="mainmenu"') > -1)
-        self.assertTrue(res.body.find('id="navtree"') > -1)
-        self.assertTrue(res.body.find('id="personaltools"') > -1)
+        self.assertTrue(res.text.find('id="mainmenu"') > -1)
+        self.assertTrue(res.text.find('id="navtree"') > -1)
+        self.assertTrue(res.text.find('id="personaltools"') > -1)
 
     def test_ProtectedContentTile(self):
         # A login form should be rendered instead of the content for anonymous

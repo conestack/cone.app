@@ -1039,7 +1039,7 @@ class TestBrowserAuthoring(TileTestCase):
             "child, '#ajax-overlay .overlay_content', 'inner', ["
         )
         self.assertTrue(res.text.find(expected) > -1)
-        expected = '"close": true,'
+        expected = '"close": true'
         self.assertTrue(res.text.find(expected) > -1)
 
     @testing.reset_node_info_registry
@@ -1151,7 +1151,7 @@ class TestBrowserAuthoring(TileTestCase):
             "child, '#ajax-overlay .overlay_content', 'inner', ["
         )
         self.assertTrue(res.text.find(expected) > -1)
-        expected = '"close": true,'
+        expected = '"close": true'
         self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(root.keys(), ['new'])
         self.assertEqual(root['new'].attrs.title, 'Child')
@@ -1260,6 +1260,6 @@ class TestBrowserAuthoring(TileTestCase):
             "child, '#ajax-overlay .overlay_content', 'inner', ["
         )
         self.assertTrue(res.text.find(expected) > -1)
-        expected = '"close": true,'
+        expected = '"close": true'
         self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(model.attrs.title, 'New Title')

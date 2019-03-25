@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import Toolbar
 from cone.app.browser.contents import ContentsTile
@@ -261,7 +262,7 @@ def wrap_ajax_target(rendered, widget, data):
         referencable = widget.attrs['referencable']
         if callable(referencable):
             referencable = referencable(widget, data)
-        if type(referencable) in [types.ListType, types.TupleType]:
+        if type(referencable) in compat.ITER_TYPES:
             referencable = ','.join(referencable)
         root = widget.attrs['root']
         if callable(root):

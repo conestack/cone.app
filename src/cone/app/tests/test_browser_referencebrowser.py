@@ -43,7 +43,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             })
         self.checkOutput("""
         <span
-        ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
+        ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         class="referencebrowser" id="input-ref" name="ref" readonly="readonly"
         type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>
         """, widget())
@@ -69,7 +69,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [ExtractionError('Ref Required')])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="" /><input name="ref.uid" type="hidden" value="" /></span>
         """, widget(data=data))
@@ -82,7 +82,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(data=data))
@@ -100,7 +100,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'referencable': 'ref_node',
             })
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>
         """, widget())
@@ -108,14 +108,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Extract from request and render widget with data
         data = widget.extract(request)
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(data=data))
 
         # Render widget with request
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=uid&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
         class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
         value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(request=request))
@@ -164,7 +164,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                 'referencable': 'ref_node',
             })
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="referencebrowser" id="input-ref" multiple="multiple"
         name="ref" /></span>
@@ -194,7 +194,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [ExtractionError('Ref Required',)])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="referencebrowser required" id="input-ref" multiple="multiple"
         name="ref" required="required"><option
@@ -209,7 +209,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(data.errors, [])
 
         self.checkOutput("""
-        <span ajax:target="http://example.com/foo?selected=&root=/&referencable=ref_node"><input
+        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="referencebrowser required" id="input-ref"
         multiple="multiple" name="ref" required="required"><option
@@ -260,7 +260,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget.attrs['root'] = '/'
         expected = (
             '<span ajax:target='
-            '"http://example.com?selected=&root=/&referencable=ref_node"'
+            '"http://example.com?referencable=ref_node&root=/&selected="'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
@@ -288,7 +288,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget.attrs['referencable'] = ['ref_node', 'ref_node_2']
         expected = (
             '<span ajax:target='
-            '"http://example.com?selected=&root=/&referencable=ref_node,ref_node_2"'
+            '"http://example.com?referencable=ref_node,ref_node_2&root=/&selected="'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
@@ -298,7 +298,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data.value = ('sel_ref', 'Selected Reference')
         expected = (
             '<span ajax:target='
-            '"http://example.com?selected=sel_ref&root=/&referencable=ref_node"'
+            '"http://example.com?referencable=ref_node&root=/&selected=sel_ref"'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
@@ -308,7 +308,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data.value = ('sel_ref', 'sel_ref_2')
         expected = (
             '<span ajax:target='
-            '"http://example.com?selected=sel_ref,sel_ref_2&root=/&referencable=ref_node"'
+            '"http://example.com?referencable=ref_node&root=/&selected=sel_ref,sel_ref_2"'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
@@ -501,7 +501,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         self.assertTrue(isinstance(action, LinkAction))
 
-        expected = 'http://example.com/model?selected=&root=/&referencable=ref_node'
+        expected = 'http://example.com/model?referencable=ref_node&root=/&selected='
         self.assertEqual(action.target, expected)
 
         expected = 'My Node'
