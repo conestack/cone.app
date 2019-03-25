@@ -119,7 +119,7 @@ Create ``example.ini`` and add:
     debug = true
 
     [server:main]
-    use = egg:waitress#http
+    use = egg:waitress#main
     host = 0.0.0.0
     port = 8081
 
@@ -215,6 +215,7 @@ containing.
 .. code-block:: python
 
     from cone.app import main_hook
+    from cone.example.browser import static_resources
     import cone.app
 
     @main_hook
@@ -223,9 +224,7 @@ containing.
         this plugin.
         """
         # register static resources view
-        config.add_view(
-            'cone.example.browser.static_resources',
-            name='example-static')
+        config.add_view(static_resources, name='example-static')
 
         # register static resources to be delivered
         cone.app.cfg.css.public.append('example-static/example.css')
