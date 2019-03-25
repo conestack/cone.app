@@ -217,8 +217,9 @@ class TestBrowserTable(TileTestCase):
         # Sort header with query white list param
         expected = (
             'ajax:target="http://example.com/'
-            '?sort=col_2&amp;b_page=1&amp;foo=bar&amp;order=desc&amp;size=10"'
+            '?b_page=1&amp;foo=bar&amp;order=desc&amp;size=10&amp;sort=col_2"'
         )
+
         self.assertTrue(rendered.find(expected) > -1)
 
         # Structure content

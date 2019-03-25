@@ -174,7 +174,7 @@ class Batch(Tile):
 
     @property
     def _siderange(self):
-        return self.batchrange / 2
+        return self.batchrange // 2
 
     @property
     def _left_over_diff(self):
@@ -228,7 +228,7 @@ class BatchedItemsBatch(Batch):
         path = node_path(self.model)
         count = self.parent.item_count
         slice_size = self.parent.slice_size
-        pages = count / slice_size
+        pages = count // slice_size
         if count % slice_size != 0:
             pages += 1
         current = self.parent.current_page
@@ -492,8 +492,11 @@ class BatchedItems(Tile):
         """Current search filter term.
         """
         term = self.request.params.get('term')
-        return compat.unquote(
-            term.encode('utf-8')).decode('utf-8') if term else term
+        if term:
+            term = term.encode('utf-8') if compat.IS_PY2 else term
+            term = compat.unquote(term)
+            term = term.decode('utf-8') if compat.IS_PY2 else term
+        return term
 
     @property
     def filter_target(self):

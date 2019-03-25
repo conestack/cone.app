@@ -1,9 +1,15 @@
 #!/bin/sh
-clear
 export TESTRUN_MARKER=True
+TEST="bin/python -m cone.app.tests.__init__"
+
+clear
+
 if [ -x "$(which python)" ]; then
-    ./py2/bin/python -m cone.app.tests.__init__
+    ./py2/$TEST
 fi
+
+echo ""
+
 if [ -x "$(which python3)" ]; then
-    ./py3/bin/python -m cone.app.tests.__init__
+    ./py3/$TEST
 fi

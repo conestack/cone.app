@@ -1,3 +1,4 @@
+from cone.app import compat
 from cone.app import testing
 from cone.app.browser import set_related_view
 from cone.app.browser.contents import ContentsTile
@@ -18,7 +19,6 @@ from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Deny
 from pyramid.security import Everyone
-import urllib
 
 
 class NeverShownChild(BaseNode):
@@ -170,8 +170,8 @@ class TestBrowserContents(TileTestCase):
         self.assertTrue(rendered.find(expected) != -1)
 
         expected = (
-            'http://example.com/?sort=created&amp;'
-            'order=desc&amp;b_page=1&amp;size=15'
+            'http://example.com/?b_page=1&amp;'
+            'order=desc&amp;size=15&amp;sort=created'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -187,8 +187,8 @@ class TestBrowserContents(TileTestCase):
         self.assertTrue(rendered.find(expected) != -1)
 
         expected = (
-            'http://example.com/?sort=created&amp;'
-            'order=desc&amp;b_page=0&amp;size=15'
+            'http://example.com/?b_page=0&amp;'
+            'order=desc&amp;size=15&amp;sort=created'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -198,8 +198,8 @@ class TestBrowserContents(TileTestCase):
             rendered = contents.batch
 
         expected = (
-            'http://example.com/?sort=modified&amp;'
-            'order=desc&amp;b_page=0&amp;size=15'
+            'http://example.com/?b_page=0&amp;'
+            'order=desc&amp;size=15&amp;sort=modified'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -230,8 +230,8 @@ class TestBrowserContents(TileTestCase):
             request.params['b_page'] = '1'
             rendered = render_tile(model, request, 'contents')
             expected = (
-                '<a href="http://example.com/?sort=title&amp;'
-                'order=desc&amp;b_page=1&amp;size=15"'
+                '<a href="http://example.com/?b_page=1&amp;'
+                'order=desc&amp;size=15&amp;sort=title"'
             )
             self.assertTrue(rendered.find(expected) != -1)
 
@@ -249,7 +249,7 @@ class TestBrowserContents(TileTestCase):
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            cut_url = urllib.quote(make_url(request, node=model['child']))
+            cut_url = compat.quote(make_url(request, node=model['child']))
             request.cookies['cone.app.copysupport.cut'] = cut_url
             rendered = render_tile(model, request, 'contents')
 
@@ -377,4 +377,4 @@ class TestBrowserContents(TileTestCase):
 
         with self.layer.authenticated('max'):
             res = listing(model, request)
-        self.assertTrue(res.body.startswith('<!DOCTYPE html>'))
+        self.assertTrue(res.text.startswith('<!DOCTYPE html>'))

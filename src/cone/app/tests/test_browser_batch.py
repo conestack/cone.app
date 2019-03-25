@@ -506,7 +506,7 @@ class TestBrowserBatch(TileTestCase):
         batched_items.query_whitelist = ['a', 'b']
         batched_items.request.params['a'] = 'a'
 
-        self.assertEqual(batched_items.make_query({'c': 'c'}), '?a=a&c=c&b=')
+        self.assertEqual(batched_items.make_query({'c': 'c'}), '?a=a&b=&c=c')
 
         # A query parameter which already exists on request gets overwritten
         self.assertEqual(batched_items.make_query({'a': 'b'}), '?a=b&b=')
@@ -516,7 +516,7 @@ class TestBrowserBatch(TileTestCase):
         # batched items implementation.
         self.assertEqual(
             batched_items.make_url(dict(c='c')),
-            u'http://example.com/container?a=a&c=c&b='
+            u'http://example.com/container?a=a&b=&c=c'
         )
 
         # It's also possible to pass a model path to ``make_url`` to avoid
@@ -524,7 +524,7 @@ class TestBrowserBatch(TileTestCase):
         path = node_path(model)
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path),
-            u'http://example.com/container?a=a&c=c&b='
+            u'http://example.com/container?a=a&b=&c=c'
         )
 
         # ``BatchedItems`` plumbs ``RelatedViewConsumer`` and considers
@@ -534,19 +534,19 @@ class TestBrowserBatch(TileTestCase):
 
         self.assertEqual(
             batched_items.make_url(dict(c='c')),
-            u'http://example.com/container?a=&c=c&b='
+            u'http://example.com/container?a=&b=&c=c'
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), include_view=True),
-            u'http://example.com/container/someview?a=&c=c&b='
+            u'http://example.com/container/someview?a=&b=&c=c'
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path),
-            u'http://example.com/container?a=&c=c&b='
+            u'http://example.com/container?a=&b=&c=c'
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path, include_view=True),
-            u'http://example.com/container/someview?a=&c=c&b='
+            u'http://example.com/container/someview?a=&b=&c=c'
         )
 
         # Default slice size
@@ -576,7 +576,7 @@ class TestBrowserBatch(TileTestCase):
         self.assertEqual(batched_items.filter_term, u'Hello')
         self.assertEqual(
             batched_items.slice_target,
-            u'http://example.com/container?a=a&term=Hello&b=b'
+            u'http://example.com/container?a=a&b=b&term=Hello'
         )
 
         # Test ``filter_target``

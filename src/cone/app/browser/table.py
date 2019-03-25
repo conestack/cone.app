@@ -85,8 +85,11 @@ class Table(Tile):
     @property
     def filter_term(self):
         term = self.request.params.get('term')
-        return compat.unquote(
-            term.encode('utf-8')).decode('utf-8') if term else term
+        if term:
+            term = term.encode('utf-8') if compat.IS_PY2 else term
+            term = compat.unquote(term)
+            term = term.decode('utf-8') if compat.IS_PY2 else term
+        return term
 
     @property
     def sort_column(self):
@@ -209,7 +212,7 @@ class TableBatch(Batch):
         path = node_path(self.model)
         count = self.table_tile.item_count
         slicesize = self.table_tile.slicesize
-        pages = count / slicesize
+        pages = count // slicesize
         if count % slicesize != 0:
             pages += 1
         current = self.request.params.get('b_page', '0')
