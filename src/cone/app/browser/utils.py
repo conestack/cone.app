@@ -1,5 +1,6 @@
 from cone.app import compat
 from cone.app.utils import app_config
+from cone.app.utils import format_traceback
 from cone.app.utils import safe_encode
 from cone.app.utils import safe_decode
 from pyramid.i18n import TranslationStringFactory
@@ -123,6 +124,4 @@ def request_property(func):
 
 
 def format_traceback():
-    etype, value, tb = sys.exc_info()
-    ret = ''.join(traceback.format_exception(etype, value, tb))
-    return '<pre>%s</pre>' % ret
+    return '<pre>{}</pre>'.format(format_traceback())

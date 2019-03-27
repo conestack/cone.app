@@ -5,6 +5,8 @@ from cone.app.model import AppRoot
 from cone.app.model import AppSettings
 from cone.app.model import Layout
 from cone.app.model import Properties
+from cone.app.utils import format_traceback
+from node.ext.ugm.file import Ugm as FileUgm
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -12,8 +14,9 @@ from pyramid.static import static_view
 from yafowil.resources import YafowilResources as YafowilResourcesBase
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
-from zope.interface import Interface
+from zope.deprecation import deprecated
 from zope.interface import implementer
+from zope.interface import Interface
 import logging
 import pyramid_chameleon
 import pyramid_zcml
@@ -33,22 +36,25 @@ cfg.main_template = 'cone.app.browser:templates/main.pt'
 # default node icon
 cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 
+# XXX: move resource registration to browser package
+# XXX: support developmenet and production mode
+
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
     '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
     '++resource++bdajax/bdajax_bs3.js',
-    'static/public.js',
+    'static/public.js'
 ]
 cfg.js.protected = [
-    'static/protected.js',
+    'static/protected.js'
 ]
 
 # CSS Resources
 cfg.css = Properties()
 
-# dev
+# development
 cfg.css.public = [
     'static/jqueryui/jquery-ui-1.10.3.custom.css',
     'static/bootstrap/css/bootstrap.css',
@@ -56,7 +62,7 @@ cfg.css.public = [
     'static/ionicons/css/ionicons.css',
     'static/typeahead/typeahead.css',
     '++resource++bdajax/bdajax_bs3.css',
-    'static/styles.css',
+    'static/styles.css'
 ]
 
 # production
@@ -65,23 +71,25 @@ cfg.css.public = [
 #     'static/bootstrap/css/bootstrap.min.css',
 #     'static/bootstrap/css/bootstrap-theme.min.css',
 #     'static/ionicons/css/ionicons.css',
-#     '++resource++bdajax/bdajax_bootstrap_3.css',
-#     'static/styles.css',
+#     'static/typeahead/typeahead.css',
+#     '++resource++bdajax/bdajax_bs3.css',
+#     'static/styles.css'
 # ]
+
 cfg.css.protected = list()
 
 # JS and CSS Assets to publish merged
 cfg.merged = Properties()
 cfg.merged.js = Properties()
 
-# dev
+# development
 cfg.merged.js.public = [
     (static_resources, 'jquery-1.9.1.js'),
     (static_resources, 'jquery.migrate-1.2.1.js'),
     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
     (static_resources, 'bootstrap/js/bootstrap.js'),
     (static_resources, 'typeahead/typeahead.bundle.js'),
-    (static_resources, 'cookie_functions.js'),
+    (static_resources, 'cookie_functions.js')
 ]
 
 # production
@@ -90,6 +98,8 @@ cfg.merged.js.public = [
 #     (static_resources, 'jquery.migrate-1.2.1.min.js'),
 #     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
 #     (static_resources, 'bootstrap/js/bootstrap.min.js'),
+#     (static_resources, 'typeahead/typeahead.bundle.js'),
+#     (static_resources, 'cookie_functions.js')
 # ]
 
 cfg.merged.js.protected = list()
@@ -100,7 +110,7 @@ cfg.merged.css.protected = list()
 
 cfg.merged.print_css = Properties()
 cfg.merged.print_css.public = [
-    (static_resources, 'print.css'),
+    (static_resources, 'print.css')
 ]
 cfg.merged.print_css.protected = list()
 
@@ -144,8 +154,11 @@ def register_config(key, factory):
     factories[key] = factory
 
 
-# B/C - will be removed as of cone.app 1.1
+# B/C
 register_plugin_config = register_config
+deprecated('register_plugin_config', """
+``cone.app.register_plugin_config`` is deprecated as of cone.app 1.0 and will
+be removed in cone.app 1.1. Use ``cone.app.register_config`` instead.""")
 
 
 def register_entry(key, factory):
@@ -155,19 +168,14 @@ def register_entry(key, factory):
     root.factories[key] = factory
 
 
-# B/C - will be removed as of cone.app 1.1
+# B/C
 register_plugin = register_entry
+deprecated('register_plugin', """
+``cone.app.register_plugin`` is deprecated as of cone.app 1.0 and will
+be removed in cone.app 1.1. Use ``cone.app.register_entry`` instead.""")
 
 
 main_hooks = list()
-
-
-def register_main_hook(callback):
-    """Register function to get called on application startup.
-
-    # B/C - will be removed as of cone.app 1.1
-    """
-    main_hooks.append(callback)
 
 
 def main_hook(func):
@@ -177,6 +185,18 @@ def main_hook(func):
     """
     main_hooks.append(func)
     return func
+
+
+# B/C
+def register_main_hook(callback):
+    """Register function to get called on application startup.
+    """
+    main_hooks.append(callback)
+
+
+deprecated('register_main_hook', """
+``cone.app.register_main_hook`` is deprecated as of cone.app 1.0 and will
+be removed in cone.app 1.1. Use ``cone.app.main_hook`` instead.""")
 
 
 def get_root(environ=None):
@@ -191,6 +211,75 @@ def auth_tkt_factory(**kwargs):
 
 def acl_factory(**kwargs):
     return ACLAuthorizationPolicy()
+
+
+class ugm_backend(object):
+    """Decorator for UGM backends.
+    """
+    factories = dict()
+    instances = dict()
+
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self, factory):
+        self.factories[self.name] = factory
+        return factory
+
+    @classmethod
+    def initialize(cls, name, settings):
+        if name not in cls.factories:
+            raise ValueError('Unknown UGM backend "{}"'.format(name))
+        cls.instances[name] = cls.factories[name](settings)
+
+    @classmethod
+    def create(cls, name):
+        if name not in cls.factories:
+            raise ValueError('Unknown UGM backend "{}"'.format(name))
+        if name not in cls.instances:
+            raise ValueError('UGM backend "{}" not initialized'.format(name))
+        ugm = cfg.auth = cls.instances[name]()
+        return ugm
+
+    @classmethod
+    def get(cls, name):
+        if name not in cls.factories:
+            raise ValueError('Unknown UGM backend "{}"'.format(name))
+        if name not in cls.instances:
+            raise ValueError('UGM backend "{}" not initialized'.format(name))
+        return cls.instances[name].ugm
+
+
+class UGMBackend(object):
+    ugm = None
+
+    def __init__(self, settings):
+        raise NotImplementedError(
+            'Abstract ``UGMBackend`` does not implement ``__init__``')
+
+    def __call__(self):
+        raise NotImplementedError(
+            'Abstract ``UGMBackend`` does not implement ``__call__``')
+
+
+@ugm_backend('file')
+class FileUGMBackend(UGMBackend):
+
+    def __init__(self, settings):
+        self.users_file = settings.get('ugm.users_file')
+        self.groups_file = settings.get('ugm.groups_file')
+        self.roles_file = settings.get('ugm.roles_file')
+        self.datadir = settings.get('ugm.datadir')
+
+    def __call__(self):
+        self.ugm = FileUgm(
+            name='ugm',
+            users_file=self.users_file,
+            groups_file=self.groups_file,
+            roles_file=self.roles_file,
+            data_directory=self.datadir
+        )
+        return self.ugm
 
 
 cfg.yafowil = Properties()
@@ -324,7 +413,7 @@ def main(global_config, **settings):
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
-        # XXX: check whether configure.zcml exists, skip loading if not found
+        # XXX: need to import plugin here?
         try:
             config.load_zcml('{}:configure.zcml'.format(plugin))
         except IOError:  # pragma: no cover
@@ -334,6 +423,16 @@ def main(global_config, **settings):
     # execute main hooks
     for hook in main_hooks:
         hook(config, global_config, settings)
+
+    # initialize UGM
+    backend_name = settings.get('ugm.backend')
+    if backend_name:
+        try:
+            ugm_backend.initialize(backend_name, settings)
+            ugm_backend.create(backend_name)
+        except Exception:
+            msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
+            logger.error(msg)
 
     # register yafowil static resources
     # done after addon config - addon code may disable yafowil resource groups

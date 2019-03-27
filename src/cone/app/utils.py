@@ -1,6 +1,8 @@
 from cone.app import compat
 from datetime import datetime
 import logging
+import sys
+import traceback
 
 
 logger = logging.getLogger('cone.app')
@@ -38,6 +40,11 @@ def safe_decode(value, encoding='utf-8'):
 
 def timestamp():
     return datetime.now()
+
+
+def format_traceback():
+    etype, value, tb = sys.exc_info()
+    return ''.join(traceback.format_exception(etype, value, tb))
 
 
 class DatetimeHelper(object):

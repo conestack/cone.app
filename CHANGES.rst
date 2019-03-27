@@ -4,6 +4,16 @@ Changes
 1.0b1 (unreleased)
 -------------------
 
+- Introduce ``cone.app.UGMBackend`` contract and implement
+  ``cone.app.FileUGMBackend``.
+  [rnix, 2019-03-27]
+
+- Add ``cone.app.ugm_backend`` decorator.
+  [rnix, 2019-03-27]
+
+- Add ``cone.app.utils.format_traceback``.
+  [rnix, 2019-03-27]
+
 - Python 3 support.
   [rnix, 2019-03-25]
 
