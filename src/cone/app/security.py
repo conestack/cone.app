@@ -1,6 +1,6 @@
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
-from cone.app.utils import app_config
+from cone.app.ugm import ugm_backend
 from plumber import Behavior
 from plumber import default
 from plumber import plumb
@@ -93,7 +93,7 @@ def authenticate(request, login, password):
     if ADMIN_USER and ADMIN_PASSWORD:
         if login == ADMIN_USER and password == ADMIN_PASSWORD:
             return remember(request, login)
-    ugm = app_config().auth
+    ugm = ugm_backend.ugm
     try:
         if ugm.users.authenticate(login, password):
             id = ugm.users.id_for_login(login)
@@ -111,7 +111,7 @@ def authenticated_user(request):
 
 
 def principal_by_id(principal_id):
-    ugm = app_config().auth
+    ugm = ugm_backend.ugm
     try:
         if principal_id.startswith('group:'):
             principal = ugm.groups.get(principal_id[6:])
@@ -129,7 +129,7 @@ def search_for_principals(term):
     criteria = {
         'id': term,
     }
-    ugm = app_config().auth
+    ugm = ugm_backend.ugm
     for user in ugm.users.search(criteria=criteria, or_search=True):
         ret.append(user)
     for group in ugm.groups.search(criteria=criteria, or_search=True):
@@ -152,7 +152,7 @@ def groups_callback(name, request):
     if name == ADMIN_USER:
         roles = environ[ROLES_CACHE_KEY] = [u'role:manager']
         return roles
-    ugm = app_config().auth
+    ugm = ugm_backend.ugm
     user = None
     try:
         user = ugm.users.get(name)

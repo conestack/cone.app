@@ -13,19 +13,6 @@ def app_config():
     return cone.app.cfg
 
 
-def principal_data(principal_id):
-    data = dict()
-    ugm = app_config().auth
-    try:
-        user = ugm.users.get(principal_id)
-        if not user:
-            return data
-        data = user.attrs
-    except Exception as e:
-        logger.error(str(e))
-    return data
-
-
 def safe_encode(value, encoding='utf-8'):
     if isinstance(value, compat.UNICODE_TYPE):
         value = value.encode(encoding)

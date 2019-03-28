@@ -13,6 +13,7 @@ from cone.app.security import OwnerSupport
 from cone.app.security import principal_by_id
 from cone.app.security import PrincipalACL
 from cone.app.security import search_for_principals
+from cone.app.ugm import ugm_backend
 from node.ext.ugm.interfaces import IGroup
 from node.ext.ugm.interfaces import IUser
 from node.tests import NodeTestCase
@@ -26,7 +27,6 @@ from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.threadlocal import get_current_registry
 from zope.component.globalregistry import BaseGlobalComponents
-import cone.app
 import logging
 
 
@@ -429,8 +429,8 @@ class SecurityTest(NodeTestCase):
         logger.addHandler(handler)
         logger.setLevel(logging.DEBUG)
 
-        old_ugm = cone.app.cfg.auth
-        cone.app.cfg.auth = object()
+        orgin_ugm = ugm_backend.ugm
+        ugm_backend.ugm = object()
 
         authenticate(self.layer.new_request(), 'foo', 'foo')
 
@@ -456,4 +456,4 @@ class SecurityTest(NodeTestCase):
         # Cleanup
         logger.setLevel(logging.INFO)
         logger.removeHandler(handler)
-        cone.app.cfg.auth = old_ugm
+        ugm_backend.ugm = orgin_ugm

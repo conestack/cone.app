@@ -4,11 +4,19 @@ Changes
 1.0b1 (unreleased)
 -------------------
 
-- Introduce ``cone.app.UGMBackend`` contract and implement
-  ``cone.app.FileUGMBackend``.
+- Move ``cone.app.utils.principal_data`` to ``cone.app.ugm.principal_data``
+  [rnix, 2019-03-28]
+
+- Remove ``cone.app.cfg.auth``. The corresponding UGM implementation is now
+  at ``cone.app.ugm.ugm_backend.ugm``
+  [rnix, 2019-03-28]
+
+- Introduce ``cone.app.ugm.UGMBackend`` contract and implement
+  ``cone.app.FileUGMBackend`` and ``BCFileUGMBackend``.
   [rnix, 2019-03-27]
 
-- Add ``cone.app.ugm_backend`` decorator.
+- Introduce ``cone.app.ugm.ugm_backend`` decorator for registering and
+  accessing ``UGMBackend`` objects.
   [rnix, 2019-03-27]
 
 - Add ``cone.app.utils.format_traceback``.

@@ -5,14 +5,12 @@ from cone.app.model import Properties
 from cone.app.utils import add_creation_metadata
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
-from cone.app.utils import principal_data
 from cone.app.utils import safe_decode
 from cone.app.utils import safe_encode
 from cone.app.utils import timestamp
 from cone.app.utils import update_creation_metadata
 from datetime import datetime
 from node.tests import NodeTestCase
-import cone.app
 
 
 class TestUtils(NodeTestCase):
@@ -22,24 +20,6 @@ class TestUtils(NodeTestCase):
         # Fetch application configuration
         cfg = app_config()
         self.assertTrue(isinstance(cfg, Properties))
-
-    def test_principal_data(self):
-        # Fetch principal data
-        self.assertEqual(principal_data('manager').items(), [
-            (u'fullname', u'Manager User'),
-            (u'email', u'manager@bar.com')
-        ])
-        self.assertEqual(principal_data('inexistent'), {})
-
-        # If UGM implementation raises an exception when trying to fetch the
-        # principal it get logged
-        old_ugm = cone.app.cfg.auth
-        cone.app.cfg.auth = None
-
-        self.assertEqual(principal_data('inexistent'), {})
-        # XXX: check logs
-
-        cone.app.cfg.auth = old_ugm
 
     def test_safe_encode(self):
         self.assertEqual(safe_encode(u'äöü'), b'\xc3\xa4\xc3\xb6\xc3\xbc')

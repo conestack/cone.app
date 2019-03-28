@@ -6,8 +6,8 @@ from cone.app.model import AppRoot
 from cone.app.model import AppSettings
 from cone.app.model import Layout
 from cone.app.model import Properties
+from cone.app.ugm import ugm_backend
 from cone.app.utils import format_traceback
-from node.ext.ugm.file import Ugm as FileUgm
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -28,10 +28,6 @@ logger = logging.getLogger('cone.app')
 
 # configuration
 cfg = Properties()
-
-# authentication provider (expect ``node.ext.ugm.Ugm`` API)
-# XXX: use ``ugm_backend`` instead
-cfg.auth = None
 
 # used main template
 cfg.main_template = 'cone.app.browser:templates/main.pt'
@@ -204,93 +200,6 @@ def acl_factory(**kwargs):
     return ACLAuthorizationPolicy()
 
 
-class ugm_backend(object):
-    """Decorator for UGM backends.
-    """
-    registry = dict()
-    factories = dict()
-    ugm = None
-
-    def __init__(self, name):
-        self.name = name
-
-    def __call__(self, factory):
-        self.registry[self.name] = factory
-        return factory
-
-    @classmethod
-    def load(cls, name, settings):
-        if name not in cls.registry:
-            raise ValueError('Unknown UGM backend "{}"'.format(name))
-        cls.factories[name] = cls.registry[name](settings)
-
-    @classmethod
-    def initialize(cls, name):
-        if name not in cls.registry:
-            raise ValueError('Unknown UGM backend "{}"'.format(name))
-        if name not in cls.factories:
-            raise ValueError('UGM backend "{}" not loaded'.format(name))
-        cls.ugm = cfg.auth = cls.factories[name]()
-
-    @classmethod
-    def get(cls, name):
-        return cls.ugm
-
-
-class UGMBackend(object):
-    """UGM backend factory.
-    """
-
-    def __init__(self, settings):
-        """Gets called by ``ugm_backend.load`` and is responsible to read
-        UGM related configuration from passed ``settings`` dict.
-        """
-        raise NotImplementedError(
-            'Abstract ``UGMBackend`` does not implement ``__init__``')
-
-    def __call__(self):
-        """Gets calles by ``ugm_backend.initialize`` and is responsible to
-        instanciate and return a concrete ``node.ext.ugm.Ugm`` implementation.
-        """
-        raise NotImplementedError(
-            'Abstract ``UGMBackend`` does not implement ``__call__``')
-
-
-@ugm_backend('file')
-class FileUGMBackend(UGMBackend):
-    """UGM backend factory for file based UGM implementation.
-    """
-
-    def __init__(self, settings):
-        self.users_file = settings.get('ugm.users_file')
-        self.groups_file = settings.get('ugm.groups_file')
-        self.roles_file = settings.get('ugm.roles_file')
-        self.datadir = settings.get('ugm.datadir')
-
-    def __call__(self):
-        return FileUgm(
-            name='ugm',
-            users_file=self.users_file,
-            groups_file=self.groups_file,
-            roles_file=self.roles_file,
-            data_directory=self.datadir
-        )
-
-
-@ugm_backend('node.ext.ugm')
-class BCFileUGMBackend(FileUGMBackend):
-    """B/C factory as replacement for the removed main hook from
-    ``node.ext.ugm``. Actually the same as ``FileUGMBackend`` but reads
-    settings from different names.
-    """
-
-    def __init__(self, settings):
-        self.users_file = settings.get('node.ext.ugm.users_file')
-        self.groups_file = settings.get('node.ext.ugm.groups_file')
-        self.roles_file = settings.get('node.ext.ugm.roles_file')
-        self.datadir = settings.get('node.ext.ugm.datadir')
-
-
 cfg.yafowil = Properties()
 cfg.yafowil.js_skip = set()
 cfg.yafowil.css_skip = set()
@@ -439,14 +348,14 @@ def main(global_config, **settings):
         hook(config, global_config, settings)
 
     # load and initialize UGM
-    backend_name = settings.get('ugm.backend')
+    ugm_backend_name = settings.get('ugm.backend')
     # B/C
-    if not backend_name:
-        backend_name = settings.get('cone.auth_impl')
-    if backend_name:
+    if not ugm_backend_name:
+        ugm_backend_name = settings.get('cone.auth_impl')
+    if ugm_backend_name:
         try:
-            ugm_backend.load(backend_name, settings)
-            ugm_backend.initialize(backend_name)
+            ugm_backend.load(ugm_backend_name, settings)
+            ugm_backend.initialize(ugm_backend_name)
         except Exception:
             msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
             logger.error(msg)

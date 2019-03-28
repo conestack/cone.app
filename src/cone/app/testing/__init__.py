@@ -135,10 +135,11 @@ class Security(object):
             'cone.root.default_child': None,
             'cone.root.default_content_tile': 'content',
             'cone.root.mainmenu_empty_title': False,
-            'node.ext.ugm.users_file': os.path.join(DATADIR, 'users'),
-            'node.ext.ugm.groups_file': os.path.join(DATADIR, 'groups'),
-            'node.ext.ugm.roles_file': os.path.join(DATADIR, 'roles'),
-            'node.ext.ugm.datadir': os.path.join(DATADIR, 'userdata'),
+            'ugm.backend': 'file',
+            'ugm.users_file': os.path.join(DATADIR, 'users'),
+            'ugm.groups_file': os.path.join(DATADIR, 'groups'),
+            'ugm.roles_file': os.path.join(DATADIR, 'roles'),
+            'ugm.datadir': os.path.join(DATADIR, 'userdata'),
             'testing.hook_global_registry': True,
         }
         settings.update(**kw)

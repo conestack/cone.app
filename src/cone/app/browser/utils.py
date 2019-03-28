@@ -12,9 +12,8 @@ import re
 _ = TranslationStringFactory('cone.app')
 
 
+# B/C. use ``authenticated_userid`` directly.
 def authenticated(request):
-    """XXX: remove this. use ``authenticated_userid`` directly.
-    """
     return request.authenticated_userid
 
 

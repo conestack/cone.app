@@ -7,7 +7,7 @@ from cone.app.browser.utils import node_icon
 from cone.app.browser.utils import node_path
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
-from cone.app.utils import principal_data
+from cone.app.ugm import principal_data
 from cone.app.utils import safe_decode
 from cone.tile import Tile
 from cone.tile import render_template
