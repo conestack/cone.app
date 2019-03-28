@@ -282,6 +282,16 @@ class FileUGMBackend(UGMBackend):
         return self.ugm
 
 
+@ugm_backend('node.ext.ugm')
+class BCFileUGMBackend(FileUGMBackend):
+
+    def __init__(self, settings):
+        self.users_file = settings.get('node.ext.ugm.users_file')
+        self.groups_file = settings.get('node.ext.ugm.groups_file')
+        self.roles_file = settings.get('node.ext.ugm.roles_file')
+        self.datadir = settings.get('node.ext.ugm.datadir')
+
+
 cfg.yafowil = Properties()
 cfg.yafowil.js_skip = set()
 cfg.yafowil.css_skip = set()
@@ -426,6 +436,9 @@ def main(global_config, **settings):
 
     # initialize UGM
     backend_name = settings.get('ugm.backend')
+    # B/C
+    if not backend_name:
+        backend_name = settings.get('cone.auth_imp')
     if backend_name:
         try:
             ugm_backend.initialize(backend_name, settings)
