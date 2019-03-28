@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from cone.app.browser import static_resources
+from cone.app import browser
+from cone.app import security
 from cone.app.interfaces import ILayout
 from cone.app.model import AppRoot
 from cone.app.model import AppSettings
@@ -20,6 +21,7 @@ import importlib
 import logging
 import pyramid_chameleon
 import pyramid_zcml
+import sys
 
 
 logger = logging.getLogger('cone.app')
@@ -84,22 +86,22 @@ cfg.merged.js = Properties()
 
 # development
 cfg.merged.js.public = [
-    (static_resources, 'jquery-1.9.1.js'),
-    (static_resources, 'jquery.migrate-1.2.1.js'),
-    (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
-    (static_resources, 'bootstrap/js/bootstrap.js'),
-    (static_resources, 'typeahead/typeahead.bundle.js'),
-    (static_resources, 'cookie_functions.js')
+    (browser.static_resources, 'jquery-1.9.1.js'),
+    (browser.static_resources, 'jquery.migrate-1.2.1.js'),
+    (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
+    (browser.static_resources, 'bootstrap/js/bootstrap.js'),
+    (browser.static_resources, 'typeahead/typeahead.bundle.js'),
+    (browser.static_resources, 'cookie_functions.js')
 ]
 
 # production
 # cfg.merged.js.public = [
-#     (static_resources, 'jquery-1.9.1.min.js'),
-#     (static_resources, 'jquery.migrate-1.2.1.min.js'),
-#     (static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
-#     (static_resources, 'bootstrap/js/bootstrap.min.js'),
-#     (static_resources, 'typeahead/typeahead.bundle.js'),
-#     (static_resources, 'cookie_functions.js')
+#     (browser.static_resources, 'jquery-1.9.1.min.js'),
+#     (browser.static_resources, 'jquery.migrate-1.2.1.min.js'),
+#     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
+#     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
+#     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
+#     (browser.static_resources, 'cookie_functions.js')
 # ]
 
 cfg.merged.js.protected = list()
@@ -110,7 +112,7 @@ cfg.merged.css.protected = list()
 
 cfg.merged.print_css = Properties()
 cfg.merged.print_css.public = [
-    (static_resources, 'print.css')
+    (browser.static_resources, 'print.css')
 ]
 cfg.merged.print_css.protected = list()
 
@@ -193,8 +195,7 @@ def get_root(environ=None):
 
 
 def auth_tkt_factory(**kwargs):
-    from cone.app.security import groups_callback
-    kwargs.setdefault('callback', groups_callback)
+    kwargs.setdefault('callback', security.groups_callback)
     return AuthTktAuthenticationPolicy(**kwargs)
 
 
@@ -223,7 +224,7 @@ class ugm_backend(object):
         cls.factories[name] = cls.registry[name](settings)
 
     @classmethod
-    def inizialize(cls, name):
+    def initialize(cls, name):
         if name not in cls.registry:
             raise ValueError('Unknown UGM backend "{}"'.format(name))
         if name not in cls.factories:
@@ -308,10 +309,10 @@ class YafowilResources(YafowilResourcesBase):
         )
 
     def configure_resource_directory(self, plugin_name, resourc_edir):
-        import cone.app
+        app = sys.modules[__name__]
         resources_view = static_view(resourc_edir, use_subpath=True)
         view_name = '%s_resources' % plugin_name.replace('.', '_')
-        setattr(cone.app, view_name, resources_view)
+        setattr(app, view_name, resources_view)
         view_path = 'cone.app.%s' % view_name
         resource_base = '++resource++%s' % plugin_name
         self.config.add_view(view_path, name=resource_base)
@@ -319,28 +320,26 @@ class YafowilResources(YafowilResourcesBase):
 
 
 def configure_yafowil_addon_resources(config):
-    import cone.app
     resources = YafowilResources(
-        js_skip=cone.app.cfg.yafowil.js_skip,
-        css_skip=cone.app.cfg.yafowil.css_skip,
+        js_skip=cfg.yafowil.js_skip,
+        css_skip=cfg.yafowil.css_skip,
         config=config
     )
     for js in reversed(resources.js_resources):
         # bdajax needs to be loaded first in order to avoid double binding on
         # document ready
-        idx = cone.app.cfg.js.public.index('++resource++bdajax/bdajax.js') + 1
-        cone.app.cfg.js.public.insert(idx, js)
+        idx = cfg.js.public.index('++resource++bdajax/bdajax.js') + 1
+        cfg.js.public.insert(idx, js)
     for css in resources.css_resources:
-        cone.app.cfg.css.public.insert(0, css)
+        cfg.css.public.insert(0, css)
 
 
 def main(global_config, **settings):
     """Returns WSGI application.
     """
     # set authentication related application properties
-    import cone.app
-    cone.app.security.ADMIN_USER = settings.get('cone.admin_user')
-    cone.app.security.ADMIN_PASSWORD = settings.get('cone.admin_password')
+    security.ADMIN_USER = settings.get('cone.admin_user')
+    security.ADMIN_PASSWORD = settings.get('cone.admin_password')
 
     auth_secret = settings.pop('cone.auth_secret', 'secret')
     auth_cookie_name = settings.pop('cone.auth_cookie_name', 'auth_tkt')
@@ -407,10 +406,10 @@ def main(global_config, **settings):
     # XXX: humans.txt
 
     # register static resources
-    config.add_view(static_resources, name='static')
+    config.add_view(browser.static_resources, name='static')
 
     # scan browser package
-    config.scan(cone.app.browser)
+    config.scan(browser)
 
     # load zcml
     config.load_zcml('configure.zcml')
