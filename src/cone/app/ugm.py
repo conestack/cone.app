@@ -9,32 +9,32 @@ class ugm_backend(object):
     """Decorator for UGM backends.
     """
     registry = dict()
-    factories = dict()
+    name = None
+    factory = None
     ugm = None
 
     def __init__(self, name):
-        self.name = name
+        self._reg_name = name
 
     def __call__(self, factory):
-        self.registry[self.name] = factory
+        self.registry[self._reg_name] = factory
         return factory
 
     @classmethod
     def load(cls, name, settings):
         if name not in cls.registry:
             raise ValueError('Unknown UGM backend "{}"'.format(name))
-        cls.factories[name] = cls.registry[name](settings)
+        cls.name = name
+        cls.factory = cls.registry[name](settings)
 
     @classmethod
-    def initialize(cls, name):
-        if name not in cls.registry:
-            raise ValueError('Unknown UGM backend "{}"'.format(name))
-        if name not in cls.factories:
-            raise ValueError('UGM backend "{}" not loaded'.format(name))
-        cls.ugm = cls.factories[name]()
+    def initialize(cls):
+        if not cls.factory:
+            raise ValueError('UGM backend not loaded')
+        cls.ugm = cls.factory()
 
     @classmethod
-    def get(cls, name):
+    def get(cls):
         return cls.ugm
 
 

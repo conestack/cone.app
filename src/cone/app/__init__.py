@@ -348,14 +348,14 @@ def main(global_config, **settings):
         hook(config, global_config, settings)
 
     # load and initialize UGM
-    ugm_backend_name = settings.get('ugm.backend')
+    backend_name = settings.get('ugm.backend')
     # B/C
-    if not ugm_backend_name:
-        ugm_backend_name = settings.get('cone.auth_impl')
-    if ugm_backend_name:
+    if not backend_name:
+        backend_name = settings.get('cone.auth_impl')
+    if backend_name:
         try:
-            ugm_backend.load(ugm_backend_name, settings)
-            ugm_backend.initialize(ugm_backend_name)
+            ugm_backend.load(backend_name, settings)
+            ugm_backend.initialize()
         except Exception:
             msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
             logger.error(msg)
