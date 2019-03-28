@@ -14,9 +14,9 @@ from pyramid.static import static_view
 from yafowil.resources import YafowilResources as YafowilResourcesBase
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
-from zope.deprecation import deprecated
 from zope.interface import implementer
 from zope.interface import Interface
+import importlib
 import logging
 import pyramid_chameleon
 import pyramid_zcml
@@ -156,9 +156,6 @@ def register_config(key, factory):
 
 # B/C
 register_plugin_config = register_config
-deprecated('register_plugin_config', """
-``cone.app.register_plugin_config`` is deprecated as of cone.app 1.0 and will
-be removed in cone.app 1.1. Use ``cone.app.register_config`` instead.""")
 
 
 def register_entry(key, factory):
@@ -170,9 +167,6 @@ def register_entry(key, factory):
 
 # B/C
 register_plugin = register_entry
-deprecated('register_plugin', """
-``cone.app.register_plugin`` is deprecated as of cone.app 1.0 and will
-be removed in cone.app 1.1. Use ``cone.app.register_entry`` instead.""")
 
 
 main_hooks = list()
@@ -192,11 +186,6 @@ def register_main_hook(callback):
     """Register function to get called on application startup.
     """
     main_hooks.append(callback)
-
-
-deprecated('register_main_hook', """
-``cone.app.register_main_hook`` is deprecated as of cone.app 1.0 and will
-be removed in cone.app 1.1. Use ``cone.app.main_hook`` instead.""")
 
 
 def get_root(environ=None):
@@ -431,7 +420,14 @@ def main(global_config, **settings):
     plugins = plugins.split('\n')
     plugins = [pl for pl in plugins if pl]
     for plugin in plugins:
-        # XXX: need to import plugin here?
+        try:
+            importlib.import_module(plugin)
+        except ImportError:
+            msg = 'Cannot import plugin {}\n{}'.format(
+                plugin,
+                format_traceback()
+            )
+            logger.error(msg)
         try:
             config.load_zcml('{}:configure.zcml'.format(plugin))
         except IOError:  # pragma: no cover
@@ -446,7 +442,7 @@ def main(global_config, **settings):
     backend_name = settings.get('ugm.backend')
     # B/C
     if not backend_name:
-        backend_name = settings.get('cone.auth_imp')
+        backend_name = settings.get('cone.auth_impl')
     if backend_name:
         try:
             ugm_backend.load(backend_name, settings)

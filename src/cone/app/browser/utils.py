@@ -1,14 +1,12 @@
 from cone.app import compat
 from cone.app.utils import app_config
-from cone.app.utils import format_traceback
+from cone.app.utils import format_traceback as _format_traceback
 from cone.app.utils import safe_encode
 from cone.app.utils import safe_decode
 from pyramid.i18n import TranslationStringFactory
 import copy
 import datetime
 import re
-import sys
-import traceback
 
 
 _ = TranslationStringFactory('cone.app')
@@ -124,4 +122,4 @@ def request_property(func):
 
 
 def format_traceback():
-    return '<pre>{}</pre>'.format(format_traceback())
+    return '<pre>{}</pre>'.format(_format_traceback())
