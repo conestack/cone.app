@@ -216,54 +216,59 @@ def acl_factory(**kwargs):
 class ugm_backend(object):
     """Decorator for UGM backends.
     """
+    registry = dict()
     factories = dict()
-    instances = dict()
+    ugm = None
 
     def __init__(self, name):
         self.name = name
 
     def __call__(self, factory):
-        self.factories[self.name] = factory
+        self.registry[self.name] = factory
         return factory
 
     @classmethod
-    def initialize(cls, name, settings):
-        if name not in cls.factories:
+    def load(cls, name, settings):
+        if name not in cls.registry:
             raise ValueError('Unknown UGM backend "{}"'.format(name))
-        cls.instances[name] = cls.factories[name](settings)
+        cls.factories[name] = cls.registry[name](settings)
 
     @classmethod
-    def create(cls, name):
-        if name not in cls.factories:
+    def inizialize(cls, name):
+        if name not in cls.registry:
             raise ValueError('Unknown UGM backend "{}"'.format(name))
-        if name not in cls.instances:
-            raise ValueError('UGM backend "{}" not initialized'.format(name))
-        ugm = cfg.auth = cls.instances[name]()
-        return ugm
+        if name not in cls.factories:
+            raise ValueError('UGM backend "{}" not loaded'.format(name))
+        cls.ugm = cfg.auth = cls.factories[name]()
 
     @classmethod
     def get(cls, name):
-        if name not in cls.factories:
-            raise ValueError('Unknown UGM backend "{}"'.format(name))
-        if name not in cls.instances:
-            raise ValueError('UGM backend "{}" not initialized'.format(name))
-        return cls.instances[name].ugm
+        return cls.ugm
 
 
 class UGMBackend(object):
-    ugm = None
+    """UGM backend factory.
+    """
 
     def __init__(self, settings):
+        """Gets called by ``ugm_backend.load`` and is responsible to read
+        UGM related configuration from passed ``settings`` dict.
+        """
         raise NotImplementedError(
             'Abstract ``UGMBackend`` does not implement ``__init__``')
 
     def __call__(self):
+        """Gets calles by ``ugm_backend.initialize`` and is responsible to
+        instanciate and return a concrete ``node.ext.ugm.Ugm`` implementation.
+        """
         raise NotImplementedError(
             'Abstract ``UGMBackend`` does not implement ``__call__``')
 
 
 @ugm_backend('file')
 class FileUGMBackend(UGMBackend):
+    """UGM backend factory for file based UGM implementation.
+    """
 
     def __init__(self, settings):
         self.users_file = settings.get('ugm.users_file')
@@ -272,18 +277,21 @@ class FileUGMBackend(UGMBackend):
         self.datadir = settings.get('ugm.datadir')
 
     def __call__(self):
-        self.ugm = FileUgm(
+        return FileUgm(
             name='ugm',
             users_file=self.users_file,
             groups_file=self.groups_file,
             roles_file=self.roles_file,
             data_directory=self.datadir
         )
-        return self.ugm
 
 
 @ugm_backend('node.ext.ugm')
 class BCFileUGMBackend(FileUGMBackend):
+    """B/C factory as replacement for the removed main hook from
+    ``node.ext.ugm``. Actually the same as ``FileUGMBackend`` but reads
+    settings from different names.
+    """
 
     def __init__(self, settings):
         self.users_file = settings.get('node.ext.ugm.users_file')
@@ -434,15 +442,15 @@ def main(global_config, **settings):
     for hook in main_hooks:
         hook(config, global_config, settings)
 
-    # initialize UGM
+    # load and initialize UGM
     backend_name = settings.get('ugm.backend')
     # B/C
     if not backend_name:
         backend_name = settings.get('cone.auth_imp')
     if backend_name:
         try:
-            ugm_backend.initialize(backend_name, settings)
-            ugm_backend.create(backend_name)
+            ugm_backend.load(backend_name, settings)
+            ugm_backend.initialize(backend_name)
         except Exception:
             msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
             logger.error(msg)

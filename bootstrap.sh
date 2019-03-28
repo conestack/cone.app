@@ -9,6 +9,7 @@ if [ -x "$(which python)" ]; then
     ./py2/bin/pip install pyramid==1.9.4
     ./py2/bin/pip install repoze.zcml==0.4
     ./py2/bin/pip install repoze.workflow==0.6.1
+    ./py2/bin/pip install https://github.com/bluedynamics/node.ext.ugm/archive/master.zip
     ./py2/bin/pip install https://github.com/bluedynamics/yafowil/archive/master.zip
     ./py2/bin/pip install https://github.com/bluedynamics/cone.tile/archive/master.zip
     ./py2/bin/pip install -e .[test]
@@ -22,6 +23,7 @@ if [ -x "$(which python3)" ]; then
     ./py3/bin/pip install pyramid==1.9.4
     ./py3/bin/pip install repoze.zcml==1.0b1
     ./py3/bin/pip install repoze.workflow==1.0b1
+    ./py3/bin/pip install https://github.com/bluedynamics/node.ext.ugm/archive/master.zip
     ./py3/bin/pip install https://github.com/bluedynamics/yafowil/archive/master.zip
     ./py3/bin/pip install https://github.com/bluedynamics/cone.tile/archive/master.zip
     ./py3/bin/pip install -e .[test,docs]
