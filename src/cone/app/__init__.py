@@ -30,6 +30,7 @@ logger = logging.getLogger('cone.app')
 cfg = Properties()
 
 # authentication provider (expect ``node.ext.ugm.Ugm`` API)
+# XXX: use ``ugm_backend`` instead
 cfg.auth = None
 
 # used main template

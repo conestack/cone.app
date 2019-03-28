@@ -18,6 +18,7 @@ install:
         pip install repoze.zcml==1.0b1
         pip install repoze.workflow==1.0b1
     fi
+  - pip install https://github.com/bluedynamics/node.ext.ugm/archive/master.zip
   - pip install https://github.com/bluedynamics/yafowil/archive/master.zip
   - pip install https://github.com/bluedynamics/cone.tile/archive/master.zip
   - pip install -e .[test]
