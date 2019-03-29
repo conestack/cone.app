@@ -33,10 +33,6 @@ class ugm_backend(object):
             raise ValueError('UGM backend not loaded')
         cls.ugm = cls.factory()
 
-    @classmethod
-    def get(cls):
-        return cls.ugm
-
 
 class UGMBackend(object):
     """UGM backend factory.

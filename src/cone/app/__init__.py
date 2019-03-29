@@ -337,6 +337,7 @@ def main(global_config, **settings):
                 format_traceback()
             )
             logger.error(msg)
+            continue
         try:
             config.load_zcml('{}:configure.zcml'.format(plugin))
         except IOError:  # pragma: no cover
@@ -356,7 +357,7 @@ def main(global_config, **settings):
         try:
             ugm_backend.load(backend_name, settings)
             ugm_backend.initialize()
-        except Exception:
+        except Exception:  # pragma: no cover
             msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
             logger.error(msg)
 
