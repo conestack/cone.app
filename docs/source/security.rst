@@ -10,11 +10,6 @@ Similar to `Zope <https://zope.org>`_, security rules are implemented as a
 cascade of ``roles``, where each role defines a set of ``permissions``. A
 ``user`` or a ``group`` of users are then assigned to this roles.
 
-For retrieval of users, groups and the assigned roles, ``node.ext.ugm`` is
-used. A UGM instance is created in the
-:ref:`Plugin main hook function <plugin_main_hook>` and set to
-``cone.app.cfg.auth``.
-
 As authentication policy ``pyramid.authentication.AuthTktAuthenticationPolicy``
 is used. ``cone.app`` passes the ``cone.app.security.groups_callback`` to the
 authentication policy which bridges roles to users and groups.
@@ -25,8 +20,9 @@ on application model nodes is provided by the ``__acl__`` property, which is
 expected by the authorization policy and described in the
 ``cone.app.interfaces.ISecured`` interface.
 
-If no UGM implementation is registered, the only user which can authenticate is
-the admin user defined in application configuration ``.ini`` file.
+For retrieval of users, groups and the assigned roles, ``node.ext.ugm`` is
+used. See :ref:`User and Group Management <user_and_group_management>` for
+details.
 
 By default, unauthenticed access to all application model nodes is prohibited.
 
@@ -273,3 +269,78 @@ A concrete shareable node looks like.
             # this must be a persistent mapping between principal id and
             # list of roles
             return dict()
+
+
+.. _user_and_group_management:
+
+User and Group Management
+-------------------------
+
+``cone.app`` provides User and Group Management via the contract described in
+``node.ext.ugm.interfaces``.
+
+Configuration is done via application config file. The default file based
+implementation for example gets configured as follows in ``app`` section of the
+ini file.
+
+.. code-block:: ini
+
+    [app:example]
+    ugm.backend = file
+    ugm.users_file = /path/to/users
+    ugm.groups_file = /path/to/groups
+    ugm.roles_file = /path/to/roles
+    ugm.datadir = /path/to/userdata
+
+To provide your own UGM implementation, a ``cone.app.ugm.UGMFactory`` must be
+implemented and registered.
+
+.. code-block:: python
+
+    from cone.app.ugm import ugm_backend
+    from cone.app.ugm import UGMFactory
+    from node.ext.ugm import Ugm
+
+    class MyUGM(Ugm):
+        """My UGM implementation.
+
+        Lots of implementation details goes here. See
+        ``node.ext.ugm.interfaces`` for details.
+        """
+
+    @ugm_backend('myugm')
+    class MyUGMFactory(UGMFactory):
+        """Custom UGM factory.
+
+        It gets registered via ``ugm_backend`` decorator by name.
+        """
+
+        def __init__(self, settings):
+            """Initialize the factory.
+
+            Passed ``settings`` contains the application settings from the ini
+            file. Thus we are free to define and expect any settings we want.
+
+            On factory initialization, we simply read settings of interest from
+            ``settings`` dict and remember them.
+            """
+            self.setting_a = settings.get('myugm.setting_a', '')
+            self.setting_b = settings.get('myugm.setting_b', '')
+
+        def __call__(self):
+            """Create the UGM instance.
+            """
+            return MyUGM(
+                self.setting_a,
+                self.setting_b
+            )
+
+In order to use our UGM implementation, configure it in the application config
+file.
+
+.. code-block:: ini
+
+    [app:example]
+    ugm.backend = myugm
+    myugm.setting_a = a
+    myugm.setting_b = b

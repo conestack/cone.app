@@ -74,20 +74,32 @@ The policy gets configured through the following parameters.
   will be generated for the wildcard domain.
 
 
-User and Group Backend Configuration
-------------------------------------
+User and Group Management Backend Configuration
+-----------------------------------------------
 
 In ``cone.app``, providing a User and Group database is done by using a concrete
 `User and Group Management (UGM) <http://pypi.python.org/pypi/node.ext.ugm>`_
 implementation.
 
-It is used for authentication and principal authorization. If not set, only
-``cone.admin_user`` is available.
+If desired, the concrete UGM implementation is created on application startup.
 
-- **cone.auth_impl**: UGM implementation package name. Used for authentication
-  and principal authorization. If not set, only ``cone.admin_user`` is
-  available. This setting is not considered at any place directly in ``cone.app`` .
-  This is left to the UGM implementation creating application hook callback.
+- **ugm.backend**: Registration name of UGM implementation.
+
+A default file based UGM factory is registered under name ``file``, which
+creates a ``cone.ugm.file.Ugm`` instance.
+
+Configuration is done through the following parameters.
+
+- **ugm.users_file**: Path to users file
+
+- **ugm.groups_file**: Path to groups file
+
+- **ugm.roles_file**: Path to roles file
+
+- **ugm.datadir** Path to userdata directory
+
+NOTE: If no UGM backend is configured, the only available user in the
+      application is the one defined as ``cone.admin_user``.
 
 
 Plugin Loading
@@ -98,7 +110,6 @@ order to be included. Plugins are included in defined order.
 
 First the :ref:`ZCML <plugin_zcml>` configuration of all Plugins is invoked.
 Then all :ref:`Plugin main hook functions <plugin_main_hook>` are called.
-
 
 - **cone.plugins**: List of plugin package names.
 

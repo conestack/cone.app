@@ -1,9 +1,9 @@
 from cone.app import testing
-from cone.app.ugm import BCFileUGMBackend
-from cone.app.ugm import FileUGMBackend
+from cone.app.ugm import BCFileUGMFactory
+from cone.app.ugm import FileUGMFactory
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
-from cone.app.ugm import UGMBackend
+from cone.app.ugm import UGMFactory
 from node.ext.ugm.file import Ugm as FileUgm
 from node.tests import NodeTestCase
 
@@ -27,14 +27,14 @@ def restore_ugm_backend(fn):
 class TestUgm(NodeTestCase):
     layer = testing.security
 
-    def test_UGMBackend(self):
-        self.expect_error(NotImplementedError, UGMBackend, {})
+    def test_UGMFactory(self):
+        self.expect_error(NotImplementedError, UGMFactory, {})
 
-        class DummyUGMBackend(UGMBackend):
+        class DummyUGMFactory(UGMFactory):
             def __init__(self, settings):
                 pass
 
-        self.expect_error(NotImplementedError, DummyUGMBackend({}).__call__)
+        self.expect_error(NotImplementedError, DummyUGMFactory({}).__call__)
 
     @restore_ugm_backend
     def test_ugm_backend(self):
@@ -47,14 +47,14 @@ class TestUgm(NodeTestCase):
             pass
 
         @ugm_backend('dummy')
-        class DummyUGMBackend(UGMBackend):
+        class DummyUGMFactory(UGMFactory):
             def __init__(self, settings):
                 pass
 
             def __call__(self):
                 return DummyUGM()
 
-        self.assertEqual(ugm_backend.registry, {'dummy': DummyUGMBackend})
+        self.assertEqual(ugm_backend.registry, {'dummy': DummyUGMFactory})
 
         err = self.expect_error(ValueError, ugm_backend.load, 'inexistent', {})
         self.assertEqual(str(err), 'Unknown UGM backend "inexistent"')
@@ -69,7 +69,7 @@ class TestUgm(NodeTestCase):
         ugm_backend.load('dummy', {})
 
         self.assertEqual(ugm_backend.name, 'dummy')
-        self.assertTrue(isinstance(ugm_backend.factory, DummyUGMBackend))
+        self.assertTrue(isinstance(ugm_backend.factory, DummyUGMFactory))
         self.assertEqual(ugm_backend.ugm, None)
 
         ugm_backend.initialize()
@@ -80,9 +80,9 @@ class TestUgm(NodeTestCase):
         self.assertFalse(ugm is ugm_backend.ugm)
 
     @restore_ugm_backend
-    def test_FileUGMBackend(self):
+    def test_FileUGMFactory(self):
         self.assertTrue('file' in ugm_backend.registry)
-        self.assertTrue(ugm_backend.registry['file'] is FileUGMBackend)
+        self.assertTrue(ugm_backend.registry['file'] is FileUGMFactory)
 
         ugm_backend.load('file', {
             'ugm.users_file': 'users',
@@ -100,9 +100,9 @@ class TestUgm(NodeTestCase):
         self.assertEqual(ugm.data_directory, 'userdata')
 
     @restore_ugm_backend
-    def test_BCFileUGMBackend(self):
+    def test_BCFileUGMFactory(self):
         self.assertTrue('node.ext.ugm' in ugm_backend.registry)
-        self.assertTrue(ugm_backend.registry['node.ext.ugm'] is BCFileUGMBackend)
+        self.assertTrue(ugm_backend.registry['node.ext.ugm'] is BCFileUGMFactory)
 
         ugm_backend.load('node.ext.ugm', {
             'node.ext.ugm.users_file': 'users',

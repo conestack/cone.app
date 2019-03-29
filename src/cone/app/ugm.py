@@ -34,7 +34,7 @@ class ugm_backend(object):
         cls.ugm = cls.factory()
 
 
-class UGMBackend(object):
+class UGMFactory(object):
     """UGM backend factory.
     """
 
@@ -43,18 +43,18 @@ class UGMBackend(object):
         UGM related configuration from passed ``settings`` dict.
         """
         raise NotImplementedError(
-            'Abstract ``UGMBackend`` does not implement ``__init__``')
+            'Abstract ``UGMFactory`` does not implement ``__init__``')
 
     def __call__(self):
         """Gets calles by ``ugm_backend.initialize`` and is responsible to
         instanciate and return a concrete ``node.ext.ugm.Ugm`` implementation.
         """
         raise NotImplementedError(
-            'Abstract ``UGMBackend`` does not implement ``__call__``')
+            'Abstract ``UGMFactory`` does not implement ``__call__``')
 
 
 @ugm_backend('file')
-class FileUGMBackend(UGMBackend):
+class FileUGMFactory(UGMFactory):
     """UGM backend factory for file based UGM implementation.
     """
 
@@ -75,9 +75,9 @@ class FileUGMBackend(UGMBackend):
 
 
 @ugm_backend('node.ext.ugm')
-class BCFileUGMBackend(FileUGMBackend):
+class BCFileUGMFactory(FileUGMFactory):
     """B/C factory as replacement for the removed main hook from
-    ``node.ext.ugm``. Actually the same as ``FileUGMBackend`` but reads
+    ``node.ext.ugm``. Actually the same as ``FileUGMFactory`` but reads
     settings from different names.
     """
 

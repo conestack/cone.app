@@ -152,7 +152,6 @@ Create ``example.ini`` and add:
     #cone.auth_http_only =
     #cone.auth_path =
     #cone.auth_wild_domain =
-    #cone.auth_impl =
 
     # plugins to be loaded
     cone.plugins = cone.example

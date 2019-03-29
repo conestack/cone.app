@@ -208,22 +208,3 @@ at ``app_root['settings']`` and can be registered to the application via
     @main_hook
     def example_main_hook(config, global_config, local_config):
         register_config('example', ExampleSettings)
-
-
-Authentication
---------------
-
-``cone.app`` provides plugable authentication as long as the authentication
-implementation follows the contract described in ``node.ext.ugm.interfaces``.
-
-If a UGM implementation is provided, it makes sense to initialize it inside
-an application startup main hook.
-
-UGM implementations acting for authentication are added to
-``cone.app.cfg.auth``.
-
-.. code-block:: python
-
-    import cone.app
-
-    cone.app.cfg.auth.append(ugm_impl)
