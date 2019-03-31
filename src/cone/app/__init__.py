@@ -327,7 +327,7 @@ def main(global_config, **settings):
     # read plugin configurator
     plugins = settings.get('cone.plugins', '')
     plugins = plugins.split('\n')
-    plugins = [pl for pl in plugins if pl]
+    plugins = [pl for pl in plugins if pl and not pl.startswith('#')]
     for plugin in plugins:
         try:
             importlib.import_module(plugin)
@@ -345,7 +345,13 @@ def main(global_config, **settings):
             logger.info(msg)
 
     # execute main hooks
+    filtered_hooks = list()
     for hook in main_hooks:
+        for plugin in plugins:
+            if hook.__module__.startswith(plugin):
+                filtered_hooks.append(hook)
+                continue
+    for hook in filtered_hooks:
         hook(config, global_config, settings)
 
     # load and initialize UGM

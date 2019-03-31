@@ -4,6 +4,13 @@ Changes
 1.0b1 (unreleased)
 -------------------
 
+- Only execute main hooks contained in defined plugins names from application
+  config file.
+  [rnix, 2019-03-31]
+
+- Ignore commented out plugin names from application config file on startup
+  [rnix, 2019-03-31]
+
 - Remove ``cone.auth_impl`` setting from application config ini file. Use
   ``ugm.backend`` instead.
   [rnix, 2019-03-29]
