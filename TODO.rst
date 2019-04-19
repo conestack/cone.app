@@ -24,7 +24,7 @@ Roadmap
 1.0b1
 -----
 
-[X] Migrate Doctests to Unittests where appropriate.
+[X] Migrate Doctests to Unittests.
 
 [X] Merge ``pyramid_upgrade`` branches back to master.
 

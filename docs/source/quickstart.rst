@@ -127,15 +127,15 @@ Create ``example.ini`` and add:
     use = egg:cone.app#main
 
     # pyramid related configuration useful for development
-    reload_templates = true
+    pyramid.reload_templates = true
 
-    debug_authorization = false
-    debug_notfound = false
-    debug_routematch = false
-    debug_templates = true
+    pyramid.debug_authorization = false
+    pyramid.debug_notfound = false
+    pyramid.debug_routematch = false
+    pyramid.debug_templates = true
 
     # default language
-    default_locale_name = en
+    pyramid.default_locale_name = en
 
     # cone.app admin user and password
     cone.admin_user = admin
