@@ -60,7 +60,12 @@ class TestUtils(NodeTestCase):
         self.assertEqual(helper.w_value(b'abc'), u'abc')
         self.assertEqual(helper.w_value(u'abc'), u'abc')
         self.assertEqual(helper.w_value(u'äöü'), u'äöü')
-        self.assertEqual(helper.w_value(dt), '2010-01-01T10:15:10')
+        self.assertEqual(helper.w_value(dt), u'2010-01-01T10:15:10')
+        self.assertEqual(helper.w_value(0), u'0')
+        self.assertEqual(helper.w_value(0.0), u'0.0')
+        self.assertEqual(helper.w_value(None), u'None')
+        self.assertEqual(helper.w_value(True), u'True')
+        self.assertEqual(helper.w_value(False), u'False')
 
     def test_timestamp(self):
         self.check_output("""

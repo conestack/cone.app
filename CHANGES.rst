@@ -4,6 +4,10 @@ Changes
 1.0b1 (unreleased)
 -------------------
 
+- Fix ``DatetimeHelper.r_value`` and ``DatetimeHelper.w_value`` handling
+  non string data types.
+  [rnix, 2019-04-30]
+
 - Only execute main hooks contained in defined plugins names from application
   config file.
   [rnix, 2019-03-31]

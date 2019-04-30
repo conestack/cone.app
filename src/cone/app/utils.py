@@ -41,17 +41,17 @@ class DatetimeHelper(object):
             return 'None'
         if isinstance(val, datetime):
             return self.dt_to_iso(val)
-        if not isinstance(val, compat.UNICODE_TYPE):
-            val = bytes(val).decode('utf-8')
-        return val
+        if isinstance(val, bytes):
+            return val.decode('utf-8')
+        return compat.UNICODE_TYPE(val)
 
     def r_value(self, val):
         try:
             return self.dt_from_iso(val)
         except (ValueError, TypeError):
-            if not isinstance(val, compat.UNICODE_TYPE):
-                val = bytes(val).decode('utf-8')
-            return val
+            if isinstance(val, bytes):
+                return val.decode('utf-8')
+            return compat.UNICODE_TYPE(val)
 
     def dt_from_iso(self, str):
         return datetime.strptime(str, '%Y-%m-%dT%H:%M:%S')
