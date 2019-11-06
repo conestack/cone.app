@@ -17,7 +17,7 @@ ZCML
 
 For each plugin registered in the
 :doc:`Application Configuration <configuration>` ``.ini`` file, a
-``configure.zcml`` file must be provided which may contain ZCML directives,
+``configure.zcml`` file can be provided containing ZCML directives,
 e.g.
 
 .. code-block:: xml
@@ -36,11 +36,6 @@ For more Information about ZCML take a look at the
 `ZCML Documentation <http://zopetoolkit.readthedocs.io/en/latest/codingstyle/zcml-style.html>`_
 and the
 `Pyramid ZCML Integration <http://docs.pylonsproject.org/projects/pyramid_zcml/en/latest/>`_
-
-.. note::
-
-    Right now the ``configure.zcml`` file is mandatory even if it containes no
-    directives, but it will be optional in future.
 
 
 .. _plugin_main_hook:
