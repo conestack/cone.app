@@ -19,7 +19,7 @@ Detailed Documentation
 ======================
 
 The detailed ``cone.app`` documentation is available 
-`here <http://packages.python.org/cone.app>`_.
+`here <https://coneapp.readthedocs.io>`_.
 
 
 Source Code
