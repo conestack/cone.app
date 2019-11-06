@@ -1,8 +1,8 @@
 Changes
 =======
 
-1.0b1 (unreleased)
--------------------
+1.0b1 (2019-11-06)
+------------------
 
 - Fix ``DatetimeHelper.r_value`` and ``DatetimeHelper.w_value`` handling
   non string data types.
