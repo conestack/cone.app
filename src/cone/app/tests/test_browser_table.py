@@ -146,6 +146,7 @@ class TestBrowserTable(TileTestCase):
                   permission='view')
             class MyTable(Table):
                 table_id = 'mytable'
+                table_css = 'mytable'
                 table_tile_name = 'mytabletile'
                 col_defs = [{
                     'id': 'col_1',
@@ -212,6 +213,9 @@ class TestBrowserTable(TileTestCase):
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'mytabletile')
         expected = '<div id="mytable"'
+        self.assertTrue(rendered.find(expected) > -1)
+
+        expected = 'panel-default mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
         # Sort header with query white list param

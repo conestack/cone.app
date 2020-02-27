@@ -1038,6 +1038,7 @@ Futher the implementation must provide ``col_defs``, ``item_count`` and
     @tile(name='example_table', path='cone.app:browser/templates/table.pt')
     class ExampleTable(Table):
         table_id = 'example_table'
+        table_css = 'example_table'
         table_tile_name = 'example_table'
         col_defs = [{
             'id': 'column_a',

@@ -4,7 +4,9 @@ Changes
 1.0b2 (unreleased)
 ------------------
 
-- No changes yet.
+- Add ``cone.app.browser.table.Table.table_css`` for rendering additinal
+  CSS classes to table wrapper.
+  [rnix, 2020-02-27]
 
 
 1.0b1 (2019-11-06)

@@ -28,6 +28,7 @@ class Table(Tile):
     """
     wrapper_binding = 'batchclicked sortclicked'
     table_id = 'table'
+    table_css = ''
     table_tile_name = 'table'
     col_defs = []
     default_sort = None
