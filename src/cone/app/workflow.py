@@ -70,13 +70,14 @@ class WorkflowState(Behavior):
         recursiv_initial_state(ret)
         return ret
 
-    def _get_state(self):
+    @property
+    def state(self):
         return self.attrs.get('state', None)
 
-    def _set_state(self, val):
+    @default
+    @state.setter
+    def state(self, val):
         self.attrs['state'] = val
-
-    state = default(property(_get_state, _set_state))
 
 
 class WorkflowACL(Behavior):

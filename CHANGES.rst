@@ -4,6 +4,10 @@ Changes
 1.0b2 (unreleased)
 ------------------
 
+- Adopt ``cone.app.model.UUIDAware`` to use ``uuid.factory`` introduced in
+  ``node`` 0.9.25.
+  [rnix, 2020-03-01]
+
 - Add ``cone.app.browser.table.Table.table_css`` for rendering additinal
   CSS classes to table wrapper.
   [rnix, 2020-02-27]

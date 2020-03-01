@@ -45,7 +45,6 @@ from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
 import logging
 import os
-import uuid
 
 
 logger = logging.getLogger('cone.app')
@@ -238,31 +237,33 @@ class AdapterNode(BaseNode):
 
 class UUIDAttributeAware(UUIDAware):
 
-    def _get_uuid(self):
+    @property
+    def uuid(self):
         return self.attrs['uuid']
 
-    def _set_uuid(self, value):
+    @default
+    @uuid.setter
+    def uuid(self, value):
         self.attrs['uuid'] = value
-
-    uuid = default(property(_get_uuid, _set_uuid))
 
 
 @implementer(IUUIDAsName)
 class UUIDAsName(UUIDAware):
 
-    def _get_name(self):
+    @property
+    def __name__(self):
         return str(self.uuid)
 
-    def _set_name(self, name):
+    @finalize
+    @__name__.setter
+    def __name__(self, name):
         pass
-
-    __name__ = finalize(property(_get_name, _set_name))
 
     @finalize
     def set_uuid_for(self, node, override=False, recursiv=False):
         if IUUIDAware.providedBy(node):
             if override or not node.uuid:
-                node.uuid = uuid.uuid4()
+                node.uuid = self.uuid_factory()
         if recursiv:
             for k, v in node.items():
                 self.set_uuid_for(v, override, recursiv)

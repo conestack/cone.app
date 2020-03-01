@@ -209,13 +209,14 @@ class OwnerSupport(Behavior):
                     return [(Allow, self.owner, ace[2])] + acl
         return acl
 
-    def _get_owner(self):
+    @property
+    def owner(self):
         return self.attrs.get('owner')
 
-    def _set_owner(self, value):
+    @default
+    @owner.setter
+    def owner(self, value):
         self.attrs['owner'] = value
-
-    owner = default(property(_get_owner, _set_owner))
 
 
 @implementer(IPrincipalACL)
