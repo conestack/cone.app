@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0b2 (unreleased)
+1.0b2 (2020-03-30)
 ------------------
 
 - Adopt ``cone.app.model.UUIDAware`` to use ``uuid.factory`` introduced in
