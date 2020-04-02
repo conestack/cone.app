@@ -171,7 +171,7 @@ class MainMenu(Tile):
         # check for default child id if no curpath
         if not curpath and root_props.default_child:
             curpath = root_props.default_child
-        # check wether to render mainmenu item title
+        # check whether to render mainmenu item title
         empty_title = root_props.mainmenu_empty_title
         # XXX: icons
         for key in root.keys():

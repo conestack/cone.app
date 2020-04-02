@@ -21,8 +21,8 @@ class TestBrowserBatch(TileTestCase):
         # providing the following keys:
         # - ``page`` - the displayed page name, normally a number, or a
         #              character.
-        # - ``current`` - Flag wether page is current page or not.
-        # - ``visible`` - Flag wether page is visible or not.
+        # - ``current`` - Flag whether page is current page or not.
+        # - ``visible`` - Flag whether page is visible or not.
         # - ``href`` - href attribute URL.
         # - ``target`` - ajax target URL.
         # - ``url`` - Target URL. B/C. Use dedicated ``href`` and ``target``.
