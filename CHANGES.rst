@@ -4,6 +4,12 @@ Changes
 1.0b3 (unreleased)
 ------------------
 
+- Add ``form-control`` CSS class to referencebrowser input and select tags.
+  [rnix, 2020-05-06]
+
+- Fix reference browser no referencable restrictions.
+  [rnix, 2020-05-06]
+
 - Implement ``cone.app.model.NamespaceUUID``.
   [rnix, 2020-05-06]
 

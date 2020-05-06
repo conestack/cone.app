@@ -162,6 +162,10 @@ div#referencebrowser .panel-heading,
 div#referencebrowser .panel-footer {
     border-radius:0px;
 }
+a.addreference.disabled, 
+a.removereference.disabled {
+    color:#ddd;
+}
 
 /* settings */
 .settingstabpane {

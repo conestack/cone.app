@@ -45,7 +45,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span
         ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        class="referencebrowser" id="input-ref" name="ref" readonly="readonly"
+        class="form-control referencebrowser" id="input-ref" name="ref" readonly="readonly"
         type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>
         """, widget())
 
@@ -71,8 +71,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
-        value="" /><input name="ref.uid" type="hidden" value="" /></span>
+        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
+        type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>
         """, widget(data=data))
 
         # Required with valid value
@@ -84,8 +84,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
-        value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
+        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
+        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(data=data))
 
         # Single valued expects 2-tuple as value with (uid, label)
@@ -102,23 +102,23 @@ class TestBrowserReferenceBrowser(TileTestCase):
             })
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
-        class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
-        value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>
+        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
+        type="text" value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>
         """, widget())
 
         # Extract from request and render widget with data
         data = widget.extract(request)
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
-        class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
-        value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
+        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
+        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(data=data))
 
         # Render widget with request
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
-        class="referencebrowser required" id="input-ref" name="ref" readonly="readonly" type="text"
-        value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
+        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
+        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
         """, widget(request=request))
 
         # Single value display renderer
@@ -134,7 +134,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             mode='display')
         self.assertEqual(
             widget(),
-            u'<div class="display-referencebrowser" id="display-ref"></div>'
+            u'<div class="display-referencebrowser form-control" id="display-ref"></div>'
         )
 
         widget = factory(
@@ -150,7 +150,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             mode='display')
         self.assertEqual(
             widget(),
-            u'<div class="display-referencebrowser" id="display-ref">Label</div>'
+            u'<div class="display-referencebrowser form-control" id="display-ref">Label</div>'
         )
 
     def test_multi_valued(self):
@@ -167,7 +167,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
-        class="referencebrowser" id="input-ref" multiple="multiple"
+        class="form-control referencebrowser" id="input-ref" multiple="multiple"
         name="ref" /></span>
         """, widget())
 
@@ -197,7 +197,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
-        class="referencebrowser required" id="input-ref" multiple="multiple"
+        class="form-control referencebrowser required" id="input-ref" multiple="multiple"
         name="ref" required="required"><option
         id="input-ref-uid1" value="uid1">Title1</option><option
         id="input-ref-uid2" value="uid2">Title2</option></select></span>
@@ -212,7 +212,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
-        class="referencebrowser required" id="input-ref"
+        class="form-control referencebrowser required" id="input-ref"
         multiple="multiple" name="ref" required="required"><option
         id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option
         id="input-ref-uid2" selected="selected"
@@ -236,7 +236,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             },
             mode='display')
         self.checkOutput("""
-        <ul class="display-referencebrowser"
+        <ul class="display-referencebrowser form-control"
         id="display-ref"><li>Title1</li><li>Title2</li></ul>
         """, widget())
 
@@ -398,13 +398,13 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['selected'] = 'foo,bar'
         self.assertEqual(action.selected_uids, ['foo', 'bar'])
 
+        request.params['referencable'] = ''
+        self.assertTrue(action.display)
         request.params['referencable'] = 'ref_node,ref_node_2'
         self.assertTrue(action.display)
         request.params['referencable'] = 'ref_node'
         self.assertTrue(action.display)
         request.params['referencable'] = 'ref_node_2'
-        self.assertFalse(action.display)
-        request.params['referencable'] = ''
         self.assertFalse(action.display)
 
         self.checkOutput('ref-...', action.id)

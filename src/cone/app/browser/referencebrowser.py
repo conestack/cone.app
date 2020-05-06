@@ -122,14 +122,13 @@ class ReferenceAction(LinkAction):
 
     @property
     def display(self):
+        if not IUUID.providedBy(self.model):
+            return False
         referencable = self.request.params['referencable']
-        referencable = [
-            it for it in self.request.params['referencable'].split(',') if it
-        ]
-        return (
-            IUUID.providedBy(self.model) and  # noqa
-            self.model.node_info_name in referencable
-        )
+        if not referencable:
+            return True
+        referencable = [it for it in referencable.split(',') if it]
+        return self.model.node_info_name in referencable
 
     def render(self):
         rendered = LinkAction.render(self)
@@ -295,7 +294,8 @@ def reference_edit_renderer(widget, data):
         if multivalued, provide a vocabulary mapping uids to node names.
 
     target
-        ajax target for reference browser triggering.
+        ajax target for reference browser triggering. If not defined,
+        application root is used.
 
     root
         path of reference browser root. Defaults to '/'
@@ -363,7 +363,7 @@ factory.defaults['reference.default'] = ''
 
 factory.defaults['reference.format'] = 'block'
 
-factory.defaults['reference.class'] = 'referencebrowser'
+factory.defaults['reference.class'] = 'referencebrowser form-control'
 
 factory.defaults['reference.multivalued'] = False
 
