@@ -253,7 +253,7 @@ def reference_extractor(widget, data):
     return data.request.get('{}.uid'.format(widget.dottedpath))
 
 
-def wrap_ajax_target(rendered, widget, data):
+def trigger_target(widget, data):
     target = widget.attrs['target']
     if not target:
         target = make_url(data.request.request, node=get_root())
@@ -277,11 +277,20 @@ def wrap_ajax_target(rendered, widget, data):
         'referencable': referencable,
         'selected': selected,
     })
-    target = '{}{}'.format(target, query)
-    attrs = {
-        'ajax:target': target,
-    }
-    return tag('span', rendered, **attrs)
+    return '{}{}'.format(target, query)
+
+
+def render_trigger(widget, data):
+    return data.tag(
+        'span',
+        tag('i', ' ', class_='ion-android-share'),
+        _('browse', default='Browse'),
+        **{
+            'class': 'referencebrowser_trigger',
+            'data-reference-target': trigger_target(widget, data),
+            'data-reference-name': widget.dottedpath
+        }
+    )
 
 
 def reference_edit_renderer(widget, data):
@@ -307,7 +316,8 @@ def reference_edit_renderer(widget, data):
     """
     if widget.attrs.get('multivalued'):
         rendered = select_edit_renderer(widget, data)
-        return wrap_ajax_target(rendered, widget, data)
+        trigger = render_trigger(widget, data)
+        return rendered + trigger
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
@@ -332,7 +342,8 @@ def reference_edit_renderer(widget, data):
         'name_': '{}.uid'.format(widget.dottedpath),
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
-    return wrap_ajax_target(rendered, widget, data)
+    trigger = render_trigger(widget, data)
+    return rendered + trigger
 
 
 def reference_display_renderer(widget, data):

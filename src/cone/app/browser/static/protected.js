@@ -274,23 +274,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         }
     }
 
-    /*
-     * Selectable Items
-     * ================
-     * 
-     * Markup
-     * ------
-     * 
-     *     <div>
-     *       <div class="selectable">selectable 1</div>
-     *       <div class="selectable">selectable 2</div>
-     *     </div>
-     * 
-     * Script
-     * ------
-     * 
-     *     $('div.selectable').selectable();
-     */
+    // Selectable items
     $.fn.selectable = function() {
         this.unbind('click').bind('click', function(event) {
             event.preventDefault();
@@ -411,39 +395,17 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         }
     });
 
-    /*
-     * Reference Browser
-     * =================
-     * 
-     * Markup
-     * ------
-     * 
-     *     <input type="text" name="foo" class="referencebrowser" />
-     *     <input type="hidden" name="foo.uid" value="" />
-     * 
-     * for single value reference or
-     * 
-     *     <select name="foo" class="referencebrowser" />
-     * 
-     * for multi valued reference.
-     * 
-     * Script
-     * ------
-     * 
-     *     $('input.referencebrowser').referencebrowser();
-     */
+    // Reference Browser
     $.fn.referencebrowser = function() {
-        var icon = $(
-            '<span class="ion-android-share referencebrowser_trigger"></span>');
-        this.after(icon);
-        icon = this.next();
-        icon.unbind('click');
-        icon.bind('click', function() {
+        this.off('click').on('click', function() {
             var elem = $(this);
-            yafowil.referencebrowser.target = elem.prev().get(0);
+            yafowil.referencebrowser.target = $(
+                '[name="' + elem.data('reference-name') + '"]',
+                elem.parent()
+            ).get(0);
             bdajax.overlay({
                 action: 'referencebrowser',
-                target: elem.parent().attr('ajax:target')
+                target: elem.data('reference-target')
             });
         });
         return this;
@@ -461,8 +423,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             },
 
             browser_binder: function(context) {
-                $('input.referencebrowser', context).referencebrowser();
-                $('select.referencebrowser', context).referencebrowser();
+                $('.referencebrowser_trigger', context).referencebrowser();
             },
 
             add_reference_binder: function(context) {

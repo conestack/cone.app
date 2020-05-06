@@ -141,6 +141,12 @@ tr.selectable.selected td {
 .referencebrowser_trigger {
     padding:10px 15px 10px 5px;
     cursor:pointer;
+    display:block;
+    font-size:120%;
+    text-decoration:underline;
+}
+.referencebrowser_trigger i {
+    margin-right:.6em;
 }
 #referencebrowser_table td.actions {
     width:100px;
