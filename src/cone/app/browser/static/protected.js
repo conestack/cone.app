@@ -45,7 +45,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // keydown / keyup binder for shift and ctrl keys
         key_binder: function() {
-            $(document).bind('keydown', function(event) {
+            $(document).on('keydown', function(event) {
                 switch (event.keyCode || event.which) {
                     case 16:
                         cone.keys.shift_down = true;
@@ -55,7 +55,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                         break;
                 }
             });
-            $(document).bind('keyup', function(event) {
+            $(document).on('keyup', function(event) {
                 switch (event.keyCode || event.which) {
                     case 16:
                         cone.keys.shift_down = false;
@@ -68,7 +68,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
 
         settingstabsbinder: function(context) {
-            $('ul.settingstabs a', context).bind('click', function(event) {
+            $('ul.settingstabs a', context).on('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
                 var target = bdajax.parsetarget(elem.attr('ajax:target'));
@@ -117,7 +117,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             // lookup selection field by selector
             var selection = $(size_selector, context);
             // handle filter on selection change
-            selection.unbind('change').bind('change', function(event) {
+            selection.off('change').on('change', function(event) {
                 var option = $('option:selected', $(this)).first();
                 var size = option.val();
                 cone.batcheditems_handle_filter(selection, 'size', size);
@@ -144,26 +144,26 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             };
             // reset filter input field if marked as empty filter
             if (searchfield.hasClass('empty_filter')) {
-                searchfield.bind('focus', function() {
+                searchfield.on('focus', function() {
                     this.value = '';
                     $(this).removeClass('empty_filter');
                 });
             }
             // prevent default action when pressing enter
-            searchfield.unbind('keypress').bind('keypress', function(event) {
+            searchfield.off('keypress').on('keypress', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
                 }
             });
             // trigger search when releasing enter
-            searchfield.unbind('keyup').bind('keyup', function(event) {
+            searchfield.off('keyup').on('keyup', function(event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
                     trigger_search($(this));
                 }
             });
             // trigger search on input change
-            searchfield.unbind('change').bind('change', function(event) {
+            searchfield.off('change').on('change', function(event) {
                 event.preventDefault();
                 trigger_search($(this));
             });
@@ -184,7 +184,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         sharingbinder: function(context) {
             var checkboxes = $('input.add_remove_role_for_principal', context);
-            checkboxes.unbind('change').bind('change', function(event) {
+            checkboxes.off('change').on('change', function(event) {
                 event.preventDefault();
                 var checkbox = $(this);
                 var action;
@@ -225,7 +225,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 return false;
             };
             $('a#toolbaraction-cut', context)
-                    .unbind('click').bind('click', function(event) {
+                    .off('click')
+                    .on('click', function(event) {
                 event.preventDefault();
                 createCookie(copy_cookie, '', 0);
                 var selected_exist = 
@@ -243,7 +244,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 cone.selectable.reset();
             });
             $('a#toolbaraction-copy', context)
-                    .unbind('click').bind('click', function(event) {
+                    .off('click')
+                    .on('click', function(event) {
                 event.preventDefault();
                 createCookie(cut_cookie, '', 0);
                 var selected_exist = 
@@ -255,8 +257,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 selectable.removeClass('copysupport_cut');
                 cone.selectable.reset();
             });
-            $('a#toolbaraction-paste', context).unbind('click')
-                    .bind('click', function(event) {
+            $('a#toolbaraction-paste', context)
+                    .off('click')
+                    .on('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
                 if (elem.hasClass('disabled')) {
@@ -276,17 +279,16 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
     // Selectable items
     $.fn.selectable = function() {
-        this.unbind('click').bind('click', function(event) {
+        this.off('click').on('click', function(event) {
             event.preventDefault();
-            $(document).unbind('mousedown')
-                       .bind('mousedown', function(event) {
+            $(document).off('mousedown').on('mousedown', function(event) {
                 var elem = $(event.target);
                 // XXX: currently static selector
                 if (elem.parents('.selectable').length) {
                     return true;
                 }
                 $('.selectable').removeClass('selected');
-                $(document).unbind('mousedown');
+                $(document).off('mousedown');
                 return false;
             });
             var elem = $(event.currentTarget);
@@ -426,16 +428,18 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             },
 
             add_reference_binder: function(context) {
-                $('a.addreference').unbind('click')
-                                   .bind('click', function(event) {
+                $('a.addreference')
+                        .off('click')
+                        .on('click', function(event) {
                     event.preventDefault();
                     yafowil.referencebrowser.addreference($(this));
                 });
             },
 
             remove_reference_binder: function(context) {
-                $('a.removereference').unbind('click')
-                                      .bind('click', function(event) {
+                $('a.removereference')
+                        .off('click')
+                        .on('click', function(event) {
                     event.preventDefault();
                     yafowil.referencebrowser.removereference($(this));
                 });
