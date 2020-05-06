@@ -4,6 +4,13 @@ Changes
 1.0b3 (unreleased)
 ------------------
 
+- Implement ``cone.app.model.NamespaceUUID``.
+  [rnix, 2020-05-06]
+
+- Expect ``node.interfaces.IUUID`` instead of ``node.interfaces.IUUIDAware`` in
+  reference browser for referencable nodes.
+  [rnix, 2020-05-06]
+
 - Fix reference browser widget rendering ``target`` handling.
   [rnix, 2020-05-06]
 

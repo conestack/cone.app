@@ -12,6 +12,7 @@ from cone.app.model import FactoryNode
 from cone.app.model import get_node_info
 from cone.app.model import Layout
 from cone.app.model import Metadata
+from cone.app.model import NamespaceUUID
 from cone.app.model import node_info
 from cone.app.model import NodeInfo
 from cone.app.model import Properties
@@ -259,6 +260,30 @@ class TestModel(NodeTestCase):
         self.assertEqual(info.addables, ['othernode'])
         self.assertEqual(info.icon, 'icon')
         self.assertEqual(MyNode.node_info_name, 'mynode')
+
+    def test_NamespaceUUID(self):
+        @plumbing(NamespaceUUID)
+        class NamespaceUUIDNode(BaseNode):
+            pass
+
+        node = NamespaceUUIDNode()
+        self.assertEqual(node.uuid, None)
+
+        with self.assertRaises(NotImplementedError):
+            node.uuid = uuid.uuid4()
+
+        root = BaseNode()
+        root['ns_node'] = node
+        self.assertEqual(
+            node.uuid,
+            uuid.UUID('44b1c59f-9de5-55d9-8e6f-4d6390be6ecd')
+        )
+
+        node.uuid_namespace = uuid.UUID('d737ada9-d400-486a-8795-57fedf05bb9f')
+        self.assertEqual(
+            node.uuid,
+            uuid.UUID('c3861feb-bb1d-542d-a18f-e864146fea4d')
+        )
 
     def test_UUIDAttributeAware(self):
         @plumbing(UUIDAttributeAware)

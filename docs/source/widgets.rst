@@ -751,8 +751,8 @@ Reference listing
 Like ``contents`` tile, but with less table columns and reference browser
 specific actions for adding and removing references.
 
-Nodes must implement ``IUUIDAware`` and provide a node info in order to be
-referenceable.
+Nodes must implement ``node.interfaces.IUUID`` and provide a node info in order
+to be referenceable.
 
 Reference browser can be used as YAFOWIL widget.
 
@@ -783,7 +783,7 @@ Expected widget ``props``:
 
 - **referencable**: List of node info names which are referencable. Defaults
   to '' which means all objects are referenceable, given they implement
-  ``IUUIDAware`` and a node info.
+  ``node.interfaces.IUUID`` and a node info.
 
 See :doc:`forms documentation <forms>` for more details.
 

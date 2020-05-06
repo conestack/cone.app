@@ -197,6 +197,16 @@ another subtree can be pasted. Cut, copy and paste features are controlled by
 all default to ``True``.
 
 
+NamespaceUUID
+-------------
+
+``cone.app.model.NamespaceUUID`` is a plumbing behavior for application model
+nodes implementing ``node.interfaces.IUUID``. The ``uuid`` attribute is
+implemented as read-only property which computes the UUID as ``uuid.uuid5``
+from a namespace and the node path. The uuid namespace can be overwritten
+via ``uuid_namespace`` attribute.
+
+
 UUIDAttributeAware
 ------------------
 

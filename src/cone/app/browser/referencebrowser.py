@@ -12,7 +12,7 @@ from cone.app.interfaces import INavigationLeaf
 from cone.tile import render_tile
 from cone.tile import Tile
 from cone.tile import tile
-from node.interfaces import IUUIDAware
+from node.interfaces import IUUID
 from node.utils import instance_property
 from node.utils import LocationIterator
 from node.utils import node_by_path
@@ -127,7 +127,7 @@ class ReferenceAction(LinkAction):
             it for it in self.request.params['referencable'].split(',') if it
         ]
         return (
-            IUUIDAware.providedBy(self.model) and  # noqa
+            IUUID.providedBy(self.model) and  # noqa
             self.model.node_info_name in referencable
         )
 
@@ -148,7 +148,7 @@ class ActionAddReference(ReferenceAction):
 
     @property
     def enabled(self):
-        if IUUIDAware.providedBy(self.model):
+        if IUUID.providedBy(self.model):
             return not str(self.model.uuid) in self.selected_uids
         return False
 
@@ -160,7 +160,7 @@ class ActionRemoveReference(ReferenceAction):
 
     @property
     def enabled(self):
-        if IUUIDAware.providedBy(self.model):
+        if IUUID.providedBy(self.model):
             return str(self.model.uuid) in self.selected_uids
         return False
 
@@ -303,7 +303,7 @@ def reference_edit_renderer(widget, data):
     referencable
         list of node info names which are referencable.  Defaults to '',
         which means all objects are referencable, given they provide
-        ``IUUIDAware`` and a node info.
+        ``node.interfaces.IUUID`` and a node info.
     """
     if widget.attrs.get('multivalued'):
         rendered = select_edit_renderer(widget, data)

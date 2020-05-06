@@ -28,6 +28,7 @@ from node.behaviors import OdictStorage
 from node.behaviors import UUIDAware
 from node.behaviors import VolatileStorageInvalidate
 from node.interfaces import IOrdered
+from node.interfaces import IUUID
 from node.interfaces import IUUIDAware
 from node.utils import instance_property
 from odict import odict
@@ -45,6 +46,7 @@ from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
 import logging
 import os
+import uuid
 
 
 logger = logging.getLogger('cone.app')
@@ -235,7 +237,31 @@ class AdapterNode(BaseNode):
         return self.model.attrs
 
 
+@implementer(IUUID)
+class NamespaceUUID(Behavior):
+    """Behavior calculating ``uuid`` by node path and namespace.
+    """
+    uuid_namespace = default(uuid.UUID('83438507-fdff-45a2-af47-1e001884eab9'))
+
+    @property
+    def uuid(self):
+        if self.__name__ is None and self.__parent__ is None:
+            return None
+        return uuid.uuid5(
+            self.uuid_namespace,
+            '/'.join([_ for _ in self.path if _ is not None])
+        )
+
+    @finalize
+    @uuid.setter
+    def uuid(self, uuid):
+        msg = 'Ignore attempt to set {}.uuid'.format(self.__class__.__name__)
+        raise NotImplementedError(msg)
+
+
 class UUIDAttributeAware(UUIDAware):
+    """UUIDAware deriving behavior storing the uid on node attributes.
+    """
 
     @property
     def uuid(self):
