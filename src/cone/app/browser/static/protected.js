@@ -399,13 +399,12 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     $.fn.referencebrowser = function() {
         this.off('click').on('click', function() {
             var elem = $(this);
-            yafowil.referencebrowser.target = $(
-                '[name="' + elem.data('reference-name') + '"]',
-                elem.parent()
-            ).get(0);
+            var wrapper = elem.parent();
+            var sel = '[name="' + elem.data('reference-name') + '"]';
+            yafowil.referencebrowser.target = $(sel, wrapper).get(0);
             bdajax.overlay({
                 action: 'referencebrowser',
-                target: elem.data('reference-target')
+                target: wrapper.attr('ajax:target')
             });
         });
         return this;

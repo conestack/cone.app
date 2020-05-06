@@ -46,7 +46,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         <span
         ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         class="form-control referencebrowser" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>
+        type="text" value="" /><input name="ref.uid" type="hidden" value="" /><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>browse</span></span>
         """, widget())
 
         # Render required with empty value
@@ -72,7 +74,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="" /><input name="ref.uid" type="hidden" value="" /></span>
+        type="text" value="" /><input name="ref.uid" type="hidden" value="" /><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>Browse</span></span>
         """, widget(data=data))
 
         # Required with valid value
@@ -85,7 +89,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
+        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>Browse</span></span>
         """, widget(data=data))
 
         # Single valued expects 2-tuple as value with (uid, label)
@@ -103,7 +109,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
         class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Label" /><input name="ref.uid" type="hidden" value="uid" /></span>
+        type="text" value="Label" /><input name="ref.uid" type="hidden" value="uid" /><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>browse</span></span>
         """, widget())
 
         # Extract from request and render widget with data
@@ -111,14 +119,18 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
         class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
+        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>Browse</span></span>
         """, widget(data=data))
 
         # Render widget with request
         self.checkOutput("""
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
         class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /></span>
+        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>Browse</span></span>
         """, widget(request=request))
 
         # Single value display renderer
@@ -168,7 +180,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
         id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
         class="form-control referencebrowser" id="input-ref" multiple="multiple"
-        name="ref" /></span>
+        name="ref"> </select><span class="referencebrowser_trigger"
+        data-reference-name='ref'><i class="ion-android-share"></i>browse</span></span>
         """, widget())
 
         # Render required with empty value
@@ -200,7 +213,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         class="form-control referencebrowser required" id="input-ref" multiple="multiple"
         name="ref" required="required"><option
         id="input-ref-uid1" value="uid1">Title1</option><option
-        id="input-ref-uid2" value="uid2">Title2</option></select></span>
+        id="input-ref-uid2" value="uid2">Title2</option></select><span
+        class="referencebrowser_trigger" data-reference-name='ref'><i
+        class="ion-android-share"></i>Browse</span></span>
         """, widget(data=data))
 
         # Required with valid value
@@ -216,7 +231,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         multiple="multiple" name="ref" required="required"><option
         id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option
         id="input-ref-uid2" selected="selected"
-        value="uid2">Title2</option></select></span>
+        value="uid2">Title2</option></select><span class="referencebrowser_trigger"
+        data-reference-name='ref'><i class="ion-android-share"></i>Browse</span></span>
         """, widget(data=data))
 
         # Multi value display renderer

@@ -253,7 +253,7 @@ def reference_extractor(widget, data):
     return data.request.get('{}.uid'.format(widget.dottedpath))
 
 
-def trigger_target(widget, data):
+def wrap_ajax_target(rendered, widget, data):
     target = widget.attrs['target']
     if not target:
         target = make_url(data.request.request, node=get_root())
@@ -277,19 +277,23 @@ def trigger_target(widget, data):
         'referencable': referencable,
         'selected': selected,
     })
-    return '{}{}'.format(target, query)
+    target = '{}{}'.format(target, query)
+    attrs = {
+        'ajax:target': target,
+    }
+    return tag('span', rendered, **attrs)
 
 
-def render_trigger(widget, data):
+def reference_trigger_renderer(widget, data):
+    attrs = {
+        'class': 'referencebrowser_trigger',
+        'data-reference-name': widget.dottedpath
+    }
     return data.tag(
         'span',
-        tag('i', ' ', class_='ion-android-share'),
+        tag('i', '', class_='ion-android-share'),
         _('browse', default='Browse'),
-        **{
-            'class': 'referencebrowser_trigger',
-            'data-reference-target': trigger_target(widget, data),
-            'data-reference-name': widget.dottedpath
-        }
+        **attrs
     )
 
 
@@ -316,8 +320,8 @@ def reference_edit_renderer(widget, data):
     """
     if widget.attrs.get('multivalued'):
         rendered = select_edit_renderer(widget, data)
-        trigger = render_trigger(widget, data)
-        return rendered + trigger
+        trigger = reference_trigger_renderer(widget, data)
+        return wrap_ajax_target(rendered + trigger, widget, data)
     value = ['', '']
     if data.extracted is not UNSET:
         value = [data.extracted, data.request.get(widget.dottedpath)]
@@ -342,8 +346,8 @@ def reference_edit_renderer(widget, data):
         'name_': '{}.uid'.format(widget.dottedpath),
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
-    trigger = render_trigger(widget, data)
-    return rendered + trigger
+    trigger = reference_trigger_renderer(widget, data)
+    return wrap_ajax_target(rendered + trigger, widget, data)
 
 
 def reference_display_renderer(widget, data):
