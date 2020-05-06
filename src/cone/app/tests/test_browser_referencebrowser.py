@@ -19,6 +19,7 @@ from yafowil.base import ExtractionError
 from yafowil.base import factory
 from yafowil.base import RuntimeData
 from yafowil.base import Widget
+from yafowil.webob import WebObRequestAdapter
 from zope.interface import implementer
 
 
@@ -247,27 +248,34 @@ class TestBrowserReferenceBrowser(TileTestCase):
             display_renderers=[],
             preprocessors=[],
             uniquename='dummy')
-        data = RuntimeData()
-
-        # XXX: referencebrowser not works without target, check if case
-        #      necessary
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, 'rendered')
-
         widget.attrs['multivalued'] = False
-        widget.attrs['target'] = 'http://example.com'
-        widget.attrs['referencable'] = 'ref_node'
+        widget.attrs['target'] = None
+        widget.attrs['referencable'] = ''
         widget.attrs['root'] = '/'
+
+        data = RuntimeData()
+        data.request = WebObRequestAdapter(self.layer.new_request())
+
         expected = (
             '<span ajax:target='
-            '"http://example.com?referencable=ref_node&root=/&selected="'
+            '"http://example.com/?referencable=&root=/&selected="'
+            '>rendered</span>'
+        )
+        rendered = wrap_ajax_target('rendered', widget, data)
+        self.assertEqual(rendered, expected)
+
+        widget.attrs['target'] = 'http://example.com/target'
+        widget.attrs['referencable'] = 'ref_node'
+        expected = (
+            '<span ajax:target='
+            '"http://example.com/target?referencable=ref_node&root=/&selected="'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
         self.assertEqual(rendered, expected)
 
         def callable_target(widget, data):
-            return 'http://example.com'
+            return 'http://example.com/target'
         widget.attrs['target'] = callable_target
 
         def callable_referencable(widget, data):
@@ -286,9 +294,10 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertEqual(rendered, expected)
 
         widget.attrs['referencable'] = ['ref_node', 'ref_node_2']
+        widget.attrs['target'] = None
         expected = (
             '<span ajax:target='
-            '"http://example.com?referencable=ref_node,ref_node_2&root=/&selected="'
+            '"http://example.com/?referencable=ref_node,ref_node_2&root=/&selected="'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
@@ -298,7 +307,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data.value = ('sel_ref', 'Selected Reference')
         expected = (
             '<span ajax:target='
-            '"http://example.com?referencable=ref_node&root=/&selected=sel_ref"'
+            '"http://example.com/?referencable=ref_node&root=/&selected=sel_ref"'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)
@@ -308,7 +317,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data.value = ('sel_ref', 'sel_ref_2')
         expected = (
             '<span ajax:target='
-            '"http://example.com?referencable=ref_node&root=/&selected=sel_ref,sel_ref_2"'
+            '"http://example.com/?referencable=ref_node&root=/&selected=sel_ref,sel_ref_2"'
             '>rendered</span>'
         )
         rendered = wrap_ajax_target('rendered', widget, data)

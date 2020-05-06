@@ -1,33 +1,33 @@
 from cone.app import compat
+from cone.app import get_root
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import Toolbar
 from cone.app.browser.contents import ContentsTile
 from cone.app.browser.layout import PathBar
 from cone.app.browser.table import RowData
 from cone.app.browser.utils import make_query
-from cone.app.browser.utils import request_property
 from cone.app.browser.utils import make_url
+from cone.app.browser.utils import request_property
 from cone.app.interfaces import INavigationLeaf
-from cone.tile import Tile
 from cone.tile import render_tile
+from cone.tile import Tile
 from cone.tile import tile
 from node.interfaces import IUUIDAware
-from node.utils import LocationIterator
 from node.utils import instance_property
+from node.utils import LocationIterator
 from node.utils import node_by_path
 from pyramid.i18n import TranslationStringFactory
-from yafowil.base import UNSET
 from yafowil.base import factory
 from yafowil.base import fetch_value
+from yafowil.base import UNSET
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
 from yafowil.common import select_display_renderer
 from yafowil.common import select_edit_renderer
 from yafowil.common import select_extractor
-from yafowil.utils import Tag
 from yafowil.utils import cssclasses
 from yafowil.utils import cssid
-import types
+from yafowil.utils import Tag
 
 
 _ = TranslationStringFactory('cone.app')
@@ -127,7 +127,7 @@ class ReferenceAction(LinkAction):
             it for it in self.request.params['referencable'].split(',') if it
         ]
         return (
-            IUUIDAware.providedBy(self.model) and
+            IUUIDAware.providedBy(self.model) and  # noqa
             self.model.node_info_name in referencable
         )
 
@@ -255,36 +255,34 @@ def reference_extractor(widget, data):
 
 
 def wrap_ajax_target(rendered, widget, data):
-    if widget.attrs.get('target'):
-        target = widget.attrs.get('target')
-        if callable(target):
-            target = target(widget, data)
-        referencable = widget.attrs['referencable']
-        if callable(referencable):
-            referencable = referencable(widget, data)
-        if type(referencable) in compat.ITER_TYPES:
-            referencable = ','.join(referencable)
-        root = widget.attrs['root']
-        if callable(root):
-            root = root(widget, data)
-        selected = ''
-        if widget.attrs['multivalued'] and data.value:
-            selected = ','.join(data.value)
-        elif data.value and data.value[0]:
-            selected = data.value[0]
-        query = make_query(**{
-            'root': root,
-            'referencable': referencable,
-            'selected': selected,
-        })
-        target = '{}{}'.format(target, query)
-        attrs = {
-            'ajax:target': target,
-        }
-        return tag('span', rendered, **attrs)
-    # XXX: referencebrowser not works without target, check if case
-    #      necessary. raise error here?
-    return rendered
+    target = widget.attrs['target']
+    if not target:
+        target = make_url(data.request.request, node=get_root())
+    if callable(target):
+        target = target(widget, data)
+    referencable = widget.attrs['referencable']
+    if callable(referencable):
+        referencable = referencable(widget, data)
+    if type(referencable) in compat.ITER_TYPES:
+        referencable = ','.join(referencable)
+    root = widget.attrs['root']
+    if callable(root):
+        root = root(widget, data)
+    selected = ''
+    if widget.attrs['multivalued'] and data.value:
+        selected = ','.join(data.value)
+    elif data.value and data.value[0]:
+        selected = data.value[0]
+    query = make_query(**{
+        'root': root,
+        'referencable': referencable,
+        'selected': selected,
+    })
+    target = '{}{}'.format(target, query)
+    attrs = {
+        'ajax:target': target,
+    }
+    return tag('span', rendered, **attrs)
 
 
 def reference_edit_renderer(widget, data):
@@ -372,3 +370,5 @@ factory.defaults['reference.multivalued'] = False
 factory.defaults['reference.root'] = '/'
 
 factory.defaults['reference.referencable'] = ''
+
+factory.defaults['reference.target'] = None

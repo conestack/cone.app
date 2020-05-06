@@ -776,7 +776,8 @@ Expected widget ``props``:
 - **vocabulary**: If multivalued, provide a vocabulary mapping uids to node
   names.
 
-- **target**: Ajax target used for rendering reference browser.
+- **target**: Ajax target used for rendering reference browser. If not defined,
+  application root is used.
 
 - **root**: Path of reference browser root. Defaults to '/'
 

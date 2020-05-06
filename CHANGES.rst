@@ -4,7 +4,8 @@ Changes
 1.0b3 (unreleased)
 ------------------
 
-- No changes yet.
+- Fix reference browser widget rendering ``target`` handling.
+  [rnix, 2020-05-06]
 
 
 1.0b2 (2020-03-30)
