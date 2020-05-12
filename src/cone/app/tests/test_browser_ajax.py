@@ -1,4 +1,4 @@
-from cone.app import root
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import ajax_form_template
@@ -37,6 +37,7 @@ class TestBrowserAjax(TileTestCase):
                 def render(self):
                     return 'rendered test tile'
 
+        root = get_root()
         request = self.layer.new_request()
         request.params['bdajax.action'] = 'testtile'
         request.params['bdajax.mode'] = 'replace'
@@ -197,6 +198,7 @@ class TestBrowserAjax(TileTestCase):
                     )
                     return u''
 
+        root = get_root()
         request = self.layer.new_request()
         request.params['bdajax.action'] = 'testtile2'
         request.params['bdajax.mode'] = 'replace'
@@ -387,6 +389,7 @@ class TestBrowserAjax(TileTestCase):
                     ]
 
         # Test unauthorized
+        root = get_root()
         request = self.layer.new_request()
         res = render_ajax_form(root, request, 'ajaxtestform')
         self.checkOutput("""
@@ -419,6 +422,7 @@ class TestBrowserAjax(TileTestCase):
     def test_livesearch(self):
         # Cone provides a livesearch view, but no referring ``ILiveSearch``
         # implementing adapter for it
+        root = get_root()
         request = self.layer.new_request()
         request.params['term'] = 'foo'
         self.assertEqual(livesearch(root, request), [])
