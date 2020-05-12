@@ -143,7 +143,7 @@ class ReferenceAction(LinkAction):
 class ActionAddReference(ReferenceAction):
     css = 'addreference'
     title = _('add_reference', default='Add reference')
-    icon = 'ion-plus-round'
+    icon = 'glyphicons glyphicons-plus-sign'
 
     @property
     def enabled(self):
@@ -155,7 +155,7 @@ class ActionAddReference(ReferenceAction):
 class ActionRemoveReference(ReferenceAction):
     css = 'removereference'
     title = _('remove_reference', default='Remove reference')
-    icon = 'ion-minus-round'
+    icon = 'glyphicons glyphicons-minus-sign'
 
     @property
     def enabled(self):

@@ -460,7 +460,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Add reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="ion-plus-round">'
+        expected = '<span class="glyphicons glyphicons-plus-sign">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -494,7 +494,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Remove reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="ion-minus-round">'
+        expected = '<span class="glyphicons glyphicons-minus-sign">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -680,7 +680,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
-        ><span class="ion-plus-round"></span></a>...
+        ><span class="glyphicons glyphicons-plus-sign"></span></a>...
         """, res)
 
     def test_referencebrowser(self):

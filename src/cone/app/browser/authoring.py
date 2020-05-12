@@ -241,6 +241,7 @@ class OverlayForm(Behavior):
     """Form behavior rendering to overlay.
     """
     action_resource = override('overlayform')
+    # XXX: change ``overlay_selector`` to #ajax-form
     overlay_selector = override('#ajax-overlay')
     overlay_content_selector = override('.overlay_content')
 
