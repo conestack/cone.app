@@ -428,18 +428,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             },
 
             add_reference_binder: function(context) {
-                $('a.addreference')
-                        .off('click')
-                        .on('click', function(event) {
+                $('a.addreference').off('click').on('click', function(event) {
                     event.preventDefault();
                     yafowil.referencebrowser.addreference($(this));
                 });
             },
 
             remove_reference_binder: function(context) {
-                $('a.removereference')
-                        .off('click')
-                        .on('click', function(event) {
+                $('a.removereference').off('click').on('click', function(event) {
                     event.preventDefault();
                     yafowil.referencebrowser.removereference($(this));
                 });
