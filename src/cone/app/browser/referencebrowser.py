@@ -319,6 +319,12 @@ def reference_trigger_renderer(widget, data):
 
 
 def multivalued_reference_vocab(widget, data):
+    vocab = list()
+    bc_vocab = attr_value('bc_vocabulary', widget, data)
+    if bc_vocab:
+        for uuid_, label in vocabulary(bc_vocab):
+            vocab.append((uuid_, label))
+        return vocab
     if widget.dottedpath in data.request:
         value = data.request[widget.dottedpath]
     else:
@@ -328,12 +334,6 @@ def multivalued_reference_vocab(widget, data):
             value = widget.getter
     if not value:
         value = list()
-    vocab = list()
-    bc_vocab = attr_value('bc_vocabulary', widget, data)
-    if bc_vocab:
-        for uuid_, label in vocabulary(bc_vocab):
-            vocab.append((uuid_, label))
-        return vocab
     lookup = attr_value('lookup', widget, data)
     for uuid_ in value:
         vocab.append((uuid_, lookup(uuid_) if lookup else uuid_))
