@@ -5,7 +5,6 @@ from cone.app.browser.referencebrowser import ActionRemoveReference
 from cone.app.browser.referencebrowser import ReferencableChildrenLink
 from cone.app.browser.referencebrowser import ReferenceAction
 from cone.app.browser.referencebrowser import ReferenceBrowserModelMixin
-from cone.app.browser.referencebrowser import wrap_ajax_target
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import BaseNode
 from cone.tile import render_tile
@@ -18,9 +17,6 @@ from plumber import plumbing
 from pyramid.httpexceptions import HTTPForbidden
 from yafowil.base import ExtractionError
 from yafowil.base import factory
-from yafowil.base import RuntimeData
-from yafowil.base import Widget
-from yafowil.webob import WebObRequestAdapter
 from zope.interface import implementer
 
 

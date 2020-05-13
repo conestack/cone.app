@@ -4,6 +4,14 @@ Changes
 1.0b3 (unreleased)
 ------------------
 
+- Improve multivalued handling of reference browser. Instead of passing
+  ``vocabulary`` property, a ``lookup`` function gets passed which is used
+  for looking up labels for currently selected references.
+  [rnix, 2020-05-13]
+
+- Proper required handling in reference browser.
+  [rnix, 2020-05-13]
+
 - Add ``form-control`` CSS class to referencebrowser input and select tags.
   [rnix, 2020-05-06]
 
