@@ -724,68 +724,100 @@ details.
 Form widget related
 ===================
 
-Reference browser
------------------
+Reference
+---------
+
+``cone.app`` provides the ``reference`` YAFOWIL form widget for referencing
+application nodes.
+
+Referenceable nodes must implement ``node.interfaces.IUUID`` and provide a node
+info.
+
+The widget uses a reference browser which gets rendered in an overlay and
+consists of the following tiles:
 
 **Tile registration name**: ``referencebrowser``
 
 Render ``referencebrowser_pathbar`` tile and ``referencelisting`` tile.
 
-This tile gets rendered in an overlay and is used by the ``referencebrowser``
-YAFOWIL widget provided by ``cone.app``.
-
-
-Reference browser pathbar
--------------------------
-
 **Tile registration name**: ``referencebrowser_pathbar``
 
 Referencebrowser specific pathbar.
-
-
-Reference listing
------------------
 
 **Tile registration name**: ``referencelisting``
 
 Like ``contents`` tile, but with less table columns and reference browser
 specific actions for adding and removing references.
 
-Nodes must implement ``node.interfaces.IUUID`` and provide a node info in order
-to be referenceable.
-
-Reference browser can be used as YAFOWIL widget.
+Single reference example. Note that preset value is a tuple consisting of
+(UUID, 'Label'):
 
 .. code-block:: python
 
     from cone.app.browser.utils import make_url
     from yafowil.base import factory
 
-    reference_field = factory(
+    single_reference_field = factory(
         'field:error:reference',
+        value=(
+            '9c214a90-8557-45e1-881b-46ee2608ba77',
+            u'Referenced node label'
+        ),
         props={
-            target: make_url(request, node=node)
-            referencable: 'referencable_node'
+            'target': make_url(request, node=node),
+            'root': '/some_container',
+            'referencable': [
+                'referencable_node_info_name',
+                'other_node_info_name'
+            ]
         })
 
-Expected widget ``props``:
+Multivalued reference example. Preset value of multivalued references is a
+list of UUIDs. The label for each uuid gets looked up via given ``lookup``
+function:
 
-- **multivalued**: Flag whether reference field is multivalued. Defaults to
-  ``False``.
+.. code-block:: python
 
-- **vocabulary**: If multivalued, provide a vocabulary mapping uids to node
-  names.
+    from cone.app.browser.utils import make_url
+    from yafowil.base import factory
+
+    def lookup_label(uuid):
+        return 'Label for given uuid'
+
+    multi_reference_field = factory(
+        'field:error:reference',
+        value=[
+            '9c214a90-8557-45e1-881b-46ee2608ba77',
+            '10185426-3238-4f97-8133-8a20112642e8',
+            'ec1a2b03-9028-4fe3-a8f9-1207069b016f'
+        ],
+        props={
+            'multivalued': True,
+            'lookup': lookup_label
+        })
+
+Reference widget properties:
 
 - **target**: Ajax target used for rendering reference browser. If not defined,
   application root is used.
 
 - **root**: Path of reference browser root. Defaults to '/'
 
-- **referencable**: List of node info names which are referencable. Defaults
-  to '' which means all objects are referenceable, given they implement
-  ``node.interfaces.IUUID`` and a node info.
+- **referencable**: Node info name or list of node info names which are
+  referencable. Defaults to None which means all objects are referenceable,
+  given they implement ``node.interfaces.IUUID`` and provide a node info.
 
-See :doc:`forms documentation <forms>` for more details.
+- **multivalued**: Flag whether reference field is multivalued. Defaults to
+  ``False``.
+
+- **lookup**: Callback accepting reference uid as argument. It is used to
+  lookup the label of referenced items if multivalued.
+
+- **vocabulary**: This property is deprecated and only kept for B/C reasons.
+  Use ``lookup`` instead. If multivalued, provide a vocabulary mapping uids to
+  node names.
+
+See :doc:`forms documentation <forms>` for more information about writing forms.
 
 
 Abstract tiles

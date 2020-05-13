@@ -17,17 +17,22 @@ from node.utils import instance_property
 from node.utils import LocationIterator
 from node.utils import node_by_path
 from pyramid.i18n import TranslationStringFactory
+from pyramid.threadlocal import get_current_request
 from yafowil.base import factory
 from yafowil.base import fetch_value
 from yafowil.base import UNSET
-from yafowil.common import generic_extractor
+from yafowil.common import generic_datatype_extractor
+from yafowil.common import generic_emptyvalue_extractor
 from yafowil.common import generic_required_extractor
 from yafowil.common import select_display_renderer
 from yafowil.common import select_edit_renderer
 from yafowil.common import select_extractor
+from yafowil.utils import attr_value
 from yafowil.utils import cssclasses
 from yafowil.utils import cssid
+from yafowil.utils import managedprops
 from yafowil.utils import Tag
+from yafowil.utils import vocabulary
 
 
 _ = TranslationStringFactory('cone.app')
@@ -247,16 +252,26 @@ class ReferenceListing(ContentsTile):
         return rows
 
 
+@managedprops('multivalued')
 def reference_extractor(widget, data):
     if widget.attrs.get('multivalued'):
         return select_extractor(widget, data)
-    return data.request.get('{}.uid'.format(widget.dottedpath))
+    request = data.request
+    dottedpath = widget.dottedpath
+    if dottedpath not in request:
+        return UNSET
+    return [
+        request['{}.uid'.format(dottedpath)],
+        request[dottedpath]
+    ]
 
 
 def wrap_ajax_target(rendered, widget, data):
     target = widget.attrs['target']
     if not target:
-        target = make_url(data.request.request, node=get_root())
+        request = data.request.request
+        request = request if request else get_current_request()
+        target = make_url(request, node=get_root())
     if callable(target):
         target = target(widget, data)
     referencable = widget.attrs['referencable']
@@ -264,14 +279,17 @@ def wrap_ajax_target(rendered, widget, data):
         referencable = referencable(widget, data)
     if type(referencable) in compat.ITER_TYPES:
         referencable = ','.join(referencable)
+    if not referencable:
+        referencable = ''
     root = widget.attrs['root']
     if callable(root):
         root = root(widget, data)
+    value = fetch_value(widget, data)
     selected = ''
     if widget.attrs['multivalued'] and data.value:
-        selected = ','.join(data.value)
+        selected = ','.join(value)
     elif data.value and data.value[0]:
-        selected = data.value[0]
+        selected = value[0]
     query = make_query(**{
         'root': root,
         'referencable': referencable,
@@ -297,44 +315,45 @@ def reference_trigger_renderer(widget, data):
     )
 
 
+def multivalued_reference_vocab(widget, data):
+    if widget.dottedpath in data.request:
+        value = data.request[widget.dottedpath]
+    else:
+        if callable(widget.getter):
+            value = widget.getter(widget, data)
+        else:
+            value = widget.getter
+    if not value:
+        value = list()
+    vocab = list()
+    bc_vocab = attr_value('bc_vocabulary', widget, data)
+    if bc_vocab:
+        for uuid_, label in vocabulary(bc_vocab):
+            vocab.append((uuid_, label))
+        return vocab
+    lookup = attr_value('lookup', widget, data)
+    for uuid_ in value:
+        vocab.append((uuid_, lookup(uuid_) if lookup else uuid_))
+    return vocab
+
+
+@managedprops(
+    'multivalued', 'vocabulary', 'target',
+    'root', 'referencable', 'lookup')
 def reference_edit_renderer(widget, data):
-    """Properties:
-
-    multivalued
-        flag whether reference field is multivalued.
-
-    vocabulary
-        if multivalued, provide a vocabulary mapping uids to node names.
-
-    target
-        ajax target for reference browser triggering. If not defined,
-        application root is used.
-
-    root
-        path of reference browser root. Defaults to '/'
-
-    referencable
-        list of node info names which are referencable.  Defaults to '',
-        which means all objects are referencable, given they provide
-        ``node.interfaces.IUUID`` and a node info.
-    """
     if widget.attrs.get('multivalued'):
+        if 'vocabulary' in widget.attrs and 'bc_vocabulary' not in widget.attrs:
+            widget.attrs['bc_vocabulary'] = widget.attrs['vocabulary']
+            del widget.attrs['vocabulary']
+        if 'vocabulary' not in widget.attrs:
+            widget.attrs['vocabulary'] = multivalued_reference_vocab(widget, data)
         rendered = select_edit_renderer(widget, data)
         trigger = reference_trigger_renderer(widget, data)
         return wrap_ajax_target(rendered + trigger, widget, data)
-    value = ['', '']
-    if data.extracted is not UNSET:
-        value = [data.extracted, data.request.get(widget.dottedpath)]
-    elif data.request.get('{}.uid'.format(widget.dottedpath)):
-        value = [
-            data.request.get('{}.uid'.format(widget.dottedpath)),
-            data.request.get(widget.dottedpath),
-        ]
-    elif data.value is not UNSET and data.value is not None:
-        value = data.value
+    value = fetch_value(widget, data)
     text_attrs = {
         'type': 'text',
-        'value': value[1],
+        'value': value[1] if value else '',
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
         'class_': cssclasses(widget, data),
@@ -342,7 +361,7 @@ def reference_edit_renderer(widget, data):
     }
     hidden_attrs = {
         'type': 'hidden',
-        'value': value[0],
+        'value': value[0] if value else '',
         'name_': '{}.uid'.format(widget.dottedpath),
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
@@ -354,6 +373,7 @@ def reference_display_renderer(widget, data):
     if widget.attrs.get('multivalued'):
         return select_display_renderer(widget, data)
     value = fetch_value(widget, data)
+    # XXX: multivalued
     if value in [UNSET, u'', None]:
         value = u''
     else:
@@ -367,8 +387,12 @@ def reference_display_renderer(widget, data):
 
 factory.register(
     'reference',
-    extractors=[generic_extractor, generic_required_extractor,
-                reference_extractor],
+    extractors=[
+        reference_extractor,
+        generic_required_extractor,
+        generic_emptyvalue_extractor,
+        generic_datatype_extractor
+    ],
     edit_renderers=[reference_edit_renderer],
     display_renderers=[reference_display_renderer])
 
@@ -380,10 +404,36 @@ factory.defaults['reference.format'] = 'block'
 
 factory.defaults['reference.class'] = 'referencebrowser form-control'
 
-factory.defaults['reference.multivalued'] = False
+factory.defaults['reference.target'] = None
+factory.doc['props']['reference.target'] = """\
+Ajax target for reference browser triggering. If not defined, application root
+is used.
+"""
 
 factory.defaults['reference.root'] = '/'
+factory.doc['props']['reference.root'] = """\
+Path of reference browser root. Defaults to '/'
+"""
 
-factory.defaults['reference.referencable'] = ''
+factory.defaults['reference.referencable'] = None
+factory.doc['props']['reference.referencable'] = """\
+Node info name or list of node info names which are referencable. Defaults to
+None which means all objects are referenceable, given they implement
+``node.interfaces.IUUID`` and provide a node info.
+"""
 
-factory.defaults['reference.target'] = None
+factory.defaults['reference.multivalued'] = False
+factory.doc['props']['reference.multivalued'] = """\
+Flag whether reference field is multivalued.
+"""
+
+factory.defaults['reference.lookup'] = None
+factory.doc['props']['reference.lookup'] = """\
+Callback accepting reference uid as argument. It is used to lookup the label of
+referenced items if multivalued.
+"""
+
+factory.doc['props']['reference.vocabulary'] = """\
+This property is deprecated and only kept for B/C reasons. Use ``lookup``
+instead. If multivalued, provide a vocabulary mapping uids to node names.
+"""

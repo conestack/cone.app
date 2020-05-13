@@ -13,6 +13,7 @@ from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
 from node.behaviors import UUIDAware
+from node.utils import UNSET
 from plumber import plumbing
 from pyramid.httpexceptions import HTTPForbidden
 from yafowil.base import ExtractionError
@@ -31,7 +32,259 @@ class RefNode(BaseNode):
 class TestBrowserReferenceBrowser(TileTestCase):
     layer = testing.security
 
-    def test_single_valued(self):
+    def test_reference_render(self):
+        self.layer.new_request()
+        widget = factory(
+            'reference',
+            name='ref',
+            props={
+                'label': 'Reference'
+            })
+        self.checkOutput("""
+        <span ajax:target="http://example.com/?referencable=&root=/&selected=">
+          <input class="form-control referencebrowser"
+                 id="input-ref" name="ref" readonly="readonly"
+                 type="text" value="" />
+          <input name="ref.uid" type="hidden" value="" />
+          <span class="referencebrowser_trigger" data-reference-name='ref'>
+            <i class="ion-android-share">
+            </i>
+          browse</span>
+        </span>
+        """, '>\n'.join(widget().split('>')))
+
+        widget.attrs['multivalued'] = True
+        self.checkOutput("""
+        <span ajax:target="http://example.com/?referencable=&root=/&selected=">
+          <input id="exists-ref" name="ref-exists" type="hidden" value="exists" />
+          <select class="form-control referencebrowser"
+                  id="input-ref" multiple="multiple" name="ref">
+          </select>
+          <span class="referencebrowser_trigger" data-reference-name='ref'>
+            <i class="ion-android-share">
+            </i>
+            browse</span>
+        </span>
+        """, '>\n'.join(widget().split('>')))
+
+    def test_reference_root(self):
+        self.layer.new_request()
+        widget = factory(
+            'reference',
+            name='ref',
+            props={
+                'label': 'Reference'
+            })
+        expected = 'http://example.com/?referencable=&root=/&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+        widget.attrs['root'] = '/container'
+        expected = 'http://example.com/?referencable=&root=/container&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+        def root_callable(widget, data):
+            return '/computed_root'
+
+        widget.attrs['root'] = root_callable
+        expected = 'http://example.com/?referencable=&root=/computed_root&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+    def test_reference_referencable(self):
+        self.layer.new_request()
+        widget = factory(
+            'reference',
+            name='ref',
+            props={
+                'label': 'Reference',
+            })
+        expected = 'http://example.com/?referencable=&root=/&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+        widget.attrs['referencable'] = 'foo'
+        expected = 'http://example.com/?referencable=foo&root=/&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+        widget.attrs['referencable'] = ['foo', 'bar']
+        expected = 'http://example.com/?referencable=foo,bar&root=/&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+        widget.attrs['referencable'] = 'foo,bar'
+        expected = 'http://example.com/?referencable=foo,bar&root=/&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+        def referencable_callable(widget, data):
+            return 'computed'
+
+        widget.attrs['referencable'] = referencable_callable
+        expected = 'http://example.com/?referencable=computed&root=/&selected='
+        self.assertTrue(widget().find(expected) > -1)
+
+    def test_reference_target(self):
+        self.layer.new_request()
+        widget = factory(
+            'reference',
+            name='ref',
+            props={
+                'label': 'Reference'
+            })
+        expected = 'ajax:target="http://example.com/?referencable=&root=/&selected="'
+        self.assertTrue(widget().find(expected) > -1)
+
+        widget.attrs['target'] = 'http://domain.com/'
+        expected = 'ajax:target="http://domain.com/?referencable=&root=/&selected="'
+        self.assertTrue(widget().find(expected) > -1)
+
+        def target_callable(widget, data):
+            return 'http://computed.com/'
+
+        widget.attrs['target'] = target_callable
+        expected = 'ajax:target="http://computed.com/?referencable=&root=/&selected="'
+        self.assertTrue(widget().find(expected) > -1)
+
+    def test_multivalued_reference_vocab(self):
+        self.layer.new_request()
+        widget = factory(
+            'reference',
+            name='ref',
+            props={
+                'label': 'Reference',
+                'multivalued': True,
+            })
+
+        # when widget gets called on multivalued reference, vocabulaty gets
+        # set on widget props for proper functioning of selection
+        # renderer/extractor
+        widget()
+        self.assertTrue('vocabulary' in widget.attrs)
+        self.assertEqual(widget.attrs['vocabulary'], [])
+        del widget.attrs['vocabulary']
+
+        # case no preset value and value passed on request.
+        # no lookup function given, label is uuid
+        self.assertEqual(widget.getter, UNSET)
+        request = self.layer.new_request()
+        request.params['ref'] = ['f5c4f643-1bbd-481e-a8b0-8a47ca070184']
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [(
+            'f5c4f643-1bbd-481e-a8b0-8a47ca070184',
+            'f5c4f643-1bbd-481e-a8b0-8a47ca070184'
+        )])
+        del widget.attrs['vocabulary']
+
+        # case preset value and no value passed on request.
+        # no lookup function given, label is uuid
+        request = self.layer.new_request()
+        widget.getter = ['94790e41-1441-44b3-b196-7c4d73bb9cca']
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [(
+            '94790e41-1441-44b3-b196-7c4d73bb9cca',
+            '94790e41-1441-44b3-b196-7c4d73bb9cca'
+        )])
+        del widget.attrs['vocabulary']
+
+        # case preset value and value passed on request.
+        # request value takes precedence
+        # no lookup function given, label is uuid
+        request = self.layer.new_request()
+        request.params['ref'] = ['2faba3ab-5af0-4240-b457-8c65ac87b8fa']
+        widget.getter = ['180eb583-239f-48dc-b304-6302296939a5']
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [(
+            '2faba3ab-5af0-4240-b457-8c65ac87b8fa',
+            '2faba3ab-5af0-4240-b457-8c65ac87b8fa'
+        )])
+        del widget.attrs['vocabulary']
+
+        # case preset value and empty value passed on request.
+        # request value takes precedence
+        # no lookup function given, label is uuid
+        request = self.layer.new_request()
+        request.params['ref'] = []
+        widget.getter = ['286abf9d-f690-4c34-bfc3-600722e955d3']
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [])
+        del widget.attrs['vocabulary']
+
+        # case preset value is a callable.
+        def value_getter(widget, data):
+            return ['d9908598-e592-45df-9e6a-f88512dddf29']
+
+        request = self.layer.new_request()
+        widget.getter = value_getter
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [(
+            'd9908598-e592-45df-9e6a-f88512dddf29',
+            'd9908598-e592-45df-9e6a-f88512dddf29'
+        )])
+        del widget.attrs['vocabulary']
+
+        # dummy lookup function
+        def label_lookup(uuid_):
+            return {
+                '8208af4f-522f-436e-93b3-37e4e736984d': 'Item 1',
+                'bb6a21f9-fb35-4d76-9063-1b0007a9df52': 'Item 2'
+            }.get(uuid_, uuid_)
+
+        # case lookup function, preset value and no value passed on request
+        request = self.layer.new_request()
+        widget.attrs['lookup'] = label_lookup
+        widget.getter = [
+            '8208af4f-522f-436e-93b3-37e4e736984d',
+            'bb6a21f9-fb35-4d76-9063-1b0007a9df52'
+        ]
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [
+            ('8208af4f-522f-436e-93b3-37e4e736984d', 'Item 1'),
+            ('bb6a21f9-fb35-4d76-9063-1b0007a9df52', 'Item 2')
+        ])
+        del widget.attrs['vocabulary']
+
+        # case lookup function, preset value and empty value passed on request
+        request = self.layer.new_request()
+        request.params['ref'] = []
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [])
+        del widget.attrs['vocabulary']
+
+        # case lookup function, preset value and value passed on request
+        request = self.layer.new_request()
+        request.params['ref'] = ['8208af4f-522f-436e-93b3-37e4e736984d']
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [
+            ('8208af4f-522f-436e-93b3-37e4e736984d', 'Item 1')
+        ])
+        del widget.attrs['vocabulary']
+
+        # case lookup function, preset value and unknown value passed on request
+        request = self.layer.new_request()
+        request.params['ref'] = ['c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4']
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [(
+            'c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4',
+            'c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4'
+        )])
+        del widget.attrs['vocabulary']
+
+        # case B/C vocabulary
+        del widget.attrs['lookup']
+        request = self.layer.new_request()
+        widget.attrs['vocabulary'] = [
+            ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
+            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2')
+        ]
+        widget(request=request)
+        self.assertEqual(widget.attrs['vocabulary'], [
+            ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
+            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2')
+        ])
+        self.assertEqual(widget.attrs['bc_vocabulary'], [
+            ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
+            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2')
+        ])
+        del widget.attrs['vocabulary']
+        del widget.attrs['bc_vocabulary']
+
+    def _test_single_valued(self):
         # Render without any value
         widget = factory(
             'reference',
@@ -165,7 +418,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             u'<div class="display-referencebrowser form-control" id="display-ref">Label</div>'
         )
 
-    def test_multi_valued(self):
+    def _test_multi_valued(self):
         # Render without any value
         widget = factory(
             'reference',
@@ -256,7 +509,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         id="display-ref"><li>Title1</li><li>Title2</li></ul>
         """, widget())
 
-    def test_wrap_ajax_target(self):
+    def _test_wrap_ajax_target(self):
         widget = Widget(
             blueprints='dummy',
             extractors=[],
