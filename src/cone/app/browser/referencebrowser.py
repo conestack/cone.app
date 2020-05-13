@@ -20,8 +20,6 @@ from pyramid.i18n import TranslationStringFactory
 from pyramid.threadlocal import get_current_request
 from yafowil.base import factory
 from yafowil.base import UNSET
-from yafowil.common import generic_datatype_extractor
-from yafowil.common import generic_emptyvalue_extractor
 from yafowil.common import generic_required_extractor
 from yafowil.common import select_display_renderer
 from yafowil.common import select_edit_renderer
@@ -266,11 +264,9 @@ def fetch_reference_value(widget, data):
 def reference_extractor(widget, data):
     if widget.attrs.get('multivalued'):
         return select_extractor(widget, data)
-    request = data.request
-    dottedpath = widget.dottedpath
-    if dottedpath not in request:
+    if widget.dottedpath not in data.request:
         return UNSET
-    return request['{}.uid'.format(dottedpath)]
+    return data.request['{}.uid'.format(widget.dottedpath)]
 
 
 def wrap_ajax_target(rendered, widget, data):
@@ -344,24 +340,33 @@ def multivalued_reference_vocab(widget, data):
     return vocab
 
 
-@managedprops(
-    'multivalued', 'vocabulary', 'target',
-    'root', 'referencable', 'lookup')
-def reference_edit_renderer(widget, data):
-    if widget.attrs.get('multivalued'):
-        if 'vocabulary' in widget.attrs and 'bc_vocabulary' not in widget.attrs:
-            widget.attrs['bc_vocabulary'] = widget.attrs['vocabulary']
-            del widget.attrs['vocabulary']
-        if 'vocabulary' not in widget.attrs:
-            widget.attrs['vocabulary'] = multivalued_reference_vocab(widget, data)
-        rendered = select_edit_renderer(widget, data)
-        trigger = reference_trigger_renderer(widget, data)
-        return wrap_ajax_target(rendered + trigger, widget, data)
+def prepare_vocab_property(widget, data):
+    if 'vocabulary' in widget.attrs and 'bc_vocabulary' not in widget.attrs:
+        widget.attrs['bc_vocabulary'] = widget.attrs['vocabulary']
+        del widget.attrs['vocabulary']
+    if 'vocabulary' not in widget.attrs:
+        widget.attrs['vocabulary'] = multivalued_reference_vocab(widget, data)
+
+
+def fetch_reference_label(widget, data):
     label = ''
     if widget.dottedpath in data.request:
         label = data.request[widget.dottedpath]
     elif data.value is not UNSET:
         label = data.value[1]
+    return label
+
+
+@managedprops(
+    'multivalued', 'vocabulary', 'target',
+    'root', 'referencable', 'lookup')
+def reference_edit_renderer(widget, data):
+    if widget.attrs.get('multivalued'):
+        prepare_vocab_property(widget, data)
+        rendered = select_edit_renderer(widget, data)
+        trigger = reference_trigger_renderer(widget, data)
+        return wrap_ajax_target(rendered + trigger, widget, data)
+    label = fetch_reference_label(widget, data)
     value = fetch_reference_value(widget, data)
     text_attrs = {
         'type': 'text',
@@ -383,27 +388,21 @@ def reference_edit_renderer(widget, data):
 
 def reference_display_renderer(widget, data):
     if widget.attrs.get('multivalued'):
+        prepare_vocab_property(widget, data)
         return select_display_renderer(widget, data)
-    value = fetch_reference_value(widget, data)
-    # XXX: multivalued
-    if value in [UNSET, u'', None]:
-        value = u''
-    else:
-        value = value[1]
+    label = fetch_reference_label(widget, data)
     attrs = {
         'id': cssid(widget, 'display'),
         'class_': 'display-{}'.format(widget.attrs['class'] or 'generic')
     }
-    return data.tag('div', value, **attrs)
+    return data.tag('div', label, **attrs)
 
 
 factory.register(
     'reference',
     extractors=[
         reference_extractor,
-        generic_required_extractor,
-        generic_emptyvalue_extractor,
-        generic_datatype_extractor
+        generic_required_extractor
     ],
     edit_renderers=[reference_edit_renderer],
     display_renderers=[reference_display_renderer])

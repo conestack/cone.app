@@ -404,212 +404,193 @@ class TestBrowserReferenceBrowser(TileTestCase):
             [UNSET, '5a65bc60-3420-43ce-bf99-9190e2ea4c02', []]
         )
 
-    def _test_display_renderer(self):
+    def test_multi_reference(self):
+        # no preset value
+        widget = factory('reference', name='ref', props={'multivalued': True})
+
+        request = self.layer.new_request()
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, UNSET, []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input id="exists-ref" name="ref-exists" '
+            'type="hidden" value="exists" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<select class="form-control referencebrowser" id="input-ref" '
+            'multiple="multiple" name="ref"> </select>'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = []
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, [], []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<select class="form-control referencebrowser" id="input-ref" '
+            'multiple="multiple" name="ref"> </select>'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = ['292cd228-4095-4381-9ac3-2a8680ac4669']
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, ['292cd228-4095-4381-9ac3-2a8680ac4669'], []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<option id="input-ref-292cd228-4095-4381-9ac3-2a8680ac4669" '
+            'selected="selected" value="292cd228-4095-4381-9ac3-2a8680ac4669">'
+            '292cd228-4095-4381-9ac3-2a8680ac4669</option>'
+        ) > -1)
+
+        # preset value
+        value = ['0bed1aa2-103d-405c-84bc-039152e4738e']
+        widget = factory(
+            'reference',
+            name='ref',
+            value=value,
+            props={
+                'multivalued': True
+            })
+
+        request = self.layer.new_request()
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [value, UNSET, []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<option id="input-ref-0bed1aa2-103d-405c-84bc-039152e4738e" '
+            'selected="selected" value="0bed1aa2-103d-405c-84bc-039152e4738e">'
+            '0bed1aa2-103d-405c-84bc-039152e4738e</option>'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = []
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [value, [], []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<select class="form-control referencebrowser" id="input-ref" '
+            'multiple="multiple" name="ref"> </select>'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = ['cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849']
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [value, ['cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849'], []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<option id="input-ref-cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849" '
+            'selected="selected" value="cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849">'
+            'cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849</option>'
+        ) > -1)
+
+        # required value
+        widget = factory(
+            'reference',
+            name='ref',
+            props={
+                'required': True,
+                'multivalued': True
+            })
+
+        request = self.layer.new_request()
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, UNSET, []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<select class="form-control referencebrowser required" '
+            'id="input-ref" multiple="multiple" name="ref" '
+            'required="required"> </select>'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        request = self.layer.new_request()
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = []
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, [], [ExtractionError('Mandatory field was empty')]]
+        )
+
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = ['8944998c-b80c-4232-a70d-7d8b426961f8']
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, ['8944998c-b80c-4232-a70d-7d8b426961f8'], []]
+        )
+
+    def test_display_renderer(self):
+        self.layer.new_request()
+
         # Single value display renderer
         widget = factory(
             'reference',
             name='ref',
-            props={
-                'label': 'Reference',
-                'multivalued': False,
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-            },
             mode='display')
-        self.assertEqual(
-            widget(),
-            u'<div class="display-referencebrowser form-control" id="display-ref"></div>'
-        )
+        self.assertEqual(widget(), (
+            '<div class="display-referencebrowser form-control" '
+            'id="display-ref"></div>'
+        ))
 
         widget = factory(
             'reference',
             name='ref',
-            value=('uid', 'Label'),
-            props={
-                'label': 'Reference',
-                'multivalued': False,
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-            },
+            value=('00c753e6-2284-4118-a286-b43d743f1259', 'Label'),
             mode='display')
-        self.assertEqual(
-            widget(),
-            u'<div class="display-referencebrowser form-control" id="display-ref">Label</div>'
-        )
-
-    def _test_multi_valued(self):
-        # Render without any value
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference',
-                'multivalued': True,
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-            })
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
-        class="form-control referencebrowser" id="input-ref" multiple="multiple"
-        name="ref"> </select><span class="referencebrowser_trigger"
-        data-reference-name='ref'><i class="ion-android-share"></i>browse</span></span>
-        """, widget())
-
-        # Render required with empty value
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference',
-                'multivalued': True,
-                'required': 'Ref Required',
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-                'vocabulary': [
-                    ('uid1', 'Title1'),
-                    ('uid2', 'Title2'),
-                ],
-            })
-
-        request = self.layer.new_request()
-        request.params['ref'] = ''
-
-        data = widget.extract(request)
-        self.assertEqual(data.extracted, '')
-        self.assertEqual(data.errors, [ExtractionError('Ref Required',)])
-
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
-        class="form-control referencebrowser required" id="input-ref" multiple="multiple"
-        name="ref" required="required"><option
-        id="input-ref-uid1" value="uid1">Title1</option><option
-        id="input-ref-uid2" value="uid2">Title2</option></select><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>Browse</span></span>
-        """, widget(data=data))
-
-        # Required with valid value
-        request.params['ref'] = ['uid1', 'uid2']
-        data = widget.extract(request)
-        self.assertEqual(data.extracted, ['uid1', 'uid2'])
-        self.assertEqual(data.errors, [])
-
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        id="exists-ref" name="ref-exists" type="hidden" value="exists" /><select
-        class="form-control referencebrowser required" id="input-ref"
-        multiple="multiple" name="ref" required="required"><option
-        id="input-ref-uid1" selected="selected" value="uid1">Title1</option><option
-        id="input-ref-uid2" selected="selected"
-        value="uid2">Title2</option></select><span class="referencebrowser_trigger"
-        data-reference-name='ref'><i class="ion-android-share"></i>Browse</span></span>
-        """, widget(data=data))
+        self.assertEqual(widget(), (
+            '<div class="display-referencebrowser form-control" '
+            'id="display-ref">Label</div>'
+        ))
 
         # Multi value display renderer
+        def lookup_label(uuid):
+            return {
+                '1900f873-8442-4046-9f08-c94a0a0cdf51': 'Item 1',
+                '2a1aea50-f48f-479a-abe9-4b0a962f8243': 'Item 2'
+            }[uuid]
+
         widget = factory(
             'reference',
             name='ref',
-            value=['uid1', 'uid2'],
+            value=[
+                '1900f873-8442-4046-9f08-c94a0a0cdf51',
+                '2a1aea50-f48f-479a-abe9-4b0a962f8243'
+            ],
             props={
-                'label': 'Reference',
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
                 'multivalued': True,
-                'vocabulary': [
-                    ('uid1', 'Title1'),
-                    ('uid2', 'Title2'),
-                ],
+                'lookup': lookup_label
             },
             mode='display')
-        self.checkOutput("""
-        <ul class="display-referencebrowser form-control"
-        id="display-ref"><li>Title1</li><li>Title2</li></ul>
-        """, widget())
-
-    def _test_wrap_ajax_target(self):
-        widget = Widget(
-            blueprints='dummy',
-            extractors=[],
-            edit_renderers=[],
-            display_renderers=[],
-            preprocessors=[],
-            uniquename='dummy')
-        widget.attrs['multivalued'] = False
-        widget.attrs['target'] = None
-        widget.attrs['referencable'] = ''
-        widget.attrs['root'] = '/'
-
-        data = RuntimeData()
-        data.request = WebObRequestAdapter(self.layer.new_request())
-
-        expected = (
-            '<span ajax:target='
-            '"http://example.com/?referencable=&root=/&selected="'
-            '>rendered</span>'
-        )
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
-
-        widget.attrs['target'] = 'http://example.com/target'
-        widget.attrs['referencable'] = 'ref_node'
-        expected = (
-            '<span ajax:target='
-            '"http://example.com/target?referencable=ref_node&root=/&selected="'
-            '>rendered</span>'
-        )
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
-
-        def callable_target(widget, data):
-            return 'http://example.com/target'
-        widget.attrs['target'] = callable_target
-
-        def callable_referencable(widget, data):
-            return 'ref_node'
-        widget.attrs['referencable'] = callable_referencable
-
-        def callable_root(widget, data):
-            return '/'
-        widget.attrs['root'] = callable_root
-
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
-
-        widget.attrs['referencable'] = ['ref_node']
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
-
-        widget.attrs['referencable'] = ['ref_node', 'ref_node_2']
-        widget.attrs['target'] = None
-        expected = (
-            '<span ajax:target='
-            '"http://example.com/?referencable=ref_node,ref_node_2&root=/&selected="'
-            '>rendered</span>'
-        )
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
-
-        widget.attrs['referencable'] = 'ref_node'
-        data.value = ('sel_ref', 'Selected Reference')
-        expected = (
-            '<span ajax:target='
-            '"http://example.com/?referencable=ref_node&root=/&selected=sel_ref"'
-            '>rendered</span>'
-        )
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
-
-        widget.attrs['multivalued'] = True
-        data.value = ('sel_ref', 'sel_ref_2')
-        expected = (
-            '<span ajax:target='
-            '"http://example.com/?referencable=ref_node&root=/&selected=sel_ref,sel_ref_2"'
-            '>rendered</span>'
-        )
-        rendered = wrap_ajax_target('rendered', widget, data)
-        self.assertEqual(rendered, expected)
+        self.assertEqual(widget(), (
+            '<ul class="display-referencebrowser form-control" '
+            'id="display-ref"><li>Item 1</li><li>Item 2</li></ul>'
+        ))
 
     def test_ReferenceBrowserModelMixin(self):
         model = BaseNode()
