@@ -19,7 +19,6 @@ from node.utils import node_by_path
 from pyramid.i18n import TranslationStringFactory
 from pyramid.threadlocal import get_current_request
 from yafowil.base import factory
-from yafowil.base import fetch_value
 from yafowil.base import UNSET
 from yafowil.common import generic_datatype_extractor
 from yafowil.common import generic_emptyvalue_extractor
@@ -252,6 +251,17 @@ class ReferenceListing(ContentsTile):
         return rows
 
 
+def fetch_reference_value(widget, data):
+    if data.extracted is not UNSET:
+        return data.extracted
+    if data.value is not UNSET:
+        if widget.attrs.get('multivalued'):
+            return data.value
+        else:
+            return data.value[0]
+    return attr_value('default', widget, data)
+
+
 @managedprops('multivalued')
 def reference_extractor(widget, data):
     if widget.attrs.get('multivalued'):
@@ -260,10 +270,7 @@ def reference_extractor(widget, data):
     dottedpath = widget.dottedpath
     if dottedpath not in request:
         return UNSET
-    return [
-        request['{}.uid'.format(dottedpath)],
-        request[dottedpath]
-    ]
+    return request['{}.uid'.format(dottedpath)]
 
 
 def wrap_ajax_target(rendered, widget, data):
@@ -284,12 +291,12 @@ def wrap_ajax_target(rendered, widget, data):
     root = widget.attrs['root']
     if callable(root):
         root = root(widget, data)
-    value = fetch_value(widget, data)
+    value = fetch_reference_value(widget, data)
     selected = ''
     if widget.attrs['multivalued'] and data.value:
         selected = ','.join(value)
-    elif data.value and data.value[0]:
-        selected = value[0]
+    elif data.value:
+        selected = value
     query = make_query(**{
         'root': root,
         'referencable': referencable,
@@ -350,10 +357,15 @@ def reference_edit_renderer(widget, data):
         rendered = select_edit_renderer(widget, data)
         trigger = reference_trigger_renderer(widget, data)
         return wrap_ajax_target(rendered + trigger, widget, data)
-    value = fetch_value(widget, data)
+    label = ''
+    if widget.dottedpath in data.request:
+        label = data.request[widget.dottedpath]
+    elif data.value is not UNSET:
+        label = data.value[1]
+    value = fetch_reference_value(widget, data)
     text_attrs = {
         'type': 'text',
-        'value': value[1] if value else '',
+        'value': label,
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
         'class_': cssclasses(widget, data),
@@ -361,7 +373,7 @@ def reference_edit_renderer(widget, data):
     }
     hidden_attrs = {
         'type': 'hidden',
-        'value': value[0] if value else '',
+        'value': value if value else '',
         'name_': '{}.uid'.format(widget.dottedpath),
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
@@ -372,7 +384,7 @@ def reference_edit_renderer(widget, data):
 def reference_display_renderer(widget, data):
     if widget.attrs.get('multivalued'):
         return select_display_renderer(widget, data)
-    value = fetch_value(widget, data)
+    value = fetch_reference_value(widget, data)
     # XXX: multivalued
     if value in [UNSET, u'', None]:
         value = u''

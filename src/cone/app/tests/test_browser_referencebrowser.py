@@ -34,12 +34,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
     def test_reference_render(self):
         self.layer.new_request()
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference'
-            })
+        widget = factory('reference', name='ref')
         self.checkOutput("""
         <span ajax:target="http://example.com/?referencable=&root=/&selected=">
           <input class="form-control referencebrowser"
@@ -69,12 +64,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
     def test_reference_root(self):
         self.layer.new_request()
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference'
-            })
+        widget = factory('reference', name='ref')
         expected = 'http://example.com/?referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
@@ -91,12 +81,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
     def test_reference_referencable(self):
         self.layer.new_request()
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference',
-            })
+        widget = factory('reference', name='ref')
         expected = 'http://example.com/?referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
@@ -121,12 +106,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
     def test_reference_target(self):
         self.layer.new_request()
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference'
-            })
+        widget = factory('reference', name='ref')
         expected = 'ajax:target="http://example.com/?referencable=&root=/&selected="'
         self.assertTrue(widget().find(expected) > -1)
 
@@ -147,8 +127,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             'reference',
             name='ref',
             props={
-                'label': 'Reference',
-                'multivalued': True,
+                'multivalued': True
             })
 
         # when widget gets called on multivalued reference, vocabulaty gets
@@ -284,108 +263,148 @@ class TestBrowserReferenceBrowser(TileTestCase):
         del widget.attrs['vocabulary']
         del widget.attrs['bc_vocabulary']
 
-    def _test_single_valued(self):
-        # Render without any value
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference',
-                'multivalued': False,
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-            })
-        self.checkOutput("""
-        <span
-        ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        class="form-control referencebrowser" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="" /><input name="ref.uid" type="hidden" value="" /><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>browse</span></span>
-        """, widget())
+    def test_single_reference(self):
+        # no preset value
+        widget = factory('reference', name='ref')
 
-        # Render required with empty value
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'label': 'Reference',
-                'multivalued': False,
-                'required': 'Ref Required',
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-            })
+        request = self.layer.new_request()
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, UNSET, []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" value="" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser" id="input-ref" '
+            'name="ref" readonly="readonly" type="text" value="" />'
+        ) > -1)
+
+        request.params['ref'] = ''
+        request.params['ref.uid'] = ''
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, '', []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" value="" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser" id="input-ref" '
+            'name="ref" readonly="readonly" type="text" value="" />'
+        ) > -1)
+
+        request.params['ref'] = 'Reference Item'
+        request.params['ref.uid'] = '378657f5-c435-4678-886b-a3eefb3141b5'
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, '378657f5-c435-4678-886b-a3eefb3141b5', []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" '
+            'value="378657f5-c435-4678-886b-a3eefb3141b5" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser" id="input-ref" '
+            'name="ref" readonly="readonly" type="text" value="Reference Item" />'
+        ) > -1)
+
+        # preset value
+        value = ['482ba322-169b-40ef-b632-6e92f29fe0ba', 'Reference Item']
+        widget = factory('reference', name='ref', value=value)
+
+        request = self.layer.new_request()
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [value, UNSET, []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" '
+            'value="482ba322-169b-40ef-b632-6e92f29fe0ba" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser" id="input-ref" '
+            'name="ref" readonly="readonly" type="text" value="Reference Item" />'
+        ) > -1)
+
+        request.params['ref'] = ''
+        request.params['ref.uid'] = ''
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [value, '', []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" value="" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser" id="input-ref" '
+            'name="ref" readonly="readonly" type="text" value="" />'
+        ) > -1)
+
+        request.params['ref'] = 'Other Item'
+        request.params['ref.uid'] = '81fc0e53-5551-41d4-a1bd-6064e34face5'
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [value, '81fc0e53-5551-41d4-a1bd-6064e34face5', []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" '
+            'value="81fc0e53-5551-41d4-a1bd-6064e34face5" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser" id="input-ref" '
+            'name="ref" readonly="readonly" type="text" value="Other Item" />'
+        ) > -1)
+
+        # required value
+        widget = factory('reference', name='ref', props={'required': True})
+
+        request = self.layer.new_request()
+        data = widget.extract(request)
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, UNSET, []]
+        )
+        rendered = widget(data=data)
+        self.assertTrue(rendered.find(
+            '<input name="ref.uid" type="hidden" value="" />'
+        ) > -1)
+        self.assertTrue(rendered.find(
+            '<input class="form-control referencebrowser required" '
+            'id="input-ref" name="ref" readonly="readonly" type="text" '
+            'value="" />'
+        ) > -1)
 
         request = self.layer.new_request()
         request.params['ref'] = ''
         request.params['ref.uid'] = ''
-
         data = widget.extract(request)
-        self.assertEqual(data.extracted, '')
-        self.assertEqual(data.errors, [ExtractionError('Ref Required')])
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, '', [ExtractionError('Mandatory field was empty')]]
+        )
 
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="" /><input name="ref.uid" type="hidden" value="" /><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>Browse</span></span>
-        """, widget(data=data))
-
-        # Required with valid value
-        request.params['ref'] = 'Title'
-        request.params['ref.uid'] = '123'
+        request.params['ref'] = 'Item'
+        request.params['ref.uid'] = '5a65bc60-3420-43ce-bf99-9190e2ea4c02'
         data = widget.extract(request)
-        self.assertEqual(data.extracted, '123')
-        self.assertEqual(data.errors, [])
+        self.assertEqual(
+            [data.value, data.extracted, data.errors],
+            [UNSET, '5a65bc60-3420-43ce-bf99-9190e2ea4c02', []]
+        )
 
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected="><input
-        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>Browse</span></span>
-        """, widget(data=data))
-
-        # Single valued expects 2-tuple as value with (uid, label)
-        widget = factory(
-            'reference',
-            name='ref',
-            value=('uid', 'Label'),
-            props={
-                'label': 'Reference',
-                'multivalued': False,
-                'required': 'Ref Required',
-                'target': 'http://example.com/foo',
-                'referencable': 'ref_node',
-            })
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
-        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Label" /><input name="ref.uid" type="hidden" value="uid" /><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>browse</span></span>
-        """, widget())
-
-        # Extract from request and render widget with data
-        data = widget.extract(request)
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
-        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>Browse</span></span>
-        """, widget(data=data))
-
-        # Render widget with request
-        self.checkOutput("""
-        <span ajax:target="http://example.com/foo?referencable=ref_node&root=/&selected=uid"><input
-        class="form-control referencebrowser required" id="input-ref" name="ref" readonly="readonly"
-        type="text" value="Title" /><input name="ref.uid" type="hidden" value="123" /><span
-        class="referencebrowser_trigger" data-reference-name='ref'><i
-        class="ion-android-share"></i>Browse</span></span>
-        """, widget(request=request))
-
+    def _test_display_renderer(self):
         # Single value display renderer
         widget = factory(
             'reference',
