@@ -121,6 +121,55 @@ class TestBrowserReferenceBrowser(TileTestCase):
         expected = 'ajax:target="http://computed.com/?referencable=&root=/&selected="'
         self.assertTrue(widget().find(expected) > -1)
 
+    def test_reference_selected(self):
+        request = self.layer.new_request()
+
+        widget = factory('reference', name='ref')
+        data = widget.extract(request)
+        self.assertTrue(widget(data=data).find(
+            'ajax:target="http://example.com/?referencable=&root=/&selected="'
+        ) > -1)
+
+        widget.getter = ['3604702a-b177-42de-8694-d81e2d993633', 'Label']
+        data = widget.extract(request)
+        self.assertTrue(widget(data=data).find(
+            'ajax:target="http://example.com/?referencable=&root=/&'
+            'selected=3604702a-b177-42de-8694-d81e2d993633"'
+        ) > -1)
+
+        request.params['ref'] = 'Item'
+        request.params['ref.uid'] = '745dd2ed-74ad-449b-b55b-b240709b2b0e'
+        data = widget.extract(request)
+        self.assertTrue(widget(data=data).find(
+            'ajax:target="http://example.com/?referencable=&root=/&'
+            'selected=745dd2ed-74ad-449b-b55b-b240709b2b0e"'
+        ) > -1)
+
+        request = self.layer.new_request()
+
+        widget = factory('reference', name='ref', props={'multivalued': True})
+        data = widget.extract(request)
+        self.assertTrue(widget(data=data).find(
+            'ajax:target="http://example.com/?referencable=&root=/&selected="'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        widget.getter = ['5f94f75c-4aea-4dc7-a31b-6152e8f89d00']
+        data = widget.extract(request)
+        self.assertTrue(widget(data=data).find(
+            'ajax:target="http://example.com/?referencable=&root=/&'
+            'selected=5f94f75c-4aea-4dc7-a31b-6152e8f89d00"'
+        ) > -1)
+        del widget.attrs['vocabulary']
+
+        request.params['ref-exists'] = 'exists'
+        request.params['ref'] = ['e2121521-60a9-4fe6-babf-0f86881c3d6a']
+        data = widget.extract(request)
+        self.assertTrue(widget(data=data).find(
+            'ajax:target="http://example.com/?referencable=&root=/&'
+            'selected=e2121521-60a9-4fe6-babf-0f86881c3d6a"'
+        ) > -1)
+
     def test_multivalued_reference_vocab(self):
         self.layer.new_request()
         widget = factory(
