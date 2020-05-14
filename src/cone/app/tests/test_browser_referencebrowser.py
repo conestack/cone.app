@@ -187,7 +187,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # no lookup function given, label is uuid
         self.assertEqual(widget.getter, UNSET)
         request = self.layer.new_request()
-        request.params['ref'] = ['f5c4f643-1bbd-481e-a8b0-8a47ca070184']
+        request.params['ref'] = 'f5c4f643-1bbd-481e-a8b0-8a47ca070184'
         widget(request=request)
         self.assertEqual(widget.attrs['vocabulary'], [(
             'f5c4f643-1bbd-481e-a8b0-8a47ca070184',

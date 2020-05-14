@@ -289,9 +289,9 @@ def wrap_ajax_target(rendered, widget, data):
         root = root(widget, data)
     value = fetch_reference_value(widget, data)
     selected = ''
-    if widget.attrs['multivalued'] and data.value:
+    if widget.attrs['multivalued'] and value:
         selected = ','.join(value)
-    elif data.value:
+    elif value:
         selected = value
     query = make_query(**{
         'root': root,
@@ -327,6 +327,8 @@ def multivalued_reference_vocab(widget, data):
         return vocab
     if widget.dottedpath in data.request:
         value = data.request[widget.dottedpath]
+        if isinstance(value, compat.STR_TYPE):
+            value = [value]
     else:
         if callable(widget.getter):
             value = widget.getter(widget, data)
