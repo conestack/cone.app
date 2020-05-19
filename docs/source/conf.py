@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import os
-
-# RTD hack
-sys.path.insert(0, os.path.abspath('../'))
-
+# import sys
+# import os
 import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -102,8 +98,11 @@ html_theme_options = {
     'source_link_position': 'false',
 }
 
-# Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+# Hack around with the following in local / RTD...
+if "html_theme_path" in globals():
+    html_theme_path += sphinx_bootstrap_theme.get_html_theme_path()
+else:
+    html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
