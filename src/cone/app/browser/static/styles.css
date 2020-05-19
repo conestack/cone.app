@@ -142,7 +142,6 @@ tr.selectable.selected td {
     padding:10px 15px 10px 5px;
     cursor:pointer;
     display:block;
-    font-size:120%;
     text-decoration:underline;
 }
 .referencebrowser_trigger i {
