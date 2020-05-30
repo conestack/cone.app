@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0b3 (unreleased)
+1.0b3 (2020-05-30)
 ------------------
 
 - Improve multivalued handling of reference browser. Instead of passing

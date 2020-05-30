@@ -44,8 +44,6 @@ Roadmap
 1.1
 ---
 
-[ ] Update to jQuery 2.0.
-
 [ ] Add template for creating ``cone.app`` plugins.
 
 [ ] Overhaul resource registration and delivery keeping B/C.
@@ -95,3 +93,12 @@ by node info name only if no class given at lookup. Or so...
 options and datasets instead of just datasets.
 
 [ ] Sharing tile table sorting by principal title instead of principal id
+
+2.0
+---
+
+[ ] Update jQuery.
+
+[ ] Update bootstrap.
+
+[ ] Drop python 2.
