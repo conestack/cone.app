@@ -4,6 +4,7 @@ from cone.app.browser import render_main_template
 from cone.app.browser.ajax import ajax_message
 from cone.app.browser.table import RowData
 from cone.app.browser.table import Table
+from cone.app.ugm import ugm_backend
 from cone.tile import Tile
 from cone.tile import tile
 from plumber import plumbing
@@ -33,10 +34,6 @@ def sharing(model, request):
     """Sharing view.
     """
     return render_main_template(model, request, 'sharing')
-
-
-GROUP_TITLE_ATTR = 'name'
-USER_TITLE_ATTR = 'fullname'
 
 
 @tile(name='local_acl',
@@ -103,6 +100,8 @@ class SharingTable(Table):
         ids = sorted(principal_ids)
         if order == 'desc':
             ids.reverse()
+        user_display_attr = ugm_backend.user_display_attr
+        group_display_attr = ugm_backend.group_display_attr
         for principal_id in ids[start:end]:
             principal = security.principal_by_id(principal_id)
             if not principal:
@@ -112,9 +111,9 @@ class SharingTable(Table):
                 default = principal_id
                 if principal_id.startswith('group:'):
                     default = principal_id[6:]
-                    title = principal.attrs.get(GROUP_TITLE_ATTR, default)
+                    title = principal.attrs.get(group_display_attr, default)
                 else:
-                    title = principal.attrs.get(USER_TITLE_ATTR, default)
+                    title = principal.attrs.get(user_display_attr, default)
             row_data = RowData()
             row_data['principal'] = title
             ugm_roles = principal.roles

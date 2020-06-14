@@ -367,6 +367,14 @@ def main(global_config, **settings):
             msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
             logger.error(msg)
 
+    user_display_attr = settings.get('ugm.user_display_attr')
+    if user_display_attr:
+        ugm_backend.user_display_attr = user_display_attr
+
+    group_display_attr = settings.get('ugm.group_display_attr')
+    if group_display_attr:
+        ugm_backend.group_display_attr = group_display_attr
+
     # register yafowil static resources
     # done after addon config - addon code may disable yafowil resource groups
     configure_yafowil_addon_resources(config)

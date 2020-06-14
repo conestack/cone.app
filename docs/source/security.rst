@@ -292,6 +292,16 @@ ini file.
     ugm.roles_file = /path/to/roles
     ugm.datadir = /path/to/userdata
 
+``cone.app`` displays user and group names at several places. The attribute to
+use as display names can be configured and defaults to ``fullname```for users
+and ``groupname`` for groups.
+
+.. code-block:: ini
+
+    [app:example]
+    ugm.user_display_attr = fullname
+    ugm.group_display_attr = groupname
+
 To provide your own UGM implementation, a ``cone.app.ugm.UGMFactory`` must be
 implemented and registered.
 

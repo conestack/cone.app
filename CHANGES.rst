@@ -4,7 +4,14 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
-- No Changes yet.
+- Introduce ``cone.app.ugm.ugm_backend.user_display_attr`` and
+  ``cone.app.ugm.ugm_backend.group_display_attr`` for configuring user and
+  group display names in the UI. The config values can be customized in the
+  application config file via ``ugm.user_display_attr`` and
+  ``ugm.group_display_attr`` settings. This settings supersede
+  ``cone.app.browser.sharing.GROUP_TITLE_ATTR`` and
+  ``cone.app.browser.sharing.USER_TITLE_ATTR``.
+  [rnix, 2020-06-14]
 
 
 1.0b3 (2020-05-30)

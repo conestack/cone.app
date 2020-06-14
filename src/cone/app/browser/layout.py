@@ -1,5 +1,5 @@
-from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import get_action_context
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -8,10 +8,11 @@ from cone.app.browser.utils import node_path
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
+from cone.app.ugm import ugm_backend
 from cone.app.utils import safe_decode
-from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
+from cone.tile import Tile
 from cone.tile import tile
 from node.utils import LocationIterator
 from odict import odict
@@ -125,8 +126,8 @@ class PersonalTools(Tile):
     def user(self):
         userid = self.request.authenticated_userid
         data = principal_data(userid)
-        fullname = data.get('fullname', userid)
-        return fullname or userid
+        display_name = data.get(ugm_backend.user_display_attr, userid)
+        return display_name or userid
 
     @property
     def items(self):

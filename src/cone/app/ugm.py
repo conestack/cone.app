@@ -12,6 +12,8 @@ class ugm_backend(object):
     name = None
     factory = None
     ugm = None
+    user_display_attr = 'fullname'
+    group_display_attr = 'groupname'
 
     def __init__(self, name):
         self._reg_name = name
