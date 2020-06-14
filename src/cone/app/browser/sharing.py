@@ -108,12 +108,12 @@ class SharingTable(Table):
                 logger.warning('principal %s not found' % principal_id)
                 continue
             else:
-                default = principal_id
                 if principal_id.startswith('group:'):
-                    default = principal_id[6:]
-                    title = principal.attrs.get(group_display_attr, default)
+                    title = principal.attrs.get(group_display_attr)
+                    title = title if title else principal_id[6:]
                 else:
-                    title = principal.attrs.get(user_display_attr, default)
+                    title = principal.attrs.get(user_display_attr)
+                    title = title if title else principal_id
             row_data = RowData()
             row_data['principal'] = title
             ugm_roles = principal.roles

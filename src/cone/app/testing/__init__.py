@@ -135,6 +135,8 @@ class Security(object):
             'cone.root.default_content_tile': 'content',
             'cone.root.mainmenu_empty_title': False,
             'ugm.backend': 'file',
+            'ugm.user_display_attr': 'fullname',
+            'ugm.group_display_attr': 'groupname',
             'ugm.users_file': os.path.join(DATADIR, 'users'),
             'ugm.groups_file': os.path.join(DATADIR, 'groups'),
             'ugm.roles_file': os.path.join(DATADIR, 'roles'),

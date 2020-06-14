@@ -4,6 +4,10 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Fix principal name displaying. Fall back to principal id if configured display
+  name attribute returns empty value.
+  [rnix, 2020-06-14]
+
 - Introduce ``cone.app.ugm.ugm_backend.user_display_attr`` and
   ``cone.app.ugm.ugm_backend.group_display_attr`` for configuring user and
   group display names in the UI. The config values can be customized in the

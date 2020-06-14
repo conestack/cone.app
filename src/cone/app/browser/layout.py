@@ -126,8 +126,8 @@ class PersonalTools(Tile):
     def user(self):
         userid = self.request.authenticated_userid
         data = principal_data(userid)
-        display_name = data.get(ugm_backend.user_display_attr, userid)
-        return display_name or userid
+        display_name = data.get(ugm_backend.user_display_attr)
+        return display_name if display_name else userid
 
     @property
     def items(self):
