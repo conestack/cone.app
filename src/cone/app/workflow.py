@@ -15,8 +15,21 @@ import logging
 logger = logging.getLogger('cone.workflow')
 
 
+def lookup_workflow(node):
+    """Lookup workflow. Original get_workflow expects class if workflow was
+    registered for class or instance if workflow was registered for interface.
+
+    XXX: Fix this upstream.
+    """
+    workflow_name = node.workflow_name
+    workflow = get_workflow(node.__class__, workflow_name)
+    if not workflow:
+        workflow = get_workflow(node, workflow_name)
+    return workflow
+
+
 def initialize_workflow(node, force=False):
-    workflow = get_workflow(node, node.workflow_name)
+    workflow = lookup_workflow(node)
     if not workflow:
         return
     if force or not node.state:
