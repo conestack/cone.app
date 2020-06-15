@@ -19,11 +19,11 @@ class TestBrowserWorkflow(TileTestCase):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput("""
         ...<a href="#"
-        class="state-initial dropdown-toggle"
-        title="Change state"
-        data-toggle="dropdown">
-        <span>State</span>:
-        <span>initial</span>
+              class="state-initial dropdown-toggle"
+              title="Change state"
+              data-toggle="dropdown">
+          <span>State</span>:
+          <span>initial</span>
         </a>...
         """, res)
 
@@ -32,9 +32,10 @@ class TestBrowserWorkflow(TileTestCase):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput("""
         ...<li class="dropdown">
-        <span>State</span>:
-        <span
-        class="state-final">final</span>
+          <span class="no-transitions state-final">
+            <span>State</span>:
+            <span>final</span>
+          </span>
         </li>...
         """, res)
 
@@ -54,10 +55,10 @@ class TestBrowserWorkflow(TileTestCase):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput("""
         ...<a href="#"
-        class="state-initial dropdown-toggle"
-        title="Change state"
-        data-toggle="dropdown">
-        <span>State</span>:
-        <span>initial</span>
+              class="state-initial dropdown-toggle"
+              title="Change state"
+              data-toggle="dropdown">
+          <span>State</span>:
+          <span>initial</span>
         </a>...
         """, res)
