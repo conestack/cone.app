@@ -39,7 +39,7 @@ class WfDropdown(Tile):
 
     @property
     def workflow(self):
-        return get_workflow(self.model.__class__, self.model.workflow_name)
+        return get_workflow(self.model, self.model.workflow_name)
 
     @property
     def state_name(self):

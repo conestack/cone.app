@@ -1,5 +1,6 @@
 from cone.app import testing
 from cone.app.interfaces import IWorkflowState
+from cone.app.testing.mock import InterfaceWorkflowNode
 from cone.app.testing.mock import StateACLWorkflowNode
 from cone.app.testing.mock import WorkflowNode
 from cone.app.workflow import initialize_workflow
@@ -19,6 +20,9 @@ class TestWorkflow(NodeTestCase):
 
         node = WorkflowNode()
         self.assertTrue(IWorkflowState.providedBy(node))
+
+        wf = get_workflow(node, u'dummy')
+        self.assertTrue(isinstance(wf, Workflow))
 
         # Workflow name is set on node properties for lookup
         self.assertEqual(node.workflow_name, u'dummy')
@@ -75,7 +79,7 @@ class TestWorkflow(NodeTestCase):
 
     def test_state_acl(self):
         node = StateACLWorkflowNode()
-        wf = get_workflow(node.__class__, node.workflow_name)
+        wf = get_workflow(node, node.workflow_name)
         self.assertTrue(isinstance(wf, Workflow))
 
         self.assertEqual(node.workflow_name, u'dummy')
@@ -89,7 +93,7 @@ class TestWorkflow(NodeTestCase):
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            wf = get_workflow(node.__class__, node.workflow_name)
+            wf = get_workflow(node, node.workflow_name)
             wf.transition(node, request, u'initial_2_final')
             self.assertEqual(node.state, u'final')
 
@@ -97,3 +101,10 @@ class TestWorkflow(NodeTestCase):
             ('Allow', 'role:manager', ['view', 'edit', 'change_state']),
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
         ])
+
+    def test_lookup_by_content_interface(self):
+        node = InterfaceWorkflowNode()
+        self.assertEqual(node.workflow_name, u'dummy')
+
+        wf = get_workflow(node, node.workflow_name)
+        self.assertTrue(isinstance(wf, Workflow))

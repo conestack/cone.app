@@ -16,7 +16,7 @@ logger = logging.getLogger('cone.workflow')
 
 
 def initialize_workflow(node, force=False):
-    workflow = get_workflow(node.__class__, node.workflow_name)
+    workflow = get_workflow(node, node.workflow_name)
     if not workflow:
         return
     if force or not node.state:
