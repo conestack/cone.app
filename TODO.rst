@@ -17,29 +17,21 @@ Docs
 
 [ ] Proper cross linking all over the place
 
+[ ] Add proper API docs to code and include in docs.
+
 
 Roadmap
 =======
 
-1.0b1
------
-
-[X] Migrate Doctests to Unittests.
-
-[X] Merge ``pyramid_upgrade`` branches back to master.
-
-[X] Python 3 support.
-
-[X] Adopt docs for using ``waitress`` instead of ``paster``.
-
-[X] Adopt docs and remove buildout section.
-
 1.0
 ---
 
-[ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
+[ ] Do not provide layout config via model ``layout`` but as callable accepting
+    model and request
 
-[ ] Add proper API docs to code and include in docs.
+[ ] Change overlay forms selector to use dedicated overlay.
+
+[ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
 
 1.1
 ---
@@ -94,7 +86,7 @@ options and datasets instead of just datasets.
 
 [ ] Sharing tile table sorting by principal title instead of principal id
 
-2.0
+1.2
 ---
 
 [ ] Update jQuery.
