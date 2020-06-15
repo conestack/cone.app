@@ -4,6 +4,10 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Introduce ``cone.app.workflow.lookup_workflow`` and use it internally to get
+  workflow. Fixes issue with interface bound workflows.
+  [rnix, 2020-06-15]
+
 - Fix principal name displaying. Fall back to principal id if configured display
   name attribute returns empty value.
   [rnix, 2020-06-14]

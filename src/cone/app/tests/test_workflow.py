@@ -1,22 +1,36 @@
 from cone.app import testing
 from cone.app.interfaces import IWorkflowState
+from cone.app.testing.mock import InexistentWorkflowNode
+from cone.app.testing.mock import InterfaceWorkflowNode
 from cone.app.testing.mock import StateACLWorkflowNode
 from cone.app.testing.mock import WorkflowNode
 from cone.app.workflow import initialize_workflow
+from cone.app.workflow import lookup_workflow
 from node.tests import NodeTestCase
 from pyramid.security import ALL_PERMISSIONS
-from repoze.workflow import get_workflow
 from repoze.workflow.workflow import Workflow
 
 
 class TestWorkflow(NodeTestCase):
     layer = testing.security
 
-    def test_workflow(self):
-        # Dummy workflow is registered for ``WorkflowNode``
-        wf = get_workflow(WorkflowNode, u'dummy')
+    def test_lookup_workflow(self):
+        wf = lookup_workflow(InexistentWorkflowNode)
+        self.assertEqual(wf, None)
+
+        wf = lookup_workflow(WorkflowNode)
         self.assertTrue(isinstance(wf, Workflow))
 
+        wf = lookup_workflow(WorkflowNode())
+        self.assertTrue(isinstance(wf, Workflow))
+
+        wf = lookup_workflow(InterfaceWorkflowNode())
+        self.assertTrue(isinstance(wf, Workflow))
+
+        wf = lookup_workflow(InterfaceWorkflowNode)
+        self.assertTrue(isinstance(wf, Workflow))
+
+    def test_workflow(self):
         node = WorkflowNode()
         self.assertTrue(IWorkflowState.providedBy(node))
 
@@ -75,9 +89,6 @@ class TestWorkflow(NodeTestCase):
 
     def test_state_acl(self):
         node = StateACLWorkflowNode()
-        wf = get_workflow(node.__class__, node.workflow_name)
-        self.assertTrue(isinstance(wf, Workflow))
-
         self.assertEqual(node.workflow_name, u'dummy')
         self.assertTrue(IWorkflowState.providedBy(node))
 
@@ -89,7 +100,7 @@ class TestWorkflow(NodeTestCase):
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            wf = get_workflow(node.__class__, node.workflow_name)
+            wf = lookup_workflow(node)
             wf.transition(node, request, u'initial_2_final')
             self.assertEqual(node.state, u'final')
 

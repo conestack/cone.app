@@ -15,7 +15,7 @@ Workflows are described in ZCML files.
 ``repoze.workflow`` is wired to ``cone.app`` as follows:
 
 - The ``content_types`` attribute in the ``workflow`` directive contains the
-  nodes this workflow can be used for.
+  node classes or interfaces this workflow can be used for.
 
 - The ``permission_checker`` attribute in the ``workflow`` directive points
   to ``cone.app.workflow.permission_checker``, which is used to check whether
@@ -41,7 +41,8 @@ A typical publication workflow would end up in a file named
                 state_attr="state"
                 initial_state="draft"
                 content_types="cone.example.model.ExampleNode
-                               cone.example.model.AnotherNode"
+                               cone.example.model.AnotherNode
+                               cone.example.interfaces.INodeInterface"
                 permission_checker="cone.app.workflow.permission_checker">
 
         <state name="draft"

@@ -19,6 +19,8 @@ from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
 from pyramid.static import static_view
+from zope.interface import implementer
+from zope.interface import Interface
 
 
 static_resources = static_view('static', use_subpath=True)
@@ -56,6 +58,17 @@ class StateACLWorkflowNode(WorkflowNode):
             (Deny, Everyone, ALL_PERMISSIONS),
         ],
     }
+
+
+class IWorkflowNode(Interface):
+    pass
+
+
+@plumbing(WorkflowState)
+@implementer(IWorkflowNode)
+class InterfaceWorkflowNode(BaseNode):
+    workflow_name = u'dummy'
+    workflow_tsf = None
 
 
 @plumbing(

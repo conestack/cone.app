@@ -2,10 +2,10 @@ from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.model import Properties
+from cone.app.workflow import lookup_workflow
 from cone.tile import Tile
 from cone.tile import tile
 from repoze.workflow import WorkflowError
-from repoze.workflow import get_workflow
 import logging
 
 
@@ -39,7 +39,7 @@ class WfDropdown(Tile):
 
     @property
     def workflow(self):
-        return get_workflow(self.model.__class__, self.model.workflow_name)
+        return lookup_workflow(self.model)
 
     @property
     def state_name(self):

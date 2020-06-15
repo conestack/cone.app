@@ -7,7 +7,8 @@
             state_attr="state"
             initial_state="initial"
             content_types="cone.app.testing.mock.WorkflowNode
-                           cone.app.testing.mock.StateACLWorkflowNode"
+                           cone.app.testing.mock.StateACLWorkflowNode
+                           cone.app.testing.mock.IWorkflowNode"
             permission_checker="cone.app.workflow.permission_checker">
 
     <state name="initial"
