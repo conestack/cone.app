@@ -4,6 +4,9 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Fix workflow state styles if no transitions are available.
+  [rnix, 2020-06-15]
+
 - Introduce ``cone.app.workflow.lookup_workflow`` and use it internally to get
   workflow. Fixes issue with interface bound workflows.
   [rnix, 2020-06-15]
