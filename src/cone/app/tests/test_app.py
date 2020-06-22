@@ -1,11 +1,16 @@
+from cone.app import DefaultLayoutConfig
+from cone.app import layout_config
 from cone.app import main_hook
 from cone.app import make_remote_addr_middleware
+from cone.app.interfaces import ILayoutConfig
 from cone.app.model import BaseNode
+from cone.app.model import LayoutConfig
 from node.tests import NodeTestCase
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.router import Router
 from pyramid.static import static_view
+from pyramid.testing import DummyRequest
 from yafowil import resources
 from yafowil.base import factory as yafowil_factory
 import cone.app
@@ -151,3 +156,46 @@ class TestApp(NodeTestCase):
         environ['HTTP_X_REAL_IP'] = '1.2.3.4'
         middleware(environ, None)
         self.assertEqual(app.remote_addr, '1.2.3.4')
+
+    def test_layout_config(self):
+        config = layout_config.lookup(model=BaseNode(), request=DummyRequest())
+        self.assertIsInstance(config, LayoutConfig)
+        self.assertIsInstance(config, DefaultLayoutConfig)
+        self.assertTrue(ILayoutConfig.providedBy(config))
+
+        self.assertTrue(config.mainmenu)
+        self.assertFalse(config.mainmenu_fluid)
+        self.assertTrue(config.livesearch)
+        self.assertTrue(config.personaltools)
+        self.assertFalse(config.columns_fluid)
+        self.assertTrue(config.pathbar)
+        self.assertEqual(config.sidebar_left, ['navtree'])
+        self.assertEqual(config.sidebar_left_grid_width, 3)
+        self.assertEqual(config.content_grid_width, 9)
+
+        @layout_config(BaseNode)
+        class BaseNodeLayout(LayoutConfig):
+            pass
+
+        class CustomNode1(BaseNode):
+            pass
+
+        class CustomNode2(BaseNode):
+            pass
+
+        @layout_config(CustomNode1, CustomNode2)
+        class CustomNodeLayout(LayoutConfig):
+            pass
+
+        config = layout_config.lookup(model=BaseNode(), request=DummyRequest())
+        self.assertIsInstance(config, BaseNodeLayout)
+
+        config = layout_config.lookup(model=CustomNode1(), request=DummyRequest())
+        self.assertIsInstance(config, CustomNodeLayout)
+
+        config = layout_config.lookup(model=CustomNode2(), request=DummyRequest())
+        self.assertIsInstance(config, CustomNodeLayout)
+
+        del layout_config._registry[BaseNode]
+        del layout_config._registry[CustomNode1]
+        del layout_config._registry[CustomNode2]

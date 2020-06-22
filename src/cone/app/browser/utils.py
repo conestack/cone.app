@@ -71,7 +71,7 @@ def make_url(request, path=None, node=None, resource=None, query=None):
 def choose_name(container, name):
     name = re.sub(
         r'-{2,}', '-',
-        re.sub('^\w-|-\w-|-\w$', '-',
+        re.sub(r'^\w-|-\w-|-\w$', '-',
                re.sub(r'\W', '-', name.strip()))).strip('-').lower()
     n = name
     i = 0

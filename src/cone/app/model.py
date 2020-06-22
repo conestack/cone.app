@@ -5,7 +5,7 @@ from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
-from cone.app.interfaces import ILayout
+from cone.app.interfaces import ILayoutConfig
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
@@ -41,7 +41,6 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
 import logging
@@ -116,15 +115,6 @@ class AppNode(Behavior):
     @property
     def __acl__(self):
         return acl_registry.lookup(self.__class__, self.node_info_name)
-
-    @default
-    @property
-    def layout(self):
-        props = self.properties
-        if props.default_child:
-            return self[props.default_child].layout
-        # XXX: consider adding and return add model layout here?
-        return get_current_registry().getAdapter(self, ILayout)
 
     @default
     @instance_property
@@ -335,11 +325,13 @@ class Properties(object):
     def __contains__(self, key):
         return key in self._get_data()
 
-    def __getattr__(self, key):
-        return self._get_data().get(key)
+    def __getattr__(self, name):
+        if name == '__provides__':
+            return self.__getattribute__(name)
+        return self._get_data().get(name)
 
-    def __setattr__(self, key, value):
-        self._get_data()[key] = value
+    def __setattr__(self, name, value):
+        self._get_data()[name] = value
 
     def keys(self):
         return self._get_data().keys()
@@ -388,6 +380,8 @@ class ProtectedProperties(Properties):
         return super(ProtectedProperties, self).__contains__(key)
 
     def __getattr__(self, name):
+        if name == '__provides__':
+            return self.__getattribute__(name)
         if not self._permits(name):
             return None
         return super(ProtectedProperties, self).get(name)
@@ -398,12 +392,17 @@ class ProtectedProperties(Properties):
         return keys
 
 
-@implementer(ILayout)
-class Layout(Properties):
+@implementer(ILayoutConfig)
+class LayoutConfig(Properties):
 
-    def __init__(self, model=None):
-        super(Layout, self).__init__()
+    def __init__(self, model=None, request=None):
+        super(LayoutConfig, self).__init__(data=None)
         self.model = model
+        self.request = request
+
+
+# B/C, removed as of cone.app 1.1
+Layout = LayoutConfig
 
 
 @implementer(IMetadata)
@@ -550,6 +549,8 @@ class ConfigProperties(Properties):
             return False
 
     def __getattr__(self, name):
+        if name == '__provides__':
+            return self.__getattribute__(name)
         try:
             value = self.config().get(self.properties_section, name)
             return safe_decode(value, encoding=self.encoding)

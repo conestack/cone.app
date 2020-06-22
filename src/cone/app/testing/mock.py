@@ -1,6 +1,8 @@
+from cone.app.interfaces import ILayout
 from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.app.model import CopySupport
+from cone.app.model import Layout
 from cone.app.model import Properties
 from cone.app.security import DEFAULT_ACL
 from cone.app.security import PrincipalACL
@@ -19,6 +21,7 @@ from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
 from pyramid.static import static_view
+from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
 
@@ -100,3 +103,30 @@ class CopySupportNode(BaseNode):
 
     def __call__(self):
         self.messages.append('Called: {}'.format(self.name))
+
+
+###############################################################################
+# B/C
+###############################################################################
+
+@implementer(ILayout)
+@adapter(Interface)
+def default_layout(context):
+    config = Layout()
+    config.mainmenu = True
+    config.mainmenu_fluid = False
+    config.livesearch = True
+    config.personaltools = True
+    config.columns_fluid = False
+    config.pathbar = True
+    config.sidebar_left = ['navtree']
+    config.sidebar_left_grid_width = 3
+    config.content_grid_width = 9
+    return config
+
+
+class LayoutConfigNode(BaseNode):
+
+    @property
+    def layout(self):
+        return default_layout(self)

@@ -1,10 +1,17 @@
+from cone.app import DefaultLayoutConfig
+from cone.app import layout_config
 from cone.app import testing
 from cone.app.browser import render_main_template
+from cone.app.browser.layout import LayoutConfigTile
 from cone.app.browser.layout import NavTree
 from cone.app.browser.layout import ProtectedContentTile
+from cone.app.interfaces import ILayoutConfig
 from cone.app.model import AppRoot
 from cone.app.model import BaseNode
+from cone.app.model import LayoutConfig
 from cone.app.security import DEFAULT_SETTINGS_ACL
+from cone.app.testing.mock import default_layout
+from cone.app.testing.mock import LayoutConfigNode
 from cone.app.testing.mock import WorkflowNode
 from cone.tile import render_tile
 from cone.tile import Tile
@@ -515,3 +522,55 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'content')
         self.assertEqual(res, '<div>Root Content</div>')
+
+    def test_layout_config_tile(self):
+        # B/C from layout attribute
+        tile = LayoutConfigTile()
+        tile.model = LayoutConfigNode()
+        tile.request = self.layer.new_request()
+        config = tile.config
+        self.assertIsInstance(config, LayoutConfig)
+
+        # B/C from layout adapter
+        request = self.layer.new_request()
+        request.registry.registerAdapter(default_layout)
+
+        model = BaseNode()
+        config = request.registry.queryAdapter(model, ILayoutConfig, default=None)
+        self.assertIsInstance(config, LayoutConfig)
+
+        tile = LayoutConfigTile()
+        tile.model = model
+        tile.request = request
+        config = tile.config
+        self.assertIsInstance(config, LayoutConfig)
+
+        request.registry.unregisterAdapter(default_layout)
+        config = request.registry.queryAdapter(model, ILayoutConfig, default=None)
+        self.assertEqual(config, None)
+
+        # from layout_config
+        tile = LayoutConfigTile()
+        tile.model = BaseNode()
+        tile.request = self.layer.new_request()
+        config = tile.config
+        self.assertIsInstance(config, DefaultLayoutConfig)
+
+        # default child
+        class ChildNode(BaseNode):
+            pass
+
+        @layout_config(ChildNode)
+        class ChildNodeLayout(LayoutConfig):
+            pass
+
+        model = BaseNode()
+        model['child'] = ChildNode()
+        model.properties.default_child = 'child'
+        tile = LayoutConfigTile()
+        tile.model = model
+        tile.request = self.layer.new_request()
+        config = tile.config
+        self.assertIsInstance(config, ChildNodeLayout)
+
+        del layout_config._registry[ChildNode]

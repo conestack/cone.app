@@ -23,10 +23,6 @@ and implements the following contracts:
 - **cone.app.interfaces.IApplicationNode** extends the node by application
   specific contracts.
 
-    - **layout**: Property containing ``cone.app.interfaces.ILayout`` implementing
-      object. The layout object contains settings for the main layout. See
-      :doc:`Application Layout <layout>` for details.
-
     - **properties**: Property containing ``cone.app.IProperties`` implementing
       object. The properties are supposed to provide UI configuration settings. See
       :doc:`UI widgets <widgets>` for details.

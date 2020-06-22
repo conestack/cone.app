@@ -29,47 +29,26 @@ is structured as follows.
     :width: 100%
 
 The layout can be configured for each application node. Layout configuration
-is described in ``cone.app.interfaces.ILayout`` and expected via application
-model node on property ``layout``.
+is described in ``cone.app.interfaces.ILayoutConfig`` and is registered for
+one or more model classes with ``cone.app.layout_config`` decorator.
 
 .. code-block:: python
 
+    from cone.app import layout_config
     from cone.app.model import BaseNode
-    from cone.app.model import Layout
+    from cone.app.model import LayoutConfig
 
-    class ExampleApp(BaseNode):
+    class CustomNodeOne(BaseNode):
+        pass
 
-        @property
-        def layout(self):
-            layout = Layout()
-            layout.mainmenu = True
-            layout.mainmenu_fluid = False
-            layout.livesearch = True
-            layout.personaltools = True
-            layout.columns_fluid = False
-            layout.pathbar = True
-            layout.sidebar_left = ['navtree']
-            layout.sidebar_left_grid_width = 3
-            layout.content_grid_width = 9
-            return layout
+    class CustomNodeTwo(BaseNode):
+        pass
 
-Alternatively to overwriting the ``layout`` property on model node, an
-``ILayout`` implementing adapter can be provided. Default ``layout`` property
-implementation on ``AppNode`` tries to find an ``ILayout`` adapter for
-``self``.
+    @layout_config(CustomNodeOne, CustomNodeTwo)
+    class CustomLayoutConfig(LayoutConfig)
 
-.. code-block:: python
-
-    from cone.app.interfaces import IApplicationNode
-    from cone.app.model import Layout
-    from zope.component import adapter
-
-    @adapter(IApplicationNode)
-    class ExampleLayout(Layout):
-
-        def __init__(self, model):
-            super(ExampleLayout, self).__init__()
-            self.model = model
+        def __init__(self, model, request):
+            super(ExampleNodeLayoutConfig, self).__init__(model, request)
             self.mainmenu = True
             self.mainmenu_fluid = False
             self.livesearch = True
@@ -101,3 +80,10 @@ Provided layout settings:
 
 - **content_grid_width**: Content grid width as integer, total grid width
   is 12.
+
+.. note::
+
+    Prior to ``cone.app 1.0rc1``, layout configuration was done either via
+    ``layout`` property on application model node or with an ``ILayout``
+    implementing adapter. These methods still work but are deprecated and will
+    be removed as of cone.app 1.1

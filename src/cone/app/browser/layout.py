@@ -1,3 +1,4 @@
+from cone.app import layout_config
 from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.utils import format_date
@@ -5,6 +6,7 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
 from cone.app.browser.utils import node_path
+from cone.app.interfaces import ILayout
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
@@ -17,6 +19,7 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
+import warnings
 
 
 _ = TranslationStringFactory('cone.app')
@@ -54,8 +57,32 @@ class ProtectedContentTile(Tile):
         return Tile.__call__(self, model, request)
 
 
+class LayoutConfigTile(Tile):
+
+    @property
+    def config(self):
+        model = self.model
+        props = model.properties
+        if props.default_child:
+            model = model[props.default_child]
+        if hasattr(model, 'layout'):
+            warnings.warn(
+                '``AppNode.layout`` is deprecated, use ``layout_config``',
+                DeprecationWarning
+            )
+            return model.layout
+        layout = self.request.registry.queryAdapter(model, ILayout, default=None)
+        if layout:
+            warnings.warn(
+                '``ILayout`` adapter is deprecated, use ``layout_config``',
+                DeprecationWarning
+            )
+            return layout
+        return layout_config.lookup(model=model, request=self.request)
+
+
 @tile(name='layout', path='templates/layout.pt', permission='login')
-class Layout(Tile):
+class Layout(LayoutConfigTile):
     """Main layout tile.
     """
 
@@ -138,7 +165,7 @@ class PersonalTools(Tile):
       path='templates/mainmenu.pt',
       permission='view',
       strict=False)
-class MainMenu(Tile):
+class MainMenu(LayoutConfigTile):
     """Main Menu tile.
 
     * set ``skip_mainmenu`` on ``model.properties`` to ``True`` if node should

@@ -6,7 +6,7 @@
       class="nav navbar-nav contextsensitiv"
       ajax:bind="contextchanged"
       ajax:action="mainmenu:#mainmenu:replace"
-      tal:define="layout model.layout">
+      tal:define="config context.config">
 
     <tal:item repeat="item context.menuitems">
 
@@ -59,7 +59,7 @@
     </tal:item>
 
     <tal:personaltools
-      condition="layout.personaltools"
+      condition="config.personaltools"
       replace="structure tile('personaltools')" />
 
   </ul>

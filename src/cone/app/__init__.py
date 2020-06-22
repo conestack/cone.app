@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
-from cone.app.interfaces import ILayout
 from cone.app.model import AppRoot
 from cone.app.model import AppSettings
-from cone.app.model import Layout
+from cone.app.model import LayoutConfig
 from cone.app.model import Properties
 from cone.app.ugm import ugm_backend
 from cone.app.utils import format_traceback
@@ -13,10 +12,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.static import static_view
 from yafowil.resources import YafowilResources as YafowilResourcesBase
-from zope.component import adapter
 from zope.component import getGlobalSiteManager
-from zope.interface import implementer
-from zope.interface import Interface
 import importlib
 import logging
 import pyramid_chameleon
@@ -118,20 +114,39 @@ root = AppRoot()
 root.factories['settings'] = AppSettings
 
 
-@implementer(ILayout)
-@adapter(Interface)
-def default_layout(context):
-    layout = Layout()
-    layout.mainmenu = True
-    layout.mainmenu_fluid = False
-    layout.livesearch = True
-    layout.personaltools = True
-    layout.columns_fluid = False
-    layout.pathbar = True
-    layout.sidebar_left = ['navtree']
-    layout.sidebar_left_grid_width = 3
-    layout.content_grid_width = 9
-    return layout
+class layout_config(object):
+    _registry = dict()
+
+    def __init__(self, *for_):
+        self.for_ = for_
+
+    def __call__(self, factory):
+        for context in self.for_:
+            self._registry[context] = factory
+        return factory
+
+    @classmethod
+    def lookup(cls, model=None, request=None):
+        for cls_ in model.__class__.mro():
+            factory = cls._registry.get(cls_)
+            if factory:
+                return factory(model=model, request=request)
+
+
+@layout_config(object)
+class DefaultLayoutConfig(LayoutConfig):
+
+    def __init__(self, model=None, request=None):
+        super(DefaultLayoutConfig, self).__init__(model=model, request=request)
+        self.mainmenu = True
+        self.mainmenu_fluid = False
+        self.livesearch = True
+        self.personaltools = True
+        self.columns_fluid = False
+        self.pathbar = True
+        self.sidebar_left = ['navtree']
+        self.sidebar_left_grid_width = 3
+        self.content_grid_width = 9
 
 
 def configure_root(settings):
@@ -299,9 +314,6 @@ def main(global_config, **settings):
     # include general dependencies
     config.include(pyramid_chameleon)
     config.include(pyramid_zcml)
-
-    # register default layout adapter
-    config.registry.registerAdapter(default_layout)
 
     # add translation
     config.add_translation_dirs('cone.app:locale/')

@@ -5,11 +5,11 @@
   <div id="layout"
        ajax:action="layout:#layout:replace"
        ajax:bind="contextchanged"
-       tal:define="layout model.layout">
+       tal:define="config context.config">
 
     <div class="navbar navbar-inverse navbar-top">
 
-      <div class="${layout.mainmenu_fluid and 'container-fluid' or 'container'}">
+      <div class="${config.mainmenu_fluid and 'container-fluid' or 'container'}">
 
         <div class="navbar-header">
 
@@ -31,21 +31,21 @@
              style="height:1px;">
 
           <tal:mainmenu
-            condition="layout.mainmenu"
+            condition="config.mainmenu"
             replace="structure tile('mainmenu')" />
 
           <tal:livesearch
-            condition="layout.livesearch"
+            condition="config.livesearch"
             replace="structure tile('livesearch')" />
 
         </div>
       </div>
     </div>
 
-    <div class="${layout.columns_fluid and 'container-fluid' or 'container'}">
+    <div class="${config.columns_fluid and 'container-fluid' or 'container'}">
 
       <div class="row"
-           tal:condition="layout.pathbar">
+           tal:condition="config.pathbar">
         <div class="col-md-12">
           <tal:pathbar replace="structure tile('pathbar')" />
         </div>
@@ -53,14 +53,14 @@
 
       <div class="row">
         <div id="sidebar_left"
-             class="col-md-${layout.sidebar_left_grid_width}"
-             tal:condition="layout.sidebar_left">
-          <tal:tiles repeat="tilename layout.sidebar_left">
+             class="col-md-${config.sidebar_left_grid_width}"
+             tal:condition="config.sidebar_left">
+          <tal:tiles repeat="tilename config.sidebar_left">
             <tal:tile replace="structure tile(tilename)" />
           </tal:tiles>
         </div>
 
-        <div class="col-md-${layout.content_grid_width}">
+        <div class="col-md-${config.content_grid_width}">
           <div id="content"
                ajax:bind="contextchanged"
                ajax:action="content:#content:inner">

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from cone.app import testing
-from cone.app.interfaces import ILayout
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
@@ -10,7 +9,6 @@ from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
 from cone.app.model import get_node_info
-from cone.app.model import Layout
 from cone.app.model import Metadata
 from cone.app.model import NamespaceUUID
 from cone.app.model import node_info
@@ -81,21 +79,6 @@ class TestModel(NodeTestCase):
 
         self.assertEqual(md.title, 'no_title')
         self.assertTrue(md.inexistent is None)
-
-        # Layout
-        layout = root.layout
-        self.assertTrue(isinstance(layout, Layout))
-        self.assertTrue(ILayout.providedBy(layout))
-
-        self.assertTrue(layout.mainmenu)
-        self.assertFalse(layout.mainmenu_fluid)
-        self.assertTrue(layout.livesearch)
-        self.assertTrue(layout.personaltools)
-        self.assertFalse(layout.columns_fluid)
-        self.assertTrue(layout.pathbar)
-        self.assertEqual(layout.sidebar_left, ['navtree'])
-        self.assertEqual(layout.sidebar_left_grid_width, 3)
-        self.assertEqual(layout.content_grid_width, 9)
 
         # Nodeinfo
         info = root.nodeinfo
@@ -374,6 +357,7 @@ class TestModel(NodeTestCase):
             'viewprotected': ['view'],
         }
         props = ProtectedProperties(context, permissions)
+        self.assertTrue(IProperties.providedBy(props))
 
         # Setting properties works always
         props.viewprotected = True
@@ -427,6 +411,7 @@ class TestModel(NodeTestCase):
             os.path.join(tempdir, 'props.xml'),
             data={'foo': u'äöüß'}
         )
+        self.assertTrue(IProperties.providedBy(props))
 
         # Testing helper functions
         self.assertEqual(props._keys(), ['foo'])
@@ -628,6 +613,7 @@ class TestModel(NodeTestCase):
             os.path.join(tempdir, 'props.cfg'),
             data={'foo': 1}
         )
+        self.assertTrue(IProperties.providedBy(props))
 
         # Nothing added yet
         self.assertEqual(os.listdir(tempdir), [])

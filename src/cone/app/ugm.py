@@ -6,7 +6,7 @@ logger = logging.getLogger('cone.app')
 
 
 class ugm_backend(object):
-    """Decorator for UGM backends.
+    """UGM backend configuration.
     """
     registry = dict()
     name = None

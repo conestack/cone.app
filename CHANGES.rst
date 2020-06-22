@@ -4,6 +4,17 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Improve layout configuration handling. Rename ``cone.app.interfaces.ILayout``
+  to ``cone.app.interfaces.ILayoutConfig`` and ``cone.app.model.Layout`` to
+  ``cone.app.model.LayoutConfig``. Remove ``layout`` property from application
+  model. Introduce ``cone.app.layout_config`` decorator which is used to register
+  concrete ``LayoutConfig`` implementations for model nodes.
+  [rnix, 2020-06-22]
+
+- Fix asking for interface implementations via ``Interface.providedBy`` on
+  subclasses of ``cone.app.model.Properties``.
+  [rnix, 2020-06-22]
+
 - Fix workflow state styles if no transitions are available.
   [rnix, 2020-06-15]
 
