@@ -33,6 +33,11 @@ Roadmap
 
 [ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
 
+[ ] Fix ACL registry lookup. First check by cls and node info name, then by
+    class only and finally return default.
+
+[ ] Remove cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS
+
 1.1
 ---
 
@@ -85,6 +90,8 @@ by node info name only if no class given at lookup. Or so...
 options and datasets instead of just datasets.
 
 [ ] Sharing tile table sorting by principal title instead of principal id
+
+[ ] Bind navtree to ``list`` permission?
 
 1.2
 ---
