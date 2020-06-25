@@ -43,17 +43,31 @@ class FooterTile(Tile):
     """
 
 
+@tile(name='insufficient_privileges',
+      path='templates/insufficient_privileges.pt',
+      permission='login')
+class InsufficientPrivilegesTile(Tile):
+    """Tile rendering insufficient privileges message.
+    """
+
+
 class ProtectedContentTile(Tile):
     """A tile rendering the loginform instead default if user is not
     authenticated.
 
-    Normally used for 'content' tiles if page should render login form in place
-    instead of throwing Unauthorized.
+    Supposed to be used for 'content' tiles if page should render login form
+    instead of throwing Unauthorized. Needs to be registered for permission
+    'login'.
+
+    The permission of the tile itself can be defined via ``content_permission``
     """
+    content_permission = 'view'
 
     def __call__(self, model, request):
         if not request.authenticated_userid:
             return render_tile(model, request, 'loginform')
+        if not request.has_permission(self.content_permission, model):
+            return render_tile(model, request, 'insufficient_privileges')
         return Tile.__call__(self, model, request)
 
 

@@ -1,0 +1,12 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+  
+  <h3 i18n:translate="insufficient_privileges">Insufficient privileges</h3>
+
+  <p i18n:translate="insufficient_privileges_help">
+    You do not have the required permission to access this resource.
+  </p>
+
+</tal:block>

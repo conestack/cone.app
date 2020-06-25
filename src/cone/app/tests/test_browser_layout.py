@@ -110,6 +110,20 @@ class TestBrowserLayout(TileTestCase):
 
         self.assertTrue(result.find('<div>Content</div>') > -1)
 
+        # test coneten permission
+        self.assertEqual(ProtectedContent.content_permission, 'view')
+        ProtectedContent.content_permission = 'manage'
+
+        with self.layer.authenticated('max'):
+            result = render_tile(model, request, 'content')
+
+        self.assertTrue(result.find('<h3>Insufficient privileges</h3>') > -1)
+
+        with self.layer.authenticated('manager'):
+            result = render_tile(model, request, 'content')
+
+        self.assertTrue(result.find('<div>Content</div>') > -1)
+
     def test_mainmenu(self):
         root = BaseNode()
         root['1'] = BaseNode()

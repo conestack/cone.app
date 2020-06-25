@@ -73,18 +73,6 @@ DEFAULT_SETTINGS_ACL = [
 ]
 
 
-# XXX: get rid of. Protected properties should only be used for protecting
-#      persistent properties/attributes.
-DEFAULT_NODE_PROPERTY_PERMISSIONS = {
-    'action_up': ['view'],
-    'action_view': ['view'],
-    'action_list': ['list'],
-    'action_edit': ['edit'],
-    'action_delete': ['delete'],
-    'action_delete_children': ['delete'],
-}
-
-
 ADMIN_USER = None
 ADMIN_PASSWORD = None
 

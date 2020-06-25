@@ -378,28 +378,28 @@ Content area for node. ``cone.app`` expects a tile registered by name
 ``content`` to render the default *Content Area* of a node. The plugin code is
 responsible to provide a content tile for model nodes.
 
-When providing tiles for displaying node content, it's normally desired to
-render the login form if access is forbidden. Therefor class
-``cone.app.browser.layout.ProtectedContentTile`` is available.
-
-If a ``content`` tile requires a template only, use ``ProtectedContentTile`` as
-``class_``.
-
 .. code-block:: python
 
-    from cone.app.browser.layout import ProtectedContentTile
     from cone.example.model import ExamplePlugin
-    from cone.tile import registerTile
+    from cone.tile import Tile
+    from cone.tile import tile
 
-    registerTile(
-        name='content',
-        path='cone.example:browser/templates/example.pt',
-        interface=ExamplePlugin,
-        class_=ProtectedContentTile,
-        permission='login')
+    @tile(name='content',
+          path='templates/content.pt',
+          interface=ExamplePlugin,
+          permission='view')
+    class ExamplePluginContentTile(Tile):
+        pass
 
-If a ``content`` tile requires a related python class to perform some view or
-controller logic, use ``ProtectedContentTile`` as base.
+When providing tiles for displaying node content, it's often desired to
+render the login form if the user is not authenticated, or display a message
+whether the user has insufficient privileges if access is forbidden. Therefor
+class ``cone.app.browser.layout.ProtectedContentTile`` is available.
+
+Protected content tiles need to be registered for permission 'login'. The
+permission required to access the tile itself can be defined via
+``content_permission`` and defaults to 'view'. If content permission not granted
+on node, a tile named ``insufficient_privileges`` is rendered.
 
 .. code-block:: python
 
@@ -408,7 +408,8 @@ controller logic, use ``ProtectedContentTile`` as base.
     from cone.tile import tile
 
     @tile(name='content', interface=ExamplePlugin, permission='login')
-    class ExamplePluginContentTile(ProtectedContentTile):
+    class ExamplePluginProtectedContentTile(ProtectedContentTile):
+        content_permission = 'list'
 
         def render(self):
             return '<div>Example Plugin Content</div>'
@@ -558,11 +559,14 @@ Context related content views are placed in ``contentviews`` toolbar.
     from cone.app.browser.actions import LinkAction
     from cone.app.browser.contextmenu import context_menu
     from cone.example.interfaces import IMyFeature
-    from cone.tile import registerTile
+    from cone.tile import tile
+    from cone.tile import Tile
     from pyramid.view import view_config
 
-    # content tile rendering my feature
-    registerTile('myfeature', 'templates/myfeature.pt', permission='view')
+    # tile rendering my feature
+    @tile('myfeature', 'templates/myfeature.pt', permission='view')
+    class MyFeatureTile(Tile):
+        pass
 
     # view rendering main template with my feature content tile
     @view_config('myfeature', permission='view')
@@ -1270,12 +1274,14 @@ When inheriting from ``TileAction``, a tile by name is rendered.
 .. code-block:: python
 
     from cone.app.browser.actions import TileAction
-    from cone.tile import registerTile
+    from cone.tile import tile
+    from cone.tile import Tile
 
-    registerTile(
-        name='example_action',
-        path='cone.example:browser/templates/example_action.pt',
-        permission='view')
+    @tile(name='example_action',
+          path='cone.example:browser/templates/example_action.pt',
+          permission='view')
+    class ExampleActionTile(Tile):
+        pass
 
     class ExampleAction(TileAction):
         tile = 'example_action'

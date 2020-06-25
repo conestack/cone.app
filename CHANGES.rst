@@ -4,6 +4,13 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Add ``ProtectedContentTile.content_permission``. If this permission is not
+  granted on model node, ``insufficient_privileges`` tile gets rendered.
+  [rnix, 2020-06-25]
+
+- Remove ``cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS``.
+  [rnix, 2020-06-25]
+
 - Fix CSS for selected items in dropdown menues.
   [rnix, 2020-06-25]
 

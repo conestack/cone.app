@@ -38,10 +38,6 @@ Roadmap
 
 [ ] Remove cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS.
 
-[ ] Protected content tile is protected by login permission to render login
-    form for unauthenticated users. Add permission required for rendering the
-    underlying view if user is authenticated.
-
 1.1
 ---
 
