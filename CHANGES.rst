@@ -4,6 +4,9 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Fix CSS for selected items in dropdown menues.
+  [rnix, 2020-06-25]
+
 - Improve layout configuration handling. Rename ``cone.app.interfaces.ILayout``
   to ``cone.app.interfaces.ILayoutConfig`` and ``cone.app.model.Layout`` to
   ``cone.app.model.LayoutConfig``. Remove ``layout`` property from application

@@ -17,6 +17,12 @@ body {
     padding-right:10px;
 }
 
+/* dropdown selected */
+.dropdown-menu > li > a.selected {
+    background-color: #e8e8e8;
+    background-image: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);
+}
+
 /* navtree */
 #navtree li {
     padding-left:8px;
