@@ -367,7 +367,6 @@ class ActionDelete(LinkAction):
         if self.model.properties.default_content_tile:
             scope = self.action_scope == 'view'
         return self.model.properties.action_delete \
-            and self.request.has_permission('delete', self.model.parent) \
             and self.permitted('delete') \
             and scope
 

@@ -4,6 +4,10 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Do not check 'delete' permission on parent node in
+  ``cona.app.browser.actions.ActionDelete.display``.
+  [rnix, 2020-06-27]
+
 - Add ``ProtectedContentTile.content_permission``. If this permission is not
   granted on model node, ``insufficient_privileges`` tile gets rendered.
   [rnix, 2020-06-25]
