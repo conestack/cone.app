@@ -211,6 +211,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         copysupportbinder: function(context) {
             var cut_cookie = 'cone.app.copysupport.cut';
             var copy_cookie = 'cone.app.copysupport.copy';
+
             var write_selected_to_cookie = function(name) {
                 var selected = $(cone.selectable.selected);
                 var ids = new Array();
@@ -224,13 +225,40 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
                 return false;
             };
+
+            var read_selected_from_cookie = function(name, css) {
+                var cookie = readCookie(name);
+                if (!cookie) {
+                    return;
+                }
+                var ids = cookie.split('::');
+                var elem, target;
+                $('table tr.selectable', context).each(function() {
+                    elem = $(this);
+                    target = elem.attr('ajax:target');
+                    for (var idx in ids) {
+                        if (ids[idx] == target) {
+                            elem.addClass('selected');
+                            if (css) {
+                                elem.addClass(css);
+                            }
+                            cone.selectable.add(elem.get(0));
+                            break;
+                        }
+                    }
+                });
+            };
+
+            cone.selectable.reset();
+            read_selected_from_cookie(cut_cookie, 'copysupport_cut');
+            read_selected_from_cookie(copy_cookie, '');
+
             $('a#toolbaraction-cut', context)
                     .off('click')
                     .on('click', function(event) {
                 event.preventDefault();
                 createCookie(copy_cookie, '', 0);
-                var selected_exist = 
-                    write_selected_to_cookie(cut_cookie);
+                var selected_exist = write_selected_to_cookie(cut_cookie);
                 if (selected_exist) {
                     $('a#toolbaraction-paste').removeClass('disabled');
                 }
@@ -243,13 +271,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 });
                 cone.selectable.reset();
             });
+
             $('a#toolbaraction-copy', context)
                     .off('click')
                     .on('click', function(event) {
                 event.preventDefault();
                 createCookie(cut_cookie, '', 0);
-                var selected_exist = 
-                    write_selected_to_cookie(copy_cookie);
+                var selected_exist = write_selected_to_cookie(copy_cookie);
                 if (selected_exist) {
                     $('a#toolbaraction-paste').removeClass('disabled');
                 }
@@ -257,6 +285,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 selectable.removeClass('copysupport_cut');
                 cone.selectable.reset();
             });
+
             $('a#toolbaraction-paste', context)
                     .off('click')
                     .on('click', function(event) {
@@ -279,85 +308,92 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
     // Selectable items
     $.fn.selectable = function() {
+        var select_no_key = function(container, elem) {
+            container.children().removeClass('selected');
+            elem.addClass('selected');
+            cone.selectable.reset();
+            cone.selectable.add(elem.get(0));
+        };
+
+        var select_ctrl_down = function(elem) {
+            elem.toggleClass('selected');
+            if (elem.hasClass('selected')) {
+                cone.selectable.add(elem.get(0));
+            } else {
+                cone.selectable.remove(elem.get(0));
+            }
+        };
+
+        var get_nearest = function(container, current_index) {
+            // get nearest next selected item from current index
+            var selected = container.children('.selected');
+            // -1 means no other selected item
+            var nearest = -1;
+            var selected_index, selected_elem;
+            $(selected).each(function() {
+                selected_elem = $(this);
+                selected_index = selected_elem.index();
+                if (nearest == -1) {
+                    nearest = selected_index;
+                } else if (current_index > selected_index) {
+                    if (cone.flags.select_direction > 0) {
+                        if (selected_index < nearest) {
+                            nearest = selected_index;
+                        }
+                    } else {
+                        if (selected_index > nearest) {
+                            nearest = selected_index;
+                        }
+                    }
+                } else if (current_index < selected_index) {
+                    if (selected_index < nearest) {
+                        nearest = selected_index;
+                    }
+                }
+            });
+            return nearest;
+        };
+
+        var select_shift_down = function(container, elem) {
+            var current_index = elem.index();
+            var nearest = get_nearest(container, current_index);
+            if (nearest == -1) {
+                elem.addClass('selected');
+                cone.selectable.add(elem.get(0));
+            } else {
+                container.children().removeClass('selected');
+                var start, end;
+                if (current_index < nearest) {
+                    cone.flags.select_direction = -1;
+                    start = current_index;
+                    end = nearest;
+                } else {
+                    cone.flags.select_direction = 1;
+                    start = nearest;
+                    end = current_index;
+                }
+                cone.selectable.reset();
+                container.children()
+                         .slice(start, end + 1)
+                         .addClass('selected')
+                         .each(function() {
+                             cone.selectable.add(this);
+                         });
+            }
+        };
+
         this.off('click').on('click', function(event) {
             event.preventDefault();
-            $(document).off('mousedown').on('mousedown', function(event) {
-                var elem = $(event.target);
-                // XXX: currently static selector
-                if (elem.parents('.selectable').length) {
-                    return true;
-                }
-                $('.selectable').removeClass('selected');
-                $(document).off('mousedown');
-                return false;
-            });
             var elem = $(event.currentTarget);
             var container = elem.parent();
             if (!cone.keys.ctrl_down && !cone.keys.shift_down) {
-                container.children().removeClass('selected');
-                elem.addClass('selected');
-                cone.selectable.reset();
-                cone.selectable.add(event.currentTarget);
+                select_no_key(container, elem);
             } else {
                 if (cone.keys.ctrl_down) {
-                    elem.toggleClass('selected');
-                    if (elem.hasClass('selected')) {
-                        cone.selectable.add(event.currentTarget);
-                    } else {
-                        cone.selectable.remove(event.currentTarget);
-                    }
+                    select_ctrl_down(elem);
                 }
                 if (cone.keys.shift_down) {
-                    var selected = container.children('.selected');
-                    // get nearest next selected item, disable others
-                    var current_index = elem.index();
-                    // -1 means no other selected item
-                    var nearest = -1;
-                    var selected_index, selected_elem;
-                    $(selected).each(function() {
-                        selected_elem = $(this);
-                        selected_index = selected_elem.index();
-                        if (nearest == -1) {
-                            nearest = selected_index;
-                        } else if (current_index > selected_index) {
-                            if (cone.flags.select_direction > 0) {
-                                if (selected_index < nearest) {
-                                    nearest = selected_index;
-                                }
-                            } else {
-                                if (selected_index > nearest) {
-                                    nearest = selected_index;
-                                }
-                            }
-                        } else if (current_index < selected_index) {
-                            if (selected_index < nearest) {
-                                nearest = selected_index;
-                            }
-                        }
-                    });
-                    if (nearest == -1) {
-                        elem.addClass('selected');
-                        cone.selectable.add(event.currentTarget);
-                    } else {
-                        container.children().removeClass('selected');
-                        var start, end;
-                        if (current_index < nearest) {
-                            cone.flags.select_direction = -1;
-                            start = current_index;
-                            end = nearest;
-                        } else {
-                            cone.flags.select_direction = 1;
-                            start = nearest;
-                            end = current_index;
-                        }
-                        cone.selectable.reset();
-                        container.children()
-                                 .slice(start, end + 1)
-                                 .addClass('selected')
-                                 .each(function() {
-                                     cone.selectable.add(this);
-                                 });
-                    }
+                    select_shift_down(container, elem);
                 }
             }
         });
