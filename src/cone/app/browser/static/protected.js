@@ -319,9 +319,10 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
     cone.Selectable = function(options) {
         // current selected dom elements
-        this.selected = [];
-        this.firstclick = true;
         this.options = options;
+        this.selected = [];
+        this.select_direction = 0;
+        this.firstclick = true;
     };
 
     cone.Selectable.prototype = {
@@ -372,7 +373,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 if (nearest == -1) {
                     nearest = selected_index;
                 } else if (current_index > selected_index) {
-                    if (cone.flags.select_direction > 0) {
+                    if (this.select_direction > 0) {
                         if (selected_index < nearest) {
                             nearest = selected_index;
                         }
@@ -400,11 +401,11 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 container.children().removeClass('selected');
                 var start, end;
                 if (current_index < nearest) {
-                    cone.flags.select_direction = -1;
+                    this.select_direction = -1;
                     start = current_index;
                     end = nearest;
                 } else {
-                    cone.flags.select_direction = 1;
+                    this.select_direction = 1;
                     start = nearest;
                     end = current_index;
                 }
