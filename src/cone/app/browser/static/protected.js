@@ -20,7 +20,6 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         bdajax.register(cone.batcheditemsbinder.bind(cone), true);
         bdajax.register(cone.tabletoolbarbinder.bind(cone), true);
         bdajax.register(cone.sharingbinder.bind(cone), true);
-        bdajax.register(cone.selectable.binder.bind(cone.selectable), true);
         bdajax.register(cone.copysupportbinder.bind(cone), true);
         var referencebrowser = yafowil.referencebrowser;
         bdajax.register(
@@ -211,9 +210,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         copysupportbinder: function(context) {
             var cut_cookie = 'cone.app.copysupport.cut';
             var copy_cookie = 'cone.app.copysupport.copy';
+            var api = $('table tr.selectable', context)
+                .selectable()
+                .data('selectable');
+            if (!api) {
+                return;
+            }
 
             var write_selected_to_cookie = function(name) {
-                var selected = $(cone.selectable.selected);
+                var selected = $(api.selected);
                 var ids = new Array();
                 selected.each(function() {
                     ids.push($(this).attr('ajax:target'));
@@ -242,14 +247,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                             if (css) {
                                 elem.addClass(css);
                             }
-                            cone.selectable.add(elem.get(0));
+                            api.add(elem.get(0));
                             break;
                         }
                     }
                 });
             };
 
-            cone.selectable.reset();
+            api.reset();
             read_selected_from_cookie(cut_cookie, 'copysupport_cut');
             read_selected_from_cookie(copy_cookie, '');
 
@@ -264,12 +269,12 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
                 var selectable = $('.selectable');
                 selectable.removeClass('copysupport_cut');
-                var selected = $(cone.selectable.selected);
+                var selected = $(api.selected);
                 selected.each(function() {
                     elem = $(this);
                     elem.addClass('copysupport_cut');
                 });
-                cone.selectable.reset();
+                api.reset();
             });
 
             $('a#toolbaraction-copy', context)
@@ -283,7 +288,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
                 var selectable = $('.selectable');
                 selectable.removeClass('copysupport_cut');
-                cone.selectable.reset();
+                api.reset();
             });
 
             $('a#toolbaraction-paste', context)
@@ -306,25 +311,48 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         }
     }
 
-    // Selectable items
-    $.fn.selectable = function() {
-        var select_no_key = function(container, elem) {
+    cone.Selectable = function() {
+        // current selected dom elements
+        this.selected = [];
+    };
+
+    cone.Selectable.prototype = {
+        // reset
+        reset: function() {
+            this.selected = [];
+        },
+
+        // add element to selected
+        add: function(elem) {
+            this.remove(elem);
+            this.selected.push(elem);
+        },
+
+        // remove element from selected
+        remove: function(elem) {
+            var reduced = $.grep(this.selected, function(item, index) {
+                return item !== elem;
+            });
+            this.selected = reduced;
+        },
+
+        select_no_key: function(container, elem) {
             container.children().removeClass('selected');
             elem.addClass('selected');
-            cone.selectable.reset();
-            cone.selectable.add(elem.get(0));
-        };
+            this.reset();
+            this.add(elem.get(0));
+        },
 
-        var select_ctrl_down = function(elem) {
+        select_ctrl_down: function(elem) {
             elem.toggleClass('selected');
             if (elem.hasClass('selected')) {
-                cone.selectable.add(elem.get(0));
+                this.add(elem.get(0));
             } else {
-                cone.selectable.remove(elem.get(0));
+                this.remove(elem.get(0));
             }
-        };
+        },
 
-        var get_nearest = function(container, current_index) {
+        get_nearest: function(container, current_index) {
             // get nearest next selected item from current index
             var selected = container.children('.selected');
             // -1 means no other selected item
@@ -352,14 +380,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 }
             });
             return nearest;
-        };
+        },
 
-        var select_shift_down = function(container, elem) {
+        select_shift_down: function(container, elem) {
             var current_index = elem.index();
-            var nearest = get_nearest(container, current_index);
+            var nearest = this.get_nearest(container, current_index);
             if (nearest == -1) {
                 elem.addClass('selected');
-                cone.selectable.add(elem.get(0));
+                this.add(elem.get(0));
             } else {
                 container.children().removeClass('selected');
                 var start, end;
@@ -372,66 +400,45 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     start = nearest;
                     end = current_index;
                 }
-                cone.selectable.reset();
+                this.reset();
+                var that = this;
                 container.children()
                          .slice(start, end + 1)
                          .addClass('selected')
                          .each(function() {
-                             cone.selectable.add(this);
+                             that.add(this);
                          });
             }
-        };
+        },
 
-        this.off('click').on('click', function(event) {
+        handle_click: function(event) {
             event.preventDefault();
             var elem = $(event.currentTarget);
             var container = elem.parent();
             if (!cone.keys.ctrl_down && !cone.keys.shift_down) {
-                select_no_key(container, elem);
+                this.select_no_key(container, elem);
             } else {
                 if (cone.keys.ctrl_down) {
-                    select_ctrl_down(elem);
+                    this.select_ctrl_down(elem);
                 }
                 if (cone.keys.shift_down) {
-                    select_shift_down(container, elem);
+                    this.select_shift_down(container, elem);
                 }
             }
-        });
+        },
+
+        bind: function(elem) {
+            elem.off('click').on('click', this.handle_click.bind(this));
+        },
+    };
+
+    // Selectable items
+    $.fn.selectable = function() {
+        var api = new cone.Selectable();
+        api.bind(this);
+        this.data('selectable', api);
         return this;
     }
-
-    $.extend(cone, {
-
-        selectable: {
-
-            // current selected dom elements
-            selected: [],
-
-            // reset
-            reset: function() {
-                cone.selectable.selected = [];
-            },
-
-            // add element to selected
-            add: function(elem) {
-                cone.selectable.remove(elem);
-                cone.selectable.selected.push(elem);
-            },
-
-            // remove element from selected
-            remove: function(elem) {
-                var reduced = $.grep(cone.selectable.selected,
-                                     function(item, index) {
-                    return item !== elem;
-                });
-                cone.selectable.selected = reduced;
-            },
-
-            binder: function(context) {
-                $('table tr.selectable', context).selectable();
-            }
-        }
-    });
 
     // Reference Browser
     $.fn.referencebrowser = function() {
