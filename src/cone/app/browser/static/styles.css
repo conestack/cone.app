@@ -17,10 +17,14 @@ body {
     padding-right:10px;
 }
 
-/* dropdown selected */
+/* dropdown */
 .dropdown-menu > li > a.selected {
     background-color: #e8e8e8;
     background-image: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);
+}
+.dropdown-menu > li > a.disabled {
+    cursor: not-allowed;
+    color: #aaa;
 }
 
 /* navtree */
