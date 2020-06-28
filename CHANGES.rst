@@ -4,6 +4,16 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Overhaul JS copy support. Do not unselect items if mouse click outside
+  selectable listing. Preselect items on page and tile load. Reset current
+  selection as soon as item gets selected in foreign listing.
+  [rnix, 2020-06-28]
+
+- Rename JS ``cone.selectable`` to ``cone.Selectable``. It is now a class and
+  each selectable listing gets it's own instance. No longer automatically binds
+  to table with selectable rows.
+  [rnix, 2020-06-28]
+
 - Do not check 'delete' permission on parent node in
   ``cona.app.browser.actions.ActionDelete.display``.
   [rnix, 2020-06-27]
