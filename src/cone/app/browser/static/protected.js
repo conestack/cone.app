@@ -210,8 +210,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         copysupportbinder: function(context) {
             var cut_cookie = 'cone.app.copysupport.cut';
             var copy_cookie = 'cone.app.copysupport.copy';
-            var api = $('table tr.selectable', context)
-                .selectable()
+            var options = {
+                on_firstclick: function(api, elem) {
+                    createCookie(cut_cookie, '', 0);
+                    createCookie(copy_cookie, '', 0);
+                }
+            };
+            var api = $('table tr.selectable.copysupportitem', context)
+                .selectable(options)
                 .data('selectable');
             if (!api) {
                 return;
@@ -311,9 +317,11 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         }
     }
 
-    cone.Selectable = function() {
+    cone.Selectable = function(options) {
         // current selected dom elements
         this.selected = [];
+        this.firstclick = true;
+        this.options = options;
     };
 
     cone.Selectable.prototype = {
@@ -425,6 +433,12 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     this.select_shift_down(container, elem);
                 }
             }
+            if (this.firstclick) {
+                this.firstclick = false;
+                if (this.options && this.options.on_firstclick) {
+                    this.options.on_firstclick(this, elem);
+                }
+            }
         },
 
         bind: function(elem) {
@@ -433,8 +447,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     };
 
     // Selectable items
-    $.fn.selectable = function() {
-        var api = new cone.Selectable();
+    $.fn.selectable = function(options) {
+        var api = new cone.Selectable(options);
         api.bind(this);
         this.data('selectable', api);
         return this;
