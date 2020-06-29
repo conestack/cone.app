@@ -21,17 +21,10 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         bdajax.register(cone.tabletoolbarbinder.bind(cone), true);
         bdajax.register(cone.sharingbinder.bind(cone), true);
         bdajax.register(cone.copysupportbinder.bind(cone), true);
-        var referencebrowser = yafowil.referencebrowser;
-        bdajax.register(
-            referencebrowser.browser_binder.bind(referencebrowser),
-            true
-        );
-        bdajax.register(
-            referencebrowser.add_reference_binder.bind(referencebrowser)
-        );
-        bdajax.register(
-            referencebrowser.remove_reference_binder.bind(referencebrowser)
-        );
+        var refbrowser = yafowil.referencebrowser;
+        bdajax.register(refbrowser.browser_binder.bind(refbrowser), true);
+        bdajax.register(refbrowser.add_reference_binder.bind(refbrowser));
+        bdajax.register(refbrowser.remove_reference_binder.bind(refbrowser));
     });
 
     cone = {
@@ -208,117 +201,117 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
 
         copysupportbinder: function(context) {
-            var cut_cookie = 'cone.app.copysupport.cut';
-            var copy_cookie = 'cone.app.copysupport.copy';
-            var options = {
-                on_firstclick: function(api, elem) {
-                    createCookie(cut_cookie, '', 0);
-                    createCookie(copy_cookie, '', 0);
-                }
-            };
-            var api = $('table tr.selectable.copysupportitem', context)
-                .selectable(options)
-                .data('selectable');
-            if (!api) {
+            new cone.CopySupport(context);
+        }
+    };
+
+    cone.CopySupport = function(context) {
+        this.context = context;
+        this.copyable = $('table tr.selectable.copysupportitem', context);
+        if (!this.copyable.length) {
+            return;
+        }
+
+        this.cut_action = $('a#toolbaraction-cut', context);
+        this.copy_action = $('a#toolbaraction-copy', context);
+        this.paste_action = $('a#toolbaraction-paste', context);
+
+        this.cut_action.off('click').on('click', this.handle_cut.bind(this));
+        this.copy_action.off('click').on('click', this.handle_copy.bind(this));
+        this.paste_action.off('click').on('click', this.handle_paste.bind(this));
+
+        this.selectable = this.copyable.selectable({
+            on_firstclick: this.on_firstclick.bind(this),
+            on_select: this.on_select.bind(this)
+        }).data('selectable');
+
+        this.read_selected_from_cookie(this.cut_cookie, 'copysupport_cut');
+        this.read_selected_from_cookie(this.copy_cookie, '');
+    };
+
+    cone.CopySupport.prototype = {
+        cut_cookie: 'cone.app.copysupport.cut',
+        copy_cookie: 'cone.app.copysupport.copy',
+
+        on_firstclick: function(selectable, elem) {
+        },
+
+        on_select: function(selectable) {
+        },
+
+        write_selected_to_cookie: function(name) {
+            var selected = $(this.selectable.selected);
+            var ids = new Array();
+            selected.each(function() {
+                ids.push($(this).attr('ajax:target'));
+            });
+            var cookie = ids.join('::');
+            createCookie(name, cookie);
+            if (cookie.length) {
+                $(this.paste_action).removeClass('disabled');
+            } else {
+                $(this.paste_action).addClass('disabled');
+            }
+        },
+
+        read_selected_from_cookie: function(name, css) {
+            var cookie = readCookie(name);
+            if (!cookie) {
                 return;
             }
-
-            var write_selected_to_cookie = function(name) {
-                var selected = $(api.selected);
-                var ids = new Array();
-                selected.each(function() {
-                    ids.push($(this).attr('ajax:target'));
-                });
-                var cookie = ids.join('::');
-                createCookie(name, cookie);
-                if (cookie.length) {
-                    return true;
-                }
-                return false;
-            };
-
-            var read_selected_from_cookie = function(name, css) {
-                var cookie = readCookie(name);
-                if (!cookie) {
-                    return;
-                }
-                var ids = cookie.split('::');
-                var elem, target;
-                $('table tr.selectable', context).each(function() {
-                    elem = $(this);
-                    target = elem.attr('ajax:target');
-                    for (var idx in ids) {
-                        if (ids[idx] == target) {
-                            elem.addClass('selected');
-                            if (css) {
-                                elem.addClass(css);
-                            }
-                            api.add(elem.get(0));
-                            break;
+            var ids = cookie.split('::');
+            var that = this;
+            var elem, target;
+            $('table tr.selectable', this.context).each(function() {
+                elem = $(this);
+                target = elem.attr('ajax:target');
+                for (var idx in ids) {
+                    if (ids[idx] == target) {
+                        elem.addClass('selected');
+                        if (css) {
+                            elem.addClass(css);
                         }
+                        that.selectable.add(elem.get(0));
+                        break;
                     }
-                });
-            };
-
-            api.reset();
-            read_selected_from_cookie(cut_cookie, 'copysupport_cut');
-            read_selected_from_cookie(copy_cookie, '');
-
-            $('a#toolbaraction-cut', context)
-                    .off('click')
-                    .on('click', function(event) {
-                event.preventDefault();
-                createCookie(copy_cookie, '', 0);
-                var selected_exist = write_selected_to_cookie(cut_cookie);
-                if (selected_exist) {
-                    $('a#toolbaraction-paste').removeClass('disabled');
                 }
-                var selectable = $('.selectable');
-                selectable.removeClass('copysupport_cut');
-                var selected = $(api.selected);
-                selected.each(function() {
-                    elem = $(this);
-                    elem.addClass('copysupport_cut');
-                });
-                api.reset();
             });
+        },
 
-            $('a#toolbaraction-copy', context)
-                    .off('click')
-                    .on('click', function(event) {
-                event.preventDefault();
-                createCookie(cut_cookie, '', 0);
-                var selected_exist = write_selected_to_cookie(copy_cookie);
-                if (selected_exist) {
-                    $('a#toolbaraction-paste').removeClass('disabled');
-                }
-                var selectable = $('.selectable');
-                selectable.removeClass('copysupport_cut');
-                api.reset();
-            });
+        handle_cut: function(event) {
+            event.preventDefault();
+            createCookie(this.copy_cookie, '', 0);
+            this.write_selected_to_cookie(this.cut_cookie);
+            this.copyable.removeClass('copysupport_cut');
+            $(this.selectable.selected).addClass('copysupport_cut');
+        },
 
-            $('a#toolbaraction-paste', context)
-                    .off('click')
-                    .on('click', function(event) {
-                event.preventDefault();
-                var elem = $(this);
-                if (elem.hasClass('disabled')) {
-                    return;
-                }
-                var target = bdajax.parsetarget(elem.attr('ajax:target'));
-                bdajax.action({
-                    name: 'paste',
-                    mode: 'NONE',
-                    selector: 'NONE',
-                    url: target.url,
-                    params: target.params
-                });
+        handle_copy: function(event) {
+            event.preventDefault();
+            createCookie(this.cut_cookie, '', 0);
+            this.write_selected_to_cookie(this.copy_cookie);
+            this.copyable.removeClass('copysupport_cut');
+        },
+
+        handle_paste: function(event) {
+            event.preventDefault();
+            var elem = $(event.currentTarget);
+            if (elem.hasClass('disabled')) {
+                return;
+            }
+            var target = bdajax.parsetarget(elem.attr('ajax:target'));
+            bdajax.action({
+                name: 'paste',
+                mode: 'NONE',
+                selector: 'NONE',
+                url: target.url,
+                params: target.params
             });
         }
-    }
+    };
 
     cone.Selectable = function(options) {
-        // current selected dom elements
+        // on_firstclick, on_select callbacks in options
         this.options = options;
         this.selected = [];
         this.select_direction = 0;
@@ -326,18 +319,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
     };
 
     cone.Selectable.prototype = {
-        // reset
         reset: function() {
             this.selected = [];
         },
 
-        // add element to selected
         add: function(elem) {
             this.remove(elem);
             this.selected.push(elem);
         },
 
-        // remove element from selected
         remove: function(elem) {
             var reduced = $.grep(this.selected, function(item, index) {
                 return item !== elem;
@@ -426,25 +416,27 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             var container = elem.parent();
             if (!cone.keys.ctrl_down && !cone.keys.shift_down) {
                 this.select_no_key(container, elem);
-            } else {
-                if (cone.keys.ctrl_down) {
-                    this.select_ctrl_down(elem);
-                }
-                if (cone.keys.shift_down) {
-                    this.select_shift_down(container, elem);
-                }
+            } else if (cone.keys.ctrl_down) {
+                this.select_ctrl_down(elem);
+            } else if (cone.keys.shift_down) {
+                this.select_shift_down(container, elem);
             }
             if (this.firstclick) {
                 this.firstclick = false;
-                if (this.options && this.options.on_firstclick) {
-                    this.options.on_firstclick(this, elem);
-                }
+                this.notify('on_firstclick', this, elem);
+            }
+            this.notify('on_select', this);
+        },
+
+        notify: function(event, ...args) {
+            if (this.options && this.options[event]) {
+                this.options[event](...args);
             }
         },
 
         bind: function(elem) {
             elem.off('click').on('click', this.handle_click.bind(this));
-        },
+        }
     };
 
     // Selectable items
@@ -453,7 +445,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         api.bind(this);
         this.data('selectable', api);
         return this;
-    }
+    };
 
     // Reference Browser
     $.fn.referencebrowser = function() {
@@ -468,7 +460,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         });
         return this;
-    }
+    };
 
     // extend yafowil by reference browser widget.
     $.extend(yafowil, {

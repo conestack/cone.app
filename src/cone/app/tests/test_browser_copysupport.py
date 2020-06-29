@@ -67,10 +67,6 @@ class TestBrowserCopysupport(TileTestCase):
         ))
         self.assertTrue(isinstance(
             request.environ['cone.app.continuation'][1],
-            AjaxAction
-        ))
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][2],
             AjaxEvent
         ))
 

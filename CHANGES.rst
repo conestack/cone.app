@@ -4,9 +4,10 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
-- Overhaul JS copy support. Do not unselect items if mouse click outside
-  selectable listing. Preselect items on page and tile load. Reset current
-  selection as soon as item gets selected in foreign listing.
+- Overhaul copy support. ``paste`` action triggers ``contextchanged`` event to
+  ``#layout`` instead of ``.contextsensitiv`` selector. Move JS copysupport logic
+  from ``cone.copysupportbinder`` to ``cone.CopySupport``. Do not unselect items
+  if mouse click outside selectable listing. Preselect items on page and tile load.
   [rnix, 2020-06-28]
 
 - Rename JS ``cone.selectable`` to ``cone.Selectable``. It is now a class and

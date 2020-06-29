@@ -26,9 +26,6 @@ Roadmap
 1.0
 ---
 
-[ ] Do not provide layout config via model ``layout`` but as callable accepting
-    model and request
-
 [ ] Change overlay forms selector to use dedicated overlay.
 
 [ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
@@ -36,10 +33,12 @@ Roadmap
 [ ] Fix ACL registry lookup. First check by cls and node info name, then by
     class only and finally return default.
 
-[ ] Remove cone.app.security.DEFAULT_NODE_PROPERTY_PERMISSIONS.
-
 1.1
 ---
+
+[ ] CopySupport is used both for marking containers supporting cut/copy/paste
+    and objects being copyable. Make dedicated interface/mechanism for marking
+    objects copyable.
 
 [ ] Add template for creating ``cone.app`` plugins.
 
