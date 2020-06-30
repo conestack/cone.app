@@ -4,10 +4,17 @@ Changes
 1.0rc1 (unreleased)
 -------------------
 
+- Implement ``__copy__`` and ``__deepcopy__`` on ``Properties``,
+  ``ProtectedProperties``, ``XMLProperties`` and ``ConfigProperties`` in
+  ``cone.app.model``.
+  [rnix, 2020-06-30]
+
 - Overhaul copy support. ``paste`` action triggers ``contextchanged`` event to
-  ``#layout`` instead of ``.contextsensitiv`` selector. Move JS copysupport logic
-  from ``cone.copysupportbinder`` to ``cone.CopySupport``. Do not unselect items
-  if mouse click outside selectable listing. Preselect items on page and tile load.
+  ``#layout`` instead of ``.contextsensitiv`` selector. Paste action considers
+  ``action_paste_tile`` model property for customizing rerendering after paste.
+  Move JS copysupport logic from ``cone.copysupportbinder`` to
+  ``cone.CopySupport``. Do not unselect items if mouse click outside selectable
+  listing. Preselect items on page and tile load.
   [rnix, 2020-06-28]
 
 - Rename JS ``cone.selectable`` to ``cone.Selectable``. It is now a class and

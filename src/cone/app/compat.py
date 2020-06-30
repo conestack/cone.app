@@ -1,13 +1,15 @@
 try:  # pragma: no cover
+    from StringIO import StringIO
     from urllib2 import quote
     from urllib2 import unquote
     import ConfigParser as configparser
     import urlparse
 except ImportError:  # pragma: no cover
-    from urllib.parse import quote
-    from urllib.parse import unquote
-    import configparser
-    import urllib.parse as urlparse
+    from io import StringIO  # noqa
+    from urllib.parse import quote  # noqa
+    from urllib.parse import unquote  # noqa
+    import configparser  # noqa
+    import urllib.parse as urlparse  # noqa
 import sys
 import types
 

@@ -43,6 +43,7 @@ from pyramid.security import Deny
 from pyramid.security import Everyone
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
+import copy
 import logging
 import os
 import uuid
@@ -301,6 +302,10 @@ class CopySupport(Behavior):
     supports_paste = default(True)
 
 
+o_getattr = object.__getattribute__
+o_setattr = object.__setattr__
+
+
 @implementer(IProperties)
 class Properties(object):
     # XXX: extend by schema
@@ -308,33 +313,40 @@ class Properties(object):
     def __init__(self, data=None):
         if data is None:
             data = dict()
-        object.__setattr__(self, '_data', data)
-
-    def _get_data(self):
-        return object.__getattribute__(self, '_data')
+        o_setattr(self, '_data', data)
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
 
     def __getitem__(self, key):
-        return self._get_data()[key]
+        return o_getattr(self, '_data')[key]
 
     def get(self, key, default=None):
-        return self._get_data().get(key, default)
+        return o_getattr(self, '_data').get(key, default)
 
     def __contains__(self, key):
-        return key in self._get_data()
+        return key in o_getattr(self, '_data')
 
     def __getattr__(self, name):
         if name == '__provides__':
             return self.__getattribute__(name)
-        return self._get_data().get(name)
+        return o_getattr(self, '_data').get(name)
 
     def __setattr__(self, name, value):
-        self._get_data()[name] = value
+        o_getattr(self, '_data')[name] = value
 
     def keys(self):
-        return self._get_data().keys()
+        return o_getattr(self, '_data').keys()
+
+    def __copy__(self):
+        return self.__class__(
+            data=copy.copy(o_getattr(self, '_data'))
+        )
+
+    def __deepcopy__(self, memo):
+        return self.__class__(
+            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+        )
 
 
 class ProtectedProperties(Properties):
@@ -348,12 +360,12 @@ class ProtectedProperties(Properties):
         ...     })
         """
         super(ProtectedProperties, self).__init__(data=data)
-        object.__setattr__(self, '_context', context)
-        object.__setattr__(self, '_permissions', permissions)
+        o_setattr(self, '_context', context)
+        o_setattr(self, '_permissions', permissions)
 
     def _permits(self, property):
-        context = object.__getattribute__(self, '_context')
-        permissions = object.__getattribute__(self, '_permissions')
+        context = o_getattr(self, '_context')
+        permissions = o_getattr(self, '_permissions')
         required = permissions.get(property)
         if not required:
             # no security check
@@ -391,6 +403,20 @@ class ProtectedProperties(Properties):
         keys = [key for key in keys if self._permits(key)]
         return keys
 
+    def __copy__(self):
+        return self.__class__(
+            context=copy.copy(o_getattr(self, '_context')),
+            permissions=copy.copy(o_getattr(self, '_permissions')),
+            data=copy.copy(o_getattr(self, '_data'))
+        )
+
+    def __deepcopy__(self, memo):
+        return self.__class__(
+            context=copy.copy(o_getattr(self, '_context')),
+            permissions=copy.deepcopy(o_getattr(self, '_permissions'), memo),
+            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+        )
+
 
 @implementer(ILayoutConfig)
 class LayoutConfig(Properties):
@@ -418,42 +444,34 @@ class NodeInfo(Properties):
 class XMLProperties(Properties):
 
     def __init__(self, path, data=None):
-        object.__setattr__(self, '_path', path)
-        object.__setattr__(self, '_data', odict())
+        o_setattr(self, '_path', path)
+        o_setattr(self, '_data', odict())
         if data:
-            object.__getattribute__(self, '_data').update(data)
+            o_getattr(self, '_data').update(data)
         self._init()
 
     def __call__(self):
-        file = open(object.__getattribute__(self, '_path'), 'wb')
+        file = open(o_getattr(self, '_path'), 'wb')
         file.write(self._xml_repr())
         file.close()
 
     def __delitem__(self, name):
-        data = object.__getattribute__(self, '_data')
+        data = o_getattr(self, '_data')
         if name in data:
             del data[name]
         else:
             raise KeyError(u"property %s does not exist" % name)
 
-    # XXX: probably superfluous. keep as of cone.app 1.1
-    # def get_path(self):
-    #     return object.__getattribute__(self, '_path')
-
-    # XXX: probably superfluous. keep as of cone.app 1.1
-    # def set_path(self, path):
-    #     object.__setattr__(self, '_path', path)
-
     def _init(self):
         dth = DatetimeHelper()
-        path = object.__getattribute__(self, '_path')
+        path = o_getattr(self, '_path')
         if not path or not os.path.exists(path):
             return
         file = open(path, 'r')
         tree = etree.parse(file)
         file.close()
         root = tree.getroot()
-        data = object.__getattribute__(self, '_data')
+        data = o_getattr(self, '_data')
         for elem in root.getchildren():
             children = elem.getchildren()
             if children:
@@ -483,7 +501,7 @@ class XMLProperties(Properties):
     def _xml_repr(self):
         dth = DatetimeHelper()
         root = etree.Element('properties')
-        data = object.__getattribute__(self, '_data')
+        data = o_getattr(self, '_data')
         for key, value in data.items():
             sub = etree.SubElement(root, key)
             if type(value) in ITER_TYPES:
@@ -503,10 +521,22 @@ class XMLProperties(Properties):
 
     # testing
     def _keys(self):
-        return object.__getattribute__(self, '_data').keys()
+        return o_getattr(self, '_data').keys()
 
     def _values(self):
-        return object.__getattribute__(self, '_data').values()
+        return o_getattr(self, '_data').values()
+
+    def __copy__(self):
+        return self.__class__(
+            path=copy.copy(o_getattr(self, '_path')),
+            data=copy.copy(o_getattr(self, '_data'))
+        )
+
+    def __deepcopy__(self, memo):
+        return self.__class__(
+            path=copy.deepcopy(o_getattr(self, '_path'), memo),
+            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+        )
 
 
 class ConfigProperties(Properties):
@@ -514,14 +544,14 @@ class ConfigProperties(Properties):
     encoding = 'utf-8'
 
     def __init__(self, path, data=None):
-        object.__setattr__(self, '_path', path)
-        object.__setattr__(self, '_data', dict())
+        o_setattr(self, '_path', path)
+        o_setattr(self, '_data', dict())
         if data:
-            object.__getattribute__(self, '_data').update(data)
+            o_getattr(self, '_data').update(data)
         self._init()
 
     def __call__(self):
-        path = object.__getattribute__(self, '_path')
+        path = o_getattr(self, '_path')
         config = self.config()
         mode = 'wb' if IS_PY2 else 'w'
         with open(path, mode) as configfile:
@@ -571,21 +601,39 @@ class ConfigProperties(Properties):
 
     def config(self):
         try:
-            return object.__getattribute__(self, '_config')
+            return o_getattr(self, '_config')
         except AttributeError:
             pass
         config = configparser.ConfigParser()
-        path = object.__getattribute__(self, '_path')
+        path = o_getattr(self, '_path')
         if os.path.exists(path):
             config.read(path)
         else:
             config.add_section(self.properties_section)
-        object.__setattr__(self, '_config', config)
-        return object.__getattribute__(self, '_config')
+        o_setattr(self, '_config', config)
+        return o_getattr(self, '_config')
 
     def _init(self):
-        data = object.__getattribute__(self, '_data')
+        data = o_getattr(self, '_data')
         config = self.config()
         for key, value in data.items():
             value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
             config.set(self.properties_section, key, value)
+
+    def __copy__(self):
+        cpy = self.__class__(
+            path=copy.copy(o_getattr(self, '_path')),
+            data=copy.copy(o_getattr(self, '_data'))
+        )
+        cfg = copy.copy(o_getattr(self, '_config'))
+        o_setattr(cpy, '_config', cfg)
+        return cpy
+
+    def __deepcopy__(self, memo):
+        cpy = self.__class__(
+            path=copy.deepcopy(o_getattr(self, '_path'), memo),
+            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+        )
+        cfg = copy.copy(o_getattr(self, '_config'))
+        o_setattr(cpy, '_config', cfg)
+        return cpy

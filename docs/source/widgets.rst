@@ -1464,6 +1464,11 @@ Invokes ``paste`` tile on node.
 
 Action related node must implement ``cone.app.interfaces.ICopySupport``.
 
+Considered ``properties``:
+
+- **action_paste_tile**: Content tile name to render after paste. Defaults to
+  ``listing`` if undefined.
+
 
 ActionShare
 -----------

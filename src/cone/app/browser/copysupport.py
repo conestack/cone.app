@@ -3,6 +3,7 @@ from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import ajax_message
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import choose_name
+from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.tile import Tile
 from cone.tile import tile
@@ -140,7 +141,11 @@ class PasteAction(Tile):
             failed = "<br /><strong>%s</strong>" % failed
             message += "<br />".join([failed] + errors)
         ajax_message(self.request, message)
-        url = make_url(self.request, node=self.model)
+        content_tile = self.model.properties.action_paste_tile
+        if not content_tile:
+            content_tile = 'listing'
+        query = make_query(contenttile=content_tile)
+        url = make_url(self.request, node=self.model, query=query)
         event = AjaxEvent(url, 'contextchanged', '#layout')
         ajax_continue(self.request, event)
         res = self.request.response

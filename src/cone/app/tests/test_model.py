@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from cone.app import testing
+from cone.app.compat import configparser
+from cone.app.compat import StringIO
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
@@ -13,6 +15,7 @@ from cone.app.model import Metadata
 from cone.app.model import NamespaceUUID
 from cone.app.model import node_info
 from cone.app.model import NodeInfo
+from cone.app.model import o_getattr
 from cone.app.model import Properties
 from cone.app.model import ProtectedProperties
 from cone.app.model import register_node_info
@@ -30,6 +33,7 @@ from node.tests import NodeTestCase
 from odict import odict
 from plumber import plumbing
 from pyramid.security import ALL_PERMISSIONS
+import copy
 import os
 import shutil
 import tempfile
@@ -181,6 +185,31 @@ class TestModel(NodeTestCase):
         # ``get``
         self.assertEqual(metadata.get('creator'), 'john doe')
 
+        # internal data
+        self.assertEqual(o_getattr(metadata, '_data'), {
+            'creator': 'john doe',
+            'description': 'some description',
+            'title': 'some title'
+        })
+
+        # ``__copy__``
+        metadata_copy = copy.copy(metadata)
+        self.assertFalse(metadata_copy is metadata)
+        self.assertEqual(metadata_copy.__class__, Metadata)
+        self.assertEqual(
+            o_getattr(metadata_copy, '_data'),
+            o_getattr(metadata, '_data')
+        )
+
+        # ``__deepcopy__``
+        metadata_deepcopy = copy.deepcopy(metadata)
+        self.assertFalse(metadata_deepcopy is metadata)
+        self.assertEqual(metadata_deepcopy.__class__, Metadata)
+        self.assertEqual(
+            o_getattr(metadata_deepcopy, '_data'),
+            o_getattr(metadata, '_data')
+        )
+
     @testing.reset_node_info_registry
     def test_NodeInfo(self):
         # The ``INodeInfo`` providing object holds information about the
@@ -222,6 +251,34 @@ class TestModel(NodeTestCase):
 
         # ``get``
         self.assertTrue(nodeinfo.get('node') is BaseNode)
+
+        # internal data
+        self.assertEqual(o_getattr(nodeinfo, '_data'), {
+            'addables': ['basenode'],
+            'description': 'Base Node Description',
+            'factory': None,
+            'icon': 'base-node-icon',
+            'node': BaseNode,
+            'title': 'Base Node'
+        })
+
+        # ``__copy__``
+        nodeinfo_copy = copy.copy(nodeinfo)
+        self.assertFalse(nodeinfo_copy is nodeinfo)
+        self.assertEqual(nodeinfo_copy.__class__, NodeInfo)
+        self.assertEqual(
+            o_getattr(nodeinfo_copy, '_data'),
+            o_getattr(nodeinfo, '_data')
+        )
+
+        # ``__deepcopy__``
+        nodeinfo_deepcopy = copy.deepcopy(nodeinfo)
+        self.assertFalse(nodeinfo_deepcopy is nodeinfo)
+        self.assertEqual(nodeinfo_deepcopy.__class__, NodeInfo)
+        self.assertEqual(
+            o_getattr(nodeinfo_deepcopy, '_data'),
+            o_getattr(nodeinfo, '_data')
+        )
 
     @testing.reset_node_info_registry
     def test_node_info(self):
@@ -348,6 +405,24 @@ class TestModel(NodeTestCase):
         self.assertTrue('bar' in props)
         self.assertEqual(sorted(props.keys()), ['bar', 'foo'])
 
+        self.assertEqual(o_getattr(props, '_data'), {'foo': 'foo', 'bar': 'bar'})
+
+        props_copy = copy.copy(props)
+        self.assertFalse(props_copy is props)
+        self.assertEqual(props_copy.__class__, Properties)
+        self.assertEqual(
+            o_getattr(props_copy, '_data'),
+            o_getattr(props, '_data')
+        )
+
+        props_deepcopy = copy.deepcopy(props)
+        self.assertFalse(props_deepcopy is props)
+        self.assertEqual(props_deepcopy.__class__, Properties)
+        self.assertEqual(
+            o_getattr(props_deepcopy, '_data'),
+            o_getattr(props, '_data')
+        )
+
     def test_ProtectedProperties(self):
         # Protected properties checks against permission for properties
         context = BaseNode()
@@ -399,6 +474,36 @@ class TestModel(NodeTestCase):
 
             props.viewprotected = False
             self.assertFalse(props.viewprotected)
+
+        # internal data
+        self.assertEqual(
+            o_getattr(props, '_data'),
+            {'unprotected': True, 'viewprotected': False}
+        )
+        self.assertTrue(o_getattr(props, '_context') is context)
+        self.assertEqual(o_getattr(props, '_permissions'), permissions)
+
+        # ``__copy__``
+        props_copy = copy.copy(props)
+        self.assertFalse(props_copy is props)
+        self.assertEqual(props_copy.__class__, ProtectedProperties)
+        self.assertEqual(
+            o_getattr(props_copy, '_data'),
+            o_getattr(props, '_data')
+        )
+        self.assertTrue(o_getattr(props, '_context') is context)
+        self.assertEqual(o_getattr(props, '_permissions'), permissions)
+
+        # ``__deepcopy__``
+        props_deepcopy = copy.deepcopy(props)
+        self.assertFalse(props_deepcopy is props)
+        self.assertEqual(props_deepcopy.__class__, ProtectedProperties)
+        self.assertEqual(
+            o_getattr(props_deepcopy, '_data'),
+            o_getattr(props, '_data')
+        )
+        self.assertTrue(o_getattr(props, '_context') is context)
+        self.assertEqual(o_getattr(props, '_permissions'), permissions)
 
     def test_XMLProperties(self):
         # There's a convenience object for XML input and output
@@ -599,6 +704,49 @@ class TestModel(NodeTestCase):
             ''
         ])
 
+        # internal data
+        self.assertTrue(o_getattr(props, '_path').endswith('props.xml'))
+        self.assertEqual(o_getattr(props, '_data'), odict([
+            ('effective', datetime(2010, 1, 1, 10, 15)),
+            ('empty', u''),
+            ('keywords', [
+                u'a',
+                datetime(2010, 1, 1, 10, 15),
+                u''
+            ]),
+            ('dictlike', odict([
+                ('b', 'bar'),
+                ('a', 'foo')
+            ])),
+            ('bar', u'<bar>\xe4\xf6\xfc</bar>')
+        ]))
+
+        # ``__copy__``
+        props_copy = copy.copy(props)
+        self.assertFalse(props_copy is props)
+        self.assertEqual(props_copy.__class__, XMLProperties)
+        self.assertEqual(
+            o_getattr(props_copy, '_data'),
+            o_getattr(props, '_data')
+        )
+        self.assertEqual(
+            o_getattr(props_copy, '_path'),
+            o_getattr(props, '_path')
+        )
+
+        # ``__deepcopy__``
+        props_deepcopy = copy.deepcopy(props)
+        self.assertFalse(props_deepcopy is props)
+        self.assertEqual(props_deepcopy.__class__, XMLProperties)
+        self.assertEqual(
+            o_getattr(props_deepcopy, '_data'),
+            o_getattr(props, '_data')
+        )
+        self.assertEqual(
+            o_getattr(props_copy, '_path'),
+            o_getattr(props, '_path')
+        )
+
         # Cleanup
         shutil.rmtree(tempdir)
 
@@ -681,6 +829,65 @@ class TestModel(NodeTestCase):
             b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
             b'',
             b''
+        ])
+        del props['baz']
+
+        props = ConfigProperties(os.path.join(tempdir, 'config.cfg'))
+        props['foo'] = 'foo'
+
+        # internal data
+        self.assertTrue(o_getattr(props, '_path').endswith('config.cfg'))
+        self.assertEqual(o_getattr(props, '_data'), {})
+        self.assertTrue(o_getattr(props, '_config') is props.config())
+
+        # ``__copy__``
+        props_copy = copy.copy(props)
+        self.assertFalse(props_copy is props)
+        self.assertEqual(props_copy.__class__, ConfigProperties)
+        self.assertEqual(
+            o_getattr(props_copy, '_data'),
+            o_getattr(props, '_data')
+        )
+        self.assertEqual(
+            o_getattr(props_copy, '_path'),
+            o_getattr(props, '_path')
+        )
+        self.assertTrue(isinstance(
+            o_getattr(props_copy, '_config'),
+            configparser.ConfigParser
+        ))
+        strio = StringIO()
+        props_copy.config().write(strio)
+        strio.seek(0)
+        self.assertEqual(strio.readlines(), [
+            '[properties]\n',
+            'foo = foo\n',
+            '\n'
+        ])
+
+        # ``__deepcopy__``
+        props_deepcopy = copy.deepcopy(props)
+        self.assertFalse(props_deepcopy is props)
+        self.assertEqual(props_deepcopy.__class__, ConfigProperties)
+        self.assertEqual(
+            o_getattr(props_deepcopy, '_data'),
+            o_getattr(props, '_data'),
+        )
+        self.assertEqual(
+            o_getattr(props_deepcopy, '_path'),
+            o_getattr(props, '_path')
+        )
+        self.assertTrue(isinstance(
+            o_getattr(props_copy, '_config'),
+            configparser.ConfigParser
+        ))
+        strio = StringIO()
+        props_deepcopy.config().write(strio)
+        strio.seek(0)
+        self.assertEqual(strio.readlines(), [
+            '[properties]\n',
+            'foo = foo\n',
+            '\n'
         ])
 
         # Cleanup
