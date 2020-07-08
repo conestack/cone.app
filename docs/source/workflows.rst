@@ -152,7 +152,7 @@ A model node plumbed by ``WorkflowState`` must provide the name of the workflow
 it uses at ``workflow_name`` which refers to the ``type`` attribute of the
 ``workflow`` directive in the workflow ZCML file.
 
-A translation string factory can be provided via ``workflow_tsf`` property in
+A translation string factory can be provided via ``workflow_tsf`` attribute in
 order to provide translations for the workflow.
 
 
@@ -224,9 +224,14 @@ An implementation integrating the publication workflow as described in
     class ExampleNode(BaseNode):
         """Application model node using the publication workflow.
         """
-        # workflow registration name
+        # Workflow registration name
         workflow_name = 'publication'
-        # translation string factory used to translate workflow
-        workflow_tsf = _
-        # workflow state specific ACL's
+
+        # Translation string factory used to translate workflow state and
+        # transition names. Note! The translation string factory is unbound, so
+        # we need to set it as staticmethod. Otherwise the node instance would
+        # be passed to the factory as first argument instead of the message ID.
+        workflow_tsf = staticmethod(_)
+
+        # Workflow state specific ACL's
         state_acls = publication_state_acls

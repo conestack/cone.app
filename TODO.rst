@@ -26,6 +26,9 @@ Roadmap
 1.0
 ---
 
+[ ] Check ``title`` of transition names before using ``name`` in workflow
+    dropdown.
+
 [ ] Change overlay forms selector to use dedicated overlay.
 
 [ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
