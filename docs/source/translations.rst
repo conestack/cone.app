@@ -24,6 +24,8 @@ environment the application is installed.
 .. code-block:: sh
 
     sudo pip install lingua
+    sudo pip install babel
+    sudo pip install chameleon
     sudo pip install yafowil.lingua
 
 
@@ -169,3 +171,28 @@ string factory must be provided on the form tile.
         @property
         def message_factory(self):
             return _
+
+
+ZCML
+~~~~
+
+Defining translation strings in ZCML files actually works the same way as for
+XML files and page templates. However, lingua ships with a ZCML extractor which
+works slightly different to what one would expect, and this extractor is set as
+default extractor for .zcml file endings.
+
+So when working with ZCML files containing translation strings it's recommended
+to use the XML extractor instead of the default extractor. Therefor we create
+a ``lingua.cfg`` file next to the ``i18n.sh`` script.
+
+.. code-block:: ini
+
+    [extensions]
+    .zcml = xml
+
+In the ``i18n.sh`` script we need to change the ``pot-create`` command to use this
+config file.
+
+.. code-block:: sh
+
+    pot-create "$SEARCH_PATH" -c lingua.cfg -o "$LOCALES_PATH"/$DOMAIN.pot
