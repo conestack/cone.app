@@ -32,7 +32,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2019 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2020 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors

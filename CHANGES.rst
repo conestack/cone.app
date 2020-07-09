@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0rc1 (unreleased)
+1.0rc1 (2020-07-09)
 -------------------
 
 - Implement ``__copy__`` and ``__deepcopy__`` on ``Properties``,
