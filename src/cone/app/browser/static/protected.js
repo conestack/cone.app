@@ -207,18 +207,20 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
     cone.CopySupport = function(context) {
         this.context = context;
+
+        this.paste_action = $('a#toolbaraction-paste', context);
+        this.paste_action.off('click').on('click', this.handle_paste.bind(this));
+
         this.copyable = $('table tr.selectable.copysupportitem', context);
         if (!this.copyable.length) {
             return;
         }
 
         this.cut_action = $('a#toolbaraction-cut', context);
-        this.copy_action = $('a#toolbaraction-copy', context);
-        this.paste_action = $('a#toolbaraction-paste', context);
-
         this.cut_action.off('click').on('click', this.handle_cut.bind(this));
+
+        this.copy_action = $('a#toolbaraction-copy', context);
         this.copy_action.off('click').on('click', this.handle_copy.bind(this));
-        this.paste_action.off('click').on('click', this.handle_paste.bind(this));
 
         this.selectable = this.copyable.selectable({
             on_firstclick: this.on_firstclick.bind(this),

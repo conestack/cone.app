@@ -4,6 +4,9 @@ Changes
 1.0rc2 (unreleased)
 -------------------
 
+- Fix case when pasting to empty folder in copysupport JS.
+  [rnix, 2020-08-12]
+
 - Remove ``col-xs-4`` CSS class from ``h4`` headings in panel headers.
   [rnix, 2020-08-12]
 
