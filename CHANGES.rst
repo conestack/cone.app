@@ -4,6 +4,9 @@ Changes
 1.0rc2 (unreleased)
 -------------------
 
+- Fix print CSS.
+  [rnix, 2020-08-12]
+
 - Fix case when pasting to empty folder in copysupport JS.
   [rnix, 2020-08-12]
 

@@ -1,10 +1,6 @@
-#header,
+.navbar-top,
+#pathbar,
 #sidebar_left,
-#footer,
-.contextmenu_wrapper {
+footer {
     display:none;
-}
-#content {
-    margin-left:-99% !important;
-    width:99% !important;
 }
