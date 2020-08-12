@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0rc2 (unreleased)
+1.0rc2 (2020-08-12)
 -------------------
 
 - Fix print CSS.
