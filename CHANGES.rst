@@ -4,7 +4,8 @@ Changes
 1.0rc2 (unreleased)
 -------------------
 
-- No changes yet.
+- Remove ``col-xs-4`` CSS class from ``h4`` headings in panel headers.
+  [rnix, 2020-08-12]
 
 
 1.0rc1 (2020-07-09)

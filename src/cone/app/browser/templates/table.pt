@@ -15,7 +15,7 @@
     <div class="panel-heading content-heading"
          tal:condition="context.display_table_header">
 
-      <h4 class="col-xs-4 pull-left">
+      <h4 class="pull-left">
         <span class="label label-primary"
               tal:condition="context.show_title"
               tal:content="context.table_title">Title</span>

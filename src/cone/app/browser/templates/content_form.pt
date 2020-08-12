@@ -8,7 +8,7 @@
     <div class="panel-heading content-heading"
          tal:condition="context.show_heading">
 
-      <h4 class="col-xs-4 pull-left">
+      <h4 class="pull-left">
         <span class="label label-primary"
               tal:content="context.form_heading">Title</span>
       </h4>
