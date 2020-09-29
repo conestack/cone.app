@@ -265,20 +265,21 @@ class TestBrowserAjax(TileTestCase):
         # JSON dump of given actions, which gets interpreted and executed on
         # client side
         action = AjaxAction(
-            'http://example.com',
-            'tilename',
-            'replace',
-            '.someselector'
+            target='http://example.com',
+            name='tilename',
+            mode='replace',
+            selector='.someselector'
         )
         event = AjaxEvent(
-            'http://example.com',
-            'contextchanged',
-            '.contextsensitiv'
+            target='http://example.com',
+            name='contextchanged',
+            selector='.contextsensitiv',
+            data=dict(key='value')
         )
         message = AjaxMessage(
-            'Some info message',
-            'info',
-            'None'
+            payload='Some info message',
+            flavor='info',
+            selector='None'
         )
         overlay = AjaxOverlay(
             selector='#ajax-overlay',
@@ -312,7 +313,10 @@ class TestBrowserAjax(TileTestCase):
             "selector": ".contextsensitiv",
             "type": "event",
             "target": "http://example.com",
-            "name": "contextchanged"
+            "name": "contextchanged",
+            "data": {
+                "key": "value"
+            }
         }, {
             "flavor": "info",
             "type": "message",

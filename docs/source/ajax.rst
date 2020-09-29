@@ -141,16 +141,17 @@ The Available continuation definitions are located in module
 
 - **AjaxAction**: Execute action. Accepted arguments
 
-    - ``target``: Traversable target URL without trailing server view
+    - ``target``: Traversable target URL without trailing server view.
     - ``name``: Action name.
     - ``mode``: DOM modification mode. Either ``inner`` and ``replace``.
     - ``selector``: DOM modification selector.
 
 - **AjaxEvent**: Trigger event. Accepted arguments
 
-    - ``target``: Traversable target URL without trailing server view
+    - ``target``: Traversable target URL without trailing server view.
     - ``name``: Event name.
     - ``selector``: Selector of DOM elements on which to trigger the event
+    - ``data``: Optional data set on event.
 
 - **AjaxMessage**: Display message. Accepted arguments
 
@@ -165,7 +166,7 @@ The Available continuation definitions are located in module
     - ``selector``: selector of overlay DOM element. Defaults to
       ``#ajax-overlay``.
     - ``action``: Name of action which should be displayed in overlay.
-    - ``target``: Traversable target URL without trailing server view
+    - ``target``: Traversable target URL without trailing server view.
     - ``close``: Flag whether to close an open overlay.
     - ``content_selector``: Optional overlay content selector. Defaults to
       ``.overlay_content``.

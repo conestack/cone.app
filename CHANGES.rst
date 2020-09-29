@@ -4,7 +4,9 @@ Changes
 1.0rc3 (unreleased)
 -------------------
 
-- No changes yet.
+- ``cone.app.browser.ajax.AjaxEvent`` supports optional ``data`` argument
+  supported as of ``bdajax`` 1.13.
+  [rnix, 2020-09-29]
 
 
 1.0rc2 (2020-08-12)
