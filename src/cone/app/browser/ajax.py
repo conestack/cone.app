@@ -121,10 +121,11 @@ class AjaxEvent(object):
     client side.
     """
 
-    def __init__(self, target, name, selector):
+    def __init__(self, target, name, selector, data=None):
         self.target = target
         self.name = name
         self.selector = selector
+        self.data = data
 
 
 class AjaxMessage(object):
@@ -154,8 +155,9 @@ class AjaxOverlay(object):
 
 
 class AjaxContinue(object):
-    """Convert ``AjaxAction`` and ``AjaxEvent`` instances to JSON response
-    definitions for bdajax continuation.
+    """Convert ``AjaxPath``, ``AjaxAction``, ``AjaxEvent``, ``AjaxMessage``
+    and  ``AjaxOverlay ``instances to JSON response definitions for bdajax
+    continuation.
     """
 
     def __init__(self, continuation):
@@ -192,7 +194,8 @@ class AjaxContinue(object):
                     'type': 'event',
                     'target': definition.target,
                     'name': definition.name,
-                    'selector': definition.selector
+                    'selector': definition.selector,
+                    'data': definition.data
                 })
             if isinstance(definition, AjaxMessage):
                 continuation.append({
