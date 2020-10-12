@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0rc3 (unreleased)
+1.0rc3 (2020-10-12)
 -------------------
 
 - ``cone.app.browser.ajax.AjaxEvent`` supports optional ``data`` argument
