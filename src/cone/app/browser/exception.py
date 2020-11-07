@@ -30,7 +30,11 @@ def internal_server_error(request):
     """
     tb = format_traceback()
     if not request.is_xhr:
+        # XXX: request.response.status = 500
+        #      return {'errors': error_dict}
         return Response(ERROR_PAGE % {'error': tb})
+    # XXX: Check request relates to bdajax action
+    #      Check if json request and modify response as needed
     from cone.app.browser.ajax import (
         AjaxContinue,
         AjaxMessage,
