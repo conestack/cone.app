@@ -1,0 +1,224 @@
+/*dark mode*/
+/*
+-- scss color definitions --
+* document gets imported to light.scss and dark.scss
+* switch.js changes mode to light or dark by changing source file .css
+*/
+body {
+  background-color: #2E2E33;
+}
+
+/*start style.scss*/
+/*dropdown dark*/
+.dropdown-menu-dark {
+  /*change colors of dropdowns in sidebar&header - BS override*/
+  background-color: #434348;
+}
+.dropdown-menu-dark a {
+  color: #949499;
+}
+.dropdown-menu-dark a:hover, .dropdown-menu-dark a:active {
+  color: #E6E6EB;
+}
+
+/*end dropdown dark*/
+/*start content*/
+#content-wrapper .card {
+  background-color: #434348;
+  color: #949499;
+}
+
+/*start breadcrumb*/
+.breadcrumb h2 {
+  color: #E6E6EB;
+  font-size: 1.2rem;
+  font-weight: semibold;
+}
+.breadcrumb a {
+  color: #949499;
+}
+.breadcrumb a:hover, .breadcrumb a:active {
+  color: #E6E6EB;
+}
+.breadcrumb .breadcrumb-item.active {
+  color: #E6E6EB;
+}
+
+/*end breadcrumb*/
+/*start footer*/
+.footer-custom {
+  border-top: 1px solid #949499;
+  color: #949499;
+}
+
+/*end footer*/
+/*end style.css*/
+/*start topnav.scss*/
+.topnav-custom {
+  background-color: #434348;
+}
+.topnav-custom .dropdown-menu {
+  background-color: #48484D;
+  border: 1px solid #2E2E33;
+}
+.topnav-custom .apps-link:hover {
+  background-color: #38383D;
+}
+
+a, label {
+  color: #949499;
+}
+
+a:hover {
+  color: #dfe8f0;
+}
+
+.noti-badge-round {
+  background: red;
+  color: white;
+}
+
+.dropdown-menu-right {
+  /*language*/
+}
+.dropdown-menu-right > *:hover {
+  color: #E6E6EB;
+}
+.dropdown-menu-right.item > :first-child {
+  color: #E6E6EB;
+}
+
+/*start searchbar*/
+#topnav-searchbar .form-control {
+  background-color: #57575C;
+  color: #949499;
+  font-size: 1em;
+  border-color: #57575C;
+  border-right: none;
+}
+#topnav-searchbar .form-control:focus {
+  border-color: #5bc0de;
+  background-color: #434348;
+  border-right: none;
+  color: #E6E6EB;
+  transition: 0.2s;
+}
+#topnav-searchbar #searchbar-button {
+  background: #dfe8f0;
+  color: #ECF5FD;
+}
+
+#searchbar-button-sm {
+  background: transparent;
+  border: 1px solid #dfe8f0;
+  color: #dfe8f0;
+}
+
+/*end searchbar*/
+/*start navbar-brand (logo)*/
+.navbar-brand a {
+  color: #E6E6EB;
+}
+
+/*end navbar-brand (logo)*/
+/*user-account*/
+.user-account {
+  color: #ECF5FD;
+  background-color: #38383D;
+}
+.user-account a:hover, .user-account:active {
+  color: #E6E6EB;
+}
+.user-account .dropdown-menu-user a {
+  color: #949499;
+}
+.user-account .dropdown-menu-user a:hover {
+  color: #E6E6EB;
+}
+
+/*end user-account*/
+/*end topnav.scss*/
+/*start sidebar.scss*/
+#sidebar-wrapper {
+  background-color: #38383D;
+}
+#sidebar-wrapper .sidebar-heading {
+  /*change headings (+hr on sm/md) in sidebar*/
+  color: #E6E6EB;
+}
+#sidebar-wrapper .help {
+  /*change font color of help*/
+  color: white;
+}
+
+/*start lg*/
+@media (min-width: 992px) {
+  #sidebar-wrapper {
+    border-right: 1px solid #2E2E33;
+  }
+
+  #sidebar-wrapper .dropdown a:hover, a:active {
+    /*change hover clr on sidebar icons & a*/
+    color: #dfe8f0;
+  }
+}
+/*end lg*/
+/*start md*/
+@media (min-width: 576px) and (max-width: 991.9px) {
+  #sidebar-wrapper {
+    border-right: 1px solid #2E2E33;
+    /*change color of icons on hover, keep clr in submenu*/
+  }
+  #sidebar-wrapper .dropdown a:hover, #sidebar-wrapper .dropdown:active {
+    /*change color of dropout links*/
+    color: #dfe8f0;
+  }
+  #sidebar-wrapper ul > li:hover svg, #sidebar-wrapper:active svg {
+    color: white;
+  }
+  #sidebar-wrapper .sidebar-dropout {
+    background-color: #2E2E33;
+  }
+  #sidebar-wrapper .sidebar-dropout > :first-child > :first-child {
+    /*change dropout title*/
+    color: #ECF5FD;
+    font-weight: 400;
+  }
+  #sidebar-wrapper .sidebar-heading hr {
+    /*change colour of hr on md*/
+    border-top: 1px solid rgba(230, 230, 235, 0.5);
+  }
+}
+/*end md*/
+/*start sm*/
+@media (max-width: 575.9px) {
+  .hamburgerMenu {
+    color: #949499;
+  }
+
+  #sidebar-wrapper {
+    border: 1px solid #2E2E33;
+    border-top: none;
+    /*change bgcolor of sidebar*/
+    background-color: #38383D;
+  }
+  #sidebar-wrapper .dropdown a:hover, #sidebar-wrapper .dropdown a:active {
+    /*change fontcolor of items in sidebar*/
+    color: #dfe8f0;
+  }
+  #sidebar-wrapper .list-group .list-group-item {
+    /*font color of submenu*/
+    color: #949499;
+  }
+  #sidebar-wrapper .list-group .help {
+    color: white;
+  }
+  #sidebar-wrapper .sidebar-heading hr {
+    /*change colour of hr on sm*/
+    border-top: 1px solid rgba(230, 230, 235, 0.2);
+  }
+}
+/*end sm*/
+/*end sidebar.scss*/
+
+/*# sourceMappingURL=dark.css.map */

@@ -1,0 +1,232 @@
+/*light mode*/
+/*body background*/
+/*main menus*/
+/*secondary menus*/
+/*search bar*/
+/*font bright*/
+/*font light*/
+/*font medium*/
+/*font hover color*/
+/*
+-- scss color definitions --
+* document gets imported to light.scss and dark.scss
+* switch.js changes mode to light or dark by changing source file .css
+*/
+body {
+  background-color: #F5F5FA;
+}
+
+/*start style.scss*/
+/*dropdown dark*/
+.dropdown-menu-dark {
+  /*change colors of dropdowns in sidebar&header - BS override*/
+  background-color: #ffffff;
+}
+.dropdown-menu-dark a {
+  color: #717176;
+}
+.dropdown-menu-dark a:hover, .dropdown-menu-dark a:active {
+  color: #57575C;
+}
+
+/*end dropdown dark*/
+/*start content*/
+#content-wrapper .card {
+  background-color: #ffffff;
+  color: #717176;
+}
+
+/*start breadcrumb*/
+.breadcrumb h2 {
+  color: #57575C;
+  font-size: 1.2rem;
+  font-weight: semibold;
+}
+.breadcrumb a {
+  color: #717176;
+}
+.breadcrumb a:hover, .breadcrumb a:active {
+  color: #57575C;
+}
+.breadcrumb .breadcrumb-item.active {
+  color: #57575C;
+}
+
+/*end breadcrumb*/
+/*start footer*/
+.footer-custom {
+  border-top: 1px solid #717176;
+  color: #717176;
+}
+
+/*end footer*/
+/*end style.css*/
+/*start topnav.scss*/
+.topnav-custom {
+  background-color: #ffffff;
+}
+.topnav-custom .dropdown-menu {
+  background-color: white;
+  border: 1px solid #EBEBF0;
+}
+.topnav-custom .apps-link:hover {
+  background-color: #FAFAFC;
+}
+
+a, label {
+  color: #717176;
+}
+
+a:hover {
+  color: #5bc0de;
+}
+
+.noti-badge-round {
+  background: red;
+  color: white;
+}
+
+.dropdown-menu-right {
+  /*language*/
+}
+.dropdown-menu-right > *:hover {
+  color: #57575C;
+}
+.dropdown-menu-right.item > :first-child {
+  color: #57575C;
+}
+
+/*start searchbar*/
+#topnav-searchbar .form-control {
+  background-color: #F5F5FA;
+  color: #717176;
+  font-size: 1em;
+  border-color: #F5F5FA;
+  border-right: none;
+}
+#topnav-searchbar .form-control:focus {
+  border-color: #5bc0de;
+  background-color: #ffffff;
+  border-right: none;
+  color: #57575C;
+  transition: 0.2s;
+}
+#topnav-searchbar #searchbar-button {
+  background: #5bc0de;
+  color: #ECF5FD;
+}
+
+#searchbar-button-sm {
+  background: transparent;
+  border: 1px solid #5bc0de;
+  color: #5bc0de;
+}
+
+/*end searchbar*/
+/*start navbar-brand (logo)*/
+.navbar-brand a {
+  color: #57575C;
+}
+
+/*end navbar-brand (logo)*/
+/*user-account*/
+.user-account {
+  color: #ECF5FD;
+  background-color: #FAFAFC;
+}
+.user-account a:hover, .user-account:active {
+  color: #57575C;
+}
+.user-account .dropdown-menu-user a {
+  color: #717176;
+}
+.user-account .dropdown-menu-user a:hover {
+  color: #57575C;
+}
+
+/*end user-account*/
+/*end topnav.scss*/
+/*start sidebar.scss*/
+#sidebar-wrapper {
+  background-color: #FAFAFC;
+}
+#sidebar-wrapper .sidebar-heading {
+  /*change headings (+hr on sm/md) in sidebar*/
+  color: #57575C;
+}
+#sidebar-wrapper .help {
+  /*change font color of help*/
+  color: white;
+}
+
+/*start lg*/
+@media (min-width: 992px) {
+  #sidebar-wrapper {
+    border-right: 1px solid #EBEBF0;
+  }
+
+  #sidebar-wrapper .dropdown a:hover, a:active {
+    /*change hover clr on sidebar icons & a*/
+    color: #5bc0de;
+  }
+}
+/*end lg*/
+/*start md*/
+@media (min-width: 576px) and (max-width: 991.9px) {
+  #sidebar-wrapper {
+    border-right: 1px solid #EBEBF0;
+    /*change color of icons on hover, keep clr in submenu*/
+  }
+  #sidebar-wrapper .dropdown a:hover, #sidebar-wrapper .dropdown:active {
+    /*change color of dropout links*/
+    color: #5bc0de;
+  }
+  #sidebar-wrapper ul > li:hover svg, #sidebar-wrapper:active svg {
+    color: white;
+  }
+  #sidebar-wrapper .sidebar-dropout {
+    background-color: #F5F5FA;
+  }
+  #sidebar-wrapper .sidebar-dropout > :first-child > :first-child {
+    /*change dropout title*/
+    color: #ECF5FD;
+    font-weight: 400;
+  }
+  #sidebar-wrapper .sidebar-heading hr {
+    /*change colour of hr on md*/
+    border-top: 1px solid rgba(87, 87, 92, 0.5);
+  }
+}
+/*end md*/
+/*start sm*/
+@media (max-width: 575.9px) {
+  .hamburgerMenu {
+    color: #717176;
+  }
+
+  #sidebar-wrapper {
+    border: 1px solid #EBEBF0;
+    border-top: none;
+    /*change bgcolor of sidebar*/
+    background-color: #FAFAFC;
+  }
+  #sidebar-wrapper .dropdown a:hover, #sidebar-wrapper .dropdown a:active {
+    /*change fontcolor of items in sidebar*/
+    color: #5bc0de;
+  }
+  #sidebar-wrapper .list-group .list-group-item {
+    /*font color of submenu*/
+    color: #717176;
+  }
+  #sidebar-wrapper .list-group .help {
+    color: white;
+  }
+  #sidebar-wrapper .sidebar-heading hr {
+    /*change colour of hr on sm*/
+    border-top: 1px solid rgba(87, 87, 92, 0.2);
+  }
+}
+/*end sm*/
+/*end sidebar.scss*/
+
+/*# sourceMappingURL=light.css.map */

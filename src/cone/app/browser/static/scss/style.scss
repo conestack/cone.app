@@ -1,0 +1,85 @@
+/*use external scss files*/
+@use "topnav";
+@use "sidebar";
+
+body {
+  margin:0;
+  font-family:"Inter", sans-serif;
+  font-weight:300;
+}
+#wrapper {
+  overflow-x: hidden;
+}
+
+/*dropdown dark*/
+.dropdown-menu-dark {
+  a {
+    text-decoration: none;
+    &:hover, &:active {
+      text-decoration: none;
+      transition: 0.5s;
+    }
+  }
+}
+/*end dropdown dark*/
+
+
+/*start content*/
+
+#content-wrapper .card {
+  margin: 0rem 2rem 2rem 0rem;
+
+  .card-header {
+    background-color: transparent;
+  }
+
+}
+
+/*start breadcrumb*/
+
+.breadcrumb {
+
+  a {
+  text-decoration: none;
+
+  &:hover, &:active {
+    text-decoration: none;
+  }
+}
+}
+
+/*end breadcrumb*/
+
+/*start footer*/
+
+.footer-copyright {
+  margin: auto;
+}
+
+/*end footer*/
+/*end content*/
+
+/*remove button borders*/
+* {
+  button:focus {
+    outline:none;
+  }
+  button::-moz-focus-inner {
+    border: 0;
+  }
+  button{
+    outline:none;
+  }
+}
+
+
+/*messages*/
+.unread-dot {
+  width: 10px;
+  height: 10px!important;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  left: .7rem;
+  top: calc(50% - 10px);
+}

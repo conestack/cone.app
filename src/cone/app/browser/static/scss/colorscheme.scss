@@ -1,0 +1,244 @@
+/*
+-- scss color definitions --
+* document gets imported to light.scss and dark.scss
+* switch.js changes mode to light or dark by changing source file .css
+*/
+
+body {
+    background-color: $bg;
+  }
+
+/*start style.scss*/
+    /*dropdown dark*/
+      .dropdown-menu-dark {
+        /*change colors of dropdowns in sidebar&header - BS override*/
+        background-color:$menu;
+        a {
+          color: $fmedium;
+          &:hover, &:active {
+            color: $flight;
+          }
+        }
+      }
+    /*end dropdown dark*/
+
+    /*start content*/
+      #content-wrapper .card {
+        background-color: $menu;
+        color: $fmedium;
+      }
+
+      /*start breadcrumb*/
+      .breadcrumb {
+        h2 {
+          color:$flight;
+          font-size:1.2rem;
+          font-weight:semibold;
+        }
+        a {
+        color: $fmedium;
+            &:hover, &:active {
+              color: $flight;
+            }
+        }
+        .breadcrumb-item.active {
+          color: $flight;
+        }
+      }
+      /*end breadcrumb*/
+
+      /*start footer*/
+      .footer-custom {
+        border-top: 1px solid $fmedium;
+        color: $fmedium;
+      }
+      /*end footer*/
+/*end style.css*/
+  
+/*start topnav.scss*/
+    .topnav-custom {
+      background-color: $menu;
+      .dropdown-menu {
+        background-color: $dropdown;
+        border:1px solid $border;
+      }
+      .apps-link:hover {
+        background-color: $menus;
+      }
+    }
+    a, label {
+      color:$fmedium;
+    }
+    a:hover {
+      color:$fhover;
+    }
+    .noti-badge-round {
+      background:red;
+      color:white;
+    }
+
+    .dropdown-menu-right {
+      /*language*/
+      > * {
+        &:hover {
+          color: $flight;
+        }
+      }
+      &.item > :first-child {
+        color:$flight;
+      }
+    }
+    
+    /*start searchbar*/
+    #topnav-searchbar {
+      .form-control {
+        background-color: $sb;
+        color: $fmedium;
+        font-size: 1em;
+        border-color: $sb;
+        border-right:none;
+      }
+      .form-control:focus {
+        border-color: #5bc0de;
+        background-color: $menu;
+        border-right: none;
+        color: $flight;
+        transition: .2s;
+      }
+      #searchbar-button {
+        background: $fhover;
+        color: $fbright;
+      }
+    }
+
+    #searchbar-button-sm {
+      background: transparent;
+      border: 1px solid $fhover;
+      color: $fhover;
+    }
+    /*end searchbar*/
+    
+    /*start navbar-brand (logo)*/
+    .navbar-brand {
+      a {
+        color: $flight;
+      }
+    }
+    /*end navbar-brand (logo)*/
+    
+    /*user-account*/
+    .user-account {
+      color: $fbright;
+      background-color: $menus;
+      a:hover, &:active {
+        color:$flight;
+      }
+
+      .dropdown-menu-user a {
+        color: $fmedium;
+        &:hover {
+          color: $flight;
+        }
+      }
+    }
+    /*end user-account*/
+
+
+
+/*end topnav.scss*/
+    
+
+/*start sidebar.scss*/
+    #sidebar-wrapper {
+      background-color:$menus;
+
+      .sidebar-heading {
+        /*change headings (+hr on sm/md) in sidebar*/
+        color: $flight;
+      }
+
+      .help {
+        /*change font color of help*/
+        color: white;
+      }
+    }
+  
+    /*start lg*/
+    @media (min-width: 992px) {
+      #sidebar-wrapper {border-right: 1px solid $border;}
+      #sidebar-wrapper .dropdown a:hover , a:active {
+        /*change hover clr on sidebar icons & a*/
+        color:$fhover;
+      }
+    }
+    /*end lg*/
+    
+
+    /*start md*/
+    @media (min-width:576px) and (max-width:991.9px) {
+      #sidebar-wrapper {
+        border-right: 1px solid $border;
+        .dropdown {
+            a:hover , &:active {
+                /*change color of dropout links*/
+                color:$fhover;
+            }
+        }
+        /*change color of icons on hover, keep clr in submenu*/
+        ul > li:hover, &:active {
+          svg {
+            color:white;
+          }
+        }
+        .sidebar-dropout {
+          background-color: $bg;
+          > :first-child > :first-child {
+            /*change dropout title*/
+            color: $fbright;
+            font-weight:400;
+          }
+        }
+        
+        .sidebar-heading hr {
+            /*change colour of hr on md*/
+            border-top: 1px solid rgba($color: $flight, $alpha: 0.5)
+        }
+      }
+    }
+    /*end md*/
+
+    /*start sm*/
+    @media(max-width:575.9px){
+      .hamburgerMenu{
+        color:$fmedium;
+      }
+
+      #sidebar-wrapper {
+        border:1px solid $border;
+        border-top:none;
+        /*change bgcolor of sidebar*/
+        background-color:$menus;
+        .dropdown {
+          a:hover , a:active {
+            /*change fontcolor of items in sidebar*/
+            color:$fhover;
+          }
+        }
+        .list-group {
+          .list-group-item {
+            /*font color of submenu*/
+            color:$fmedium;
+          }
+          .help {
+            color: white;
+          }
+        }
+        .sidebar-heading hr{
+            /*change colour of hr on sm*/
+          border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
+        }
+      }
+    }
+    /*end sm*/
+/*end sidebar.scss*/
+    
