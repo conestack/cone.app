@@ -53,7 +53,6 @@ cfg.css = Properties()
 cfg.css.public = [
     'static/jqueryui/jquery-ui-1.10.3.custom.css',
     'static/bootstrap/css/bootstrap.css',
-    'static/bootstrap/css/bootstrap-theme.css',
     'static/ionicons/css/ionicons.css',
     'static/typeahead/typeahead.css',
     '++resource++bdajax/bdajax_bs3.css',
@@ -64,7 +63,6 @@ cfg.css.public = [
 # cfg.css.public = [
 #     'static/jqueryui/jquery-ui-1.10.3.custom.css',
 #     'static/bootstrap/css/bootstrap.min.css',
-#     'static/bootstrap/css/bootstrap-theme.min.css',
 #     'static/ionicons/css/ionicons.css',
 #     'static/typeahead/typeahead.css',
 #     '++resource++bdajax/bdajax_bs3.css',
@@ -79,8 +77,8 @@ cfg.merged.js = Properties()
 
 # development
 cfg.merged.js.public = [
-    (browser.static_resources, 'jquery-1.9.1.js'),
-    (browser.static_resources, 'jquery.migrate-1.2.1.js'),
+    (browser.static_resources, 'jquery-3.5.1.js'),
+    (browser.static_resources, 'jquery-migrate-3.3.2.js'),
     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
     (browser.static_resources, 'bootstrap/js/bootstrap.js'),
     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
@@ -89,8 +87,8 @@ cfg.merged.js.public = [
 
 # production
 # cfg.merged.js.public = [
-#     (browser.static_resources, 'jquery-1.9.1.min.js'),
-#     (browser.static_resources, 'jquery.migrate-1.2.1.min.js'),
+#     (browser.static_resources, 'jquery-3.5.1.min.js'),
+#     (browser.static_resources, 'jquery-migrate-3.3.2.min.js'),
 #     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
 #     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
 #     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
