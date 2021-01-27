@@ -18,6 +18,7 @@ styles
 [x] - logo styles, added
 [x] - #searchbar-button-sm obsolete, removed
 [x] - sidebar hover icon colour, fixed
+[ ] - rename 'dropdown-menu-dark' in layout.pt
 
 
 icons
