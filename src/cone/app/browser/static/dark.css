@@ -8,6 +8,11 @@ body {
   background-color: #2E2E33;
 }
 
+.btn-inf {
+  background-color: #5bc0de;
+  color: #ECF5FD;
+}
+
 /*start style.scss*/
 /*dropdown dark*/
 .dropdown-menu-dark {
@@ -103,15 +108,26 @@ a:hover {
   color: #E6E6EB;
   transition: 0.2s;
 }
-#topnav-searchbar #searchbar-button {
-  background: #dfe8f0;
-  color: #ECF5FD;
+#topnav-searchbar input {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-
-#searchbar-button-sm {
-  background: transparent;
-  border: 1px solid #dfe8f0;
-  color: #dfe8f0;
+#topnav-searchbar #searchbar-button {
+  background-color: #5bc0de;
+  color: #ECF5FD;
 }
 
 /*end searchbar*/
@@ -139,25 +155,25 @@ a:hover {
 /*end user-account*/
 /*end topnav.scss*/
 /*start sidebar.scss*/
-#sidebar-wrapper {
+#sidebar_left {
   background-color: #38383D;
 }
-#sidebar-wrapper .sidebar-heading {
+#sidebar_left .sidebar-heading {
   /*change headings (+hr on sm/md) in sidebar*/
   color: #E6E6EB;
 }
-#sidebar-wrapper .help {
+#sidebar_left .help {
   /*change font color of help*/
   color: white;
 }
 
 /*start lg*/
 @media (min-width: 992px) {
-  #sidebar-wrapper {
+  #sidebar_left {
     border-right: 1px solid #2E2E33;
   }
 
-  #sidebar-wrapper .dropdown a:hover, a:active {
+  #sidebar_left .dropdown a:hover, a:active {
     /*change hover clr on sidebar icons & a*/
     color: #dfe8f0;
   }
@@ -165,26 +181,27 @@ a:hover {
 /*end lg*/
 /*start md*/
 @media (min-width: 576px) and (max-width: 991.9px) {
-  #sidebar-wrapper {
+  #sidebar_left {
     border-right: 1px solid #2E2E33;
     /*change color of icons on hover, keep clr in submenu*/
   }
-  #sidebar-wrapper .dropdown a:hover, #sidebar-wrapper .dropdown:active {
+  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown:active {
     /*change color of dropout links*/
     color: #dfe8f0;
   }
-  #sidebar-wrapper ul > li:hover svg, #sidebar-wrapper:active svg {
+  #sidebar_left ul > li:hover i, #sidebar_left:active i {
     color: white;
   }
-  #sidebar-wrapper .sidebar-dropout {
+  #sidebar_left .sidebar-dropout {
     background-color: #2E2E33;
   }
-  #sidebar-wrapper .sidebar-dropout > :first-child > :first-child {
+  #sidebar_left .sidebar-dropout > :first-child > :first-child {
     /*change dropout title*/
     color: #ECF5FD;
+    background-color: #5bc0de;
     font-weight: 400;
   }
-  #sidebar-wrapper .sidebar-heading hr {
+  #sidebar_left .sidebar-heading hr {
     /*change colour of hr on md*/
     border-top: 1px solid rgba(230, 230, 235, 0.5);
   }
@@ -196,24 +213,24 @@ a:hover {
     color: #949499;
   }
 
-  #sidebar-wrapper {
+  #sidebar_left {
     border: 1px solid #2E2E33;
     border-top: none;
     /*change bgcolor of sidebar*/
     background-color: #38383D;
   }
-  #sidebar-wrapper .dropdown a:hover, #sidebar-wrapper .dropdown a:active {
+  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown a:active {
     /*change fontcolor of items in sidebar*/
     color: #dfe8f0;
   }
-  #sidebar-wrapper .list-group .list-group-item {
+  #sidebar_left .list-group .list-group-item {
     /*font color of submenu*/
     color: #949499;
   }
-  #sidebar-wrapper .list-group .help {
+  #sidebar_left .list-group .help {
     color: white;
   }
-  #sidebar-wrapper .sidebar-heading hr {
+  #sidebar_left .sidebar-heading hr {
     /*change colour of hr on sm*/
     border-top: 1px solid rgba(230, 230, 235, 0.2);
   }

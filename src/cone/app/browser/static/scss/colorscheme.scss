@@ -8,6 +8,11 @@ body {
     background-color: $bg;
   }
 
+.btn-inf {
+  background-color: $info;
+  color:$fbright;
+}
+
 /*start style.scss*/
     /*dropdown dark*/
       .dropdown-menu-dark {
@@ -105,17 +110,29 @@ body {
         color: $flight;
         transition: .2s;
       }
+      input {
+          display: block;
+          width: 100%;
+          padding: .375rem .75rem;
+          font-size: 1rem;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #212529;
+          background-color: #fff;
+          background-clip: padding-box;
+          border: 1px solid #ced4da;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          border-radius: .25rem;
+          transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      }
       #searchbar-button {
-        background: $fhover;
+        background-color: $info;
         color: $fbright;
       }
     }
 
-    #searchbar-button-sm {
-      background: transparent;
-      border: 1px solid $fhover;
-      color: $fhover;
-    }
     /*end searchbar*/
     
     /*start navbar-brand (logo)*/
@@ -149,7 +166,7 @@ body {
     
 
 /*start sidebar.scss*/
-    #sidebar-wrapper {
+    #sidebar_left {
       background-color:$menus;
 
       .sidebar-heading {
@@ -165,8 +182,8 @@ body {
   
     /*start lg*/
     @media (min-width: 992px) {
-      #sidebar-wrapper {border-right: 1px solid $border;}
-      #sidebar-wrapper .dropdown a:hover , a:active {
+      #sidebar_left {border-right: 1px solid $border;}
+      #sidebar_left .dropdown a:hover , a:active {
         /*change hover clr on sidebar icons & a*/
         color:$fhover;
       }
@@ -176,7 +193,7 @@ body {
 
     /*start md*/
     @media (min-width:576px) and (max-width:991.9px) {
-      #sidebar-wrapper {
+      #sidebar_left {
         border-right: 1px solid $border;
         .dropdown {
             a:hover , &:active {
@@ -186,7 +203,7 @@ body {
         }
         /*change color of icons on hover, keep clr in submenu*/
         ul > li:hover, &:active {
-          svg {
+          i {
             color:white;
           }
         }
@@ -195,6 +212,7 @@ body {
           > :first-child > :first-child {
             /*change dropout title*/
             color: $fbright;
+            background-color: $info;
             font-weight:400;
           }
         }
@@ -213,7 +231,7 @@ body {
         color:$fmedium;
       }
 
-      #sidebar-wrapper {
+      #sidebar_left {
         border:1px solid $border;
         border-top:none;
         /*change bgcolor of sidebar*/
