@@ -4,7 +4,8 @@ Changes
 1.0rc4 (unreleased)
 -------------------
 
-- No changes yet.
+- Introduce ``cone.app.interfaces.IAuthenticator`` utility.
+  [rnix, zworkb, 2021-02-02]
 
 
 1.0rc3 (2020-10-12)

@@ -265,6 +265,7 @@ def main(global_config, **settings):
     # set authentication related application properties
     security.ADMIN_USER = settings.get('cone.admin_user')
     security.ADMIN_PASSWORD = settings.get('cone.admin_password')
+    security.AUTHENTICATOR = settings.get('cone.authenticator')
 
     auth_secret = settings.pop('cone.auth_secret', 'secret')
     auth_cookie_name = settings.pop('cone.auth_cookie_name', 'auth_tkt')

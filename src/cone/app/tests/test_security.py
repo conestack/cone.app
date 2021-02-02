@@ -1,5 +1,6 @@
 from cone.app import security
 from cone.app import testing
+from cone.app.interfaces import IAuthenticator
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
 from cone.app.model import BaseNode
@@ -27,7 +28,15 @@ from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.threadlocal import get_current_registry
 from zope.component.globalregistry import BaseGlobalComponents
+from zope.interface import implementer
 import logging
+
+
+@implementer(IAuthenticator)
+class TestAuthenticator(object):
+
+    def authenticate(self, login, password):
+        return login
 
 
 class SecurityTest(NodeTestCase):
@@ -457,3 +466,22 @@ class SecurityTest(NodeTestCase):
         logger.setLevel(logging.INFO)
         logger.removeHandler(handler)
         ugm_backend.ugm = orgin_ugm
+
+    def test_IAuthenticator(self):
+        request = self.layer.new_request()
+        registry = request.registry
+        authenticator = TestAuthenticator()
+        registry.registerUtility(
+            authenticator,
+            IAuthenticator,
+            name='test_authenticator'
+        )
+        authenticator_origin = security.AUTHENTICATOR
+        security.AUTHENTICATOR = 'test_authenticator'
+
+        with self.layer.authenticated('foo'):
+            self.assertEqual(request.authenticated_userid, 'foo')
+        self.assertEqual(request.authenticated_userid, None)
+
+        security.AUTHENTICATOR = authenticator_origin
+        registry.unregisterUtility(authenticator)

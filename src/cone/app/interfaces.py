@@ -158,3 +158,18 @@ class ILiveSearch(Interface):
         dropdown. Any other keys are optional, they are accessible in the JS
         callback when ``typeahead:selected`` gets triggered.
         """
+
+
+class IAuthenticator(Interface):
+    """Authenticator utility.
+
+    If application ini file defines ``cone.authenticator`` setting, a named
+    utility of IAuthenticator gets looked up and principal authentication
+    happens against it.
+    """
+
+    def authenticate(login, password):
+        """Authenticate principal.
+
+        Return principal id if authentication is successful, else None.
+        """

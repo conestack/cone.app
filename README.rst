@@ -32,7 +32,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2020 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2021 BlueDynamics Alliance http://www.bluedynamics.com
 
 
 Contributors
@@ -41,3 +41,8 @@ Contributors
 - Robert Niederreiter (Author)
 - Jens Klein
 - Georg Gogo. BERNHARD
+- Phil Auersperg
+- Florian Friesdorf
+- Attila Olah
+- Peter Holzer
+- Johannes Raggam

@@ -354,3 +354,45 @@ file.
     ugm.backend = myugm
     myugm.setting_a = a
     myugm.setting_b = b
+
+
+Custom Authenticator
+--------------------
+
+For authentication against a remote provider,
+``cone.app.interfaces.IAuthenticator`` is used.
+
+An implementation gets registered as named utility.
+
+.. code-block:: python
+
+    from cone.app import main_hook
+    from cone.app.interfaces import IAuthenticator
+    from zope.interface import implementer
+
+    @implementer(IAuthenticator)
+    class MyAuthenticator(object):
+
+        def authenticate(self, login, password):
+            # custom authentication goes here
+            # return id for login if authentication is successful, else None
+            return login
+
+    @main_hook
+    def example_main_hook(config, global_config, local_config):
+        # register custom authenticator as named utility.
+        config.registry.registerUtility(
+            MyAuthenticator(),
+            IAuthenticator,
+            name='my_authenticator'
+        )
+
+The utility name must be defined in application ini file.
+
+.. code-block:: ini
+
+    [app:example]
+    cone.authenticator = 'my_authenticator'
+
+If a UGM implementation is configured, it gets used as fallback for
+authentication.

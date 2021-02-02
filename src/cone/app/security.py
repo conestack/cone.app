@@ -1,3 +1,4 @@
+from cone.app.interfaces import IAuthenticator
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
 from cone.app.ugm import ugm_backend
@@ -75,22 +76,32 @@ DEFAULT_SETTINGS_ACL = [
 
 ADMIN_USER = None
 ADMIN_PASSWORD = None
+AUTHENTICATOR = None
 
 
 def authenticate(request, login, password):
     if ADMIN_USER and ADMIN_PASSWORD:
         if login == ADMIN_USER and password == ADMIN_PASSWORD:
             return remember(request, login)
+    if AUTHENTICATOR:
+        authenticator = request.registry.queryUtility(
+            IAuthenticator,
+            name=AUTHENTICATOR
+        )
+        if authenticator:
+            pid = authenticator.authenticate(login, password)
+            if pid:
+                return remember(request, pid)
     ugm = ugm_backend.ugm
     try:
         if ugm.users.authenticate(login, password):
-            id = ugm.users.id_for_login(login)
-            return remember(request, id)
+            pid = ugm.users.id_for_login(login)
+            return remember(request, pid)
     except Exception as e:
-        msg = u"Authentication plugin %s raised an Exception while " + \
-              u"trying to authenticate: %s"
-        msg = msg % (str(ugm.__class__), str(e))
-        logger.warning(msg)
+        logger.warning((
+            u'Authentication plugin {} raised an Exception while '
+            u'trying to authenticate: {}'
+        ).format(str(ugm.__class__), e))
 
 
 def authenticated_user(request):
