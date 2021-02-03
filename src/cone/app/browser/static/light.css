@@ -23,14 +23,15 @@ body {
 
 /*start style.scss*/
 /*dropdown dark*/
-.dropdown-menu-dark {
+.dropdown-menu-custom {
   /*change colors of dropdowns in sidebar&header - BS override*/
   background-color: #ffffff;
 }
-.dropdown-menu-dark a {
+.dropdown-menu-custom a {
   color: #717176;
+  text-decoration: none;
 }
-.dropdown-menu-dark a:hover, .dropdown-menu-dark a:active {
+.dropdown-menu-custom a:hover, .dropdown-menu-custom a:active {
   color: #57575C;
 }
 
@@ -70,9 +71,12 @@ body {
 .topnav-custom {
   background-color: #ffffff;
 }
-.topnav-custom .dropdown-menu {
+.topnav-custom .dropdown-menu-custom {
   background-color: white;
   border: 1px solid #EBEBF0;
+}
+.topnav-custom .dropdown-menu-custom > :first-child {
+  color: #717176;
 }
 .topnav-custom .apps-link:hover {
   background-color: #FAFAFC;
@@ -102,43 +106,36 @@ a:hover {
 }
 
 /*start searchbar*/
-#topnav-searchbar .form-control {
-  background-color: #F5F5FA;
-  color: #717176;
-  font-size: 1em;
-  border-color: #F5F5FA;
-  border-right: none;
-}
-#topnav-searchbar .form-control:focus {
-  border-color: #5bc0de;
-  background-color: #ffffff;
-  border-right: none;
-  color: #57575C;
-  transition: 0.2s;
-}
 #topnav-searchbar input {
-  display: block;
-  width: 100%;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  color: #57575C !important;
+  background-color: #F5F5FA !important;
+  border: 0;
+  border-radius: 4px 0 0 4px;
 }
 #topnav-searchbar #searchbar-button {
   background-color: #5bc0de;
   color: #ECF5FD;
+  border-radius: 0 4px 4px 0;
+}
+@media (min-width: 380px) and (max-width: 1038.9px) {
+  #topnav-searchbar #searchbar-button {
+    border-radius: 4px;
+  }
+  #topnav-searchbar #searchbar-button.clicked {
+    border-radius: 0 4px 4px 0;
+  }
 }
 
 /*end searchbar*/
+/*notifications*/
+#notifications .user-msg {
+  background-color: #F5F5FA;
+  border: 1px solid #ECF5FD;
+}
+#notifications .user-msg > i {
+  color: #57575C;
+}
+
 /*start navbar-brand (logo)*/
 .navbar-brand a {
   color: #57575C;
@@ -153,6 +150,13 @@ a:hover {
 .user-account a:hover, .user-account:active {
   color: #57575C;
 }
+.user-account .profile-image {
+  background-color: #F5F5FA;
+  border: 1px solid #ECF5FD;
+}
+.user-account .profile-image > i {
+  color: #57575C;
+}
 .user-account .dropdown-menu-user a {
   color: #717176;
 }
@@ -165,6 +169,9 @@ a:hover {
 /*start sidebar.scss*/
 #sidebar_left {
   background-color: #FAFAFC;
+}
+#sidebar_left li.active .dropdown > a {
+  color: #5bc0de;
 }
 #sidebar_left .sidebar-heading {
   /*change headings (+hr on sm/md) in sidebar*/

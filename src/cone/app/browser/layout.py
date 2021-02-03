@@ -175,6 +175,14 @@ class PersonalTools(Tile):
         return [_(self.model, self.request) for _ in personal_tools.values()]
 
 
+@tile(name='toolbar_top',
+      path='templates/toolbar_top.pt',
+      permission='view',
+      strict=False)
+class ToolbarTop(LayoutConfigTile):
+    pass
+
+
 @tile(name='mainmenu',
       path='templates/mainmenu.pt',
       permission='view',

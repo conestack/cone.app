@@ -1,0 +1,28 @@
+<tal:search xmlns:tal="http://xml.zope.org/namespaces/tal"
+            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+            i18n:domain="cone.app"
+            omit-tag="True">
+
+  <ul class="nav navbar-nav navbar-right">
+    <li id="search">
+
+      <form class="form-inline" role="search">
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <div class="input-group-addon">
+              <span class="glyphicon glyphicon-search"></span>
+            </div>
+            <input type="text"
+                   class="form-control"
+                   id="search-text"
+                   placeholder="search database ..."
+                   name="term"
+                   i18n:attributes="placeholder search_database" />
+          </div>
+        </div>
+      </form>
+
+    </li>
+  </ul>
+
+</tal:search>

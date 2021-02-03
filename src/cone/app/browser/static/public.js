@@ -104,9 +104,16 @@ var livesearch_options = new Object();
             $.extend(options, livesearch_options);
             input.typeahead(null, options);
 
-            if($(window).width() <= 1035.9) {
+            if($(window).width() <= 380) {
+                $('#topnav-searchbar', context).detach().prependTo('#sidebar_left', context);
+            }
+            else if($(window).width() <= 1035.9) {
                 $('#searchbar-button', context).on('click', function() {
                     $('#search-text', context).animate({width: 'toggle'}, 200);
+                    $('#searchbar-button', context).toggleClass('clicked');
+                    if($(window).width() <= 575.9) {
+                        $('#topnav-right', context).fadeToggle('fast');
+                    }
                 });
             } else {
                 $('#search-text', context).show();

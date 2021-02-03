@@ -1,4 +1,53 @@
 /* -- styles of topnav header -- */
+/*searchbar*/
+#topnav-searchbar {
+  display: inline-block;
+  height: 2.2rem;
+  font-size: 0.95em;
+}
+#topnav-searchbar .form-control:focus {
+  outline: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+#topnav-searchbar .input-group, #topnav-searchbar *:not(svg) {
+  height: inherit;
+  flex-wrap: nowrap;
+}
+#topnav-searchbar .input-group input, #topnav-searchbar *:not(svg) input {
+  padding: 0.375rem 0.75rem;
+  display: block;
+  font-size: 1em;
+}
+#topnav-searchbar .btn {
+  padding: 0 0.5rem;
+  margin: 0;
+}
+@media (min-width: 380px) and (max-width: 1036px) {
+  #topnav-searchbar {
+    position: absolute;
+    top: 1rem;
+    margin-left: 0;
+  }
+  #topnav-searchbar.expanded {
+    top: -0.5rem;
+  }
+  #topnav-searchbar #search-text {
+    display: none;
+  }
+  #topnav-searchbar #search-text {
+    position: relative;
+  }
+}
+@media (max-width: 379.9px) {
+  #topnav-searchbar {
+    width: 100%;
+    padding: 0 1rem;
+    margin: 0.5rem 0;
+  }
+}
+
+/*end searchbar*/
 .noti-badge-round {
   /*badge for notifications with number*/
   position: relative;
@@ -22,8 +71,6 @@
   /*settings*/
   /*mode switch*/
   /*end settings*/
-  /*searchbar*/
-  /*end searchbar*/
   /*user-account*/
 }
 .topnav-custom div {
@@ -56,18 +103,33 @@
   width: 20rem;
   height: content;
 }
-.topnav-custom .dropdown-menu-end#notifications img {
-  margin-top: -1.25rem;
+.topnav-custom .dropdown-menu-end#notifications .user-msg {
+  display: flex;
+  position: absolute;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
   margin-right: 1rem;
+  margin-top: 0.3rem;
   box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
 }
-.topnav-custom .dropdown-menu-end#notifications a div * {
+.topnav-custom .dropdown-menu-end#notifications .user-msg > i {
+  position: relative;
+  margin: auto;
+  font-size: 1rem;
+}
+.topnav-custom .dropdown-menu-end#notifications .user-msg img {
+  width: 2.5em;
+  height: 2.5em;
+}
+.topnav-custom .dropdown-menu-end#notifications .message {
+  position: relative;
+  left: 3rem;
+}
+.topnav-custom .dropdown-menu-end#notifications > a .message * {
   display: block;
 }
-.topnav-custom .dropdown-menu-end#notifications a div > :last-child {
+.topnav-custom .dropdown-menu-end#notifications > a .message > :last-child {
   font-size: 0.7rem;
 }
 .topnav-custom .dropdown-menu-end > * {
@@ -124,45 +186,6 @@
   width: 1.7em;
   box-shadow: none;
 }
-.topnav-custom #topnav-searchbar {
-  margin-left: 8rem;
-  display: inline-block;
-  height: 2.2rem;
-  font-size: 0.95em;
-}
-.topnav-custom #topnav-searchbar .form-control:focus {
-  outline: 0;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-.topnav-custom #topnav-searchbar .input-group, .topnav-custom #topnav-searchbar *:not(svg) {
-  height: inherit;
-  flex-wrap: nowrap;
-}
-.topnav-custom #topnav-searchbar .input-group input, .topnav-custom #topnav-searchbar *:not(svg) input {
-  padding: 0.375rem 0.75rem;
-  display: block;
-}
-.topnav-custom #topnav-searchbar .btn {
-  padding: 0 0.5rem;
-  margin: 0;
-}
-@media (max-width: 1036px) {
-  .topnav-custom #topnav-searchbar {
-    position: absolute;
-    top: 1rem;
-    margin-left: 0;
-  }
-  .topnav-custom #topnav-searchbar.expanded {
-    top: -0.5rem;
-  }
-  .topnav-custom #topnav-searchbar #search-text {
-    display: none;
-  }
-  .topnav-custom #topnav-searchbar #search-text {
-    position: relative;
-  }
-}
 .topnav-custom .navbar-brand {
   display: inline-block;
   font-size: 1.5rem;
@@ -179,6 +202,11 @@
   float: right;
   display: inline-block;
   height: inherit;
+}
+@media (max-width: 575px) {
+  .topnav-custom #topnav-right {
+    transition: display 3s;
+  }
 }
 .topnav-custom #topnav-right .navbar-nav {
   height: inherit;
@@ -203,6 +231,7 @@
   min-width: 18rem;
   position: absolute;
   left: 1rem;
+  top: 2.8rem !important;
   margin-top: 0.25rem;
 }
 .topnav-custom .user-account .dropdown-menu-user .dropdown-item {
@@ -218,21 +247,37 @@
   margin-top: -0.3rem;
 }
 .topnav-custom .user-account .profile-image {
+  position: absolute;
   vertical-align: top;
   margin-top: 0.25rem;
   width: 2.5em;
+  height: 2.5em;
   border-radius: 50% !important;
   box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
+  display: flex;
+}
+.topnav-custom .user-account .profile-image > i {
+  position: relative;
+  margin: auto;
+  font-size: 1.5rem;
+}
+.topnav-custom .user-account .profile-image img {
+  width: 2.5em;
+  height: 2.5em;
+}
+.topnav-custom .user-account .user-specs {
+  position: absolute;
+  left: 4rem;
 }
 @media (max-width: 991.9px) {
   .topnav-custom .user-specs {
     display: none;
   }
   .topnav-custom .user-account {
-    min-width: 3rem;
+    min-width: 4rem;
   }
   .topnav-custom .user-account .dropdown-menu-user {
-    min-width: 0rem;
+    min-width: 10rem;
   }
   .topnav-custom .user-account .dropdown-menu-user a {
     padding: 0;

@@ -15,11 +15,12 @@ body {
 
 /*start style.scss*/
     /*dropdown dark*/
-      .dropdown-menu-dark {
+      .dropdown-menu-custom {
         /*change colors of dropdowns in sidebar&header - BS override*/
         background-color:$menu;
         a {
           color: $fmedium;
+          text-decoration:none;
           &:hover, &:active {
             color: $flight;
           }
@@ -63,9 +64,12 @@ body {
 /*start topnav.scss*/
     .topnav-custom {
       background-color: $menu;
-      .dropdown-menu {
+      .dropdown-menu-custom {
         background-color: $dropdown;
         border:1px solid $border;
+        > :first-child {
+          color:$fmedium;
+        }
       }
       .apps-link:hover {
         background-color: $menus;
@@ -92,48 +96,41 @@ body {
       &.item > :first-child {
         color:$flight;
       }
+
     }
     
     /*start searchbar*/
     #topnav-searchbar {
-      .form-control {
-        background-color: $sb;
-        color: $fmedium;
-        font-size: 1em;
-        border-color: $sb;
-        border-right:none;
-      }
-      .form-control:focus {
-        border-color: #5bc0de;
-        background-color: $menu;
-        border-right: none;
-        color: $flight;
-        transition: .2s;
-      }
+
       input {
-          display: block;
-          width: 100%;
-          padding: .375rem .75rem;
-          font-size: 1rem;
-          font-weight: 400;
-          line-height: 1.5;
-          color: #212529;
-          background-color: #fff;
-          background-clip: padding-box;
-          border: 1px solid #ced4da;
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          appearance: none;
-          border-radius: .25rem;
-          transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+          color: $flight!important;
+          background-color: $sb!important;
+          border: 0;
+          border-radius: 4px 0 0 4px;
       }
       #searchbar-button {
         background-color: $info;
         color: $fbright;
+        border-radius: 0 4px 4px 0;
+        @media(min-width:380px) and (max-width:1038.9px){
+          border-radius:4px;
+          &.clicked {
+            border-radius: 0 4px 4px 0;
+          }
+        }
       }
     }
 
     /*end searchbar*/
+
+    /*notifications*/
+    #notifications .user-msg {
+      background-color: $bg;
+      border: 1px solid $fbright;
+      > i {
+        color:$flight;
+      }
+    }
     
     /*start navbar-brand (logo)*/
     .navbar-brand {
@@ -149,6 +146,13 @@ body {
       background-color: $menus;
       a:hover, &:active {
         color:$flight;
+      }
+      .profile-image {
+        background-color: $bg;
+        border: 1px solid $fbright;
+        > i {
+          color:$flight;
+        }
       }
 
       .dropdown-menu-user a {
@@ -168,6 +172,12 @@ body {
 /*start sidebar.scss*/
     #sidebar_left {
       background-color:$menus;
+
+      li {
+        &.active .dropdown > a {
+        color: $info;
+        }
+      }
 
       .sidebar-heading {
         /*change headings (+hr on sm/md) in sidebar*/

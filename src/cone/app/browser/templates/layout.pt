@@ -9,7 +9,7 @@
        tal:define="config context.config">
 
     <nav class="topnav navbar-expand topnav-custom">
-      <div class="container-fluid">
+      <div class="container-fluid pe-0">
 
         <div class="navbar-brand d-none d-sm-inline-block">
           <tal:logo replace="structure tile('logo')" />
@@ -27,12 +27,14 @@
           condition="config.livesearch"
           replace="structure tile('livesearch')" />
 
+        <tal:toolbar_top replace="structure tile('toolbar_top')" />
+
       </div>
     </nav>
 
     <div class="d-flex" id="wrapper">
 
-      <div class="dropdown-menu-dark"
+      <div class="dropdown-menu-custom"
            id="sidebar_left"
            tal:condition="config.sidebar_left">
 
