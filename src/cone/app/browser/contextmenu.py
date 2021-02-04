@@ -84,27 +84,76 @@ class ContextMenuDropdown(Toolbar):
 
 context_menu = odict()
 
-context_menu['navigation'] = ContextMenuToolbar()
-context_menu['navigation']['up'] = ActionUp()
 
-contentviews_title = _('display', default=u'Display')
-context_menu['contentviews'] = ContextMenuDropdown(title=contentviews_title)
-context_menu['contentviews']['list'] = ActionList()
-context_menu['contentviews']['view'] = ActionView()
-context_menu['contentviews']['edit'] = ActionEdit()
-context_menu['contentviews']['sharing'] = ActionSharing()
+class context_menu_group(object):
+    """Decorator defining a context menu group.
+    """
 
-childactions_title = _('actions', default=u'Actions')
-context_menu['childactions'] = ContextMenuDropdown(title=childactions_title)
-context_menu['childactions']['cut'] = ActionCut()
-context_menu['childactions']['copy'] = ActionCopy()
-context_menu['childactions']['paste'] = ActionPaste()
-# context_menu['childactions']['delete'] = ActionDeleteChildren()
+    def __init__(self, name):
+        self.name = name
 
-context_menu['contextactions'] = ContextMenuToolbar()
-context_menu['contextactions']['change_state'] = ActionState()
-context_menu['contextactions']['add'] = ActionAdd()
-context_menu['contextactions']['delete'] = ActionDelete()
+    def __call__(self, factory):
+        context_menu[self.name] = factory()
+        return factory
+
+
+class context_menu_item(object):
+    """Decorator defining a context menu item inside a group.
+    """
+
+    def __init__(self, group, name):
+        self.group = group
+        self.name = name
+
+    def __call__(self, factory):
+        context_menu[self.group][self.name] = factory()
+        return factory
+
+
+@context_menu_group(name='navigation')
+class NavigationToolbar(ContextMenuToolbar):
+    """Context menu navigation toolbar.
+    """
+
+
+context_menu_item(group='navigation', name='up')(ActionUp)
+
+
+@context_menu_group(name='contentviews')
+class ContentViewsDropdown(ContextMenuDropdown):
+    """Context menu content views dropdown.
+    """
+    title = _('display', default=u'Display')
+
+
+context_menu_item(group='contentviews', name='list')(ActionList)
+context_menu_item(group='contentviews', name='view')(ActionView)
+context_menu_item(group='contentviews', name='edit')(ActionEdit)
+context_menu_item(group='contentviews', name='sharing')(ActionSharing)
+
+
+@context_menu_group(name='childactions')
+class ChildActionsDropdown(ContextMenuDropdown):
+    """Context menu content views dropdown.
+    """
+    title = _('actions', default=u'Actions')
+
+
+context_menu_item(group='childactions', name='cut')(ActionCut)
+context_menu_item(group='childactions', name='copy')(ActionCopy)
+context_menu_item(group='childactions', name='paste')(ActionPaste)
+# context_menu_item(group='childactions', name='delete')(ActionDeleteChildren)
+
+
+@context_menu_group(name='contextactions')
+class ContextActionsToolbar(ContextMenuToolbar):
+    """Context menu navigation toolbar.
+    """
+
+
+context_menu_item(group='contextactions', name='change_state')(ActionState)
+context_menu_item(group='contextactions', name='add')(ActionAdd)
+context_menu_item(group='contextactions', name='delete')(ActionDelete)
 
 
 @tile(name='contextmenu', path='templates/contextmenu.pt', permission='view')

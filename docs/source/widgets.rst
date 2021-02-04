@@ -524,19 +524,19 @@ Context menu
 
 **Tile registration name**: ``contextmenu``
 
-User actions for a node. The context menu consists of toolbars containing
-context related actions. Toolbars and actions are configured at
-``cone.app.browser.contextmenu.context_menu``.
+User actions for a node. The context menu consists of groups containing
+context related action items. Groups and items are registered with decorators.
 
-Navigation related actions are placed in the ``navigation`` toolbar.
+Navigation related actions are registered in the ``navigation`` group:
 
 .. code-block:: python
 
     from cone.app.browser.actions import LinkAction
-    from cone.app.browser.contextmenu import context_menu
+    from cone.app.browser.contextmenu import context_menu_item
     from cone.app.browser.utils import make_query
     from cone.app.browser.utils import make_url
 
+    @context_menu_item(group='navigation', name='link_to_somewhere')
     class LinkToSomewhereAction(LinkAction):
         id = 'toolbaraction-link-to-somewhere'
         icon = 'glyphicon glyphicon-arrow-down'
@@ -549,15 +549,13 @@ Navigation related actions are placed in the ``navigation`` toolbar.
             query = make_query(contenttile='content')
             return make_url(self.request, node=model, query=query)
 
-    context_menu['navigation']['link_to_somewhere'] = LinkToSomewhereAction()
-
-Context related content views are placed in ``contentviews`` toolbar.
+Context related content views are placed in ``contentviews`` group:
 
 .. code-block:: python
 
     from cone.app.browser import render_main_template
     from cone.app.browser.actions import LinkAction
-    from cone.app.browser.contextmenu import context_menu
+    from cone.app.browser.contextmenu import context_menu_item
     from cone.example.interfaces import IMyFeature
     from cone.tile import tile
     from cone.tile import Tile
@@ -573,6 +571,7 @@ Context related content views are placed in ``contentviews`` toolbar.
     def myfeature(model, request):
         return render_main_template(model, request, 'myfeature')
 
+    @context_menu_item(group='contentviews', name='myfeature')
     class ActionMyFeature(LinkAction):
         id = 'toolbaraction-myfeature'
         action = 'myfeature:#content:inner'
@@ -593,27 +592,32 @@ Context related content views are placed in ``contentviews`` toolbar.
             # check whether myfeature tile is current scope to highlight action
             return self.action_scope == 'myfeature'
 
-    context_menu['contentviews']['myfeature'] = ActionSharing()
+Context child related action items are placed in ``childactions`` group. This
+group contains by default ``ICopySupport`` related cut, copy and paste actions.
+It is supposed to be rendered if ``listing`` tile is shown. The group may
+contain items relying on selected items in the listing table.
 
-Context related children actions are placed in ``childactions`` toolbar. This
-toolbar by default contains ``ICopySupport`` support related cut, copy and
-paste actions. Children actions are supposed to be rendered if ``listing``
-tile is shown. The children actions may rely on the selected items in the
-table.
+Context related action items are placed in ``contextactions`` group. Context
+related items are e.g. the add dropdown, workflow transition dropdown or
+other custom items performing a task on current model node.
 
-Context related actions are placed in ``contextactions`` toolbar. Context
-related actions are e.g. the add dropdown, workflow transition dropdown or
-other custom actions performing a task on current model node.
-
-A plugin can extend the contextmenu by entire toolbars like so.
+A plugin can extend the contextmenu by custom groups:
 
 .. code-block:: python
 
     from cone.app.browser.contextmenu import ContextMenuToolbar
-    from cone.app.browser.contextmenu import context_menu
+    from cone.app.browser.contextmenu import context_menu_group
+    from cone.app.browser.contextmenu import context_menu_item
 
-    context_menu['mytoolbar'] = ContextMenuToolbar()
-    context_menu['mytoolbar']['myaction'] = MyAction()
+    @context_menu_group(name='mytoolbar')
+    class MyToolbar(ContextMenuToolbar):
+        """My custom toolbar.
+        """
+
+    @context_menu_item(group='mytoolbar', name='myaction')
+    class MyAction(LinkAction):
+        """Action cintained in custom toolbar.
+        """
 
 
 Add dropdown
