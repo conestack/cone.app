@@ -193,16 +193,16 @@ authenticated user name and contains a set of links to personal stuff. By
 default, a link to application settings and the logout link are rendered in the
 dropdown.
 
-To add more items to the dropdown, set a callable on
-``cone.app.browser.layout.personal_tools``. The callable gets passed the model
-and request as arguments and returns the rendered markup.
+To add more items to the dropdown, register an action with the
+``cone.app.browser.layout.personal_tools_action`` decorator.
 
 .. code-block:: python
 
     from cone.app.browser.actions import LinkAction
-    from cone.app.browser.layout import personal_tools
+    from cone.app.browser.layout import personal_tools_action
     from cone.app.browser.utils import make_url
 
+    @personal_tools_action(name='example')
     class ExampleAction(LinkAction):
         text = 'Example'
         icon = 'ion-ios7-gear'
@@ -213,8 +213,6 @@ and request as arguments and returns the rendered markup.
             return make_url(self.request, node=self.model.root['example'])
 
         href = target
-
-    personal_tools['example'] = ExampleAction()
 
 
 Main menu

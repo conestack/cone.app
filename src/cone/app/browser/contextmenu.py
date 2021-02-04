@@ -82,6 +82,7 @@ class ContextMenuDropdown(Toolbar):
         super(ContextMenuDropdown, self).__setitem__(name, value)
 
 
+# context menu group registry
 context_menu = odict()
 
 

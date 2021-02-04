@@ -4,8 +4,11 @@ Changes
 1.0rc4 (unreleased)
 -------------------
 
+- Introduce ``cone.app.browser.layout.personal_tools_action`` decorator.
+  [rnix, 2021-02-04]
+
 - Introduce ``cone.app.browser.contextmenu.context_menu_group`` and
-  ``cone.app.browser.contextmenu.context_menu_item``.
+  ``cone.app.browser.contextmenu.context_menu_item`` decorators.
   [rnix, 2021-02-04]
 
 - Introduce ``cone.app.interfaces.IAuthenticator`` utility.
