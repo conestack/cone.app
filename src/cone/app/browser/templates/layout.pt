@@ -1,5 +1,6 @@
 <tal:layout xmlns:tal="http://xml.zope.org/namespaces/tal"
             xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
             omit-tag="True">
 
   <div id="layout"
@@ -7,72 +8,61 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <div class="navbar navbar-inverse navbar-top">
+    <nav class="topnav navbar-expand topnav-custom">
+      <div class="container-fluid pe-0">
 
-      <div class="${config.mainmenu_fluid and 'container-fluid' or 'container'}">
-
-        <div class="navbar-header">
-
-          <button class="navbar-toggle collapsed"
-                  data-target=".navbar-collapse"
-                  data-toggle="collapse"
-                  type="button">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-
+        <div class="navbar-brand d-none d-sm-inline-block">
           <tal:logo replace="structure tile('logo')" />
-
         </div>
 
-        <div class="navbar-collapse collapse"
-             style="height:1px;">
-
-          <tal:mainmenu
-            condition="config.mainmenu"
-            replace="structure tile('mainmenu')" />
-
-          <tal:livesearch
-            condition="config.livesearch"
-            replace="structure tile('livesearch')" />
-
+        <div class="p-3 font-light d-inline-block d-sm-none" id="mobile-menu">
+          <button id="hamburger-menu-toggle" class="hamburgerMenu">
+            <svg class="bi" width="2em" height="2em" fill="currentColor">
+              <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
+            </svg>
+          </button>
         </div>
+
+        <tal:livesearch
+          condition="config.livesearch"
+          replace="structure tile('livesearch')" />
+
+        <tal:toolbar_top replace="structure tile('toolbar_top')" />
+
       </div>
-    </div>
+    </nav>
 
-    <div class="${config.columns_fluid and 'container-fluid' or 'container'}">
+    <div class="d-flex" id="wrapper">
 
-      <div class="row"
-           tal:condition="config.pathbar">
-        <div class="col-md-12">
+      <div class="dropdown-menu-custom"
+           id="sidebar_left"
+           tal:condition="config.sidebar_left">
+
+        <tal:tiles repeat="tilename config.sidebar_left">
+          <tal:tile replace="structure tile(tilename)" />
+        </tal:tiles>
+
+      </div>
+
+      <div id="page-content-wrapper"
+           class="container-fluid d-flex flex-column min-vh-100">
+
+        <row tal:condition="config.pathbar">
           <tal:pathbar replace="structure tile('pathbar')" />
-        </div>
-      </div>
+        </row>
 
-      <div class="row">
-        <div id="sidebar_left"
-             class="col-md-${config.sidebar_left_grid_width}"
-             tal:condition="config.sidebar_left">
-          <tal:tiles repeat="tilename config.sidebar_left">
-            <tal:tile replace="structure tile(tilename)" />
-          </tal:tiles>
-        </div>
-
-        <div class="col-md-${config.content_grid_width}">
+        <div class="container-fluid me-1" id="content-wrapper">
           <div id="content"
                ajax:bind="contextchanged"
                ajax:action="content:#content:inner">
-            <tal:content
-              replace="structure tile(context.contenttile)" />
+            <tal:content replace="structure tile(context.contenttile)" />
           </div>
+
+          <tal:footer replace="structure tile('footer')" />
         </div>
+
       </div>
     </div>
-
-    <tal:footer replace="structure tile('footer')" />
-
   </div>
 
 </tal:layout>

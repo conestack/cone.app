@@ -1,0 +1,15 @@
+<tal:logo xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+          omit-tag="True">
+
+  <a class="navbar-brand"
+     href="${request.application_url}"
+     ajax:bind="click"
+     ajax:target="${request.application_url}"
+     ajax:event="contextchanged:#layout"
+     ajax:path="href"
+     tal:content="model.root.metadata.title">
+    Cone
+  </a>
+
+</tal:logo>

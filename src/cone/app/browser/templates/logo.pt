@@ -2,14 +2,18 @@
           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
           omit-tag="True">
 
-  <a class="navbar-brand"
-     href="${request.application_url}"
+  <a href="${request.application_url}"
+     class="navbar-brand d-none d-sm-inline-block"
      ajax:bind="click"
      ajax:target="${request.application_url}"
      ajax:event="contextchanged:#layout"
-     ajax:path="href"
-     tal:content="model.root.metadata.title">
-    Cone
+     ajax:path="href">
+
+    <img class="logo" src="static/images/cone-logo-cone.svg">
+    <span class="d-none d-lg-inline-block"
+          tal:content="model.root.metadata.title">
+      Cone
+    </span>
   </a>
 
 </tal:logo>

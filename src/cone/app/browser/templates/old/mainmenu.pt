@@ -1,0 +1,67 @@
+<tal:mainmenu xmlns:tal="http://xml.zope.org/namespaces/tal"
+              xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+              omit-tag="True">
+
+  <ul id="mainmenu"
+      class="nav navbar-nav contextsensitiv"
+      ajax:bind="contextchanged"
+      ajax:action="mainmenu:#mainmenu:replace"
+      tal:define="config context.config">
+
+    <tal:item repeat="item context.menuitems">
+
+      <tal:comment replace="None">Main menu item as link</tal:comment>
+      <li tal:condition="not item['children']"
+          tal:define="css item['selected'] and 'active' or '';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="${item['url']}"
+           title="${item['description']}"
+           ajax:bind="click"
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           ajax:path="href"
+          ><span class="${item['icon']|nothing}"></span>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
+
+      </li>
+
+      <tal:comment replace="None">Main menu item as dropdown</tal:comment>
+      <li tal:condition="item['children']"
+          tal:define="css item['selected'] and 'dropdown active' or 'dropdown';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="#"
+           class="dropdown-toggle"
+           data-toggle="dropdown"
+          ><span class="${item['icon']|nothing}"></span>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
+
+        <ul class="dropdown-menu">
+          <tal:li repeat="child item['children']">
+            <li tal:define="css child['selected'] and 'active' or '';"
+                tal:attributes="class css">
+              <a href="${child['url']}"
+                 title="${child['description']}"
+                 ajax:bind="click"
+                 ajax:target="${child['target']}"
+                 ajax:event="contextchanged:#layout"
+                 ajax:path="href"
+                ><span class="${child['icon']|nothing}"></span>
+                <span tal:content="child['title'] | string:'&nbsp;'">Title</span></a>
+            </li>
+          </tal:li>
+        </ul>
+      </li>
+
+    </tal:item>
+
+    <tal:personaltools
+      condition="config.personaltools"
+      replace="structure tile('personaltools')" />
+
+  </ul>
+
+</tal:mainmenu>

@@ -53,18 +53,21 @@ cfg.css = Properties()
 cfg.css.public = [
     'static/jqueryui/jquery-ui-1.10.3.custom.css',
     'static/bootstrap/css/bootstrap.css',
-    'static/bootstrap/css/bootstrap-theme.css',
     'static/ionicons/css/ionicons.css',
     'static/typeahead/typeahead.css',
     '++resource++bdajax/bdajax_bs3.css',
-    'static/styles.css'
+    # 'static/styles.css',
+    'static/style.css',
+    'static/light.css',
+    'static/dark.css',
+    #bootstrap icon font
+    'static/bootstrap-font/bootstrap-icons.css'
 ]
 
 # production
 # cfg.css.public = [
 #     'static/jqueryui/jquery-ui-1.10.3.custom.css',
 #     'static/bootstrap/css/bootstrap.min.css',
-#     'static/bootstrap/css/bootstrap-theme.min.css',
 #     'static/ionicons/css/ionicons.css',
 #     'static/typeahead/typeahead.css',
 #     '++resource++bdajax/bdajax_bs3.css',
@@ -79,9 +82,10 @@ cfg.merged.js = Properties()
 
 # development
 cfg.merged.js.public = [
-    (browser.static_resources, 'jquery-1.9.1.js'),
-    (browser.static_resources, 'jquery.migrate-1.2.1.js'),
+    (browser.static_resources, 'jquery-3.5.1.js'),
+    (browser.static_resources, 'jquery-migrate-3.3.2.js'),
     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
+    (browser.static_resources, 'popper/popper.js'),
     (browser.static_resources, 'bootstrap/js/bootstrap.js'),
     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
     (browser.static_resources, 'cookie_functions.js')
@@ -89,9 +93,10 @@ cfg.merged.js.public = [
 
 # production
 # cfg.merged.js.public = [
-#     (browser.static_resources, 'jquery-1.9.1.min.js'),
-#     (browser.static_resources, 'jquery.migrate-1.2.1.min.js'),
+#     (browser.static_resources, 'jquery-3.5.1.min.js'),
+#     (browser.static_resources, 'jquery-migrate-3.3.2.min.js'),
 #     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
+#     (browser.static_resources, 'popper/popper.min.js'),
 #     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
 #     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
 #     (browser.static_resources, 'cookie_functions.js')
@@ -144,7 +149,7 @@ class DefaultLayoutConfig(LayoutConfig):
         self.personaltools = True
         self.columns_fluid = False
         self.pathbar = True
-        self.sidebar_left = ['navtree']
+        self.sidebar_left = ['mainmenu'] #'navtree']
         self.sidebar_left_grid_width = 3
         self.content_grid_width = 9
 

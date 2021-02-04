@@ -6,12 +6,11 @@
  *     bdajax
  */
 
-if (typeof(window['yafowil']) == "undefined") yafowil = {};
+if (window.yafowil === undefined) yafowil = {};
 
 (function($) {
 
-    $(document).ready(function() {
-
+    $(function() {
         // initial binding
         cone.key_binder();
 
@@ -27,7 +26,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         bdajax.register(refbrowser.remove_reference_binder.bind(refbrowser));
     });
 
-    cone = {
+    $.extend(cone, {
 
         // object to store global flags
         flags: {},
@@ -203,7 +202,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         copysupportbinder: function(context) {
             new cone.CopySupport(context);
         }
-    };
+    });
 
     cone.CopySupport = function(context) {
         this.context = context;

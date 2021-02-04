@@ -1,0 +1,26 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <li id="personaltools"
+      class="dropdown list-group-item">
+
+    <a href="#"
+       class="dropdown-toggle"
+       data-toggle="dropdown">
+      <span tal:replace="context.user">Admin</span>
+      <span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu">
+
+      <tal:li repeat="item context.items">
+        <li>
+          <tal:action replace="structure item" />
+        </li>
+      </tal:li>
+
+    </ul>
+
+  </li>
+
+</tal:block>

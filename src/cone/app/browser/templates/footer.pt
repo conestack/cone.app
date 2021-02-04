@@ -1,15 +1,20 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-  <footer class="navbar-default navbar-fixed-bottom">
 
-    <div class="container">
-      <p>
-        Copyright (c) 2009-2020
-        <a href="http://www.bluedynamics.eu/">BlueDynamics Alliance</a>.
-      </p>
-    </div>
+    <footer class="footer footer-custom p-3 bg-transparent font-light mt-auto">
+      <div class="container-fluid text-center text-md-left">
+        <div class="row">
+            <!---copyright-->
+            <div class="footer-copyright">
+              © 2021 Copyright:<a href="https://r2solutions.at/"> r2Solutions</a>
+            </div>
+            <!---/copyright-->
+        </div>
+      </div>
+    </footer>
 
-  </footer>
 
 </tal:block>
+
+

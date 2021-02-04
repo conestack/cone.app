@@ -1,0 +1,256 @@
+/*light mode*/
+/*body background*/
+/*main menus*/
+/*secondary menus*/
+/*search bar*/
+/*font bright*/
+/*font light*/
+/*font medium*/
+/*font hover color*/
+/*
+-- scss color definitions --
+* document gets imported to light.scss and dark.scss
+* switch.js changes mode to light or dark by changing source file .css
+*/
+body {
+  background-color: #F5F5FA;
+}
+
+.btn-inf {
+  background-color: #5bc0de;
+  color: #ECF5FD;
+}
+
+/*start style.scss*/
+/*dropdown dark*/
+.dropdown-menu-custom {
+  /*change colors of dropdowns in sidebar&header - BS override*/
+  background-color: #ffffff;
+}
+.dropdown-menu-custom a {
+  color: #717176;
+  text-decoration: none;
+}
+.dropdown-menu-custom a:hover, .dropdown-menu-custom a:active {
+  color: #57575C;
+}
+
+/*end dropdown dark*/
+/*start content*/
+#content-wrapper .card {
+  background-color: #ffffff;
+  color: #717176;
+}
+
+/*start breadcrumb*/
+.breadcrumb h2 {
+  color: #57575C;
+  font-size: 1.2rem;
+  font-weight: semibold;
+}
+.breadcrumb a {
+  color: #717176;
+}
+.breadcrumb a:hover, .breadcrumb a:active {
+  color: #57575C;
+}
+.breadcrumb .breadcrumb-item.active {
+  color: #57575C;
+}
+
+/*end breadcrumb*/
+/*start footer*/
+.footer-custom {
+  border-top: 1px solid #717176;
+  color: #717176;
+}
+
+/*end footer*/
+/*end style.css*/
+/*start topnav.scss*/
+.topnav-custom {
+  background-color: #ffffff;
+}
+.topnav-custom .dropdown-menu-custom {
+  background-color: white;
+  border: 1px solid #EBEBF0;
+}
+.topnav-custom .dropdown-menu-custom > :first-child {
+  color: #717176;
+}
+.topnav-custom .apps-link:hover {
+  background-color: #FAFAFC;
+}
+
+a, label {
+  color: #717176;
+}
+
+a:hover {
+  color: #5bc0de;
+}
+
+.noti-badge-round {
+  background: red;
+  color: white;
+}
+
+.dropdown-menu-right {
+  /*language*/
+}
+.dropdown-menu-right > *:hover {
+  color: #57575C;
+}
+.dropdown-menu-right.item > :first-child {
+  color: #57575C;
+}
+
+/*start searchbar*/
+#topnav-searchbar input {
+  color: #57575C !important;
+  background-color: #F5F5FA !important;
+  border: 0;
+  border-radius: 4px 0 0 4px;
+}
+#topnav-searchbar #searchbar-button {
+  background-color: #5bc0de;
+  color: #ECF5FD;
+  border-radius: 0 4px 4px 0;
+}
+@media (min-width: 380px) and (max-width: 1038.9px) {
+  #topnav-searchbar #searchbar-button {
+    border-radius: 4px;
+  }
+  #topnav-searchbar #searchbar-button.clicked {
+    border-radius: 0 4px 4px 0;
+  }
+}
+
+/*end searchbar*/
+/*notifications*/
+#notifications .user-msg {
+  background-color: #F5F5FA;
+  border: 1px solid #ECF5FD;
+}
+#notifications .user-msg > i {
+  color: #57575C;
+}
+
+/*start navbar-brand (logo)*/
+.navbar-brand a {
+  color: #57575C;
+}
+
+/*end navbar-brand (logo)*/
+/*user-account*/
+.user-account {
+  color: #ECF5FD;
+  background-color: #FAFAFC;
+}
+.user-account a:hover, .user-account:active {
+  color: #57575C;
+}
+.user-account .profile-image {
+  background-color: #F5F5FA;
+  border: 1px solid #ECF5FD;
+}
+.user-account .profile-image > i {
+  color: #57575C;
+}
+.user-account .dropdown-menu-user a {
+  color: #717176;
+}
+.user-account .dropdown-menu-user a:hover {
+  color: #57575C;
+}
+
+/*end user-account*/
+/*end topnav.scss*/
+/*start sidebar.scss*/
+#sidebar_left {
+  background-color: #FAFAFC;
+}
+#sidebar_left li.active .dropdown > a {
+  color: #5bc0de;
+}
+#sidebar_left .sidebar-heading {
+  /*change headings (+hr on sm/md) in sidebar*/
+  color: #57575C;
+}
+#sidebar_left .help {
+  /*change font color of help*/
+  color: white;
+}
+
+/*start lg*/
+@media (min-width: 992px) {
+  #sidebar_left {
+    border-right: 1px solid #EBEBF0;
+  }
+
+  #sidebar_left .dropdown a:hover, a:active {
+    /*change hover clr on sidebar icons & a*/
+    color: #5bc0de;
+  }
+}
+/*end lg*/
+/*start md*/
+@media (min-width: 576px) and (max-width: 991.9px) {
+  #sidebar_left {
+    border-right: 1px solid #EBEBF0;
+    /*change color of icons on hover, keep clr in submenu*/
+  }
+  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown:active {
+    /*change color of dropout links*/
+    color: #5bc0de;
+  }
+  #sidebar_left ul > li:hover i, #sidebar_left:active i {
+    color: white;
+  }
+  #sidebar_left .sidebar-dropout {
+    background-color: #F5F5FA;
+  }
+  #sidebar_left .sidebar-dropout > :first-child > :first-child {
+    /*change dropout title*/
+    color: #ECF5FD;
+    background-color: #5bc0de;
+    font-weight: 400;
+  }
+  #sidebar_left .sidebar-heading hr {
+    /*change colour of hr on md*/
+    border-top: 1px solid rgba(87, 87, 92, 0.5);
+  }
+}
+/*end md*/
+/*start sm*/
+@media (max-width: 575.9px) {
+  .hamburgerMenu {
+    color: #717176;
+  }
+
+  #sidebar_left {
+    border: 1px solid #EBEBF0;
+    border-top: none;
+    /*change bgcolor of sidebar*/
+    background-color: #FAFAFC;
+  }
+  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown a:active {
+    /*change fontcolor of items in sidebar*/
+    color: #5bc0de;
+  }
+  #sidebar_left .list-group .list-group-item {
+    /*font color of submenu*/
+    color: #717176;
+  }
+  #sidebar_left .list-group .help {
+    color: white;
+  }
+  #sidebar_left .sidebar-heading hr {
+    /*change colour of hr on sm*/
+    border-top: 1px solid rgba(87, 87, 92, 0.2);
+  }
+}
+/*end sm*/
+/*end sidebar.scss*/
+
+/*# sourceMappingURL=light.css.map */
