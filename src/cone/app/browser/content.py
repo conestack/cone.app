@@ -2,15 +2,17 @@ from cone.app.browser import render_main_template
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.contextmenu import context_menu
 from cone.app.browser.utils import make_url
-from cone.tile import tile
 from cone.tile import register_tile
+from cone.tile import tile
 from zope.interface import Interface
 import sys
 
 
 class content_view_tile(tile):
-    """Extended tile decorator for registering content tiles. Additionally
-    registers a view with the same name as the tile traversable via browser URL.
+    """Extended tile decorator for registering content tiles.
+
+    Additionally registers a view with the same name as the tile traversable
+    via browser URL.
     """
 
     def create_content_view(self, ob):
@@ -18,7 +20,10 @@ class content_view_tile(tile):
             return render_main_template(model, request, contenttile=self.name)
 
         view_name = '{}_content_view'.format(self.name)
-        content_view.__doc__ = 'Dynamically created by content_view_tile'
+        content_view.__doc__ = (
+            'Dynamically created by '
+            'cone.app.browser.content.content_view_tile'
+        )
         content_view.__name__ = view_name
         content_view.__qualname__ = view_name
         content_view.__module__ = ob.__module__
@@ -60,8 +65,9 @@ class content_view_tile(tile):
 
 
 class ContentViewAction(LinkAction):
-    """View action for the contentviews group of the contextmenu. Gets created
-    by ``content_view_action`` decorator.
+    """View action for the contentviews group of the contextmenu.
+
+    Gets created by ``content_view_action`` decorator.
     """
 
     def __init__(self, name, interface=None,
@@ -92,8 +98,8 @@ class ContentViewAction(LinkAction):
 
 
 class content_view_action(object):
-    """Decorator providing a shortcut for creating a view action and registering
-    it in the contentviews group of the contextmenu.
+    """Decorator providing a shortcut for creating a view action and
+    registering in the contentviews group of the contextmenu.
     """
 
     def __init__(self, name, interface=None, permission=None,
@@ -112,3 +118,4 @@ class content_view_action(object):
             text=self.text,
             icon=self.icon
         )
+        return ob
