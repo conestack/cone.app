@@ -2,108 +2,106 @@
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
 
-  <ul class="list-group list-group-flush"
-      id="mainmenu"
-      ajax:bind="contextchanged"
-      ajax:action="mainmenu:#mainmenu:replace"
-      tal:define="config context.config">
 
-    <tal:item repeat="item context.menuitems">
+    <ul id="mainmenu"
+        class="navbar-nav"
+        ajax:bind="contextchanged"
+        ajax:action="mainmenu:#mainmenu:replace"
+        tal:define="config context.config">
+  
+      <tal:item repeat="item context.menuitems">
+  
+        <tal:comment replace="None">Main menu item as link</tal:comment>
+        <li tal:condition="not item['children']"
+            tal:define="css item['selected'] and 'active' or '';
+                        css css + 'nav-item topnav-element dropdown-submenu dropout-relative arrow-none';
+                        css ' '.join([css, 'node-%s' % item['id']]);"
+            tal:attributes="class css">
 
-      <tal:comment replace="None">Main menu item as link</tal:comment>
-      <li tal:condition="not item['children']"
-          tal:define="css item['selected'] and 'active' or '';
-                      css css + ' dropdown-submenu dropout-relative arrow-none';
-                      css ' '.join([css, 'node-%s' % item['id']]);"
-          tal:attributes="class css">
+            <div class="dropdown">
 
-        <div class="dropdown">
-
-          <a href="#submenu-${item['id']}"
-             class="list-group-item arrow-none pe-0"
-             ajax:bind="click"
-             ajax:target="${item['target']}"
-             ajax:event="contextchanged:#layout"
-             ajax:path="href">
-            <i class="${item['icon']|nothing}"></i>
-            <span class="sm-lg"
-                  tal:content="item['title'] | string:'&nbsp;'">
-              Title
-            </span>
-          </a>
-
-          <div class="dropdown-content"
-               id="submenu-${item['id']}">
-            <ul class="sidebar-dropout list-unstyled p-0">
-              <li>
-                <span class="list-group-item md"
-                      tal:content="item['title'] | string:'&nbsp;'">
-                  Title
-                </span>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </li>
-
-      <tal:comment replace="None">Main menu item as dropdown</tal:comment>
-      <li tal:condition="item['children']"
-          tal:define="css item['selected'] and 'active' or '';
-                      css css + ' dropdown-submenu dropout-relative list-true';
-                      css ' '.join([css, 'node-%s' % item['id']]);"
-          tal:attributes="class css">
-
-        <div class="dropdown">
-
-          <a href="#submenu-${item['id']}"
-             class="sm-lg list-group-item dropdown-toggle"
-             data-bs-toggle="collapse">
-            <i class="${item['icon']|nothing}"></i>
-            <span tal:content="item['title'] | string:'&nbsp;'">Title</span>
-          </a>
-
-          <a href="#submenu-${item['id']}"
-             class="md list-group-item pe-0 dropdown-toggle"
-             data-bs-toggle="collapse"
-             data-hover="dropdown">
-            <i class="${item['icon']|nothing}"></i>
-          </a>
-
-          <div class="dropdown-content collapse"
-               id="submenu-${item['id']}">
-            <ul class="sidebar-dropout list-unstyled">
-
-              <li>
-                <span class="list-group-item d-inline-block d-lg-none"
-                      tal:content="item['title'] | string:'&nbsp;'">
-                  Title
-                </span>
-              </li>
-
-              <tal:li repeat="child item['children']">
-                <li tal:define="css child['selected'] and 'list-group-item' or 'list-group-item';"
-                    tal:attributes="class css">
-                  <a href="${child['url']}"
-                     title="${child['description']}"
-                     tal:content="child['title'] | string:'&nbsp;'"
-                     ajax:bind="click"
-                     ajax:target="${child['target']}"
-                     ajax:event="contextchanged:#layout"
-                     ajax:path="href">
+            <a href="${item['url']}"
+               class="nav-link dropdown-toggle"
+               data-hover="dropdown"
+               title="${item['description']}"
+               ajax:bind="click"
+               ajax:target="${item['target']}"
+               ajax:event="contextchanged:#layout"
+               ajax:path="href"
+              >
+              <i class="${item['icon']|nothing}"></i>
+              <span tal:content="item['title'] | string:'&nbsp;'"
+                    class="d-none d-xl-inline-block">Title
+              </span>
+            </a>
+    
+            <div class="d-xl-none dropdown-menu dropdown-menu-end dropdown-menu-custom dropdown-content collapse"
+                 id="submenu-${item['id']}">
+    
+              <ul class="dropdown-old">
+                <li>
+                  <span tal:content="item['title'] | string:'&nbsp;'">
                     Title
-                  </a>
+                  </span>
                 </li>
-              </tal:li>
+              </ul>
+  
+            </div>
+          </div>
+  
+        </li>
+  
+        <tal:comment replace="None">Main menu item as dropdown</tal:comment>
+        <li tal:condition="item['children']"
+            tal:define="css item['selected'] and 'active' or '';
+                        css css + 'nav-item topnav-element dropdown-submenu dropout-relative list-true';
+                        css ' '.join([css, 'node-%s' % item['id']]);"
+            tal:attributes="class css">
 
-            </ul>
+          <div class="dropdown">
+
+            <a href="#submenu-${item['id']}"
+               class="nav-link dropdown-toggle"
+               data-hover="dropdown"
+              >
+              <i class="${item['icon']|nothing}"></i>
+              <span tal:content="item['title'] | string:'&nbsp;'"
+                    class="d-none d-xl-inline-block">Title
+              </span>
+            </a>
+    
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-custom dropdown-content collapse"
+                 id="submenu-${item['id']}">
+    
+              <ul class="dropdown-old">
+                <li>
+                  <span class="d-inline-block d-xl-none"
+                        tal:content="item['title'] | string:'&nbsp;'">
+                    Title
+                  </span>
+                </li>
+                <tal:li repeat="child item['children']">
+                  <li tal:define="css child['selected'] and 'active' or '';"
+                      tal:attributes="class css">
+                    <a href="${child['url']}"
+                       title="${child['description']}"
+                       ajax:bind="click"
+                       ajax:target="${child['target']}"
+                       ajax:event="contextchanged:#layout"
+                       ajax:path="href"
+                      ><i class="${child['icon']|nothing}"></i>
+                      <span tal:content="child['title'] | string:'&nbsp;'">Title</span></a>
+                  </li>
+                </tal:li>
+              </ul>
+  
+            </div>
           </div>
 
-        </div>
+        </li>
+  
+      </tal:item>
 
-      </li>
-    </tal:item>
-
-  </ul>
+    </ul>
 
 </tal:mainmenu>

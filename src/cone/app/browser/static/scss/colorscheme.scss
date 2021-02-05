@@ -62,6 +62,19 @@ body {
 /*end style.css*/
   
 /*start topnav.scss*/
+
+
+/*topnav old*/
+
+#mainmenu .dropdown-menu {
+    a:hover {
+      color:$info;
+    }
+  }
+
+/*end topnav old*/
+
+
     .topnav-custom {
       background-color: $menu;
       .dropdown-menu-custom {
@@ -73,6 +86,7 @@ body {
       }
       .apps-link:hover {
         background-color: $menus;
+        color:$flight;
       }
     }
     a, label {

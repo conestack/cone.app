@@ -1,5 +1,60 @@
 /* -- styles of topnav header -- */
 /*searchbar*/
+#topnav-container {
+  /*topnav old styles*/
+  /*end topnav old styles*/
+}
+#topnav-container > * {
+  display: inline-block;
+}
+#topnav-container #user-account-old {
+  min-width: 10rem;
+  position: absolute;
+  right: 0;
+}
+#topnav-container #user-account-old .dropdown-menu-user {
+  min-width: 10rem;
+  top: 2rem !important;
+}
+#topnav-container #user-account-old .nav-link {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  padding-top: 0;
+}
+#topnav-container #user-account-old .nav-link > * {
+  top: 0.75rem;
+}
+#topnav-container #mainmenu {
+  margin-right: 2rem;
+}
+#topnav-container #mainmenu .dropdown-old {
+  padding-left: 0;
+}
+#topnav-container #mainmenu .dropdown-old > :first-child {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  background-color: transparent;
+  border: 0;
+}
+#topnav-container #mainmenu .dropdown-old > :only-child {
+  margin-bottom: 0;
+}
+#topnav-container #mainmenu .dropdown-old li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+#topnav-container #mainmenu .dropdown-menu {
+  min-width: 10rem;
+}
+#topnav-container #mainmenu .dropdown:hover .dropdown-content {
+  display: block;
+}
+#topnav-container #mainmenu .dropdown .dropdown-content {
+  display: none;
+  z-index: 1;
+  margin-top: 0;
+}
+
 #topnav-searchbar {
   display: inline-block;
   height: 2.2rem;
@@ -152,7 +207,7 @@
   padding-top: 1rem;
   margin: 0;
   border-radius: 5%;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 .topnav-custom .dropdown-menu-end > * .col .apps-link img {
   width: 1.5rem;
@@ -496,6 +551,7 @@
     width: 20rem;
     min-height: 0;
     height: min-content;
+    width: 100%;
     z-index: 1000;
     box-shadow: 1rem 1rem 1rem -1rem rgba(0, 0, 0, 0.15);
     border-radius: 0 0 2% 2%;
@@ -551,12 +607,13 @@
   right: 20px;
   transform: translateY(-50%);
 }
-#sidebar_left .arrow-none .dropdown-toggle::after {
-  content: none;
-}
 
 /*end page-content-wrapper*/
 /*end sidebar*/
+.arrow-none .dropdown-toggle::after {
+  content: none;
+}
+
 /*use external scss files*/
 body {
   margin: 0;

@@ -9,11 +9,27 @@
        tal:define="config context.config">
 
     <nav class="topnav navbar-expand topnav-custom">
-      <div class="container-fluid pe-0">
+      <div class="container-fluid p-0" id="topnav-container">
 
         <div class="navbar-brand d-none d-sm-inline-block">
           <tal:logo replace="structure tile('logo')" />
         </div>
+
+        <tal:version_old condition="True">
+          <tal:mainmenu
+            condition="config.mainmenu"
+            replace="structure tile('mainmenu')" />
+          <tal:livesearch
+            condition="config.livesearch"
+            replace="structure tile('livesearch')" />
+          <div class="nav-item user-account ms-3 user-account-old"
+               id="user-account-old"
+               tal:define="config context.config">
+            <tal:personaltools condition="config.personaltools"
+                               replace="structure tile('personaltools')" />
+          </div>
+          
+        </tal:version_old>
 
         <div class="p-3 font-light d-inline-block d-sm-none" id="mobile-menu">
           <button id="hamburger-menu-toggle" class="hamburgerMenu">
@@ -23,11 +39,15 @@
           </button>
         </div>
 
-        <tal:livesearch
-          condition="config.livesearch"
-          replace="structure tile('livesearch')" />
+        <tal:version_new condition="False">
+          <tal:livesearch
+            condition="config.livesearch"
+            replace="structure tile('livesearch')" />
 
-        <tal:toolbar_top replace="structure tile('toolbar_top')" />
+          <tal:toolbar_top
+            condition="True"
+            replace="structure tile('toolbar_top')" />
+        </tal:version_new>
 
       </div>
     </nav>

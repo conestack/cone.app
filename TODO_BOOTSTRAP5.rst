@@ -6,14 +6,19 @@ TODO
 [X] - toolbar_top tile, add
 [ ] - navtree -> insert markup (tehut.eu)
 [ ] - mainmenu -> navtree
+[ ] - old layout - migrate to bs5 (grid system)
 
 javascript
 ----------
 
 [X] - cone.ThemeSwitcher to change light/dark mode (public.js), added
 [ ] - responsive searchbar script (public.js), added - need to modify
-[X] - searchbar better supports mobile 
+[X] - searchbar better supports mobile - moved to dropdown on < 380px
 [ ] - modify searchbar to adapt responsively on window resize
+[ ] - update deprecated javascript in private.js
+[X] - now supports screen dimensions from 330px and up
+[X] - implement popper.js
+[ ] - hamburger menu: main menu instead of sidebar / rename to mobile menu
 
 styles
 ------
@@ -27,10 +32,11 @@ styles
 [X] - implement default user image styles
 [X] - optimize searchbar styles
 [ ] - fix breadcrumb display in pathbar.pt
-[ ] - add webfont 'Inter' (https://fonts.google.com/specimen/Inter?preview.text_type=custom)
-[ ] - mobile menu: full width
-[ ] - topnav wrapper padding - remove
-
+[X] - mobile menu: full width
+[X] - topnav wrapper padding - remove
+[ ] - implement bs5 in old layout:
+      [X] - add basic support for md&lg screen sizes;
+      [ ] - add support for sm screen size
 
 icons
 -----

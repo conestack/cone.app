@@ -2,7 +2,7 @@
                  xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
                  omit-tag="True">
 
-  <div id="topnav-right">
+  <div id="topnav-right" class="topnav-nav">
     <ul class="navbar-nav">
 
       <li class="nav-item topnav-element">
