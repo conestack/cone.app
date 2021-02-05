@@ -1,8 +1,14 @@
 Changes
 =======
 
-1.0rc4 (unreleased)
+1.0 (unreleased)
 -------------------
+
+- Introduce ``cone.app.browser.content.content_view_tile`` decorator.
+  [rnix, 2021-02-05]
+
+- Introduce ``cone.app.browser.content.content_view_action`` decorator.
+  [rnix, 2021-02-05]
 
 - Introduce ``cone.app.browser.layout.personal_tools_action`` decorator.
   [rnix, 2021-02-04]
