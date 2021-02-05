@@ -221,6 +221,7 @@
       width:20rem;
       min-height:0;
       height:min-content;
+      width: 100%;
       z-index:1000;
       box-shadow:1rem 1rem 1rem -1rem rgb(0, 0, 0, .15);
       border-radius: 0 0 2% 2%;
@@ -292,12 +293,13 @@
         transform: translateY(-50%);
       }
     }
-  
-    .arrow-none .dropdown-toggle::after {
-      content: none;
-    }
   }
 
   /*end page-content-wrapper*/
   
   /*end sidebar*/
+
+
+  .arrow-none .dropdown-toggle::after {
+    content: none;
+  }

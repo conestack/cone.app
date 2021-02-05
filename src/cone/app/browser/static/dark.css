@@ -60,6 +60,12 @@ body {
 /*end footer*/
 /*end style.css*/
 /*start topnav.scss*/
+/*topnav old*/
+#mainmenu .dropdown-menu a:hover {
+  color: #5bc0de;
+}
+
+/*end topnav old*/
 .topnav-custom {
   background-color: #434348;
 }
@@ -72,6 +78,7 @@ body {
 }
 .topnav-custom .apps-link:hover {
   background-color: #38383D;
+  color: #E6E6EB;
 }
 
 a, label {

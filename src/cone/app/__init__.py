@@ -149,7 +149,7 @@ class DefaultLayoutConfig(LayoutConfig):
         self.personaltools = True
         self.columns_fluid = False
         self.pathbar = True
-        self.sidebar_left = ['mainmenu'] #'navtree']
+        self.sidebar_left = [] # ['navtree']
         self.sidebar_left_grid_width = 3
         self.content_grid_width = 9
 

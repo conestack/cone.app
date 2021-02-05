@@ -1,6 +1,68 @@
 /* -- styles of topnav header -- */
 
 /*searchbar*/
+#topnav-container {
+  > * {
+    display:inline-block;
+  }
+
+  /*topnav old styles*/
+
+#user-account-old {
+  min-width:10rem;
+  position: absolute;
+  right:0;
+  .dropdown-menu-user {
+    min-width:10rem;
+    top:2rem!important;
+  }
+  .nav-link {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-top:0;
+    > * {
+      top:.75rem;
+    }
+  }
+}
+
+#mainmenu {
+  margin-right:2rem;
+  .dropdown-old {
+    padding-left:0;
+    > :first-child {
+      margin-bottom:1rem;
+      font-weight:bold;
+      background-color:transparent;
+      border:0;
+    }
+    > :only-child {
+      margin-bottom:0;
+    }
+    li {
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+  }
+  .dropdown-menu {
+    min-width:10rem;
+  }
+  .dropdown {
+    &:hover .dropdown-content {
+      display: block;
+    }
+    .dropdown-content {
+      display: none;
+      z-index: 1;
+      margin-top:0;
+    }
+    
+  }
+}
+
+  /*end topnav old styles*/
+}
+
 #topnav-searchbar {
   display: inline-block;
   height:2.2rem;
@@ -51,7 +113,6 @@
 }
 /*end searchbar*/
 
-
 .noti-badge-round {
   /*badge for notifications with number*/
   position: relative;
@@ -91,9 +152,9 @@
   }
 
   .dropdown-menu-end {
-  margin-top:.75rem;
-  padding:1rem 2rem;
-  box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
+    margin-top:.75rem;
+    padding:1rem 2rem;
+    box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
 
   /*language*/
   &#language {
@@ -162,7 +223,7 @@
         padding-top:1rem;
         margin:0;
         border-radius:5%;
-        transition:0.3s;
+        transition: 0.2s;
 
         img {
           width: 1.5rem;
