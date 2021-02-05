@@ -1,9 +1,10 @@
 from cone.app import model
 from cone.app.security import authenticate
-from cone.tile.tests import DummyVenusian
 from contextlib import contextmanager
 from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
+from pyramid.tests.test_view import DummyVenusianContext
+from pyramid.tests.test_view import DummyVenusianInfo
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 from zope.configuration.xmlconfig import XMLConfig
@@ -29,6 +30,20 @@ class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
     @property
     def is_xhr(self):
         return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+
+class DummyVenusian(object):
+
+    def __init__(self):
+        self.attachments = []
+
+    def attach(self, wrapped, callback, category=None, depth=1):
+        self.attachments.append((wrapped, callback))
+        return DummyVenusianInfo()
+
+    def call_attachemnts(self):
+        for wrapped, callback in self.attachments:
+            callback(DummyVenusianContext(), None, wrapped)
 
 
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
@@ -115,10 +130,12 @@ class Security(object):
 
     @contextmanager
     def hook_tile_reg(self):
+        venusian_ = DummyVenusian()
         try:
-            cone.tile.tile.venusian = DummyVenusian()
+            cone.tile.tile.venusian = venusian_
             yield
         finally:
+            venusian_.call_attachemnts()
             cone.tile.tile.venusian = venusian
 
     def make_app(self, **kw):

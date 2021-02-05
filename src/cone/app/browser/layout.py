@@ -105,6 +105,23 @@ class Layout(LayoutConfigTile):
         return get_action_context(self.request).scope
 
 
+# personal tools action registry
+personal_tools = odict()
+
+
+class personal_tools_action(object):
+    """Decorator defining a personaltools dropdown item.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self, factory):
+        personal_tools[self.name] = factory()
+        return factory
+
+
+@personal_tools_action(name='settings')
 class ViewSettingsAction(LinkAction):
     text = _('settings', default='Settings')
     icon = 'ion-ios7-gear'
@@ -134,6 +151,7 @@ class ViewSettingsAction(LinkAction):
         return True
 
 
+@personal_tools_action(name='logout')
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
     icon = 'ion-log-out'
@@ -148,11 +166,6 @@ class LogoutAction(LinkAction):
     @property
     def path(self):
         return '/'
-
-
-personal_tools = odict()
-personal_tools['settings'] = ViewSettingsAction()
-personal_tools['logout'] = LogoutAction()
 
 
 @tile(name='personaltools',

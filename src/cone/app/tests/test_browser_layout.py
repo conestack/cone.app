@@ -2,8 +2,11 @@ from cone.app import DefaultLayoutConfig
 from cone.app import layout_config
 from cone.app import testing
 from cone.app.browser import render_main_template
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.layout import LayoutConfigTile
 from cone.app.browser.layout import NavTree
+from cone.app.browser.layout import personal_tools
+from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.interfaces import ILayoutConfig
 from cone.app.model import AppRoot
@@ -372,6 +375,16 @@ class TestBrowserLayout(TileTestCase):
 
         with self.layer.authenticated('manager'):
             self.assertEqual(len(navtree.navtree()['children']), 2)
+
+    def test_personal_tools_action(self):
+        @personal_tools_action(name='testaction')
+        class TestAction(LinkAction):
+            pass
+
+        self.assertTrue('testaction' in personal_tools)
+        self.assertIsInstance(personal_tools['testaction'], TestAction)
+
+        del personal_tools['testaction']
 
     def test_personaltools(self):
         root = BaseNode()

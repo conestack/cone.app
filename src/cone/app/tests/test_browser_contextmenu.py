@@ -2,6 +2,9 @@ from cone.app import testing
 from cone.app.browser.actions import Action
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.contextmenu import context_menu
+from cone.app.browser.contextmenu import context_menu_group
+from cone.app.browser.contextmenu import context_menu_item
 from cone.app.browser.contextmenu import ContextMenuDropdown
 from cone.app.browser.contextmenu import ContextMenuToolbar
 from cone.app.model import BaseNode
@@ -94,6 +97,23 @@ class TestBrowserContextmenu(TileTestCase):
         request = self.layer.new_request()
         res = cmd(model, request)
         self.assertTrue(res.find('<li class="dropdown">') > -1)
+
+    def test_context_menu_decorators(self):
+        @context_menu_group(name='testgroup')
+        class TestContextMenuGroup(ContextMenuToolbar):
+            pass
+
+        self.assertTrue('testgroup' in context_menu)
+        self.assertIsInstance(context_menu['testgroup'], TestContextMenuGroup)
+
+        @context_menu_item(group='testgroup', name='testaction')
+        class TestAction(LinkAction):
+            pass
+
+        self.assertTrue('testaction' in context_menu['testgroup'])
+        self.assertIsInstance(context_menu['testgroup']['testaction'], TestAction)
+
+        del context_menu['testgroup']
 
     def test_contextmenu(self):
         with self.layer.authenticated('manager'):
