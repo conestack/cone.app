@@ -1,33 +1,61 @@
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import LinkAction
-from cone.app.browser.context_menu import context_menu
+from cone.app.browser.contextmenu import context_menu
 from cone.app.browser.utils import make_url
 from cone.tile import tile
-from zope.interface import Interface
+from cone.tile import register_tile
 from pyramid.view import view_config
+from zope.interface import Interface
+import sys
 
 
-class content_tile(tile):
+class content_view_tile(tile):
     """Extended tile decorator for registering content tiles. Additionally
     registers a view with the same name as the tile traversable via browser URL.
     """
 
-    def __call__(self, ob):
-        super(content_tile, self).__call__(ob)
-        name = self.name
-
+    def create_content_view(self, ob):
         def content_view(model, request):
-            return render_main_template(model, request, name)
+            import pdb;pdb.set_trace()
+            return render_main_template(model, request, self.name)
 
-        view_name = '{}_content_view'.format(name)
+        view_name = '{}_content_view'.format(self.name)
         content_view.__name__ = view_name
-        module = ob.__module__
+
+        from cone.app.browser import content as module
+        # module = sys.modules[ob.__module__]
         setattr(module, view_name, content_view)
-        view_config(
-            name=name,
-            context=self.interface,
-            permission=self.permission
-        )(content_view)
+
+        kw = dict(name=self.name)
+        if self.interface is not None:
+            kw['interface'] = self.interface
+        if self.permission is not None:
+            kw['permission'] = self.permission
+
+        def callback(context, name, ob_):
+            config = context.config.with_package(info.module)
+            config.add_view(view=ob_, **kw)
+        info = self.venusian.attach(
+            content_view, callback, category='pyramid', depth=1
+        )
+
+    def __call__(self, ob):
+        self.create_content_view(ob)
+
+        self_ = self
+
+        def callback(context, name, ob_):
+            register_tile(
+                name=self_.name,
+                path=self_.path,
+                attribute=self_.attribute,
+                interface=self_.interface,
+                class_=ob_,
+                permission=self_.permission,
+                strict=self_.strict
+            )
+        self.venusian.attach(ob, callback, category='pyramid', depth=1)
+        return ob
 
 
 class ContentViewAction(LinkAction):

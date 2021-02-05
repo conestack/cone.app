@@ -13,13 +13,14 @@ from pyramid.i18n import TranslationStringFactory
 from pyramid.view import view_config
 from yafowil.base import factory
 import logging
+from cone.app.browser.content import content_view_tile
 
 
 logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
 
 
-@tile(name='sharing',
+@content_view_tile(name='sharing',
       path='templates/sharing.pt',
       permission='manage_permissions')
 @plumbing(RelatedViewProvider)
@@ -29,11 +30,11 @@ class SharingTile(Tile):
     related_view = 'sharing'
 
 
-@view_config(name='sharing', permission='manage_permissions')
-def sharing(model, request):
-    """Sharing view.
-    """
-    return render_main_template(model, request, 'sharing')
+#@view_config(name='sharing', permission='manage_permissions')
+#def sharing(model, request):
+#    """Sharing view.
+#    """
+#    return render_main_template(model, request, 'sharing')
 
 
 @tile(name='local_acl',
