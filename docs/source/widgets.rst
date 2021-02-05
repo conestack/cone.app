@@ -412,6 +412,53 @@ on node, a tile named ``insufficient_privileges`` is rendered.
         def render(self):
             return '<div>Example Plugin Content</div>'
 
+Often it's desired to render different "Content views" on the same application
+node. Therefor an extended tile decorator exists at
+``cone.app.browser.content.content_view_tile``. In addition to the tile it
+also registers a pyramid view by the same name which is traversable via
+browser URL:
+
+.. code-block:: python
+
+    from cone.app.browser.content import content_view_tile
+    from cone.example.model import ExamplePlugin
+    from cone.tile import Tile
+
+    @content_view_tile(
+        name='details',
+        interface=ExamplePlugin,
+        permission='view')
+    class DetailsContentTile(Tile):
+        """For this class a pyramid view is registered which is reachable
+        under 'http://domain.com/path/to/node/details'. This view renders
+        the main template with the ``details`` tile as page content.
+        """
+
+Furthermore it's possible to register a view action for the contextmenu's
+'contentviews' group by applying ``content_view_action`` decorator:
+
+.. code-block:: python
+
+    from cone.app.browser.content import content_view_action
+    from cone.app.browser.content import content_view_tile
+    from cone.example.model import ExamplePlugin
+    from cone.tile import Tile
+
+    @content_view_tile(
+        name='details',
+        interface=ExamplePlugin,
+        permission='view')
+    @content_view_action(
+        name='details_view_action',
+        tilename='details',
+        interface=ExamplePlugin,
+        permission='view')
+    class DetailsContentTile(Tile):
+        """For this class a pyramid view is registered which is reachable
+        under 'http://domain.com/path/to/node/details'. This view renders
+        the main template with the ``details`` tile as page content.
+        """
+
 
 Model structure related
 =======================

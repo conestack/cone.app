@@ -51,6 +51,7 @@ class TestBrowserLayout(TileTestCase):
 
         @content_view_action(
             name='model_action',
+            tilename='model_tile',
             interface=Model,
             permission='view',
             text='Model Action',
@@ -62,7 +63,7 @@ class TestBrowserLayout(TileTestCase):
 
         action = context_menu['contentviews']['model_action']
         self.assertIsInstance(action, ContentViewAction)
-        self.assertEqual(action.name, 'model_action')
+        self.assertEqual(action.name, 'model_tile')
         self.assertEqual(action.interface, Model)
         self.assertEqual(action.permission, 'view')
         self.assertEqual(action.text, 'Model Action')

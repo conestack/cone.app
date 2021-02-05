@@ -95,10 +95,7 @@ class ContentViewAction(LinkAction):
 
     @property
     def href(self):
-        return '{}/{}'.format(
-            make_url(self.request, node=self.model),
-            self.name
-        )
+        return make_url(self.request, node=self.model, resource=self.name)
 
 
 class content_view_action(object):
@@ -106,9 +103,10 @@ class content_view_action(object):
     registering in the contentviews group of the contextmenu.
     """
 
-    def __init__(self, name, interface=None, permission=None,
-                 text=None, icon=None):
+    def __init__(self, name, tilename=None, interface=None,
+                 permission=None, text=None, icon=None):
         self.name = name
+        self.tilename = tilename if tilename is not None else name
         self.interface = interface
         self.permission = permission
         self.text = text
@@ -116,7 +114,7 @@ class content_view_action(object):
 
     def __call__(self, ob):
         context_menu['contentviews'][self.name] = ContentViewAction(
-            name=self.name,
+            name=self.tilename,
             interface=self.interface,
             permission=self.permission,
             text=self.text,
