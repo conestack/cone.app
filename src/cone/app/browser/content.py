@@ -80,10 +80,14 @@ class ContentViewAction(LinkAction):
 
     @property
     def display(self):
-        permitted = self.permitted(self.permission)
-        if issubclass(Interface):
-            return self.interface.providedBy(self.model) and permitted
-        return isinstance(self.model, self.interface) and permitted
+        permitted = True
+        if self.permission:
+            permitted = self.permitted(self.permission)
+        if self.interface:
+            if issubclass(self.interface, Interface):
+                return self.interface.providedBy(self.model) and permitted
+            return isinstance(self.model, self.interface) and permitted
+        return permitted
 
     @property
     def selected(self):
