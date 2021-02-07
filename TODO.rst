@@ -23,7 +23,7 @@ Docs
 Roadmap
 =======
 
-1.0
+1.1
 ---
 
 [ ] Check ``title`` of transition names before using ``name`` in workflow
@@ -35,9 +35,6 @@ Roadmap
 
 [ ] Fix ACL registry lookup. First check by cls and node info name, then by
     class only and finally return default.
-
-1.1
----
 
 [ ] CopySupport is used both for marking containers supporting cut/copy/paste
     and objects being copyable. Make dedicated interface/mechanism for marking
