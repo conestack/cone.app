@@ -452,7 +452,7 @@ Furthermore it's possible to register a view action for the contextmenu's
         name='details_view_action',
         tilename='details',
         interface=ExamplePlugin,
-        permission='view'
+        permission='view',
         text='Details',
         icon='glyphicons glyphicons-magic')
     class DetailsContentTile(Tile):
