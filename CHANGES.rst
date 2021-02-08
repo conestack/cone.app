@@ -1,8 +1,14 @@
 Changes
 =======
 
-1.0 (unreleased)
--------------------
+1.0.1 (unreleased)
+------------------
+
+- No changes yet.
+
+
+1.0 (2021-02-07)
+----------------
 
 - Introduce ``cone.app.browser.content.content_view_tile`` decorator.
   [rnix, 2021-02-05]
