@@ -3,7 +3,7 @@
                  omit-tag="True">
 
   <div id="topnav-right" class="topnav-nav">
-    <ul class="navbar-nav">
+    <ul class="navbar-nav list-unstyled">
 
       <li class="nav-item topnav-element">
 
@@ -12,23 +12,27 @@
         </a>
 
         <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="language">
+          
           <span>Language</span>
-
-            <a href="#">
+          <ul class="list-unstyled">
+          <li><a href="#">
               <img src="static/images/flags/fr.svg" height="15em">
               <p class="d-none d-md-inline-block">French</p>
             </a>
+          </li>
 
-            <a href="#">
+          <li><a href="#">
               <img src="static/images/flags/de.svg" height="15em">
               <p class="d-none d-md-inline-block">German</p>
             </a>
+          </li>
 
-            <a href="#">
+          <li><a href="#">
               <img src="static/images/flags/it.svg" height="15em">
               <p class="d-none d-md-inline-block">Italian</p>
             </a>
-
+          </li>
+          </ul>
         </div>
 
       </li>
@@ -82,7 +86,7 @@
           <i class="bi-grid-3x3-gap-fill"></i>
         </a>
 
-        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom">
+        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="apps">
           <span>Apps</span>
           <div class="row">
 
@@ -154,7 +158,7 @@
           <i class="bi-gear-fill"></i>
         </a>
 
-        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom">
+        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="settings">
           <span>Settings</span>
 
             <div class="form-check form-switch">

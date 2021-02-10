@@ -12,13 +12,17 @@ javascript
 ----------
 
 [X] - cone.ThemeSwitcher to change light/dark mode (public.js), added
-[ ] - responsive searchbar script (public.js), added - need to modify
 [X] - searchbar better supports mobile - moved to dropdown on < 380px
-[ ] - modify searchbar to adapt responsively on window resize
 [ ] - update deprecated javascript in private.js
-[X] - now supports screen dimensions from 330px and up
+[X] - now supports screen dimensions from 330px and up - new layout
 [X] - implement popper.js
-[ ] - hamburger menu: main menu instead of sidebar / rename to mobile menu
+[ ] - hamburger menu: main menu instead of sidebar / [X] - rename to mobile menu
+[ ] - change searchbar script to class; add cases for resize;
+      - if there is not enough space for searchbar, collapse searchbar 
+        -> expand on click, fade out other elements
+      + if there is not enough space for mainmenu texts, collapse elements to icons
+      + if there is not enough space for either mainmenu icons or searchbar, 
+          move content to mobile menu
 
 styles
 ------
@@ -31,12 +35,16 @@ styles
 [X] - rename 'dropdown-menu-dark' in layout.pt to 'dropdown-menu-custom'
 [X] - implement default user image styles
 [X] - optimize searchbar styles
-[ ] - fix breadcrumb display in pathbar.pt
 [X] - mobile menu: full width
 [X] - topnav wrapper padding - remove
 [ ] - implement bs5 in old layout:
       [X] - add basic support for md&lg screen sizes;
       [ ] - add support for sm screen size
+[ ] - fix breadcrumb display in pathbar.pt
+[ ] - remove mainmenu in sidebar - move to topbar
+[ ] - add navtree in sidebar - display md on hover:
+      - current branch: first level & sublevels
+      - non-current branch: first level
 
 icons
 -----

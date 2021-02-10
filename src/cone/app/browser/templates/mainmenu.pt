@@ -2,9 +2,9 @@
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
 
-
+<div id="main-menu">
     <ul id="mainmenu"
-        class="navbar-nav"
+        class="navbar-nav list-unstyled"
         ajax:bind="contextchanged"
         ajax:action="mainmenu:#mainmenu:replace"
         tal:define="config context.config">
@@ -35,10 +35,10 @@
               </span>
             </a>
     
-            <div class="d-xl-none dropdown-menu dropdown-menu-end dropdown-menu-custom dropdown-content collapse"
+            <div class="d-xl-none dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content collapse"
                  id="submenu-${item['id']}">
     
-              <ul class="dropdown-old">
+              <ul class="mainmenu-dropdown list-unstyled">
                 <li>
                   <span tal:content="item['title'] | string:'&nbsp;'">
                     Title
@@ -70,10 +70,10 @@
               </span>
             </a>
     
-            <div class="dropdown-menu dropdown-menu-end dropdown-menu-custom dropdown-content collapse"
+            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content collapse"
                  id="submenu-${item['id']}">
     
-              <ul class="dropdown-old">
+              <ul class="mainmenu-dropdown list-unstyled">
                 <li>
                   <span class="d-inline-block d-xl-none"
                         tal:content="item['title'] | string:'&nbsp;'">
@@ -103,5 +103,6 @@
       </tal:item>
 
     </ul>
+</div>
 
 </tal:mainmenu>

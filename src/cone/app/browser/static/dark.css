@@ -13,6 +13,12 @@ body {
   color: #ECF5FD;
 }
 
+/*mainmenu.scss*/
+#mainmenu .mainmenu-dropdown > :first-child {
+  background-color: #5bc0de;
+  color: white;
+}
+
 /*start style.scss*/
 /*dropdown dark*/
 .dropdown-menu-custom {

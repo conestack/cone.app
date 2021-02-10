@@ -13,6 +13,15 @@ body {
   color:$fbright;
 }
 
+/*mainmenu.scss*/
+#mainmenu {
+  .mainmenu-dropdown > :first-child {
+    background-color:$info;
+    color:white;
+  }
+}
+
+
 /*start style.scss*/
     /*dropdown dark*/
       .dropdown-menu-custom {
