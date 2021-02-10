@@ -1,64 +1,39 @@
 /* -- styles of topnav header -- */
-/*searchbar*/
-#topnav-container {
-  /*topnav old styles*/
-  /*end topnav old styles*/
-}
 #topnav-container > * {
   display: inline-block;
-}
-#topnav-container #user-account-old {
-  min-width: 10rem;
-  position: absolute;
-  right: 0;
-}
-#topnav-container #user-account-old .dropdown-menu-user {
-  min-width: 10rem;
-  top: 2rem !important;
-}
-#topnav-container #user-account-old .nav-link {
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
-  padding-top: 0;
-}
-#topnav-container #user-account-old .nav-link > * {
-  top: 0.75rem;
-}
-#topnav-container #mainmenu {
-  margin-right: 2rem;
-}
-#topnav-container #mainmenu .dropdown-old {
-  padding-left: 0;
-}
-#topnav-container #mainmenu .dropdown-old > :first-child {
-  margin-bottom: 1rem;
-  font-weight: bold;
-  background-color: transparent;
-  border: 0;
-}
-#topnav-container #mainmenu .dropdown-old > :only-child {
-  margin-bottom: 0;
-}
-#topnav-container #mainmenu .dropdown-old li {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-#topnav-container #mainmenu .dropdown-menu {
-  min-width: 10rem;
-}
-#topnav-container #mainmenu .dropdown:hover .dropdown-content {
-  display: block;
-}
-#topnav-container #mainmenu .dropdown .dropdown-content {
-  display: none;
-  z-index: 1;
-  margin-top: 0;
+  position: relative;
 }
 
+.topnav-custom {
+  height: 4.2rem;
+  box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
+}
+.topnav-custom div {
+  height: inherit;
+}
+.topnav-custom a, .topnav-custom label {
+  text-decoration: none;
+}
+.topnav-custom a:hover {
+  text-decoration: none;
+  transition: 0.5s;
+}
+.topnav-custom .topnav-element {
+  display: inline-block;
+  padding-top: 0.75rem;
+}
+.topnav-custom .dropdown-menu-start, .topnav-custom .dropdown-menu-end {
+  margin-top: 0.75rem;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
+}
+
+/*searchbar*/
 #topnav-searchbar {
   display: inline-block;
   height: 2.2rem;
   font-size: 0.95em;
+  z-index: 1000;
 }
 #topnav-searchbar .form-control:focus {
   outline: 0;
@@ -103,205 +78,95 @@
 }
 
 /*end searchbar*/
-.noti-badge-round {
-  /*badge for notifications with number*/
-  position: relative;
-  top: -2.8rem;
-  left: 50%;
-  font-size: 10px;
-  border-radius: 50% !important;
-  width: 1rem;
-  height: 1rem !important;
-  padding: 2px 0px;
-}
-.noti-badge-round span {
-  pointer-events: none;
-  letter-spacing: -2px;
-}
-
-.topnav-custom {
-  height: 4.2rem;
-  box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
-  /*end apps*/
-  /*settings*/
-  /*mode switch*/
-  /*end settings*/
-  /*user-account*/
-}
-.topnav-custom div {
-  height: inherit;
-}
-.topnav-custom a, .topnav-custom label {
-  text-decoration: none;
-}
-.topnav-custom a:hover {
-  text-decoration: none;
-  transition: 0.5s;
-}
-.topnav-custom .topnav-element {
-  display: inline-block;
-  padding-top: 0.75rem;
-}
-.topnav-custom .dropdown-menu-end {
-  margin-top: 0.75rem;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
-  /*language*/
-  /*notifications*/
-  /*end notifications*/
-  /*apps*/
-}
-.topnav-custom .dropdown-menu-end#language img {
-  margin-right: 0.5rem;
-}
-.topnav-custom .dropdown-menu-end#notifications {
-  width: 20rem;
-  height: content;
-}
-.topnav-custom .dropdown-menu-end#notifications .user-msg {
-  display: flex;
-  position: absolute;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  margin-right: 1rem;
-  margin-top: 0.3rem;
-  box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
-}
-.topnav-custom .dropdown-menu-end#notifications .user-msg > i {
-  position: relative;
-  margin: auto;
-  font-size: 1rem;
-}
-.topnav-custom .dropdown-menu-end#notifications .user-msg img {
-  width: 2.5em;
-  height: 2.5em;
-}
-.topnav-custom .dropdown-menu-end#notifications .message {
-  position: relative;
-  left: 3rem;
-}
-.topnav-custom .dropdown-menu-end#notifications > a .message * {
-  display: block;
-}
-.topnav-custom .dropdown-menu-end#notifications > a .message > :last-child {
-  font-size: 0.7rem;
-}
-.topnav-custom .dropdown-menu-end > * {
-  display: block;
-}
-.topnav-custom .dropdown-menu-end > *:hover {
-  transition: 0.5s;
-}
-.topnav-custom .dropdown-menu-end > * .col {
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  width: 5rem;
-  height: 5rem;
-  margin-bottom: 0.3rem;
-}
-.topnav-custom .dropdown-menu-end > * .col .apps-link {
-  height: 5rem;
-  width: 5rem;
-  padding-top: 1rem;
-  margin: 0;
-  border-radius: 5%;
-  transition: 0.2s;
-}
-.topnav-custom .dropdown-menu-end > * .col .apps-link img {
-  width: 1.5rem;
-  height: 1.5rem;
-  display: block;
-  margin: auto;
-  margin-bottom: 0.75rem;
-}
-.topnav-custom .dropdown-menu-end > * > * {
-  display: inline-block;
-}
-.topnav-custom .dropdown-menu-end p {
-  margin: 0.25em 0;
-}
-.topnav-custom .dropdown-menu-end a {
-  background-color: transparent;
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-.topnav-custom .dropdown-menu-end.item > :first-child {
-  margin-bottom: 1rem;
-  font-weight: bold;
-  background-color: transparent;
-}
-@media (max-width: 764.9px) {
-  .topnav-custom .dropdown-menu-end.item > :first-child {
-    display: none;
-  }
-}
-.topnav-custom #toggleMode {
-  width: 1.7em;
-  box-shadow: none;
-}
-.topnav-custom .navbar-brand {
+.navbar-brand {
   display: inline-block;
   font-size: 1.5rem;
   font-family: Arial;
 }
-.topnav-custom .navbar-brand a {
+.navbar-brand a {
   text-decoration: none;
 }
-.topnav-custom .navbar-brand .logo {
+.navbar-brand .logo {
   height: 2rem;
   margin: 0.4rem 0 0.5rem 0.5rem;
 }
-.topnav-custom #topnav-right {
+
+#topnav-right {
   float: right;
   display: inline-block;
   height: inherit;
 }
 @media (max-width: 575px) {
-  .topnav-custom #topnav-right {
+  #topnav-right {
     transition: display 3s;
   }
 }
-.topnav-custom #topnav-right .navbar-nav {
+#topnav-right .navbar-nav {
   height: inherit;
 }
+
 @media (max-width: 991.9px) {
-  .topnav-custom .dropdown-menu {
+  .dropdown-menu {
     min-width: 0rem;
   }
-  .topnav-custom .navbar-brand {
+
+  .navbar-brand {
     margin-left: 0;
   }
 }
-.topnav-custom .user-account {
+/*user-account*/
+/*topnav old styles*/
+#user-account-old {
+  min-width: 10rem;
+  position: absolute;
+  right: 0;
+}
+@media (max-width: 991.9px) {
+  #user-account-old {
+    min-width: 4rem;
+  }
+}
+#user-account-old .dropdown-menu-user {
+  min-width: 10rem;
+  top: 3.7rem !important;
+}
+#user-account-old .nav-link {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  padding-top: 0;
+}
+#user-account-old .nav-link > * {
+  top: 0.75rem;
+}
+
+.user-account {
   min-width: 18rem;
   display: inline-block;
   border-left: 1px solid rgba(53, 59, 65, 0.1);
 }
-.topnav-custom .user-account .dropdown-item {
+.user-account .dropdown-item {
   font-weight: 300;
 }
-.topnav-custom .user-account .dropdown-menu-user {
+.user-account .dropdown-menu-user {
   min-width: 18rem;
   position: absolute;
   left: 1rem;
   top: 2.8rem !important;
   margin-top: 0.25rem;
 }
-.topnav-custom .user-account .dropdown-menu-user .dropdown-item {
+.user-account .dropdown-menu-user .dropdown-item {
   padding: 0;
 }
-.topnav-custom .user-account .user-account-name {
+.user-account .user-account-name {
   display: block;
   margin-top: 0.3rem;
 }
-.topnav-custom .user-account .user-account-position {
+.user-account .user-account-position {
   display: block;
   font-size: 0.8em;
   margin-top: -0.3rem;
 }
-.topnav-custom .user-account .profile-image {
+.user-account .profile-image {
   position: absolute;
   vertical-align: top;
   margin-top: 0.25rem;
@@ -311,38 +176,39 @@
   box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
   display: flex;
 }
-.topnav-custom .user-account .profile-image > i {
+.user-account .profile-image > i {
   position: relative;
   margin: auto;
   font-size: 1.5rem;
 }
-.topnav-custom .user-account .profile-image img {
+.user-account .profile-image img {
   width: 2.5em;
   height: 2.5em;
 }
-.topnav-custom .user-account .user-specs {
+.user-account .user-specs {
   position: absolute;
   left: 4rem;
 }
+
 @media (max-width: 991.9px) {
-  .topnav-custom .user-specs {
+  .user-specs {
     display: none;
   }
-  .topnav-custom .user-account {
+
+  .user-account {
     min-width: 4rem;
   }
-  .topnav-custom .user-account .dropdown-menu-user {
+  .user-account .dropdown-menu-user {
     min-width: 10rem;
   }
-  .topnav-custom .user-account .dropdown-menu-user a {
+  .user-account .dropdown-menu-user a {
     padding: 0;
     margin: 0.3em 0;
   }
-  .topnav-custom .user-account .dropdown-item {
+  .user-account .dropdown-item {
     padding: 0;
   }
 }
-
 /*end user-account*/
 #sidebar_left {
   min-height: 100vh;
@@ -614,6 +480,179 @@
   content: none;
 }
 
+/*mainmenu*/
+#mainmenu {
+  margin-right: 2rem;
+}
+#mainmenu .dropdown > div {
+  border-radius: 0;
+  position: absolute;
+  top: 3.25rem;
+}
+#mainmenu .mainmenu-dropdown {
+  padding-left: 1.5rem;
+}
+#mainmenu .mainmenu-dropdown > :first-child {
+  margin: 0;
+  font-weight: bold;
+  border: 0;
+  width: calc(100% + 1.5rem);
+  position: relative;
+  left: -1.5rem;
+  padding-left: 1.5rem;
+  height: 2.5rem;
+  padding-top: 0.5rem;
+}
+#mainmenu .mainmenu-dropdown > :only-child {
+  margin-bottom: 0;
+}
+#mainmenu .mainmenu-dropdown li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+#mainmenu .dropdown-menu {
+  min-width: 10rem;
+}
+#mainmenu .dropdown:hover .dropdown-content {
+  display: block;
+}
+#mainmenu .dropdown .dropdown-content {
+  display: none;
+  z-index: 1;
+  margin-top: 0;
+}
+#mainmenu .dropdown .dropdown-menu-custom {
+  padding: 0;
+}
+
+/*end mainmenu styles*/
+.noti-badge-round {
+  /*badge for notifications with number*/
+  position: relative;
+  top: -2.8rem;
+  left: 50%;
+  font-size: 10px;
+  border-radius: 50% !important;
+  width: 1rem;
+  height: 1rem !important;
+  padding: 2px 0px;
+}
+.noti-badge-round span {
+  pointer-events: none;
+  letter-spacing: -2px;
+}
+
+#topnav-right {
+  /*language*/
+  /*notifications*/
+  /*end notifications*/
+  /*apps*/
+  /*end apps*/
+  /*settings*/
+  /*end settings*/
+}
+#topnav-right .topnav-element > .dropdown-menu {
+  min-width: max-content;
+}
+#topnav-right .topnav-element > .dropdown-menu > :first-child {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+#topnav-right #language img {
+  margin-right: 0.5rem;
+}
+#topnav-right #notifications {
+  width: 20rem;
+  height: content;
+}
+#topnav-right #notifications .user-msg {
+  display: flex;
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+  margin-top: 0.3rem;
+  box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
+}
+#topnav-right #notifications .user-msg > i {
+  position: relative;
+  margin: auto;
+  font-size: 1rem;
+}
+#topnav-right #notifications .user-msg img {
+  width: 2.5em;
+  height: 2.5em;
+}
+#topnav-right #notifications .message {
+  position: relative;
+  left: 3rem;
+}
+#topnav-right #notifications > a .message * {
+  display: block;
+}
+#topnav-right #notifications > a .message > :last-child {
+  font-size: 0.7rem;
+}
+#topnav-right #apps > * {
+  display: block;
+}
+#topnav-right #apps > *:hover {
+  transition: 0.5s;
+}
+#topnav-right #apps > * .col {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  width: 5rem;
+  height: 5rem;
+  margin-bottom: 0.3rem;
+}
+#topnav-right #apps > * .col .apps-link {
+  height: 5rem;
+  width: 5rem;
+  padding-top: 1rem;
+  margin: 0;
+  border-radius: 5%;
+  transition: 0.2s;
+}
+#topnav-right #apps > * .col .apps-link img {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+  margin: auto;
+  margin-bottom: 0.75rem;
+}
+#topnav-right #apps > * > * {
+  display: inline-block;
+}
+#topnav-right #apps p {
+  margin: 0.25em 0;
+}
+#topnav-right #apps a {
+  background-color: transparent;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+#topnav-right #apps.item > :first-child {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  background-color: transparent;
+}
+@media (max-width: 764.9px) {
+  #topnav-right #apps.item > :first-child {
+    display: none;
+  }
+}
+#topnav-right #settings {
+  /*mode switch*/
+}
+#topnav-right #settings #toggleMode {
+  width: 1.7em;
+  box-shadow: none;
+}
+
 /*use external scss files*/
 body {
   margin: 0;
@@ -626,10 +665,10 @@ body {
 }
 
 /*dropdown dark*/
-.dropdown-menu-dark a {
+.dropdown-menu-custom a {
   text-decoration: none;
 }
-.dropdown-menu-dark a:hover, .dropdown-menu-dark a:active {
+.dropdown-menu-custom a:hover, .dropdown-menu-custom a:active {
   text-decoration: none;
   transition: 0.5s;
 }

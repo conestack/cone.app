@@ -1,6 +1,8 @@
 /*use external scss files*/
 @use "topnav";
 @use "sidebar";
+@use "mainmenu";
+@use "toolbar-top";
 
 body {
   margin:0;
@@ -12,7 +14,7 @@ body {
 }
 
 /*dropdown dark*/
-.dropdown-menu-dark {
+.dropdown-menu-custom {
   a {
     text-decoration: none;
     &:hover, &:active {

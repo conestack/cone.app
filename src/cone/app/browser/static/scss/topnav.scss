@@ -1,72 +1,47 @@
 /* -- styles of topnav header -- */
 
-/*searchbar*/
+
 #topnav-container {
   > * {
     display:inline-block;
-  }
-
-  /*topnav old styles*/
-
-#user-account-old {
-  min-width:10rem;
-  position: absolute;
-  right:0;
-  .dropdown-menu-user {
-    min-width:10rem;
-    top:2rem!important;
-  }
-  .nav-link {
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
-    padding-top:0;
-    > * {
-      top:.75rem;
-    }
+    position:relative;
   }
 }
 
-#mainmenu {
-  margin-right:2rem;
-  .dropdown-old {
-    padding-left:0;
-    > :first-child {
-      margin-bottom:1rem;
-      font-weight:bold;
-      background-color:transparent;
-      border:0;
-    }
-    > :only-child {
-      margin-bottom:0;
-    }
-    li {
-      margin-top: 0.25rem;
-      margin-bottom: 0.25rem;
-    }
+.topnav-custom {
+  height: 4.2rem;
+  box-shadow:0 .5rem 1rem rgba(53, 59, 65, .025);
+
+  div {
+    height:inherit;
   }
-  .dropdown-menu {
-    min-width:10rem;
+
+  a, label {
+    text-decoration:none;
   }
-  .dropdown {
-    &:hover .dropdown-content {
-      display: block;
-    }
-    .dropdown-content {
-      display: none;
-      z-index: 1;
-      margin-top:0;
-    }
+  a:hover {
+    text-decoration:none;
+    transition: 0.5s;
+  }
+  
+  .topnav-element {
+    display: inline-block;
+    padding-top: 0.75rem;
     
   }
-}
 
-  /*end topnav old styles*/
+  .dropdown-menu-start, .dropdown-menu-end {
+    margin-top:.75rem;
+    padding:1rem 2rem;
+    box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
+  }
 }
-
+/*searchbar*/
 #topnav-searchbar {
   display: inline-block;
   height:2.2rem;
   font-size:.95em;
+  z-index:1000;
 
   .form-control:focus {
     outline: 0;
@@ -113,157 +88,7 @@
 }
 /*end searchbar*/
 
-.noti-badge-round {
-  /*badge for notifications with number*/
-  position: relative;
-  top: -2.8rem;
-  left: 50%;
-  font-size: 10px;
-  border-radius: 50% !important;
-  width:1rem;
-  height:1rem!important;
-  padding:2px 0px;
-  span {
-    pointer-events: none;
-    letter-spacing:-2px;
-  }
-}
 
-.topnav-custom {
-  height: 4.2rem;
-  box-shadow:0 .5rem 1rem rgba(53, 59, 65, .025);
-
-  div {
-    height:inherit;
-  }
-
-  a, label {
-    text-decoration:none;
-  }
-  a:hover {
-    text-decoration:none;
-    transition: 0.5s;
-  }
-  
-  .topnav-element {
-    display: inline-block;
-    padding-top: 0.75rem;
-    
-  }
-
-  .dropdown-menu-end {
-    margin-top:.75rem;
-    padding:1rem 2rem;
-    box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
-
-  /*language*/
-  &#language {
-    img {
-      margin-right:.5rem;
-    }
-  }
-
-  /*notifications*/
-  &#notifications {
-    width:20rem;
-    height:content;
-    
-    .user-msg {
-      display:flex;
-      position:absolute;
-      width:2rem;
-      height:2rem;
-      border-radius:50%;
-      margin-right:1rem;
-      margin-top:.3rem;
-      box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
-      > i {
-        position: relative;
-        margin:auto;
-        font-size:1rem;
-      }
-      img {
-        width: 2.5em;
-        height: 2.5em;
-      }
-    }
-
-    .message {
-      position:relative;
-      left:3rem;
-    }
-  
-    > a .message {
-      * {display:block;}
-       > :last-child {
-      font-size:.7rem;
-       }
-    }
-
-  }
-  /*end notifications*/
-
-  /*apps*/
-  > * {
-    display:block;
-    &:hover {
-      transition: 0.5s;
-    }
-    .col {
-      text-align: center;
-      margin: 0;
-      padding:0;
-      width:5rem;
-      height:5rem; 
-      margin-bottom:.3rem;
-     
-      .apps-link {
-        height:5rem;
-        width:5rem;
-        padding-top:1rem;
-        margin:0;
-        border-radius:5%;
-        transition: 0.2s;
-
-        img {
-          width: 1.5rem;
-          height: 1.5rem;
-          display: block;
-          margin: auto;
-          margin-bottom:.75rem;
-        }
-      }
-    }
-    > * {
-      display:inline-block;
-    }
-  }
-  p {
-    margin:.25em 0;
-  }
-  a {
-    background-color:transparent;
-    margin-top:.25rem;
-    margin-bottom:.25rem;
-  }
-  &.item > :first-child {
-    margin-bottom:1rem;
-    font-weight:bold;
-    background-color:transparent;
-    @media(max-width:764.9px) {
-      display:none;
-    }
-  }
-  }
-  /*end apps*/
-
-  /*settings*/
-      /*mode switch*/
-      #toggleMode {
-        width:1.7em;
-        box-shadow:none;
-      }
-  /*end settings*/
   
   
   
@@ -310,6 +135,30 @@
   
   /*user-account*/
   
+    /*topnav old styles*/
+
+  #user-account-old {
+    min-width:10rem;
+    position: absolute;
+    right:0;
+
+    @media (max-width: 991.9px) {
+      min-width:4rem;
+    }
+    .dropdown-menu-user {
+      min-width:10rem;
+      top:3.7rem!important;
+    }
+    .nav-link {
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      padding-top:0;
+      > * {
+        top:.75rem;
+      }
+    }
+  }
+
   .user-account {
     min-width: 18rem;
     display: inline-block;
@@ -387,7 +236,7 @@
       }
     }
   }
-}
+
 /*end user-account*/
 
 #sidebar_left {

@@ -2,7 +2,7 @@
            omit-tag="True">
 
 
-  <li class="nav-item dropdown" 
+  <div class="nav-item dropdown" 
       id="personaltools">
 
     <a class="nav-link" data-bs-toggle="dropdown" href="#" 
@@ -36,6 +36,6 @@
       </ul>
     </div>
 
-  </li>
+  </div>
 
 </tal:block>

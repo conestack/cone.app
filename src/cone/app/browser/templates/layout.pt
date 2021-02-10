@@ -15,6 +15,14 @@
           <tal:logo replace="structure tile('logo')" />
         </div>
 
+        <div class="p-3 font-light d-inline-block d-sm-none" id="mobile-menu">
+          <button id="hamburger-menu-toggle" class="hamburgerMenu">
+            <svg class="bi" width="2em" height="2em" fill="currentColor">
+              <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
+            </svg>
+          </button>
+        </div>
+
         <tal:version_old condition="True">
           <tal:mainmenu
             condition="config.mainmenu"
@@ -31,13 +39,6 @@
           
         </tal:version_old>
 
-        <div class="p-3 font-light d-inline-block d-sm-none" id="mobile-menu">
-          <button id="hamburger-menu-toggle" class="hamburgerMenu">
-            <svg class="bi" width="2em" height="2em" fill="currentColor">
-              <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
-            </svg>
-          </button>
-        </div>
 
         <tal:version_new condition="False">
           <tal:livesearch
