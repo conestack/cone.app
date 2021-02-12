@@ -23,6 +23,7 @@ javascript
       + if there is not enough space for mainmenu texts, collapse elements to icons
       + if there is not enough space for either mainmenu icons or searchbar, 
           move content to mobile menu
+[ ] - rename SidebarMenu -> MainMenu
 
 styles
 ------

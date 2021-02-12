@@ -128,19 +128,10 @@ body {
       input {
           color: $flight!important;
           background-color: $sb!important;
-          border: 0;
-          border-radius: 4px 0 0 4px;
       }
       #searchbar-button {
         background-color: $info;
         color: $fbright;
-        border-radius: 0 4px 4px 0;
-        @media(min-width:380px) and (max-width:1038.9px){
-          border-radius:4px;
-          &.clicked {
-            border-radius: 0 4px 4px 0;
-          }
-        }
       }
     }
 
@@ -259,10 +250,10 @@ body {
     /*end md*/
 
     /*start sm*/
+    .hamburgerMenu{
+      color:$fmedium;
+    }
     @media(max-width:575.9px){
-      .hamburgerMenu{
-        color:$fmedium;
-      }
 
       #sidebar_left {
         border:1px solid $border;

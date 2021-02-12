@@ -3,7 +3,7 @@
           omit-tag="True">
 
   <a href="${request.application_url}"
-     class="navbar-brand d-none d-sm-inline-block"
+     class="navbar-brand"
      ajax:bind="click"
      ajax:target="${request.application_url}"
      ajax:event="contextchanged:#layout"

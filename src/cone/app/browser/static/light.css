@@ -122,21 +122,10 @@ a:hover {
 #topnav-searchbar input {
   color: #57575C !important;
   background-color: #F5F5FA !important;
-  border: 0;
-  border-radius: 4px 0 0 4px;
 }
 #topnav-searchbar #searchbar-button {
   background-color: #5bc0de;
   color: #ECF5FD;
-  border-radius: 0 4px 4px 0;
-}
-@media (min-width: 380px) and (max-width: 1038.9px) {
-  #topnav-searchbar #searchbar-button {
-    border-radius: 4px;
-  }
-  #topnav-searchbar #searchbar-button.clicked {
-    border-radius: 0 4px 4px 0;
-  }
 }
 
 /*end searchbar*/
@@ -236,11 +225,11 @@ a:hover {
 }
 /*end md*/
 /*start sm*/
-@media (max-width: 575.9px) {
-  .hamburgerMenu {
-    color: #717176;
-  }
+.hamburgerMenu {
+  color: #717176;
+}
 
+@media (max-width: 575.9px) {
   #sidebar_left {
     border: 1px solid #EBEBF0;
     border-top: none;

@@ -11,16 +11,20 @@
     <nav class="topnav navbar-expand topnav-custom">
       <div class="container-fluid p-0" id="topnav-container">
 
-        <div class="navbar-brand d-none d-sm-inline-block">
+        <div class="navbar-brand" id="cone-logo">
           <tal:logo replace="structure tile('logo')" />
         </div>
 
-        <div class="p-3 font-light d-inline-block d-sm-none" id="mobile-menu">
+        <div class="p-3 font-light" id="mobile-menu">
           <button id="hamburger-menu-toggle" class="hamburgerMenu">
             <svg class="bi" width="2em" height="2em" fill="currentColor">
               <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
             </svg>
           </button>
+          <div id="mobile-menu-content">
+          <span>lalalala</span>
+          
+          </div>
         </div>
 
         <tal:version_old condition="True">
@@ -56,12 +60,8 @@
     <div class="d-flex" id="wrapper">
 
       <div class="dropdown-menu-custom"
-           id="sidebar_left"
-           tal:condition="config.sidebar_left">
-
-        <tal:tiles repeat="tilename config.sidebar_left">
-          <tal:tile replace="structure tile(tilename)" />
-        </tal:tiles>
+           id="mobile_menu"
+           tal:condition="config.mainmenu">
 
       </div>
 

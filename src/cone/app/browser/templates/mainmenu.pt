@@ -18,7 +18,7 @@
                         css ' '.join([css, 'node-%s' % item['id']]);"
             tal:attributes="class css">
 
-            <div class="dropdown">
+          <div class="dropdown">
 
             <a href="${item['url']}"
                class="nav-link dropdown-toggle"
@@ -31,11 +31,11 @@
               >
               <i class="${item['icon']|nothing}"></i>
               <span tal:content="item['title'] | string:'&nbsp;'"
-                    class="d-none d-xl-inline-block">Title
+                    class="mainmenu-title">Title
               </span>
             </a>
     
-            <div class="d-xl-none dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content collapse"
+            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content collapse"
                  id="submenu-${item['id']}">
     
               <ul class="mainmenu-dropdown list-unstyled">
@@ -66,7 +66,7 @@
               >
               <i class="${item['icon']|nothing}"></i>
               <span tal:content="item['title'] | string:'&nbsp;'"
-                    class="d-none d-xl-inline-block">Title
+                    class="mainmenu-title">Title
               </span>
             </a>
     
@@ -75,8 +75,7 @@
     
               <ul class="mainmenu-dropdown list-unstyled">
                 <li>
-                  <span class="d-inline-block d-xl-none"
-                        tal:content="item['title'] | string:'&nbsp;'">
+                  <span tal:content="item['title'] | string:'&nbsp;'">
                     Title
                   </span>
                 </li>
