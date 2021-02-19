@@ -34,18 +34,32 @@
       min-width:10rem;
     }
     .dropdown {
-      &:hover .dropdown-content {
-        display: block;
+      &.toggle-hover {
+        .dropdown-content {
+          display: none;
+          z-index: 1;
+          margin-top:0;
+        }
+        .dropdown-menu-custom {
+          padding:0;
+        }
+        &:hover .dropdown-content {
+          display: block;
+        }
       }
-      .dropdown-content {
-        display: none;
-        z-index: 1;
-        margin-top:0;
+    }
+  }
+
+  #main-menu {
+    &.mobile {
+      #mainmenu {
+        li {
+          display:block;
+        }
+        .mainmenu-title {
+          display:inline-block;
+        }
       }
-      .dropdown-menu-custom {
-        padding:0;
-      }
-      
     }
   }
     /*end mainmenu styles*/

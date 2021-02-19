@@ -8,7 +8,7 @@
         ajax:bind="contextchanged"
         ajax:action="mainmenu:#mainmenu:replace"
         tal:define="config context.config">
-  
+      
       <tal:item repeat="item context.menuitems">
   
         <tal:comment replace="None">Main menu item as link</tal:comment>
@@ -63,6 +63,7 @@
             <a href="#submenu-${item['id']}"
                class="nav-link dropdown-toggle"
                data-hover="dropdown"
+               data-bs-toggle="collapse"
               >
               <i class="${item['icon']|nothing}"></i>
               <span tal:content="item['title'] | string:'&nbsp;'"
@@ -74,7 +75,7 @@
                  id="submenu-${item['id']}">
     
               <ul class="mainmenu-dropdown list-unstyled">
-                <li>
+                <li class="dropdown-title">
                   <span tal:content="item['title'] | string:'&nbsp;'">
                     Title
                   </span>

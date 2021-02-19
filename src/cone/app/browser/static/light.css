@@ -229,29 +229,28 @@ a:hover {
   color: #717176;
 }
 
-@media (max-width: 575.9px) {
-  #sidebar_left {
-    border: 1px solid #EBEBF0;
-    border-top: none;
-    /*change bgcolor of sidebar*/
-    background-color: #FAFAFC;
-  }
-  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown a:active {
-    /*change fontcolor of items in sidebar*/
-    color: #5bc0de;
-  }
-  #sidebar_left .list-group .list-group-item {
-    /*font color of submenu*/
-    color: #717176;
-  }
-  #sidebar_left .list-group .help {
-    color: white;
-  }
-  #sidebar_left .sidebar-heading hr {
-    /*change colour of hr on sm*/
-    border-top: 1px solid rgba(87, 87, 92, 0.2);
-  }
+#mobile-menu-content {
+  border: 1px solid #EBEBF0;
+  border-top: none;
+  /*change bgcolor of sidebar*/
+  background-color: #FAFAFC;
 }
+#mobile-menu-content .dropdown a:hover, #mobile-menu-content .dropdown a:active {
+  /*change fontcolor of items in sidebar*/
+  color: #5bc0de;
+}
+#mobile-menu-content .list-group .list-group-item {
+  /*font color of submenu*/
+  color: #717176;
+}
+#mobile-menu-content .list-group .help {
+  color: white;
+}
+#mobile-menu-content .sidebar-heading hr {
+  /*change colour of hr on sm*/
+  border-top: 1px solid rgba(87, 87, 92, 0.2);
+}
+
 /*end sm*/
 /*end sidebar.scss*/
 

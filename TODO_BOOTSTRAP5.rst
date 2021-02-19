@@ -17,12 +17,13 @@ javascript
 [X] - now supports screen dimensions from 330px and up - new layout
 [X] - implement popper.js
 [ ] - hamburger menu: main menu instead of sidebar / [X] - rename to mobile menu
-[ ] - change searchbar script to class; add cases for resize;
-      - if there is not enough space for searchbar, collapse searchbar 
-        -> expand on click, fade out other elements
-      + if there is not enough space for mainmenu texts, collapse elements to icons
-      + if there is not enough space for either mainmenu icons or searchbar, 
-          move content to mobile menu
+[X] - change searchbar script to class; add cases for resize;
+      [X] - if there is not enough space for searchbar, collapse searchbar 
+         -> expand on click, fade out other elements
+      [X] + if there is not enough space for mainmenu texts, collapse elements to icons
+      [X] + if there is not enough space for either mainmenu icons or searchbar, 
+        move content to mobile menu
+[ ] - debug main menu
 [ ] - rename SidebarMenu -> MainMenu
 
 styles

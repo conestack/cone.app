@@ -7,9 +7,7 @@
     position:relative;
   }
 }
-#mobile-menu{
-  display:none;
-}
+
 .hamburgerMenu{
   border:none;
   background-color:transparent;
@@ -25,6 +23,10 @@
 
   div {
     height:inherit;
+  }
+
+  .nav-link {
+    padding-bottom:1.25rem;
   }
 
   a, label {
@@ -56,8 +58,12 @@
   top:1rem;
   position: absolute;
 
+  .twitter-typeahead {
+    width:200px;
+  }
+
   &.expanded{
-    #search-text {
+    .twitter-typeahead {
       display:block;
       position:absolute;
     }
@@ -69,9 +75,9 @@
     box-shadow: none;
   }
 
-  #search-text {
+  /* #search-text {
     display:none;
-  }
+  } */
 
   .red {
     background-color:red!important;
@@ -95,27 +101,19 @@
     margin:0;
     border-radius: 4px;
   }
-
-/*   @media(min-width:380px) and (max-width:1036px) {
+ 
+  &.mobile {
     position: absolute;
     top: 1rem;
     margin-left:0;
-    &.expanded {
-      top:-.5rem;
-    }
-    #search-text {
-      display:none;
-    }
-    #search-text {
-      position:relative;
-    }
-  }
-
-  @media(max-width: 379.9px) {
     width: 100%;
     padding: 0 1rem;
     margin: .5rem 0;
-  } */
+    #search-text {
+      position:relative;
+      display:inline-block;
+    }
+  }
 }
 /*end searchbar*/
 
@@ -144,10 +142,6 @@
     float: right;
     display: inline-block;
     height: inherit;
-
-    @media(max-width: 575px) {
-      transition: display 3s;
-    }
   
     .navbar-nav {
       height: inherit;
@@ -302,3 +296,79 @@
   }
 }
   
+
+/* mobile menu */
+#mobile-menu {
+  position: relative;
+  display:none;
+}
+#mobile-menu-content {
+  display:none;
+  position:absolute;
+  left: 0;
+  top: 4.25rem;
+  height:fit-content;
+  min-height:5rem;
+  width: 100vw;
+  z-index:1000;
+  box-shadow:1rem 1rem 1rem -1rem rgb(0, 0, 0, .15);
+  border-radius: 0 0 2% 2%;
+  overflow:hidden;
+
+  #topnav-searchbar .twitter-typeahead {
+    width: 100%;
+  }
+
+  .dropdown {
+    width: 100%;
+
+    .dropdown-content {
+      font-size:.85rem;
+      padding-left:.3rem;
+
+      .list-group-item {
+        padding:0.5rem 0.5rem 0.5rem 1.3rem;
+      }
+    }
+  }
+
+  .dropdown-content {
+    font-size:.85rem;
+    padding-left:.3rem;
+    background-color:transparent;
+  }
+
+  .list-group {
+    width:100%;
+    background-color:transparent;
+
+    .list-group-item {
+      background-color: transparent;
+    }
+  }
+
+  .sidebar-dropout > :first-child {
+    display:none;
+    background-color:transparent;
+  }
+
+  .sidebar-heading {
+    padding: 0 1rem;
+    background-color:transparent;
+
+    hr {
+      margin:0;
+    }
+  }
+
+  #mainmenu {
+    margin-top:4rem;
+  }
+
+  #page-content-wrapper {
+    position:absolute;
+    z-index: -1;
+  }
+}
+
+/* end mobile menu */

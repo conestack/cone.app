@@ -253,9 +253,8 @@ body {
     .hamburgerMenu{
       color:$fmedium;
     }
-    @media(max-width:575.9px){
 
-      #sidebar_left {
+      #mobile-menu-content {
         border:1px solid $border;
         border-top:none;
         /*change bgcolor of sidebar*/
@@ -280,7 +279,6 @@ body {
           border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
         }
       }
-    }
     /*end sm*/
 /*end sidebar.scss*/
     

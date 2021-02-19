@@ -12,6 +12,7 @@ cone = {
     main_menu: null,
     theme_switcher: null,
     searchbar_handler: null,
+    mobile_menu: null,
     default_themes: [
         'static/light.css',
         'static/dark.css'
@@ -27,11 +28,117 @@ var livesearch_options = new Object();
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context, 575.9);
-            new cone.Searchbar(context, 250, 130);
+            new cone.Searchbar(context, 200, 130);
             new cone.MainMenu(context);
+            new cone.MobileMenu(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
+
+    
+    //mobile menu
+    cone.MobileMenu = class {
+        constructor(context) {
+            cone.mobile_menu = this;
+    
+            this.logo = $('#cone-logo', context);
+            this.mobile_btn = $('#hamburger-menu-toggle', context);
+            this.mobile_menu = $('#mobile-menu', context);
+            this.mobile_content = $('#mobile-menu-content', context);
+    
+            this._mobile_handler = this.mobile_handler.bind(this);
+            $(this._mobile_handler);
+            $(window).on('resize', this._mobile_handler);
+
+            this._mobile_toggle = this.toggle_mobile_menu.bind(this);
+            this.mobile_btn.on('click', this._mobile_toggle);
+        }
+
+        mobile_handler() {
+
+            if ($(".mobile").length) {
+                $('.mobile').detach().appendTo(this.mobile_content);
+                this.logo.hide();
+                this.mobile_menu.css('display', 'inline-block');
+                console.log('appended to mobile');
+            } else if (!$('.mobile').length && this.mobile_content.children().length > 0) {
+                this.mobile_menu.hide();
+                this.logo.show();
+                this.mobile_content.children('div').detach().appendTo('#topnav-container');
+                console.log('removed from mobile');
+            } else {
+                console.log('there is/was nothing in mobile');
+            }
+        }
+
+        toggle_mobile_menu() {
+            console.log('mobile btn clicked');
+            this.mobile_content.toggle();
+        }
+    }
+
+    //main menu
+    cone.MainMenu = class {
+        constructor(context) {
+
+            if (cone.main_menu !== null) {
+                cone.main_menu.unload();
+            }
+
+            cone.main_menu = this;
+            this.mainmenu_list = $('#mainmenu', context);
+            this.topnav_children = $('#topnav-container', context).children('div');
+            this.mainmenu = $('#main-menu', context);
+            this.menu_objects = this.mainmenu_list.children('li');
+            this.mainmenu_titles = $('.mainmenu-title', context);
+
+            this.free_space = 0;
+
+            this._get_free_space = this.get_free_space.bind(this);
+            $(this._get_free_space);
+            $(window).on('resize', this._get_free_space);
+
+            this._handle_visibility = this.handle_visibility.bind(this);
+            $(this._handle_visibility);
+            $(window).on('resize', this._handle_visibility);
+
+        }
+
+        get_free_space() {
+            let total_width = 0;
+            $(this.topnav_children).each(function(index) {
+                total_width += parseInt($(this).outerWidth(true), 10);
+            });
+            this.free_space = $(window).width() - total_width ;  
+            console.log('mainmenu free space: ' + this.free_space);
+            console.log('topnav width: ' + total_width);
+            console.log('mainmenu width: ' + $('#mainmenu').width());
+        }
+
+        handle_visibility() {
+            if (this.free_space <= 0 && this.menu_objects.hasClass('expanded')) {
+                this.mainmenu_titles.css('display', 'none'); 
+                this.menu_objects.addClass('collapsed');
+                this.menu_objects.removeClass('expanded');
+            } 
+            else if (this.free_space <= 0 && this.menu_objects.hasClass('collapsed')) {
+                // this.menu_objects.removeClass('collapsed');
+                // this.mainmenu.addClass('mobile');
+                // this.mainmenu_list.toggleClass('navbar-nav');
+            }
+            else {
+                this.mainmenu_titles.css('display', 'inline-block');
+                this.menu_objects.removeClass('collapsed');
+                this.menu_objects.addClass('expanded');
+
+                if($('.topnav-element').hasClass('arrow-none')){
+                    $('.arrow-none').find('.dropdown-content').css('display', 'none');
+                }
+
+                $('.dropdown').toggleClass('toggle-hover');
+            }
+        }
+    }
 
     //searchbar
     cone.Searchbar = class {
@@ -41,127 +148,85 @@ var livesearch_options = new Object();
             this.threshold_1 = threshold_1;
             this.threshold_2 = threshold_2;
 
-            this._get_total_width = this.get_total_width.bind(this);
-            $(window).on('resize', this._get_total_width);
-
             this.searchbar_btn = $('#searchbar-button', context);
-            this.searchbar_text = $('#search-text', context);
+            this.searchbar_text = $('.twitter-typeahead', context);
             this.toolbar_top = $('#toolbar-top', context);
             this.searchbar = $('#topnav-searchbar', context);
-            this.topnav_children = $('#topnav-container').children('div').not('#topnav-searchbar');
-            this.mobile_menu = $('#sidebar_left');
+            this.topnav = $('#topnav-container', context);
+            this.topnav_children = this.topnav.children('div').not(this.searchbar);
+
+            this.free_space = 0;
+
+            this._get_total_width = this.get_total_width.bind(this);
+            $(window).on('resize', this._get_total_width);
+            $(this._get_total_width);
 
             this._resize_handle = this.resize_handle.bind(this);
             $(this._resize_handle);
             $(window).on('resize', this._resize_handle);
-            // this.searchbar_btn.on('click', this._resize_handle);
         }
 
-        get_total_width() {
-            console.log("get total width");
-            console.log(this.topnav_children);
-
+        get_total_width() { // calculate width of children in topnav
             let total_width = 0;
             $(this.topnav_children).each(function(index) {
                 total_width += parseInt($(this).outerWidth(true), 10);
             });
 
-            let free_space = $(window).width() - total_width;
-
-            console.log('total width:' + total_width);
-            console.log('window width:' + $(window).width());
-            console.log('free space:' + free_space);
-
-            return free_space;
+            this.free_space = $(window).width() - total_width;
+            console.log('searchbar free space: ' + this.free_space);
         }
 
-        resize_handle() { // calculate width of children in containerfluid and adjust searchbar
-            let free_space = this.get_total_width();
-            switch(true) {
-                case free_space <= 130:
-                    console.log("free space under 130");
-                    this.searchbar_btn.toggleClass('red');
-                    // this.searchbar.detach().prependTo('#sidebar_left', context)
-                    break;
-                case free_space <= 250:
-                    console.log("free space under 250 and over 130");
+        resize_handle() { // adjust searchbar
 
-                    if(this.searchbar.hasClass('expanded')) {
-                        this.searchbar.removeClass('expanded');
-                    } else {
-                        this.searchbar_btn.on('click', event => { //expand
-                            console.log("clicked");
-                            console.log(this.topnav_children.last().width());
-                            this.searchbar_text.css('width', (free_space + this.topnav_children.last().width() - this.searchbar_btn.width() - 20));
-                            this.topnav_children.last().fadeToggle(300);
-                            this.searchbar.toggleClass('expanded', false);
-                            this.searchbar_text.animate({width:'toggle'}, 'fast'); 
-                        });
+            switch(true) {
+                case this.free_space <= 130: // mobile
+                    if($('#mainmenu').children('li').hasClass('collapsed')) {
+                        this.searchbar.removeClass('collapsed');
+                        this.searchbar.addClass('mobile');
+                        console.log('searchbar mobile');
                     }
                     break;
 
+                case this.free_space <= 250: // collapsed
+                    if(this.searchbar.hasClass('mobile')){
+                        this.searchbar.removeClass('mobile');
+                    }
+
+                    $('.twitter-typeahead').css('width', '0');
+
+                   /*  if(this.searchbar.hasClass('mobile')) {
+                        this.searchbar.removeClass('mobile');
+                    } */
+                    if(this.searchbar.hasClass('expanded')) {
+                        this.searchbar.removeClass('expanded');
+                    }
+                    this.searchbar.addClass('collapsed');
+
+                    this.searchbar_btn.on('click', event => {
+                        if(this.searchbar.hasClass('expanded')) {
+                            this.searchbar_text.animate({width:0}, 'fast');
+                            this.searchbar.removeClass('expanded');
+                            this.searchbar.addClass('collapsed');
+                            console.log('close');
+                        } else {
+                            this.searchbar.removeClass('collapsed');
+                            this.searchbar.addClass('expanded');
+                            this.searchbar_text.animate({width:this.free_space}, 'fast');
+                            console.log('open');
+                        }
+                    });
+                    break;
+
                 default: //free space over 250px
+                $('.twitter-typeahead').css('width', '200px');
+                    if(this.searchbar.hasClass('collapsed')){
+                        this.searchbar.removeClass('collapsed');
+                    }
                     this.searchbar.addClass('expanded');
-                    console.log("free space over 250");
                     break;
             }
         }
     }
-
-    //main menu
-    cone.MainMenu = class {
-        constructor(context) {
-            this.menu_toggle = $('#hamburger-menu-toggle', context);
-            if (!this.menu_toggle.length) {
-                return;
-            }
-            if (cone.main_menu !== null) {
-                cone.main_menu.unload();
-            }
-            cone.main_menu = this;
-            this.mainmenu = $('#mainmenu');
-            this.mobile_content = $('#mobile-menu-content', context);
-            this.mobile_btn = $('#mobile-menu-btn', context);
-            this.mobile_menu = $('#mobile-menu', context);
-            // this.logo = $('#cone-logo', context);
-            this.topnav_children = $('#topnav-container', context).children('div');
-            this.menu_objects = this.mainmenu.children('li');
-            this.mainmenu_titles = $('.mainmenu-title', context);
-
-            this._handle_visibility = this.handle_visibility.bind(this)
-            $(window).on('resize', this._handle_visibility);
-            $(this._handle_visibility);
-
-            // this.menu_toggle.on('click', this.toggle_menu.bind(this));
-        }
-
-        get_free_space() {
-            let total_width = 0;
-            $(this.topnav_children).each(function(index) {
-                total_width += parseInt($(this).outerWidth(true), 10);
-            });
-            console.log('MAINMENU width:' + total_width);
-            return ( $(window).width() - total_width );  
-        }
-
-        handle_visibility() {
-            let free_space = this.get_free_space();
-            console.log(free_space);
-            switch(true){
-                case free_space <= 0:
-                    console.log('zu klein');
-                    this.mainmenu_titles.css('display', 'none');
-                    break;
-                default:
-                    this.mainmenu_titles.css('display', 'inline-block');
-                    break;
-            }
-        }
-
-        /* toggle_menu(evt) {
-            this.mobile_content.toggle();
-        } */
-    };
 
     //sidebar menu
     cone.SidebarMenu = class {
