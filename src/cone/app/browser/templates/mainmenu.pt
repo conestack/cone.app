@@ -2,7 +2,7 @@
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
 
-<div id="main-menu">
+<div id="main-menu" class="expanded">
     <ul id="mainmenu"
         class="navbar-nav list-unstyled"
         ajax:bind="contextchanged"
@@ -14,7 +14,7 @@
         <tal:comment replace="None">Main menu item as link</tal:comment>
         <li tal:condition="not item['children']"
             tal:define="css item['selected'] and 'active' or '';
-                        css css + 'nav-item topnav-element dropdown-submenu dropout-relative arrow-none';
+                        css css + 'mainmenu-item nav-item topnav-element dropdown-submenu dropout-relative arrow-none';
                         css ' '.join([css, 'node-%s' % item['id']]);"
             tal:attributes="class css">
 
@@ -35,7 +35,7 @@
               </span>
             </a>
     
-            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content collapse"
+            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content"
                  id="submenu-${item['id']}">
     
               <ul class="mainmenu-dropdown list-unstyled">
@@ -63,7 +63,6 @@
             <a href="#submenu-${item['id']}"
                class="nav-link dropdown-toggle"
                data-hover="dropdown"
-               data-bs-toggle="collapse"
               >
               <i class="${item['icon']|nothing}"></i>
               <span tal:content="item['title'] | string:'&nbsp;'"
@@ -71,7 +70,7 @@
               </span>
             </a>
     
-            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content collapse"
+            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content"
                  id="submenu-${item['id']}">
     
               <ul class="mainmenu-dropdown list-unstyled">

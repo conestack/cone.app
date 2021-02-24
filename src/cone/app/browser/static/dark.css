@@ -182,7 +182,7 @@ a:hover {
     border-right: 1px solid #2E2E33;
   }
 
-  #sidebar_left .dropdown a:hover, a:active {
+  #sidebar_left .dropdown-submenu a:hover, a:active {
     /*change hover clr on sidebar icons & a*/
     color: #dfe8f0;
   }
@@ -194,7 +194,7 @@ a:hover {
     border-right: 1px solid #2E2E33;
     /*change color of icons on hover, keep clr in submenu*/
   }
-  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown:active {
+  #sidebar_left .dropdown-submenu a:hover, #sidebar_left .dropdown-submenu:active {
     /*change color of dropout links*/
     color: #dfe8f0;
   }
@@ -227,7 +227,7 @@ a:hover {
   /*change bgcolor of sidebar*/
   background-color: #38383D;
 }
-#mobile-menu-content .dropdown a:hover, #mobile-menu-content .dropdown a:active {
+#mobile-menu-content .dropdown-submenu a:hover, #mobile-menu-content .dropdown-submenu a:active {
   /*change fontcolor of items in sidebar*/
   color: #dfe8f0;
 }

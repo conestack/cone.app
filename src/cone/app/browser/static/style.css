@@ -34,7 +34,7 @@
   display: inline-block;
   padding-top: 0.75rem;
 }
-.topnav-custom .dropdown-menu-start, .topnav-custom .dropdown-menu-end {
+.topnav-custom .dropdown-menu-start {
   margin-top: 0.75rem;
   padding: 1rem 2rem;
   box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
@@ -143,7 +143,6 @@
 }
 #user-account-old .dropdown-menu-user {
   min-width: 10rem;
-  top: 3.7rem !important;
 }
 #user-account-old .nav-link {
   padding-right: 0.5rem;
@@ -225,31 +224,6 @@
   }
 }
 /*end user-account*/
-#sidebar_left {
-  min-height: 100vh;
-}
-#sidebar_left svg {
-  margin-right: 1rem;
-}
-#sidebar_left .sidebar-heading {
-  padding: 0.875rem 1.25rem;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-}
-#sidebar_left .list-group {
-  width: 15rem;
-}
-#sidebar_left .list-unstyled {
-  margin-left: 2rem;
-}
-#sidebar_left .list-group-item {
-  border: 0;
-}
-#sidebar_left .submenu {
-  font-size: 0.9rem;
-  margin-left: 0.75rem;
-}
-
 /* mobile menu */
 #mobile-menu {
   position: relative;
@@ -314,38 +288,63 @@
 }
 
 /* end mobile menu */
-#sidebar_left > :first-child {
+#sidebar_left {
+  min-height: 100vh;
+}
+#sidebar_left svg {
+  margin-right: 1rem;
+}
+#sidebar_left .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+#sidebar_left .list-group {
+  width: 15rem;
+}
+#sidebar_left .list-unstyled {
+  margin-left: 2rem;
+}
+#sidebar_left .list-group-item {
+  border: 0;
+}
+#sidebar_left .submenu {
+  font-size: 0.9rem;
+  margin-left: 0.75rem;
+}
+
+#sidebar_left #navtree > :first-child {
   margin-top: 0.5rem;
 }
-#sidebar_left .md {
+#sidebar_left #navtree .md {
   display: none;
 }
-#sidebar_left .help {
+#sidebar_left #navtree .help {
   background-color: #17a2b8 !important;
   color: white;
 }
-#sidebar_left .help a:hover {
+#sidebar_left #navtree .help a:hover {
   background-color: #00899F !important;
 }
-#sidebar_left .help span {
+#sidebar_left #navtree .help span {
   font-weight: 400;
   color: white;
 }
-#sidebar_left .help .badge {
+#sidebar_left #navtree .help .badge {
   background-color: white;
   color: #17a2b8;
 }
-#sidebar_left .help svg {
+#sidebar_left #navtree .help svg {
   color: white;
 }
 @media (min-width: 576px) and (max-width: 991.9px) {
-  #sidebar_left .md {
+  #sidebar_left #navtree .md {
     display: block;
   }
-  #sidebar_left .sm-lg {
+  #sidebar_left #navtree .sm-lg {
     display: none;
   }
-  #sidebar_left .help a:hover {
+  #sidebar_left #navtree .help a:hover {
     background-color: transparent !important;
   }
 }
@@ -416,19 +415,19 @@
   #sidebar_left .dropdown-toggle::after {
     content: none;
   }
-  #sidebar_left .dropdown {
+  #sidebar_left .dropdown-submenu {
     position: relative;
   }
-  #sidebar_left .dropdown .list-group-item {
+  #sidebar_left .dropdown-submenu .list-group-item {
     background-color: transparent;
   }
-  #sidebar_left .dropdown a:hover, #sidebar_left .dropdown:active {
+  #sidebar_left .dropdown-submenu a:hover, #sidebar_left .dropdown-submenu:active {
     transition: 0s;
   }
-  #sidebar_left .dropdown:hover .dropdown-content {
+  #sidebar_left .dropdown-submenu:hover .dropdown-content {
     display: block;
   }
-  #sidebar_left .dropdown .dropdown-content {
+  #sidebar_left .dropdown-submenu .dropdown-content {
     display: none;
     position: absolute;
     top: 0;
@@ -502,13 +501,31 @@
 }
 
 /*mainmenu*/
+#main-menu .dropdown-menu-custom {
+  padding: 0;
+}
+#main-menu .dropdown-content {
+  display: none;
+  z-index: 1;
+  margin-top: 0;
+}
+#main-menu.expanded li.list-true:hover .dropdown-content {
+  display: block;
+}
+#main-menu.collapsed li:hover .dropdown-content {
+  display: block;
+}
+
 #mainmenu {
   margin-right: 2rem;
 }
 #mainmenu .dropdown > div {
   border-radius: 0;
   position: absolute;
-  top: 3.25rem;
+  top: 3.3rem;
+}
+#mainmenu .dropdown-menu {
+  min-width: 10rem;
 }
 #mainmenu .mainmenu-dropdown {
   padding-left: 1.5rem;
@@ -531,26 +548,12 @@
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
-#mainmenu .dropdown-menu {
-  min-width: 10rem;
-}
-#mainmenu .dropdown.toggle-hover .dropdown-content {
-  display: none;
-  z-index: 1;
-  margin-top: 0;
-}
-#mainmenu .dropdown.toggle-hover .dropdown-menu-custom {
-  padding: 0;
-}
-#mainmenu .dropdown.toggle-hover:hover .dropdown-content {
-  display: block;
-}
 
 #main-menu.mobile #mainmenu li {
   display: block;
 }
 #main-menu.mobile #mainmenu .mainmenu-title {
-  display: inline-block;
+  display: none;
 }
 
 /*end mainmenu styles*/

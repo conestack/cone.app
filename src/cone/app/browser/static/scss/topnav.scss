@@ -43,7 +43,7 @@
     
   }
 
-  .dropdown-menu-start, .dropdown-menu-end {
+  .dropdown-menu-start {
     margin-top:.75rem;
     padding:1rem 2rem;
     box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
@@ -173,7 +173,6 @@
     }
     .dropdown-menu-user {
       min-width:10rem;
-      top:3.7rem!important;
     }
     .nav-link {
       padding-right: 0.5rem;
@@ -264,38 +263,6 @@
   }
 
 /*end user-account*/
-
-#sidebar_left {
-  svg {
-    margin-right: 1rem;
-  }
-
-  min-height: 100vh;
-
-  .sidebar-heading {
-    padding: 0.875rem 1.25rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-  }
-
-  .list-group {
-    width: 15rem;
-  }
-
-  .list-unstyled {
-    margin-left: 2rem;
-  }
-
-  .list-group-item {
-    border: 0;
-  }
-
-  .submenu {
-    font-size: 0.9rem;
-    margin-left: 0.75rem;
-  }
-}
-  
 
 /* mobile menu */
 #mobile-menu {

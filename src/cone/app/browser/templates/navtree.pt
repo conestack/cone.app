@@ -12,10 +12,40 @@
       Navigation
     </div>
 
-    <ul class="nav list-group-item">
+    <ul class="list-group list-group-flush">
+    
+      <li class="list-group-item sidebar-heading">
+        <span class="d-none d-lg-inline-block">Navigation</span>
+        <hr />
+      </li>
+
+      <li class="dropdown-submenu dropout-relative">
+        <a href="#submenu" 
+           data-hover="dropdown" 
+           class="list-group-item arrow-none pe-0">
+
+          <i class="${item['icon']|nothing}"></i>
+          <i class="bi bi-mouse"></i>
+
+          <span class="sm-lg"
+                tal:content="context.title">
+            Navigation
+          </span>
+        </a>
+
+        <div class="dropdown-content" id="submenu">
+            <ul class="sidebar-dropout list-unstyled p-0">
+              <li>
+                <span class="list-group-item md bg-info">Hover</span>
+              </li>
+            </ul>
+        </div> 
+      </li>
+
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
     </ul>
 
   </div>
+
 
 </tal:block>

@@ -43,7 +43,6 @@
           
         </tal:version_old>
 
-
         <tal:version_new condition="False">
           <tal:livesearch
             condition="config.livesearch"
@@ -56,13 +55,20 @@
 
       </div>
     </nav>
+    
+    <div class="dropdown-menu-custom"
+         id="mobile_menu"
+         tal:condition="config.mainmenu">
+    </div>
 
     <div class="d-flex" id="wrapper">
 
       <div class="dropdown-menu-custom"
-           id="mobile_menu"
-           tal:condition="config.mainmenu">
-
+           id="sidebar_left"
+           tal:condition="config.sidebar_left">
+        <tal:tiles repeat="tilename config.sidebar_left">
+          <tal:tile replace="structure tile(tilename)" />
+        </tal:tiles>
       </div>
 
       <div id="page-content-wrapper"
@@ -85,5 +91,6 @@
       </div>
     </div>
   </div>
+
 
 </tal:layout>

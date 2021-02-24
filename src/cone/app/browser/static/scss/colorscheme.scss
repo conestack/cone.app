@@ -207,7 +207,7 @@ body {
     /*start lg*/
     @media (min-width: 992px) {
       #sidebar_left {border-right: 1px solid $border;}
-      #sidebar_left .dropdown a:hover , a:active {
+      #sidebar_left .dropdown-submenu a:hover , a:active {
         /*change hover clr on sidebar icons & a*/
         color:$fhover;
       }
@@ -219,7 +219,7 @@ body {
     @media (min-width:576px) and (max-width:991.9px) {
       #sidebar_left {
         border-right: 1px solid $border;
-        .dropdown {
+        .dropdown-submenu {
             a:hover , &:active {
                 /*change color of dropout links*/
                 color:$fhover;
@@ -259,7 +259,7 @@ body {
         border-top:none;
         /*change bgcolor of sidebar*/
         background-color:$menus;
-        .dropdown {
+        .dropdown-submenu {
           a:hover , a:active {
             /*change fontcolor of items in sidebar*/
             color:$fhover;
