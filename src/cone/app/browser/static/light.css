@@ -119,11 +119,11 @@ a:hover {
 }
 
 /*start searchbar*/
-#topnav-searchbar input {
+.searchbar input {
   color: #57575C !important;
   background-color: #F5F5FA !important;
 }
-#topnav-searchbar #searchbar-button {
+.searchbar #searchbar-button {
   background-color: #5bc0de;
   color: #ECF5FD;
 }

@@ -41,11 +41,12 @@ var livesearch_options = new Object();
         constructor(context) {
             cone.mobile_menu = this;
     
-            this.logo = $('#cone-logo', context);
-            this.mobile_btn = $('#hamburger-menu-toggle', context);
-            this.mobile_menu = $('#mobile-menu', context);
-            this.mobile_content = $('#mobile-menu-content', context);
-            this.mobile_items = $('#mobile-menu-content', context).children('div');
+            this.logo = $('#cone-logo');
+            this.mobile_btn = $('#hamburger-menu-toggle');
+            this.mobile_menu = $('#mobile-menu');
+            this.mobile_content = $('#mobile-menu-content');
+            this.mobile_items = $('#mobile-menu-content').children('div');
+            this.topnav_items = $('#topnav-container').children('div');
     
             this._mobile_handler = this.mobile_handler.bind(this);
             $(this._mobile_handler);
@@ -55,29 +56,20 @@ var livesearch_options = new Object();
             this.mobile_btn.on('click', this._mobile_toggle);
         }
 
-        mobile_handler() {
-
-            if ($(".mobile").length) {
-                $('.mobile').detach().appendTo(this.mobile_content);
+        mobile_handler(evt) {
+            if(this.mobile_menu.hasClass('active')){
                 this.logo.hide();
                 this.mobile_menu.css('display', 'inline-block');
-                console.log('appended to mobile');
-            } else if (this.mobile_content.find('div')) {
-                this.mobile_menu.hide();
-                this.logo.show();
-                this.mobile_items.each(function() {
-                    $(this).detach().prependTo('#topnav-container');
-                    console.log('appended to topnav');
-                });
-                console.log('removed from mobile');
             } else {
-                console.log('there is/was nothing in mobile');
+                this.mobile_menu.hide();
+                this.logo.css('display', 'inline-block');
             }
-        }
+        } 
 
         toggle_mobile_menu() {
             this.mobile_content.toggle();
         }
+
     }
 
     //main menu
@@ -89,19 +81,20 @@ var livesearch_options = new Object();
             }
 
             cone.main_menu = this;
-            this.mainmenu_list = $('#mainmenu', context);
-            this.topnav_children = $('#topnav-container', context).children('div');
-            this.mainmenu = $('#main-menu', context);
-            this.menu_objects = this.mainmenu_list.children('li');
-            this.mainmenu_titles = $('.mainmenu-title', context);
-            this.topnav_element = $('.topnav-element', context);
-            this.mainmenu_item = $('.mainmenu-item', context);
+            this.topnav_children = $('#topnav-container').children('div');
+
+            this.topnav_mainmenu = $('#topnav-mainmenu');
+            this.mainmenu_list = this.topnav_mainmenu.children('ul');
+            this.topnav_menu_icons = $('#topnav-mainmenu').children('li').find('i');
+
+            this.topnav_mainmenu_titles = this.topnav_mainmenu.find('.mainmenu-title');
 
             this.free_space = 0;
-            this.menu_width = 0;
-
-            this._get_menu_width = this.get_menu_width.bind(this);
-            $(this._get_menu_width);
+            this.menu_width = parseFloat($('#topnav-mainmenu').outerWidth(true), 10);
+            this.menu_width_collapsed = parseFloat(this.topnav_menu_icons.each(function(){
+                this.menu_width_collapsed += $(this).outerWidth(true);
+                console.log(this.menu_width_collapsed);
+            }));
 
             this._calc_free_space = this.calc_free_space.bind(this);
             $(this._calc_free_space);
@@ -113,45 +106,37 @@ var livesearch_options = new Object();
 
         }
 
-        get_menu_width() {
-            let menu_width = 0;
-            $('.mainmenu-item').each(function(index) {
-                menu_width += parseInt($(this).outerWidth(true), 10);
-                console.log(menu_width);
-            });
-            this.menu_width = menu_width;
-            console.log('main menu width: ' + this.menu_width);
-        }
-
         calc_free_space() {
             let total_width = 0;
             this.topnav_children.each(function(index) {
                 total_width += parseInt($(this).outerWidth(true), 10);
             })
             this.free_space = $(window).width() - total_width ;
-            console.log('free space: ' + this.free_space);
-            console.log('total width: ' + total_width);
+            // console.log('free space: ' + this.free_space);
+            // console.log('total width: ' + total_width);
+            // console.log(this.menu_width);
         }
 
-        handle_visibility() {
-            if (this.free_space <= 0 && this.mainmenu.hasClass('expanded')) { //collapse
-                this.mainmenu_titles.css('display', 'none'); 
-                this.mainmenu.addClass('collapsed');
-                this.mainmenu.removeClass('expanded');
-                console.log('collapsed');
+        handle_visibility(evt) {
+            if (this.free_space <= 130 
+                && this.topnav_mainmenu.hasClass('expanded')) { //collapse
+                this.topnav_mainmenu_titles.css('display', 'none'); 
+                this.topnav_mainmenu.addClass('collapsed');
+                this.topnav_mainmenu.removeClass('expanded');
+                this.topnav_mainmenu.css('display', 'inline-block');
+                // console.log('collapsed');
             } 
             else if (this.free_space > this.menu_width){ //expand
-                this.mainmenu_titles.css('display', 'inline-block');
-                this.mainmenu.removeClass('collapsed');
-                this.mainmenu.addClass('expanded');
-                console.log('enough space expand');
+                this.topnav_mainmenu.css('display', 'inline-block');
+                this.topnav_mainmenu_titles.css('display', 'inline-block');
+                this.topnav_mainmenu.removeClass('collapsed');
+                this.topnav_mainmenu.addClass('expanded');
+                // console.log('enough space expand');
             }
-            else if (this.free_space <= 0 && 
-                this.mainmenu.hasClass('collapsed') && 
-                $('#topnav-searchbar').hasClass('mobile') ) { //mobile - adjust
-                this.mainmenu.removeClass('collapsed');
-                this.mainmenu.addClass('mobile');
-                this.mainmenu_list.toggleClass('navbar-nav');
+            else if (this.free_space <= 0 
+                && this.topnav_mainmenu.hasClass('collapsed') 
+                && $('#topnav-searchbar').css('display') == "none" ) { //mobile - adjust
+                this.topnav_mainmenu.hide();
             }
            
         }
@@ -165,12 +150,13 @@ var livesearch_options = new Object();
             this.threshold_1 = threshold_1;
             this.threshold_2 = threshold_2;
 
-            this.searchbar_btn = $('#searchbar-button', context);
-            this.searchbar_text = $('.twitter-typeahead', context);
-            this.toolbar_top = $('#toolbar-top', context);
-            this.searchbar = $('#topnav-searchbar', context);
-            this.topnav = $('#topnav-container', context);
-            this.topnav_children = this.topnav.children('div').not(this.searchbar);
+            this.searchbar_btn = $('#searchbar-button');
+            this.topnav_searchbar_text = $('#topnav-searchbar').find('.twitter-typeahead');
+            // this.toolbar_top = $('#toolbar-top');
+            this.topnav_searchbar = $('#topnav-searchbar');
+            this.mobile_searchbar = $('#mobile-searchbar');
+            this.topnav = $('#topnav-container');
+            this.topnav_children = this.topnav.children('div').not(this.topnav_searchbar);
 
             this.free_space = 0;
 
@@ -193,42 +179,35 @@ var livesearch_options = new Object();
             console.log('searchbar free space: ' + this.free_space);
         }
 
-        resize_handle() { // adjust searchbar
+        resize_handle(evt) { // adjust searchbar
 
             switch(true) {
                 case this.free_space <= 130: // mobile
-                    if($('#main-menu').hasClass('collapsed')) {
-                        this.searchbar.removeClass('collapsed');
-                        this.searchbar.addClass('mobile');
-                        // console.log('searchbar mobile');
-                    }
+                    console.log('mobile searchbar');
+                    this.topnav_searchbar.hide();
+                    $('#mobile-menu').addClass('active');
                     break;
 
                 case this.free_space <= 250: // collapsed
-                    if(this.searchbar.hasClass('mobile')){
-                        this.searchbar.removeClass('mobile');
-                    }
+                    $('#mobile-menu').removeClass('active');
+                    this.topnav_searchbar.css('display', 'inline-block');
+                    this.topnav_searchbar.find('.twitter-typeahead').css('width', '0');
 
-                    $('.twitter-typeahead').css('width', '0');
-
-                   /*  if(this.searchbar.hasClass('mobile')) {
-                        this.searchbar.removeClass('mobile');
-                    } */
-                    if(this.searchbar.hasClass('expanded')) {
-                        this.searchbar.removeClass('expanded');
+                    if(this.topnav_searchbar.hasClass('expanded')) {
+                        this.topnav_searchbar.removeClass('expanded');
                     }
-                    this.searchbar.addClass('collapsed');
+                    this.topnav_searchbar.addClass('collapsed');
 
                     this.searchbar_btn.on('click', event => {
-                        if(this.searchbar.hasClass('expanded')) {
-                            this.searchbar_text.animate({width:0}, 'fast');
-                            this.searchbar.removeClass('expanded');
-                            this.searchbar.addClass('collapsed');
+                        if(this.topnav_searchbar.hasClass('expanded')) {
+                            this.topnav_searchbar_text.animate({width:0}, 'fast');
+                            this.topnav_searchbar.removeClass('expanded');
+                            this.topnav_searchbar.addClass('collapsed');
                             console.log('close');
                         } else {
-                            this.searchbar.removeClass('collapsed');
-                            this.searchbar.addClass('expanded');
-                            this.searchbar_text.animate({width:this.free_space}, 'fast');
+                            this.topnav_searchbar.removeClass('collapsed');
+                            this.topnav_searchbar.addClass('expanded');
+                            this.topnav_searchbar_text.animate({width:this.free_space}, 'fast');
                             console.log('open');
                         }
                     });
@@ -236,10 +215,10 @@ var livesearch_options = new Object();
 
                 default: //free space over 250px
                 $('.twitter-typeahead').css('width', '200px');
-                    if(this.searchbar.hasClass('collapsed')){
-                        this.searchbar.removeClass('collapsed');
+                    if(this.topnav_searchbar.hasClass('collapsed')){
+                        this.topnav_searchbar.removeClass('collapsed');
                     }
-                    this.searchbar.addClass('expanded');
+                    this.topnav_searchbar.addClass('expanded');
                     break;
             }
         }
@@ -249,7 +228,7 @@ var livesearch_options = new Object();
     cone.SidebarMenu = class {
 
         constructor(context, threshold) {
-            this.menu_toggle = $('#hamburger-menu-toggle', context);
+            this.menu_toggle = $('#hamburger-menu-toggle');
             if (!this.menu_toggle.length) {
                 return;
             }

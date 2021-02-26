@@ -9,10 +9,6 @@
   background-color: transparent;
 }
 
-.collapsed {
-  display: none;
-}
-
 .topnav-custom {
   height: 4.2rem;
   box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
@@ -41,16 +37,38 @@
 }
 
 /*searchbar*/
-#topnav-searchbar {
+.searchbar {
   display: inline-block;
-  height: 2.2rem;
+  height: 2.3rem !important;
   font-size: 0.95em;
   z-index: 1000;
   top: 1rem;
   position: absolute;
-  /* #search-text {
-    display:none;
-  } */
+}
+.searchbar .form-control:focus {
+  outline: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.searchbar .input-group, .searchbar *:not(svg) {
+  height: inherit;
+  flex-wrap: nowrap;
+}
+.searchbar .input-group input, .searchbar *:not(svg) input {
+  padding: 0.375rem 0.75rem;
+  display: block;
+  font-size: 1em;
+  border: 0;
+  border-radius: 4px 0 0 4px;
+}
+.searchbar #searchbar-button {
+  padding: 0 0.55em;
+  margin: 0;
+  border-radius: 4px;
+}
+
+#topnav-searchbar {
+  top: 0;
 }
 #topnav-searchbar .twitter-typeahead {
   width: 200px;
@@ -59,43 +77,23 @@
   display: block;
   position: absolute;
 }
-#topnav-searchbar .form-control:focus {
-  outline: 0;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-#topnav-searchbar .red {
-  background-color: red !important;
-}
-#topnav-searchbar .input-group, #topnav-searchbar *:not(svg) {
-  height: inherit;
-  flex-wrap: nowrap;
-}
-#topnav-searchbar .input-group input, #topnav-searchbar *:not(svg) input {
-  padding: 0.375rem 0.75rem;
-  display: block;
-  font-size: 1em;
-  border: 0;
-  border-radius: 4px 0 0 4px;
-}
-#topnav-searchbar #searchbar-button {
-  padding: 0 0.5rem;
-  margin: 0;
-  border-radius: 4px;
-}
-#topnav-searchbar.mobile {
+
+#mobile-searchbar {
   position: absolute;
-  top: 1rem;
+  top: 0.5rem;
   margin-left: 0;
   width: 100%;
   padding: 0 1rem;
   margin: 0.5rem 0;
 }
-#topnav-searchbar.mobile #search-text {
+#mobile-searchbar #search-text {
   position: relative;
   display: inline-block;
 }
 
+/* #search-text {
+  display:none;
+} */
 /*end searchbar*/
 .navbar-brand {
   display: inline-block;
@@ -278,9 +276,6 @@
 }
 #mobile-menu-content .sidebar-heading hr {
   margin: 0;
-}
-#mobile-menu-content #mainmenu {
-  margin-top: 4rem;
 }
 #mobile-menu-content #page-content-wrapper {
   position: absolute;
@@ -501,36 +496,36 @@
 }
 
 /*mainmenu*/
-#main-menu .dropdown-menu-custom {
+.mainmenu .dropdown-menu-custom {
   padding: 0;
 }
-#main-menu .dropdown-content {
-  display: none;
-  z-index: 1;
-  margin-top: 0;
-}
-#main-menu.expanded li.list-true:hover .dropdown-content {
-  display: block;
-}
-#main-menu.collapsed li:hover .dropdown-content {
-  display: block;
-}
 
-#mainmenu {
+#topnav-mainmenu {
   margin-right: 2rem;
 }
-#mainmenu .dropdown > div {
+#topnav-mainmenu.expanded li.list-true:hover .dropdown-content {
+  display: block;
+}
+#topnav-mainmenu.collapsed li:hover .dropdown-content {
+  display: block;
+}
+#topnav-mainmenu .dropdown > div {
   border-radius: 0;
   position: absolute;
   top: 3.3rem;
 }
-#mainmenu .dropdown-menu {
+#topnav-mainmenu .dropdown-content {
+  display: none;
+  z-index: 1;
+  margin-top: 0;
+}
+#topnav-mainmenu .dropdown-menu {
   min-width: 10rem;
 }
-#mainmenu .mainmenu-dropdown {
+#topnav-mainmenu .mainmenu-dropdown {
   padding-left: 1.5rem;
 }
-#mainmenu .mainmenu-dropdown > :first-child {
+#topnav-mainmenu .mainmenu-dropdown > :first-child {
   margin: 0;
   font-weight: bold;
   border: 0;
@@ -541,19 +536,29 @@
   height: 2.5rem;
   padding-top: 0.5rem;
 }
-#mainmenu .mainmenu-dropdown > :only-child {
+#topnav-mainmenu .mainmenu-dropdown > :only-child {
   margin-bottom: 0;
 }
-#mainmenu .mainmenu-dropdown li {
+#topnav-mainmenu .mainmenu-dropdown li {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
-#main-menu.mobile #mainmenu li {
-  display: block;
+#mobile-mainmenu #mainmenu {
+  flex-direction: column;
+  margin-top: 4rem;
+  padding-left: 1rem;
 }
-#main-menu.mobile #mainmenu .mainmenu-title {
-  display: none;
+#mobile-mainmenu #mainmenu li {
+  display: block;
+  width: 100%;
+  padding: 0;
+}
+#mobile-mainmenu #mainmenu .mainmenu-title {
+  display: inline-block;
+}
+#mobile-mainmenu #mainmenu .navbar-expand .navbar-nav {
+  flex-direction: column;
 }
 
 /*end mainmenu styles*/

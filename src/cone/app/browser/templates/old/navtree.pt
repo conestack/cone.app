@@ -1,0 +1,21 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+           omit-tag="True">
+
+  <div id="navtree"
+       class="contextsensitiv list-group"
+       ajax:bind="contextchanged"
+       ajax:action="navtree:#navtree:replace">
+
+    <div class="list-group-item active"
+         tal:content="context.title">
+      Navigation
+    </div>
+
+    <ul class="nav list-group-item">
+      <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
+    </ul>
+
+  </div>
+
+</tal:block>

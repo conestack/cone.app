@@ -22,18 +22,29 @@
             </svg>
           </button>
           <div id="mobile-menu-content">
-
-          
+            <div id="mobile-searchbar" class="searchbar">
+              <tal:livesearch
+                condition="config.livesearch"
+                replace="structure tile('livesearch')" />
+            </div>
+            <div id="mobile-mainmenu" class="mainmenu expanded">
+              <tal:mainmenu condition="config.mainmenu"
+                            replace="structure tile('mainmenu')" />
+            </div>
           </div>
         </div>
 
         <tal:version_old condition="True">
-          <tal:mainmenu
-            condition="config.mainmenu"
-            replace="structure tile('mainmenu')" />
-          <tal:livesearch
-            condition="config.livesearch"
-            replace="structure tile('livesearch')" />
+          <div id="topnav-mainmenu" class="mainmenu expanded">
+            <tal:mainmenu
+              condition="config.mainmenu"
+              replace="structure tile('mainmenu')" />
+          </div>
+          <div id="topnav-searchbar" class="searchbar"> 
+            <tal:livesearch
+               condition="config.livesearch"
+               replace="structure tile('livesearch')" />
+          </div>
           <div class="nav-item user-account ms-3 user-account-old"
                id="user-account-old"
                tal:define="config context.config">

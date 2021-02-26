@@ -2,7 +2,7 @@
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
 
-<div id="main-menu" class="expanded">
+
     <ul id="mainmenu"
         class="navbar-nav list-unstyled"
         ajax:bind="contextchanged"
@@ -102,6 +102,6 @@
       </tal:item>
 
     </ul>
-</div>
+
 
 </tal:mainmenu>

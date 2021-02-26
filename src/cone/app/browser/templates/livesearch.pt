@@ -3,7 +3,7 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-  <div id="topnav-searchbar">
+  
     <div class="input-group">
 
       <input type="text"
@@ -14,12 +14,12 @@
              i18n:attributes="placeholder search_database">
 
       <div class="input-group-append">
-        <button class="btn shadow-none border-none btn-md" type="submit" id="searchbar-button">
+        <button class="btn shadow-none border-none btn-md sb-button" type="submit" id="searchbar-button">
           <i class="bi-search"></i>
         </button>
       </div>
 
     </div>
-  </div>
+
 
 </tal:search>

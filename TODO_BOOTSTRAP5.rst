@@ -7,6 +7,7 @@ TODO
 [ ] - navtree -> insert markup (tehut.eu)
 [~] - mainmenu -> navtree
 [~] - old layout - migrate to bs5 (grid system)
+[~] - rewrite topnav, searchbar and mobile menu 
 
 javascript
 ----------
