@@ -75,6 +75,11 @@
         width:100%;
         padding:0;
       }
+      #mobile-searchbar {
+        .twitter-typeahead {
+          width:100%;
+        }
+      }
       .mainmenu-title {
         display:inline-block;
       }

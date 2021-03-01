@@ -42,13 +42,18 @@ styles
 [X] - topnav wrapper padding - remove
 [ ] - implement bs5 in old layout:
       [X] - add basic support for md&lg screen sizes;
-      [~] - add support for sm screen size
+      [X] - add support for sm screen size
 [ ] - fix breadcrumb display in pathbar.pt
 [X] - remove mainmenu in sidebar - move to topbar
 [~] - add navtree in sidebar - display md on hover:
       - current branch: first level & sublevels
       - non-current branch: first level
     - add toggle button
+    - stlye navtree [X]
+    - fix bugs [ ]
+    - add close button [ ]
+    - implement mobile version [ ]
+    - simplify and declutter scss [ ]
 
 icons
 -----

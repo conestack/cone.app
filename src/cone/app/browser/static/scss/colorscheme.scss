@@ -231,6 +231,10 @@ body {
             color:white;
           }
         }
+        .dropout-title {
+          background-color:$info;
+        }
+        
         .sidebar-dropout {
           background-color: $bg;
           > :first-child > :first-child {

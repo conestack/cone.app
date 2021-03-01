@@ -209,6 +209,9 @@ a:hover {
   #sidebar_left ul > li:hover i, #sidebar_left:active i {
     color: white;
   }
+  #sidebar_left .dropout-title {
+    background-color: #5bc0de;
+  }
   #sidebar_left .sidebar-dropout {
     background-color: #F5F5FA;
   }
