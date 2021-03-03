@@ -1,0 +1,91 @@
+
+    #navtree {
+      > :first-child {
+        margin-top:.5rem;
+      }
+
+      .dropdown {
+      .dropdown-content {
+          display:block;
+        ul {
+            border:none;
+
+            &:before {
+              background-color: grey;
+              content: "";
+              display: inline-block;
+              height: calc(100% - 2rem);
+              width: 1px;
+              position: absolute;
+              left: 0;
+
+            }
+          }
+      }
+    
+
+      .list-group-item {
+        .dropdown {
+            &:before{
+              content: "";
+              display: inline-block;
+              height: 1rem;
+              border-radius: 0 0 0 5px;
+              border: 1px solid;
+              border-color: transparent transparent grey grey;
+              position: absolute;
+              top: -0.5rem;
+              left: -1.3rem;
+              width: 0.8rem;
+            }
+          }
+      }
+  
+      .md {
+        display:none;
+        }
+  
+      .help {
+        background-color: #17a2b8!important;
+        color:white;
+        a:hover {
+          background-color: #00899F!important;
+        }
+        span {
+          font-weight:400;
+          color:white;
+        }
+        .badge {
+          background-color: white;
+          color:#17a2b8;
+        }
+        svg {
+          color:white;
+        }
+      }
+
+      @media(min-width:576px) and (max-width:991.9px) {
+            .dropdown-content {
+              display:none;
+            }
+            a > span {
+              display:none;
+            }
+
+
+        .md {
+          display:block;
+        }
+  
+        .sm-lg {
+          display:none;
+        }
+        .help {
+          a:hover {
+            background-color: transparent!important;
+          }
+        }
+      }
+    }
+    }
+  
