@@ -19,6 +19,10 @@ body {
   color: white;
 }
 
+#topnav-mainmenu li:hover > a {
+  color: #dfe8f0;
+}
+
 /*start style.scss*/
 /*dropdown dark*/
 .dropdown-menu-custom {
@@ -67,7 +71,7 @@ body {
 /*end style.css*/
 /*start topnav.scss*/
 /*topnav old*/
-#mainmenu .dropdown-menu a:hover {
+#mainmenu .dropdown-menu-custom a:hover {
   color: #5bc0de;
 }
 
@@ -248,5 +252,10 @@ a:hover {
 
 /*end sm*/
 /*end sidebar.scss*/
+#mobile-mainmenu li:hover {
+  background-color: #57575C;
+  color: #dfe8f0;
+  transition: background-color 0.4s;
+}
 
 /*# sourceMappingURL=dark.css.map */

@@ -31,6 +31,11 @@
               <tal:mainmenu condition="config.mainmenu"
                             replace="structure tile('mainmenu')" />
             </div>
+            <div id="mobile-navtree">
+              <tal:tiles repeat="tilename config.sidebar_left">
+                <tal:tile replace="structure tile(tilename)" />
+              </tal:tiles>
+            </div>
           </div>
         </div>
 
@@ -77,9 +82,17 @@
       <div class="dropdown-menu-custom"
            id="sidebar_left"
            tal:condition="config.sidebar_left">
-        <tal:tiles repeat="tilename config.sidebar_left">
-          <tal:tile replace="structure tile(tilename)" />
-        </tal:tiles>
+
+        <div id="sidebar-toggle-btn">
+          <i class="bi bi-chevron-left"></i>
+          <i class="bi bi-chevron-right"></i>
+        </div>
+
+        <div id="sidebar-navtree">
+          <tal:tiles repeat="tilename config.sidebar_left">
+            <tal:tile replace="structure tile(tilename)" />
+          </tal:tiles>
+        </div>
       </div>
 
       <div id="page-content-wrapper"

@@ -25,6 +25,7 @@ javascript
       [X] + if there is not enough space for either mainmenu icons or searchbar, 
         move content to mobile menu
 [~] - debug main menu
+[ ] - debug searchbar
 [X] - add Main Menu Class
 
 styles
@@ -48,12 +49,14 @@ styles
 [~] - add navtree in sidebar - display md on hover:
       - current branch: first level & sublevels
       - non-current branch: first level
-    - add toggle button
-    - stlye navtree [X]
-    - fix bugs [ ]
-    - add close button [ ]
-    - implement mobile version [ ]
-    - simplify and declutter scss [ ]
+      - add toggle button [ ]
+      - style navtree [X]
+      - fix bugs [X]
+      - implement mobile version [~]
+      - simplify and declutter scss [ ]
+[X] - added mobile-menu.scss and navtree.scss
+[X] - ".list-true" and ".arrow-none" obsolete, removed -> now uses bootstrap icon,
+      opens menu on arrow click in mobile while preserving clickable main link
 
 icons
 -----

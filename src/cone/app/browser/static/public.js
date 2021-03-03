@@ -13,6 +13,7 @@ cone = {
     theme_switcher: null,
     searchbar_handler: null,
     mobile_menu: null,
+    navtree: null,
     default_themes: [
         'static/light.css',
         'static/dark.css'
@@ -35,6 +36,14 @@ var livesearch_options = new Object();
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
+    // navtree
+    cone.Navtree = class {
+        constructor(context) {
+            cone.navtree = this;
+
+            this.navtree_wrap = $('#navtree');
+        }
+    }
     
     // mobile menu
     cone.MobileMenu = class {
@@ -103,8 +112,8 @@ var livesearch_options = new Object();
             $(this._handle_visibility);
             $(window).on('resize', this._handle_visibility);
 
-            this.mobile_mainmenu.find('li').on('click', function(event){ 
-                $(this).find('.dropdown-content').toggle();
+            this.mobile_mainmenu.find('.dropdown-arrow').on('click', function(event){ 
+                $(this).parent('li').find('.dropdown-content').toggle();
                 event.stopPropagation(); //disable default scrolldown
                 event.preventDefault();
             });
@@ -279,8 +288,11 @@ var livesearch_options = new Object();
             cone.sidebar_menu = this;
             this.threshold = threshold;
             this.sidebar = $('#sidebar_left');
-            this.menu_toggle.on('click', this.toggle_menu.bind(this));
-            this._resize_handle = this.handle_menu_visibility.bind(this)
+            this.toggle_btn = $('#sidebar-toggle-btn');
+
+            this.toggle_btn.on('click', this.toggle_menu.bind(this));
+            this._resize_handle = this.handle_menu_visibility.bind(this);
+            $(this._resize_handle);
             $(window).on('resize', this._resize_handle);
             this.handle_menu_visibility(null);
         }
@@ -290,7 +302,13 @@ var livesearch_options = new Object();
         }
 
         toggle_menu(evt) {
-            this.sidebar.toggle();
+            if(this.sidebar.hasClass('collapsed')){
+                this.sidebar.removeClass('collapsed');
+                this.sidebar.addClass('expanded');
+            } else if(this.sidebar.hasClass('expanded')) {
+                this.sidebar.removeClass('expanded');
+                this.sidebar.addClass('collapsed');
+            }
         }
 
         handle_menu_visibility(evt) {
@@ -298,6 +316,11 @@ var livesearch_options = new Object();
                 this.sidebar.hide();
             } else {
                 this.sidebar.show();
+                if(window.matchMedia(`(max-width: 991.9px)`).matches) {
+                    this.sidebar.addClass('collapsed');
+                } else {
+                    this.sidebar.addClass('expanded');
+                }
             }
         }
     };

@@ -10,8 +10,7 @@
     <ul class="list-group list-group-flush list-unstyled">
     
       <li class="sidebar-heading">
-        <span class="d-none d-lg-inline-block"
-                 tal:content="context.title">
+        <span tal:content="context.title">
           Navigation
         </span>
         <hr />

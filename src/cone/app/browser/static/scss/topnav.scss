@@ -39,7 +39,7 @@
     
   }
 
-  .dropdown-menu-start {
+  .dropdown-menu-custom {
     margin-top:.75rem;
     padding:1rem 2rem;
     box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
@@ -119,18 +119,6 @@
     }
   }
 }
-#mobile-searchbar {
-  position: absolute;
-  top: .5rem;
-  margin-left:0;
-  width: 100%;
-  padding: 0 1rem;
-  margin: .5rem 0;
-  #search-text {
-    position:relative;
-    display:inline-block;
-  }
-}
   /* #search-text {
     display:none;
   } */
@@ -169,10 +157,6 @@
   }
   
   @media (max-width: 991.9px) {
-    .dropdown-menu {
-      min-width: 0rem;
-    }
-  
     .navbar-brand {
       margin-left: 0;
     }
@@ -284,103 +268,3 @@
   }
 
 /*end user-account*/
-
-/* mobile menu */
-#mobile-menu {
-  position: relative;
-  display:none;
-}
-#mobile-menu-content {
-  display:none;
-  position:absolute;
-  left: 0;
-  top: 4.25rem;
-  height:fit-content;
-  min-height:5rem;
-  width: 100vw;
-  z-index:1000;
-  box-shadow:1rem 1rem 1rem -1rem rgb(0, 0, 0, .15);
-  border-radius: 0 0 2% 2%;
-  overflow:hidden;
-
-  #topnav-searchbar .twitter-typeahead {
-    width: 100%;
-  }
-
-  li {
-    a {
-      padding-bottom:0;
-
-      :last-child {
-        padding-bottom:1rem;
-      }
-    }
-    &.arrow-none {
-      .dropdown-menu {
-        display:none;
-      }
-    }
-  }
-  .mainmenu-dropdown li {
-    margin: .5rem 0;
-  }
-  .dropdown {
-    width: 100%;
-
-    .dropdown-content {
-      position:relative;
-      left:1rem;
-      margin-top:0;
-      margin-bottom:1rem;
-      display:none;
-      font-size:.85rem;
-      padding-left:.3rem;
-      box-shadow:none;
-      border:none;
-
-      .dropdown-title {
-        display:none!important;
-      }
-
-      .list-group-item {
-        padding:0.5rem 0.5rem 0.5rem 1.3rem;
-      }
-    }
-  }
-
-  .dropdown-content {
-    font-size:.85rem;
-    padding-left:.3rem;
-    background-color:transparent;
-  }
-
-  .list-group {
-    width:100%;
-    background-color:transparent;
-
-    .list-group-item {
-      background-color: transparent;
-    }
-  }
-
-  .sidebar-dropout > :first-child {
-    display:none;
-    background-color:transparent;
-  }
-
-  .sidebar-heading {
-    padding: 0 1rem;
-    background-color:transparent;
-
-    hr {
-      margin:0;
-    }
-  }
-
-  #page-content-wrapper {
-    position:absolute;
-    z-index: -1;
-  }
-}
-
-/* end mobile menu */

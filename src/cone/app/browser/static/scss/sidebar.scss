@@ -1,4 +1,27 @@
 #sidebar_left {
+  position:absolute;
+
+  #sidebar-toggle-btn {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    display: block;
+    top: 1rem;
+    float: right;
+    align-items: center;
+    justify-content: center;
+    right: 1rem;
+    border-radius: 50%;
+    border: 1px solid red;
+    display: flex;
+    padding: 0;
+
+    i {
+      font-size:1.2rem;
+      margin:0;
+    }
+  }
+
   i {
     margin-right: 1rem;
   }
@@ -23,54 +46,6 @@
     margin-left: 0.75rem;
   }
 }
-  
-
-#sidebar_left {
-  #navtree {
-    > :first-child {
-      margin-top:.5rem;
-    }
-
-    .md {
-      display:none;
-      }
-
-    .help {
-      background-color: #17a2b8!important;
-      color:white;
-      a:hover {
-        background-color: #00899F!important;
-      }
-      span {
-        font-weight:400;
-        color:white;
-      }
-      .badge {
-        background-color: white;
-        color:#17a2b8;
-      }
-      svg {
-        color:white;
-      }
-    }
-
-    @media(min-width:576px) and (max-width:991.9px) {
-      .md {
-        display:block;
-      }
-
-      .sm-lg {
-        display:none;
-      }
-      .help {
-        a:hover {
-          background-color: transparent!important;
-        }
-      }
-    }
-  }
-}
-
 
 #page-content-wrapper {
     min-width: 100vw;
@@ -81,7 +56,9 @@
   }
 
   /*lg*/
-  @media (min-width: 992px) {
+  #sidebar_left {
+
+  &.expanded {
   
     #page-content-wrapper {
       min-width: 0;
@@ -92,6 +69,10 @@
       padding-left:2rem;
       box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
       margin-left: 0;
+
+      .bi-chevron-right {
+        display:none;
+      }
 
       .dropout-title {
         display:none;
@@ -104,8 +85,8 @@
 
       .sidebar-heading {
         padding: 1rem 0;
+        display: inline-block;
       }
-      
 
       hr {
         display: none;
@@ -118,68 +99,42 @@
           font-size:.85rem;
           padding-left:.3rem;
 
-          ul {
-            
-            &:before{
-              background-color:grey;
-              content:"";
-              display:inline-block;
-              height: calc(100% - 1.7rem);
-              width:1px;
-              position:absolute;
-              left:0;
-            }
-          }
-
           .list-group-item {
             padding:0.5rem 0.5rem 0.5rem 1.3rem;
-            .dropdown {
-
-            &:before{
-              background-color: grey;
-              content: "";
-              display: inline-block;
-              height: 1px;
-              position: absolute;
-              top:.5rem;
-              left: -1.3rem;
-              width: .8rem;
-            }
-          }
           }
         }
       }
     }
   }
+}
   /*end lg*/
   
 
-  /*md*/
-  @media (min-width:576px) and (max-width:991.9px) {
+#sidebar_left {
+  &.collapsed {
     #page-content-wrapper {
       min-width: 0;
       width: 100vw;
-    }
-
-    #navtree {
-      .dropdown-content {
-        display:none;
-      }
-      a > span {
-        display:none;
-      }
     }
   
     #sidebar_left {
       width: 3.5rem;
       box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
 
+      .bi-chevron-left {
+        display:none;
+      }
+
+      #sidebar-navtree {
+        margin-top:3rem;
+      }
+
       > * {
         padding-left:1rem;
       }
 
       .sidebar-heading {
-        padding: 1rem 1rem 1rem 0;
+        display:none;
       }
 
       ul {
@@ -189,9 +144,6 @@
         }
       }
 
-      .dropdown-toggle::after {
-        content: none;
-      }
       
       .dropdown-submenu {
         position: relative;
@@ -295,32 +247,6 @@
       font-weight:400;
     }
   }
+}
   /*end md*/
-
   
-  #sidebar_left {
-
-  
-    .list-true {
-      a[data-bs-toggle="collapse"] {
-        position: relative;
-      }
-  
-      .dropdown-toggle::after {
-        display: block;
-        position: absolute;
-        top: 50%;
-        right: 20px;
-        transform: translateY(-50%);
-      }
-    }
-  }
-
-  /*end page-content-wrapper*/
-  
-  /*end sidebar*/
-
-
-  .arrow-none .dropdown-toggle::after {
-    content: none;
-  }

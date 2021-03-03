@@ -21,6 +21,12 @@ body {
   }
 }
 
+#topnav-mainmenu {
+  li:hover > a {
+    color:$fhover;
+  }
+}
+
 
 /*start style.scss*/
     /*dropdown dark*/
@@ -75,7 +81,7 @@ body {
 
 /*topnav old*/
 
-#mainmenu .dropdown-menu {
+#mainmenu .dropdown-menu-custom {
     a:hover {
       color:$info;
     }
@@ -286,3 +292,11 @@ body {
     /*end sm*/
 /*end sidebar.scss*/
     
+
+#mobile-mainmenu {
+  li:hover {
+    background-color:$sb;
+    color:$fhover;
+    transition: background-color .4s;
+}
+}
