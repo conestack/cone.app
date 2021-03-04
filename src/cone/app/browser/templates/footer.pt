@@ -2,15 +2,9 @@
            omit-tag="True">
 
 
-    <footer class="footer footer-custom p-3 bg-transparent font-light mt-auto">
-      <div class="container-fluid text-center text-md-left">
-        <div class="row">
-            <!---copyright-->
-            <div class="footer-copyright">
-              © 2021 Copyright:<a href="https://r2solutions.at/"> r2Solutions</a>
-            </div>
-            <!---/copyright-->
-        </div>
+    <footer id="cone-footer">
+      <div class="footer-copyright">
+        © 2021 Copyright:<a href="https://r2solutions.at/"> r2Solutions</a>
       </div>
     </footer>
 

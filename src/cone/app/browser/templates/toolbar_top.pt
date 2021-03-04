@@ -2,16 +2,16 @@
                  xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
                  omit-tag="True">
 
-  <div id="topnav-right" class="topnav-nav">
+  <div id="toolbar-top">
     <ul class="navbar-nav list-unstyled">
 
       <li class="nav-item topnav-element">
 
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+        <a class="nav-link" href="#" id="navbarDropdown" role="button">
           <img src="static/images/flags/gb.svg" height="15em">
         </a>
 
-        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="language">
+        <div class="dropdown-menu item dropdown-menu-custom" id="language">
           
           <span>Language</span>
           <ul class="list-unstyled">
@@ -38,7 +38,7 @@
       </li>
 
       <li class="nav-item topnav-element">
-        <a class="nav-link" data-bs-toggle="collapse" href="#" id="navbarDropdown" role="button">
+        <a class="nav-link" href="#" id="navbarDropdown" role="button">
           <i class="bi-bell-fill"></i>
         </a>
 
@@ -46,7 +46,7 @@
           <span>9+</span>
         </div>
 
-        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="notifications">
+        <div class="dropdown-menu item dropdown-menu-custom" id="notifications">
           <span>Notifications</span>
 
           <a href="#" id="msg1" class="msg unread">
@@ -82,11 +82,11 @@
 
       <li class="nav-item topnav-element">
 
-        <a class="nav-link" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+        <a class="nav-link" href="#" id="navbarDropdown" role="button">
           <i class="bi-grid-3x3-gap-fill"></i>
         </a>
 
-        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="apps">
+        <div class="dropdown-menu item dropdown-menu-custom" id="apps">
           <span>Apps</span>
           <div class="row">
 
@@ -154,11 +154,11 @@
       </li>
 
       <li class="nav-item topnav-element">
-        <a class="nav-link" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+        <a class="nav-link" href="#" id="navbarDropdown" role="button">
           <i class="bi-gear-fill"></i>
         </a>
 
-        <div class="dropdown-menu dropdown-menu-end item dropdown-menu-custom" id="settings">
+        <div class="dropdown-menu item dropdown-menu-custom" id="settings">
           <span>Settings</span>
 
             <div class="form-check form-switch">
@@ -171,12 +171,6 @@
         </div>
 
       </li>
-
-      <div class="nav-item user-account ms-3"
-           tal:define="config context.config">
-        <tal:personaltools condition="config.personaltools"
-                           replace="structure tile('personaltools')" />
-      </div>
 
     </ul>
   </div>

@@ -1,32 +1,15 @@
 /*dark mode*/
 /*
--- scss color definitions --
-* document gets imported to light.scss and dark.scss
-* switch.js changes mode to light or dark by changing source file .css
+----- scss color definitions -----
+document gets imported to light.scss and dark.scss
+changes mode to light or dark by changing source file .css
 */
 body {
   background-color: #2E2E33;
 }
 
-.btn-inf {
-  background-color: #5bc0de;
-  color: #ECF5FD;
-}
-
-/*mainmenu.scss*/
-#mainmenu .mainmenu-dropdown > :first-child {
-  background-color: #5bc0de;
-  color: white;
-}
-
-#topnav-mainmenu li:hover > a {
-  color: #dfe8f0;
-}
-
-/*start style.scss*/
-/*dropdown dark*/
+/* ----- dropdowns ----- */
 .dropdown-menu-custom {
-  /*change colors of dropdowns in sidebar&header - BS override*/
   background-color: #434348;
 }
 .dropdown-menu-custom a {
@@ -37,45 +20,7 @@ body {
   color: #E6E6EB;
 }
 
-/*end dropdown dark*/
-/*start content*/
-#content-wrapper .card {
-  background-color: #434348;
-  color: #949499;
-}
-
-/*start breadcrumb*/
-.breadcrumb h2 {
-  color: #E6E6EB;
-  font-size: 1.2rem;
-  font-weight: semibold;
-}
-.breadcrumb a {
-  color: #949499;
-}
-.breadcrumb a:hover, .breadcrumb a:active {
-  color: #E6E6EB;
-}
-.breadcrumb .breadcrumb-item.active {
-  color: #E6E6EB;
-}
-
-/*end breadcrumb*/
-/*start footer*/
-.footer-custom {
-  border-top: 1px solid #949499;
-  color: #949499;
-}
-
-/*end footer*/
-/*end style.css*/
-/*start topnav.scss*/
-/*topnav old*/
-#mainmenu .dropdown-menu-custom a:hover {
-  color: #5bc0de;
-}
-
-/*end topnav old*/
+/* ----- topnav ----- */
 .topnav-custom {
   background-color: #434348;
 }
@@ -91,30 +36,49 @@ body {
   color: #E6E6EB;
 }
 
-a, label {
-  color: #949499;
+/* ----- main menu ----- */
+#mainmenu .mainmenu-dropdown > :first-child {
+  background-color: #5bc0de;
+  color: white;
+}
+#mainmenu .dropdown-menu-custom a:hover {
+  color: #5bc0de;
 }
 
-a:hover {
+#topnav-mainmenu li:hover > a {
   color: #dfe8f0;
 }
 
-.noti-badge-round {
-  background: red;
+/* ----- mobile menu ----- */
+.hamburgerMenu {
+  color: #949499;
+}
+
+#mobile-menu-content {
+  border: 1px solid #2E2E33;
+  border-top: none;
+  background-color: #38383D;
+}
+#mobile-menu-content .dropdown-submenu a:hover, #mobile-menu-content .dropdown-submenu a:active {
+  color: #dfe8f0;
+}
+#mobile-menu-content .list-group .list-group-item {
+  color: #949499;
+}
+#mobile-menu-content .list-group .help {
   color: white;
 }
-
-.dropdown-menu-right {
-  /*language*/
-}
-.dropdown-menu-right > *:hover {
-  color: #E6E6EB;
-}
-.dropdown-menu-right.item > :first-child {
-  color: #E6E6EB;
+#mobile-menu-content .sidebar-heading hr {
+  border-top: 1px solid rgba(230, 230, 235, 0.2);
 }
 
-/*start searchbar*/
+#mobile-mainmenu li:hover {
+  background-color: #57575C;
+  color: #dfe8f0;
+  transition: background-color 0.4s;
+}
+
+/* ----- searchbar ----- */
 .searchbar input {
   color: #E6E6EB !important;
   background-color: #57575C !important;
@@ -124,138 +88,142 @@ a:hover {
   color: #ECF5FD;
 }
 
-/*end searchbar*/
-/*notifications*/
-#notifications .user-msg {
+/* ----- toolbar top ----- */
+#toolbar-top {
+  /* -- notifications -- */
+  /* -- logo -- */
+  /* -- user account -- */
+}
+#toolbar-top > *:hover {
+  color: #E6E6EB;
+}
+#toolbar-top.item > :first-child {
+  color: #E6E6EB;
+}
+#toolbar-top #notifications .user-msg {
   background-color: #2E2E33;
   border: 1px solid #ECF5FD;
 }
-#notifications .user-msg > i {
+#toolbar-top #notifications .user-msg > i {
   color: #E6E6EB;
 }
-
-/*start navbar-brand (logo)*/
-.navbar-brand a {
+#toolbar-top .navbar-brand a {
   color: #E6E6EB;
 }
-
-/*end navbar-brand (logo)*/
-/*user-account*/
-.user-account {
+#toolbar-top #personaltools {
   color: #ECF5FD;
   background-color: #38383D;
 }
-.user-account a:hover, .user-account:active {
+#toolbar-top #personaltools a:hover, #toolbar-top #personaltools:active {
   color: #E6E6EB;
 }
-.user-account .profile-image {
+#toolbar-top #personaltools .profile-image {
   background-color: #2E2E33;
   border: 1px solid #ECF5FD;
 }
-.user-account .profile-image > i {
+#toolbar-top #personaltools .profile-image > i {
   color: #E6E6EB;
 }
-.user-account .dropdown-menu-user a {
+#toolbar-top #personaltools .dropdown-menu-user a {
   color: #949499;
 }
-.user-account .dropdown-menu-user a:hover {
+#toolbar-top #personaltools .dropdown-menu-user a:hover {
   color: #E6E6EB;
 }
 
-/*end user-account*/
-/*end topnav.scss*/
-/*start sidebar.scss*/
+/* ----- sidebar left ----- */
 #sidebar_left {
   background-color: #38383D;
+}
+#sidebar_left #sidebar-toggle-btn {
+  color: rgba(230, 230, 235, 0.3);
 }
 #sidebar_left li.active .dropdown > a {
   color: #5bc0de;
 }
 #sidebar_left .sidebar-heading {
-  /*change headings (+hr on sm/md) in sidebar*/
   color: #E6E6EB;
 }
 #sidebar_left .help {
-  /*change font color of help*/
   color: white;
 }
 
-/*start lg*/
+/* ----- sidebar left expanded ----- */
 @media (min-width: 992px) {
   #sidebar_left {
     border-right: 1px solid #2E2E33;
   }
-
-  #sidebar_left .dropdown-submenu a:hover, a:active {
-    /*change hover clr on sidebar icons & a*/
+  #sidebar_left .dropdown-submenu a:hover, #sidebar_left a:active {
     color: #dfe8f0;
   }
 }
-/*end lg*/
-/*start md*/
+/* ----- sidebar left collapsed ----- */
 @media (min-width: 576px) and (max-width: 991.9px) {
   #sidebar_left {
     border-right: 1px solid #2E2E33;
-    /*change color of icons on hover, keep clr in submenu*/
   }
   #sidebar_left .dropdown-submenu a:hover, #sidebar_left .dropdown-submenu:active {
-    /*change color of dropout links*/
     color: #dfe8f0;
   }
   #sidebar_left ul > li:hover i, #sidebar_left:active i {
     color: white;
   }
-  #sidebar_left .dropout-title {
+  #sidebar_left #navtree .dropout-title {
     background-color: #5bc0de;
   }
   #sidebar_left .sidebar-dropout {
     background-color: #2E2E33;
   }
-  #sidebar_left .sidebar-dropout > :first-child > :first-child {
-    /*change dropout title*/
+  #sidebar_left .sidebar-dropout .dropout-title {
     color: #ECF5FD;
     background-color: #5bc0de;
     font-weight: 400;
   }
   #sidebar_left .sidebar-heading hr {
-    /*change colour of hr on md*/
     border-top: 1px solid rgba(230, 230, 235, 0.5);
   }
 }
-/*end md*/
-/*start sm*/
-.hamburgerMenu {
+/* ----- breadcrumb ----- */
+.breadcrumb h2 {
+  color: #E6E6EB;
+  font-size: 1.2rem;
+  font-weight: semibold;
+}
+.breadcrumb a {
+  color: #949499;
+}
+.breadcrumb a:hover, .breadcrumb a:active {
+  color: #E6E6EB;
+}
+.breadcrumb .breadcrumb-item.active {
+  color: #E6E6EB;
+}
+
+/* ----- footer ----- */
+.footer-custom {
+  border-top: 1px solid #949499;
   color: #949499;
 }
 
-#mobile-menu-content {
-  border: 1px solid #2E2E33;
-  border-top: none;
-  /*change bgcolor of sidebar*/
-  background-color: #38383D;
-}
-#mobile-menu-content .dropdown-submenu a:hover, #mobile-menu-content .dropdown-submenu a:active {
-  /*change fontcolor of items in sidebar*/
-  color: #dfe8f0;
-}
-#mobile-menu-content .list-group .list-group-item {
-  /*font color of submenu*/
+/* ----- general styles ----- */
+/* -- links -- */
+a, label {
   color: #949499;
 }
-#mobile-menu-content .list-group .help {
+
+a:hover {
+  color: #dfe8f0;
+}
+
+/* -- badges, buttons -- */
+.noti-badge-round {
+  background: red;
   color: white;
 }
-#mobile-menu-content .sidebar-heading hr {
-  /*change colour of hr on sm*/
-  border-top: 1px solid rgba(230, 230, 235, 0.2);
-}
 
-/*end sm*/
-/*end sidebar.scss*/
-#mobile-mainmenu li:hover {
-  background-color: #57575C;
-  color: #dfe8f0;
-  transition: background-color 0.4s;
+.btn-inf {
+  background-color: #5bc0de;
+  color: #ECF5FD;
 }
 
 /*# sourceMappingURL=dark.css.map */

@@ -6,13 +6,13 @@
 
 
 
-  <div class="breadcrumb bg-transparent my-3 py-2">
+  <div class="breadcrumb bg-transparent">
 
     <li class="me-auto">
       <h2 class="p-0 m-0" >Page Title</h2>
     </li>
 
-    <ol class="breadcrumb bg-transparent mt-1 mb-0 ms-0 me-2 p-0 float-end" 
+    <ol class="breadcrumb bg-transparent float-end" 
         id="pathbar"
         ajax:bind="contextchanged"
         ajax:action="pathbar:#pathbar:replace">

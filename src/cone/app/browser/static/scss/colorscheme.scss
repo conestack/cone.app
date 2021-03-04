@@ -1,23 +1,60 @@
 /*
--- scss color definitions --
-* document gets imported to light.scss and dark.scss
-* switch.js changes mode to light or dark by changing source file .css
+----- scss color definitions -----
+document gets imported to light.scss and dark.scss
+changes mode to light or dark by changing source file .css
 */
 
 body {
     background-color: $bg;
-  }
-
-.btn-inf {
-  background-color: $info;
-  color:$fbright;
 }
 
-/*mainmenu.scss*/
+
+/* ----- dropdowns ----- */
+.dropdown-menu-custom { 
+  background-color:$menu;
+
+  a {
+    color: $fmedium;
+    text-decoration:none;
+
+    &:hover, &:active {
+      color: $flight;
+    }
+  }
+}
+
+
+/* ----- topnav ----- */
+.topnav-custom {
+  background-color: $menu;
+
+  .dropdown-menu-custom {
+    background-color: $dropdown;
+    border:1px solid $border;
+
+    > :first-child {
+      color:$fmedium;
+    }
+  }
+
+  .apps-link:hover {
+    background-color: $menus;
+    color:$flight;
+  }
+}
+
+
+/* ----- main menu ----- */
 #mainmenu {
   .mainmenu-dropdown > :first-child {
     background-color:$info;
     color:white;
+  }
+
+  .dropdown-menu-custom {
+    a:hover {
+      color:$info;
+    }
   }
 }
 
@@ -28,275 +65,232 @@ body {
 }
 
 
-/*start style.scss*/
-    /*dropdown dark*/
-      .dropdown-menu-custom {
-        /*change colors of dropdowns in sidebar&header - BS override*/
-        background-color:$menu;
-        a {
-          color: $fmedium;
-          text-decoration:none;
-          &:hover, &:active {
-            color: $flight;
-          }
-        }
-      }
-    /*end dropdown dark*/
+/* ----- mobile menu ----- */
+.hamburgerMenu{
+  color:$fmedium;
+}
 
-    /*start content*/
-      #content-wrapper .card {
-        background-color: $menu;
-        color: $fmedium;
-      }
+#mobile-menu-content {
+  border:1px solid $border;
+  border-top:none;
+  background-color:$menus;
 
-      /*start breadcrumb*/
-      .breadcrumb {
-        h2 {
-          color:$flight;
-          font-size:1.2rem;
-          font-weight:semibold;
-        }
-        a {
-        color: $fmedium;
-            &:hover, &:active {
-              color: $flight;
-            }
-        }
-        .breadcrumb-item.active {
-          color: $flight;
-        }
-      }
-      /*end breadcrumb*/
-
-      /*start footer*/
-      .footer-custom {
-        border-top: 1px solid $fmedium;
-        color: $fmedium;
-      }
-      /*end footer*/
-/*end style.css*/
-  
-/*start topnav.scss*/
-
-
-/*topnav old*/
-
-#mainmenu .dropdown-menu-custom {
-    a:hover {
-      color:$info;
+  .dropdown-submenu {
+    a:hover , a:active { // change font-color of items in sidebar
+      color:$fhover;
     }
   }
 
-/*end topnav old*/
-
-
-    .topnav-custom {
-      background-color: $menu;
-      .dropdown-menu-custom {
-        background-color: $dropdown;
-        border:1px solid $border;
-        > :first-child {
-          color:$fmedium;
-        }
-      }
-      .apps-link:hover {
-        background-color: $menus;
-        color:$flight;
-      }
-    }
-    a, label {
-      color:$fmedium;
-    }
-    a:hover {
-      color:$fhover;
-    }
-    .noti-badge-round {
-      background:red;
-      color:white;
-    }
-
-    .dropdown-menu-right {
-      /*language*/
-      > * {
-        &:hover {
-          color: $flight;
-        }
-      }
-      &.item > :first-child {
-        color:$flight;
-      }
-
-    }
-    
-    /*start searchbar*/
-    .searchbar {
-
-      input {
-          color: $flight!important;
-          background-color: $sb!important;
-      }
-      #searchbar-button {
-        background-color: $info;
-        color: $fbright;
-      }
-    }
-
-    /*end searchbar*/
-
-    /*notifications*/
-    #notifications .user-msg {
-      background-color: $bg;
-      border: 1px solid $fbright;
-      > i {
-        color:$flight;
-      }
-    }
-    
-    /*start navbar-brand (logo)*/
-    .navbar-brand {
-      a {
-        color: $flight;
-      }
-    }
-    /*end navbar-brand (logo)*/
-    
-    /*user-account*/
-    .user-account {
-      color: $fbright;
-      background-color: $menus;
-      a:hover, &:active {
-        color:$flight;
-      }
-      .profile-image {
-        background-color: $bg;
-        border: 1px solid $fbright;
-        > i {
-          color:$flight;
-        }
-      }
-
-      .dropdown-menu-user a {
-        color: $fmedium;
-        &:hover {
-          color: $flight;
-        }
-      }
-    }
-    /*end user-account*/
-
-
-
-/*end topnav.scss*/
-    
-
-/*start sidebar.scss*/
-    #sidebar_left {
-      background-color:$menus;
-
-      li {
-        &.active .dropdown > a {
-        color: $info;
-        }
-      }
-
-      .sidebar-heading {
-        /*change headings (+hr on sm/md) in sidebar*/
-        color: $flight;
-      }
-
-      .help {
-        /*change font color of help*/
-        color: white;
-      }
-    }
-  
-    /*start lg*/
-    @media (min-width: 992px) {
-      #sidebar_left {border-right: 1px solid $border;}
-      #sidebar_left .dropdown-submenu a:hover , a:active {
-        /*change hover clr on sidebar icons & a*/
-        color:$fhover;
-      }
-    }
-    /*end lg*/
-    
-
-    /*start md*/
-    @media (min-width:576px) and (max-width:991.9px) {
-      #sidebar_left {
-        border-right: 1px solid $border;
-        .dropdown-submenu {
-            a:hover , &:active {
-                /*change color of dropout links*/
-                color:$fhover;
-            }
-        }
-        /*change color of icons on hover, keep clr in submenu*/
-        ul > li:hover, &:active {
-          i {
-            color:white;
-          }
-        }
-        .dropout-title {
-          background-color:$info;
-        }
-        
-        .sidebar-dropout {
-          background-color: $bg;
-          > :first-child > :first-child {
-            /*change dropout title*/
-            color: $fbright;
-            background-color: $info;
-            font-weight:400;
-          }
-        }
-        
-        .sidebar-heading hr {
-            /*change colour of hr on md*/
-            border-top: 1px solid rgba($color: $flight, $alpha: 0.5)
-        }
-      }
-    }
-    /*end md*/
-
-    /*start sm*/
-    .hamburgerMenu{
+  .list-group {
+    .list-group-item { // font color of submenu
       color:$fmedium;
     }
 
-      #mobile-menu-content {
-        border:1px solid $border;
-        border-top:none;
-        /*change bgcolor of sidebar*/
-        background-color:$menus;
-        .dropdown-submenu {
-          a:hover , a:active {
-            /*change fontcolor of items in sidebar*/
-            color:$fhover;
-          }
-        }
-        .list-group {
-          .list-group-item {
-            /*font color of submenu*/
-            color:$fmedium;
-          }
-          .help {
-            color: white;
-          }
-        }
-        .sidebar-heading hr{
-            /*change colour of hr on sm*/
-          border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
-        }
-      }
-    /*end sm*/
-/*end sidebar.scss*/
-    
+    .help {
+      color: white;
+    }
+  }
+
+  .sidebar-heading hr {
+    border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
+  }
+}
 
 #mobile-mainmenu {
   li:hover {
     background-color:$sb;
     color:$fhover;
     transition: background-color .4s;
+  }
 }
+
+
+/* ----- searchbar ----- */
+.searchbar {
+  input {
+    color: $flight!important;
+    background-color: $sb!important;
+  }
+  #searchbar-button {
+    background-color: $info;
+    color: $fbright;
+  }
+}
+
+
+/* ----- toolbar top ----- */
+#toolbar-top {
+  > *:hover {
+    color: $flight;
+  }
+
+  &.item > :first-child {
+    color:$flight; 
+  }
+
+  /* -- notifications -- */
+  #notifications .user-msg {
+    background-color: $bg;
+    border: 1px solid $fbright;
+
+    > i {
+      color:$flight;
+    }
+  }
+
+  /* -- logo -- */
+  .navbar-brand {
+    a {
+      color: $flight;
+    }
+  }
+
+  /* -- user account -- */
+  #personaltools {
+    color: $fbright;
+    background-color: $menus;
+
+    a:hover, &:active {
+      color:$flight;
+    }
+
+    .profile-image {
+      background-color: $bg;
+      border: 1px solid $fbright;
+      > i {
+        color:$flight;
+      }
+    }
+
+    .dropdown-menu-user a {
+      color: $fmedium;
+      &:hover {
+        color: $flight;
+      }
+    }
+  }
+}
+    
+
+/* ----- sidebar left ----- */
+#sidebar_left {
+  background-color:$menus;
+
+  #sidebar-toggle-btn {
+    color: rgba($color: $flight, $alpha: 0.3);
+  }
+
+  li {
+    &.active .dropdown > a {
+    color: $info;
+    }
+  }
+
+  .sidebar-heading {
+    color: $flight;
+  }
+
+  .help {
+    color: white;
+  }
+}
+  
+/* ----- sidebar left expanded ----- */
+@media (min-width: 992px) {
+  #sidebar_left {
+    border-right: 1px solid $border;
+
+    .dropdown-submenu a:hover , a:active {
+      color:$fhover;
+    }
+  }
+}
+    
+
+/* ----- sidebar left collapsed ----- */
+@media (min-width:576px) and (max-width:991.9px) {
+  #sidebar_left {
+    border-right: 1px solid $border;
+
+    .dropdown-submenu {
+        a:hover , &:active { // change color of dropout links
+            color:$fhover;
+        }
+    }
+
+    ul > li:hover, &:active { // change color of icons on hover
+      i {
+        color:white;
+      }
+    }
+
+    #navtree .dropout-title {
+      background-color:$info;
+    }
+    
+    .sidebar-dropout {
+      background-color: $bg;
+
+      .dropout-title {
+        color: $fbright;
+        background-color: $info;
+        font-weight:400;
+      }
+    }
+
+    .sidebar-heading hr {
+      border-top: 1px solid rgba($color: $flight, $alpha: 0.5)
+    }
+  }
+}
+
+
+/* ----- breadcrumb ----- */
+.breadcrumb {
+  h2 {
+    color:$flight;
+    font-size:1.2rem;
+    font-weight:semibold;
+  }
+
+  a {
+  color: $fmedium;
+    &:hover, &:active {
+      color: $flight;
+    }
+  }
+
+  .breadcrumb-item.active {
+    color: $flight;
+  }
+}
+
+
+/* ----- footer ----- */
+.footer-custom {
+  border-top: 1px solid $fmedium;
+  color: $fmedium;
+}
+
+
+/* ----- general styles ----- */
+
+/* -- links -- */
+a, label {
+  color:$fmedium;
+}
+
+a:hover {
+  color:$fhover;
+}
+
+/* -- badges, buttons -- */
+.noti-badge-round {
+  background:red;
+  color:white;
+}
+
+.btn-inf {
+  background-color: $info;
+  color:$fbright;
 }

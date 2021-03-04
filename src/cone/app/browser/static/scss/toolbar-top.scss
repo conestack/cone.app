@@ -13,11 +13,22 @@
       letter-spacing:-2px;
     }
   }
-  
-  
-#topnav-right {
+
+#toolbar-top {
+  display: inline-block;
+  height: inherit;
+  float:right;
+
+  .navbar-nav {
+    height: inherit;
+  }
+
+  li {
+    position:relative;
+  }
 
     .topnav-element > .dropdown-menu-custom {
+        position:absolute;
         min-width:max-content;
         > :first-child {
         font-weight: bold;
@@ -125,7 +136,7 @@
           display:none;
         }
       }
-      }
+      
     
     /*end apps*/
   
@@ -138,4 +149,5 @@
         }
     }
     /*end settings*/
+}
 }

@@ -14,11 +14,19 @@ cone = {
     searchbar_handler: null,
     mobile_menu: null,
     navtree: null,
+    toolbar_top: null,
     default_themes: [
         'static/light.css',
         'static/dark.css'
     ]
 };
+
+// class removal
+function class_remove(element, elemclass){
+    if(element.hasClass(elemclass)){
+        element.removeClass(elemclass);
+    }
+}
 
 // additional livesearch options
 var livesearch_options = new Object();
@@ -32,10 +40,26 @@ var livesearch_options = new Object();
             new cone.Searchbar(context, 200, 130);
             new cone.MainMenu(context);
             new cone.MobileMenu(context);
+            new cone.ToolbarTop(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
+    cone.ToolbarTop = class {
+        constructor(context) {
+            cone.toolbar_top = this;
+
+            this.toolbar = $('#toolbar-top');
+            this.toolbar.find('li').on('click', function(evt){
+                $(this).find('.dropdown-menu').toggle();
+                console.log('click');
+            });
+        }
+
+        handle_visibility() {
+            console.log('handle visibility');
+        }
+    }
     // navtree
     cone.Navtree = class {
         constructor(context) {
@@ -151,13 +175,12 @@ var livesearch_options = new Object();
             else if (this.free_space > this.menu_width){ // expand
                 this.topnav_mainmenu.css('display', 'inline-block');
                 this.topnav_mainmenu_titles.css('display', 'inline-block');
-                this.topnav_mainmenu.removeClass('collapsed');
+                class_remove(this.topnav_mainmenu , 'collapsed');
                 this.topnav_mainmenu.addClass('expanded');
                 // console.log('enough space expand');
             }
             else if (this.free_space <= this.menu_width_collapsed
-                && this.topnav_mainmenu.hasClass('collapsed') 
-                && $('#topnav-searchbar').css('display') == "none" ) { // mobile
+                && this.topnav_mainmenu.hasClass('collapsed')) { // mobile
                 this.topnav_mainmenu.hide();
                /*  this.mobile_mainmenu.find('.list-true').find('a').each(
                     $(this).on('click', function(){
@@ -165,11 +188,8 @@ var livesearch_options = new Object();
                     $(this).find('dropdown-content').toggle();
                 })); */
             }
-
         }
-
     }
-
 
     // searchbar
     cone.Searchbar = class {
@@ -213,44 +233,34 @@ var livesearch_options = new Object();
         resize_handle(evt) { // adjust searchbar
 
             switch(true) {
-                case this.free_space <= 0: // mobile
+                /* case this.free_space <= 0: // mobile
                     console.log('mobile searchbar');
                     this.topnav_searchbar.hide();
                     $('#mobile-menu').addClass('active');
-                    break;
+                    break; */
 
                 case this.free_space <= 200: // collapsed
-                    if($('#mobile-menu').hasClass('active')){
-                        $('#mobile-menu').removeClass('active');
-                    }
+                    class_remove($('#mobile-menu'), 'active');
                     
                     this.topnav_searchbar.css('display', 'inline-block');
                     this.topnav_searchbar.addClass('collapsed');
-                    if(this.topnav_searchbar.hasClass('expanded')){
-                        this.topnav_searchbar.removeClass('expanded');
-                    }
-                    if(this.topnav_searchbar.hasClass('toggle-collapse')){
-                        this.topnav_searchbar.removeClass('toggle-collapse')
-                    }
-                    if(this.topnav_searchbar.hasClass('toggle-expand')){
-                        this.topnav_searchbar.removeClass('toggle-expand')
-                    }
+
+                    class_remove(this.topnav_searchbar, 'expanded');
+                    class_remove(this.topnav_searchbar, 'toggle-collapse');
+                    class_remove(this.topnav_searchbar, 'toggle-expand');
+
 
                     this.topnav_searchbar_btn.on('click', event => {
                         if(this.topnav_searchbar.hasClass('expanded')) {
-                            if(this.topnav_searchbar.hasClass('toggle-expand')){
-                                this.topnav_searchbar.removeClass('toggle-expand')
-                            }
-                            this.topnav_searchbar.removeClass('expanded');
+                            class_remove(this.topnav_searchbar, 'toggle-expand');
+                            class_remove(this.topnav_searchbar, 'expanded');
                             this.topnav_searchbar.addClass('collapsed');
                             this.topnav_searchbar.addClass('toggle-collapse');
                             $('#topnav-container').children('div').last().show();
                             console.log('close');
                         } else {
-                            if(this.topnav_searchbar.hasClass('toggle-collapse')){
-                                this.topnav_searchbar.removeClass('toggle-collapse')
-                            }
-                            this.topnav_searchbar.removeClass('collapsed');
+                            class_remove(this.topnav_searchbar, 'toggle-collapse');
+                            class_remove(this.topnav_searchbar, 'collapsed');
                             this.topnav_searchbar.addClass('expanded');
                             this.topnav_searchbar.addClass('toggle-expand');
                             $('#topnav-container').children('div').last().hide();
@@ -265,9 +275,7 @@ var livesearch_options = new Object();
                 $('.twitter-typeahead').css('width', '200px');
                 this.topnav_searchbar.css('display', 'inline-block');
 
-                if(this.topnav_searchbar.hasClass('collapsed')){
-                    this.topnav_searchbar.removeClass('collapsed');
-                }
+                class_remove(this.topnav_searchbar, 'collapsed');
                 this.topnav_searchbar.addClass('expanded');
                 break;
             }
@@ -278,10 +286,6 @@ var livesearch_options = new Object();
     cone.SidebarMenu = class {
 
         constructor(context, threshold) {
-            this.menu_toggle = $('#hamburger-menu-toggle');
-            if (!this.menu_toggle.length) {
-                return;
-            }
             if (cone.sidebar_menu !== null) {
                 cone.sidebar_menu.unload();
             }
@@ -318,8 +322,10 @@ var livesearch_options = new Object();
                 this.sidebar.show();
                 if(window.matchMedia(`(max-width: 991.9px)`).matches) {
                     this.sidebar.addClass('collapsed');
+                    class_remove(this.sidebar, 'expanded');
                 } else {
                     this.sidebar.addClass('expanded');
+                    class_remove(this.sidebar, 'collapsed');
                 }
             }
         }

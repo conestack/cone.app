@@ -1,16 +1,10 @@
-/* -- styles of topnav header -- */
-
+/* ----- topnav ----- */
 
 #topnav-container {
   > * {
     display:inline-block;
     position:relative;
   }
-}
-
-.hamburgerMenu{
-  border:none;
-  background-color:transparent;
 }
 
 .topnav-custom {
@@ -28,6 +22,7 @@
   a, label {
     text-decoration:none;
   }
+
   a:hover {
     text-decoration:none;
     transition: 0.5s;
@@ -36,7 +31,6 @@
   .topnav-element {
     display: inline-block;
     padding-top: 0.75rem;
-    
   }
 
   .dropdown-menu-custom {
@@ -45,14 +39,15 @@
     box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
   }
 }
-/*searchbar*/
+
+/* ----- searchbar ----- */
 .searchbar {
   display: inline-block;
+  position: absolute;
+  top:1rem;
   height:2.3rem!important;
   font-size:.95em;
   z-index:1000;
-  top:1rem;
-  position: absolute;
 
   .form-control:focus {
     outline: 0;
@@ -65,8 +60,8 @@
     flex-wrap: nowrap;
 
     input{
-      padding:0.375rem 0.75rem;
       display:block;
+      padding:0.375rem 0.75rem;
       font-size:1em;
       border: 0;
       border-radius: 4px 0 0 4px;
@@ -74,14 +69,15 @@
   }
 
   #searchbar-button {
-    padding: 0 .55em;
     margin:0;
+    padding: 0 .55em;
     border-radius: 4px;
   }
 }
 
 #topnav-searchbar {
   top:0;
+
   .twitter-typeahead {
     width:200px;
   }
@@ -109,6 +105,7 @@
       }
     }
   }
+
   &.toggle-expand {
     .twitter-typeahead {
       animation: slidein .5s;
@@ -119,152 +116,133 @@
     }
   }
 }
-  /* #search-text {
-    display:none;
-  } */
-
-/*end searchbar*/
 
 
-  
-  
-  
-  
-  
+/* ----- logo ----- */
+.navbar-brand {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-family: Arial;
+
+  a {
+    text-decoration: none;
+  }
+
+  .logo {
+    height: 2rem;
+    margin: .4rem 0 .5rem .5rem;
+  }
+}
+
+@media (max-width: 991.9px) {
   .navbar-brand {
-    display: inline-block;
-    font-size: 1.5rem;
-    font-family: Arial;
-  
-    a {
-      text-decoration: none;
-    }
-  
-    .logo {
-      height: 2rem;
-      margin: .4rem 0 .5rem .5rem;
-    }
+    margin-left: 0;
   }
+}
   
-  #topnav-right {
-    float: right;
-    display: inline-block;
-    height: inherit;
-  
-    .navbar-nav {
-      height: inherit;
-    }
-  }
-  
+
+/* ----- user account ----- */
+#personaltools {
+  display: inline-block;
+  float:right;
+  top: 0;
+  min-width:10rem;
+  margin: 0 1.5rem;
+  border-left:1px solid rgba(53, 59, 65, 0.1);
+
   @media (max-width: 991.9px) {
-    .navbar-brand {
-      margin-left: 0;
-    }
+    min-width:4rem;
   }
-  
-  /*user-account*/
-  
-    /*topnav old styles*/
 
-  #user-account-old {
+  .dropdown-menu-user {
     min-width:10rem;
-    right:0;
-    position: absolute;
-    top: 0;
+    padding:1rem;
+  }
 
-    @media (max-width: 991.9px) {
-      min-width:4rem;
-    }
-    .dropdown-menu-user {
-      min-width:10rem;
-      padding:1rem;
-    }
-    .nav-link {
-      padding-right: 0.5rem;
-      padding-left: 0.5rem;
-      padding-top:0;
-      > * {
-        top:.75rem;
-      }
+  .nav-link {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-top:0;
+
+    > * {
+      top:.75rem;
     }
   }
 
-  .user-account {
+  .dropdown-item {
+    font-weight:300;
+  }
+
+  .dropdown-menu-user {
+    position:absolute;
+    left:1rem;
+    top: 2.8rem!important;
     min-width: 18rem;
-    display: inline-block;
-    border-left:1px solid rgba(53, 59, 65, 0.1);
-    
+    margin-top:.25rem;
+
     .dropdown-item {
-      font-weight:300;
+      padding:0;
     }
-    .dropdown-menu-user {
-      min-width: 18rem;
-      position:absolute;
-      left:1rem;
-      top: 2.8rem!important;
-      margin-top:.25rem;
-      .dropdown-item {
-        padding:0;
-      }
+  }
+
+  .user-account-name {
+    display: block;
+    margin-top:.3rem;
+  }
+
+  .user-account-position {
+    display: block;
+    margin-top:-.3rem;
+    font-size:.8em;
+  }
+
+  .profile-image {
+    display: flex;
+    position:absolute;
+    vertical-align: top;
+    width: 2.5em;
+    height: 2.5em;
+    margin-top: 0.25rem;
+    border-radius: 50% !important;
+    box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
+
+    > i {
+      position: relative;
+      margin:auto;
+      font-size:1.5rem;
     }
-    .user-account-name {
-      display: block;
-      margin-top:.3rem;
-    }
-  
-    .user-account-position {
-      display: block;
-      font-size:.8em;
-      margin-top:-.3rem;
-    }
-  
-    .profile-image {
-      position:absolute;
-      vertical-align: top;
-      margin-top: 0.25rem;
+
+    img {
       width: 2.5em;
       height: 2.5em;
-      border-radius: 50% !important;
-      box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
-      display: flex;
-
-      > i {
-        position: relative;
-        margin:auto;
-        font-size:1.5rem;
-      }
-      img {
-        width: 2.5em;
-        height: 2.5em;
-      }
-    }
-
-    .user-specs {
-      position: absolute;
-      left: 4rem;
     }
   }
-  
-  
-  
-  @media (max-width: 991.9px) {
-    .user-specs {
-      display: none;
-    }
-  
-    .user-account {
-      min-width: 4rem;
-      .dropdown-menu-user {
-        min-width: 10rem;
-        a {
-          padding:0;
-          margin:.3em 0;
-        }
-      }
-      .dropdown-item {
+
+  .user-specs {
+    position: absolute;
+    left: 4rem;
+  }
+}
+
+@media (max-width: 991.9px) {
+  .user-specs {
+    display: none;
+  }
+
+  #personaltools {
+    min-width: 4rem;
+
+    .dropdown-menu-user {
+      min-width: 10rem;
+
+      a {
         padding:0;
+        margin:.3em 0;
       }
     }
-  }
 
-/*end user-account*/
+    .dropdown-item {
+      padding:0;
+    }
+  }
+}

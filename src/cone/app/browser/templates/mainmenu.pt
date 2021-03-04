@@ -14,7 +14,7 @@
         <tal:comment replace="None">Main menu item as link</tal:comment>
         <li tal:condition="not item['children']"
             tal:define="css item['selected'] and 'active' or '';
-                        css css + 'mainmenu-item nav-item topnav-element dropdown-submenu dropout-relative ';
+                        css css + 'mainmenu-item nav-item topnav-element dropdown-submenu';
                         css ' '.join([css, 'node-%s' % item['id']]);"
             tal:attributes="class css">
 
@@ -34,8 +34,8 @@
                     class="mainmenu-title">Title
               </span>
             </a>
-    
-            <div class="dropdown-menu dropdown-menu-start dropdown-menu-custom dropdown-content"
+
+            <div class="dropdown-menu-custom dropdown-content"
                  id="submenu-${item['id']}">
     
               <ul class="mainmenu-dropdown list-unstyled">
@@ -45,16 +45,15 @@
                   </span>
                 </li>
               </ul>
-  
+
             </div>
           </div>
-  
         </li>
-  
+
         <tal:comment replace="None">Main menu item as dropdown</tal:comment>
         <li tal:condition="item['children']"
             tal:define="css item['selected'] and 'active ' or '';
-                        css css + 'me-1 nav-item topnav-element dropdown-submenu dropout-relative';
+                        css css + 'menu nav-item topnav-element dropdown-submenu';
                         css ' '.join([css, 'node-%s' % item['id']]);"
             tal:attributes="class css"
             >
