@@ -8,10 +8,9 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <nav class="topnav navbar-expand topnav-custom">
-      <div class="container-fluid p-0" id="topnav-container">
+    <nav id="topnav-custom">
 
-        <div class="navbar-brand" id="cone-logo">
+        <div id="cone-logo">
           <tal:logo replace="structure tile('logo')" />
         </div>
 
@@ -47,11 +46,11 @@
                replace="structure tile('livesearch')" />
           </div>
 
+          <tal:toolbar_top condition="True"
+                           replace="structure tile('toolbar_top')" />
+
           <tal:personaltools condition="config.personaltools"
                               replace="structure tile('personaltools')" />
-
-          <tal:toolbar_top condition="True"
-                             replace="structure tile('toolbar_top')" />
           
         </tal:version_old>
 
@@ -65,7 +64,6 @@
             replace="structure tile('toolbar_top')" />
         </tal:version_new>
 
-      </div>
     </nav>
     
     <div class="dropdown-menu-custom"

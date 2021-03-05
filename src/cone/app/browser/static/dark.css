@@ -1,4 +1,4 @@
-/*dark mode*/
+/* ----- dark mode ----- */
 /*
 ----- scss color definitions -----
 document gets imported to light.scss and dark.scss
@@ -21,23 +21,20 @@ body {
 }
 
 /* ----- topnav ----- */
-.topnav-custom {
+#topnav-custom {
   background-color: #434348;
 }
-.topnav-custom .dropdown-menu-custom {
+#topnav-custom .dropdown-menu-custom {
   background-color: #48484D;
   border: 1px solid #2E2E33;
 }
-.topnav-custom .dropdown-menu-custom > :first-child {
-  color: #949499;
-}
-.topnav-custom .apps-link:hover {
+#topnav-custom .apps-link:hover {
   background-color: #38383D;
   color: #E6E6EB;
 }
 
 /* ----- main menu ----- */
-#mainmenu .mainmenu-dropdown > :first-child {
+#mainmenu .dropdown-title {
   background-color: #5bc0de;
   color: white;
 }
@@ -81,7 +78,9 @@ body {
 /* ----- searchbar ----- */
 .searchbar input {
   color: #E6E6EB !important;
-  background-color: #57575C !important;
+}
+.searchbar .input-group {
+  background-color: #57575C;
 }
 .searchbar #searchbar-button {
   background-color: #5bc0de;
@@ -92,7 +91,6 @@ body {
 #toolbar-top {
   /* -- notifications -- */
   /* -- logo -- */
-  /* -- user account -- */
 }
 #toolbar-top > *:hover {
   color: #E6E6EB;
@@ -110,24 +108,26 @@ body {
 #toolbar-top .navbar-brand a {
   color: #E6E6EB;
 }
-#toolbar-top #personaltools {
-  color: #ECF5FD;
+
+/* -- user account -- */
+#personaltools {
+  color: #E6E6EB;
   background-color: #38383D;
 }
-#toolbar-top #personaltools a:hover, #toolbar-top #personaltools:active {
+#personaltools a:hover, #personaltools:active {
   color: #E6E6EB;
 }
-#toolbar-top #personaltools .profile-image {
+#personaltools .profile-image {
   background-color: #2E2E33;
   border: 1px solid #ECF5FD;
 }
-#toolbar-top #personaltools .profile-image > i {
+#personaltools .profile-image > i {
   color: #E6E6EB;
 }
-#toolbar-top #personaltools .dropdown-menu-user a {
+#personaltools .dropdown-menu-user a {
   color: #949499;
 }
-#toolbar-top #personaltools .dropdown-menu-user a:hover {
+#personaltools .dropdown-menu-user a:hover {
   color: #E6E6EB;
 }
 

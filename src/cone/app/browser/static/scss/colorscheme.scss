@@ -25,16 +25,12 @@ body {
 
 
 /* ----- topnav ----- */
-.topnav-custom {
+#topnav-custom {
   background-color: $menu;
 
   .dropdown-menu-custom {
     background-color: $dropdown;
     border:1px solid $border;
-
-    > :first-child {
-      color:$fmedium;
-    }
   }
 
   .apps-link:hover {
@@ -46,7 +42,7 @@ body {
 
 /* ----- main menu ----- */
 #mainmenu {
-  .mainmenu-dropdown > :first-child {
+  .dropdown-title {
     background-color:$info;
     color:white;
   }
@@ -109,8 +105,12 @@ body {
 .searchbar {
   input {
     color: $flight!important;
-    background-color: $sb!important;
   }
+
+  .input-group {
+    background-color: $sb;
+  }
+
   #searchbar-button {
     background-color: $info;
     color: $fbright;
@@ -144,29 +144,30 @@ body {
       color: $flight;
     }
   }
+}
 
-  /* -- user account -- */
-  #personaltools {
-    color: $fbright;
-    background-color: $menus;
 
-    a:hover, &:active {
+/* -- user account -- */
+#personaltools {
+  color: $flight;
+  background-color: $menus;
+
+  a:hover, &:active {
+    color:$flight;
+  }
+
+  .profile-image {
+    background-color: $bg;
+    border: 1px solid $fbright;
+    > i {
       color:$flight;
     }
+  }
 
-    .profile-image {
-      background-color: $bg;
-      border: 1px solid $fbright;
-      > i {
-        color:$flight;
-      }
-    }
-
-    .dropdown-menu-user a {
-      color: $fmedium;
-      &:hover {
-        color: $flight;
-      }
+  .dropdown-menu-user a {
+    color: $fmedium;
+    &:hover {
+      color: $flight;
     }
   }
 }

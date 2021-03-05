@@ -2,16 +2,14 @@
                  xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
                  omit-tag="True">
 
-  <div id="toolbar-top">
-    <ul class="navbar-nav list-unstyled">
+  <ul id="toolbar-top">
+      <li class="topnav-element">
 
-      <li class="nav-item topnav-element">
-
-        <a class="nav-link" href="#" id="navbarDropdown" role="button">
+        <a class="toolbar-link">
           <img src="static/images/flags/gb.svg" height="15em">
         </a>
 
-        <div class="dropdown-menu item dropdown-menu-custom" id="language">
+        <div class="dropdown-menu-custom" id="language">
           
           <span>Language</span>
           <ul class="list-unstyled">
@@ -37,16 +35,16 @@
 
       </li>
 
-      <li class="nav-item topnav-element">
-        <a class="nav-link" href="#" id="navbarDropdown" role="button">
+      <li class="topnav-element">
+        <a class="toolbar-link">
           <i class="bi-bell-fill"></i>
+
+          <div class="noti-badge-round">
+            <span>9+</span>
+          </div>
         </a>
 
-        <div class="badge noti-badge-round">
-          <span>9+</span>
-        </div>
-
-        <div class="dropdown-menu item dropdown-menu-custom" id="notifications">
+        <div class="dropdown-menu-custom" id="notifications">
           <span>Notifications</span>
 
           <a href="#" id="msg1" class="msg unread">
@@ -80,13 +78,13 @@
         </div>
       </li>
 
-      <li class="nav-item topnav-element">
+      <li class=" topnav-element">
 
-        <a class="nav-link" href="#" id="navbarDropdown" role="button">
+        <a class="toolbar-link">
           <i class="bi-grid-3x3-gap-fill"></i>
         </a>
 
-        <div class="dropdown-menu item dropdown-menu-custom" id="apps">
+        <div class="dropdown-menu-custom" id="apps">
           <span>Apps</span>
           <div class="row">
 
@@ -153,12 +151,12 @@
         </div>
       </li>
 
-      <li class="nav-item topnav-element">
-        <a class="nav-link" href="#" id="navbarDropdown" role="button">
+      <li class=" topnav-element">
+        <a class="toolbar-link">
           <i class="bi-gear-fill"></i>
         </a>
 
-        <div class="dropdown-menu item dropdown-menu-custom" id="settings">
+        <div class="dropdown-menu-custom" id="settings">
           <span>Settings</span>
 
             <div class="form-check form-switch">
@@ -173,6 +171,5 @@
       </li>
 
     </ul>
-  </div>
 
 </tal:toolbar_top>

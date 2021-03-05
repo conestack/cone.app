@@ -57,6 +57,8 @@ styles
 [X] - added mobile-menu.scss and navtree.scss
 [X] - ".list-true" and ".arrow-none" obsolete, removed -> now uses bootstrap icon,
       opens menu on arrow click in mobile while preserving clickable main link
+[X] - removed '.dropdown' class entirely
+[X] - rewrote basic structure to be more flexible
 
 icons
 -----

@@ -15,6 +15,7 @@ cone = {
     mobile_menu: null,
     navtree: null,
     toolbar_top: null,
+    personal_tools: null,
     default_themes: [
         'static/light.css',
         'static/dark.css'
@@ -41,17 +42,19 @@ var livesearch_options = new Object();
             new cone.MainMenu(context);
             new cone.MobileMenu(context);
             new cone.ToolbarTop(context);
+            new cone.PersonalTools(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
+    // toolbar top
     cone.ToolbarTop = class {
         constructor(context) {
             cone.toolbar_top = this;
 
             this.toolbar = $('#toolbar-top');
             this.toolbar.find('li').on('click', function(evt){
-                $(this).find('.dropdown-menu').toggle();
+                $(this).find('.dropdown-menu-custom').toggle();
                 console.log('click');
             });
         }
@@ -68,7 +71,20 @@ var livesearch_options = new Object();
             this.navtree_wrap = $('#navtree');
         }
     }
-    
+
+    // personal tools
+    cone.PersonalTools = class {
+        constructor(context) {
+            cone.personal_tools = this;
+
+            this.personaltools = $('#personaltools');
+
+            this.personaltools.on('click', function(evt){
+                $(this).find('.dropdown-menu-custom').toggle();
+            })
+        }
+    }
+
     // mobile menu
     cone.MobileMenu = class {
         constructor(context) {
@@ -79,7 +95,7 @@ var livesearch_options = new Object();
             this.mobile_menu = $('#mobile-menu');
             this.mobile_content = $('#mobile-menu-content');
             this.mobile_items = $('#mobile-menu-content').children('div');
-            this.topnav_items = $('#topnav-container').children('div');
+            this.topnav_items = $('#topnav-custom').children('div');
     
             this._mobile_handler = this.mobile_handler.bind(this);
             $(this._mobile_handler);
@@ -92,10 +108,10 @@ var livesearch_options = new Object();
         mobile_handler(evt) {
             if(this.mobile_menu.hasClass('active')){
                 this.logo.hide();
-                this.mobile_menu.css('display', 'inline-block');
+                this.mobile_menu.show();
             } else {
                 this.mobile_menu.hide();
-                this.logo.css('display', 'inline-block');
+                this.logo.show();
             }
         } 
 
@@ -115,7 +131,7 @@ var livesearch_options = new Object();
             }
 
             cone.main_menu = this;
-            this.topnav_children = $('#topnav-container').children('div');
+            this.topnav_children = $('#topnav-custom').children('div');
 
             this.mobile_mainmenu = $('#mobile-mainmenu');
             this.topnav_mainmenu = $('#topnav-mainmenu');
@@ -129,12 +145,14 @@ var livesearch_options = new Object();
             this.menu_width_collapsed = 0;
 
             this._calc_space = this.calc_space.bind(this);
-            $(this._calc_space);
-            $(window).on('resize', this._calc_space);
+            // $(this._calc_space);
+            // $(window).on('resize', this._calc_space);
 
             this._handle_visibility = this.handle_visibility.bind(this);
-            $(this._handle_visibility);
-            $(window).on('resize', this._handle_visibility);
+            // $(this._handle_visibility);
+            // $(window).on('resize', this._handle_visibility);
+
+            this.mainmenu_items = $('.mainmenu-item');
 
             this.mobile_mainmenu.find('.dropdown-arrow').on('click', function(event){ 
                 $(this).parent('li').find('.dropdown-content').toggle();
@@ -206,7 +224,7 @@ var livesearch_options = new Object();
             this.topnav_searchbar_text = this.topnav_searchbar.find('.twitter-typeahead');
             // this.toolbar_top = $('#toolbar-top');
 
-            this.topnav = $('#topnav-container');
+            this.topnav = $('#topnav-custom');
             this.topnav_children = this.topnav.children('div').not(this.topnav_searchbar);
 
             this.free_space = 0;
@@ -256,14 +274,14 @@ var livesearch_options = new Object();
                             class_remove(this.topnav_searchbar, 'expanded');
                             this.topnav_searchbar.addClass('collapsed');
                             this.topnav_searchbar.addClass('toggle-collapse');
-                            $('#topnav-container').children('div').last().show();
+                            // $('#topnav-custom').children('div').last().show();
                             console.log('close');
                         } else {
                             class_remove(this.topnav_searchbar, 'toggle-collapse');
                             class_remove(this.topnav_searchbar, 'collapsed');
                             this.topnav_searchbar.addClass('expanded');
                             this.topnav_searchbar.addClass('toggle-expand');
-                            $('#topnav-container').children('div').last().hide();
+                            // $('#topnav-custom').children('div').last().hide();
                             console.log('open');
                         }
                     });

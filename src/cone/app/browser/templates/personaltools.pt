@@ -2,33 +2,24 @@
            omit-tag="True">
 
 
-  <div class="nav-item dropdown" 
-      id="personaltools">
+  <div id="personaltools">
 
-    <a class="nav-link" data-bs-toggle="dropdown" href="#" 
-       id="navbarDropdown" role="button">
+    <div class="profile-image">
+      <!-- <img src=""> -->
+      <i class="bi bi-person bi-md"></i> 
+    </div>
+    <div class="d-lg-inline-block d-none user-specs">
+      <span class="user-account-name"
+            tal:content="context.user">
+        Admin
+      </span>
+      <span class="user-account-position">
+        position
+      </span>
+    </div>
 
-      <div class="profile-image ms-1 me-2">
-        <!-- <img src=""> -->
-        <i class="bi bi-person bi-md"></i> 
-      </div>
 
-      <div class="d-lg-inline-block d-none user-specs">
-
-        <span class="user-account-name"
-              tal:replace="context.user">
-          Admin
-        </span>
-
-        <span class="user-account-position">
-          position
-        </span>
-
-      </div>
-
-    </a>
-
-    <div class="dropdown-menu dropdown-menu-end dropdown-menu-custom dropdown-menu-user">
+    <div class="dropdown-menu-custom" id="user">
       <ul class="list-unstyled">
         <tal:li repeat="item context.items">
           <tal:action replace="structure item" />

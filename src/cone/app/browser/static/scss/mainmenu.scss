@@ -1,6 +1,9 @@
 /* ----- mainmenu ----- */
 
-.mainmenu {
+#mainmenu {
+  margin-bottom:0;
+  padding:0;
+
   .dropdown-menu-custom {
     min-width:10rem;
     padding:0;
@@ -13,65 +16,69 @@
   .menu {
     display:inline-block;
   }
+
+  li {
+    display: inline-block;
+  }
 }
 
 #topnav-mainmenu {
-    margin-right:2rem;
+  height:inherit;
 
-    &.collapsed {
-      li:hover {
-        .dropdown-content {
-          display: block;
-        }
-      }
-    }
-    
-    li.menu:hover {
+  .mainmenu-item {
+    height: inherit;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 10px;
+  }
+
+  &.collapsed {
+    li:hover {
       .dropdown-content {
         display: block;
       }
     }
+  }
 
-    .dropdown-arrow {
-      left: -.4rem;
-      font-size: .7rem;
-    }
-
-    /* -- dropdown -- */
-    .dropdown > div {
-      position: absolute;
-      top:3.3rem;
-      border-radius:0;
-    }
-
-    .dropdown-content {
-      display: none;
-      position:absolute;
-      margin-top:0;
-      z-index: 1;
-    }
-
-    .mainmenu-dropdown {
-      padding-left:1.5rem;
+  #mainmenu {
+    height:inherit;
+  }
   
-      > :first-child {
-        position: relative;
-        left: -1.5rem;
-        padding-left: 1.5rem;
-        height: 2.5rem;
-        width: calc(100% + 1.5rem);
-
-        margin: 0;
-        padding-top: 0.5rem;
-        font-weight: bold;
-        border: 0;
-      }
-      > :only-child {
-        margin-bottom:0;
-      }
-      li {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
+  li.menu:hover {
+    .dropdown-content {
+      display: block;
     }
+  }
+
+  .dropdown-arrow {
+    left: .4rem;
+    font-size: .7rem;
+  }
+
+  /* -- dropdown -- */
+
+  .dropdown-content {
+    position:absolute;
+    z-index: 1;
+
+    .dropdown-title {
+      font-weight:bold;
+      padding: .5rem 1.5rem;
+    }
+  }
+
+  .mainmenu-dropdown {
+    padding-left:1.5rem;
+
+    > :only-child {
+      margin-bottom:0;
+    }
+
+    li {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      display:block;
+    }
+  }
   }

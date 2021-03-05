@@ -1,18 +1,13 @@
 /* ----- topnav ----- */
-
-#topnav-container {
-  > * {
-    display:inline-block;
-    position:relative;
-  }
-}
-
-.topnav-custom {
-  height: 4.2rem;
+#topnav-custom {
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  height: 4rem;
   box-shadow:0 .5rem 1rem rgba(53, 59, 65, .025);
 
-  div {
-    height:inherit;
+  > * {
+    margin: 0 .75rem;
   }
 
   .nav-link {
@@ -30,24 +25,24 @@
   
   .topnav-element {
     display: inline-block;
-    padding-top: 0.75rem;
   }
 
   .dropdown-menu-custom {
-    margin-top:.75rem;
+    display:none;
+    position: absolute;
+    top:4rem;
     padding:1rem 2rem;
     box-shadow:0 0 1.5rem rgba(53, 59, 65, 0.1);
+    z-index:1000;
   }
 }
 
 /* ----- searchbar ----- */
 .searchbar {
   display: inline-block;
-  position: absolute;
-  top:1rem;
-  height:2.3rem!important;
   font-size:.95em;
   z-index:1000;
+  height: 2.2rem;
 
   .form-control:focus {
     outline: 0;
@@ -55,28 +50,29 @@
     box-shadow: none;
   }
 
-  .input-group, *:not(svg) {
-    height:inherit;
-    flex-wrap: nowrap;
+  .input-group {
+    height: 100%;
+    overflow:hidden;
+    border-radius: 4px;
+    flex-wrap:nowrap;
+  }
 
-    input{
-      display:block;
-      padding:0.375rem 0.75rem;
-      font-size:1em;
-      border: 0;
-      border-radius: 4px 0 0 4px;
-    }
+  .input-group * {
+    flex-wrap: nowrap;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    padding:0;
+    background-color: transparent;
+    font-size:15px!important;
   }
 
   #searchbar-button {
-    margin:0;
-    padding: 0 .55em;
-    border-radius: 4px;
+    width:2.2rem;
   }
 }
 
 #topnav-searchbar {
-  top:0;
 
   .twitter-typeahead {
     width:200px;
@@ -85,14 +81,15 @@
   &.expanded {
     .twitter-typeahead {
       display:block;
-      position:absolute;
+      padding-left:.7rem;
     }
   }
 
   &.collapsed {
     .twitter-typeahead {
+      position:absolute!important;
       width:0!important;
-      position:absolute;
+      z-index:-1;
     }
   }
 
@@ -119,8 +116,10 @@
 
 
 /* ----- logo ----- */
-.navbar-brand {
-  display: inline-block;
+#cone-logo {
+  height: inherit;
+  display: flex;
+  align-items: center;
   font-size: 1.5rem;
   font-family: Arial;
 
@@ -130,79 +129,44 @@
 
   .logo {
     height: 2rem;
-    margin: .4rem 0 .5rem .5rem;
   }
 }
 
 @media (max-width: 991.9px) {
-  .navbar-brand {
-    margin-left: 0;
+  #cone-logo {
+    span {
+      display:none;
+    }
   }
 }
   
 
-/* ----- user account ----- */
+/* ----- personal tools ----- */
 #personaltools {
-  display: inline-block;
-  float:right;
-  top: 0;
-  min-width:10rem;
-  margin: 0 1.5rem;
-  border-left:1px solid rgba(53, 59, 65, 0.1);
+  display: flex;
+  align-items:center;
+  right:0;
+  min-width: 10rem;
+  margin:0;
+  padding: 0.75rem;
+  border-left: 1px solid rgba(53, 59, 65, 0.1);
 
-  @media (max-width: 991.9px) {
-    min-width:4rem;
+  #user {
+    min-width:inherit;
+    margin:0;
+    right:0;
   }
 
-  .dropdown-menu-user {
-    min-width:10rem;
-    padding:1rem;
-  }
-
-  .nav-link {
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
-    padding-top:0;
-
-    > * {
-      top:.75rem;
-    }
-  }
-
-  .dropdown-item {
-    font-weight:300;
-  }
-
-  .dropdown-menu-user {
-    position:absolute;
-    left:1rem;
-    top: 2.8rem!important;
-    min-width: 18rem;
-    margin-top:.25rem;
-
-    .dropdown-item {
-      padding:0;
-    }
-  }
-
-  .user-account-name {
-    display: block;
-    margin-top:.3rem;
-  }
-
-  .user-account-position {
-    display: block;
-    margin-top:-.3rem;
-    font-size:.8em;
+  .user-specs {
+    position: relative;
+    margin-left: .6rem;
   }
 
   .profile-image {
     display: flex;
-    position:absolute;
-    vertical-align: top;
+    position: relative;
     width: 2.5em;
     height: 2.5em;
-    margin-top: 0.25rem;
     border-radius: 50% !important;
     box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
 
@@ -218,9 +182,14 @@
     }
   }
 
-  .user-specs {
-    position: absolute;
-    left: 4rem;
+  .user-account-name {
+    display:block;
+  }
+
+  .user-account-position {
+    display: block;
+    margin-top:-.3rem;
+    font-size:.8em;
   }
 }
 
@@ -230,7 +199,7 @@
   }
 
   #personaltools {
-    min-width: 4rem;
+    min-width: 4.3rem;
 
     .dropdown-menu-user {
       min-width: 10rem;
