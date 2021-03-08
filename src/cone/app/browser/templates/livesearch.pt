@@ -3,7 +3,7 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-  
+  <div class="searchbar">
     <div class="input-group">
 
       <input type="text"
@@ -20,6 +20,7 @@
       </div>
 
     </div>
+  </div>
 
 
 </tal:search>

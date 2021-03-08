@@ -1,13 +1,11 @@
 <tal:toolbar_top xmlns:tal="http://xml.zope.org/namespaces/tal"
                  xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
                  omit-tag="True">
-
-  <ul id="toolbar-top">
+<div id="toolbar-top">
+  <ul id="toolbar">
       <li class="topnav-element">
 
-        <a class="toolbar-link">
-          <img src="static/images/flags/gb.svg" height="15em">
-        </a>
+        <img src="static/images/flags/gb.svg" height="15em">
 
         <div class="dropdown-menu-custom" id="language">
           
@@ -36,13 +34,11 @@
       </li>
 
       <li class="topnav-element">
-        <a class="toolbar-link">
-          <i class="bi-bell-fill"></i>
+        <i class="bi-bell-fill"></i>
 
-          <div class="noti-badge-round">
-            <span>9+</span>
-          </div>
-        </a>
+        <div class="noti-badge-round">
+          <span>9+</span>
+        </div>
 
         <div class="dropdown-menu-custom" id="notifications">
           <span>Notifications</span>
@@ -79,10 +75,7 @@
       </li>
 
       <li class=" topnav-element">
-
-        <a class="toolbar-link">
-          <i class="bi-grid-3x3-gap-fill"></i>
-        </a>
+        <i class="bi-grid-3x3-gap-fill"></i>
 
         <div class="dropdown-menu-custom" id="apps">
           <span>Apps</span>
@@ -152,9 +145,7 @@
       </li>
 
       <li class=" topnav-element">
-        <a class="toolbar-link">
-          <i class="bi-gear-fill"></i>
-        </a>
+        <i class="bi-gear-fill"></i>
 
         <div class="dropdown-menu-custom" id="settings">
           <span>Settings</span>
@@ -171,5 +162,8 @@
       </li>
 
     </ul>
+
+</div>
+
 
 </tal:toolbar_top>

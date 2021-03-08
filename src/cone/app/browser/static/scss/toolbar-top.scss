@@ -1,28 +1,31 @@
 /* ----- toolbar top ----- */
 #toolbar-top {
-  display: flex;
-  align-items: center;
-  height: inherit;
-  margin-left:auto;
+  display: inline-block;
   padding:0;
+  height:100%;
+  vertical-align: top;
+
+  #toolbar {
+    height:100%;
+  }
 
   ul {
-    height:inherit;
     margin:0;
+    padding:0;
   }
 
   li {
     position:relative;
+    vertical-align:middle;
   }
 
   .topnav-element {
-    height: inherit;
     padding: 0 0.5rem;
+    height:100%;
+    padding-top: 1.2rem;
     
     > a {
-      display: flex;
-      align-items: center;
-      height:inherit;
+      vertical-align:middle;
     }
 
     > .dropdown-menu-custom {
@@ -35,9 +38,6 @@
         font-size:1rem;
       }
     }
-  }
-
-  .toolbar-link {
   }
 
   /* -- language -- */

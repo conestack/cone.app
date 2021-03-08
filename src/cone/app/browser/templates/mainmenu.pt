@@ -17,29 +17,22 @@
                         css ' '.join([css, 'node-%s' % item['id']]);"
             tal:attributes="class css">
 
-          <div class="dropdown">
-
-            <a href="${item['url']}"
-               data-hover="dropdown"
-               title="${item['description']}"
-               ajax:bind="click"
-               ajax:target="${item['target']}"
-               ajax:event="contextchanged:#layout"
-               ajax:path="href"
-              >
-              <i class="${item['icon']|nothing}"></i>
-              <span tal:content="item['title'] | string:'&nbsp;'"
-                    class="mainmenu-title">Title
-              </span>
-            </a>
-
-            <div class="dropdown-menu-custom dropdown-content"
-                 id="submenu-${item['id']}">
-    
-              <span tal:content="item['title'] | string:'&nbsp;'">
+          <a href="${item['url']}">
+            <i class="${item['icon']|nothing}"></i>
+            <span tal:content="item['title'] | string:'&nbsp;'"
+                  class="mainmenu-title">
                 Title
-              </span>
-            </div>
+            </span>
+          </a>
+
+
+          <div class="dropdown-menu-custom dropdown-content"
+               id="submenu-${item['id']}">
+              <div class="dropdown-title">
+                <span tal:content="item['title'] | string:'&nbsp;'">
+                  Title
+                </span>
+              </div>
           </div>
         </li>
 
@@ -51,11 +44,11 @@
             tal:attributes="class css"
             >
 
-            <a href="${item['url']}"
-              >
+            <a href="${item['url']}">
               <i class="${item['icon']|nothing}"></i>
               <span tal:content="item['title'] | string:'&nbsp;'"
-                    class="mainmenu-title">Title
+                    class="mainmenu-title">
+                  Title
               </span>
             </a>
 

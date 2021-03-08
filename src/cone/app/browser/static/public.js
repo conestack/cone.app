@@ -131,28 +131,26 @@ var livesearch_options = new Object();
             }
 
             cone.main_menu = this;
-            this.topnav_children = $('#topnav-custom').children('div');
 
             this.mobile_mainmenu = $('#mobile-mainmenu');
             this.topnav_mainmenu = $('#topnav-mainmenu');
-            this.mainmenu_list = this.topnav_mainmenu.children('ul');
-            this.topnav_menu_icons = $('#topnav-mainmenu').children('li').find('i');
-
+            this.mainmenu_list = this.topnav_mainmenu.find('#mainmenu');
+            
             this.topnav_mainmenu_titles = this.topnav_mainmenu.find('.mainmenu-title');
+            this.mainmenu_items = $('.mainmenu-item');
+            this.topnav_menu_icons =  this.topnav_mainmenu.find('.mainmenu-item').find('i');
 
             this.free_space = 0;
             this.menu_width = parseFloat($('#topnav-mainmenu').outerWidth(true), 10);
             this.menu_width_collapsed = 0;
 
             this._calc_space = this.calc_space.bind(this);
-            // $(this._calc_space);
-            // $(window).on('resize', this._calc_space);
+            $(this._calc_space);
+            $(window).on('resize', this._calc_space);
 
             this._handle_visibility = this.handle_visibility.bind(this);
-            // $(this._handle_visibility);
-            // $(window).on('resize', this._handle_visibility);
-
-            this.mainmenu_items = $('.mainmenu-item');
+            $(this._handle_visibility);
+            $(window).on('resize', this._handle_visibility);
 
             this.mobile_mainmenu.find('.dropdown-arrow').on('click', function(event){ 
                 $(this).parent('li').find('.dropdown-content').toggle();
@@ -163,14 +161,14 @@ var livesearch_options = new Object();
         }
 
         calc_space() {
-            let total_width = 0;
-            this.topnav_children.not(this.topnav_mainmenu).each(function(index) {
+            let total_width = $('#tools').width();
+            this.topnav_mainmenu.find('#mainmenu').children('li').not(this.topnav_mainmenu).not('#tools').each(function(index) {
                 total_width += parseInt($(this).outerWidth(true), 10);
             })
-            this.free_space = $(window).width() - total_width ;
-            //console.log('free space: ' + this.free_space);
-            //console.log('total width: ' + total_width);
-            //console.log('mainmenu width:' + this.menu_width);
+            this.free_space = $(window).width() - total_width;
+            console.log('free space: ' + this.free_space);
+            console.log('total width: ' + total_width);
+            console.log('mainmenu width:' + this.menu_width);
 
             let span_width = 0;
             this.mainmenu_list.children('li').find('span').each(function(index ){
@@ -195,16 +193,12 @@ var livesearch_options = new Object();
                 this.topnav_mainmenu_titles.css('display', 'inline-block');
                 class_remove(this.topnav_mainmenu , 'collapsed');
                 this.topnav_mainmenu.addClass('expanded');
+                this.topnav_mainmenu.find('.menu').find('.dropdown-title').toggle();
                 // console.log('enough space expand');
             }
             else if (this.free_space <= this.menu_width_collapsed
                 && this.topnav_mainmenu.hasClass('collapsed')) { // mobile
                 this.topnav_mainmenu.hide();
-               /*  this.mobile_mainmenu.find('.list-true').find('a').each(
-                    $(this).on('click', function(){
-                    console.log('click');
-                    $(this).find('dropdown-content').toggle();
-                })); */
             }
         }
     }
@@ -225,17 +219,17 @@ var livesearch_options = new Object();
             // this.toolbar_top = $('#toolbar-top');
 
             this.topnav = $('#topnav-custom');
-            this.topnav_children = this.topnav.children('div').not(this.topnav_searchbar);
+            this.topnav_children = this.topnav.children('div').not(this.topnav_searchbar, '#tools');
 
             this.free_space = 0;
 
             this._get_total_width = this.get_total_width.bind(this);
-            $(window).on('resize', this._get_total_width);
-            $(this._get_total_width);
+            // $(window).on('resize', this._get_total_width);
+            // $(this._get_total_width);
 
             this._resize_handle = this.resize_handle.bind(this);
-            $(this._resize_handle);
-            $(window).on('resize', this._resize_handle);
+            // $(this._resize_handle);
+            // $(window).on('resize', this._resize_handle);
         }
 
         get_total_width() { // calculate width of children in topnav

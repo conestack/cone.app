@@ -8,13 +8,13 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <nav id="topnav-custom">
+    <ul id="topnav-custom">
 
-        <div id="cone-logo">
+        <li id="cone-logo">
           <tal:logo replace="structure tile('logo')" />
-        </div>
+        </li>
 
-        <div class="p-3 font-light" id="mobile-menu">
+        <li class="p-3 font-light" id="mobile-menu">
           <button id="hamburger-menu-toggle" class="hamburgerMenu">
             <svg class="bi" width="2em" height="2em" fill="currentColor">
               <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
@@ -31,27 +31,28 @@
                             replace="structure tile('mainmenu')" />
             </div>
           </div>
-        </div>
+        </li>
 
         <tal:version_old condition="True">
-          <div id="topnav-mainmenu" class="mainmenu expanded">
+          <li id="topnav-mainmenu" class="mainmenu expanded">
             <tal:mainmenu
               condition="config.mainmenu"
               replace="structure tile('mainmenu')" />
-          </div>
+          </li>
 
-          <div id="topnav-searchbar" class="searchbar"> 
+          <li id="topnav-searchbar"> 
             <tal:livesearch
                condition="config.livesearch"
                replace="structure tile('livesearch')" />
-          </div>
-
+          </li>
+          
+          <li id="tools">
           <tal:toolbar_top condition="True"
                            replace="structure tile('toolbar_top')" />
 
           <tal:personaltools condition="config.personaltools"
                               replace="structure tile('personaltools')" />
-          
+          </li>
         </tal:version_old>
 
         <tal:version_new condition="False">
@@ -64,7 +65,7 @@
             replace="structure tile('toolbar_top')" />
         </tal:version_new>
 
-    </nav>
+    </ul>
     
     <div class="dropdown-menu-custom"
          id="mobile_menu"

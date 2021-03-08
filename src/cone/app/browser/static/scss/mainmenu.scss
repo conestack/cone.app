@@ -23,10 +23,10 @@
 }
 
 #topnav-mainmenu {
-  height:inherit;
+  height:100%;
 
   .mainmenu-item {
-    height: inherit;
+    height: 100%;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
@@ -42,7 +42,7 @@
   }
 
   #mainmenu {
-    height:inherit;
+    height:100%;
   }
   
   li.menu:hover {

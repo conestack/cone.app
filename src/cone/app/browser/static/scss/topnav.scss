@@ -1,13 +1,19 @@
 /* ----- topnav ----- */
 #topnav-custom {
   display:flex;
-  flex-direction:row;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items:center;
+  list-style:none;
   height: 4rem;
   box-shadow:0 .5rem 1rem rgba(53, 59, 65, .025);
+  margin:0;
+  padding:0;
 
-  > * {
-    margin: 0 .75rem;
+  > li:not(#tools) {
+    margin: 0 0 0 1rem;
+    display:inline-block;
+    vertical-align: top;
   }
 
   .nav-link {
@@ -117,9 +123,6 @@
 
 /* ----- logo ----- */
 #cone-logo {
-  height: inherit;
-  display: flex;
-  align-items: center;
   font-size: 1.5rem;
   font-family: Arial;
 
@@ -140,16 +143,26 @@
   }
 }
   
-
+/* ----- tools ----- */
+#tools {
+  margin-left:auto;
+  height:100%;
+}
 /* ----- personal tools ----- */
 #personaltools {
-  display: flex;
-  align-items:center;
+  display: inline-flex;
+  align-items: center;
   right:0;
   min-width: 10rem;
-  margin:0;
-  padding: 0.75rem;
+  height:100%;
+  margin:0 0 0 .5rem;
+  padding: 0 0.75rem;
   border-left: 1px solid rgba(53, 59, 65, 0.1);
+  cursor: pointer;
+
+  > div {
+    display: inline-block;
+  }
 
   #user {
     min-width:inherit;
@@ -160,10 +173,14 @@
   .user-specs {
     position: relative;
     margin-left: .6rem;
+    height:100%;
+    padding: .75rem 0;
   }
 
   .profile-image {
-    display: flex;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     width: 2.5em;
     height: 2.5em;
@@ -172,7 +189,6 @@
 
     > i {
       position: relative;
-      margin:auto;
       font-size:1.5rem;
     }
 

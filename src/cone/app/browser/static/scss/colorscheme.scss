@@ -120,12 +120,20 @@ body {
 
 /* ----- toolbar top ----- */
 #toolbar-top {
-  > *:hover {
-    color: $flight;
-  }
 
   &.item > :first-child {
     color:$flight; 
+  }
+
+  .topnav-element {
+    color:$fmedium;
+  }
+  .topnav-element:hover {
+    i {
+      color:$fhover;
+      transition: .5s;
+      cursor:pointer;
+    }
   }
 
   /* -- notifications -- */

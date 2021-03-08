@@ -92,11 +92,16 @@ body {
   /* -- notifications -- */
   /* -- logo -- */
 }
-#toolbar-top > *:hover {
-  color: #E6E6EB;
-}
 #toolbar-top.item > :first-child {
   color: #E6E6EB;
+}
+#toolbar-top .topnav-element {
+  color: #949499;
+}
+#toolbar-top .topnav-element:hover i {
+  color: #dfe8f0;
+  transition: 0.5s;
+  cursor: pointer;
 }
 #toolbar-top #notifications .user-msg {
   background-color: #2E2E33;
