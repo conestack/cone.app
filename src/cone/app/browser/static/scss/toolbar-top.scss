@@ -1,28 +1,26 @@
 /* ----- toolbar top ----- */
 #toolbar-top {
   display: inline-block;
-  padding:0;
-  height:100%;
   vertical-align: top;
+  height:100%;
 
-  #toolbar {
-    height:100%;
-  }
+  @media(max-width:500px) {
+    .toolbar-title {
+      display:none;
+    }
 
-  ul {
-    margin:0;
-    padding:0;
-  }
-
-  li {
-    position:relative;
-    vertical-align:middle;
+    .topnav-element > .dropdown-menu-custom {
+      transform: translateX(-50%);
+    }
   }
 
   .topnav-element {
+    position:relative;
+    vertical-align: top;
+    display:inline-flex;
+    align-items: center;
     padding: 0 0.5rem;
     height:100%;
-    padding-top: 1.2rem;
     
     > a {
       vertical-align:middle;
@@ -32,16 +30,22 @@
       min-width:max-content;
       transform: translateX(calc(-100% + 1.3rem));
 
-      > :first-child {
-        margin-bottom:1rem;
+      .toolbar-title {
         font-weight: bold;
         font-size:1rem;
+      }
+
+      ul {
+        margin-top:1rem;
       }
     }
   }
 
   /* -- language -- */
   #language {
+    li {
+      line-height: 1;
+    }
     img {
       margin-right:.5rem;
     }
@@ -50,7 +54,7 @@
   /*notifications*/
   #notifications {
     width:20rem;
-    height:content;
+    height:max-content;
     
     .user-msg {
       display:flex;
@@ -137,15 +141,6 @@
       margin-top:.25rem;
       margin-bottom:.25rem;
       background-color:transparent;
-    }
-
-    &.item > :first-child {
-      margin-bottom:1rem;
-      font-weight:bold;
-      background-color:transparent;
-      @media(max-width:764.9px) {
-        display:none;
-      }
     }
   
     /* -- settings -- */

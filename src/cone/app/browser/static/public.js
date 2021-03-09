@@ -16,6 +16,7 @@ cone = {
     navtree: null,
     toolbar_top: null,
     personal_tools: null,
+    topnav: null,
     default_themes: [
         'static/light.css',
         'static/dark.css'
@@ -28,6 +29,7 @@ function class_remove(element, elemclass){
         element.removeClass(elemclass);
     }
 }
+
 
 // additional livesearch options
 var livesearch_options = new Object();
@@ -43,9 +45,18 @@ var livesearch_options = new Object();
             new cone.MobileMenu(context);
             new cone.ToolbarTop(context);
             new cone.PersonalTools(context);
+            new cone.Topnav(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
+
+    // topnav
+    cone.Topnav = class {
+        constructor(context) {
+            cone.topnav = this;
+            this.topnav = $('#topnav-custom');
+        }
+    }
 
     // toolbar top
     cone.ToolbarTop = class {
@@ -58,11 +69,8 @@ var livesearch_options = new Object();
                 console.log('click');
             });
         }
-
-        handle_visibility() {
-            console.log('handle visibility');
-        }
     }
+
     // navtree
     cone.Navtree = class {
         constructor(context) {
@@ -134,70 +142,70 @@ var livesearch_options = new Object();
 
             this.mobile_mainmenu = $('#mobile-mainmenu');
             this.topnav_mainmenu = $('#topnav-mainmenu');
-            this.mainmenu_list = this.topnav_mainmenu.find('#mainmenu');
             
             this.topnav_mainmenu_titles = this.topnav_mainmenu.find('.mainmenu-title');
             this.mainmenu_items = $('.mainmenu-item');
-            this.topnav_menu_icons =  this.topnav_mainmenu.find('.mainmenu-item').find('i');
 
             this.free_space = 0;
-            this.menu_width = parseFloat($('#topnav-mainmenu').outerWidth(true), 10);
+            this.menu_width = $('#topnav-mainmenu').outerWidth(true);
             this.menu_width_collapsed = 0;
+            this.spanwidth = 0;
 
             this._calc_space = this.calc_space.bind(this);
-            $(this._calc_space);
             $(window).on('resize', this._calc_space);
 
             this._handle_visibility = this.handle_visibility.bind(this);
-            $(this._handle_visibility);
             $(window).on('resize', this._handle_visibility);
 
+            // toggle content
             this.mobile_mainmenu.find('.dropdown-arrow').on('click', function(event){ 
-                $(this).parent('li').find('.dropdown-content').toggle();
+                $(this).parent('li').find('.dropdown-menu-custom').toggle();
                 event.stopPropagation(); //disable default scrolldown
                 event.preventDefault();
             });
 
+
         }
 
         calc_space() {
-            let total_width = $('#tools').width();
-            this.topnav_mainmenu.find('#mainmenu').children('li').not(this.topnav_mainmenu).not('#tools').each(function(index) {
-                total_width += parseInt($(this).outerWidth(true), 10);
-            })
+            let total_width = 0;
+            $('#topnav-custom').children('div').not(this.topnav_mainmenu).each(function(index){
+                total_width += parseInt($(this).outerWidth(true));
+            });
+
             this.free_space = $(window).width() - total_width;
-            console.log('free space: ' + this.free_space);
             console.log('total width: ' + total_width);
-            console.log('mainmenu width:' + this.menu_width);
+            console.log('free space: ' + this.free_space);
 
             let span_width = 0;
-            this.mainmenu_list.children('li').find('span').each(function(index ){
+            this.mainmenu_items.find('span').each(function(index ){
                 span_width += parseInt($(this).outerWidth(true), 10);
             })
+            this.spanwidth = span_width;
+            console.log('menu width: ' + this.menu_width);
+            console.log('span width: ' + span_width);
 
             this.menu_width_collapsed = this.menu_width - span_width ;
-            //console.log('mainmenu collapsed' + this.menu_width_collapsed);
+            console.log('mainmenu collapsed: ' + this.menu_width_collapsed);
         }
 
         handle_visibility(evt) {
             if (this.free_space <= this.menu_width
                 && this.topnav_mainmenu.hasClass('expanded')) { // collapse
-                this.topnav_mainmenu_titles.css('display', 'none'); 
-                this.topnav_mainmenu.addClass('collapsed');
                 this.topnav_mainmenu.removeClass('expanded');
-                this.topnav_mainmenu.css('display', 'inline-block');
+                this.topnav_mainmenu.addClass('collapsed');
                 // console.log('collapsed');
             } 
-            else if (this.free_space > this.menu_width){ // expand
+            else if (this.free_space >= this.menu_width
+                && this.topnav_mainmenu.hasClass('collapsed')){ // expand
                 this.topnav_mainmenu.css('display', 'inline-block');
-                this.topnav_mainmenu_titles.css('display', 'inline-block');
                 class_remove(this.topnav_mainmenu , 'collapsed');
                 this.topnav_mainmenu.addClass('expanded');
-                this.topnav_mainmenu.find('.menu').find('.dropdown-title').toggle();
                 // console.log('enough space expand');
             }
             else if (this.free_space <= this.menu_width_collapsed
                 && this.topnav_mainmenu.hasClass('collapsed')) { // mobile
+                $('#mobile-menu').addClass('active');
                 this.topnav_mainmenu.hide();
             }
         }
@@ -216,20 +224,17 @@ var livesearch_options = new Object();
 
             this.topnav_searchbar_btn = this.topnav_searchbar.find('#searchbar-button');
             this.topnav_searchbar_text = this.topnav_searchbar.find('.twitter-typeahead');
-            // this.toolbar_top = $('#toolbar-top');
 
             this.topnav = $('#topnav-custom');
-            this.topnav_children = this.topnav.children('div').not(this.topnav_searchbar, '#tools');
+            this.topnav_children = this.topnav.children('li').not(this.topnav_searchbar);
 
             this.free_space = 0;
 
-            this._get_total_width = this.get_total_width.bind(this);
-            // $(window).on('resize', this._get_total_width);
-            // $(this._get_total_width);
+            //this._get_total_width = this.get_total_width.bind(this);
+            //$(window).on('resize', this._get_total_width);
 
-            this._resize_handle = this.resize_handle.bind(this);
-            // $(this._resize_handle);
-            // $(window).on('resize', this._resize_handle);
+            //this._resize_handle = this.resize_handle.bind(this);
+            //$(window).on('resize', this._resize_handle);
         }
 
         get_total_width() { // calculate width of children in topnav
@@ -239,56 +244,54 @@ var livesearch_options = new Object();
             });
 
             this.free_space = $(window).width() - total_width;
-            console.log('searchbar free space: ' + this.free_space);
+            // console.log('searchbar free space: ' + this.free_space);
         }
 
         resize_handle(evt) { // adjust searchbar
 
             switch(true) {
-                /* case this.free_space <= 0: // mobile
-                    console.log('mobile searchbar');
-                    this.topnav_searchbar.hide();
-                    $('#mobile-menu').addClass('active');
-                    break; */
+                case this.free_space <= 0: // mobile
+/*                     console.log('mobile searchbar');
+                    this.topnav_searchbar.hide(); */
+                    break; 
 
                 case this.free_space <= 200: // collapsed
-                    class_remove($('#mobile-menu'), 'active');
+                    class_remove(this.topnav_searchbar, 'expanded');
                     
-                    this.topnav_searchbar.css('display', 'inline-block');
+                    this.topnav_searchbar.css('display', 'inline-flex');
                     this.topnav_searchbar.addClass('collapsed');
 
-                    class_remove(this.topnav_searchbar, 'expanded');
-                    class_remove(this.topnav_searchbar, 'toggle-collapse');
-                    class_remove(this.topnav_searchbar, 'toggle-expand');
+                    this.topnav_searchbar_btn.on('click', evt => {
+                        this.topnav_searchbar.addClass('toggle-expand expanded');
+                        this.topnav_searchbar.removeClass('collapsed');
+                    })
 
-
-                    this.topnav_searchbar_btn.on('click', event => {
-                        if(this.topnav_searchbar.hasClass('expanded')) {
-                            class_remove(this.topnav_searchbar, 'toggle-expand');
+                    /* this.topnav_searchbar_btn.on('click', event => {
+                        if(this.topnav_searchbar.hasClass('toggle-expand')) {
+                            this.topnav_searchbar.removeClass('toggle-expand');
                             class_remove(this.topnav_searchbar, 'expanded');
                             this.topnav_searchbar.addClass('collapsed');
                             this.topnav_searchbar.addClass('toggle-collapse');
-                            // $('#topnav-custom').children('div').last().show();
+                            //$('#topnav-custom').children('li').last().show();
                             console.log('close');
                         } else {
                             class_remove(this.topnav_searchbar, 'toggle-collapse');
                             class_remove(this.topnav_searchbar, 'collapsed');
                             this.topnav_searchbar.addClass('expanded');
                             this.topnav_searchbar.addClass('toggle-expand');
-                            // $('#topnav-custom').children('div').last().hide();
+                            //$('#topnav-custom').children('li').last().hide();
                             console.log('open');
                         }
-                    });
+                    }); */
                     break;
 
                 default: //free space over 250px
-                $('#mobile-menu').removeClass('active');
-                $('#topnav-mainmenu').css('display', 'inline-block');
                 $('.twitter-typeahead').css('width', '200px');
-                this.topnav_searchbar.css('display', 'inline-block');
+                this.topnav_searchbar.css('display', 'inline-flex');
 
                 class_remove(this.topnav_searchbar, 'collapsed');
                 this.topnav_searchbar.addClass('expanded');
+
                 break;
             }
         }

@@ -98,6 +98,11 @@ body {
     color:$fhover;
     transition: background-color .4s;
   }
+
+  .dropdown-menu-custom {
+    background:transparent;
+    border:none;
+  }
 }
 
 

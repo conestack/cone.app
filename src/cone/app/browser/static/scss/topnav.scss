@@ -1,23 +1,15 @@
 /* ----- topnav ----- */
 #topnav-custom {
-  display:flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items:center;
   list-style:none;
   height: 4rem;
   box-shadow:0 .5rem 1rem rgba(53, 59, 65, .025);
   margin:0;
   padding:0;
 
-  > li:not(#tools) {
-    margin: 0 0 0 1rem;
-    display:inline-block;
+  .tile { // tiles
+    margin: 0 0 0 .75rem;
     vertical-align: top;
-  }
-
-  .nav-link {
-    padding-bottom:1.25rem;
+    height:100%;
   }
 
   a, label {
@@ -33,6 +25,14 @@
     display: inline-block;
   }
 
+  #topnav-content {
+    display:inline-block;
+    > * {
+      vertical-align: top;
+      height:100%;
+    }
+  }
+
   .dropdown-menu-custom {
     display:none;
     position: absolute;
@@ -43,42 +43,41 @@
   }
 }
 
-/* ----- searchbar ----- */
-.searchbar {
-  display: inline-block;
-  font-size:.95em;
-  z-index:1000;
-  height: 2.2rem;
 
-  .form-control:focus {
-    outline: 0;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+/* ----- logo ----- */
+#cone-logo {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  font-size: 1.5rem;
+  font-family: Arial;
+
+  a {
+    text-decoration: none;
   }
 
-  .input-group {
-    height: 100%;
-    overflow:hidden;
-    border-radius: 4px;
-    flex-wrap:nowrap;
-  }
-
-  .input-group * {
-    flex-wrap: nowrap;
-    height: 100%;
-    border: 0;
-    border-radius: 0;
-    padding:0;
-    background-color: transparent;
-    font-size:15px!important;
-  }
-
-  #searchbar-button {
-    width:2.2rem;
+  .logo {
+    height: 2rem;
   }
 }
 
+@media (max-width: 991.9px) {
+  #cone-logo {
+    span {
+      display:none;
+    }
+  }
+}
+
+/* ----- topnav content ----- */
+#topnav-content {
+  position: relative;
+}  
+
+/* ----- searchbar ----- */
 #topnav-searchbar {
+  display:inline-flex;
+  align-items: center;
 
   .twitter-typeahead {
     width:200px;
@@ -120,42 +119,55 @@
   }
 }
 
+.searchbar {
+  display: inline-block;
+  font-size:.95em;
+  z-index:1000;
+  height: 2.2rem;
 
-/* ----- logo ----- */
-#cone-logo {
-  font-size: 1.5rem;
-  font-family: Arial;
-
-  a {
-    text-decoration: none;
+  .form-control:focus {
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
   }
 
-  .logo {
-    height: 2rem;
+  .input-group {
+    height: 100%;
+    overflow:hidden;
+    border-radius: 4px;
+    flex-wrap:nowrap;
+  }
+
+  .input-group * {
+    flex-wrap: nowrap;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    padding:0;
+    background-color: transparent;
+    font-size:15px!important;
+  }
+
+  #searchbar-button {
+    width:2.2rem;
   }
 }
 
-@media (max-width: 991.9px) {
-  #cone-logo {
-    span {
-      display:none;
-    }
-  }
-}
-  
 /* ----- tools ----- */
 #tools {
-  margin-left:auto;
-  height:100%;
+  position: absolute;
+  right:0;
+  top:0;
+  height:4rem;
 }
 /* ----- personal tools ----- */
 #personaltools {
   display: inline-flex;
   align-items: center;
-  right:0;
+  vertical-align: top;
   min-width: 10rem;
-  height:100%;
-  margin:0 0 0 .5rem;
+  height:4rem;
+  margin-left: .75rem;
   padding: 0 0.75rem;
   border-left: 1px solid rgba(53, 59, 65, 0.1);
   cursor: pointer;
@@ -173,8 +185,6 @@
   .user-specs {
     position: relative;
     margin-left: .6rem;
-    height:100%;
-    padding: .75rem 0;
   }
 
   .profile-image {

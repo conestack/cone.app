@@ -1,84 +1,116 @@
 /* ----- mainmenu ----- */
 
 #mainmenu {
+  list-style: none;
   margin-bottom:0;
   padding:0;
+
+  .nav-item > a {
+    display:inline-block;
+  }
+
+  ul {
+    list-style: none;
+  }
+}
+
+/* ----- topnav mainmenu ----- */
+#topnav-mainmenu {
+  display:inline-block;
 
   .dropdown-menu-custom {
     min-width:10rem;
     padding:0;
   }
 
-  .nav-item > a {
-    display:inline-block;
-  }
-
-  .menu {
-    display:inline-block;
-  }
-
-  li {
-    display: inline-block;
-  }
-}
-
-#topnav-mainmenu {
-  height:100%;
-
-  .mainmenu-item {
-    height: 100%;
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 0 10px;
-  }
-
   &.collapsed {
-    li:hover {
-      .dropdown-content {
+    .mainmenu-title {
+      display:none;
+    }
+
+    .mainmenu-item:hover {
+      .dropdown-menu-custom {
         display: block;
+      }
+    }
+  }
+
+  &.expanded {
+    .mainmenu-item.menu:hover {
+      .dropdown-menu-custom {
+        display:block;
       }
     }
   }
 
   #mainmenu {
     height:100%;
+
+    .mainmenu-item {
+      height: 100%;
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 0 10px;
+
+      .dropdown-arrow {
+        left: .4rem;
+        font-size: .7rem;
+      }
+    
+      .dropdown-title {
+        font-weight:bold;
+        padding: .5rem 1.5rem;
+      }
+
+      .mainmenu-dropdown {
+        padding-left:1.5rem;
+    
+        li {
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+          display:block;
+        }
+      }
+    }
   }
-  
-  li.menu:hover {
-    .dropdown-content {
-      display: block;
+}
+
+/* ----- mobile main menu ---- */
+#mobile-mainmenu {
+  position: relative;
+
+  #mainmenu {
+    line-height:2;
+
+    li {
+      width:100%;
+      padding:0;
+    }
+    .mainmenu-title {
+      display:inline-block;
     }
   }
 
-  .dropdown-arrow {
-    left: .4rem;
-    font-size: .7rem;
+  .dropdown-title {
+    display:none;
   }
 
-  /* -- dropdown -- */
-
-  .dropdown-content {
-    position:absolute;
-    z-index: 1;
-
-    .dropdown-title {
-      font-weight:bold;
-      padding: .5rem 1.5rem;
-    }
+  .dropdown-menu-custom {
+    display:none;
+    position: relative;
+    top: 0;
+    border:0;
+    padding-left:1rem;
+    box-shadow:none;
   }
 
   .mainmenu-dropdown {
-    padding-left:1.5rem;
-
-    > :only-child {
-      margin-bottom:0;
-    }
+    line-height:1.5;
+    padding-left: 0;
 
     li {
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-      display:block;
+      margin: .5rem 0;
     }
   }
-  }
+}

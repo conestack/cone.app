@@ -8,64 +8,51 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <ul id="topnav-custom">
+    <div id="topnav-custom">
 
-        <li id="cone-logo">
-          <tal:logo replace="structure tile('logo')" />
-        </li>
+      <div class="tile" id="cone-logo">
+        <tal:logo replace="structure tile('logo')" />
+      </div>
 
-        <li class="p-3 font-light" id="mobile-menu">
-          <button id="hamburger-menu-toggle" class="hamburgerMenu">
-            <svg class="bi" width="2em" height="2em" fill="currentColor">
-              <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
-            </svg>
-          </button>
-          <div id="mobile-menu-content">
-            <div id="mobile-searchbar" class="searchbar">
-              <tal:livesearch
-                condition="config.livesearch"
-                replace="structure tile('livesearch')" />
-            </div>
-            <div id="mobile-mainmenu" class="mainmenu expanded">
-              <tal:mainmenu condition="config.mainmenu"
-                            replace="structure tile('mainmenu')" />
-            </div>
-          </div>
-        </li>
-
-        <tal:version_old condition="True">
-          <li id="topnav-mainmenu" class="mainmenu expanded">
-            <tal:mainmenu
-              condition="config.mainmenu"
-              replace="structure tile('mainmenu')" />
-          </li>
-
-          <li id="topnav-searchbar"> 
+      <div class="tile" id="mobile-menu">
+        <button id="hamburger-menu-toggle" class="hamburgerMenu">
+          <svg class="bi" width="2em" height="2em" fill="currentColor">
+            <use xlink:href="static/bootstrap-icons/bootstrap-icons.svg#list"/>
+          </svg>
+        </button>
+        <div id="mobile-menu-content">
+          <div id="mobile-searchbar" class="searchbar">
             <tal:livesearch
-               condition="config.livesearch"
-               replace="structure tile('livesearch')" />
-          </li>
-          
-          <li id="tools">
-          <tal:toolbar_top condition="True"
-                           replace="structure tile('toolbar_top')" />
+              condition="config.livesearch"
+              replace="structure tile('livesearch')" />
+          </div>
+          <div id="mobile-mainmenu" class="mainmenu expanded">
+            <tal:mainmenu condition="config.mainmenu"
+                          replace="structure tile('mainmenu')" />
+          </div>
+        </div>
+      </div>
+      
+      <div class="tile expanded" id="topnav-mainmenu">
+        <tal:mainmenu
+          condition="config.mainmenu"
+          replace="structure tile('mainmenu')" />
+      </div>
 
-          <tal:personaltools condition="config.personaltools"
-                              replace="structure tile('personaltools')" />
-          </li>
-        </tal:version_old>
+      <div class="tile" id="topnav-searchbar"> 
+        <tal:livesearch
+           condition="config.livesearch"
+           replace="structure tile('livesearch')" />
+      </div>
 
-        <tal:version_new condition="False">
-          <tal:livesearch
-            condition="config.livesearch"
-            replace="structure tile('livesearch')" />
+      <div id="tools">
+        <tal:toolbar_top condition="True"
+                         replace="structure tile('toolbar_top')" />
+        <tal:personaltools condition="config.personaltools"
+                            replace="structure tile('personaltools')" />
+      </div>
 
-          <tal:toolbar_top
-            condition="True"
-            replace="structure tile('toolbar_top')" />
-        </tal:version_new>
-
-    </ul>
+    </div>
     
     <div class="dropdown-menu-custom"
          id="mobile_menu"

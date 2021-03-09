@@ -1,15 +1,14 @@
 <tal:toolbar_top xmlns:tal="http://xml.zope.org/namespaces/tal"
                  xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
                  omit-tag="True">
-<div id="toolbar-top">
-  <ul id="toolbar">
+  <ul id="toolbar-top">
       <li class="topnav-element">
 
         <img src="static/images/flags/gb.svg" height="15em">
 
         <div class="dropdown-menu-custom" id="language">
           
-          <span>Language</span>
+          <span class="toolbar-title">Language</span>
           <ul class="list-unstyled">
           <li><a href="#">
               <img src="static/images/flags/fr.svg" height="15em">
@@ -41,7 +40,7 @@
         </div>
 
         <div class="dropdown-menu-custom" id="notifications">
-          <span>Notifications</span>
+          <span class="toolbar-title">Notifications</span>
 
           <a href="#" id="msg1" class="msg unread">
             <div class="unread-dot">
@@ -78,7 +77,7 @@
         <i class="bi-grid-3x3-gap-fill"></i>
 
         <div class="dropdown-menu-custom" id="apps">
-          <span>Apps</span>
+          <span class="toolbar-title">Apps</span>
           <div class="row">
 
             <div class="col">
@@ -148,7 +147,7 @@
         <i class="bi-gear-fill"></i>
 
         <div class="dropdown-menu-custom" id="settings">
-          <span>Settings</span>
+          <span class="toolbar-title">Settings</span>
 
             <div class="form-check form-switch">
               <input class="form-check-input switch_mode" type="checkbox" id="toggleMode">
@@ -163,7 +162,6 @@
 
     </ul>
 
-</div>
 
 
 </tal:toolbar_top>

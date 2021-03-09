@@ -74,6 +74,10 @@ body {
   color: #dfe8f0;
   transition: background-color 0.4s;
 }
+#mobile-mainmenu .dropdown-menu-custom {
+  background: transparent;
+  border: none;
+}
 
 /* ----- searchbar ----- */
 .searchbar input {
