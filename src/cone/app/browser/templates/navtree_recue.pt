@@ -5,12 +5,10 @@
   <tal:li repeat="item children">
 
     <li tal:define="css item['selected'] and 'active ' or '';
-                    css css + 'dropdown-submenu dropout-relative';
                     css ' '.join([item['css'], css, 'navtreelevel_%i' % level]);
                     css css.strip()"
         tal:attributes="class css">
 
-      <div class="dropdown">
         <a href="${item['url']}"
            ajax:bind="click"
            ajax:target="${item['target']}"
@@ -20,18 +18,10 @@
           <span tal:content="item['title']">Title</span>
         </a>
 
-        <div class="dropdown-content">
-          <ul tal:condition="item['children']"
-              class="nav ${'navtreelevel_%i' % level} list-group-item sidebar-dropout list-unstyled">
-            <li class="dropout-title">
-             <i class="${item['icon']}" alt="..."></i>
-             <span tal:content="item['title']">Title</span>
-             </li>
-            <tal:tree replace="structure context.rendertree(item['children'],
+        <ul tal:condition="item['children']">
+          <tal:tree replace="structure context.rendertree(item['children'],
                                                             level + 1)" />
-          </ul>
-        </div>
-      </div>
+        </ul>
 
     </li>
 

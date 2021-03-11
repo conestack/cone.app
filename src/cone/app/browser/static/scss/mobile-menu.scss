@@ -1,12 +1,10 @@
 /* ----- mobile menu ----- */
 
 #mobile-menu {
-  display:none;
-  position: relative;
-  line-height:1;
+  display: none;
 
   &.active {
-    display:inline-flex;
+    display: inline-flex;
     align-items: center;
   }
 
@@ -15,61 +13,54 @@
   }
 }
 
-.hamburgerMenu{
-  border:none;
-  background-color:transparent;
+#mobile-menu-toggle {
+  border: none;
+  background-color: transparent;
+  
+  i {
+    font-size: 2rem;
+  }
 }
 
 /* ----- mobile content ----- */
 #mobile-menu-content {
-  display:none;
-  position:fixed;
+  display: none;
+  position: absolute;
   left: 0;
   top: 4rem;
-  height:fit-content;
-  min-height:5rem;
-  width: 100vw;
+  width: 100%;
 
-  padding: 0 1rem 2rem 1rem;
-  border-radius: 0 0 2% 2%;
+  padding: 1.5rem 1rem;
+  border-radius: 0 0 10px 10px;
 
-  box-shadow:1rem 1rem 1rem -1rem rgb(0, 0, 0, .15);
-  overflow:hidden;
-  z-index:1000;
+  box-shadow: 1rem 1rem 1rem -1rem rgb(0, 0, 0, .15);
+  z-index: 1000;
 
   #topnav-searchbar .twitter-typeahead {
     width: 100%;
   }
   
   .dropdown-menu-custom {
-    display:none;
-    position:relative;
-    left:1rem;
-    margin-top:0;
-    margin-bottom:.5rem;
-    padding-left:.3rem;
-    font-size:.85rem;
-    box-shadow:none;
-    border:none;
+    display: none;
+    position: relative;
+    top: 0;
+    left: 1rem;
+    padding: 0;
+    font-size: .85rem;
+    box-shadow: none;
 
     .dropdown-title {
-      display:none!important;
+      display: none!important;
     }
     
     .list-group-item {
-      padding:0.5rem 0.5rem 0.5rem 1.3rem;
+      padding: 0.5rem 0.5rem 0.5rem 1.3rem;
     }
   }
 
-  .dropdown-menu-custom {
-    padding-left:.3rem;
-    font-size:.85rem;
-    background-color:transparent;
-  }
-
   .list-group {
-    width:100%;
-    background-color:transparent;
+    width: 100%;
+    background-color: transparent;
 
     .list-group-item {
       background-color: transparent;
@@ -77,29 +68,29 @@
   }
 
   .sidebar-dropout > :first-child {
-    display:none;
-    background-color:transparent;
+    display: none;
+    background-color: transparent;
   }
 
   .sidebar-heading {
     position: relative;
     margin-left: -.5rem;
-    margin-bottom:1rem;
+    margin-bottom: 1rem;
 
-    background-color:transparent;
+    background-color: transparent;
     font-size: 0.8rem;
     text-transform: uppercase;
 
     hr {
-      display:none;
+      display: none;
       }
 
     &::before { // sets separator between mobile content
-        content:"";
-        position:absolute;
+        content: "";
+        position: absolute;
         bottom: 1.5rem;
         left: -1rem;
-        height:1px;
+        height: 1px;
         width: calc(100% + 2rem);
         background-color: grey;
     }
@@ -108,19 +99,16 @@
 
 /* ----- mobile searchbar ----- */
 #mobile-searchbar {
-  position: relative;
-  top: .5rem;
   width: 100%;
-  margin-left:0;
-  margin: .5rem 0;
+  margin-bottom: 1rem;
 
   .searchbar {
-    width:100%;
+    width: 100%;
   }
 
   #search-text {
-    display:inline-block;
-    position:relative;
+    display: inline-block;
+    position: relative;
   }
 }
 

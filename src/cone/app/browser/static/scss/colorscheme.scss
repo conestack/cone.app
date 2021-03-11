@@ -11,11 +11,11 @@ body {
 
 /* ----- dropdowns ----- */
 .dropdown-menu-custom { 
-  background-color:$menu;
+  background-color: $menu;
 
   a {
     color: $fmedium;
-    text-decoration:none;
+    text-decoration: none;
 
     &:hover, &:active {
       color: $flight;
@@ -35,7 +35,7 @@ body {
 
   .apps-link:hover {
     background-color: $menus;
-    color:$flight;
+    color: $flight;
   }
 }
 
@@ -43,43 +43,37 @@ body {
 /* ----- main menu ----- */
 #mainmenu {
   .dropdown-title {
-    background-color:$info;
-    color:white;
+    background-color: $info;
+    color: white;
   }
 
   .dropdown-menu-custom {
     a:hover {
-      color:$info;
+      color: $info;
     }
   }
 }
 
 #topnav-mainmenu {
   li:hover > a {
-    color:$fhover;
+    color: $fhover;
   }
 }
 
 
 /* ----- mobile menu ----- */
-.hamburgerMenu{
-  color:$fmedium;
+#mobile-menu-toggle {
+  color: $fmedium;
 }
 
 #mobile-menu-content {
-  border:1px solid $border;
-  border-top:none;
-  background-color:$menus;
-
-  .dropdown-submenu {
-    a:hover , a:active { // change font-color of items in sidebar
-      color:$fhover;
-    }
-  }
+  border: 1px solid $border;
+  border-top: none;
+  background-color: $menus;
 
   .list-group {
     .list-group-item { // font color of submenu
-      color:$fmedium;
+      color: $fmedium;
     }
 
     .help {
@@ -94,14 +88,9 @@ body {
 
 #mobile-mainmenu {
   li:hover {
-    background-color:$sb;
-    color:$fhover;
+    background-color: $sb;
+    color: $fhover;
     transition: background-color .4s;
-  }
-
-  .dropdown-menu-custom {
-    background:transparent;
-    border:none;
   }
 }
 
@@ -127,33 +116,26 @@ body {
 #toolbar-top {
 
   &.item > :first-child {
-    color:$flight; 
+    color: $flight; 
   }
 
   .topnav-element {
-    color:$fmedium;
+    color: $fmedium;
   }
   .topnav-element:hover {
     i {
-      color:$fhover;
+      color: $fhover;
       transition: .5s;
-      cursor:pointer;
+      cursor: pointer;
     }
   }
 
   /* -- notifications -- */
-  #notifications .user-msg {
+  #notifications .user-img {
     background-color: $bg;
     border: 1px solid $fbright;
 
     > i {
-      color:$flight;
-    }
-  }
-
-  /* -- logo -- */
-  .navbar-brand {
-    a {
       color: $flight;
     }
   }
@@ -166,7 +148,7 @@ body {
   background-color: $menus;
 
   a:hover, &:active {
-    color:$flight;
+    color: $flight;
   }
 
   .profile-image {
@@ -188,14 +170,15 @@ body {
 
 /* ----- sidebar left ----- */
 #sidebar_left {
-  background-color:$menus;
+  background-color: $menus;
+  border-right: 1px solid $border;
 
   #sidebar-toggle-btn {
     color: rgba($color: $flight, $alpha: 0.3);
   }
 
   li {
-    &.active .dropdown > a {
+    &.active .dropout > a {
     color: $info;
     }
   }
@@ -208,63 +191,14 @@ body {
     color: white;
   }
 }
-  
-/* ----- sidebar left expanded ----- */
-@media (min-width: 992px) {
-  #sidebar_left {
-    border-right: 1px solid $border;
-
-    .dropdown-submenu a:hover , a:active {
-      color:$fhover;
-    }
-  }
-}
-    
-
-/* ----- sidebar left collapsed ----- */
-@media (min-width:576px) and (max-width:991.9px) {
-  #sidebar_left {
-    border-right: 1px solid $border;
-
-    .dropdown-submenu {
-        a:hover , &:active { // change color of dropout links
-            color:$fhover;
-        }
-    }
-
-    ul > li:hover, &:active { // change color of icons on hover
-      i {
-        color:white;
-      }
-    }
-
-    #navtree .dropout-title {
-      background-color:$info;
-    }
-    
-    .sidebar-dropout {
-      background-color: $bg;
-
-      .dropout-title {
-        color: $fbright;
-        background-color: $info;
-        font-weight:400;
-      }
-    }
-
-    .sidebar-heading hr {
-      border-top: 1px solid rgba($color: $flight, $alpha: 0.5)
-    }
-  }
-}
 
 
 /* ----- breadcrumb ----- */
 .breadcrumb {
   h2 {
-    color:$flight;
-    font-size:1.2rem;
-    font-weight:semibold;
+    color: $flight;
+    font-size: 1.2rem;
+    font-weight: semibold;
   }
 
   a {
@@ -291,20 +225,20 @@ body {
 
 /* -- links -- */
 a, label {
-  color:$fmedium;
+  color: $fmedium;
 }
 
 a:hover {
-  color:$fhover;
+  color: $fhover;
 }
 
 /* -- badges, buttons -- */
 .noti-badge-round {
-  background:red;
-  color:white;
+  background: red;
+  color: white;
 }
 
 .btn-inf {
   background-color: $info;
-  color:$fbright;
+  color: $fbright;
 }

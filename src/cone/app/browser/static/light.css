@@ -55,7 +55,7 @@ body {
 }
 
 /* ----- mobile menu ----- */
-.hamburgerMenu {
+#mobile-menu-toggle {
   color: #717176;
 }
 
@@ -63,9 +63,6 @@ body {
   border: 1px solid #EBEBF0;
   border-top: none;
   background-color: #FAFAFC;
-}
-#mobile-menu-content .dropdown-submenu a:hover, #mobile-menu-content .dropdown-submenu a:active {
-  color: #5bc0de;
 }
 #mobile-menu-content .list-group .list-group-item {
   color: #717176;
@@ -81,10 +78,6 @@ body {
   background-color: #F5F5FA;
   color: #5bc0de;
   transition: background-color 0.4s;
-}
-#mobile-mainmenu .dropdown-menu-custom {
-  background: transparent;
-  border: none;
 }
 
 /* ----- searchbar ----- */
@@ -102,7 +95,6 @@ body {
 /* ----- toolbar top ----- */
 #toolbar-top {
   /* -- notifications -- */
-  /* -- logo -- */
 }
 #toolbar-top.item > :first-child {
   color: #57575C;
@@ -115,14 +107,11 @@ body {
   transition: 0.5s;
   cursor: pointer;
 }
-#toolbar-top #notifications .user-msg {
+#toolbar-top #notifications .user-img {
   background-color: #F5F5FA;
   border: 1px solid #ECF5FD;
 }
-#toolbar-top #notifications .user-msg > i {
-  color: #57575C;
-}
-#toolbar-top .navbar-brand a {
+#toolbar-top #notifications .user-img > i {
   color: #57575C;
 }
 
@@ -151,11 +140,12 @@ body {
 /* ----- sidebar left ----- */
 #sidebar_left {
   background-color: #FAFAFC;
+  border-right: 1px solid #EBEBF0;
 }
 #sidebar_left #sidebar-toggle-btn {
   color: rgba(87, 87, 92, 0.3);
 }
-#sidebar_left li.active .dropdown > a {
+#sidebar_left li.active .dropout > a {
   color: #5bc0de;
 }
 #sidebar_left .sidebar-heading {
@@ -165,41 +155,6 @@ body {
   color: white;
 }
 
-/* ----- sidebar left expanded ----- */
-@media (min-width: 992px) {
-  #sidebar_left {
-    border-right: 1px solid #EBEBF0;
-  }
-  #sidebar_left .dropdown-submenu a:hover, #sidebar_left a:active {
-    color: #5bc0de;
-  }
-}
-/* ----- sidebar left collapsed ----- */
-@media (min-width: 576px) and (max-width: 991.9px) {
-  #sidebar_left {
-    border-right: 1px solid #EBEBF0;
-  }
-  #sidebar_left .dropdown-submenu a:hover, #sidebar_left .dropdown-submenu:active {
-    color: #5bc0de;
-  }
-  #sidebar_left ul > li:hover i, #sidebar_left:active i {
-    color: white;
-  }
-  #sidebar_left #navtree .dropout-title {
-    background-color: #5bc0de;
-  }
-  #sidebar_left .sidebar-dropout {
-    background-color: #F5F5FA;
-  }
-  #sidebar_left .sidebar-dropout .dropout-title {
-    color: #ECF5FD;
-    background-color: #5bc0de;
-    font-weight: 400;
-  }
-  #sidebar_left .sidebar-heading hr {
-    border-top: 1px solid rgba(87, 87, 92, 0.5);
-  }
-}
 /* ----- breadcrumb ----- */
 .breadcrumb h2 {
   color: #57575C;

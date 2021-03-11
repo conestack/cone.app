@@ -1,12 +1,12 @@
 /* ----- toolbar top ----- */
 #toolbar-top {
   display: inline-block;
-  vertical-align: top;
-  height:100%;
+  height: 100%;
+  margin: 0;
 
   @media(max-width:500px) {
     .toolbar-title {
-      display:none;
+      display: none;
     }
 
     .topnav-element > .dropdown-menu-custom {
@@ -15,28 +15,28 @@
   }
 
   .topnav-element {
-    position:relative;
     vertical-align: top;
-    display:inline-flex;
+    display: inline-flex;
     align-items: center;
     padding: 0 0.5rem;
-    height:100%;
+    height: 100%;
     
     > a {
-      vertical-align:middle;
+      vertical-align: middle;
     }
 
     > .dropdown-menu-custom {
-      min-width:max-content;
+      min-width: max-content;
       transform: translateX(calc(-100% + 1.3rem));
 
       .toolbar-title {
         font-weight: bold;
-        font-size:1rem;
+        margin-bottom: 1rem;
       }
 
       ul {
-        margin-top:1rem;
+        padding: 0;
+        list-style: none;
       }
     }
   }
@@ -47,108 +47,89 @@
       line-height: 1;
     }
     img {
-      margin-right:.5rem;
+      margin-right: .5rem;
     }
   }
   
   /*notifications*/
   #notifications {
-    width:20rem;
-    height:max-content;
-    
-    .user-msg {
-      display:flex;
-      position:absolute;
-      width:2rem;
-      height:2rem;
-      margin-right:1rem;
-      margin-top:.3rem;
-      border-radius:50%;
-      box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
 
-      > i {
-        position: relative;
-        margin:auto;
-        font-size:1rem;
-      }
+    .notification {
+      display: flex;
+      align-items: center;
+      margin-bottom: .5rem;
+      cursor: pointer;
 
-      img {
-        width: 2.5em;
-        height: 2.5em;
-      }
-    }
-
-    .message {
-      position:relative;
-      left:3rem;
-    }
+      .user-img {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        box-shadow: 0 0 1px 1px rgba(53, 59, 65, 0.2);
   
-    > a .message {
-      * {display:block;}
-
-      > :last-child {
-        font-size:.7rem;
+        img {
+          width: 2.5em;
+          height: 2.5em;
+        }
       }
-    }
-
-  }
   
-  /* -- apps -- */
-  #apps {
-    > * {
-      display:block;
-
-      &:hover {
-        transition: 0.5s;
-      }
-
-      .col {
-        width:5rem;
-        height:5rem; 
-        margin: 0;
-        margin-bottom:.3rem;
-        padding:0;
-        text-align: center;
-       
-        .apps-link {
-          height:5rem;
-          width:5rem;
-          margin:0;
-          padding-top:1rem;
-          border-radius:5%;
-          transition: 0.2s;
+      .msg {
+        display:inline-block;
+        margin-left: .5rem;
   
-          img {
-            display: block;
-            width: 1.5rem;
-            height: 1.5rem;
-            margin: auto;
-            margin-bottom:.75rem;
+        p {
+          margin: 0;
+  
+          &.timestamp {
+            font-size: .7rem;
           }
         }
       }
 
-      > * {
-        display:inline-block;
+      &.unread::before {
+        content: "";
+        position: absolute;
+        transform: translateX(-200%);
+        width: 10px;
+        height: 10px;
+        background: red;
+        border-radius: 50%;
       }
     }
-
-    p {
-      margin:.25em 0;
-    }
-
-    a {
-      margin-top:.25rem;
-      margin-bottom:.25rem;
-      background-color:transparent;
-    }
+  }
   
-    /* -- settings -- */
-    #settings {
-        #toggleMode { // color mode switch
-          width:1.7em;
-          box-shadow:none;
-        }
+  /* -- apps -- */
+  #apps {
+    #apps-container {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 20rem;
+    }
+
+    .apps-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+
+      img {
+        display: block;
+        width: 2rem;
+        height: 2rem;
+        margin-bottom: .5rem;
+      }
     }
   }
+  
+  /* -- settings -- */
+  #settings {
+    #toggleMode { // color mode switch
+      width: 1.7em;
+      box-shadow: none;
+    }
+  }
+  
 }

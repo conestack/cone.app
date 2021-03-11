@@ -2,24 +2,19 @@
            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
            omit-tag="True">
 
-  <div id="navtree"
-       class="list-group"
+  <ul id="navtree"
        ajax:bind="contextchanged"
        ajax:action="navtree:#navtree:replace">
 
-    <ul class="list-group list-group-flush list-unstyled">
-    
       <li class="sidebar-heading">
         <span tal:content="context.title">
           Navigation
         </span>
-        <hr />
       </li>
 
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
-    </ul>
+  </ul>
 
-  </div>
 
 
 </tal:block>

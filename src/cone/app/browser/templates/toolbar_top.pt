@@ -1,15 +1,16 @@
 <tal:toolbar_top xmlns:tal="http://xml.zope.org/namespaces/tal"
                  xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
                  omit-tag="True">
+
   <ul id="toolbar-top">
-      <li class="topnav-element">
+      <li class="topnav-element" id="language">
 
         <img src="static/images/flags/gb.svg" height="15em">
 
-        <div class="dropdown-menu-custom" id="language">
+        <div class="dropdown-menu-custom">
           
-          <span class="toolbar-title">Language</span>
-          <ul class="list-unstyled">
+          <div class="toolbar-title">Language</div>
+          <ul>
           <li><a href="#">
               <img src="static/images/flags/fr.svg" height="15em">
               <p class="d-none d-md-inline-block">French</p>
@@ -32,129 +33,103 @@
 
       </li>
 
-      <li class="topnav-element">
+      <li class="topnav-element" id="notifications">
         <i class="bi-bell-fill"></i>
 
         <div class="noti-badge-round">
           <span>9+</span>
         </div>
 
-        <div class="dropdown-menu-custom" id="notifications">
-          <span class="toolbar-title">Notifications</span>
+        <div class="dropdown-menu-custom">
+          <div class="toolbar-title">Notifications</div>
 
-          <a href="#" id="msg1" class="msg unread">
-            <div class="unread-dot">
-            </div>
+          <ul>
+            <li href="#" class="notification unread">
 
-            <div class="user-msg">
-              <!-- <img src="" id="user1"> -->
-              <i class="bi bi-person"></i>
-            </div>
-            
-            <div class="message">
-              <span>User 1 sent you a message</span>
-              <span>5 minutes ago</span>
-            </div>
+              <div class="user-img">
+                <!-- <img src="" id="user1"> -->
+                <i class="bi bi-person"></i>
+              </div>
 
-          </a>
+              <div class="msg">
+                <p class="message">User 1 sent you a message</p>
+                <p class="timestamp">5 minutes ago</p>
+              </div>
 
-          <a href="#" class="msg unread" id="2">
-            <div class="user-msg">
-              <!-- <img src="" id="user1"> -->
-              <i class="bi bi-person"></i>
-            </div>
+            </li>
 
-            <div class="message">
-              <span>User 2 updated file.css</span>
-              <span>3 hours ago</span>
-            </div>
-          </a>
+            <li href="#" class="notification">
+              <div class="user-img">
+                <!-- <img src="" id="user1"> -->
+                <i class="bi bi-person"></i>
+              </div>
+
+              <div class="msg">
+                <p class="message">User 2 updated file.css</p>
+                <p class="timestamp">3 hours ago</p>
+              </div>
+            </li>
+
+          </ul>
 
         </div>
       </li>
 
-      <li class=" topnav-element">
+      <li class="topnav-element" id="apps">
         <i class="bi-grid-3x3-gap-fill"></i>
 
-        <div class="dropdown-menu-custom" id="apps">
-          <span class="toolbar-title">Apps</span>
-          <div class="row">
+        <div class="dropdown-menu-custom">
+          <div class="toolbar-title">Apps</div>
 
-            <div class="col">
-              <a href="#">
-                <div class="apps-link">
-                  <img src="">
-                  <span>App 1</span>
-                </div>
-              </a>
-            </div>
+          <ul id="apps-container">
+            <li class="apps-link">
+              <img src="">
+              <span>App 1</span>
+            </li>
 
-            <div class="col">
-              <a href="#">
-                <div class="apps-link">
-                  <img src="">
-                  <span>App 2</span>
-                </div>
-              </a>
-            </div>
+            <li class="apps-link">
+              <img src="">
+              <span>App 2</span>
+            </li>
 
-            <div class="col">
-              <a href="#">
-                <div class="apps-link">
-                  <img src="">
-                  <span>App 3</span>
-                </div>
-              </a>
-            </div>
+            <li class="apps-link">
+              <img src="">
+              <span>App 3</span>
+            </li>
 
-          </div>
+            <li class="apps-link">
+              <img src="">
+              <span>App 4</span>
+            </li>
 
-          <div class="row">
+            <li class="apps-link">
+              <img src="">
+              <span>App 5</span>
+            </li>
 
-            <div class="col">
-              <a href="#">
-                <div class="apps-link">
-                  <img src="">
-                  <span>App 4</span>
-                </div>
-              </a>
-            </div>
-
-            <div class="col">
-              <a href="#">
-                <div class="apps-link">
-                  <img src="">
-                  <span>App 5</span>
-                </div>
-              </a>
-            </div>
-
-            <div class="col">
-              <a href="#">
-                <div class="apps-link">
-                  <img src="">
-                  <span>App 6</span>
-                </div>
-              </a>
-            </div>
-
-          </div>
-
+            <li class="apps-link">
+              <img src="">
+              <span>App 6</span>
+            </li>
+          </ul>
         </div>
       </li>
 
-      <li class=" topnav-element">
+      <li class="topnav-element" id="settings">
         <i class="bi-gear-fill"></i>
 
-        <div class="dropdown-menu-custom" id="settings">
-          <span class="toolbar-title">Settings</span>
+        <div class="dropdown-menu-custom">
+          <div class="toolbar-title">Settings</div>
 
-            <div class="form-check form-switch">
+          <ul>
+            <li class="form-check form-switch">
               <input class="form-check-input switch_mode" type="checkbox" id="toggleMode">
               <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
-            </div>
-
-            <a href="#">Preferences</a>
+            </li>
+            <li>
+              <a href="#">Preferences</a>
+            </li>
+          </ul>
 
         </div>
 

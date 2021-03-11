@@ -99,7 +99,7 @@ var livesearch_options = new Object();
             cone.mobile_menu = this;
     
             this.logo = $('#cone-logo');
-            this.mobile_btn = $('#hamburger-menu-toggle');
+            this.mobile_btn = $('#mobile-menu-toggle');
             this.mobile_menu = $('#mobile-menu');
             this.mobile_content = $('#mobile-menu-content');
             this.mobile_items = $('#mobile-menu-content').children('div');
