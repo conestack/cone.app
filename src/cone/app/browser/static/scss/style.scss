@@ -4,7 +4,6 @@
 @use "mainmenu";
 @use "toolbar-top";
 @use "mobile-menu";
-@use "navtree";
 
 body {
   margin: 0;
@@ -27,7 +26,7 @@ body {
     height: 95%;
     padding: 1.5rem;
     overflow: auto; // scrollable content
-    z-index: -1;
+    z-index: -100;
 
     #content { // sets footer position 
       min-height: calc(100% - 5rem);

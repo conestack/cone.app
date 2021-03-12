@@ -4,7 +4,7 @@
   box-shadow: 0 .5rem 1rem rgba(53, 59, 65, .025);
 
   .tile { // tiles
-    margin: 0 0 0 .75rem;
+    padding: 0 0 0 .75rem;
     vertical-align: top;
     height: 100%;
   }
@@ -146,10 +146,8 @@
 
 /* ----- tools ----- */
 #tools {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 4rem;
+  display:inline-block;
+  float:right;
 }
 /* ----- personal tools ----- */
 #personaltools {

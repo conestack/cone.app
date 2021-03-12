@@ -44,30 +44,32 @@
           <div class="toolbar-title">Notifications</div>
 
           <ul>
-            <li href="#" class="notification unread">
+            <li class="notification unread">
+                <div class="user-img">
+                  <!-- <img src="" id="user1"> -->
+                  <i class="bi bi-person"></i>
+                </div>
 
-              <div class="user-img">
-                <!-- <img src="" id="user1"> -->
-                <i class="bi bi-person"></i>
-              </div>
-
-              <div class="msg">
-                <p class="message">User 1 sent you a message</p>
-                <p class="timestamp">5 minutes ago</p>
-              </div>
-
+                <div class="msg">
+                  <a href="#">
+                    <p class="message">User 1 sent you a message</p>
+                    <p class="timestamp">5 minutes ago</p>
+                  </a>
+                </div>
             </li>
 
             <li href="#" class="notification">
-              <div class="user-img">
-                <!-- <img src="" id="user1"> -->
-                <i class="bi bi-person"></i>
-              </div>
+                <div class="user-img">
+                  <!-- <img src="" id="user1"> -->
+                  <i class="bi bi-person"></i>
+                </div>
 
-              <div class="msg">
-                <p class="message">User 2 updated file.css</p>
-                <p class="timestamp">3 hours ago</p>
-              </div>
+                <div class="msg">
+                  <a href="#">
+                    <p class="message">User 2 updated file.css</p>
+                    <p class="timestamp">3 hours ago</p>
+                  </a>
+                </div>
             </li>
 
           </ul>
@@ -83,33 +85,45 @@
 
           <ul id="apps-container">
             <li class="apps-link">
-              <img src="">
-              <span>App 1</span>
+              <a href="#">
+                <img src="">
+                <span>App 1</span>
+              </a>
             </li>
 
             <li class="apps-link">
-              <img src="">
-              <span>App 2</span>
+              <a href="#">
+                <img src="">
+                <span>App 2</span>
+              </a>
             </li>
 
             <li class="apps-link">
-              <img src="">
-              <span>App 3</span>
+              <a href="#">
+                <img src="">
+                <span>App 3</span>
+              </a>
             </li>
 
             <li class="apps-link">
-              <img src="">
-              <span>App 4</span>
+              <a href="#">
+                <img src="">
+                <span>App 4</span>
+              </a>
             </li>
 
             <li class="apps-link">
-              <img src="">
-              <span>App 5</span>
+              <a href="#">
+                <img src="">
+                <span>App 5</span>
+              </a>
             </li>
 
             <li class="apps-link">
-              <img src="">
-              <span>App 6</span>
+              <a href="#">
+                <img src="">
+                <span>App 6</span>
+              </a>
             </li>
           </ul>
         </div>

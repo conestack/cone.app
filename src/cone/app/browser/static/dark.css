@@ -8,6 +8,10 @@ body {
   background-color: #2E2E33;
 }
 
+.active > a {
+  color: #5bc0de !important;
+}
+
 /* ----- dropdowns ----- */
 .dropdown-menu-custom {
   background-color: #434348;
@@ -16,8 +20,9 @@ body {
   color: #949499;
   text-decoration: none;
 }
-.dropdown-menu-custom a:hover, .dropdown-menu-custom a:active {
-  color: #E6E6EB;
+.dropdown-menu-custom a:hover {
+  color: #dfe8f0;
+  transition: color 0.25s;
 }
 
 /* ----- topnav ----- */
@@ -30,7 +35,7 @@ body {
 }
 #topnav-custom .apps-link:hover {
   background-color: #38383D;
-  color: #E6E6EB;
+  transition: background-color 0.25s;
 }
 
 /* ----- main menu ----- */
@@ -39,7 +44,7 @@ body {
   color: white;
 }
 #mainmenu .dropdown-menu-custom a:hover {
-  color: #5bc0de;
+  color: #dfe8f0;
 }
 
 #topnav-mainmenu li:hover > a {
@@ -56,20 +61,16 @@ body {
   border-top: none;
   background-color: #38383D;
 }
-#mobile-menu-content .list-group .list-group-item {
-  color: #949499;
-}
-#mobile-menu-content .list-group .help {
-  color: white;
-}
 #mobile-menu-content .sidebar-heading hr {
   border-top: 1px solid rgba(230, 230, 235, 0.2);
 }
 
+#mobile-mainmenu #mainmenu .dropdown-menu-custom {
+  border: none;
+  background: transparent;
+}
 #mobile-mainmenu li:hover {
-  background-color: #57575C;
   color: #dfe8f0;
-  transition: background-color 0.4s;
 }
 
 /* ----- searchbar ----- */
@@ -88,11 +89,12 @@ body {
 #toolbar-top {
   /* -- notifications -- */
 }
-#toolbar-top.item > :first-child {
-  color: #E6E6EB;
-}
 #toolbar-top .topnav-element {
   color: #949499;
+}
+#toolbar-top .topnav-element li:hover {
+  color: #dfe8f0;
+  transition: color 0.5s;
 }
 #toolbar-top .topnav-element:hover i {
   color: #dfe8f0;
@@ -111,9 +113,6 @@ body {
 #personaltools {
   color: #E6E6EB;
   background-color: #38383D;
-}
-#personaltools a:hover, #personaltools:active {
-  color: #E6E6EB;
 }
 #personaltools .profile-image {
   background-color: #2E2E33;
@@ -145,6 +144,16 @@ body {
 }
 #sidebar_left .help {
   color: white;
+}
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover {
+  background: #5bc0de;
+}
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover > a {
+  color: white;
+}
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover ul {
+  background: #434348;
+  border: 1px solid #2E2E33;
 }
 
 /* ----- breadcrumb ----- */

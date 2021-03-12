@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="tile expanded" id="topnav-mainmenu">
         <tal:mainmenu
           condition="config.mainmenu"
@@ -43,7 +43,7 @@
            replace="structure tile('livesearch')" />
       </div>
 
-      <div id="tools">
+      <div class="tile" id="tools">
         <tal:toolbar_top condition="True"
                          replace="structure tile('toolbar_top')" />
         <tal:personaltools condition="config.personaltools"

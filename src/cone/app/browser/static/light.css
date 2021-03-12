@@ -16,6 +16,10 @@ body {
   background-color: #F5F5FA;
 }
 
+.active > a {
+  color: #5bc0de !important;
+}
+
 /* ----- dropdowns ----- */
 .dropdown-menu-custom {
   background-color: #ffffff;
@@ -24,8 +28,9 @@ body {
   color: #717176;
   text-decoration: none;
 }
-.dropdown-menu-custom a:hover, .dropdown-menu-custom a:active {
-  color: #57575C;
+.dropdown-menu-custom a:hover {
+  color: #5bc0de;
+  transition: color 0.25s;
 }
 
 /* ----- topnav ----- */
@@ -38,7 +43,7 @@ body {
 }
 #topnav-custom .apps-link:hover {
   background-color: #FAFAFC;
-  color: #57575C;
+  transition: background-color 0.25s;
 }
 
 /* ----- main menu ----- */
@@ -64,20 +69,16 @@ body {
   border-top: none;
   background-color: #FAFAFC;
 }
-#mobile-menu-content .list-group .list-group-item {
-  color: #717176;
-}
-#mobile-menu-content .list-group .help {
-  color: white;
-}
 #mobile-menu-content .sidebar-heading hr {
   border-top: 1px solid rgba(87, 87, 92, 0.2);
 }
 
+#mobile-mainmenu #mainmenu .dropdown-menu-custom {
+  border: none;
+  background: transparent;
+}
 #mobile-mainmenu li:hover {
-  background-color: #F5F5FA;
   color: #5bc0de;
-  transition: background-color 0.4s;
 }
 
 /* ----- searchbar ----- */
@@ -96,11 +97,12 @@ body {
 #toolbar-top {
   /* -- notifications -- */
 }
-#toolbar-top.item > :first-child {
-  color: #57575C;
-}
 #toolbar-top .topnav-element {
   color: #717176;
+}
+#toolbar-top .topnav-element li:hover {
+  color: #5bc0de;
+  transition: color 0.5s;
 }
 #toolbar-top .topnav-element:hover i {
   color: #5bc0de;
@@ -119,9 +121,6 @@ body {
 #personaltools {
   color: #57575C;
   background-color: #FAFAFC;
-}
-#personaltools a:hover, #personaltools:active {
-  color: #57575C;
 }
 #personaltools .profile-image {
   background-color: #F5F5FA;
@@ -153,6 +152,16 @@ body {
 }
 #sidebar_left .help {
   color: white;
+}
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover {
+  background: #5bc0de;
+}
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover > a {
+  color: white;
+}
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover ul {
+  background: #ffffff;
+  border: 1px solid #EBEBF0;
 }
 
 /* ----- breadcrumb ----- */

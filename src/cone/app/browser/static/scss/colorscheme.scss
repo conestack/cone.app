@@ -8,6 +8,9 @@ body {
     background-color: $bg;
 }
 
+.active > a {
+  color: $info!important;
+}
 
 /* ----- dropdowns ----- */
 .dropdown-menu-custom { 
@@ -17,8 +20,9 @@ body {
     color: $fmedium;
     text-decoration: none;
 
-    &:hover, &:active {
-      color: $flight;
+    &:hover {
+      color: $fhover;
+      transition: color .25s;
     }
   }
 }
@@ -35,7 +39,7 @@ body {
 
   .apps-link:hover {
     background-color: $menus;
-    color: $flight;
+    transition: background-color .25s;
   }
 }
 
@@ -49,7 +53,7 @@ body {
 
   .dropdown-menu-custom {
     a:hover {
-      color: $info;
+      color: $fhover;
     }
   }
 }
@@ -71,26 +75,18 @@ body {
   border-top: none;
   background-color: $menus;
 
-  .list-group {
-    .list-group-item { // font color of submenu
-      color: $fmedium;
-    }
-
-    .help {
-      color: white;
-    }
-  }
-
   .sidebar-heading hr {
     border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
   }
 }
 
 #mobile-mainmenu {
+  #mainmenu .dropdown-menu-custom {
+    border: none;
+    background: transparent;
+  }
   li:hover {
-    background-color: $sb;
     color: $fhover;
-    transition: background-color .4s;
   }
 }
 
@@ -114,14 +110,15 @@ body {
 
 /* ----- toolbar top ----- */
 #toolbar-top {
-
-  &.item > :first-child {
-    color: $flight; 
-  }
-
   .topnav-element {
     color: $fmedium;
+
+    li:hover {
+      color: $fhover;
+      transition: color .5s;
+    }
   }
+
   .topnav-element:hover {
     i {
       color: $fhover;
@@ -146,10 +143,6 @@ body {
 #personaltools {
   color: $flight;
   background-color: $menus;
-
-  a:hover, &:active {
-    color: $flight;
-  }
 
   .profile-image {
     background-color: $bg;
@@ -189,6 +182,19 @@ body {
 
   .help {
     color: white;
+  }
+
+  &.collapsed #navtree {
+    .navtreelevel_1:hover {
+      background: $info;
+
+      > a { color: white;}
+
+      ul {
+        background: $menu;
+        border: 1px solid $border;
+      }
+    }
   }
 }
 
