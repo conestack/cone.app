@@ -8,7 +8,7 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <div id="topnav-custom">
+    <div id="cone-topnav">
 
       <div class="tile" id="cone-logo">
         <tal:logo replace="structure tile('logo')" />

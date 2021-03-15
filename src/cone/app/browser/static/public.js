@@ -99,7 +99,7 @@ var livesearch_options = new Object();
             this.mobile_menu = $('#mobile-menu');
             this.mobile_content = $('#mobile-menu-content');
             this.mobile_items = $('#mobile-menu-content').children('div');
-            this.topnav_items = $('#topnav-custom').children('div');
+            this.topnav_items = $('#cone-topnav').children('div');
     
             this._mobile_handler = this.mobile_handler.bind(this);
             $(this._mobile_handler);
@@ -172,7 +172,7 @@ var livesearch_options = new Object();
 
         calc_space() {
             let total_width = 0;
-            $('#topnav-custom').children('div').not('#topnav-mainmenu').not('#mobile-menu').each(function(index){
+            $('#cone-topnav').children('div').not('#topnav-mainmenu').not('#mobile-menu').each(function(index){
                 total_width += parseInt($(this).outerWidth(true));
             });
 
@@ -223,7 +223,7 @@ var livesearch_options = new Object();
             this.topnav_searchbar_btn = this.topnav_searchbar.find('#searchbar-button');
             this.topnav_searchbar_text = this.topnav_searchbar.find('.twitter-typeahead');
 
-            this.topnav = $('#topnav-custom');
+            this.topnav = $('#cone-topnav');
             this.topnav_children = this.topnav.children('li').not(this.topnav_searchbar);
 
             this.free_space = 0;
@@ -270,14 +270,14 @@ var livesearch_options = new Object();
                             class_remove(this.topnav_searchbar, 'expanded');
                             this.topnav_searchbar.addClass('collapsed');
                             this.topnav_searchbar.addClass('toggle-collapse');
-                            //$('#topnav-custom').children('li').last().show();
+                            //$('#cone-topnav').children('li').last().show();
                             console.log('close');
                         } else {
                             class_remove(this.topnav_searchbar, 'toggle-collapse');
                             class_remove(this.topnav_searchbar, 'collapsed');
                             this.topnav_searchbar.addClass('expanded');
                             this.topnav_searchbar.addClass('toggle-expand');
-                            //$('#topnav-custom').children('li').last().hide();
+                            //$('#cone-topnav').children('li').last().hide();
                             console.log('open');
                         }
                     });

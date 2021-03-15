@@ -34,14 +34,14 @@ body {
 }
 
 /* ----- topnav ----- */
-#topnav-custom {
+#cone-topnav {
   background-color: #ffffff;
 }
-#topnav-custom .cone-dropdown-menu {
+#cone-topnav .cone-dropdown-menu {
   background-color: white;
   border: 1px solid #EBEBF0;
 }
-#topnav-custom .apps-link:hover {
+#cone-topnav .apps-link:hover {
   background-color: #FAFAFC;
   transition: background-color 0.25s;
 }
