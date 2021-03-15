@@ -27,7 +27,6 @@ function class_remove(element, elemclass){
     }
 }
 
-
 // additional livesearch options
 var livesearch_options = new Object();
 
@@ -37,10 +36,10 @@ var livesearch_options = new Object();
         bdajax.register(cone.bind_dropdowns, true);
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
-            new cone.SidebarMenu(context, 575.9);
-            new cone.Searchbar(context, 200, 130);
-            new cone.MainMenu(context);
-            new cone.MobileMenu(context);
+            //new cone.SidebarMenu(context, 575.9);
+            //new cone.Searchbar(context, 200, 130);
+            //new cone.MainMenu(context);
+            //new cone.MobileMenu(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
@@ -99,7 +98,7 @@ var livesearch_options = new Object();
             this.mobile_menu = $('#mobile-menu');
             this.mobile_content = $('#mobile-menu-content');
             this.mobile_items = $('#mobile-menu-content').children('div');
-            this.topnav_items = $('#cone-topnav').children('div');
+            this.topnav_items = $('#topnav').children('div');
     
             this._mobile_handler = this.mobile_handler.bind(this);
             $(this._mobile_handler);
@@ -125,15 +124,9 @@ var livesearch_options = new Object();
 
     }
 
-
     // main menu
     cone.MainMenu = class {
         constructor(context) {
-
-            //if (cone.main_menu !== null) {
-            //    cone.main_menu.unload();
-            //}
-
             cone.main_menu = this;
 
             this.mobile_mainmenu = $('#mobile-mainmenu');
@@ -172,7 +165,7 @@ var livesearch_options = new Object();
 
         calc_space() {
             let total_width = 0;
-            $('#cone-topnav').children('div').not('#topnav-mainmenu').not('#mobile-menu').each(function(index){
+            $('#topnav').children('div').not('#topnav-mainmenu').not('#mobile-menu').each(function(index){
                 total_width += parseInt($(this).outerWidth(true));
             });
 
@@ -223,7 +216,7 @@ var livesearch_options = new Object();
             this.topnav_searchbar_btn = this.topnav_searchbar.find('#searchbar-button');
             this.topnav_searchbar_text = this.topnav_searchbar.find('.twitter-typeahead');
 
-            this.topnav = $('#cone-topnav');
+            this.topnav = $('#topnav');
             this.topnav_children = this.topnav.children('li').not(this.topnav_searchbar);
 
             this.free_space = 0;
@@ -237,7 +230,7 @@ var livesearch_options = new Object();
 
         get_total_width() { // calculate width of children in topnav
             let total_width = 0;
-            $('.tile').each(function(index) {
+            $('.topnav-section').each(function(index) {
                 total_width += parseInt($(this).outerWidth(true), 10);
             });
 
@@ -270,14 +263,14 @@ var livesearch_options = new Object();
                             class_remove(this.topnav_searchbar, 'expanded');
                             this.topnav_searchbar.addClass('collapsed');
                             this.topnav_searchbar.addClass('toggle-collapse');
-                            //$('#cone-topnav').children('li').last().show();
+                            //$('#topnav').children('li').last().show();
                             console.log('close');
                         } else {
                             class_remove(this.topnav_searchbar, 'toggle-collapse');
                             class_remove(this.topnav_searchbar, 'collapsed');
                             this.topnav_searchbar.addClass('expanded');
                             this.topnav_searchbar.addClass('toggle-expand');
-                            //$('#cone-topnav').children('li').last().hide();
+                            //$('#topnav').children('li').last().hide();
                             console.log('open');
                         }
                     });

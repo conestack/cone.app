@@ -1,31 +1,31 @@
 /* ----- topnav ----- */
-#cone-topnav {
+#topnav {
   height: 4rem;
   box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
 }
-#cone-topnav .tile {
+#topnav .topnav-section {
   padding: 0 0 0 0.75rem;
   vertical-align: top;
   height: 100%;
 }
-#cone-topnav a, #cone-topnav label {
+#topnav a, #topnav label {
   text-decoration: none;
 }
-#cone-topnav a:hover {
+#topnav a:hover {
   text-decoration: none;
   transition: 0.5s;
 }
-#cone-topnav .topnav-element {
+#topnav .topnav-element {
   display: inline-block;
 }
-#cone-topnav #topnav-content {
+#topnav #topnav-content {
   display: inline-block;
 }
-#cone-topnav #topnav-content > * {
+#topnav #topnav-content > * {
   vertical-align: top;
   height: 100%;
 }
-#cone-topnav .cone-dropdown-menu {
+#topnav .cone-dropdown-menu {
   display: none;
   position: absolute;
   top: 4rem;
