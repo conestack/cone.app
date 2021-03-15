@@ -10,52 +10,26 @@
 
     <div id="topnav">
 
-      <div class="topnav-section" id="cone-logo">
+      <div class="" id="cone-logo">
         <tal:logo replace="structure tile('logo')" />
       </div>
 
-      <div class="topnav-section" id="mobile-menu">
-        <button id="mobile-menu-toggle">
-          <i class="bi bi-list"></i>
-        </button>
+      <div id="topnav-content">
 
-        <div id="mobile-menu-content">
-          <div id="mobile-searchbar">
-            <tal:livesearch
-              condition="config.livesearch"
-              replace="structure tile('livesearch')" />
-          </div>
-          <div id="mobile-mainmenu">
-            <tal:mainmenu condition="config.mainmenu"
-                          replace="structure tile('mainmenu')" />
-          </div>
-        </div>
-      </div>
-
-      <div class="topnav-section expanded" id="topnav-mainmenu">
         <tal:mainmenu
           condition="config.mainmenu"
           replace="structure tile('mainmenu')" />
-      </div>
-
-      <div class="topnav-section" id="topnav-searchbar">
+  
         <tal:livesearch
-           condition="config.livesearch"
-           replace="structure tile('livesearch')" />
-      </div>
-
-      <div class="topnav-section" id="tools">
+             condition="config.livesearch"
+             replace="structure tile('livesearch')" />
+  
         <tal:toolbar_top condition="True"
                          replace="structure tile('toolbar_top')" />
+  
         <tal:personaltools condition="config.personaltools"
                            replace="structure tile('personaltools')" />
       </div>
-
-    </div>
-
-    <div class="cone-dropdown-menu"
-         id="mobile_menu"
-         tal:condition="config.mainmenu">
     </div>
 
     <div id="wrapper">

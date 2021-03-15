@@ -36,7 +36,7 @@ var livesearch_options = new Object();
         bdajax.register(cone.bind_dropdowns, true);
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
-            //new cone.SidebarMenu(context, 575.9);
+            new cone.SidebarMenu(context, 575.9);
             //new cone.Searchbar(context, 200, 130);
             //new cone.MainMenu(context);
             //new cone.MobileMenu(context);
@@ -328,10 +328,10 @@ var livesearch_options = new Object();
                 this.sidebar.show();
                 if(window.matchMedia(`(max-width: 991.9px)`).matches) {
                     this.sidebar.addClass('collapsed');
-                    class_remove(this.sidebar, 'expanded');
+                    this.sidebar.removeClass('expanded');
                 } else {
                     this.sidebar.addClass('expanded');
-                    class_remove(this.sidebar, 'collapsed');
+                    this.sidebar.removeClass('collapsed');
                 }
             }
         }

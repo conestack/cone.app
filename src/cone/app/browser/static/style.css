@@ -3,29 +3,46 @@
   height: 4rem;
   box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
 }
-#topnav .topnav-section {
-  padding: 0 0 0 0.75rem;
-  vertical-align: top;
-  height: 100%;
+
+#topnav-content {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  /* .topnav-section {
+    padding: 0 0 0 .75rem;
+    vertical-align: top;
+    height: 100%;
+  } */
+  /*   #topnav-content {
+      display: inline-flex;
+      height: 100%;
+      width:100%;
+      > * {
+        vertical-align: top;
+        height: 100%;
+      }
+    } */
 }
-#topnav a, #topnav label {
+@media (max-width: 600px) {
+  #topnav-content {
+    flex-direction: column;
+    align-items: baseline;
+  }
+  #topnav-content #mainmenu {
+    flex-direction: column;
+  }
+}
+#topnav-content a, #topnav-content label {
   text-decoration: none;
 }
-#topnav a:hover {
+#topnav-content a:hover {
   text-decoration: none;
   transition: 0.5s;
 }
-#topnav .topnav-element {
+#topnav-content .topnav-element {
   display: inline-block;
 }
-#topnav #topnav-content {
-  display: inline-block;
-}
-#topnav #topnav-content > * {
-  vertical-align: top;
-  height: 100%;
-}
-#topnav .cone-dropdown-menu {
+#topnav-content .cone-dropdown-menu {
   display: none;
   position: absolute;
   top: 4rem;
@@ -36,10 +53,10 @@
 
 /* ----- logo ----- */
 #cone-logo {
-  display: inline-flex;
-  align-items: center;
   font-size: 1.5rem;
   font-family: Arial;
+  margin-right: 2rem;
+  display: inline-block;
 }
 #cone-logo a {
   text-decoration: none;
@@ -54,15 +71,10 @@
 }
 
 /* ----- topnav content ----- */
-#topnav-content {
+/* #topnav-content {
   position: relative;
-}
-
+}   */
 /* ----- searchbar ----- */
-#topnav-searchbar {
-  display: inline-flex;
-  align-items: center;
-}
 #topnav-searchbar .twitter-typeahead {
   width: 200px;
 }
@@ -100,6 +112,7 @@
 
 .searchbar {
   height: 2.2rem;
+  margin-right: 1rem;
 }
 .searchbar .form-control:focus {
   outline: 0;
@@ -127,15 +140,16 @@
 
 /* ----- tools ----- */
 #tools {
-  display: inline-block;
-  float: right;
+  display: flex;
+  flex-wrap: nowrap;
+  margin-left: auto;
+  align-items: center;
 }
 
 /* ----- personal tools ----- */
 #personaltools {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  vertical-align: top;
   min-width: 10rem;
   height: 4rem;
   margin-left: 0.75rem;
@@ -332,38 +346,40 @@
   list-style: none;
   margin-bottom: 0;
   padding: 0;
+  margin-right: auto;
 }
 #mainmenu .nav-item > a {
   display: inline-block;
 }
-#mainmenu ul {
-  list-style: none;
+#mainmenu li {
+  margin-right: 1rem;
 }
 
 /* ----- topnav mainmenu ----- */
-#topnav-mainmenu {
-  display: inline-block;
+#mainmenu {
+  display: inline-flex;
+  flex-wrap: wrap;
 }
-#topnav-mainmenu .cone-dropdown-menu {
+#mainmenu .cone-dropdown-menu {
   min-width: 10rem;
   padding: 0;
 }
-#topnav-mainmenu.collapsed .mainmenu-title {
+#mainmenu.collapsed .mainmenu-title {
   display: none;
 }
-#topnav-mainmenu.collapsed .mainmenu-item:hover .cone-dropdown-menu {
+#mainmenu.collapsed .mainmenu-item:hover .cone-dropdown-menu {
   display: block;
 }
-#topnav-mainmenu.expanded .mainmenu-item:hover .dropdown-title {
+#mainmenu.expanded .mainmenu-item:hover .dropdown-title {
   display: none;
 }
-#topnav-mainmenu.expanded .mainmenu-item:hover .cone-dropdown-menu {
+#mainmenu.expanded .mainmenu-item:hover .cone-dropdown-menu {
   display: block;
 }
-#topnav-mainmenu #mainmenu {
+#mainmenu #mainmenu {
   height: 100%;
 }
-#topnav-mainmenu #mainmenu .mainmenu-item {
+#mainmenu #mainmenu .mainmenu-item {
   height: 100%;
   display: inline-flex;
   flex-direction: row;
@@ -371,18 +387,18 @@
   align-items: center;
   padding: 0 10px;
 }
-#topnav-mainmenu #mainmenu .mainmenu-item .dropdown-arrow {
+#mainmenu #mainmenu .mainmenu-item .dropdown-arrow {
   left: 0.4rem;
   font-size: 0.7rem;
 }
-#topnav-mainmenu #mainmenu .mainmenu-item .dropdown-title {
+#mainmenu #mainmenu .mainmenu-item .dropdown-title {
   font-weight: bold;
   padding: 0.5rem 1.5rem;
 }
-#topnav-mainmenu #mainmenu .mainmenu-item .mainmenu-dropdown {
+#mainmenu #mainmenu .mainmenu-item .mainmenu-dropdown {
   padding-left: 1.5rem;
 }
-#topnav-mainmenu #mainmenu .mainmenu-item .mainmenu-dropdown li {
+#mainmenu #mainmenu .mainmenu-item .mainmenu-dropdown li {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }

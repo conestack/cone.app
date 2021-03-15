@@ -4,19 +4,21 @@
   list-style: none;
   margin-bottom:0;
   padding:0;
+  margin-right:auto;
 
   .nav-item > a {
     display:inline-block;
   }
 
-  ul {
-    list-style: none;
+  li {
+    margin-right:1rem;
   }
 }
 
 /* ----- topnav mainmenu ----- */
-#topnav-mainmenu {
-  display:inline-block;
+#mainmenu {
+  display:inline-flex;
+  flex-wrap:wrap;
 
   .cone-dropdown-menu {
     min-width:10rem;
