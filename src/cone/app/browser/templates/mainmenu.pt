@@ -2,92 +2,90 @@
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
 
+  <ul id="mainmenu"
+      ajax:bind="contextchanged"
+      ajax:action="mainmenu:#mainmenu:replace"
+      tal:define="config context.config">
 
-    <ul id="mainmenu"
-        ajax:bind="contextchanged"
-        ajax:action="mainmenu:#mainmenu:replace"
-        tal:define="config context.config">
-      
-      <tal:item repeat="item context.menuitems">
-  
-        <tal:comment replace="None">Main menu item as link</tal:comment>
-        <li tal:condition="not item['children']"
-            tal:define="css item['selected'] and 'active' or '';
-                        css css + 'mainmenu-item';
-                        css ' '.join([css, 'node-%s' % item['id']]);"
-            tal:attributes="class css">
+    <tal:item repeat="item context.menuitems">
 
-          <a href="${item['url']}">
-            <i class="${item['icon']|nothing}"></i>
-            <span tal:content="item['title'] | string:'&nbsp;'"
-                  class="mainmenu-title">
-                Title
+      <tal:comment replace="None">Main menu item as link</tal:comment>
+      <li tal:condition="not item['children']"
+          tal:define="css item['selected'] and 'active' or '';
+                      css css + 'mainmenu-item';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="${item['url']}"
+           title="${item['description']}"
+           ajax:bind="click"
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           ajax:path="href">
+          <i class="${item['icon']|nothing}"></i>
+          <span tal:content="item['title'] | string:'&nbsp;'"
+                class="mainmenu-title">
+            Title
+          </span>
+        </a>
+      </li>
+
+      <tal:comment replace="None">Main menu item as dropdown</tal:comment>
+      <li tal:condition="item['children']"
+          tal:define="css item['selected'] and 'active ' or '';
+                      css css + 'mainmenu-item menu';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="${item['url']}"
+           title="${item['description']}"
+           ajax:bind="click"
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           ajax:path="href">
+          <i class="${item['icon']|nothing}"></i>
+          <span tal:content="item['title'] | string:'&nbsp;'"
+                class="mainmenu-title">
+            Title
+          </span>
+        </a>
+
+        <a class="dropdown-arrow"
+           href="#submenu-${item['id']}">
+          <i class="bi bi-chevron-down"></i>
+        </a>
+
+        <div class="cone-dropdown-menu hover"
+             id="submenu-${item['id']}">
+          <div class="dropdown-title">
+            <span tal:content="item['title'] | string:'&nbsp;'">
+              Title
             </span>
-          </a>
-
-
-          <div class="dropdown-menu-custom"
-               id="submenu-${item['id']}">
-              <div class="dropdown-title">
-                <span tal:content="item['title'] | string:'&nbsp;'">
-                  Title
-                </span>
-              </div>
           </div>
-        </li>
 
-        <tal:comment replace="None">Main menu item as dropdown</tal:comment>
-        <li tal:condition="item['children']"
-            tal:define="css item['selected'] and 'active ' or '';
-                        css css + 'mainmenu-item menu';
-                        css ' '.join([css, 'node-%s' % item['id']]);"
-            tal:attributes="class css"
-            >
+          <ul class="mainmenu-dropdown">
+            <tal:li repeat="child item['children']">
+              <li tal:define="css child['selected'] and 'active' or '';"
+                  tal:attributes="class css">
+                <a href="${child['url']}"
+                   title="${child['description']}"
+                   ajax:bind="click"
+                   ajax:target="${child['target']}"
+                   ajax:event="contextchanged:#layout"
+                   ajax:path="href">
+                  <i class="${child['icon']|nothing}"></i>
+                  <span tal:content="child['title'] | string:'&nbsp;'">
+                    Title
+                  </span>
+                </a>
+              </li>
+            </tal:li>
+          </ul>
+        </div>
+      </li>
 
-            <a href="${item['url']}">
-              <i class="${item['icon']|nothing}"></i>
-              <span tal:content="item['title'] | string:'&nbsp;'"
-                    class="mainmenu-title">
-                  Title
-              </span>
-            </a>
+    </tal:item>
 
-            <a class=" dropdown-arrow"
-               href="#submenu-${item['id']}">
-              <i class="bi bi-chevron-down"></i>
-            </a>
-    
-            <div class="dropdown-menu-custom"
-                 id="submenu-${item['id']}">
-              <div class="dropdown-title">
-                <span tal:content="item['title'] | string:'&nbsp;'">
-                  Title
-                </span>
-              </div>
-
-              <ul class="mainmenu-dropdown">
-                <tal:li repeat="child item['children']">
-                  <li tal:define="css child['selected'] and 'active' or '';"
-                      tal:attributes="class css">
-                    <a href="${child['url']}"
-                       title="${child['description']}"
-                       ajax:bind="click"
-                       ajax:target="${child['target']}"
-                       ajax:event="contextchanged:#layout"
-                       ajax:path="href"
-                      ><i class="${child['icon']|nothing}"></i>
-                      <span tal:content="child['title'] | string:'&nbsp;'">Title</span></a>
-                  </li>
-                </tal:li>
-              </ul>
-            </div>
-
-
-        </li>
-  
-      </tal:item>
-
-    </ul>
-
+  </ul>
 
 </tal:mainmenu>

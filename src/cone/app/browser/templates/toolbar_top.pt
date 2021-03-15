@@ -7,7 +7,7 @@
 
         <img src="static/images/flags/gb.svg" height="15em">
 
-        <div class="dropdown-menu-custom">
+        <div class="cone-dropdown-menu">
           
           <div class="toolbar-title">Language</div>
           <ul>
@@ -40,7 +40,7 @@
           <span>9+</span>
         </div>
 
-        <div class="dropdown-menu-custom">
+        <div class="cone-dropdown-menu">
           <div class="toolbar-title">Notifications</div>
 
           <ul>
@@ -80,7 +80,7 @@
       <li class="topnav-element" id="apps">
         <i class="bi-grid-3x3-gap-fill"></i>
 
-        <div class="dropdown-menu-custom">
+        <div class="cone-dropdown-menu">
           <div class="toolbar-title">Apps</div>
 
           <ul id="apps-container">
@@ -132,7 +132,7 @@
       <li class="topnav-element" id="settings">
         <i class="bi-gear-fill"></i>
 
-        <div class="dropdown-menu-custom">
+        <div class="cone-dropdown-menu">
           <div class="toolbar-title">Settings</div>
 
           <ul>

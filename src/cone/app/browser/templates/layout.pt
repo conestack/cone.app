@@ -52,7 +52,7 @@
 
     </div>
     
-    <div class="dropdown-menu-custom"
+    <div class="cone-dropdown-menu"
          id="mobile_menu"
          tal:condition="config.mainmenu">
     </div>

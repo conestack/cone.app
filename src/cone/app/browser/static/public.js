@@ -14,8 +14,6 @@ cone = {
     searchbar_handler: null,
     mobile_menu: null,
     navtree: null,
-    toolbar_top: null,
-    personal_tools: null,
     default_themes: [
         'static/light.css',
         'static/dark.css'
@@ -36,53 +34,32 @@ var livesearch_options = new Object();
 (function($) {
 
     $(function() {
+        bdajax.register(cone.bind_dropdowns, true);
+
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context, 575.9);
             new cone.Searchbar(context, 200, 130);
             new cone.MainMenu(context);
             new cone.MobileMenu(context);
-            new cone.ToolbarTop(context);
-            new cone.PersonalTools(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
-
-    // toolbar top
-    cone.ToolbarTop = class {
-
-        constructor(context) {
-            toolbar = $('#toolbar-top', context);
-            if (!toolbar.length) {
+    cone.bind_dropdowns = function(context) {
+        $('.cone-dropdown-menu', context).each(function() {
+            let dm = $(this);
+            if (dm.hasClass('hover')) {
                 return;
             }
-            cone.toolbar_top = this;
-            this.elem = toolbar;
-            this.bind_dropdowns();
-        }
+            let handle = cone.toogle_dropdown
+            dm.parent().off('click', handle).on('click', handle);
+        });
+    };
 
-        bind_dropdowns() {
-            $('li', this.elem).on('click', this.toggle_dropdown);
-        }
-
-        toggle_dropdown() {
-            $('> .cone-dropdown-menu', this).toggle();
-        }
-    }
-
-    // personal tools
-    cone.PersonalTools = class {
-
-        constructor(context) {
-            cone.personal_tools = this;
-
-            this.personaltools = $('#personaltools');
-
-            this.personaltools.on('click', function(evt){
-                $(this).find('.cone-dropdown-menu').toggle();
-            })
-        }
+    cone.toogle_dropdown = function() {
+        console.log('cone.toogle_dropdown');
+        $('> .cone-dropdown-menu', this).toggle();
     }
 
     // mobile menu
@@ -126,9 +103,9 @@ var livesearch_options = new Object();
     cone.MainMenu = class {
         constructor(context) {
 
-            if (cone.main_menu !== null) {
-                cone.main_menu.unload();
-            }
+            //if (cone.main_menu !== null) {
+            //    cone.main_menu.unload();
+            //}
 
             cone.main_menu = this;
 

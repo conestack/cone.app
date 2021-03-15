@@ -19,7 +19,7 @@
     </span>
   </div>
 
-  <div class="dropdown-menu-custom" id="user">
+  <div class="cone-dropdown-menu" id="user">
     <ul class="list-unstyled">
       <tal:li repeat="item context.items">
         <tal:action replace="structure item" />

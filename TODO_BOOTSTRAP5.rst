@@ -36,7 +36,7 @@ styles
 [X] - logo styles, added
 [X] - #searchbar-button-sm obsolete, removed
 [X] - sidebar hover icon colour, fixed
-[X] - rename 'dropdown-menu-dark' in layout.pt to 'dropdown-menu-custom'
+[X] - rename 'dropdown-menu-dark' in layout.pt to 'cone-dropdown-menu'
 [X] - implement default user image styles
 [X] - optimize searchbar styles
 [X] - mobile menu: full width
