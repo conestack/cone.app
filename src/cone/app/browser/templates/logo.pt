@@ -8,7 +8,7 @@
      ajax:event="contextchanged:#layout"
      ajax:path="href">
 
-    <img class="logo" src="static/images/cone-logo-cone.svg">
+    <img class="logo" src="/static/images/cone-logo-cone.svg">
     <span tal:content="model.root.metadata.title">
       Cone
     </span>

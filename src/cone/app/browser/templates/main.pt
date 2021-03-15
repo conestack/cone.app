@@ -14,7 +14,7 @@
     <tal:resources replace="structure tile('resources')" />
 
     <!-- resource registration corrently not supports ids -->
-    <link id="colormode-styles" rel="stylesheet" href="static/light.css" >
+    <link id="colormode-styles" rel="stylesheet" href="/static/light.css" >
   </head>
 
   <body role="document">

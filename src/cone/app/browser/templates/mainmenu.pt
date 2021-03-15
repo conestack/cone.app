@@ -11,7 +11,7 @@
 
       <tal:comment replace="None">Main menu item as link</tal:comment>
       <li tal:condition="not item['children']"
-          tal:define="css item['selected'] and 'active' or '';
+          tal:define="css item['selected'] and 'active ' or '';
                       css css + 'mainmenu-item';
                       css ' '.join([css, 'node-%s' % item['id']]);"
           tal:attributes="class css">
@@ -65,7 +65,7 @@
 
           <ul class="mainmenu-dropdown">
             <tal:li repeat="child item['children']">
-              <li tal:define="css child['selected'] and 'active' or '';"
+              <li tal:define="css child['selected'] and 'active ' or '';"
                   tal:attributes="class css">
                 <a href="${child['url']}"
                    title="${child['description']}"

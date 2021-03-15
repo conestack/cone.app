@@ -1,14 +1,10 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-
     <footer id="cone-footer">
       <div class="footer-copyright">
-        © 2021 Copyright:<a href="https://r2solutions.at/"> r2Solutions</a>
+        © 2009-2021 Copyright: <a href="https://bluedynamics.com/">BlueDynamics Alliance</a>
       </div>
     </footer>
 
-
 </tal:block>
-
-

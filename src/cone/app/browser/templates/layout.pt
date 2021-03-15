@@ -18,6 +18,7 @@
         <button id="mobile-menu-toggle">
           <i class="bi bi-list"></i>
         </button>
+
         <div id="mobile-menu-content">
           <div id="mobile-searchbar">
             <tal:livesearch
@@ -47,11 +48,11 @@
         <tal:toolbar_top condition="True"
                          replace="structure tile('toolbar_top')" />
         <tal:personaltools condition="config.personaltools"
-                            replace="structure tile('personaltools')" />
+                           replace="structure tile('personaltools')" />
       </div>
 
     </div>
-    
+
     <div class="cone-dropdown-menu"
          id="mobile_menu"
          tal:condition="config.mainmenu">
@@ -70,7 +71,7 @@
         <tal:tiles repeat="tilename config.sidebar_left">
           <tal:tile replace="structure tile(tilename)" />
         </tal:tiles>
-        
+
       </div>
 
       <div id="page-content-wrapper">
@@ -78,7 +79,6 @@
         <row tal:condition="config.pathbar">
           <tal:pathbar replace="structure tile('pathbar')" />
         </row>
-
 
           <div id="content"
                ajax:bind="contextchanged"
@@ -91,6 +91,5 @@
       </div>
     </div>
   </div>
-
 
 </tal:layout>

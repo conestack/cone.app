@@ -3,154 +3,149 @@
                  omit-tag="True">
 
   <ul id="toolbar-top">
-      <li class="topnav-element" id="language">
 
-        <img src="static/images/flags/gb.svg" height="15em">
+    <li class="topnav-element" id="language">
+      <img src="/static/images/flags/gb.svg" height="15em">
 
-        <div class="cone-dropdown-menu">
-          
-          <div class="toolbar-title">Language</div>
-          <ul>
-          <li><a href="#">
-              <img src="static/images/flags/fr.svg" height="15em">
+      <div class="cone-dropdown-menu">
+        <div class="toolbar-title">Language</div>
+        <ul>
+          <li>
+            <a href="#">
+              <img src="/static/images/flags/fr.svg" height="15em">
               <p class="d-none d-md-inline-block">French</p>
             </a>
           </li>
 
-          <li><a href="#">
-              <img src="static/images/flags/de.svg" height="15em">
+          <li>
+            <a href="#">
+              <img src="/static/images/flags/de.svg" height="15em">
               <p class="d-none d-md-inline-block">German</p>
             </a>
           </li>
 
-          <li><a href="#">
-              <img src="static/images/flags/it.svg" height="15em">
+          <li>
+            <a href="#">
+              <img src="/static/images/flags/it.svg" height="15em">
               <p class="d-none d-md-inline-block">Italian</p>
             </a>
           </li>
-          </ul>
-        </div>
+        </ul>
+      </div>
+    </li>
 
-      </li>
+    <li class="topnav-element" id="notifications">
+      <i class="bi-bell-fill"></i>
 
-      <li class="topnav-element" id="notifications">
-        <i class="bi-bell-fill"></i>
+      <div class="noti-badge-round">
+        <span>9+</span>
+      </div>
 
-        <div class="noti-badge-round">
-          <span>9+</span>
-        </div>
+      <div class="cone-dropdown-menu">
+        <div class="toolbar-title">Notifications</div>
 
-        <div class="cone-dropdown-menu">
-          <div class="toolbar-title">Notifications</div>
+        <ul>
+          <li class="notification unread">
+            <div class="user-img">
+              <!-- <img src="" id="user1"> -->
+              <i class="bi bi-person"></i>
+            </div>
 
-          <ul>
-            <li class="notification unread">
-                <div class="user-img">
-                  <!-- <img src="" id="user1"> -->
-                  <i class="bi bi-person"></i>
-                </div>
-
-                <div class="msg">
-                  <a href="#">
-                    <p class="message">User 1 sent you a message</p>
-                    <p class="timestamp">5 minutes ago</p>
-                  </a>
-                </div>
-            </li>
-
-            <li href="#" class="notification">
-                <div class="user-img">
-                  <!-- <img src="" id="user1"> -->
-                  <i class="bi bi-person"></i>
-                </div>
-
-                <div class="msg">
-                  <a href="#">
-                    <p class="message">User 2 updated file.css</p>
-                    <p class="timestamp">3 hours ago</p>
-                  </a>
-                </div>
-            </li>
-
-          </ul>
-
-        </div>
-      </li>
-
-      <li class="topnav-element" id="apps">
-        <i class="bi-grid-3x3-gap-fill"></i>
-
-        <div class="cone-dropdown-menu">
-          <div class="toolbar-title">Apps</div>
-
-          <ul id="apps-container">
-            <li class="apps-link">
+            <div class="msg">
               <a href="#">
-                <img src="">
-                <span>App 1</span>
+                <p class="message">User 1 sent you a message</p>
+                <p class="timestamp">5 minutes ago</p>
               </a>
-            </li>
+            </div>
+          </li>
 
-            <li class="apps-link">
+          <li href="#" class="notification">
+            <div class="user-img">
+              <!-- <img src="" id="user1"> -->
+              <i class="bi bi-person"></i>
+            </div>
+
+            <div class="msg">
               <a href="#">
-                <img src="">
-                <span>App 2</span>
+                <p class="message">User 2 updated file.css</p>
+                <p class="timestamp">3 hours ago</p>
               </a>
-            </li>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
 
-            <li class="apps-link">
-              <a href="#">
-                <img src="">
-                <span>App 3</span>
-              </a>
-            </li>
+    <li class="topnav-element" id="apps">
+      <i class="bi-grid-3x3-gap-fill"></i>
 
-            <li class="apps-link">
-              <a href="#">
-                <img src="">
-                <span>App 4</span>
-              </a>
-            </li>
+      <div class="cone-dropdown-menu">
+        <div class="toolbar-title">Apps</div>
 
-            <li class="apps-link">
-              <a href="#">
-                <img src="">
-                <span>App 5</span>
-              </a>
-            </li>
+        <ul id="apps-container">
+          <li class="apps-link">
+            <a href="#">
+              <img src="">
+              <span>App 1</span>
+            </a>
+          </li>
 
-            <li class="apps-link">
-              <a href="#">
-                <img src="">
-                <span>App 6</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </li>
+          <li class="apps-link">
+            <a href="#">
+              <img src="">
+              <span>App 2</span>
+            </a>
+          </li>
 
-      <li class="topnav-element" id="settings">
-        <i class="bi-gear-fill"></i>
+          <li class="apps-link">
+            <a href="#">
+              <img src="">
+              <span>App 3</span>
+            </a>
+          </li>
 
-        <div class="cone-dropdown-menu">
-          <div class="toolbar-title">Settings</div>
+          <li class="apps-link">
+            <a href="#">
+              <img src="">
+              <span>App 4</span>
+            </a>
+          </li>
 
-          <ul>
-            <li class="form-check form-switch">
-              <input class="form-check-input switch_mode" type="checkbox" id="toggleMode">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
-            </li>
-            <li>
-              <a href="#">Preferences</a>
-            </li>
-          </ul>
+          <li class="apps-link">
+            <a href="#">
+              <img src="">
+              <span>App 5</span>
+            </a>
+          </li>
 
-        </div>
+          <li class="apps-link">
+            <a href="#">
+              <img src="">
+              <span>App 6</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
 
-      </li>
+    <li class="topnav-element" id="settings">
+      <i class="bi-gear-fill"></i>
 
-    </ul>
+      <div class="cone-dropdown-menu">
+        <div class="toolbar-title">Settings</div>
 
+        <ul>
+          <li class="form-check form-switch">
+            <input class="form-check-input switch_mode" type="checkbox">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
+          </li>
+          <li>
+            <a href="#">Preferences</a>
+          </li>
+        </ul>
+      </div>
+    </li>
 
+  </ul>
 
 </tal:toolbar_top>

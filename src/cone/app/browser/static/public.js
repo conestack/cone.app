@@ -15,8 +15,8 @@ cone = {
     mobile_menu: null,
     navtree: null,
     default_themes: [
-        'static/light.css',
-        'static/dark.css'
+        '/static/light.css',
+        '/static/dark.css'
     ]
 };
 
@@ -35,7 +35,6 @@ var livesearch_options = new Object();
 
     $(function() {
         bdajax.register(cone.bind_dropdowns, true);
-
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context, 575.9);
@@ -52,15 +51,43 @@ var livesearch_options = new Object();
             if (dm.hasClass('hover')) {
                 return;
             }
-            let handle = cone.toogle_dropdown
+            let handle = cone.toggle_dropdown;
             dm.parent().off('click', handle).on('click', handle);
         });
     };
 
-    cone.toogle_dropdown = function() {
-        console.log('cone.toogle_dropdown');
+    cone.toggle_dropdown = function() {
         $('> .cone-dropdown-menu', this).toggle();
     }
+
+    cone.ThemeSwitcher = class {
+
+        constructor(context, modes) {
+            let elem = $('input.switch_mode', context);
+            if (!elem.length) {
+                return;
+            }
+            cone.theme_switcher = this;
+            this.elem = elem;
+            this.modes = modes;
+            this.link = $('head #colormode-styles');
+            this.elem.on('click', this.switch_theme.bind(this));
+        }
+
+        get current() {
+            return this.link.attr('href');
+        }
+
+        set current(value) {
+            this.link.attr('href', value);
+        }
+
+        switch_theme(evt) {
+            evt.stopPropagation();
+            let theme = this.current === this.modes[0] ? this.modes[1] : this.modes[0]
+            this.current = theme;
+        }
+    };
 
     // mobile menu
     cone.MobileMenu = class {
@@ -90,7 +117,7 @@ var livesearch_options = new Object();
                 this.mobile_menu.hide();
                 this.logo.show();
             }
-        } 
+        }
 
         toggle_mobile_menu() {
             this.mobile_content.toggle();
@@ -316,28 +343,6 @@ var livesearch_options = new Object();
             }
         }
     };
-
-    //cone theme switcher
-    cone.ThemeSwitcher = class {
-
-        constructor(context, modes) {
-            let theme_switch = $('body .switch_mode', context);
-            if (!theme_switch.length) {
-                return;
-            }
-            cone.theme_switcher = this;
-            this.modes = modes;
-            this.link = $('head #colormode-styles');
-            this.current = this.link.attr('href');
-            theme_switch.on('click', this.switch_theme.bind(this));
-        }
-
-        switch_theme(evt) {
-            this.current = this.current === this.modes[0] ? this.modes[1] : this.modes[0];
-            this.link.attr('href', this.current);
-        }
-    };
-
 
     livesearch = {
         binder: function(context) {
