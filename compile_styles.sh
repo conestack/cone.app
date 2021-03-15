@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# install sass:
+#     sudo apt install npm
+#     sudo npm install -g sass
 
 pushd src/cone/app/browser/static/scss
 

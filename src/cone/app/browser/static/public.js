@@ -51,26 +51,36 @@ var livesearch_options = new Object();
 
     // toolbar top
     cone.ToolbarTop = class {
-        constructor(context) {
-            cone.toolbar_top = this;
 
-            this.toolbar = $('#toolbar-top');
-            this.toolbar.find('li').on('click', function(evt){
-                $(this).find('.dropdown-menu-custom').toggle();
-                console.log('click');
-            });
+        constructor(context) {
+            toolbar = $('#toolbar-top', context);
+            if (!toolbar.length) {
+                return;
+            }
+            cone.toolbar_top = this;
+            this.elem = toolbar;
+            this.bind_dropdowns();
+        }
+
+        bind_dropdowns() {
+            $('li', this.elem).on('click', this.toggle_dropdown);
+        }
+
+        toggle_dropdown() {
+            $('> .cone-dropdown-menu', this).toggle();
         }
     }
 
     // personal tools
     cone.PersonalTools = class {
+
         constructor(context) {
             cone.personal_tools = this;
 
             this.personaltools = $('#personaltools');
 
             this.personaltools.on('click', function(evt){
-                $(this).find('.dropdown-menu-custom').toggle();
+                $(this).find('.cone-dropdown-menu').toggle();
             })
         }
     }
@@ -148,7 +158,7 @@ var livesearch_options = new Object();
 
             // toggle content
             this.mobile_mainmenu.find('.dropdown-arrow').on('click', function(event){ 
-                $(this).parent('li').find('.dropdown-menu-custom').toggle();
+                $(this).parent('li').find('.cone-dropdown-menu').toggle();
                 event.stopPropagation(); //disable default scrolldown
                 event.preventDefault();
             });

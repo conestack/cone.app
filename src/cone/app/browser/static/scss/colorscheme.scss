@@ -13,7 +13,7 @@ body {
 }
 
 /* ----- dropdowns ----- */
-.dropdown-menu-custom { 
+.cone-dropdown-menu {
   background-color: $menu;
 
   a {
@@ -32,7 +32,7 @@ body {
 #topnav-custom {
   background-color: $menu;
 
-  .dropdown-menu-custom {
+  .cone-dropdown-menu {
     background-color: $dropdown;
     border:1px solid $border;
   }
@@ -51,7 +51,7 @@ body {
     color: white;
   }
 
-  .dropdown-menu-custom {
+  .cone-dropdown-menu {
     a:hover {
       color: $fhover;
     }
@@ -81,7 +81,7 @@ body {
 }
 
 #mobile-mainmenu {
-  #mainmenu .dropdown-menu-custom {
+  #mainmenu .cone-dropdown-menu {
     border: none;
     background: transparent;
   }

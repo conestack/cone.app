@@ -18,7 +18,7 @@
 #topnav-mainmenu {
   display:inline-block;
 
-  .dropdown-menu-custom {
+  .cone-dropdown-menu {
     min-width:10rem;
     padding:0;
   }
@@ -29,7 +29,7 @@
     }
 
     .mainmenu-item:hover {
-      .dropdown-menu-custom {
+      .cone-dropdown-menu {
         display: block;
       }
     }
@@ -40,7 +40,7 @@
       .dropdown-title {
         display:none;
       }
-      .dropdown-menu-custom {
+      .cone-dropdown-menu {
         display:block;
       }
     }

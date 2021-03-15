@@ -10,7 +10,7 @@
       display: none;
     }
 
-    .topnav-element > .dropdown-menu-custom {
+    .topnav-element > .cone-dropdown-menu {
       transform: translateX(-50%);
     }
   }
@@ -26,7 +26,7 @@
       vertical-align: middle;
     }
 
-    > .dropdown-menu-custom {
+    > .cone-dropdown-menu {
       min-width: max-content;
       transform: translateX(calc(-100% + 1.3rem));
 
