@@ -4,7 +4,7 @@
 
   <ul id="toolbar-top">
 
-    <li class="topnav-element" id="language">
+    <li id="language">
       <img src="/static/images/flags/gb.svg" height="15em">
 
       <div class="cone-dropdown-menu">
@@ -34,7 +34,7 @@
       </div>
     </li>
 
-    <li class="topnav-element" id="notifications">
+    <li id="notifications">
       <i class="bi-bell-fill"></i>
 
       <div class="noti-badge-round">
@@ -76,7 +76,7 @@
       </div>
     </li>
 
-    <li class="topnav-element" id="apps">
+    <li id="apps">
       <i class="bi-grid-3x3-gap-fill"></i>
 
       <div class="cone-dropdown-menu">
@@ -128,7 +128,7 @@
       </div>
     </li>
 
-    <li class="topnav-element" id="settings">
+    <li id="settings">
       <i class="bi-gear-fill"></i>
 
       <div class="cone-dropdown-menu">

@@ -10,8 +10,12 @@
 
     <div id="topnav">
 
-      <div class="" id="cone-logo">
+      <div id="cone-logo">
         <tal:logo replace="structure tile('logo')" />
+      </div>
+
+      <div id="mobile-menu-toggle">
+        <i class="bi bi-list"></i>
       </div>
 
       <div id="topnav-content">
@@ -30,6 +34,7 @@
         <tal:personaltools condition="config.personaltools"
                            replace="structure tile('personaltools')" />
       </div>
+
     </div>
 
     <div id="wrapper">

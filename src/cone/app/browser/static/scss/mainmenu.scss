@@ -1,31 +1,42 @@
 /* ----- mainmenu ----- */
-
-#mainmenu {
-  list-style: none;
-  margin-bottom:0;
-  padding:0;
-  margin-right:auto;
-
-  .nav-item > a {
-    display:inline-block;
-  }
-
-  li {
-    margin-right:1rem;
-  }
-}
-
-/* ----- topnav mainmenu ----- */
 #mainmenu {
   display:inline-flex;
   flex-wrap:wrap;
+  margin-bottom:0;
+  padding:0;
+  margin-right:auto;
+  height:100%;
 
   .cone-dropdown-menu {
     min-width:10rem;
     padding:0;
   }
 
-  &.collapsed {
+  @media(min-width:560px) {
+    .mainmenu-item {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      padding: 0 10px;
+      .dropdown-arrow {
+        left: .4rem;
+        font-size: .7rem;
+      }
+      .dropdown-title {
+        font-weight:bold;
+        padding: .5rem 1.5rem;
+      }
+      .mainmenu-dropdown {
+        padding-left:1.5rem;
+        li {
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+  @media(min-width:560px) and (max-width:1200px) {
     .mainmenu-title {
       display:none;
     }
@@ -37,7 +48,7 @@
     }
   }
 
-  &.expanded {
+  @media(min-width:1200px) {
     .mainmenu-item:hover {
       .dropdown-title {
         display:none;
@@ -47,56 +58,5 @@
       }
     }
   }
-
-  #mainmenu {
-    height:100%;
-
-    .mainmenu-item {
-      height: 100%;
-      display: inline-flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: center;
-      padding: 0 10px;
-
-      .dropdown-arrow {
-        left: .4rem;
-        font-size: .7rem;
-      }
-
-      .dropdown-title {
-        font-weight:bold;
-        padding: .5rem 1.5rem;
-      }
-
-      .mainmenu-dropdown {
-        padding-left:1.5rem;
-
-        li {
-          margin-top: 0.5rem;
-          margin-bottom: 0.5rem;
-        }
-      }
-    }
-  }
 }
 
-/* ----- mobile main menu ---- */
-#mobile-mainmenu {
-  line-height: 2;
-
-  #mainmenu {
-    .mainmenu-title {
-      display:inline-block;
-    }
-  }
-
-  .mainmenu-dropdown {
-    line-height:1.5;
-    padding: 0;
-
-    li {
-      margin: .5rem 0;
-    }
-  }
-}

@@ -3,7 +3,7 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-  <div class="searchbar">
+  <div id="cone-searchbar">
     <div class="input-group">
 
       <input type="text"

@@ -5,6 +5,11 @@
 @use "toolbar-top";
 @use "mobile-menu";
 
+$threshold_desktop: 1200px;
+$threshold_tablet: 900px;
+$threshold_mobile: 560px;
+
+
 body {
   margin: 0;
   font-family: "Inter", sans-serif;

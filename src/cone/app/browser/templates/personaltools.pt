@@ -3,22 +3,22 @@
 
 
 <div id="personaltools">
+  <div>
+    <div class="profile-image">
+      <!-- <img src=""> -->
+      <i class="bi bi-person bi-md"></i> 
+    </div>
 
-  <div class="profile-image">
-    <!-- <img src=""> -->
-    <i class="bi bi-person bi-md"></i> 
+    <div class="user-specs">
+      <span class="user-account-name"
+            tal:content="context.user">
+        Admin
+      </span>
+      <span class="user-account-position">
+        position
+      </span>
+    </div>
   </div>
-
-  <div class="d-lg-inline-block d-none user-specs">
-    <span class="user-account-name"
-          tal:content="context.user">
-      Admin
-    </span>
-    <span class="user-account-position">
-      position
-    </span>
-  </div>
-
   <div class="cone-dropdown-menu" id="user">
     <ul class="list-unstyled">
       <tal:li repeat="item context.items">

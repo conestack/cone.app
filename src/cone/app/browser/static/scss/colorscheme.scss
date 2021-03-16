@@ -92,7 +92,7 @@ body {
 
 
 /* ----- searchbar ----- */
-.searchbar {
+#cone-searchbar {
   input {
     color: $flight!important;
   }
@@ -110,20 +110,20 @@ body {
 
 /* ----- toolbar top ----- */
 #toolbar-top {
-  .topnav-element {
+  li {
     color: $fmedium;
+
+    &:hover {
+      i {
+        color: $fhover;
+        transition: .5s;
+        cursor: pointer;
+      }
+    }
 
     li:hover {
       color: $fhover;
       transition: color .5s;
-    }
-  }
-
-  .topnav-element:hover {
-    i {
-      color: $fhover;
-      transition: .5s;
-      cursor: pointer;
     }
   }
 

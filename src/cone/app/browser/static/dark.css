@@ -74,13 +74,13 @@ body {
 }
 
 /* ----- searchbar ----- */
-.searchbar input {
+#cone-searchbar input {
   color: #E6E6EB !important;
 }
-.searchbar .input-group {
+#cone-searchbar .input-group {
   background-color: #57575C;
 }
-.searchbar #searchbar-button {
+#cone-searchbar #searchbar-button {
   background-color: #5bc0de;
   color: #ECF5FD;
 }
@@ -89,17 +89,17 @@ body {
 #toolbar-top {
   /* -- notifications -- */
 }
-#toolbar-top .topnav-element {
+#toolbar-top li {
   color: #949499;
 }
-#toolbar-top .topnav-element li:hover {
-  color: #dfe8f0;
-  transition: color 0.5s;
-}
-#toolbar-top .topnav-element:hover i {
+#toolbar-top li:hover i {
   color: #dfe8f0;
   transition: 0.5s;
   cursor: pointer;
+}
+#toolbar-top li li:hover {
+  color: #dfe8f0;
+  transition: color 0.5s;
 }
 #toolbar-top #notifications .user-img {
   background-color: #2E2E33;
