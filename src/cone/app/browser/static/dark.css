@@ -37,6 +37,10 @@ body {
   background-color: #38383D;
   transition: background-color 0.25s;
 }
+#topnav.mobile #topnav-content {
+  background-color: #38383D;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
 
 /* ----- main menu ----- */
 #mainmenu .dropdown-title {
@@ -166,7 +170,7 @@ body {
   color: #949499;
 }
 .breadcrumb a:hover, .breadcrumb a:active {
-  color: #E6E6EB;
+  color: #dfe8f0;
 }
 .breadcrumb .breadcrumb-item.active {
   color: #E6E6EB;

@@ -6,18 +6,29 @@ $threshold_mobile: 560px;
 
 #topnav {
   min-height: 4rem;
-  box-shadow: 0 .5rem 1rem rgba(53, 59, 65, .025);
-  display:flex;
-  flex-direction:row;
-  align-items:center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  width:100%;
+  width: 100%;
+  padding-left: .75rem;
+  box-shadow: 0 .5rem 1rem rgba(53, 59, 65, .025);
+
+  #personaltools {
+    order:1;
+  }
+
+  #cone-searchbar {
+    margin: 0 1rem;
+  }
 
   ul {
-    list-style:none;
+    padding:0;
+    margin-bottom: 0;
+    list-style: none;
   }
   .cone-dropdown-menu {
-    display:none;
+    display: none;
   }
   a, label {
     text-decoration: none;
@@ -27,19 +38,20 @@ $threshold_mobile: 560px;
     transition: 0.5s;
   }
 
+  .cone-dropdown-menu {
+    position: absolute;
+    top: 4rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
+    z-index: 1000;
+  }
+
   @media(min-width:$threshold_mobile) {
     #topnav-content {
-      display:contents!important;
-    }
-    .cone-dropdown-menu {
-      position: absolute;
-      top: 4rem;
-      padding: 1rem 2rem;
-      box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
-      z-index: 1000;
+      display: contents!important;
     }
     #mobile-menu-toggle {
-      display:none;
+      display: none;
     }
   }
 }
@@ -49,7 +61,7 @@ $threshold_mobile: 560px;
 #cone-logo {
   font-size: 1.5rem;
   font-family: Arial;
-  margin-right: 2rem;
+  margin-right: 2rem;;
   white-space: nowrap;
 
   a {
@@ -69,8 +81,16 @@ $threshold_mobile: 560px;
 
 /* ----- searchbar ----- */
 #cone-searchbar {
-  height: 2.2rem;
-  margin-right:1rem;
+  min-height: 2.2rem;
+
+  #cone-livesearch-dropdown {
+    min-width: 16rem;
+    max-height:40rem;
+    overflow-y:auto;
+    @media(min-width: $threshold_mobile) and (max-width: $threshold_tablet) {
+      transform: translateX(calc(-100% + 2rem));
+    }
+  }
 
   .twitter-typeahead {
     width: 100%;
@@ -83,7 +103,7 @@ $threshold_mobile: 560px;
   }
 
   .input-group {
-    height: 100%;
+    height: 2.2rem;;
     overflow: hidden;
     border-radius: 4px;
     flex-wrap: nowrap;
@@ -103,11 +123,9 @@ $threshold_mobile: 560px;
     width: 2.2rem;
   }
 
-  @media(min-width:$threshold_desktop){
-    .twitter-typeahead {
-      display: block;
-      padding-left: .7rem;
-    }
+  .twitter-typeahead {
+    display: block;
+    padding-left: .7rem;
   }
 
   @media(min-width:$threshold_mobile) and (max-width:$threshold_desktop){
@@ -121,7 +139,6 @@ $threshold_mobile: 560px;
 
 /* ----- personal tools ----- */
 #personaltools {
-
   min-width: 10rem;
   height: 4rem;
   margin-left: .75rem;
@@ -129,7 +146,7 @@ $threshold_mobile: 560px;
   border-left: 1px solid rgba(53, 59, 65, 0.1);
   cursor: pointer;
 
-  > div {
+  #pt-wrapper {
     display: flex;
     align-items: center;
     height:inherit;

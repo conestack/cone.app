@@ -1,10 +1,9 @@
 /* ----- sidebar ----- */
 
 #sidebar_left {
-  display:inline-block;
-  position:relative;
-  height: 100%;
-  padding-right:3rem;
+  position: relative;
+  height: calc(100% - 4rem);
+  padding-right: 3rem;
 
   ul {
     width: max-content;
@@ -17,30 +16,34 @@
     box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
 
     .bi-arrow-left-circle { // switches collapse/expand arrows
-      display:none;
+      display: none;
     }
 
     #navtree {
-      margin-top:3rem;
-      margin-left:0;
-      width:inherit;
+      margin-top: 3rem;
+      margin-left: 0;
+      width: inherit;
 
       .navtreelevel_1 {
         padding: .75rem 1rem;
 
         ul { // hide dropdown
-          display:none;
+          display: none;
         }
 
         > a > span { // hide title
-        display:none;
+        display: none;
         margin-left: 2rem;
-        font-weight:bold;
+        font-weight: bold;
         color: white;
         }
 
         &:hover { // dropout
           min-width: 16rem;
+
+          > a {
+            color:white!important;
+          } 
 
           span {
             display: inline-block;
@@ -69,7 +72,9 @@
 
   // expanded
   &.expanded {
-    padding-left:2rem;
+    width: 12rem;
+    overflow: auto;
+    padding-left: 2rem;
     box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
 
     .bi-arrow-right-circle { // switches collapse/expand arrows
@@ -95,8 +100,10 @@
       }
 
       li {
+        padding-top: .25rem;
         &:not(:last-child) {
-          border-left:1px solid grey;
+          padding-bottom: .25rem;
+          border-left: 1px solid grey;
 
           &:before { // sets borders in navtree navigation
             content: "";

@@ -13,21 +13,21 @@
           <li>
             <a href="#">
               <img src="/static/images/flags/fr.svg" height="15em">
-              <p class="d-none d-md-inline-block">French</p>
+              <span>French</span>
             </a>
           </li>
 
           <li>
             <a href="#">
               <img src="/static/images/flags/de.svg" height="15em">
-              <p class="d-none d-md-inline-block">German</p>
+              <span>German</span>
             </a>
           </li>
 
           <li>
             <a href="#">
               <img src="/static/images/flags/it.svg" height="15em">
-              <p class="d-none d-md-inline-block">Italian</p>
+              <span>Italian</span>
             </a>
           </li>
         </ul>

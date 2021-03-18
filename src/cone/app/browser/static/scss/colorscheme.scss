@@ -41,6 +41,12 @@ body {
     background-color: $menus;
     transition: background-color .25s;
   }
+
+  &.mobile #topnav-content {
+    background-color: $menus;
+    box-shadow: 0 5px 5px rgba($color: black, $alpha: 0.2);
+
+  }
 }
 
 
@@ -210,7 +216,7 @@ body {
   a {
   color: $fmedium;
     &:hover, &:active {
-      color: $flight;
+      color: $fhover;
     }
   }
 

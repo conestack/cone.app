@@ -20,6 +20,23 @@
       </div>
 
     </div>
+
+    <div class="cone-dropdown-menu" id="cone-livesearch-dropdown">
+        <p>Search Results</p>
+        <ul>
+          <li>
+            <span>3</span>
+          </li>
+
+          <li>
+            <span>3</span>
+          </li>
+
+          <li>
+            <span>3</span>
+          </li>
+        </ul>
+      </div>
   </div>
 
 

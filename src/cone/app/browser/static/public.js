@@ -47,6 +47,7 @@ var livesearch_options = new Object();
             }
             let handle = cone.toggle_dropdown;
             dm.parent().off('click', handle).on('click', handle);
+            
         });
     };
 
@@ -102,7 +103,10 @@ var livesearch_options = new Object();
         }
 
         toggle_menu(evt) {
-            $('#topnav-content').toggle();
+            $('#topnav-content').slideToggle('fast');
+            if($('#topnav-content').css('display') == 'block') {
+                $('#topnav-content').css('display', 'flex');
+            }
         }
 
         handle_visibility(evt) {
@@ -111,8 +115,8 @@ var livesearch_options = new Object();
 
                 $('#mainmenu').find('.dropdown-arrow').off().on('click', function(evt) {
                     $(this).parent('li').find('.cone-dropdown-menu').slideToggle('fast');
-                    // evt.stopPropagation(); //disable default scrolldown
-                    // evt.preventDefault();
+                    evt.stopPropagation(); //disable default scrolldown
+                    evt.preventDefault();
                 })
             } else {
                 this.elem.removeClass('mobile');
@@ -130,48 +134,7 @@ var livesearch_options = new Object();
             this.topnav_searchbar_btn = this.topnav_searchbar.find('#searchbar-button');
             this.topnav_searchbar_text = this.topnav_searchbar.find('.twitter-typeahead');
             this.topnav = $('#topnav');
-
-            // this._resize_handle = this.resize_handle.bind(this);
-            // $(window).on('resize', this._resize_handle);
         }
-
-/*         resize_handle(evt) { // adjust searchbar
-
-                // collapsed
-                this.topnav_searchbar.removeClass('expanded');
-                
-                this.topnav_searchbar.css('display', 'inline-flex');
-                this.topnav_searchbar.addClass('collapsed');
-                this.topnav_searchbar_btn.on('click', evt => {
-                    this.topnav_searchbar.addClass('toggle-expand expanded');
-                    this.topnav_searchbar.removeClass('collapsed');
-                })
-                this.topnav_searchbar_btn.on('click', event => {
-                    if(this.topnav_searchbar.hasClass('toggle-expand')) {
-                        this.topnav_searchbar.removeClass('toggle-expand');
-                        this.topnav_searchbar.removeClass('expanded');
-                        this.topnav_searchbar.addClass('collapsed');
-                        this.topnav_searchbar.addClass('toggle-collapse');
-                        $('#topnav').children('li').last().show();
-                        console.log('close');
-                    } else {
-                        this.topnav_searchbar.removeClass('toggle-collapse');
-                        this.topnav_searchbar.removeClass('collapsed');
-                        this.topnav_searchbar.addClass('expanded');
-                        this.topnav_searchbar.addClass('toggle-expand');
-                        $('#topnav').children('li').last().hide();
-                        console.log('open');
-                    }
-                });
-
-                // expanded
-                $('.twitter-typeahead').css('width', '200px');
-                this.topnav_searchbar.css('display', 'inline-flex');
-
-                this.topnav_searchbar.removeClass('collapsed');
-                this.topnav_searchbar.addClass('expanded');
-
-        } */
     }
 
     //sidebar menu

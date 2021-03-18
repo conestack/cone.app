@@ -1,14 +1,23 @@
 /* ----- topnav ----- */
 #topnav {
   min-height: 4rem;
-  box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding-left: 0.75rem;
+  box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
+}
+#topnav #personaltools {
+  order: 1;
+}
+#topnav #cone-searchbar {
+  margin: 0 1rem;
 }
 #topnav ul {
+  padding: 0;
+  margin-bottom: 0;
   list-style: none;
 }
 #topnav .cone-dropdown-menu {
@@ -21,16 +30,16 @@
   text-decoration: none;
   transition: 0.5s;
 }
+#topnav .cone-dropdown-menu {
+  position: absolute;
+  top: 4rem;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
+  z-index: 1000;
+}
 @media (min-width: 560px) {
   #topnav #topnav-content {
     display: contents !important;
-  }
-  #topnav .cone-dropdown-menu {
-    position: absolute;
-    top: 4rem;
-    padding: 1rem 2rem;
-    box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
-    z-index: 1000;
   }
   #topnav #mobile-menu-toggle {
     display: none;
@@ -58,8 +67,17 @@
 
 /* ----- searchbar ----- */
 #cone-searchbar {
-  height: 2.2rem;
-  margin-right: 1rem;
+  min-height: 2.2rem;
+}
+#cone-searchbar #cone-livesearch-dropdown {
+  min-width: 16rem;
+  max-height: 40rem;
+  overflow-y: auto;
+}
+@media (min-width: 560px) and (max-width: 900px) {
+  #cone-searchbar #cone-livesearch-dropdown {
+    transform: translateX(calc(-100% + 2rem));
+  }
 }
 #cone-searchbar .twitter-typeahead {
   width: 100%;
@@ -70,7 +88,7 @@
   box-shadow: none;
 }
 #cone-searchbar .input-group {
-  height: 100%;
+  height: 2.2rem;
   overflow: hidden;
   border-radius: 4px;
   flex-wrap: nowrap;
@@ -87,11 +105,9 @@
 #cone-searchbar #searchbar-button {
   width: 2.2rem;
 }
-@media (min-width: 1200px) {
-  #cone-searchbar .twitter-typeahead {
-    display: block;
-    padding-left: 0.7rem;
-  }
+#cone-searchbar .twitter-typeahead {
+  display: block;
+  padding-left: 0.7rem;
 }
 @media (min-width: 560px) and (max-width: 1200px) {
   #cone-searchbar .twitter-typeahead {
@@ -110,7 +126,7 @@
   border-left: 1px solid rgba(53, 59, 65, 0.1);
   cursor: pointer;
 }
-#personaltools > div {
+#personaltools #pt-wrapper {
   display: flex;
   align-items: center;
   height: inherit;
@@ -170,9 +186,8 @@
 }
 /* ----- sidebar ----- */
 #sidebar_left {
-  display: inline-block;
   position: relative;
-  height: 100%;
+  height: calc(100% - 4rem);
   padding-right: 3rem;
 }
 #sidebar_left ul {
@@ -206,6 +221,9 @@
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover {
   min-width: 16rem;
 }
+#sidebar_left.collapsed #navtree .navtreelevel_1:hover > a {
+  color: white !important;
+}
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover span {
   display: inline-block;
 }
@@ -224,6 +242,8 @@
   display: none;
 }
 #sidebar_left.expanded {
+  width: 12rem;
+  overflow: auto;
   padding-left: 2rem;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
 }
@@ -245,7 +265,11 @@
 #sidebar_left.expanded .navtreelevel_1 ul ul {
   margin-left: 1rem;
 }
+#sidebar_left.expanded .navtreelevel_1 li {
+  padding-top: 0.25rem;
+}
 #sidebar_left.expanded .navtreelevel_1 li:not(:last-child) {
+  padding-bottom: 0.25rem;
   border-left: 1px solid grey;
 }
 #sidebar_left.expanded .navtreelevel_1 li:not(:last-child):before {
@@ -297,11 +321,12 @@
 /* ----- mainmenu ----- */
 #mainmenu {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-bottom: 0;
   padding: 0;
   margin-right: auto;
   height: 100%;
+  overflow-x: auto;
 }
 #mainmenu .cone-dropdown-menu {
   min-width: 10rem;
@@ -311,8 +336,8 @@
   #mainmenu .mainmenu-item {
     display: inline-flex;
     flex-direction: row;
-    flex-wrap: nowrap;
     align-items: center;
+    white-space: nowrap;
     padding: 0 10px;
   }
   #mainmenu .mainmenu-item .dropdown-arrow {
@@ -365,22 +390,17 @@
 #toolbar-top > li > a {
   vertical-align: middle;
 }
-@media (min-width: 560px) {
-  #toolbar-top > li > .cone-dropdown-menu {
-    min-width: max-content;
-    transform: translateX(calc(-100% + 1.3rem));
-  }
-  #toolbar-top > li > .cone-dropdown-menu .toolbar-title {
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  #toolbar-top > li > .cone-dropdown-menu ul {
-    padding: 0;
-    list-style: none;
-  }
+#toolbar-top > li > .cone-dropdown-menu {
+  min-width: max-content;
+  transform: translateX(calc(-100% + 1.3rem));
 }
-#toolbar-top #language li {
-  line-height: 1;
+#toolbar-top > li > .cone-dropdown-menu .toolbar-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+#toolbar-top > li > .cone-dropdown-menu ul {
+  padding: 0;
+  list-style: none;
 }
 #toolbar-top #language img {
   margin-right: 0.5rem;
@@ -450,62 +470,74 @@
   height: 4rem;
   padding: 1rem;
 }
+#topnav.mobile ul {
+  margin: 0;
+}
 #topnav.mobile #mobile-menu-toggle {
   display: block;
   font-size: 2rem;
+  margin-left: 1rem;
+}
+#topnav.mobile #cone-logo {
+  margin-right: auto;
 }
 #topnav.mobile #cone-searchbar {
-  margin-right: 0;
+  order: -1;
+}
+#topnav.mobile #cone-searchbar p {
+  display: none;
 }
 #topnav.mobile #topnav-content {
   position: absolute;
   top: 4rem;
   left: 0;
   display: none;
+  flex-direction: column;
   width: 100%;
-  height: calc(100vh - 4rem);
   padding: 1rem;
-  background: lightgray;
   z-index: 1000;
 }
 #topnav.mobile #topnav-content > * {
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
 }
-#topnav.mobile .dropdown-arrow {
+#topnav.mobile #topnav-content .dropdown-arrow {
   float: right;
 }
-#topnav.mobile .cone-dropdown-menu {
-  padding: 0;
+#topnav.mobile #topnav-content .cone-dropdown-menu {
+  position: relative;
+  box-shadow: none;
+  top: 0;
+  padding: 0 0 0 1rem;
   background: transparent;
   border: none;
 }
-#topnav.mobile .cone-dropdown-menu .dropdown-title {
+#topnav.mobile #topnav-content .cone-dropdown-menu .dropdown-title {
   display: none;
 }
 #topnav.mobile #personaltools {
-  margin: 0;
+  display: inline-block;
+  min-height: max-content;
+  padding: 0;
+  border: 0;
 }
-#topnav.mobile #toolbar-top > li {
-  vertical-align: top;
-}
-#topnav.mobile #toolbar-top .toolbar-title {
-  display: none;
-}
-#topnav.mobile #toolbar-top .cone-dropdown-menu {
-  background-color: yellow;
+#topnav.mobile #toolbar-top > li > .cone-dropdown-menu {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  transform: none;
 }
 #topnav.mobile #mainmenu {
   line-height: 2;
   width: 100%;
-  height: auto;
   flex-direction: column;
+  overflow: hidden;
 }
 #topnav.mobile #mainmenu .mainmenu-title {
   display: inline-block;
 }
 #topnav.mobile #mainmenu .mainmenu-dropdown {
   line-height: 1.5;
-  padding: 0 0 0 1rem;
+  padding: 0;
 }
 #topnav.mobile #mainmenu .mainmenu-dropdown li {
   margin: 0.5rem 0;

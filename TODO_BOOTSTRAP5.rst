@@ -1,13 +1,14 @@
 TODO
 ====
 
-[ ] - layout.mainmenu_fluid obsolete, remove
-[ ] - mainmenu_empty_title obsolete, remove
+[X] - layout.mainmenu_fluid obsolete, remove
+[X] - mainmenu_empty_title obsolete, remove
 [X] - toolbar_top tile, add
 [ ] - navtree -> insert markup (tehut.eu)
-[~] - mainmenu -> navtree
-[~] - old layout - migrate to bs5 (grid system)
-[~] - rewrite topnav, searchbar and mobile menu 
+[X] - mainmenu -> navtree
+[X] - old layout - migrate to bs5 (grid system)
+[X] - rewrite topnav, searchbar and mobile menu 
+[X] - fix breadcrumb display
 
 javascript
 ----------
@@ -17,15 +18,10 @@ javascript
 [ ] - update deprecated javascript in private.js
 [X] - now supports screen dimensions from 330px and up - new layout
 [X] - implement popper.js
-[~] - hamburger menu: main menu instead of sidebar / [X] - rename to mobile menu
-[X] - change searchbar script to class; add cases for resize;
-      [X] - if there is not enough space for searchbar, collapse searchbar 
-         -> expand on click, fade out other elements
-      [X] + if there is not enough space for mainmenu texts, collapse elements to icons
-      [X] + if there is not enough space for either mainmenu icons or searchbar, 
-        move content to mobile menu
-[~] - debug main menu
-[ ] - debug searchbar
+[X] - hamburger menu: main menu instead of sidebar / [X] - rename to mobile menu
+[X] - searchbar and mainmenu classes obsolete, remove
+[X] - debug main menu
+[X] - debug searchbar
 [X] - add Main Menu Class
 
 styles
@@ -41,10 +37,10 @@ styles
 [X] - optimize searchbar styles
 [X] - mobile menu: full width
 [X] - topnav wrapper padding - remove
-[ ] - implement bs5 in old layout:
+[X] - implement bs5 in old layout:
       [X] - add basic support for md&lg screen sizes;
       [X] - add support for sm screen size
-[ ] - fix breadcrumb display in pathbar.pt
+[X] - fix breadcrumb display in pathbar.pt
 [X] - remove mainmenu in sidebar - move to topbar
 [~] - add navtree in sidebar - display md on hover:
       - current branch: first level & sublevels

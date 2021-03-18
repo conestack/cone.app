@@ -12,29 +12,22 @@
       vertical-align: middle;
     }
 
-    @media(min-width:560px) {
-      > .cone-dropdown-menu {
-        min-width: max-content;
-        transform: translateX(calc(-100% + 1.3rem));
-
-        .toolbar-title {
-          font-weight: bold;
-          margin-bottom: 1rem;
-        }
-
-        ul {
-          padding: 0;
-          list-style: none;
-        }
+    > .cone-dropdown-menu {
+      min-width: max-content;
+      transform: translateX(calc(-100% + 1.3rem));
+      .toolbar-title {
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      ul {
+        padding: 0;
+        list-style: none;
       }
     }
   }
 
   /* -- language -- */
   #language {
-    li {
-      line-height: 1;
-    }
     img {
       margin-right: .5rem;
     }

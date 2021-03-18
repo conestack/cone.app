@@ -18,20 +18,25 @@
         ajax:action="pathbar:#pathbar:replace">
 
         <tal:li repeat="item context.items">
-          <li tal:attributes="class item['selected'] and 'breadcrumb-item active' or 'breadcrumb-item'">
+        
+          <li tal:attributes="class item['selected'] and 'breadcrumb-item active' or 'breadcrumb-item'"
+              tal:condition="not item['selected']">
             <a href="${item['url']}"
                ajax:bind="click"
                ajax:target="${item['target']}"
                ajax:event="contextchanged:#layout"
                ajax:path="href"
-               tal:content="item['title']"
-               tal:condition="not item['selected']">
+               tal:content="item['title']">
               Title
             </a>
-            <li class="breadcrumb-item active" 
-                tal:content="item['title']"
-                tal:condition="item['selected']">Title</li>
           </li>
+
+          <li class="breadcrumb-item active" 
+              tal:content="item['title']"
+              tal:condition="item['selected']">
+              Title
+          </li>
+
         </tal:li>
 
     </ol>

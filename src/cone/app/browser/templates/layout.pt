@@ -14,12 +14,8 @@
         <tal:logo replace="structure tile('logo')" />
       </div>
 
-      <div id="mobile-menu-toggle">
-        <i class="bi bi-list"></i>
-      </div>
 
       <div id="topnav-content">
-
         <tal:mainmenu
           condition="config.mainmenu"
           replace="structure tile('mainmenu')" />
@@ -27,12 +23,16 @@
         <tal:livesearch
              condition="config.livesearch"
              replace="structure tile('livesearch')" />
-  
+        <tal:personaltools condition="config.personaltools"
+             replace="structure tile('personaltools')" />
+      </div>   
+
         <tal:toolbar_top condition="True"
                          replace="structure tile('toolbar_top')" />
-  
-        <tal:personaltools condition="config.personaltools"
-                           replace="structure tile('personaltools')" />
+      
+
+      <div id="mobile-menu-toggle">
+        <i class="bi bi-list"></i>
       </div>
 
     </div>
