@@ -292,6 +292,9 @@ class MainMenu(LayoutConfigTile):
         item['icon'] = node_icon(node)
         return item
 
+    def to_json(self, data):
+        import json
+        return json.dumps(data)
 
 @tile(name='pathbar',
       path='templates/pathbar.pt',

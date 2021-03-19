@@ -18,9 +18,15 @@
 
   #cone-searchbar {
     order: -1;
-    p {
-      display:none;
-    }
+  }
+
+  .cone-dropdown-menu {
+    position: relative;
+    top: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
   }
 
   #topnav-content {
@@ -36,22 +42,6 @@
     > * {
       margin: .5rem 0;
     } 
-
-    .dropdown-arrow {
-      float: right;
-    }
-    .cone-dropdown-menu {
-      position: relative;
-      box-shadow: none;
-      top: 0;
-      padding: 0 0 0 1rem;
-      background: transparent;
-      border: none;
-
-      .dropdown-title {
-        display: none;
-      }
-    }
   }
 
   #personaltools {
@@ -59,13 +49,6 @@
     min-height: max-content;
     padding: 0;
     border: 0;
-  }
-
-  #toolbar-top > li > .cone-dropdown-menu {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    transform: none;
   }
 
   #mainmenu {
@@ -78,13 +61,30 @@
       display: inline-block;
     }
 
-    .mainmenu-dropdown {
-      line-height: 1.5;
-      padding: 0;
+    .dropdown-arrow {
+      float: right;
+    }
 
-      li {
-        margin: .5rem 0;
-        width: 100%;
+    .cone-mainmenu-dropdown {
+      position: relative;
+      box-shadow: none;
+      top: 0;
+      padding: 0 0 0 1rem;
+      background: transparent;
+      border: none;
+
+      .dropdown-title {
+        display: none;
+      }
+
+      .mainmenu-dropdown {
+        line-height: 1.5;
+        padding: 0;
+
+        li {
+          margin: .5rem 0;
+          width: 100%;
+        }
       }
     }
   }

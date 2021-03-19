@@ -13,14 +13,16 @@ body {
 }
 
 /* ----- dropdowns ----- */
-.cone-dropdown-menu {
-  background-color: #434348;
+.cone-dropdown-menu, .cone-mainmenu-dropdown {
+  background-color: #48484D;
+  border: 1px solid #2E2E33;
+  box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
 }
-.cone-dropdown-menu a {
+.cone-dropdown-menu a, .cone-mainmenu-dropdown a {
   color: #949499;
   text-decoration: none;
 }
-.cone-dropdown-menu a:hover {
+.cone-dropdown-menu a:hover, .cone-mainmenu-dropdown a:hover {
   color: #dfe8f0;
   transition: color 0.25s;
 }
@@ -28,10 +30,6 @@ body {
 /* ----- topnav ----- */
 #topnav {
   background-color: #434348;
-}
-#topnav .cone-dropdown-menu {
-  background-color: #48484D;
-  border: 1px solid #2E2E33;
 }
 #topnav .apps-link:hover {
   background-color: #38383D;
@@ -47,12 +45,9 @@ body {
   background-color: #5bc0de;
   color: white;
 }
-#mainmenu .cone-dropdown-menu a:hover {
+#mainmenu li:hover > a {
   color: #dfe8f0;
-}
-
-#topnav-mainmenu li:hover > a {
-  color: #dfe8f0;
+  transition: 0.25s;
 }
 
 /* ----- mobile menu ----- */
@@ -67,14 +62,6 @@ body {
 }
 #mobile-menu-content .sidebar-heading hr {
   border-top: 1px solid rgba(230, 230, 235, 0.2);
-}
-
-#mobile-mainmenu #mainmenu .cone-dropdown-menu {
-  border: none;
-  background: transparent;
-}
-#mobile-mainmenu li:hover {
-  color: #dfe8f0;
 }
 
 /* ----- searchbar ----- */
@@ -125,17 +112,15 @@ body {
 #personaltools .profile-image > i {
   color: #E6E6EB;
 }
-#personaltools .dropdown-menu-user a {
-  color: #949499;
-}
-#personaltools .dropdown-menu-user a:hover {
-  color: #E6E6EB;
-}
 
 /* ----- sidebar left ----- */
 #sidebar_left {
   background-color: #38383D;
   border-right: 1px solid #2E2E33;
+  /* .help {
+     color: white;
+   }
+  */
 }
 #sidebar_left #sidebar-toggle-btn {
   color: rgba(230, 230, 235, 0.3);
@@ -145,9 +130,6 @@ body {
 }
 #sidebar_left .sidebar-heading {
   color: #E6E6EB;
-}
-#sidebar_left .help {
-  color: white;
 }
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover {
   background: #5bc0de;
@@ -201,6 +183,25 @@ a:hover {
 .btn-inf {
   background-color: #5bc0de;
   color: #ECF5FD;
+}
+
+/* -- scrollbar -- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2E2E33;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #949499;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #dfe8f0;
 }
 
 /*# sourceMappingURL=dark.css.map */

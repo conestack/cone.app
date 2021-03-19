@@ -40,6 +40,37 @@ var livesearch_options = new Object();
     });
 
     cone.bind_dropdowns = function(context) {
+        $('.mainmenu-item', context).each(function() {
+            let elem = $(this);
+            let children = elem.data('menu-items');
+            // console.log(children);
+            let trigger = $('> a', elem).on('click', function(e) {
+                e.preventDefault();
+                let menu = $(`
+                  <div class="cone-mainmenu-dropdown">
+                      <ul class="mainmenu-dropdown">
+                      </ul>
+                  </div>
+                `);
+                let dropdown = $('ul', menu);
+                for (let i in children) {
+                    let menu_item = children[i];
+                    console.log(menu_item);
+                    dropdown.append(`
+                      <li class="${menu_item.selected ? 'active': ''}">
+                        <a href="${menu_item.url}"
+                           title="${menu_item.title}">
+                          <i class="${menu_item.icon}"></i>
+                          <span>
+                            ${menu_item.title ? menu_item.title : '&nbsp;'}
+                          </span>
+                        </a>
+                      </li>
+                    `);
+                }
+                $('#layout').append(menu);
+            });
+        });
         $('.cone-dropdown-menu', context).each(function() {
             let dm = $(this);
             if (dm.hasClass('hover')) {

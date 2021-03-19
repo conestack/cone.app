@@ -13,8 +13,10 @@ body {
 }
 
 /* ----- dropdowns ----- */
-.cone-dropdown-menu {
-  background-color: $menu;
+.cone-dropdown-menu, .cone-mainmenu-dropdown {
+  background-color: $dropdown;
+  border:1px solid $border;
+  box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
 
   a {
     color: $fmedium;
@@ -31,11 +33,6 @@ body {
 /* ----- topnav ----- */
 #topnav {
   background-color: $menu;
-
-  .cone-dropdown-menu {
-    background-color: $dropdown;
-    border:1px solid $border;
-  }
 
   .apps-link:hover {
     background-color: $menus;
@@ -57,16 +54,9 @@ body {
     color: white;
   }
 
-  .cone-dropdown-menu {
-    a:hover {
-      color: $fhover;
-    }
-  }
-}
-
-#topnav-mainmenu {
   li:hover > a {
     color: $fhover;
+    transition: .25s;
   }
 }
 
@@ -83,16 +73,6 @@ body {
 
   .sidebar-heading hr {
     border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
-  }
-}
-
-#mobile-mainmenu {
-  #mainmenu .cone-dropdown-menu {
-    border: none;
-    background: transparent;
-  }
-  li:hover {
-    color: $fhover;
   }
 }
 
@@ -157,13 +137,6 @@ body {
       color:$flight;
     }
   }
-
-  .dropdown-menu-user a {
-    color: $fmedium;
-    &:hover {
-      color: $flight;
-    }
-  }
 }
     
 
@@ -186,10 +159,10 @@ body {
     color: $flight;
   }
 
-  .help {
+  /* .help {
     color: white;
   }
-
+ */
   &.collapsed #navtree {
     .navtreelevel_1:hover {
       background: $info;
@@ -253,4 +226,23 @@ a:hover {
 .btn-inf {
   background-color: $info;
   color: $fbright;
+}
+
+/* -- scrollbar -- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: $bg; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: $fmedium;
+  border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $fhover;
 }

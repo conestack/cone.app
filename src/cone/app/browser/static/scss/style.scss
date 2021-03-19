@@ -39,16 +39,6 @@ body {
   }
 }
 
-.cone-dropdown-menu {
-  a {
-    text-decoration: none;
-    &:hover, &:active {
-      text-decoration: none;
-      transition: 0.5s;
-    }
-  }
-}
-
 .breadcrumb {
   a {
   text-decoration: none;
@@ -88,7 +78,7 @@ body {
   align-items: center;
   justify-content: center;
   position: absolute;
-  transform: translate(0.5rem, -.7rem);
+  transform: translate(0.5rem, -2rem);
   font-size: 10px;
   border-radius: 50%;
   width: 1rem;

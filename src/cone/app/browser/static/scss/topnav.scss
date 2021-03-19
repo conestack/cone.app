@@ -5,11 +5,10 @@ $threshold_tablet: 900px;
 $threshold_mobile: 560px;
 
 #topnav {
-  min-height: 4rem;
+  height: 4rem;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   padding-left: .75rem;
   box-shadow: 0 .5rem 1rem rgba(53, 59, 65, .025);
@@ -27,23 +26,22 @@ $threshold_mobile: 560px;
     margin-bottom: 0;
     list-style: none;
   }
-  .cone-dropdown-menu {
-    display: none;
-  }
-  a, label {
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: none;
-    transition: 0.5s;
-  }
 
   .cone-dropdown-menu {
+    display: none;
     position: absolute;
     top: 4rem;
     padding: 1rem 2rem;
-    box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
     z-index: 1000;
+  }
+
+  a, label {
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: none;
+    transition: 0.5s;
   }
 
   @media(min-width:$threshold_mobile) {

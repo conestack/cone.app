@@ -1,49 +1,66 @@
 /* ----- mainmenu ----- */
+.scroll-container {
+  overflow-x: auto;
+  transform: rotate(180deg);
+  margin-right: auto;
+  height: 100%;
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  align-items: center;
+}
+
+.cone-mainmenu-dropdown {
+  position: absolute;
+  z-index: 1000;
+  padding: .5rem;
+  min-width: 10rem;
+
+  ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+}
+
 #mainmenu {
   display: inline-flex;
   flex-wrap: nowrap;
   margin-bottom: 0;
   padding: 0;
-  margin-right: auto;
-  height: 100%;
-  overflow-x: auto;
+  padding-top: 1rem;
+  transform: rotate(180deg);
+}
 
-  .cone-dropdown-menu {
-    min-width: 10rem;
-    padding: 0;
-  }
-
-  @media(min-width:560px) {
-    .mainmenu-item {
-      display: inline-flex;
-      flex-direction: row;
-      align-items: center;
-      white-space: nowrap;
-      padding: 0 10px;
-      .dropdown-arrow {
-        left: .4rem;
-        font-size: .7rem;
-      }
-      .dropdown-title {
-        font-weight:bold;
-        padding: .5rem 1.5rem;
-      }
-      .mainmenu-dropdown {
-        padding-left: 1.5rem;
-        li {
-          margin-top: 0.5rem;
-          margin-bottom: 0.5rem;
-        }
-      }
+@media(min-width:560px) {
+  .mainmenu-item {
+    white-space: nowrap;
+    padding: 0 10px;
+    .dropdown-arrow {
+      left: .4rem;
+      font-size: .7rem;
+    }
+    .dropdown-title {
+      font-weight: bold;
+      padding: .5rem 1.5rem;
     }
   }
-  @media(min-width:560px) and (max-width:1200px) {
+
+  .cone-mainmenu-dropdown {
+    padding-left: 1.5rem;
+    li {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+  /* @media(min-width:560px) and (max-width:1200px) {
     .mainmenu-title {
       display: none;
     }
 
     .mainmenu-item:hover {
-      .cone-dropdown-menu {
+      .cone-mainmenu-dropdown- {
         display: block;
       }
     }
@@ -51,13 +68,14 @@
 
   @media(min-width:1200px) {
     .mainmenu-item:hover {
+      //height: 20rem;
       .dropdown-title {
         display: none;
       }
-      .cone-dropdown-menu {
+      .cone-mainmenu-dropdown {
         display: block;
       }
-    }
-  }
-}
+    } 
+  } */
+
 

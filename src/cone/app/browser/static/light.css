@@ -21,14 +21,16 @@ body {
 }
 
 /* ----- dropdowns ----- */
-.cone-dropdown-menu {
-  background-color: #ffffff;
+.cone-dropdown-menu, .cone-mainmenu-dropdown {
+  background-color: white;
+  border: 1px solid #EBEBF0;
+  box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
 }
-.cone-dropdown-menu a {
+.cone-dropdown-menu a, .cone-mainmenu-dropdown a {
   color: #717176;
   text-decoration: none;
 }
-.cone-dropdown-menu a:hover {
+.cone-dropdown-menu a:hover, .cone-mainmenu-dropdown a:hover {
   color: #5bc0de;
   transition: color 0.25s;
 }
@@ -36,10 +38,6 @@ body {
 /* ----- topnav ----- */
 #topnav {
   background-color: #ffffff;
-}
-#topnav .cone-dropdown-menu {
-  background-color: white;
-  border: 1px solid #EBEBF0;
 }
 #topnav .apps-link:hover {
   background-color: #FAFAFC;
@@ -55,12 +53,9 @@ body {
   background-color: #5bc0de;
   color: white;
 }
-#mainmenu .cone-dropdown-menu a:hover {
+#mainmenu li:hover > a {
   color: #5bc0de;
-}
-
-#topnav-mainmenu li:hover > a {
-  color: #5bc0de;
+  transition: 0.25s;
 }
 
 /* ----- mobile menu ----- */
@@ -75,14 +70,6 @@ body {
 }
 #mobile-menu-content .sidebar-heading hr {
   border-top: 1px solid rgba(87, 87, 92, 0.2);
-}
-
-#mobile-mainmenu #mainmenu .cone-dropdown-menu {
-  border: none;
-  background: transparent;
-}
-#mobile-mainmenu li:hover {
-  color: #5bc0de;
 }
 
 /* ----- searchbar ----- */
@@ -133,17 +120,15 @@ body {
 #personaltools .profile-image > i {
   color: #57575C;
 }
-#personaltools .dropdown-menu-user a {
-  color: #717176;
-}
-#personaltools .dropdown-menu-user a:hover {
-  color: #57575C;
-}
 
 /* ----- sidebar left ----- */
 #sidebar_left {
   background-color: #FAFAFC;
   border-right: 1px solid #EBEBF0;
+  /* .help {
+     color: white;
+   }
+  */
 }
 #sidebar_left #sidebar-toggle-btn {
   color: rgba(87, 87, 92, 0.3);
@@ -153,9 +138,6 @@ body {
 }
 #sidebar_left .sidebar-heading {
   color: #57575C;
-}
-#sidebar_left .help {
-  color: white;
 }
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover {
   background: #5bc0de;
@@ -209,6 +191,25 @@ a:hover {
 .btn-inf {
   background-color: #5bc0de;
   color: #ECF5FD;
+}
+
+/* -- scrollbar -- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #717176;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5bc0de;
 }
 
 /*# sourceMappingURL=light.css.map */

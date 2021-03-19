@@ -54,7 +54,6 @@
       </div>
 
       <div id="page-content-wrapper">
-
         <row tal:condition="config.pathbar">
           <tal:pathbar replace="structure tile('pathbar')" />
         </row>
