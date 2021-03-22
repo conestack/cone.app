@@ -9,7 +9,7 @@
 
 cone = {
     sidebar_menu: null,
-    // main_menu: null,
+    main_menu: null,
     theme_switcher: null,
     searchbar_handler: null,
     // mobile_menu: null,
@@ -27,19 +27,19 @@ var livesearch_options = new Object();
 (function($) {
 
     $(function() {
-        bdajax.register(cone.bind_dropdowns, true);
+        // bdajax.register(cone.bind_dropdowns, true);
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context, 575.9);
             new cone.Topnav(context);
             //new cone.Searchbar(context, 200, 130);
-            // new cone.MainMenu(context);
+            new cone.MainMenu(context);
             //new cone.MobileMenu(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
-    cone.bind_dropdowns = function(context) {
+/*     cone.bind_dropdowns = function(context) {
         $('.mainmenu-item', context).each(function() {
             let elem = $(this);
             let children = elem.data('menu-items');
@@ -80,10 +80,59 @@ var livesearch_options = new Object();
             dm.parent().off('click', handle).on('click', handle);
             
         });
-    };
+    }; */
 
-    cone.toggle_dropdown = function() {
-        $('> .cone-dropdown-menu', this).toggle();
+    cone.MainMenu = class {
+        constructor(context) {
+            $('.mainmenu-item').each(this.set_position);
+            $('.scroll-container').scrollLeft($('#mainmenu').outerWidth()); // scroll to right (rtl scroll direction)
+        }
+
+        set_position() {
+            let elem = $(this);
+            let children = elem.data('menu-items');
+            let menu = $(`
+              <div class="cone-mainmenu-dropdown">
+                  <ul class="mainmenu-dropdown">
+                  </ul>
+              </div>
+          ` );
+            let dropdown = $('ul', menu);
+
+            for (let i in children) {
+                let menu_item = children[i];
+                dropdown.append(`
+                  <li class="${menu_item.selected ? 'active': ''}">
+                    <a href="${menu_item.url}"
+                       title="${menu_item.title}">
+                      <i class="${menu_item.icon}"></i>
+                      <span>
+                        ${menu_item.title ? menu_item.title : '&nbsp;'}
+                      </span>
+                    </a>
+                  </li>
+                `);
+            }
+            $('#layout').append(menu);
+            
+            //enter
+            elem.on('mouseenter', function(e) {
+                $('.cone-mainmenu-dropdown').hide();
+                e.preventDefault();
+                menu.offset({left: elem.offset().left});
+                menu.show();
+            });
+
+            //leave
+            menu.on('mouseleave', function(e){
+                console.log('mouseleave');
+                menu.hide();
+            });
+
+            $('#main-menu').on('scroll', function(){
+                menu.hide();
+            })
+        }
     }
 
     //theme switch
