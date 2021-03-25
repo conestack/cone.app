@@ -30,7 +30,6 @@
   height: 100%;
   margin-bottom: 0;
   padding: 0;
-  padding-top: 1rem;
   transform: rotate(180deg);
 
   li{
@@ -62,28 +61,3 @@
     }
   }
 }
-  /* @media(min-width:560px) and (max-width:1200px) {
-    .mainmenu-title {
-      display: none;
-    }
-
-    .mainmenu-item:hover {
-      .cone-mainmenu-dropdown- {
-        display: block;
-      }
-    }
-  }
-
-  @media(min-width:1200px) {
-    .mainmenu-item:hover {
-      //height: 20rem;
-      .dropdown-title {
-        display: none;
-      }
-      .cone-mainmenu-dropdown {
-        display: block;
-      }
-    } 
-  } */
-
-

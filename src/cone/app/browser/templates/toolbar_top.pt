@@ -4,84 +4,69 @@
 
   <ul id="toolbar-top">
 
-    <li id="language">
-      <img src="/static/images/flags/gb.svg" height="15em">
-
-      <div class="cone-dropdown-menu">
-        <div class="toolbar-title">Language</div>
-        <ul>
-          <li>
-            <a href="#">
-              <img src="/static/images/flags/fr.svg" height="15em">
-              <span>French</span>
-            </a>
+    <li class="dropdown" id="language">
+      <img class="dropdown-toggle" role="button" data-bs-toggle="dropdown" src="/static/images/flags/gb.svg" height="15em">
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li class="toolbar-title">Language</li>
+        <li>
+          <a href="#">
+            <img src="/static/images/flags/fr.svg" height="15em">
+            <span>French</span>
+          </a>
           </li>
-
-          <li>
-            <a href="#">
-              <img src="/static/images/flags/de.svg" height="15em">
-              <span>German</span>
-            </a>
-          </li>
-
-          <li>
-            <a href="#">
-              <img src="/static/images/flags/it.svg" height="15em">
-              <span>Italian</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+         <li>
+          <a href="#">
+            <img src="/static/images/flags/de.svg" height="15em">
+            <span>German</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <img src="/static/images/flags/it.svg" height="15em">
+            <span>Italian</span>
+          </a>
+        </li>
+      </ul>
     </li>
 
-    <li id="notifications">
-      <i class="bi-bell-fill"></i>
+    <li class="dropdown" id="notifications">
+      <i class="dropdown-toggle bi bi-bell-fill" role="button" data-bs-toggle="dropdown"></i>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li class="toolbar-title">Notifications</li>
 
-      <div class="noti-badge-round">
-        <span>9+</span>
-      </div>
+        <li class="notification unread">
+          <div class="user-img">
+            <!-- <img src="" id="user1"> -->
+            <i class="bi bi-person"></i>
+          </div>
+          <div class="msg">
+            <a href="#">
+              <p class="message">User 1 sent you a message</p>
+              <p class="timestamp">5 minutes ago</p>
+            </a>
+          </div>
+        </li>
 
-      <div class="cone-dropdown-menu">
-        <div class="toolbar-title">Notifications</div>
+        <li class="notification">
+          <div class="user-img">
+            <!-- <img src="" id="user1"> -->
+            <i class="bi bi-person"></i>
+          </div>
+          <div class="msg">
+            <a href="#">
+              <p class="message">User 2 updated file.css</p>
+              <p class="timestamp">3 hours ago</p>
+            </a>
+          </div>
+        </li>
 
-        <ul>
-          <li class="notification unread">
-            <div class="user-img">
-              <!-- <img src="" id="user1"> -->
-              <i class="bi bi-person"></i>
-            </div>
-
-            <div class="msg">
-              <a href="#">
-                <p class="message">User 1 sent you a message</p>
-                <p class="timestamp">5 minutes ago</p>
-              </a>
-            </div>
-          </li>
-
-          <li href="#" class="notification">
-            <div class="user-img">
-              <!-- <img src="" id="user1"> -->
-              <i class="bi bi-person"></i>
-            </div>
-
-            <div class="msg">
-              <a href="#">
-                <p class="message">User 2 updated file.css</p>
-                <p class="timestamp">3 hours ago</p>
-              </a>
-            </div>
-          </li>
-        </ul>
-      </div>
+      </ul>
     </li>
 
-    <li id="apps">
-      <i class="bi-grid-3x3-gap-fill"></i>
-
-      <div class="cone-dropdown-menu">
-        <div class="toolbar-title">Apps</div>
-
+    <li class="dropdown" id="apps">
+      <i class="dropdown-toggle bi bi-grid-3x3-gap-fill" role="button" data-bs-toggle="dropdown"></i>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li class="toolbar-title">Apps</li>
         <ul id="apps-container">
           <li class="apps-link">
             <a href="#">
@@ -125,25 +110,21 @@
             </a>
           </li>
         </ul>
-      </div>
+      </ul>
     </li>
 
-    <li id="settings">
-      <i class="bi-gear-fill"></i>
-
-      <div class="cone-dropdown-menu">
-        <div class="toolbar-title">Settings</div>
-
-        <ul>
-          <li class="form-check form-switch">
-            <input class="form-check-input switch_mode" type="checkbox">
-            <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
-          </li>
-          <li>
-            <a href="#">Preferences</a>
-          </li>
-        </ul>
-      </div>
+    <li class="dropdown" id="settings">
+      <i class="dropdown-toggle bi bi-gear-fill" role="button" data-bs-toggle="dropdown"></i>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li class="toolbar-title">Settings</li>
+        <li class="form-check form-switch">
+          <input class="form-check-input switch_mode" type="checkbox">
+          <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
+        </li>
+        <li>
+          <a href="#">Preferences</a>
+        </li>
+      </ul>
     </li>
 
   </ul>

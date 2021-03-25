@@ -3,41 +3,32 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-  <div id="cone-searchbar">
-    <div class="input-group">
-
-      <input type="text"
-             class="form-control"
-             id="search-text"
-             name="term"
-             placeholder="search database ..."
-             i18n:attributes="placeholder search_database">
-
-      <div class="input-group-append">
-        <button type="submit" id="searchbar-button">
-          <i class="bi-search"></i>
-        </button>
+  <div class="dropdown" id="cone-searchbar">
+    <div id="cone-searchbar-wrapper" class="dropdown-toggle" role="button" data-bs-toggle="dropdown">
+      <div class="input-group" id="livesearch-group">
+        <div id="livesearch-input">
+          <input type="text"
+                 class="form-control"
+                 id="livesearch"
+                 name="term"
+                 placeholder="search database ..."
+                 i18n:attributes="placeholder search_database">
+        </div>
+        <div class="input-group-append">
+          <button type="submit" id="searchbar-button">
+            <i class="bi-search"></i>
+          </button>
+        </div>
       </div>
-
     </div>
-
-    <div class="cone-dropdown-menu" id="cone-livesearch-dropdown">
-        <p>Search Results</p>
-        <ul>
-          <li>
-            <span>3</span>
-          </li>
-
-          <li>
-            <span>3</span>
-          </li>
-
-          <li>
-            <span>3</span>
-          </li>
-        </ul>
+    <ul class="dropdown-menu" id="cone-livesearch-dropdown">
+      <li class="dropdown-title">Search Results</li>
+      <div id="cone-livesearch-results">
+        <li>
+          <span>sadjsajdsakjdksajdsa</span>
+        </li>
       </div>
+    </ul>
   </div>
-
 
 </tal:search>

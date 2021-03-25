@@ -3,7 +3,6 @@
 #sidebar_left {
   position: relative;
   height: calc(100% - 4rem);
-  padding-right: 3rem;
 
   ul {
     width: max-content;
@@ -74,8 +73,11 @@
   &.expanded {
     width: 12rem;
     overflow: auto;
-    padding-left: 2rem;
     box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
+
+    #navtree {
+      padding: 0 2rem;
+    }
 
     .bi-arrow-right-circle { // switches collapse/expand arrows
       display:none;
@@ -165,6 +167,3 @@
     }
   }
 }
-
-
-  

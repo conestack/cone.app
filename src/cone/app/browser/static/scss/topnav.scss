@@ -17,22 +17,29 @@ $threshold_mobile: 560px;
     order:1;
   }
 
+  .dropdown-toggle::after {//remove bs dropdown arrow
+    content:none;
+  }
+
+  .dropdown-menu {
+    min-width: max-content;
+    min-width: max-content;
+    padding: 1rem;
+
+    .toolbar-title, .dropdown-title {
+      font-weight: bold;
+      padding-bottom: 1rem;
+      pointer-events: none;
+    }
+  }
+
   #cone-searchbar {
     margin: 0 1rem;
   }
 
   ul {
-    padding:0;
     margin-bottom: 0;
     list-style: none;
-  }
-
-  .cone-dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 4rem;
-    padding: 1rem 2rem;
-    z-index: 1000;
   }
 
   a, label {
@@ -81,12 +88,31 @@ $threshold_mobile: 560px;
 #cone-searchbar {
   min-height: 2.2rem;
 
+  #cone-searchbar-wrapper {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    cursor: unset;
+  }
+
   #cone-livesearch-dropdown {
-    min-width: 16rem;
-    max-height:40rem;
-    overflow-y:auto;
-    @media(min-width: $threshold_mobile) and (max-width: $threshold_tablet) {
-      transform: translateX(calc(-100% + 2rem));
+    min-width: 0;
+    max-width: 16rem;
+
+    li {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    }
+
+    #cone-livesearch-results {
+      overflow-y:auto;
+      max-height: 12rem;
+    }
+
+    #livesearch {
+      height: 2rem;
+      font-size: .9em;
     }
   }
 
@@ -94,20 +120,20 @@ $threshold_mobile: 560px;
     width: 100%;
   }
 
-  .form-control:focus {
+  #livesearch:focus {
     outline: 0;
     -webkit-box-shadow: none;
     box-shadow: none;
   }
 
-  .input-group {
+  #livesearch-group {
     height: 2.2rem;;
     overflow: hidden;
     border-radius: 4px;
     flex-wrap: nowrap;
   }
 
-  .input-group * {
+  #livesearch-group * {
     flex-wrap: nowrap;
     height: 100%;
     border: 0;
@@ -121,16 +147,16 @@ $threshold_mobile: 560px;
     width: 2.2rem;
   }
 
-  .twitter-typeahead {
-    display: block;
+  #livesearch {
     padding-left: .7rem;
   }
 
   @media(min-width:$threshold_mobile) and (max-width:$threshold_desktop){
-    .twitter-typeahead {
-      position: absolute!important;
-      width: 0!important;
-      z-index: -1;
+    .dropdown-title {
+      font-size: .9em;
+    }
+    #livesearch {
+      margin-bottom: 1rem;
     }
   }
 }
@@ -147,13 +173,14 @@ $threshold_mobile: 560px;
   #pt-wrapper {
     display: flex;
     align-items: center;
-    height:inherit;
+    height: inherit;
   }
 
   #user {
     min-width: inherit;
     margin: 0;
     right: 0;
+    left:auto!important;
   }
 
   .user-specs {
@@ -199,7 +226,7 @@ $threshold_mobile: 560px;
   #personaltools {
     min-width: 4.3rem;
 
-    .dropdown-menu-user {
+    #user {
       min-width: 10rem;
 
       a {

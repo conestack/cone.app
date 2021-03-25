@@ -13,18 +13,19 @@ body {
 }
 
 /* ----- dropdowns ----- */
-.cone-dropdown-menu, .cone-mainmenu-dropdown {
+.dropdown-menu, .cone-mainmenu-dropdown {
   background-color: #48484D;
   border: 1px solid #2E2E33;
   box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
 }
-.cone-dropdown-menu a, .cone-mainmenu-dropdown a {
+.dropdown-menu a, .cone-mainmenu-dropdown a {
   color: #949499;
   text-decoration: none;
 }
-.cone-dropdown-menu a:hover, .cone-mainmenu-dropdown a:hover {
+.dropdown-menu a:hover, .cone-mainmenu-dropdown a:hover {
   color: #dfe8f0;
   transition: color 0.25s;
+  background: transparent;
 }
 
 /* ----- topnav ----- */
@@ -65,6 +66,9 @@ body {
 }
 
 /* ----- searchbar ----- */
+#cone-searchbar .dropdown-title, #cone-searchbar span {
+  color: #949499;
+}
 #cone-searchbar input {
   color: #E6E6EB !important;
 }
@@ -74,6 +78,9 @@ body {
 #cone-searchbar #searchbar-button {
   background-color: #5bc0de;
   color: #ECF5FD;
+}
+#cone-searchbar #cone-livesearch-dropdown #livesearch:focus {
+  border-color: #5bc0de;
 }
 
 /* ----- toolbar top ----- */
@@ -183,6 +190,11 @@ a:hover {
 .btn-inf {
   background-color: #5bc0de;
   color: #ECF5FD;
+}
+
+.form-check-input:checked {
+  background-color: #5bc0de;
+  border-color: #5bc0de;
 }
 
 /* -- scrollbar -- */

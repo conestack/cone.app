@@ -32,65 +32,28 @@ var livesearch_options = new Object();
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context, 575.9);
             new cone.Topnav(context);
-            //new cone.Searchbar(context, 200, 130);
+            new cone.Searchbar(context, 200, 130);
             new cone.MainMenu(context);
             //new cone.MobileMenu(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
-/*     cone.bind_dropdowns = function(context) {
-        $('.mainmenu-item', context).each(function() {
-            let elem = $(this);
-            let children = elem.data('menu-items');
-            // console.log(children);
-            let trigger = $('> a', elem).on('click', function(e) {
-                e.preventDefault();
-                let menu = $(`
-                  <div class="cone-mainmenu-dropdown">
-                      <ul class="mainmenu-dropdown">
-                      </ul>
-                  </div>
-                `);
-                let dropdown = $('ul', menu);
-                for (let i in children) {
-                    let menu_item = children[i];
-                    console.log(menu_item);
-                    dropdown.append(`
-                      <li class="${menu_item.selected ? 'active': ''}">
-                        <a href="${menu_item.url}"
-                           title="${menu_item.title}">
-                          <i class="${menu_item.icon}"></i>
-                          <span>
-                            ${menu_item.title ? menu_item.title : '&nbsp;'}
-                          </span>
-                        </a>
-                      </li>
-                    `);
-                }
-                $('#layout').append(menu);
-            });
-        });
-        $('.cone-dropdown-menu', context).each(function() {
-            let dm = $(this);
-            if (dm.hasClass('hover')) {
-                return;
-            }
-            let handle = cone.toggle_dropdown;
-            dm.parent().off('click', handle).on('click', handle);
-            
-        });
-    }; */
-
     cone.MainMenu = class {
         constructor(context) {
             $('.mainmenu-item').each(this.set_position);
+            $(window).on('resize', this.set_position);
             $('.scroll-container').scrollLeft($('#mainmenu').outerWidth()); // scroll to right (rtl scroll direction)
         }
 
-        set_position() {
+        set_position(evt) {
+            console.log($(this))
             let elem = $(this);
             let children = elem.data('menu-items');
+            if(!children){
+                return;
+            }
+
             let menu = $(`
               <div class="cone-mainmenu-dropdown">
                   <ul class="mainmenu-dropdown">
@@ -113,7 +76,11 @@ var livesearch_options = new Object();
                   </li>
                 `);
             }
-            $('#layout').append(menu);
+            if(window.matchMedia(`(max-width:560px)`).matches) {
+                $(this).append(menu);
+            } else {
+                $('#layout').append(menu);
+            }
             
             //enter
             elem.on('mouseenter', function(e) {
@@ -211,9 +178,23 @@ var livesearch_options = new Object();
         constructor(context, threshold_1, threshold_2) {
             cone.searchbar_handler = this;
 
-            this.topnav_searchbar_btn = this.topnav_searchbar.find('#searchbar-button');
-            this.topnav_searchbar_text = this.topnav_searchbar.find('.twitter-typeahead');
-            this.topnav = $('#topnav');
+            this._handle = this.handle_visibility.bind(this);
+            $(this._handle);
+            $(window).on('resize', this._handle);
+
+            this.dd = $('#cone-livesearch-dropdown');
+            this.searchbar = $('#cone-searchbar');
+            this.search_text = $('#livesearch-input');
+        }
+
+        handle_visibility(evt){
+            if(window.matchMedia(`(min-width:560px) and (max-width: 1200px)`).matches) {
+                this.dd.addClass('dropdown-menu-end');
+                this.search_text.detach().prependTo('#cone-livesearch-dropdown');
+            } else {
+                this.search_text.detach().prependTo('#livesearch-group');
+                this.dd.removeClass('dropdown-menu-end');
+            }
         }
     }
 
@@ -274,7 +255,7 @@ var livesearch_options = new Object();
                 remote: 'livesearch?term=%QUERY'
             });
             livesearch_source.initialize();
-            var input = $('input#search-text');
+            var input = $('input#livesearch');
             var options = {
                 name: 'livesearch',
                 displayKey: 'value',

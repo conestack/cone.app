@@ -13,9 +13,9 @@ body {
 }
 
 /* ----- dropdowns ----- */
-.cone-dropdown-menu, .cone-mainmenu-dropdown {
+.dropdown-menu, .cone-mainmenu-dropdown {
   background-color: $dropdown;
-  border:1px solid $border;
+  border: 1px solid $border;
   box-shadow: 0 0 1.5rem rgba(53, 59, 65, 0.1);
 
   a {
@@ -25,6 +25,7 @@ body {
     &:hover {
       color: $fhover;
       transition: color .25s;
+      background: transparent;
     }
   }
 }
@@ -79,6 +80,10 @@ body {
 
 /* ----- searchbar ----- */
 #cone-searchbar {
+  .dropdown-title, span {
+    color: $fmedium;
+  }
+
   input {
     color: $flight!important;
   }
@@ -90,6 +95,12 @@ body {
   #searchbar-button {
     background-color: $info;
     color: $fbright;
+  }
+
+  #cone-livesearch-dropdown{
+    #livesearch:focus {
+      border-color:$info;
+    }
   }
 }
 
@@ -226,6 +237,11 @@ a:hover {
 .btn-inf {
   background-color: $info;
   color: $fbright;
+}
+
+.form-check-input:checked {
+  background-color: $info;
+  border-color: $info;
 }
 
 /* -- scrollbar -- */

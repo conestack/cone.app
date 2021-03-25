@@ -11,20 +11,25 @@
 #topnav #personaltools {
   order: 1;
 }
+#topnav .dropdown-toggle::after {
+  content: none;
+}
+#topnav .dropdown-menu {
+  min-width: max-content;
+  min-width: max-content;
+  padding: 1rem;
+}
+#topnav .dropdown-menu .toolbar-title, #topnav .dropdown-menu .dropdown-title {
+  font-weight: bold;
+  padding-bottom: 1rem;
+  pointer-events: none;
+}
 #topnav #cone-searchbar {
   margin: 0 1rem;
 }
 #topnav ul {
-  padding: 0;
   margin-bottom: 0;
   list-style: none;
-}
-#topnav .cone-dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 4rem;
-  padding: 1rem 2rem;
-  z-index: 1000;
 }
 #topnav a, #topnav label {
   text-decoration: none;
@@ -65,31 +70,44 @@
 #cone-searchbar {
   min-height: 2.2rem;
 }
-#cone-searchbar #cone-livesearch-dropdown {
-  min-width: 16rem;
-  max-height: 40rem;
-  overflow-y: auto;
+#cone-searchbar #cone-searchbar-wrapper {
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  cursor: unset;
 }
-@media (min-width: 560px) and (max-width: 900px) {
-  #cone-searchbar #cone-livesearch-dropdown {
-    transform: translateX(calc(-100% + 2rem));
-  }
+#cone-searchbar #cone-livesearch-dropdown {
+  min-width: 0;
+  max-width: 16rem;
+}
+#cone-searchbar #cone-livesearch-dropdown li {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#cone-searchbar #cone-livesearch-dropdown #cone-livesearch-results {
+  overflow-y: auto;
+  max-height: 12rem;
+}
+#cone-searchbar #cone-livesearch-dropdown #livesearch {
+  height: 2rem;
+  font-size: 0.9em;
 }
 #cone-searchbar .twitter-typeahead {
   width: 100%;
 }
-#cone-searchbar .form-control:focus {
+#cone-searchbar #livesearch:focus {
   outline: 0;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-#cone-searchbar .input-group {
+#cone-searchbar #livesearch-group {
   height: 2.2rem;
   overflow: hidden;
   border-radius: 4px;
   flex-wrap: nowrap;
 }
-#cone-searchbar .input-group * {
+#cone-searchbar #livesearch-group * {
   flex-wrap: nowrap;
   height: 100%;
   border: 0;
@@ -101,15 +119,15 @@
 #cone-searchbar #searchbar-button {
   width: 2.2rem;
 }
-#cone-searchbar .twitter-typeahead {
-  display: block;
+#cone-searchbar #livesearch {
   padding-left: 0.7rem;
 }
 @media (min-width: 560px) and (max-width: 1200px) {
-  #cone-searchbar .twitter-typeahead {
-    position: absolute !important;
-    width: 0 !important;
-    z-index: -1;
+  #cone-searchbar .dropdown-title {
+    font-size: 0.9em;
+  }
+  #cone-searchbar #livesearch {
+    margin-bottom: 1rem;
   }
 }
 
@@ -131,6 +149,7 @@
   min-width: inherit;
   margin: 0;
   right: 0;
+  left: auto !important;
 }
 #personaltools .user-specs {
   margin-left: 0.6rem;
@@ -169,10 +188,10 @@
   #personaltools {
     min-width: 4.3rem;
   }
-  #personaltools .dropdown-menu-user {
+  #personaltools #user {
     min-width: 10rem;
   }
-  #personaltools .dropdown-menu-user a {
+  #personaltools #user a {
     padding: 0;
     margin: 0.3em 0;
   }
@@ -184,7 +203,6 @@
 #sidebar_left {
   position: relative;
   height: calc(100% - 4rem);
-  padding-right: 3rem;
 }
 #sidebar_left ul {
   width: max-content;
@@ -240,8 +258,10 @@
 #sidebar_left.expanded {
   width: 12rem;
   overflow: auto;
-  padding-left: 2rem;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
+}
+#sidebar_left.expanded #navtree {
+  padding: 0 2rem;
 }
 #sidebar_left.expanded .bi-arrow-right-circle {
   display: none;
@@ -345,7 +365,6 @@
   height: 100%;
   margin-bottom: 0;
   padding: 0;
-  padding-top: 1rem;
   transform: rotate(180deg);
 }
 #mainmenu li {
@@ -376,29 +395,6 @@
     margin-bottom: 0.5rem;
   }
 }
-/* @media(min-width:560px) and (max-width:1200px) {
-  .mainmenu-title {
-    display: none;
-  }
-
-  .mainmenu-item:hover {
-    .cone-mainmenu-dropdown- {
-      display: block;
-    }
-  }
-}
-
-@media(min-width:1200px) {
-  .mainmenu-item:hover {
-    //height: 20rem;
-    .dropdown-title {
-      display: none;
-    }
-    .cone-mainmenu-dropdown {
-      display: block;
-    }
-  } 
-} */
 /* ----- toolbar top ----- */
 #toolbar-top {
   margin: 0;
@@ -409,21 +405,24 @@
   /* -- apps -- */
   /* -- settings -- */
 }
+#toolbar-top .dropdown-menu {
+  top: auto !important;
+}
 #toolbar-top > li {
   padding: 0 0.5rem;
   display: inline-block;
 }
-#toolbar-top > li .cone-dropdown-menu {
-  min-width: max-content;
-  transform: translateX(calc(-100% + 1.3rem));
-}
-#toolbar-top > li .cone-dropdown-menu .toolbar-title {
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-#toolbar-top > li .cone-dropdown-menu ul {
+#toolbar-top > li ul {
   padding: 0;
   list-style: none;
+}
+@media (max-width: 560px) {
+  #toolbar-top > li .toolbar-title {
+    display: none;
+  }
+  #toolbar-top > li .dropdown-menu {
+    width: 100vw;
+  }
 }
 #toolbar-top #language img {
   margin-right: 0.5rem;
@@ -460,7 +459,7 @@
 #toolbar-top #notifications .notification.unread::before {
   content: "";
   position: absolute;
-  transform: translateX(-200%);
+  transform: translateX(-150%);
   width: 10px;
   height: 10px;
   background: red;
@@ -507,14 +506,6 @@
 #topnav.mobile #cone-searchbar {
   order: -1;
 }
-#topnav.mobile .cone-dropdown-menu {
-  position: relative;
-  top: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-}
 #topnav.mobile #topnav-content {
   position: absolute;
   top: 4rem;
@@ -548,6 +539,7 @@
 }
 #topnav.mobile #mainmenu .cone-mainmenu-dropdown {
   position: relative;
+  display: block;
   box-shadow: none;
   top: 0;
   padding: 0 0 0 1rem;
@@ -594,6 +586,9 @@ body {
   min-height: calc(100% - 5rem);
 }
 
+.breadcrumb {
+  flex-wrap: wrap-reverse;
+}
 .breadcrumb a {
   text-decoration: none;
 }

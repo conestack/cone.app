@@ -40,6 +40,7 @@ body {
 }
 
 .breadcrumb {
+  flex-wrap: wrap-reverse;
   a {
   text-decoration: none;
   &:hover, &:active {
