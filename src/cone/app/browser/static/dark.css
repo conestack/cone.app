@@ -40,6 +40,9 @@ body {
   background-color: #38383D;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
 }
+#topnav.mobile #personaltools::before {
+  background-color: #949499;
+}
 
 /* ----- main menu ----- */
 #mainmenu .dropdown-title {

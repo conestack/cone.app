@@ -506,6 +506,10 @@
 #topnav.mobile #cone-searchbar {
   order: -1;
 }
+#topnav.mobile #cone-searchbar .input-group-append {
+  position: absolute;
+  right: 0;
+}
 #topnav.mobile #topnav-content {
   position: absolute;
   top: 4rem;
@@ -513,7 +517,7 @@
   display: none;
   flex-direction: column;
   width: 100%;
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
   z-index: 1000;
 }
 #topnav.mobile #topnav-content > * {
@@ -525,11 +529,27 @@
   padding: 0;
   border: 0;
 }
+#topnav.mobile #personaltools #user {
+  position: relative !important;
+  transform: none !important;
+}
+#topnav.mobile #personaltools::before {
+  content: "";
+  position: absolute;
+  top: -0.25rem;
+  width: 100%;
+  height: 1px;
+}
+#topnav.mobile #main-menu {
+  transform: none;
+  overflow: visible;
+}
 #topnav.mobile #mainmenu {
   line-height: 2;
   width: 100%;
   flex-direction: column;
   overflow: hidden;
+  transform: none;
 }
 #topnav.mobile #mainmenu .mainmenu-title {
   display: inline-block;
@@ -537,9 +557,12 @@
 #topnav.mobile #mainmenu .dropdown-arrow {
   float: right;
 }
+#topnav.mobile #mainmenu .mainmenu-item {
+  display: block;
+}
 #topnav.mobile #mainmenu .cone-mainmenu-dropdown {
   position: relative;
-  display: block;
+  display: none;
   box-shadow: none;
   top: 0;
   padding: 0 0 0 1rem;

@@ -27,7 +27,6 @@ var livesearch_options = new Object();
 (function($) {
 
     $(function() {
-        // bdajax.register(cone.bind_dropdowns, true);
         bdajax.register(function(context) {
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context, 575.9);
@@ -39,32 +38,29 @@ var livesearch_options = new Object();
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
 
-    cone.MainMenu = class {
-        constructor(context) {
-            $('.mainmenu-item').each(this.set_position);
-            $(window).on('resize', this.set_position);
-            $('.scroll-container').scrollLeft($('#mainmenu').outerWidth()); // scroll to right (rtl scroll direction)
-        }
-
-        set_position(evt) {
-            console.log($(this))
-            let elem = $(this);
-            let children = elem.data('menu-items');
-            if(!children){
+    cone.MainMenuItem = class {
+        constructor(elem) {
+            this.elem = elem;
+            this.children = this.elem.data('menu-items');
+            if(!this.children){
                 return;
             }
 
-            let menu = $(`
-              <div class="cone-mainmenu-dropdown">
-                  <ul class="mainmenu-dropdown">
-                  </ul>
-              </div>
-          ` );
-            let dropdown = $('ul', menu);
+            this.menu = $(`
+                <div class="cone-mainmenu-dropdown">
+                    <ul class="mainmenu-dropdown">
+                    </ul>
+                </div>
+            `);
 
-            for (let i in children) {
-                let menu_item = children[i];
-                dropdown.append(`
+            this.dropdown = $('ul', this.menu);
+            $(this.render_dd());
+        }
+
+        render_dd() {
+            for (let i in this.children) {
+                let menu_item = this.children[i];
+                let dd_item = $(`
                   <li class="${menu_item.selected ? 'active': ''}">
                     <a href="${menu_item.url}"
                        title="${menu_item.title}">
@@ -75,30 +71,68 @@ var livesearch_options = new Object();
                     </a>
                   </li>
                 `);
+                this.dropdown.append(dd_item);
             }
-            if(window.matchMedia(`(max-width:560px)`).matches) {
-                $(this).append(menu);
-            } else {
-                $('#layout').append(menu);
-            }
-            
-            //enter
-            elem.on('mouseenter', function(e) {
-                $('.cone-mainmenu-dropdown').hide();
-                e.preventDefault();
-                menu.offset({left: elem.offset().left});
-                menu.show();
+            this.menu.appendTo('#layout');
+        }
+    }
+
+    cone.MainMenu = class {
+        constructor(context) {
+            this.main_menu_items = [];
+            let that = this;
+            $('.scroll-container').scrollLeft($('#mainmenu').outerWidth()); // scroll to right (rtl scroll direction)
+
+            $('.mainmenu-item').each(function() {
+                let main_menu_item = new cone.MainMenuItem($(this));
+                that.main_menu_items.push(main_menu_item);
             });
 
-            //leave
-            menu.on('mouseleave', function(e){
-                console.log('mouseleave');
-                menu.hide();
-            });
+            $(this.handle_visibility());
+            $(window).on('resize', this.handle_visibility());
+        }
 
-            $('#main-menu').on('scroll', function(){
-                menu.hide();
-            })
+        handle_visibility() {
+            for(let i in this.main_menu_items){
+                let item = this.main_menu_items[i];
+
+                if(!item.menu) {
+                    return;
+                }
+
+                if(window.matchMedia(`(max-width:560px)`).matches) {
+                    item.elem.off('mouseenter');
+                    item.menu.off('mouseleave');
+                    item.menu.detach().appendTo(item.elem);
+                    $('a.dropdown-arrow', item.elem).on('click', function(evt) {
+                        evt.preventDefault();
+                        console.log('clicked arrow');
+                        item.menu.slideToggle('fast');
+                    });
+                } else {
+                    console.log(item.elem);
+                    item.menu.detach().appendTo('#layout');
+
+                    $('a.dropdown-arrow', item.elem).off('click');
+
+                    //enter
+                    item.elem.on('mouseenter', function(e) {
+                        console.log('mouseenter');
+                        item.menu.show();
+                        item.menu.offset({left: item.elem.offset().left});
+                    });
+
+                    //leave
+                    item.menu.on('mouseleave', function(e){
+                        console.log('mouseleave');
+                        item.menu.hide();
+                    });
+
+                    $('#main-menu').on('scroll', function(){
+                        item.menu.hide();
+                    });
+                }
+            }
         }
     }
 
@@ -159,12 +193,6 @@ var livesearch_options = new Object();
         handle_visibility(evt) {
             if (window.matchMedia(`(max-width: 560px)`).matches) {
                 this.elem.addClass('mobile');
-
-                $('#mainmenu').find('.dropdown-arrow').off().on('click', function(evt) {
-                    $(this).parent('li').find('.cone-dropdown-menu').slideToggle('fast');
-                    evt.stopPropagation(); //disable default scrolldown
-                    evt.preventDefault();
-                })
             } else {
                 this.elem.removeClass('mobile');
             }

@@ -40,10 +40,14 @@ body {
     transition: background-color .25s;
   }
 
-  &.mobile #topnav-content {
-    background-color: $menus;
-    box-shadow: 0 5px 5px rgba($color: black, $alpha: 0.2);
-
+  &.mobile {
+    #topnav-content {
+      background-color: $menus;
+      box-shadow: 0 5px 5px rgba($color: black, $alpha: 0.2);
+    }
+    #personaltools::before {
+      background-color: $fmedium;
+    }
   }
 }
 
