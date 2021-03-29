@@ -67,6 +67,16 @@ body {
 
 
 /* ----- mobile menu ----- */
+#topnav.mobile {
+  .sidebar-heading {
+    border-top: 1px solid $fmedium;
+    color: $flight;
+  }
+
+  #personaltools {
+    border-top: 1px solid $fmedium;
+  }
+}
 #mobile-menu-toggle {
   color: $fmedium;
 }
@@ -75,10 +85,6 @@ body {
   border: 1px solid $border;
   border-top: none;
   background-color: $menus;
-
-  .sidebar-heading hr {
-    border-top: 1px solid rgba($color: $flight, $alpha: 0.2)
-  }
 }
 
 
@@ -215,8 +221,7 @@ body {
 
 
 /* ----- footer ----- */
-.footer-custom {
-  border-top: 1px solid $fmedium;
+#cone-footer {
   color: $fmedium;
 }
 

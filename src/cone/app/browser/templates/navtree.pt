@@ -6,13 +6,15 @@
        ajax:bind="contextchanged"
        ajax:action="navtree:#navtree:replace">
 
-      <li class="sidebar-heading">
-        <span tal:content="context.title">
-          Navigation
-        </span>
-      </li>
+    <li class="sidebar-heading" id="navtree-heading">
+      <span tal:content="context.title">
+        Navigation
+      </span>
+    </li>
 
+    <div id="navtree-content">
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
+    </div>
   </ul>
 
 

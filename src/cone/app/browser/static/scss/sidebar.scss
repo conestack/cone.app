@@ -39,6 +39,7 @@
 
         &:hover { // dropout
           min-width: 16rem;
+          width: max-content;
 
           > a {
             color:white!important;
@@ -53,7 +54,7 @@
             position: absolute;
             z-index: -1;
             left: 0;
-            min-width: inherit;
+            min-width: max-content;
             padding: 1.5rem 1rem 1rem 5rem;
 
             ul {
@@ -75,10 +76,6 @@
     overflow: auto;
     box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
 
-    #navtree {
-      padding: 0 2rem;
-    }
-
     .bi-arrow-right-circle { // switches collapse/expand arrows
       display:none;
     }
@@ -89,50 +86,57 @@
       text-transform: uppercase;
     }
 
-    .navtreelevel_1 {
-      padding-bottom: .5rem;
+    #navtree {
+      padding: 0 2rem;
 
-      ul {
-        margin: .25rem 0;
-        font-size: .95em;
-
-        ul {
-          margin-left:1rem;
-        }
+      #navtree-content {
+        display:contents;
       }
 
-      li {
-        padding-top: .25rem;
-        &:not(:last-child) {
-          padding-bottom: .25rem;
-          border-left: 1px solid grey;
+      .navtreelevel_1 {
+        padding-bottom: .5rem;
 
-          &:before { // sets borders in navtree navigation
-            content: "";
-            display: inline-block;
-            // position: absolute;
-            height: 1rem;
-            width: 0.8rem;
-            transform: translate(-1px, -25%);
-            border-radius: 0 0 0 5px;
-            border: 1px solid;
-            border-color: transparent transparent grey grey;
+        ul {
+          margin: .25rem 0;
+          font-size: .95em;
+
+          ul {
+            margin-left:1rem;
           }
         }
-        &:last-child {
-          &:before { // sets borders in navtree navigation
-            content: "";
-            display: inline-block;
-            // position: absolute;
-            height: 1rem;
-            width: 0.8rem;
-            transform: translateY(-25%);
-            border-radius: 0 0 0 5px;
-            border: 1px solid;
-            border-color: transparent transparent grey grey;
+
+        li {
+          padding-top: .25rem;
+          &:not(:last-child) {
+            padding-bottom: .25rem;
+            border-left: 1px solid grey;
+
+            &:before { // sets borders in navtree navigation
+              content: "";
+              display: inline-block;
+              // position: absolute;
+              height: 1rem;
+              width: 0.8rem;
+              transform: translate(-1px, -25%);
+              border-radius: 0 0 0 5px;
+              border: 1px solid;
+              border-color: transparent transparent grey grey;
+            }
+          }
+          &:last-child {
+            &:before { // sets borders in navtree navigation
+              content: "";
+              display: inline-block;
+              // position: absolute;
+              height: 1rem;
+              width: 0.8rem;
+              transform: translateY(-25%);
+              border-radius: 0 0 0 5px;
+              border: 1px solid;
+              border-color: transparent transparent grey grey;
+            }
           }
         }
-        
       }
     }
   }

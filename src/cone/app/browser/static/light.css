@@ -63,6 +63,14 @@ body {
 }
 
 /* ----- mobile menu ----- */
+#topnav.mobile .sidebar-heading {
+  border-top: 1px solid #717176;
+  color: #57575C;
+}
+#topnav.mobile #personaltools {
+  border-top: 1px solid #717176;
+}
+
 #mobile-menu-toggle {
   color: #717176;
 }
@@ -71,9 +79,6 @@ body {
   border: 1px solid #EBEBF0;
   border-top: none;
   background-color: #FAFAFC;
-}
-#mobile-menu-content .sidebar-heading hr {
-  border-top: 1px solid rgba(87, 87, 92, 0.2);
 }
 
 /* ----- searchbar ----- */
@@ -177,8 +182,7 @@ body {
 }
 
 /* ----- footer ----- */
-.footer-custom {
-  border-top: 1px solid #717176;
+#cone-footer {
   color: #717176;
 }
 

@@ -2,9 +2,9 @@
            omit-tag="True">
 
     <footer id="cone-footer">
-      <div class="footer-copyright">
-        © 2009-2021 Copyright: <a href="https://bluedynamics.com/">BlueDynamics Alliance</a>
-      </div>
+      <span class="footer-copyright">
+      © 2009-2021 Copyright: <a href="https://bluedynamics.com/">BlueDynamics Alliance</a>
+      </span>
     </footer>
 
 </tal:block>
