@@ -33,7 +33,6 @@
         </a>
 
         <a class="dropdown-arrow"
-           href="#submenu-${item['id']}"
            tal:condition="children">
           <i class="bi bi-chevron-down"></i>
         </a>
