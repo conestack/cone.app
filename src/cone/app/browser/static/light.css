@@ -152,9 +152,6 @@ body {
 #sidebar_left #sidebar-toggle-btn {
   color: rgba(87, 87, 92, 0.3);
 }
-#sidebar_left li.active .dropout > a {
-  color: #5bc0de;
-}
 #sidebar_left .sidebar-heading {
   color: #57575C;
 }
@@ -165,6 +162,16 @@ body {
   color: white;
 }
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover ul {
+  background: #ffffff;
+  border: 1px solid #EBEBF0;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover {
+  background: #5bc0de;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover > a {
+  color: white;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover ul {
   background: #ffffff;
   border: 1px solid #EBEBF0;
 }

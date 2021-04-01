@@ -14,6 +14,7 @@ cone = {
     searchbar_handler: null,
     navtree: null,
     topnav: null,
+    main_menu_sidebar: null,
     view_mobile: null,
     vp_flag: true,
     default_themes: [
@@ -57,12 +58,58 @@ var livesearch_options = new Object();
             new cone.ThemeSwitcher(context, cone.default_themes);
             new cone.SidebarMenu(context);
             new cone.Topnav(context);
-            new cone.Searchbar(context, 200, 130);
+            new cone.Searchbar(context);
             new cone.MainMenu(context);
             new cone.Navtree(context);
+            new cone.MainMenuSidebar(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
+
+    cone.MainMenuSidebar = class {
+        constructor(context) {
+            let elem = $('#mainmenu_sidebar', context);
+            if(!elem.length) {
+                return;
+            }
+            if (cone.main_menu_sidebar !== null) {
+                cone.main_menu_sidebar.unload();
+            }
+            this.elem = elem;
+
+            this._mouseenter_handle = this.align_width.bind(this);
+            this._restore = this.restore_width.bind(this);
+
+            if(cone.SidebarMenu.state) {
+                $('.sb-menu', elem).on('mouseenter', this._mouseenter_handle);
+                $('.sb-menu', elem).on('mouseleave', this._restore); //restore original size
+            } else {
+                $('.dropdown-arrow', elem).on('click', this._handle);
+            }
+
+            cone.main_menu_sidebar = this;
+        }
+
+        unload() {
+            $(window).off('resize', this._handle);
+            $('.sb-menu', elem).off('mouseenter', this._mouseenter_handle);
+            $('.sb-menu', elem).off('mouseleave', this._restore);
+        }
+
+
+        align_width(evt) {
+            let target = $(evt.currentTarget);
+            if(target.outerWidth() > $('ul', target).outerWidth()) {
+                $('ul', target).css('width', target.outerWidth());
+            } else {
+                target.css('width', $('ul', target).outerWidth());
+            }
+        }
+
+        restore_width(evt) {
+            $(evt.currentTarget).css('width', 'auto');
+        }
+    }
 
     cone.Navtree = class {
 
@@ -381,6 +428,7 @@ var livesearch_options = new Object();
             }
             cone.sidebar_menu = this;
             this.sidebar = $('#sidebar_left');
+            this.state = null;
             this.toggle_btn = $('#sidebar-toggle-btn');
 
             this.toggle_btn.on('click', this.toggle_menu.bind(this));
@@ -388,10 +436,26 @@ var livesearch_options = new Object();
             $(this._resize_handle);
             $(window).on('resize', this._resize_handle);
             this.handle_menu_visibility(null);
+
+            this._handle_state = this.handle_state.bind(this);
+            $(this._handle_state);
+            $(window).on('resize', this._handle_state);
         }
 
         unload() {
             $(window).off('resize', this._resize_handle);
+        }
+
+        handle_state() {
+            if(window.matchMedia(`(max-width: 990px)`).matches) {
+                this.sidebar.addClass('collapsed');
+                this.sidebar.removeClass('expanded');
+                this.state = true;
+            } else {
+                this.sidebar.addClass('expanded');
+                this.sidebar.removeClass('collapsed');
+                this.state = false;
+            }
         }
 
         toggle_menu(evt) {
@@ -399,21 +463,15 @@ var livesearch_options = new Object();
             if(this.sidebar.hasClass('collapsed')){
                 this.sidebar.removeClass('collapsed');
                 this.sidebar.addClass('expanded');
+                this.state = false;
             } else if(this.sidebar.hasClass('expanded')) {
                 this.sidebar.removeClass('expanded');
                 this.sidebar.addClass('collapsed');
+                this.state = true;
             }
         }
 
         handle_menu_visibility(evt) {
-            if(window.matchMedia(`(max-width: 991.9px)`).matches) {
-                this.sidebar.addClass('collapsed');
-                this.sidebar.removeClass('expanded');
-            } else {
-                this.sidebar.addClass('expanded');
-                this.sidebar.removeClass('collapsed');
-            }
-
             if(!cone.vp_flag) {
                 return;
             }

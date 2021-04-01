@@ -206,6 +206,7 @@
 }
 #sidebar_left ul {
   width: max-content;
+  list-style: none;
 }
 #sidebar_left.collapsed {
   width: 3.5rem;
@@ -273,7 +274,7 @@
   display: none;
 }
 #sidebar_left.expanded #navtree {
-  padding: 0 2rem;
+  padding: 0 1.5rem;
 }
 #sidebar_left.expanded #navtree #navtree-content {
   display: contents;
@@ -342,7 +343,21 @@
 }
 
 /* ----- mainmenu ----- */
-.scroll-container {
+.cone-mainmenu-dropdown {
+  position: absolute;
+  z-index: 1000;
+  padding: 0.5rem;
+  min-width: 10rem;
+  display: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#topnav-content .scroll-container {
   overflow-x: auto;
   transform: rotate(180deg);
   margin-right: auto;
@@ -352,21 +367,7 @@
   flex-wrap: nowrap;
   align-items: center;
 }
-
-.cone-mainmenu-dropdown {
-  position: absolute;
-  z-index: 1000;
-  padding: 0.5rem;
-  min-width: 10rem;
-  display: none;
-}
-.cone-mainmenu-dropdown ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#mainmenu {
+#topnav-content #mainmenu {
   display: inline-flex;
   flex-wrap: nowrap;
   height: 100%;
@@ -374,7 +375,7 @@
   padding: 0;
   transform: rotate(180deg);
 }
-#mainmenu li {
+#topnav-content #mainmenu li {
   height: 100%;
   display: flex;
   align-items: center;
@@ -402,6 +403,66 @@
     margin-bottom: 0.5rem;
   }
 }
+#sidebar_left.collapsed #mainmenu_sidebar {
+  margin-top: 3rem;
+  margin-left: 0;
+  padding: 0;
+  width: inherit;
+}
+#sidebar_left.collapsed #mainmenu_sidebar .dropdown-arrow {
+  display: none;
+}
+#sidebar_left.collapsed #mainmenu_sidebar .cone-mainmenu-dropdown-sb {
+  display: none;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li {
+  padding: 0.75rem 1rem;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li > a > span {
+  display: none;
+  margin-left: 2rem;
+  font-weight: bold;
+  color: white;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover {
+  min-width: 16rem;
+  width: max-content;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover > a {
+  color: white !important;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover span {
+  display: inline-block;
+}
+#sidebar_left.collapsed #mainmenu_sidebar > li:hover .cone-mainmenu-dropdown-sb {
+  display: block;
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  min-width: max-content;
+  padding: 1.5rem 1rem 1rem 5rem;
+}
+#sidebar_left.expanded .cone-mainmenu-dropdown-sb {
+  width: 100%;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+#sidebar_left #mainmenu_sidebar {
+  width: 100%;
+  margin: 0;
+  padding: 0 1.5rem;
+}
+#sidebar_left #mainmenu_sidebar a {
+  text-decoration: none;
+}
+#sidebar_left #mainmenu_sidebar li:not(.sidebar-heading) {
+  padding-bottom: 0.5rem;
+}
+#sidebar_left #mainmenu_sidebar .dropdown-arrow {
+  float: right;
+}
+
 /* ----- toolbar top ----- */
 #toolbar-top {
   margin: 0;

@@ -174,12 +174,6 @@ body {
     color: rgba($color: $flight, $alpha: 0.3);
   }
 
-  li {
-    &.active .dropout > a {
-    color: $info;
-    }
-  }
-
   .sidebar-heading {
     color: $flight;
   }
@@ -188,15 +182,29 @@ body {
     color: white;
   }
  */
-  &.collapsed #navtree {
-    .navtreelevel_1:hover {
-      background: $info;
-
-      > a { color: white;}
-
-      ul {
-        background: $menu;
-        border: 1px solid $border;
+  &.collapsed {
+    #navtree {
+      .navtreelevel_1:hover {
+        background: $info;
+  
+        > a { color: white;}
+  
+        ul {
+          background: $menu;
+          border: 1px solid $border;
+        }
+      }
+    }
+    #mainmenu_sidebar {
+      > li:hover {
+        background: $info;
+  
+        > a { color: white;}
+  
+        ul {
+          background: $menu;
+          border: 1px solid $border;
+        }
       }
     }
   }

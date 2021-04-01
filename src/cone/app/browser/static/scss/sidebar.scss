@@ -6,6 +6,7 @@
 
   ul {
     width: max-content;
+    list-style: none;
   }
 
   // collapsed
@@ -90,7 +91,7 @@
     }
 
     #navtree {
-      padding: 0 2rem;
+      padding: 0 1.5rem;
 
       #navtree-content {
         display:contents;
