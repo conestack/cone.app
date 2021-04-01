@@ -296,6 +296,15 @@ class MainMenu(LayoutConfigTile):
         import json
         return json.dumps(data)
 
+
+@tile(name='mainmenu_sidebar',
+      path='templates/mainmenu_sidebar.pt',
+      permission='view',
+      strict=False)
+class MainMenuSideBar(MainMenu):
+    pass
+
+
 @tile(name='pathbar',
       path='templates/pathbar.pt',
       permission='view',

@@ -1,0 +1,69 @@
+<tal:mainmenu xmlns:tal="http://xml.zope.org/namespaces/tal"
+              xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+              omit-tag="True">
+
+  <ul id="mainmenu_sidebar"
+      ajax:bind="contextchanged"
+      ajax:action="mainmenu:#mainmenu:replace"
+      tal:define="config context.config">
+
+    <li class="sidebar-heading" id="navtree-heading">
+      <span>
+        main Menu
+      </span>
+    </li>
+
+    <tal:item repeat="item context.menuitems">
+
+      <tal:comment replace="None">Main menu item as link</tal:comment>
+      <li tal:condition="not item['children']"
+          tal:define="css item['selected'] and 'active' or '';
+                      css ' '.join([css, 'node-%s' % item['id']]);"
+          tal:attributes="class css">
+
+        <a href="${item['url']}"
+           title="${item['description']}"
+           ajax:bind="click"
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           ajax:path="href"
+          ><i class="${item['icon']|nothing}"></i>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span></a>
+
+      </li>
+
+      <tal:comment replace="None">Main menu item as dropdown</tal:comment>
+      <li tal:condition="item['children']"
+          tal:define="css item['selected'] and 'active' or '';
+                      css ' '.join([css, 'node-%s' % item['id']]);
+                      css css + ' sb-menu';"
+          tal:attributes="class css">
+
+        <a href="#">
+          <i class="${item['icon']|nothing}"></i>
+          <span tal:content="item['title'] | string:'&nbsp;'">Title</span>
+          <i class="dropdown-arrow bi bi-chevron-down"></i>
+        </a>
+
+        <ul class="cone-mainmenu-dropdown-sb">
+          <tal:li repeat="child item['children']">
+            <li tal:define="css child['selected'] and 'active' or '';"
+                tal:attributes="class css">
+              <a href="${child['url']}"
+                 title="${child['description']}"
+                 ajax:bind="click"
+                 ajax:target="${child['target']}"
+                 ajax:event="contextchanged:#layout"
+                 ajax:path="href"
+                ><i class="${child['icon']|nothing}"></i>
+                <span tal:content="child['title'] | string:'&nbsp;'">Title</span></a>
+            </li>
+          </tal:li>
+        </ul>
+      </li>
+
+    </tal:item>
+
+  </ul>
+
+</tal:mainmenu>
