@@ -71,6 +71,10 @@ body {
   .sidebar-heading {
     border-top: 1px solid $fmedium;
     color: $flight;
+    &#navtree-heading:hover {
+      color: $info;
+      transition: color .25s;
+    }
   }
 
   #personaltools {

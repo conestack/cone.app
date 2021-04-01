@@ -10,6 +10,7 @@
       <span tal:content="context.title">
         Navigation
       </span>
+      <i class="dropdown-arrow bi bi-chevron-down"></i>
     </li>
 
     <div id="navtree-content">

@@ -269,6 +269,9 @@
   font-size: 0.8rem;
   text-transform: uppercase;
 }
+#sidebar_left.expanded .sidebar-heading .dropdown-arrow {
+  display: none;
+}
 #sidebar_left.expanded #navtree {
   padding: 0 2rem;
 }
@@ -593,6 +596,10 @@
 #topnav.mobile #navtree.mobile {
   padding: 0;
 }
+#topnav.mobile #navtree.mobile .dropdown-arrow {
+  float: right;
+  display: inline-block;
+}
 #topnav.mobile #navtree.mobile #navtree-content {
   margin-top: 1rem;
   display: none;
@@ -601,15 +608,6 @@
   padding: 1rem 1rem 0 1rem;
   text-transform: uppercase;
 }
-#topnav.mobile #navtree.mobile .sidebar-heading::after {
-  content: "O";
-}
-#topnav.mobile #navtree.mobile li a::after {
-  content: "+";
-}
-#topnav.mobile #navtree.mobile li.active > a::after {
-  content: "-";
-}
 #topnav.mobile #navtree.mobile .navtreelevel_1 {
   padding: 0 1rem;
   padding-bottom: 0.5rem;
@@ -617,6 +615,7 @@
 #topnav.mobile #navtree.mobile .navtreelevel_1 ul {
   margin: 0.25rem 0;
   font-size: 0.95em;
+  padding: 0;
 }
 #topnav.mobile #navtree.mobile .navtreelevel_1 ul ul {
   padding: 0;

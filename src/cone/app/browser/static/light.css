@@ -67,6 +67,10 @@ body {
   border-top: 1px solid #717176;
   color: #57575C;
 }
+#topnav.mobile .sidebar-heading#navtree-heading:hover {
+  color: #5bc0de;
+  transition: color 0.25s;
+}
 #topnav.mobile #personaltools {
   border-top: 1px solid #717176;
 }

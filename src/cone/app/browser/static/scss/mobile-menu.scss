@@ -115,6 +115,11 @@
   #navtree.mobile {
     padding: 0;
 
+    .dropdown-arrow {
+      float: right;
+      display: inline-block;
+    }
+
     #navtree-content {
       margin-top: 1rem;
       display:none;
@@ -123,22 +128,6 @@
     .sidebar-heading {
       padding: 1rem 1rem 0 1rem;
       text-transform: uppercase;
-
-      &::after {
-        content:"O";
-      }
-    }
-
-    li {
-      a::after {
-        content:"+";
-      }
-    }
-
-    li.active {
-      > a::after {
-        content:"-";
-      }
     }
 
     .navtreelevel_1 {
@@ -147,6 +136,7 @@
       ul {
         margin: .25rem 0;
         font-size: .95em;
+        padding: 0;
         ul {
           padding: 0;
           margin-left:1rem;
