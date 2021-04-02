@@ -11,19 +11,19 @@
         <li>
           <a href="#">
             <img src="/static/images/flags/fr.svg" height="15em">
-            <span>French</span>
+            <span>FR</span>
           </a>
           </li>
          <li>
           <a href="#">
             <img src="/static/images/flags/de.svg" height="15em">
-            <span>German</span>
+            <span>DE</span>
           </a>
         </li>
         <li>
           <a href="#">
-            <img src="/static/images/flags/it.svg" height="15em">
-            <span>Italian</span>
+            <img src="/static/images/flags/at.svg" height="15em">
+            <span>AT</span>
           </a>
         </li>
       </ul>

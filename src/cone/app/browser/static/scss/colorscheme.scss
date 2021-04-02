@@ -37,7 +37,8 @@ body {
 
   .apps-link:hover {
     background-color: $menus;
-    transition: background-color .25s;
+    color: $fhover;
+    transition: all .25s;
   }
 
   &.mobile {
@@ -183,6 +184,9 @@ body {
   }
  */
   &.collapsed {
+    >:not(:nth-child(-n+2)):before {
+      background: $fmedium;
+    }
     #navtree {
       .navtreelevel_1:hover {
         background: $info;

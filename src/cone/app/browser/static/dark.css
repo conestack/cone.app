@@ -34,7 +34,8 @@ body {
 }
 #topnav .apps-link:hover {
   background-color: #38383D;
-  transition: background-color 0.25s;
+  color: #dfe8f0;
+  transition: all 0.25s;
 }
 #topnav.mobile #topnav-content {
   background-color: #38383D;
@@ -146,6 +147,9 @@ body {
 }
 #sidebar_left .sidebar-heading {
   color: #E6E6EB;
+}
+#sidebar_left.collapsed > :not(:nth-child(-n+2)):before {
+  background: #949499;
 }
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover {
   background: #5bc0de;

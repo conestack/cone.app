@@ -7,7 +7,7 @@
       ajax:action="mainmenu:#mainmenu:replace"
       tal:define="config context.config">
 
-    <li class="sidebar-heading" id="navtree-heading">
+    <li class="sidebar-heading" id="mainmenu-sb-heading">
       <span>
         main Menu
       </span>
@@ -39,11 +39,14 @@
                       css css + ' sb-menu';"
           tal:attributes="class css">
 
-        <a href="#">
+        <a href="${item['url']}">
           <i class="${item['icon']|nothing}"></i>
           <span tal:content="item['title'] | string:'&nbsp;'">Title</span>
+        </a>
+        <a href="#" class="sidebar-arrow">
           <i class="dropdown-arrow bi bi-chevron-down"></i>
         </a>
+
 
         <ul class="cone-mainmenu-dropdown-sb">
           <tal:li repeat="child item['children']">

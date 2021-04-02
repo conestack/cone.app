@@ -124,22 +124,34 @@ ul {
       display: none;
     }
   }
-  
-  #mainmenu_sidebar {
-    width: 100%;
-    margin: 0;
-    padding: 0 1.5rem;
+}
 
-    a {
-      text-decoration: none;
+#mainmenu_sidebar {
+  width: 100%;
+  margin: 0;
+  padding: 0 1.5rem;
+
+  a {
+    text-decoration: none;
+  }
+
+  li:not(.sidebar-heading) {
+    padding-bottom: 0.5rem;
+  }
+
+  .dropdown-arrow{
+    float:right;
+    cursor: pointer;
+  }
+
+  &.mobile {
+    order: -1;
+    .cone-mainmenu-dropdown-sb {
+      display:none;
+      padding: .5rem 0 0 1rem;
     }
-
-    li:not(.sidebar-heading) {
-      padding-bottom: 0.5rem;
-    }
-
-    .dropdown-arrow{
-      float:right;
+    #mainmenu-sb-heading {
+      display: none;
     }
   }
 }
