@@ -66,8 +66,8 @@ var livesearch_options = new Object();
 
     cone.MainMenuItem = class {
 
-        constructor(elem) {
-            this.elem = elem;
+        constructor(mm_top) {
+            this.elem = mm_top;
             this.children = this.elem.data('menu-items');
             if(!this.children){
                 return;
@@ -103,30 +103,29 @@ var livesearch_options = new Object();
         }
 
         mv_to_mobile() {
+            console.log('cone.main_menu_item.mv_to_mobile()');
             let menu = this.menu;
             let elem = this.elem;
-            menu.hide();
-
+            menu.hide().off();
+            elem.off();
+            menu.css('left', '0');
             if(!elem.children('div').length) {
                 menu.detach().appendTo(elem);
             }
-            $('a.dropdown-arrow', elem).off().on('click', function(e){
+            $('a.dropdown-arrow', elem).off().on('click', function(evt){
+                console.log('top mm click');
                 menu.slideToggle('fast');
             });
-            elem.off();
-            menu.off();
-            menu.css('left', '0');
         }
 
         mv_to_top() {
+            console.log('cone.main_menu_item.mv_to_top()');
             let menu = this.menu;
             let elem = this.elem;
             menu.hide();
-
             if(elem.children('div').length) {
                 menu.detach().appendTo('#layout');
             }
-            
             $('a.dropdown-arrow', this.elem).off();
             elem.off().on('mouseenter mouseleave', function(e) {
                 menu.toggle();
@@ -164,19 +163,16 @@ var livesearch_options = new Object();
             $(this._handle);
             $(window).on('resize', this._handle);
     
-            this._mouseenter_handle = this.align_width.bind(this);
-            this._restore = this.restore_width.bind(this);
-            this._bind_c = this.bind_collapse.bind(this);
-            this._bind_e = this.bind_expand.bind(this);
+            this._mousein_sb = this.mousein_sidebar.bind(this);
+            this._mouseout_sb = this.mouseout_sidebar.bind(this);
             this._toggle = this.toggle_dropdown.bind(this);
+            this._bind = this.bind_events_sidebar.bind(this);
     
             cone.main_menu = this;
         }
     
         unload() {
             $(window).off('resize', this._handle);
-            //$('.sb-menu', elem).off('mouseenter', this._mouseenter_handle);
-            //$('.sb-menu', elem).off('mouseleave', this._restore);
         }
     
         handle_visibility(evt) {
@@ -206,23 +202,23 @@ var livesearch_options = new Object();
                 }
             }
             else {
+                console.log('cone.view_desktop');
                 if(this.mm_sb.length) {
-                    this.mm_top.show();
                     this.mm_sb.detach().prependTo('#sidebar_left').removeClass('mobile');
-                } else {
-                    this.mm_top.show();
-                    for(let i in this.main_menu_items){
-                        let item = this.main_menu_items[i];
-                        if(!item.menu) {
-                            return;
-                        }
-                        item.mv_to_top();
+                }
+                this.mm_top.show();
+                for(let i in this.main_menu_items){
+                    let item = this.main_menu_items[i];
+                    if(!item.menu) {
+                        return;
                     }
+                    item.mv_to_top();
                 }
             }
         }
     
-        align_width(evt) {
+        mousein_sidebar(evt) {
+            console.log('mousein');
             let target = $(evt.currentTarget);
             $('.cone-mainmenu-dropdown-sb', target).show();
             if(target.outerWidth() > $('ul', target).outerWidth()) {
@@ -232,7 +228,8 @@ var livesearch_options = new Object();
             }
         }
     
-        restore_width(evt) {
+        mouseout_sidebar(evt) {
+            console.log('mouseout');
             $('.cone-mainmenu-dropdown-sb').hide();
             $(evt.currentTarget).css('width', 'auto');
         }
@@ -243,17 +240,18 @@ var livesearch_options = new Object();
             $('.cone-mainmenu-dropdown-sb', item).slideToggle('fast');
         }
     
-        bind_collapse(evt) {
-            $('.cone-mainmenu-dropdown-sb').hide();
-            $('.dropdown-arrow', this.elem).off('click', this._toggle);
-            $('.sb-menu', this.elem).on('mouseenter', this._mouseenter_handle);
-            $('.sb-menu', this.elem).on('mouseleave', this._restore);
-        }
-    
-        bind_expand(evt) {
-            $('.sb-menu', this.elem).off('mouseenter', this._mouseenter_handle);
-            $('.sb-menu', this.elem).off('mouseleave', this._restore);
-            $('.dropdown-arrow', this.elem).off().on('click', this._toggle);
+        bind_events_sidebar() {
+            console.log('cone.sidebar_menu.collapsed: ' + cone.sidebar_menu.state);
+            let elem = $('.sb-menu', this.mm_sb);
+            if(cone.sidebar_menu.state == true){
+                $('.cone-mainmenu-dropdown-sb', elem).hide();
+                $('.dropdown-arrow', elem).off('click');
+                elem.off().on('mouseenter', this._mousein_sb);
+                elem.on('mouseleave', this._mouseout_sb);
+            } else {
+                elem.off('mouseenter mouseleave');
+                $('.dropdown-arrow', elem).off().on('click', this._toggle);
+            }
         }
     }
 
@@ -318,9 +316,13 @@ var livesearch_options = new Object();
             cone.sidebar_menu = this;
             this.sidebar = $('#sidebar_left');
             this.state = null;
+            this.flag = true;
             this.toggle_btn = $('#sidebar-toggle-btn');
+            this.toggled = false;
 
-            this.toggle_btn.on('click', this.toggle_menu.bind(this));
+            this._toggle = this.toggle_menu.bind(this);
+            this.toggle_btn.on('click', this._toggle);
+
             this._resize_handle = this.handle_menu_visibility.bind(this);
             $(this._resize_handle);
             $(window).on('resize', this._resize_handle);
@@ -329,52 +331,49 @@ var livesearch_options = new Object();
             this._handle_state = this.handle_state.bind(this);
             $(this._handle_state);
             $(window).on('resize', this._handle_state);
-
-            this._bind = this.bind_events.bind(this);
-            $(this._bind);
         }
 
         unload() {
             $(window).off('resize', this._resize_handle);
         }
 
-        bind_events() {
-            if(this.state == true){
-                $(cone.main_menu._bind_c);
-            } else {
-                $(cone.main_menu._bind_e);
-            }
-        }
-
         handle_state() {
-            if(!cone.view_mobile && window.matchMedia(`(max-width: 990px)`).matches) {
-                this.sidebar.addClass('collapsed');
-                this.sidebar.removeClass('expanded');
-                this.state = true;
-                console.log('collapse ' + this.state);
-            } else {
-                this.sidebar.addClass('expanded');
-                this.sidebar.removeClass('collapsed');
-                this.state = false;
-                console.log('expand ' + this.state);
+            if(this.toggled) {
+                return;
             }
-            $(this._bind);
+
+            let state = null;
+
+            if(!cone.view_mobile && window.matchMedia(`(max-width: 990px)`).matches) {
+                this.sidebar.addClass('collapsed').removeClass('expanded');
+                state = true;
+            } else {
+                this.sidebar.addClass('expanded').removeClass('collapsed');
+                state = false;
+            }
+            let flag = state !== this.state;
+            this.state = state;
+
+            if(flag) {
+                $(cone.main_menu._bind);
+                console.log('cone.main_menu._bind');
+            }
         }
 
         toggle_menu(evt) {
             console.log('sidebar toggle click');
+            this.toggled = true;
+
             if(this.sidebar.hasClass('collapsed')){
-                this.sidebar.removeClass('collapsed');
-                this.sidebar.addClass('expanded');
+                this.sidebar.removeClass('collapsed').addClass('expanded');
                 this.state = false;
-                console.log('expand ' + this.state);
             } else if(this.sidebar.hasClass('expanded')) {
-                this.sidebar.removeClass('expanded');
-                this.sidebar.addClass('collapsed');
+                this.sidebar.removeClass('expanded').addClass('collapsed');
                 this.state = true;
-                console.log('collapse ' + this.state);
             }
-            $(this._bind);
+            this.flag = true;
+            $(cone.main_menu._bind);
+            console.log('cone.main_menu._bind');
         }
 
         handle_menu_visibility(evt) {
