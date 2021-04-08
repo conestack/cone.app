@@ -23,6 +23,10 @@ javascript
 [X] - debug main menu
 [X] - debug searchbar
 [X] - add Main Menu Class
+[ ] - simplify - cleanup - correct public.js
+      [ ] - reduce jquery DOM elements - less is better! -> use in object instead (this.x)
+      [ ] - make sure to have context with DOM elements to improve performance
+      [ ] - bootstrap dropdowns: read documentation and adjust closing toggle on cone.view_mobile
 
 styles
 ------
@@ -42,7 +46,7 @@ styles
       [X] - add support for sm screen size
 [X] - fix breadcrumb display in pathbar.pt
 [X] - remove mainmenu in sidebar - move to topbar
-[~] - add navtree in sidebar - display md on hover:
+[X] - add navtree in sidebar - display md on hover:
       - current branch: first level & sublevels
       - non-current branch: first level
       - add toggle button [ ]
