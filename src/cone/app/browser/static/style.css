@@ -151,6 +151,9 @@
   right: 0;
   left: auto !important;
 }
+#personaltools .dropdown-arrow {
+  display: none;
+}
 #personaltools .user-specs {
   margin-left: 0.6rem;
 }
@@ -627,8 +630,14 @@ ul {
   min-height: max-content;
   border: 0;
 }
+#topnav.mobile #personaltools .dropdown-arrow {
+  display: inline-block;
+  position: absolute;
+  right: 1rem;
+}
 #topnav.mobile #personaltools #user {
   position: relative !important;
+  top: -0.5rem;
   transform: none !important;
   background: transparent;
   box-shadow: none;

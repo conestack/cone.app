@@ -78,8 +78,28 @@ body {
     }
   }
 
+  .dropdown-arrow {
+    &:hover {
+      color: $info;
+      transition: color .3s;
+    }
+  }
+
   #personaltools {
     border-top: 1px solid $fmedium;
+    #pt-wrapper:hover {
+      color: $info;
+      transition: color .3s;
+      .profile-image {
+        box-shadow: none;
+        border-color: $info;
+        transition: all .3s;
+        > i {
+          color: $info;
+          transition: color .3s;
+        }
+      }
+    }
   }
 }
 #mobile-menu-toggle {
@@ -151,7 +171,7 @@ body {
 }
 
 
-/* -- user account -- */
+/* -- personal tools -- */
 #personaltools {
   color: $flight;
   background-color: $menus;
@@ -267,6 +287,10 @@ a:hover {
 .form-check-input:checked {
   background-color: $info;
   border-color: $info;
+}
+
+.dropdown-arrow {
+  color: $flight;
 }
 
 /* -- scrollbar -- */

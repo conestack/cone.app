@@ -18,7 +18,9 @@
         position
       </span>
     </div>
+    <i class="dropdown-arrow bi bi-chevron-down"></i>
   </div>
+
   <div class="dropdown-menu dropdown-menu-end" id="user">
     <ul class="list-unstyled">
       <tal:li repeat="item context.items">

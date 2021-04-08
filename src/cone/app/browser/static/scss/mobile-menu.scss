@@ -53,8 +53,15 @@
     min-height: max-content;
     border: 0;
 
+    .dropdown-arrow {
+      display: inline-block;
+      position: absolute;
+      right: 1rem;
+    }
+
     #user {
       position: relative!important;
+      top: -.5rem;
       transform: none!important;
       background: transparent;
       box-shadow: none;

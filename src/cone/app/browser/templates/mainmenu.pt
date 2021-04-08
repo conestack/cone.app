@@ -31,11 +31,9 @@
             Title
           </span>
         </a>
-
-        <a class="dropdown-arrow"
-           tal:condition="children">
-          <i class="bi bi-chevron-down"></i>
-        </a>
+        <i tal:condition="children"
+           class="dropdown-arrow bi bi-chevron-down">
+        </i>
       </li>
 
     </tal:item>

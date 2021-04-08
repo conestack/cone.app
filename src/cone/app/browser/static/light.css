@@ -72,8 +72,25 @@ body {
   color: #5bc0de;
   transition: color 0.25s;
 }
+#topnav.mobile .dropdown-arrow:hover {
+  color: #5bc0de;
+  transition: color 0.3s;
+}
 #topnav.mobile #personaltools {
   border-top: 1px solid #717176;
+}
+#topnav.mobile #personaltools #pt-wrapper:hover {
+  color: #5bc0de;
+  transition: color 0.3s;
+}
+#topnav.mobile #personaltools #pt-wrapper:hover .profile-image {
+  box-shadow: none;
+  border-color: #5bc0de;
+  transition: all 0.3s;
+}
+#topnav.mobile #personaltools #pt-wrapper:hover .profile-image > i {
+  color: #5bc0de;
+  transition: color 0.3s;
 }
 
 #mobile-menu-toggle {
@@ -128,7 +145,7 @@ body {
   color: #57575C;
 }
 
-/* -- user account -- */
+/* -- personal tools -- */
 #personaltools {
   color: #57575C;
   background-color: #FAFAFC;
@@ -225,6 +242,10 @@ a:hover {
 .form-check-input:checked {
   background-color: #5bc0de;
   border-color: #5bc0de;
+}
+
+.dropdown-arrow {
+  color: #57575C;
 }
 
 /* -- scrollbar -- */
