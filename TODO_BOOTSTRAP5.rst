@@ -27,7 +27,8 @@ javascript
       [ ] - reduce jquery DOM elements - less is better! -> use in object instead (this.x)
       [ ] - make sure to have context with DOM elements to improve performance
       [ ] - bootstrap dropdowns: read documentation and adjust closing toggle on cone.view_mobile
-      [ ] - descend from ID
+      [X] - descend from ID
+[-] - add custom scrollbar
 
 styles
 ------

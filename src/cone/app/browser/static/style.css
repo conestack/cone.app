@@ -364,8 +364,7 @@ ul {
 }
 
 #topnav-content .scroll-container {
-  overflow-x: auto;
-  transform: rotate(180deg);
+  overflow-x: hidden;
   margin-right: auto;
   height: 100%;
   display: flex;
@@ -379,7 +378,6 @@ ul {
   height: 100%;
   margin-bottom: 0;
   padding: 0;
-  transform: rotate(180deg);
 }
 #topnav-content #mainmenu li {
   height: 100%;
@@ -806,6 +804,19 @@ body {
   height: 1rem;
   pointer-events: none;
   letter-spacing: -2px;
+}
+
+.scrollbar {
+  position: absolute;
+  top: 0;
+  height: 10px;
+  width: 100%;
+  background: red;
+}
+.scrollbar .scroll-handle {
+  background: yellow;
+  width: 10%;
+  height: 100%;
 }
 
 /*# sourceMappingURL=style.css.map */

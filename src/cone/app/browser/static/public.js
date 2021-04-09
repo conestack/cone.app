@@ -16,6 +16,7 @@ cone = {
     topnav: null,
     view_mobile: null,
     vp_flag: true,
+    scrollbar: true,
     default_themes: [
         '/static/light.css',
         '/static/dark.css'
@@ -69,6 +70,7 @@ var livesearch_options = new Object();
             new cone.Searchbar(context);
             new cone.MainMenu(context);
             new cone.Navtree(context);
+            new cone.ScrollBar(context);
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
@@ -137,6 +139,71 @@ var livesearch_options = new Object();
         }
     }
 
+    cone.ScrollBar = class {
+        constructor(context) {
+            this.container = $('#main-menu');
+            this.content = $('#mainmenu');
+            this.diff = 0;
+            this.scrollbar = $(`
+                <div class="scrollbar">
+                </div>
+            `);
+            this.handle = $(`
+                <div class="scroll-handle">
+                </div>
+            `);
+            
+            this._create = this.create_elems.bind(this);
+            $(this._create);
+
+            this._handle = this.handle_scrollbar.bind(this);
+            $(this._handle);
+            $(window).on('resize', this._handle);
+
+            this._drag_start = this.drag_start.bind(this);
+            this._drag_end = this.drag_end.bind(this);
+            this.handle.off().on('mousedown', this._drag_start);
+            this.handle.off('mouseup').on('mouseup', this._drag_end);
+        }
+
+        create_elems() {
+            this.container.prepend(this.scrollbar);
+            this.scrollbar.append(this.handle);
+        }
+
+        handle_scrollbar() {
+            console.log('container width: ' + this.container.outerWidth(true));
+            console.log('content width: ' + this.content.outerWidth(true));
+
+            let factor = this.content.outerWidth(true) / this.container.outerWidth(true);
+            console.log(factor);
+
+            this.scrollbar.css('width', this.container.outerWidth(true));
+
+            let handle_width = this.container.outerWidth(true) / factor;
+            this.handle.css('width', handle_width);
+        }
+
+        drag_start(evt) {
+            let content = this.content;
+            console.log('drag start');
+            this.handle.on('mousemove', function(){
+                console.log('dragging');
+                console.log(evt.pageX);
+                content.css('background', 'green');
+            })
+        }
+
+        drag_end(evt) {
+            let content = this.content;
+            this.handle.off('mouseup').on('mouseup', function() {
+                $(this).off('mousemove');
+                console.log('drag stopped');
+                content.css('background', 'transparent');
+            })
+        }
+    }
+
     cone.MainMenu = class {
 
         constructor(context) {
@@ -186,8 +253,6 @@ var livesearch_options = new Object();
             }
 
             dd_reset(this.sb_arrows, this.sb_dropdowns);
-
-            this.mm_top.scrollLeft(this.mm_top.outerWidth());
 
             if(cone.view_mobile) {
                 if(this.mm_sb.length) {
@@ -242,7 +307,6 @@ var livesearch_options = new Object();
         }
     
         bind_events_sidebar() {
-            console.log('sidebar state: ' + cone.sidebar_menu.state);
             if(cone.sidebar_menu.state){
                 this.sb_dropdowns.hide();
                 this.sb_arrows.off('click');

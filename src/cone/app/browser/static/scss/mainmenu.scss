@@ -15,8 +15,7 @@ ul {
 
 #topnav-content {
   .scroll-container {
-    overflow-x: auto;
-    transform: rotate(180deg);
+    overflow-x: hidden;
     margin-right: auto;
     height: 100%;
     display:flex;
@@ -31,7 +30,6 @@ ul {
     height: 100%;
     margin-bottom: 0;
     padding: 0;
-    transform: rotate(180deg);
 
     li{
       height:100%;

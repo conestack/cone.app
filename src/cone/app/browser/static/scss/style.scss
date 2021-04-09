@@ -86,3 +86,18 @@ body {
   pointer-events: none;
   letter-spacing: -2px;
 }
+
+// scrollbars
+.scrollbar {
+  position: absolute;
+  top: 0;
+  height: 10px;
+  width: 100%;
+  background: red;
+
+    .scroll-handle {
+      background:yellow;
+      width:10%;
+      height:100%;
+    }
+}
