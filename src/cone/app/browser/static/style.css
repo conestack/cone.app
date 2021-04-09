@@ -215,9 +215,6 @@
   padding: 0;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
 }
-#sidebar_left.collapsed .bi-arrow-left-circle {
-  display: none;
-}
 #sidebar_left.collapsed > :not(:nth-child(-n+2)):before {
   content: "";
   position: absolute;
@@ -273,9 +270,6 @@
   width: 12rem;
   overflow: auto;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
-}
-#sidebar_left.expanded .bi-arrow-right-circle {
-  display: none;
 }
 #sidebar_left.expanded .sidebar-heading {
   padding: 1rem 0;
