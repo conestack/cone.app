@@ -241,22 +241,14 @@ a:hover {
 }
 
 /* -- scrollbar -- */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+.scrollbar {
+  background: red;
 }
-
-::-webkit-scrollbar-track {
-  background: #2E2E33;
-}
-
-::-webkit-scrollbar-thumb {
+.scrollbar .scroll-handle {
   background: #949499;
-  border-radius: 20px;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #dfe8f0;
+.scrollbar .scroll-handle:hover, .scrollbar .scroll-handle.active {
+  background: #5bc0de;
 }
 
 /*# sourceMappingURL=dark.css.map */

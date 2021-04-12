@@ -88,16 +88,17 @@ body {
 }
 
 // scrollbars
-.scrollbar {
-  position: absolute;
-  top: 0;
-  height: 10px;
-  width: 100%;
-  background: red;
-
+.scroll-container {
+  overflow: hidden;
+  .scroll-content {
+    position:relative;
+  }
+  .scrollbar {
+    position: absolute;
+    border-radius: 3px;
     .scroll-handle {
-      background:yellow;
-      width:10%;
-      height:100%;
+      position:relative;
+      border-radius: 3px;
     }
+  }
 }

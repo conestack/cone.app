@@ -368,9 +368,13 @@ ul {
   margin-right: auto;
   height: 100%;
   display: flex;
+  padding-top: 1rem;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+}
+#topnav-content .scroll-container .scroll-content {
+  position: relative;
 }
 #topnav-content #mainmenu {
   display: inline-flex;
@@ -806,17 +810,19 @@ body {
   letter-spacing: -2px;
 }
 
-.scrollbar {
-  position: absolute;
-  top: 0;
-  height: 10px;
-  width: 100%;
-  background: red;
+.scroll-container {
+  overflow: hidden;
 }
-.scrollbar .scroll-handle {
-  background: yellow;
-  width: 10%;
-  height: 100%;
+.scroll-container .scroll-content {
+  position: relative;
+}
+.scroll-container .scrollbar {
+  position: absolute;
+  border-radius: 3px;
+}
+.scroll-container .scrollbar .scroll-handle {
+  position: relative;
+  border-radius: 3px;
 }
 
 /*# sourceMappingURL=style.css.map */

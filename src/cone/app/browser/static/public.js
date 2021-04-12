@@ -16,7 +16,7 @@ cone = {
     topnav: null,
     view_mobile: null,
     vp_flag: true,
-    scrollbar: true,
+    scrollbars: [],
     default_themes: [
         '/static/light.css',
         '/static/dark.css'
@@ -70,10 +70,202 @@ var livesearch_options = new Object();
             new cone.Searchbar(context);
             new cone.MainMenu(context);
             new cone.Navtree(context);
-            new cone.ScrollBar(context);
+            $('.scroll-container', context).each(function() {
+                let condition = $(this).find('.scroll-content').outerWidth(true) > $(this).outerWidth(true);
+                let scrollbar = (condition) ? new ScrollBarX($(this)):new ScrollBarY($(this)); 
+            });
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
     });
+
+    cone.ScrollBar = class {
+        constructor(context) {
+            this.container = context;
+            this.content = this.container.find('.scroll-content');
+            cone.scrollbars.push(this);
+
+            this.scrollbar = $(`
+                <div class="scrollbar">
+                </div>
+            `);
+            this.thumb = $(`
+                <div class="scroll-handle">
+                </div>
+            `);
+
+            this.thickness = '6px';
+            this._create = this.create_elems.bind(this);
+            $(this._create);
+        }
+
+        create_elems() {
+            this.container.prepend(this.scrollbar);
+            this.scrollbar.append(this.thumb);
+
+            console.log('content dim: ' + this.content_dim);
+            console.log('container dim: ' + this.container_dim);
+            if(this.content_dim >= this.container_dim) {
+                this.scrollbar.css(this.dimension, this.container_dim)
+                .css(this.dimension_s, this.thickness)
+                .css(this.alignment, '0');
+                this.thumb.css(this.dimension_s, this.thickness);
+            }
+        }
+
+        handle_scrollbar() {
+            if(this.dimension == 'width') {
+                this.content_dim = this.content.outerWidth(true);
+                this.container_dim = this.container.outerWidth(true);
+            } else {
+                this.content_dim = this.content.outerHeight(true);
+                this.container_dim = this.container.outerHeight(true);
+            }
+
+            console.log('content dim: ' + this.content_dim);
+            console.log('container dim: ' + this.container_dim);
+
+            this.scrollbar.css(this.dimension, this.container_dim);
+            let factor = this.content_dim / this.container_dim;
+            let thumb_dim = this.container_dim / factor;
+            this.thumb.css(this.dimension, thumb_dim);
+
+            if(thumb_dim >= this.container_dim) {
+                console.log('hide scrollbar');
+                this.scrollbar.hide();
+                this.container.css('padding', 0);
+            } else {
+                this.scrollbar.show();
+                this.container.css(('padding-' + this.alignment), '.5rem');
+            }
+        }
+    }
+
+    class ScrollBarX extends cone.ScrollBar {
+        constructor(elem) {
+            super(elem);
+            this.elem = elem;
+
+            this.dimension = 'width';
+            this.dimension_s= 'height';
+            this.alignment = 'top';
+            this.container_dim = this.container.outerWidth(true);
+            this.content_dim = this.content.outerWidth(true);
+
+            this._drag_start = this.drag_start.bind(this);
+            this.thumb.off().on('mousedown', this._drag_start);
+
+            this._handle = this.handle_scrollbar.bind(this);
+            $(this._handle);
+            $(window).on('resize', this._handle);
+        }
+
+        drag_start(evt) {
+            let content = this.content;
+            let slider = this.scrollbar;
+            let thumb = this.thumb;
+            let thumb_rect = thumb.offset().left + thumb.outerWidth(true);
+            let slider_rect = slider.offset().left + slider.outerWidth(true);
+            let shift = evt.clientX - thumb_rect;
+            thumb.addClass('active');
+
+            evt.preventDefault();
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+
+            function onMouseMove(evt) {
+                let newLeft = evt.clientX - shift - slider_rect;
+
+                if (newLeft < 0) {
+                  newLeft = 0;
+                }
+
+                let rightEdge = slider.outerWidth(true) - thumb.outerWidth(true);
+                console.log(slider.outerWidth(true));
+                if (newLeft > rightEdge) {
+                  newLeft = rightEdge;
+                }
+
+                thumb.css('left', (newLeft + 'px'))
+                content.css('right', (newLeft + 'px'));
+            }
+
+            function onMouseUp() {
+              document.removeEventListener('mouseup', onMouseUp);
+              document.removeEventListener('mousemove', onMouseMove);
+              thumb.removeClass('active');
+            }
+
+            thumb.ondragstart = function() {
+              return false;
+            };
+        }
+    }
+
+    class ScrollBarY extends cone.ScrollBar {
+        constructor(elem) {
+            super(elem);
+            this.elem = elem;
+
+            this.dimension = 'height';
+            this.dimension_s= 'width';
+            this.alignment = 'left';
+            this.container_dim = this.container.outerHeight(true);
+            this.content_dim = this.content.outerHeight(true);
+
+            console.log('container dimension ' + this.container_dim);
+
+            this._drag_start = this.drag_start.bind(this);
+            this.thumb.off().on('mousedown', this._drag_start);
+
+            this._handle = this.handle_scrollbar.bind(this);
+            $(this._handle);
+            $(window).on('resize', this._handle);
+        }
+
+        drag_start(evt) {
+            let content = this.content;
+            let slider = this.scrollbar;
+            let thumb = this.thumb;
+            let thumb_rect = thumb.offset().top + thumb.outerHeight(true);
+            let slider_rect = slider.offset().top + slider.outerHeight(true);
+            let shift = evt.clientY - thumb_rect;
+            thumb.addClass('active');
+
+            evt.preventDefault();
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+
+            function onMouseMove(evt) {
+                let newTop = evt.clientY - shift - slider_rect;
+
+                if (newTop < 0) {
+                  newTop = 0;
+                }
+
+                let bottomEdge = slider.outerHeight(true) - thumb.outerHeight(true);
+                console.log(slider.outerWidth(true));
+                if (newTop > bottomEdge) {
+                  newTop = bottomEdge;
+                }
+
+                thumb.css('top', (newTop + 'px'))
+                content.css('bottom', (newTop + 'px'));
+            }
+
+            function onMouseUp() {
+              document.removeEventListener('mouseup', onMouseUp);
+              document.removeEventListener('mousemove', onMouseMove);
+              thumb.removeClass('active');
+            }
+
+            thumb.ondragstart = function() {
+              return false;
+            };
+        }
+    }
+
 
     cone.MainMenuItem = class {
 
@@ -135,71 +327,6 @@ var livesearch_options = new Object();
             });
             menu.off().on('mouseenter mouseleave', function() {
                 menu.toggle();
-            })
-        }
-    }
-
-    cone.ScrollBar = class {
-        constructor(context) {
-            this.container = $('#main-menu');
-            this.content = $('#mainmenu');
-            this.diff = 0;
-            this.scrollbar = $(`
-                <div class="scrollbar">
-                </div>
-            `);
-            this.handle = $(`
-                <div class="scroll-handle">
-                </div>
-            `);
-            
-            this._create = this.create_elems.bind(this);
-            $(this._create);
-
-            this._handle = this.handle_scrollbar.bind(this);
-            $(this._handle);
-            $(window).on('resize', this._handle);
-
-            this._drag_start = this.drag_start.bind(this);
-            this._drag_end = this.drag_end.bind(this);
-            this.handle.off().on('mousedown', this._drag_start);
-            this.handle.off('mouseup').on('mouseup', this._drag_end);
-        }
-
-        create_elems() {
-            this.container.prepend(this.scrollbar);
-            this.scrollbar.append(this.handle);
-        }
-
-        handle_scrollbar() {
-            console.log('container width: ' + this.container.outerWidth(true));
-            console.log('content width: ' + this.content.outerWidth(true));
-
-            let factor = this.content.outerWidth(true) / this.container.outerWidth(true);
-            console.log(factor);
-
-            this.scrollbar.css('width', this.container.outerWidth(true));
-
-            let handle_width = this.container.outerWidth(true) / factor;
-            this.handle.css('width', handle_width);
-        }
-
-        drag_start(evt) {
-            let content = this.content;
-            console.log('drag start');
-            this.handle.on('mousemove', function(){
-                console.log('dragging');
-                console.log(evt.pageX);
-                content.css('background', 'green');
-            })
-        }
-
-        drag_end(evt) {
-            let content = this.content;
-            this.handle.off('mouseup').on('mouseup', function() {
-                $(this).off('mousemove');
-                console.log('drag stopped');
-                content.css('background', 'transparent');
             })
         }
     }

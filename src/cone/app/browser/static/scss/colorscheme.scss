@@ -294,20 +294,13 @@ a:hover {
 }
 
 /* -- scrollbar -- */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: $bg; 
-}
-
-::-webkit-scrollbar-thumb {
-  background: $fmedium;
-  border-radius:20px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: $fhover;
+.scrollbar {
+  // background: $sb;
+  background:red;
+    .scroll-handle {
+      background:$sb_border;
+      &:hover, &.active {
+        background:$info;
+      }
+    }
 }
