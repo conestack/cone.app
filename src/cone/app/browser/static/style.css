@@ -363,18 +363,13 @@ ul {
   margin: 0;
 }
 
-#topnav-content .scroll-container {
-  overflow-x: hidden;
+#topnav-content #main-menu {
   margin-right: auto;
   height: 100%;
   display: flex;
-  padding-top: 1rem;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-}
-#topnav-content .scroll-container .scroll-content {
-  position: relative;
 }
 #topnav-content #mainmenu {
   display: inline-flex;
@@ -817,6 +812,7 @@ body {
   position: relative;
 }
 .scroll-container .scrollbar {
+  display: none;
   position: absolute;
   border-radius: 3px;
 }

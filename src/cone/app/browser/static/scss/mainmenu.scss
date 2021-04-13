@@ -14,19 +14,13 @@ ul {
 }
 
 #topnav-content {
-  .scroll-container {
-    overflow-x: hidden;
+  #main-menu {
     margin-right: auto;
     height: 100%;
     display:flex;
-    padding-top: 1rem;
     flex-direction:row;
     flex-wrap:nowrap;
     align-items: center;
-
-    .scroll-content {
-      position:relative;
-    }
   }
 
   #mainmenu {
