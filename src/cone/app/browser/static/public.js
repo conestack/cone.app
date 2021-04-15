@@ -83,9 +83,10 @@ var livesearch_options = new Object();
     cone.ScrollBar = class {
 
         constructor(context) {
+
             cone.scrollbars.push(this);
             this.container = context;
-            this.content = this.container.find('.scroll-content');
+            this.content =$('.scroll-content', this.container);
 
             this.scrollbar = $(`
                 <div class="scrollbar">
@@ -100,17 +101,19 @@ var livesearch_options = new Object();
             this._create = this.create_elems.bind(this);
             $(this._create);
 
-            // this.container.off().on('mouseenter mouseleave', function() {
-            //     let scrollbar = $(this).find('.scrollbar');
-            //     scrollbar.fadeToggle('fast');
-            // })
-
             this.position = 0;
+
             this.thumb_pos = 0;
+            this.thumb_dim = 0;
+            this.thumb_end = 0;
+            this.factor = 0;
+            this.space_between = 0;
+
             this.unit = 10;
+            this.scrollbar_unit = 0;
 
             this._scroll = this.scroll_handle.bind(this);
-            this.container.off('mousewheel DOMMouseScroll').on('mousewheel DOMMouseScroll', this._scroll);
+            this.container.off().on('mousewheel DOMMouseScroll', this._scroll);
 
             this._handle = this.handle_scrollbar.bind(this);
             $(this._handle);
@@ -123,8 +126,9 @@ var livesearch_options = new Object();
         create_elems() {
             this.container.prepend(this.scrollbar);
             this.scrollbar.append(this.thumb);
-            this.scrollbar.show();
+            this.scrollbar_unit = this.container_dim / (this.content_dim / this.unit);
 
+            // this.scrollbar.show();
             if(this.content_dim >= this.container_dim) {
                 this.scrollbar.css(this.dimension, this.container_dim)
                 .css(this.dimension_s, this.thickness)
@@ -133,11 +137,29 @@ var livesearch_options = new Object();
             }
         }
 
+        handle_scrollbar() {
+            if(this.dimension == 'width') {
+                this.content_dim = this.content.outerWidth(true);
+                this.container_dim = this.container.outerWidth(true);
+                this.factor = this.content_dim / this.container_dim;
+                this.thumb_dim = this.container_dim / this.factor;
+                this.thumb_end = this.thumb.offset().left + this.thumb_dim;
+                this.container_end = this.container.offset().left + this.container_dim;
+            } else {
+                this.content_dim = this.content.outerHeight(true);
+                this.container_dim = this.container.outerHeight(true);
+                this.factor = this.content_dim / this.container_dim;
+                this.thumb_dim = this.container_dim / this.factor;
+                this.thumb_end = this.thumb.offset().top + this.thumb_dim;
+                this.container_end = this.container.offset().top + this.container_dim;
+            }
+            this.space_between = this.container_dim - this.thumb_dim;
+
+            this.scrollbar.css(this.dimension, this.container_dim);
+            this.thumb.css(this.dimension, this.thumb_dim);
+        }
+
         scroll_handle(e) {
-            let ct_dim = 0;
-            let cr_dim = 0;
-            let sc_dim = 0;
-            let th_dim = 0;
 
             /*if(typeof e.originalEvent.detail == 'number' && e.originalEvent.detail !== 0) {
                 if(e.originalEvent.detail > 0) {
@@ -145,46 +167,30 @@ var livesearch_options = new Object();
                 } else if(e.originalEvent.detail < 0){
                     console.log('Up');
                 }
-            } else*/    // FF secure
-            if(this.dimension == 'width') {
-                ct_dim = this.content.outerWidth(true);
-                cr_dim = this.container.outerWidth(true);
-                sc_dim = this.scrollbar.outerWidth(true);
-                th_dim = this.thumb.outerWidth(true);
-            } else {
-                ct_dim = this.content.outerHeight(true);
-                cr_dim = this.container.outerHeight(true);
-                sc_dim = this.scrollbar.outerHeight(true);
-                th_dim = this.thumb.outerHeight(true);
-            }
+            } else*/    // FF fallback
 
             if (typeof e.originalEvent.wheelDelta == 'number') {
-                let scrollbar_factor = ct_dim / this.unit;
-                let scrollbar_px_step = cr_dim / scrollbar_factor;
-
-                // declare edge for collision
-                let container_end = ((this.dimension == 'width') ?( this.container.offset().left + cr_dim) : (this.container.offset().top + cr_dim) );
-                let content_end = ((this.dimension == 'width') ? (this.content.offset().left  + ct_dim) : (this.content.offset().top + ct_dim) );
-
-                console.log('container end: ' + container_end + ' + content end: ' + content_end);
 
                 // scroll event data
-                if(e.originalEvent.wheelDelta < 0) {
+                if(e.originalEvent.wheelDelta < 0) { // down
                     this.position -= this.unit;
-                    this.thumb_pos += scrollbar_px_step;
+                    this.thumb_pos += this.scrollbar_unit;
                 }
-                if(content_end <= container_end) {
-                    this.position = cr_dim - ct_dim;
-                    this.thumb_pos = sc_dim - th_dim;
+                if(this.thumb_pos >= this.container_dim - this.thumb_dim) { // stop scrolling on end
+                    this.thumb_pos = this.container_dim - this.thumb_dim;
+                    this.position = this.container_dim - this.content_dim;
                 }
-                if(e.originalEvent.wheelDelta > 0) {
+                if(e.originalEvent.wheelDelta > 0) { // up
                     this.position += this.unit;
-                    this.thumb_pos -= scrollbar_px_step;
+                    this.thumb_pos -= this.scrollbar_unit;
                 }
-                if(this.position > 0) {
+                if(this.position > 0) { // stop scrolling on start
                     this.position = 0;
                     this.thumb_pos = 0;
                 }
+
+                console.log('thumb pos on scroll: '+ this.thumb_pos);
+                console.log('content pos on scroll: '+ this.position);
 
                 // set new position
                 this.content.css(this.alignment_s, this.position + 'px');
@@ -192,88 +198,57 @@ var livesearch_options = new Object();
             }
         }
 
-        handle_scrollbar() {
-            if(this.dimension == 'width') {
-                this.content_dim = this.content.outerWidth(true);
-                this.container_dim = this.container.outerWidth(true);
-            } else {
-                this.content_dim = this.content.outerHeight(true);
-                this.container_dim = this.container.outerHeight(true);
-            }
-
-            this.scrollbar.css(this.dimension, this.container_dim);
-            let factor = this.content_dim / this.container_dim;
-            let thumb_dim = this.container_dim / factor;
-            this.thumb.css(this.dimension, thumb_dim);
-
-            if(thumb_dim >= this.container_dim) {
-                this.content.css('margin', 0);
-            } else {
-                this.content.css(('margin-' + this.alignment), '.5rem');
-            }
-        }
-
         drag_start(evt) {
-            let scrollbar = this.scrollbar;
-            let content = this.content;
-            let thumb = this.thumb;
+            console.log('thumb pos on drag start: ' + this.thumb_pos);
+            console.log('content pos on drag start: ' + this.position);
 
-            let thumb_rect = 0;
-            let slider_rect = 0;
-            let shift = 0;
-
-            let alignment = this.alignment;
-            let alignment_s = this.alignment_s;
-            let alignment_c = this.alignment_c;
-
-            if(this.dimension == 'width') {
-                thumb_rect = thumb.offset().left + thumb.outerWidth(true);
-                slider_rect = scrollbar.offset().left + scrollbar.outerWidth(true);
-                shift = evt.clientX - thumb_rect;
-            } else {
-                thumb_rect = thumb.offset().top + thumb.outerHeight(true);
-                slider_rect = scrollbar.offset().top + scrollbar.outerHeight(true);
-                shift = evt.clientY - thumb_rect;
-            }
+            let content = this.content,
+            thumb = this.thumb,
+            alignment_s = this.alignment_s,
+            alignment_c = this.alignment_c,
+            space_between = this.space_between,
+            container_end = this.container_end,
+            shift = ( (this.dimension == 'width') ? evt.clientY:evt.clientX ) - this.thumb_end,
+            thumb_pos = this.thumb_pos,
+            position = this.position,
+            factor = this.factor;
 
             thumb.addClass('active');
 
             evt.preventDefault(); // prevent selection
 
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            $(document).on('mousemove', onMouseMove).on('mouseup', onMouseUp);
 
-            function onMouseMove(evt) {
-                let end_edge = 0;
-                let newPos = ( (this.dimension == 'width') ? evt.clientX : evt.clientY ) - shift - slider_rect;
+            function onMouseMove(evt) {      
 
-                if (newPos < 0) {
-                    newPos = 0;
+                console.log('content position on drag: -' + position);
+                console.log('thumb position on drag: ' + thumb_pos);
+
+                position = parseInt(( (this.dimension == 'width') ? evt.clientX : evt.clientY ) - shift - container_end);
+                thumb_pos = position / factor;
+
+                if (position < 0) {
+                    position = 0;
+                    thumb_pos = 0;
                 }
 
-                if(this.dimension == 'width'){
-                    end_edge = scrollbar.outerWidth(true) - thumb.outerWidth(true);
-                } else {
-                    end_edge = scrollbar.outerHeight(true) - thumb.outerHeight(true);
+                if (thumb_pos > space_between) { // set max scroll position
+                    thumb_pos = space_between;
+                    position = thumb_pos * factor;
                 }
 
-                if (newPos > end_edge) {
-                  newPos = end_edge;
-                }
-
-                thumb.css(alignment_s, (newPos + 'px'))
-                content.css(alignment_c, (newPos + 'px'));
+                thumb.css(alignment_s, (thumb_pos + 'px'))
+                content.css(alignment_s, (-position + 'px'));
             }
 
             function onMouseUp() {
-              document.removeEventListener('mouseup', onMouseUp);
-              document.removeEventListener('mousemove', onMouseMove);
+              $(document).off('mousemove', onMouseMove);
               thumb.removeClass('active');
             }
 
-            thumb.ondragstart = function() {
-              return false;
-            };
+            //thumb.ondragstart = function() {
+            //  return false;
+            //};
         }
     }
 
@@ -290,8 +265,7 @@ var livesearch_options = new Object();
 
             this.container_dim = this.container.outerWidth(true);
             this.content_dim = this.content.outerWidth(true);
-            this.scrollbar_dim = this.scrollbar.outerWidth(true);
-            this.thumb_dim = this.thumb.outerWidth(true);
+            // this.thumb_dim = this.thumb.outerWidth(true);
 
             this.container_end = this.container.offset().left + this.container_dim;
             this.content_end = this.content.offset().left + this.content_dim;
@@ -311,54 +285,11 @@ var livesearch_options = new Object();
 
             this.container_dim = this.container.outerHeight(true);
             this.content_dim = this.content.outerHeight(true);
-            this.scrollbar_dim = this.scrollbar.outerHeight(true);
-            this.thumb_dim = this.thumb.outerHeight(true);
+            // this.thumb_dim = this.thumb.outerHeight(true);
 
             this.container_end = this.container.offset().top + this.container_dim;
             this.content_end = this.content.offset().top + this.content_dim;
         }
-
-        /* drag_start(evt) {
-            let content = this.content;
-            let slider = this.scrollbar;
-            let thumb = this.thumb;
-            let thumb_rect = thumb.offset().top + thumb.outerHeight(true);
-            let slider_rect = slider.offset().top + slider.outerHeight(true);
-            let shift = evt.clientY - thumb_rect;
-            thumb.addClass('active');
-
-            evt.preventDefault();
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-
-            function onMouseMove(evt) {
-                let newTop = evt.clientY - shift - slider_rect;
-
-                if (newTop < 0) {
-                  newTop = 0;
-                }
-
-                let bottomEdge = slider.outerHeight(true) - thumb.outerHeight(true);
-                console.log(slider.outerWidth(true));
-                if (newTop > bottomEdge) {
-                  newTop = bottomEdge;
-                }
-
-                thumb.css('top', (newTop + 'px'))
-                content.css('bottom', (newTop + 'px'));
-            }
-
-            function onMouseUp() {
-              document.removeEventListener('mouseup', onMouseUp);
-              document.removeEventListener('mousemove', onMouseMove);
-              thumb.removeClass('active');
-            }
-
-            thumb.ondragstart = function() {
-              return false;
-            };
-        } */
     }
 
 

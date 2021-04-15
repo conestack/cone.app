@@ -812,7 +812,6 @@ body {
   position: relative;
 }
 .scroll-container .scrollbar {
-  display: none;
   position: absolute;
   border-radius: 3px;
 }
