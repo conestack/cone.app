@@ -210,6 +210,10 @@
 #sidebar_left ul {
   list-style: none;
 }
+#sidebar_left #sidebar_content {
+  height: 300rem;
+  background: yellow;
+}
 #sidebar_left.collapsed {
   width: 3.5rem;
   padding: 0;
@@ -268,7 +272,7 @@
 }
 #sidebar_left.expanded {
   width: 12rem;
-  overflow: auto;
+  overflow: hidden;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
 }
 #sidebar_left.expanded .sidebar-heading {
@@ -364,6 +368,7 @@ ul {
 }
 
 #topnav-content #main-menu {
+  padding-top: 0.5rem;
   margin-right: auto;
   height: 100%;
   display: flex;
@@ -808,14 +813,17 @@ body {
 .scroll-container {
   overflow: hidden;
 }
-.scroll-container .scroll-content {
+
+.scroll-content {
   position: relative;
 }
-.scroll-container .scrollbar {
+
+.scrollbar {
   position: absolute;
   border-radius: 3px;
+  z-index: 1000;
 }
-.scroll-container .scrollbar .scroll-handle {
+.scrollbar .scroll-handle {
   position: relative;
   border-radius: 3px;
 }

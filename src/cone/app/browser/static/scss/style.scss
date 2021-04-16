@@ -90,17 +90,17 @@ body {
 // scrollbars
 .scroll-container {
   overflow: hidden;
-
-  .scroll-content {
+}
+.scroll-content {
+  position:relative;
+}
+.scrollbar {
+  // display: none;
+  position: absolute;
+  border-radius: 3px;
+  z-index:1000;
+  .scroll-handle {
     position:relative;
-  }
-  .scrollbar {
-    // display: none;
-    position: absolute;
     border-radius: 3px;
-    .scroll-handle {
-      position:relative;
-      border-radius: 3px;
-    }
   }
 }

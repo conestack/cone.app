@@ -57,7 +57,7 @@ function dd_reset(arrow, dropdown) {
     dropdown.hide();
 }
 
-// additional livesearch options
+
 var livesearch_options = new Object();
 
 (function($) {
@@ -70,11 +70,17 @@ var livesearch_options = new Object();
             new cone.Searchbar(context);
             new cone.MainMenu(context);
             new cone.Navtree(context);
+
+            // let scrollers = document.getElementsByClassName('scroll-container');
+            // for(let i in scrollers) {
+            //     console.log('scroller' + i);
+            //     let condition = $(scrollers[i]).find('.scroll-content').outerWidth(true) > $(scrollers[i]).outerWidth(true);
+            //     let scrollbar = (condition) ? new ScrollBarX(scrollers[i]):new ScrollBarY(scrollers[i]);
+            // }
+
             $('.scroll-container', context).each(function() {
                 let condition = $(this).find('.scroll-content').outerWidth(true) > $(this).outerWidth(true);
-                let scrollbar = (condition) ? new ScrollBarX($(this)):new ScrollBarY($(this)); 
-                let attr = (condition) ? 'x':'y'; 
-                $(this).attr('scroll-direction', attr);
+                let scrollbar = (condition) ? new ScrollBarX($(this)):new ScrollBarY($(this));
             });
         }, true);
         bdajax.register(livesearch.binder.bind(livesearch), true);
@@ -112,12 +118,20 @@ var livesearch_options = new Object();
             this.unit = 10;
             this.scrollbar_unit = 0;
 
-            this._scroll = this.scroll_handle.bind(this);
-            this.container.off().on('mousewheel DOMMouseScroll', this._scroll);
-
             this._handle = this.handle_scrollbar.bind(this);
             $(this._handle);
             $(window).on('resize', this._handle);
+            
+            // this.container_observe = context;
+            // console.log('COOOOOOOOOOOOOOOOO '+ context);
+            // const resizeObserver = new ResizeObserver(entries => {
+            //     console.log('size changed');
+            //     $(this._handle);
+            // });
+            // resizeObserver.observe(this.container_observe);
+
+            this._scroll = this.scroll_handle.bind(this);
+            $(this.container).off().on('mousewheel DOMMouseScroll', this._scroll);
 
             this._drag_start = this.drag_start.bind(this);
             this.thumb.off().on('mousedown', this._drag_start);
@@ -138,6 +152,7 @@ var livesearch_options = new Object();
         }
 
         handle_scrollbar() {
+            console.log('scrollbar handle');
             if(this.dimension == 'width') {
                 this.content_dim = this.content.outerWidth(true);
                 this.container_dim = this.container.outerWidth(true);
@@ -169,6 +184,9 @@ var livesearch_options = new Object();
                 }
             } else*/    // FF fallback
 
+            console.log('this.container_dim: ' + this.container_dim);
+            console.log('this.content_dim: ' + this.content_dim);
+            
             if (typeof e.originalEvent.wheelDelta == 'number') {
 
                 // scroll event data
@@ -189,9 +207,6 @@ var livesearch_options = new Object();
                     this.thumb_pos = 0;
                 }
 
-                console.log('thumb pos on scroll: '+ this.thumb_pos);
-                console.log('content pos on scroll: '+ this.position);
-
                 // set new position
                 this.content.css(this.alignment_s, this.position + 'px');
                 this.thumb.css(this.alignment_s, this.thumb_pos + 'px');
@@ -199,56 +214,38 @@ var livesearch_options = new Object();
         }
 
         drag_start(evt) {
-            console.log('thumb pos on drag start: ' + this.thumb_pos);
-            console.log('content pos on drag start: ' + this.position);
+            let mouse_pos = ( (this.dimension == 'width') ? evt.pageX:evt.pageY ) - this.offset,
+                thumb_diff = this.container_dim - this.thumb_dim,
+                new_thumb_pos = 0
+            ;
 
-            let content = this.content,
-            thumb = this.thumb,
-            alignment_s = this.alignment_s,
-            alignment_c = this.alignment_c,
-            space_between = this.space_between,
-            container_end = this.container_end,
-            shift = ( (this.dimension == 'width') ? evt.clientY:evt.clientX ) - this.thumb_end,
-            thumb_pos = this.thumb_pos,
-            position = this.position,
-            factor = this.factor;
+            this.thumb.addClass('active');
+            evt.preventDefault(); // prevent text selection
 
-            thumb.addClass('active');
-
-            evt.preventDefault(); // prevent selection
-
-            $(document).on('mousemove', onMouseMove).on('mouseup', onMouseUp);
+            $(document).on('mousemove', onMouseMove.bind(this)).on('mouseup', onMouseUp.bind(this));
 
             function onMouseMove(evt) {      
-
-                console.log('content position on drag: -' + position);
-                console.log('thumb position on drag: ' + thumb_pos);
-
-                position = parseInt(( (this.dimension == 'width') ? evt.clientX : evt.clientY ) - shift - container_end);
-                thumb_pos = position / factor;
-
-                if (position < 0) {
-                    position = 0;
-                    thumb_pos = 0;
+                let mouse_pos_on_move = ( (this.dimension == 'width') ? evt.pageX:evt.pageY ) - this.offset;
+                let diff = mouse_pos_on_move - mouse_pos;
+                new_thumb_pos = this.thumb_pos + diff;
+                if(new_thumb_pos <= 0) {
+                    new_thumb_pos = 0;
+                } else if (new_thumb_pos >= thumb_diff) {
+                    new_thumb_pos = thumb_diff;
                 }
-
-                if (thumb_pos > space_between) { // set max scroll position
-                    thumb_pos = space_between;
-                    position = thumb_pos * factor;
-                }
-
-                thumb.css(alignment_s, (thumb_pos + 'px'))
-                content.css(alignment_s, (-position + 'px'));
+                this.thumb.css(this.alignment_s, new_thumb_pos);
+                this.content.css(this.alignment_s, - (new_thumb_pos * this.factor));
             }
 
             function onMouseUp() {
-              $(document).off('mousemove', onMouseMove);
-              thumb.removeClass('active');
+              $(document).off('mousemove mouseup');
+              this.thumb.removeClass('active');
+              this.thumb_pos = new_thumb_pos;
             }
 
-            //thumb.ondragstart = function() {
-            //  return false;
-            //};
+            this.thumb.ondragstart = function() {
+              return false;
+            };
         }
     }
 
@@ -267,7 +264,8 @@ var livesearch_options = new Object();
             this.content_dim = this.content.outerWidth(true);
             // this.thumb_dim = this.thumb.outerWidth(true);
 
-            this.container_end = this.container.offset().left + this.container_dim;
+            this.offset = this.container.offset().left;
+            this.container_end = this.offset + this.container_dim;
             this.content_end = this.content.offset().left + this.content_dim;
         }
     }
@@ -284,11 +282,57 @@ var livesearch_options = new Object();
             this.alignment_c = 'bottom';
 
             this.container_dim = this.container.outerHeight(true);
-            this.content_dim = this.content.outerHeight(true);
+            this.content_dim = (this.content.length) ? this.content.outerHeight(true) : 0;
             // this.thumb_dim = this.thumb.outerHeight(true);
 
-            this.container_end = this.container.offset().top + this.container_dim;
+            this.offset = this.container.offset().top;
+            this.container_end = this.offset + this.container_dim;
+            this.content_end =(this.content.length) ? (this.content.offset().top + this.content_dim) : 0;
+        }
+    }
+
+    class ScrollBarSidebar extends ScrollBarY {
+        constructor(elem) {
+            super(elem);
+            this.elem = elem;
+
+            this.content = $('#sidebar_content');
+            this.dimension = 'height';
+            this.dimension_s= 'width';
+            this.alignment = 'left';
+            this.alignment_s = 'top';
+            this.alignment_c = 'bottom';
+
+            this.container_dim = this.container.outerHeight(true);
+
+            this.offset = this.container.offset().top;
+            this.container_end = this.offset + this.container_dim;
+        }
+
+        create_elems() {
+            console.log('create sidebar');
+            console.log(this.elem);
+
+
+            console.log(this.content);
+            this.container.prepend(this.content);
+            this.content.addClass('scroll-content');
+
+            this.container.prepend(this.scrollbar);
+            this.scrollbar.append(this.thumb);
+            this.scrollbar_unit = this.container_dim / (this.content_dim / this.unit);
+
+            this.content_dim = this.content.outerHeight(true);
             this.content_end = this.content.offset().top + this.content_dim;
+
+            // this.scrollbar.show();
+            if(this.content_dim >= this.container_dim) {
+                console.log(this.scrollbar);
+                this.scrollbar.css(this.dimension, this.container_dim)
+                .css(this.dimension_s, this.thickness)
+                .css(this.alignment, '0');
+                this.thumb.css(this.dimension_s, this.thickness);
+            }
         }
     }
 
@@ -424,7 +468,7 @@ var livesearch_options = new Object();
             }
             else {
                 if(this.mm_sb.length) {
-                    this.mm_sb.detach().prependTo(cone.sidebar_menu.elem).removeClass('mobile');
+                    this.mm_sb.detach().prependTo(cone.sidebar_menu.content).removeClass('mobile');
                 }
                 this.mm_top.show();
                 for(let i in this.main_menu_items){
@@ -573,6 +617,10 @@ var livesearch_options = new Object();
             }
             cone.sidebar_menu = this;
             this.elem = $('#sidebar_left');
+            this.scrollbar = new ScrollBarSidebar(this.elem);
+
+            this.content = $('#sidebar_content');
+
             this.state = null;
             this.flag = true;
             this.toggle_btn = $('#sidebar-toggle-btn', this.elem);
@@ -699,7 +747,7 @@ var livesearch_options = new Object();
                 })
                 this.content.hide();
             } else {
-                this.navtree.detach().appendTo(cone.sidebar_menu.elem).removeClass('mobile');
+                this.navtree.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
                 this.heading.off('click');
                 this.content.show();
             }

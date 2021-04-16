@@ -41,15 +41,14 @@
 
       <div id="sidebar_left"
            tal:condition="config.sidebar_left">
-
         <div id="sidebar-toggle-btn">
           <i class="bi bi-arrow-left-circle"></i>
         </div>
-
-        <tal:tiles repeat="tilename config.sidebar_left">
-          <tal:tile replace="structure tile(tilename)" />
-        </tal:tiles>
-
+        <div id="sidebar_content">
+          <tal:tiles repeat="tilename config.sidebar_left">
+            <tal:tile replace="structure tile(tilename)" />
+          </tal:tiles>
+        </div>
       </div>
 
       <div id="page-content-wrapper">
@@ -62,7 +61,7 @@
                ajax:action="content:#content:inner">
             <tal:content replace="structure tile(context.contenttile)" />
             <br>
-            <div class="scroll-container" style="height:400px">
+            <div class="scroll-container" style="height:375px">
               <div class="scroll-content">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget magna fermentum iaculis eu non diam. Commodo quis imperdiet massa tincidunt nunc. Sem fringilla ut morbi tincidunt augue interdum velit. Nibh venenatis cras sed felis eget velit aliquet sagittis id. Interdum velit laoreet id donec ultrices tincidunt. Nibh mauris cursus mattis molestie a iaculis at erat. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus viverra. Malesuada fames ac turpis egestas. Mauris augue neque gravida in fermentum et sollicitudin. Leo duis ut diam quam nulla porttitor massa id. Ultrices sagittis orci a scelerisque purus semper. Integer feugiat scelerisque varius morbi enim nunc faucibus. Eget gravida cum sociis natoque penatibus et magnis dis parturient. Gravida rutrum quisque non tellus. Massa eget egestas purus viverra accumsan in.
 
