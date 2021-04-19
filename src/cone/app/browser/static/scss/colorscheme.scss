@@ -193,6 +193,7 @@ body {
 
   #sidebar-toggle-btn {
     color: rgba($color: $flight, $alpha: 0.3);
+    background: $menus;
   }
 
   .sidebar-heading {
@@ -204,7 +205,7 @@ body {
   }
  */
   &.collapsed {
-    >:not(:nth-child(-n+2)):before {
+    #sidebar_content >:not(:first-child):before {
       background: $fmedium;
     }
     #navtree {
@@ -255,6 +256,10 @@ body {
   }
 }
 
+/* ----- content ----- */
+#content {
+  color: $fmedium;
+}
 
 /* ----- footer ----- */
 #cone-footer {
@@ -295,10 +300,9 @@ a:hover {
 
 /* -- scrollbar -- */
 .scrollbar {
-  // background: $sb;
-  background:red;
+  background: rgba($color: $flight, $alpha: 0.1);
     .scroll-handle {
-      background:$sb_border;
+      background: rgba($color: $flight, $alpha: 0.2);
       &:hover, &.active {
         background:$info;
       }

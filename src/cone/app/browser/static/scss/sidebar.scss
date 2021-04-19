@@ -9,8 +9,7 @@
   }
 
   #sidebar_content {
-    height: 300rem;
-    background: yellow;
+    height: 1300px;
   }
 
   // collapsed
@@ -19,7 +18,7 @@
     padding:0;
     box-shadow: .5rem 0rem 1rem rgba(0,0,0,0.02);
 
-    >:not(:nth-child(-n+2)):before {
+    #sidebar_content >:not(:first-child):before {
       content:"";
       position: absolute;
       width: 100%;
@@ -153,14 +152,16 @@
   }
 
   #sidebar-toggle-btn {
-    display: block;
-    float: right;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+    height: 3rem;
+    padding-right: .75rem;
     position: absolute;
-    top: .5rem;
-    right: 1rem;
-    width: 1.7rem;
-    height: 1.7rem;
-    padding: 0;
+    bottom: 0;
+    right: 0;
+    margin-left: 0.5rem;
+    width: calc(100% - .5rem);
 
     i {
       margin: 0;

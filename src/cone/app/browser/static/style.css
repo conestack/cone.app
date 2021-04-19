@@ -211,15 +211,14 @@
   list-style: none;
 }
 #sidebar_left #sidebar_content {
-  height: 300rem;
-  background: yellow;
+  height: 1300px;
 }
 #sidebar_left.collapsed {
   width: 3.5rem;
   padding: 0;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
 }
-#sidebar_left.collapsed > :not(:nth-child(-n+2)):before {
+#sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   content: "";
   position: absolute;
   width: 100%;
@@ -327,14 +326,16 @@
   border-color: transparent transparent grey grey;
 }
 #sidebar_left #sidebar-toggle-btn {
-  display: block;
-  float: right;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  height: 3rem;
+  padding-right: 0.75rem;
   position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  padding: 0;
+  bottom: 0;
+  right: 0;
+  margin-left: 0.5rem;
+  width: calc(100% - .5rem);
 }
 #sidebar_left #sidebar-toggle-btn i {
   margin: 0;
@@ -376,6 +377,9 @@ ul {
   flex-wrap: nowrap;
   align-items: center;
 }
+#topnav-content #main-menu .scrollbar {
+  top: 0;
+}
 #topnav-content #mainmenu {
   display: inline-flex;
   flex-wrap: nowrap;
@@ -412,7 +416,6 @@ ul {
   }
 }
 #sidebar_left.collapsed #mainmenu_sidebar {
-  margin-top: 3rem;
   margin-left: 0;
   padding: 0;
   width: inherit;
@@ -751,17 +754,23 @@ body {
   flex-direction: row;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 #wrapper #page-content-wrapper {
   position: relative;
   width: 100%;
-  height: 95%;
-  padding: 1.5rem;
-  overflow: auto;
+  height: calc(100vh - 4rem);
+  padding: 0;
   z-index: -100;
 }
+#wrapper #page-content-wrapper #page-content {
+  padding: 1.5rem;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 #wrapper #page-content-wrapper #content {
-  min-height: calc(100% - 5rem);
+  margin-bottom: auto;
 }
 
 .breadcrumb {
@@ -819,6 +828,7 @@ body {
 }
 
 .scrollbar {
+  display: none;
   position: absolute;
   border-radius: 3px;
   z-index: 1000;
@@ -826,6 +836,10 @@ body {
 .scrollbar .scroll-handle {
   position: relative;
   border-radius: 3px;
+}
+
+#scrolltest1 .scroll-content {
+  margin-left: 1rem;
 }
 
 /*# sourceMappingURL=style.css.map */

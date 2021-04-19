@@ -2,9 +2,8 @@
               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
               omit-tag="True">
 
-<div class="scroll-container" id="main-menu">
+<div id="main-menu">
   <ul id="mainmenu"
-      class="scroll-content"
       ajax:bind="contextchanged"
       ajax:action="mainmenu:#mainmenu:replace"
       tal:define="config context.config">

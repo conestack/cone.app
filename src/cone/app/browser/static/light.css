@@ -169,11 +169,12 @@ body {
 }
 #sidebar_left #sidebar-toggle-btn {
   color: rgba(87, 87, 92, 0.3);
+  background: #FAFAFC;
 }
 #sidebar_left .sidebar-heading {
   color: #57575C;
 }
-#sidebar_left.collapsed > :not(:nth-child(-n+2)):before {
+#sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   background: #717176;
 }
 #sidebar_left.collapsed #navtree .navtreelevel_1:hover {
@@ -213,6 +214,11 @@ body {
   color: #57575C;
 }
 
+/* ----- content ----- */
+#content {
+  color: #717176;
+}
+
 /* ----- footer ----- */
 #cone-footer {
   color: #717176;
@@ -250,10 +256,10 @@ a:hover {
 
 /* -- scrollbar -- */
 .scrollbar {
-  background: red;
+  background: rgba(87, 87, 92, 0.1);
 }
 .scrollbar .scroll-handle {
-  background: #DCDCE1;
+  background: rgba(87, 87, 92, 0.2);
 }
 .scrollbar .scroll-handle:hover, .scrollbar .scroll-handle.active {
   background: #5bc0de;

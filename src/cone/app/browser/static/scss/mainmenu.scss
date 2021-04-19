@@ -22,6 +22,9 @@ ul {
     flex-direction:row;
     flex-wrap:nowrap;
     align-items: center;
+    .scrollbar {
+      top:0;
+    }
   }
 
   #mainmenu {
@@ -66,7 +69,6 @@ ul {
 #sidebar_left {
   &.collapsed {
     #mainmenu_sidebar {
-      margin-top: 3rem;
       margin-left: 0;
       padding: 0;
       width: inherit;
