@@ -125,14 +125,14 @@ var livesearch_options = new Object();
             this.container.off().on('mousewheel wheel', this._scroll);
 
             this._drag_start = this.drag_start.bind(this);
-            this.thumb.off().on('mousedown', this._drag_start);
+            this.scrollbar.off().on('mousedown', this._drag_start);
 
             this._mousehandle = this.mouse_in_out.bind(this);
             this.container.off('mouseenter mouseleave', this._mousehandle).on('mouseenter mouseleave', this._mousehandle);
         }
 
         unload(){
-            this.thumb.off();
+            this.scrollbar.off();
             this.container.off();
         }
 
@@ -155,7 +155,6 @@ var livesearch_options = new Object();
 
                 // scroll event data
                 if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) { // down
-                    console.log('down');
                     this.position -= this.unit;
                     this.thumb_pos += this.scrollbar_unit;
 
@@ -166,7 +165,6 @@ var livesearch_options = new Object();
                 }
 
                 if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) { // up
-                    console.log('up');
                     this.position += this.unit;
                     this.thumb_pos -= this.scrollbar_unit;
 
@@ -221,7 +219,6 @@ var livesearch_options = new Object();
         }
 
         drag_start(evt) {
-            cone.dragging = true; //
             evt.preventDefault(); // prevent text selection
             this.thumb.addClass('active');
 
@@ -229,29 +226,49 @@ var livesearch_options = new Object();
                 thumb_diff = this.container_dim - this.thumb_dim,
                 new_thumb_pos = 0
             ;
-            $(document).on('mousemove', onMouseMove.bind(this)).on('mouseup', onMouseUp.bind(this));
 
-            function onMouseMove(evt) {
-                console.log('cone.dragging ' + cone.dragging); //
-
-                let mouse_pos_on_move = evt.pageX - this.offset;
-                let diff = mouse_pos_on_move - mouse_pos;
-                new_thumb_pos = this.thumb_pos + diff;
-                if(new_thumb_pos <= 0) {
-                    new_thumb_pos = 0;
-                } else if (new_thumb_pos >= thumb_diff) {
-                    new_thumb_pos = thumb_diff;
+            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
+                console.log('click not on thumb X');
+                if(mouse_pos < this.thumb_pos) {
+                    if(mouse_pos <= this.thumb_pos / 2) {
+                        new_thumb_pos = 0;
+                    } else {
+                        new_thumb_pos = mouse_pos- this.thumb_dim / 2;
+                    }
+                } else if(mouse_pos > this.thumb_pos + this.thumb_dim){
+                    if(mouse_pos > this.space_between + this.thumb_dim / 2) {
+                        new_thumb_pos = thumb_diff;
+                    } else {
+                        new_thumb_pos = mouse_pos - this.thumb_dim / 2;
+                    }
                 }
                 this.thumb.css('left', new_thumb_pos);
                 this.content.css('left', - (new_thumb_pos * this.factor));
+                this.thumb_pos = new_thumb_pos;
+            } else {
+                cone.dragging = true;
+                $(document).on('mousemove', onMouseMove.bind(this));
+
+                function onMouseMove(evt) {
+                    let mouse_pos_on_move = evt.pageX - this.offset;
+                    let diff = mouse_pos_on_move - mouse_pos;
+                    new_thumb_pos = this.thumb_pos + diff;
+                    if(new_thumb_pos <= 0) {
+                        new_thumb_pos = 0;
+                    } else if (new_thumb_pos >= thumb_diff) {
+                        new_thumb_pos = thumb_diff;
+                    }
+                    this.thumb.css('left', new_thumb_pos);
+                    this.content.css('left', - (new_thumb_pos * this.factor));
+                }
             }
 
+            $(document).on('mouseup', onMouseUp.bind(this));
             function onMouseUp() {
-                cone.dragging = false; //
+                cone.dragging = false;
                 $(document).off('mousemove mouseup');
                 this.thumb.removeClass('active');
                 this.thumb_pos = new_thumb_pos;
-                console.log('cone.dragging ' + cone.dragging); //
             }
         }
     }
@@ -297,7 +314,6 @@ var livesearch_options = new Object();
         }
 
         drag_start(evt) {
-            cone.dragging = true; //
             evt.preventDefault(); // prevent text selection
             this.thumb.addClass('active');
 
@@ -305,29 +321,48 @@ var livesearch_options = new Object();
                 thumb_diff = this.container_dim - this.thumb_dim,
                 new_thumb_pos = 0
             ;
-            $(document).on('mousemove', onMouseMove.bind(this)).on('mouseup', onMouseUp.bind(this));
 
-            function onMouseMove(evt) {      
-                console.log('cone.dragging ' + cone.dragging); //
-
-                let mouse_pos_on_move = evt.pageY - this.offset;
-                let diff = mouse_pos_on_move - mouse_pos;
-                new_thumb_pos = this.thumb_pos + diff;
-                if(new_thumb_pos <= 0) {
-                    new_thumb_pos = 0;
-                } else if (new_thumb_pos >= thumb_diff) {
-                    new_thumb_pos = thumb_diff;
+            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
+                console.log('click not on thumb Y');
+                if(mouse_pos < this.thumb_pos) {
+                    if(mouse_pos <= this.thumb_pos / 2) {
+                        new_thumb_pos = 0;
+                    } else {
+                        new_thumb_pos = mouse_pos- this.thumb_dim / 2;
+                    }
+                } else if(mouse_pos > this.thumb_pos + this.thumb_dim){
+                    if(mouse_pos > this.space_between + this.thumb_dim / 2) {
+                        new_thumb_pos = thumb_diff;
+                    } else {
+                        new_thumb_pos = mouse_pos - this.thumb_dim / 2;
+                    }
                 }
                 this.thumb.css('top', new_thumb_pos);
                 this.content.css('top', - (new_thumb_pos * this.factor));
-            }
-
-            function onMouseUp() {
-                cone.dragging = false; //
-                $(document).off('mousemove mouseup');
-                this.thumb.removeClass('active');
                 this.thumb_pos = new_thumb_pos;
-                console.log('cone.dragging ' + cone.dragging); //
+            } else {
+                cone.dragging = true;
+                $(document).on('mousemove', onMouseMove.bind(this)).on('mouseup', onMouseUp.bind(this));
+
+                function onMouseMove(evt) {      
+                    let mouse_pos_on_move = evt.pageY - this.offset;
+                    let diff = mouse_pos_on_move - mouse_pos;
+                    new_thumb_pos = this.thumb_pos + diff;
+                    if(new_thumb_pos <= 0) {
+                        new_thumb_pos = 0;
+                    } else if (new_thumb_pos >= thumb_diff) {
+                        new_thumb_pos = thumb_diff;
+                    }
+                    this.thumb.css('top', new_thumb_pos);
+                    this.content.css('top', - (new_thumb_pos * this.factor));
+                }
+
+                function onMouseUp() {
+                    cone.dragging = false;
+                    $(document).off('mousemove mouseup');
+                    this.thumb.removeClass('active');
+                    this.thumb_pos = new_thumb_pos;
+                }
             }
         }
     }
@@ -417,7 +452,6 @@ var livesearch_options = new Object();
                     return;
                 }
                 menu.offset({left: elem.offset().left});
-                console.log('not dragging');
                 if(e.type == 'mouseenter') {
                     menu.show();
                 } else {
@@ -516,8 +550,6 @@ var livesearch_options = new Object();
             let target = $(evt.currentTarget);
 
             if(cone.dragging) {
-                evt.stopImmediatePropagation();
-                console.log('sidebar dragging');
                 return;
             }
             target.addClass('hover');
