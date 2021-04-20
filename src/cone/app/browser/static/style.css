@@ -245,17 +245,17 @@
   font-weight: bold;
   color: white;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover {
   min-width: 16rem;
   width: max-content;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover > a {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover > a {
   color: white !important;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover span {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover span {
   display: inline-block;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover ul {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover ul {
   display: block;
   position: absolute;
   z-index: -1;
@@ -263,7 +263,7 @@
   min-width: max-content;
   padding: 1.5rem 1rem 1rem 5rem;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover ul ul {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover ul ul {
   display: none;
 }
 #sidebar_left.collapsed .sidebar-heading {
@@ -435,17 +435,17 @@ ul {
   font-weight: bold;
   color: white;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover {
   min-width: 16rem;
   width: max-content;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover > a {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover > a {
   color: white !important;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover span {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover span {
   display: inline-block;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover .cone-mainmenu-dropdown-sb {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover .cone-mainmenu-dropdown-sb {
   display: block;
   position: absolute;
   z-index: -1;

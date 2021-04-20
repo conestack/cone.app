@@ -209,7 +209,7 @@ body {
       background: $fmedium;
     }
     #navtree {
-      .navtreelevel_1:hover {
+      .navtreelevel_1.hover {
         background: $info;
   
         > a { color: white;}
@@ -221,7 +221,7 @@ body {
       }
     }
     #mainmenu_sidebar {
-      > li:hover {
+      > li.hover {
         background: $info;
   
         > a { color: white;}

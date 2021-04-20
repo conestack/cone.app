@@ -169,23 +169,23 @@ body {
 #sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   background: #949499;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover {
   background: #5bc0de;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover > a {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover > a {
   color: white;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover ul {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover ul {
   background: #434348;
   border: 1px solid #2E2E33;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover {
   background: #5bc0de;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover > a {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover > a {
   color: white;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover ul {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover ul {
   background: #434348;
   border: 1px solid #2E2E33;
 }

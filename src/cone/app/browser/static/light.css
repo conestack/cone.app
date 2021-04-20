@@ -177,23 +177,23 @@ body {
 #sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   background: #717176;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover {
   background: #5bc0de;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover > a {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover > a {
   color: white;
 }
-#sidebar_left.collapsed #navtree .navtreelevel_1:hover ul {
+#sidebar_left.collapsed #navtree .navtreelevel_1.hover ul {
   background: #ffffff;
   border: 1px solid #EBEBF0;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover {
   background: #5bc0de;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover > a {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover > a {
   color: white;
 }
-#sidebar_left.collapsed #mainmenu_sidebar > li:hover ul {
+#sidebar_left.collapsed #mainmenu_sidebar > li.hover ul {
   background: #ffffff;
   border: 1px solid #EBEBF0;
 }
