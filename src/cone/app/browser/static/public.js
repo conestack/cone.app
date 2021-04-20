@@ -113,15 +113,15 @@ var livesearch_options = new Object();
             this._handle = this.handle_scrollbar.bind(this); // bind this required!
             $(this._handle); // jquery required!
             
-            const scroll_observer = new ResizeObserver(entries => {
+            const scrollbar_observer = new ResizeObserver(entries => {
                 for(let entry of entries) {
                     $(this._handle);
                 }
             });
-            scroll_observer.observe(this.container.get(0));
+            scrollbar_observer.observe(this.container.get(0));
 
             this._scroll = this.scroll_handle.bind(this);
-            $(this.container).off().on('mousewheel DOMMouseScroll', this._scroll);
+            $(this.container).off().on('mousewheel wheel', this._scroll);
 
             this._drag_start = this.drag_start.bind(this);
             this.thumb.off().on('mousedown', this._drag_start);
@@ -148,45 +148,32 @@ var livesearch_options = new Object();
         scroll_handle(e) {
             this.update_dimensions();
 
-            if(typeof e.originalEvent.detail == 'number' && e.originalEvent.detail !== 0) { // Firefox
-                if(e.originalEvent.detail > 0) { // down
-                    this.position -= this.unit;
-                    this.thumb_pos += this.scrollbar_unit;
-                } 
-                if(this.thumb_pos >= this.container_dim - this.thumb_dim) { // stop scrolling on end
-                    this.thumb_pos = this.container_dim - this.thumb_dim;
-                    this.position = this.container_dim - this.content_dim;
-                }
-                if(e.originalEvent.detail < 0){ // up
-                    this.position += this.unit;
-                    this.thumb_pos -= this.scrollbar_unit;
-                }
-                if(this.position > 0) { // stop scrolling on start
-                    this.position = 0;
-                    this.thumb_pos = 0;
-                }
-            } else if (typeof e.originalEvent.wheelDelta == 'number') { // Chrome
+            if (typeof e.originalEvent.wheelDelta == 'number' || typeof e.originalEvent.deltaY == 'number') {
 
                 // scroll event data
-                if(e.originalEvent.wheelDelta < 0) { // down
+                if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) { // down
+                    console.log('down');
                     this.position -= this.unit;
                     this.thumb_pos += this.scrollbar_unit;
-                }
-                if(this.thumb_pos >= this.container_dim - this.thumb_dim) { // stop scrolling on end
-                    this.thumb_pos = this.container_dim - this.thumb_dim;
-                    this.position = this.container_dim - this.content_dim;
-                }
-                if(e.originalEvent.wheelDelta > 0) { // up
-                    this.position += this.unit;
-                    this.thumb_pos -= this.scrollbar_unit;
-                }
-                if(this.position > 0) { // stop scrolling on start
-                    this.position = 0;
-                    this.thumb_pos = 0;
+
+                    if(this.thumb_pos >= this.container_dim - this.thumb_dim) { // stop scrolling on end
+                        this.thumb_pos = this.container_dim - this.thumb_dim;
+                        this.position = this.container_dim - this.content_dim;
+                    }
                 }
 
-                this.set_position();
+                if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) { // up
+                    console.log('up');
+                    this.position += this.unit;
+                    this.thumb_pos -= this.scrollbar_unit;
+
+                    if(this.position > 0) { // stop scrolling on start
+                        this.position = 0;
+                        this.thumb_pos = 0;
+                    }
+                }
             }
+            this.set_position();
         }
     }
 
