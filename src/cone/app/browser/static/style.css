@@ -206,12 +206,10 @@
 #sidebar_left {
   position: relative;
   height: calc(100% - 4rem);
+  flex-shrink: 0;
 }
 #sidebar_left ul {
   list-style: none;
-}
-#sidebar_left #sidebar_content {
-  height: 1300px;
 }
 #sidebar_left.collapsed {
   width: 3.5rem;
@@ -286,7 +284,7 @@
   padding: 0 1.5rem;
 }
 #sidebar_left.expanded #navtree #navtree-content {
-  display: contents;
+  overflow: hidden;
 }
 #sidebar_left.expanded #navtree .navtreelevel_1 {
   padding-bottom: 0.5rem;
@@ -428,6 +426,7 @@ ul {
 }
 #sidebar_left.collapsed #mainmenu_sidebar > li {
   padding: 0.75rem 1rem;
+  width: 3.5rem;
 }
 #sidebar_left.collapsed #mainmenu_sidebar > li > a > span {
   display: none;

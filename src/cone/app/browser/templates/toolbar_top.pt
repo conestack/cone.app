@@ -118,7 +118,7 @@
       <ul class="dropdown-menu dropdown-menu-end">
         <li class="toolbar-title">Settings</li>
         <li class="form-check form-switch">
-          <input class="form-check-input switch_mode" type="checkbox">
+          <input class="form-check-input" id="switch_mode" type="checkbox">
           <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
         </li>
         <li>

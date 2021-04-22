@@ -3,13 +3,10 @@
 #sidebar_left {
   position: relative;
   height: calc(100% - 4rem);
+  flex-shrink: 0;
 
   ul {
     list-style: none;
-  }
-
-  #sidebar_content {
-    height: 1300px;
   }
 
   // collapsed
@@ -38,6 +35,7 @@
           display: none;
           > li {
             padding-bottom: 0.5rem;
+            //width: 3.5rem;
           }
         }
 
@@ -100,7 +98,7 @@
       padding: 0 1.5rem;
 
       #navtree-content {
-        display:contents;
+        overflow: hidden;
       }
 
       .navtreelevel_1 {

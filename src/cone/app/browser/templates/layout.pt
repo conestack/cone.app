@@ -57,7 +57,7 @@
             <tal:pathbar replace="structure tile('pathbar')" />
           </row>
 
-          <div id="content" style="height:1200px;"
+          <div id="content"
                ajax:bind="contextchanged"
                ajax:action="content:#content:inner">
             <tal:content replace="structure tile(context.contenttile)" />
