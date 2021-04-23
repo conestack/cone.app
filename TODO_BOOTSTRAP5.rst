@@ -25,10 +25,14 @@ javascript
 [X] - add Main Menu Class
 [ ] - simplify - cleanup - correct public.js
       [X] - reduce jquery DOM elements - less is better! -> use in object instead (this.x)
-      [ ] - make sure to have context with DOM elements to improve performance
+      [X] - make sure to have context with DOM elements to improve performance
       [ ] - bootstrap dropdowns: read documentation and adjust closing toggle on cone.view_mobile
       [X] - descend from ID
 [X] - add custom scrollbar
+[X] - modeswitch cookie
+[ ] - sidebar cookie
+[ ] - dropdown cookie sidebar
+
 
 styles
 ------

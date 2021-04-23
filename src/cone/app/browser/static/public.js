@@ -67,7 +67,8 @@ var livesearch_options = new Object();
     $(function() {
         bdajax.register(function(context) {
             let theme_switcher = new cone.ThemeSwitcher(context, cone.default_themes);
-            theme_switcher.current = readCookie('modeswitch');
+            theme_switcher.current = readCookie('modeswitch')!=null ? readCookie('modeswitch') : cone.theme_switcher.modes[0];
+            
             new cone.SidebarMenu(context);
             new cone.Topnav(context);
             new cone.Searchbar(context);
@@ -230,7 +231,6 @@ var livesearch_options = new Object();
             ;
 
             if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) { // click
-                console.log('click not on thumb X');
                 if(mouse_pos < this.thumb_pos) {
                     if(mouse_pos <= this.thumb_pos / 2) {
                         new_thumb_pos = 0;
@@ -327,7 +327,6 @@ var livesearch_options = new Object();
             ;
 
             if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
-                console.log('click not on thumb Y');
                 if(mouse_pos < this.thumb_pos) {
                     if(mouse_pos <= this.thumb_pos / 2) {
                         new_thumb_pos = 0;
@@ -370,15 +369,6 @@ var livesearch_options = new Object();
             }
         }
     }
-
-    // class ScrollBarContent extends ScrollBarY {
-    //     constructor(elem) {
-    //         super(elem);
-    //         this.elem = elem;
-    //         this.content = $('#page-content');
-    //         console.log(this.content);
-    //     }
-    // }
 
     class ScrollBarSidebar extends ScrollBarY {
         constructor(elem) {
@@ -695,81 +685,73 @@ var livesearch_options = new Object();
             this.scrollbar = new ScrollBarSidebar(this.elem);
 
             this.content = $('#sidebar_content');
-
             this.state = null;
-            this.flag = true;
+
             this.toggle_btn = $('#sidebar-toggle-btn', this.elem);
             this.toggle_arrow = $('i', this.toggle_btn);
-            this.toggled = false;
 
-            this._toggle = this.toggle_menu.bind(this);
-            this.toggle_btn.on('click', this._toggle);
+            this.handle_cookie();
+            this.handle_menu_visibility();
+            $(window).on('resize', this.handle_menu_visibility.bind(this));
 
-            this._resize_handle = this.handle_menu_visibility.bind(this);
-            $(this._resize_handle);
-            $(window).on('resize', this._resize_handle);
-            this.handle_menu_visibility(null);
+            this._handle_resize = this.handle_resize.bind(this);
+            $(window).on('resize', this._handle_resize);
 
-            this._handle_state = this.handle_state.bind(this);
-            $(this._handle_state);
-            $(window).on('resize', this._handle_state);
-
-            this._handle_c = this.handle_collapse.bind(this);
+            this._assign_state = $(this.assign_state.bind(this));
+            this.toggle_btn.off('click').on('click', this.toggle_menu.bind(this));
         }
 
         unload() {
-            $(window).off('resize', this._resize_handle);
+            $(window).off('resize', this.handle_menu_visibility.bind(this));
+            $(window).off('resize', this._handle_resize);
+            this.toggle_btn.off('click');
         }
 
-        handle_state() {
-            if(cone.view_mobile && cone.vp_flag){
-                this.state = false;
+        assign_state() {
+            let elem_class = this.state === true ? 'collapsed':'expanded';
+            let button_class = 'bi bi-arrow-' + ((this.state === true) ? 'right':'left') + '-circle';
+            this.elem.attr('class', elem_class);
+            this.toggle_arrow.attr('class', button_class);
+            $(cone.main_menu._bind);
+        }
+
+        handle_resize() {
+            if(this.handle_cookie() === null) {
+                let condition = !cone.view_mobile && window.matchMedia(`(max-width: 990px)`).matches ;
+                let state = (condition) ? true:false;
+                if(state != this.state){
+                    this.state = state;
+                    this.assign_state();
+                }
             }
+        }
 
-            if(this.toggled) {
-                return;
-            }
-
-            let state = null;
-
-            if(!cone.view_mobile && window.matchMedia(`(max-width: 990px)`).matches) {
-                state = true;
+        handle_cookie() {
+            let cookie = readCookie('sidebar');
+            if(cookie == "true") {
+                cookie = true;
+            } else if(cookie == "false"){
+                cookie = false;
             } else {
-                state = false;
+                cookie = null;
             }
-
-            let flag = state !== this.state;
-            this.state = state;
-
-            if(flag) {
-                $(cone.main_menu._bind);
-                $(this._handle_c);
-            }
+            this.state = cookie;
+            this._assign_state;
+            return cookie;
         }
 
         toggle_menu() {
-            let state = (this.state) ? false:true;
-            this.state = state;
-            this.flag = true;
-            this.toggled = true;
-
             dd_reset(cone.main_menu.sb_arrows, cone.main_menu.sb_dropdowns);
-            $(cone.main_menu._bind);
-            $(this._handle_c);
-        }
+            this.state = (this.state) ? false:true;
+            this.assign_state();
 
-        handle_collapse() {
-            let elem_class = (this.state) ? 'collapsed':'expanded';
-            let button_class = 'bi bi-arrow-' + ((this.state) ? 'right':'left') + '-circle';
-            this.elem.attr('class', elem_class);
-            this.toggle_arrow.attr('class', button_class);
+            createCookie('sidebar', this.state, null);
         }
 
         handle_menu_visibility() {
             if(!cone.vp_flag) {
                 return;
             }
-
             if (cone.view_mobile) {
                 this.elem.hide();
             } else {
@@ -858,7 +840,9 @@ var livesearch_options = new Object();
             this.elem = elem;
             this.modes = modes;
             this.link = $('head #colormode-styles');
+            this.state = false;
             this.elem.on('click', this.switch_theme.bind(this));
+            this.switch_checkbox();
         }
 
         get current() {
@@ -869,11 +853,19 @@ var livesearch_options = new Object();
             this.link.attr('href', value);
         }
 
+        switch_checkbox() {
+            if(readCookie('modeswitch') != null){
+                let state = readCookie('modeswitch')===this.modes[0]? false:true;
+                this.elem.prop('checked', state);
+            }
+        }
+
         switch_theme(evt) {
             evt.stopPropagation();
             let theme = this.current === this.modes[0] ? this.modes[1] : this.modes[0]
             this.current = theme;
             createCookie("modeswitch", theme, null);
+            this.switch_checkbox();
         }
     };
 

@@ -5,7 +5,7 @@ document gets imported to light.scss and dark.scss
 changes mode to light or dark by changing source file .css
 */
 body {
-  background-color: #2E2E33;
+  background: #2E2E33;
 }
 
 .active > a {

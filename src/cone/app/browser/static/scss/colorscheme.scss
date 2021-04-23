@@ -5,7 +5,7 @@ changes mode to light or dark by changing source file .css
 */
 
 body {
-    background-color: $bg;
+    background: $bg;
 }
 
 .active > a {
