@@ -30,8 +30,8 @@ javascript
       [X] - descend from ID
 [X] - add custom scrollbar
 [X] - modeswitch cookie
-[ ] - sidebar cookie
-[ ] - dropdown cookie sidebar
+[X] - sidebar cookie
+[?] - dropdown cookie sidebar
 
 
 styles

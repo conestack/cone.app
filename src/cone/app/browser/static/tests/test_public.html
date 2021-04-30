@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>cone.light editor tests</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.5.0.css">
+    <link rel="stylesheet" href="http://localhost:8081/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/light.css">
+    <!-- <link rel="stylesheet" href="/static/style.css"> -->
+  </head>
+
+  <body>
+
+    <div id="sidebar_left" style="display:none;"> <div></div> </div>
+    <div id="main-menu" style="display:none;"><div></div> </div>
+    <div id="page-content-wrapper" style="display:none;"> <div></div> </div>
+
+    <div id="test" class="scroll-container" style="height:100px; width:200px;"><div class="scroll-content" style="height:100px; width:400px;"><span>Heast oida geh endlich, reg mi ned auf</span></div></div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" id="switch_mode" type="checkbox">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
+    </div>
+
+    <!-- qunit related -->
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="https://code.jquery.com/qunit/qunit-2.5.0.js"></script>
+
+    <!-- public dependencies -->
+    <script src="/static/jquery-3.5.1.js"></script>
+    <script src="/static/cookie_functions.js"></script>
+    <!-- <script src="/popper/popper.js"></script> -->
+    <script src="/++resource++bdajax/overlay.js"></script>
+    <script src="/++resource++bdajax/bdajax.js"></script>
+    <script src="/++resource++bdajax/bdajax_bs3.js"></script>
+
+    <!-- include public JS -->
+    <script src="/static/public.js"></script>
+
+
+    <!-- include tests -->
+    <script src="/static/tests/test_public.js"></script>
+  </body>
+</html>
+
+
