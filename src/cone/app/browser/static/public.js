@@ -91,8 +91,7 @@ var livesearch_options = new Object();
 
             cone.scrollbars.push(this);
             this.container = context;
-            console.log(this.container);
-            this.content =$('>', this.container);
+            this.content = $('>', this.container);
 
             this.scrollbar = $(`
                 <div class="scrollbar">
@@ -609,10 +608,10 @@ var livesearch_options = new Object();
             }
 
             this.elem = elem;
-            this.content = $('#topnav-content', this.elem);
-            this.toggle_button = $('#mobile-menu-toggle', this.elem);
-            this.logo = $('#cone-logo', this.elem);
-            this.tb_dropdowns = $('#toolbar-top>li.dropdown', this.elem);
+            this.content = $('#topnav-content');
+            this.toggle_button = $('#mobile-menu-toggle');
+            this.logo = $('#cone-logo');
+            this.tb_dropdowns = $('#toolbar-top>li.dropdown');
             
             this._toggle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle);
@@ -621,8 +620,8 @@ var livesearch_options = new Object();
             $(this._handle);
             $(window).on('resize', this._handle);
 
-            this.pt = $('#personaltools', this.elem);
-            this.user =  $('#user', this.pt);
+            this.pt = $('#personaltools');
+            this.user =  $('#user');
             this._pt_handle = this.pt_handle.bind(this);
             $(this._pt_handle);
             $(window).on('resize', this._pt_handle);
@@ -703,7 +702,7 @@ var livesearch_options = new Object();
             this.state = null;
             this.cookie = null;
 
-            this.toggle_btn = $('#sidebar-toggle-btn', this.elem);
+            this.toggle_btn = $('#sidebar-toggle-btn');
             this.toggle_arrow = $('i', this.toggle_btn);
 
             this.handle_cookie();
@@ -846,7 +845,7 @@ var livesearch_options = new Object();
     cone.ThemeSwitcher = class {
 
         constructor(context, modes) {
-            let elem = $('#switch_mode', context);
+            let elem = $('#switch_mode');
             if (!elem.length) {
                 return;
             }
@@ -855,7 +854,7 @@ var livesearch_options = new Object();
             this.modes = modes;
             this.link = $('head #colormode-styles');
             this.state = false;
-            this.elem.on('click', this.switch_theme.bind(this));
+            this.elem.off().on('click', this.switch_theme.bind(this));
             this.switch_checkbox();
         }
 
@@ -869,16 +868,19 @@ var livesearch_options = new Object();
 
         switch_checkbox() {
             if(readCookie('modeswitch') != null){
-                let state = readCookie('modeswitch')===this.modes[0]? false:true;
+                let state = readCookie('modeswitch') === this.modes[0] ? false:true;
                 this.elem.prop('checked', state);
             }
         }
 
         switch_theme(evt) {
             evt.stopPropagation();
-            let theme = this.current === this.modes[0] ? this.modes[1] : this.modes[0]
+            console.log(this.current);
+            let theme = this.current === this.modes[0] ? this.modes[1] : this.modes[0];
+            console.log(theme);
             this.current = theme;
             createCookie("modeswitch", theme, null);
+            console.log(readCookie("modeswitch"));
             this.switch_checkbox();
         }
     };
@@ -887,7 +889,7 @@ var livesearch_options = new Object();
 
         constructor(context) {
 
-            let elem = $('#cone-searchbar', context);
+            let elem = $('#cone-searchbar');
             if (!elem.length) {
                 return;
             }

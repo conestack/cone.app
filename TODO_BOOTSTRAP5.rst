@@ -1,6 +1,16 @@
 TODO
 ====
 
+testing
+-------
+
+[?] - implement selenium for window events
+[ ] - debug modeswitch
+[ ] - testen testen testen
+
+general
+-------
+
 [X] - layout.mainmenu_fluid obsolete, remove
 [X] - mainmenu_empty_title obsolete, remove
 [X] - toolbar_top tile, add
