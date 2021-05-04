@@ -14,12 +14,14 @@ def app_config():
 
 
 def safe_encode(value, encoding='utf-8'):
+    # deprecated, use node.utils.safe_encode instead.
     if isinstance(value, compat.UNICODE_TYPE):
         value = value.encode(encoding)
     return value
 
 
 def safe_decode(value, encoding='utf-8'):
+    # deprecated, use node.utils.safe_decode instead.
     if not isinstance(value, compat.UNICODE_TYPE):
         value = value.decode(encoding)
     return value
