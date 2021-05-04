@@ -4,7 +4,7 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_path
 from cone.app.browser.utils import request_property
-from cone.app.browser.utils import safe_decode
+from node.utils import safe_decode
 from cone.tile import Tile
 from cone.tile import render_template
 from plumber import plumbing

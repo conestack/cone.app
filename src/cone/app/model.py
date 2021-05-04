@@ -13,8 +13,6 @@ from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
-from cone.app.utils import safe_decode
-from cone.app.utils import safe_encode
 from node.behaviors import Adopt
 from node.behaviors import AsAttrAccess
 from node.behaviors import Attributes
@@ -31,6 +29,8 @@ from node.interfaces import IOrdered
 from node.interfaces import IUUID
 from node.interfaces import IUUIDAware
 from node.utils import instance_property
+from node.utils import safe_decode
+from node.utils import safe_encode
 from odict import odict
 from plumber import Behavior
 from plumber import default
