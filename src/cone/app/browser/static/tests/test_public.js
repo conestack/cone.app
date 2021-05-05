@@ -1,5 +1,15 @@
+QUnit.test('hello world', assert => {
+    assert.strictEqual(1, 1, '1 is 1')
+})
+
+QUnit.test('lets see if you work', assert => {
+    let fixture = $('#fixture')
+    assert.deepEqual(fixture, fixture, 'body')
+})
+
+
 /* scrollbar */
-QUnit.test('test Scrollbar', assert => {
+/* QUnit.test('test Scrollbar', assert => {
     var fixture = document.getElementById('qunit-fixture');
     fixture.innerHTML = '<div id="test"> <div></div> </div>';
     let ctx = $('#test');
@@ -12,11 +22,11 @@ QUnit.test('test Scrollbar', assert => {
     let thk = '6px';
     assert.strictEqual(the_scrollbar.thickness, thk, 'thickness is thickness');
     fixture.innerHTML = '';
-})
+}) */
 
 
 /* topnav */
-QUnit.test('test Topnav', assert => {
+/* QUnit.test('test Topnav', assert => {
     var fixture = document.getElementById('qunit-fixture');
     fixture.innerHTML = `
     <div id="topnav"> 
@@ -48,10 +58,10 @@ QUnit.test('test Topnav', assert => {
     assert.deepEqual(topnav.tb_dropdowns, $('#toolbar-top>li.dropdown'), 'dropdowns ok');
     assert.deepEqual(topnav.pt, $('#personaltools'), 'pt ok');
     assert.deepEqual(topnav.user, $('#user'), 'user ok');
-})
+}) */
 
 /* sidebar */
-QUnit.test('test Sidebar', assert => {
+/* QUnit.test('test Sidebar', assert => {
     //var fixture = document.getElementById('qunit-fixture');
 
     let sidebar = new cone.SidebarMenu();
@@ -80,9 +90,9 @@ QUnit.test('test Sidebar', assert => {
 
     // find a way to fake window width for resize testing
 })
-
+ */
 /* modeswitch */
-QUnit.test('test modeswitch', assert => {
+/* QUnit.test('test modeswitch', assert => {
     let modeswitch = new cone.ThemeSwitcher($('#topnav'), cone.default_themes);
     assert.deepEqual($('#switch_mode'), modeswitch.elem, 'elem set');
     assert.deepEqual(modeswitch.link, $('head #colormode-styles'), 'link set');
@@ -92,10 +102,10 @@ QUnit.test('test modeswitch', assert => {
     // assert.strictEqual(modeswitch.state, true, 'state true');
 
     // debug!! -> how do stylesheets get loaded?
-})
+}) */
 
 /* searchbar */
-QUnit.test('test searchbar', assert => {
+/* QUnit.test('test searchbar', assert => {
     let fixture = document.getElementById('qunit-fixture');
     fixture.innerHTML = '<div id="cone-searchbar"></div>';
     let searchbar = new cone.Searchbar();
@@ -105,4 +115,4 @@ QUnit.test('test searchbar', assert => {
     assert.deepEqual(searchbar.dd, $('#cone-livesearch-dropdown', '#cone-searchbar'), 'dropdown set');
 
     // window resize
-})
+}) */

@@ -1,12 +1,22 @@
 TODO
 ====
 
-testing
--------
+JS TESTING REQUIREMENTS
+-----------------------
 
-[?] - implement selenium for window events
-[ ] - debug modeswitch
-[ ] - testen testen testen
+Karma: https://karma-runner.github.io/6.3/intro/installation.html
+Istanbul: https://istanbul.js.org/
+Puppeteer: https://pptr.dev/
+
+install in project directory:
+  - karma: browser/chrome
+    - chrome launcher needed - also launches chromium/chromium headless
+    - set qunit test files
+  - istanbul
+  - puppeteer
+OR 
+  - cypress: https://www.cypress.io/
+
 
 general
 -------
