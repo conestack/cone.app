@@ -7,103 +7,176 @@
  *     typeahead.js
  */
 
+// cone namespace
 cone = {
-    sidebar_menu: null,
-    main_menu: null,
     theme_switcher: null,
     searchbar_handler: null,
-    navtree: null,
-    topnav: null,
     content: null,
     scrollbars: [],
     default_themes: [
         '/static/light.css',
         '/static/dark.css'
     ],
-    view_mobile: null,
-    vp_flag: true,
     dragging: false
 };
 
-$(function() {
-    let state = null;
-    if(window.matchMedia(`(max-width:560px)`).matches) {
-        state = true;
-     } else {
-        state = false;
-     }
-     cone.view_mobile = state;
-})
-
-$(window).on('resize', function(evt) {
-    let state = null;
-    if(window.matchMedia(`(max-width:560px)`).matches) {
-       state = true;
-    } else {
-       state = false;
-    }
-    let flag = state !== cone.view_mobile;
-    cone.view_mobile = state;
-    cone.vp_flag = flag;
-});
-
-// dropdown arrows ----------------------------------------
-function dd_click(arrow) {
-    let currentMode = $(arrow).attr('class');
-    let mode = 'dropdown-arrow bi bi-chevron-';
-    let newMode = mode + ((currentMode == mode + 'down') ? 'up':'down');
-    $(arrow).attr('class', newMode);
-}
-function dd_reset(arrow, dropdown) {
-    arrow.attr('class', 'dropdown-arrow bi bi-chevron-down');
-    dropdown.hide();
-}
-
-
-var livesearch_options = new Object();
+// var livesearch_options = new Object();
 
 (function($) {
 
+    // viewport related
+    cone.viewport = null;
+    cone.VP_MOBILE = 0;
+    cone.VP_SMALL = 1;
+    cone.VP_MEDIUM = 2;
+    cone.VP_LARGE = 3;
+
+    // layout components
+    cone.sidebar_menu = null;
+    cone.main_menu = null;
+    cone.navtree = null;
+    cone.topnav = null;
+
     $(function() {
+        // create viewport singleton
+        cone.viewport = new cone.ViewPort();
+
         bdajax.register(function(context) {
-            console.log(context);
             let theme_switcher = new cone.ThemeSwitcher(context, cone.default_themes);
-            theme_switcher.current = readCookie('modeswitch') != null ? readCookie('modeswitch') : cone.theme_switcher.modes[0];
+            theme_switcher.current =
+                readCookie('modeswitch') != null ?
+                readCookie('modeswitch') :
+                cone.theme_switcher.modes[0];
 
-
-            new cone.SidebarMenu(context);
             new cone.Topnav(context);
-            new cone.Searchbar(context);
             new cone.MainMenu(context);
+            new cone.SidebarMenu(context);
+
+            cone.topnav.viewport_changed(null);
+            cone.main_menu.viewport_changed(null);
+            cone.sidebar_menu.viewport_changed(null);
+
+            new cone.Searchbar(context);
             new cone.Navtree(context);
             new cone.Content(context);
+
             $('.scroll-container', context).each(function() {
                 let condition = $(this).find('.scroll-content').outerWidth(true) > $(this).outerWidth(true);
-                let scrollbar = (condition) ? new ScrollBarX($(this)):new ScrollBarY($(this));
+                let scrollbar = (condition) ?
+                    new cone.ScrollBarX($(this)) :
+                    new cone.ScrollBarY($(this));
             });
         }, true);
-        // bdajax.register(livesearch.binder.bind(livesearch), true); 
+
+        // bdajax.register(livesearch.binder.bind(livesearch), true);
+
     });
+
+    // XXX: move to cone.utils
+    function toggle_arrow(arrow) {
+        if (arrow.hasClass('bi-chevron-up')) {
+            arrow.removeClass('bi-chevron-up');
+            arrow.addClass('bi-chevron-down');
+        } else {
+            arrow.removeClass('bi-chevron-down');
+            arrow.addClass('bi-chevron-up');
+        }
+    }
+
+    function dd_reset(arrow, dropdown) {
+        arrow.attr('class', 'dropdown-arrow bi bi-chevron-down');
+        dropdown.hide();
+    }
+
+    // viewport singleton
+    cone.ViewPort = class {
+
+        constructor() {
+            this.state = null;
+            this._mobile_query = `(max-width:560px)`;
+            this._small_query = `(min-width:560px) and (max-width: 990px)`;
+            this._medium_query = `(min-width:560px) and (max-width: 1200px)`;
+            this.update_viewport(null);
+            $(window).on('resize', this.update_viewport.bind(this));
+        }
+
+        update_viewport(e) {
+            let state = this.state;
+            if (window.matchMedia(this._mobile_query).matches) {
+                this.state = cone.VP_MOBILE;
+            } else if (window.matchMedia(this._small_query).matches) {
+                this.state = cone.VP_SMALL;
+            } else if (window.matchMedia(this._medium_query).matches) {
+                this.state = cone.VP_MEDIUM;
+            } else {
+                this.state = cone.VP_LARGE;
+            }
+            if (e && state != this.state) {
+                var evt = $.Event('viewport_changed');
+                evt.state = this.state;
+                $(window).trigger(evt);
+            }
+        }
+    }
+
+    cone.ViewPortAware = class {
+
+        constructor(context) {
+            this._viewport_changed_handle = this.viewport_changed.bind(this);
+            $(window).on('viewport_changed', this._viewport_changed_handle);
+        }
+
+        unload() {
+            $(window).off('viewport_changed', this._viewport_changed_handle);
+        }
+
+        viewport_changed(e) {
+        }
+    }
+
+    // layout component
+    cone.ViewComponent = class {
+
+        constructor(elem, global_name=null) {
+            this.elem = elem;
+            this._observe_removed();
+            if (global_name) {
+                cone[global_name] = this;
+            }
+        }
+
+        _observe_removed() {
+            let elem = this.elem.get(0);
+            let that = this;
+            let observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    mutation.removedNodes.forEach(node => {
+                        if (Object.is(elem, node)) {
+                            observer.disconnect();
+                            that.unload();
+                        }
+                    });
+                });
+            });
+            observer.observe(elem.parentNode, {childList: true});
+        }
+
+        unload() {
+            // abstract, implement on subclass
+        }
+    }
 
     cone.ScrollBar = class {
 
         constructor(context) {
-
             cone.scrollbars.push(this);
             this.container = context;
             this.content = $('>', this.container);
 
-            this.scrollbar = $(`
-                <div class="scrollbar">
-                </div>
-            `);
-            this.thumb = $(`
-                <div class="scroll-handle">
-                </div>
-            `);
+            this.scrollbar = $('<div class="scrollbar" />');
+            this.thumb = $('<div class="scroll-handle" />');
             this.thickness = '6px';
 
-            console.log(this.create_elems);
             $(this.create_elems.bind(this));
     
             this.position = 0;
@@ -133,19 +206,25 @@ var livesearch_options = new Object();
             this.scrollbar.off().on('mousedown', this._drag_start);
 
             this._mousehandle = this.mouse_in_out.bind(this);
-            this.container.off('mouseenter mouseleave', this._mousehandle).on('mouseenter mouseleave', this._mousehandle);
+            this.container.off(
+                'mouseenter mouseleave',
+                this._mousehandle
+            ).on('mouseenter mouseleave', this._mousehandle);
         }
 
-        create_elems(){
+        create_elems() {
+            // abstract, implemented in subclass
         }
 
-        update_dimensions(){
+        update_dimensions() {
+            // abstract, implemented in subclass
         }
 
-        drag_start(){
+        drag_start() {
+            // abstract, implemented in subclass
         }
 
-        unload(){
+        unload() {
             this.scrollbar.off();
             this.container.off();
         }
@@ -193,7 +272,8 @@ var livesearch_options = new Object();
         }
     }
 
-    class ScrollBarX extends cone.ScrollBar {
+    cone.ScrollBarX = class extends cone.ScrollBar {
+
         constructor(elem) {
             super(elem);
             this.elem = elem;
@@ -239,10 +319,10 @@ var livesearch_options = new Object();
 
             let mouse_pos = evt.pageX - this.offset,
                 thumb_diff = this.container_dim - this.thumb_dim,
-                new_thumb_pos = 0
-            ;
+                new_thumb_pos = 0;
 
-            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) { // click
+            // case click
+            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
                 if(mouse_pos < this.thumb_pos) {
                     if(mouse_pos <= this.thumb_pos / 2) {
                         new_thumb_pos = 0;
@@ -259,7 +339,8 @@ var livesearch_options = new Object();
                 this.thumb.css('left', new_thumb_pos);
                 this.content.css('left', - (new_thumb_pos * this.factor));
                 this.thumb_pos = new_thumb_pos;
-            } else { // drag
+            // case drag
+            } else {
                 cone.dragging = true;
                 $(document).on('mousemove', onMouseMove.bind(this));
 
@@ -289,7 +370,8 @@ var livesearch_options = new Object();
         }
     };
 
-    class ScrollBarY extends cone.ScrollBar {
+    cone.ScrollBarY = class extends cone.ScrollBar {
+
         constructor(elem) {
             super(elem);
             this.elem = elem;
@@ -330,23 +412,24 @@ var livesearch_options = new Object();
         }
 
         drag_start(evt) {
-            evt.preventDefault(); // prevent text selection
+            // prevent text selection
+            evt.preventDefault();
             this.thumb.addClass('active');
 
             let mouse_pos = evt.pageY - this.offset,
                 thumb_diff = this.container_dim - this.thumb_dim,
-                new_thumb_pos = 0
-            ;
+                new_thumb_pos = 0;
 
-            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
-                if(mouse_pos < this.thumb_pos) {
-                    if(mouse_pos <= this.thumb_pos / 2) {
+            // case click
+            if (mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
+                if (mouse_pos < this.thumb_pos) {
+                    if (mouse_pos <= this.thumb_pos / 2) {
                         new_thumb_pos = 0;
                     } else {
                         new_thumb_pos = mouse_pos- this.thumb_dim / 2;
                     }
-                } else if(mouse_pos > this.thumb_pos + this.thumb_dim){
-                    if(mouse_pos > this.space_between + this.thumb_dim / 2) {
+                } else if (mouse_pos > this.thumb_pos + this.thumb_dim){
+                    if (mouse_pos > this.space_between + this.thumb_dim / 2) {
                         new_thumb_pos = thumb_diff;
                     } else {
                         new_thumb_pos = mouse_pos - this.thumb_dim / 2;
@@ -355,9 +438,13 @@ var livesearch_options = new Object();
                 this.thumb.css('top', new_thumb_pos);
                 this.content.css('top', - (new_thumb_pos * this.factor));
                 this.thumb_pos = new_thumb_pos;
+            // case drag
             } else {
                 cone.dragging = true;
-                $(document).on('mousemove', onMouseMove.bind(this)).on('mouseup', onMouseUp.bind(this));
+                $(document).on(
+                    'mousemove',
+                    onMouseMove.bind(this)
+                ).on('mouseup', onMouseUp.bind(this));
 
                 function onMouseMove(evt) {      
                     let mouse_pos_on_move = evt.pageY - this.offset;
@@ -382,7 +469,8 @@ var livesearch_options = new Object();
         }
     }
 
-    class ScrollBarSidebar extends ScrollBarY {
+    cone.ScrollBarSidebar = class extends cone.ScrollBarY {
+
         constructor(elem) {
             super(elem);
             this.elem = elem;
@@ -391,10 +479,11 @@ var livesearch_options = new Object();
     }
 
     cone.Content = class {
+
         constructor(context) {
             cone.content = this;
             this.elem = $('#page-content-wrapper');
-            this.scrollbar = new ScrollBarY(this.elem);
+            this.scrollbar = new cone.ScrollBarY(this.elem);
         }
     }
 
@@ -444,7 +533,7 @@ var livesearch_options = new Object();
             elem.off();
             this.arrow.off().on('click', function(){
                 menu.slideToggle('fast');
-                dd_click(this);
+                toggle_arrow(this);
             });
         }
 
@@ -470,20 +559,22 @@ var livesearch_options = new Object();
         }
     }
 
-    cone.MainMenu = class {
+    cone.MainMenu = class extends cone.ViewPortAware {
 
         constructor(context) {
-            if(cone.main_menu !== null){
-                cone.main_menu.unload();
-            }
-    
             let mm_top = $('#main-menu', context);
-            let mm_top_scrollbar = new ScrollBarX(mm_top);
+            let mm_top_scrollbar = new cone.ScrollBarX(mm_top);
 
             let mm_sb = $('#mainmenu_sidebar', context);
             if(!mm_top.length && !mm_sb.length) {
                 return;
             }
+            if(cone.main_menu !== null) {
+                cone.main_menu.unload();
+            }
+
+            super();
+
             this.mm_top = mm_top;
             this.main_menu_items = [];
             let that = this;
@@ -501,9 +592,7 @@ var livesearch_options = new Object();
 
             this.sb_menus = $('.sb-menu', this.mm_sb);
 
-            this._handle = this.handle_visibility.bind(this);
-            $(this._handle);
-            $(window).on('resize', this._handle);
+            //this.viewport_changed(null);
     
             this._mousein_sb = this.mousein_sidebar.bind(this);
             this._mouseout_sb = this.mouseout_sidebar.bind(this);
@@ -513,40 +602,34 @@ var livesearch_options = new Object();
             cone.main_menu = this;
         }
     
-        unload() {
-            $(window).off('resize', this._handle);
-        }
-    
-        handle_visibility() {
-            if(!cone.vp_flag) {
-                return;
-            }
-
+        viewport_changed(e) {
             dd_reset(this.sb_arrows, this.sb_dropdowns);
-
-            if(cone.view_mobile) {
-                if(this.mm_sb.length) {
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                if (this.mm_sb.length) {
                     $(this._bind);
                     this.mm_top.hide();
-                    this.mm_sb.detach().appendTo(cone.topnav.content).addClass('mobile');
+                    this.mm_sb.detach()
+                        .appendTo(cone.topnav.content)
+                        .addClass('mobile');
                 } else {
-                    for(let i in this.main_menu_items) {
+                    for (let i in this.main_menu_items) {
                         let item = this.main_menu_items[i];
-                        if(!item.menu) {
+                        if (!item.menu) {
                             return;
                         }
                         item.mv_to_mobile();
                     }
                 }
-            }
-            else {
-                if(this.mm_sb.length) {
-                    this.mm_sb.detach().prependTo(cone.sidebar_menu.content).removeClass('mobile');
+            } else {
+                if (this.mm_sb.length) {
+                    this.mm_sb.detach()
+                        .prependTo(cone.sidebar_menu.content)
+                        .removeClass('mobile');
                 }
                 this.mm_top.show();
-                for(let i in this.main_menu_items){
+                for (let i in this.main_menu_items) {
                     let item = this.main_menu_items[i];
-                    if(!item.menu) {
+                    if (!item.menu) {
                         return;
                     }
                     item.mv_to_top();
@@ -556,8 +639,7 @@ var livesearch_options = new Object();
     
         mousein_sidebar(evt) {
             let target = $(evt.currentTarget);
-
-            if(cone.dragging) {
+            if (cone.dragging) {
                 return;
             }
             target.addClass('hover');
@@ -579,11 +661,11 @@ var livesearch_options = new Object();
             let target = $(evt.currentTarget);
             let item = target.parent().parent();
             $(this.sb_dd_sel, item).slideToggle('fast');
-            dd_click(target);
+            toggle_arrow(target);
         }
     
         bind_events_sidebar() {
-            if(cone.sidebar_menu.state){
+            if (cone.sidebar_menu.state) {
                 this.sb_dropdowns.hide();
                 this.sb_arrows.off('click');
                 this.sb_items.off().on('mouseenter', this._mousein_sb);
@@ -595,10 +677,9 @@ var livesearch_options = new Object();
         }
     }
 
-    cone.Topnav = class {
+    cone.Topnav = class extends cone.ViewPortAware {
 
         constructor(context) {
-
             let elem = $('#topnav', context);
             if (!elem.length) {
                 return;
@@ -607,31 +688,29 @@ var livesearch_options = new Object();
                 cone.topnav.unload();
             }
 
+            super();
+
             this.elem = elem;
             this.content = $('#topnav-content');
             this.toggle_button = $('#mobile-menu-toggle');
             this.logo = $('#cone-logo');
             this.tb_dropdowns = $('#toolbar-top>li.dropdown');
             
-            this._toggle = this.toggle_menu.bind(this);
-            this.toggle_button.on('click', this._toggle);
+            this._toggle_menu_handle = this.toggle_menu.bind(this);
+            this.toggle_button.on('click', this._toggle_menu_handle);
 
-            this._handle = this.handle_visibility.bind(this);
-            $(this._handle);
-            $(window).on('resize', this._handle);
-
+            // tmp
             this.pt = $('#personaltools');
             this.user =  $('#user');
-            this._pt_handle = this.pt_handle.bind(this);
-            $(this._pt_handle);
-            $(window).on('resize', this._pt_handle);
+            this.pt_handle();
+            // end tmp
 
             cone.topnav = this;
         }
 
         unload() {
-            $(window).off('resize', this._handle);
-            this.toggle_button.off('click', this.toggle_menu.bind(this));
+            super.unload();
+            this.toggle_button.off('click', this._toggle_menu_handle);
         }
 
         toggle_menu() {
@@ -641,14 +720,11 @@ var livesearch_options = new Object();
             }
         }
 
-        handle_visibility() {
-            if(!cone.vp_flag) {
-                return;
-            }
+        viewport_changed(e) {
             if(!cone.main_menu.mm_top.length) {
                 this.logo.css('margin-right', 'auto');
             }
-            if (cone.view_mobile) {
+            if (cone.viewport.state === cone.VP_MOBILE) {
                 this.content.hide();
                 this.elem.addClass('mobile');
                 // hide menu on toolbar click
@@ -660,22 +736,21 @@ var livesearch_options = new Object();
                 this.elem.removeClass('mobile');
                 this.tb_dropdowns.off();
             }
+
+            // tmp
+            this.pt_handle();
         }
 
         pt_handle() {
-            if(!cone.vp_flag) {
-                return;
-            }
             let user = this.user;
-
-            if(cone.view_mobile) {
+            if (cone.viewport.state === cone.VP_MOBILE) {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', function() {
                     user.stop(true, true).slideDown('fast');
-                    dd_click($('i.dropdown-arrow', '#personaltools'));
+                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
                 });
                 this.pt.off('hide.bs.dropdown').on('hide.bs.dropdown', function() {
                     user.stop(true, true).slideUp('fast');
-                    dd_click($('i.dropdown-arrow', '#personaltools'));
+                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
                 });
             } else {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', function() {
@@ -688,15 +763,18 @@ var livesearch_options = new Object();
         }
     }
 
-    cone.SidebarMenu = class {
+    cone.SidebarMenu = class extends cone.ViewPortAware {
 
         constructor(context) {
             if (cone.sidebar_menu !== null) {
                 cone.sidebar_menu.unload();
             }
+            super();
+
             cone.sidebar_menu = this;
+
             this.elem = $('#sidebar_left');
-            this.scrollbar = new ScrollBarSidebar(this.elem);
+            this.scrollbar = new cone.ScrollBarSidebar(this.elem);
 
             this.content = $('#sidebar_content');
             this.state = null;
@@ -707,43 +785,36 @@ var livesearch_options = new Object();
 
             this.handle_cookie();
 
-            this._handle_resize = this.handle_resize.bind(this);
-            $(window).on('resize', this._handle_resize);
-
-            this._assign_state = this.assign_state.bind(this);
-            $(this._handle_resize);
-            this.toggle_btn.off('click').on('click', this.toggle_menu.bind(this));
+            this._toggle_menu_handle = this.toggle_menu.bind(this)
+            this.toggle_btn.off('click').on('click', this._toggle_menu_handle);
         }
 
         unload() {
-            $(window).off('resize', this._handle_resize);
-            this.toggle_btn.off('click');
+            super.unload();
+            this.toggle_btn.off('click', this._toggle_menu_handle);
         }
 
         assign_state() {
-            let elem_class = this.state === true ? 'collapsed':'expanded';
+            let elem_class = this.state === true ? 'collapsed' : 'expanded';
             let button_class = 'bi bi-arrow-' + ((this.state === true) ? 'right':'left') + '-circle';
             this.elem.attr('class', elem_class);
             this.toggle_arrow.attr('class', button_class);
             $(cone.main_menu._bind);
         }
 
-        handle_resize() {
-            if(cone.vp_flag) {
-                if (cone.view_mobile) {
-                    this.state = false;
-                    this.elem.hide();
-                } else {
-                    this.state = this.cookie;
-                    this.elem.show();
-                }
-                this.assign_state();
+        viewport_changed(e) {
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                this.state = false;
+                this.elem.hide();
+            } else {
+                this.state = this.cookie;
+                this.elem.show();
             }
+            this.assign_state();
 
-            if(this.cookie === null) {
-                let condition = !cone.view_mobile && window.matchMedia(`(max-width: 990px)`).matches ;
-                let state = (condition) ? true:false;
-                if(state != this.state){
+            if (this.cookie === null) {
+                let state = cone.viewport.state === cone.VP_SMALL;
+                if(state != this.state) {
                     this.state = state;
                     this.assign_state();
                 }
@@ -754,13 +825,13 @@ var livesearch_options = new Object();
             let cookie = readCookie('sidebar');
             if(cookie == "true") {
                 cookie = true;
-            } else if(cookie == "false"){
+            } else if(cookie == "false") {
                 cookie = false;
             } else {
                 cookie = null;
             }
             this.state = cookie;
-            this._assign_state;
+            //this._assign_state;
             this.cookie = cookie;
         }
 
@@ -774,7 +845,7 @@ var livesearch_options = new Object();
         }
     };
 
-    cone.Navtree = class {
+    cone.Navtree = class extends cone.ViewPortAware {
 
         constructor(context) {
             let navtree = $('#navtree', context);
@@ -784,14 +855,16 @@ var livesearch_options = new Object();
             if (cone.navtree !== null) {
                 cone.navtree.unload();
             }
+
+            super();
+
             this.navtree = navtree;
             this.content = $('#navtree-content', this.navtree);
             this.heading = $('#navtree-heading', this.navtree);
             this.toggle_elems = $('li.navtreelevel_1', navtree);
 
-            this._resize_handle = this.toggle_visibility.bind(this);
-            $(this._resize_handle);
-            $(window).on('resize', this._resize_handle);
+            this.viewport_changed(null);
+
             this._mouseenter_handle = this.align_width.bind(this);
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
             this._restore = this.restore_width.bind(this);
@@ -800,20 +873,17 @@ var livesearch_options = new Object();
         }
 
         unload() {
-            $(window).off('resize', this._resize_handle);
+            super.unload();
             this.toggle_elems.off();
         }
 
-        toggle_visibility() {
-            if(!cone.vp_flag) {
-                return;
-            }
-            if (cone.view_mobile) {
+        viewport_changed(e) {
+            if (cone.viewport.state === cone.VP_MOBILE) {
                 this.navtree.detach().appendTo(cone.topnav.content).addClass('mobile');
                 let content = this.content;
                 this.heading.off('click').on('click', function() {
                     content.slideToggle('fast');
-                    dd_click($('i.dropdown-arrow', this));
+                    toggle_arrow($('i.dropdown-arrow', this));
                 })
                 this.content.hide();
             } else {
@@ -829,7 +899,7 @@ var livesearch_options = new Object();
             }
             let target = $(evt.currentTarget);
             target.addClass('hover');
-            if(target.outerWidth() > $('ul', target).outerWidth()) {
+            if (target.outerWidth() > $('ul', target).outerWidth()) {
                 $('ul', target).css('width', target.outerWidth());
             } else {
                 target.css('width', $('ul', target).outerWidth());
@@ -875,20 +945,16 @@ var livesearch_options = new Object();
 
         switch_theme(evt) {
             evt.stopPropagation();
-            console.log(this.current);
             let theme = this.current === this.modes[0] ? this.modes[1] : this.modes[0];
-            console.log(theme);
             this.current = theme;
             createCookie("modeswitch", theme, null);
-            console.log(readCookie("modeswitch"));
             this.switch_checkbox();
         }
     };
 
-    cone.Searchbar = class {
+    cone.Searchbar = class extends cone.ViewPortAware {
 
         constructor(context) {
-
             let elem = $('#cone-searchbar');
             if (!elem.length) {
                 return;
@@ -897,24 +963,20 @@ var livesearch_options = new Object();
                 cone.searchbar_handler.unload();
             }
 
+            super();
+
             this.elem = elem;
             this.search_text = $('#livesearch-input', this.elem);
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
 
-            this._handle = this.handle_visibility.bind(this);
-            $(this._handle);
-            $(window).on('resize', this._handle);
+            this.viewport_changed(null);
 
             cone.searchbar_handler = this;
         }
 
-        unload() {
-            $(window).off('resize', this._handle);
-        }
-
-        handle_visibility(){
-            if(window.matchMedia(`(min-width:560px) and (max-width: 1200px)`).matches) {
+        viewport_changed(e) {
+            if(cone.viewport.state === cone.VP_MEDIUM) {
                 this.dd.addClass('dropdown-menu-end');
                 this.search_text.detach().prependTo(this.dd);
             } else {
@@ -924,23 +986,23 @@ var livesearch_options = new Object();
         }
     }
 
-/*     livesearch = {
-        binder: function(context) {
-            var livesearch_source = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: 'livesearch?term=%QUERY'
-            });
-            livesearch_source.initialize();
-            var input = $('input#livesearch');
-            var options = {
-                name: 'livesearch',
-                displayKey: 'value',
-                source: livesearch_source.ttAdapter()
-            };
-            $.extend(options, livesearch_options);
-            input.typeahead(null, options);
-        }
-    }; */
+    // livesearch = {
+    //     binder: function(context) {
+    //         var livesearch_source = new Bloodhound({
+    //             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    //             queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //             remote: 'livesearch?term=%QUERY'
+    //         });
+    //         livesearch_source.initialize();
+    //         var input = $('input#livesearch');
+    //         var options = {
+    //             name: 'livesearch',
+    //             displayKey: 'value',
+    //             source: livesearch_source.ttAdapter()
+    //         };
+    //         $.extend(options, livesearch_options);
+    //         input.typeahead(null, options);
+    //     }
+    // };
 
 })(jQuery);

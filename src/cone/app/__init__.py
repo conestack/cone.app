@@ -60,7 +60,7 @@ cfg.css.public = [
     'static/style.css',
     'static/light.css',
     'static/dark.css',
-    #bootstrap icon font
+    # bootstrap icon font
     'static/bootstrap-font/bootstrap-icons.css'
 ]
 
