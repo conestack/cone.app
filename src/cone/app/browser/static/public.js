@@ -21,7 +21,8 @@
             '/static/light.css',
             '/static/dark.css'
         ],
-        dragging: false
+        dragging: false,
+        searchbar: null,
     };
 
     // viewport related
@@ -45,16 +46,15 @@
             cone.ThemeSwitcher.initialize(context, cone.default_themes);
             cone.Topnav.initialize(context);
             cone.MainMenu.initialize(context);
-
-            new cone.SidebarMenu(context);
+            cone.SidebarMenu.initialize(context);
 
             cone.topnav.viewport_changed(null);
             cone.main_menu.viewport_changed(null);
             cone.sidebar_menu.viewport_changed(null);
 
-            new cone.Searchbar(context);
-            new cone.Navtree(context);
-            new cone.Content(context);
+            cone.Searchbar.initialize(context);
+            cone.Navtree.initialize(context);
+            cone.Content.initialize(context);
 
             $('.scroll-container', context).each(function() {
                 let condition = $(this).find('.scroll-content').outerWidth(true) > $(this).outerWidth(true);
@@ -476,10 +476,17 @@
 
     cone.Content = class {
 
-        constructor(context) {
-            cone.content = this;
-            this.elem = $('#page-content-wrapper');
-            this.scrollbar = new cone.ScrollBarY(this.elem);
+        static initialize(context) {
+            let elem = $('#page-content-wrapper', context);
+            if (!elem.length) {
+                return;
+            }
+            cone.content = new cone.Content(elem);
+        }
+
+        constructor(elem) {
+            this.elem = elem;
+            this.scrollbar = new cone.ScrollBarY(elem);
         }
     }
 
@@ -487,7 +494,7 @@
 
         constructor(elem) {
             this.elem = elem;
-            this.children = this.elem.data('menu-items');
+            this.children = elem.data('menu-items');
             if(!this.children){
                 return;
             }
@@ -761,22 +768,27 @@
 
     cone.SidebarMenu = class extends cone.ViewPortAware {
 
-        constructor(context) {
+        static initialize(context) {
+            let elem = $('#sidebar_left', context);
+            if (!elem.length) {
+                return;
+            }
             if (cone.sidebar_menu !== null) {
                 cone.sidebar_menu.unload();
             }
+            cone.sidebar_menu = new cone.SidebarMenu(elem);
+        }
+
+        constructor(elem) {
             super();
+            this.elem = elem;
+            this.scrollbar = new cone.ScrollBarSidebar(elem);
 
-            cone.sidebar_menu = this;
-
-            this.elem = $('#sidebar_left');
-            this.scrollbar = new cone.ScrollBarSidebar(this.elem);
-
-            this.content = $('#sidebar_content');
+            this.content = $('#sidebar_content', elem);
             this.state = null;
             this.cookie = null;
 
-            this.toggle_btn = $('#sidebar-toggle-btn');
+            this.toggle_btn = $('#sidebar-toggle-btn', elem);
             this.toggle_arrow = $('i', this.toggle_btn);
 
             this.handle_cookie();
@@ -843,20 +855,22 @@
 
     cone.Navtree = class extends cone.ViewPortAware {
 
-        constructor(context) {
-            let navtree = $('#navtree', context);
-            if (!navtree.length) {
+        static initialize(context) {
+            let elem = $('#navtree', context);
+            if (!elem.length) {
                 return;
             }
             if (cone.navtree !== null) {
                 cone.navtree.unload();
             }
+            cone.navtree = new cone.Navtree(elem);
+        }
 
+        constructor(elem) {
             super();
-
-            this.navtree = navtree;
-            this.content = $('#navtree-content', this.navtree);
-            this.heading = $('#navtree-heading', this.navtree);
+            this.elem = elem;
+            this.content = $('#navtree-content', elem);
+            this.heading = $('#navtree-heading', elem);
             this.toggle_elems = $('li.navtreelevel_1', navtree);
 
             this.viewport_changed(null);
@@ -865,7 +879,6 @@
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
             this._restore = this.restore_width.bind(this);
             this.toggle_elems.on('mouseleave', this._restore); //restore original size
-            cone.navtree = this;
         }
 
         unload() {
@@ -875,7 +888,7 @@
 
         viewport_changed(e) {
             if (cone.viewport.state === cone.VP_MOBILE) {
-                this.navtree.detach().appendTo(cone.topnav.content).addClass('mobile');
+                this.elem.detach().appendTo(cone.topnav.content).addClass('mobile');
                 let content = this.content;
                 this.heading.off('click').on('click', function() {
                     content.slideToggle('fast');
@@ -883,7 +896,7 @@
                 })
                 this.content.hide();
             } else {
-                this.navtree.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
+                this.elem.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
                 this.heading.off('click');
                 this.content.show();
             }
@@ -950,25 +963,24 @@
 
     cone.Searchbar = class extends cone.ViewPortAware {
 
-        constructor(context) {
-            let elem = $('#cone-searchbar');
+        static initialize(context) {
+            let elem = $('#cone-searchbar', context);
             if (!elem.length) {
                 return;
             }
-            if (cone.searchbar_handler !== null) {
-                cone.searchbar_handler.unload();
+            if (cone.searchbar !== null) {
+                cone.searchbar.unload();
             }
+            cone.searchbar = new cone.Searchbar(elem);
+        }
 
+        constructor(elem) {
             super();
-
             this.elem = elem;
             this.search_text = $('#livesearch-input', this.elem);
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
-
             this.viewport_changed(null);
-
-            cone.searchbar_handler = this;
         }
 
         viewport_changed(e) {
