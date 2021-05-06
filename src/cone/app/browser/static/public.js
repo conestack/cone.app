@@ -44,8 +44,8 @@
         bdajax.register(function(context) {
             cone.ThemeSwitcher.initialize(context, cone.default_themes);
             cone.Topnav.initialize(context);
+            cone.MainMenu.initialize(context);
 
-            new cone.MainMenu(context);
             new cone.SidebarMenu(context);
 
             cone.topnav.viewport_changed(null);
@@ -557,10 +557,8 @@
 
     cone.MainMenu = class extends cone.ViewPortAware {
 
-        constructor(context) {
+        static initialize(context) {
             let mm_top = $('#main-menu', context);
-            let mm_top_scrollbar = new cone.ScrollBarX(mm_top);
-
             let mm_sb = $('#mainmenu_sidebar', context);
             if(!mm_top.length && !mm_sb.length) {
                 return;
@@ -568,24 +566,26 @@
             if(cone.main_menu !== null) {
                 cone.main_menu.unload();
             }
+            cone.main_menu = new cone.MainMenu(mm_top, mm_sb);
+        }
 
+        constructor(mm_top, mm_sb) {
             super();
-
+            new cone.ScrollBarX(mm_top);
             this.mm_top = mm_top;
+            this.mm_sb = mm_sb;
             this.main_menu_items = [];
+
             let that = this;
-            
             $('li', mm_top).each(function() {
                 let main_menu_item = new cone.MainMenuItem($(this));
                 that.main_menu_items.push(main_menu_item);
             });
 
-            this.mm_sb = mm_sb;
             this.sb_items = $('>li', this.mm_sb);
             this.sb_arrows = $('i.dropdown-arrow', this.sb_items);
             this.sb_dropdowns = $('ul', this.sb_items);
             this.sb_dd_sel = 'ul.cone-mainmenu-dropdown-sb';
-
             this.sb_menus = $('.sb-menu', this.mm_sb);
 
             //this.viewport_changed(null);
@@ -594,8 +594,6 @@
             this._mouseout_sb = this.mouseout_sidebar.bind(this);
             this._toggle = this.toggle_dropdown.bind(this);
             this._bind = this.bind_events_sidebar.bind(this);
-    
-            cone.main_menu = this;
         }
     
         viewport_changed(e) {
