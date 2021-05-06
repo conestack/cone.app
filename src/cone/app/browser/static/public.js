@@ -43,8 +43,8 @@
 
         bdajax.register(function(context) {
             cone.ThemeSwitcher.initialize(context, cone.default_themes);
+            cone.Topnav.initialize(context);
 
-            new cone.Topnav(context);
             new cone.MainMenu(context);
             new cone.SidebarMenu(context);
 
@@ -675,7 +675,7 @@
 
     cone.Topnav = class extends cone.ViewPortAware {
 
-        constructor(context) {
+        static initialize(context) {
             let elem = $('#topnav', context);
             if (!elem.length) {
                 return;
@@ -683,15 +683,16 @@
             if(cone.topnav !== null) {
                 cone.topnav.unload();
             }
+            cone.topnav = new cone.Topnav(elem);
+        }
 
+        constructor(elem) {
             super();
-
             this.elem = elem;
-            this.content = $('#topnav-content');
-            this.toggle_button = $('#mobile-menu-toggle');
-            this.logo = $('#cone-logo');
-            this.tb_dropdowns = $('#toolbar-top>li.dropdown');
-            
+            this.content = $('#topnav-content', elem);
+            this.toggle_button = $('#mobile-menu-toggle', elem);
+            this.logo = $('#cone-logo', elem);
+            this.tb_dropdowns = $('#toolbar-top>li.dropdown', elem);
             this._toggle_menu_handle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle_menu_handle);
 
@@ -700,8 +701,6 @@
             this.user =  $('#user');
             this.pt_handle();
             // end tmp
-
-            cone.topnav = this;
         }
 
         unload() {
@@ -711,7 +710,8 @@
 
         toggle_menu() {
             this.content.slideToggle('fast');
-            if(this.content.css('display') == 'block') {
+            // XXX: this always sets display flex. why not via CSS file directly then?
+            if (this.content.css('display') === 'block') {
                 this.content.css('display', 'flex');
             }
         }
@@ -735,9 +735,11 @@
 
             // tmp
             this.pt_handle();
+            // end tmp
         }
 
         pt_handle() {
+            // tmp
             let user = this.user;
             if (cone.viewport.state === cone.VP_MOBILE) {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', function() {
