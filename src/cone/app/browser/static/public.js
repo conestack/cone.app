@@ -7,22 +7,22 @@
  *     typeahead.js
  */
 
-// cone namespace
-cone = {
-    theme_switcher: null,
-    searchbar_handler: null,
-    content: null,
-    scrollbars: [],
-    default_themes: [
-        '/static/light.css',
-        '/static/dark.css'
-    ],
-    dragging: false
-};
-
 // var livesearch_options = new Object();
 
 (function($) {
+
+    // cone namespace
+    cone = {
+        theme_switcher: null,
+        searchbar_handler: null,
+        content: null,
+        scrollbars: [],
+        default_themes: [
+            '/static/light.css',
+            '/static/dark.css'
+        ],
+        dragging: false
+    };
 
     // viewport related
     cone.viewport = null;
@@ -42,11 +42,7 @@ cone = {
         cone.viewport = new cone.ViewPort();
 
         bdajax.register(function(context) {
-            let theme_switcher = new cone.ThemeSwitcher(context, cone.default_themes);
-            theme_switcher.current =
-                readCookie('modeswitch') != null ?
-                readCookie('modeswitch') :
-                cone.theme_switcher.modes[0];
+            cone.ThemeSwitcher.initialize(context, cone.default_themes);
 
             new cone.Topnav(context);
             new cone.MainMenu(context);
@@ -914,18 +910,24 @@ cone = {
 
     cone.ThemeSwitcher = class {
 
-        constructor(context, modes) {
-            let elem = $('#switch_mode');
+        static initialize(context, modes) {
+            let elem = $('#switch_mode', context);
             if (!elem.length) {
                 return;
             }
-            cone.theme_switcher = this;
+            cone.theme_switcher = new cone.ThemeSwitcher(elem, modes);
+        }
+
+        constructor(elem, modes) {
             this.elem = elem;
             this.modes = modes;
             this.link = $('head #colormode-styles');
-            this.state = false;
-            this.elem.off().on('click', this.switch_theme.bind(this));
-            this.switch_checkbox();
+            this.elem.on('click', this.switch_theme.bind(this));
+            let current = readCookie('modeswitch');
+            if (!current) {
+                current = modes[0];
+            }
+            this.current = current;
         }
 
         get current() {
@@ -934,21 +936,15 @@ cone = {
 
         set current(value) {
             this.link.attr('href', value);
+            createCookie('modeswitch', value, null);
+            let checked = value === this.modes[0] ? false : true;
+            this.elem.prop('checked', checked);
         }
 
-        switch_checkbox() {
-            if(readCookie('modeswitch') != null){
-                let state = readCookie('modeswitch') === this.modes[0] ? false:true;
-                this.elem.prop('checked', state);
-            }
-        }
-
-        switch_theme(evt) {
-            evt.stopPropagation();
-            let theme = this.current === this.modes[0] ? this.modes[1] : this.modes[0];
-            this.current = theme;
-            createCookie("modeswitch", theme, null);
-            this.switch_checkbox();
+        switch_theme(e) {
+            e.stopPropagation();
+            let modes = this.modes;
+            this.current = this.current === modes[0] ? modes[1] : modes[0];
         }
     };
 
