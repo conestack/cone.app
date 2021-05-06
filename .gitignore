@@ -38,3 +38,6 @@ include/
 /py3/
 /.coverage
 /htmlcov/
+/node_modules/
+/package-lock.json
+/karma/
