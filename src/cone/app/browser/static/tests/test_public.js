@@ -1,9 +1,17 @@
+//const { connect } = require("puppeteer")
+const {setup} = require('qunit-dom')
+
+var blah = $('<div id="blah"></div>');
+QUnit.test('blehhhh', assert => {
+    assert.deepEqual(blah, $('#blah'), 'ALTAAAA')
+})
+
 QUnit.test('hello world', assert => {
     assert.strictEqual(1, 1, '1 is 1')
 })
 
 QUnit.test('lets see if you work', assert => {
-    let fixture = $('#fixture')
+    let fixture = $('#qunit-fixture')
     assert.deepEqual(fixture, fixture, 'body')
 })
 
