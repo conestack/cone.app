@@ -52,6 +52,14 @@ javascript
 [X] - modeswitch cookie
 [X] - sidebar cookie
 [?] - dropdown cookie sidebar
+[ ] - public.js cleanup:
+    [~] - add initial function to every ViewPortAware Class
+        [X] - sidebar_left
+        [X] - topnav
+        [X] - navtree
+        [X] - mainmenu_sidebar
+        [ ] - mainmenu_top
+        [ ] -
 
 
 styles

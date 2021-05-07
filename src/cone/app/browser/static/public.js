@@ -34,7 +34,8 @@
 
     // layout components
     cone.sidebar_menu = null;
-    cone.main_menu = null;
+    cone.main_menu_top = null;
+    cone.main_menu_sidebar = null;
     cone.navtree = null;
     cone.topnav = null;
 
@@ -45,12 +46,10 @@
         bdajax.register(function(context) {
             cone.ThemeSwitcher.initialize(context, cone.default_themes);
             cone.Topnav.initialize(context);
-            cone.MainMenu.initialize(context);
-            cone.SidebarMenu.initialize(context);
+            cone.MainMenuSidebar.initialize(context);
+            cone.MainMenuTop.initialize(context);
 
-            cone.topnav.viewport_changed(null);
-            cone.main_menu.viewport_changed(null);
-            cone.sidebar_menu.viewport_changed(null);
+            cone.SidebarMenu.initialize(context);
 
             cone.Searchbar.initialize(context);
             cone.Navtree.initialize(context);
@@ -117,7 +116,7 @@
 
     cone.ViewPortAware = class {
 
-        constructor(context) {
+        constructor() {
             this._viewport_changed_handle = this.viewport_changed.bind(this);
             $(window).on('viewport_changed', this._viewport_changed_handle);
         }
@@ -466,7 +465,6 @@
     }
 
     cone.ScrollBarSidebar = class extends cone.ScrollBarY {
-
         constructor(elem) {
             super(elem);
             this.elem = elem;
@@ -550,7 +548,7 @@
                     return;
                 }
                 menu.offset({left: elem.offset().left});
-                if(e.type == 'mouseenter') {
+                if(e.type === 'mouseenter') {
                     menu.show();
                 } else {
                     menu.hide();
@@ -562,72 +560,64 @@
         }
     }
 
-    cone.MainMenu = class extends cone.ViewPortAware {
+    cone.MainMenuTop = class extends cone.ViewPortAware {
 
         static initialize(context) {
-            let mm_top = $('#main-menu', context);
-            let mm_sb = $('#mainmenu_sidebar', context);
-            if(!mm_top.length && !mm_sb.length) {
+            let elem = $('#main-menu', context);
+            if(!elem.length) {
                 return;
             }
-            if(cone.main_menu !== null) {
-                cone.main_menu.unload();
+            if(cone.main_menu_top !== null) {
+                cone.main_menu_top.unload();
             }
-            cone.main_menu = new cone.MainMenu(mm_top, mm_sb);
+            cone.main_menu_top = new cone.MainMenuTop(elem);
         }
 
-        constructor(mm_top, mm_sb) {
+        constructor(elem) {
             super();
-            new cone.ScrollBarX(mm_top);
-            this.mm_top = mm_top;
-            this.mm_sb = mm_sb;
+            this.elem = elem;
+            new cone.ScrollBarX(elem);
             this.main_menu_items = [];
-
             let that = this;
-            $('li', mm_top).each(function() {
+            $('li', elem).each(function() {
                 let main_menu_item = new cone.MainMenuItem($(this));
                 that.main_menu_items.push(main_menu_item);
             });
 
-            this.sb_items = $('>li', this.mm_sb);
-            this.sb_arrows = $('i.dropdown-arrow', this.sb_items);
-            this.sb_dropdowns = $('ul', this.sb_items);
-            this.sb_dd_sel = 'ul.cone-mainmenu-dropdown-sb';
-            this.sb_menus = $('.sb-menu', this.mm_sb);
-
-            //this.viewport_changed(null);
-    
-            this._mousein_sb = this.mousein_sidebar.bind(this);
-            this._mouseout_sb = this.mouseout_sidebar.bind(this);
-            this._toggle = this.toggle_dropdown.bind(this);
-            this._bind = this.bind_events_sidebar.bind(this);
-        }
-    
-        viewport_changed(e) {
-            dd_reset(this.sb_arrows, this.sb_dropdowns);
-            if (cone.viewport.state === cone.VP_MOBILE) {
-                if (this.mm_sb.length) {
-                    $(this._bind);
-                    this.mm_top.hide();
-                    this.mm_sb.detach()
-                        .appendTo(cone.topnav.content)
-                        .addClass('mobile');
+            // wip
+            for (let i in this.main_menu_items) {
+                let item = this.main_menu_items[i];
+                if (!item.menu) {
+                    return;
+                }
+                if(cone.viewport.state === cone.VP_MOBILE && !cone.main_menu_sidebar.length){
+                    item.mv_to_mobile();
                 } else {
+                    item.mv_to_top();
+                }
+            }
+        }
+
+        unload() {
+            super.unload();
+        }
+
+        viewport_changed(e) {
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                if (!cone.main_menu_sidebar.elem.length) {
                     for (let i in this.main_menu_items) {
                         let item = this.main_menu_items[i];
                         if (!item.menu) {
                             return;
                         }
                         item.mv_to_mobile();
+                        
                     }
+                } else {
+                    this.elem.hide();
                 }
             } else {
-                if (this.mm_sb.length) {
-                    this.mm_sb.detach()
-                        .prependTo(cone.sidebar_menu.content)
-                        .removeClass('mobile');
-                }
-                this.mm_top.show();
+                this.elem.show();
                 for (let i in this.main_menu_items) {
                     let item = this.main_menu_items[i];
                     if (!item.menu) {
@@ -637,23 +627,71 @@
                 }
             }
         }
-    
-        mousein_sidebar(evt) {
-            let target = $(evt.currentTarget);
-            if (cone.dragging) {
+    }
+
+    cone.MainMenuSidebar = class extends cone.ViewPortAware {
+
+        static initialize(context) {
+            let elem = $('#mainmenu_sidebar', context);
+            if(!elem.length) {
                 return;
             }
+            if(cone.main_menu_sidebar !== null) {
+                cone.main_menu_sidebar.unload();
+            }
+            cone.main_menu_sidebar = new cone.MainMenuSidebar(elem);
+        }
+
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            this.items = $('>li', this.elem);
+            this.arrows = $('i.dropdown-arrow', this.items);
+            this.dropdowns = $('ul', this.items);
+            this.dd_sel = 'ul.cone-mainmenu-dropdown-sb';
+            this.menus = $('.sb-menu', this.elem);
+
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                this.mv_to_mobile();
+            } 
+    
+            this._mousein = this.mousein_handle.bind(this);
+            this._mouseout = this.mouseout_handle.bind(this);
+            this._toggle = this.toggle_dropdown.bind(this);
+            this._bind_collapse = this.bind_collapse.bind(this);
+            this._bind_expand = this.bind_expand.bind(this);
+        }
+
+        unload() {
+            super.unload();
+        }
+
+        viewport_changed(e) {
+            dd_reset(this.arrows, this.dropdowns);
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                this.mv_to_mobile();
+            } 
+            else {
+                this.mv_to_sidebar();
+            }
+        }
+
+        mousein_handle(evt) {
+            let target = $(evt.currentTarget);
+            // if (cone.dragging) {
+            //     return;
+            // }
             target.addClass('hover');
-            $(this.sb_dd_sel, target).show();
             if(target.outerWidth() > $('ul', target).outerWidth()) {
                 $('ul', target).css('width', target.outerWidth());
             } else {
                 target.css('width', $('ul', target).outerWidth());
             }
+            $(this.dd_sel, target).show();
         }
     
-        mouseout_sidebar(evt) {
-            $(this.sb_dd_sel).hide();
+        mouseout_handle(evt) {
+            $(this.dd_sel).hide();
             $(evt.currentTarget).removeClass('hover');
             $(evt.currentTarget).css('width', 'auto');
         }
@@ -661,20 +699,32 @@
         toggle_dropdown(evt) {
             let target = $(evt.currentTarget);
             let item = target.parent().parent();
-            $(this.sb_dd_sel, item).slideToggle('fast');
+            $(this.dd_sel, item).slideToggle('fast');
             toggle_arrow(target);
         }
     
-        bind_events_sidebar() {
-            if (cone.sidebar_menu.state) {
-                this.sb_dropdowns.hide();
-                this.sb_arrows.off('click');
-                this.sb_items.off().on('mouseenter', this._mousein_sb);
-                this.sb_items.on('mouseleave', this._mouseout_sb);
-            } else {
-                this.sb_items.off('mouseenter mouseleave');
-                this.sb_arrows.off().on('click', this._toggle);
-            }
+        mv_to_mobile() {
+            this.elem.detach()
+            .appendTo(cone.topnav.content)
+            .addClass('mobile');
+        }
+
+        mv_to_sidebar() {
+            this.elem.detach()
+            .prependTo(cone.sidebar_menu.content)
+            .removeClass('mobile');
+        }
+
+        bind_collapse() {
+            this.dropdowns.hide();
+            this.arrows.off('click');
+            this.items.off().on('mouseenter', this._mousein);
+            this.items.on('mouseleave', this._mouseout);
+        }
+
+        bind_expand() {
+            this.items.off('mouseenter mouseleave');
+            this.arrows.off().on('click', this._toggle);
         }
     }
 
@@ -701,6 +751,13 @@
             this._toggle_menu_handle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle_menu_handle);
 
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                this.elem.addClass('mobile');
+                this.tb_dropdowns.off().on('show.bs.dropdown', function() {
+                    cone.topnav.content.hide();
+                });
+            }
+
             // tmp
             this.pt = $('#personaltools');
             this.user =  $('#user');
@@ -716,13 +773,15 @@
         toggle_menu() {
             this.content.slideToggle('fast');
             // XXX: this always sets display flex. why not via CSS file directly then?
+            // XXX: because slideToggle overwrites display:flex with display:block / display:none
+            // setting display to flex!important disables slideToggle behaviour (L)
             if (this.content.css('display') === 'block') {
                 this.content.css('display', 'flex');
             }
         }
 
         viewport_changed(e) {
-            if(!cone.main_menu.mm_top.length) {
+            if(!cone.main_menu_top.elem.length) {
                 this.logo.css('margin-right', 'auto');
             }
             if (cone.viewport.state === cone.VP_MOBILE) {
@@ -782,19 +841,31 @@
         constructor(elem) {
             super();
             this.elem = elem;
-            this.scrollbar = new cone.ScrollBarSidebar(elem);
+            //this.scrollbar = new cone.ScrollBarSidebar(elem);
 
             this.content = $('#sidebar_content', elem);
-            this.state = null;
+            this.collapsed = false;
+
+            let cookie = readCookie('sidebar');
             this.cookie = null;
+            if(cookie) {
+                this.cookie = cookie === "true" ? true : false;
+            }
 
             this.toggle_btn = $('#sidebar-toggle-btn', elem);
             this.toggle_arrow = $('i', this.toggle_btn);
 
-            this.handle_cookie();
-
             this._toggle_menu_handle = this.toggle_menu.bind(this)
             this.toggle_btn.off('click').on('click', this._toggle_menu_handle);
+
+            let vp_state = cone.viewport.state;
+            if (vp_state === cone.VP_MOBILE) {
+                this.elem.hide();
+            } 
+            else if (this.cookie === true || vp_state !== cone.VP_LARGE) {
+                this.collapsed = true;
+            } 
+            this.assign_state();
         }
 
         unload() {
@@ -802,54 +873,46 @@
             this.toggle_btn.off('click', this._toggle_menu_handle);
         }
 
-        assign_state() {
-            let elem_class = this.state === true ? 'collapsed' : 'expanded';
-            let button_class = 'bi bi-arrow-' + ((this.state === true) ? 'right':'left') + '-circle';
-            this.elem.attr('class', elem_class);
-            this.toggle_arrow.attr('class', button_class);
-            $(cone.main_menu._bind);
-        }
-
         viewport_changed(e) {
-            if (cone.viewport.state === cone.VP_MOBILE) {
-                this.state = false;
+            if(cone.viewport.state === cone.VP_MOBILE) {
+                this.collapsed = false;
                 this.elem.hide();
-            } else {
-                this.state = this.cookie;
+            }
+            else if (this.cookie !== null) {
+                this.collapsed = this.cookie;
                 this.elem.show();
             }
-            this.assign_state();
-
-            if (this.cookie === null) {
+            else {
+                this.elem.show();
                 let state = cone.viewport.state === cone.VP_SMALL;
-                if(state != this.state) {
-                    this.state = state;
-                    this.assign_state();
+                if(state != this.collapsed) {
+                    this.collapsed = state;
                 }
             }
+            this.assign_state();
         }
 
-        handle_cookie() {
-            let cookie = readCookie('sidebar');
-            if(cookie == "true") {
-                cookie = true;
-            } else if(cookie == "false") {
-                cookie = false;
-            } else {
-                cookie = null;
+        assign_state() {
+            let elem_class = this.collapsed === true ? 'collapsed' : 'expanded';
+            let button_class = 'bi bi-arrow-' + ((this.collapsed === true) ? 'right':'left') + '-circle';
+            this.elem.attr('class', elem_class);
+            this.toggle_arrow.attr('class', button_class);
+
+            if(this.collapsed) {
+                cone.main_menu_sidebar.bind_collapse();
             }
-            this.state = cookie;
-            //this._assign_state;
-            this.cookie = cookie;
+            else {
+                cone.main_menu_sidebar.bind_expand();
+            }
         }
 
         toggle_menu() {
-            dd_reset(cone.main_menu.sb_arrows, cone.main_menu.sb_dropdowns);
-            this.state = (this.state) ? false:true;
+            dd_reset(cone.main_menu_sidebar.arrows, cone.main_menu_sidebar.dropdowns);
+            this.collapsed = !this.collapsed;
             this.assign_state();
 
-            createCookie('sidebar', this.state, null);
-            this.cookie = this.state;
+            createCookie('sidebar', this.collapsed, null);
+            this.cookie = this.collapsed;
         }
     };
 
@@ -873,7 +936,9 @@
             this.heading = $('#navtree-heading', elem);
             this.toggle_elems = $('li.navtreelevel_1', navtree);
 
-            this.viewport_changed(null);
+            if (cone.viewport.state === cone.VP_MOBILE) {
+                this.mv_to_mobile();
+            }
 
             this._mouseenter_handle = this.align_width.bind(this);
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
@@ -886,15 +951,21 @@
             this.toggle_elems.off();
         }
 
+        mv_to_mobile() {
+            console.log('mv to mobile');
+            this.elem.detach().appendTo(cone.topnav.content).addClass('mobile');
+            this.content.hide();
+            this.heading.off('click').on('click', content_toggle.bind(this));
+    
+            function content_toggle() {
+                this.content.slideToggle('fast');
+                toggle_arrow($('i.dropdown-arrow', this));
+            }
+        }
+
         viewport_changed(e) {
             if (cone.viewport.state === cone.VP_MOBILE) {
-                this.elem.detach().appendTo(cone.topnav.content).addClass('mobile');
-                let content = this.content;
-                this.heading.off('click').on('click', function() {
-                    content.slideToggle('fast');
-                    toggle_arrow($('i.dropdown-arrow', this));
-                })
-                this.content.hide();
+                this.mv_to_mobile();
             } else {
                 this.elem.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
                 this.heading.off('click');
