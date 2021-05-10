@@ -851,10 +851,12 @@
             this.lock_switch = $('#toggle-fluid');
             this.cookie = null;
            
+            this._toggle_menu_handle = this.toggle_menu.bind(this);
+            this.toggle_btn.off('click').on('click', this._toggle_menu_handle);
+
             this.initial_load();
 
             this.lock_switch.on('click', this.toggle_lock.bind(this));
-            this._toggle_menu_handle = this.toggle_menu.bind(this);
         }
 
         unload() {
@@ -869,11 +871,11 @@
                 this.elem.hide();
             } 
             else if (cookie === null) {
-                this.toggle_btn.off('click').on('click', this._toggle_menu_handle);
                 if(vp_state !== cone.VP_LARGE) {
                     this.collapsed = true;
                 }
             } else {
+                this.toggle_btn.off('click', this._toggle_menu_handle);
                 this.cookie = cookie === 'true';
                 this.collapsed = this.cookie;
                 this.lock_switch.addClass('active');
