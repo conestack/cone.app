@@ -30,7 +30,6 @@
         <tal:toolbar_top condition="True"
                          replace="structure tile('toolbar_top')" />
       
-
       <div id="mobile-menu-toggle">
         <i class="bi bi-list"></i>
       </div>
@@ -41,13 +40,19 @@
 
       <div id="sidebar_left"
            tal:condition="config.sidebar_left">
-        <div id="sidebar-toggle-btn">
-          <i class="bi bi-arrow-left-circle"></i>
-        </div>
         <div id="sidebar_content">
           <tal:tiles repeat="tilename config.sidebar_left">
             <tal:tile replace="structure tile(tilename)" />
           </tal:tiles>
+        </div>
+        <div id="sidebar_footer">
+          <div id="toggle-fluid">
+            <i class="bi bi-lock-fill"></i> 
+            <span>Lock state</span>
+          </div>
+          <div id="sidebar-toggle-btn">
+            <i class="bi bi-arrow-left-circle"></i>
+          </div>
         </div>
       </div>
 

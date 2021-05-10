@@ -35,7 +35,7 @@ javascript
 
 [X] - cone.ThemeSwitcher to change light/dark mode (public.js), added
 [X] - searchbar better supports mobile - moved to dropdown on < 380px
-[ ] - update deprecated javascript in private.js
+[?] - update deprecated javascript in private.js
 [X] - now supports screen dimensions from 330px and up - new layout
 [X] - implement popper.js
 [X] - hamburger menu: main menu instead of sidebar / [X] - rename to mobile menu
@@ -58,7 +58,7 @@ javascript
         [X] - topnav
         [X] - navtree
         [X] - mainmenu_sidebar
-        [ ] - mainmenu_top
+        [X] - mainmenu_top
         [ ] -
 
 

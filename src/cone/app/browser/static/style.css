@@ -51,7 +51,7 @@
 #cone-logo {
   font-size: 1.5rem;
   font-family: Arial;
-  margin-right: 2rem;
+  margin-right: auto;
   white-space: nowrap;
 }
 #cone-logo a {
@@ -211,10 +211,29 @@
 #sidebar_left ul {
   list-style: none;
 }
+#sidebar_left #sidebar_footer {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px 1rem;
+}
+#sidebar_left #sidebar_footer #toggle-fluid {
+  cursor: pointer;
+  user-select: none;
+}
 #sidebar_left.collapsed {
   width: 3.5rem;
   padding: 0;
   box-shadow: 0.5rem 0rem 1rem rgba(0, 0, 0, 0.02);
+}
+#sidebar_left.collapsed #sidebar_footer {
+  flex-direction: column;
+}
+#sidebar_left.collapsed #sidebar_footer #toggle-fluid span {
+  display: none;
 }
 #sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   content: "";
@@ -325,15 +344,6 @@
 }
 #sidebar_left #sidebar-toggle-btn {
   z-index: 1000;
-  display: flex;
-  justify-content: flex-end;
-  height: 3rem;
-  padding-right: 0.75rem;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  margin-left: 0.5rem;
-  width: calc(100% - .5rem);
 }
 #sidebar_left #sidebar-toggle-btn i {
   margin: 0;

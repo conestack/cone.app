@@ -173,6 +173,9 @@ body {
 #sidebar_left .sidebar-heading {
   color: #57575C;
 }
+#sidebar_left #toggle-fluid.active {
+  color: #5bc0de;
+}
 #sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   background: #717176;
 }
