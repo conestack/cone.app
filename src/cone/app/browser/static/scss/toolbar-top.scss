@@ -10,7 +10,7 @@
 
   > li {
     padding: 0 0.5rem;
-    display:inline-block;
+    display: inline-block;
 
     ul {
       padding: 0;
@@ -19,7 +19,7 @@
 
     @media(max-width:560px) {
       .toolbar-title {
-        display:none;
+        display: none;
       }
       .dropdown-menu {
         width: 100vw;
@@ -60,7 +60,7 @@
       }
 
       .msg {
-        display:inline-block;
+        display: inline-block;
         margin-left: .5rem;
 
         p {

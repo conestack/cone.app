@@ -134,7 +134,7 @@ body {
 
   #cone-livesearch-dropdown{
     #livesearch:focus {
-      border-color:$info;
+      border-color: $info;
     }
   }
 }
@@ -180,7 +180,7 @@ body {
     background-color: $bg;
     border: 1px solid $fbright;
     > i {
-      color:$flight;
+      color: $flight;
     }
   }
 }
@@ -214,7 +214,7 @@ body {
       .navtreelevel_1.hover {
         background: $info;
   
-        > a { color: white;}
+        > a { color: white; }
   
         ul {
           background: $menu;
@@ -306,7 +306,7 @@ a:hover {
     .scroll-handle {
       background: rgba($color: $flight, $alpha: 0.2);
       &:hover, &.active {
-        background:$info;
+        background: $info;
       }
     }
 }

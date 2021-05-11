@@ -29,7 +29,7 @@ body {
     position: relative;
     width: 100%;
     height: calc(100vh - 4rem);
-    padding:0;
+    padding: 0;
     z-index: -100;
 
     #page-content {
@@ -39,7 +39,7 @@ body {
       flex-direction: column;
     }
     #content { 
-      margin-bottom: auto;// sets footer position 
+      margin-bottom: auto; // sets footer position 
     }
   }
 }
@@ -98,20 +98,15 @@ body {
   overflow: hidden;
 }
 .scroll-content {
-  position:relative;
+  position: relative;
 }
 .scrollbar {
   display: none;
   position: absolute;
   border-radius: 3px;
-  z-index:1000;
+  z-index: 1000;
   .scroll-handle {
-    position:relative;
+    position: relative;
     border-radius: 3px;
   }
-}
-
-
-#scrolltest1 .scroll-content{
-  margin-left:1rem;
 }

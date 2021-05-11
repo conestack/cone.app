@@ -184,8 +184,8 @@
             this.unit = 10;
             this.scrollbar_unit = 0;
 
-            this._handle = this.update_dimensions.bind(this); // bind this required!
-            $(this._handle); // jquery required!
+            this._handle = this.update_dimensions.bind(this); // bind this required! - why?
+            $(this._handle); // jquery required! - why?
             
             const scrollbar_observer = new ResizeObserver(entries => {
                 for(let entry of entries) {
@@ -201,10 +201,8 @@
             this.scrollbar.off().on('mousedown', this._drag_start);
 
             this._mousehandle = this.mouse_in_out.bind(this);
-            this.container.off(
-                'mouseenter mouseleave',
-                this._mousehandle
-            ).on('mouseenter mouseleave', this._mousehandle);
+            this.container.off('mouseenter mouseleave', this._mousehandle)
+                          .on('mouseenter mouseleave', this._mousehandle);
         }
 
         create_elems() {
@@ -667,6 +665,8 @@
 
         unload() {
             super.unload();
+            this.items.off();
+            this.arrows.off();
         }
 
         viewport_changed(e) {
@@ -772,6 +772,7 @@
         unload() {
             super.unload();
             this.toggle_button.off('click', this._toggle_menu_handle);
+            this.tb_dropdowns.off('show.bs.dropdown');
         }
 
         toggle_menu() {
@@ -856,12 +857,14 @@
 
             this.initial_load();
 
-            this.lock_switch.on('click', this.toggle_lock.bind(this));
+            this._toggle_lock = this.toggle_lock.bind(this);
+            this.lock_switch.on('click', this._toggle_lock);
         }
 
         unload() {
             super.unload();
             this.toggle_btn.off('click', this._toggle_menu_handle);
+            this.lock_switch.off('click', this._toggle_lock);
         }
 
         initial_load() {
@@ -976,7 +979,9 @@
 
         unload() {
             super.unload();
-            this.toggle_elems.off();
+            this.heading.off('click');
+            this.toggle_elems.off('mouseenter', this._mouseenter_handle)
+                             .off('mouseleave', this._restore);
         }
 
         mv_to_mobile() {
@@ -1031,7 +1036,7 @@
             this.elem = elem;
             this.modes = modes;
             this.link = $('head #colormode-styles');
-            this.elem.on('click', this.switch_theme.bind(this));
+            this.elem.off('click').on('click', this.switch_theme.bind(this));
             let current = readCookie('modeswitch');
             if (!current) {
                 current = modes[0];
@@ -1077,6 +1082,10 @@
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
             this.viewport_changed(null);
+        }
+
+        unload() {
+            // placeholder
         }
 
         viewport_changed(e) {

@@ -71,8 +71,8 @@
   min-height: 2.2rem;
 }
 #cone-searchbar #cone-searchbar-wrapper {
-  height: 4rem;
   display: flex;
+  height: 4rem;
   align-items: center;
   cursor: unset;
 }
@@ -363,11 +363,11 @@
 
 /* ----- mainmenu ----- */
 .cone-mainmenu-dropdown {
+  display: none;
   position: absolute;
   z-index: 1000;
   padding: 0.5rem;
   min-width: 10rem;
-  display: none;
 }
 
 ul {
@@ -377,13 +377,13 @@ ul {
 }
 
 #topnav-content #main-menu {
-  padding-top: 0.5rem;
-  margin-right: auto;
-  height: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+  height: 100%;
+  margin-right: auto;
+  padding-top: 0.5rem;
 }
 #topnav-content #main-menu .scrollbar {
   top: 0;
@@ -396,9 +396,9 @@ ul {
   padding: 0;
 }
 #topnav-content #mainmenu li {
-  height: 100%;
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
 @media (min-width: 560px) {
@@ -435,8 +435,8 @@ ul {
   display: none;
 }
 #sidebar_left.collapsed #mainmenu_sidebar > li {
-  padding: 0.75rem 1rem;
   width: 3.5rem;
+  padding: 0.75rem 1rem;
 }
 #sidebar_left.collapsed #mainmenu_sidebar > li > a > span {
   display: none;
@@ -463,10 +463,10 @@ ul {
   padding: 1.5rem 1rem 1rem 5rem;
 }
 #sidebar_left.expanded .cone-mainmenu-dropdown-sb {
+  display: none;
   width: 100%;
   margin-left: 1rem;
   margin-top: 0.5rem;
-  display: none;
 }
 
 #mainmenu_sidebar {
@@ -845,10 +845,6 @@ body {
 .scrollbar .scroll-handle {
   position: relative;
   border-radius: 3px;
-}
-
-#scrolltest1 .scroll-content {
-  margin-left: 1rem;
 }
 
 /*# sourceMappingURL=style.css.map */

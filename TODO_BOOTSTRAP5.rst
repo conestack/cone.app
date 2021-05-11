@@ -18,6 +18,12 @@ OR
   - cypress: https://www.cypress.io/
 
 
+issues
+------
+[ ] - chromium produces console warning: "cone.js:5281 [Violation] Added non-passive event listener 
+      to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make 
+      the page more responsive. See https://www.chromestatus.com/feature/5745543795965952"
+
 general
 -------
 
@@ -59,7 +65,6 @@ javascript
         [X] - navtree
         [X] - mainmenu_sidebar
         [X] - mainmenu_top
-        [ ] -
 
 
 styles

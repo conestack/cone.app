@@ -1,14 +1,14 @@
 #topnav.mobile {
-  height:4rem;
-  padding:1rem;
+  height: 4rem;
+  padding: 1rem;
 
   ul {
-    margin:0;
+    margin: 0;
   }
 
   #mobile-menu-toggle {
-    display:block;
-    font-size:2rem;
+    display: block;
+    font-size: 2rem;
     margin-left: 1rem;
   }
 
@@ -28,8 +28,8 @@
     #cone-livesearch-dropdown {
       position: relative!important;
       transform: none!important;
-      max-width:100%;
-      width:100%;
+      max-width: 100%;
+      width: 100%;
     }
   }
 
@@ -70,8 +70,8 @@
   }
 
   #main-menu {
-    transform:none;
-    overflow:visible;
+    transform: none;
+    overflow: visible;
   }
   #mainmenu {
     padding: 0;
@@ -79,7 +79,7 @@
     width: 100%;
     flex-direction: column;
     overflow: hidden;
-    transform:none;
+    transform: none;
 
     .mainmenu-title {
       display: inline-block;
@@ -129,7 +129,7 @@
 
     #navtree-content {
       margin-top: 1rem;
-      display:none;
+      display: none;
     }
 
     .sidebar-heading {
@@ -146,7 +146,7 @@
         padding: 0;
         ul {
           padding: 0;
-          margin-left:1rem;
+          margin-left: 1rem;
         }
       }
       li {
@@ -157,7 +157,6 @@
           &:before { // sets borders in navtree navigation
             content: "";
             display: inline-block;
-            // position: absolute;
             height: 1rem;
             width: 0.8rem;
             transform: translate(-1px, -25%);
@@ -170,7 +169,6 @@
           &:before { // sets borders in navtree navigation
             content: "";
             display: inline-block;
-            // position: absolute;
             height: 1rem;
             width: 0.8rem;
             transform: translateY(-25%);

@@ -14,11 +14,11 @@ $threshold_mobile: 560px;
   box-shadow: 0 .5rem 1rem rgba(53, 59, 65, .025);
 
   #personaltools {
-    order:1;
+    order: 1;
   }
 
   .dropdown-toggle::after {//remove bs dropdown arrow
-    content:none;
+    content: none;
   }
 
   .dropdown-menu {
@@ -88,8 +88,8 @@ $threshold_mobile: 560px;
   min-height: 2.2rem;
 
   #cone-searchbar-wrapper {
-    height: 4rem;
     display: flex;
+    height: 4rem;
     align-items: center;
     cursor: unset;
   }
@@ -105,7 +105,7 @@ $threshold_mobile: 560px;
     }
 
     #cone-livesearch-results {
-      overflow-y:auto;
+      overflow-y: auto;
       max-height: 12rem;
     }
 
@@ -183,7 +183,7 @@ $threshold_mobile: 560px;
   }
 
   .dropdown-arrow {
-    display:none;
+    display: none;
   }
 
   .user-specs {
