@@ -9,28 +9,24 @@
 
 // var livesearch_options = new Object();
 
+// ensure namespace
+if (window.cone === undefined) cone = {};
+
 (function($) {
 
-    // cone namespace
-    cone = {
-        theme_switcher: null,
-        searchbar_handler: null,
-        content: null,
-        scrollbars: [],
-        default_themes: [
-            '/static/light.css',
-            '/static/dark.css'
-        ],
-        dragging: false,
-        searchbar: null,
-    };
-
-    // viewport related
+    // viewport
     cone.viewport = null;
     cone.VP_MOBILE = 0;
     cone.VP_SMALL = 1;
     cone.VP_MEDIUM = 2;
     cone.VP_LARGE = 3;
+
+    // theme
+    cone.theme_switcher = null;
+    cone.default_themes = [
+        '/static/light.css',
+        '/static/dark.css'
+    ];
 
     // layout components
     cone.sidebar_menu = null;
@@ -38,6 +34,16 @@
     cone.main_menu_sidebar = null;
     cone.navtree = null;
     cone.topnav = null;
+
+    // seqrchbar
+    cone.searchbar = null;
+    cone.searchbar_handler = null;
+
+    // content
+    cone.content = null;
+
+    // XXX: remove
+    cone.dragging = false;
 
     $(function() {
         // create viewport singleton
@@ -48,27 +54,18 @@
             cone.Topnav.initialize(context);
             cone.MainMenuSidebar.initialize(context);
             cone.MainMenuTop.initialize(context);
-
             cone.SidebarMenu.initialize(context);
-
             cone.Searchbar.initialize(context);
             cone.Navtree.initialize(context);
             cone.Content.initialize(context);
-
-            $('.scroll-container', context).each(function() {
-                let condition = $(this).find('.scroll-content').outerWidth(true) > $(this).outerWidth(true);
-                let scrollbar = (condition) ?
-                    new cone.ScrollBarX($(this)) :
-                    new cone.ScrollBarY($(this));
-            });
         }, true);
 
         // bdajax.register(livesearch.binder.bind(livesearch), true);
 
     });
 
-    // XXX: move to cone.utils
-    function toggle_arrow(arrow) {
+    // toggle vertical arrow icon
+    cone.toggle_arrow = function(arrow) {
         if (arrow.hasClass('bi-chevron-up')) {
             arrow.removeClass('bi-chevron-up');
             arrow.addClass('bi-chevron-down');
@@ -76,9 +73,10 @@
             arrow.removeClass('bi-chevron-down');
             arrow.addClass('bi-chevron-up');
         }
-    }
+    };
 
-    function dd_reset(arrow, dropdown) {
+    // close dropdown and reset arrow
+    cone.dd_reset = function(arrow, dropdown) {
         arrow.attr('class', 'dropdown-arrow bi bi-chevron-down');
         dropdown.hide();
     }
@@ -91,11 +89,11 @@
             this._mobile_query = `(max-width:560px)`;
             this._small_query = `(min-width:560px) and (max-width: 990px)`;
             this._medium_query = `(min-width:560px) and (max-width: 1200px)`;
-            this.update_viewport(null);
-            $(window).on('resize', this.update_viewport.bind(this));
+            this.update_viewport();
+            $(window).on('resize', this.resize_handle.bind(this));
         }
 
-        update_viewport(e) {
+        update_viewport() {
             let state = this.state;
             if (window.matchMedia(this._mobile_query).matches) {
                 this.state = cone.VP_MOBILE;
@@ -106,6 +104,10 @@
             } else {
                 this.state = cone.VP_LARGE;
             }
+        }
+
+        resize_handle(e) {
+            this.update_viewport();
             if (e && state != this.state) {
                 var evt = $.Event('viewport_changed');
                 evt.state = this.state;
@@ -117,6 +119,7 @@
     cone.ViewPortAware = class {
 
         constructor() {
+            this.vp_state = cone.viewport.state;
             this._viewport_changed_handle = this.viewport_changed.bind(this);
             $(window).on('viewport_changed', this._viewport_changed_handle);
         }
@@ -126,339 +129,7 @@
         }
 
         viewport_changed(e) {
-        }
-    }
-
-    // layout component
-    cone.ViewComponent = class {
-
-        constructor(elem, global_name=null) {
-            this.elem = elem;
-            this._observe_removed();
-            if (global_name) {
-                cone[global_name] = this;
-            }
-        }
-
-        _observe_removed() {
-            let elem = this.elem.get(0);
-            let that = this;
-            let observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    mutation.removedNodes.forEach(node => {
-                        if (Object.is(elem, node)) {
-                            observer.disconnect();
-                            that.unload();
-                        }
-                    });
-                });
-            });
-            observer.observe(elem.parentNode, {childList: true});
-        }
-
-        unload() {
-            // abstract, implement on subclass
-        }
-    }
-
-    cone.ScrollBar = class {
-
-        constructor(context) {
-            cone.scrollbars.push(this);
-            this.container = context;
-            this.content = $('>', this.container);
-
-            this.scrollbar = $('<div class="scrollbar" />');
-            this.thumb = $('<div class="scroll-handle" />');
-            this.thickness = '6px';
-
-            $(this.create_elems.bind(this));
-    
-            this.position = 0;
-            this.thumb_pos = 0;
-            this.thumb_dim = 0;
-            this.thumb_end = 0;
-            this.factor = 0;
-            this.space_between = 0;
-
-            this.unit = 10;
-            this.scrollbar_unit = 0;
-
-            this._handle = this.update_dimensions.bind(this); // bind this required! - why?
-            $(this._handle); // jquery required! - why?
-            
-            const scrollbar_observer = new ResizeObserver(entries => {
-                for(let entry of entries) {
-                    $(this._handle);
-                }
-            });
-            scrollbar_observer.observe(this.container.get(0));
-
-            this._scroll = this.scroll_handle.bind(this);
-            this.container.off().on('mousewheel wheel', this._scroll);
-
-            this._drag_start = this.drag_start.bind(this);
-            this.scrollbar.off().on('mousedown', this._drag_start);
-
-            this._mousehandle = this.mouse_in_out.bind(this);
-            this.container.off('mouseenter mouseleave', this._mousehandle)
-                          .on('mouseenter mouseleave', this._mousehandle);
-        }
-
-        create_elems() {
-            // abstract, implemented in subclass
-        }
-
-        update_dimensions() {
-            // abstract, implemented in subclass
-        }
-
-        drag_start() {
-            // abstract, implemented in subclass
-        }
-
-        unload() {
-            this.scrollbar.off();
-            this.container.off();
-        }
-
-        mouse_in_out(e) {
-            if(cone.dragging || this.content_dim <= this.container_dim) {
-                return;
-            } else {
-                if(e.type == 'mouseenter') {
-                    this.scrollbar.fadeIn();
-                } else {
-                    this.scrollbar.fadeOut();
-                }
-            }
-        }
-
-        scroll_handle(e) {
-            if(this.content_dim < this.container_dim) {
-                return;
-            }
-            if (typeof e.originalEvent.wheelDelta == 'number' || typeof e.originalEvent.deltaY == 'number') {
-
-                // scroll event data
-                if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) { // down
-                    this.position -= this.unit;
-                    this.thumb_pos += this.scrollbar_unit;
-
-                    if(this.thumb_pos >= this.container_dim - this.thumb_dim) { // stop scrolling on end
-                        this.thumb_pos = this.container_dim - this.thumb_dim;
-                        this.position = this.container_dim - this.content_dim;
-                    }
-                };
-
-                if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) { // up
-                    this.position += this.unit;
-                    this.thumb_pos -= this.scrollbar_unit;
-
-                    if(this.position > 0) { // stop scrolling on start
-                        this.position = 0;
-                        this.thumb_pos = 0;
-                    }
-                }
-            }
-            this.set_position();
-        }
-    }
-
-    cone.ScrollBarX = class extends cone.ScrollBar {
-
-        constructor(elem) {
-            super(elem);
-            this.elem = elem;
-
-            this.container_dim = this.container.outerWidth(true);
-            this.content_dim = this.content.outerWidth(true);
-
-            this.offset = this.container.offset().left;
-        }
-
-        create_elems() {
-            this.content.addClass('scroll-content');
-            this.elem.addClass('scroll-container');
-            this.container.prepend(this.scrollbar);
-            this.scrollbar.append(this.thumb);
-            this.thumb.css('height', this.thickness);
-            this.scrollbar.css('height', this.thickness);
-        }
-
-        update_dimensions() {
-            this.content_dim = this.content.outerWidth(true);
-            this.container_dim = this.container.outerWidth(true);
-            this.factor = this.content_dim / this.container_dim;
-            this.thumb_dim = this.container_dim / this.factor;
-            this.thumb_end = this.thumb.offset().left + this.thumb_dim;
-            this.container_end = this.container.offset().left + this.container_dim;
-
-            this.scrollbar.css('width', this.container_dim);
-            this.thumb.css('width', this.thumb_dim);
-
-            this.scrollbar_unit = this.container_dim / (this.content_dim / this.unit);
-            this.space_between = this.container_dim - this.thumb_dim;
-        }
-
-        set_position() {
-            this.content.css('left', this.position + 'px');
-            this.thumb.css('left', this.thumb_pos + 'px');
-        }
-
-        drag_start(evt) {
-            evt.preventDefault(); // prevent text selection
-            this.thumb.addClass('active');
-
-            let mouse_pos = evt.pageX - this.offset,
-                thumb_diff = this.container_dim - this.thumb_dim,
-                new_thumb_pos = 0;
-
-            // case click
-            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
-                if(mouse_pos < this.thumb_pos) {
-                    if(mouse_pos <= this.thumb_pos / 2) {
-                        new_thumb_pos = 0;
-                    } else {
-                        new_thumb_pos = mouse_pos- this.thumb_dim / 2;
-                    }
-                } else if(mouse_pos > this.thumb_pos + this.thumb_dim){
-                    if(mouse_pos > this.space_between + this.thumb_dim / 2) {
-                        new_thumb_pos = thumb_diff;
-                    } else {
-                        new_thumb_pos = mouse_pos - this.thumb_dim / 2;
-                    }
-                }
-                this.thumb.css('left', new_thumb_pos);
-                this.content.css('left', - (new_thumb_pos * this.factor));
-                this.thumb_pos = new_thumb_pos;
-            // case drag
-            } else {
-                cone.dragging = true;
-                $(document).on('mousemove', onMouseMove.bind(this));
-
-                function onMouseMove(evt) {
-                    let mouse_pos_on_move = evt.pageX - this.offset;
-                    let diff = mouse_pos_on_move - mouse_pos;
-                    new_thumb_pos = this.thumb_pos + diff;
-                    if(new_thumb_pos <= 0) {
-                        new_thumb_pos = 0;
-                    } else if (new_thumb_pos >= thumb_diff) {
-                        new_thumb_pos = thumb_diff;
-                    }
-                    this.thumb.css('left', new_thumb_pos);
-                    this.content.css('left', - (new_thumb_pos * this.factor));
-                }
-
-                $(document).on('mouseup', onMouseUp.bind(this));
-                function onMouseUp() {
-                    cone.dragging = false;
-                    $(document).off('mousemove mouseup');
-                    this.thumb.removeClass('active');
-                    this.thumb_pos = new_thumb_pos;
-                }
-            }
-
-
-        }
-    };
-
-    cone.ScrollBarY = class extends cone.ScrollBar {
-
-        constructor(elem) {
-            super(elem);
-            this.elem = elem;
-
-            this.container_dim = this.container.outerHeight(true);
-            this.content_dim = (this.content.length) ? this.content.outerHeight(true) : 0;
-
-            this.offset = this.container.offset().top;
-        }
-
-        create_elems() {
-            this.content.addClass('scroll-content');
-            this.elem.addClass('scroll-container');
-            this.container.prepend(this.scrollbar);
-            this.scrollbar.append(this.thumb);
-            this.thumb.css('width', this.thickness);
-            this.scrollbar.css('width', this.thickness);
-        }
-
-        update_dimensions() {
-            this.content_dim = this.content.outerHeight(true);
-            this.container_dim = this.container.outerHeight(true);
-            this.factor = this.content_dim / this.container_dim;
-            this.thumb_dim = this.container_dim / this.factor;
-            this.thumb_end = this.thumb.offset().top + this.thumb_dim;
-            this.container_end = this.container.offset().top + this.container_dim;
-
-            this.scrollbar.css('height', this.container_dim);
-            this.thumb.css('height', this.thumb_dim);
-
-            this.scrollbar_unit = this.container_dim / (this.content_dim / this.unit);
-            this.space_between = this.container_dim - this.thumb_dim;
-        }
-
-        set_position() {
-            this.content.css('top', this.position + 'px');
-            this.thumb.css('top', this.thumb_pos + 'px');
-        }
-
-        drag_start(evt) {
-            // prevent text selection
-            evt.preventDefault();
-            this.thumb.addClass('active');
-
-            let mouse_pos = evt.pageY - this.offset,
-                thumb_diff = this.container_dim - this.thumb_dim,
-                new_thumb_pos = 0;
-
-            // case click
-            if (mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
-                if (mouse_pos < this.thumb_pos) {
-                    if (mouse_pos <= this.thumb_pos / 2) {
-                        new_thumb_pos = 0;
-                    } else {
-                        new_thumb_pos = mouse_pos- this.thumb_dim / 2;
-                    }
-                } else if (mouse_pos > this.thumb_pos + this.thumb_dim){
-                    if (mouse_pos > this.space_between + this.thumb_dim / 2) {
-                        new_thumb_pos = thumb_diff;
-                    } else {
-                        new_thumb_pos = mouse_pos - this.thumb_dim / 2;
-                    }
-                }
-                this.thumb.css('top', new_thumb_pos);
-                this.content.css('top', - (new_thumb_pos * this.factor));
-                this.thumb_pos = new_thumb_pos;
-            // case drag
-            } else {
-                cone.dragging = true;
-                $(document).on(
-                    'mousemove',
-                    onMouseMove.bind(this)
-                ).on('mouseup', onMouseUp.bind(this));
-
-                function onMouseMove(evt) {      
-                    let mouse_pos_on_move = evt.pageY - this.offset;
-                    let diff = mouse_pos_on_move - mouse_pos;
-                    new_thumb_pos = this.thumb_pos + diff;
-                    if(new_thumb_pos <= 0) {
-                        new_thumb_pos = 0;
-                    } else if (new_thumb_pos >= thumb_diff) {
-                        new_thumb_pos = thumb_diff;
-                    }
-                    this.thumb.css('top', new_thumb_pos);
-                    this.content.css('top', - (new_thumb_pos * this.factor));
-                }
-
-                function onMouseUp() {
-                    cone.dragging = false;
-                    $(document).off('mousemove mouseup');
-                    this.thumb.removeClass('active');
-                    this.thumb_pos = new_thumb_pos;
-                }
-            }
+            this.vp_state = e.state;
         }
     }
 
@@ -543,7 +214,7 @@
             this.elem.off();
             this.arrow.off().on('click', () => {
                 this.menu.slideToggle('fast');
-                toggle_arrow(this.arrow);
+                cone.toggle_arrow(this.arrow);
             });
         }
 
@@ -602,6 +273,7 @@
         }
 
         viewport_changed(e) {
+            super.viewport_changed(e);
             if(cone.viewport.state === cone.VP_MOBILE) {
                 cone.topnav.logo.css('margin-right', 'auto');
             } else {
@@ -670,7 +342,8 @@
         }
 
         viewport_changed(e) {
-            dd_reset(this.arrows, this.dropdowns);
+            super.viewport_changed(e);
+            cone.dd_reset(this.arrows, this.dropdowns);
             if (cone.viewport.state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } 
@@ -703,7 +376,7 @@
             let target = $(evt.currentTarget);
             let item = target.parent().parent();
             $(this.dd_sel, item).slideToggle('fast');
-            toggle_arrow(target);
+            cone.toggle_arrow(target);
         }
     
         mv_to_mobile() {
@@ -777,15 +450,14 @@
 
         toggle_menu() {
             this.content.slideToggle('fast');
-            // XXX: this always sets display flex. why not via CSS file directly then?
-            // XXX: because slideToggle overwrites display:flex with display:block / display:none
-            // setting display to flex!important disables slideToggle behaviour (L)
+            // slideToggle overrides display flex with block, we need flex
             if (this.content.css('display') === 'block') {
                 this.content.css('display', 'flex');
             }
         }
 
         viewport_changed(e) {
+            super.viewport_changed(e);
             if (cone.viewport.state === cone.VP_MOBILE) {
                 this.content.hide();
                 this.elem.addClass('mobile');
@@ -809,11 +481,11 @@
             if (cone.viewport.state === cone.VP_MOBILE) {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
                     this.user.stop(true, true).slideDown('fast');
-                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
+                    cone.toggle_arrow($('i.dropdown-arrow', '#personaltools'));
                 });
                 this.pt.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
                     this.user.stop(true, true).slideUp('fast');
-                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
+                    cone.toggle_arrow($('i.dropdown-arrow', '#personaltools'));
                 });
             } else {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
@@ -902,6 +574,7 @@
         }
 
         viewport_changed(e) {
+            super.viewport_changed(e);
             if(cone.viewport.state === cone.VP_MOBILE) {
                 this.collapsed = false;
                 this.elem.hide();
@@ -941,7 +614,8 @@
         }
 
         toggle_menu() {
-            dd_reset(cone.main_menu_sidebar.arrows, cone.main_menu_sidebar.dropdowns);
+            let mms = cone.main_menu_sidebar;
+            cone.dd_reset(mms.arrows, mms.dropdowns);
             this.collapsed = !this.collapsed;
             this.assign_state();
         }
@@ -989,11 +663,12 @@
             this.content.hide();
             this.heading.off('click').on('click', () => {
                 this.content.slideToggle('fast');
-                toggle_arrow($('i.dropdown-arrow', this));
+                cone.toggle_arrow($('i.dropdown-arrow', this));
             });
         }
 
         viewport_changed(e) {
+            super.viewport_changed(e);
             if (cone.viewport.state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } else {
@@ -1081,7 +756,7 @@
             this.search_text = $('#livesearch-input', this.elem);
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
-            this.viewport_changed(null);
+            // this.viewport_changed(null); <- remove
         }
 
         unload() {
@@ -1089,6 +764,7 @@
         }
 
         viewport_changed(e) {
+            super.viewport_changed(e);
             if(cone.viewport.state === cone.VP_MEDIUM) {
                 this.dd.addClass('dropdown-menu-end');
                 this.search_text.detach().prependTo(this.dd);

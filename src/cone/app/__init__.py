@@ -40,6 +40,7 @@ cfg.js.public = [
     '++resource++bdajax/overlay.js',
     '++resource++bdajax/bdajax.js',
     '++resource++bdajax/bdajax_bs3.js',
+    'static/scrollbar.js',
     'static/public.js'
 ]
 cfg.js.protected = [
