@@ -23,6 +23,12 @@ issues
 [ ] - chromium produces console warning: "cone.js:5281 [Violation] Added non-passive event listener 
       to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make 
       the page more responsive. See https://www.chromestatus.com/feature/5745543795965952"
+[~] - scrollbar: fix all the bugs. *******
+    [X] - fix bug when thumb is positioned right side on resize
+    [~] - simplify and cleanup scrollbar code - WIP
+    [ ] - performance needs drastic improvement
+    [X] - rename and reduce scrollbar elements
+
 
 general
 -------
@@ -58,14 +64,17 @@ javascript
 [X] - modeswitch cookie
 [X] - sidebar cookie
 [?] - dropdown cookie sidebar
-[ ] - public.js cleanup:
-    [~] - add initial function to every ViewPortAware Class
+[X] - public.js cleanup:
+    [X] - add initial function to every ViewPortAware Class
         [X] - sidebar_left
         [X] - topnav
         [X] - navtree
         [X] - mainmenu_sidebar
         [X] - mainmenu_top
-
+[X] - fix searchbar display on resize
+[X] - rename toggle_arrow element to toggl_arrow_elem f clarity
+[X] - remove initial viewport_changed(null)
+[ ] - disconnect scrollbar.observer ?
 
 styles
 ------

@@ -94,7 +94,6 @@ if (window.cone === undefined) cone = {};
         }
 
         update_viewport() {
-            let state = this.state;
             if (window.matchMedia(this._mobile_query).matches) {
                 this.state = cone.VP_MOBILE;
             } else if (window.matchMedia(this._small_query).matches) {
@@ -107,6 +106,7 @@ if (window.cone === undefined) cone = {};
         }
 
         resize_handle(e) {
+            let state = this.state;
             this.update_viewport();
             if (e && state != this.state) {
                 var evt = $.Event('viewport_changed');
@@ -153,7 +153,7 @@ if (window.cone === undefined) cone = {};
 
         constructor(elem) {
             this.elem = elem;
-            this.scrollbar = new cone.ScrollBarY(elem);
+            //this.scrollbar = new cone.ScrollBarY(elem);
         }
     }
 
@@ -177,7 +177,7 @@ if (window.cone === undefined) cone = {};
 
             this._toggle = this.mouseenter_toggle.bind(this)
 
-            if(cone.viewport.state === cone.VP_MOBILE){
+            if(this.vp_state === cone.VP_MOBILE){
                 this.mv_to_mobile();
             } else {
                 this.elem.off().on('mouseenter mouseleave', this._toggle);
@@ -261,7 +261,7 @@ if (window.cone === undefined) cone = {};
                 that.main_menu_items.push(main_menu_item);
             });
 
-            if(cone.viewport.state !== cone.VP_MOBILE) {
+            if(this.vp_state !== cone.VP_MOBILE) {
                 cone.topnav.logo.css('margin-right', '2rem');
             } else if (cone.main_menu_sidebar) {
                 this.elem.hide();
@@ -274,13 +274,13 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if(cone.viewport.state === cone.VP_MOBILE) {
+            if(this.vp_state === cone.VP_MOBILE) {
                 cone.topnav.logo.css('margin-right', 'auto');
             } else {
                 cone.topnav.logo.css('margin-right', '2rem');
             }
             if(cone.main_menu_sidebar) {
-                if(cone.viewport.state === cone.VP_MOBILE) {
+                if(this.vp_state === cone.VP_MOBILE) {
                     this.elem.hide();
                 } else {
                     this.elem.show();
@@ -291,7 +291,7 @@ if (window.cone === undefined) cone = {};
             for (let i in this.main_menu_items) {
                 let item = this.main_menu_items[i];
                 if (item.menu) {
-                    if (cone.viewport.state === cone.VP_MOBILE) {
+                    if (this.vp_state === cone.VP_MOBILE) {
                         item.mv_to_mobile();
                     } else {
                         item.mv_to_top();
@@ -323,8 +323,7 @@ if (window.cone === undefined) cone = {};
             this.dd_sel = 'ul.cone-mainmenu-dropdown-sb';
             this.menus = $('.sb-menu', this.elem);
 
-            if (cone.viewport.state === cone.VP_MOBILE) {
-                console.log('YEET');
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } 
     
@@ -344,7 +343,7 @@ if (window.cone === undefined) cone = {};
         viewport_changed(e) {
             super.viewport_changed(e);
             cone.dd_reset(this.arrows, this.dropdowns);
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } 
             else {
@@ -428,7 +427,7 @@ if (window.cone === undefined) cone = {};
             this.toggle_button.on('click', this._toggle_menu_handle);
             //this.logo.css('margin-right', 'auto');
 
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.elem.addClass('mobile');
                 this.tb_dropdowns.off().on('show.bs.dropdown', () => {
                     this.content.hide();
@@ -458,7 +457,7 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.content.hide();
                 this.elem.addClass('mobile');
                 // hide menu on toolbar click
@@ -478,7 +477,7 @@ if (window.cone === undefined) cone = {};
 
         pt_handle() {
             // tmp
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
                     this.user.stop(true, true).slideDown('fast');
                     cone.toggle_arrow($('i.dropdown-arrow', '#personaltools'));
@@ -520,7 +519,7 @@ if (window.cone === undefined) cone = {};
             this.collapsed = false;
 
             this.toggle_btn = $('#sidebar-toggle-btn', elem);
-            this.toggle_arrow = $('i', this.toggle_btn);
+            this.toggle_arrow_elem = $('i', this.toggle_btn);
             this.lock_switch = $('#toggle-fluid');
             this.cookie = null;
            
@@ -541,7 +540,7 @@ if (window.cone === undefined) cone = {};
 
         initial_load() {
             let cookie = readCookie('sidebar');
-            let vp_state = cone.viewport.state;
+            let vp_state = this.vp_state;
             if (vp_state === cone.VP_MOBILE) {
                 this.elem.hide();
             } 
@@ -575,7 +574,7 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if(cone.viewport.state === cone.VP_MOBILE) {
+            if(this.vp_state === cone.VP_MOBILE) {
                 this.collapsed = false;
                 this.elem.hide();
             }
@@ -583,9 +582,9 @@ if (window.cone === undefined) cone = {};
                 this.collapsed = this.cookie;
                 this.elem.show();
             }
-            else if(cone.viewport.state === cone.VP_SMALL) {
+            else if(this.vp_state === cone.VP_SMALL) {
                 this.elem.show();
-                let state = cone.viewport.state === cone.VP_SMALL;
+                let state = this.vp_state === cone.VP_SMALL;
                 if(state != this.collapsed) {
                     this.collapsed = state;
                 }
@@ -601,7 +600,7 @@ if (window.cone === undefined) cone = {};
             let elem_class = this.collapsed === true ? 'collapsed' : 'expanded';
             let button_class = 'bi bi-arrow-' + ((this.collapsed === true) ? 'right':'left') + '-circle';
             this.elem.attr('class', elem_class);
-            this.toggle_arrow.attr('class', button_class);
+            this.toggle_arrow_elem.attr('class', button_class);
 
             if(cone.main_menu_sidebar) {
                 if(this.collapsed) {
@@ -641,7 +640,7 @@ if (window.cone === undefined) cone = {};
             this.heading = $('#navtree-heading', elem);
             this.toggle_elems = $('li.navtreelevel_1', navtree);
 
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             }
 
@@ -663,13 +662,13 @@ if (window.cone === undefined) cone = {};
             this.content.hide();
             this.heading.off('click').on('click', () => {
                 this.content.slideToggle('fast');
-                cone.toggle_arrow($('i.dropdown-arrow', this));
+                cone.toggle_arrow_elem($('i.dropdown-arrow', this));
             });
         }
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } else {
                 this.elem.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
@@ -756,7 +755,12 @@ if (window.cone === undefined) cone = {};
             this.search_text = $('#livesearch-input', this.elem);
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
-            // this.viewport_changed(null); <- remove
+
+            console.log(this.vp_state);
+            if(this.vp_state === cone.VP_SMALL || this.vp_state === cone.VP_MEDIUM ) {
+                this.dd.addClass('dropdown-menu-end');
+                this.search_text.detach().prependTo(this.dd);
+            }
         }
 
         unload() {
@@ -765,7 +769,7 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if(cone.viewport.state === cone.VP_MEDIUM) {
+            if(this.vp_state === cone.VP_SMALL || this.vp_state === cone.VP_MEDIUM) {
                 this.dd.addClass('dropdown-menu-end');
                 this.search_text.detach().prependTo(this.dd);
             } else {
