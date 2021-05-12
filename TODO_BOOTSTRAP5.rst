@@ -25,9 +25,14 @@ issues
       the page more responsive. See https://www.chromestatus.com/feature/5745543795965952"
 [~] - scrollbar: fix all the bugs. *******
     [X] - fix bug when thumb is positioned right side on resize
+    [X] - well fix that again
     [~] - simplify and cleanup scrollbar code - WIP
     [ ] - performance needs drastic improvement
     [X] - rename and reduce scrollbar elements
+
+    [X] - fix scroll event
+    [ ] - fix click event
+    [ ] - fix drag event
 
 
 general

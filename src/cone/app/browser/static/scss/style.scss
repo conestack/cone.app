@@ -99,14 +99,50 @@ body {
 }
 .scroll-content {
   position: relative;
+
+  //tmp
+  &:after {
+    content:"";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    border-left: 2px solid yellow;
+    transform: translate(-50%);
+  }
 }
 .scrollbar {
   display: none;
   position: absolute;
   border-radius: 3px;
   z-index: 1000;
+
+  //tmp
+  &:after {
+    content:"";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    border-left: 2px solid blue;
+    transform: translate(-50%);
+  }
+
   .scroll-handle {
     position: relative;
     border-radius: 3px;
+
+    //tmp
+    &:after {
+      content:"";
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      border-left: 2px solid #ff0000;
+      transform: translate(-50%);
+    }
   }
 }

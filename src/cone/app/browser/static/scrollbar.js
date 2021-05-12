@@ -17,34 +17,35 @@ if (window.cone === undefined) cone = {};
             this.scrollbar = $('<div class="scrollbar" />');
             this.thumb = $('<div class="scroll-handle" />');
 
-            // wait for elements to load properly
+            // wait for elements to load
             setTimeout(this.compile.bind(this), 100);
 
             this.position = 0;
-            this.thumb_position = 0;
-
             this.unit = 10;
 
-            const scrollbar_observer = new ResizeObserver(entries => {
+            this.scrollbar_observer = new ResizeObserver(entries =>{
                 for(let entry of entries) {
-                    // why does it fire twice?
-                    // => timeout?
                     this.update();
                 }
-            });
-            scrollbar_observer.observe(this.elem.get(0));
+            })
+
+            // prevent multiple occurances before page is fully loaded
+            setTimeout( this.observe_container.bind(this) , 500);
 
             this._scroll = this.scroll_handle.bind(this);
             this.elem.off().on('mousewheel wheel', this._scroll);
 
-            // this._drag_start = this.drag_start.bind(this);
-            // this.scrollbar.off().on('mousedown', this._drag_start);
+            this._drag_start = this.drag_start.bind(this);
+            this.scrollbar.off().on('mousedown', this._drag_start);
 
             // this._mousehandle = this.mouse_in_out.bind(this);
             // this.elem.off('mouseenter mouseleave', this._mousehandle)
             //          .on('mouseenter mouseleave', this._mousehandle);
         }
 
+        observe_container() {
+            this.scrollbar_observer.observe(this.elem.get(0));
+        }
         compile() {
             // abstract, implemented in subclass
         }
@@ -75,38 +76,17 @@ if (window.cone === undefined) cone = {};
         }
 
         scroll_handle(e) {
-            // return if same size
             if(this.contentsize <= this.scrollsize) {
                 return;
             }
-
             if (typeof e.originalEvent.wheelDelta == 'number' || typeof e.originalEvent.deltaY == 'number') {
-
-                let scrollbar_unit = this.scrollsize / (this.contentsize / this.unit);
-
                 // down
                 if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) {
-                    this.position -= this.unit;
-                    this.thumb_position += scrollbar_unit;
-
-                    // stop scrolling on end
-                    let thumb_size = this.scrollsize / (this.contentsize / this.scrollsize);
-                    if(this.thumb_position >= this.scrollsize - thumb_size) {
-                        this.thumb_position = this.scrollsize - thumb_size;
-                        this.position = this.scrollsize - this.contentsize;
-                    }
-                };
-
-                // up
-                if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) {
                     this.position += this.unit;
-                    this.thumb_position -= scrollbar_unit;
-
-                    // stop scrolling on start
-                    if(this.position > 0) {
-                        this.position = 0;
-                        this.thumb_position = 0;
-                    }
+                }
+                // up
+                else if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) {
+                    this.position -= this.unit;
                 }
             }
             this.set_position();
@@ -117,14 +97,9 @@ if (window.cone === undefined) cone = {};
 
         constructor(elem) {
             super(elem);
-            this.scrollsize = this.elem.outerWidth(true);
-            this.contentsize = this.content.outerWidth(true);
-            this.elem = elem;
-            // this.offset = this.elem.offset().left;
         }
 
         compile() {
-            console.log('scrollbarX.compile()');
             this.content.addClass('scroll-content');
             this.elem.addClass('scroll-container')
                      .prepend(this.scrollbar);
@@ -132,48 +107,36 @@ if (window.cone === undefined) cone = {};
             this.thumb.css('height', '6px');
             this.scrollbar.css('height', '6px');
 
-            // this.scrollsize = this.elem.outerWidth();
-            // this.contentsize = this.content.outerWidth();
-            // 
-            // this.scrollbar.css('width', this.scrollsize);
-            // //this.thumb.css('width', this.thumbsize);
-// 
+            this.scrollsize = this.elem.outerWidth();
+            this.contentsize = this.content.outerWidth();
+
+            this.scrollbar.css('width', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('width', this.thumbsize);
+
             //tmp
             this.scrollbar.show();
-
         }
 
         update() {
-            console.log('scrollbarX.update()');
-
-            // handle switching to mobile and back, reset - WIP
-            if(this.scrollbar.is(':hidden')) {
-                this.position = 0;
-                this.thumb_pos = 0;
-                console.log('hidden');
-                return;
-            }
-
-            this.contentsize = this.content.outerWidth();
             this.scrollsize = this.elem.outerWidth();
-
             this.scrollbar.css('width', this.scrollsize);
-            let thumb_size = this.scrollsize / (this.contentsize / this.scrollsize);
-            this.thumb.css('width', thumb_size);
-
-            // prevent overflow of thumb - WIP
-            let thumb_right_edge = this.thumb.offset().left + this.thumb.outerWidth();
-            let elem_right_edge = this.elem.offset().left + this.elem.outerWidth();
-            if( thumb_right_edge >= elem_right_edge ) {
-                    let newpos = this.elem.outerWidth() - this.thumb.outerWidth();
-                    this.thumb.css('left', newpos);
-                    this.content.css('left', -newpos);
-            }
+            this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+            this.thumb.css('width', this.thumbsize);
+            this.set_position();
         }
 
         set_position() {
-            this.content.css('left', this.position + 'px');
-            this.thumb.css('left', this.thumb_position + 'px');
+            let threshold = this.contentsize - this.scrollsize;
+            if(this.position >= threshold) {
+                this.position = threshold;
+            } else if(this.position <= 0) {
+                this.position = 0;
+            }
+
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('right', this.position + 'px');
+            this.thumb.css('left', thumb_pos + 'px');
         }
 
         drag_start(evt) {
@@ -182,28 +145,46 @@ if (window.cone === undefined) cone = {};
 
             let mouse_pos = evt.pageX - this.elem.offset().left,
                 thumb_diff = this.scrollsize - this.thumbsize,
+                thumb_position = this.position / (this.contentsize / this.scrollsize),
                 new_thumb_pos = 0;
 
+            // console.log('thumb position: ' + thumb_position);
+            // console.log('mouse position: ' + mouse_pos);
+
             // case click
-            if(mouse_pos < this.thumb_position || mouse_pos > (this.thumb_position + this.thumbsize)) {
-                if(mouse_pos < this.thumb_position) {
-                    if(mouse_pos <= this.thumb_position / 2) {
-                        new_thumb_pos = 0;
-                    } else {
-                        new_thumb_pos = mouse_pos- this.thumbsize / 2;
-                    }
-                } else if(mouse_pos > this.thumb_position + this.thumbsize){
-                    if(mouse_pos > (this.scrollsize - this.thumbsize) + this.thumbsize / 2) {
-                        new_thumb_pos = thumb_diff;
-                    } else {
-                        new_thumb_pos = mouse_pos - this.thumbsize / 2;
-                    }
+            if(mouse_pos < thumb_position) {
+                console.log('click left');
+                if(mouse_pos <= thumb_position / 2) {
+                    new_thumb_pos = 0;
+                } else {
+                    new_thumb_pos = mouse_pos- this.thumbsize / 2;
                 }
-                this.thumb.css('left', new_thumb_pos);
-                this.content.css('left', - (new_thumb_pos * this.factor));
-                this.thumb_position = new_thumb_pos;
+                 // reverse calculate pos
+                new_content_pos = this.contentsize * new_thumb_pos / this.scrollsize;
+            }
+            else if(mouse_pos > thumb_position + this.thumbsize) {
+                console.log('click right');
+            }
+                // if(mouse_pos < thumb_position) {
+                //     if(mouse_pos <= thumb_position / 2) {
+                //         new_thumb_pos = 0;
+                //     } else {
+                //         new_thumb_pos = mouse_pos- this.thumbsize / 2;
+                //     }
+                // } else if(mouse_pos > thumb_position + this.thumbsize){
+                //     if(mouse_pos > (this.scrollsize - this.thumbsize) + this.thumbsize / 2) {
+                //         new_thumb_pos = thumb_diff;
+                //     } else {
+                //         new_thumb_pos = mouse_pos - this.thumbsize / 2;
+                //     }
+                // }
+
+                // this.thumb_position = new_thumb_pos;
             // case drag
-            } else {
+            else {
+                console.log('click on thumb');
+            }
+            /* else {
                 cone.dragging = true;
                 $(document).on('mousemove', onMouseMove.bind(this));
 
@@ -227,7 +208,7 @@ if (window.cone === undefined) cone = {};
                     this.thumb.removeClass('active');
                     this.thumb_position = new_thumb_pos;
                 }
-            }
+            } */
 
 
         }
@@ -239,7 +220,6 @@ if (window.cone === undefined) cone = {};
             super(elem);
             this.scrollsize = this.elem.outerHeight(true);
             this.contentsize = (this.content.length) ? this.content.outerHeight(true) : 0;
-            // this.offset = this.elem.offset().top;
         }
 
         compile() {

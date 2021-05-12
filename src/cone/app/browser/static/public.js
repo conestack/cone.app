@@ -620,6 +620,7 @@ if (window.cone === undefined) cone = {};
         }
     };
 
+
     cone.Navtree = class extends cone.ViewPortAware {
 
         static initialize(context) {
