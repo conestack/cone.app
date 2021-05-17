@@ -35,8 +35,8 @@ if (window.cone === undefined) cone = {};
             this._scroll = this.scroll_handle.bind(this);
             this.elem.off().on('mousewheel wheel', this._scroll);
 
-            this._drag_start = this.drag_start.bind(this);
-            this.scrollbar.off().on('mousedown', this._drag_start);
+            this._click_drag_handle = this.click_drag_handle.bind(this);
+            this.scrollbar.off().on('mousedown', this._click_drag_handle);
 
             this._mousehandle = this.mouse_in_out.bind(this);
             this.elem.off('mouseenter mouseleave', this._mousehandle)
@@ -89,6 +89,57 @@ if (window.cone === undefined) cone = {};
             }
             this.set_position();
         }
+
+        prevent_overflow() {
+            let threshold = this.contentsize - this.scrollsize;
+            if(this.position >= threshold) {
+                this.position = threshold;
+            } else if(this.position <= 0) {
+                this.position = 0;
+            }
+        }
+
+        click_drag_handle(e) {
+            e.preventDefault(); // prevent text selection
+            this.thumb.addClass('active');
+
+            let evt_data = this.get_evt_data(e),
+                mouse_pos = evt_data - this.get_offset(),
+                thumb_position = this.position / (this.contentsize / this.scrollsize),
+                new_thumb_pos = 0,
+                new_content_pos = 0;
+
+            if(mouse_pos < thumb_position || mouse_pos > thumb_position + this.thumbsize) {
+                // case click
+                new_thumb_pos = mouse_pos - this.thumbsize / 2;
+                new_content_pos = this.contentsize * new_thumb_pos / this.scrollsize;
+                this.position = new_content_pos;
+                this.set_position();
+            }
+
+            else {
+                // case drag
+                let _on_move = on_move.bind(this),
+                    _on_up = on_up.bind(this);
+
+                $(document).on('mousemove', _on_move);
+
+                function on_move(e) {
+                    let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
+                        new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
+                    this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+                    this.set_position();
+                }
+
+                function on_up() {
+                    $(document).off('mousemove', _on_move).off('mouseup', _on_up);
+                    this.thumb.removeClass('active');
+                }
+
+                $(document).on('mouseup', _on_up);
+            }
+        }
+
     }
 
     cone.ScrollBarX = class extends cone.ScrollBar {
@@ -122,48 +173,18 @@ if (window.cone === undefined) cone = {};
         }
 
         set_position() {
-            let threshold = this.contentsize - this.scrollsize;
-            if(this.position >= threshold) {
-                this.position = threshold;
-            } else if(this.position <= 0) {
-                this.position = 0;
-            }
-
+            this.prevent_overflow();
             let thumb_pos = this.position / (this.contentsize / this.scrollsize);
             this.content.css('right', this.position + 'px');
             this.thumb.css('left', thumb_pos + 'px');
         }
 
-        drag_start(evt) {
-            evt.preventDefault(); // prevent text selection
-            this.thumb.addClass('active');
+        get_evt_data(e) {
+            return e.pageX;
+        }
 
-            let mouse_pos = evt.pageX - this.elem.offset().left,
-                thumb_position = this.position / (this.contentsize / this.scrollsize),
-                new_thumb_pos = 0,
-                new_content_pos = 0;
-
-            // case click
-            if(mouse_pos < thumb_position || mouse_pos > thumb_position + this.thumbsize) {
-                new_thumb_pos = mouse_pos - this.thumbsize / 2;
-                new_content_pos = this.contentsize * new_thumb_pos / this.scrollsize;
-                this.position = new_content_pos;
-                this.set_position();
-            }
-            else {
-                // case drag
-                $(document).on('mousemove', evt => {
-                    let mouse_pos_on_move = evt.pageX - this.elem.offset().left;
-                    new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
-                    this.position = this.contentsize * new_thumb_pos / this.scrollsize;
-                    this.set_position();
-                });
-
-                $(document).on('mouseup', () => {
-                    $(document).off('mousemove mouseup');
-                    this.thumb.removeClass('active');
-                });
-            }
+        get_offset() {
+            return this.elem.offset().left;
         }
     };
 
@@ -210,36 +231,12 @@ if (window.cone === undefined) cone = {};
             this.thumb.css('top', thumb_pos + 'px');
         }
 
-        drag_start(evt) {
-            evt.preventDefault(); // prevent text selection
-            this.thumb.addClass('active');
+        get_evt_data(e) {
+            return e.pageY;
+        }
 
-            let mouse_pos = evt.pageY - this.elem.offset().top,
-                thumb_position = this.position / (this.contentsize / this.scrollsize),
-                new_thumb_pos = 0,
-                new_content_pos = 0;
-
-            // case click
-            if(mouse_pos < thumb_position || mouse_pos > thumb_position + this.thumbsize) {
-                new_thumb_pos = mouse_pos - this.thumbsize / 2;
-                new_content_pos = this.contentsize * new_thumb_pos / this.scrollsize;
-                this.position = new_content_pos;
-                this.set_position();
-            }
-            else {
-                // case drag
-                $(document).on('mousemove', evt => {
-                    let mouse_pos_on_move = evt.pageY - this.elem.offset().top;
-                    new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
-                    this.position = this.contentsize * new_thumb_pos / this.scrollsize;
-                    this.set_position();
-                });
-
-                $(document).on('mouseup', () => {
-                    $(document).off('mousemove mouseup');
-                    this.thumb.removeClass('active');
-                });
-            }
+        get_offset() {
+            return this.elem.offset().top;
         }
     }
 
