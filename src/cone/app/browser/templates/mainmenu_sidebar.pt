@@ -48,7 +48,8 @@
         </a>
 
 
-        <ul class="cone-mainmenu-dropdown-sb">
+        <ul class="cone-mainmenu-dropdown-sb"
+            cone_toggle="collapse">
           <tal:li repeat="child item['children']">
             <li tal:define="css child['selected'] and 'active' or '';"
                 tal:attributes="class css">

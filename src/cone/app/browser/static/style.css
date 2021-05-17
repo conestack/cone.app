@@ -480,6 +480,9 @@ ul {
 #mainmenu_sidebar li:not(.sidebar-heading) {
   padding-bottom: 0.5rem;
 }
+#mainmenu_sidebar .cone-mainmenu-dropdown-sb.expanded {
+  display: block;
+}
 #mainmenu_sidebar .dropdown-arrow {
   float: right;
   cursor: pointer;
