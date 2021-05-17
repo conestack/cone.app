@@ -153,7 +153,7 @@ if (window.cone === undefined) cone = {};
 
         constructor(elem) {
             this.elem = elem;
-            //this.scrollbar = new cone.ScrollBarY(elem);
+            this.scrollbar = new cone.ScrollBarY(elem);
         }
     }
 

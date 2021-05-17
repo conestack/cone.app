@@ -835,15 +835,6 @@ body {
 .scroll-content {
   position: relative;
 }
-.scroll-content:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  border-left: 2px solid yellow;
-  transform: translate(-50%);
-}
 
 .scrollbar {
   display: none;
@@ -851,29 +842,9 @@ body {
   border-radius: 3px;
   z-index: 1000;
 }
-.scrollbar:after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  border-left: 2px solid blue;
-  transform: translate(-50%);
-}
 .scrollbar .scroll-handle {
   position: relative;
   border-radius: 3px;
-}
-.scrollbar .scroll-handle:after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  border-left: 2px solid #ff0000;
-  transform: translate(-50%);
 }
 
 /*# sourceMappingURL=style.css.map */
