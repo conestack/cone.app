@@ -1,10 +1,11 @@
 Changes
 =======
 
-1.0.1 (unreleased)
+1.0.1 (2021-05-17)
 ------------------
 
-- No changes yet.
+- Use ``safe_encode`` and ``safe_decode`` from ``node.utils``.
+  [rnix, 2021-05-17]
 
 
 1.0 (2021-02-07)
