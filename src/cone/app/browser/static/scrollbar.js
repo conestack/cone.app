@@ -33,10 +33,13 @@ if (window.cone === undefined) cone = {};
             setTimeout( this.observe_container.bind(this), 500 );
 
             this._scroll = this.scroll_handle.bind(this);
-            this.elem.off().on('mousewheel wheel', this._scroll);
+            this.elem.off('mousewheel wheel', this._scroll).on('mousewheel wheel', this._scroll);
 
-            this._click_drag_handle = this.click_drag_handle.bind(this);
-            this.scrollbar.off().on('mousedown', this._click_drag_handle);
+            this._click_handle = this.click_handle.bind(this);
+            this.scrollbar.off('click', this._click_handle).on('click', this._click_handle);
+
+            this._drag_handle = this.drag_handle.bind(this);
+            this.thumb.off('mousedown', this._drag_handle).on('mousedown', this._drag_handle);
 
             this._mousehandle = this.mouse_in_out.bind(this);
             this.elem.off('mouseenter mouseleave', this._mousehandle)
@@ -46,15 +49,12 @@ if (window.cone === undefined) cone = {};
         observe_container() {
             this.scrollbar_observer.observe(this.elem.get(0));
         }
+
         compile() {
             // abstract, implemented in subclass
         }
 
         update() {
-            // abstract, implemented in subclass
-        }
-
-        drag_start() {
             // abstract, implemented in subclass
         }
 
@@ -99,47 +99,42 @@ if (window.cone === undefined) cone = {};
             }
         }
 
-        click_drag_handle(e) {
+        click_handle(e) {
             e.preventDefault(); // prevent text selection
             this.thumb.addClass('active');
-
             let evt_data = this.get_evt_data(e),
-                mouse_pos = evt_data - this.get_offset(),
-                thumb_position = this.position / (this.contentsize / this.scrollsize),
-                new_thumb_pos = 0,
-                new_content_pos = 0;
-
-            if(mouse_pos < thumb_position || mouse_pos > thumb_position + this.thumbsize) {
-                // case click
-                new_thumb_pos = mouse_pos - this.thumbsize / 2;
-                new_content_pos = this.contentsize * new_thumb_pos / this.scrollsize;
-                this.position = new_content_pos;
-                this.set_position();
-            }
-
-            else {
-                // case drag
-                let _on_move = on_move.bind(this),
-                    _on_up = on_up.bind(this);
-
-                $(document).on('mousemove', _on_move);
-
-                function on_move(e) {
-                    let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
-                        new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
-                    this.position = this.contentsize * new_thumb_pos / this.scrollsize;
-                    this.set_position();
-                }
-
-                function on_up() {
-                    $(document).off('mousemove', _on_move).off('mouseup', _on_up);
-                    this.thumb.removeClass('active');
-                }
-
-                $(document).on('mouseup', _on_up);
-            }
+                new_thumb_pos = evt_data - this.get_offset() - this.thumbsize / 2;
+            this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+            this.set_position();
+            this.thumb.removeClass('active');
         }
 
+        drag_handle(e) {
+            e.preventDefault();
+            var evt = $.Event('dragstart');
+            $(window).trigger(evt);
+
+            let _on_move = on_move.bind(this),
+                _on_up = on_up.bind(this),
+                mouse_pos = this.get_evt_data(e) - this.get_offset(),
+                thumb_position = this.position / (this.contentsize / this.scrollsize);
+
+            $(document).on('mousemove', _on_move);
+            $(document).on('mouseup', _on_up);
+
+            function on_move(e) {
+                let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
+                    new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
+                this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+                this.set_position();
+            }
+            function on_up() {
+                var evt = $.Event('dragend');
+                $(window).trigger(evt);
+                $(document).off('mousemove', _on_move).off('mouseup', _on_up);
+                this.thumb.removeClass('active');
+            }
+        }
     }
 
     cone.ScrollBarX = class extends cone.ScrollBar {

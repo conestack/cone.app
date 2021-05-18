@@ -42,9 +42,6 @@ if (window.cone === undefined) cone = {};
     // content
     cone.content = null;
 
-    // XXX: remove
-    cone.dragging = false;
-
     $(function() {
         // create viewport singleton
         cone.viewport = new cone.ViewPort();
@@ -154,7 +151,14 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             this.elem = elem;
             this.scrollbar = new cone.ScrollBarY(elem);
+            // this.handle_scrollbar();
         }
+
+        // handle_scrollbar() {
+        //     $('window')
+        //     .on('dragstart', xx)
+        //     .on('dragend', xx);
+        // }
     }
 
     cone.MainMenuItem = class {
@@ -185,6 +189,16 @@ if (window.cone === undefined) cone = {};
                     this.menu.toggle();
                 })
             }
+        }
+
+        unload() {
+            console.log('unload');
+            console.log(this.elem)
+            this.elem.off();
+            this.menu.off();
+        }
+        rebind() {
+            console.log('rebind')
         }
 
         render_dd() {
@@ -266,10 +280,24 @@ if (window.cone === undefined) cone = {};
             } else if (cone.main_menu_sidebar) {
                 this.elem.hide();
             }
+
+            this.handle_scrollbar();
         }
 
         unload() {
             super.unload();
+        }
+
+        handle_scrollbar() {
+            for(let item of this.main_menu_items) {
+                $(window)
+                .on('dragstart', () => {
+                    item.elem.off('mouseenter mouseleave', item._toggle);
+                })
+                .on('dragend', () => {
+                    item.elem.on('mouseenter mouseleave', item._toggle);
+                })   
+            }
         }
 
         viewport_changed(e) {
@@ -317,29 +345,18 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             super();
             this.elem = elem;
-            this.items = $('>li', this.elem);
+            this.items = $('>li:not(".sidebar-heading")', this.elem);
             this.arrows = $('i.dropdown-arrow', this.items);
-            this.dropdowns = $('ul', this.items);
-            this.dd_sel = 'ul.cone-mainmenu-dropdown-sb';
             this.menus = $('.sb-menu', this.elem);
 
-            this.toggled_cookie = readCookie('sidebar menus');
- 
-            console.log(this.toggled_cookie)
-            if(this.toggled_cookie) {
-                this.toggled_menus = this.toggled_cookie.split(',');
-                this.initial_cookie();
-            }
+            this.initial_cookie();
 
             if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
-            } 
-    
-            this._mousein = this.mousein_handle.bind(this);
-            this._mouseout = this.mouseout_handle.bind(this);
-            this._toggle = this.toggle_dropdown.bind(this);
-            this._bind_collapse = this.bind_collapse.bind(this);
-            this._bind_expand = this.bind_expand.bind(this);
+            }
+
+            this._collapse = this.collapse.bind(this);
+            this._expand = this.expand.bind(this);
         }
 
         unload() {
@@ -349,88 +366,25 @@ if (window.cone === undefined) cone = {};
         }
 
         initial_cookie() {
-            let i = 0;
-            for(let menu of this.menus) {
-                let dd = $('ul.cone-mainmenu-dropdown-sb', menu);
-                let arrow = $('i.dropdown-arrow', menu);
-
-                dd.attr('cone_toggle', this.toggled_menus[i]);
-                if(dd.attr('cone_toggle') === "expand") {
-                    dd.css('display', 'block');
-                    arrow.removeClass('bi-chevron-down').addClass('bi-chevron-up');
+            let cookie = readCookie('sidebar menus');
+            if(cookie) {
+                this.display_data = cookie.split(',');
+            } else {
+                this.display_data = [];
+                for(let elem of this.menus) {
+                    this.display_data.push('none');
                 }
-                i++;
-            }
-        }
-
-        menu_handle_expand(menu) {
-            let dd = $('ul.cone-mainmenu-dropdown-sb', menu);
-            let arrow = $('i.dropdown-arrow', menu);
-            console.log('dd ' + dd);
-            if(dd.attr('cone_toggle') === "expand") {
-                dd.css('display', 'block');
-                arrow.removeClass('bi-chevron-down').addClass('bi-chevron-up');
             }
         }
 
         viewport_changed(e) {
             super.viewport_changed(e);
-
             if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } 
             else {
                 this.mv_to_sidebar();
             }
-
-            if(this.toggled_cookie) { // bad performance, fix
-                for(let menu of this.menus) {
-                    this.menu_handle_expand($(menu));
-                }
-            }
-        }
-
-        mousein_handle(evt) {
-            let target = $(evt.currentTarget);
-            // if (cone.dragging) {
-            //     return;
-            // }
-            target.addClass('hover');
-            if(target.outerWidth() > $('ul', target).outerWidth()) {
-                $('ul', target).css('width', target.outerWidth());
-            } else {
-                target.css('width', $('ul', target).outerWidth());
-            }
-            $(this.dd_sel, target).show();
-        }
-    
-        mouseout_handle(evt) {
-            $(this.dd_sel).hide();
-            $(evt.currentTarget).removeClass('hover');
-            $(evt.currentTarget).css('width', 'auto');
-        }
-    
-        toggle_dropdown(evt) {
-            let target = $(evt.currentTarget);
-            let item = target.parent().parent();
-            $(this.dd_sel, item).slideToggle('fast');
-            cone.toggle_arrow(target);
-
-            let dd = $('ul.cone-mainmenu-dropdown-sb', item);
-            let target_dropdown_attr = dd.attr('cone_toggle');
-            if(target_dropdown_attr === "collapse") {
-                dd.attr('cone_toggle', 'expand');
-            } else {
-                dd.attr('cone_toggle', 'collapse');
-            }
-            
-            let attrs = [];
-            for(let menu of this.menus){
-                let dd = $('ul.cone-mainmenu-dropdown-sb', menu);
-                let attr = dd.attr('cone_toggle');
-                attrs.push(attr);
-            }
-            createCookie('sidebar menus', attrs, null);
         }
     
         mv_to_mobile() {
@@ -445,17 +399,73 @@ if (window.cone === undefined) cone = {};
             .removeClass('mobile');
         }
 
-        bind_collapse() {
-            this.dropdowns.hide();
+        collapse() {
+            $('ul', this.items).hide();
             this.arrows.off('click');
-            this.items.off().on('mouseenter', this._mousein);
-            this.items.on('mouseleave', this._mouseout);
+
+            for(let item of this.items) {
+                let elem = $(item);
+                let menu = $('ul', elem);
+
+                elem.off().on('mouseenter', mouse_in);
+
+                function mouse_in() {
+                    elem.addClass('hover');
+                    let elem_w = elem.outerWidth(),
+                        menu_w = menu.outerWidth();
+                    if(elem_w > menu_w) {
+                        menu.css('width', elem_w);
+                    } else {
+                        elem.css('width', menu_w);
+                    }
+                    menu.show();
+                }
+
+                elem.on('mouseleave', () => {
+                    menu.hide();
+                    elem.removeClass('hover')
+                        .css('width', 'auto');
+                })
+
+                // stop event on scrollbar drag
+                $(window)
+                .on('dragstart', () => {
+                    elem.off('mouseenter', mouse_in);
+                })
+                .on('dragend', () => {
+                    elem.on('mouseenter', mouse_in);
+                })
+            }
         }
 
-        bind_expand() {
+        expand() {
             this.items.off('mouseenter mouseleave');
-            this.arrows.off().on('click', this._toggle);
+
+            for(let i = 0; i < this.menus.length; i++) {
+                let elem = this.menus[i],
+                    arrow = $('i.dropdown-arrow', elem),
+                    menu = $('ul.cone-mainmenu-dropdown-sb', elem);
+
+                menu.css('display', this.display_data[i]);
+
+                if(menu.css('display') === 'block') {
+                    arrow.removeClass('bi-chevron-down')
+                         .addClass('bi-chevron-up');
+                } else {
+                    arrow.removeClass('bi-chevron-up')
+                         .addClass('bi-chevron-down');
+                }
+
+                arrow.off().on('click', () => {
+                    let val = menu.css('display') === 'block' ? 'none' : 'block' ;
+                    menu.slideToggle('fast');
+                    cone.toggle_arrow(arrow);
+                    this.display_data[i] = val; 
+                    createCookie('sidebar menus', this.display_data, null);
+                });
+            }
         }
+
     }
 
     cone.Topnav = class extends cone.ViewPortAware {
@@ -659,10 +669,10 @@ if (window.cone === undefined) cone = {};
 
             if(cone.main_menu_sidebar) {
                 if(this.collapsed) {
-                    cone.main_menu_sidebar.bind_collapse();
+                    cone.main_menu_sidebar.collapse();
                 }
                 else {
-                    cone.main_menu_sidebar.bind_expand();
+                    cone.main_menu_sidebar.expand();
                 }
             }
         }
@@ -704,6 +714,8 @@ if (window.cone === undefined) cone = {};
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
             this._restore = this.restore_width.bind(this);
             this.toggle_elems.on('mouseleave', this._restore); //restore original size
+
+            this.scrollbar_handle();
         }
 
         unload() {
@@ -718,7 +730,7 @@ if (window.cone === undefined) cone = {};
             this.content.hide();
             this.heading.off('click').on('click', () => {
                 this.content.slideToggle('fast');
-                cone.toggle_arrow_elem($('i.dropdown-arrow', this));
+                //cone.toggle_arrow_elem($('i.dropdown-arrow', this));
             });
         }
 
@@ -749,6 +761,16 @@ if (window.cone === undefined) cone = {};
         restore_width(evt) {
             $(evt.currentTarget).css('width', 'auto');
             $(evt.currentTarget).removeClass('hover');
+        }
+
+        scrollbar_handle(){
+            $(window)
+            .on('dragstart', () => {
+                this.toggle_elems.off('mouseenter', this._mouseenter_handle);
+            })
+            .on('dragend', () => {
+                this.toggle_elems.on('mouseenter', this._mouseenter_handle);
+            });
         }
     }
 
