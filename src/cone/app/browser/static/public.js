@@ -151,14 +151,7 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             this.elem = elem;
             this.scrollbar = new cone.ScrollBarY(elem);
-            // this.handle_scrollbar();
         }
-
-        // handle_scrollbar() {
-        //     $('window')
-        //     .on('dragstart', xx)
-        //     .on('dragend', xx);
-        // }
     }
 
     cone.MainMenuItem = class {
@@ -179,7 +172,7 @@ if (window.cone === undefined) cone = {};
             this.arrow = $('i.dropdown-arrow', this.elem);
             this.render_dd();
 
-            this._toggle = this.mouseenter_toggle.bind(this)
+            this._toggle = this.mouseenter_toggle.bind(this);
 
             if(this.vp_state === cone.VP_MOBILE){
                 this.mv_to_mobile();
@@ -189,16 +182,6 @@ if (window.cone === undefined) cone = {};
                     this.menu.toggle();
                 })
             }
-        }
-
-        unload() {
-            console.log('unload');
-            console.log(this.elem)
-            this.elem.off();
-            this.menu.off();
-        }
-        rebind() {
-            console.log('rebind')
         }
 
         render_dd() {
@@ -457,10 +440,10 @@ if (window.cone === undefined) cone = {};
                 }
 
                 arrow.off().on('click', () => {
-                    let val = menu.css('display') === 'block' ? 'none' : 'block' ;
+                    let display = menu.css('display') === 'block' ? 'none' : 'block' ;
                     menu.slideToggle('fast');
                     cone.toggle_arrow(arrow);
-                    this.display_data[i] = val; 
+                    this.display_data[i] = display; 
                     createCookie('sidebar menus', this.display_data, null);
                 });
             }
@@ -490,7 +473,6 @@ if (window.cone === undefined) cone = {};
             this.tb_dropdowns = $('#toolbar-top>li.dropdown', elem);
             this._toggle_menu_handle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle_menu_handle);
-            //this.logo.css('margin-right', 'auto');
 
             if (this.vp_state === cone.VP_MOBILE) {
                 this.elem.addClass('mobile');
@@ -578,9 +560,9 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             super();
             this.elem = elem;
-            //this.scrollbar = new cone.ScrollBarSidebar(elem);
 
             this.content = $('#sidebar_content', elem);
+            this.scrollbar = new cone.ScrollBarSidebar(elem);
             this.collapsed = false;
 
             this.toggle_btn = $('#sidebar-toggle-btn', elem);
@@ -678,8 +660,6 @@ if (window.cone === undefined) cone = {};
         }
 
         toggle_menu() {
-            let mms = cone.main_menu_sidebar;
-            cone.dd_reset(mms.arrows, mms.dropdowns);
             this.collapsed = !this.collapsed;
             this.assign_state();
         }
@@ -730,7 +710,6 @@ if (window.cone === undefined) cone = {};
             this.content.hide();
             this.heading.off('click').on('click', () => {
                 this.content.slideToggle('fast');
-                //cone.toggle_arrow_elem($('i.dropdown-arrow', this));
             });
         }
 

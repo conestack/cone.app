@@ -9,6 +9,11 @@
     list-style: none;
   }
 
+  #sidebar_content {
+    min-height: 100%;
+    padding-bottom:3rem;
+  }
+
   #sidebar_footer {
     position: absolute;
     bottom: 0;

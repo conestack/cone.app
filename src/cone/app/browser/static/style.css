@@ -211,6 +211,10 @@
 #sidebar_left ul {
   list-style: none;
 }
+#sidebar_left #sidebar_content {
+  min-height: 100%;
+  padding-bottom: 3rem;
+}
 #sidebar_left #sidebar_footer {
   position: absolute;
   bottom: 0;
@@ -479,9 +483,6 @@ ul {
 }
 #mainmenu_sidebar li:not(.sidebar-heading) {
   padding-bottom: 0.5rem;
-}
-#mainmenu_sidebar .cone-mainmenu-dropdown-sb.expanded {
-  display: block;
 }
 #mainmenu_sidebar .dropdown-arrow {
   float: right;

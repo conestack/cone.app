@@ -118,6 +118,8 @@ if (window.cone === undefined) cone = {};
                 _on_up = on_up.bind(this),
                 mouse_pos = this.get_evt_data(e) - this.get_offset(),
                 thumb_position = this.position / (this.contentsize / this.scrollsize);
+            this.thumb.addClass('active');
+            this.elem.off('mouseenter mouseleave', this._mousehandle);
 
             $(document).on('mousemove', _on_move);
             $(document).on('mouseup', _on_up);
@@ -133,6 +135,7 @@ if (window.cone === undefined) cone = {};
                 $(window).trigger(evt);
                 $(document).off('mousemove', _on_move).off('mouseup', _on_up);
                 this.thumb.removeClass('active');
+                this.elem.on('mouseenter mouseleave', this._mousehandle);
             }
         }
     }
