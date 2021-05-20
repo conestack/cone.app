@@ -72,12 +72,6 @@ if (window.cone === undefined) cone = {};
         }
     };
 
-    // close dropdown and reset arrow
-    cone.dd_reset = function(arrow, dropdown) {
-        arrow.attr('class', 'dropdown-arrow bi bi-chevron-down');
-        dropdown.hide();
-    }
-
     // viewport singleton
     cone.ViewPort = class {
 
@@ -130,14 +124,6 @@ if (window.cone === undefined) cone = {};
         }
     }
 
-    cone.ScrollBarSidebar = class extends cone.ScrollBarY {
-        constructor(elem) {
-            super(elem);
-            this.elem = elem;
-            this.content = $('#sidebar_content');
-        }
-    }
-
     cone.Content = class {
 
         static initialize(context) {
@@ -159,6 +145,7 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             this.elem = elem;
             this.children = elem.data('menu-items');
+            console.log(elem.data('menu-items'));
             if(!this.children){
                 return;
             }

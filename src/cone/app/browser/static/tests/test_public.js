@@ -1,36 +1,86 @@
-//const { connect } = require("puppeteer")
-const {setup} = require('qunit-dom')
+// do we need this? -L
 
-var blah = $('<div id="blah"></div>');
-QUnit.test('blehhhh', assert => {
-    assert.deepEqual(blah, $('#blah'), 'ALTAAAA')
-})
+// const { connect } = require("puppeteer")
+// const {setup} = require('qunit-dom')
+// const { connect } = require("puppeteer");
 
 QUnit.test('hello world', assert => {
     assert.strictEqual(1, 1, '1 is 1')
 })
 
-QUnit.test('lets see if you work', assert => {
-    let fixture = $('#qunit-fixture')
-    assert.deepEqual(fixture, fixture, 'body')
+QUnit.test('Test cone.toggle_arrow', assert => {
+    let up = 'bi-chevron-up',
+        down = 'bi-chevron-down',
+        arrow_up = $(`<i class="dropdown-arrow ${up}" />`),
+        arrow_down = $(`<i class="dropdown-arrow ${down}" />`);
+    cone.toggle_arrow(arrow_up);
+    assert.strictEqual(arrow_up.attr('class'), `dropdown-arrow ${down}`, 'arrow class = down');
+    cone.toggle_arrow(arrow_down);
+    assert.strictEqual(arrow_down.attr('class'), `dropdown-arrow ${up}`, 'arrow class = up');
 })
+
+// cone.ViewPort -> viewport simulation in karma?
+// cone.ViewPortAware -> viewport simulation in karma?
+// cone.Content
+
+// cone.MainMenuItem
+QUnit.test('Test cone.MainMenuItem', assert => {
+    let data_menu_items = [{"url": "http://localhost:8081/child_1/child_1", "title": "child_1", "target": "http://localhost:8081/child_1/child_1", "selected": false, "id": "child_1", "description": null, "icon": "bi bi-kanban"}];
+
+    let elem = $(`
+      <li class="mainmenu-item menu" data-menu-items="${data_menu_items}">
+        <a href="#">
+          <i class="#"><i/>
+          <span class="mainmenu-title">
+            Title
+          </span>
+        </a>
+        <i class="dropdown-arrow bi bi-chevron-down">
+      </li>
+    `);
+    let menu = $(`
+      <div class="cone-mainmenu-dropdown">
+        <ul class="mainmenu-dropdown">
+          <li class="">
+            <a href="http://localhost:8081/child_1/child_1">
+              <i class="bi bi-kanban"></i>
+              <span>
+                child_1
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    `);
+    let main_menu_item = new cone.MainMenuItem(elem);
+    assert.deepEqual(main_menu_item.menu, menu, 'elem has class');
+    //assert.deepEqual(main_menu_item.menu, menu, 'menu is menu')
+})
+
+// cone.MainMenuTop
+// cone.MainMenuSidebar
+// cone.Topnav
+// cone.SidebarMenu
+// cone.Navtree
+// cone.ThemeSwitcher
+// cone.Searchbar
 
 
 /* scrollbar */
-/* QUnit.test('test Scrollbar', assert => {
-    var fixture = document.getElementById('qunit-fixture');
-    fixture.innerHTML = '<div id="test"> <div></div> </div>';
-    let ctx = $('#test');
-    let scbar = $('<div class="scrollbar"></div>');
-    let the_scrollbar = new cone.ScrollBar(ctx);
-    let ctn = $('>', the_scrollbar.container);
-    assert.deepEqual(the_scrollbar.container, ctx, 'Container is ctx');
-    assert.deepEqual(the_scrollbar.content, ctn, 'Content is ctn');
-    // assert.deepEqual(the_scrollbar.scrollbar, scbar, 'scrollbar is scbar');
-    let thk = '6px';
-    assert.strictEqual(the_scrollbar.thickness, thk, 'thickness is thickness');
-    fixture.innerHTML = '';
-}) */
+// QUnit.test('test Scrollbar', assert => {
+//     var fixture = document.getElementById('qunit-fixture');
+//     fixture.innerHTML = '<div id="test"> <div></div> </div>';
+//     let ctx = $('#test');
+//     let scbar = $('<div class="scrollbar"></div>');
+//     let the_scrollbar = new cone.ScrollBar(ctx);
+//     let ctn = $('>', the_scrollbar.container);
+//     assert.deepEqual(the_scrollbar.container, ctx, 'Container is ctx');
+//     assert.deepEqual(the_scrollbar.content, ctn, 'Content is ctn');
+//     // assert.deepEqual(the_scrollbar.scrollbar, scbar, 'scrollbar is scbar');
+//     let thk = '6px';
+//     assert.strictEqual(the_scrollbar.thickness, thk, 'thickness is thickness');
+//     fixture.innerHTML = '';
+// })
 
 
 /* topnav */
