@@ -44,12 +44,16 @@
       }
     }
 
-    #sidebar_content >:not(:first-child):before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 1px;
-      transform: translateY(-1.5rem);
+    #sidebar_content >:not(:first-child) {
+      margin-top: 3rem;
+
+      &:before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        transform: translateY(-1.5rem);
+      }
     }
 
     #navtree {

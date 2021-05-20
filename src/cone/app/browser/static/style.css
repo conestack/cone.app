@@ -239,6 +239,9 @@
 #sidebar_left.collapsed #sidebar_footer #toggle-fluid span {
   display: none;
 }
+#sidebar_left.collapsed #sidebar_content > :not(:first-child) {
+  margin-top: 3rem;
+}
 #sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   content: "";
   position: absolute;

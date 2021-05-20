@@ -44,9 +44,6 @@
           <tal:tiles repeat="tilename config.sidebar_left">
             <tal:tile replace="structure tile(tilename)" />
           </tal:tiles>
-
-          <ul style="height:80rem; background:red;"></ul>
-
         </div>
         <div id="sidebar_footer">
           <div id="toggle-fluid">
