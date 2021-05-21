@@ -24,40 +24,124 @@ QUnit.test('Test cone.toggle_arrow', assert => {
 // cone.Content
 
 // cone.MainMenuItem
-QUnit.test('Test cone.MainMenuItem', assert => {
-    let data_menu_items = [{"url": "http://localhost:8081/child_1/child_1", "title": "child_1", "target": "http://localhost:8081/child_1/child_1", "selected": false, "id": "child_1", "description": null, "icon": "bi bi-kanban"}];
+// QUnit.test('Test cone.MainMenuItem', assert => {
+//     let data_menu_items = [{"url": "http://localhost:8081/child_1/child_1", "title": "child_1", "target": "http://localhost:8081/child_1/child_1", "selected": false, "id": "child_1", "description": null, "icon": "bi bi-kanban"}];
 
-    let elem = $(`
-      <li class="mainmenu-item menu" data-menu-items="${data_menu_items}">
-        <a href="#">
-          <i class="#"><i/>
-          <span class="mainmenu-title">
-            Title
-          </span>
-        </a>
-        <i class="dropdown-arrow bi bi-chevron-down">
-      </li>
-    `);
-    let menu = $(`
-      <div class="cone-mainmenu-dropdown">
-        <ul class="mainmenu-dropdown">
-          <li class="">
-            <a href="http://localhost:8081/child_1/child_1">
-              <i class="bi bi-kanban"></i>
-              <span>
-                child_1
-              </span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    `);
-    let main_menu_item = new cone.MainMenuItem(elem);
-    assert.deepEqual(main_menu_item.menu, menu, 'elem has class');
-    //assert.deepEqual(main_menu_item.menu, menu, 'menu is menu')
-})
+//     let elem = $(`
+//       <li class="mainmenu-item menu" data-menu-items="${data_menu_items}">
+//         <a href="#">
+//           <i class="#"><i/>
+//           <span class="mainmenu-title">
+//             Title
+//           </span>
+//         </a>
+//         <i class="dropdown-arrow bi bi-chevron-down">
+//       </li>
+//     `);
+//     let menu = $(`
+//       <div class="cone-mainmenu-dropdown">
+//         <ul class="mainmenu-dropdown">
+//           <li class="">
+//             <a href="http://localhost:8081/child_1/child_1">
+//               <i class="bi bi-kanban"></i>
+//               <span>
+//                 child_1
+//               </span>
+//             </a>
+//           </li>
+//         </ul>
+//       </div>
+//     `);
+//     let main_menu_item = new cone.MainMenuItem(elem);
+//     assert.deepEqual(main_menu_item.menu, menu, 'elem has class');
+//     //assert.deepEqual(main_menu_item.menu, menu, 'menu is menu')
+// })
 
 // cone.MainMenuTop
+QUnit.skip('Test cone.MainMenuTop', assert => {
+  $('body').append($('<link rel="stylesheet" href="/static/style.css" />'));
+
+  let topnav_elem = $(
+    `<div id="topnav">
+      <div id="cone-logo"></div>
+      <div id="topnav-content"></div>
+    </div>`
+  );
+  cone.topnav = new cone.Topnav(topnav_elem);
+  let elem = $(`
+    <div id="main-menu">
+    </div>`
+  );
+  let mainmenu = $(`<ul id="mainmenu"></ul>`);
+  let data_menu_items = '[{"target": "#", "description": null, "selected": false, "url": "#", "id": "child_1", "icon": "bi bi-kanban", "title": "child_1"}]';
+  let item = $(`
+    <li class="mainmenu-item"
+        data-menu-items="${data_menu_items}">
+      <a href="#">
+        <i class="#"></i>
+        <span class="mainmenu-title">
+          Title
+        </span>
+      </a>
+      <i class="#"></i>
+    </li>`
+  );
+  mainmenu.append(item);
+  elem.append(mainmenu);
+
+  cone.VP_MOBILE = 0;
+  cone.VP_SMALL = 1;
+  cone.VP_MEDIUM = 2;
+  cone.VP_LARGE = 3;
+  cone.viewport = new cone.ViewPort();
+
+  cone.viewport.state = cone.VP_MOBILE;
+  cone.main_menu_top = new cone.MainMenuTop(elem);
+  let mmt = cone.main_menu_top;
+  assert.deepEqual(elem, mmt.elem, 'elem is correct');
+  assert.strictEqual(elem.attr('id'), mmt.elem.attr('id'), 'Id correct');
+  assert.strictEqual($(mmt.main_menu_items[0]).attr('class'), 'mainmenu-item', 'item has correct class');
+
+  // VP TESTS //
+  // -------- //
+
+  // initial (mobile)
+  cone.vp_state = cone.VP_MOBILE;
+  assert.strictEqual(cone.topnav.logo.css('margin-right'), 'auto', 'margin is auto on mobile');
+
+  function testViewport(mock_state) {
+    cone.viewport.state = mock_state;
+    cone.vp_state = mock_state;
+    let e = {state:mock_state}; // mock event state
+    mmt.viewport_changed(e);
+
+    // fails
+    // need to include css files
+    if(cone.vp_state === cone.VP_MOBILE) {
+      assert.strictEqual(cone.topnav.logo.css('margin-right'), 'auto', `VP${cone.vp_state} logo margin:auto`);
+      if(cone.main_menu_sidebar) {
+        assert.strictEqual(mmt.elem.css('display'), 'none', 'elem hidden');
+      } 
+    } else {
+      assert.strictEqual(cone.topnav.logo.css('margin-right'), '2rem', `VP${cone.vp_state} logo margin:2rem`);
+      assert.strictEqual(mmt.elem.css('display'), 'flex', 'elem visible'); // fails because css styling not included
+    }
+  }
+
+  // without sidebar mainmenu
+  testViewport(cone.VP_SMALL);
+  testViewport(cone.VP_MEDIUM);
+  testViewport(cone.VP_LARGE);
+  testViewport(cone.VP_MOBILE);
+
+  // with sidebar mainmenu
+  cone.main_menu_sidebar = true;
+  testViewport(cone.VP_SMALL);
+  testViewport(cone.VP_MEDIUM);
+  testViewport(cone.VP_LARGE);
+  testViewport(cone.VP_MOBILE);
+})
+
 // cone.MainMenuSidebar
 // cone.Topnav
 // cone.SidebarMenu
@@ -66,20 +150,27 @@ QUnit.test('Test cone.MainMenuItem', assert => {
 // cone.Searchbar
 
 
-/* scrollbar */
+// cone.ScrollBar
+
+QUnit.test('Test cone.ScrollBar', assert => {
+  let ctx = $('<div id="test"> <div></div> </div>');
+  let scrolltest = new cone.ScrollBar(ctx);
+  assert.strictEqual(ctx.attr('id'), scrolltest.elem.attr('id'), 'id is id');
+  assert.deepEqual(ctx, scrolltest.elem, 'elem is context');
+  assert.strictEqual(scrolltest.scrollbar.attr('class'), 'scrollbar', 'correct class');
+})
 // QUnit.test('test Scrollbar', assert => {
-//     var fixture = document.getElementById('qunit-fixture');
-//     fixture.innerHTML = '<div id="test"> <div></div> </div>';
-//     let ctx = $('#test');
-//     let scbar = $('<div class="scrollbar"></div>');
-//     let the_scrollbar = new cone.ScrollBar(ctx);
-//     let ctn = $('>', the_scrollbar.container);
-//     assert.deepEqual(the_scrollbar.container, ctx, 'Container is ctx');
-//     assert.deepEqual(the_scrollbar.content, ctn, 'Content is ctn');
-//     // assert.deepEqual(the_scrollbar.scrollbar, scbar, 'scrollbar is scbar');
-//     let thk = '6px';
-//     assert.strictEqual(the_scrollbar.thickness, thk, 'thickness is thickness');
-//     fixture.innerHTML = '';
+//   var fixture = document.getElementById('qunit-fixture');
+//   fixture.innerHTML = '<div id="test"> <div></div> </div>';
+//   let ctx = $('#test');
+//   let scbar = $('<div class="scrollbar"></div>');
+//   let the_scrollbar = new cone.ScrollBar(ctx);
+//   let ctn = $('>', the_scrollbar.container);
+//   assert.deepEqual(the_scrollbar.container, ctx, 'Container is ctx');
+//   assert.deepEqual(the_scrollbar.content, ctn, 'Content is ctn');
+//   // assert.deepEqual(the_scrollbar.scrollbar, scbar, 'scrollbar is scbar');
+//   let thk = '6px';
+//   assert.strictEqual(the_scrollbar.thickness, thk, 'thickness is thickness');
 // })
 
 

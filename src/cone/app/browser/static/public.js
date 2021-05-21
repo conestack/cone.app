@@ -77,8 +77,8 @@ if (window.cone === undefined) cone = {};
 
         constructor() {
             this.state = null;
-            this._mobile_query = `(max-width:560px)`;
-            this._small_query = `(min-width:560px) and (max-width: 990px)`;
+            this._mobile_query = `(max-width:559.9px)`;
+            this._small_query = `(min-width:560px) and (max-width: 989.9px)`;
             this._medium_query = `(min-width:560px) and (max-width: 1200px)`;
             this.update_viewport();
             $(window).on('resize', this.resize_handle.bind(this));
@@ -247,8 +247,11 @@ if (window.cone === undefined) cone = {};
 
             if(this.vp_state !== cone.VP_MOBILE) {
                 cone.topnav.logo.css('margin-right', '2rem');
-            } else if (cone.main_menu_sidebar) {
+            } else {
+                cone.topnav.logo.css('margin-right', 'auto');
+                if (cone.main_menu_sidebar) {
                 this.elem.hide();
+                }
             }
 
             this.handle_scrollbar();
@@ -279,9 +282,9 @@ if (window.cone === undefined) cone = {};
             }
             if(cone.main_menu_sidebar) {
                 if(this.vp_state === cone.VP_MOBILE) {
-                    this.elem.hide();
+                    this.elem.css('display', 'none');
                 } else {
-                    this.elem.show();
+                    this.elem.css('display', 'flex');
                 }
                 return;
             }
@@ -549,7 +552,7 @@ if (window.cone === undefined) cone = {};
             this.elem = elem;
 
             this.content = $('#sidebar_content', elem);
-            this.scrollbar = new cone.ScrollBarSidebar(elem);
+            //this.scrollbar = new cone.ScrollBarSidebar(elem);
             this.collapsed = false;
 
             this.toggle_btn = $('#sidebar-toggle-btn', elem);

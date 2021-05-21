@@ -147,6 +147,9 @@ if (window.cone === undefined) cone = {};
         }
 
         compile() {
+            console.log('compile');
+            console.log(this.position);
+
             this.content.addClass('scroll-content');
             this.elem.addClass('scroll-container')
                      .prepend(this.scrollbar);
@@ -163,6 +166,10 @@ if (window.cone === undefined) cone = {};
         }
 
         update() {
+            if(this.contentsize === 0) {
+                // if elem starts out hidden
+                this.contentsize = this.content.outerWidth();
+            }
             this.scrollsize = this.elem.outerWidth();
             this.scrollbar.css('width', this.scrollsize);
             this.thumbsize = this.scrollsize ** 2 / this.contentsize;
@@ -209,6 +216,10 @@ if (window.cone === undefined) cone = {};
         }
 
         update() {
+            if(this.contentsize === 0) {
+                // if elem starts out hidden
+                this.contentsize = this.content.outerHeight();
+            }
             this.scrollsize = this.elem.outerHeight();
             this.scrollbar.css('height', this.scrollsize);
             this.thumbsize = this.scrollsize ** 2 / this.contentsize;
