@@ -35,7 +35,7 @@ if (window.cone === undefined) cone = {};
     cone.navtree = null;
     cone.topnav = null;
 
-    // seqrchbar
+    // searchbar
     cone.searchbar = null;
     cone.searchbar_handler = null;
 
