@@ -145,7 +145,6 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             this.elem = elem;
             this.children = elem.data('menu-items');
-            console.log(elem.data('menu-items'));
             if(!this.children){
                 return;
             }
@@ -465,6 +464,7 @@ if (window.cone === undefined) cone = {};
             this.toggle_button.on('click', this._toggle_menu_handle);
 
             if (this.vp_state === cone.VP_MOBILE) {
+                this.content.hide();
                 this.elem.addClass('mobile');
                 this.tb_dropdowns.off().on('show.bs.dropdown', () => {
                     this.content.hide();

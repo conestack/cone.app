@@ -147,9 +147,6 @@ if (window.cone === undefined) cone = {};
         }
 
         compile() {
-            console.log('compile');
-            console.log(this.position);
-
             this.content.addClass('scroll-content');
             this.elem.addClass('scroll-container')
                      .prepend(this.scrollbar);
