@@ -1,8 +1,6 @@
-// do we need this? -L
 
-// const { connect } = require("puppeteer")
-// const {setup} = require('qunit-dom')
-// const { connect } = require("puppeteer");
+// const { connect } = require[("puppeteer")];
+// const {setup} = require('qunit-dom');
 
 const { test } = QUnit;
 
@@ -12,11 +10,20 @@ cone.VP_SMALL = 1;
 cone.VP_MEDIUM = 2;
 cone.VP_LARGE = 3;
 
-function mockViewport(mock_state) {
+
+function mockNewViewport(mock_state) {
+  cone.viewport = new cone.ViewPort();
   cone.viewport.state = mock_state;
   cone.vp_state = mock_state;
-  let e = {state:mock_state}; // mock event state
-  return e;
+}
+function mockViewportChange(mock_state) {
+  cone.viewport.state = mock_state;
+  cone.vp_state = mock_state;
+  let e = {state:mock_state};
+
+  var evt = $.Event('viewport_changed');
+  evt.state = mock_state;
+  $(window).trigger(evt);
 }
 
 test('fixture test', assert => {
@@ -43,80 +50,111 @@ let topnav_elem = $('#topnav');
 
 QUnit.module('cone.Topnav', hooks => {
 
-  function assertVisibility(assert) {
-    let topnav = cone.topnav;
-    assert.ok(topnav.elem.is(':visible'), 'elem is visible');
-    assert.strictEqual(topnav.elem.css('display'), 'flex', 'display is flex');
-    assert.strictEqual(topnav.elem.outerHeight(), 64, 'height is 4rem (64px)');
-    assert.strictEqual(topnav.elem.outerWidth(), $('#layout').outerWidth(), 'elem width fills layout');
+  QUnit.module('initial load');
 
-    // visibility
-    assert.ok(topnav.logo.is(':visible'), 'logo is visible');
-    let logo_img = $('img', topnav.logo);
-    let logo_title = $('span', topnav.logo);
-    assert.strictEqual(logo_img.attr('src'), '/static/images/cone-logo-cone.svg', 'correct img');
-    assert.strictEqual(logo_img.outerHeight(), 32, 'logo height is 32');
-    assert.strictEqual(logo_img.outerHeight(), 32, 'logo width is 32');
-
-    if(cone.viewport.state === cone.VP_MOBILE) {
-      assert.ok(topnav.elem.hasClass('mobile'), 'elem has class mobile');
-      assert.ok(topnav.content.is(':hidden'), 'content is hidden');
-      assert.ok(topnav.toggle_button.is(':visible'), 'toggle btn visible');
-      // assert.ok(logo_title.is(':hidden'), 'logo title hidden'); media query required
-    } 
-    else {
-      assert.notOk(topnav.elem.hasClass('mobile'), 'elem does not have class mobile');
-      assert.strictEqual(topnav.content.css('display'), 'contents', 'content has display contents');
-      assert.ok(topnav.toggle_button.is(':hidden'), 'toggle btn hidden');
-      assert.strictEqual(topnav.logo.css('font-size'), '24px', 'font size is 24px (1.5rem)');
-      assert.ok(logo_title.is(':visible'), 'logo title visible');
-    }
-  }
-
-  QUnit.module('initial');
-    function check_elems(viewport) {
+    function initialElemTest(viewport) {
       test(`check elem vp: ${viewport}`, assert => {
-        cone.viewport = new cone.ViewPort();
-        cone.viewport.state = viewport;
+        mockNewViewport(viewport);
         cone.topnav = new cone.Topnav(topnav_elem);
 
         let topnav = cone.topnav;
+
+        //test that required elements exist
         assert.ok(topnav.elem, '.elem exists');
-        assert.deepEqual(topnav.elem, topnav_elem, '.elem correct');
-        assert.deepEqual(topnav.logo, $('#cone-logo', topnav.elem), '.logo correct');
-        assert.deepEqual(topnav.tb_dropdowns, $('#toolbar-top>li.dropdown', topnav.elem), 'tb dropdowns correct');
+        assert.ok(topnav.logo, '.logo exists');
+        assert.ok(topnav.content, '.content exists');
+        assert.ok(topnav.toggle_button, '.toggle_button exists');
+
+        // assert.deepEqual(topnav.elem, topnav_elem, '.elem correct');
+        // assert.deepEqual(topnav.logo, $('#cone-logo', topnav.elem), '.logo correct');
+        // assert.deepEqual(topnav.tb_dropdowns, $('#toolbar-top>li.dropdown', topnav.elem), 'tb dropdowns correct');
 
         assertVisibility(assert);
+
+        topnav.elem.attr('class', ''); // remove class after tests
+        delete cone.topnav;
+        delete cone.viewport;
       })
     }
-    check_elems(cone.VP_MOBILE);
-    check_elems(cone.VP_SMALL);
-    check_elems(cone.VP_MEDIUM);
-    check_elems(cone.VP_LARGE);
+  
+    initialElemTest(cone.VP_MOBILE);
+    initialElemTest(cone.VP_SMALL);
+    initialElemTest(cone.VP_MEDIUM);
+    initialElemTest(cone.VP_LARGE);
+
+    function assertVisibility(assert) {
+      let topnav = cone.topnav;
+      assert.ok(topnav.elem.is(':visible'), 'elem is visible');
+      assert.strictEqual(topnav.elem.css('display'), 'flex', 'elem display is flex');
+      assert.strictEqual(topnav.elem.outerHeight(), 64, 'elem height is 4rem (64px)');
+      assert.strictEqual(topnav.elem.outerWidth(), $('#layout').outerWidth(), 'elem width fills layout');
+
+      assert.ok(topnav.logo.is(':visible'), 'logo is visible');
+      let logo_img = $('img', topnav.logo);
+      let logo_title = $('span', topnav.logo);
+      assert.strictEqual(logo_img.attr('src'), '/static/images/cone-logo-cone.svg', 'correct img');
+      assert.strictEqual(logo_img.outerHeight(), 32, 'logo height is 32');
+      assert.strictEqual(logo_img.outerHeight(), 32, 'logo width is 32');
+
+      if(cone.viewport.state === cone.VP_MOBILE) {
+        assert.ok(topnav.elem.hasClass('mobile'), 'elem has class mobile');
+        assert.ok(topnav.content.is(':hidden'), 'content is hidden');
+        assert.ok(topnav.toggle_button.is(':visible'), 'toggle btn visible');
+        // assert.ok(logo_title.is(':hidden'), 'logo title hidden'); media query required
+      } 
+      else {
+        assert.notOk(topnav.elem.hasClass('mobile'), 'elem does not have class mobile');
+        assert.strictEqual(topnav.content.css('display'), 'contents', 'content has display contents');
+        assert.ok(topnav.toggle_button.is(':hidden'), 'toggle btn hidden');
+        assert.strictEqual(topnav.logo.css('font-size'), '24px', 'font size is 24px (1.5rem)');
+        assert.ok(logo_title.is(':visible'), 'logo title visible');
+      }
+    }
 
   QUnit.module('viewport.changed()');
-    test('cone.VP_MOBILE', assert => {
-      mockViewport(cone.VP_MOBILE);
-      assertVisibility(assert);
-    });
-    test('cone.VP_SMALL', assert => {
-      mockViewport(cone.VP_SMALL);
-      assertVisibility(assert);
-    })
-    test('cone.VP_MEDIUM', assert => {
-      mockViewport(cone.VP_MEDIUM);
-      assertVisibility(assert);
-    })
-    test('cone.VP_LARGE', assert => {
-      mockViewport(cone.VP_LARGE);
-      assertVisibility(assert);
-    })
+    function createNewElem() {
+      delete cone.viewport;
+      delete cone.topnav;
+      mockNewViewport(cone.VP_LARGE);
+      cone.topnav = new cone.Topnav(topnav_elem);
+    }
 
-  QUnit.module('mobile functions');
-    QUnit.skip( "toggle_menu()", assert => {
-      mockViewport(cone.VP_MOBILE);
+    test('cone.VP_MOBILE', assert => {
+      createNewElem(); // create new obj
+      mockViewportChange(cone.VP_MOBILE);
+      assert.equal(cone.topnav.vp_state, 0, 'state is cone.VP_MOBILE')
+      assertVisibility(assert);
+
+      const mediaQueryList = window.matchMedia('(max-width:559.9px)');
+
+      if (mediaQueryList.matches) {
+        assert.deepEqual(1, 1, 'FOOOOOOOOOOOOOOOOOOOOOOOOOO matches')
+      } else {
+        assert.deepEqual(1, 1, 'BAAAAAAAAAAAAAAAAAAAAAAAAAAAr dont match')
+      }
+
+
+      assert.equal(cone.topnav.content.css('display'), 'none', 'content hidden'); // fails (display contents)
+    });
+    // test('cone.VP_SMALL', assert => {
+    //   mockViewportChange(cone.VP_SMALL);
+    //   assert.equal(cone.topnav.vp_state, 1, 'state is cone.VP_MOBILE')
+    //   assertVisibility(assert);
+    // })
+    // test('cone.VP_MEDIUM', assert => {
+    //   mockViewportChange(cone.VP_MEDIUM);
+    //   assert.equal(cone.topnav.vp_state, 2, 'state is cone.VP_MOBILE')
+    //   assertVisibility(assert);
+    // })
+    // test('cone.VP_LARGE', assert => {
+    //   mockViewportChange(cone.VP_LARGE);
+    //   assert.equal(cone.topnav.vp_state, 3, 'state is cone.VP_MOBILE')
+    //   assertVisibility(assert);
+    // })
+
+    function test_toggle_menu(assert) {
       const done = assert.async();
-      assert.ok(cone.topnav.elem.hasClass('mobile'), 'has class mobile')
+      assert.equal(cone.topnav.vp_state, 0, 'topnav.vp_state = 0');
       assert.equal(cone.topnav.content.css('display'), 'none', 'content hidden'); // fails (display contents)
 
       // set timeout for slideToggle
@@ -124,7 +162,7 @@ QUnit.module('cone.Topnav', hooks => {
         assert.equal(cone.topnav.content.css('display'), 'flex', 'content visible after click');
         done();
       }, 500 );
-    });
+    }
 })
 
 
@@ -137,7 +175,7 @@ QUnit.skip( 'cone.MainMenuTop', hooks => {
 
   function create_elems(viewport) {
     cone.viewport = new cone.ViewPort();
-    mockViewport(viewport);
+    mockViewportChange(viewport);
     cone.main_menu_top = new cone.MainMenuTop(mainmenu_elem);
   }
 
@@ -172,7 +210,7 @@ QUnit.skip( 'cone.MainMenuTop', hooks => {
   QUnit.module('initial with sidebar');
     let sidebar_elem = $('#sidebar_left');
     cone.viewport = new cone.ViewPort();
-    mockViewport(cone.VP_LARGE);
+    mockViewportChange(cone.VP_LARGE);
 
     cone.main_menu_sidebar = new cone.SidebarMenu(sidebar_elem);
     check_elems(cone.VP_MOBILE);
@@ -228,14 +266,13 @@ QUnit.module( 'cone.ScrollBar', hooks => {
 QUnit.module('cone.SidebarMenu', hooks => {
   // function create_elems(viewport) {
   //   cone.viewport = new cone.ViewPort();
-  //   mockViewport(viewport);
+  //   mockViewportChange(viewport);
   //   cone.sidebar_menu = new cone.SidebarMenu(sidebar_elem);
   // }
 
   function check_elems(viewport) {
     test(`check elem vp: ${viewport}`, assert => {
-      cone.viewport = new cone.ViewPort();
-      cone.viewport.state = viewport;
+      mockNewViewport(viewport);
 
       let sidebar_elem = $('#sidebar_left'); 
       cone.sidebar_menu = new cone.SidebarMenu(sidebar_elem);
@@ -266,7 +303,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
 
   QUnit.skip('test Sidebar', assert => {
     cone.viewport = new cone.ViewPort();
-    mockViewport(cone.VP_LARGE);
+    mockViewportChange(cone.VP_LARGE);
 
 
     if(sidebar.cookie === null) {
