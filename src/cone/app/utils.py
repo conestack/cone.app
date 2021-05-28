@@ -1,5 +1,7 @@
 from cone.app import compat
 from datetime import datetime
+from node.utils import safe_decode as _safe_decode
+from node.utils import safe_encode as _safe_encode
 import logging
 import sys
 import traceback
@@ -13,16 +15,16 @@ def app_config():
     return cone.app.cfg
 
 
+# B/C
+# deprecated: will be removed in cone.app 2.0
 def safe_encode(value, encoding='utf-8'):
-    if isinstance(value, compat.UNICODE_TYPE):
-        value = value.encode(encoding)
-    return value
+    return _safe_encode(value, encoding=encoding)
 
 
+# B/C
+# deprecated: will be removed in cone.app 2.0
 def safe_decode(value, encoding='utf-8'):
-    if not isinstance(value, compat.UNICODE_TYPE):
-        value = value.decode(encoding)
-    return value
+    return _safe_decode(value, encoding=encoding)
 
 
 def timestamp():

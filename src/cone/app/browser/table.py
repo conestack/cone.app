@@ -5,8 +5,8 @@ from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_path
-from cone.app.browser.utils import safe_decode
 from cone.tile import Tile
+from node.utils import safe_decode
 from plumber import plumbing
 
 

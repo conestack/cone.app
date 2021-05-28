@@ -11,12 +11,12 @@ from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
-from cone.app.utils import safe_decode
 from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import Tile
 from cone.tile import tile
 from node.utils import LocationIterator
+from node.utils import safe_decode
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
 import warnings
