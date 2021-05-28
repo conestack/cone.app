@@ -14,6 +14,7 @@ let files = [
     `${bdajax_static}/overlay.js`,
     `${bdajax_static}/bdajax.js`,
     `${bdajax_static}/bdajax_bs3.js`,
+    `${cone_app_static}/scrollbar.js`,
     `${cone_app_static}/public.js`,
     `${cone_app_static}/tests/test_public.js`,
 ];
