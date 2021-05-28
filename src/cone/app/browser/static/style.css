@@ -211,6 +211,10 @@
 #sidebar_left ul {
   list-style: none;
 }
+#sidebar_left #sidebar_content {
+  min-height: 100%;
+  padding-bottom: 3rem;
+}
 #sidebar_left #sidebar_footer {
   position: absolute;
   bottom: 0;
@@ -234,6 +238,9 @@
 }
 #sidebar_left.collapsed #sidebar_footer #toggle-fluid span {
   display: none;
+}
+#sidebar_left.collapsed #sidebar_content > :not(:first-child) {
+  margin-top: 3rem;
 }
 #sidebar_left.collapsed #sidebar_content > :not(:first-child):before {
   content: "";

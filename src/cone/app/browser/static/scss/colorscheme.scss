@@ -60,7 +60,11 @@ body {
     color: white;
   }
 
-  li:hover > a {
+  li.active i {
+    color: $info;
+  }
+
+  li:hover > * {
     color: $fhover;
     transition: .25s;
   }
@@ -193,6 +197,10 @@ body {
 
   #sidebar-toggle-btn {
     color: rgba($color: $flight, $alpha: 0.3);
+  }
+
+  #sidebar_footer {
+    background-color: $menus;
   }
 
   .sidebar-heading {

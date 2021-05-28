@@ -42,9 +42,6 @@ if (window.cone === undefined) cone = {};
     // content
     cone.content = null;
 
-    // XXX: remove
-    cone.dragging = false;
-
     $(function() {
         // create viewport singleton
         cone.viewport = new cone.ViewPort();
@@ -75,26 +72,19 @@ if (window.cone === undefined) cone = {};
         }
     };
 
-    // close dropdown and reset arrow
-    cone.dd_reset = function(arrow, dropdown) {
-        arrow.attr('class', 'dropdown-arrow bi bi-chevron-down');
-        dropdown.hide();
-    }
-
     // viewport singleton
     cone.ViewPort = class {
 
         constructor() {
             this.state = null;
-            this._mobile_query = `(max-width:560px)`;
-            this._small_query = `(min-width:560px) and (max-width: 990px)`;
+            this._mobile_query = `(max-width:559.9px)`;
+            this._small_query = `(min-width:560px) and (max-width: 989.9px)`;
             this._medium_query = `(min-width:560px) and (max-width: 1200px)`;
             this.update_viewport();
             $(window).on('resize', this.resize_handle.bind(this));
         }
 
         update_viewport() {
-            let state = this.state;
             if (window.matchMedia(this._mobile_query).matches) {
                 this.state = cone.VP_MOBILE;
             } else if (window.matchMedia(this._small_query).matches) {
@@ -107,6 +97,7 @@ if (window.cone === undefined) cone = {};
         }
 
         resize_handle(e) {
+            let state = this.state;
             this.update_viewport();
             if (e && state != this.state) {
                 var evt = $.Event('viewport_changed');
@@ -130,14 +121,6 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             this.vp_state = e.state;
-        }
-    }
-
-    cone.ScrollBarSidebar = class extends cone.ScrollBarY {
-        constructor(elem) {
-            super(elem);
-            this.elem = elem;
-            this.content = $('#sidebar_content');
         }
     }
 
@@ -175,9 +158,9 @@ if (window.cone === undefined) cone = {};
             this.arrow = $('i.dropdown-arrow', this.elem);
             this.render_dd();
 
-            this._toggle = this.mouseenter_toggle.bind(this)
+            this._toggle = this.mouseenter_toggle.bind(this);
 
-            if(cone.viewport.state === cone.VP_MOBILE){
+            if(this.vp_state === cone.VP_MOBILE){
                 this.mv_to_mobile();
             } else {
                 this.elem.off().on('mouseenter mouseleave', this._toggle);
@@ -261,29 +244,46 @@ if (window.cone === undefined) cone = {};
                 that.main_menu_items.push(main_menu_item);
             });
 
-            if(cone.viewport.state !== cone.VP_MOBILE) {
+            if(this.vp_state !== cone.VP_MOBILE) {
                 cone.topnav.logo.css('margin-right', '2rem');
-            } else if (cone.main_menu_sidebar) {
+            } else {
+                cone.topnav.logo.css('margin-right', 'auto');
+                if (cone.main_menu_sidebar) {
                 this.elem.hide();
+                }
             }
+
+            this.handle_scrollbar();
         }
 
         unload() {
             super.unload();
         }
 
+        handle_scrollbar() {
+            for(let item of this.main_menu_items) {
+                $(window)
+                .on('dragstart', () => {
+                    item.elem.off('mouseenter mouseleave', item._toggle);
+                })
+                .on('dragend', () => {
+                    item.elem.on('mouseenter mouseleave', item._toggle);
+                })   
+            }
+        }
+
         viewport_changed(e) {
             super.viewport_changed(e);
-            if(cone.viewport.state === cone.VP_MOBILE) {
+            if(this.vp_state === cone.VP_MOBILE) {
                 cone.topnav.logo.css('margin-right', 'auto');
             } else {
                 cone.topnav.logo.css('margin-right', '2rem');
             }
             if(cone.main_menu_sidebar) {
-                if(cone.viewport.state === cone.VP_MOBILE) {
-                    this.elem.hide();
+                if(this.vp_state === cone.VP_MOBILE) {
+                    this.elem.css('display', 'none');
                 } else {
-                    this.elem.show();
+                    this.elem.css('display', 'flex');
                 }
                 return;
             }
@@ -291,7 +291,7 @@ if (window.cone === undefined) cone = {};
             for (let i in this.main_menu_items) {
                 let item = this.main_menu_items[i];
                 if (item.menu) {
-                    if (cone.viewport.state === cone.VP_MOBILE) {
+                    if (this.vp_state === cone.VP_MOBILE) {
                         item.mv_to_mobile();
                     } else {
                         item.mv_to_top();
@@ -317,22 +317,18 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             super();
             this.elem = elem;
-            this.items = $('>li', this.elem);
+            this.items = $('>li:not(".sidebar-heading")', this.elem);
             this.arrows = $('i.dropdown-arrow', this.items);
-            this.dropdowns = $('ul', this.items);
-            this.dd_sel = 'ul.cone-mainmenu-dropdown-sb';
             this.menus = $('.sb-menu', this.elem);
 
-            if (cone.viewport.state === cone.VP_MOBILE) {
-                console.log('YEET');
+            this.initial_cookie();
+
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
-            } 
-    
-            this._mousein = this.mousein_handle.bind(this);
-            this._mouseout = this.mouseout_handle.bind(this);
-            this._toggle = this.toggle_dropdown.bind(this);
-            this._bind_collapse = this.bind_collapse.bind(this);
-            this._bind_expand = this.bind_expand.bind(this);
+            }
+
+            this._collapse = this.collapse.bind(this);
+            this._expand = this.expand.bind(this);
         }
 
         unload() {
@@ -341,42 +337,26 @@ if (window.cone === undefined) cone = {};
             this.arrows.off();
         }
 
+        initial_cookie() {
+            let cookie = readCookie('sidebar menus');
+            if(cookie) {
+                this.display_data = cookie.split(',');
+            } else {
+                this.display_data = [];
+                for(let elem of this.menus) {
+                    this.display_data.push('none');
+                }
+            }
+        }
+
         viewport_changed(e) {
             super.viewport_changed(e);
-            cone.dd_reset(this.arrows, this.dropdowns);
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } 
             else {
                 this.mv_to_sidebar();
             }
-        }
-
-        mousein_handle(evt) {
-            let target = $(evt.currentTarget);
-            // if (cone.dragging) {
-            //     return;
-            // }
-            target.addClass('hover');
-            if(target.outerWidth() > $('ul', target).outerWidth()) {
-                $('ul', target).css('width', target.outerWidth());
-            } else {
-                target.css('width', $('ul', target).outerWidth());
-            }
-            $(this.dd_sel, target).show();
-        }
-    
-        mouseout_handle(evt) {
-            $(this.dd_sel).hide();
-            $(evt.currentTarget).removeClass('hover');
-            $(evt.currentTarget).css('width', 'auto');
-        }
-    
-        toggle_dropdown(evt) {
-            let target = $(evt.currentTarget);
-            let item = target.parent().parent();
-            $(this.dd_sel, item).slideToggle('fast');
-            cone.toggle_arrow(target);
         }
     
         mv_to_mobile() {
@@ -391,17 +371,73 @@ if (window.cone === undefined) cone = {};
             .removeClass('mobile');
         }
 
-        bind_collapse() {
-            this.dropdowns.hide();
+        collapse() {
+            $('ul', this.items).hide();
             this.arrows.off('click');
-            this.items.off().on('mouseenter', this._mousein);
-            this.items.on('mouseleave', this._mouseout);
+
+            for(let item of this.items) {
+                let elem = $(item);
+                let menu = $('ul', elem);
+
+                elem.off().on('mouseenter', mouse_in);
+
+                function mouse_in() {
+                    elem.addClass('hover');
+                    let elem_w = elem.outerWidth(),
+                        menu_w = menu.outerWidth();
+                    if(elem_w > menu_w) {
+                        menu.css('width', elem_w);
+                    } else {
+                        elem.css('width', menu_w);
+                    }
+                    menu.show();
+                }
+
+                elem.on('mouseleave', () => {
+                    menu.hide();
+                    elem.removeClass('hover')
+                        .css('width', 'auto');
+                })
+
+                // stop event on scrollbar drag
+                $(window)
+                .on('dragstart', () => {
+                    elem.off('mouseenter', mouse_in);
+                })
+                .on('dragend', () => {
+                    elem.on('mouseenter', mouse_in);
+                })
+            }
         }
 
-        bind_expand() {
+        expand() {
             this.items.off('mouseenter mouseleave');
-            this.arrows.off().on('click', this._toggle);
+
+            for(let i = 0; i < this.menus.length; i++) {
+                let elem = this.menus[i],
+                    arrow = $('i.dropdown-arrow', elem),
+                    menu = $('ul.cone-mainmenu-dropdown-sb', elem);
+
+                menu.css('display', this.display_data[i]);
+
+                if(menu.css('display') === 'block') {
+                    arrow.removeClass('bi-chevron-down')
+                         .addClass('bi-chevron-up');
+                } else {
+                    arrow.removeClass('bi-chevron-up')
+                         .addClass('bi-chevron-down');
+                }
+
+                arrow.off().on('click', () => {
+                    let display = menu.css('display') === 'block' ? 'none' : 'block' ;
+                    menu.slideToggle('fast');
+                    cone.toggle_arrow(arrow);
+                    this.display_data[i] = display; 
+                    createCookie('sidebar menus', this.display_data, null);
+                });
+            }
         }
+
     }
 
     cone.Topnav = class extends cone.ViewPortAware {
@@ -426,9 +462,9 @@ if (window.cone === undefined) cone = {};
             this.tb_dropdowns = $('#toolbar-top>li.dropdown', elem);
             this._toggle_menu_handle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle_menu_handle);
-            //this.logo.css('margin-right', 'auto');
 
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
+                this.content.hide();
                 this.elem.addClass('mobile');
                 this.tb_dropdowns.off().on('show.bs.dropdown', () => {
                     this.content.hide();
@@ -458,7 +494,7 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.content.hide();
                 this.elem.addClass('mobile');
                 // hide menu on toolbar click
@@ -478,7 +514,7 @@ if (window.cone === undefined) cone = {};
 
         pt_handle() {
             // tmp
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
                     this.user.stop(true, true).slideDown('fast');
                     cone.toggle_arrow($('i.dropdown-arrow', '#personaltools'));
@@ -514,13 +550,13 @@ if (window.cone === undefined) cone = {};
         constructor(elem) {
             super();
             this.elem = elem;
-            //this.scrollbar = new cone.ScrollBarSidebar(elem);
 
             this.content = $('#sidebar_content', elem);
+            //this.scrollbar = new cone.ScrollBarSidebar(elem);
             this.collapsed = false;
 
             this.toggle_btn = $('#sidebar-toggle-btn', elem);
-            this.toggle_arrow = $('i', this.toggle_btn);
+            this.toggle_arrow_elem = $('i', this.toggle_btn);
             this.lock_switch = $('#toggle-fluid');
             this.cookie = null;
            
@@ -541,7 +577,7 @@ if (window.cone === undefined) cone = {};
 
         initial_load() {
             let cookie = readCookie('sidebar');
-            let vp_state = cone.viewport.state;
+            let vp_state = this.vp_state;
             if (vp_state === cone.VP_MOBILE) {
                 this.elem.hide();
             } 
@@ -575,7 +611,7 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if(cone.viewport.state === cone.VP_MOBILE) {
+            if(this.vp_state === cone.VP_MOBILE) {
                 this.collapsed = false;
                 this.elem.hide();
             }
@@ -583,9 +619,9 @@ if (window.cone === undefined) cone = {};
                 this.collapsed = this.cookie;
                 this.elem.show();
             }
-            else if(cone.viewport.state === cone.VP_SMALL) {
+            else if(this.vp_state === cone.VP_SMALL) {
                 this.elem.show();
-                let state = cone.viewport.state === cone.VP_SMALL;
+                let state = this.vp_state === cone.VP_SMALL;
                 if(state != this.collapsed) {
                     this.collapsed = state;
                 }
@@ -601,25 +637,24 @@ if (window.cone === undefined) cone = {};
             let elem_class = this.collapsed === true ? 'collapsed' : 'expanded';
             let button_class = 'bi bi-arrow-' + ((this.collapsed === true) ? 'right':'left') + '-circle';
             this.elem.attr('class', elem_class);
-            this.toggle_arrow.attr('class', button_class);
+            this.toggle_arrow_elem.attr('class', button_class);
 
             if(cone.main_menu_sidebar) {
                 if(this.collapsed) {
-                    cone.main_menu_sidebar.bind_collapse();
+                    cone.main_menu_sidebar.collapse();
                 }
                 else {
-                    cone.main_menu_sidebar.bind_expand();
+                    cone.main_menu_sidebar.expand();
                 }
             }
         }
 
         toggle_menu() {
-            let mms = cone.main_menu_sidebar;
-            cone.dd_reset(mms.arrows, mms.dropdowns);
             this.collapsed = !this.collapsed;
             this.assign_state();
         }
     };
+
 
     cone.Navtree = class extends cone.ViewPortAware {
 
@@ -641,7 +676,7 @@ if (window.cone === undefined) cone = {};
             this.heading = $('#navtree-heading', elem);
             this.toggle_elems = $('li.navtreelevel_1', navtree);
 
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             }
 
@@ -649,6 +684,8 @@ if (window.cone === undefined) cone = {};
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
             this._restore = this.restore_width.bind(this);
             this.toggle_elems.on('mouseleave', this._restore); //restore original size
+
+            this.scrollbar_handle();
         }
 
         unload() {
@@ -663,13 +700,12 @@ if (window.cone === undefined) cone = {};
             this.content.hide();
             this.heading.off('click').on('click', () => {
                 this.content.slideToggle('fast');
-                cone.toggle_arrow($('i.dropdown-arrow', this));
             });
         }
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if (cone.viewport.state === cone.VP_MOBILE) {
+            if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
             } else {
                 this.elem.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
@@ -694,6 +730,16 @@ if (window.cone === undefined) cone = {};
         restore_width(evt) {
             $(evt.currentTarget).css('width', 'auto');
             $(evt.currentTarget).removeClass('hover');
+        }
+
+        scrollbar_handle(){
+            $(window)
+            .on('dragstart', () => {
+                this.toggle_elems.off('mouseenter', this._mouseenter_handle);
+            })
+            .on('dragend', () => {
+                this.toggle_elems.on('mouseenter', this._mouseenter_handle);
+            });
         }
     }
 
@@ -756,7 +802,11 @@ if (window.cone === undefined) cone = {};
             this.search_text = $('#livesearch-input', this.elem);
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
-            // this.viewport_changed(null); <- remove
+
+            if(this.vp_state === cone.VP_SMALL || this.vp_state === cone.VP_MEDIUM ) {
+                this.dd.addClass('dropdown-menu-end');
+                this.search_text.detach().prependTo(this.dd);
+            }
         }
 
         unload() {
@@ -765,7 +815,7 @@ if (window.cone === undefined) cone = {};
 
         viewport_changed(e) {
             super.viewport_changed(e);
-            if(cone.viewport.state === cone.VP_MEDIUM) {
+            if(this.vp_state === cone.VP_SMALL || this.vp_state === cone.VP_MEDIUM) {
                 this.dd.addClass('dropdown-menu-end');
                 this.search_text.detach().prependTo(this.dd);
             } else {

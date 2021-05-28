@@ -58,7 +58,10 @@ body {
   background-color: #5bc0de;
   color: white;
 }
-#mainmenu li:hover > a {
+#mainmenu li.active i {
+  color: #5bc0de;
+}
+#mainmenu li:hover > * {
   color: #5bc0de;
   transition: 0.25s;
 }
@@ -169,6 +172,9 @@ body {
 }
 #sidebar_left #sidebar-toggle-btn {
   color: rgba(87, 87, 92, 0.3);
+}
+#sidebar_left #sidebar_footer {
+  background-color: #FAFAFC;
 }
 #sidebar_left .sidebar-heading {
   color: #57575C;

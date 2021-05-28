@@ -105,8 +105,13 @@ body {
   position: absolute;
   border-radius: 3px;
   z-index: 1000;
+
   .scroll-handle {
     position: relative;
     border-radius: 3px;
   }
+}
+
+#foo {
+  height:100px;
 }

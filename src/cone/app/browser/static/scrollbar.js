@@ -16,40 +16,38 @@ if (window.cone === undefined) cone = {};
             this.content = $('>', this.elem);
             this.scrollbar = $('<div class="scrollbar" />');
             this.thumb = $('<div class="scroll-handle" />');
-            this.thickness = '6px';
 
-            this.compile();
+            // wait for elements to load
+            setTimeout(this.compile.bind(this), 100);
 
             this.position = 0;
-            this.thumb_pos = 0;
-            this.thumb_dim = 0;
-            this.thumb_end = 0;
-            this.factor = 0;
-            this.space_between = 0;
-
             this.unit = 10;
-            this.scrollbar_unit = 0;
 
-            this._handle = this.update.bind(this); // bind this required! - why?
-            $(this._handle); // jquery required! - why?
-
-            const scrollbar_observer = new ResizeObserver(entries => {
+            this.scrollbar_observer = new ResizeObserver(entries =>{
                 for(let entry of entries) {
-                    console.log(this._handle);
-                    $(this._handle);
+                    this.update();
                 }
-            });
-            scrollbar_observer.observe(this.elem.get(0));
+            })
+
+            // prevent multiple occurances before page is fully loaded
+            setTimeout( this.observe_container.bind(this), 500 );
 
             this._scroll = this.scroll_handle.bind(this);
-            this.elem.off().on('mousewheel wheel', this._scroll);
+            this.elem.off('mousewheel wheel', this._scroll).on('mousewheel wheel', this._scroll);
 
-            this._drag_start = this.drag_start.bind(this);
-            this.scrollbar.off().on('mousedown', this._drag_start);
+            this._click_handle = this.click_handle.bind(this);
+            this.scrollbar.off('click', this._click_handle).on('click', this._click_handle);
+
+            this._drag_handle = this.drag_handle.bind(this);
+            this.thumb.off('mousedown', this._drag_handle).on('mousedown', this._drag_handle);
 
             this._mousehandle = this.mouse_in_out.bind(this);
             this.elem.off('mouseenter mouseleave', this._mousehandle)
                      .on('mouseenter mouseleave', this._mousehandle);
+        }
+
+        observe_container() {
+            this.scrollbar_observer.observe(this.elem.get(0));
         }
 
         compile() {
@@ -57,10 +55,6 @@ if (window.cone === undefined) cone = {};
         }
 
         update() {
-            // abstract, implemented in subclass
-        }
-
-        drag_start() {
             // abstract, implemented in subclass
         }
 
@@ -70,9 +64,7 @@ if (window.cone === undefined) cone = {};
         }
 
         mouse_in_out(e) {
-            if(cone.dragging || this.content_dim <= this.container_dim) {
-                return;
-            } else {
+            if(this.contentsize > this.scrollsize) {
                 if(e.type == 'mouseenter') {
                     this.scrollbar.fadeIn();
                 } else {
@@ -82,33 +74,69 @@ if (window.cone === undefined) cone = {};
         }
 
         scroll_handle(e) {
-            if(this.content_dim < this.container_dim) {
+            if(this.contentsize <= this.scrollsize) {
                 return;
             }
             if (typeof e.originalEvent.wheelDelta == 'number' || typeof e.originalEvent.deltaY == 'number') {
-
-                // scroll event data
-                if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) { // down
-                    this.position -= this.unit;
-                    this.thumb_pos += this.scrollbar_unit;
-
-                    if(this.thumb_pos >= this.container_dim - this.thumb_dim) { // stop scrolling on end
-                        this.thumb_pos = this.container_dim - this.thumb_dim;
-                        this.position = this.container_dim - this.content_dim;
-                    }
-                };
-
-                if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) { // up
+                // down
+                if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) {
                     this.position += this.unit;
-                    this.thumb_pos -= this.scrollbar_unit;
-
-                    if(this.position > 0) { // stop scrolling on start
-                        this.position = 0;
-                        this.thumb_pos = 0;
-                    }
+                }
+                // up
+                else if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) {
+                    this.position -= this.unit;
                 }
             }
             this.set_position();
+        }
+
+        prevent_overflow() {
+            let threshold = this.contentsize - this.scrollsize;
+            if(this.position >= threshold) {
+                this.position = threshold;
+            } else if(this.position <= 0) {
+                this.position = 0;
+            }
+        }
+
+        click_handle(e) {
+            e.preventDefault(); // prevent text selection
+            this.thumb.addClass('active');
+            let evt_data = this.get_evt_data(e),
+                new_thumb_pos = evt_data - this.get_offset() - this.thumbsize / 2;
+            this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+            this.set_position();
+            this.thumb.removeClass('active');
+        }
+
+        drag_handle(e) {
+            e.preventDefault();
+            var evt = $.Event('dragstart');
+            $(window).trigger(evt);
+
+            let _on_move = on_move.bind(this),
+                _on_up = on_up.bind(this),
+                mouse_pos = this.get_evt_data(e) - this.get_offset(),
+                thumb_position = this.position / (this.contentsize / this.scrollsize);
+            this.thumb.addClass('active');
+            this.elem.off('mouseenter mouseleave', this._mousehandle);
+
+            $(document).on('mousemove', _on_move);
+            $(document).on('mouseup', _on_up);
+
+            function on_move(e) {
+                let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
+                    new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
+                this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+                this.set_position();
+            }
+            function on_up() {
+                var evt = $.Event('dragend');
+                $(window).trigger(evt);
+                $(document).off('mousemove', _on_move).off('mouseup', _on_up);
+                this.thumb.removeClass('active');
+                this.elem.on('mouseenter mouseleave', this._mousehandle);
+            }
         }
     }
 
@@ -116,94 +144,49 @@ if (window.cone === undefined) cone = {};
 
         constructor(elem) {
             super(elem);
-            this.container_dim = this.elem.outerWidth(true);
-            this.content_dim = this.content.outerWidth(true);
-            this.offset = this.elem.offset().left;
         }
 
         compile() {
             this.content.addClass('scroll-content');
-            this.elem.addClass('scroll-container');
-            this.elem.prepend(this.scrollbar);
+            this.elem.addClass('scroll-container')
+                     .prepend(this.scrollbar);
             this.scrollbar.append(this.thumb);
-            this.thumb.css('height', this.thickness);
-            this.scrollbar.css('height', this.thickness);
+            this.thumb.css('height', '6px');
+            this.scrollbar.css('height', '6px');
+
+            this.scrollsize = this.elem.outerWidth();
+            this.contentsize = this.content.outerWidth();
+
+            this.scrollbar.css('width', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('width', this.thumbsize);
         }
 
         update() {
-            this.content_dim = this.content.outerWidth(true);
-            this.container_dim = this.elem.outerWidth(true);
-            this.factor = this.content_dim / this.container_dim;
-            this.thumb_dim = this.container_dim / this.factor;
-            this.thumb_end = this.thumb.offset().left + this.thumb_dim;
-            this.container_end = this.elem.offset().left + this.container_dim;
-
-            this.scrollbar.css('width', this.container_dim);
-            this.thumb.css('width', this.thumb_dim);
-
-            this.scrollbar_unit = this.container_dim / (this.content_dim / this.unit);
-            this.space_between = this.container_dim - this.thumb_dim;
+            if(this.contentsize === 0) {
+                // if elem starts out hidden
+                this.contentsize = this.content.outerWidth();
+            }
+            this.scrollsize = this.elem.outerWidth();
+            this.scrollbar.css('width', this.scrollsize);
+            this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+            this.thumb.css('width', this.thumbsize);
+            this.set_position();
         }
 
         set_position() {
-            this.content.css('left', this.position + 'px');
-            this.thumb.css('left', this.thumb_pos + 'px');
+            this.prevent_overflow();
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('right', this.position + 'px');
+            this.thumb.css('left', thumb_pos + 'px');
         }
 
-        drag_start(evt) {
-            evt.preventDefault(); // prevent text selection
-            this.thumb.addClass('active');
+        get_evt_data(e) {
+            return e.pageX;
+        }
 
-            let mouse_pos = evt.pageX - this.offset,
-                thumb_diff = this.container_dim - this.thumb_dim,
-                new_thumb_pos = 0;
-
-            // case click
-            if(mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
-                if(mouse_pos < this.thumb_pos) {
-                    if(mouse_pos <= this.thumb_pos / 2) {
-                        new_thumb_pos = 0;
-                    } else {
-                        new_thumb_pos = mouse_pos- this.thumb_dim / 2;
-                    }
-                } else if(mouse_pos > this.thumb_pos + this.thumb_dim){
-                    if(mouse_pos > this.space_between + this.thumb_dim / 2) {
-                        new_thumb_pos = thumb_diff;
-                    } else {
-                        new_thumb_pos = mouse_pos - this.thumb_dim / 2;
-                    }
-                }
-                this.thumb.css('left', new_thumb_pos);
-                this.content.css('left', - (new_thumb_pos * this.factor));
-                this.thumb_pos = new_thumb_pos;
-            // case drag
-            } else {
-                cone.dragging = true;
-                $(document).on('mousemove', onMouseMove.bind(this));
-
-                function onMouseMove(evt) {
-                    let mouse_pos_on_move = evt.pageX - this.offset;
-                    let diff = mouse_pos_on_move - mouse_pos;
-                    new_thumb_pos = this.thumb_pos + diff;
-                    if(new_thumb_pos <= 0) {
-                        new_thumb_pos = 0;
-                    } else if (new_thumb_pos >= thumb_diff) {
-                        new_thumb_pos = thumb_diff;
-                    }
-                    this.thumb.css('left', new_thumb_pos);
-                    this.content.css('left', - (new_thumb_pos * this.factor));
-                }
-
-                $(document).on('mouseup', onMouseUp.bind(this));
-                function onMouseUp() {
-                    cone.dragging = false;
-                    $(document).off('mousemove mouseup');
-                    this.thumb.removeClass('active');
-                    this.thumb_pos = new_thumb_pos;
-                }
-            }
-
-
+        get_offset() {
+            return this.elem.offset().left;
         }
     };
 
@@ -211,96 +194,57 @@ if (window.cone === undefined) cone = {};
 
         constructor(elem) {
             super(elem);
-            this.container_dim = this.elem.outerHeight(true);
-            this.content_dim = (this.content.length) ? this.content.outerHeight(true) : 0;
-            this.offset = this.elem.offset().top;
         }
 
         compile() {
             this.content.addClass('scroll-content');
-            this.elem.addClass('scroll-container');
-            this.elem.prepend(this.scrollbar);
+            this.elem.addClass('scroll-container')
+                     .prepend(this.scrollbar);
             this.scrollbar.append(this.thumb);
-            this.thumb.css('width', this.thickness);
-            this.scrollbar.css('width', this.thickness);
+            this.thumb.css('width', '6px');
+            this.scrollbar.css('width', '6px');
+
+            this.scrollsize = this.elem.outerHeight();
+            this.contentsize = this.content.outerHeight();
+
+            this.scrollbar.css('height', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('height', this.thumbsize);
         }
 
         update() {
-            this.content_dim = this.content.outerHeight(true);
-            this.container_dim = this.elem.outerHeight(true);
-            this.factor = this.content_dim / this.container_dim;
-            this.thumb_dim = this.container_dim / this.factor;
-            this.thumb_end = this.thumb.offset().top + this.thumb_dim;
-            this.container_end = this.elem.offset().top + this.container_dim;
-
-            this.scrollbar.css('height', this.container_dim);
-            this.thumb.css('height', this.thumb_dim);
-
-            this.scrollbar_unit = this.container_dim / (this.content_dim / this.unit);
-            this.space_between = this.container_dim - this.thumb_dim;
+            if(this.contentsize === 0) {
+                // if elem starts out hidden
+                this.contentsize = this.content.outerHeight();
+            }
+            this.scrollsize = this.elem.outerHeight();
+            this.scrollbar.css('height', this.scrollsize);
+            this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+            this.thumb.css('height', this.thumbsize);
+            this.set_position();
         }
 
         set_position() {
-            this.content.css('top', this.position + 'px');
-            this.thumb.css('top', this.thumb_pos + 'px');
+            let threshold = this.contentsize - this.scrollsize;
+            if(this.position >= threshold) {
+                this.position = threshold;
+            } else if(this.position <= 0) {
+                this.position = 0;
+            }
+
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('bottom', this.position + 'px');
+            this.thumb.css('top', thumb_pos + 'px');
         }
 
-        drag_start(evt) {
-            // prevent text selection
-            evt.preventDefault();
-            this.thumb.addClass('active');
+        get_evt_data(e) {
+            return e.pageY;
+        }
 
-            let mouse_pos = evt.pageY - this.offset,
-                thumb_diff = this.container_dim - this.thumb_dim,
-                new_thumb_pos = 0;
-
-            // case click
-            if (mouse_pos < this.thumb_pos || mouse_pos > (this.thumb_pos + this.thumb_dim)) {
-                if (mouse_pos < this.thumb_pos) {
-                    if (mouse_pos <= this.thumb_pos / 2) {
-                        new_thumb_pos = 0;
-                    } else {
-                        new_thumb_pos = mouse_pos- this.thumb_dim / 2;
-                    }
-                } else if (mouse_pos > this.thumb_pos + this.thumb_dim){
-                    if (mouse_pos > this.space_between + this.thumb_dim / 2) {
-                        new_thumb_pos = thumb_diff;
-                    } else {
-                        new_thumb_pos = mouse_pos - this.thumb_dim / 2;
-                    }
-                }
-                this.thumb.css('top', new_thumb_pos);
-                this.content.css('top', - (new_thumb_pos * this.factor));
-                this.thumb_pos = new_thumb_pos;
-            // case drag
-            } else {
-                cone.dragging = true;
-                $(document).on(
-                    'mousemove',
-                    onMouseMove.bind(this)
-                ).on('mouseup', onMouseUp.bind(this));
-
-                function onMouseMove(evt) {
-                    let mouse_pos_on_move = evt.pageY - this.offset;
-                    let diff = mouse_pos_on_move - mouse_pos;
-                    new_thumb_pos = this.thumb_pos + diff;
-                    if(new_thumb_pos <= 0) {
-                        new_thumb_pos = 0;
-                    } else if (new_thumb_pos >= thumb_diff) {
-                        new_thumb_pos = thumb_diff;
-                    }
-                    this.thumb.css('top', new_thumb_pos);
-                    this.content.css('top', - (new_thumb_pos * this.factor));
-                }
-
-                function onMouseUp() {
-                    cone.dragging = false;
-                    $(document).off('mousemove mouseup');
-                    this.thumb.removeClass('active');
-                    this.thumb_pos = new_thumb_pos;
-                }
-            }
+        get_offset() {
+            return this.elem.offset().top;
         }
     }
 
-})(jQuery);
+}
+)(jQuery);
