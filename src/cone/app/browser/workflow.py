@@ -5,11 +5,38 @@ from cone.app.model import Properties
 from cone.app.workflow import lookup_workflow
 from cone.tile import Tile
 from cone.tile import tile
-from repoze.workflow import WorkflowError
+from repoze.workflow import WorkflowError, get_workflow, Workflow
 import logging
 
 
 logger = logging.getLogger('cone.app')
+
+def workflow_for(obj, wftype='default'):
+    """queries workflow for an object and if necessary initializes it"""
+    wf = get_workflow(obj, wftype)
+    if wf and not wf.has_state(obj):
+        wf.initialize(obj)
+    return wf
+
+
+def workflow_state_of(obj, wftype='default'):
+    wf = workflow_for(obj, wftype)
+    return wf.state_of(obj)
+
+
+def workflow_state_title_of(obj, wftype="default"):
+    wf = workflow_for(obj, wftype)
+    if wf:
+        state = wf.state_of(obj)
+    else:
+        # fallback: use the state property, should not happen in real world
+        return getattr(obj, "state")
+
+    try:
+        # safely extract title from workflow definition
+        return wf._state_data[state]["title"]
+    except KeyError:
+        return state
 
 
 @tile(name='wf_dropdown',
@@ -46,7 +73,7 @@ class WfDropdown(Tile):
         workflow_tsf = self.model.workflow_tsf
         if workflow_tsf:
             return workflow_tsf(self.model.state)
-        return self.model.state
+        return workflow_state_title_of(self.model)
 
     @property
     def transitions(self):
@@ -68,6 +95,6 @@ class WfDropdown(Tile):
             if workflow_tsf:
                 props.title = workflow_tsf(transition['name'])
             else:
-                props.title = transition['name']
+                props.title = transition['title']
             ret.append(props)
         return ret
