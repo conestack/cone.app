@@ -77,13 +77,14 @@ if (window.cone === undefined) cone = {};
             if(this.contentsize <= this.scrollsize) {
                 return;
             }
-            if (typeof e.originalEvent.wheelDelta == 'number' || typeof e.originalEvent.deltaY == 'number') {
+            let evt = e.originalEvent;
+            if (typeof evt.wheelDelta === 'number' || typeof evt.deltaY === 'number') {
                 // down
-                if(e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) {
+                if(evt.wheelDelta < 0 || evt.deltaY > 0) {
                     this.position += this.unit;
                 }
                 // up
-                else if(e.originalEvent.wheelDelta > 0 || e.originalEvent.deltaY < 0) {
+                else if(evt.wheelDelta > 0 || evt.deltaY < 0) {
                     this.position -= this.unit;
                 }
             }
@@ -163,10 +164,16 @@ if (window.cone === undefined) cone = {};
         }
 
         update() {
-            if(this.contentsize === 0) {
-                // if elem starts out hidden
-                this.contentsize = this.content.outerWidth();
-            }
+            /* promotes problem if contentsize changes
+                - read contentsize every time?
+                -> resize observer?
+            */
+            // if(this.contentsize === 0) {
+            //     // if elem starts out hidden
+            //     this.contentsize = this.content.outerWidth();
+            // }
+            this.contentsize = this.content.outerWidth(); // may remove, see above
+
             this.scrollsize = this.elem.outerWidth();
             this.scrollbar.css('width', this.scrollsize);
             this.thumbsize = this.scrollsize ** 2 / this.contentsize;
