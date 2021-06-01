@@ -120,6 +120,7 @@ if (window.cone === undefined) cone = {};
                 mouse_pos = this.get_evt_data(e) - this.get_offset(),
                 thumb_position = this.position / (this.contentsize / this.scrollsize);
             this.thumb.addClass('active');
+
             this.elem.off('mouseenter mouseleave', this._mousehandle);
 
             $(document).on('mousemove', _on_move);
@@ -172,11 +173,17 @@ if (window.cone === undefined) cone = {};
             //     // if elem starts out hidden
             //     this.contentsize = this.content.outerWidth();
             // }
-            this.contentsize = this.content.outerWidth(); // may remove, see above
 
+            this.contentsize = this.content.outerWidth(); // may remove, see above
             this.scrollsize = this.elem.outerWidth();
             this.scrollbar.css('width', this.scrollsize);
-            this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+
+            if(this.contentsize <= this.scrollsize) {
+                this.thumbsize = this.scrollsize;
+            } else {
+                this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+            }
+
             this.thumb.css('width', this.thumbsize);
             this.set_position();
         }
@@ -220,13 +227,16 @@ if (window.cone === undefined) cone = {};
         }
 
         update() {
-            if(this.contentsize === 0) {
-                // if elem starts out hidden
-                this.contentsize = this.content.outerHeight();
-            }
+            this.contentsize = this.content.outerHeight(); // may remove, see ScrollBarX
             this.scrollsize = this.elem.outerHeight();
             this.scrollbar.css('height', this.scrollsize);
-            this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+
+            if(this.contentsize <= this.scrollsize) {
+                this.thumbsize = this.scrollsize;
+            } else {
+                this.thumbsize = this.scrollsize ** 2 / this.contentsize;
+            }
+
             this.thumb.css('height', this.thumbsize);
             this.set_position();
         }

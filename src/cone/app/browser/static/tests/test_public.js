@@ -1,155 +1,230 @@
 
-// const { connect } = require[("puppeteer")];
-// const {setup} = require('qunit-dom');
-
 const { test } = QUnit;
 
 var fixture = $('#qunit-fixture');
-// cone.VP_MOBILE = 0;
-// cone.VP_SMALL = 1;
-// cone.VP_MEDIUM = 2;
-// cone.VP_LARGE = 3;
-
-test('test test', assert => {
- assert.ok(true, 'test okay');
-})
 
 QUnit.module('cone namespace');
 
-test('test cone elems', assert => {
-  // viewport
-  assert.ok(cone.viewport instanceof cone.ViewPort);
-  assert.strictEqual(cone.VP_MOBILE, 0, 'cone.VP_MOBILE is 0');
-  assert.strictEqual(cone.VP_SMALL, 1, 'cone.VP_SMALL is 1');
-  assert.strictEqual(cone.VP_MEDIUM, 2, 'cone.VP_MEDIUM is 2');
-  assert.strictEqual(cone.VP_LARGE, 3, 'cone.VP_LARGE is 3');
+  test('test cone elems', assert => {
+    // viewport
+    assert.ok(cone.viewport instanceof cone.ViewPort);
+    assert.strictEqual(cone.VP_MOBILE, 0, 'cone.VP_MOBILE is 0');
+    assert.strictEqual(cone.VP_SMALL, 1, 'cone.VP_SMALL is 1');
+    assert.strictEqual(cone.VP_MEDIUM, 2, 'cone.VP_MEDIUM is 2');
+    assert.strictEqual(cone.VP_LARGE, 3, 'cone.VP_LARGE is 3');
 
-  // theme 
-  assert.strictEqual(cone.theme_switcher, null);
-  assert.deepEqual(cone.default_themes, ['/static/light.css', '/static/dark.css']);
+    // theme
+    assert.strictEqual(cone.theme_switcher, null, 'cone.theme_switcher is null');
+    assert.deepEqual(cone.default_themes, ['/static/light.css', '/static/dark.css'], 'cone.default_themes correct');
 
-  // layout components
-  assert.strictEqual(cone.sidebar_menu, null);
-  assert.strictEqual(cone.main_menu_top, null);
-  assert.strictEqual(cone.main_menu_sidebar, null);
-  assert.strictEqual(cone.navtree, null);
-  assert.strictEqual(cone.topnav, null);
+    // layout components
+    assert.strictEqual(cone.sidebar_menu, null, 'cone.sidebar_menu is null');
+    assert.strictEqual(cone.main_menu_top, null, 'cone.main_menu_top is null');
+    assert.strictEqual(cone.main_menu_sidebar, null, 'cone.main_menu_sidebar is null');
+    assert.strictEqual(cone.navtree, null, 'cone.navtree is null');
+    assert.strictEqual(cone.topnav, null, 'cone.topnav is null');
 
-  // searchbar
-  assert.strictEqual(cone.searchbar, null);
-  assert.strictEqual(cone.searchbar_handler, null);
+    // searchbar
+    assert.strictEqual(cone.searchbar, null, 'cone.searchbar is null');
+    assert.strictEqual(cone.searchbar_handler, null, 'cone.searchbar_handler is null');
 
-  // content
-  assert.strictEqual(cone.content, null);
-})
+    // content
+    assert.strictEqual(cone.content, null, 'cone.content is null');
+  })
+
 
 QUnit.module( 'cone.ScrollBar', hooks => {
-  let test_scrollbar,
-      test_scrollbar_hidden,
-      test_container_width = 400,
-      test_content_width = 800,
-      test_thumbsize;
+
+  let test_container_dim = 400,
+      test_content_dim = 800,
+      test_thumbsize = test_container_dim ** 2 / test_content_dim;
 
   hooks.before( () => {
-    let test_id = 'test-container';
-    let scrollbar_test_elem = `
-      <div style="width:${test_container_width}px; height:200px; left:100px; top:100px; overflow:hidden;" id="${test_id}">
-        <div style="width:${test_content_width}px; height:200px; position:relative;">
+    console.log('####### cone.ScrollBar ######');
+    function create_elem(test_id, width, height, content_width, content_height) {
+      let scrollbar_test_elem = `
+        <div style="width:${width}px; height:${height}px; left:100px; top:100px; overflow:hidden;" id="${test_id}">
+          <div style="width:${content_width}px; height:${content_height}px; position:relative;">
+          </div>
         </div>
-      </div>
-    `;
-
-    $('body').append(scrollbar_test_elem);
-    test_scrollbar = new cone.ScrollBarX($('#test-container'));
+      `;
+      $('body').append(scrollbar_test_elem);
+    }
+    create_elem('test-container-x', test_container_dim, 200, test_content_dim, 200);
+    create_elem('test-container-y', 200, test_container_dim, 200, test_content_dim);
+    test_scrollbar_x = new cone.ScrollBarX($('#test-container-x'));
+    test_scrollbar_y = new cone.ScrollBarY($('#test-container-y'));
   });
 
   hooks.afterEach( () => {
-    console.log('module teardown');
-    test_scrollbar.position = 0;
-    test_scrollbar.scrollsize = 400;
-    test_scrollbar.contentsize = 800;
-    test_scrollbar.elem.css('width', '400px');
-    test_scrollbar.content.css('width', '800px');
-    test_scrollbar.thumbsize = test_scrollbar.scrollsize ** 2 / test_scrollbar.contentsize;
-    test_scrollbar.thumb.css('width', test_scrollbar.thumbsize);
+    console.log('done - ' + QUnit.config.current.testName);
 
+    function reset(obj, dir) {
+      obj.position = 0;
+      obj.scrollsize = test_container_dim;
+      obj.contentsize = test_content_dim;
+      obj.thumbsize = test_thumbsize;
+
+      if(dir === 'x') {
+        obj.elem.css('width', `${test_container_dim}px`);
+        obj.content.css('width', `${test_content_dim}px`);
+        obj.thumb.css('width', `${test_thumbsize}px`);
+      } else
+      if(dir === 'y') {
+        obj.elem.css('height', `${test_container_dim}px`);
+        obj.content.css('height', `${test_content_dim}px`);
+        obj.thumb.css('height', `${test_thumbsize}px`);
+      }
+    }
+    reset(test_scrollbar_x, 'x');
+    reset(test_scrollbar_y, 'y');
   })
 
-  function test_compile(test_elem, assert) {
-    assert.strictEqual(test_elem.position, 0, 'position 0');
-    assert.strictEqual(test_elem.unit, 10, 'unit is 10px');
+  hooks.after( () => {
+    $('#test-container-x').remove();
+    $('#test-container-y').remove();
+    test_scrollbar_x = null;
+    test_scrollbar_y = null;
+    delete test_scrollbar_x;
+    delete test_scrollbar_y;
+    $(document).off();
+  })
 
-    test_elem.compile();
-
-    assert.ok(test_elem.scrollbar.hasClass('scrollbar'), 'scrollbar hasClass scrollbar');
-    assert.ok(test_elem.elem.hasClass('scroll-container'), 'elem hasClass scroll-container');
-    assert.ok(test_elem.content.hasClass('scroll-content'), 'content hasClass scroll-content');
-
-    assert.ok(test_elem.elem.children('div').length == 2, 'elem has two children');
-    assert.ok(test_elem.thumb.parents('.scrollbar').length == 1, 'scrollbar has thumb');
-
-    // assert.ok(test_elem.scrollbar.is(':hidden'), 'scrollbar hidden'); // hidden via css file
-  }
-
-  //QUnit.module('visible');
+  QUnit.module('cone.ScrollBarX');
     test('compile()', assert => {
-      test_compile(test_scrollbar, assert);
-      assert.ok(test_scrollbar.scrollbar.parents("#test-container").length == 1, 'container has scrollbar');
-      assert.ok(test_scrollbar.content.parents("#test-container").length == 1, 'container has content');
+      test_compile(test_scrollbar_x, assert);
+      assert.ok(test_scrollbar_x.scrollbar.parents("#test-container-x").length == 1, 'container has scrollbar');
+      assert.ok(test_scrollbar_x.content.parents("#test-container-x").length == 1, 'container has content');
     })
 
     test('update() fixed dim', assert => {
-      test_container_width = 300;
-      test_thumbsize = test_container_width ** 2 / test_content_width;
-
-      test_scrollbar.elem.css('width', `${test_container_width}px`);
-      test_scrollbar.update();
-
-      assert.strictEqual(test_scrollbar.scrollsize, test_container_width, 'scrollbar size is container size');
-      assert.strictEqual(test_scrollbar.thumbsize, test_thumbsize, 'thumbsize correct');
+      update_fixed_dim(test_scrollbar_x, assert);
     });
 
-  //QUnit.module('random dimension update()');
-    // test with random numbers
-    test('random dimensions update()', assert => {
-      for(let i=0; i<10; i++) {
-        test_scrollbar.position = 0;
-        test_container_width = Math.floor(Math.random() * 1000);
-        test_content_width = 1000;
-        test_thumbsize = test_container_width ** 2 / test_content_width;
-
-        test_scrollbar.elem.css('width', `${test_container_width}px`);
-        test_scrollbar.content.css('width', `${test_content_width}px`);
-
-        test_scrollbar.update();
-  
-        assert.strictEqual(test_scrollbar.scrollsize, test_container_width, `scrollsize ${test_container_width}`);
-        assert.strictEqual(test_scrollbar.thumbsize, test_thumbsize, 'thumbsize correct');
-      }
+    test('update() random dim', assert => {
+      update_random_dim(test_scrollbar_x, assert);
     })
 
-    QUnit.test('mouse_in_out()', assert => {
-      // scrollbar is hidden via css on start
-      test_scrollbar.scrollbar.hide();
-      assert.ok(test_scrollbar.scrollbar.is(':hidden'), 'scrollbar hidden on load');
-
-      test_scrollbar.elem.trigger('mouseenter');
-      var done = assert.async();
-      console.log(test_scrollbar.scrollbar.css('display'))
-      $(function (){
-        assert.ok(test_scrollbar.scrollbar.is(':visible'), 'scrollbar visible on mouseenter');
-        done();
-      })
-      // works in karma but not qunit in browser?? 
-      // buggy, fix
+    QUnit.skip('mouse_in_out()', assert => {
+      handle_mouse_in_out(test_scrollbar_x, assert);
     })
-
-
 
     test('scroll_handle()', assert => {
-      assert.ok(true);
+      test_scroll_handle(test_scrollbar_x, assert);
+    })
 
+    test('click_handle()', assert => {
+      test_click_handle(test_scrollbar_x, assert);
+    })
+
+    test('drag_handle()', assert => {
+      test_drag_handle(test_scrollbar_x, assert);
+    })
+
+  QUnit.module('cone.ScrollBarY');
+    test('compile()', assert => {
+      test_compile(test_scrollbar_y, assert);
+      assert.ok(test_scrollbar_y.scrollbar.parents("#test-container-y").length == 1, 'container has scrollbar');
+      assert.ok(test_scrollbar_y.content.parents("#test-container-y").length == 1, 'container has content');
+    })
+
+    test('update() fixed dim', assert => {
+      update_fixed_dim(test_scrollbar_y, assert);
+    });
+
+    test('update() random dim', assert => {
+      update_random_dim(test_scrollbar_y, assert);
+    })
+
+    QUnit.skip('mouse_in_out()', assert => {
+      handle_mouse_in_out(test_scrollbar_y, assert);
+    })
+
+    test('scroll_handle()', assert => {
+      test_scroll_handle(test_scrollbar_y, assert);
+    })
+
+    test('click_handle()', assert => {
+      test_click_handle(test_scrollbar_y, assert);
+    })
+
+    test('drag_handle()', assert => {
+      test_drag_handle(test_scrollbar_y, assert);
+    })
+
+    ////////////////////////////////////////////
+
+    function test_compile(test_elem, assert) {
+      assert.strictEqual(test_elem.position, 0, 'position 0');
+      assert.strictEqual(test_elem.unit, 10, 'unit is 10px');
+
+      test_elem.compile();
+
+      assert.ok(test_elem.scrollbar.hasClass('scrollbar'), 'scrollbar hasClass scrollbar');
+      assert.ok(test_elem.elem.hasClass('scroll-container'), 'elem hasClass scroll-container');
+      assert.ok(test_elem.content.hasClass('scroll-content'), 'content hasClass scroll-content');
+      assert.ok(test_elem.elem.children('div').length == 2, 'elem has two children');
+      assert.ok(test_elem.thumb.parents('.scrollbar').length == 1, 'scrollbar has thumb');
+      // assert.ok(test_elem.scrollbar.is(':hidden'), 'scrollbar hidden'); // hidden via css file
+    }
+
+    function update_fixed_dim(test_elem, assert) {
+      test_container_dim = 300;
+      test_thumbsize = test_container_dim ** 2 / test_content_dim;
+
+      if(test_elem === test_scrollbar_x) {
+        test_elem.elem.css('width', `${test_container_dim}px`);
+      } else {
+        test_elem.elem.css('height', `${test_container_dim}px`);
+      }
+
+      test_elem.update();
+      assert.strictEqual(test_elem.scrollsize, test_container_dim, 'scrollbar size is container size');
+      assert.strictEqual(test_elem.thumbsize, test_thumbsize, 'thumbsize correct');
+    }
+
+    function update_random_dim(test_elem, assert) {
+      for(let i=0; i<10; i++) {
+        test_elem.position = 0;
+        let new_test_container_dim = Math.floor(Math.random() * 1000),
+            new_test_content_dim = Math.floor(Math.random() * 1000),
+            new_test_thumbsize = new_test_container_dim ** 2 / new_test_content_dim;
+
+        if(test_elem === test_scrollbar_x) {
+          test_elem.elem.css('width', `${new_test_container_dim}px`);
+          test_elem.content.css('width', `${new_test_content_dim}px`);
+        } else {
+          test_elem.elem.css('height', `${new_test_container_dim}px`);
+          test_elem.content.css('height', `${new_test_content_dim}px`);
+        }
+
+        test_elem.update();
+
+        if(new_test_content_dim >= new_test_container_dim) {
+          assert.strictEqual(test_elem.thumbsize, new_test_thumbsize, `thumbsize ${new_test_thumbsize}`);
+        }
+        assert.strictEqual(test_elem.scrollsize, new_test_container_dim, `scrollsize ${new_test_container_dim}`);
+      }
+    }
+
+    function handle_mouse_in_out(test_elem, assert) {
+      // scrollbar is hidden via css on start
+      test_elem.scrollbar.hide();
+      assert.ok(test_elem.scrollbar.is(':hidden'), 'scrollbar hidden on load');
+
+      test_elem.elem.trigger('mouseenter');
+      var done = assert.async();
+      console.log(test_elem.scrollbar.css('display'))
+      $(function (){
+        assert.ok(test_elem.scrollbar.is(':visible'), 'scrollbar visible on mouseenter');
+        done();
+      })
+      // works in karma but not qunit in browser??
+    }
+
+    function test_scroll_handle(test_elem, assert) {
       // set val as number of scroll ticks
+
       function sim_scroll(val, dir){
         let delta = dir === 'pos' ? 1:-1;
         for(let i=0; i<val; i++){
@@ -158,58 +233,98 @@ QUnit.module( 'cone.ScrollBar', hooks => {
           $(window).trigger(synthetic_scroll);
         }
       }
-      $(window).on('syntheticWheel', test_scrollbar._scroll);
+      $(window).on('syntheticWheel', test_elem._scroll);
 
-      assert.strictEqual(test_scrollbar.position, 0, 'position 0 before scroll');
+      assert.strictEqual(test_elem.position, 0, 'position 0 before scroll');
 
-      let threshold = test_scrollbar.contentsize - test_scrollbar.scrollsize;
+      let threshold = test_elem.contentsize - test_elem.scrollsize;
 
-      // for(let i=1; i<=threshold/10; i++) {
-      //   sim_scroll(1, 'pos');
-      //   assert.strictEqual(test_scrollbar.position, i*10, test_scrollbar.position)
-      // }
-
-      /* scroll to right end */
+      /* scroll to end */
       sim_scroll(500, 'pos');
-      assert.strictEqual(test_scrollbar.position, threshold, 'stop on container end');
+      assert.strictEqual(test_elem.position, threshold, 'stop on container end');
 
-      /* scroll to left end */
+      /* scroll to start */
       sim_scroll(500, 'neg');
-      assert.strictEqual(test_scrollbar.position, 0, 'stop on container start');
+      assert.strictEqual(test_elem.position, 0, 'stop on container start');
 
       /* scroll to middle */
-      sim_scroll( (test_scrollbar.scrollsize / 20), 'pos');
-      let result_middle = Math.ceil( test_scrollbar.scrollsize/20 ) * 10;
-      assert.strictEqual(test_scrollbar.position, result_middle, 'scroll to middle');
-    })
+      sim_scroll( (test_elem.scrollsize / 20), 'pos');
+      let result_middle = Math.ceil( test_elem.scrollsize/20 ) * 10;
+      assert.strictEqual(test_elem.position, result_middle, 'scroll to middle');
+    }
 
+    function test_click_handle(test_elem, assert) {
 
+      $(window).on('syntheticClick', test_elem._click_handle);
 
+      let offset = test_elem.get_offset(),
+          click_threshold = offset + test_elem.scrollsize;
 
+      function trigger_synthetic_click(val){
+        let new_thumb_pos = val - offset - test_elem.thumbsize / 2,
+            calc_new_pos = test_elem.contentsize * new_thumb_pos / test_elem.scrollsize,
+            threshold = test_elem.contentsize - test_elem.scrollsize,
+            synthetic_click
+        ;
 
+        if(test_elem === test_scrollbar_x) {
+          synthetic_click = new $.Event("syntheticClick", {"pageX": val, "pageY": 0});
+        } else {
+          synthetic_click = new $.Event("syntheticClick", {"pageX": 0, "pageY": val});
+        }
 
-  // QUnit.module('hidden');  
-  
-  //   test('compile', assert => {
-  //     let scrollbar_test_elem_hidden = `
-  //       <div style="width:400px; height:200px; left:100px; top:100px; overflow:hidden; display:none;" id="test-container-hidden">
-  //         <div style="position:relative; width:1000px">
-  //         </div>
-  //       </div>
-  //     `;
-  //     $('body').append(scrollbar_test_elem_hidden);
+        // prevent_overflow()
+        if(calc_new_pos >= threshold) {
+          calc_new_pos = threshold;
+        } else if(calc_new_pos <= 0) {
+          calc_new_pos = 0;
+        }
 
-  //     test_scrollbar_hidden = new cone.ScrollBarX($('#test-container-hidden'));
-  //     test_compile(test_scrollbar_hidden, assert);
-  //     console.log(test_scrollbar_hidden.content.outerWidth())
+        $(window).trigger(synthetic_click);
 
-  //     test_scrollbar_hidden.elem.show();
-  //     assert.ok(test_scrollbar_hidden.elem.is(':visible'), 'elem visible');
-  //     assert.ok(test_scrollbar_hidden.content.is(':visible'), 'content visible');
-  //     console.log(test_scrollbar_hidden.elem.outerWidth())
-  //     console.log(test_scrollbar_hidden.content.outerWidth())
-  //     console.log(test_scrollbar_hidden.contentsize)
-  //   });
+        // assert.ok(test_elem.thumb.hasClass('active'));
+        assert.strictEqual(test_elem.position, calc_new_pos, 'position correct after click');
+      }
+
+      trigger_synthetic_click(0, 0);
+      trigger_synthetic_click(click_threshold, 0);
+      trigger_synthetic_click((click_threshold - offset) / 2, 0);
+    }
+
+    function test_drag_handle(test_elem, assert) {
+
+      function trigger_synthetic_drag(val){
+        let synthetic_mousedown,
+            synthetic_mousemove,
+            newVal = 204 // replace with more values
+        ;
+        if(test_elem === test_scrollbar_x) {
+          synthetic_mousedown = new $.Event("mousedown", {"pageX": val, "pageY": 0});
+          synthetic_mousemove = new $.Event("mousemove", {"pageX": newVal, "pageY": 0});
+        } else {
+          synthetic_mousedown = new $.Event("mousedown", {"pageX": 0, "pageY": val});
+          synthetic_mousemove = new $.Event("mousemove", {"pageX": 0, "pageY": newVal});
+        }
+        test_elem.thumb.trigger(synthetic_mousedown);
+
+        assert.ok(test_elem.thumb.hasClass('active'), 'thumb active');
+
+        let mouse_pos = val - test_elem.get_offset(),
+            thumb_position = test_elem.position / (test_elem.contentsize / test_elem.scrollsize),
+            mouse_pos_on_move = newVal - test_elem.get_offset(),
+            calc_new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos,
+            calc_new_position = test_elem.contentsize * calc_new_thumb_pos / test_elem.scrollsize
+        ;
+        $(document).trigger(synthetic_mousemove);
+
+        assert.strictEqual(test_elem.position, calc_new_position, 'position correct after mousemove');
+      }
+
+      trigger_synthetic_drag(200, 0);
+
+      $(document).trigger('mouseup');
+      assert.notOk(test_elem.thumb.hasClass('active'), 'thumb not active after click');
+    }
 
 });
 
