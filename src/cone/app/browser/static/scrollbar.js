@@ -61,6 +61,7 @@ if (window.cone === undefined) cone = {};
         unload() {
             this.scrollbar.off();
             this.elem.off();
+            this.thumb.off();
         }
 
         mouse_in_out(e) {
@@ -78,13 +79,13 @@ if (window.cone === undefined) cone = {};
                 return;
             }
             let evt = e.originalEvent;
-            if (typeof evt.wheelDelta === 'number' || typeof evt.deltaY === 'number') {
+            if (typeof evt.deltaY === 'number') {
                 // down
-                if(evt.wheelDelta < 0 || evt.deltaY > 0) {
+                if(evt.deltaY > 0) {
                     this.position += this.unit;
                 }
                 // up
-                else if(evt.wheelDelta > 0 || evt.deltaY < 0) {
+                else if(evt.deltaY < 0) {
                     this.position -= this.unit;
                 }
             }

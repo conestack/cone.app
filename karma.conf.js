@@ -21,6 +21,7 @@ let files = [
 
 // files to include for test coverage
 let preprocessors = {};
+preprocessors[`${cone_app_static}/scrollbar.js`] = 'coverage';
 preprocessors[`${cone_app_static}/public.js`] = 'coverage';
 
 module.exports = function(config) {

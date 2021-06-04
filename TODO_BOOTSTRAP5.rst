@@ -8,31 +8,26 @@ Karma: https://karma-runner.github.io/6.3/intro/installation.html
 Istanbul: https://istanbul.js.org/
 Puppeteer: https://pptr.dev/
 
-install in project directory:
-  - karma: browser/chrome
-    - chrome launcher needed - also launches chromium/chromium headless
-    - set qunit test files
-  - istanbul
-  - puppeteer
-OR 
-  - cypress: https://www.cypress.io/
 
+TESTING
+-------
+[X] - test scrollbar.js
 
 issues
 ------
 [ ] - chromium produces console warning: "cone.js:5281 [Violation] Added non-passive event listener 
       to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make 
       the page more responsive. See https://www.chromestatus.com/feature/5745543795965952"
-[~] - scrollbar: fix all the bugs. *******
+[X] - scrollbar: fix all the bugs. *******
     [X] - fix bug when thumb is positioned right side on resize
     [X] - well fix that again
-    [~] - simplify and cleanup scrollbar code - WIP
-    [ ] - performance needs drastic improvement
+    [X] - simplify and cleanup scrollbar code - WIP
+    [X] - performance needs drastic improvement
     [X] - rename and reduce scrollbar elements
 
     [X] - fix scroll event
-    [ ] - fix click event
-    [ ] - fix drag event
+    [X] - fix click event
+    [X] - fix drag event
 
 
 general
