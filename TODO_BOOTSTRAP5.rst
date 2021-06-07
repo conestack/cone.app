@@ -12,6 +12,7 @@ Puppeteer: https://pptr.dev/
 TESTING
 -------
 [X] - test scrollbar.js
+[~] - test topnav
 
 issues
 ------
@@ -74,7 +75,6 @@ javascript
 [X] - fix searchbar display on resize
 [X] - rename toggle_arrow element to toggl_arrow_elem f clarity
 [X] - remove initial viewport_changed(null)
-[ ] - disconnect scrollbar.observer ?
 
 styles
 ------

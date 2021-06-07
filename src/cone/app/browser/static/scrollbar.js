@@ -50,6 +50,10 @@ if (window.cone === undefined) cone = {};
             this.scrollbar_observer.observe(this.elem.get(0));
         }
 
+        observe_content() {
+            this.content_observer.observe(this.content.get(0));
+        }
+
         compile() {
             // abstract, implemented in subclass
         }
@@ -165,20 +169,14 @@ if (window.cone === undefined) cone = {};
             this.thumb.css('width', this.thumbsize);
         }
 
-        update() {
-            /* promotes problem if contentsize changes
-                - read contentsize every time?
-                -> resize observer?
-            */
-            // if(this.contentsize === 0) {
-            //     // if elem starts out hidden
-            //     this.contentsize = this.content.outerWidth();
-            // }
 
-            this.contentsize = this.content.outerWidth(); // may remove, see above
+        update() {
             this.scrollsize = this.elem.outerWidth();
             this.scrollbar.css('width', this.scrollsize);
 
+            if(this.content.outerWidth() !== this.contentsize) {
+                this.contentsize = this.content.outerWidth();
+            }
             if(this.contentsize <= this.scrollsize) {
                 this.thumbsize = this.scrollsize;
             } else {
@@ -228,10 +226,12 @@ if (window.cone === undefined) cone = {};
         }
 
         update() {
-            this.contentsize = this.content.outerHeight(); // may remove, see ScrollBarX
             this.scrollsize = this.elem.outerHeight();
             this.scrollbar.css('height', this.scrollsize);
 
+            if(this.content.outerHeight() !== this.contentsize) {
+                this.contentsize = this.content.outerHeight();
+            }
             if(this.contentsize <= this.scrollsize) {
                 this.thumbsize = this.scrollsize;
             } else {
