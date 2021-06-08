@@ -8,11 +8,17 @@ Karma: https://karma-runner.github.io/6.3/intro/installation.html
 Istanbul: https://istanbul.js.org/
 Puppeteer: https://pptr.dev/
 
+Plugins:
+  - karma-qunit
+  - karma-chrome
+  - karma-viewport
+
 
 TESTING
 -------
 [X] - test scrollbar.js
 [~] - test topnav
+[~] - test ViewPort Singleton
 
 issues
 ------

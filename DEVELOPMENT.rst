@@ -7,7 +7,7 @@ Install npm::
 
 Install testrunner::
 
-    npm install qunit karma karma-qunit karma-coverage karma-chrome-launcher
+    npm install qunit karma karma-qunit karma-coverage karma-chrome-launcher karma-viewport
 
 Start karma server (immediately run tests)::
 

@@ -27,7 +27,40 @@ preprocessors[`${cone_app_static}/public.js`] = 'coverage';
 module.exports = function(config) {
     config.set({
         basePath: 'karma',
-        frameworks: ['qunit'],
+        frameworks: ['qunit', 'viewport'],
+        // Viewport configuration
+        viewport: {
+            breakpoints: [
+            {
+                name: "mobile",
+                size: {
+                    width: 559,
+                    height: 600
+                }
+            },
+            {
+                name: "small",
+                size: {
+                    width: 561,
+                    height: 1024
+                }
+            },
+            {
+                name: "medium",
+                size: {
+                    width: 1000,
+                    height: 900
+                }
+            },
+            {
+                name: "large",
+                size: {
+                    width: 1600,
+                    height: 1024
+                }
+            }
+            ]
+        },
         files: files,
         browsers: ['ChromeHeadless'],
         singlerun: true,

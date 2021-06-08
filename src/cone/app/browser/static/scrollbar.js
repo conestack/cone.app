@@ -50,10 +50,6 @@ if (window.cone === undefined) cone = {};
             this.scrollbar_observer.observe(this.elem.get(0));
         }
 
-        observe_content() {
-            this.content_observer.observe(this.content.get(0));
-        }
-
         compile() {
             // abstract, implemented in subclass
         }

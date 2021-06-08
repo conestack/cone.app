@@ -3,6 +3,35 @@ const { test } = QUnit;
 
 var fixture = $('#qunit-fixture');
 
+/* mock Viewport state */
+function mockNewViewport(mock_state) {
+	cone.viewport = new cone.ViewPort();
+	cone.viewport.state = mock_state;
+	cone.vp_state = mock_state;
+}
+function mockViewportChange(mock_state) {
+	cone.viewport.state = mock_state;
+	cone.vp_state = mock_state;
+	let e = {state:mock_state};
+
+	var evt = $.Event('viewport_changed');
+	evt.state = mock_state;
+	$(window).trigger(evt);
+}
+
+QUnit.skip('responsive stuff', assert => {
+
+	/* Set to 320px x 500px
+	   values must be int
+	   only works in karma, not qunit in browser! */
+	let val1 = 320;
+	let val2 = 500;
+	viewport.set(val1, val2);
+
+	assert.strictEqual($(window).width(), val1, 'viewport changed');
+})
+
+// XXXXXX namespace XXXXXX
 QUnit.module('cone namespace', hooks => {
 	test('test cone elems', assert => {
 		// viewport
@@ -32,9 +61,120 @@ QUnit.module('cone namespace', hooks => {
   })
 });
 
+// XXXXXX cone.ViewPort XXXXXX
+QUnit.module('cone.ViewPort', hooks => {
+	hooks.before( () => {
+		cone.viewport = new cone.ViewPort; 
+	})
 
-QUnit.skip( 'cone.ScrollBar', hooks => {
+	hooks.after( () => {
+		cone.viewport = null;
+		delete cone.viewport;
+	})
 
+	function switch_viewport(i, assert) {
+		viewport.set(states[i]);
+		$(window).trigger('resize');
+
+		assert.strictEqual($(window).width(), window_widths[i], `window width ${window_widths[i]}`);
+		assert.strictEqual($(window).height(), window_heights[i], `window height ${window_heights[i]}`);
+		assert.strictEqual(cone.viewport.state, i, `cone.viewport.state is ${i}`);
+	}
+
+	let states = ['mobile', 'small', 'medium', 'large'],
+	    window_widths = [559, 561, 1000, 1600],
+	    window_heights = [600, 1024, 900, 1024];
+
+	for( let i = 0; i <= 3; i++ ) {
+		QUnit.test(`vp${i}`, assert => {
+			switch_viewport(i, assert);
+		})
+	}
+})
+
+// XXXXXXX cone.ViewPortAware XXXXXXX
+QUnit.module('cone.ViewPortAware', hooks => {
+
+	QUnit.module('initial', hooks => {
+		hooks.beforeEach( () => {
+			cone.viewport = new cone.ViewPort();
+			test_obj = new cone.ViewPortAware();
+		})
+
+		hooks.afterEach( () => {
+			cone.viewport = null;
+			test_obj = null;
+			delete cone.viewport;
+			delete test_obj;
+		})
+
+		let states = ['mobile', 'small', 'medium', 'large'];
+		function switch_viewport(i, assert) {
+			viewport.set(states[i]);
+			$(window).trigger('resize');
+
+			assert.strictEqual(cone.viewport.state, i, `cone.viewport.state is ${i}`);
+			assert.strictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state is cone.viewport.state');
+		}
+
+		for( let i = 0; i <= 3; i++ ) {
+			QUnit.test(`vp${i}`, assert => {
+				switch_viewport(i, assert);
+			})
+		}
+	})
+
+	QUnit.module('unload()', hooks => {
+		hooks.before( () => {
+			viewport.set(1800, 1024);
+			cone.viewport = new cone.ViewPort();
+			test_obj = new cone.ViewPortAware();
+		})
+
+		test('unload vp', assert =>{
+			assert.strictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state is cone.viewport.state');
+			test_obj.unload();
+			viewport.set(500, 200);
+			$(window).trigger('resize');
+
+			assert.notStrictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state not changed after unload');
+		})
+
+		hooks.after( () => {
+			cone.viewport = null;
+			test_obj = null;
+			delete cone.viewport;
+			delete test_obj;
+		})
+	})
+
+	hooks.after( () => {
+		console.log('DONE - cone.ViewPortAware');
+	})
+});
+
+
+// XXXXXX cone.Content WIP XXXXXXX
+QUnit.module('cone.Content', hooks => {
+	hooks.before( () => {
+		let content_html = `
+			<div id="page-content-wrapper">
+			  <div id="page-content">
+			  </div>
+			</div>
+		`;
+		$('body').append(content_html);
+		let content_elem = $('#page-content-wrapper');
+		cone.content = new cone.Content(content_elem);
+	})
+
+	test('content', assert => {
+		assert.ok(true);
+	})
+})
+
+// XXXXXX cone.ScrollBar XXXXXX
+QUnit.module( 'cone.ScrollBar', hooks => {
 	hooks.after( () => {
 		console.log('DONE - cone.ScrollBar');
 	})
@@ -404,23 +544,7 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
 	}
 });
 
-/* mock Viewport state tests */
-function mockNewViewport(mock_state) {
-	cone.viewport = new cone.ViewPort();
-	cone.viewport.state = mock_state;
-	cone.vp_state = mock_state;
-}
-function mockViewportChange(mock_state) {
-	cone.viewport.state = mock_state;
-	cone.vp_state = mock_state;
-	let e = {state:mock_state};
-
-	var evt = $.Event('viewport_changed');
-	evt.state = mock_state;
-	$(window).trigger(evt);
-}
-
-test('Test cone.toggle_arrow', assert => {
+QUnit.test('Test cone.toggle_arrow', assert => {
 	let up = 'bi-chevron-up',
 		down = 'bi-chevron-down',
 		arrow_up = $(`<i class="dropdown-arrow ${up}" />`),
@@ -429,7 +553,7 @@ test('Test cone.toggle_arrow', assert => {
 	assert.strictEqual(arrow_up.attr('class'), `dropdown-arrow ${down}`, 'arrow class = down');
 	cone.toggle_arrow(arrow_down);
 	assert.strictEqual(arrow_down.attr('class'), `dropdown-arrow ${up}`, 'arrow class = up');
-})
+});
 
 
 /* XXXXXXX cone.topnav XXXXXXX */
@@ -437,46 +561,16 @@ test('Test cone.toggle_arrow', assert => {
 QUnit.module('cone.Topnav', hooks => {
 
 	hooks.before( () => {
-		let topnav_html = `
-		  <div id="topnav"
-		  	   style="
-				  box-sizing: border-box;
-				  height:4rem;
-				  display:flex;
-				  flex-direction:row;
-				  align-items: center;
-				  width: 100%;
-				  padding-left: .75rem;
-		  ">
-		    <div id="cone-logo"
-				 style="
-				 	font-size:1.5rem;
-					font-family: Arial;
-					margin-right: auto;
-					white-space: nowrap;
-					width: 32px;
-					height: 32px;
-			">
-		  	<a>
-		  	  <img class="logo" 
-				   src="/static/images/cone-logo-cone.svg"
-				   style="height:32px;">
-		  	  <span>
-		  	    Cone
-		  	  </span>
-		  	</a>
-		    </div>
+		create_topnav_elem();
+	})
 
-		    <div id="topnav-content" style="display:contents">
-		    </div>
-		    
-		    <div id="mobile-menu-toggle" style="display:none">
-		      <i class="bi bi-list"></i>
-		    </div>
-		  </div>
-		`;
-
-		$('body').append(topnav_html);
+	hooks.after( () => {
+		console.log('DONE - cone.Topnav');
+		cone.topnav = null;
+		cone.viewport = null;
+		delete cone.topnav;
+		delete cone.viewport;
+		$('#topnav').remove();
 	})
 
 
@@ -494,9 +588,9 @@ QUnit.module('cone.Topnav', hooks => {
 			assert.ok(cone.topnav instanceof cone.ViewPortAware, 'cone.topnav instance of ViewPortAware');
 
 			if(cone.viewport.state === cone.VP_MOBILE) {
-				style_to_mobile();
+				topnav_style_to_mobile();
 			} else {
-				style_to_desktop();
+				topnav_style_to_desktop();
 			}
 
 			//test that required elements exist
@@ -552,14 +646,14 @@ QUnit.module('cone.Topnav', hooks => {
 			mockNewViewport(3);
 			let topnav_elem = $('#topnav');	
 			cone.topnav = new cone.Topnav(topnav_elem);
-			style_to_desktop();
+			topnav_style_to_desktop();
 			console.log('state: ' + cone.viewport.state);
 		})
 
 		QUnit.module('cone.VP_MOBILE', hooks => {
 			hooks.before( () =>{
 				mockViewportChange(0);
-				style_to_mobile();
+				topnav_style_to_mobile();
 			});
 
 			test('visibility', assert => {
@@ -568,7 +662,7 @@ QUnit.module('cone.Topnav', hooks => {
 			})
 
 			test('toggle_menu()', assert => {
-				style_to_mobile();
+				topnav_style_to_mobile();
 				test_toggle_menu(assert);
 			})
 		});
@@ -576,7 +670,7 @@ QUnit.module('cone.Topnav', hooks => {
 		QUnit.module('cone.VP_SMALL', hooks => {
 			hooks.before( () => {
 				mockViewportChange(1);
-				style_to_desktop();
+				topnav_style_to_desktop();
 			});
 
 			test('visibility', assert => {
@@ -648,54 +742,6 @@ QUnit.module('cone.Topnav', hooks => {
 
 	/////////////////////////////////////////
 
-	function style_to_mobile() {
-		let topnav = cone.topnav;
-		topnav.elem.css({
-			'padding': '1rem',
-			'height': '4rem',
-
-		});
-		topnav.logo.css('margin-right', 'auto');
-		$('span', topnav.logo).css('display', 'none'); // hidden via css
-
-		topnav.content.css({
-			'position': 'absolute',
-			'top': '4rem',
-			'left': 0,
-			'display': 'block',
-			'flex-direction': 'column',
-			'width': '100%',
-			'z-index': 1000
-		}).hide();
-		topnav.toggle_button.css({
-			'display': 'block',
-			'font-size': '2rem',
-			'margin-left': '1rem'
-		});
-	}
-
-	function style_to_desktop() {
-		let topnav = cone.topnav;
-		topnav.elem.css({
-			'padding': '0',
-			'padding-left': '.75rem'
-		});
-		topnav.logo.css('margin-right', 'auto'); // needed?
-		$('span', topnav.logo).css('display', 'inline-block'); // show via css
-
-		topnav.content.css({
-			'position': 'absolute',
-			'top': '',
-			'left': '',
-			'display': 'contents',
-			'flex-direction': 'row',
-			'width': '100%'
-		});
-		topnav.toggle_button.css({
-			'display': 'none',
-		});
-	}
-
 	function assertVisibility(assert) {
 
 		let topnav = cone.topnav;
@@ -708,7 +754,7 @@ QUnit.module('cone.Topnav', hooks => {
 		assert.ok(topnav.logo.is(':visible'), 'logo is visible');
 		let logo_img = $('img', topnav.logo);
 		assert.strictEqual(logo_img.attr('src'), '/static/images/cone-logo-cone.svg', 'correct img');
-		//assert.strictEqual(logo_img.outerHeight(), 32, 'logo height is 32');
+		//assert.strictEqual(logo_img.outerHeight(), 32, 'logo height is 32'); // fails, why?
 		//assert.strictEqual(logo_img.outerHeight(), 32, 'logo width is 32');
 
 		if(cone.viewport.state === cone.VP_MOBILE) {
@@ -742,86 +788,157 @@ QUnit.module('cone.Topnav', hooks => {
 		  done();
 		}, 3000 );
 	}
-	
 })
 
 
 // cone.MainMenuTop
 
-// QUnit.skip( 'cone.MainMenuTop', hooks => {
+QUnit.module( 'cone.MainMenuTop', hooks => {
 
-//   QUnit.module('initial');
-//   let mainmenu_elem = $('#main-menu');
+	let vp_states = ['mobile', 'small', 'medium', 'large'];
 
-//   function create_elems(viewport) {
-//     cone.viewport = new cone.ViewPort();
-//     mockViewportChange(viewport);
-//     cone.main_menu_top = new cone.MainMenuTop(mainmenu_elem);
-//   }
+	QUnit.module('no sidebar', hooks => {
 
-//   function check_elems(viewport) {
-//     test(`check elem vp: ${viewport}`, assert => {
-//       create_elems(viewport);
-//       let mm_top = cone.main_menu_top;
-//       assert.ok(cone.topnav, 'cone.topnav exists');
-//       assert.ok(mm_top.elem, 'elem exists');
-//       assert.ok(mm_top.main_menu_items[2], 'all three array children exist');
+		QUnit.module('initial load', hooks => {
 
-//       if(cone.vp_state === cone.VP_MOBILE) {
-//         assert.notStrictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin NOT 2rem`);
-//         if(cone.main_menu_sidebar) {
-//           assert.strictEqual(mm_top.elem.css('display'), 'none', 'elem hidden');
-//         } else {
-//           assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem display is flex')
-//         }
-//       } else {
-//         assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin:2rem(32px)`);
-//         assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem visible'); // fails because external css styling not included
-//       }
-//     })
-//   }
+			for( let i = 0; i <= 3; i++ ) {
+				QUnit.module(`Viewport ${i}`, hooks => {
+					hooks.before( () => {
+						console.log('before called');
+						create_elems(vp_states[i]);
+					})
 
-//   QUnit.module('initial no sidebar');
-//     check_elems(cone.VP_MOBILE);
-//     check_elems(cone.VP_SMALL);
-//     check_elems(cone.VP_MEDIUM);
-//     check_elems(cone.VP_LARGE);
+					test('check elems', assert => {
+						check_elems(assert);
+					})
 
-//   QUnit.module('initial with sidebar');
-//     let sidebar_elem = $('#sidebar_left');
-//     cone.viewport = new cone.ViewPort();
-//     mockViewportChange(cone.VP_LARGE);
+					hooks.after( assert => {
+						console.log('after called');
+						remove_elems(assert);
+					})
+				})
+			}
+		})
+	})
 
-//     cone.main_menu_sidebar = new cone.SidebarMenu(sidebar_elem);
-//     check_elems(cone.VP_MOBILE);
-//     check_elems(cone.VP_SMALL);
-//     check_elems(cone.VP_MEDIUM);
-//     check_elems(cone.VP_LARGE);
-// })
+	QUnit.module('with sidebar', hooks => {
 
-/// cone.MainMenuItem ///
-  // let data_menu_items = `[{
-	//   "target": "#", 
-	//   "description": null, 
-	//   "selected": false, 
-	//   "url": "#", 
-	//   "id": "child_1", 
-	//   "icon": "bi bi-kanban", 
-	//   "title": "child_1"
-	// }]`;
+		QUnit.module('initial load', hooks => {
 
-	// let item = $(`
-	//   <li class="mainmenu-item"
-	//       data-menu-items="${data_menu_items}">
-	//     <a href="#">
-	//       <i class="#"></i>
-	//       <span class="mainmenu-title">
-	//         Title
-	//       </span>
-	//     </a>
-	//     <i class="#"></i>
-	//   </li>`
-	// );
+			for( let i = 0; i <= 3; i++ ) {
+				QUnit.module(`Viewport ${i}`, hooks => {
+					hooks.before( () => {
+						cone.main_menu_sidebar = true;
+						console.log('before called');
+						create_elems(vp_states[i]);
+					})
+
+					test('check elems', assert => {
+						check_elems(assert);
+					})
+
+					hooks.after( assert => {
+						console.log('after called');
+						remove_elems(assert);
+					})
+				})
+			}
+		})
+	})
+
+	///////////////////////////////////////////
+
+	function create_elems(vp) {
+		console.log('create_elems called');
+
+		create_topnav_elem();
+		create_mm_top_elem();
+
+		viewport.set(vp);
+		cone.viewport = new cone.ViewPort();
+
+		let mainmenu_elem = $('#main-menu');
+		let topnav_elem = $('#topnav');
+
+		cone.topnav = new cone.Topnav(topnav_elem);
+		cone.main_menu_top = new cone.MainMenuTop(mainmenu_elem);
+
+		if( vp === 'mobile') {
+			topnav_style_to_mobile();
+		} else {
+			mm_top_style_to_mobile();
+		}
+	}
+
+	function check_elems(assert) {
+		let mm_top = cone.main_menu_top;
+		assert.strictEqual(cone.main_menu_top.vp_state, cone.viewport.state, 'vp_state is viewport.state');
+		assert.ok(cone.topnav, 'cone.topnav exists');
+		assert.ok(mm_top.elem, 'elem exists');
+		assert.ok(mm_top.main_menu_items[1], 'all 2 array children exist');
+
+		if(mm_top.vp_state === 0) {
+			assert.notStrictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin NOT 2rem`);
+			if(cone.main_menu_sidebar) {
+				assert.strictEqual(mm_top.elem.css('display'), 'none', 'elem hidden');
+			} else {
+				assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem display is flex')
+			}
+		} else {
+			assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin:2rem(32px)`);
+			// assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem visible'); // fails because external css styling not included
+		}
+	}
+
+	function remove_elems(assert) {
+		console.log('remove_elems called');
+
+		function remove_topnav(){
+			cone.topnav = null;
+			delete cone.topnav;
+		}
+
+		// timeout required - else topnav gets deleted before mainmenu
+		let done = assert.async();
+
+		setTimeout(function() {
+			remove_topnav();
+			done();
+		}, 100 );
+
+		cone.main_menu_top = null;
+		delete cone.main_menu_top;
+		cone.viewport = null;
+		delete cone.viewport;
+
+		$('#topnav').remove();
+	}
+
+})
+
+// cone.MainMenuItem ///
+//   let data_menu_items = `[{
+// 	  "target": "#",
+// 	  "description": null,
+// 	  "selected": false,
+// 	  "url": "#",
+// 	  "id": "child_1",
+// 	  "icon": "bi bi-kanban",
+// 	  "title": "child_1"
+// 	}]`;
+
+// 	let item = $(`
+// 	  <li class="mainmenu-item"
+// 	      data-menu-items="${data_menu_items}">
+// 	    <a href="#">
+// 	      <i class="#"></i>
+// 	      <span class="mainmenu-title">
+// 	        Title
+// 	      </span>
+// 	    </a>
+// 	    <i class="#"></i>
+// 	  </li>`
+// 	);
 
 
 // cone.MainMenuSidebar
@@ -921,3 +1038,197 @@ QUnit.module('cone.Topnav', hooks => {
 
 	// window resize
 }) */
+
+
+///////// html /////////
+
+
+// topnav
+function create_topnav_elem() {
+	console.log('create_topnav_elem called');
+    let topnav_html = `
+		<div id="topnav"
+			style="
+				box-sizing: border-box;
+				height:4rem;
+				display:flex;
+				flex-direction:row;
+				align-items: center;
+				width: 100%;
+				padding-left: .75rem;
+		">
+		<div id="cone-logo"
+			style="
+				font-size:1.5rem;
+				font-family: Arial;
+				margin-right: auto;
+				white-space: nowrap;
+				width: 32px;
+				height: 32px;
+		">
+			<a>
+			<img class="logo"
+				src="/static/images/cone-logo-cone.svg"
+				style="height:32px;">
+			<span>
+				Cone
+			</span>
+			</a>
+		</div>
+
+		<div id="topnav-content" style="display:contents">
+		</div>
+
+		<div id="mobile-menu-toggle" style="display:none">
+			<i class="bi bi-list"></i>
+		</div>
+		</div>
+    `;
+
+  $('body').append(topnav_html);
+}
+
+function topnav_style_to_mobile() {
+    let topnav = cone.topnav;
+    topnav.elem.css({
+        'padding': '1rem',
+        'height': '4rem',
+    });
+    topnav.logo.css('margin-right', 'auto');
+    $('span', topnav.logo).css('display', 'none'); // hidden via css
+
+    topnav.content.css({
+        'position': 'absolute',
+        'top': '4rem',
+        'left': 0,
+        'display': 'block',
+        'flex-direction': 'column',
+        'width': '100%',
+        'z-index': 1000
+    }).hide();
+    topnav.toggle_button.css({
+        'display': 'block',
+        'font-size': '2rem',
+        'margin-left': '1rem'
+    });
+}
+
+function topnav_style_to_desktop() {
+    let topnav = cone.topnav;
+    topnav.elem.css({
+        'padding': '0',
+        'padding-left': '.75rem'
+    });
+    topnav.logo.css('margin-right', 'auto'); // needed?
+    $('span', topnav.logo).css('display', 'inline-block'); // show via css
+
+    topnav.content.css({
+        'position': 'absolute',
+        'top': '',
+        'left': '',
+        'display': 'contents',
+        'flex-direction': 'row',
+        'width': '100%'
+    });
+    topnav.toggle_button.css({
+        'display': 'none',
+    });
+}
+
+
+// mainmenu top
+
+function create_mm_top_elem() {
+	console.log('create_mm_top_elem called');
+	let mainmenu_item_html = `
+		<li class="mainmenu-item"
+			style="
+			  display: flex;
+			  align-items: center;
+			  height: 100%;
+			"
+		>
+			<a>
+				<i class="bi bi-heart"></i>
+				<span class="mainmenu-title">
+					Title
+				</span>
+			</a>
+		</li>
+	`;
+
+	let mainmenu_item_menu_html = `
+		<li class="mainmenu-item menu"
+			style="
+				display: flex;
+				align-items: center;
+				height: 100%;
+			"
+		>
+			<a>
+				<i class="bi bi-heart"></i>
+				<span class="mainmenu-title">
+					Title
+				</span>
+			</a>
+
+			<i class="dropdown-arrow bi bi-chevron-down"></i>
+		</li>
+	`;
+
+	let mainmenu_html = `
+		<div id="main-menu"
+		     style="
+			   display:flex;
+			   flex-direction:row;
+			   flex-wrap:nowrap;
+			   align-items: center;
+			   height: 100%;
+			   margin-right: auto;
+			   padding-top: .5rem;
+			 "
+		>
+			<ul id="mainmenu"
+			    style="
+				  display: inline-flex;
+				  flex-wrap: nowrap;
+				  height: 100%;
+				  margin-bottom: 0;
+				  padding: 0;
+			">
+			</ul>
+		</div>
+	`;
+
+	$('#topnav-content').append(mainmenu_html);
+	$('#mainmenu').append(mainmenu_item_html);
+	$('#mainmenu').append(mainmenu_item_menu_html);
+}
+
+function mm_top_style_to_desktop() {
+	$('.mainmenu-item').css({
+		'white-space': 'nowrap',
+		'padding': '0 10px'
+	});
+}
+
+function mm_top_style_to_mobile() {
+	$('#main-menu').css({
+		'transform': 'none',
+		'overflow': 'visible'
+	});
+
+	$('#mainmenu').css({
+		'padding': '0',
+		'line-height': '2',
+		'width': '100%',
+		'flex-direction': 'column',
+		'overflow': 'hidden',
+		'transform': 'none'
+	});
+
+	$('#mainmenu .mainmenu-title').css({
+		'display': 'inline-block'
+	});
+	$('.mainmenu-item').css('display', 'block');
+}
