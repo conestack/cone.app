@@ -18,7 +18,8 @@ TESTING
 -------
 [X] - test scrollbar.js
 [~] - test topnav
-[~] - test ViewPort Singleton
+[X] - test ViewPort Singleton
+[~] - test sidebarMenu
 
 issues
 ------
