@@ -3,37 +3,29 @@ const { test } = QUnit;
 
 var vp_states = ['mobile', 'small', 'medium', 'large'];
 
-/* mock Viewport state */
-function mockNewViewport(mock_state) {
-	cone.viewport = new cone.ViewPort();
-	cone.viewport.state = mock_state;
-	cone.vp_state = mock_state;
-}
-function mockViewportChange(mock_state) {
-	cone.viewport.state = mock_state;
-	cone.vp_state = mock_state;
-	let e = {state:mock_state};
+// QUnit.begin = function() {
+//     console.log('####');
+// };
 
-	var evt = $.Event('viewport_changed');
-	evt.state = mock_state;
-	$(window).trigger(evt);
-}
+// QUnit.testStart = function(test) {
+//     var module = test.module ? test.module : '';
+//     console.log('#' + module + " " + test.name + ": started.");
+// };
 
-QUnit.skip('responsive stuff', assert => {
-
-	/* Set to 320px x 500px
-	   values must be int
-	   only works in karma, not qunit in browser! */
-	let val1 = 320;
-	let val2 = 500;
-	viewport.set(val1, val2);
-
-	assert.strictEqual($(window).width(), val1, 'viewport changed');
-})
+// QUnit.testDone = function(test) {
+//     var module = test.module ? test.module : '';
+//     console.log('#' + module + " " + test.name + ": done.");
+//     console.log('####');
+// };
 
 // XXXXXX namespace XXXXXX
-QUnit.skip('cone namespace', hooks => {
+QUnit.module('cone namespace', hooks => {
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone Namespace');
+	})
+
 	test('test cone elems', assert => {
+		console.log('- test: cone elems');
 		// viewport
 		assert.ok(cone.viewport instanceof cone.ViewPort);
 		assert.strictEqual(cone.VP_MOBILE, 0, 'cone.VP_MOBILE is 0');
@@ -58,18 +50,25 @@ QUnit.skip('cone namespace', hooks => {
 
 		// content
 		assert.strictEqual(cone.content, null, 'cone.content is null');
-  })
+  	});
+
+	hooks.after( () => {
+		console.log('COMPLETE: cone Namespace');
+		console.log('-------------------------------------');
+	})
 });
 
 // XXXXXX cone.ViewPort XXXXXX
-QUnit.skip('cone.ViewPort', hooks => {
+QUnit.module('cone.ViewPort', hooks => {
 	hooks.before( () => {
+		console.log('NOW RUNNING: cone.ViewPort');
 		cone.viewport = new cone.ViewPort; 
 	})
 
 	hooks.after( () => {
 		cone.viewport = null;
-		// delete cone.viewport;
+		console.log('COMPLETE: cone.ViewPort');
+		console.log('-------------------------------------');
 	})
 
 	function switch_viewport(i, assert) {
@@ -87,26 +86,43 @@ QUnit.skip('cone.ViewPort', hooks => {
 
 	for( let i = 0; i <= 3; i++ ) {
 		QUnit.test(`vp${i}`, assert => {
+			console.log(`- test: vp${i}`);
 			switch_viewport(i, assert);
 		})
 	}
 })
 
 // XXXXXXX cone.ViewPortAware XXXXXXX
-QUnit.skip('cone.ViewPortAware', hooks => {
+QUnit.module('cone.ViewPortAware', hooks => {
+
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone.ViewPortAware');
+	});
+
+	hooks.after( () => {
+		console.log('COMPLETE: cone.ViewPortAware');
+		console.log('-------------------------------------');
+	});
 
 	QUnit.module('initial', hooks => {
+		hooks.before( () => {
+			console.log('- now running: initial');
+		})
+
+		hooks.after( () => {
+			console.log('- done: initial');
+		})
+	
 		hooks.beforeEach( () => {
 			cone.viewport = new cone.ViewPort();
 			test_obj = new cone.ViewPortAware();
-		})
+		});
 
 		hooks.afterEach( () => {
 			cone.viewport = null;
 			test_obj = null;
-			// delete cone.viewport;
-			// delete test_obj;
-		})
+			delete test_obj;
+		});
 
 		let states = ['mobile', 'small', 'medium', 'large'];
 		function switch_viewport(i, assert) {
@@ -119,38 +135,37 @@ QUnit.skip('cone.ViewPortAware', hooks => {
 
 		for( let i = 0; i <= 3; i++ ) {
 			QUnit.test(`vp${i}`, assert => {
+				console.log(`-- test: vp${i}`);
 				switch_viewport(i, assert);
-			})
+			});
 		}
-	})
+	});
 
 	QUnit.module('unload()', hooks => {
 		hooks.before( () => {
+			console.log('- now running: unload()');
 			viewport.set(1800, 1024);
 			cone.viewport = new cone.ViewPort();
 			test_obj = new cone.ViewPortAware();
-		})
+		});
 
-		test('unload vp', assert =>{
+		test('unload vp', assert => {
+			console.log('-- test: unload vp');
 			assert.strictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state is cone.viewport.state');
 			test_obj.unload();
 			viewport.set(500, 200);
 			$(window).trigger('resize');
 
 			assert.notStrictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state not changed after unload');
-		})
+		});
 
 		hooks.after( () => {
 			cone.viewport = null;
 			test_obj = null;
-			// delete cone.viewport;
-			// delete test_obj;
-		})
-	})
-
-	hooks.after( () => {
-		console.log('DONE - cone.ViewPortAware');
-	})
+			delete test_obj;
+			console.log('- done: unload()');
+		});
+	});
 });
 
 
@@ -160,20 +175,26 @@ QUnit.skip('cone.ViewPortAware', hooks => {
 //cone.searchbar and cone.mainMenuTop seem to conflict, why??
 // -> changed position from after mmtop to before mmtop
 
-QUnit.skip('cone.Searchbar', hooks => {
+QUnit.module('cone.Searchbar', hooks => {
 	let vp_states = ['mobile', 'small', 'medium', 'large'];
 
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone.Searchbar');
+	});
+
 	hooks.after( () => {
-		console.log('DONE - cone.Searchbar');
 		cone.searchbar = null;
 		cone.viewport = null;
 		$('#cone-searchbar').remove();
+		console.log('COMPLETE: cone.Searchbar');
+		console.log('-------------------------------------');
 	})
 
 	QUnit.module('initial load', hooks => {
 		for( let i = 0; i <= 3; i++ ) {
 			QUnit.module(`Viewport ${i}`, hooks => {
 				hooks.beforeEach( () => {
+					console.log(`- now running: Viewport ${i}`);
 					viewport.set(vp_states[i]);
 					cone.viewport = new cone.ViewPort();
 					create_searchbar_elem();
@@ -183,11 +204,12 @@ QUnit.skip('cone.Searchbar', hooks => {
 				hooks.afterEach( () => {
 					cone.searchbar = null;
 					cone.viewport = null;
-					//delete cone.searchbar;
 					$('#cone-searchbar').remove();
+					console.log(`- done: Viewport ${i}`);
 				})
 
 				test('check elems', assert => {
+					console.log(`-- test: check elems`);
 					check_elems(assert);
 				})
 			})
@@ -196,14 +218,20 @@ QUnit.skip('cone.Searchbar', hooks => {
 
 	QUnit.module('vp_changed()', hooks => {
 		hooks.before( () => {
+			console.log('- now running: vp_changed()');
 			viewport.set('large');
 			cone.viewport = new cone.ViewPort();
 			create_searchbar_elem();
 			cone.searchbar = new cone.Searchbar( $('#cone-searchbar') );
+		});
+
+		hooks.after( () => {
+			console.log('- done: vp_changed()');
 		})
 
 		for( let i = 0; i <= 3; i++ ) {
 			test(`Viewport ${i}`, assert => {
+				console.log(`-- test: Viewport ${i}`);
 				viewport.set(vp_states[i]);
 				$(window).trigger('resize');
 				check_elems(assert);
@@ -212,8 +240,8 @@ QUnit.skip('cone.Searchbar', hooks => {
 	})
 
 	//////////////////////////////////
+
 	function check_elems(assert) {
-		console.log('check_elems() called');
 		assert.strictEqual(cone.searchbar.vp_state, cone.viewport.state, 'cone vp_state is viewport state');
 		assert.strictEqual(cone.searchbar.elem.css('display'), 'block', 'elem display block');
 
@@ -230,9 +258,11 @@ QUnit.skip('cone.Searchbar', hooks => {
 	}
 })
 
-// XXXXXX cone.Content WIP XXXXXXX
-QUnit.skip('cone.Content', hooks => {
+
+// XXXXXX cone.Content XXXXXXX
+QUnit.module.todo('cone.Content', hooks => {
 	hooks.before( () => {
+		console.log('NOW RUNNING: cone.Content');
 		let content_html = `
 			<div id="page-content-wrapper">
 			  <div id="page-content">
@@ -244,15 +274,28 @@ QUnit.skip('cone.Content', hooks => {
 		cone.Content.initialize( $('body') );
 	})
 
+	hooks.after( () => {
+		cone.content = null;
+		$('#page-content-wrapper').remove();
+		console.log('COMPLETE: cone.Content');
+		console.log('-------------------------------------');
+	})
+
 	test('content', assert => {
+		console.log('- test: content');
 		assert.ok(true);
 	})
 })
 
+
 // XXXXXX cone.ScrollBar XXXXXX
-QUnit.skip( 'cone.ScrollBar', hooks => {
+QUnit.module( 'cone.ScrollBar', hooks => {
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone.ScrollBar');
+	})
 	hooks.after( () => {
-		console.log('DONE - cone.ScrollBar');
+		console.log('COMPLETE: cone.ScrollBar');
+		console.log('-------------------------------------');
 	})
 
 	let test_container_dim = 400,
@@ -263,7 +306,7 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
 
 		hooks.before( () => {
 			//init
-			console.log('--- cone.ScrollBarX ---');
+			console.log('- now running: cone.ScrollBarX');
 			let scrollbar_test_elem = `
 			<div style="width:${test_container_dim}px; height:200px; overflow:hidden; left:0; top:0; position:absolute;" id="test-container-x">
 				<div style="width:${test_content_dim}px; height:200px; position:relative;">
@@ -283,42 +326,51 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
 			//cleanup
 			$('#test-container-x').remove();
 			test_scrollbar_x = null;
-			// delete test_scrollbar_x;
+			delete test_scrollbar_x;
 			$(document).off();
+			console.log('- done: cone.ScrollBarX');
 		})
 
 		test('compile()', assert => {
+			console.log('-- test: compile');
 			test_compile(test_scrollbar_x, assert);
 			assert.ok(test_scrollbar_x.scrollbar.parents("#test-container-x").length == 1, 'container has scrollbar');
 			assert.ok(test_scrollbar_x.content.parents("#test-container-x").length == 1, 'container has content');
 		})
 
 		test('update() fixed dim', assert => {
+			console.log('-- test: update() fixed dim');
 			update_fixed_dim(test_scrollbar_x, assert);
 		});
 
 		test('update() random dim', assert => {
+			console.log('-- test: update() random dim');
 			update_random_dim(test_scrollbar_x, assert);
 		})
 
 		test('mouse_in_out()', assert => {
+			console.log('-- test: mouse_in_out');
 			handle_mouse_in_out(test_scrollbar_x, assert);
 		})
 
 		test('scroll_handle()', assert => {
+			console.log('-- test: scroll_handle');
 			test_scroll_handle(test_scrollbar_x, assert);
 		})
 
 		test('click_handle()', assert => {
+			console.log('-- test: click_handle');
 			test_click_handle(test_scrollbar_x, assert);
 		})
 
 		test('drag_handle()', assert => {
+			console.log('-- test: drag_handle');
 			test_drag_handle(test_scrollbar_x, assert);
 		})
 
 		// events deleted
 		test('unload()', assert => {
+			console.log('-- test: unload');
 			test_scrollbar_x.unload();
 			assert.notOk($._data($(test_scrollbar_x.elem)[0], "events"), 'elem events removed');
 			assert.notOk($._data($(test_scrollbar_x.scrollbar)[0], "events"), 'scrollbar events removed');
@@ -329,7 +381,7 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
   	QUnit.module('cone.ScrollBarY', hooks => {
 		hooks.before( () => {
 			//init
-			console.log('--- cone.ScrollBarY ---');
+			console.log('- now running: cone.ScrollBarY');
 			let scrollbar_test_elem = `
 				<div style="width:200pxpx; height:${test_container_dim}px; overflow:hidden; left:0; top:0; position:absolute;" id="test-container-y">
 				<div style="width:200px; height:${test_content_dim}px; position:relative;">
@@ -349,42 +401,51 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
 			//cleanup
 			$('#test-container-y').remove();
 			test_scrollbar_y = null;
-			// delete test_scrollbar_y;
+			delete test_scrollbar_y;
 			$(document).off();
+			console.log('- done: cone.ScrollBarY');
 		})
 
 		test('compile()', assert => {
+			console.log('-- test: compile');
 			test_compile(test_scrollbar_y, assert);
 			assert.ok(test_scrollbar_y.scrollbar.parents("#test-container-y").length == 1, 'container has scrollbar');
 			assert.ok(test_scrollbar_y.content.parents("#test-container-y").length == 1, 'container has content');
 		})
 
 		test('update() fixed dim', assert => {
+			console.log('-- test: update() fixed dim');
 			update_fixed_dim(test_scrollbar_y, assert);
 		});
 
 		test('update() random dim', assert => {
+			console.log('-- test: update() random dim');
 			update_random_dim(test_scrollbar_y, assert);
 		})
 
 		test('mouse_in_out()', assert => {
+			console.log('-- test: mouse_in_out');
 			handle_mouse_in_out(test_scrollbar_y, assert);
 		})
 
 		test('scroll_handle()', assert => {
+			console.log('-- test: scroll_handle');
 			test_scroll_handle(test_scrollbar_y, assert);
 		})
 
 		test('click_handle()', assert => {
+			console.log('-- test: click_handle');
 			test_click_handle(test_scrollbar_y, assert);
 		})
 
 		test('drag_handle()', assert => {
+			console.log('-- test: drag_handle');
 			test_drag_handle(test_scrollbar_y, assert);
 		})
 
 		// events deleted
 		test('unload()', assert => {
+			console.log('-- test: unload');
 			test_scrollbar_y.unload();
 			assert.notOk($._data($(test_scrollbar_y.elem)[0], "events"), 'elem events removed');
 			assert.notOk($._data($(test_scrollbar_y.scrollbar)[0], "events"), 'scrollbar events removed');
@@ -410,7 +471,6 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
 	}
 
 	function reset_obj(obj) {
-		console.log('done - ' + QUnit.config.current.testName);
 		test_container_dim = 400,
 		test_content_dim = 800,
 		test_thumbsize = test_container_dim ** 2 / test_content_dim;
@@ -620,7 +680,7 @@ QUnit.skip( 'cone.ScrollBar', hooks => {
 	}
 });
 
-QUnit.skip('Test cone.toggle_arrow', assert => {
+test('Test cone.toggle_arrow', assert => {
 	let up = 'bi-chevron-up',
 		down = 'bi-chevron-down',
 		arrow_up = $(`<i class="dropdown-arrow ${up}" />`),
@@ -634,19 +694,27 @@ QUnit.skip('Test cone.toggle_arrow', assert => {
 
 /* XXXXXXX cone.topnav XXXXXXX */
 
-QUnit.skip('cone.Topnav', hooks => {
+QUnit.module('cone.Topnav', hooks => {
 
 	let vp_states = ['mobile', 'small', 'medium', 'large'];
 
-	hooks.after( () => {
-		console.log('AFTER')
+	hooks.before ( () => {
+		console.log('NOW RUNNING: cone.Topnav');
 	})
+	hooks.after( () => {
+		cone.topnav = null;
+		cone.viewport = null;
+		$('#topnav').remove();
+		console.log('COMPLETE: cone.Topnav');
+		console.log('-------------------------------------');
+	})
+
 	QUnit.module('initial load', hooks => {
 		for( let i=0; i <=3; i++ ) {
 
 			QUnit.module(`Viewport ${i}`, hooks => {
 				hooks.before( () => {
-					console.log('before called');
+					console.log(`- now running: initial Viewport ${i}`);
 					create_topnav_elem();
 
 					viewport.set(vp_states[i]);
@@ -661,7 +729,7 @@ QUnit.skip('cone.Topnav', hooks => {
 				})
 
 				test(`cone.viewport ${i}`, assert => {
-					console.log(`cone.viewport ${i}`);
+					console.log(`-- test: cone.viewport ${i}`);
 					
 					assert.ok(cone.topnav instanceof cone.Topnav, 'cone.topnav instance of Topnav');
 					assert.ok(cone.topnav instanceof cone.ViewPortAware, 'cone.topnav instance of ViewPortAware');
@@ -685,6 +753,7 @@ QUnit.skip('cone.Topnav', hooks => {
 					cone.topnav = null;
 					cone.viewport = null;
 					$('#topnav').remove();
+					console.log(`- done: initial Viewport ${i}`);
 				})
 			})
 		}
@@ -702,7 +771,6 @@ QUnit.skip('cone.Topnav', hooks => {
 		})
 
 		hooks.after( () => {
-			console.log('after');
 			cone.topnav = null;
 			cone.viewport = null;
 			$('#topnav').remove();
@@ -712,7 +780,7 @@ QUnit.skip('cone.Topnav', hooks => {
 
 			QUnit.module(`Viewport ${i}`, hooks => {
 				hooks.before( () => {
-					console.log('before hooks')
+					console.log(`- now running: change to Viewport ${i}`);
 					viewport.set(vp_states[i]);
 					cone.viewport = new cone.ViewPort();
 					$(window).trigger('resize');
@@ -725,7 +793,7 @@ QUnit.skip('cone.Topnav', hooks => {
 				})
 
 				test(`cone.viewport ${i}`, assert => {
-					console.log(`cone.viewport ${i}`);
+					console.log(`-- test: cone.viewport ${i}`);
 					assertVisibility(assert);
 					if( cone.viewport.state === 0 ) {
 						test_toggle_menu(assert);
@@ -733,13 +801,14 @@ QUnit.skip('cone.Topnav', hooks => {
 				})
 
 				hooks.afterEach( () => {
-					console.log(`done - cone.viewport ${i}`);
+					console.log(`- done: change to Viewport ${i}`);
 				})
 			})
 		}
     });
 
 	test('unload', assert => {
+		console.log(`- test: unload`);
 		create_topnav_elem();
 		viewport.set('mobile');
 		cone.viewport = new cone.ViewPort();
@@ -757,6 +826,7 @@ QUnit.skip('cone.Topnav', hooks => {
 	})
 
 	test('topnav not null', assert => {
+		console.log(`- test: not null`);
 		create_topnav_elem();
 		cone.viewport = new cone.ViewPort();
 		cone.Topnav.initialize( $('body') );
@@ -817,227 +887,236 @@ QUnit.skip('cone.Topnav', hooks => {
 })
 
 
-// XXXXXX cone.MainMenuTop XXXXXX
-
-QUnit.skip( 'cone.MainMenuTop', hooks => {
-
-	let vp_states = ['mobile', 'small', 'medium', 'large'];
-
-	hooks.after( () => {
-		console.log('AFTER MMTOP')
-		console.log(cone.topnav);
-		console.log(cone.main_menu_top);
-	})
-
-	QUnit.module('no sidebar', hooks => {
-
-		QUnit.module('initial load', hooks => {
-
-			for( let i = 0; i <= 3; i++ ) {
-				QUnit.module(`Viewport ${i}`, hooks => {
-					hooks.before( () => {
-						console.log('before called');
-						create_elems(vp_states[i]);
-					})
-
-					test('check elems', assert => {
-						check_elems(assert);
-					})
-
-					hooks.after( assert => {
-						console.log('after called');
-						remove_elems(assert);
-					})
-				})
-			}
-		})
-	})
-
-	QUnit.module('with sidebar', hooks => {
-
-		QUnit.module('initial load', hooks => {
-
-			for( let i = 0; i <= 3; i++ ) {
-				QUnit.module(`Viewport ${i}`, hooks => {
-					hooks.before( () => {
-						cone.main_menu_sidebar = true;
-						console.log('before called');
-						create_elems(vp_states[i]);
-					})
-
-					test('check elems', assert => {
-						check_elems(assert);
-					})
-
-					hooks.after( assert => {
-						console.log('after called');
-						remove_elems(assert);
-					})
-				})
-			}
-		})
-	})
-
-	///////////////////////////////////////////
-
-	function create_elems(vp) {
-		console.log('create_elems called');
-
-		create_topnav_elem();
-		create_mm_top_elem();
-
-		viewport.set(vp);
-		cone.viewport = new cone.ViewPort();
-
-		let mainmenu_elem = $('#main-menu');
-		let topnav_elem = $('#topnav');
-
-		cone.topnav = new cone.Topnav(topnav_elem);
-		cone.main_menu_top = new cone.MainMenuTop(mainmenu_elem);
-
-		if( vp === 'mobile') {
-			topnav_style_to_mobile();
-		} else {
-			mm_top_style_to_mobile();
-		}
-	}
-
-	function check_elems(assert) {
-		let mm_top = cone.main_menu_top;
-		assert.strictEqual(cone.main_menu_top.vp_state, cone.viewport.state, 'vp_state is viewport.state');
-		assert.ok(cone.topnav, 'cone.topnav exists');
-		assert.ok(mm_top.elem, 'elem exists');
-		assert.ok(mm_top.main_menu_items[1], 'all 2 array children exist');
-
-		if(mm_top.vp_state === 0) {
-			assert.notStrictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin NOT 2rem`);
-			if(cone.main_menu_sidebar) {
-				assert.strictEqual(mm_top.elem.css('display'), 'none', 'elem hidden');
-			} else {
-				assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem display is flex')
-			}
-		} else {
-			assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin:2rem(32px)`);
-			// assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem visible'); // fails because external css styling not included
-		}
-	}
-
-	function remove_elems(assert) {
-		console.log('remove_elems called');
-
-		function remove_topnav(){
-			cone.topnav = null;
-			//delete cone.topnav;
-		}
-
-		// timeout required - else topnav gets deleted before mainmenu
-		let done = assert.async();
-
-		setTimeout(function() {
-			remove_topnav();
-			done();
-		}, 100 );
-
-		cone.main_menu_top = null;
-		//delete cone.main_menu_top;
-		cone.viewport = null;
-		//delete cone.viewport;
-
-		$('#topnav').remove();
-	}
-
-})
-
-// cone.MainMenuItem ///
-//   let data_menu_items = `[{
-// 	  "target": "#",
-// 	  "description": null,
-// 	  "selected": false,
-// 	  "url": "#",
-// 	  "id": "child_1",
-// 	  "icon": "bi bi-kanban",
-// 	  "title": "child_1"
-// 	}]`;
-
-// 	let item = $(`
-// 	  <li class="mainmenu-item"
-// 	      data-menu-items="${data_menu_items}">
-// 	    <a href="#">
-// 	      <i class="#"></i>
-// 	      <span class="mainmenu-title">
-// 	        Title
-// 	      </span>
-// 	    </a>
-// 	    <i class="#"></i>
-// 	  </li>`
-// 	);
-
 QUnit.module('cone.SidebarMenu', hooks => {
 
-	QUnit.module('initial load', hooks => {
-		hooks.before( () => {
-			console.log('before initial');
-		})
-		hooks.after( () => {
-			console.log('DONE - inital load')
-		})
+	let elem = $('#sidebar_left');
+
+	hooks.before( function() {
+		console.log('NOW RUNNING: cone.SidebarMenu');
+	});
+
+	hooks.after( () => {
+		cone.sidebar_menu = null;
+		cone.viewport = null;
+		elem.remove();
+
+		console.log('COMPLETE: cone.SidebarMenu')
+		console.log('-------------------------------------');
+	});
+
+	QUnit.module('initial load', () => {
 
 		for( let i = 0; i <= 3; i++ ) {
 			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.beforeEach( () => {
+				hooks.before( () => {
 					viewport.set(vp_states[i]);
 					cone.viewport = new cone.ViewPort();
+
 					create_sidebar_elem();
 					cone.SidebarMenu.initialize($('body'));
-				})
+				});
 
-				hooks.afterEach( () => {
+				hooks.after( () => {
 					cone.sidebar_menu = null;
 					cone.viewport = null;
-					$('#sidebar_left').remove();
-				})
+					elem.remove();
+				});
 
 				test('check elems', assert => {
-					assert.ok(true)
-					let sidebar = cone.sidebar_menu;
+					console.log(`-- test: initial load Viewport ${i}`);
 					check_elems(assert);
-				})
-			})
+				});
+			});
 		}
-	})
+	});
 
-	QUnit.module('viewport_changed()', assert => {
-		hooks.beforeEach( () => {
-			console.log('before vp changed')
+	QUnit.module.todo('viewport_changed()', hooks => {
+
+		hooks.before( () => {
+			console.log('- now running: viewport_changed()');
+
 			viewport.set('large');
 			cone.viewport = new cone.ViewPort();
 			create_sidebar_elem();
 			cone.SidebarMenu.initialize($('body'));
-		})
+		});
+
+		hooks.after( () => {
+			console.log('- DONE: viewport_changed()');
+			cone.viewport = null;
+			cone.sidebar_menu = null;
+			elem.remove();
+		});
 
 		for( let i = 0; i <= 3; i++ ) {
 			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.beforeEach( () => {
+				hooks.before( () => {
 					viewport.set(vp_states[i]);
 					$(window).trigger('resize');
-				})
+				});
 
 				test('check elems', assert => {
+					console.log(`-- test: change to Viewport ${i}`);
 					assert.ok(true)
 					let sidebar = cone.sidebar_menu;
-					//check_elems(assert);
-				})
-			})
+					check_elems(assert);
+				});
+
+				hooks.after( () => {
+					cone.viewport = null;
+				});
+			});
 		}
+	});
 
-		hooks.after( () => {
-			console.log('after')
-			cone.sidebar_menu = null;
-			cone.viewport = null;
-			$('#sidebar_left').remove();
-		})
-	})
+	QUnit.module('toggle_lock()', () => {
 
+		QUnit.module('no cookie', hooks => {
+			hooks.before( () => {
+				console.log( '-- now running: no cookie' );
+	
+				viewport.set('large');
+				cone.viewport = new cone.ViewPort();
+				create_sidebar_elem();
+				cone.SidebarMenu.initialize( $('body') );
+			});
+
+			hooks.after( () => {
+				console.log( '-- DONE: no cookie' );
+				cone.viewport = null;
+				cone.sidebar_menu = null;
+				elem.remove();
+			});
+
+			test('initial no cookie', assert => {
+				let sidebar = cone.sidebar_menu;
+				console.log( '--- test: initial (no cookie)' );
+	
+				assert.notOk( readCookie('sidebar'), 'no sidebar cookie' );
+				assert.notOk( sidebar.cookie, 'no sidebar_menu cookie' );
+				assert.notOk( sidebar.lock_switch.hasClass('active'), 'lock_switch doesnt have class active' );
+	
+				sidebar.lock_switch.trigger('click');
+	
+				assert.ok( sidebar.lock_switch.hasClass('active') );
+				assert.strictEqual( readCookie('sidebar'), 'false' );
+				assert.strictEqual( sidebar.collapsed, false );
+				
+				sidebar.toggle_btn.trigger('click');
+				assert.strictEqual( sidebar.collapsed, false );
+	
+				check_collapsed(assert);
+			})
+	
+			test('vp_changed()', assert => {
+				let sidebar = cone.sidebar_menu;
+				console.log( '--- test: vp_changed()' );
+	
+				viewport.set('small');
+				$(window).trigger('resize');
+				assert.strictEqual( sidebar.collapsed, false );
+				check_collapsed(assert);
+	
+				viewport.set('mobile');
+				$(window).trigger('resize');
+				assert.strictEqual( sidebar.collapsed, false );
+				check_collapsed(assert);
+	
+				viewport.set('large');
+				$(window).trigger('resize');
+				assert.strictEqual( sidebar.collapsed, false );
+				check_collapsed(assert);
+			})
+	
+			test('second click', assert => {
+				let sidebar = cone.sidebar_menu;
+				console.log( '--- test: second click' );
+	
+				sidebar.lock_switch.trigger('click');
+	
+				assert.notOk( sidebar.lock_switch.hasClass('active') );
+				assert.strictEqual( readCookie('sidebar'), null );
+				assert.strictEqual( sidebar.collapsed, false );
+				
+				sidebar.toggle_btn.trigger('click');
+				assert.strictEqual( sidebar.collapsed, true );
+	
+				check_collapsed(assert);
+			})
+		});
+
+		QUnit.module('with cookie', hooks => {
+			hooks.before( () => {
+				console.log( '-- now running: with cookie' );
+				createCookie('sidebar', 'true', null);
+
+				viewport.set('large');
+				cone.viewport = new cone.ViewPort();
+				create_sidebar_elem();
+				cone.SidebarMenu.initialize( $('body') );
+			});
+
+			hooks.after( () => {
+				console.log( '-- DONE: with cookie' );
+			});
+
+			test('initial no cookie', assert => {
+				let sidebar = cone.sidebar_menu;
+				console.log( '--- test: initial (with cookie)' );
+
+				assert.strictEqual( sidebar.cookie, true );
+				assert.strictEqual( sidebar.collapsed, true );
+				check_collapsed(assert);
+
+				assert.ok( sidebar.lock_switch.hasClass('active') );
+
+				sidebar.lock_switch.trigger('click');
+
+				assert.notOk( sidebar.lock_switch.hasClass('active') );
+				assert.strictEqual( readCookie('sidebar'), null );
+
+				sidebar.toggle_btn.trigger('click');
+				assert.strictEqual( sidebar.collapsed, false );
+				check_collapsed(assert);
+			})
+	
+			test('vp_changed()', assert => {
+				let sidebar = cone.sidebar_menu;
+				console.log( '--- test: vp_changed()' );
+	
+				viewport.set('small');
+				$(window).trigger('resize');
+				assert.strictEqual( sidebar.collapsed, true );
+				check_collapsed(assert);
+	
+				viewport.set('mobile');
+				$(window).trigger('resize');
+				assert.strictEqual( sidebar.collapsed, false );
+				check_collapsed(assert);
+	
+				viewport.set('large');
+				$(window).trigger('resize');
+				assert.strictEqual( sidebar.collapsed, false );
+				check_collapsed(assert);
+			})
+
+		});
+
+		test('unload()', assert => {
+			console.log('- test: unload()');
+			assert.ok(true);
+
+			let collapsed = cone.sidebar_menu.collapsed;
+			let switch_state = cone.sidebar_menu.lock_switch.hasClass('active');
+			cone.sidebar_menu.unload();
+			cone.sidebar_menu.toggle_btn.trigger('click');
+			cone.sidebar_menu.lock_switch.trigger('click');
+
+			assert.strictEqual(collapsed, cone.sidebar_menu.collapsed);
+			assert.strictEqual(switch_state, cone.sidebar_menu.lock_switch.hasClass('active'));
+		});
+
+	});
 
 
 	/////////////////////////////////////////
@@ -1052,44 +1131,210 @@ QUnit.module('cone.SidebarMenu', hooks => {
 		if(sidebar.vp_state === cone.VP_LARGE && sidebar.cookie === null) {
 			assert.ok(sidebar.elem.hasClass('expanded'), 'sidebar class expanded');
 			assert.notOk(sidebar.elem.hasClass('collapsed'), 'sidebar class not collapsed');
-		} else
+		} /* else
 		if(sidebar.cookie === null) {
 			assert.ok(sidebar.elem.hasClass('collapsed'), 'sidebar class collapsed');
 			assert.notOk(sidebar.elem.hasClass('expanded'), 'sidebar class not expanded');
-		} 
+		}  */
 	}
+
+	function check_collapsed(assert) {
+		let sidebar = cone.sidebar_menu;
+
+		if( sidebar.collapsed === true ) {
+			assert.ok(sidebar.elem.hasClass('collapsed'), 'sidebar class collapsed');
+			assert.notOk(sidebar.elem.hasClass('expanded'), 'sidebar class not expanded');
+			assert.strictEqual( sidebar.toggle_arrow_elem.attr('class'), 'bi bi-arrow-right-circle' );
+		} else
+		if( sidebar.collapsed === false ) {
+			assert.ok(sidebar.elem.hasClass('expanded'), 'sidebar class expanded');
+			assert.notOk(sidebar.elem.hasClass('collapsed'), 'sidebar class not collapsed');
+			assert.strictEqual( sidebar.toggle_arrow_elem.attr('class'), 'bi bi-arrow-left-circle' );
+		} else {
+			console.log('else???')
+		}
+	}
+});
+
+
+// XXXXXX cone.MainMenuTop XXXXXX
+
+QUnit.module.only('cone.MainMenuTop', hooks => {
+
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone.MainMenuTop');
+	})
+
+	hooks.after( () => {
+		console.log('COMPLETE: cone.MainMenuTop');
+		console.log('-------------------------------------');
+	})
+
+	QUnit.module('no sidebar', () => {
+
+		QUnit.module('initial load', () => {
+			for( let i = 0; i <= 3; i++ ) {
+				QUnit.module(`Viewport ${i}`, hooks => {
+					hooks.before( () => {
+						console.log(`- now running: initial load no sidebar Viewport ${i}`);
+						create_elems(vp_states[i]);
+					})
+
+					test('check elems', assert => {
+						console.log(`-- test: check elems`);
+						check_elems(assert);
+					})
+
+					hooks.after( assert => {
+						console.log(`- done: initial load no sidebar Viewport ${i}`);
+						remove_elems(assert);
+					})
+				})
+			}
+		})
+
+		QUnit.module.only('mainmenu item', hooks => {
+			hooks.before( () => {
+				console.log(`- now running: mainmenu item`);
+				
+				create_topnav_elem();
+				create_mm_top_elem();
+				create_mainmenu_item();
+				create_mainmenu_item(true);
+
+				viewport.set('large');
+				cone.viewport = new cone.ViewPort();
+
+				let topnav_elem = $('#topnav');
+				cone.topnav = new cone.Topnav(topnav_elem);
+				cone.MainMenuTop.initialize( $('body') );
+
+				mm_top_style_to_desktop();
+			})
+
+			test('check main_menu_items', assert => {
+				console.log(`-- test: check main_menu_items`);
+				assert.ok(true);
+
+				let mm_top = cone.main_menu_top;
+				console.log(mm_top.main_menu_items);
+
+				console.log( $('li', mm_top.elem) );
+			})
+
+			hooks.after( assert => {
+				console.log(`- done: mainmenu item`);
+				remove_elems(assert);
+			})
+		})
+
+		QUnit.test.skip('handle_scrollbar', assert => {
+			console.log('-- test: handle scrollbar');
+			create_elems('small');
+
+			let mm_top = cone.main_menu_top;
+			console.log( $('.cone-mainmenu-dropdown').length );
+			assert.strictEqual( $('.cone-mainmenu-dropdown').css('display'), 'none');
+			
+			//$(window).trigger('dragstart');
+				
+			remove_elems(assert);
+		})
+	})
+
+	QUnit.module.skip('with sidebar', () => {
+
+		QUnit.module('initial load', () => {
+			for( let i = 0; i <= 3; i++ ) {
+				QUnit.module(`Viewport ${i}`, hooks => {
+					hooks.before( () => {
+						console.log(`- now running: initial load with sidebar Viewport ${i}`);
+						cone.main_menu_sidebar = true;
+						create_elems(vp_states[i]);
+					})
+
+					test('check elems', assert => {
+						console.log(`-- test: check elems`);
+						check_elems(assert);
+					});
+
+					hooks.after( assert => {
+						remove_elems(assert);
+						cone.main_menu_sidebar = null;
+						console.log(`- done: initial load with sidebar Viewport ${i}`);
+					});
+				})
+			}
+		})
+	})
+
+	///////////////////////////////////////////
+
+	function create_elems(vp) {
+		create_topnav_elem();
+		create_mm_top_elem();
+
+		viewport.set(vp);
+		cone.viewport = new cone.ViewPort();
+
+		let topnav_elem = $('#topnav');
+
+		cone.topnav = new cone.Topnav(topnav_elem);
+		cone.MainMenuTop.initialize( $('body') );
+
+		if( vp === 'mobile') {
+			topnav_style_to_mobile();
+		} else {
+			mm_top_style_to_mobile();
+		}
+	}
+
+	function check_elems(assert) {
+		let mm_top = cone.main_menu_top;
+		assert.strictEqual(cone.main_menu_top.vp_state, cone.viewport.state, 'vp_state is viewport.state');
+		assert.ok(cone.topnav, 'cone.topnav exists');
+		assert.ok(mm_top.elem, 'elem exists');
+		// assert.ok(mm_top.main_menu_items[1], 'all 2 array children exist');
+
+		if(mm_top.vp_state === 0) {
+			assert.notStrictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin NOT 2rem`);
+			if(cone.main_menu_sidebar !== null) {
+				assert.strictEqual(mm_top.elem.css('display'), 'none', 'elem hidden');
+			} else {
+				assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem display is flex')
+			}
+		} else {
+			assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin:2rem(32px)`);
+			// assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem visible'); // fails because external css styling not included
+		}
+	}
+
+	function remove_elems(assert) {
+		function remove_topnav(){
+			cone.topnav = null;
+		}
+
+		// timeout required - else topnav gets deleted before mainmenu
+		let done = assert.async();
+
+		setTimeout(function() {
+			remove_topnav();
+			done();
+		}, 100 );
+
+		cone.main_menu_top = null;
+		cone.viewport = null;
+
+		$('#topnav').remove();
+	}
+
 })
-
-  QUnit.skip('test Sidebar', assert => {
-    cone.viewport = new cone.ViewPort();
-    mockViewportChange(cone.VP_LARGE);
-
-
-    if(sidebar.cookie === null) {
-        assert.strictEqual(sidebar.collapsed, false, 'collapsed is null');
-        assert.strictEqual(sidebar.cookie, null, 'cookie is null');
-    } else {
-        assert.notStrictEqual(sidebar.collapsed, null, 'collapsed is not null');
-        assert.notStrictEqual(sidebar.cookie, null, 'cookie is not null');
-    }
-
-    // toggle button test
-    sidebar.toggle_menu();
-
-    assert.notStrictEqual(sidebar.collapsed, null, 'collapsed after click not null');
-    assert.notStrictEqual(sidebar.cookie, null, 'cookie after click not null');
-    let st = sidebar.collapsed;
-
-    sidebar.toggle_menu();
-    assert.notStrictEqual(sidebar.collapsed, st, 'collapsed diff after 2. click');
-  })
 
 
 // XXXXXX cone.ThemeSwitcher XXXXXX
-QUnit.skip('cone.ThemeSwitcher', hooks => {
+QUnit.module('cone.ThemeSwitcher', hooks => {
 	hooks.before( () => {
-		console.log('before called');
-
+		console.log('NOW RUNNING: cone.ThemeSwitcher');
 		let head_styles = `
 			<link href="http://localhost:8081/static/light.css" rel="stylesheet" type="text/css" media="all">
 			<link href="http://localhost:8081/static/dark.css" rel="stylesheet" type="text/css" media="all">
@@ -1097,24 +1342,21 @@ QUnit.skip('cone.ThemeSwitcher', hooks => {
 		$('head').append(head_styles);
 	})
 
-	hooks.beforeEach( assert => {
-		console.log('beforeEach called');
-	});
 
 	hooks.afterEach( () => {
-		console.log('afterEach called');
 		cone.theme_switcher = null;
-		// delete cone.theme_switcher;
 		$('#switch_mode').remove();
 		$('#colormode-styles').remove();
 		createCookie('modeswitch', '', -1);
 	})
 
 	hooks.after( () => {
-		console.log('DONE - cone.ThemeSwitcher');
+		console.log('COMPLETE: cone.ThemeSwitcher');
+		console.log('-------------------------------------');
 	})
 
 	test('initial default check elems', assert => {
+		console.log('- test: initial default check');
 		create_elems();
 		cone.ThemeSwitcher.initialize($('body'), cone.default_themes);
 		let switcher = cone.theme_switcher;
@@ -1124,6 +1366,7 @@ QUnit.skip('cone.ThemeSwitcher', hooks => {
 	})
 
 	test('initial check cookie', assert => {
+		console.log('- test: initial cookie check');
 		create_elems();
 		createCookie('modeswitch', cone.default_themes[1], null);
 
@@ -1135,6 +1378,7 @@ QUnit.skip('cone.ThemeSwitcher', hooks => {
 	})
 
 	test('switch_theme()', assert => {
+		console.log('- test: switch theme');
 		create_elems();
 		cone.ThemeSwitcher.initialize($('body'), cone.default_themes);
 		let switcher = cone.theme_switcher;
@@ -1171,7 +1415,7 @@ QUnit.skip('cone.ThemeSwitcher', hooks => {
 
 // topnav
 function create_topnav_elem() {
-	console.log('create_topnav_elem called');
+	//console.log('create_topnav_elem called');
     let topnav_html = `
 		<div id="topnav"
 			style="
@@ -1215,7 +1459,7 @@ function create_topnav_elem() {
 }
 
 function topnav_style_to_mobile() {
-	console.log('topnav_style_to_mobile() called');
+	//console.log('topnav_style_to_mobile() called');
 
     let topnav = cone.topnav;
     topnav.elem.css({
@@ -1242,7 +1486,7 @@ function topnav_style_to_mobile() {
 }
 
 function topnav_style_to_desktop() {
-	console.log('topnav_style_to_desktop() called');
+	//console.log('topnav_style_to_desktop() called');
 
     let topnav = cone.topnav;
     topnav.elem.css({
@@ -1269,42 +1513,7 @@ function topnav_style_to_desktop() {
 // mainmenu top
 
 function create_mm_top_elem() {
-	console.log('create_mm_top_elem called');
-	let mainmenu_item_html = `
-		<li class="mainmenu-item"
-			style="
-			  display: flex;
-			  align-items: center;
-			  height: 100%;
-			"
-		>
-			<a>
-				<i class="bi bi-heart"></i>
-				<span class="mainmenu-title">
-					Title
-				</span>
-			</a>
-		</li>
-	`;
-
-	let mainmenu_item_menu_html = `
-		<li class="mainmenu-item menu"
-			style="
-				display: flex;
-				align-items: center;
-				height: 100%;
-			"
-		>
-			<a>
-				<i class="bi bi-heart"></i>
-				<span class="mainmenu-title">
-					Title
-				</span>
-			</a>
-
-			<i class="dropdown-arrow bi bi-chevron-down"></i>
-		</li>
-	`;
+	//console.log('create_mm_top_elem called');
 
 	let mainmenu_html = `
 		<div id="main-menu"
@@ -1331,8 +1540,6 @@ function create_mm_top_elem() {
 	`;
 
 	$('#topnav-content').append(mainmenu_html);
-	$('#mainmenu').append(mainmenu_item_html);
-	$('#mainmenu').append(mainmenu_item_menu_html);
 }
 
 function mm_top_style_to_desktop() {
@@ -1366,7 +1573,7 @@ function mm_top_style_to_mobile() {
 // searchbar
 
 function create_searchbar_elem() {
-	console.log('create_searchbar_elem() called');
+	//console.log('create_searchbar_elem() called');
 
 	let searchbar_html = `
 		<div id="cone-searchbar">
@@ -1402,7 +1609,7 @@ function create_searchbar_elem() {
 // sidebar
 
 function create_sidebar_elem() {
-	console.log('create_sidebar_elem() called');
+	// console.log('CALLED: create_sidebar_elem()');
 
 	let sidebar_html = `
 	 	<div id="sidebar_left">
@@ -1421,4 +1628,66 @@ function create_sidebar_elem() {
 	`;
 
 	$('body').append(sidebar_html);
+}
+
+// mainmenu items
+
+function create_mainmenu_item(menu) {
+
+	let data_menu_items = `[{
+		"target": "#",
+		"description": null,
+		"selected": false,
+		"url": "#",
+		"id": "child_1",
+		"icon": "bi bi-kanban",
+		"title": "child_1"
+	  }]`;
+
+
+	let mainmenu_item_html = `
+		<li class="mainmenu-item"
+			style="
+			display: flex;
+			align-items: center;
+			height: 100%;
+			"
+		>
+			<a>
+				<i class="bi bi-heart"></i>
+				<span class="mainmenu-title">
+					Title
+				</span>
+			</a>
+		</li>
+	`;
+
+	let mainmenu_item_menu_html = `
+		<li class="mainmenu-item menu"
+			style="
+				display: flex;
+				align-items: center;
+				height: 100%;
+			"
+		>
+			<a>
+				<i class="bi bi-heart"></i>
+				<span class="mainmenu-title">
+					Title
+				</span>
+			</a>
+			<i class="dropdown-arrow bi bi-chevron-down"></i>
+		</li>
+	`;
+
+	if(!menu) {
+		$('#mainmenu').append(mainmenu_item_html);
+	} else {
+		$('#mainmenu').append(mainmenu_item_menu_html);
+	}
+	
+	$('li', '#mainmenu').each( function() {
+		$(this).data('menu-items', data_menu_items);
+	})
+
 }

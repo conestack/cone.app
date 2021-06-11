@@ -566,7 +566,7 @@ if (window.cone === undefined) cone = {};
             this.initial_load();
 
             this._toggle_lock = this.toggle_lock.bind(this);
-            this.lock_switch.on('click', this._toggle_lock);
+            this.lock_switch.off('click').on('click', this._toggle_lock);
         }
 
         unload() {
@@ -639,7 +639,7 @@ if (window.cone === undefined) cone = {};
             this.elem.attr('class', elem_class);
             this.toggle_arrow_elem.attr('class', button_class);
 
-            if(cone.main_menu_sidebar) {
+            if(cone.main_menu_sidebar !== null) {
                 if(this.collapsed) {
                     cone.main_menu_sidebar.collapse();
                 }
