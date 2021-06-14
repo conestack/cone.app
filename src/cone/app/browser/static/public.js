@@ -140,9 +140,10 @@ if (window.cone === undefined) cone = {};
         }
     }
 
-    cone.MainMenuItem = class {
+    cone.MainMenuItem = class extends cone.ViewPortAware {
 
         constructor(elem) {
+            super(elem);
             this.elem = elem;
             this.children = elem.data('menu-items');
             if(!this.children){
@@ -213,9 +214,9 @@ if (window.cone === undefined) cone = {};
         mouseenter_toggle(e) {
             this.menu.offset({left: this.elem.offset().left});
             if(e.type === 'mouseenter') {
-                this.menu.show();
+                this.menu.css('display', 'block');
             } else {
-                this.menu.hide();
+                this.menu.css('display', 'none');
             }
         }
     }
