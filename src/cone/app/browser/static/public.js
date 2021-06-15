@@ -250,7 +250,7 @@ if (window.cone === undefined) cone = {};
             } else {
                 cone.topnav.logo.css('margin-right', 'auto');
                 if (cone.main_menu_sidebar) {
-                this.elem.hide();
+                    this.elem.css('display', 'none');
                 }
             }
 

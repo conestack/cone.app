@@ -1155,101 +1155,271 @@ QUnit.module('cone.SidebarMenu', hooks => {
 });
 
 
-// XXXXXX cone.MainMenuTop XXXXXX
 
-QUnit.module('cone.MainMenuTop', hooks => {
 
+// XXXXXX cone.MainMenuTOP XXXXXX
+QUnit.module('cone.MainMenu TOP', hooks => {
 	hooks.before( () => {
 		console.log('NOW RUNNING: cone.MainMenuTop');
-	})
+	});
 
 	hooks.after( () => {
 		console.log('COMPLETE: cone.MainMenuTop');
 		console.log('-------------------------------------');
-	})
+	});
 
-	QUnit.module('no sidebar', () => {
+	QUnit.module('initial load', () => {
+		for( let i=0; i <=3; i++ ) {
+			QUnit.module(`Viewport ${i}`, hooks => {
+				hooks.before( () => {
+					console.log(`- now running: initial load Viewport ${i}`);
+					viewport.set(vp_states[i]);
+					cone.viewport = new cone.ViewPort();
 
-		QUnit.module('initial load', () => {
-			for( let i = 0; i <= 3; i++ ) {
-				QUnit.module(`Viewport ${i}`, hooks => {
-					hooks.before( () => {
-						console.log(`- now running: initial load no sidebar Viewport ${i}`);
-						create_elems(vp_states[i]);
-					})
+					initialize_elems();
+					$(window).off('viewport_changed');
 
-					test('check elems', assert => {
-						console.log(`-- test: check elems`);
-						check_elems(assert);
-					})
+					if(cone.viewport.state === 0) {
+						topnav_style_to_mobile();
+					} else {
+						topnav_style_to_desktop();
+					}
+				});
 
-					hooks.after( assert => {
-						console.log(`- done: initial load no sidebar Viewport ${i}`);
-						remove_elems(assert);
-					})
-				})
-			}
-		})
-
-		QUnit.test.skip('handle_scrollbar', assert => {
-			console.log('-- test: handle scrollbar');
-			create_elems('small');
-
-			let mm_top = cone.main_menu_top;
-			console.log( $('.cone-mainmenu-dropdown').length );
-			assert.strictEqual( $('.cone-mainmenu-dropdown').css('display'), 'none');
-			
-			//$(window).trigger('dragstart');
-				
-			remove_elems(assert);
-		})
-	})
-
-	QUnit.module('with sidebar', () => {
-
-		QUnit.module('initial load', () => {
-			for( let i = 0; i <= 3; i++ ) {
-				QUnit.module(`Viewport ${i}`, hooks => {
-					hooks.before( () => {
-						console.log(`- now running: initial load with sidebar Viewport ${i}`);
-						cone.MainMenuSidebar.initialize(); // TODO
-						create_elems(vp_states[i]);
-					})
-
-					test('check elems', assert => {
-						console.log(`-- test: check elems`);
+				if(i === 0) {
+					test('mobile creation', assert => {
+						console.log('-- test: test mobile elems');
+						assert.ok(true)
 						check_elems(assert);
 					});
-
-					hooks.after( assert => {
-						remove_elems(assert);
-						cone.main_menu_sidebar = null;
-						console.log(`- done: initial load with sidebar Viewport ${i}`);
+				} else {
+					test('check main_menu_items creation', assert => {
+						console.log('-- test: test desktop elems');
+						assert.ok(true)
 					});
-				})
+				}
+
+				hooks.after( () => {
+					console.log('remove elems');
+
+					cone.topnav = null;
+					cone.main_menu_top = null;
+
+					$('#topnav').remove();
+				});
+			});
+		}
+	});
+
+	QUnit.test('handle_scrollbar()', assert => {
+		viewport.set('medium');
+		cone.viewport = new cone.ViewPort();
+		initialize_elems();
+
+		console.log('- test: handle_scrollbar()');
+		let item = cone.main_menu_top.main_menu_items[0];
+
+		// overwrite method
+		cone.MainMenuItem.prototype.change_toggle = function() {
+			this.mouseenter_toggle = function() {
+				assert.step( "mouseenter happened" );
 			}
-		})
+			this._toggle = this.mouseenter_toggle.bind(this);
+			this.elem.off().on('mouseenter mouseleave', this._toggle);
+		}
+		item.change_toggle();
+
+		// function not called
+		$(window).trigger('dragstart');
+		item.elem.trigger('mouseenter');
+		assert.verifySteps([]);
+
+		// function called
+		$(window).trigger('dragend');
+		item.elem.trigger('mouseenter');
+		assert.verifySteps(["mouseenter happened"]);
+
+		// cleanup
+		cone.main_menu_top = null;
+		cone.topnav = null;
+		$('#topnav').remove();
+		$('.cone-mainmenu-dropdown').remove();
 	})
 
-	///////////////////////////////////////////
+	QUnit.test.todo('super.unload()', assert => {
+		console.log('- test: super.unload()');
+		viewport.set('large');
+		cone.viewport = new cone.ViewPort();
+		initialize_elems();
 
-	function create_elems(vp) {
+		// overwrite method
+		cone.ViewPortAware.prototype.change_super_unload = function() {
+			this.unload = function() {
+				$(window).off('viewport_changed', this._viewport_changed_handle);
+				assert.step( "super.unload() happened" );
+			}
+		}
+		cone.main_menu_top.change_super_unload();
+		cone.main_menu_top.unload();
+
+		// unload called
+		assert.verifySteps(["super.unload() happened"]);
+
+		// cleanup
+		cone.main_menu_top = null;
+		cone.topnav = null;
+		$('#topnav').remove();
+		$('.cone-mainmenu-dropdown').remove();
+	})
+
+	QUnit.test('unload() called', assert => {
+		console.log('- test: unload() called');
+		viewport.set('large');
+		cone.viewport = new cone.ViewPort();
+		initialize_elems();
+
+		// overwrite method
+		cone.MainMenuTop.prototype.change_unload = function() {
+			this.unload = function() {
+				assert.step( "unload() happened" );
+			}
+		}
+		cone.main_menu_top.change_unload();
+		cone.MainMenuTop.initialize();
+		$(window).off('viewport_changed');
+
+		// unload called
+		assert.verifySteps(["unload() happened"]);
+
+		// cleanup
+		cone.main_menu_top = null;
+		cone.topnav = null;
+		$('#topnav').remove();
+		$('.cone-mainmenu-dropdown').remove();
+	})
+
+	QUnit.test('mobile with sidebar', assert => {
+		console.log(`- test: initial load mobile with sidebar`);
+		viewport.set('mobile');
+		cone.viewport = new cone.ViewPort();
+		create_sidebar_elem();
+		create_mm_sidebar_elem();
 		create_topnav_elem();
 		create_mm_top_elem();
+		cone.Topnav.initialize();
+		cone.SidebarMenu.initialize();
+		cone.MainMenuSidebar.initialize();
+		cone.MainMenuTop.initialize();
+		topnav_style_to_mobile();
 
-		viewport.set(vp);
-		cone.viewport = new cone.ViewPort();
+		assert.ok( $('main-menu', cone.topnav.content) )
+		assert.strictEqual(cone.main_menu_top.vp_state, 0);
+		assert.strictEqual( $('#topnav-content > #main-menu').length, 1 );
+		assert.strictEqual( $('#topnav-content > #mainmenu_sidebar').length, 1 );
 
-		let topnav_elem = $('#topnav');
+		assert.strictEqual( cone.main_menu_top.elem.css('display'), 'none' );
+		assert.strictEqual( cone.main_menu_sidebar.elem.css('display'), 'block' );
 
-		cone.topnav = new cone.Topnav(topnav_elem);
-		cone.MainMenuTop.initialize( $('body') );
 
-		if( vp === 'mobile') {
-			topnav_style_to_mobile();
-		} else {
-			mm_top_style_to_mobile();
-		}
+		// cleanup
+		cone.main_menu_top = null;
+		cone.topnav = null;
+		$(window).off('viewport_changed');
+		cone.main_menu_sidebar = null;
+		cone.sidebar_menu = null;
+		$('#topnav').remove();
+		$('.cone-mainmenu-dropdown').remove();
+		$('#sidebar_left').remove();
+	})
+
+	QUnit.module('viewport changed', () => {
+
+		QUnit.module('no sidebar', hooks => {
+			hooks.before( () => {
+				console.log('- now running: no sidebar | vp changed');
+				viewport.set('large');
+				cone.viewport = new cone.ViewPort();
+				initialize_elems();
+				topnav_style_to_desktop();
+			});
+
+			hooks.after( () => {
+				cone.main_menu_top = null;
+				cone.topnav = null;
+				console.log('- done: no sidebar | vp changed')
+			});
+
+			for(let i=0; i<=3; i++) {
+				QUnit.module(`Viewport ${i}`, () => {
+					test('resize', assert => {
+						console.log('-- test: resize: ' + i);
+						assert.ok(true)
+						viewport.set(vp_states[i]);
+						$(window).trigger('resize');
+
+						let mm_top = cone.main_menu_top;
+
+						if(mm_top.vp_state === 0) {
+							topnav_style_to_mobile();
+						} else {
+							topnav_style_to_desktop();
+						}
+					});
+				});
+			}
+		});
+
+		QUnit.module('with sidebar', hooks => {
+			hooks.before( () => {
+				console.log('- now running: sidebar | vp changed');
+				viewport.set('large');
+				cone.viewport = new cone.ViewPort();
+				create_sidebar_elem();
+				create_mm_sidebar_elem();
+				cone.SidebarMenu.initialize();
+				cone.MainMenuSidebar.initialize();
+				initialize_elems();
+				topnav_style_to_desktop();
+			});
+
+			hooks.after( () => {
+				cone.main_menu_top = null;
+				cone.topnav = null;
+				cone.sidebar_menu = null;
+				cone.main_menu_sidebar = null;
+				$('#topnav').remove();
+				$('#sidebar_left').remove();
+				console.log('- done: no sidebar | vp changed')
+			});
+
+			for(let i=0; i<=3; i++) {
+				QUnit.module(`Viewport ${i}`, () => {
+					test('resize', assert => {
+						assert.ok(true)
+						console.log('-- test: resize: ' + i);
+						viewport.set(vp_states[i]);
+						$(window).trigger('resize');
+						let mm_top = cone.main_menu_top;
+
+						if(mm_top.vp_state === 0) {
+							topnav_style_to_mobile();
+						} else {
+							topnav_style_to_desktop();
+						}
+					});
+				});
+			}
+		});
+	});
+
+	//////////////////////////////////
+
+	function initialize_elems() {
+		create_topnav_elem();
+		create_mm_top_elem();
+		create_mm_items(1);
+		cone.Topnav.initialize();
+		cone.MainMenuTop.initialize();
 	}
 
 	function check_elems(assert) {
@@ -1257,7 +1427,6 @@ QUnit.module('cone.MainMenuTop', hooks => {
 		assert.strictEqual(cone.main_menu_top.vp_state, cone.viewport.state, 'vp_state is viewport.state');
 		assert.ok(cone.topnav, 'cone.topnav exists');
 		assert.ok(mm_top.elem, 'elem exists');
-		// assert.ok(mm_top.main_menu_items[1], 'all 2 array children exist');
 
 		if(mm_top.vp_state === 0) {
 			assert.notStrictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin NOT 2rem`);
@@ -1271,62 +1440,129 @@ QUnit.module('cone.MainMenuTop', hooks => {
 			// assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem visible'); // fails because external css styling not included
 		}
 	}
+});
 
-	function remove_elems(assert) {
-		function remove_topnav(){
-			cone.topnav = null;
-		}
 
-		// timeout required - else topnav gets deleted before mainmenu
-		let done = assert.async();
+// XXXXXX cone.MainMenuSidebar XXXXXX
+QUnit.module('cone.MainMenuSidebar', hooks => {
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone.MainMenuSidebar');
+	});
 
-		setTimeout(function() {
-			remove_topnav();
-			done();
-		}, 100 );
+	hooks.after( () => {
+		console.log('COMPLETE: cone.MainMenuSidebar');
+		console.log('-------------------------------------');
+	});
 
-		cone.main_menu_top = null;
-		cone.viewport = null;
+	QUnit.module('constructor', hooks => {
+		hooks.before( () => {
+			console.log('beforeEach');
+			create_sidebar_elem();
+			create_mm_sidebar_elem();
+			cone.SidebarMenu.initialize();
+			cone.MainMenuSidebar.initialize();
+		})
+		QUnit.test.only('elements', assert => {
+			console.log('- test: elements');
+			let mm_sb = cone.main_menu_sidebar;
+			assert.ok(mm_sb instanceof cone.ViewPortAware);
+			assert.strictEqual(mm_sb.elem.attr('id'), 'mainmenu_sidebar');
+		})
 
-		$('#topnav').remove();
-		$('.mainmenu-item').remove();
-	}
+		QUnit.test.only('initial_cookie()', assert => {
+			console.log('- test: initial_cookie()');
+			let mm_sb = cone.main_menu_sidebar;
+			assert.notOk(readCookie('sidebar menus'));
+
+			let test_display_data = [];
+			for(let elem of mm_sb.menus) {
+				test_display_data.push('none');
+			}
+			assert.deepEqual(mm_sb.display_data, test_display_data);
+		});
+
+		QUnit.test.only('initial_cookie() with cookie', assert => {
+			console.log('- test: initial_cookie() with cookie');
+
+			let mm_sb = cone.main_menu_sidebar;
+			let test_display_data = [];
+			for(let elem of mm_sb.menus) {
+				test_display_data.push('block');
+			}
+			createCookie('sidebar menus', test_display_data, null);
+			assert.ok(readCookie('sidebar menus'));
+			mm_sb.initial_cookie();
+			assert.deepEqual(mm_sb.display_data, test_display_data);
+
+			// cleanup
+			createCookie('sidebar menus', '', -1);
+		})
+
+		QUnit.test.only('vp mobile', assert => {
+			console.log('- test: mv_to_mobile called');
+			cone.sidebar_menu = null;
+			cone.main_menu_sidebar = null;
+			cone.viewport = null;
+
+			cone.MainMenuSidebar.prototype.change_mv_to_mobile = function() {
+				this.mv_to_mobile = function() {
+					assert.step( "mv_to_mobile() happened" );
+				}
+			}
+			cone.MainMenuSidebar.mv_to_mobile = function() {
+				assert.step( "mv_to_mobile() happened" );
+			}
+
+			viewport.set('mobile');
+			cone.viewport = new cone.ViewPort();
+
+			create_topnav_elem();
+			cone.Topnav.initialize();
+			cone.SidebarMenu.initialize();
+			cone.MainMenuSidebar.initialize();
+			// cone.main_menu_sidebar.change_mv_to_mobile();
+
+			$(window).off('viewport_changed');
+			let mm_sb = cone.main_menu_sidebar;
+			// overwrite method
+			assert.verifySteps(["mv_to_mobile() happened"]);
+
+		})
+
+		hooks.after( () => {
+			cone.sidebar_menu = null;
+			cone.main_menu_sidebar = null;
+			$('#sidebar_left').remove();
+			console.log('afterEach')
+		})
+	})
+
 
 })
 
 
 // XXXXXX cone.MainMenuItem XXXXXX
-QUnit.module('mm item', hooks => {
+QUnit.module('cone.MainMenuItem', hooks => {
 	hooks.before( () => {
 		console.log('NOW RUNNING: cone.MainMenuItem');
-	})
+	});
 
 	hooks.after( () => {
 		console.log('COMPLETE: cone.MainMenuItem');
 		console.log('-------------------------------------');
-	})
+	});
 
 	QUnit.module('initial load', () => {
 
 		for( let i=0; i <=3; i++ ) {
 			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.before( assert => {
+				hooks.before( () => {
 					console.log(`- now running: initial load Viewport ${i}`);
-					let done1 = assert.async();
 					viewport.set(vp_states[i]);
 					cone.viewport = new cone.ViewPort();
-
-					create_topnav_elem();
-					create_mm_top_elem();
-
-					create_mm_items(1);
-					create_empty_item(); // return if no children
-					done1();
-
-					let done2 = assert.async();
-					cone.Topnav.initialize();
-					done2();
-					cone.MainMenuTop.initialize();
+					
+					initialize_elems();
+					$(window).off('viewport_changed');
 
 					if(cone.viewport.state === 0) {
 						topnav_style_to_mobile();
@@ -1339,218 +1575,130 @@ QUnit.module('mm item', hooks => {
 					test('mobile creation', assert => {
 						console.log('-- test: test mobile elems');
 						test_mobile_elem(assert);
-					})
-				}
-				else {
+					});
+				} else {
 					test('check main_menu_items creation', assert => {
 						console.log('-- test: test desktop elems');
 						test_desktop_elem(assert);
 					});
-
 					test('mouseenter toggle', assert => {
 						console.log('-- test: mouseenter toggle');
 						check_mouseenter_toggle(assert);
 					});
 				}
 
-				hooks.after( assert => {
+				hooks.after( () => {
 					console.log('remove elems');
-					remove_elems(assert);
-				})
-			})
+
+					cone.topnav = null;
+					cone.main_menu_top = null;
+				});
+			});
 		}
-	})
+	});
 
 	QUnit.module('viewport changed', () => {
 
 		QUnit.module('no sidebar', hooks => {
-			hooks.before( assert => {
+			hooks.before( () => {
 				console.log('- now running: no sidebar | vp changed');
-				let done1 = assert.async();
 				viewport.set('large');
 				cone.viewport = new cone.ViewPort();
-
-				create_topnav_elem();
-				create_mm_top_elem();
-
-				create_mm_items(1);
-				done1();
-
-				let done2 = assert.async();
-				cone.Topnav.initialize();
-				done2();
-				cone.MainMenuTop.initialize();
-
+				initialize_elems();
 				topnav_style_to_desktop();
 			});
 
-			hooks.after(assert => {
-				remove_elems(assert);
+			hooks.after( () => {
+				cone.main_menu_top = null;
+				cone.topnav = null;
 				console.log('- done: no sidebar | vp changed')
-			})
+			});
 
 			for(let i=0; i<=3; i++) {
-				test(`Viewport ${i}`, assert => {
-					console.log('-- test: resize: ' + i);
-					viewport.set(vp_states[i]);
-					$(window).trigger('resize');
+				QUnit.module(`Viewport ${i}`, () => {
+					test('resize', assert => {
+						console.log('-- test: resize: ' + i);
+						viewport.set(vp_states[i]);
+						$(window).trigger('resize');
 
-					let mm_top = cone.main_menu_top;
-					let item = mm_top.main_menu_items[0];
-					assert.strictEqual(cone.viewport.state, item.vp_state);
+						let mm_top = cone.main_menu_top;
+						let item = mm_top.main_menu_items[0];
+						assert.strictEqual(cone.viewport.state, item.vp_state);
 
-					if(item.vp_state === 0) {
-						topnav_style_to_mobile();
-						test_mobile_elem(assert);
-					} else {
-						test('check main_menu_items creation', assert => {
+						if(item.vp_state === 0) {
+							topnav_style_to_mobile();
+							test_mobile_elem(assert);
+						} else {
 							test_desktop_elem(assert);
-						});
-
-						test('mouseenter toggle', assert => {
 							check_mouseenter_toggle(assert);
-						});
-					}
-				})
+						}
+					});
+				});
 			}
 		});
 
 		QUnit.module('with sidebar', hooks => {
-			hooks.before( assert => {
+			hooks.before( () => {
 				console.log('- now running: sidebar | vp changed');
-				let done1 = assert.async();
 				viewport.set('large');
 				cone.viewport = new cone.ViewPort();
-
-				create_topnav_elem();
-				create_mm_top_elem();
 				create_sidebar_elem();
-				cone.MainMenuSidebar.initialize(); // TODO
-
-				create_mm_items(1);
-				done1();
-
-				let done2 = assert.async();
-				cone.Topnav.initialize();
-				done2();
-				cone.MainMenuTop.initialize();
-
+				create_mm_sidebar_elem();
+				cone.SidebarMenu.initialize();
+				cone.MainMenuSidebar.initialize();
+				initialize_elems();
 				topnav_style_to_desktop();
 			});
 
-			hooks.after(assert => {
-				remove_elems(assert);
+			hooks.after( () => {
+				cone.main_menu_top = null;
+				cone.topnav = null;
 				cone.sidebar_menu = null;
+				cone.main_menu_sidebar = null;
+				$('#topnav').remove();
 				$('#sidebar_left').remove();
-				console.log('- done: sidebar | vp changed')
-			})
+				console.log('- done: no sidebar | vp changed')
+			});
 
 			for(let i=0; i<=3; i++) {
-				test(`Viewport ${i}`, assert => {
-					console.log('-- test: resize: ' + i);
-					viewport.set(vp_states[i]);
-					$(window).trigger('resize');
+				QUnit.module(`Viewport ${i}`, () => {
+					test('resize', assert => {
+						console.log('-- test: resize: ' + i);
+						viewport.set(vp_states[i]);
+						$(window).trigger('resize');
+						let mm_top = cone.main_menu_top;
+						let item = mm_top.main_menu_items[0];
+						assert.strictEqual(cone.viewport.state, item.vp_state);
 
-					let mm_top = cone.main_menu_top;
-					let item = mm_top.main_menu_items[0];
-					assert.strictEqual(cone.viewport.state, item.vp_state);
-
-					if(item.vp_state === 0) {
-						topnav_style_to_mobile();
-						test_mobile_elem(assert);
-						item.mv_to_mobile(); // returns
-					} else {
-						test('check main_menu_items creation', assert => {
+						if(item.vp_state === 0) {
+							topnav_style_to_mobile();
+							test_mobile_elem(assert);
+						} else {
 							test_desktop_elem(assert);
-						});
-
-						test('mouseenter toggle', assert => {
 							check_mouseenter_toggle(assert);
-						});
-					}
+						}
+					});
 				});
 			}
-		})
+
+			test('mv_to_top cancel', assert=> {
+				assert.ok(true);
+				let mm_top = cone.main_menu_top;
+				let item = mm_top.main_menu_items[0];
+				item.mv_to_mobile(); // should return
+				// check if still correct
+			});
+		});
 	});
 
 	//////////////////////////////////
 
-	function create_mm_items(count) {
-		let data_menu_items =
-			[
-				{
-					"selected": false,
-					"icon": "bi bi-kanban",
-					"id": "child_1",
-					"description": null,
-					"url": "http://localhost:8081/child_1/child_1",
-					"target": "http://localhost:8081/child_1/child_1",
-					"title": "child_1"
-				},
-				{
-					"selected": false, "icon":
-					"bi bi-kanban", "id": "child_2",
-					"description": null,
-					"url": "http://localhost:8081/child_1/child_2",
-					"target": "http://localhost:8081/child_1/child_2",
-					"title": "child_2"
-				},
-				{
-					"selected": false,
-					"icon":
-					"bi bi-kanban",
-					"id": "child_3",
-					"description": null,
-					"url": "http://localhost:8081/child_1/child_3",
-					"target": "http://localhost:8081/child_1/child_3",
-					"title": "child_3"
-				}
-			]
-		;
-
-		for(let i=1; i <=count; i++) {
-			let mainmenu_item_html = `
-				<li class="mainmenu-item node-child_${i} menu"
-					style="
-					  display: flex;
-					  align-items: center;
-					  height: 100%;
-					"
-					id="elem${count}"
-				>
-					<a>
-						<i class="bi bi-heart"></i>
-						<span class="mainmenu-title">
-						</span>
-					</a>
-					<i class="dropdown-arrow bi bi-chevron-down"></i>
-				</li>
-			`;
-
-			$('#main-menu').append(mainmenu_item_html);
-
-			$(`#elem${count}`).data('menu-items', data_menu_items);
-		}
-	}
-
-	function create_empty_item() {
-		let mainmenu_item_html = `
-				<li class="mainmenu-item"
-					style="
-					display: flex;
-					align-items: center;
-					height: 100%;
-					"
-				>
-					<a>
-						<i class="bi bi-heart"></i>
-						<span class="mainmenu-title">
-						</span>
-					</a>
-				</li>
-			`;
-
-			$('#main-menu').append(mainmenu_item_html);
+	function initialize_elems() {
+		create_topnav_elem();
+		create_mm_top_elem();
+		create_mm_items(1);
+		cone.Topnav.initialize();
+		cone.MainMenuTop.initialize();
 	}
 
 	function check_mouseenter_toggle(assert){
@@ -1620,27 +1768,7 @@ QUnit.module('mm item', hooks => {
 		assert.ok(item.children);
 		assert.ok(item.menu);
 	}
-
-	function remove_elems(assert) {
-		function remove_topnav(){
-			cone.topnav = null;
-		}
-
-		// timeout required - else topnav gets deleted before mainmenu
-		let done = assert.async();
-
-		setTimeout(function() {
-			remove_topnav();
-			done();
-		}, 100 );
-
-		cone.main_menu_top = null;
-		cone.viewport = null;
-
-		$('#topnav').remove();
-		$('.cone-mainmenu-dropdown').remove();
-	}
-})
+});
 
 // XXXXXX cone.ThemeSwitcher XXXXXX
 QUnit.module('cone.ThemeSwitcher', hooks => {
@@ -1939,4 +2067,127 @@ function create_sidebar_elem() {
 	`;
 
 	$('body').append(sidebar_html);
+}
+
+// mainmenu sidebar
+
+function create_mm_sidebar_elem() {
+	let mm_sidebar_html = `
+		<ul id="mainmenu_sidebar">
+		  <li class="sidebar-heading" id="mainmenu-sb-heading">
+		  	<span>
+		  	  Main Menu
+		  	</span>
+		  </li>
+
+		  <li class="active node_child_1 sb-menu">
+			<a href="#">
+			  <i class="bi bi-heart"></i>
+				<span">Title</span>
+			</a>
+		  </li>
+
+		  <li class="node-child_2 sb-menu">
+		    <a href="#">
+		      <i class="bi bi-heart"></i>
+		    	<span">Title</span>
+		    </a>
+			<a href="#" class="sidebar-arrow">
+				<i class="dropdown-arrow bi bi-chevron-down"></i>
+			</a>
+
+			<ul class="cone-mainmenu-dropdown-sb">
+			  <li>
+			  	<a href="#">
+				  <i class="bi bi-heart"></i>
+			      <span>Title</span>
+				</a>
+			  </li>
+			</ul>
+		  </li>
+		</ul>
+	`;
+
+	$('#sidebar_content').append(mm_sidebar_html);
+}
+
+
+// mainmenu items
+
+function create_mm_items(count) {
+	let data_menu_items =
+		[
+			{
+				"selected": false,
+				"icon": "bi bi-kanban",
+				"id": "child_1",
+				"description": null,
+				"url": "http://localhost:8081/child_1/child_1",
+				"target": "http://localhost:8081/child_1/child_1",
+				"title": "child_1"
+			},
+			{
+				"selected": false, "icon":
+				"bi bi-kanban", "id": "child_2",
+				"description": null,
+				"url": "http://localhost:8081/child_1/child_2",
+				"target": "http://localhost:8081/child_1/child_2",
+				"title": "child_2"
+			},
+			{
+				"selected": false,
+				"icon":
+				"bi bi-kanban",
+				"id": "child_3",
+				"description": null,
+				"url": "http://localhost:8081/child_1/child_3",
+				"target": "http://localhost:8081/child_1/child_3",
+				"title": "child_3"
+			}
+		]
+	;
+
+	for(let i=1; i <=count; i++) {
+		let mainmenu_item_html = `
+			<li class="mainmenu-item node-child_${i} menu"
+				style="
+				  display: flex;
+				  align-items: center;
+				  height: 100%;
+				"
+				id="elem${count}"
+			>
+				<a>
+					<i class="bi bi-heart"></i>
+					<span class="mainmenu-title">
+					</span>
+				</a>
+				<i class="dropdown-arrow bi bi-chevron-down"></i>
+			</li>
+		`;
+
+		$('#main-menu').append(mainmenu_item_html);
+
+		$(`#elem${count}`).data('menu-items', data_menu_items);
+	}
+}
+
+function create_empty_item() {
+	let mainmenu_item_html = `
+			<li class="mainmenu-item"
+				style="
+				display: flex;
+				align-items: center;
+				height: 100%;
+				"
+			>
+				<a>
+					<i class="bi bi-heart"></i>
+					<span class="mainmenu-title">
+					</span>
+				</a>
+			</li>
+		`;
+
+		$('#main-menu').append(mainmenu_item_html);
 }

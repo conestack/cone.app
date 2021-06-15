@@ -20,6 +20,9 @@ TESTING
 [~] - test topnav
 [X] - test ViewPort Singleton
 [~] - test sidebarMenu
+[~] - test MainMenuTop
+[~] - test MainMenuItem
+[~] - test MainMenuSidebar
 
 issues
 ------
