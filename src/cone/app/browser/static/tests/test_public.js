@@ -1456,20 +1456,32 @@ QUnit.module('cone.MainMenuSidebar', hooks => {
 
 	QUnit.module('constructor', hooks => {
 		hooks.before( () => {
-			console.log('beforeEach');
-			create_sidebar_elem();
-			create_mm_sidebar_elem();
-			cone.SidebarMenu.initialize();
+			console.log('before');
+			create_elems();
+		});
+
+		QUnit.test('unload() call', assert => {
+			// save original function
+			let unload_origin = cone.MainMenuSidebar.prototype.unload;
+			// overwrite original function
+			cone.MainMenuSidebar.prototype.unload = function() {
+				assert.step( "unload() happened" );
+			}
 			cone.MainMenuSidebar.initialize();
-		})
-		QUnit.test.only('elements', assert => {
+			assert.verifySteps(["unload() happened"]);
+
+			// reset original function
+			cone.MainMenuSidebar.prototype.unload = unload_origin;
+		});
+
+		QUnit.test('elements', assert => {
 			console.log('- test: elements');
 			let mm_sb = cone.main_menu_sidebar;
 			assert.ok(mm_sb instanceof cone.ViewPortAware);
 			assert.strictEqual(mm_sb.elem.attr('id'), 'mainmenu_sidebar');
-		})
+		});
 
-		QUnit.test.only('initial_cookie()', assert => {
+		QUnit.test('initial_cookie()', assert => {
 			console.log('- test: initial_cookie()');
 			let mm_sb = cone.main_menu_sidebar;
 			assert.notOk(readCookie('sidebar menus'));
@@ -1481,7 +1493,7 @@ QUnit.module('cone.MainMenuSidebar', hooks => {
 			assert.deepEqual(mm_sb.display_data, test_display_data);
 		});
 
-		QUnit.test.only('initial_cookie() with cookie', assert => {
+		QUnit.test('initial_cookie() with cookie', assert => {
 			console.log('- test: initial_cookie() with cookie');
 
 			let mm_sb = cone.main_menu_sidebar;
@@ -1496,50 +1508,524 @@ QUnit.module('cone.MainMenuSidebar', hooks => {
 
 			// cleanup
 			createCookie('sidebar menus', '', -1);
-		})
+		});
 
-		QUnit.test.only('vp mobile', assert => {
+		QUnit.test('mv_to_mobile call', assert => {
 			console.log('- test: mv_to_mobile called');
 			cone.sidebar_menu = null;
 			cone.main_menu_sidebar = null;
 			cone.viewport = null;
 
-			cone.MainMenuSidebar.prototype.change_mv_to_mobile = function() {
-				this.mv_to_mobile = function() {
-					assert.step( "mv_to_mobile() happened" );
-				}
-			}
-			cone.MainMenuSidebar.mv_to_mobile = function() {
+			// save original function
+			let mv_to_mobile_origin = cone.MainMenuSidebar.prototype.mv_to_mobile;
+			// overwrite original function
+			cone.MainMenuSidebar.prototype.mv_to_mobile = function() {
 				assert.step( "mv_to_mobile() happened" );
 			}
-
+			
 			viewport.set('mobile');
 			cone.viewport = new cone.ViewPort();
-
+			
 			create_topnav_elem();
 			cone.Topnav.initialize();
 			cone.SidebarMenu.initialize();
 			cone.MainMenuSidebar.initialize();
-			// cone.main_menu_sidebar.change_mv_to_mobile();
-
+			
 			$(window).off('viewport_changed');
-			let mm_sb = cone.main_menu_sidebar;
-			// overwrite method
 			assert.verifySteps(["mv_to_mobile() happened"]);
 
-		})
+			// reset original function
+			cone.MainMenuSidebar.prototype.mv_to_mobile = mv_to_mobile_origin;
+		});
 
 		hooks.after( () => {
 			cone.sidebar_menu = null;
 			cone.main_menu_sidebar = null;
 			$('#sidebar_left').remove();
-			console.log('afterEach')
-		})
-	})
+			// cone.viewport = null;
+			console.log('after')
+		});
+	});
 
+	QUnit.module('methods', hooks => {
+		hooks.before( () => {
+			console.log('- now running: methods');
+		});
+		hooks.beforeEach( () => {
+			viewport.set('large');
+			$(window).trigger('resize');
+			create_elems();
+		});
+		hooks.afterEach( () => {
+			cone.sidebar_menu = null;
+			cone.main_menu_sidebar = null;
+			$('#sidebar_left').remove();
+			if(cone.topnav) {
+				cone.topnav = null;
+				$('#topnav').remove();
+			}
+		});
+		hooks.after( () => {
+			console.log('- done: methods');
+		});
+
+		QUnit.test('viewport_changed()', assert => {
+			console.log('-- test: viewport_changed()');
+
+			create_topnav_elem();
+			cone.Topnav.initialize();
+			let mm_sb = cone.main_menu_sidebar;
+			let resize_evt = $.Event('viewport_changed');
+			resize_evt.state = 0;
+
+			// save original functions
+			let super_vp_changed_origin = cone.ViewPortAware.prototype.viewport_changed,
+				mv_to_mobile_origin = mm_sb.mv_to_mobile,
+				mv_to_sidebar_origin = mm_sb.mv_to_sidebar
+			;
+			// overwrite original functions
+			cone.ViewPortAware.prototype.viewport_changed = function(e) {
+				this.vp_state = e.state;
+				assert.step( "super.viewport_changed() happened" );
+			}
+			mm_sb.mv_to_mobile = function() {
+				assert.step( "mv_to_mobile() happened" );
+			}
+			mm_sb.mv_to_sidebar = function() {
+				assert.step( "mv_to_sidebar() happened" );
+			}
+
+			mm_sb.viewport_changed(resize_evt);
+			assert.strictEqual(mm_sb.vp_state, resize_evt.state);
+
+			resize_evt.state = 2;
+			mm_sb.viewport_changed(resize_evt);
+			assert.strictEqual(mm_sb.vp_state, resize_evt.state);
+
+			assert.verifySteps([
+				"super.viewport_changed() happened", 
+				"mv_to_mobile() happened",
+				"super.viewport_changed() happened",
+				"mv_to_sidebar() happened"
+			]);
+
+			// reset original functions
+			cone.ViewPortAware.prototype.viewport_changed = super_vp_changed_origin;
+			mm_sb.mv_to_mobile = mv_to_mobile_origin;
+			mm_sb.mv_to_sidebar = mv_to_sidebar_origin;
+		});
+
+		QUnit.test('mv_to_mobile()', assert => {
+			console.log('-- test: mv_to_mobile()');
+			
+			let mm_sb = cone.main_menu_sidebar;
+			create_topnav_elem();
+			cone.Topnav.initialize();
+
+			assert.strictEqual( $('#sidebar_content > #mainmenu_sidebar').length, 1 );
+			mm_sb.mv_to_mobile();
+
+			assert.strictEqual( $('#sidebar_content > #mainmenu_sidebar').length, 0 );
+			assert.strictEqual( $('#topnav-content > #mainmenu_sidebar').length, 1 );
+			assert.ok(mm_sb.elem.hasClass('mobile'));
+		});
+
+		QUnit.test('mv_to_sidebar()', assert => {
+			console.log('-- test: mv_to_sidebar()');
+			
+			let mm_sb = cone.main_menu_sidebar;
+			create_topnav_elem();
+			cone.Topnav.initialize();
+
+			mm_sb.mv_to_mobile();
+			assert.strictEqual( $('#sidebar_content > #mainmenu_sidebar').length, 0 );
+			mm_sb.mv_to_sidebar();
+
+			assert.strictEqual( $('#sidebar_content > #mainmenu_sidebar').length, 1 );
+			assert.strictEqual( $('#topnav-content > #mainmenu_sidebar').length, 0 );
+			assert.notOk(mm_sb.elem.hasClass('mobile'));
+		});
+
+		QUnit.test('collapse()', assert => {
+			console.log('-- test: collapse()');
+
+			cone.main_menu_sidebar.arrows.on('click', () => {
+				throw new Error( "click happened" );
+			});
+
+			let mm_sb = cone.main_menu_sidebar;
+			mm_sb.collapse();
+			assert.ok( $('ul', mm_sb.items).is(':hidden') );
+			mm_sb.arrows.trigger('click');
+
+			for(let item of mm_sb.items) {
+                let elem = $(item);
+                let menu = $('ul', elem);
+
+				if( menu.length > 0 ){
+
+					function test_width(elem_width, menu_width) {
+						elem.css('width', elem_width);
+						menu.css('width', menu_width);
+						elem.trigger('mouseenter');
+						assert.ok(elem.hasClass('hover'));
+
+						// assert.strictEqual(elem.outerWidth(), menu.outerWidth());
+						assert.ok(menu.is(':visible'));
+
+						elem.trigger('mouseleave');
+						assert.ok(menu.is(':hidden'));
+						assert.notOk(elem.hasClass('hover'));
+					}
+
+					test_width(300, 400);
+					test_width(400, 300);
+
+					$(window).trigger('dragstart');
+					elem.trigger('mouseenter');
+					assert.notOk(menu.is(':visible'));
+
+					$(window).trigger('dragend');
+					elem.trigger('mouseenter');
+					assert.ok(menu.is(':visible'));
+				}
+            }
+		});
+
+		QUnit.test('expand()', assert => {
+			console.log('-- test: expand()');
+			assert.ok(true)
+			let mm_sb = cone.main_menu_sidebar;
+			mm_sb.collapse();
+
+			// mock expanded menu
+			$('.node-child_3').trigger('mouseenter');
+			$('.node-child_3').removeClass('hover');
+
+			mm_sb.display_data = [];
+			for(let i = 0; i < mm_sb.menus.length; i++) {
+				let data = $('ul', mm_sb.menus[i]).css('display');
+				mm_sb.display_data.push(data);
+			}
+
+			mm_sb.items.on('mouseenter mouseleave', () => {
+				throw new Error( "mouseenter/mouseleave happened" );
+			})
+			mm_sb.expand();
+			mm_sb.items.trigger('mouseenter').trigger('mouseleave');
+
+			for(let i = 0; i < mm_sb.menus.length; i++) {
+				let elem = mm_sb.menus[i],
+					arrow = $('i.dropdown-arrow', elem),
+					menu = $('ul.cone-mainmenu-dropdown-sb', elem)
+				;
+
+				assert.strictEqual(menu.css('display'), mm_sb.display_data[i]);
+	
+				if( menu.css('display') === 'none' ){
+					assert.notOk(arrow.hasClass('bi-chevron-up'));
+					assert.ok(arrow.hasClass('bi-chevron-down'));
+					arrow.trigger('click');
+					assert.strictEqual(menu.css('display'), 'block');
+					assert.strictEqual(mm_sb.display_data[i], 'block');
+					assert.notOk(arrow.hasClass('bi-chevron-down'));
+					assert.ok(arrow.hasClass('bi-chevron-up'));
+				} else if( menu.css('display') === 'block' ){
+					assert.ok(arrow.hasClass('bi-chevron-up'));
+					assert.notOk(arrow.hasClass('bi-chevron-down'));
+					arrow.trigger('click');
+					let done = assert.async();
+
+					setTimeout(function() {
+						assert.strictEqual(menu.css('display'), 'none');
+						done();
+					}, 500);
+					assert.notOk(arrow.hasClass('bi-chevron-up'));
+					assert.ok(arrow.hasClass('bi-chevron-down'));
+					assert.strictEqual(mm_sb.display_data[i], 'none');
+				}
+				assert.ok(readCookie('sidebar menus'));
+			}
+		});
+
+		QUnit.test('unload()', assert => {
+			console.log('-- test: unload()');
+	
+			// save original function
+			let super_unload_origin = cone.ViewPortAware.prototype.unload;
+			// overwrite original function
+			cone.ViewPortAware.prototype.unload = function() {
+				assert.step( "super.unload() happened" );
+			}
+			cone.main_menu_sidebar.items.on('mouseenter mouseleave', () => {
+				throw new Error( "mouseenter/mouseleave happened" );
+			});
+			cone.main_menu_sidebar.arrows.on('click', () => {
+				throw new Error( "click happened" );
+			});
+	
+			cone.main_menu_sidebar.unload();
+			cone.main_menu_sidebar.items.trigger('mouseenter').trigger('mouseleave');
+			cone.main_menu_sidebar.arrows.trigger('click');
+	
+			assert.verifySteps(["super.unload() happened"]);
+	
+			// reset original function
+			cone.ViewPortAware.prototype.unload = super_unload_origin;
+		});
+	});
+
+	//////////////////////////////////////////
+
+	function create_elems() {
+		create_sidebar_elem();
+		create_mm_sidebar_elem();
+		cone.SidebarMenu.initialize();
+		cone.MainMenuSidebar.initialize();
+	}
 
 })
 
+
+// XXXXXX cone.Navtree XXXXXX
+QUnit.module('cone.Navtree', hooks => {
+	hooks.before( () => {
+		console.log('NOW RUNNING: cone.Navtree');
+	});
+
+	hooks.after( () => {
+		console.log('COMPLETE: cone.Navtree');
+		console.log('-------------------------------------');
+	});
+
+	QUnit.module('constructor', hooks => {
+		hooks.before( () => {
+			console.log('- now running: constructor');
+		});
+		hooks.beforeEach( () => {
+			viewport.set('large');
+			$(window).trigger('resize');
+			create_sidebar_elem();
+			create_navtree_elem();
+			cone.SidebarMenu.initialize();
+			cone.Navtree.initialize();
+		})
+		hooks.afterEach( () => {
+			cone.navtree = null;
+			cone.sidebar_menu = null;
+			$('#sidebar_left').remove();
+		})
+		hooks.after( () => {
+			console.log('- done: constructor');
+		})
+
+		QUnit.test.only('unload() call', assert => {
+			console.log('-- test: unload() call');
+			// save original function
+			let unload_origin = cone.Navtree.prototype.unload;
+			// overwrite original function
+			cone.Navtree.prototype.unload = function() {
+				assert.step( "unload() happened" );
+			}
+			cone.Navtree.initialize();
+			assert.verifySteps(["unload() happened"]);
+
+			// reset original function
+			cone.Navtree.prototype.unload = unload_origin;
+		});
+
+		QUnit.test.only('elems', assert => {
+			console.log('-- test: elems');
+			let navtree = cone.navtree;
+			assert.ok( navtree instanceof cone.ViewPortAware);
+			assert.ok(navtree.content);
+			assert.ok(navtree.heading);
+			assert.ok(navtree.toggle_elems);
+		})
+
+		QUnit.test.only('mv_to_mobile() call', assert => {
+			console.log('-- test: mv_to_mobile() call');
+			cone.sidebar_menu = null;
+			cone.navtree = null;
+			cone.viewport = null;
+			viewport.set('mobile');
+			cone.viewport = new cone.ViewPort();
+		
+			let mv_to_mobile_origin = cone.Navtree.prototype.mv_to_mobile;
+			// overwrite original function
+			cone.Navtree.prototype.mv_to_mobile = function() {
+				assert.step( "mv_to_mobile() happened" );
+			}
+
+			cone.SidebarMenu.initialize();
+			cone.Navtree.initialize();
+			$(window).off('viewport_changed');
+			
+			assert.verifySteps(["mv_to_mobile() happened"]);
+			// reset original function
+			cone.Navtree.prototype.mv_to_mobile = mv_to_mobile_origin;
+		});
+
+		QUnit.test.only('scrollbar_handle() call', assert => {
+			console.log('-- test: scrollbar_handle() call');
+			cone.navtree = null;
+
+			scrollbar_handle_origin = cone.Navtree.prototype.scrollbar_handle;
+			cone.Navtree.prototype.scrollbar_handle = function() {
+				assert.step( "scrollbar_handle() happened" );
+			}
+
+			cone.Navtree.initialize();
+			$(window).off('viewport_changed');
+			assert.verifySteps(["scrollbar_handle() happened"]);
+
+			cone.Navtree.prototype.scrollbar_handle = scrollbar_handle_origin;
+		})
+	});
+
+	QUnit.module('methods', hooks => {
+		hooks.before( () => {
+			console.log('- now running: methods');
+		});
+		hooks.beforeEach( () => {
+			viewport.set('large');
+			$(window).trigger('resize');
+			create_sidebar_elem();
+			create_navtree_elem();
+			cone.SidebarMenu.initialize();
+			cone.Navtree.initialize();
+		});
+		hooks.afterEach( () => {
+			cone.navtree = null;
+			cone.sidebar_menu = null;
+			$('#sidebar_left').remove();
+			if(cone.topnav) {
+				cone.topnav = null;
+				$('#topnav').remove();
+			}
+		});
+		hooks.after( () => {
+			console.log('- done: methods');
+		});
+
+		QUnit.test.skip('unload()', assert => {
+			console.log('-- test: unload()');
+
+			cone.navtree = null;
+			let align_width_origin = cone.Navtree.align_width,
+				restore_width_origin = cone.Navtree.restore_width
+			;
+
+			cone.Navtree.prototype.change_event_functions = function() {
+				this.align_width = function() {
+					throw new Error( "align_width() happened" );
+				}
+				this._mouseenter_handle = this.align_width.bind(this);
+				this.toggle_elems.on('mouseenter', this._mouseenter_handle);
+				this.restore_width = function() {
+					throw new Error( "restore_width() happened" );
+				}
+				this._restore = this.restore_width.bind(this);
+				this.toggle_elems.on('mouseleave', this._restore);
+			}
+			cone.Navtree.initialize();
+			cone.navtree.change_event_functions();
+
+			// save original function
+			let super_unload_origin = cone.ViewPortAware.prototype.unload;
+			// overwrite original function
+			cone.ViewPortAware.prototype.unload = function() {
+				assert.step( "super.unload() happened" );
+			}
+			cone.navtree.heading.on('click', () => {
+				throw new Error('click happened');
+			});
+
+			cone.navtree.unload();
+			cone.navtree.toggle_elems.trigger('mouseenter').trigger('mouseleave');
+			cone.navtree.heading.trigger('click');
+	
+			assert.verifySteps(["super.unload() happened"]);
+	
+			// reset original function
+			cone.ViewPortAware.prototype.unload = super_unload_origin;
+			cone.Navtree.prototype.align_width = align_width_origin;
+			cone.Navtree.prototype.restore_width = restore_width_origin;
+		});
+
+		QUnit.test.only('mv_to_mobile', assert => {
+			console.log('-- test: mv_to_mobile()');
+			create_topnav_elem();
+			cone.Topnav.initialize();
+
+			cone.navtree.mv_to_mobile();
+			assert.ok(cone.navtree.elem.hasClass('mobile'));
+			assert.strictEqual( $('#topnav-content > #navtree').length, 1);
+			assert.strictEqual( $('#sidebar_content > #navtree').length, 0);
+			assert.ok(cone.navtree.content.is(':hidden'));
+			cone.navtree.heading.trigger('click');
+			assert.ok(cone.navtree.content.is(':visible'));
+		});
+
+		QUnit.test.only('viewport_changed()', assert => {
+			console.log('-- test: viewport_changed()');
+			create_topnav_elem();
+			cone.Topnav.initialize();
+			let resize_evt = $.Event('viewport_changed');
+			resize_evt.state = 0;
+
+			let super_vp_changed_origin = cone.ViewPortAware.prototype.viewport_changed;
+			cone.ViewPortAware.prototype.viewport_changed = function(e) {
+				this.vp_state = e.state;
+				assert.step( "super.viewport_changed() happened" );
+			}
+
+			// mobile
+			let mv_to_mobile_origin = cone.Navtree.prototype.mv_to_mobile;
+			cone.Navtree.prototype.mv_to_mobile = function() {
+				assert.step( "mv_to_mobile() happened" );
+			}
+
+			cone.navtree.viewport_changed(resize_evt);
+			assert.strictEqual(cone.navtree.vp_state, resize_evt.state);
+
+			//desktop
+			cone.navtree.heading.on('click', () => {
+				assert.step('click happened');
+			});
+			resize_evt.state = 2;
+			cone.navtree.viewport_changed(resize_evt);
+			assert.notOk(cone.navtree.elem.hasClass('mobile'));
+			assert.strictEqual( $('#topnav-content > #navtree').length, 0);
+			assert.strictEqual( $('#sidebar_content > #navtree').length, 1);
+			cone.navtree.heading.trigger('click');
+			assert.ok(cone.navtree.content.is(':visible'));
+			
+			assert.verifySteps([
+				"super.viewport_changed() happened",
+				"mv_to_mobile() happened",
+				"super.viewport_changed() happened"
+			]);
+
+			// reset
+			cone.ViewPortAware.prototype.viewport_changed = super_vp_changed_origin;
+			cone.Navtree.prototype.mv_to_mobile = mv_to_mobile_origin;
+		});
+
+		QUnit.test.only('align_width()', assert => {
+			console.log('-- test: align_width()');
+			assert.ok(true);
+
+			for(let item of cone.navtree.toggle_elems) {
+				let elem = $(item);
+				elem.trigger('mouseenter');
+				assert.ok(elem.hasClass('hover'));
+			}
+			
+
+		})
+	});
+});
 
 // XXXXXX cone.MainMenuItem XXXXXX
 QUnit.module('cone.MainMenuItem', hooks => {
@@ -2080,7 +2566,7 @@ function create_mm_sidebar_elem() {
 		  	</span>
 		  </li>
 
-		  <li class="active node_child_1 sb-menu">
+		  <li class="active node-child_1">
 			<a href="#">
 			  <i class="bi bi-heart"></i>
 				<span">Title</span>
@@ -2104,6 +2590,25 @@ function create_mm_sidebar_elem() {
 				</a>
 			  </li>
 			</ul>
+		  </li>
+
+		  <li class="node-child_3 sb-menu">
+		    <a href="#">
+		  	  <i class="bi bi-heart"></i>
+		  	    <span">Title</span>
+		      </a>
+		      <a href="#" class="sidebar-arrow">
+		  	    <i class="dropdown-arrow bi bi-chevron-down"></i>
+		      </a>
+  
+		    <ul class="cone-mainmenu-dropdown-sb">
+		      <li>
+		  		<a href="#">
+		  		  <i class="bi bi-heart"></i>
+		  		  <span>Title</span>
+		  	    </a>
+		  	  </li>
+		    </ul>
 		  </li>
 		</ul>
 	`;
@@ -2190,4 +2695,54 @@ function create_empty_item() {
 		`;
 
 		$('#main-menu').append(mainmenu_item_html);
+}
+
+// navtree
+
+function create_navtree_elem() {
+	let navtree_html = `
+	<ul id="navtree">
+		<li class="sidebar-heading" id="navtree-heading">
+		  <span>
+		  	Navigation
+		  </span>
+		  <i class="dropdown-arrow bi bi-chevron-down"></i>
+		</li>
+
+		<div id="navtree-content">
+		
+		<li class="active navtreelevel_1">
+		  <a href="#">
+			<i class="bi bi-heart"></i>
+			<span>Title</span>
+		  </a>
+		  <ul>
+			<li class="navtreelevel_2">
+			  <a href="#">
+				<i class="bi bi-heart"></i>
+				<span>Title</span>
+		      </a>
+			</li>
+		  </ul>
+		</li>
+	
+		<li class="active navtreelevel_1">
+		  <a href="#">
+			<i class="bi bi-heart"></i>
+			<span>Title</span>
+		  </a>
+		  <ul>
+			<li class="navtreelevel_2">
+			  <a href="#">
+				<i class="bi bi-heart"></i>
+				<span>Title</span>
+		      </a>
+			</li>
+		  </ul>
+		</li>
+	  </div>
+	</ul>
+	`;
+
+	$('#sidebar_content').append(navtree_html);
 }

@@ -417,7 +417,8 @@ if (window.cone === undefined) cone = {};
             for(let i = 0; i < this.menus.length; i++) {
                 let elem = this.menus[i],
                     arrow = $('i.dropdown-arrow', elem),
-                    menu = $('ul.cone-mainmenu-dropdown-sb', elem);
+                    menu = $('ul.cone-mainmenu-dropdown-sb', elem)
+                ;
 
                 menu.css('display', this.display_data[i]);
 
@@ -716,9 +717,6 @@ if (window.cone === undefined) cone = {};
         }
 
         align_width(evt) {
-            if(cone.dragging) {
-                return;
-            }
             let target = $(evt.currentTarget);
             target.addClass('hover');
             if (target.outerWidth() > $('ul', target).outerWidth()) {
