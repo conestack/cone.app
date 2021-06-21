@@ -10,7 +10,9 @@
 // var livesearch_options = new Object();
 
 // ensure namespace
-if (window.cone === undefined) cone = {};
+if (window.cone === undefined) {
+    cone = {};
+}
 
 (function($) {
 
@@ -809,7 +811,7 @@ if (window.cone === undefined) cone = {};
         }
 
         unload() {
-            // placeholder
+            super.unload();
         }
 
         viewport_changed(e) {
