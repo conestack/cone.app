@@ -1,10 +1,16 @@
 
 const { test } = QUnit;
 
-var vp_states = ['mobile', 'small', 'medium', 'large'];
 
 QUnit.begin( details => {
 	console.log( `Test amount: ${details.totalTests}` );
+});
+
+QUnit.done( function( details ) {
+	console.log(
+	  "Total: " + details.total + " Failed: " + details.failed
+	  + " Passed: " + details.passed + " Runtime: " + details.runtime
+	);
 });
 
 QUnit.test('window.cone = undefined', assert => {
@@ -12,8 +18,13 @@ QUnit.test('window.cone = undefined', assert => {
 	window.cone = undefined;
 	assert.ok($.isEmptyObject(cone));
 	window.cone = window_cone_origin;
-})
+});
 
+
+// viewport states for responsive tests
+var vp_states = ['mobile', 'small', 'medium', 'large'];
+
+// overwrite unload for super call
 function overwrite_vp_unload(assert) {
 	cone.ViewPortAware.prototype.unload = function() {
 		$(window).off('viewport_changed', this._viewport_changed_handle);
@@ -53,7 +64,6 @@ QUnit.test('cone namespace', assert => {
 	console.log('COMPLETE: cone Namespace');
 	console.log('-------------------------------------');
 });
-
 
 // XXXXXX cone.ViewPort XXXXXX
 QUnit.module('cone.ViewPort', hooks => {
@@ -111,6 +121,7 @@ QUnit.module('cone.ViewPortAware', hooks => {
 		});
 	
 		hooks.beforeEach( () => {
+			viewport.set('large');
 			cone.viewport = new cone.ViewPort();
 			test_obj = new cone.ViewPortAware();
 		});
@@ -187,7 +198,7 @@ QUnit.module('cone.Searchbar', hooks => {
 		})
 
 
-		QUnit.test.only('unload() called', assert => {
+		QUnit.test.skip('unload() called', assert => {
 			cone.Searchbar.initialize();
 			let unload_origin = cone.Searchbar.prototype.unload;
 			cone.Searchbar.prototype.unload = function() {
@@ -199,7 +210,7 @@ QUnit.module('cone.Searchbar', hooks => {
 		});
 
 		for( let i = 0; i < vp_states.length; i++ ) {
-			QUnit.test.only(`initial Viewport ${i}`, assert => {
+			QUnit.test(`initial Viewport ${i}`, assert => {
 				console.log(`- test: initial Viewport ${i}`);
 				viewport.set(vp_states[i]);
 				cone.viewport = new cone.ViewPort();
@@ -209,19 +220,7 @@ QUnit.module('cone.Searchbar', hooks => {
 		}
 	});
 
-	for( let i = 0; i < vp_states.length; i++ ) {
-		QUnit.test.skip(`initial Viewport ${i}`, assert => {
-			console.log(`- test: initial Viewport ${i}`);
-			viewport.set(vp_states[i]);
-			cone.viewport = new cone.ViewPort();
-			create_searchbar_elem();
-			cone.Searchbar.initialize();
-
-			check_elems(assert);
-		});
-	}
-
-	QUnit.test.skip('vp_changed()', assert => {
+	QUnit.test('vp_changed()', assert => {
 		console.log('- now running: vp_changed()');
 		viewport.set('large');
 		cone.viewport = new cone.ViewPort();
@@ -236,9 +235,9 @@ QUnit.module('cone.Searchbar', hooks => {
 		}
 	});
 
-	QUnit.test.skip('unload()', assert => {
+	QUnit.test('unload()', assert => {
+		let unload_origin = cone.ViewPortAware.prototype.unload;
 		overwrite_vp_unload(assert);
-		assert.ok(true);
 		viewport.set('large');
 		cone.viewport = new cone.ViewPort();
 		create_searchbar_elem();
@@ -246,6 +245,7 @@ QUnit.module('cone.Searchbar', hooks => {
 
 		cone.searchbar.unload();
 		assert.verifySteps(["super.unload() happened"]);
+		cone.ViewPortAware.prototype.unload = unload_origin;
 	})
 
 	//////////////////////////////////
@@ -688,7 +688,7 @@ QUnit.module( 'cone.ScrollBar', hooks => {
 	}
 });
 
-test('Test cone.toggle_arrow', assert => {
+QUnit.test('Test cone.toggle_arrow', assert => {
 	let up = 'bi-chevron-up',
 		down = 'bi-chevron-down',
 		arrow_up = $(`<i class="dropdown-arrow ${up}" />`),
@@ -703,470 +703,477 @@ test('Test cone.toggle_arrow', assert => {
 /* XXXXXXX cone.topnav XXXXXXX */
 
 QUnit.module('cone.Topnav', hooks => {
-
 	hooks.before ( () => {
 		console.log('NOW RUNNING: cone.Topnav');
 	})
-	hooks.after( () => {
-		cone.topnav = null;
-		cone.viewport = null;
-		$('#topnav').remove();
-		console.log('COMPLETE: cone.Topnav');
-		console.log('-------------------------------------');
-	})
+	// hooks.after( () => {
+	// 	cone.topnav = null;
+	// 	cone.viewport = null;
+	// 	$('#topnav').remove();
+	// 	console.log('COMPLETE: cone.Topnav');
+	// 	console.log('-------------------------------------');
+	// })
 
-	QUnit.module('initial load', () => {
-		for( let i=0; i <=3; i++ ) {
-
-			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.before( () => {
-					console.log(`- now running: initial Viewport ${i}`);
-					create_topnav_elem();
-
-					viewport.set(vp_states[i]);
-					cone.viewport = new cone.ViewPort();
-					cone.Topnav.initialize( $('body') );
-
-					if(cone.topnav.vp_state === 0) {
-						topnav_style_to_mobile();
-					} else {
-						topnav_style_to_desktop();
-					}
-				})
-
-				test(`cone.viewport ${i}`, assert => {
-					console.log(`-- test: cone.viewport ${i}`);
-					
-					assert.ok(cone.topnav instanceof cone.Topnav, 'cone.topnav instance of Topnav');
-					assert.ok(cone.topnav instanceof cone.ViewPortAware, 'cone.topnav instance of ViewPortAware');
-	
-					//test that required elements exist
-					assert.ok(cone.topnav.elem, '.elem exists');
-					assert.ok(cone.topnav.logo, '.logo exists');
-					assert.ok(cone.topnav.content, '.content exists');
-					assert.ok(cone.topnav.toggle_button, '.toggle_button exists');
-	
-					assert.strictEqual(cone.topnav.vp_state, i, `topnav.vp_state ${i}`);
-					assertVisibility(assert);
-					
-					// why does it fail?
-					// if( cone.viewport.state === 0 ) {
-					// 	test_toggle_menu(assert);
-					// }
-				})
-
-				hooks.after( () => {
-					cone.topnav = null;
-					cone.viewport = null;
-					$('#topnav').remove();
-					console.log(`- done: initial Viewport ${i}`);
-				})
-			})
-		}
-	})
-
-	QUnit.module('viewport_changed()', hooks => {
-
-		hooks.before( () => {
+	QUnit.module('constructor', hooks => {
+		hooks.beforeEach( () => {
 			create_topnav_elem();
-
-			viewport.set('large');
-			cone.viewport = new cone.ViewPort();
-			cone.Topnav.initialize( $('body') );
-			topnav_style_to_desktop();
-		})
-
-		hooks.after( () => {
+		});
+		hooks.afterEach( () => {
 			cone.topnav = null;
-			cone.viewport = null;
 			$('#topnav').remove();
-		})
+		});
 
-		for( let i=0; i <=3; i++ ) {
+		QUnit.test('unload() called', assert => {
+			console.log('-- test: unload() called');
+			cone.Topnav.initialize();
+			call_unload(cone.Topnav, assert);
+		});
 
-			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.before( () => {
-					console.log(`- now running: change to Viewport ${i}`);
-					viewport.set(vp_states[i]);
-					cone.viewport = new cone.ViewPort();
-					$(window).trigger('resize');
+		QUnit.test('vp mobile', assert => {
+			console.log('-- test: vp mobile');
+			cone.viewport.state = 0;
+			cone.Topnav.initialize();
+			assert.ok(cone.topnav instanceof cone.ViewPortAware, 'cone.topnav instance of ViewPortAware');
+			let topnav = cone.topnav;
+			assert.ok(topnav.content.is(':hidden'));
+			assert.ok(topnav.elem.hasClass('mobile'));
+		});
 
-					if(cone.topnav.vp_state === 0) {
-						topnav_style_to_mobile();
-					} else {
-						topnav_style_to_desktop();
-					}
-				})
+		QUnit.test('pt_handle() called', assert => {
+			console.log('-- test: pt_handle() called');
+			let pt_handle_origin = cone.Topnav.prototype.pt_handle;
+			cone.Topnav.prototype.pt_handle = function() {
+				assert.step('pt_handle() called');
+			}
+			cone.Topnav.initialize();
+			assert.verifySteps(['pt_handle() called']);
+			cone.Topnav.prototype.pt_handle = pt_handle_origin;
+		});
+	});
 
-				test(`cone.viewport ${i}`, assert => {
-					console.log(`-- test: cone.viewport ${i}`);
-					assertVisibility(assert);
-					if( cone.viewport.state === 0 ) {
-						test_toggle_menu(assert);
-					}
-				})
+	QUnit.module('methods', hooks => {
+		hooks.beforeEach( () => {
+			create_topnav_elem();
+		});
+		hooks.afterEach( () => {
+			cone.topnav = null;
+			$('#topnav').remove();
+			cone.viewport.state = 3;
+		});
 
-				hooks.afterEach( () => {
-					console.log(`- done: change to Viewport ${i}`);
-				})
-			})
-		}
-    });
+		QUnit.test('unload()', assert => {
+			console.log('-- test: unload()');
+			let super_unload_origin = cone.ViewPortAware.prototype.unload,
+				toggle_menu_origin = cone.Topnav.prototype.toggle_menu;
 
-	test('unload', assert => {
-		console.log(`- test: unload`);
-		create_topnav_elem();
-		viewport.set('mobile');
-		cone.viewport = new cone.ViewPort();
-		cone.Topnav.initialize( $('body') );
-		topnav_style_to_mobile();
+			cone.ViewPortAware.prototype.unload = function() {
+				assert.step('super.unload()');
+			}
+			cone.Topnav.prototype.toggle_menu = function() {
+				assert.step('toggle_menu()');
+			}
 
-		let display_state = cone.topnav.content.css('display');
-		cone.topnav.unload();
-		cone.topnav.toggle_button.trigger('click');
-		assert.strictEqual( cone.topnav.content.css('display'), display_state, 'evt listener removed' );
+			cone.Topnav.initialize();
+			cone.topnav.unload();
+			cone.topnav.toggle_button.trigger('click');
+			
+			assert.verifySteps(['super.unload()']);
 
-		cone.topnav = null;
-		cone.viewport = null;
-		$('#topnav').remove();
-	})
+			cone.ViewPortAware.prototype.unload = super_unload_origin;
+			cone.Topnav.prototype.toggle_menu = toggle_menu_origin;
+		});
 
-	test('topnav not null', assert => {
-		console.log(`- test: not null`);
-		create_topnav_elem();
-		cone.viewport = new cone.ViewPort();
-		cone.Topnav.initialize( $('body') );
+		QUnit.test('toggle_menu()', assert => {
+			console.log('-- test: toggle_menu()');
+			cone.viewport.state = 0;
+			cone.Topnav.initialize();
+			topnav_style_to_mobile();
+			assert.strictEqual(cone.topnav.content.css('display'), 'none');
+			cone.topnav.toggle_button.trigger('click');
+			assert.strictEqual(cone.topnav.content.css('display'), 'flex');
 
-		assert.notStrictEqual(cone.topnav, null, 'topnav is not null');
-		
-		cone.Topnav.initialize( $('body') );
-	})
+			let done = assert.async();
+			cone.topnav.toggle_button.trigger('click');
 
-	/////////////////////////////////////////
+			setTimeout( () => {
+				assert.strictEqual(cone.topnav.content.css('display'), 'none');
+				done();
+			}, 500);
+		});
 
-	function assertVisibility(assert) {
+		QUnit.test('viewport_changed()', assert => {
+			console.log('-- test: viewport_changed()');
 
-		let topnav = cone.topnav;
+			cone.Topnav.initialize();
+			let resize_evt = $.Event('viewport_changed');
+			resize_evt.state = 0;
 
-		assert.ok(topnav.elem.is(':visible'), 'elem is visible');
-		assert.strictEqual(topnav.elem.css('display'), 'flex', 'elem display is flex');
-		assert.strictEqual(topnav.elem.outerHeight(), 64, 'elem height is 4rem (64px)');
-		//assert.strictEqual(topnav.elem.outerWidth(), $('body').outerWidth(), 'elem width fills layout');
-  
-		assert.ok(topnav.logo.is(':visible'), 'logo is visible');
-		let logo_img = $('img', topnav.logo);
-		assert.strictEqual(logo_img.attr('src'), '/static/images/cone-logo-cone.svg', 'correct img');
-		//assert.strictEqual(logo_img.outerHeight(), 32, 'logo height is 32'); // fails, why?
-		//assert.strictEqual(logo_img.outerHeight(), 32, 'logo width is 32');
+			let super_vp_changed_origin = cone.ViewPortAware.prototype.viewport_changed;
+			cone.ViewPortAware.prototype.viewport_changed = function(e) {
+				this.vp_state = e.state;
+				assert.step( "super.viewport_changed() happened" );
+			}
 
-		if(cone.viewport.state === cone.VP_MOBILE) {
-			assert.ok(topnav.elem.hasClass('mobile'), 'elem has class mobile');
-			assert.ok(topnav.content.is(':hidden'), 'content is hidden');
-			assert.strictEqual(topnav.toggle_button.css('display'), 'block', 'toggle btn visible');
-			assert.ok(topnav.content.is(':hidden'), 'content hidden');
-			assert.strictEqual($('span', topnav.logo).css('display'), 'none', 'logo title hidden');
-			assert.strictEqual(topnav.elem.css('padding'), '16px', 'elem padding 16px = 1rem');
-		} 
-		else {
-			assert.notOk(topnav.elem.hasClass('mobile'), 'elem does not have class mobile');
-			assert.strictEqual(topnav.content.css('display'), 'contents', 'content has display contents');
-			assert.ok(topnav.toggle_button.is(':hidden'), 'toggle btn hidden');
-			assert.strictEqual(topnav.logo.css('font-size'), '24px', 'font size is 24px (1.5rem)');
-			assert.ok($('span', topnav.logo).is(':visible'), 'logo title visible');
-		}
-	}
+			// mobile
+			cone.topnav.viewport_changed(resize_evt);
+			topnav_style_to_mobile();
+			assert.strictEqual(cone.topnav.vp_state, resize_evt.state);
+			assert.strictEqual(cone.topnav.content.css('display'), 'none');
+			assert.ok(cone.topnav.elem.hasClass('mobile'));
 
-	function test_toggle_menu(assert) {
-		assert.strictEqual(cone.topnav.content.css('display'), 'none', 'content hidden');
-		
-		let done = assert.async();
+			//desktop
+			cone.topnav.tb_dropdowns.on('click', () => {
+				assert.step('click happened');
+			});
+			resize_evt.state = 3;
+			cone.topnav.viewport_changed(resize_evt);
+			assert.strictEqual(cone.topnav.content.css('display'), 'block');
+			assert.notOk(cone.topnav.elem.hasClass('mobile'));
+			cone.topnav.tb_dropdowns.trigger('click');
+			
+			assert.verifySteps([
+				"super.viewport_changed() happened",
+				"super.viewport_changed() happened"
+			]);
 
-		cone.topnav.toggle_button.trigger('click');
-		assert.strictEqual(cone.topnav.content.css('display'), 'flex', 'topnav content visible on click');
-
-		cone.topnav.toggle_button.trigger('click');
-		setTimeout(function() {
-		  assert.strictEqual(cone.topnav.content.css('display'), 'none', 'display none on 2nd click')
-		  done();
-		}, 1000 );
-	}
-})
+			// reset
+			cone.ViewPortAware.prototype.viewport_changed = super_vp_changed_origin;
+		});
+	});
+});
 
 
 QUnit.module('cone.SidebarMenu', hooks => {
-
-	let elem = $('#sidebar_left');
-
 	hooks.before( function() {
 		console.log('NOW RUNNING: cone.SidebarMenu');
 	});
 
 	hooks.after( () => {
-		cone.sidebar_menu = null;
-		cone.viewport = null;
-		elem.remove();
-
 		console.log('COMPLETE: cone.SidebarMenu')
 		console.log('-------------------------------------');
 	});
 
-	QUnit.module('initial load', () => {
-
-		for( let i = 0; i <= 3; i++ ) {
-			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.before( () => {
-					viewport.set(vp_states[i]);
-					cone.viewport = new cone.ViewPort();
-
-					create_sidebar_elem();
-					cone.SidebarMenu.initialize($('body'));
-				});
-
-				hooks.after( () => {
-					cone.sidebar_menu = null;
-					cone.viewport = null;
-					elem.remove();
-				});
-
-				test('check elems', assert => {
-					console.log(`-- test: initial load Viewport ${i}`);
-					check_elems(assert);
-				});
-			});
-		}
-	});
-
-	QUnit.module.todo('viewport_changed()', hooks => {
-
+	QUnit.module('constructor', hooks => {
 		hooks.before( () => {
-			console.log('- now running: viewport_changed()');
-
-			viewport.set('large');
-			cone.viewport = new cone.ViewPort();
+			console.log('- now running: constructor');
+		})
+		hooks.beforeEach( () => {
 			create_sidebar_elem();
-			cone.SidebarMenu.initialize($('body'));
+		});
+		hooks.afterEach( () => {
+			cone.sidebar_menu = null;
+			$('#sidebar_left').remove();
 		});
 
-		hooks.after( () => {
-			console.log('- DONE: viewport_changed()');
-			cone.viewport = null;
+		QUnit.test('unload() call', assert => {
+			console.log('-- test: unload() call');
+			cone.SidebarMenu.initialize();
+			// save original function
+			let unload_origin = cone.SidebarMenu.prototype.unload;
+			// overwrite original function
+			cone.SidebarMenu.prototype.unload = function() {
+				assert.step( "unload() happened" );
+			}
+			cone.SidebarMenu.initialize();
+			assert.verifySteps(["unload() happened"]);
+
+			// reset original function
+			cone.SidebarMenu.prototype.unload = unload_origin;
+		});
+
+		QUnit.test('elems', assert => {
+			console.log('-- test: elems');
+			cone.SidebarMenu.initialize();
+			let sidebar = cone.sidebar_menu;
+			assert.ok( sidebar instanceof cone.ViewPortAware);
+			assert.ok(sidebar.content);
+		});
+
+		QUnit.test('initial_load() call', assert => {
+			console.log('-- test: initial_load() call');
+			let initial_load_origin = cone.SidebarMenu.prototype.initial_load;
+			cone.SidebarMenu.prototype.initial_load = function() {
+				assert.step('initial_load()');
+			}
+			cone.SidebarMenu.initialize();
+			assert.verifySteps(['initial_load()']);
+			cone.SidebarMenu.prototype.initial_load = initial_load_origin;
+		});
+	});
+
+	QUnit.module('methods', hooks =>{
+		hooks.beforeEach( () => {
+			create_sidebar_elem();
+		});
+		hooks.afterEach( () => {
 			cone.sidebar_menu = null;
 			elem.remove();
 		});
 
-		for( let i = 0; i <= 3; i++ ) {
-			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.before( () => {
-					viewport.set(vp_states[i]);
-					$(window).trigger('resize');
-				});
+		QUnit.test('unload()', assert => {
+			console.log('-- test: unload()');
 
-				test('check elems', assert => {
-					console.log(`-- test: change to Viewport ${i}`);
-					assert.ok(true)
-					let sidebar = cone.sidebar_menu;
-					check_elems(assert);
-				});
+			let super_unload_origin = cone.ViewPortAware.prototype.unload,
+				toggle_menu_origin = cone.SidebarMenu.prototype.toggle_menu,
+				toggle_lock_origin = cone.SidebarMenu.prototype.toggle_lock;
 
-				hooks.after( () => {
-					cone.viewport = null;
-				});
-			});
-		}
-	});
+			cone.ViewPortAware.prototype.unload = function() {
+				assert.step('super.unload()');
+			}
+			cone.SidebarMenu.prototype.toggle_menu = function() {
+				assert.step('toggle_menu()');
+			}
+			cone.SidebarMenu.prototype.toggle_lock = function() {
+				assert.step('toggle_lock()');
+			}
 
-	QUnit.module('toggle_lock()', () => {
+			cone.SidebarMenu.initialize();
 
-		QUnit.module('no cookie', hooks => {
-			hooks.before( () => {
-				console.log( '-- now running: no cookie' );
-	
-				viewport.set('large');
-				cone.viewport = new cone.ViewPort();
-				create_sidebar_elem();
-				cone.SidebarMenu.initialize( $('body') );
-			});
-
-			hooks.after( () => {
-				console.log( '-- DONE: no cookie' );
-				cone.viewport = null;
-				cone.sidebar_menu = null;
-				elem.remove();
-			});
-
-			test('initial no cookie', assert => {
-				let sidebar = cone.sidebar_menu;
-				console.log( '--- test: initial (no cookie)' );
-	
-				assert.notOk( readCookie('sidebar'), 'no sidebar cookie' );
-				assert.notOk( sidebar.cookie, 'no sidebar_menu cookie' );
-				assert.notOk( sidebar.lock_switch.hasClass('active'), 'lock_switch doesnt have class active' );
-	
-				sidebar.lock_switch.trigger('click');
-	
-				assert.ok( sidebar.lock_switch.hasClass('active') );
-				assert.strictEqual( readCookie('sidebar'), 'false' );
-				assert.strictEqual( sidebar.collapsed, false );
-				
-				sidebar.toggle_btn.trigger('click');
-				assert.strictEqual( sidebar.collapsed, false );
-	
-				check_collapsed(assert);
-			})
-	
-			test('vp_changed()', assert => {
-				let sidebar = cone.sidebar_menu;
-				console.log( '--- test: vp_changed()' );
-	
-				viewport.set('small');
-				$(window).trigger('resize');
-				assert.strictEqual( sidebar.collapsed, false );
-				check_collapsed(assert);
-	
-				viewport.set('mobile');
-				$(window).trigger('resize');
-				assert.strictEqual( sidebar.collapsed, false );
-				check_collapsed(assert);
-	
-				viewport.set('large');
-				$(window).trigger('resize');
-				assert.strictEqual( sidebar.collapsed, false );
-				check_collapsed(assert);
-			})
-	
-			test('second click', assert => {
-				let sidebar = cone.sidebar_menu;
-				console.log( '--- test: second click' );
-	
-				sidebar.lock_switch.trigger('click');
-	
-				assert.notOk( sidebar.lock_switch.hasClass('active') );
-				assert.strictEqual( readCookie('sidebar'), null );
-				assert.strictEqual( sidebar.collapsed, false );
-				
-				sidebar.toggle_btn.trigger('click');
-				assert.strictEqual( sidebar.collapsed, true );
-	
-				check_collapsed(assert);
-			})
-		});
-
-		QUnit.module('with cookie', hooks => {
-			hooks.before( () => {
-				console.log( '-- now running: with cookie' );
-				createCookie('sidebar', 'true', null);
-
-				viewport.set('large');
-				cone.viewport = new cone.ViewPort();
-				create_sidebar_elem();
-				cone.SidebarMenu.initialize( $('body') );
-			});
-
-			hooks.after( () => {
-				console.log( '-- DONE: with cookie' );
-			});
-
-			test('initial no cookie', assert => {
-				let sidebar = cone.sidebar_menu;
-				console.log( '--- test: initial (with cookie)' );
-
-				assert.strictEqual( sidebar.cookie, true );
-				assert.strictEqual( sidebar.collapsed, true );
-				check_collapsed(assert);
-
-				assert.ok( sidebar.lock_switch.hasClass('active') );
-
-				sidebar.lock_switch.trigger('click');
-
-				assert.notOk( sidebar.lock_switch.hasClass('active') );
-				assert.strictEqual( readCookie('sidebar'), null );
-
-				sidebar.toggle_btn.trigger('click');
-				assert.strictEqual( sidebar.collapsed, false );
-				check_collapsed(assert);
-			})
-	
-			test('vp_changed()', assert => {
-				let sidebar = cone.sidebar_menu;
-				console.log( '--- test: vp_changed()' );
-	
-				viewport.set('small');
-				$(window).trigger('resize');
-				assert.strictEqual( sidebar.collapsed, true );
-				check_collapsed(assert);
-	
-				viewport.set('mobile');
-				$(window).trigger('resize');
-				assert.strictEqual( sidebar.collapsed, false );
-				check_collapsed(assert);
-	
-				viewport.set('large');
-				$(window).trigger('resize');
-				assert.strictEqual( sidebar.collapsed, false );
-				check_collapsed(assert);
-			})
-
-		});
-
-		test('unload()', assert => {
-			console.log('- test: unload()');
-			assert.ok(true);
-
-			let collapsed = cone.sidebar_menu.collapsed;
-			let switch_state = cone.sidebar_menu.lock_switch.hasClass('active');
 			cone.sidebar_menu.unload();
 			cone.sidebar_menu.toggle_btn.trigger('click');
 			cone.sidebar_menu.lock_switch.trigger('click');
 
-			assert.strictEqual(collapsed, cone.sidebar_menu.collapsed);
-			assert.strictEqual(switch_state, cone.sidebar_menu.lock_switch.hasClass('active'));
+			assert.verifySteps(['super.unload()']);
+	
+			// reset original functions
+			cone.ViewPortAware.prototype.unload = super_unload_origin;
+			cone.SidebarMenu.prototype.toggle_menu = toggle_menu_origin;
+			cone.SidebarMenu.prototype.toggle_lock = toggle_lock_origin;
 		});
 
+		QUnit.test('initial_load()', assert => {
+			console.log('-- test: initial_load()');
+
+			// prepare
+			let assign_state_origin = cone.SidebarMenu.prototype.assign_state,
+				toggle_menu_origin = cone.SidebarMenu.prototype.toggle_menu;
+
+			cone.SidebarMenu.prototype.assign_state = function() {
+				assert.step('assign_state()');
+			}
+			cone.SidebarMenu.prototype.toggle_menu = function() {
+				assert.step('toggle_menu()');
+			}
+
+			// mobile
+			cone.viewport.state = 0;
+			cone.SidebarMenu.initialize();
+			assert.strictEqual(readCookie('sidebar'), null);
+			assert.strictEqual(cone.sidebar_menu.elem.css('display'), 'none');
+			cone.sidebar_menu = null;
+
+			cone.viewport.state = 2;
+			cone.SidebarMenu.initialize();
+			assert.strictEqual(readCookie('sidebar'), null);
+			assert.strictEqual(cone.sidebar_menu.collapsed, true);
+			cone.sidebar_menu = null;
+
+			cone.viewport.state = 3;
+			cone.SidebarMenu.initialize();
+			assert.strictEqual(readCookie('sidebar'), null);
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+			cone.sidebar_menu = null;
+
+			cone.viewport.state = 3;
+			createCookie('sidebar', true, null);
+			cone.SidebarMenu.initialize();
+			assert.strictEqual(readCookie('sidebar'), 'true');
+			assert.strictEqual(cone.sidebar_menu.collapsed, true);
+			cone.sidebar_menu.toggle_btn.trigger('click');
+			assert.ok(cone.sidebar_menu.lock_switch.hasClass('active'));
+			cone.sidebar_menu = null;
+
+			assert.verifySteps([
+				'assign_state()', 
+				'assign_state()', 
+				'assign_state()',
+				'assign_state()'
+			]);
+
+			// reset
+			createCookie('sidebar', '', -1);
+			cone.SidebarMenu.prototype.assign_state = assign_state_origin;
+			cone.SidebarMenu.prototype.toggle_menu = toggle_menu_origin;
+		});
+
+		QUnit.test('toggle_lock()', assert => {
+			console.log('-- test: toggle_lock()');
+
+			// prepare
+			let toggle_menu_origin = cone.SidebarMenu.prototype.toggle_menu;
+			cone.SidebarMenu.prototype.toggle_menu = function() {
+				assert.step('toggle_menu()');
+			}
+
+			cone.SidebarMenu.initialize();
+
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+
+			// without cookie
+			assert.strictEqual(readCookie('sidebar'), null);
+			cone.sidebar_menu.lock_switch.trigger('click');
+			assert.ok(cone.sidebar_menu.lock_switch.hasClass('active'));
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+			assert.strictEqual(cone.sidebar_menu.cookie, false);
+			cone.sidebar_menu.toggle_btn.trigger('click');
+			// cone.sidebar_menu = null;
+
+			// with cookie
+			createCookie('sidebar', true, null);
+			assert.strictEqual(readCookie('sidebar'), 'true');
+			cone.sidebar_menu.toggle_lock();
+			assert.strictEqual(readCookie('sidebar'), null);
+			assert.notOk(cone.sidebar_menu.lock_switch.hasClass('active'));
+			cone.sidebar_menu.toggle_btn.trigger('click');
+			assert.strictEqual(cone.sidebar_menu.cookie, null);
+
+
+			assert.verifySteps(['toggle_menu()']);
+			// reset
+			cone.SidebarMenu.prototype.toggle_menu = toggle_menu_origin;
+		});
+
+		QUnit.test('viewport_changed()', assert => {
+			console.log('-- test: viewport_changed()');
+			cone.SidebarMenu.initialize();
+
+			// prepare
+			let resize_evt = $.Event('viewport_changed');
+			resize_evt.state = 0;
+
+			let super_vp_changed_origin = cone.ViewPortAware.prototype.viewport_changed,
+				assign_state_origin = cone.SidebarMenu.prototype.assign_state;
+
+			cone.ViewPortAware.prototype.viewport_changed = function(e) {
+				this.vp_state = e.state;
+				assert.step( "super.viewport_changed()" );
+			}
+			cone.SidebarMenu.prototype.assign_state = function() {
+				assert.step('assign_state()');
+			}
+
+			// mobile
+			cone.sidebar_menu.viewport_changed(resize_evt);
+			assert.strictEqual(cone.sidebar_menu.vp_state, resize_evt.state);
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+			assert.strictEqual(cone.sidebar_menu.elem.css('display'), 'none');
+
+			// mobile WIP
+			resize_evt.state = 1;
+			cone.sidebar_menu.viewport_changed(resize_evt);
+			assert.strictEqual(cone.sidebar_menu.elem.css('display'), 'block');
+
+			// desktop
+			resize_evt.state = 3;
+			cone.sidebar_menu.viewport_changed(resize_evt);
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+			assert.strictEqual(cone.sidebar_menu.elem.css('display'), 'block');
+
+			// with cookie
+			resize_evt.state = 2;
+			cone.sidebar_menu.cookie = true;
+			cone.sidebar_menu.viewport_changed(resize_evt);
+			assert.strictEqual(cone.sidebar_menu.collapsed, true);
+			assert.strictEqual(cone.sidebar_menu.elem.css('display'), 'block');
+
+			assert.verifySteps([
+				"super.viewport_changed()",
+				'assign_state()',
+				"super.viewport_changed()",
+				'assign_state()',
+				"super.viewport_changed()",
+				'assign_state()',
+				"super.viewport_changed()",
+				'assign_state()'
+			]);
+
+			// reset
+			cone.sidebar_menu.cookie = null;
+			cone.ViewPortAware.prototype.viewport_changed = super_vp_changed_origin;
+			cone.SidebarMenu.prototype.assign_state = assign_state_origin;
+		});
+
+		QUnit.test('assign_state()', assert => {
+			console.log('-- test: assign_state()');
+			cone.SidebarMenu.initialize();
+
+			// collapsed false
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+			assert.ok(cone.sidebar_menu.elem.hasClass('expanded'));
+			assert.ok(cone.sidebar_menu.toggle_arrow_elem.hasClass('bi bi-arrow-left-circle'));
+
+			// collapsed true
+			cone.sidebar_menu.collapsed = true;
+			cone.sidebar_menu.assign_state();
+			assert.ok(cone.sidebar_menu.elem.hasClass('collapsed'));
+			assert.ok(cone.sidebar_menu.toggle_arrow_elem.hasClass('bi bi-arrow-right-circle'));
+			cone.sidebar_menu = null;
+
+			// with mainmenu sidebar
+			create_mm_sidebar_elem();
+
+			let collapse_origin = cone.MainMenuSidebar.prototype.collapse,
+				expand_origin = cone.MainMenuSidebar.prototype.expand;
+
+			cone.MainMenuSidebar.prototype.collapse = function() {
+				assert.step('collapse()');
+			}
+			cone.MainMenuSidebar.prototype.expand = function() {
+				assert.step('expand()');
+			}
+			cone.SidebarMenu.initialize();
+			cone.MainMenuSidebar.initialize();
+			
+			// expand
+			cone.sidebar_menu.assign_state();
+
+			//collapse
+			cone.sidebar_menu.collapsed = true;
+			cone.sidebar_menu.assign_state();
+
+			assert.verifySteps([
+				'expand()',
+				'collapse()'
+			]);
+
+			// reset
+			cone.MainMenuSidebar.prototype.collapse = collapse_origin;
+			cone.MainMenuSidebar.prototype.expand = expand_origin;
+			cone.main_menu_sidebar = null;
+		});
+
+		QUnit.test('toggle_menu()', assert => {
+			console.log('-- test: toggle_menu()');
+
+			// prepare
+			let assign_state_origin = cone.SidebarMenu.prototype.assign_state;
+			cone.SidebarMenu.prototype.assign_state = function() {
+				assert.step('assign_state()');
+			}
+
+			cone.SidebarMenu.initialize();
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+			cone.sidebar_menu.toggle_btn.trigger('click');
+			assert.strictEqual(cone.sidebar_menu.collapsed, true);
+			cone.sidebar_menu.toggle_btn.trigger('click');
+			assert.strictEqual(cone.sidebar_menu.collapsed, false);
+
+			assert.verifySteps([
+				'assign_state()',
+				'assign_state()',
+				'assign_state()'
+			]);
+			// reset
+			cone.SidebarMenu.prototype.assign_state = assign_state_origin;
+		});
 	});
-
-
-	/////////////////////////////////////////
-	function check_elems(assert) {
-		let sidebar = cone.sidebar_menu;
-		assert.ok(sidebar.elem, 'elem exists');
-
-		if(sidebar.vp_state === cone.VP_MOBILE) {
-			assert.ok(sidebar.elem.hasClass('expanded'), 'sidebar class expanded');
-			assert.notOk(sidebar.elem.hasClass('collapsed'), 'sidebar class not collapsed');
-		} else
-		if(sidebar.vp_state === cone.VP_LARGE && sidebar.cookie === null) {
-			assert.ok(sidebar.elem.hasClass('expanded'), 'sidebar class expanded');
-			assert.notOk(sidebar.elem.hasClass('collapsed'), 'sidebar class not collapsed');
-		} /* else
-		if(sidebar.cookie === null) {
-			assert.ok(sidebar.elem.hasClass('collapsed'), 'sidebar class collapsed');
-			assert.notOk(sidebar.elem.hasClass('expanded'), 'sidebar class not expanded');
-		}  */
-	}
-
-	function check_collapsed(assert) {
-		let sidebar = cone.sidebar_menu;
-
-		if( sidebar.collapsed === true ) {
-			assert.ok(sidebar.elem.hasClass('collapsed'), 'sidebar class collapsed');
-			assert.notOk(sidebar.elem.hasClass('expanded'), 'sidebar class not expanded');
-			assert.strictEqual( sidebar.toggle_arrow_elem.attr('class'), 'bi bi-arrow-right-circle' );
-		} else
-		if( sidebar.collapsed === false ) {
-			assert.ok(sidebar.elem.hasClass('expanded'), 'sidebar class expanded');
-			assert.notOk(sidebar.elem.hasClass('collapsed'), 'sidebar class not collapsed');
-			assert.strictEqual( sidebar.toggle_arrow_elem.attr('class'), 'bi bi-arrow-left-circle' );
-		} else {
-			console.log('else???')
-		}
-	}
 });
 
 
 
 
 // XXXXXX cone.MainMenuTOP XXXXXX
-QUnit.module('cone.MainMenu TOP', hooks => {
+QUnit.module('cone.MainMenuTop', hooks => {
 	hooks.before( () => {
 		console.log('NOW RUNNING: cone.MainMenuTop');
 	});
@@ -1176,278 +1183,193 @@ QUnit.module('cone.MainMenu TOP', hooks => {
 		console.log('-------------------------------------');
 	});
 
-	QUnit.module('initial load', () => {
-		for( let i=0; i <=3; i++ ) {
-			QUnit.module(`Viewport ${i}`, hooks => {
-				hooks.before( () => {
-					console.log(`- now running: initial load Viewport ${i}`);
-					viewport.set(vp_states[i]);
-					cone.viewport = new cone.ViewPort();
+	QUnit.module('constructor', hooks => {
+		hooks.before( () => {
+			console.log('- now running: constructor');
+		})
+		hooks.beforeEach( () => {
+			create_topnav_elem();
+			create_mm_top_elem();
+		});
+		hooks.afterEach( () => {
+			cone.viewport.state = 3;
+			cone.topnav = null;
+			cone.main_menu_top = null;
+			$('#topnav').remove();
+		});
 
-					initialize_elems();
-					$(window).off('viewport_changed');
-
-					if(cone.viewport.state === 0) {
-						topnav_style_to_mobile();
-					} else {
-						topnav_style_to_desktop();
-					}
-				});
-
-				if(i === 0) {
-					test('mobile creation', assert => {
-						console.log('-- test: test mobile elems');
-						assert.ok(true)
-						check_elems(assert);
-					});
-				} else {
-					test('check main_menu_items creation', assert => {
-						console.log('-- test: test desktop elems');
-						assert.ok(true)
-					});
-				}
-
-				hooks.after( () => {
-					console.log('remove elems');
-
-					cone.topnav = null;
-					cone.main_menu_top = null;
-
-					$('#topnav').remove();
-				});
-			});
-		}
-	});
-
-	QUnit.test('handle_scrollbar()', assert => {
-		viewport.set('medium');
-		cone.viewport = new cone.ViewPort();
-		initialize_elems();
-
-		console.log('- test: handle_scrollbar()');
-		let item = cone.main_menu_top.main_menu_items[0];
-
-		// overwrite method
-		cone.MainMenuItem.prototype.change_toggle = function() {
-			this.mouseenter_toggle = function() {
-				assert.step( "mouseenter happened" );
-			}
-			this._toggle = this.mouseenter_toggle.bind(this);
-			this.elem.off().on('mouseenter mouseleave', this._toggle);
-		}
-		item.change_toggle();
-
-		// function not called
-		$(window).trigger('dragstart');
-		item.elem.trigger('mouseenter');
-		assert.verifySteps([]);
-
-		// function called
-		$(window).trigger('dragend');
-		item.elem.trigger('mouseenter');
-		assert.verifySteps(["mouseenter happened"]);
-
-		// cleanup
-		cone.main_menu_top = null;
-		cone.topnav = null;
-		$('#topnav').remove();
-		$('.cone-mainmenu-dropdown').remove();
-	})
-
-	QUnit.test('super.unload()', assert => {
-		console.log('- test: super.unload()');
-		viewport.set('large');
-		cone.viewport = new cone.ViewPort();
-		initialize_elems();
-
-		let super_unload_origin = cone.ViewPortAware.prototype.unload;
-		// overwrite method
-		cone.ViewPortAware.prototype.unload = function() {
-			$(window).off('viewport_changed', this._viewport_changed_handle);
-			assert.step( "super.unload() happened" );
-		}
-	
-		cone.main_menu_top.unload();
-
-		// unload called
-		assert.verifySteps(["super.unload() happened"]);
-
-		// cleanup
-		cone.ViewPortAware.prototype.unload = super_unload_origin;
-		cone.main_menu_top = null;
-		cone.topnav = null;
-		$('#topnav').remove();
-		$('.cone-mainmenu-dropdown').remove();
-	})
-
-	QUnit.test('unload() called', assert => {
-		console.log('- test: unload() called');
-		viewport.set('large');
-		cone.viewport = new cone.ViewPort();
-		initialize_elems();
-
-		// overwrite method
-		cone.MainMenuTop.prototype.change_unload = function() {
-			this.unload = function() {
+		QUnit.test('unload() call', assert => {
+			console.log('-- test: unload() call');
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+			// save original function
+			let unload_origin = cone.MainMenuTop.prototype.unload;
+			// overwrite original function
+			cone.MainMenuTop.prototype.unload = function() {
 				assert.step( "unload() happened" );
 			}
-		}
-		cone.main_menu_top.change_unload();
-		cone.MainMenuTop.initialize();
-		$(window).off('viewport_changed');
+			cone.MainMenuTop.initialize();
+			assert.verifySteps(["unload() happened"]);
 
-		// unload called
-		assert.verifySteps(["unload() happened"]);
-
-		// cleanup
-		cone.main_menu_top = null;
-		cone.topnav = null;
-		$('#topnav').remove();
-		$('.cone-mainmenu-dropdown').remove();
-	})
-
-	QUnit.test('mobile with sidebar', assert => {
-		console.log(`- test: initial load mobile with sidebar`);
-		viewport.set('mobile');
-		cone.viewport = new cone.ViewPort();
-		create_sidebar_elem();
-		create_mm_sidebar_elem();
-		create_topnav_elem();
-		create_mm_top_elem();
-		cone.Topnav.initialize();
-		cone.SidebarMenu.initialize();
-		cone.MainMenuSidebar.initialize();
-		cone.MainMenuTop.initialize();
-		topnav_style_to_mobile();
-
-		assert.ok( $('main-menu', cone.topnav.content) )
-		assert.strictEqual(cone.main_menu_top.vp_state, 0);
-		assert.strictEqual( $('#topnav-content > #main-menu').length, 1 );
-		assert.strictEqual( $('#topnav-content > #mainmenu_sidebar').length, 1 );
-
-		assert.strictEqual( cone.main_menu_top.elem.css('display'), 'none' );
-		assert.strictEqual( cone.main_menu_sidebar.elem.css('display'), 'block' );
-
-
-		// cleanup
-		cone.main_menu_top = null;
-		cone.topnav = null;
-		$(window).off('viewport_changed');
-		cone.main_menu_sidebar = null;
-		cone.sidebar_menu = null;
-		$('#topnav').remove();
-		$('.cone-mainmenu-dropdown').remove();
-		$('#sidebar_left').remove();
-	})
-
-	QUnit.module('viewport changed', () => {
-
-		QUnit.module('no sidebar', hooks => {
-			hooks.before( () => {
-				console.log('- now running: no sidebar | vp changed');
-				viewport.set('large');
-				cone.viewport = new cone.ViewPort();
-				initialize_elems();
-				topnav_style_to_desktop();
-			});
-
-			hooks.after( () => {
-				cone.main_menu_top = null;
-				cone.topnav = null;
-				console.log('- done: no sidebar | vp changed')
-			});
-
-			for(let i=0; i<=3; i++) {
-				QUnit.module(`Viewport ${i}`, () => {
-					test('resize', assert => {
-						console.log('-- test: resize: ' + i);
-						assert.ok(true)
-						viewport.set(vp_states[i]);
-						$(window).trigger('resize');
-
-						let mm_top = cone.main_menu_top;
-
-						if(mm_top.vp_state === 0) {
-							topnav_style_to_mobile();
-						} else {
-							topnav_style_to_desktop();
-						}
-					});
-				});
-			}
+			// reset original function
+			cone.MainMenuTop.prototype.unload = unload_origin;
 		});
 
-		QUnit.module('with sidebar', hooks => {
-			hooks.before( () => {
-				console.log('- now running: sidebar | vp changed');
-				viewport.set('large');
-				cone.viewport = new cone.ViewPort();
-				create_sidebar_elem();
-				create_mm_sidebar_elem();
-				cone.SidebarMenu.initialize();
-				cone.MainMenuSidebar.initialize();
-				initialize_elems();
-				topnav_style_to_desktop();
-			});
+		QUnit.test('elems', assert => {
+			console.log('-- test: elems');
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+			assert.ok(cone.main_menu_top instanceof cone.ViewPortAware);
+		});
 
-			hooks.after( () => {
-				cone.main_menu_top = null;
-				cone.topnav = null;
-				cone.sidebar_menu = null;
-				cone.main_menu_sidebar = null;
-				$('#topnav').remove();
-				$('#sidebar_left').remove();
-				console.log('- done: no sidebar | vp changed')
-			});
+		QUnit.test('desktop', assert => {
+			console.log('-- test: desktop');
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+			assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px');
+		});
 
-			for(let i=0; i<=3; i++) {
-				QUnit.module(`Viewport ${i}`, () => {
-					test('resize', assert => {
-						assert.ok(true)
-						console.log('-- test: resize: ' + i);
-						viewport.set(vp_states[i]);
-						$(window).trigger('resize');
-						let mm_top = cone.main_menu_top;
+		QUnit.test('mobile', assert => {
+			console.log('-- test: mobile');
+			cone.viewport.state = 0;
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+			// margin right auto
+			// assert.strictEqual(cone.topnav.logo.css('margin-right'), '2rem');
+			cone.main_menu_top = null;
 
-						if(mm_top.vp_state === 0) {
-							topnav_style_to_mobile();
-						} else {
-							topnav_style_to_desktop();
-						}
-					});
-				});
-			}
+			// with mm sidebar
+			cone.main_menu_sidebar = true;
+			cone.MainMenuTop.initialize();
+			assert.strictEqual(cone.main_menu_top.elem.css('display'), 'none');
+			cone.main_menu_sidebar = null;
+		});
+
+		QUnit.test('MainMenuItems', assert => {
+			console.log('-- test: mainmenu items');
+
+			// prepare
+			let elem_count = 2;
+			create_mm_items(elem_count);
+
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+
+			assert.strictEqual(cone.main_menu_top.main_menu_items.length, elem_count);
+			$('.mainmenu-item').remove();
 		});
 	});
 
-	//////////////////////////////////
+	QUnit.module('methods', hooks => {
+		hooks.before( () => {
+			console.log('- now running: methods');
+		})
+		hooks.beforeEach( () => {
+			create_topnav_elem();
+			create_mm_top_elem();
+		});
+		hooks.afterEach( () => {
+			cone.viewport.state = 3;
+			cone.topnav = null;
+			cone.main_menu_top = null;
+			$('#topnav').remove();
 
-	function initialize_elems() {
-		create_topnav_elem();
-		create_mm_top_elem();
-		create_mm_items(1);
-		cone.Topnav.initialize();
-		cone.MainMenuTop.initialize();
-	}
-
-	function check_elems(assert) {
-		let mm_top = cone.main_menu_top;
-		assert.strictEqual(cone.main_menu_top.vp_state, cone.viewport.state, 'vp_state is viewport.state');
-		assert.ok(cone.topnav, 'cone.topnav exists');
-		assert.ok(mm_top.elem, 'elem exists');
-
-		if(mm_top.vp_state === 0) {
-			assert.notStrictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin NOT 2rem`);
-			if(cone.main_menu_sidebar !== null) {
-				assert.strictEqual(mm_top.elem.css('display'), 'none', 'elem hidden');
-			} else {
-				assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem display is flex')
+			if($('.mainmenu-item').length > 0) {
+				$('.mainmenu-item').remove();
 			}
-		} else {
-			assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px', `logo margin:2rem(32px)`);
-			// assert.strictEqual(mm_top.elem.css('display'), 'flex', 'elem visible'); // fails because external css styling not included
-		}
-	}
+		});
+
+		QUnit.test('unload()', assert => {
+			console.log('-- test: unload()');
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+			let unload_origin = cone.ViewPortAware.prototype.unload;
+			cone.ViewPortAware.prototype.unload = function() {
+				assert.step('super.unload()');
+			}
+			cone.main_menu_top.unload();
+			assert.verifySteps(["super.unload()"]);
+			cone.ViewPortAware.prototype.unload = unload_origin;
+		});
+
+		QUnit.test.skip('handle_scrollbar()', assert => {
+			// WIP
+		});
+
+		QUnit.test('viewport_changed()', assert => {
+			console.log('-- test: viewport_changed()');
+			
+			// prepare
+			let resize_evt = $.Event('viewport_changed');
+			resize_evt.state = 0;
+			
+			let super_vp_changed_origin = cone.ViewPortAware.prototype.viewport_changed,
+				mv_to_mobile_origin = cone.MainMenuItem.prototype.mv_to_mobile,
+				mv_to_top_origin = cone.MainMenuItem.prototype.mv_to_top;
+			
+			cone.ViewPortAware.prototype.viewport_changed = function(e) {
+				this.vp_state = e.state;
+				assert.step( "super.viewport_changed()" );
+			}
+			cone.MainMenuItem.prototype.mv_to_mobile = function() {
+				assert.step('mv_to_mobile()');
+			}
+			cone.MainMenuItem.prototype.mv_to_top = function() {
+				assert.step('mv_to_top()');
+			}
+			
+
+			cone.Topnav.initialize();
+			cone.MainMenuTop.initialize();
+
+			// mobile
+			cone.main_menu_top.viewport_changed(resize_evt);
+			// margin right auto
+
+			// mobile with sidebar
+			cone.main_menu_sidebar = true;
+			cone.main_menu_top.viewport_changed(resize_evt);
+			assert.strictEqual(cone.main_menu_top.elem.css('display'), 'none');
+			cone.main_menu_sidebar = null;
+
+			// desktop
+			resize_evt.state = 3;
+			cone.main_menu_top.viewport_changed(resize_evt);
+			assert.strictEqual(cone.topnav.logo.css('margin-right'), '32px');
+
+			// dektop with sidebar
+			cone.main_menu_sidebar = true;
+			cone.main_menu_top.viewport_changed(resize_evt);
+			assert.strictEqual(cone.main_menu_top.elem.css('display'), 'flex');
+			cone.main_menu_sidebar = null;
+			cone.main_menu_top = null;
+
+			// main menu items
+			create_mm_items(1);
+			create_empty_item();
+			cone.MainMenuTop.initialize();
+			resize_evt.state = 0;
+			cone.main_menu_top.viewport_changed(resize_evt);
+			resize_evt.state = 3;
+			cone.main_menu_top.viewport_changed(resize_evt);
+
+			assert.verifySteps([
+				"super.viewport_changed()",
+				"super.viewport_changed()",
+				"super.viewport_changed()",
+				"super.viewport_changed()",
+				"super.viewport_changed()",
+				"mv_to_mobile()",
+				"super.viewport_changed()",
+				"mv_to_top()"
+			]);
+
+			// reset
+			cone.ViewPortAware.prototype.viewport_changed = super_vp_changed_origin;
+			cone.MainMenuItem.prototype.mv_to_mobile = mv_to_mobile_origin;
+			cone.MainMenuItem.prototype.mv_to_top = mv_to_top_origin;
+		});
+	});
 });
 
 
@@ -2118,6 +2040,21 @@ QUnit.module('cone.MainMenuItem', hooks => {
 		console.log('-------------------------------------');
 	});
 
+	QUnit.module('constructor', hooks => {
+		hooks.before( () => {
+			console.log('- now running: constructor');
+		})
+		hooks.beforeEach( () => {
+			create_topnav_elem();
+			create_mm_top_elem();
+			create_mm_items(2);
+			create_empty_item();
+		});
+		hooks.afterEach( () => {
+			// cone.main_menu_top = null;
+			$('#topnav').remove();
+		});
+	})
 	QUnit.module('initial load', () => {
 
 		for( let i=0; i <=3; i++ ) {
@@ -2514,7 +2451,6 @@ function topnav_style_to_desktop() {
     });
 }
 
-
 // mainmenu top
 
 function create_mm_top_elem() {
@@ -2825,4 +2761,28 @@ function create_navtree_elem() {
 	`;
 
 	$('#sidebar_content').append(navtree_html);
+}
+
+
+// unload() call test
+function call_unload(elem, assert) {
+	let unload_origin = elem.prototype.unload;
+	elem.prototype.unload = function() {
+		assert.step('unload() called');
+	}
+
+	elem.initialize();
+	assert.verifySteps(["unload() called"]);
+	elem.prototype.unload = unload_origin;
+}
+
+function test_func(assert, elem) {
+	let unload_origin = cone.ViewPortAware.prototype.unload;
+	cone.ViewPortAware.prototype.unload = function() {
+		assert.step('unload()');
+	}
+	elem.change_unload_listeners();
+	elem.test_unload();
+
+	cone.ViewPortAware.prototype.unload = unload_origin;
 }
