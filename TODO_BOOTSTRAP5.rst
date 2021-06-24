@@ -16,22 +16,8 @@ Plugins:
 
 TESTING
 -------
-[X] - scrollbar.js
-[~] - topnav
-[X] - ViewPort Singleton
-[X] - sidebarMenu
-[X] - MainMenuTop
-[X] - MainMenuItem
-[X] - MainMenuSidebar
-[X] - Navtree
 
-[ ] - write function for super unload
-[WIP] - fix and simplify;
-      - done:
-        - cone namespace
-        - cone.ViewPort
-        - cone.ViewPortAware
-        ~ cone.searchbar
+[WIP] - simplify
 
 issues
 ------

@@ -10,6 +10,7 @@
 // var livesearch_options = new Object();
 
 // ensure namespace
+/* istanbul ignore if  */
 if (window.cone === undefined) {
     cone = {};
 }

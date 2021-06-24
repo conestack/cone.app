@@ -50,10 +50,12 @@ if (window.cone === undefined) cone = {};
             this.scrollbar_observer.observe(this.elem.get(0));
         }
 
+        /* istanbul ignore next */
         compile() {
             // abstract, implemented in subclass
         }
 
+        /* istanbul ignore next */
         update() {
             // abstract, implemented in subclass
         }
@@ -65,6 +67,7 @@ if (window.cone === undefined) cone = {};
         }
 
         mouse_in_out(e) {
+            /* istanbul ignore else */
             if(this.contentsize > this.scrollsize) {
                 if(e.type == 'mouseenter') {
                     this.scrollbar.fadeIn();
@@ -79,12 +82,14 @@ if (window.cone === undefined) cone = {};
                 return;
             }
             let evt = e.originalEvent;
+            /* istanbul ignore else */
             if (typeof evt.deltaY === 'number') {
                 // down
                 if(evt.deltaY > 0) {
                     this.position += this.unit;
                 }
                 // up
+                /* istanbul ignore else */
                 else if(evt.deltaY < 0) {
                     this.position -= this.unit;
                 }
