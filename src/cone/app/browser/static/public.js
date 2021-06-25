@@ -658,8 +658,7 @@ if (window.cone === undefined) {
             this.collapsed = !this.collapsed;
             this.assign_state();
         }
-    };
-
+    }
 
     cone.Navtree = class extends cone.ViewPortAware {
 

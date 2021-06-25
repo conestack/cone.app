@@ -3,7 +3,10 @@
  */
 
 // ensure namespace
-if (window.cone === undefined) cone = {};
+/* istanbul ignore if */
+if(window.cone === undefined) {
+    cone = {};
+}
 
 (function($) {
 
@@ -101,7 +104,8 @@ if (window.cone === undefined) cone = {};
             let threshold = this.contentsize - this.scrollsize;
             if(this.position >= threshold) {
                 this.position = threshold;
-            } else if(this.position <= 0) {
+            } /* istanbul ignore else */
+            else if(this.position <= 0) {
                 this.position = 0;
             }
         }
@@ -244,13 +248,7 @@ if (window.cone === undefined) cone = {};
         }
 
         set_position() {
-            let threshold = this.contentsize - this.scrollsize;
-            if(this.position >= threshold) {
-                this.position = threshold;
-            } else if(this.position <= 0) {
-                this.position = 0;
-            }
-
+            this.prevent_overflow();
             let thumb_pos = this.position / (this.contentsize / this.scrollsize);
             this.content.css('bottom', this.position + 'px');
             this.thumb.css('top', thumb_pos + 'px');

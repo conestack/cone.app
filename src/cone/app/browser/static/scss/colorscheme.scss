@@ -207,9 +207,13 @@ body {
     color: $flight;
   }
 
-  #toggle-fluid.active{
-    color: $info;
+  #toggle-fluid {
+    color: $fmedium;
+    &.active{
+      color: $info;
+    }
   }
+
   /* .help {
     color: white;
   }

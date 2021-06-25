@@ -179,6 +179,9 @@ body {
 #sidebar_left .sidebar-heading {
   color: #57575C;
 }
+#sidebar_left #toggle-fluid {
+  color: #57575C;
+}
 #sidebar_left #toggle-fluid.active {
   color: #5bc0de;
 }

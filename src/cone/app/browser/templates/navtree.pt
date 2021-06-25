@@ -15,22 +15,6 @@
 
     <div id="navtree-content">
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
-        <li class="navtreelevel_1">
-          <a>
-            <i class="bi bi-heart"></i>
-              <span>This is a test to see if it works! Trolololololo</span>
-          </a>
-
-          <ul>
-            <li class="navtreelevel_2">
-              <a>
-                <i class="bi bi-kanban" alt="..."></i>
-                <span> Oh yeet. </span>
-              </a>
-            </li>
-          </ul>
-
-      </li>
     </div>
   </ul>
 

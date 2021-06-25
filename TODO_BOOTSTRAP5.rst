@@ -18,6 +18,7 @@ TESTING
 -------
 
 [WIP] - simplify
+[X] - overwrite jQuery slideUp(), slideToggle() and fadeOut() functions to improve performance
 
 issues
 ------
