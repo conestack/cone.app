@@ -1,5 +1,5 @@
 <tal:layout xmlns:tal="http://xml.zope.org/namespaces/tal"
-            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+            xmlns:ajax="http://namespaces.conestack.org/ajax"
             omit-tag="True">
 
   <div id="layout"
