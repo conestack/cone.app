@@ -1,3 +1,14 @@
+Cone Development
+================
+
+Bootstrap
+=========
+
+Currently included bootstrap:
+
+- https://github.com/twbs/bootstrap/releases/tag/v5.0.2
+- https://github.com/twbs/icons/archive/v1.5.0.zip
+
 Javascript Tests
 ================
 
