@@ -91,105 +91,59 @@ QUnit.module('cone.ViewPort', hooks => {
 	hooks.before( () => {
 		console.log('NOW RUNNING: cone.ViewPort');
 		cone.viewport = new cone.ViewPort; 
-	})
-
+	});
 	hooks.after( () => {
 		cone.viewport = null;
 		console.log('COMPLETE: cone.ViewPort');
 		console.log('-------------------------------------');
-	})
-
-	function switch_viewport(i, assert) {
-		viewport.set(states[i]);
-		$(window).trigger('resize');
-
-		assert.strictEqual($(window).width(), window_widths[i], `window width ${window_widths[i]}`);
-		assert.strictEqual($(window).height(), window_heights[i], `window height ${window_heights[i]}`);
-		assert.strictEqual(cone.viewport.state, i, `cone.viewport.state is ${i}`);
-	}
-
-	let states = ['mobile', 'small', 'medium', 'large'],
-	    window_widths = [559, 561, 1000, 1600],
-	    window_heights = [600, 1024, 900, 1024];
+	});
 
 	for( let i = 0; i < vp_states.length; i++ ) {
 		QUnit.test(`vp${i}`, assert => {
 			console.log(`- test: vp${i}`);
-			switch_viewport(i, assert);
-		})
+			viewport.set(vp_states[i]);
+			$(window).trigger('resize');
+			assert.strictEqual(cone.viewport.state, i, `cone.viewport.state is ${i}`);
+		});
 	}
 });
 
 // XXXXXXX cone.ViewPortAware XXXXXXX
 QUnit.module('cone.ViewPortAware', hooks => {
-
 	hooks.before( () => {
 		cone.viewport = new cone.ViewPort();
 		console.log('NOW RUNNING: cone.ViewPortAware');
 	});
-
 	hooks.after( () => {
 		cone.viewport = null;
 		console.log('COMPLETE: cone.ViewPortAware');
 		console.log('-------------------------------------');
 	});
+	hooks.afterEach( () => {
+		test_obj = null;
+		delete test_obj;
+	});
 
-	QUnit.module('initial', hooks => {
-		hooks.before( () => {
-			console.log('- now running: initial');
-		});
-
-		hooks.after( () => {
-			console.log('- done: initial');
-		});
-	
-		hooks.beforeEach( () => {
-			viewport.set('large');
-			cone.viewport = new cone.ViewPort();
-			test_obj = new cone.ViewPortAware();
-		});
-
-		hooks.afterEach( () => {
-			cone.viewport = null;
-			test_obj = null;
-			delete test_obj;
-		});
-
+	QUnit.module('initial', () => {
 		for( let i = 0; i <= 3; i++ ) {
 			QUnit.test(`vp${i}`, assert => {
 				console.log(`-- test: vp${i}`);
-				viewport.set(vp_states[i]);
-				$(window).trigger('resize');
+				cone.viewport.state = i;
+				test_obj = new cone.ViewPortAware();
 				assert.strictEqual(cone.viewport.state, i, `cone.viewport.state is ${i}`);
 				assert.strictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state is cone.viewport.state');
 			});
 		}
 	});
 
-	QUnit.module('unload()', hooks => {
-		hooks.before( () => {
-			console.log('- now running: unload()');
-			viewport.set('large');
-			cone.viewport = new cone.ViewPort();
-			test_obj = new cone.ViewPortAware();
-		});
-
-		test('unload vp', assert => {
-			console.log('-- test: unload vp');
-			assert.strictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state is cone.viewport.state');
-			test_obj.unload();
-			viewport.set('small');
-			$(window).trigger('resize');
-
-			assert.notStrictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state not changed after unload');
-		});
-
-		hooks.after( () => {
-			cone.viewport = null;
-			test_obj = null;
-			delete test_obj;
-			console.log('- done: unload()');
-		});
+	QUnit.test('unload()', assert => {
+		console.log('-- test: unload()');
+		test_obj = new cone.ViewPortAware();
+		assert.strictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state is cone.viewport.state');
+		test_obj.unload();
+		viewport.set('small');
+		$(window).trigger('resize');
+		assert.notStrictEqual(test_obj.vp_state, cone.viewport.state, 'vp_state not changed after unload');
 	});
 });
 
@@ -205,7 +159,7 @@ QUnit.module.todo('cone.Content', hooks => {
 		`;
 		$('body').append(content_html);
 
-		cone.Content.initialize( $('body') );
+		cone.Content.initialize();
 	})
 
 	hooks.after( () => {
@@ -230,6 +184,7 @@ QUnit.module('cone.MainMenuItem', hooks => {
 
 	hooks.after( () => {
 		cone.viewport = null;
+		delete item1, item2;
 		console.log('COMPLETE: cone.MainMenuItem');
 		console.log('-------------------------------------');
 	});
@@ -254,23 +209,21 @@ QUnit.module('cone.MainMenuItem', hooks => {
 
 		QUnit.test('mobile', assert => {
 			console.log('-- test: mobile');
+			cone.viewport.state = 0;
 
-			// prepare
 			let mv_to_mobile_origin = cone.MainMenuItem.prototype.mv_to_mobile;
 			cone.MainMenuItem.prototype.mv_to_mobile = function() {
 				assert.step('mv_to_mobile()');
 			}
 
-			cone.viewport.state = 0;
 			item1 = new cone.MainMenuItem( $('.node-child_1') );
-
 			assert.verifySteps(['mv_to_mobile()']);
+
 			cone.MainMenuItem.prototype.mv_to_mobile = mv_to_mobile_origin;
 		});
 
 		QUnit.test('desktop', assert => {
 			console.log('-- test: desktop');
-
 			cone.viewport.state = 3;
 			let toggle_origin = cone.MainMenuItem.prototype.mouseenter_toggle;
 			cone.MainMenuItem.prototype.mouseenter_toggle = function() {
@@ -289,7 +242,7 @@ QUnit.module('cone.MainMenuItem', hooks => {
 			cone.MainMenuItem.prototype.mouseenter_toggle = toggle_origin;
 			item1 = null;
 
-			// switch elems
+			// move from elem1 to elem2
 			item1 = new cone.MainMenuItem( $('.node-child_1') );
 			item2 = new cone.MainMenuItem( $('.node-child_2') );
 			$(item1.menu).css('display', 'none'); // done in css
@@ -404,7 +357,6 @@ QUnit.module('cone.MainMenuItem', hooks => {
 				'mouseenter_toggle()'
 			]);
 
-			
 			item1.menu.css('display', 'block');
 			item1.menu.trigger('mouseleave');
 			assert.strictEqual(item1.menu.css('display'), 'none');
