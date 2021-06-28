@@ -61,7 +61,7 @@ must be defined.
 .. code-block:: xml
 
     <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-               xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+               xmlns:ajax="http://namespaces.conestack.org/ajax"
                omit-tag="True">
 
       <!-- bdajax using markup goes here -->

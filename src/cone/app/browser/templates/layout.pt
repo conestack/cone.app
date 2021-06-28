@@ -1,6 +1,6 @@
 <tal:layout xmlns:tal="http://xml.zope.org/namespaces/tal"
-            xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
             xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:ajax="http://namespaces.conestack.org/ajax"
             omit-tag="True">
 
   <div id="layout"

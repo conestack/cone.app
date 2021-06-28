@@ -16,7 +16,7 @@ contains both the integration and plugin code.
 
     The example package created in this documentation can be found in the
     `Github repository
-    <https://github.com/bluedynamics/cone.app/tree/master/examples>`_.
+    <https://github.com/conestack/cone.app/tree/master/examples>`_.
 
 
 Create Python Package

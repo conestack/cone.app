@@ -26,13 +26,13 @@ Source Code
 ===========
 
 The sources are in a GIT DVCS with its main branches at 
-`github <http://github.com/bluedynamics/cone.app>`_.
+`github <http://github.com/conestack/cone.app>`_.
 
 
 Copyright
 =========
 
-- Copyright (c) 2009-2021 BlueDynamics Alliance http://www.bluedynamics.com
+- Copyright (c) 2009-2021 Cone Contributors
 
 
 Contributors
