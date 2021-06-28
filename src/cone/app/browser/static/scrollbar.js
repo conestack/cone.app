@@ -20,20 +20,11 @@ if(window.cone === undefined) {
             this.scrollbar = $('<div class="scrollbar" />');
             this.thumb = $('<div class="scroll-handle" />');
 
-            // wait for elements to load
-            setTimeout(this.compile.bind(this), 100);
-
             this.position = 0;
             this.unit = 10;
 
-            this.scrollbar_observer = new ResizeObserver(entries =>{
-                for(let entry of entries) {
-                    this.update();
-                }
-            })
-
-            // prevent multiple occurances before page is fully loaded
-            setTimeout( this.observe_container.bind(this), 500 );
+            this.compile();
+            this.observe_container();
 
             this._scroll = this.scroll_handle.bind(this);
             this.elem.off('mousewheel wheel', this._scroll).on('mousewheel wheel', this._scroll);
@@ -50,6 +41,11 @@ if(window.cone === undefined) {
         }
 
         observe_container() {
+            this.scrollbar_observer = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    this.update();
+                }
+            })
             this.scrollbar_observer.observe(this.elem.get(0));
         }
 
@@ -67,6 +63,7 @@ if(window.cone === undefined) {
             this.scrollbar.off();
             this.elem.off();
             this.thumb.off();
+            this.scrollbar_observer.unobserve(this.elem.get(0));
         }
 
         mouse_in_out(e) {
