@@ -1,5 +1,7 @@
+// chromium binary
 process.env.CHROME_BIN = '/usr/bin/chromium';
 
+// relative resource paths
 let cone_app_static = '../src/cone/app/browser/static';
 let bdajax_static = '../devsrc/bdajax/src/bdajax/resources';
 
@@ -24,42 +26,40 @@ let preprocessors = {};
 preprocessors[`${cone_app_static}/scrollbar.js`] = 'coverage';
 preprocessors[`${cone_app_static}/public.js`] = 'coverage';
 
+// viewport configuration
+let viewport_breakpoints = [{
+    name: "mobile",
+    size: {
+        width: 559,
+        height: 600
+    }
+}, {
+    name: "small",
+    size: {
+        width: 561,
+        height: 1024
+    }
+}, {
+    name: "medium",
+    size: {
+        width: 1000,
+        height: 900
+    }
+}, {
+    name: "large",
+    size: {
+        width: 1600,
+        height: 1024
+    }
+}];
+
 module.exports = function(config) {
     config.set({
         basePath: 'karma',
         frameworks: ['qunit', 'viewport'],
         // Viewport configuration
         viewport: {
-            breakpoints: [
-            {
-                name: "mobile",
-                size: {
-                    width: 559,
-                    height: 600
-                }
-            },
-            {
-                name: "small",
-                size: {
-                    width: 561,
-                    height: 1024
-                }
-            },
-            {
-                name: "medium",
-                size: {
-                    width: 1000,
-                    height: 900
-                }
-            },
-            {
-                name: "large",
-                size: {
-                    width: 1600,
-                    height: 1024
-                }
-            }
-            ]
+            breakpoints: viewport_breakpoints
         },
         files: files,
         browsers: ['ChromeHeadless'],

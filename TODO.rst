@@ -23,6 +23,25 @@ Docs
 Roadmap
 =======
 
+2.0
+---
+
+[ ] chromium produces console warning: "cone.js:5281 [Violation] Added
+non-passive event listener to a scroll-blocking 'mousewheel' event. Consider
+marking event handler as 'passive' to make the page more responsive. See
+https://www.chromestatus.com/feature/5745543795965952"
+
+[ ] navtree -> insert markup
+
+[ ] update deprecated javascript in protected.js
+
+[ ] simplify - cleanup - correct public.js
+
+[ ] bootstrap dropdowns: read documentation and adjust closing toggle on
+cone.view_mobile
+
+[ ] dropdown cookie sidebar
+
 1.1
 ---
 
