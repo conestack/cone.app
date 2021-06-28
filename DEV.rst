@@ -18,7 +18,7 @@ Install npm and karma::
 
 Install sass::
 
-    npm install -g sass
+    sudo npm install -g sass
 
 
 Javascript Tests

@@ -9,7 +9,6 @@ let bdajax_static = '../devsrc/bdajax/src/bdajax/resources';
 let files = [
     `${cone_app_static}/jquery-3.5.1.js`,
     `${cone_app_static}/jquery-migrate-3.3.2.js`,
-    `${cone_app_static}/popper/popper.js`,
     `${cone_app_static}/bootstrap/js/bootstrap.js`,
     `${cone_app_static}/typeahead/typeahead.bundle.js`,
     `${cone_app_static}/cookie_functions.js`,
@@ -18,7 +17,8 @@ let files = [
     `${bdajax_static}/bdajax_bs3.js`,
     `${cone_app_static}/scrollbar.js`,
     `${cone_app_static}/public.js`,
-    `${cone_app_static}/tests/test_public.js`,
+    `${cone_app_static}/tests/test_scrollbar.js`,
+    `${cone_app_static}/tests/test_public.js`
 ];
 
 // files to include for test coverage
