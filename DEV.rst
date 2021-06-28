@@ -1,13 +1,14 @@
 Cone Development
 ================
 
-Bootstrap
-=========
+Browser Resources
+=================
 
-Currently included bootstrap:
+Included resources:
 
 - https://github.com/twbs/bootstrap/releases/tag/v5.0.2
 - https://github.com/twbs/icons/archive/v1.5.0.zip
+- https://github.com/twitter/typeahead.js/releases/tag/v0.11.1
 
 Javascript Tests
 ================
