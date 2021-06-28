@@ -101,35 +101,67 @@ QUnit.module('cone.ScrollBar', hooks => {
             console.log('Set up cone.ScrollBar.constructor tests');
 
             // add dummy scrollbar element to DOM
-			create_scrollbar_elem('x');
+            create_scrollbar_elem('x');
 
             // dummy scrollbar class
             TestScrollbar = class extends cone.ScrollBar {
+                compile() {
+                    assert.step('compile()');
+                }
                 update() {
                     assert.step('update()');
                 }
             }
 		});
+
 		hooks.after(() => {
             console.log('Tear down cone.ScrollBar.constructor tests');
 
             // remove dummy scrollbar fromDOM
-			$('#test-container').remove();
+            $('#test-container').remove();
 
             // unload and delete scrollbar instance
             test_scrollbar.unload();
-			delete test_scrollbar;
+            delete test_scrollbar;
 		});
 
-		QUnit.test('resize observer', assert => {
+		QUnit.test.only('load properties', assert => {
+            // create test scrollbar element
 			test_scrollbar = new TestScrollbar($('#test-container'));
-            test_scrollbar.elem.css('width', '202px');
 
+            // element
+            assert.ok(test_scrollbar.elem);
+            assert.ok(test_scrollbar.elem.is('div'));
+
+            assert.ok(test_scrollbar.content);
+
+            assert.ok(test_scrollbar.scrollbar);
+            assert.ok(test_scrollbar.scrollbar.is('div'));
+            assert.ok(test_scrollbar.scrollbar.hasClass('scrollbar'));
+
+            assert.ok(test_scrollbar.thumb);
+            assert.ok(test_scrollbar.thumb.is('div'));
+            assert.ok(test_scrollbar.thumb.hasClass('scroll-handle'));
+
+            assert.strictEqual(test_scrollbar.position, 0);
+            assert.strictEqual(test_scrollbar.unit, 10);
+
+            // verify private functions
+            assert.ok(test_scrollbar._scroll);
+            assert.ok(test_scrollbar._click_handle);
+            assert.ok(test_scrollbar._drag_handle);
+            assert.ok(test_scrollbar._mousehandle);
+
+
+            // verify function load
             let done = assert.async();
-            setTimeout(function() {
-                assert.verifySteps(['update()']);
+            setTimeout(() => {
+                assert.verifySteps([
+                    'compile()',
+                    'update()'
+                ]);
                 done();
-            }, 501);
+            }, 50);
 		});
 	});
 
@@ -142,6 +174,56 @@ QUnit.module('cone.ScrollBar', hooks => {
 			test_scrollbar = null;
 			delete test_scrollbar;
 		});
+
+        QUnit.module('resize observer', hooks => {
+            let TestScrollbar,
+                test_scrollbar;
+
+            hooks.before(assert => {
+                console.log('Set up cone.ScrollBar.resize_observer tests');
+
+                // add dummy scrollbar element to DOM
+                create_scrollbar_elem('x');
+
+                // dummy scrollbar class
+                TestScrollbar = class extends cone.ScrollBar {
+                    compile() {
+                        assert.step('compile()');
+                    }
+                    update() {
+                        assert.step('update()');
+                    }
+                }
+            });
+            hooks.after(() => {
+                console.log('Tear down cone.ScrollBar.constructor tests');
+
+                // remove dummy scrollbar fromDOM
+                $('#test-container').remove();
+
+                // unload and delete scrollbar instance
+                test_scrollbar.unload();
+                delete test_scrollbar;
+            });
+
+            QUnit.test('resize observer', assert => {
+                // create test scrollbar element
+                test_scrollbar = new TestScrollbar($('#test-container'));
+
+                // trigger resize observer by changing element width
+                test_scrollbar.elem.css('width', '202px');
+
+                // verify function load
+                let done = assert.async();
+                setTimeout(function() {
+                    assert.verifySteps([
+                        'compile()',
+                        'update()'
+                    ]);
+                    done();
+                }, 50);
+            });
+        });
 
         /*
 		QUnit.test('observe_container()', assert => {
