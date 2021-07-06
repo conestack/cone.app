@@ -111,7 +111,6 @@ if (window.cone === undefined) {
     }
 
     cone.ViewPortAware = class {
-
         constructor() {
             this.vp_state = cone.viewport.state;
             this._viewport_changed_handle = this.viewport_changed.bind(this);
@@ -678,7 +677,7 @@ if (window.cone === undefined) {
             this.elem = elem;
             this.content = $('#navtree-content', elem);
             this.heading = $('#navtree-heading', elem);
-            this.toggle_elems = $('li.navtreelevel_1', navtree);
+            this.toggle_elems = $('li.navtreelevel_1', elem);
 
             if (this.vp_state === cone.VP_MOBILE) {
                 this.mv_to_mobile();
@@ -804,7 +803,7 @@ if (window.cone === undefined) {
             this.search_group = $('#livesearch-group', this.elem);
             this.dd = $('#cone-livesearch-dropdown', this.elem);
 
-            if(this.vp_state === cone.VP_SMALL || this.vp_state === cone.VP_MEDIUM ) {
+            if(this.vp_state === cone.VP_SMALL || this.vp_state === cone.VP_MEDIUM) {
                 this.dd.addClass('dropdown-menu-end');
                 this.search_text.detach().prependTo(this.dd);
             }
