@@ -2685,8 +2685,8 @@ QUnit.module('cone.SidebarMenu', hooks => {
 
 						// trigger click on toggle button
 						test_sidebar_menu.toggle_btn.trigger('click');
-						// toggle_menu_handle is unbound
-						assert.verifySteps([]);
+						// toggle_menu_handle called
+						assert.verifySteps(['toggle_menu()']);
 					}
 
 					// remove dummy cookie
@@ -2751,8 +2751,8 @@ QUnit.module('cone.SidebarMenu', hooks => {
 				// trigger click on toggle button
 				test_sidebar_menu.toggle_btn.trigger('click');
 
-				// toggle_menu() has not been called
-				assert.verifySteps([]);
+				// toggle_menu() called
+				assert.verifySteps(['toggle_menu()']);
 			});
 
 			QUnit.test('toggle_lock() with cookie', assert => {

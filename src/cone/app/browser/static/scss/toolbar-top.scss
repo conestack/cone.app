@@ -6,6 +6,7 @@
 
   .dropdown-menu{
     top: auto!important; //override bs top:0px
+    margin-top: -2px!important;
   }
 
   > li {

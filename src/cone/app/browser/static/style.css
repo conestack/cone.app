@@ -1,6 +1,6 @@
 /* ----- topnav ----- */
 #topnav {
-  height: 4rem;
+  height: 64px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -15,7 +15,6 @@
   content: none;
 }
 #topnav .dropdown-menu {
-  min-width: max-content;
   min-width: max-content;
   padding: 1rem;
 }
@@ -79,6 +78,7 @@
 #cone-searchbar #cone-livesearch-dropdown {
   min-width: 0;
   max-width: 16rem;
+  margin-top: -2px !important;
 }
 #cone-searchbar #cone-livesearch-dropdown li {
   text-overflow: ellipsis;
@@ -148,8 +148,14 @@
 #personaltools #user {
   min-width: inherit;
   margin: 0;
+  margin-top: -2px !important;
   right: 0;
   left: auto !important;
+}
+@media (max-width: 560px) {
+  #personaltools #user {
+    left: 0 !important;
+  }
 }
 #personaltools .dropdown-arrow {
   display: none;
@@ -514,6 +520,7 @@ ul {
 }
 #toolbar-top .dropdown-menu {
   top: auto !important;
+  margin-top: -2px !important;
 }
 #toolbar-top > li {
   padding: 0 0.5rem;
@@ -643,6 +650,9 @@ ul {
 #topnav.mobile #personaltools {
   display: inline-block;
   min-height: max-content;
+  height: auto;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   border: 0;
 }
 #topnav.mobile #personaltools .dropdown-arrow {
@@ -652,7 +662,7 @@ ul {
 }
 #topnav.mobile #personaltools #user {
   position: relative !important;
-  top: -0.5rem;
+  top: 0.5rem !important;
   transform: none !important;
   background: transparent;
   box-shadow: none;
@@ -852,10 +862,6 @@ body {
 .scrollbar .scroll-handle {
   position: relative;
   border-radius: 3px;
-}
-
-#foo {
-  height: 100px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -5,7 +5,7 @@ $threshold_tablet: 900px;
 $threshold_mobile: 560px;
 
 #topnav {
-  height: 4rem;
+  height: 64px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -22,7 +22,6 @@ $threshold_mobile: 560px;
   }
 
   .dropdown-menu {
-    min-width: max-content;
     min-width: max-content;
     padding: 1rem;
 
@@ -97,6 +96,7 @@ $threshold_mobile: 560px;
   #cone-livesearch-dropdown {
     min-width: 0;
     max-width: 16rem;
+    margin-top: -2px!important;
 
     li {
     text-overflow: ellipsis;
@@ -178,8 +178,13 @@ $threshold_mobile: 560px;
   #user {
     min-width: inherit;
     margin: 0;
+    margin-top: -2px!important;
     right: 0;
     left:auto!important;
+
+    @media(max-width:$threshold_mobile) {
+      left:0!important;
+    }
   }
 
   .dropdown-arrow {

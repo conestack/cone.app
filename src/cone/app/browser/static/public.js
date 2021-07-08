@@ -590,7 +590,6 @@ if (window.cone === undefined) {
                     this.collapsed = true;
                 }
             } else {
-                this.toggle_btn.off('click', this._toggle_menu_handle);
                 this.cookie = cookie === 'true';
                 this.collapsed = this.cookie;
                 this.lock_switch.addClass('active');
@@ -603,13 +602,11 @@ if (window.cone === undefined) {
             if(readCookie('sidebar')) {
                 createCookie('sidebar', '', -1);
                 this.lock_switch.removeClass('active');
-                this.toggle_btn.off().on('click', this._toggle_menu_handle);
                 this.cookie = null;
             } else {
                 this.lock_switch.addClass('active');
                 createCookie('sidebar', this.collapsed, null);
                 this.cookie = this.collapsed;
-                this.toggle_btn.off('click', this._toggle_menu_handle);
             }
         }
 
@@ -656,6 +653,11 @@ if (window.cone === undefined) {
 
         toggle_menu() {
             this.collapsed = !this.collapsed;
+            
+            if (this.lock_switch.hasClass('active')) {
+                createCookie('sidebar', this.collapsed, null);
+                this.cookie = this.collapsed;
+            }
             this.assign_state();
         }
     }

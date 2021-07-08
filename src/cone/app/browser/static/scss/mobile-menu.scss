@@ -51,6 +51,9 @@
   #personaltools {
     display: inline-block;
     min-height: max-content;
+    height: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     border: 0;
 
     .dropdown-arrow {
@@ -61,7 +64,7 @@
 
     #user {
       position: relative!important;
-      top: -.5rem;
+      top: .5rem!important;
       transform: none!important;
       background: transparent;
       box-shadow: none;

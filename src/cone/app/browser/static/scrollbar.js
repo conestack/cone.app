@@ -219,6 +219,7 @@ if(window.cone === undefined) {
             this.scrollbar.append(this.thumb);
             this.thumb.css('width', '6px');
             this.scrollbar.css('width', '6px');
+            this.scrollbar.css('right', '0px');
 
             this.scrollsize = this.elem.outerHeight();
             this.contentsize = this.content.outerHeight();
