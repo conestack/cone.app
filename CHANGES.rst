@@ -4,7 +4,8 @@ Changes
 1.0.2 (unreleased)
 ------------------
 
-- No changes yet.
+- Deliver CSS before Javascript in HTML head.
+  [rnix, 2021-06-30]
 
 
 1.0.1 (2021-05-17)
