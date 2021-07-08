@@ -5,7 +5,11 @@
   <ul id="toolbar-top">
 
     <li class="dropdown" id="language">
-      <img class="dropdown-toggle" role="button" data-bs-toggle="dropdown" src="/static/images/flags/gb.svg" height="15em">
+      <img class="dropdown-toggle"
+           role="button"
+           data-bs-toggle="dropdown"
+           src="/static/images/flags/gb.svg"
+           height="15em">
       <ul class="dropdown-menu dropdown-menu-end">
         <li class="toolbar-title">Language</li>
         <li>

@@ -182,10 +182,11 @@ class TestBrowserResources(TileTestCase):
         # Merged Assets
         assets = cone.app.cfg.merged.js.public
         self.checkOutput("""
-        [(<pyramid.static.static_view object at ...>, 'jquery-1.9.1.js'),
-        (<pyramid.static.static_view object at ...>, 'jquery.migrate-1.2.1.js'),
-        (<pyramid.static.static_view object at ...>, 'jqueryui/jquery-ui-1.10.3.custom.js'),
-        (<pyramid.static.static_view object at ...>, 'bootstrap/js/bootstrap.js')...]
+        [(<pyramid.static.static_view object at ...>, 'jquery-3.5.1.js'),
+        (<pyramid.static.static_view object at ...>, 'jquery-migrate-3.3.2.js'),
+        (<pyramid.static.static_view object at ...>, 'bootstrap/js/bootstrap.bundle.js'),
+        (<pyramid.static.static_view object at ...>, 'typeahead/typeahead.bundle.js'),
+        (<pyramid.static.static_view object at ...>, 'cookie_functions.js')]
         """, str(assets))
 
         static = assets[0][0]
@@ -195,7 +196,7 @@ class TestBrowserResources(TileTestCase):
 
         subpath = os.path.join(static.docroot, resource)
         path = pkg_resources.resource_filename(static.package_name, subpath)
-        self.checkOutput('/.../cone/app/browser/static/jquery-1.9.1.js', path)
+        self.checkOutput('/.../cone/app/browser/static/jquery-3.5.1.js', path)
 
         data = ''
         with open(path, 'r') as file:
