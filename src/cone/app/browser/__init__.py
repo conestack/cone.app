@@ -8,7 +8,7 @@ from pyramid.static import static_view
 from pyramid.view import view_config
 import cone.app
 import os
-import yafowil.loader
+import yafowil.loader  # noqa
 
 
 static_resources = static_view('static', use_subpath=True)

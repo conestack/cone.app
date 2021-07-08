@@ -4,8 +4,6 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-
-
   <div class="breadcrumb bg-transparent">
 
     <li class="me-auto">
@@ -18,8 +16,9 @@
         ajax:action="pathbar:#pathbar:replace">
 
         <tal:li repeat="item context.items">
-        
-          <li tal:attributes="class item['selected'] and 'breadcrumb-item active' or 'breadcrumb-item'"
+
+          <li tal:attributes="class item['selected'] and \
+                              'breadcrumb-item active' or 'breadcrumb-item'"
               tal:condition="not item['selected']">
             <a href="${item['url']}"
                ajax:bind="click"
@@ -42,6 +41,5 @@
     </ol>
 
   </div>
-
 
 </tal:block>

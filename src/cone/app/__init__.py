@@ -55,7 +55,6 @@ cfg.css.public = [
     # 'static/jqueryui/jquery-ui-1.10.3.custom.css',
     'static/bootstrap/css/bootstrap.css',
     'static/ionicons/css/ionicons.css',
-    'static/typeahead/typeahead.css',
     '++resource++bdajax/bdajax_bs3.css',
     # 'static/styles.css',
     'static/style.css',
@@ -86,7 +85,7 @@ cfg.merged.js.public = [
     (browser.static_resources, 'jquery-3.5.1.js'),
     (browser.static_resources, 'jquery-migrate-3.3.2.js'),
     # (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
-    (browser.static_resources, 'bootstrap/js/bootstrap.js'),
+    (browser.static_resources, 'bootstrap/js/bootstrap.bundle.js'),
     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
     (browser.static_resources, 'cookie_functions.js')
 ]
@@ -96,7 +95,7 @@ cfg.merged.js.public = [
 #     (browser.static_resources, 'jquery-3.5.1.min.js'),
 #     (browser.static_resources, 'jquery-migrate-3.3.2.min.js'),
 #     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
-#     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
+#     (browser.static_resources, 'bootstrap/js/bootstrap.bundle.min.js'),
 #     (browser.static_resources, 'typeahead/typeahead.bundle.min.js'),
 #     (browser.static_resources, 'cookie_functions.js')
 # ]
