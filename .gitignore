@@ -6,6 +6,8 @@
 /.pydevproject.bak
 /.settings/
 /.vscode/
+/lib64
+/pyvenv.cfg
 /buildout.cfg
 /twistd.pid
 /src/cone.app.egg-info/

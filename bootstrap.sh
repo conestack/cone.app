@@ -22,7 +22,7 @@ if [ -x "$(which python3)" ]; then
     virtualenv --clear --no-site-packages -p python3 py3
 
     ./py3/bin/pip install coverage
-    ./py2/bin/pip install waitress
+    ./py3/bin/pip install waitress
     ./py3/bin/pip install pyramid==1.9.4
     ./py3/bin/pip install repoze.zcml==1.1
     ./py3/bin/pip install repoze.workflow==1.1

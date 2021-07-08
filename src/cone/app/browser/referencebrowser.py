@@ -336,7 +336,7 @@ def multivalued_reference_vocab(widget, data):
             value = widget.getter
     if not value:
         value = list()
-    lookup = attr_value('lookup', widget, data)
+    lookup = widget.attrs.get('lookup')
     for uuid_ in value:
         vocab.append((uuid_, lookup(uuid_) if lookup else uuid_))
     return vocab
