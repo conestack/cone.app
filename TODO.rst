@@ -40,7 +40,7 @@ https://www.chromestatus.com/feature/5745543795965952"
 [ ] bootstrap dropdowns: read documentation and adjust closing toggle on
 cone.view_mobile
 
-[ ] dropdown cookie sidebar
+[ ] format tests
 
 1.1
 ---
