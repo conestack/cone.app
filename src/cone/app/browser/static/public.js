@@ -626,6 +626,7 @@ if (window.cone === undefined) {
             else if(this.vp_state === cone.VP_SMALL) {
                 this.elem.show();
                 let state = this.vp_state === cone.VP_SMALL;
+                /* istanbul ignore else */
                 if(state != this.collapsed) {
                     this.collapsed = state;
                 }

@@ -60,9 +60,9 @@ if(window.cone === undefined) {
         }
 
         unload() {
-            this.scrollbar.off();
-            this.elem.off();
-            this.thumb.off();
+            this.scrollbar.off('click', this._click_handle);
+            this.elem.off('mousewheel wheel', this._scroll);
+            this.thumb.off('mousedown', this._drag_handle);
             this.scrollbar_observer.unobserve(this.elem.get(0));
         }
 
