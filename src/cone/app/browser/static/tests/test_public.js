@@ -2325,8 +2325,6 @@ QUnit.module('cone.Topnav', hooks => {
 						'super.viewport_changed()'
 					]);
 
-					console.log(i)
-
 					if (i === 0) {
 						// apply required mobile css styles
 						topnav_style_to_mobile();
@@ -3986,9 +3984,8 @@ QUnit.module('cone.Searchbar', hooks => {
 						assert.strictEqual(
 							$('#cone-livesearch-dropdown > #livesearch-input').length,
 							0);
-						assert.strictEqual(
-							$('#livesearch-group > #livesearch-input').length,
-							1);
+						assert.strictEqual($('#livesearch-group > #livesearch-input').length,
+											1);
 					}
 					assert.verifySteps(['super.viewport_changed()']);
 				}
