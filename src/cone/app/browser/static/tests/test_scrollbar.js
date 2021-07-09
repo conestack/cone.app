@@ -14,6 +14,7 @@ function create_scrollbar_elem(dir) {
         content_width = 200;
         content_height = 400;
     }
+
 	// create dummy scrollbar elem
     let scrollbar_test_elem = `
         <div style="width:${container_width}px;
@@ -29,6 +30,7 @@ function create_scrollbar_elem(dir) {
           </div>
         </div>
     `;
+
 	// append dummy scrollbar to DOM
     $('body').append(scrollbar_test_elem);
 }
@@ -65,14 +67,19 @@ function test_set_position(assert, test_scrollbar){
         return test_scrollbar.position
 		/ (test_scrollbar.contentsize / test_scrollbar.scrollsize) + 'px';
     }
+
 	// assert actual thumb position
     if (test_scrollbar instanceof cone.ScrollBarX){
-        assert.strictEqual(test_scrollbar.content.css('right'),
-						   test_scrollbar.position + 'px');
+        assert.strictEqual(
+			test_scrollbar.content.css('right'),
+			test_scrollbar.position + 'px'
+		);
         assert.strictEqual(test_scrollbar.thumb.css('left'), calc_thumb_pos());
     } else if (test_scrollbar instanceof cone.ScrollBarY ) {
-        assert.strictEqual(test_scrollbar.content.css('bottom'),
-						   test_scrollbar.position + 'px');
+        assert.strictEqual(
+			test_scrollbar.content.css('bottom'),
+			test_scrollbar.position + 'px'
+		);
         assert.strictEqual(test_scrollbar.thumb.css('top'), calc_thumb_pos());
     }
 
@@ -80,18 +87,29 @@ function test_set_position(assert, test_scrollbar){
     test_scrollbar.contentsize = 800;
     test_scrollbar.scrollsize = 300;
     test_scrollbar.position = 500;
+
 	// set position
     test_scrollbar.set_position();
 
 	// assert actual thumb position
     if (test_scrollbar instanceof cone.ScrollBarX){
-        assert.strictEqual(test_scrollbar.content.css('right'),
-						   test_scrollbar.position + 'px');
-        assert.strictEqual(test_scrollbar.thumb.css('left'), calc_thumb_pos());
+        assert.strictEqual(
+			test_scrollbar.content.css('right'),
+			test_scrollbar.position + 'px'
+		);
+        assert.strictEqual(
+			test_scrollbar.thumb.css('left'),
+			calc_thumb_pos()
+		);
     } else if (test_scrollbar instanceof cone.ScrollBarY ) {
-        assert.strictEqual(test_scrollbar.content.css('bottom'),
-						   test_scrollbar.position + 'px');
-        assert.strictEqual(test_scrollbar.thumb.css('top'), calc_thumb_pos());
+        assert.strictEqual(
+			test_scrollbar.content.css('bottom'),
+			test_scrollbar.position + 'px'
+		);
+        assert.strictEqual(
+			test_scrollbar.thumb.css('top'),
+			calc_thumb_pos()
+		);
     }
 }
 
@@ -228,14 +246,14 @@ QUnit.module('cone.ScrollBar', hooks => {
 
 				// change elem width after first assertion
 				let done2 = assert.async();
-				setTimeout( () => {
+				setTimeout(() => {
 					test_scrollbar.elem.css('width', '1px');
 					done2();
 				}, 40);
 
 				// assert resize call after size change
 				let done3 = assert.async();
-					setTimeout( () => {
+					setTimeout(() => {
 						assert.verifySteps(['update()']);
 						// resizeObserver needs to be disconnected
 						let scroll_elem = test_scrollbar.elem.get(0);
@@ -326,19 +344,21 @@ QUnit.module('cone.ScrollBar', hooks => {
 				// save jQuery fadeIn, fadeOut origin
 				fade_out_origin = $.fn.fadeOut;
 				fade_in_origin = $.fn.fadeIn;
-	
-				// overwrite jQuery fadeIn, fadeOut function
+
+				// overwrite jQuery fadeIn, fadeOut functions
 				$.fn._fadeOut = $.fn.fadeOut;
 				$.fn.fadeOut = function(){
 					assert.step('fadeOut called');
 					$.fn.hide.apply(this);
 				};
+
 				$.fn._fadeIn = $.fn.fadeIn;
 				$.fn.fadeIn = function(){
 					assert.step('fadeIn called');
 					$.fn.show.apply(this);
 				};
 			});
+
 			hooks.after(() => {
                 console.log('Tear down cone.ScrollBar.mouse_in_out tests');
 
@@ -400,6 +420,7 @@ QUnit.module('cone.ScrollBar', hooks => {
 					}		
 				}
 			});
+
 			hooks.after(() => {
 				console.log('Tear down cone.ScrollBar.scroll_handle tests');
 
@@ -410,7 +431,6 @@ QUnit.module('cone.ScrollBar', hooks => {
 				test_scrollbar.unload();
 				delete test_scrollbar;
 			});
-
 
 			QUnit.test('scroll_handle()', assert => {
 				// create test scrollbar element
@@ -478,7 +498,7 @@ QUnit.module('cone.ScrollBar', hooks => {
 			QUnit.test('prevent_overflow()', assert => {
 				// create scrollbar object
 				test_scrollbar = new cone.ScrollBar($('#test-container'));
-	
+
 				// set dimensions
 				test_scrollbar.contentsize = 400;
 				test_scrollbar.scrollsize = 200;
@@ -489,7 +509,7 @@ QUnit.module('cone.ScrollBar', hooks => {
 				test_scrollbar.position = 500;
 				test_scrollbar.prevent_overflow();
 				assert.strictEqual(test_scrollbar.position, threshold);
-	
+
 				// scroll to start
 				test_scrollbar.position = -500;
 				test_scrollbar.prevent_overflow();
@@ -520,6 +540,7 @@ QUnit.module('cone.ScrollBar', hooks => {
 					}
 				};
 			});
+
 			hooks.after(() => {
 				console.log('Tear down cone.ScrollBar.set_position tests');
 
@@ -549,7 +570,7 @@ QUnit.module('cone.ScrollBar', hooks => {
 				assert.notOk(test_scrollbar.thumb.hasClass('active'));
 			});
 		});
-		
+
 		QUnit.module('drag_handle()', hooks => {
 			let TestScrollbar,
 				test_scrollbar;
@@ -582,6 +603,7 @@ QUnit.module('cone.ScrollBar', hooks => {
 					}
 				};
 			});
+
 			hooks.after(() => {
 				console.log('Tear down cone.ScrollBar.drag_handle tests');
 
@@ -690,13 +712,14 @@ QUnit.module('cone.ScrollBar', hooks => {
 QUnit.module('cone.ScrollBarX', hooks => {
 	hooks.before(() => {
 		console.log('Set up cone.ScrollBarX tests');
-	})
+	});
+
 	hooks.after(() => {
 		console.log('Tear down cone.ScrollBarX tests');
-	})
+	});
 
 	QUnit.module('constructor', () => {
-		
+
 		QUnit.module('constructor methods', hooks => {
 			let TestScrollbarX,
 			test_scrollbar_x,
@@ -732,6 +755,7 @@ QUnit.module('cone.ScrollBarX', hooks => {
 					this.scrollbar_observer.observe(this.elem.get(0));
 				}
 			});
+
 			hooks.after(() => {
 				console.log('Tear down cone.ScrollBarX.constructor method tests');
 
@@ -749,7 +773,7 @@ QUnit.module('cone.ScrollBarX', hooks => {
 			QUnit.test('all constructor methods called', assert => {
 				// create ScrollBarX instance
 				test_scrollbar_x = new TestScrollbarX($('#test-container'));
-	
+
 				// verify methods in constructor are called
 				let done = assert.async();
 				setTimeout(() => {
@@ -789,24 +813,24 @@ QUnit.module('cone.ScrollBarX', hooks => {
 				// scroll container
 				assert.ok(test_scrollbar_x.elem);
 				assert.ok(test_scrollbar_x.elem.is('div'));
-	
+
 				// content
 				assert.ok(test_scrollbar_x.content);
-	
+
 				// scrollbar
 				assert.ok(test_scrollbar_x.scrollbar);
 				assert.ok(test_scrollbar_x.scrollbar.is('div'));
 				assert.ok(test_scrollbar_x.scrollbar.hasClass('scrollbar'));
-	
+
 				// thumb
 				assert.ok(test_scrollbar_x.thumb);
 				assert.ok(test_scrollbar_x.thumb.is('div'));
 				assert.ok(test_scrollbar_x.thumb.hasClass('scroll-handle'));
-	
+
 				// position related
 				assert.strictEqual(test_scrollbar_x.position, 0);
 				assert.strictEqual(test_scrollbar_x.unit, 10);
-	
+
 				// verify private functions
 				assert.ok(test_scrollbar_x._scroll);
 				assert.ok(test_scrollbar_x._click_handle);
@@ -820,6 +844,7 @@ QUnit.module('cone.ScrollBarX', hooks => {
 		hooks.beforeEach(() => {
 			create_scrollbar_elem('x');
 		});
+
 		hooks.afterEach(() => {
 			$('#test-container').remove();
 			test_scrollbar_x = null;
@@ -889,6 +914,7 @@ QUnit.module('cone.ScrollBarX', hooks => {
 				// dimension and property changed
 				test_scrollbar_x.contentsize = 100;
 				test_scrollbar_x.content.css('width', '100px');
+
 				// update
 				test_scrollbar_x.update();
 				assert.strictEqual(test_scrollbar_x.thumbsize,
@@ -966,7 +992,7 @@ QUnit.module('cone.ScrollBarX', hooks => {
 
 		QUnit.test('get_offset()', assert => {
 			// create instance of cone.ScrollBarX
-			test_scrollbar_x = new cone.ScrollBarX( $('#test-container') );
+			test_scrollbar_x = new cone.ScrollBarX($('#test-container'));
 			// actual offset is the same as offset returned by method
 			assert.strictEqual(test_scrollbar_x.elem.offset().left,
 							   test_scrollbar_x.get_offset());
@@ -977,10 +1003,11 @@ QUnit.module('cone.ScrollBarX', hooks => {
 QUnit.module('cone.ScrollBarY', hooks => {
 	hooks.before(() => {
 		console.log('Set up cone.ScrollBarY tests');
-	})
+	});
+
 	hooks.after(() => {
 		console.log('Tear down cone.ScrollBarY tests');
-	})
+	});
 
 	QUnit.module('constructor', () => {
 
@@ -989,7 +1016,7 @@ QUnit.module('cone.ScrollBarY', hooks => {
 				test_scrollbar_y,
 				observe_container_origin;
 
-			hooks.before( assert => {
+			hooks.before(assert => {
 				console.log('Set up cone.ScrollBarY.constructor method tests');
 
 				// add dummy scrollbar element to DOM
@@ -1018,7 +1045,8 @@ QUnit.module('cone.ScrollBarY', hooks => {
 					this.scrollbar_observer.observe(this.elem.get(0));
 				}
 			});
-			hooks.after( () => {
+
+			hooks.after(() => {
 				console.log('Tear down cone.ScrollBarY.constructor method tests');
 
 				// remove dummy scrollbar fromDOM
@@ -1075,24 +1103,24 @@ QUnit.module('cone.ScrollBarY', hooks => {
 				// scroll container
 				assert.ok(test_scrollbar_y.elem);
 				assert.ok(test_scrollbar_y.elem.is('div'));
-	
+
 				// content
 				assert.ok(test_scrollbar_y.content);
-	
+
 				// scrollbar
 				assert.ok(test_scrollbar_y.scrollbar);
 				assert.ok(test_scrollbar_y.scrollbar.is('div'));
 				assert.ok(test_scrollbar_y.scrollbar.hasClass('scrollbar'));
-	
+
 				// thumb
 				assert.ok(test_scrollbar_y.thumb);
 				assert.ok(test_scrollbar_y.thumb.is('div'));
 				assert.ok(test_scrollbar_y.thumb.hasClass('scroll-handle'));
-	
+
 				// position related
 				assert.strictEqual(test_scrollbar_y.position, 0);
 				assert.strictEqual(test_scrollbar_y.unit, 10);
-	
+
 				// verify private functions
 				assert.ok(test_scrollbar_y._scroll);
 				assert.ok(test_scrollbar_y._click_handle);
@@ -1107,6 +1135,7 @@ QUnit.module('cone.ScrollBarY', hooks => {
 			// add dummy scrollbar to DOM
 			create_scrollbar_elem('y');
 		});
+
 		hooks.afterEach(() => {
 			// remove dummy scrollbar from DOM
 			$('#test-container').remove();
