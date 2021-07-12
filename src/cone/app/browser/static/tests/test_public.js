@@ -1059,7 +1059,7 @@ QUnit.module('cone.MainMenuTop', hooks => {
                 cone.MainMenuTop.initialize();
                 // main menu top does not show in mobile menu if sidebar menu
                 assert.strictEqual(
-                    cone.main_menu_top.elem.css('display'), 
+                    cone.main_menu_top.elem.css('display'),
                     'none'
                 );
             });
@@ -1567,7 +1567,7 @@ QUnit.module('cone.MainMenuSidebar', hooks => {
                 for (let elem of mm_sb.menus) {
                     test_display_data.push('none');
                 }
-                // display_data shows all menus hidden 
+                // display_data shows all menus hidden
                 assert.deepEqual(mm_sb.display_data, test_display_data);
             });
 
@@ -1663,13 +1663,13 @@ QUnit.module('cone.MainMenuSidebar', hooks => {
                     if (i === 0) {
                         // mobile
                         assert.verifySteps([
-                            'super.viewport_changed()', 
+                            'super.viewport_changed()',
                             'mv_to_mobile()'
                         ]);
                     } else {
                         // desktop
                         assert.verifySteps([
-                            'super.viewport_changed()', 
+                            'super.viewport_changed()',
                             'mv_to_sidebar()'
                         ]);
                     }
@@ -1711,7 +1711,7 @@ QUnit.module('cone.MainMenuSidebar', hooks => {
 
             QUnit.test('mv_to_mobile()', assert => {
                 // initialize instances
-                cone.Topnav.initialize();	
+                cone.Topnav.initialize();
                 cone.SidebarMenu.initialize();
 
                 // initialize MainMenuSidebar
@@ -2376,7 +2376,7 @@ QUnit.module('cone.Topnav', hooks => {
                         topnav_style_to_mobile();
 
                         assert.strictEqual(
-                            cone.topnav.content.css('display'), 
+                            cone.topnav.content.css('display'),
                             'none'
                         );
                         assert.ok(cone.topnav.elem.hasClass('mobile'));
@@ -2500,7 +2500,7 @@ function create_sidebar_elem() {
           </div>
           <div id="sidebar_footer">
             <div id="toggle-fluid">
-              <i class="bi bi-lock-fill"></i> 
+              <i class="bi bi-lock-fill"></i>
               <span>Lock state</span>
             </div>
             <div id="sidebar-toggle-btn">
@@ -3027,14 +3027,14 @@ QUnit.module('cone.SidebarMenu', hooks => {
                         // collapsed state can't change on mobile
                         assert.verifySteps([
                             `super.viewport_changed(${i})`,
-                            `assign_state(false)` 
+                            `assign_state(false)`
                         ]);
                         assert.strictEqual(test_sidebar_menu.collapsed, false);
                     } else {
                         // collapsed cookie state gets applied
                         assert.verifySteps([
                             `super.viewport_changed(${i})`,
-                            `assign_state(${state})` 
+                            `assign_state(${state})`
                         ]);
                         assert.strictEqual(test_sidebar_menu.collapsed, state);
                     }
@@ -3783,7 +3783,7 @@ function create_theme_switcher_elem(mode) {
         </li>
     `;
     let head_current = `
-        <link id="colormode-styles" 
+        <link id="colormode-styles"
               rel="stylesheet"
               href=${mode}>`;
     $('body').append(modeswitch_html);
@@ -3893,7 +3893,7 @@ function create_searchbar_elem() {
     // create dummy searchber element
     let searchbar_html = `
         <div id="cone-searchbar">
-          <div id="cone-searchbar-wrapper" 
+          <div id="cone-searchbar-wrapper"
                class="dropdown-toggle"
                role="button"
                data-bs-toggle="dropdown">
@@ -3993,7 +3993,7 @@ QUnit.module('cone.Searchbar', hooks => {
                     // assert.ok(cone.searchbar.search_text.is('#livesearch-group > #livesearch-input'));
                     // assert.notOk(cone.searchbar.dd.hasClass('dropdown-menu-end'));
                     // assert.strictEqual($('#cone-livesearch-dropdown > #livesearch-input').length, 0);
-                } 
+                }
             }
         });
     });
@@ -4090,7 +4090,7 @@ QUnit.module('cone.Searchbar', hooks => {
                 cone.Searchbar.initialize();
 
                 for (let i=0; i<vp_states.length; i++) {
-                    // set dummy resize event 
+                    // set dummy resize event
                     resize_evt.state = i;
 
                     // invoke viewport_changed method
