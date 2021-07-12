@@ -4,10 +4,10 @@
 #     sudo apt install npm
 #     sudo npm install -g sass
 
-pushd src/cone/app/browser/static/scss
+pushd scss
 
-sass style.scss ../style.css
-sass light.scss ../light.css
-sass dark.scss ../dark.css
+sass style.scss ../src/cone/app/browser/static/style.css
+sass light.scss ../src/cone/app/browser/static/light.css
+sass dark.scss ../src/cone/app/browser/static/dark.css
 
 popd

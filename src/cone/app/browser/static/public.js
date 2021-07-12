@@ -556,6 +556,13 @@ if (window.cone === undefined) {
             this.elem = elem;
 
             this.content = $('#sidebar_content', elem);
+
+            if(!$.trim(this.content.html()).length) {
+                // hide sidebar if empty
+                // trim() ensures execution if content has whitespace
+                this.elem.hide();
+                super.unload();
+            }
             //this.scrollbar = new cone.ScrollBarSidebar(elem);
             this.collapsed = false;
 
