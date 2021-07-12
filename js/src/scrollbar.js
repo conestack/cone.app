@@ -17,17 +17,16 @@ export class ScrollBar {
         this.observe_container();
 
         this._scroll = this.scroll_handle.bind(this);
-        this.elem.off('mousewheel wheel', this._scroll).on('mousewheel wheel', this._scroll);
+        this.elem.on('mousewheel wheel', this._scroll);
 
         this._click_handle = this.click_handle.bind(this);
-        this.scrollbar.off('click', this._click_handle).on('click', this._click_handle);
+        this.scrollbar.on('click', this._click_handle);
 
         this._drag_handle = this.drag_handle.bind(this);
-        this.thumb.off('mousedown', this._drag_handle).on('mousedown', this._drag_handle);
+        this.thumb.on('mousedown', this._drag_handle);
 
         this._mousehandle = this.mouse_in_out.bind(this);
-        this.elem.off('mouseenter mouseleave', this._mousehandle)
-                    .on('mouseenter mouseleave', this._mousehandle);
+        this.elem.on('mouseenter mouseleave', this._mousehandle);
     }
 
     observe_container() {
@@ -121,8 +120,9 @@ export class ScrollBar {
 
         this.elem.off('mouseenter mouseleave', this._mousehandle);
 
-        $(document).on('mousemove', _on_move);
-        $(document).on('mouseup', _on_up);
+        $(document)
+            .on('mousemove', _on_move)
+            .on('mouseup', _on_up);
 
         function on_move(e) {
             let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
@@ -133,7 +133,9 @@ export class ScrollBar {
         function on_up() {
             var evt = $.Event('dragend');
             $(window).trigger(evt);
-            $(document).off('mousemove', _on_move).off('mouseup', _on_up);
+            $(document)
+                .off('mousemove', _on_move)
+                .off('mouseup', _on_up);
             this.thumb.removeClass('active');
             this.elem.on('mouseenter mouseleave', this._mousehandle);
         }
@@ -148,8 +150,9 @@ export class ScrollBarX extends ScrollBar {
 
     compile() {
         this.content.addClass('scroll-content');
-        this.elem.addClass('scroll-container')
-                    .prepend(this.scrollbar);
+        this.elem
+            .addClass('scroll-container')
+            .prepend(this.scrollbar);
         this.scrollbar.append(this.thumb);
         this.thumb.css('height', '6px');
         this.scrollbar.css('height', '6px');
@@ -161,7 +164,6 @@ export class ScrollBarX extends ScrollBar {
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('width', this.thumbsize);
     }
-
 
     update() {
         this.scrollsize = this.elem.outerWidth();
@@ -204,8 +206,9 @@ export class ScrollBarY extends ScrollBar {
 
     compile() {
         this.content.addClass('scroll-content');
-        this.elem.addClass('scroll-container')
-                    .prepend(this.scrollbar);
+        this.elem
+            .addClass('scroll-container')
+            .prepend(this.scrollbar);
         this.scrollbar.append(this.thumb);
         this.thumb.css('width', '6px');
         this.scrollbar.css('width', '6px');
