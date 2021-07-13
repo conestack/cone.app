@@ -7,9 +7,9 @@ export const VP_MEDIUM = 2;
 export const VP_LARGE = 3;
 
 // viewport singleton
-let viewport = null;
+let cone_viewport = null;
 
-class ViewPort {
+export class ViewPort {
 
     constructor() {
         this.state = null;
@@ -45,7 +45,7 @@ class ViewPort {
 
 export class ViewPortAware {
 
-    constructor() {
+    constructor(viewport) {
         this.vp_state = viewport.state;
         this._viewport_changed_handle = this.viewport_changed.bind(this);
         $(window).on('viewport_changed', this._viewport_changed_handle);
@@ -62,5 +62,5 @@ export class ViewPortAware {
 
 $(function() {
     // create viewport singleton
-    viewport = new ViewPort();
+    cone_viewport = new ViewPort();
 });

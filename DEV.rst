@@ -14,7 +14,19 @@ Install virtualenv and run buildout::
 Install npm and karma::
 
     sudo apt install npm
-    npm install qunit karma karma-qunit karma-coverage karma-chrome-launcher karma-viewport
+    npm install \
+        qunit \
+        karma \
+        karma-qunit \
+        karma-coverage \
+        karma-chrome-launcher \
+        karma-viewport \
+        karma-module-resolver-preprocessor
+
+Install jquery from git as jquery 4 is not released yet but required to run
+tests as modules and import from jquery sources works::
+
+    npm install https://github.com/jquery/jquery#main
 
 Install sass::
 
