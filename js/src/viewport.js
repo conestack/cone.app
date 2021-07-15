@@ -1,6 +1,13 @@
 import $ from 'jquery'
+import {cone} from '../src/globals.wip.js'
 
 // viewport states
+export const vp_states = {
+    MOBILE: 0,
+    SMALL: 1,
+    MEDIUM: 2,
+    LARGE: 3
+}
 export const VP_MOBILE = 0;
 export const VP_SMALL = 1;
 export const VP_MEDIUM = 2;
@@ -13,6 +20,8 @@ export class ViewPort {
 
     constructor() {
         this.state = null;
+        cone.viewportState = this.state;
+
         this._mobile_query = `(max-width:559.9px)`;
         this._small_query = `(min-width:560px) and (max-width: 989.9px)`;
         this._medium_query = `(min-width:560px) and (max-width: 1200px)`;
@@ -45,8 +54,9 @@ export class ViewPort {
 
 export class ViewPortAware {
 
-    constructor(viewport) {
-        this.vp_state = viewport.state;
+    constructor() {
+        this.vp_state = cone.viewportState;
+
         this._viewport_changed_handle = this.viewport_changed.bind(this);
         $(window).on('viewport_changed', this._viewport_changed_handle);
     }
@@ -60,7 +70,7 @@ export class ViewPortAware {
     }
 }
 
-$(function() {
+/* $(function() {
     // create viewport singleton
     cone_viewport = new ViewPort();
-});
+}); */

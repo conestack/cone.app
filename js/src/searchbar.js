@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import {ViewPort, ViewPortAware, VP_SMALL, VP_MEDIUM} from '../src/viewport.js';
+import {ViewPortAware, VP_SMALL, VP_MEDIUM} from '../src/viewport.js';
 
 let searchbar = null;
 

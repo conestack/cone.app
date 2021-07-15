@@ -1,4 +1,9 @@
 import {SidebarMenu} from '../src/sidebar_menu.js'; 
+import {ViewPortAware} from '../src/viewport.js';
+import {karma_vp_states} from '../src/viewport_states.js';
+import {cone} from '../src/globals.wip.js';
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // cone.SidebarMenu helpers
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,28 +36,35 @@ function create_sidebar_elem() {
 QUnit.module('cone.SidebarMenu', hooks => {
     hooks.before(() => {
         console.log('Set up cone.SidebarMenu tests');
-        cone.viewport = new cone.ViewPort();
     });
 
     hooks.after(() => {
         console.log('Tear down cone.SidebarMenu tests');
-        cone.viewport = null;
+    });
+
+    QUnit.test.only('TEEEEST check global scope and shit', assert => {
+        assert.ok(true);
+        cone.viewportState = 3;
+
+        // create dummy sidebar
+        create_sidebar_elem();
+
+        console.log(cone.sidebar_menu.exists);
+        let sidebar = SidebarMenu.initialize();
+        console.log(cone.sidebar_menu.exists);
+
     });
 
     QUnit.module('constructor', () => {
-        hooks.before(() => {
-            console.log('Set up cone.SidebarMenu tests');
-        });
-        hooks.after(() =>{
-            console.log('Tear down cone.SidebarMenu tests');
-        });
 
         QUnit.module('properties', hooks => {
+            let test_sidebar;
+
             hooks.before(() => {
                 console.log('Set up cone.SidebarMenu properties tests');
 
                 // set viewport to desktop
-                cone.viewport.state = 3;
+                cone.viewportState = 3;
 
                 // create dummy sidebar
                 create_sidebar_elem();
@@ -62,46 +74,46 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Tear down cone.SidebarMenu properties tests');
 
                 // unset and remove sidebar
-                cone.sidebar_menu = null;
+                test_sidebar = null;
                 // remove dummy sidebar from DOM
                 $('#sidebar_left').remove();
             });
 
-            QUnit.test('elems', assert => {
+            QUnit.test.only('elems', assert => {
+                assert.ok(true);
                 // initialize new SidebarMenu instance
-                cone.SidebarMenu.initialize();
-                let sidebar = cone.sidebar_menu;
+                // test_sidebar = SidebarMenu.initialize();
 
-                // Sidebar is child of cone.ViewPortAware class
-                assert.ok(sidebar instanceof cone.ViewPortAware);
+            //     // Sidebar is child of cone.ViewPortAware class
+            //     assert.ok(test_sidebar instanceof ViewPortAware);
 
-                // containing element
-                assert.ok(sidebar.elem.is('div#sidebar_left'));
+            //     // containing element
+            //     assert.ok(test_sidebar.elem.is('div#sidebar_left'));
 
-                // content
-                assert.ok(sidebar.content.is('div#sidebar_content'));
+            //     // content
+            //     assert.ok(test_sidebar.content.is('div#sidebar_content'));
 
-                // sidebar is expanded on desktop load
-                assert.false(sidebar.collapsed);
+            //     // sidebar is expanded on desktop load
+            //     assert.false(test_sidebar.collapsed);
 
-                // footer
-                assert.ok(
-                    sidebar.toggle_btn
-                    .is('#sidebar_footer > #sidebar-toggle-btn')
-                );
-                assert.ok(
-                    sidebar.toggle_arrow_elem
-                    .is('#sidebar-toggle-btn > i')
-                );
-                assert.ok(
-                    sidebar.lock_switch
-                    .is('#sidebar_footer > #toggle-fluid')
-                );
-                assert.strictEqual(sidebar.cookie, null);
+            //     // footer
+            //     assert.ok(
+            //         test_sidebar.toggle_btn
+            //         .is('#sidebar_footer > #sidebar-toggle-btn')
+            //     );
+            //     assert.ok(
+            //         test_sidebar.toggle_arrow_elem
+            //         .is('#sidebar-toggle-btn > i')
+            //     );
+            //     assert.ok(
+            //         test_sidebar.lock_switch
+            //         .is('#sidebar_footer > #toggle-fluid')
+            //     );
+            //     assert.strictEqual(test_sidebar.cookie, null);
 
-                // private methods exist
-                assert.ok(sidebar._toggle_menu_handle);
-                assert.ok(sidebar._toggle_lock);
+            //     // private methods exist
+            //     assert.ok(test_sidebar._toggle_menu_handle);
+            //     assert.ok(test_sidebar._toggle_lock);
             });
         });
     });
@@ -116,29 +128,29 @@ QUnit.module('cone.SidebarMenu', hooks => {
         });
 
         QUnit.module('unload', hooks => {
-            let toggle_menu_origin = cone.SidebarMenu.prototype.toggle_menu,
-                toggle_lock_origin = cone.SidebarMenu.prototype.toggle_lock,
-                super_unload_origin = cone.ViewPortAware.prototype.unload;
+            let toggle_menu_origin = SidebarMenu.prototype.toggle_menu,
+                toggle_lock_origin = SidebarMenu.prototype.toggle_lock,
+                super_unload_origin = ViewPortAware.prototype.unload;
 
             hooks.before(assert => {
                 console.log('Set up cone.SidebarMenu.unload tests');
 
                 // set viewport
-                cone.viewport.state = 3;
+                cone.viewportState = 3;
 
                 // create dummy sidebar element
                 create_sidebar_elem();
 
                 // overwrite methods to check for method calls
-                cone.SidebarMenu.prototype.toggle_menu = function() {
+                SidebarMenu.prototype.toggle_menu = function() {
                     assert.step('toggle_menu()');
                 }
-                cone.SidebarMenu.prototype.toggle_lock = function() {
+                SidebarMenu.prototype.toggle_lock = function() {
                     assert.step('toggle_lock()');
                 }
 
                 // overwrite super.unload function
-                cone.ViewPortAware.prototype.unload = function() {
+                ViewPortAware.prototype.unload = function() {
                     assert.step('super.unload()');
                 }
             });
@@ -147,31 +159,31 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Tear down cone.SidebarMenu.unload tests');
 
                 // unset sidebar
-                cone.sidebar_menu = null;
+                sidebar_menu = null;
                 // remove dummy element from DOM
                 $('#sidebar_left').remove();
 
                 // reset super.unload() function
-                cone.ViewPortAware.prototype.unload = super_unload_origin;
+                ViewPortAware.prototype.unload = super_unload_origin;
 
                 // reset methods after test completion
-                cone.SidebarMenu.prototype.toggle_menu = toggle_menu_origin;
-                cone.SidebarMenu.prototype.toggle_lock = toggle_lock_origin;
+                SidebarMenu.prototype.toggle_menu = toggle_menu_origin;
+                SidebarMenu.prototype.toggle_lock = toggle_lock_origin;
             });
 
             QUnit.test('unload()', assert => {
                 // initialize new SidebarMenu instance
-                cone.SidebarMenu.initialize();
+                SidebarMenu.initialize();
                 // second instance invokes unload in constructor
-                cone.SidebarMenu.initialize();
+                SidebarMenu.initialize();
                 assert.verifySteps(['super.unload()']);
 
                 // manually unload
-                cone.sidebar_menu.unload();
+                sidebar_menu.unload();
 
                 // trigger events to check for unbind
-                cone.sidebar_menu.toggle_btn.trigger('click');
-                cone.sidebar_menu.lock_switch.trigger('click');
+                sidebar_menu.toggle_btn.trigger('click');
+                sidebar_menu.lock_switch.trigger('click');
 
                 // super.unload has been called
                 assert.verifySteps(['super.unload()']);
@@ -188,7 +200,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 create_sidebar_elem();
 
                 // dummy class
-                TestSidebarMenu = class extends cone.SidebarMenu {
+                TestSidebarMenu = class extends SidebarMenu {
                     assign_state() {
                         assert.step('assign_state()');
                     }
@@ -208,17 +220,17 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 $('#sidebar_left').remove();
             });
 
-            for (let i=0; i<vp_states.length; i++) {
+            for (let i=0; i<karma_vp_states.length; i++) {
                 QUnit.test(`Viewport ${i}`, assert => {
                     // set viewport
-                    cone.viewport.state = i;
+                    cone.viewportState = i;
 
                     // initialize Test Sidebar
                     test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
 
                     assert.strictEqual(
                         test_sidebar_menu.vp_state,
-                        cone.viewport.state
+                        cone.viewportState
                     );
                     assert.verifySteps(['assign_state()']);
 
@@ -242,7 +254,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
 
                 QUnit.test(`Viewport ${i} with cookie`, assert => {
                     // set viewport
-                    cone.viewport.state = i;
+                    cone.viewportState = i;
 
                     // create dummy cookie
                     createCookie('sidebar', true, null);
@@ -252,7 +264,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
 
                     assert.strictEqual(
                         test_sidebar_menu.vp_state,
-                        cone.viewport.state
+                        cone.viewportState
                     );
                     assert.verifySteps(['assign_state()']);
 
@@ -288,13 +300,13 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Set up cone.SidebarMenu.toggle_lock tests');
 
                 // set viewport
-                cone.viewport.state = 3;
+                cone.viewportState = 3;
 
                 // create dummy sidebar element
                 create_sidebar_elem();
 
                 // dummy class
-                TestSidebarMenu = class extends cone.SidebarMenu {
+                TestSidebarMenu = class extends SidebarMenu {
                     toggle_menu() {
                         assert.step('toggle_menu()');
                     }
@@ -371,20 +383,20 @@ QUnit.module('cone.SidebarMenu', hooks => {
         QUnit.module('viewport_changed()', hooks => {
             let TestSidebarMenu,
                 test_sidebar_menu,
-                VPA = cone.ViewPortAware,
+                VPA = ViewPortAware,
                 super_vp_changed_origin = VPA.prototype.viewport_changed;
 
             hooks.beforeEach(assert => {
                 console.log('Set up cone.SidebarMenu.toggle_lock tests');
 
                 // set viewport
-                cone.viewport.state = 3;
+                cone.viewportState = 3;
 
                 // create dummy sidebar element
                 create_sidebar_elem();
 
                 // dummy class
-                TestSidebarMenu = class extends cone.SidebarMenu {
+                TestSidebarMenu = class extends SidebarMenu {
                     assign_state() {
                         assert.step(`assign_state(${this.collapsed})`);
                     }
@@ -425,7 +437,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 // create dummy viewport changed event
                 let resize_evt = $.Event('viewport_changed');
 
-                for (let i=0; i<vp_states.length; i++) {
+                for (let i=0; i<karma_vp_states.length; i++) {
                     // set dummy viewport changed event
                     resize_evt.state = i;
                     // invoke viewport_changed method
@@ -518,7 +530,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 // initial assign_state call on load
                 assert.verifySteps(['assign_state(false)']);
 
-                for (let i=0; i<vp_states.length; i++) {
+                for (let i=0; i<karma_vp_states.length; i++) {
                     if (i === 1) {
                         state = false;
                     } else {
@@ -560,7 +572,7 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Set up cone.SidebarMenu.toggle_lock tests');
 
                 // set viewport
-                cone.viewport.state = 3;
+                cone.viewportState = 3;
 
                 // create dummy sidebar element
                 create_sidebar_elem();
@@ -569,10 +581,10 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 create_mm_sidebar_elem();
 
                 // dummy class
-                TestMainMenuSidebar = class extends cone.MainMenuSidebar {
+                TestMainMenuSidebar = class extends MainMenuSidebar {
                     static initialize(context) {
                         let elem = $('#mainmenu_sidebar');
-                        cone.main_menu_sidebar = new TestMainMenuSidebar(elem);
+                        main_menu_sidebar = new TestMainMenuSidebar(elem);
                     }
                     collapse() {
                         assert.step('collapse()');
@@ -587,52 +599,52 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Tear down cone.SidebarMenu.toggle_lock tests');
 
                 // unset sidebar
-                cone.sidebar_menu.unload();
-                cone.sidebar_menu = null;
+                sidebar_menu.unload();
+                sidebar_menu = null;
                 // remove dummy element from DOM
                 $('#sidebar_left').remove();
 
                 // unset main menu sidebar
-                if (cone.main_menu_sidebar) {
-                    cone.main_menu_sidebar.unload();
-                    cone.main_menu_sidebar = null;
+                if (main_menu_sidebar) {
+                    main_menu_sidebar.unload();
+                    main_menu_sidebar = null;
                 }
             });
 
             QUnit.test('assign_state()', assert => {
-                cone.SidebarMenu.initialize();
+                SidebarMenu.initialize();
 
                 // sidebar is expanded on load
-                assert.strictEqual(cone.sidebar_menu.collapsed, false);
-                assert.ok(cone.sidebar_menu.elem.hasClass('expanded'));
+                assert.strictEqual(sidebar_menu.collapsed, false);
+                assert.ok(sidebar_menu.elem.hasClass('expanded'));
                 assert.ok(
-                    cone.sidebar_menu.toggle_arrow_elem
+                    sidebar_menu.toggle_arrow_elem
                     .hasClass('bi bi-arrow-left-circle')
                 );
 
                 // sidebar is collapsed
-                cone.sidebar_menu.collapsed = true;
+                sidebar_menu.collapsed = true;
                 // invoke assign_state() method
-                cone.sidebar_menu.assign_state();
-                assert.ok(cone.sidebar_menu.elem.hasClass('collapsed'));
+                sidebar_menu.assign_state();
+                assert.ok(sidebar_menu.elem.hasClass('collapsed'));
                 assert.ok(
-                    cone.sidebar_menu.toggle_arrow_elem
+                    sidebar_menu.toggle_arrow_elem
                     .hasClass('bi bi-arrow-right-circle')
                 );
             });
 
             QUnit.test('with mainmenu sidebar', assert => {
                 // initialize SidebarMenu instance
-                cone.SidebarMenu.initialize();
+                SidebarMenu.initialize();
                 // initialize mainmenu sidebar instance
                 TestMainMenuSidebar.initialize();
 
                 // expand
-                cone.sidebar_menu.assign_state();
+                sidebar_menu.assign_state();
 
                 //collapse
-                cone.sidebar_menu.collapsed = true;
-                cone.sidebar_menu.assign_state();
+                sidebar_menu.collapsed = true;
+                sidebar_menu.assign_state();
 
                 assert.verifySteps([
                     'expand()',
@@ -648,13 +660,13 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Set up cone.SidebarMenu.toggle_menu tests');
 
                 // set viewport
-                cone.viewport.state = 3;
+                cone.viewportState = 3;
 
                 // create dummy sidebar element
                 create_sidebar_elem();
 
                 // dummy class
-                TestSidebarMenu = class extends cone.SidebarMenu {
+                TestSidebarMenu = class extends SidebarMenu {
                     assign_state() {
                         assert.step('assign_state()');
                     }
@@ -665,32 +677,32 @@ QUnit.module('cone.SidebarMenu', hooks => {
                 console.log('Tear down cone.SidebarMenu.toggle_menu tests');
 
                 // unset sidebar
-                cone.sidebar_menu.unload();
-                cone.sidebar_menu = null;
+                sidebar_menu.unload();
+                sidebar_menu = null;
                 // remove dummy element from DOM
                 $('#sidebar_left').remove();
             });
 
             QUnit.test('toggle_menu()', assert => {
                 // initialize new SidebarMenu instance
-                cone.sidebar_menu = new TestSidebarMenu();
+                sidebar_menu = new TestSidebarMenu();
 
                 // initial assign_state call
                 assert.verifySteps(['assign_state()']);
 
                 // sidebar is expanded on load
-                assert.strictEqual(cone.sidebar_menu.collapsed, false);
+                assert.strictEqual(sidebar_menu.collapsed, false);
 
                 // trigger click on toggle button
-                cone.sidebar_menu.toggle_btn.trigger('click');
+                sidebar_menu.toggle_btn.trigger('click');
                 // sidebar is collapsed after click
-                assert.strictEqual(cone.sidebar_menu.collapsed, true);
+                assert.strictEqual(sidebar_menu.collapsed, true);
                 assert.verifySteps(['assign_state()']);
 
                 // trigger click on toggle button
-                cone.sidebar_menu.toggle_btn.trigger('click');
+                sidebar_menu.toggle_btn.trigger('click');
                 // sidebar is expanded after click
-                assert.strictEqual(cone.sidebar_menu.collapsed, false);
+                assert.strictEqual(sidebar_menu.collapsed, false);
                 assert.verifySteps(['assign_state()']);
             });
         });

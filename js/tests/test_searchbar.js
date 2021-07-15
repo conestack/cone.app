@@ -1,6 +1,7 @@
 import {Searchbar} from '../src/searchbar.js';
-import {ViewPort, ViewPortAware} from '../src/viewport.js';
+import {ViewPortAware} from '../src/viewport.js';
 import {vp_states} from '../src/viewport_states.js';
+import {cone} from '../src/globals.wip.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Searchbar test helper
@@ -48,16 +49,16 @@ function create_searchbar_elem() {
 ///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('Searchbar', hooks => {
-    let cone_viewport;
+    // let cone_viewport;
 
     hooks.before(() => {
         console.log('Set up Searchbar tests');
-        cone_viewport = new ViewPort();
+        // cone_viewport = new ViewPort();
     });
 
     hooks.after(() => {
         console.log('Tear down Searchbar tests');
-        cone_viewport = null;
+        // cone_viewport = null;
     });
 
     QUnit.module('constructor', hooks => {
@@ -69,8 +70,8 @@ QUnit.module('Searchbar', hooks => {
         });
 
         hooks.afterEach(() => {
-            // set viewport
-            cone_viewport.state = 3;
+            // set viewport state
+            cone.viewportState = 3;
 
             // unset searchbar
             test_searchbar = null;
@@ -78,107 +79,83 @@ QUnit.module('Searchbar', hooks => {
             $('#cone-searchbar').remove();
         });
 
-        QUnit.test.only('constructor', assert => {
-            for (let i=0; i<vp_states.length; i++) {
+        for (let i=0; i<vp_states.length; i++) {
+            QUnit.test.only('constructor', assert => {
                 // set viewport state
-                cone_viewport.state = i;
-                console.log(i)
+                cone.viewportState = i;
 
                 // initialize instance
                 test_searchbar = Searchbar.initialize();
+                // console.log(test_searchbar.vp_state);
 
-                // assert.ok(test_searchbar instanceof ViewPortAware);
+                assert.ok(test_searchbar instanceof ViewPortAware);
+                assert.strictEqual(test_searchbar.vp_state, cone.viewportState);
 
-                // if (i === 0) {
-                //     assert.notOk(
-                //         test_searchbar.dd
-                //         .hasClass('dropdown-menu-end')
-                //     );
-                //     assert.ok(
-                //         test_searchbar.search_text
-                //         .is('#livesearch-group > #livesearch-input')
-                //     );
-                // } else if (i === 1) {
-                //     assert.ok(test_searchbar.dd.hasClass('dropdown-menu-end'));
-                //     assert.ok(
-                //         test_searchbar.search_text
-                //         .is('#cone-livesearch-dropdown > #livesearch-input')
-                //     );
-                // } else if (i === 2) {
-                //     assert.ok(test_searchbar.dd.hasClass('dropdown-menu-end'));
-                //     assert.ok(
-                //         test_searchbar.search_text
-                //         .is('#cone-livesearch-dropdown > #livesearch-input')
-                //     );
-                // } else if (i === 3) {
-                    // ????? fails
-                    // assert.ok(searchbar.search_text.is('#livesearch-group > #livesearch-input'));
-                    // assert.notOk(searchbar.dd.hasClass('dropdown-menu-end'));
-                    // assert.strictEqual($('#cone-livesearch-dropdown > #livesearch-input').length, 0);
-                // }
-            }
-        });
+                switch(i) {
+                    case 0:
+                        assert.notOk(
+                            test_searchbar.dd
+                            .hasClass('dropdown-menu-end')
+                        );
+                        assert.ok(
+                            test_searchbar.search_text
+                            .is('#livesearch-group > #livesearch-input')
+                        );
+                      break;
+                    case 1:
+                        assert.ok(test_searchbar.dd.hasClass('dropdown-menu-end'));
+                        assert.ok(
+                            test_searchbar.search_text
+                            .is('#cone-livesearch-dropdown > #livesearch-input')
+                        );
+                      break;
+                    case 2:
+                        assert.ok(test_searchbar.dd.hasClass('dropdown-menu-end'));
+                        assert.ok(
+                            test_searchbar.search_text
+                            .is('#cone-livesearch-dropdown > #livesearch-input')
+                        );
+                      break;
+                    case 3:
+                        assert.ok(
+                            test_searchbar.search_text
+                            .is('#livesearch-group > #livesearch-input')
+                        );
+                        assert.notOk(
+                            test_searchbar.dd
+                            .hasClass('dropdown-menu-end')
+                        );
+                        assert.strictEqual(
+                            $('#cone-livesearch-dropdown > #livesearch-input').length,
+                            0
+                        );
+                      break;
+                    default:
+                      throw new Error('i is not defined correctly');
+                }
+            });
+        }
     });
 
-    QUnit.module.skip('methods', hooks => {
+    QUnit.module('methods', hooks => {
         hooks.before(() => {
-            console.log('Set up Scrollbar tests');
+            console.log('Set up Searchbar method tests');
 
-            // set viewport
-            viewport = new ViewPort();
+            // set viewport state
+            cone.viewportState = 3;
         });
 
         hooks.after(() => {
-            console.log('Tear down Scrollbar tests');
+            console.log('Tear down Searchbar method tests');
 
-            // unset viewport
-            viewport = null;
-        });
-
-        QUnit.module('unload', hooks => {
-            let unload_origin = ViewPortAware.prototype.unload;
-
-            hooks.before(assert => {
-                console.log('Set up Scrollbar method tests');
-
-                // create dummy searchbar element
-                create_searchbar_elem();
-
-                // overwrite super class method to test for call
-                ViewPortAware.prototype.unload = function() {
-                    $(window).off(
-                        'viewport_changed',
-                        this._viewport_changed_handle
-                    );
-                    assert.step('super.unload()');
-                }
-            });
-
-            hooks.after(() => {
-                console.log('Set up Scrollbar method tests');
-
-                // unset searchbar
-                searchbar = null;
-                // remove dummy searchbar element from DOM
-                $('#cone-searchbar').remove();
-
-                // reset super class method
-                ViewPortAware.prototype.unload = unload_origin;
-            });
-
-            QUnit.test('unload()', assert => {
-                // initialize searchbar
-                Searchbar.initialize();
-                // second instance invokes unload
-                Searchbar.initialize();
-
-                assert.verifySteps(['super.unload()']);
-            });
+            // unset viewport state
+            cone.viewportState = null;
         });
 
         QUnit.module('vp_changed', hooks => {
             let VPA = ViewPortAware,
-                super_vp_changed_origin = VPA.prototype.viewport_changed;
+                super_vp_changed_origin = VPA.prototype.viewport_changed,
+                test_searchbar;
 
             hooks.before(assert => {
                 // create dummy searchbar element
@@ -190,13 +167,13 @@ QUnit.module('Searchbar', hooks => {
                     assert.step('super.viewport_changed()');
                 }
 
-                // set viewport
-                viewport.state = 3;
+                // set viewport state
+                cone.viewportState = 3;
             });
 
             hooks.after(() => {
                 // unset searchbar
-                searchbar = null;
+                test_searchbar = null;
                 // remove dummy searchbar element from DOM
                 $('#cone-searchbar').remove();
 
@@ -204,23 +181,23 @@ QUnit.module('Searchbar', hooks => {
                 VPA.prototype.viewport_changed = super_vp_changed_origin;
             });
 
-            QUnit.test('vp_changed()', assert => {
+            QUnit.test.only('vp_changed()', assert => {
                 // create dummy resize event
                 let resize_evt = $.Event('viewport_changed');
 
                 // initialize Searchbar
-                Searchbar.initialize();
+                test_searchbar = Searchbar.initialize();
 
                 for (let i=0; i<vp_states.length; i++) {
                     // set dummy resize event
                     resize_evt.state = i;
 
                     // invoke viewport_changed method
-                    searchbar.viewport_changed(resize_evt);
+                    test_searchbar.viewport_changed(resize_evt);
 
                     if (i === 1 || i === 2){
                         assert.ok(
-                            searchbar.dd
+                            test_searchbar.dd
                             .hasClass('dropdown-menu-end')
                         );
                         assert.strictEqual(
@@ -228,7 +205,7 @@ QUnit.module('Searchbar', hooks => {
                             1);
                     } else {
                         assert.notOk(
-                            searchbar.dd
+                            test_searchbar.dd
                             .hasClass('dropdown-menu-end')
                         );
                         assert.strictEqual(

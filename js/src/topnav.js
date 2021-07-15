@@ -1,16 +1,24 @@
 import $ from 'jquery'
+import {
+    ViewPortAware,
+    vp_states
+} from '../src/viewport.js';
+import { toggle_arrow } from './toggle_arrow.js';
+import {cone} from '../src/globals.wip.js';
 
-export class Topnav extends cone.ViewPortAware {
+let topnav = null;
+
+export class Topnav extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#topnav', context);
         if (!elem.length) {
             return;
         }
-        if(cone.topnav !== null) {
-            cone.topnav.unload();
+        if(topnav !== null) {
+            topnav.unload();
         }
-        cone.topnav = new cone.Topnav(elem);
+        return new Topnav(elem);
     }
 
     constructor(elem) {
@@ -23,7 +31,7 @@ export class Topnav extends cone.ViewPortAware {
         this._toggle_menu_handle = this.toggle_menu.bind(this);
         this.toggle_button.on('click', this._toggle_menu_handle);
 
-        if (this.vp_state === cone.VP_MOBILE) {
+        if (this.vp_state === vp_states.MOBILE) {
             this.content.hide();
             this.elem.addClass('mobile');
             this.tb_dropdowns.off().on('show.bs.dropdown', () => {
@@ -54,7 +62,7 @@ export class Topnav extends cone.ViewPortAware {
 
     viewport_changed(e) {
         super.viewport_changed(e);
-        if (this.vp_state === cone.VP_MOBILE) {
+        if (this.vp_state === vp_states.MOBILE) {
             this.content.hide();
             this.elem.addClass('mobile');
             // hide menu on toolbar click
@@ -74,14 +82,14 @@ export class Topnav extends cone.ViewPortAware {
 
     pt_handle() {
         // tmp
-        if (this.vp_state === cone.VP_MOBILE) {
+        if (this.vp_state === vp_states.MOBILE) {
             this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
                 this.user.stop(true, true).slideDown('fast');
-                cone.toggle_arrow($('i.dropdown-arrow', '#personaltools'));
+                toggle_arrow($('i.dropdown-arrow', '#personaltools'));
             });
             this.pt.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
                 this.user.stop(true, true).slideUp('fast');
-                cone.toggle_arrow($('i.dropdown-arrow', '#personaltools'));
+                toggle_arrow($('i.dropdown-arrow', '#personaltools'));
             });
         } else {
             this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {

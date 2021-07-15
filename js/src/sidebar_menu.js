@@ -1,31 +1,37 @@
 import $ from 'jquery'
+import {vp_states} from './viewport.js';
+import {ViewPortAware} from './viewport.js';
+import {cone} from './globals.wip.js';
+import {createCookie, readCookie} from './cookie_functions.js';
 
-export class SidebarMenu extends cone.ViewPortAware {
+export class SidebarMenu extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#sidebar_left', context);
         if (!elem.length) {
             return;
         }
-        if (cone.sidebar_menu !== null) {
-            cone.sidebar_menu.unload();
+        if (cone.sidebar_menu.exists) {
+            console.log('sidebar already exists')
+            // cone.sidebar_menu.unload();
         }
-        cone.sidebar_menu = new cone.SidebarMenu(elem);
+        return new SidebarMenu(elem);
     }
 
     constructor(elem) {
         super();
         this.elem = elem;
-
         this.content = $('#sidebar_content', elem);
 
-        if(!$.trim(this.content.html()).length) {
+        cone.sidebar_menu.exists = true;
+
+        /* if(!$.trim(this.content.html()).length) {
             // hide sidebar if empty
             // trim() ensures execution if content has whitespace
             this.elem.hide();
             super.unload();
-        }
-        //this.scrollbar = new cone.ScrollBarSidebar(elem);
+        } */
+        //this.scrollbar = new ScrollBarSidebar(elem);
         this.collapsed = false;
 
         this.toggle_btn = $('#sidebar-toggle-btn', elem);
@@ -51,11 +57,11 @@ export class SidebarMenu extends cone.ViewPortAware {
     initial_load() {
         let cookie = readCookie('sidebar');
         let vp_state = this.vp_state;
-        if (vp_state === cone.VP_MOBILE) {
+        if (vp_state === vp_states.MOBILE) {
             this.elem.hide();
         } 
         else if (cookie === null) {
-            if(vp_state !== cone.VP_LARGE) {
+            if(vp_state !== vp_states.LARGE) {
                 this.collapsed = true;
             }
         } else {
@@ -81,7 +87,7 @@ export class SidebarMenu extends cone.ViewPortAware {
 
     viewport_changed(e) {
         super.viewport_changed(e);
-        if(this.vp_state === cone.VP_MOBILE) {
+        if(this.vp_state === vp_states.MOBILE) {
             this.collapsed = false;
             this.elem.hide();
         }
@@ -89,9 +95,9 @@ export class SidebarMenu extends cone.ViewPortAware {
             this.collapsed = this.cookie;
             this.elem.show();
         }
-        else if(this.vp_state === cone.VP_SMALL) {
+        else if(this.vp_state === vp_states.SMALL) {
             this.elem.show();
-            let state = this.vp_state === cone.VP_SMALL;
+            let state = this.vp_state === vp_states.SMALL;
             /* istanbul ignore else */
             if(state != this.collapsed) {
                 this.collapsed = state;
@@ -110,14 +116,14 @@ export class SidebarMenu extends cone.ViewPortAware {
         this.elem.attr('class', elem_class);
         this.toggle_arrow_elem.attr('class', button_class);
 
-        if(cone.main_menu_sidebar !== null) {
-            if(this.collapsed) {
-                cone.main_menu_sidebar.collapse();
-            }
-            else {
-                cone.main_menu_sidebar.expand();
-            }
-        }
+        // if(cone.main_menu_sidebar !== null) {
+        //     if(this.collapsed) {
+        //         cone.main_menu_sidebar.collapse();
+        //     }
+        //     else {
+        //         cone.main_menu_sidebar.expand();
+        //     }
+        // }
     }
 
     toggle_menu() {
@@ -130,3 +136,8 @@ export class SidebarMenu extends cone.ViewPortAware {
         this.assign_state();
     }
 }
+
+$(function() {
+    let sidebar_menu = SidebarMenu.initialize();
+    // cone.sidebar_menu.unload = sidebar_menu._unload;
+});

@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-const content = null;
+let content = null;
 
 export class Content {
 

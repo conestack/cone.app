@@ -6,8 +6,8 @@ import {
     VP_MEDIUM,
     VP_LARGE
 } from '../src/viewport.js';
-
 import {vp_states} from '../src/viewport_states.js';
+import {cone} from '../src/globals.wip.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // ViewPort tests
@@ -18,7 +18,7 @@ QUnit.module('ViewPort', hooks => {
     hooks.before(() => {
         console.log('Set up ViewPort tests');
 
-        // set viewport
+        // set browser viewport
         viewport.set('large');
     });
 
@@ -156,7 +156,7 @@ QUnit.module('ViewPort', hooks => {
                 assert.verifySteps(['update_viewport()']);
 
                 for (let i=0; i<vp_states.length; i++) {
-                    // set viewport
+                    // set browser viewport
                     viewport.set(vp_states[i]);
                     // trigger resize event
                     $(window).trigger('resize');
@@ -211,14 +211,14 @@ QUnit.module('ViewPortAware', hooks => {
             // initial construct
             for (let i = 0; i <= 3; i++) {
                 // set cone viewport state
-                cone_viewport.state = i;
+                cone.viewportState = i;
 
                 // create instance
-                test_vp_aware = new ViewPortAware(cone_viewport);
+                test_vp_aware = new ViewPortAware();
 
                 // assert viewport states
-                assert.strictEqual(cone_viewport.state, i);
-                assert.strictEqual(test_vp_aware.vp_state, cone_viewport.state);
+                assert.strictEqual(cone.viewportState, i);
+                assert.strictEqual(test_vp_aware.vp_state, cone.viewportState);
             }
         });
     });
@@ -228,14 +228,16 @@ QUnit.module('ViewPortAware', hooks => {
             test_vp_aware;
 
         QUnit.module('unload()', hooks => {
-            hooks.before(() => {
+            hooks.before(assert => {
                 console.log('Set up ViewPortAware.unload tests');
+                // set browser viewport
                 viewport.set('large');
-                cone_viewport.state = 3;
+                cone.viewportState = 3;
 
                 // dummy class
                 TestViewPortAware = class extends ViewPortAware {
-                    viewport_changed() {
+                    viewport_changed(e) {
+                        this.vp_state = e.state;
                         assert.step('viewport_changed()');
                     }
                 }
@@ -249,34 +251,34 @@ QUnit.module('ViewPortAware', hooks => {
 
             QUnit.test('unload()', assert => {
                 // create instance
-                test_vp_aware = new TestViewPortAware(cone_viewport);
+                test_vp_aware = new TestViewPortAware();
 
                 // test object viewport state is cone viewport state
-                assert.strictEqual(test_vp_aware.vp_state, cone_viewport.state);
+                assert.strictEqual(test_vp_aware.vp_state, cone.viewportState);
 
                 // unload test object
                 test_vp_aware.unload();
 
-                // change viewport
-                viewport.set('small');
-                // fire resize evt
-                $(window).trigger('resize');
+                // change viewport state
+                cone.viewportState = 1;
+                // fire evt
+                $(window).trigger('viewport_changed');
 
-                // test if resize event listener is unbound
-                assert.strictEqual(cone_viewport.state, 1);
+                // test if event listener is unbound
+                assert.strictEqual(cone.viewportState, 1);
                 assert.notStrictEqual(
                     test_vp_aware.vp_state,
-                    cone_viewport.state
+                    cone.viewportState
                 );
 
-                // no steps called if unbound
+                // // no steps called if unbound
                 assert.verifySteps([]);
             });
         });
 
         QUnit.test('viewport_changed', assert => {
             // create instance
-            test_vp_aware = new ViewPortAware(cone_viewport);
+            test_vp_aware = new ViewPortAware();
 
             // mock event
             let evt = new $.Event('viewport_changed', {

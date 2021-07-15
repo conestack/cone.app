@@ -1,8 +1,7 @@
 import {Content} from '../src/content.js';
 
 QUnit.module('Content', hooks => {
-    let TestContent,
-        test_content;
+    let test_content;
 
     hooks.before(() => {
         console.log('Set up Content tests');
@@ -17,7 +16,7 @@ QUnit.module('Content', hooks => {
         $('body').append(content_html);
 
         // dummy class
-        const test_content = Content.initialize();
+        test_content = Content.initialize();
     });
 
     hooks.after(() => {

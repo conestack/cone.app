@@ -14,24 +14,16 @@ module.exports = function(config) {
             type: 'module',
             included: false
         }, {
-            pattern: '../js/src/searchbar.js',
+            pattern: '../js/src/*.js',
             type: 'module',
             included: false
         }, 
+        // tests
         {
-            pattern: '../js/src/viewport.js',
-            type: 'module',
-            included: false
-        },
-        {
-            pattern: '../js/src/viewport_states.js',
-            type: 'module',
-            included: false
-        },
-        {
-            pattern: '../js/tests/test_searchbar.js',
+            pattern: '../js/tests/test_sidebar_menu.js',
             type: 'module'
-        }],
+        },
+       ],
         browsers: [
             'ChromeHeadless'
         ],
