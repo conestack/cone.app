@@ -5,9 +5,8 @@ import $ from 'jquery'
 // import {cone} from '../src/globals.wip.js';
 
 // why does this not work?
-// only one import allowed?
 
-// import {bla} from '../src/sidebar_menu.js';
+import {SidebarMenu} from '../src/sidebar_menu.js';
 
 
 QUnit.test.only('sidebar menu', assert => {
