@@ -68,6 +68,10 @@ module.exports = function(config) {
             '../js/src/*.js': [
                 'coverage',
                 'module-resolver'
+            ],
+            '../js/tests/*.js': [
+                'coverage',
+                'module-resolver'
             ]
         },
         moduleResolverPreprocessor: {

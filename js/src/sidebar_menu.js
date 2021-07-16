@@ -1,20 +1,24 @@
-import $ from 'jquery'
+import $ from 'jquery';
 import {vp_states} from './viewport.js';
-import {ViewPortAware} from './viewport.js';
-import {cone} from './globals.wip.js';
+import {sidebar_menu} from './globals.wip.js';
 import {createCookie, readCookie} from './cookie_functions.js';
+import {ViewPortAware} from './viewport.js';
+import {main_menu_sidebar} from './globals.wip.js';
+
 
 export class SidebarMenu extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#sidebar_left', context);
-        if (!elem.length) {
+
+        if(!elem.length) {
             return;
         }
-        if (cone.sidebar_menu.exists) {
-            console.log('sidebar already exists')
-            // cone.sidebar_menu.unload();
+
+        if(sidebar_menu !== null) {
+            sidebar_menu.unload();
         }
+
         return new SidebarMenu(elem);
     }
 
@@ -23,15 +27,13 @@ export class SidebarMenu extends ViewPortAware {
         this.elem = elem;
         this.content = $('#sidebar_content', elem);
 
-        cone.sidebar_menu.exists = true;
-
-        /* if(!$.trim(this.content.html()).length) {
-            // hide sidebar if empty
-            // trim() ensures execution if content has whitespace
-            this.elem.hide();
-            super.unload();
-        } */
-        //this.scrollbar = new ScrollBarSidebar(elem);
+        /* NOTE: trim doesn't work in safe mode, apparently */
+        // if(!$.trim(this.content.html()).length) {
+        //     // hide sidebar if empty
+        //     // trim() ensures execution if content has whitespace
+        //     this.elem.hide();
+        //     super.unload();
+        // }
         this.collapsed = false;
 
         this.toggle_btn = $('#sidebar-toggle-btn', elem);
@@ -116,14 +118,14 @@ export class SidebarMenu extends ViewPortAware {
         this.elem.attr('class', elem_class);
         this.toggle_arrow_elem.attr('class', button_class);
 
-        // if(cone.main_menu_sidebar !== null) {
-        //     if(this.collapsed) {
-        //         cone.main_menu_sidebar.collapse();
-        //     }
-        //     else {
-        //         cone.main_menu_sidebar.expand();
-        //     }
-        // }
+        if(main_menu_sidebar !== null) {
+            if(this.collapsed) {
+                main_menu_sidebar.collapse();
+            }
+            else {
+                main_menu_sidebar.expand();
+            }
+        }
     }
 
     toggle_menu() {
@@ -135,9 +137,6 @@ export class SidebarMenu extends ViewPortAware {
         }
         this.assign_state();
     }
-}
+} 
 
-$(function() {
-    let sidebar_menu = SidebarMenu.initialize();
-    // cone.sidebar_menu.unload = sidebar_menu._unload;
-});
+export var bla = 'bla';

@@ -4,7 +4,7 @@ import {MainMenuSidebar} from '../src/main_menu_sidebar.js';
 // cone.MainMenuSidebar test helpers
 ///////////////////////////////////////////////////////////////////////////////
 
-function create_mm_sidebar_elem() {
+export function create_mm_sidebar_elem() {
     let mm_sidebar_html = `
         <ul id="mainmenu_sidebar">
           <li class="sidebar-heading" id="mainmenu-sb-heading">
