@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import {ViewPortAware, VP_SMALL, VP_MEDIUM} from '../src/viewport.js';
+import {ViewPortAware, vp_states} from '../src/viewport.js';
 
 let searchbar = null;
 
@@ -10,7 +10,8 @@ export class Searchbar extends ViewPortAware {
         if (!elem.length) {
             return;
         }
-        return new Searchbar(elem);
+        searchbar = new Searchbar(elem);
+        return searchbar;
     }
 
     constructor(elem) {
@@ -20,7 +21,7 @@ export class Searchbar extends ViewPortAware {
         this.search_group = $('#livesearch-group', this.elem);
         this.dd = $('#cone-livesearch-dropdown', this.elem);
 
-        if(this.vp_state === VP_SMALL || this.vp_state === VP_MEDIUM) {
+        if(this.vp_state === vp_states.SMALL || this.vp_state === vp_states.MEDIUM) {
             this.dd.addClass('dropdown-menu-end');
             this.search_text.detach().prependTo(this.dd);
         }
@@ -28,7 +29,7 @@ export class Searchbar extends ViewPortAware {
 
     viewport_changed(e) {
         super.viewport_changed(e);
-        if(this.vp_state ===VP_SMALL || this.vp_state === VP_MEDIUM) {
+        if(this.vp_state === vp_states.SMALL || this.vp_state === vp_states.MEDIUM) {
             this.dd.addClass('dropdown-menu-end');
             this.search_text.detach().prependTo(this.dd);
         } else {

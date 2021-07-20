@@ -36,9 +36,11 @@ https://www.chromestatus.com/feature/5745543795965952"
 [ ] update deprecated javascript in protected.js
 
 [ ] bootstrap dropdowns: read documentation and adjust closing toggle on
-cone.view_mobile
+    cone.view_mobile
 
-[ ] format tests
+[X] implement css in tests
+
+[ ] split public.js into modules
 
 1.1
 ---

@@ -1,5 +1,7 @@
 import $ from 'jquery'
 
+let theme_switcher = null;
+
 export class ThemeSwitcher {
 
     static initialize(context, modes) {
@@ -7,7 +9,8 @@ export class ThemeSwitcher {
         if (!elem.length) {
             return;
         }
-        cone.theme_switcher = new cone.ThemeSwitcher(elem, modes);
+        theme_switcher = new ThemeSwitcher(elem, modes);
+        return theme_switcher;
     }
 
     constructor(elem, modes) {

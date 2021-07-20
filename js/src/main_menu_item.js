@@ -1,11 +1,11 @@
 import $ from 'jquery'
+import { toggle_arrow } from './toggle_arrow.js';
 
 /* cone Main Menu Item */
 
-export class MainMenuItem extends cone.ViewPortAware {
+export class MainMenuItem {
 
     constructor(elem) {
-        super(elem);
         this.elem = elem;
         this.children = elem.data('menu-items');
         if(!this.children){
@@ -22,15 +22,6 @@ export class MainMenuItem extends cone.ViewPortAware {
         this.render_dd();
 
         this._toggle = this.mouseenter_toggle.bind(this);
-
-        if(this.vp_state === cone.VP_MOBILE){
-            this.mv_to_mobile();
-        } else {
-            this.elem.off().on('mouseenter mouseleave', this._toggle);
-            this.menu.off().on('mouseenter mouseleave', () => {
-                this.menu.toggle();
-            })
-        }
     }
 
     render_dd() {
@@ -53,18 +44,20 @@ export class MainMenuItem extends cone.ViewPortAware {
     }
 
     mv_to_mobile() {
-        if(cone.main_menu_sidebar) {
-            return;
-        }
+        console.log('mv to mobile')
+        // if(cone.main_menu_sidebar) {
+        //     return;
+        // }
         this.menu.off().detach().appendTo(this.elem).css('left', '0');
         this.elem.off();
         this.arrow.off().on('click', () => {
             this.menu.slideToggle('fast');
-            cone.toggle_arrow(this.arrow);
+            toggle_arrow(this.arrow);
         });
     }
 
     mv_to_top() {
+        console.log('mv to top')
         this.menu.detach().appendTo('#layout');
         this.arrow.off();
         this.elem.off().on('mouseenter mouseleave', this._toggle);

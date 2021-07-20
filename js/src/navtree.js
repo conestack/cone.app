@@ -1,28 +1,26 @@
 import $ from 'jquery'
 
-export class Navtree extends cone.ViewPortAware {
+let navtree = null;
+
+export class Navtree {
 
     static initialize(context) {
         let elem = $('#navtree', context);
         if (!elem.length) {
             return;
         }
-        if (cone.navtree !== null) {
-            cone.navtree.unload();
-        }
-        cone.navtree = new cone.Navtree(elem);
+/*         if (navtree !== null) {
+            navtree.unload();
+        } */
+        navtree = new Navtree(elem);
+        return navtree;
     }
 
     constructor(elem) {
-        super();
         this.elem = elem;
         this.content = $('#navtree-content', elem);
         this.heading = $('#navtree-heading', elem);
         this.toggle_elems = $('li.navtreelevel_1', elem);
-
-        if (this.vp_state === cone.VP_MOBILE) {
-            this.mv_to_mobile();
-        }
 
         this._mouseenter_handle = this.align_width.bind(this);
         this.toggle_elems.on('mouseenter', this._mouseenter_handle);
@@ -37,25 +35,6 @@ export class Navtree extends cone.ViewPortAware {
         this.heading.off('click');
         this.toggle_elems.off('mouseenter', this._mouseenter_handle)
                          .off('mouseleave', this._restore);
-    }
-
-    mv_to_mobile() {
-        this.elem.detach().appendTo(cone.topnav.content).addClass('mobile');
-        this.content.hide();
-        this.heading.off('click').on('click', () => {
-            this.content.slideToggle('fast');
-        });
-    }
-
-    viewport_changed(e) {
-        super.viewport_changed(e);
-        if (this.vp_state === cone.VP_MOBILE) {
-            this.mv_to_mobile();
-        } else {
-            this.elem.detach().appendTo(cone.sidebar_menu.content).removeClass('mobile');
-            this.heading.off('click');
-            this.content.show();
-        }
     }
 
     align_width(evt) {

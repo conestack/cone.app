@@ -9,7 +9,9 @@ module.exports = function(config) {
             'qunit',
             'viewport'
         ],
-        files: [{
+        files: [
+        // js    
+        {
             pattern: '../node_modules/jquery/src/**/*.js',
             type: 'module',
             included: false
@@ -17,12 +19,27 @@ module.exports = function(config) {
             pattern: '../js/src/*.js',
             type: 'module',
             included: false
-        }, 
+        },
+        // css
+        {   
+            pattern: '../src/cone/app/browser/static/*.css', included: true
+        },
         // tests
         {
-            pattern: '../js/tests/test_sidebar_menu.js',
+            pattern: '../js/tests/test_topnav.test.js',
             type: 'module'
         },
+        // helpers
+        {
+            pattern: '../js/tests/helpers.js',
+            type: 'module',
+            included: false
+        }, 
+        {
+            pattern: '../js/tests/karma_viewport_states.js',
+            type: 'module',
+            included: false
+        }, 
        ],
         browsers: [
             'ChromeHeadless'

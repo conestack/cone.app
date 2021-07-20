@@ -1,37 +1,173 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 // import {ViewPortAware} from '../src/viewport.js';
 // import {karma_vp_states} from '../src/viewport_states.js';
-// import {cone} from '../src/globals.wip.js';
 
-// why does this not work?
-// import {SidebarMenu} from '../src/sidebar_menu.js';
+import {SidebarMenu} from '../src/sidebar_menu.js';
+// import {MainMenuSidebar}from '../src/main_menu_sidebar.js';
+import {Topnav} from '../src/topnav.js';
+// import {Navtree} from '../src/navtree.js';
+// import {create_mm_sidebar_elem} from './test_main_menu_sidebar.js';
 
+QUnit.test('css', assert => {
+  assert.ok(true);
 
-///////////////////////////////////////////////////////////////////////////////
-// cone.SidebarMenu helpers
-///////////////////////////////////////////////////////////////////////////////
+  $('body').append( $('<div id="topnav"></div>'));
+  console.log($(topnav).css('display'))
 
-function create_sidebar_elem() {
-    // create dummy sidebar element
-    let sidebar_html = `
-        <div id="sidebar_left">
-          <div id="sidebar_content">
-          </div>
-          <div id="sidebar_footer">
-            <div id="toggle-fluid">
-              <i class="bi bi-lock-fill"></i>
-              <span>Lock state</span>
-            </div>
-            <div id="sidebar-toggle-btn">
-              <i class="bi bi-arrow-left-circle"></i>
-            </div>
-          </div>
+  // console.log($('body'))
+});
+
+QUnit.module.skip('whatever', hooks => {
+  let sidebar = null;
+
+  hooks.before(()=> {
+    create_sidebar_elem();
+    
+    let mm_sidebar_html = `
+        <ul id="mainmenu_sidebar">
+          <li class="sidebar-heading" id="mainmenu-sb-heading">
+            <span>
+              Main Menu
+            </span>
+          </li>
+
+          <li class="active node-child_1">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+                <span">Title</span>
+            </a>
+          </li>
+
+          <li class="node-child_2 sb-menu">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+                <span">Title</span>
+            </a>
+            <a href="#" class="sidebar-arrow">
+              <i class="dropdown-arrow bi bi-chevron-down"></i>
+            </a>
+
+            <ul class="cone-mainmenu-dropdown-sb">
+              <li>
+                <a href="#">
+                  <i class="bi bi-heart"></i>
+                <span>Title</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+    `;
+    let topnav_html = `
+        <div id="topnav"
+            style="
+            box-sizing: border-box;
+            height:4rem;
+            display:flex;
+            flex-direction:row;
+            align-items: center;
+            width: 100%;
+            padding-left: .75rem;">
+        <div id="cone-logo"
+            style="
+                font-size:1.5rem;
+                font-family: Arial;
+                margin-right: auto;
+                white-space: nowrap;
+                width: 32px;
+                height: 32px;">
+            <a>
+            <img class="logo"
+                src="/static/images/cone-logo-cone.svg"
+                style="height:32px;">
+            <span>
+                Cone
+            </span>
+            </a>
+        </div>
+
+        <div id="topnav-content" style="display:contents">
+        </div>
+
+        <div id="mobile-menu-toggle" style="display:none">
+            <i class="bi bi-list"></i>
+        </div>
         </div>
     `;
-    // append dummy element to DOM
-    $('body').append(sidebar_html);
-}
+    let navtree_html = `
+    <ul id="navtree">
+      <li class="sidebar-heading" id="navtree-heading">
+        <span>
+          Navigation
+        </span>
+        <i class="dropdown-arrow bi bi-chevron-down"></i>
+      </li>
+
+      <div id="navtree-content">
+
+        <li class="active navtreelevel_1">
+          <a href="#">
+            <i class="bi bi-heart"></i>
+            <span>Title</span>
+          </a>
+          <ul>
+            <li class="navtreelevel_2">
+              <a href="#">
+                <i class="bi bi-heart"></i>
+                <span>Title</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="active navtreelevel_1">
+          <a href="#">
+            <i class="bi bi-heart"></i>
+            <span>Title</span>
+          </a>
+          <ul>
+            <li class="navtreelevel_2">
+              <a href="#">
+                <i class="bi bi-heart"></i>
+                <span>Title</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </div>
+    </ul>
+    `;
+
+    // append elements to DOM
+    $('body').append(topnav_html);
+    $('#sidebar_content').append(mm_sidebar_html);
+    $('#sidebar_content').append(navtree_html);
+
+  });
+
+  hooks.after(() => {
+    $('#sidebar_left').remove();
+    sidebar = null;
+  })
+
+  QUnit.test('', assert => {
+    assert.ok(true);
+
+    
+    cone.viewportState = 1;
+    let topnav = Topnav.initialize();
+    // let mm_sb = MainMenuSidebar.initialize();
+    // let navtree = Navtree.initialize();
+
+    sidebar = SidebarMenu.initialize($('body'), topnav);
+
+    console.log($('ul', sidebar.content).length);
+    // console.log(sidebar.content)
+  });
+   
+});
+
 
 // ///////////////////////////////////////////////////////////////////////////////
 // // cone.SidebarMenu tests

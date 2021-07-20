@@ -1,43 +1,34 @@
 import $ from 'jquery'
+import {ScrollBarX} from '../src/scrollbar.js';
+import {MainMenuItem} from '../src/main_menu_item.js';
+import {vp_states} from '../src/viewport.js';
 
-export class MainMenuTop extends cone.ViewPortAware {
+let main_menu_top = null;
+
+export class MainMenuTop {
 
     static initialize(context) {
         let elem = $('#main-menu', context);
         if(!elem.length) {
-            return;
+            main_menu_top = null;
+        } else {
+            main_menu_top = new MainMenuTop(elem);
         }
-        if(cone.main_menu_top !== null) {
-            cone.main_menu_top.unload();
-        }
-        cone.main_menu_top = new cone.MainMenuTop(elem);
+
+        return main_menu_top;
     }
 
     constructor(elem) {
-        super();
         this.elem = elem;
-        new cone.ScrollBarX(elem);
+        new ScrollBarX(elem);
         this.main_menu_items = [];
         let that = this;
         $('li', elem).each(function() {
-            let main_menu_item = new cone.MainMenuItem($(this));
+            let main_menu_item = new MainMenuItem($(this));
             that.main_menu_items.push(main_menu_item);
         });
 
-        if(this.vp_state !== cone.VP_MOBILE) {
-            cone.topnav.logo.css('margin-right', '2rem');
-        } else {
-            cone.topnav.logo.css('margin-right', 'auto');
-            if (cone.main_menu_sidebar) {
-                this.elem.css('display', 'none');
-            }
-        }
-
         this.handle_scrollbar();
-    }
-
-    unload() {
-        super.unload();
     }
 
     handle_scrollbar() {
@@ -52,26 +43,11 @@ export class MainMenuTop extends cone.ViewPortAware {
         }
     }
 
-    viewport_changed(e) {
-        super.viewport_changed(e);
-        if(this.vp_state === cone.VP_MOBILE) {
-            cone.topnav.logo.css('margin-right', 'auto');
-        } else {
-            cone.topnav.logo.css('margin-right', '2rem');
-        }
-        if(cone.main_menu_sidebar) {
-            if(this.vp_state === cone.VP_MOBILE) {
-                this.elem.css('display', 'none');
-            } else {
-                this.elem.css('display', 'flex');
-            }
-            return;
-        }
-
+    viewport_changed(state) {
         for (let i in this.main_menu_items) {
             let item = this.main_menu_items[i];
             if (item.menu) {
-                if (this.vp_state === cone.VP_MOBILE) {
+                if (state === vp_states.MOBILE) {
                     item.mv_to_mobile();
                 } else {
                     item.mv_to_top();

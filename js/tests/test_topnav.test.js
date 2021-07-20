@@ -1,117 +1,17 @@
+import $ from 'jquery';
 import {Topnav} from '../src/topnav.js';
-import {ViewPortAware} from '../src/viewport.js';
-import {cone} from '../src/globals.wip.js';
-import {karma_vp_states} from '../src/viewport_states.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// Topnav test helpers
-///////////////////////////////////////////////////////////////////////////////
-
-function create_topnav_elem() {
-    // create html element
-    let topnav_html = `
-        <div id="topnav"
-             style="
-               box-sizing: border-box;
-               height:4rem;
-               display:flex;
-               flex-direction:row;
-               align-items: center;
-               width: 100%;
-               padding-left: .75rem;">
-          <div id="cone-logo"
-               style="
-                 font-size:1.5rem;
-                 font-family: Arial;
-                 margin-right: auto;
-                 white-space: nowrap;
-                 width: 32px;
-                 height: 32px;">
-            <a>
-              <img class="logo"
-                   src="/static/images/cone-logo-cone.svg"
-                   style="height:32px;">
-              <span>
-                Cone
-              </span>
-            </a>
-          </div>
-
-          <div id="topnav-content" style="display:contents">
-          </div>
-
-          <div id="mobile-menu-toggle" style="display:none">
-            <i class="bi bi-list"></i>
-          </div>
-        </div>
-    `;
-    // append element to DOM
-    $('body').append(topnav_html);
-}
-
-function topnav_style_to_mobile(topnav) {
-    // mock required css styling for mobile viewport
-
-    topnav.elem.css({
-        'padding': '1rem',
-        'height': '4rem',
-    });
-
-    topnav.logo.css('margin-right', 'auto');
-    $('span', topnav.logo).css('display', 'none');
-
-    topnav.content.css({
-        'position': 'absolute',
-        'top': '4rem',
-        'left': 0,
-        'display': 'block',
-        'flex-direction': 'column',
-        'width': '100%',
-        'z-index': 1000
-    }).hide();
-
-    topnav.toggle_button.css({
-        'display': 'block',
-        'font-size': '2rem',
-        'margin-left': '1rem'
-    });
-}
-
-function topnav_style_to_desktop(topnav) {
-    // mock required css styling for desktop viewport (states 1, 2, 3)
-
-    topnav.elem.css({
-        'padding': '0',
-        'padding-left': '.75rem'
-    });
-
-    topnav.logo.css('margin-right', 'auto');
-    $('span', topnav.logo).css('display', 'inline-block');
-
-    topnav.content.css({
-        'position': 'absolute',
-        'top': '',
-        'left': '',
-        'display': 'contents',
-        'flex-direction': 'row',
-        'width': '100%'
-    });
-
-    topnav.toggle_button.css({
-        'display': 'none',
-    });
-}
+import {ViewPortAware, vp} from '../src/viewport.js';
+import * as helpers from './helpers.js';
+import { karma_vp_states } from './karma_viewport_states.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Topnav tests
 ///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('Topnav', hooks => {
+
     hooks.before(() => {
         console.log('Set up Topnav tests');
-
-        // // set viewport
-        // cone.viewport = new cone.ViewPort();
     });
 
     hooks.after(() => {
@@ -125,8 +25,11 @@ QUnit.module('Topnav', hooks => {
             hooks.beforeEach(() => {
                 console.log('Set up Topnav properties tests');
 
+                // set vp to ensure consistency
+                viewport.set('large');
+
                 // create topnav DOM element
-                create_topnav_elem();
+                helpers.create_topnav_elem();
 
                 // append toolbar dropdowns dummy element to DOM
                 let tb_dropdown_elem = $(`
@@ -144,39 +47,34 @@ QUnit.module('Topnav', hooks => {
                 // unload and remove instance
                 test_topnav = null;
                 $('#topnav').remove();
-
-                // unset viewport
-                cone.viewportState = null;
             });
 
-            QUnit.test.only('vp mobile', assert => {
-                console.log('0')
-                // set viewport to mobile
-                cone.viewportState = 0;
+            QUnit.test.skip('vp mobile', assert => {
+                helpers.set_vp('mobile');
+
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
 
-                assert.ok(test_topnav instanceof ViewPortAware);
-
                 // content to dropdown is hidden
-                assert.ok(test_topnav.content.is(':hidden'));
+                assert.strictEqual(test_topnav.content.css('display'), 'none');
                 assert.ok(test_topnav.elem.hasClass('mobile'));
 
                 // show topnav content
                 test_topnav.content.show();
-                // trigger bootstap dropdownon toolbar dropdowns
+                // trigger bootstap dropdown on toolbar dropdown show
                 test_topnav.tb_dropdowns.trigger('show.bs.dropdown');
                 // topnav content is hidden
+
+                // dropdown is hidden
                 assert.strictEqual(test_topnav.content.css('display'), 'none');
             });
 
-            QUnit.test.only('vp desktop', assert => {
+            QUnit.test.skip('vp desktop', assert => {
                 // set viewport to desktop
-                cone.viewportState = 3;
+                helpers.set_vp('large');
+
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
-
-                assert.ok(test_topnav instanceof ViewPortAware);
 
                 // content to dropdown is visible
                 assert.strictEqual(test_topnav.content.css('display'), 'contents');
@@ -213,8 +111,11 @@ QUnit.module('Topnav', hooks => {
             hooks.before(assert => {
                 console.log('Set up Topnav.unload test');
 
+                // set vp to ensure consistency
+                viewport.set('large');
+
                 // create topnav DOM element
-                create_topnav_elem();
+                helpers.create_topnav_elem();
 
                 // since unload happens in static method, overwrite isntead
                 // of creating dummy class
@@ -241,7 +142,7 @@ QUnit.module('Topnav', hooks => {
                 Topnav.prototype.toggle_menu = toggle_menu_origin;
             });
 
-            QUnit.test.only('unload()', assert => {
+            QUnit.test.skip('unload()', assert => {
                 // initialize instance
                 test_topnav = Topnav.initialize();
                 
@@ -264,7 +165,7 @@ QUnit.module('Topnav', hooks => {
                 console.log('Set up Topnav.toggle_menu tests');
 
                 // create topnav DOM element
-                create_topnav_elem();
+                helpers.create_topnav_elem();
 
                 // save jQuery slideToggle origin
                 slide_toggle_origin = $.fn.slideToggle;
@@ -272,7 +173,6 @@ QUnit.module('Topnav', hooks => {
                 // overwrite jQuery slideToggle function for performance
                 $.fn._slideToggle = $.fn.slideToggle;
                 $.fn.slideToggle = function(){
-                    assert.step('slideToggle called');
                     if (this.css('display') === 'none') {
                         $.fn.show.apply(this);
                     } else {
@@ -295,43 +195,38 @@ QUnit.module('Topnav', hooks => {
 
             QUnit.test.only('toggle_menu()', assert => {
                 // set viewport state to mobile
-                cone.viewportState = 0;
+                helpers.set_vp('mobile');
 
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
-                // apply mobile css styles
-                topnav_style_to_mobile(test_topnav);
 
+                // TODO:
+
+                assert.ok(test_topnav.elem.hasClass('mobile'));
                 // content is hidden
                 assert.strictEqual(test_topnav.content.css('display'), 'none');
 
                 // trigger click on toggle button
                 test_topnav.toggle_button.trigger('click');
-                // slideToggle has been called
-                assert.verifySteps(['slideToggle called']);
-                // content has display flex
+
                 assert.strictEqual(test_topnav.content.css('display'), 'flex');
 
                 // trigger second click on toggle button
                 test_topnav.toggle_button.trigger('click');
 
-                // slideToggle has been called
-                assert.verifySteps(['slideToggle called']);
                 // content is hidden
                 assert.strictEqual(test_topnav.content.css('display'), 'none');
             });
         });
 
         QUnit.module('viewport_changed', hooks => {
-            let VPA = ViewPortAware,
-                super_vp_changed_origin = VPA.prototype.viewport_changed,
-                test_topnav;
+            let test_topnav;
 
-            hooks.before(assert => {
+            hooks.before(() => {
                 console.log('Set up Topnav.viewport_changed tests');
 
                 // create topnav DOM element
-                create_topnav_elem();
+                helpers.create_topnav_elem();
 
                 // append dummy toolbar dropdowns to DOM
                 let tb_dropdown_elem = $(`
@@ -341,12 +236,6 @@ QUnit.module('Topnav', hooks => {
                     </div>
                 `);
                 $('#topnav-content').append(tb_dropdown_elem);
-
-                // overwrite super() function
-                VPA.prototype.viewport_changed = function(e) {
-                    this.vp_state = e.state;
-                    assert.step('super.viewport_changed()');
-                }
             });
 
             hooks.after(() => {
@@ -355,37 +244,24 @@ QUnit.module('Topnav', hooks => {
                 // remove topnav element from DOM
                 $('#topnav').remove();
                 test_topnav = null;
-
-                // reset super() function
-                VPA.prototype.viewport_changed = super_vp_changed_origin;
             });
 
             QUnit.test.only('viewport_changed()', assert => {
                 // initialize instance of Topnav
                 test_topnav = Topnav.initialize();
 
-                // mock window resize event
-                let resize_evt = $.Event('viewport_changed');
-
-                for (let i=0; i<karma_vp_states.length; i++) {
-                    resize_evt.state = i;
+                for (let i=0; i<3; i++) {
+                    // set viewport
+                    helpers.set_vp(karma_vp_states[i]);
 
                     // assert click on dropdowns
                     test_topnav.tb_dropdowns.on('click', () => {
                         assert.step('click');
                     });
 
-                    // invoke viewport_changed()
-                    test_topnav.viewport_changed(resize_evt);
-                    assert.strictEqual(test_topnav.vp_state, resize_evt.state);
-                    assert.verifySteps([
-                        'super.viewport_changed()'
-                    ]);
+                    assert.strictEqual(test_topnav.vp_state, vp.state);
 
                     if (i === 0) {
-                        // apply required mobile css styles
-                        topnav_style_to_mobile(test_topnav);
-
                         assert.strictEqual(
                             test_topnav.content.css('display'),
                             'none'
@@ -403,18 +279,19 @@ QUnit.module('Topnav', hooks => {
                             'none'
                         );
                     } else {
-                        // apply required desktop css styles
-                        topnav_style_to_desktop(test_topnav);
-
                         assert.strictEqual(
                             test_topnav.content.css('display'),
                             'contents'
                         );
                         assert.notOk(test_topnav.elem.hasClass('mobile'));
 
-                        // trigger click on toolbar dropdowns
-                        // no assertion step should be invoked
-                        test_topnav.tb_dropdowns.trigger('click');
+                        // trigger dropdown on toolbar dropdowns
+                        test_topnav.tb_dropdowns.trigger('show.bs.dropdown');
+
+                        assert.notStrictEqual(
+                            test_topnav.content.css('display'),
+                            'none'
+                        );
                     }
                 }
             });
@@ -428,7 +305,7 @@ QUnit.module('Topnav', hooks => {
                 console.log('Set up Topnav.pt_handle tests');
 
                 // create dummy topnav
-                create_topnav_elem();
+                helpers.create_topnav_elem();
 
                 // create dummy toolbar dropdowns element
                 let tb_dropdown_elem = $(`
@@ -449,7 +326,7 @@ QUnit.module('Topnav', hooks => {
                 $('#topnav-content').append(personaltools);
 
                 // set viewport to mobile
-                cone.viewportState = 0;
+                helpers.set_vp('mobile');
 
                 // overwrite jQuery slideUp function
                 $.fn._slideUp = $.fn.slideUp;
@@ -485,7 +362,9 @@ QUnit.module('Topnav', hooks => {
                 assert.verifySteps(['slideUp called']);
 
                 test_topnav = null;
-                cone.viewportState = 3;
+                
+                helpers.set_vp('large');
+                // initalize
                 test_topnav = Topnav.initialize();
 
                 // trigger bootstrap show.bs.dropdown

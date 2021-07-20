@@ -1,59 +1,90 @@
 import $ from 'jquery';
 import {vp_states} from './viewport.js';
-import {sidebar_menu} from './globals.wip.js';
 import {createCookie, readCookie} from './cookie_functions.js';
 import {ViewPortAware} from './viewport.js';
-import {main_menu_sidebar} from './globals.wip.js';
+import {MainMenuSidebar} from './main_menu_sidebar.js';
+import {Navtree} from './navtree.js';
 
+// declare elements
+let sidebar_menu = null;
+// let mm_sb = null;
+let topnav = null;
+// let navtree = null;
 
 export class SidebarMenu extends ViewPortAware {
-
-    static initialize(context) {
+    static initialize(context, topnav) {
         let elem = $('#sidebar_left', context);
 
         if(!elem.length) {
             return;
         }
 
-        if(sidebar_menu !== null) {
-            sidebar_menu.unload();
-        }
-
-        return new SidebarMenu(elem);
+        sidebar_menu = new SidebarMenu(elem, topnav);
+        return sidebar_menu;
     }
 
-    constructor(elem) {
+    constructor(elem, topnav) {
         super();
         this.elem = elem;
         this.content = $('#sidebar_content', elem);
 
-        /* NOTE: trim doesn't work in safe mode, apparently */
-        // if(!$.trim(this.content.html()).length) {
-        //     // hide sidebar if empty
-        //     // trim() ensures execution if content has whitespace
-        //     this.elem.hide();
-        //     super.unload();
-        // }
-        this.collapsed = false;
+        this.topnav = topnav;
+        this.mm_sb = MainMenuSidebar.initialize();
+        this.navtree = Navtree.initialize();
 
+        if (this.vp_state === vp_states.MOBILE) {
+            // move mainmenu sidebar to mobile menu
+            if (this.mm_sb !== null) {
+                this.mm_sb.elem.detach()
+                .appendTo(this.topnav.content)
+                .addClass('mobile');
+                
+                this.topnav.elem.css('display', 'none');
+            }
+            if (this.navtree !== null && this.topnav !== null) {
+                this.navtree.elem.detach().appendTo(this.topnav.content).addClass('mobile');
+                this.navtree.content.hide();
+                this.navtree.heading.off('click').on('click', () => {
+                    this.navtree.content.slideToggle('fast');
+                });
+            }
+        } else {
+            if (this.navtree !== null) {
+                this.navtree.elem.detach().appendTo(this.content).removeClass('mobile');
+                this.navtree.heading.off('click');
+                this.navtree.content.show();
+            }
+            if (this.mm_sb !== null) {
+                this.mm_sb.elem.detach()
+                .prependTo(this.content)
+                .removeClass('mobile');
+            }
+        }
+
+        if (this.mm_sb === null && this.topnav === null && this.navtree === null) {
+            // hide if no children are in content
+            this.elem.hide();
+            super.unload();
+        }
+
+        // DOM elements
         this.toggle_btn = $('#sidebar-toggle-btn', elem);
         this.toggle_arrow_elem = $('i', this.toggle_btn);
         this.lock_switch = $('#toggle-fluid');
+
+        // properties
         this.cookie = null;
+        this.collapsed = false;
        
+        // bindings
         this._toggle_menu_handle = this.toggle_menu.bind(this);
         this.toggle_btn.off('click').on('click', this._toggle_menu_handle);
-
-        this.initial_load();
-
+        
         this._toggle_lock = this.toggle_lock.bind(this);
         this.lock_switch.off('click').on('click', this._toggle_lock);
-    }
 
-    unload() {
-        super.unload();
-        this.toggle_btn.off('click', this._toggle_menu_handle);
-        this.lock_switch.off('click', this._toggle_lock);
+        // execute initial load
+        this.initial_load();
     }
 
     initial_load() {
@@ -75,6 +106,22 @@ export class SidebarMenu extends ViewPortAware {
         this.assign_state();
     }
 
+    assign_state() {
+        let elem_class = this.collapsed === true ? 'collapsed' : 'expanded';
+        let button_class = 'bi bi-arrow-' + ((this.collapsed === true) ? 'right':'left') + '-circle';
+        this.elem.attr('class', elem_class);
+        this.toggle_arrow_elem.attr('class', button_class);
+
+        if(this.mm_sb !== null) {
+            if(this.collapsed) {
+                this.mm_sb.collapse();
+            }
+            else {
+                this.mm_sb.expand();
+            }
+        }
+    }
+
     toggle_lock() {
         if(readCookie('sidebar')) {
             createCookie('sidebar', '', -1);
@@ -92,6 +139,10 @@ export class SidebarMenu extends ViewPortAware {
         if(this.vp_state === vp_states.MOBILE) {
             this.collapsed = false;
             this.elem.hide();
+
+            if(this.mm_sb !== null) {
+                this.topnav.mm_top.elem.css('display', 'none');
+            }
         }
         else if (this.cookie !== null) {
             this.collapsed = this.cookie;
@@ -109,23 +160,14 @@ export class SidebarMenu extends ViewPortAware {
             this.collapsed = false;
             this.elem.show();
         }
-        this.assign_state();
-    }
 
-    assign_state() {
-        let elem_class = this.collapsed === true ? 'collapsed' : 'expanded';
-        let button_class = 'bi bi-arrow-' + ((this.collapsed === true) ? 'right':'left') + '-circle';
-        this.elem.attr('class', elem_class);
-        this.toggle_arrow_elem.attr('class', button_class);
-
-        if(main_menu_sidebar !== null) {
-            if(this.collapsed) {
-                main_menu_sidebar.collapse();
-            }
-            else {
-                main_menu_sidebar.expand();
+        if(this.topnav.mm_top !== null) {
+            if(this.vp_state !== vp_states.MOBILE && this.mm_sb !== null) {
+                this.topnav.mm_top.elem.css('display', 'flex');
             }
         }
+       
+        this.assign_state();
     }
 
     toggle_menu() {
@@ -137,6 +179,8 @@ export class SidebarMenu extends ViewPortAware {
         }
         this.assign_state();
     }
-} 
+}
 
-export var bla = 'bla';
+$(function() {
+    sidebar_menu = SidebarMenu.initialize();
+});
