@@ -11,6 +11,7 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.static import static_view
+from treibstoff import static as treibstoff_static
 from yafowil.resources import YafowilResources as YafowilResourcesBase
 from zope.component import getGlobalSiteManager
 import importlib
@@ -37,9 +38,7 @@ cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
-    '++resource++bdajax/overlay.js',
-    '++resource++bdajax/bdajax.js',
-    '++resource++bdajax/bdajax_bs3.js',
+    'treibstoff-static/treibstoff.bundle.js',
     'static/public.js'
 ]
 cfg.js.protected = [
@@ -56,7 +55,7 @@ cfg.css.public = [
     'static/bootstrap/css/bootstrap-theme.css',
     'static/ionicons/css/ionicons.css',
     'static/typeahead/typeahead.css',
-    '++resource++bdajax/bdajax_bs3.css',
+    'treibstoff-static/treibstoff.css',
     'static/styles.css'
 ]
 
@@ -67,7 +66,7 @@ cfg.css.public = [
 #     'static/bootstrap/css/bootstrap-theme.min.css',
 #     'static/ionicons/css/ionicons.css',
 #     'static/typeahead/typeahead.css',
-#     '++resource++bdajax/bdajax_bs3.css',
+#     'treibstoff-static/treibstoff.css',
 #     'static/styles.css'
 # ]
 
@@ -251,9 +250,9 @@ def configure_yafowil_addon_resources(config):
         config=config
     )
     for js in reversed(resources.js_resources):
-        # bdajax needs to be loaded first in order to avoid double binding on
+        # treibstoff needs to be loaded first in order to avoid double binding on
         # document ready
-        idx = cfg.js.public.index('++resource++bdajax/bdajax.js') + 1
+        idx = cfg.js.public.index('treibstoff-static/treibstoff.bundle.js') + 1
         cfg.js.public.insert(idx, js)
     for css in resources.css_resources:
         cfg.css.public.insert(0, css)
@@ -329,6 +328,7 @@ def main(global_config, **settings):
     # XXX: humans.txt
 
     # register static resources
+    config.add_view(treibstoff_static, name='treibstoff-static')
     config.add_view(browser.static_resources, name='static')
 
     # scan browser package
