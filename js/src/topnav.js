@@ -3,14 +3,12 @@ import {ViewPortAware, vp_states} from './viewport.js';
 import {MainMenuTop} from './main_menu_top.js';
 import {toggle_arrow} from './toggle_arrow.js';
 
-let topnav = null;
-
 export class Topnav extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#topnav', context);
         if (!elem.length) {
-            return;
+            return null;
         }
         topnav = new Topnav(elem);
         return topnav;
@@ -114,3 +112,5 @@ export class Topnav extends ViewPortAware {
         }
     }
 }
+
+export var topnav = Topnav.initialize();

@@ -194,3 +194,213 @@ export function mm_top_style_to_mobile() {
 
     $('.mainmenu-item').css('display', 'block');
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// cone.MainMenuItem test helpers
+///////////////////////////////////////////////////////////////////////////////
+
+export function create_mm_items(count) {
+    // create data menu items array
+    let data_menu_items =
+        [
+            {
+                "selected": true,
+                "icon": "bi bi-kanban",
+                "id": "child_1",
+                "description": null,
+                "url": "http://localhost:8081/child_1/child_1",
+                "target": "http://localhost:8081/child_1/child_1",
+                "title": ""
+            },
+            {
+                "selected": false, "icon":
+                "bi bi-kanban", "id": "child_2",
+                "description": null,
+                "url": "http://localhost:8081/child_1/child_2",
+                "target": "http://localhost:8081/child_1/child_2",
+                "title": "child_2"
+            },
+            {
+                "selected": false,
+                "icon":
+                "bi bi-kanban",
+                "id": "child_3",
+                "description": null,
+                "url": "http://localhost:8081/child_1/child_3",
+                "target": "http://localhost:8081/child_1/child_3",
+                "title": "child_3"
+            }
+        ]
+    ;
+
+    // create number of dummy item elements
+    for (let i=1; i <=count; i++) {
+        let mainmenu_item_html = `
+            <li class="mainmenu-item node-child_${i} menu"
+                style="
+                  display: flex;
+                  align-items: center;
+                  height: 100%;
+                "
+                id="elem${count}">
+              <a>
+                <i class="bi bi-heart"></i>
+                <span class="mainmenu-title">
+                </span>
+              </a>
+              <i class="dropdown-arrow bi bi-chevron-down"></i>
+            </li>
+        `;
+
+        // append item element to mainmenu DOM
+        $('#mainmenu').append(mainmenu_item_html);
+
+        // set item menu-items data
+        $(`#elem${count}`).data('menu-items', data_menu_items);
+    }
+}
+
+export function create_empty_item() {
+    // create empty dummy item
+    let mainmenu_item_html = `
+        <li class="mainmenu-item"
+            style="
+            display: flex;
+            align-items: center;
+            height: 100%;">
+          <a>
+            <i class="bi bi-heart"></i>
+            <span class="mainmenu-title">
+            </span>
+          </a>
+        </li>
+    `;
+
+    // append empty dummy item to mainmenu DOM
+    $('#mainmenu').append(mainmenu_item_html);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Searchbar test helper
+///////////////////////////////////////////////////////////////////////////////
+
+export function create_searchbar_elem() {
+    // create dummy searchber element
+    let searchbar_html = `
+        <div id="cone-searchbar">
+          <div id="cone-searchbar-wrapper"
+               class="dropdown-toggle"
+               role="button"
+               data-bs-toggle="dropdown">
+            <div class="input-group" id="livesearch-group">
+              <div id="livesearch-input">
+                <input type="text"
+                       class="form-control">
+                </input>
+              </div>
+              <div class="input-group-append">
+                <button type="submit" id="searchbar-button">
+                  <i class="bi-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ul class="dropdown-menu" id="cone-livesearch-dropdown">
+            <li class="dropdown-title">
+              Search Results
+            </li>
+            <div id="cone-livesearch-results">
+              <li>
+                <span>Example Livesearch Result</span>
+              </li>
+            </div>
+          </ul>
+        </div>
+    `;
+    // append dummy element to DOM
+    $('body').append(searchbar_html);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ThemeSwitcher test helpers
+///////////////////////////////////////////////////////////////////////////////
+
+export function create_theme_switcher_elem(mode) {
+    let modeswitch_html = `
+        <li class="form-check form-switch">
+          <input class="form-check-input" id="switch_mode" type="checkbox">
+          <label class="form-check-label" for="flexSwitchCheckDefault">
+            Toggle dark mode
+          </label>
+        </li>
+    `;
+    let head_current = `
+        <link id="colormode-styles"
+              rel="stylesheet"
+              href=${mode}>`;
+    $('body').append(modeswitch_html);
+    $('head').append(head_current);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// cone.MainMenuSidebar test helpers
+///////////////////////////////////////////////////////////////////////////////
+
+export function create_mm_sidebar_elem() {
+    let mm_sidebar_html = `
+        <ul id="mainmenu_sidebar">
+          <li class="sidebar-heading" id="mainmenu-sb-heading">
+            <span>
+              Main Menu
+            </span>
+          </li>
+
+          <li class="active node-child_1">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+                <span">Title</span>
+            </a>
+          </li>
+
+          <li class="node-child_2 sb-menu">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+                <span">Title</span>
+            </a>
+            <a href="#" class="sidebar-arrow">
+              <i class="dropdown-arrow bi bi-chevron-down"></i>
+            </a>
+
+            <ul class="cone-mainmenu-dropdown-sb">
+              <li>
+                <a href="#">
+                  <i class="bi bi-heart"></i>
+                <span>Title</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="node-child_3 sb-menu">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+                <span">Title</span>
+            </a>
+            <a href="#" class="sidebar-arrow">
+              <i class="dropdown-arrow bi bi-chevron-down"></i>
+            </a>
+
+            <ul class="cone-mainmenu-dropdown-sb">
+              <li>
+                <a href="#">
+                  <i class="bi bi-heart"></i>
+                  <span>Title</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+    `;
+
+    $('#sidebar_content').append(mm_sidebar_html);
+}

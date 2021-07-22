@@ -1,13 +1,11 @@
 import $ from 'jquery'
 
-let navtree = null;
-
 export class Navtree {
 
     static initialize(context) {
         let elem = $('#navtree', context);
-        if (!elem.length) {
-            return;
+        if (!elem.length) { 
+            return null;
         }
 /*         if (navtree !== null) {
             navtree.unload();
@@ -62,3 +60,5 @@ export class Navtree {
         });
     }
 }
+
+export var navtree = Navtree.initialize();

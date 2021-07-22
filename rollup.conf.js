@@ -21,7 +21,7 @@ export default {
     }, {
         file: 'cone-bundle/cone.bundle.min.js',
         format: 'iife',
-        name: 'ts',
+        name: 'cone',
         plugins: [
             terser()
         ],

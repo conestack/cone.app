@@ -193,7 +193,7 @@ QUnit.module('Topnav', hooks => {
                 $.fn._slideToggle = $.fn.slideToggle;
             });
 
-            QUnit.test.only('toggle_menu()', assert => {
+            QUnit.test('toggle_menu()', assert => {
                 // set viewport state to mobile
                 helpers.set_vp('mobile');
 
@@ -246,7 +246,7 @@ QUnit.module('Topnav', hooks => {
                 test_topnav = null;
             });
 
-            QUnit.test.only('viewport_changed()', assert => {
+            QUnit.test('viewport_changed()', assert => {
                 // initialize instance of Topnav
                 test_topnav = Topnav.initialize();
 
@@ -348,7 +348,7 @@ QUnit.module('Topnav', hooks => {
                 $('#topnav').remove();
             });
 
-            QUnit.test.only('pt_handle()', assert => {
+            QUnit.test('pt_handle()', assert => {
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
 

@@ -1,837 +1,602 @@
 import $ from 'jquery';
 
-// import {ViewPortAware} from '../src/viewport.js';
-// import {karma_vp_states} from '../src/viewport_states.js';
+import {ViewPortAware, vp_states} from '../src/viewport.js';
+import {karma_vp_states} from './karma_viewport_states.js';
 
 import {SidebarMenu} from '../src/sidebar_menu.js';
-// import {MainMenuSidebar}from '../src/main_menu_sidebar.js';
+import {MainMenuSidebar}from '../src/main_menu_sidebar.js';
+import {Navtree} from '../src/navtree.js';
 import {Topnav} from '../src/topnav.js';
-// import {Navtree} from '../src/navtree.js';
-// import {create_mm_sidebar_elem} from './test_main_menu_sidebar.js';
 
-QUnit.test('css', assert => {
-  assert.ok(true);
+import * as helpers from './helpers.js';
+import {createCookie, readCookie} from '../src/cookie_functions.js';
 
-  $('body').append( $('<div id="topnav"></div>'));
-  console.log($(topnav).css('display'))
-
-  // console.log($('body'))
-});
-
-QUnit.module.skip('whatever', hooks => {
-  let sidebar = null;
-
-  hooks.before(()=> {
-    create_sidebar_elem();
-    
-    let mm_sidebar_html = `
-        <ul id="mainmenu_sidebar">
-          <li class="sidebar-heading" id="mainmenu-sb-heading">
-            <span>
-              Main Menu
-            </span>
-          </li>
-
-          <li class="active node-child_1">
-            <a href="#">
-              <i class="bi bi-heart"></i>
-                <span">Title</span>
-            </a>
-          </li>
-
-          <li class="node-child_2 sb-menu">
-            <a href="#">
-              <i class="bi bi-heart"></i>
-                <span">Title</span>
-            </a>
-            <a href="#" class="sidebar-arrow">
-              <i class="dropdown-arrow bi bi-chevron-down"></i>
-            </a>
-
-            <ul class="cone-mainmenu-dropdown-sb">
-              <li>
-                <a href="#">
-                  <i class="bi bi-heart"></i>
-                <span>Title</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-    `;
-    let topnav_html = `
-        <div id="topnav"
-            style="
-            box-sizing: border-box;
-            height:4rem;
-            display:flex;
-            flex-direction:row;
-            align-items: center;
-            width: 100%;
-            padding-left: .75rem;">
-        <div id="cone-logo"
-            style="
-                font-size:1.5rem;
-                font-family: Arial;
-                margin-right: auto;
-                white-space: nowrap;
-                width: 32px;
-                height: 32px;">
-            <a>
-            <img class="logo"
-                src="/static/images/cone-logo-cone.svg"
-                style="height:32px;">
-            <span>
-                Cone
-            </span>
-            </a>
-        </div>
-
-        <div id="topnav-content" style="display:contents">
-        </div>
-
-        <div id="mobile-menu-toggle" style="display:none">
-            <i class="bi bi-list"></i>
-        </div>
-        </div>
-    `;
-    let navtree_html = `
-    <ul id="navtree">
-      <li class="sidebar-heading" id="navtree-heading">
-        <span>
-          Navigation
-        </span>
-        <i class="dropdown-arrow bi bi-chevron-down"></i>
-      </li>
-
-      <div id="navtree-content">
-
-        <li class="active navtreelevel_1">
-          <a href="#">
-            <i class="bi bi-heart"></i>
-            <span>Title</span>
-          </a>
-          <ul>
-            <li class="navtreelevel_2">
-              <a href="#">
-                <i class="bi bi-heart"></i>
-                <span>Title</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <li class="active navtreelevel_1">
-          <a href="#">
-            <i class="bi bi-heart"></i>
-            <span>Title</span>
-          </a>
-          <ul>
-            <li class="navtreelevel_2">
-              <a href="#">
-                <i class="bi bi-heart"></i>
-                <span>Title</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-      </div>
-    </ul>
-    `;
-
-    // append elements to DOM
-    $('body').append(topnav_html);
-    $('#sidebar_content').append(mm_sidebar_html);
-    $('#sidebar_content').append(navtree_html);
-
-  });
-
-  hooks.after(() => {
-    $('#sidebar_left').remove();
-    sidebar = null;
-  })
-
-  QUnit.test('', assert => {
+// tmp
+QUnit.test('temp', assert => {
     assert.ok(true);
 
+    helpers.set_vp('large');
+    $(window).on('sidebar_collapsed', () => {
+        console.log('sidebar collapsed event!')
+    });
+    $(window).on('sidebar_expanded', () => {
+        console.log('sidebar expanded event!')
+    });
+    helpers.create_sidebar_elem();
+    helpers.create_mm_sidebar_elem();
+
+    let sidebar = SidebarMenu.initialize();
+    let mm_sb = MainMenuSidebar.initialize();
     
-    cone.viewportState = 1;
-    let topnav = Topnav.initialize();
-    // let mm_sb = MainMenuSidebar.initialize();
-    // let navtree = Navtree.initialize();
-
-    sidebar = SidebarMenu.initialize($('body'), topnav);
-
-    console.log($('ul', sidebar.content).length);
-    // console.log(sidebar.content)
-  });
-   
+    helpers.set_vp('small');
+    console.log(sidebar.vp_state)
+    console.log(sidebar.collapsed)
 });
-
-
-// ///////////////////////////////////////////////////////////////////////////////
-// // cone.SidebarMenu tests
-// ///////////////////////////////////////////////////////////////////////////////
-
-// QUnit.module('cone.SidebarMenu', hooks => {
-//     hooks.before(() => {
-//         console.log('Set up cone.SidebarMenu tests');
-//     });
-
-//     hooks.after(() => {
-//         console.log('Tear down cone.SidebarMenu tests');
-//     });
-
-//     QUnit.module('constructor', () => {
-
-//         QUnit.module('properties', hooks => {
-//             let test_sidebar;
-
-//             hooks.before(() => {
-//                 console.log('Set up cone.SidebarMenu properties tests');
-
-//                 // set viewport to desktop
-//                 cone.viewportState = 3;
-
-//                 // create dummy sidebar
-//                 create_sidebar_elem();
-//             });
-
-//             hooks.after(() =>{
-//                 console.log('Tear down cone.SidebarMenu properties tests');
-
-//                 // unset and remove sidebar
-//                 test_sidebar = null;
-//                 // remove dummy sidebar from DOM
-//                 $('#sidebar_left').remove();
-//             });
-
-//             QUnit.test('elems', assert => {
-//                 assert.ok(true);
-//                 // initialize new SidebarMenu instance
-//                 // test_sidebar = SidebarMenu.initialize();
-
-//             //     // Sidebar is child of cone.ViewPortAware class
-//             //     assert.ok(test_sidebar instanceof ViewPortAware);
-
-//             //     // containing element
-//             //     assert.ok(test_sidebar.elem.is('div#sidebar_left'));
-
-//             //     // content
-//             //     assert.ok(test_sidebar.content.is('div#sidebar_content'));
-
-//             //     // sidebar is expanded on desktop load
-//             //     assert.false(test_sidebar.collapsed);
-
-//             //     // footer
-//             //     assert.ok(
-//             //         test_sidebar.toggle_btn
-//             //         .is('#sidebar_footer > #sidebar-toggle-btn')
-//             //     );
-//             //     assert.ok(
-//             //         test_sidebar.toggle_arrow_elem
-//             //         .is('#sidebar-toggle-btn > i')
-//             //     );
-//             //     assert.ok(
-//             //         test_sidebar.lock_switch
-//             //         .is('#sidebar_footer > #toggle-fluid')
-//             //     );
-//             //     assert.strictEqual(test_sidebar.cookie, null);
-
-//             //     // private methods exist
-//             //     assert.ok(test_sidebar._toggle_menu_handle);
-//             //     assert.ok(test_sidebar._toggle_lock);
-//             });
-//         });
-//     });
-
-//     QUnit.module('methods', hooks =>{
-//         hooks.before(() => {
-//             console.log('Set up cone.SidebarMenu method tests');
-//         });
-
-//         hooks.after(() => {
-//             console.log('Tear down cone.SidebarMenu method tests');
-//         });
-
-//         QUnit.module('unload', hooks => {
-//             let toggle_menu_origin = SidebarMenu.prototype.toggle_menu,
-//                 toggle_lock_origin = SidebarMenu.prototype.toggle_lock,
-//                 super_unload_origin = ViewPortAware.prototype.unload;
-
-//             hooks.before(assert => {
-//                 console.log('Set up cone.SidebarMenu.unload tests');
-
-//                 // set viewport
-//                 cone.viewportState = 3;
-
-//                 // create dummy sidebar element
-//                 create_sidebar_elem();
-
-//                 // overwrite methods to check for method calls
-//                 SidebarMenu.prototype.toggle_menu = function() {
-//                     assert.step('toggle_menu()');
-//                 }
-//                 SidebarMenu.prototype.toggle_lock = function() {
-//                     assert.step('toggle_lock()');
-//                 }
-
-//                 // overwrite super.unload function
-//                 ViewPortAware.prototype.unload = function() {
-//                     assert.step('super.unload()');
-//                 }
-//             });
-
-//             hooks.after(() => {
-//                 console.log('Tear down cone.SidebarMenu.unload tests');
-
-//                 // unset sidebar
-//                 sidebar_menu = null;
-//                 // remove dummy element from DOM
-//                 $('#sidebar_left').remove();
-
-//                 // reset super.unload() function
-//                 ViewPortAware.prototype.unload = super_unload_origin;
-
-//                 // reset methods after test completion
-//                 SidebarMenu.prototype.toggle_menu = toggle_menu_origin;
-//                 SidebarMenu.prototype.toggle_lock = toggle_lock_origin;
-//             });
-
-//             QUnit.test('unload()', assert => {
-//                 // initialize new SidebarMenu instance
-//                 SidebarMenu.initialize();
-//                 // second instance invokes unload in constructor
-//                 SidebarMenu.initialize();
-//                 assert.verifySteps(['super.unload()']);
-
-//                 // manually unload
-//                 sidebar_menu.unload();
-
-//                 // trigger events to check for unbind
-//                 sidebar_menu.toggle_btn.trigger('click');
-//                 sidebar_menu.lock_switch.trigger('click');
-
-//                 // super.unload has been called
-//                 assert.verifySteps(['super.unload()']);
-//             });
-//         });
-
-//         QUnit.module('initial_load()', hooks => {
-//             let TestSidebarMenu,
-//                 test_sidebar_menu;
-
-//             hooks.beforeEach(assert => {
-//                 console.log('Set up cone.SidebarMenu.initial_load tests');
-//                 // create dummy sidebar html elem
-//                 create_sidebar_elem();
-
-//                 // dummy class
-//                 TestSidebarMenu = class extends SidebarMenu {
-//                     assign_state() {
-//                         assert.step('assign_state()');
-//                     }
-//                     toggle_menu() {
-//                         assert.step('toggle_menu()');
-//                     }
-//                 }
-//             });
-
-//             hooks.afterEach(() => {
-//                 console.log('Tear down cone.SidebarMenu.initial_load tests');
-
-//                 // unload and unset instance
-//                 test_sidebar_menu.unload();
-//                 test_sidebar_menu = null;
-//                 // remove dummy element from DOM
-//                 $('#sidebar_left').remove();
-//             });
-
-//             for (let i=0; i<karma_vp_states.length; i++) {
-//                 QUnit.test(`Viewport ${i}`, assert => {
-//                     // set viewport
-//                     cone.viewportState = i;
-
-//                     // initialize Test Sidebar
-//                     test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                     assert.strictEqual(
-//                         test_sidebar_menu.vp_state,
-//                         cone.viewportState
-//                     );
-//                     assert.verifySteps(['assign_state()']);
-
-//                     // sidebar cookie is null
-//                     assert.strictEqual(readCookie('sidebar'), null);
-
-//                     if (i === 0) {
-//                         // containing element is hidden on mobile viewport
-//                         assert.strictEqual(
-//                             test_sidebar_menu.elem.css('display'),
-//                             'none'
-//                         );
-//                     } else if (i === 2) {
-//                         // sidebar is collapsed on medium viewport
-//                         assert.strictEqual(test_sidebar_menu.collapsed, true);
-//                     } else if (i === 3) {
-//                         // sidebar is expanded on large viewport
-//                         assert.strictEqual(test_sidebar_menu.collapsed, false);
-//                     }
-//                 });
-
-//                 QUnit.test(`Viewport ${i} with cookie`, assert => {
-//                     // set viewport
-//                     cone.viewportState = i;
-
-//                     // create dummy cookie
-//                     createCookie('sidebar', true, null);
-
-//                     // initialize Test Sidebar
-//                     test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                     assert.strictEqual(
-//                         test_sidebar_menu.vp_state,
-//                         cone.viewportState
-//                     );
-//                     assert.verifySteps(['assign_state()']);
-
-//                     assert.strictEqual(readCookie('sidebar'), 'true');
-
-//                     if (i !== 0) {
-//                         // cookie state === collapsed if viewport is not mobile
-//                         assert.strictEqual(test_sidebar_menu.collapsed, true);
-
-//                         // lock switch is active if cookie exists
-//                         assert.ok(
-//                             test_sidebar_menu.lock_switch
-//                             .hasClass('active')
-//                         );
-
-//                         // trigger click on toggle button
-//                         test_sidebar_menu.toggle_btn.trigger('click');
-//                         // toggle_menu_handle called
-//                         assert.verifySteps(['toggle_menu()']);
-//                     }
-
-//                     // remove dummy cookie
-//                     createCookie('sidebar', '', -1);
-//                 });
-//             }
-//         });
-
-//         QUnit.module('toggle_lock()', hooks => {
-//             let TestSidebarMenu,
-//                 test_sidebar_menu;
-
-//             hooks.beforeEach(assert => {
-//                 console.log('Set up cone.SidebarMenu.toggle_lock tests');
-
-//                 // set viewport
-//                 cone.viewportState = 3;
-
-//                 // create dummy sidebar element
-//                 create_sidebar_elem();
-
-//                 // dummy class
-//                 TestSidebarMenu = class extends SidebarMenu {
-//                     toggle_menu() {
-//                         assert.step('toggle_menu()');
-//                     }
-//                 }
-//             });
-
-//             hooks.afterEach(() => {
-//                 console.log('Tear down cone.SidebarMenu.toggle_lock tests');
-
-//                 // unset sidebar
-//                 test_sidebar_menu.unload();
-//                 test_sidebar_menu = null;
-//                 // remove dummy element from DOM
-//                 $('#sidebar_left').remove();
-
-//                 // delete dummy cookie
-//                 createCookie('sidebar', '', -1);
-//             });
-
-//             QUnit.test('toggle_lock()', assert => {
-//                 // create new SidebarMenu instance
-//                 test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                 // sidebar is collapsed on load
-//                 assert.strictEqual(test_sidebar_menu.collapsed, false);
-
-//                 // cookie is null
-//                 assert.strictEqual(readCookie('sidebar'), null);
-
-//                 // trigger click on lock switch (lock state)
-//                 test_sidebar_menu.lock_switch.trigger('click');
-//                 // lock switch is active
-//                 assert.ok(test_sidebar_menu.lock_switch.hasClass('active'));
-//                 // collapsed state has not changed
-//                 assert.strictEqual(test_sidebar_menu.collapsed, false);
-//                 // no cookie created after click
-//                 assert.strictEqual(test_sidebar_menu.cookie, false);
-
-//                 // trigger click on toggle button
-//                 test_sidebar_menu.toggle_btn.trigger('click');
-
-//                 // toggle_menu() called
-//                 assert.verifySteps(['toggle_menu()']);
-//             });
-
-//             QUnit.test('toggle_lock() with cookie', assert => {
-//                 // create dummy cookie
-//                 createCookie('sidebar', true, null);
-//                 assert.strictEqual(readCookie('sidebar'), 'true');
-
-//                 // create new SidebarMenu instance
-//                 test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                 // lock switch is active
-//                 assert.ok(test_sidebar_menu.lock_switch.hasClass('active'));
-
-//                 // trigger unclick on lock switch
-//                 test_sidebar_menu.lock_switch.trigger('click');
-//                 // cookie is deleted
-//                 assert.strictEqual(readCookie('sidebar'), null);
-
-//                 // lock switch is not active after click
-//                 assert.notOk(test_sidebar_menu.lock_switch.hasClass('active'));
-
-//                 // trigger click on toggle button
-//                 test_sidebar_menu.toggle_btn.trigger('click');
-//                 assert.strictEqual(test_sidebar_menu.cookie, null);
-
-//                 // toggle_menu() has been called
-//                 assert.verifySteps(['toggle_menu()']);
-//             });
-//         });
-
-//         QUnit.module('viewport_changed()', hooks => {
-//             let TestSidebarMenu,
-//                 test_sidebar_menu,
-//                 VPA = ViewPortAware,
-//                 super_vp_changed_origin = VPA.prototype.viewport_changed;
-
-//             hooks.beforeEach(assert => {
-//                 console.log('Set up cone.SidebarMenu.toggle_lock tests');
-
-//                 // set viewport
-//                 cone.viewportState = 3;
-
-//                 // create dummy sidebar element
-//                 create_sidebar_elem();
-
-//                 // dummy class
-//                 TestSidebarMenu = class extends SidebarMenu {
-//                     assign_state() {
-//                         assert.step(`assign_state(${this.collapsed})`);
-//                     }
-//                 }
-
-//                 // overwrite vp changed method to assert call
-//                 VPA.prototype.viewport_changed = function(e) {
-//                     this.vp_state = e.state;
-//                     assert.step(`super.viewport_changed(${e.state})`);
-//                 }
-//             });
-
-//             hooks.afterEach(() => {
-//                 console.log('Tear down cone.SidebarMenu.toggle_lock tests');
-
-//                 // unset sidebar
-//                 test_sidebar_menu.unload();
-//                 test_sidebar_menu = null;
-//                 // remove dummy element from DOM
-//                 $('#sidebar_left').remove();
-
-//                 // reset vp changed method
-//                 VPA.prototype.viewport_changed = super_vp_changed_origin;
-
-//                 // delete dummy cookie
-//                 createCookie('sidebar', '', -1);
-//             });
-
-//             QUnit.test('viewport_changed()', assert => {
-//                 // create new SidebarMenu instance
-//                 test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                 // initial assign_state call on load
-//                 assert.verifySteps([
-//                     'assign_state(false)'
-//                 ]);
-
-//                 // create dummy viewport changed event
-//                 let resize_evt = $.Event('viewport_changed');
-
-//                 for (let i=0; i<karma_vp_states.length; i++) {
-//                     // set dummy viewport changed event
-//                     resize_evt.state = i;
-//                     // invoke viewport_changed method
-//                     test_sidebar_menu.viewport_changed(resize_evt);
-
-//                     let state;
-
-//                     assert.strictEqual(
-//                         test_sidebar_menu.vp_state,
-//                         resize_evt.state
-//                     );
-
-//                     if (i === 0) {
-//                         // sidebar is expanded on mobile viewport
-//                         assert.strictEqual(test_sidebar_menu.collapsed, false);
-//                         // element is hidden in mobile dropdown
-//                         assert.strictEqual(
-//                             test_sidebar_menu.elem.css('display'),
-//                             'none'
-//                         );
-//                         state = false;
-//                     } else if (i === 1) {
-//                         // sidebar is collapsed on small viewport
-//                         assert.strictEqual(test_sidebar_menu.collapsed, true);
-//                         // element is visible
-//                         assert.strictEqual(
-//                             test_sidebar_menu.elem.css('display'),
-//                             'block'
-//                         );
-//                         state = true;
-//                     } else if (i === 2) {
-//                         state = false;
-//                     } else if (i === 3) {
-//                         // sidebar is expanded on large viewport
-//                         assert.strictEqual(test_sidebar_menu.collapsed, false);
-//                         // element is visible
-//                         assert.strictEqual(
-//                             test_sidebar_menu.elem.css('display'),
-//                             'block'
-//                         );
-//                         state = false;
-//                     }
-
-//                     // methods have been called
-//                     assert.verifySteps([
-//                         `super.viewport_changed(${i})`,
-//                         `assign_state(${state})`
-//                     ]);
-//                 }
-//             });
-
-//             QUnit.test('viewport small', assert => {
-//                 // create new SidebarMenu instance
-//                 test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                 // initial assign_state call on load
-//                 assert.verifySteps(['assign_state(false)']);
-
-//                 // create dummy viewport changed event
-//                 let resize_evt = $.Event('viewport_changed');
-//                 // resize event state does not equal sidebar viewport state
-//                 resize_evt.state = 1;
-//                 test_sidebar_menu.vp_state = 2;
-
-//                 // invoke viewport_changed method
-//                 test_sidebar_menu.viewport_changed(resize_evt);
-//                 // sidebar is collapsed
-//                 assert.strictEqual(test_sidebar_menu.collapsed, true);
-//                 // elem is visible
-//                 assert.strictEqual(
-//                     test_sidebar_menu.elem.css('display'),
-//                     'block'
-//                 );
-
-//                 assert.verifySteps([
-//                     'super.viewport_changed(1)',
-//                     'assign_state(true)'
-//                 ]);
-//             });
-
-//             QUnit.test('with cookie', assert => {
-//                 let state;
-
-//                 // create dummy viewport changed event
-//                 let resize_evt = $.Event('viewport_changed');
-
-//                 // create new SidebarMenu instance
-//                 test_sidebar_menu = new TestSidebarMenu($('#sidebar_left'));
-
-//                 // initial assign_state call on load
-//                 assert.verifySteps(['assign_state(false)']);
-
-//                 for (let i=0; i<karma_vp_states.length; i++) {
-//                     if (i === 1) {
-//                         state = false;
-//                     } else {
-//                         state = true;
-//                     }
-
-//                     // create dummy cookie
-//                     test_sidebar_menu.cookie = state;
-
-//                     // set dummy viewport changed event state
-//                     resize_evt.state = i;
-
-//                     // invoke viewport_changed method
-//                     test_sidebar_menu.viewport_changed(resize_evt);
-
-//                     if (i === 0) {
-//                         // collapsed state can't change on mobile
-//                         assert.verifySteps([
-//                             `super.viewport_changed(${i})`,
-//                             `assign_state(false)`
-//                         ]);
-//                         assert.strictEqual(test_sidebar_menu.collapsed, false);
-//                     } else {
-//                         // collapsed cookie state gets applied
-//                         assert.verifySteps([
-//                             `super.viewport_changed(${i})`,
-//                             `assign_state(${state})`
-//                         ]);
-//                         assert.strictEqual(test_sidebar_menu.collapsed, state);
-//                     }
-//                 }
-//             });
-//         });
-
-//         QUnit.module('assign_state()', hooks => {
-//             let TestMainMenuSidebar;
-
-//             hooks.beforeEach(assert => {
-//                 console.log('Set up cone.SidebarMenu.toggle_lock tests');
-
-//                 // set viewport
-//                 cone.viewportState = 3;
-
-//                 // create dummy sidebar element
-//                 create_sidebar_elem();
-
-//                 // create dummy mainmenu sidebar element
-//                 create_mm_sidebar_elem();
-
-//                 // dummy class
-//                 TestMainMenuSidebar = class extends MainMenuSidebar {
-//                     static initialize(context) {
-//                         let elem = $('#mainmenu_sidebar');
-//                         main_menu_sidebar = new TestMainMenuSidebar(elem);
-//                     }
-//                     collapse() {
-//                         assert.step('collapse()');
-//                     }
-//                     expand() {
-//                         assert.step('expand()');
-//                     }
-//                 }
-//             });
-
-//             hooks.afterEach(() => {
-//                 console.log('Tear down cone.SidebarMenu.toggle_lock tests');
-
-//                 // unset sidebar
-//                 sidebar_menu.unload();
-//                 sidebar_menu = null;
-//                 // remove dummy element from DOM
-//                 $('#sidebar_left').remove();
-
-//                 // unset main menu sidebar
-//                 if (main_menu_sidebar) {
-//                     main_menu_sidebar.unload();
-//                     main_menu_sidebar = null;
-//                 }
-//             });
-
-//             QUnit.test('assign_state()', assert => {
-//                 SidebarMenu.initialize();
-
-//                 // sidebar is expanded on load
-//                 assert.strictEqual(sidebar_menu.collapsed, false);
-//                 assert.ok(sidebar_menu.elem.hasClass('expanded'));
-//                 assert.ok(
-//                     sidebar_menu.toggle_arrow_elem
-//                     .hasClass('bi bi-arrow-left-circle')
-//                 );
-
-//                 // sidebar is collapsed
-//                 sidebar_menu.collapsed = true;
-//                 // invoke assign_state() method
-//                 sidebar_menu.assign_state();
-//                 assert.ok(sidebar_menu.elem.hasClass('collapsed'));
-//                 assert.ok(
-//                     sidebar_menu.toggle_arrow_elem
-//                     .hasClass('bi bi-arrow-right-circle')
-//                 );
-//             });
-
-//             QUnit.test('with mainmenu sidebar', assert => {
-//                 // initialize SidebarMenu instance
-//                 SidebarMenu.initialize();
-//                 // initialize mainmenu sidebar instance
-//                 TestMainMenuSidebar.initialize();
-
-//                 // expand
-//                 sidebar_menu.assign_state();
-
-//                 //collapse
-//                 sidebar_menu.collapsed = true;
-//                 sidebar_menu.assign_state();
-
-//                 assert.verifySteps([
-//                     'expand()',
-//                     'collapse()'
-//                 ]);
-//             });
-//         });
-
-//         QUnit.module('toggle_menu()', hooks => {
-//             let TestSidebarMenu;
-
-//             hooks.before(assert => {
-//                 console.log('Set up cone.SidebarMenu.toggle_menu tests');
-
-//                 // set viewport
-//                 cone.viewportState = 3;
-
-//                 // create dummy sidebar element
-//                 create_sidebar_elem();
-
-//                 // dummy class
-//                 TestSidebarMenu = class extends SidebarMenu {
-//                     assign_state() {
-//                         assert.step('assign_state()');
-//                     }
-//                 }
-//             });
-
-//             hooks.after(() => {
-//                 console.log('Tear down cone.SidebarMenu.toggle_menu tests');
-
-//                 // unset sidebar
-//                 sidebar_menu.unload();
-//                 sidebar_menu = null;
-//                 // remove dummy element from DOM
-//                 $('#sidebar_left').remove();
-//             });
-
-//             QUnit.test('toggle_menu()', assert => {
-//                 // initialize new SidebarMenu instance
-//                 sidebar_menu = new TestSidebarMenu();
-
-//                 // initial assign_state call
-//                 assert.verifySteps(['assign_state()']);
-
-//                 // sidebar is expanded on load
-//                 assert.strictEqual(sidebar_menu.collapsed, false);
-
-//                 // trigger click on toggle button
-//                 sidebar_menu.toggle_btn.trigger('click');
-//                 // sidebar is collapsed after click
-//                 assert.strictEqual(sidebar_menu.collapsed, true);
-//                 assert.verifySteps(['assign_state()']);
-
-//                 // trigger click on toggle button
-//                 sidebar_menu.toggle_btn.trigger('click');
-//                 // sidebar is expanded after click
-//                 assert.strictEqual(sidebar_menu.collapsed, false);
-//                 assert.verifySteps(['assign_state()']);
-//             });
-//         });
-//     });
-// });
+// end tmp
+
+///////////////////////////////////////////////////////////////////////////////
+// SidebarMenu tests
+///////////////////////////////////////////////////////////////////////////////
+
+QUnit.module.skip('SidebarMenu', hooks => {
+    hooks.before(() => {
+        console.log('Set up SidebarMenu tests');
+    });
+
+    hooks.after(() => {
+        console.log('Tear down SidebarMenu tests');
+    });
+
+    QUnit.module('constructor', () => {
+
+        QUnit.module('properties', hooks => {
+            let sidebar;
+
+            hooks.before(() => {
+                console.log('Set up SidebarMenu properties tests');
+
+                // set viewport to desktop size
+                helpers.set_vp('large');
+
+                // create dummy sidebar
+                helpers.create_sidebar_elem();
+            });
+
+            hooks.after(() =>{
+                console.log('Tear down SidebarMenu properties tests');
+
+                // unset and remove sidebar
+                sidebar = null;
+                // remove dummy sidebar from DOM
+                $('#sidebar_left').remove();
+            });
+
+            QUnit.test('elems', assert => {
+                assert.ok(true);
+                // initialize new SidebarMenu instance
+                sidebar = SidebarMenu.initialize($('body'), null);
+
+                // Sidebar is child of ViewPortAware class
+                assert.ok(sidebar instanceof ViewPortAware);
+
+                // containing element
+                assert.ok(sidebar.elem.is('div#sidebar_left'));
+
+                // content
+                assert.ok(sidebar.content.is('div#sidebar_content'));
+
+                // sidebar is expanded on desktop load
+                assert.false(sidebar.collapsed);
+
+                // footer
+                assert.ok(
+                    sidebar.toggle_btn
+                    .is('#sidebar_footer > #sidebar-toggle-btn')
+                );
+                assert.ok(
+                    sidebar.toggle_arrow_elem
+                    .is('#sidebar-toggle-btn > i')
+                );
+                assert.ok(
+                    sidebar.lock_switch
+                    .is('#sidebar_footer > #toggle-fluid')
+                );
+                assert.strictEqual(sidebar.cookie, null);
+
+                // private methods exist
+                assert.ok(sidebar._toggle_menu_handle);
+                assert.ok(sidebar._toggle_lock);
+            });
+        });
+    });
+
+    QUnit.module('methods', hooks =>{
+        hooks.before(() => {
+            console.log('Set up SidebarMenu method tests');
+        });
+
+        hooks.after(() => {
+            console.log('Tear down SidebarMenu method tests');
+        });
+
+        QUnit.module('initial_load()', hooks => {
+            let sidebar;
+
+            hooks.beforeEach(assert => {
+                console.log('Set up SidebarMenu.initial_load tests');
+                // create dummy sidebar html elem
+                helpers.create_sidebar_elem();
+            });
+
+            hooks.afterEach(() => {
+                console.log('Tear down SidebarMenu.initial_load tests');
+
+                sidebar = null;
+                // remove dummy element from DOM
+                $('#sidebar_left').remove();
+            });
+
+            for (let i=0; i<karma_vp_states.length; i++) {
+                QUnit.test(`Viewport ${i}`, assert => {
+                    // set viewport
+                    helpers.set_vp(karma_vp_states[i]);
+
+                    // initialize Test Sidebar
+                    sidebar = new SidebarMenu($('#sidebar_left'));
+
+                    assert.strictEqual(
+                        sidebar.vp_state,
+                        i
+                    );
+
+                    // sidebar cookie is null
+                    assert.strictEqual(readCookie('sidebar'), null);
+
+                    if (i === 0) {
+                        // containing element is hidden on mobile viewport
+                        assert.strictEqual(
+                            sidebar.elem.css('display'),
+                            'none'
+                        );
+                    } else if (i === 2) {
+                        // sidebar is collapsed on medium viewport
+                        assert.strictEqual(sidebar.collapsed, true);
+                    } else if (i === 3) {
+                        // sidebar is expanded on large viewport
+                        assert.strictEqual(sidebar.collapsed, false);
+                    }
+                });
+
+                QUnit.test(`Viewport ${i} with cookie`, assert => {
+                    // set viewport
+                    helpers.set_vp(karma_vp_states[i]);
+
+                    // create dummy cookie
+                    createCookie('sidebar', true, null);
+
+                    // initialize Test Sidebar
+                    sidebar = new SidebarMenu($('#sidebar_left'));
+
+                    assert.strictEqual(
+                        sidebar.vp_state,
+                        i
+                    );
+
+                    assert.strictEqual(readCookie('sidebar'), 'true');
+
+                    if (i !== 0) {
+                        // cookie state === collapsed if viewport is not mobile
+                        assert.strictEqual(sidebar.collapsed, true);
+
+                        // lock switch is active if cookie exists
+                        assert.ok(
+                            sidebar.lock_switch
+                            .hasClass('active')
+                        );
+
+                        // trigger click on toggle button
+                        sidebar.toggle_btn.trigger('click');
+                    }
+
+                    // remove dummy cookie
+                    createCookie('sidebar', '', -1);
+                });
+            }
+        });
+
+        QUnit.module('toggle_lock()', hooks => {
+            let sidebar;
+
+            hooks.beforeEach(() => {
+                console.log('Set up SidebarMenu.toggle_lock tests');
+
+                // set viewport
+                helpers.set_vp('large');
+
+                // create dummy sidebar element
+                helpers.create_sidebar_elem();
+            });
+
+            hooks.afterEach(() => {
+                console.log('Tear down SidebarMenu.toggle_lock tests');
+
+                // unset sidebar
+                sidebar = null;
+                // remove dummy element from DOM
+                $('#sidebar_left').remove();
+
+                // delete dummy cookie
+                createCookie('sidebar', '', -1);
+            });
+
+            QUnit.test('toggle_lock()', assert => {
+                // create new SidebarMenu instance
+                sidebar = new SidebarMenu($('#sidebar_left'));
+
+                // sidebar is collapsed on load
+                assert.strictEqual(sidebar.collapsed, false);
+
+                // cookie is null
+                assert.strictEqual(readCookie('sidebar'), null);
+
+                // trigger click on lock switch (lock state)
+                sidebar.lock_switch.trigger('click');
+                // lock switch is active
+                assert.ok(sidebar.lock_switch.hasClass('active'));
+                // collapsed state has not changed
+                assert.strictEqual(sidebar.collapsed, false);
+                // no cookie created after click
+                assert.strictEqual(sidebar.cookie, false);
+
+                // trigger click on toggle button
+                sidebar.toggle_btn.trigger('click');
+            });
+
+            QUnit.test('toggle_lock() with cookie', assert => {
+                // create dummy cookie
+                createCookie('sidebar', true, null);
+                assert.strictEqual(readCookie('sidebar'), 'true');
+
+                // create new SidebarMenu instance
+                sidebar = new SidebarMenu($('#sidebar_left'));
+
+                // lock switch is active
+                assert.ok(sidebar.lock_switch.hasClass('active'));
+
+                // trigger unclick on lock switch
+                sidebar.lock_switch.trigger('click');
+                // cookie is deleted
+                assert.strictEqual(readCookie('sidebar'), null);
+
+                // lock switch is not active after click
+                assert.notOk(sidebar.lock_switch.hasClass('active'));
+
+                // trigger click on toggle button
+                sidebar.toggle_btn.trigger('click');
+                assert.strictEqual(sidebar.cookie, null);
+            });
+        });
+
+        QUnit.module('viewport_changed()', hooks => {
+            let TestSidebarMenu,
+                sidebar,
+                VPA = ViewPortAware,
+                super_vp_changed_origin = VPA.prototype.viewport_changed;
+
+            hooks.beforeEach(assert => {
+                console.log('Set up SidebarMenu.toggle_lock tests');
+
+                // create dummy sidebar element
+                helpers.create_sidebar_elem();
+
+                // dummy class
+                TestSidebarMenu = class extends SidebarMenu {
+                    assign_state() {
+                        assert.step(`assign_state(${this.collapsed})`);
+                    }
+                }
+
+                // overwrite vp changed method to assert call
+                VPA.prototype.viewport_changed = function(e) {
+                    this.vp_state = e.state;
+                    assert.step(`super.viewport_changed(${e.state})`);
+                }
+            });
+
+            hooks.afterEach(() => {
+                console.log('Tear down SidebarMenu.toggle_lock tests');
+
+                // unset sidebar
+                sidebar.unload();
+                sidebar = null;
+                // remove dummy element from DOM
+                $('#sidebar_left').remove();
+
+                // reset vp changed method
+                VPA.prototype.viewport_changed = super_vp_changed_origin;
+
+                // delete dummy cookie
+                createCookie('sidebar', '', -1);
+            });
+
+            QUnit.test('viewport_changed()', assert => {
+                // create new SidebarMenu instance
+                sidebar = new TestSidebarMenu($('#sidebar_left'));
+
+                // initial assign_state call on load
+                assert.verifySteps([
+                    'assign_state(false)'
+                ]);
+
+                // create dummy viewport changed event
+                let resize_evt = $.Event('viewport_changed');
+
+                for (let i=0; i<karma_vp_states.length; i++) {
+                    // set dummy viewport changed event
+                    resize_evt.state = i;
+                    // invoke viewport_changed method
+                    sidebar.viewport_changed(resize_evt);
+
+                    let state;
+
+                    assert.strictEqual(
+                        sidebar.vp_state,
+                        resize_evt.state
+                    );
+
+                    if (i === 0) {
+                        // sidebar is expanded on mobile viewport
+                        assert.strictEqual(sidebar.collapsed, false);
+                        // element is hidden in mobile dropdown
+                        assert.strictEqual(
+                            sidebar.elem.css('display'),
+                            'none'
+                        );
+                        state = false;
+                    } else if (i === 1) {
+                        // sidebar is collapsed on small viewport
+                        assert.strictEqual(sidebar.collapsed, true);
+                        // element is visible
+                        assert.strictEqual(
+                            sidebar.elem.css('display'),
+                            'block'
+                        );
+                        state = true;
+                    } else if (i === 2) {
+                        state = false;
+                    } else if (i === 3) {
+                        // sidebar is expanded on large viewport
+                        assert.strictEqual(sidebar.collapsed, false);
+                        // element is visible
+                        assert.strictEqual(
+                            sidebar.elem.css('display'),
+                            'block'
+                        );
+                        state = false;
+                    }
+
+                    // methods have been called
+                    assert.verifySteps([
+                        `super.viewport_changed(${i})`,
+                        `assign_state(${state})`
+                    ]);
+                }
+            });
+
+            QUnit.test('viewport small', assert => {
+                // create new SidebarMenu instance
+                sidebar = new TestSidebarMenu($('#sidebar_left'));
+
+                // initial assign_state call on load
+                assert.verifySteps(['assign_state(false)']);
+
+                // create dummy viewport changed event
+                let resize_evt = $.Event('viewport_changed');
+                // resize event state does not equal sidebar viewport state
+                resize_evt.state = 1;
+                sidebar.vp_state = 2;
+
+                // invoke viewport_changed method
+                sidebar.viewport_changed(resize_evt);
+                // sidebar is collapsed
+                assert.strictEqual(sidebar.collapsed, true);
+                // elem is visible
+                assert.strictEqual(
+                    sidebar.elem.css('display'),
+                    'block'
+                );
+
+                assert.verifySteps([
+                    'super.viewport_changed(1)',
+                    'assign_state(true)'
+                ]);
+            });
+
+            QUnit.test('with cookie', assert => {
+                let state;
+
+                // create dummy viewport changed event
+                let resize_evt = $.Event('viewport_changed');
+
+                // create new SidebarMenu instance
+                sidebar = new TestSidebarMenu($('#sidebar_left'));
+
+                // initial assign_state call on load
+                assert.verifySteps(['assign_state(false)']);
+
+                for (let i=0; i<karma_vp_states.length; i++) {
+                    if (i === 1) {
+                        state = false;
+                    } else {
+                        state = true;
+                    }
+
+                    // create dummy cookie
+                    sidebar.cookie = state;
+
+                    // set dummy viewport changed event state
+                    resize_evt.state = i;
+
+                    // invoke viewport_changed method
+                    sidebar.viewport_changed(resize_evt);
+
+                    if (i === 0) {
+                        // collapsed state can't change on mobile
+                        assert.verifySteps([
+                            `super.viewport_changed(${i})`,
+                            `assign_state(false)`
+                        ]);
+                        assert.strictEqual(sidebar.collapsed, false);
+                    } else {
+                        // collapsed cookie state gets applied
+                        assert.verifySteps([
+                            `super.viewport_changed(${i})`,
+                            `assign_state(${state})`
+                        ]);
+                        assert.strictEqual(sidebar.collapsed, state);
+                    }
+                }
+            });
+        });
+
+        QUnit.module('assign_state()', hooks => {
+            let TestMainMenuSidebar,
+                main_menu_sidebar,
+                sidebar;
+
+            hooks.beforeEach(assert => {
+                console.log('Set up SidebarMenu.toggle_lock tests');
+
+                // create dummy sidebar element
+                helpers.create_sidebar_elem();
+
+                // create dummy mainmenu sidebar element
+                helpers.create_mm_sidebar_elem();
+
+                // dummy class
+                TestMainMenuSidebar = class extends MainMenuSidebar {
+                    static initialize(context) {
+                        let elem = $('#mainmenu_sidebar');
+                        main_menu_sidebar = new TestMainMenuSidebar(elem);
+                    }
+                    collapse() {
+                        assert.step('collapse()');
+                    }
+                    expand() {
+                        assert.step('expand()');
+                    }
+                }
+            });
+
+            hooks.afterEach(() => {
+                console.log('Tear down SidebarMenu.toggle_lock tests');
+
+                // unset sidebar
+                sidebar = null;
+                // remove dummy element from DOM
+                $('#sidebar_left').remove();
+
+                // unset main menu sidebar
+                if (main_menu_sidebar) {
+                    main_menu_sidebar.unload();
+                    main_menu_sidebar = null;
+                }
+            });
+
+            QUnit.test('assign_state()', assert => {
+                sidebar = SidebarMenu.initialize();
+
+                // sidebar is expanded on load
+                assert.strictEqual(sidebar.collapsed, false);
+                assert.ok(sidebar.elem.hasClass('expanded'));
+                assert.ok(
+                    sidebar.toggle_arrow_elem
+                    .hasClass('bi bi-arrow-left-circle')
+                );
+
+                // sidebar is collapsed
+                sidebar.collapsed = true;
+                // invoke assign_state() method
+                sidebar.assign_state();
+                assert.ok(sidebar.elem.hasClass('collapsed'));
+                assert.ok(
+                    sidebar.toggle_arrow_elem
+                    .hasClass('bi bi-arrow-right-circle')
+                );
+            });
+
+            QUnit.test.skip('with mainmenu sidebar', assert => {
+                // TODO
+
+                assert.ok(true);
+                // initialize SidebarMenu instance
+                sidebar = SidebarMenu.initialize();
+                // initialize mainmenu sidebar instance
+                main_menu_sidebar = TestMainMenuSidebar.initialize();
+
+                // expand
+                sidebar.assign_state();
+
+                //collapse
+                sidebar.collapsed = true;
+                sidebar.assign_state();
+
+                // assert.verifySteps([
+                //     'expand()',
+                //     'collapse()'
+                // ]);
+            });
+        });
+
+        QUnit.module('toggle_menu()', hooks => {
+            let TestSidebarMenu,
+                sidebar;
+
+            hooks.before(assert => {
+                console.log('Set up SidebarMenu.toggle_menu tests');
+
+                // create dummy sidebar element
+                helpers.create_sidebar_elem();
+
+                // dummy class
+                TestSidebarMenu = class extends SidebarMenu {
+                    assign_state() {
+                        assert.step('assign_state()');
+                    }
+                }
+            });
+
+            hooks.after(() => {
+                console.log('Tear down SidebarMenu.toggle_menu tests');
+
+                // unset sidebar
+                sidebar = null;
+                // remove dummy element from DOM
+                $('#sidebar_left').remove();
+            });
+
+            QUnit.test('toggle_menu()', assert => {
+                // initialize new SidebarMenu instance
+                sidebar = new TestSidebarMenu();
+
+                // initial assign_state call
+                assert.verifySteps(['assign_state()']);
+
+                // sidebar is expanded on load
+                assert.strictEqual(sidebar.collapsed, false);
+
+                // trigger click on toggle button
+                sidebar.toggle_btn.trigger('click');
+                // sidebar is collapsed after click
+                assert.strictEqual(sidebar.collapsed, true);
+                assert.verifySteps(['assign_state()']);
+
+                // trigger click on toggle button
+                sidebar.toggle_btn.trigger('click');
+                // sidebar is expanded after click
+                assert.strictEqual(sidebar.collapsed, false);
+                assert.verifySteps(['assign_state()']);
+            });
+        });
+    });
+});

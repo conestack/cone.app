@@ -26,7 +26,7 @@ module.exports = function(config) {
         },
         // tests
         {
-            pattern: '../js/tests/test_topnav.test.js',
+            pattern: '../js/tests/test_mobile_nav.js',
             type: 'module'
         },
         // helpers
@@ -37,6 +37,11 @@ module.exports = function(config) {
         }, 
         {
             pattern: '../js/tests/karma_viewport_states.js',
+            type: 'module',
+            included: false
+        }, 
+        {
+            pattern: '../js/tests/cone.test.js',
             type: 'module',
             included: false
         }, 

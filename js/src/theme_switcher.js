@@ -1,4 +1,10 @@
 import $ from 'jquery'
+import {createCookie, readCookie} from './cookie_functions.js';
+
+export const default_themes = [
+    '/static/light.css',
+    '/static/dark.css'
+];
 
 let theme_switcher = null;
 

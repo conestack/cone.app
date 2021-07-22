@@ -3,61 +3,65 @@ import {vp_states} from './viewport.js';
 import {createCookie, readCookie} from './cookie_functions.js';
 import {ViewPortAware} from './viewport.js';
 
+// declare elements
+let sidebar_menu = null;
+let mm_sb = null;
+let topnav = null;
+let navtree = null;
+
 export class SidebarMenu extends ViewPortAware {
-    static initialize(context) {
+    static initialize(context, mm_sb, topnav, navtree) {
         let elem = $('#sidebar_left', context);
 
         if(!elem.length) {
-            return null;
+            return;
         }
 
-        sidebar_menu = new SidebarMenu(elem);
+        sidebar_menu = new SidebarMenu(elem, mm_sb, topnav, navtree);
         return sidebar_menu;
     }
 
-    constructor(elem) {
+    constructor(elem, mm_sb, topnav, navtree) {
         super();
         this.elem = elem;
         this.content = $('#sidebar_content', elem);
 
-       /*  this.topnav = topnav;
-        this.mm_sb = MainMenuSidebar.initialize();
-        this.navtree = Navtree.initialize(); */
+        this.mm_sb = mm_sb;
+        this.topnav = topnav;
+        this.navtree = navtree;
 
-        // if (this.vp_state === vp_states.MOBILE) {
-        //     // move mainmenu sidebar to mobile menu
-        //     if (this.mm_sb !== null) {
-        //         this.mm_sb.elem.detach()
-        //         .appendTo(this.topnav.content)
-        //         .addClass('mobile');
-                
-        //         this.topnav.elem.css('display', 'none');
-        //     }
-        //     if (this.navtree !== null && this.topnav !== null) {
-        //         this.navtree.elem.detach().appendTo(this.topnav.content).addClass('mobile');
-        //         this.navtree.content.hide();
-        //         this.navtree.heading.off('click').on('click', () => {
-        //             this.navtree.content.slideToggle('fast');
-        //         });
-        //     }
-        // } else {
-        //     if (this.navtree !== null) {
-        //         this.navtree.elem.detach().appendTo(this.content).removeClass('mobile');
-        //         this.navtree.heading.off('click');
-        //         this.navtree.content.show();
-        //     }
-        //     if (this.mm_sb !== null) {
-        //         this.mm_sb.elem.detach()
-        //         .prependTo(this.content)
-        //         .removeClass('mobile');
-        //     }
-        // }
+        if (this.vp_state === vp_states.MOBILE) {
+            // move mainmenu sidebar to mobile menu
+            if (this.mm_sb !== null) {
+                this.mm_sb.elem.detach()
+                .appendTo(this.topnav.content)
+                .addClass('mobile');
+            }
+            if (this.navtree !== null && this.topnav !== null) {
+                this.navtree.elem.detach().appendTo(this.topnav.content).addClass('mobile');
+                this.navtree.content.hide();
+                this.navtree.heading.off('click').on('click', () => {
+                    this.navtree.content.slideToggle('fast');
+                });
+            }
+        } else {
+            if (this.navtree !== null) {
+                this.navtree.elem.detach().appendTo(this.content).removeClass('mobile');
+                this.navtree.heading.off('click');
+                this.navtree.content.show();
+            }
+            if (this.mm_sb !== null) {
+                this.mm_sb.elem.detach()
+                .prependTo(this.content)
+                .removeClass('mobile');
+            }
+        }
 
-        // if (this.mm_sb === null && this.topnav === null && this.navtree === null) {
-        //     // hide if no children are in content
-        //     this.elem.hide();
-        //     super.unload();
-        // }
+        if (this.mm_sb === null && this.topnav === null && this.navtree === null) {
+            // hide if no children are in content
+            this.elem.hide();
+            super.unload();
+        }
 
         // DOM elements
         this.toggle_btn = $('#sidebar-toggle-btn', elem);
@@ -104,8 +108,14 @@ export class SidebarMenu extends ViewPortAware {
         this.elem.attr('class', elem_class);
         this.toggle_arrow_elem.attr('class', button_class);
 
-        var evt = $.Event(`sidebar_${elem_class}`);
-        $(window).trigger(evt);
+        if(this.mm_sb !== null) {
+            if(this.collapsed) {
+                this.mm_sb.collapse();
+            }
+            else {
+                this.mm_sb.expand();
+            }
+        }
     }
 
     toggle_lock() {
@@ -125,10 +135,6 @@ export class SidebarMenu extends ViewPortAware {
         if(this.vp_state === vp_states.MOBILE) {
             this.collapsed = false;
             this.elem.hide();
-
-          /*   if(this.mm_sb !== null) {
-                this.topnav.mm_top.elem.css('display', 'none');
-            } */
         }
         else if (this.cookie !== null) {
             this.collapsed = this.cookie;
@@ -146,13 +152,6 @@ export class SidebarMenu extends ViewPortAware {
             this.collapsed = false;
             this.elem.show();
         }
-
-      /*   if(this.topnav.mm_top !== null) {
-            if(this.vp_state !== vp_states.MOBILE && this.mm_sb !== null) {
-                this.topnav.mm_top.elem.css('display', 'flex');
-            }
-        } */
-       
         this.assign_state();
     }
 
@@ -167,6 +166,6 @@ export class SidebarMenu extends ViewPortAware {
     }
 }
 
-export var sidebar_menu = SidebarMenu.initialize();
-
-// $(SidebarMenu.initialize());
+$(function() {
+    sidebar_menu = SidebarMenu.initialize();
+});
