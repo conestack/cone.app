@@ -272,10 +272,13 @@ ajax_form_template = """\
     while(child != null && child.nodeType == 3) {
         child = child.nextSibling;
     }
-    console.log('--------------- ajax_from_iframe --------------');
-    console.log('%(selector)s');
-    console.log('%(mode)s');
-    parent.ts.ajax.render_ajax_form(child, '%(selector)s', '%(mode)s', %(next)s);
+    parent.ts.ajax.render_ajax_form({
+        payload: child,
+        selector: '%(selector)s',
+        mode: '%(mode)s',
+        next: %(next)s,
+        error: %(error)s
+    });
 </script>
 """
 
@@ -290,12 +293,13 @@ def render_ajax_form(model, request, name):
         continuation = request.environ.get('cone.app.continuation')
         form_continue = AjaxFormContinue(result, continuation)
         rendered_form = form_continue.form
-        rendered = ajax_form_template % {
-            'form': rendered_form,
-            'selector': selector,
-            'mode': mode,
-            'next': form_continue.next
-        }
+        rendered = ajax_form_template % dict(
+            form=rendered_form,
+            selector=selector,
+            mode=mode,
+            next=form_continue.next,
+            error='false'
+        )
         request.response.body = safe_encode(rendered)
         return request.response
     except Exception:
@@ -305,12 +309,13 @@ def render_ajax_form(model, request, name):
         tb = format_traceback()
         continuation = AjaxMessage(tb, 'error', None)
         form_continue = AjaxFormContinue(result, [continuation])
-        rendered = ajax_form_template % {
-            'form': form_continue.form.replace(u'\n', u' '),  # XXX: replace?
-            'selector': selector,
-            'mode': mode,
-            'next': form_continue.next
-        }
+        rendered = ajax_form_template % dict(
+            form=form_continue.form.replace(u'\n', u' '),
+            selector=selector,
+            mode=mode,
+            next=form_continue.next,
+            error='true'
+        )
         return Response(rendered)
 
 
