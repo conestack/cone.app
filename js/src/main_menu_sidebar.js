@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { toggle_arrow } from './toggle_arrow.js';
 import {readCookie, createCookie} from './cookie_functions.js';
+import {topnav} from './topnav.js';
+import {sidebar_menu} from './sidebar_menu.js';
 
 export class MainMenuSidebar {
 
@@ -114,6 +116,23 @@ export class MainMenuSidebar {
                 createCookie('sidebar menus', this.display_data, null);
             });
         }
+    }
+
+    mv_to_mobile() {
+        this.elem
+            .detach()
+            .appendTo(topnav.content)
+            .addClass('mobile')
+        ;
+        topnav.elem.css('display', 'none');
+    }
+
+    mv_to_sidebar() {
+        this.elem
+            .detach()
+            .appendTo(sidebar_menu.content)
+            .removeClass('mobile')
+        ;
     }
 }
 

@@ -3,19 +3,15 @@ import {ScrollBarX} from '../src/scrollbar.js';
 import {MainMenuItem} from '../src/main_menu_item.js';
 import {vp_states} from '../src/viewport.js';
 
-let main_menu_top = null;
-
 export class MainMenuTop {
 
     static initialize(context) {
         let elem = $('#main-menu', context);
         if(!elem.length) {
-            main_menu_top = null;
-        } else {
-            main_menu_top = new MainMenuTop(elem);
+            return null;
         }
-
-        return main_menu_top;
+        mainmenu_top = new MainMenuTop(elem);
+        return mainmenu_top;
     }
 
     constructor(elem) {
@@ -43,7 +39,24 @@ export class MainMenuTop {
         }
     }
 
-    viewport_changed(state) {
+    mv_to_mobile() {
+        for (let i in this.main_menu_items) {
+            let item = this.main_menu_items[i];
+            if (item.menu) {
+                item.mv_to_mobile();
+            }
+        }
+    }
+
+    mv_to_top() {
+        for (let i in this.main_menu_items) {
+            let item = this.main_menu_items[i];
+            if (item.menu) {
+                item.mv_to_top();
+            }
+        }
+    }
+/*     viewport_changed(state) {
         for (let i in this.main_menu_items) {
             let item = this.main_menu_items[i];
             if (item.menu) {
@@ -54,5 +67,7 @@ export class MainMenuTop {
                 }
             }
         }
-    }
+    } */
 }
+
+export var mainmenu_top = MainMenuTop.initialize();

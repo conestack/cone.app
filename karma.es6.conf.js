@@ -10,6 +10,16 @@ module.exports = function(config) {
             'viewport'
         ],
         files: [
+        // css
+        {   
+            pattern: '../src/cone/app/browser/static/light.css', included: true
+        },
+        {   
+            pattern: '../src/cone/app/browser/static/dark.css', included: true
+        },
+        {   
+            pattern: '../src/cone/app/browser/static/style.css', included: true
+        },
         // js    
         {
             pattern: '../node_modules/jquery/src/**/*.js',
@@ -19,10 +29,6 @@ module.exports = function(config) {
             pattern: '../js/src/*.js',
             type: 'module',
             included: false
-        },
-        // css
-        {   
-            pattern: '../src/cone/app/browser/static/*.css', included: true
         },
         // tests
         {

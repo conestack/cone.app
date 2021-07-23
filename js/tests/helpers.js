@@ -9,7 +9,6 @@ export function set_vp(state) {
     $(window).trigger('resize');
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // SidebarMenu helpers
 ///////////////////////////////////////////////////////////////////////////////
@@ -403,4 +402,56 @@ export function create_mm_sidebar_elem() {
     `;
 
     $('#sidebar_content').append(mm_sidebar_html);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// cone.Navtree helpers
+///////////////////////////////////////////////////////////////////////////////
+
+export function create_navtree_elem() {
+  let navtree_html = `
+  <ul id="navtree">
+    <li class="sidebar-heading" id="navtree-heading">
+      <span>
+        Navigation
+      </span>
+      <i class="dropdown-arrow bi bi-chevron-down"></i>
+    </li>
+
+    <div id="navtree-content">
+
+      <li class="active navtreelevel_1">
+        <a href="#">
+          <i class="bi bi-heart"></i>
+          <span>Title</span>
+        </a>
+        <ul>
+          <li class="navtreelevel_2">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+              <span>Title</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="active navtreelevel_1">
+        <a href="#">
+          <i class="bi bi-heart"></i>
+          <span>Title</span>
+        </a>
+        <ul>
+          <li class="navtreelevel_2">
+            <a href="#">
+              <i class="bi bi-heart"></i>
+              <span>Title</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </div>
+  </ul>
+  `;
+
+  $('#sidebar_content').append(navtree_html);
 }

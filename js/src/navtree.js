@@ -1,4 +1,6 @@
 import $ from 'jquery'
+import { topnav } from './topnav.js';
+import { sidebar_menu } from './sidebar_menu.js';
 
 export class Navtree {
 
@@ -58,6 +60,23 @@ export class Navtree {
         .on('dragend', () => {
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
         });
+    }
+
+    mv_to_mobile() {
+        this.elem.detach().appendTo(topnav.content).addClass('mobile');
+        this.content.hide();
+        this.heading.off('click').on('click', () => {
+            this.content.slideToggle('fast');
+        });
+    }
+
+    mv_to_sidebar() {
+        this.elem
+            .detach()
+            .appendTo(sidebar_menu.content)
+            .removeClass('mobile');
+        this.heading.off('click');
+        this.content.show();
     }
 }
 

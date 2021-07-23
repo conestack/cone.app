@@ -25,15 +25,14 @@ export class Topnav extends ViewPortAware {
         this.toggle_button.on('click', this._toggle_menu_handle);
 
 
-        // children
-        this.mm_top = MainMenuTop.initialize();
+/*         this.mm_top = MainMenuTop.initialize(); */
 
         this.viewport_changed();
 
         // set mainmenu top viewport state
-        if(this.mm_top !== null) {
+/*         if(this.mm_top !== null) {
             this.mm_top.viewport_changed(this.vp_state);
-        }
+        } */
 
         // tmp
         this.pt = $('#personaltools');
@@ -57,9 +56,9 @@ export class Topnav extends ViewPortAware {
         }
 
         // update mainmenu top viewport state
-        if(this.mm_top !== null) {
+/*         if(this.mm_top !== null) {
             this.mm_top.viewport_changed(this.vp_state);
-        }
+        } */
 
         if (this.vp_state === vp_states.MOBILE) {
             this.content.hide();
@@ -70,18 +69,18 @@ export class Topnav extends ViewPortAware {
                 this.content.hide();
             });
 
-            if(this.mm_top !== null) {
+/*             if(this.mm_top !== null) {
                 this.logo.css('margin-right', 'auto');
-            }
+            } */
         } else {
             this.content.show();
             this.elem.removeClass('mobile');
 
             this.tb_dropdowns.off();
 
-            if(this.mm_top !== null){
+/*             if(this.mm_top !== null){
                 this.logo.css('margin-right', '2rem');
-            }
+            } */
         }
 
         // tmp
