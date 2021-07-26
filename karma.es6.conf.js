@@ -10,6 +10,11 @@ module.exports = function(config) {
             'viewport'
         ],
         files: [
+        // bootstrap
+        {   
+            pattern: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css', 
+            included: true
+        },
         // css
         {   
             pattern: '../src/cone/app/browser/static/light.css', included: true
@@ -45,12 +50,7 @@ module.exports = function(config) {
             pattern: '../js/tests/karma_viewport_states.js',
             type: 'module',
             included: false
-        }, 
-        {
-            pattern: '../js/tests/cone.test.js',
-            type: 'module',
-            included: false
-        }, 
+        }
        ],
         browsers: [
             'ChromeHeadless'

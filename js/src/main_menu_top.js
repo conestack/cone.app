@@ -8,9 +8,10 @@ export class MainMenuTop {
     static initialize(context) {
         let elem = $('#main-menu', context);
         if(!elem.length) {
-            return null;
+            mainmenu_top = null;
+        } else {
+            mainmenu_top = new MainMenuTop(elem);
         }
-        mainmenu_top = new MainMenuTop(elem);
         return mainmenu_top;
     }
 

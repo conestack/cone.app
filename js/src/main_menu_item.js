@@ -22,6 +22,10 @@ export class MainMenuItem {
         this.render_dd();
 
         this._toggle = this.mouseenter_toggle.bind(this);
+        this.elem.off().on('mouseenter mouseleave', this._toggle);
+        this.menu.off().on('mouseenter mouseleave', () => {
+            this.menu.toggle();
+        });
     }
 
     render_dd() {
@@ -44,7 +48,6 @@ export class MainMenuItem {
     }
 
     mv_to_mobile() {
-        console.log('mv to mobile')
         // if(cone.main_menu_sidebar) {
         //     return;
         // }
@@ -57,13 +60,12 @@ export class MainMenuItem {
     }
 
     mv_to_top() {
-        console.log('mv to top')
         this.menu.detach().appendTo('#layout');
         this.arrow.off();
         this.elem.off().on('mouseenter mouseleave', this._toggle);
         this.menu.off().on('mouseenter mouseleave', () => {
             this.menu.toggle();
-        })
+        });
     }
 
     mouseenter_toggle(e) {

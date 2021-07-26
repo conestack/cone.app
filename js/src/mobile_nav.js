@@ -12,21 +12,21 @@ export class MobileNav extends ViewPortAware {
     constructor() {
         super();
 
-        this.children = [mainmenu_sidebar, navtree, mainmenu_top];
+        this.children = [mainmenu_sidebar, navtree];
 
         if(sidebar_menu === null && topnav === null) {
-            return null;
+            return;
         }
 
         // // TODO: create topnav if null
         // else if(topnav === null) {
-        //     // create topnav or go with icon bar?
+        //     // create topnav or go with sidebar icon bar?
         // }
 
         // hide if no children are in content
         if (sidebar_menu !== null &&
             mainmenu_sidebar === null &&
-            navtree === null 
+            navtree === null
         ){
             sidebar_menu.elem.hide();
             // sidebar.unload();

@@ -1,4 +1,17 @@
 ///////////////////////////////////////////////////////////////////////////////
+// create layout element
+///////////////////////////////////////////////////////////////////////////////
+
+export function create_layout_elem() {
+  let layout_html = $(`
+    <div id="layout" style="height:100vh; width:100vw">
+      <div id="wrapper"></div>
+    </div>
+  `);
+  $('body').append(layout_html);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Viewport helpers
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +27,9 @@ export function set_vp(state) {
 ///////////////////////////////////////////////////////////////////////////////
 
 export function create_sidebar_elem() {
+    if ($('#layout').length === 0) {
+      create_layout_elem();
+    }
     // create dummy sidebar element
     let sidebar_html = `
         <div id="sidebar_left">
@@ -31,7 +47,7 @@ export function create_sidebar_elem() {
         </div>
     `;
     // append dummy element to DOM
-    $('body').append(sidebar_html);
+    $('#wrapper').append(sidebar_html);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,6 +55,10 @@ export function create_sidebar_elem() {
 ///////////////////////////////////////////////////////////////////////////////
 
 export function create_topnav_elem() {
+    if ($('#layout').length === 0) {
+      create_layout_elem();
+    }
+
     // create html element
     let topnav_html = `
         <div id="topnav"
@@ -77,60 +97,7 @@ export function create_topnav_elem() {
         </div>
     `;
     // append element to DOM
-    $('body').append(topnav_html);
-}
-
-export function topnav_style_to_mobile(topnav) {
-    // mock required css styling for mobile viewport
-
-    topnav.elem.css({
-        'padding': '1rem',
-        'height': '4rem',
-    });
-
-    topnav.logo.css('margin-right', 'auto');
-    $('span', topnav.logo).css('display', 'none');
-
-    topnav.content.css({
-        'position': 'absolute',
-        'top': '4rem',
-        'left': 0,
-        'display': 'block',
-        'flex-direction': 'column',
-        'width': '100%',
-        'z-index': 1000
-    }).hide();
-
-    topnav.toggle_button.css({
-        'display': 'block',
-        'font-size': '2rem',
-        'margin-left': '1rem'
-    });
-}
-
-export function topnav_style_to_desktop(topnav) {
-    // mock required css styling for desktop viewport (states 1, 2, 3)
-
-    topnav.elem.css({
-        'padding': '0',
-        'padding-left': '.75rem'
-    });
-
-    topnav.logo.css('margin-right', 'auto');
-    $('span', topnav.logo).css('display', 'inline-block');
-
-    topnav.content.css({
-        'position': 'absolute',
-        'top': '',
-        'left': '',
-        'display': 'contents',
-        'flex-direction': 'row',
-        'width': '100%'
-    });
-
-    topnav.toggle_button.css({
-        'display': 'none',
-    });
+    $('#layout').append(topnav_html);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,37 +130,6 @@ export function create_mm_top_elem() {
     $('#topnav-content').append(mainmenu_html);
 }
 
-export function mm_top_style_to_desktop() {
-    // manually set css as set in style.css
-    $('.mainmenu-item').css({
-        'white-space': 'nowrap',
-        'padding': '0 10px'
-    });
-}
-
-export function mm_top_style_to_mobile() {
-    // manually set mobile css as set in style.css
-    $('#main-menu').css({
-        'transform': 'none',
-        'overflow': 'visible'
-    });
-
-    $('#mainmenu').css({
-        'padding': '0',
-        'line-height': '2',
-        'width': '100%',
-        'flex-direction': 'column',
-        'overflow': 'hidden',
-        'transform': 'none'
-    });
-
-    $('#mainmenu .mainmenu-title').css({
-        'display': 'inline-block'
-    });
-
-    $('.mainmenu-item').css('display', 'block');
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // cone.MainMenuItem test helpers
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,20 +139,20 @@ export function create_mm_items(count) {
     let data_menu_items =
         [
             {
-                "selected": true,
+                "selected": false,
                 "icon": "bi bi-kanban",
                 "id": "child_1",
                 "description": null,
-                "url": "http://localhost:8081/child_1/child_1",
-                "target": "http://localhost:8081/child_1/child_1",
-                "title": ""
+                "url": "#",
+                "target": "#",
+                "title": "child_1"
             },
             {
-                "selected": false, "icon":
-                "bi bi-kanban", "id": "child_2",
+                "selected": false, 
+                "icon": "bi bi-kanban", "id": "child_2",
                 "description": null,
-                "url": "http://localhost:8081/child_1/child_2",
-                "target": "http://localhost:8081/child_1/child_2",
+                "url": "#",
+                "target": "#",
                 "title": "child_2"
             },
             {
@@ -225,8 +161,8 @@ export function create_mm_items(count) {
                 "bi bi-kanban",
                 "id": "child_3",
                 "description": null,
-                "url": "http://localhost:8081/child_1/child_3",
-                "target": "http://localhost:8081/child_1/child_3",
+                "url": "#",
+                "target": "#",
                 "title": "child_3"
             }
         ]
@@ -241,7 +177,7 @@ export function create_mm_items(count) {
                   align-items: center;
                   height: 100%;
                 "
-                id="elem${count}">
+                id="elem${i}">
               <a>
                 <i class="bi bi-heart"></i>
                 <span class="mainmenu-title">
@@ -255,7 +191,7 @@ export function create_mm_items(count) {
         $('#mainmenu').append(mainmenu_item_html);
 
         // set item menu-items data
-        $(`#elem${count}`).data('menu-items', data_menu_items);
+        $(`#elem${i}`).data('menu-items', data_menu_items);
     }
 }
 
@@ -284,6 +220,9 @@ export function create_empty_item() {
 ///////////////////////////////////////////////////////////////////////////////
 
 export function create_searchbar_elem() {
+    if ($('#layout').length === 0) {
+      create_layout_elem();
+    }
     // create dummy searchber element
     let searchbar_html = `
         <div id="cone-searchbar">
@@ -317,7 +256,7 @@ export function create_searchbar_elem() {
         </div>
     `;
     // append dummy element to DOM
-    $('body').append(searchbar_html);
+    $('#layout').append(searchbar_html);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

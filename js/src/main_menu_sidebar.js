@@ -9,9 +9,10 @@ export class MainMenuSidebar {
     static initialize(context) {
         let elem = $('#mainmenu_sidebar', context);
         if(!elem.length) {
-            return null;
+            mainmenu_sidebar = null;
+        } else {
+            mainmenu_sidebar = new MainMenuSidebar(elem);
         }
-        mainmenu_sidebar = new MainMenuSidebar(elem);
         return mainmenu_sidebar;
     }
 

@@ -8,10 +8,11 @@ export class SidebarMenu extends ViewPortAware {
         let elem = $('#sidebar_left', context);
 
         if(!elem.length) {
-            return null;
+            sidebar_menu = null;
+        } else {
+            sidebar_menu = new SidebarMenu(elem);
         }
 
-        sidebar_menu = new SidebarMenu(elem);
         return sidebar_menu;
     }
 
