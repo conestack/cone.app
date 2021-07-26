@@ -1,6 +1,5 @@
 import $ from 'jquery'
 import {ViewPortAware, vp_states} from './viewport.js';
-import {MainMenuTop} from './main_menu_top.js';
 import {toggle_arrow} from './toggle_arrow.js';
 
 export class Topnav extends ViewPortAware {
@@ -24,15 +23,7 @@ export class Topnav extends ViewPortAware {
         this._toggle_menu_handle = this.toggle_menu.bind(this);
         this.toggle_button.on('click', this._toggle_menu_handle);
 
-
-/*         this.mm_top = MainMenuTop.initialize(); */
-
         this.viewport_changed();
-
-        // set mainmenu top viewport state
-/*         if(this.mm_top !== null) {
-            this.mm_top.viewport_changed(this.vp_state);
-        } */
 
         // tmp
         this.pt = $('#personaltools');
@@ -55,11 +46,6 @@ export class Topnav extends ViewPortAware {
             super.viewport_changed(e);
         }
 
-        // update mainmenu top viewport state
-/*         if(this.mm_top !== null) {
-            this.mm_top.viewport_changed(this.vp_state);
-        } */
-
         if (this.vp_state === vp_states.MOBILE) {
             this.content.hide();
             this.elem.addClass('mobile');
@@ -72,6 +58,7 @@ export class Topnav extends ViewPortAware {
 /*             if(this.mm_top !== null) {
                 this.logo.css('margin-right', 'auto');
             } */
+
         } else {
             this.content.show();
             this.elem.removeClass('mobile');
@@ -81,6 +68,7 @@ export class Topnav extends ViewPortAware {
 /*             if(this.mm_top !== null){
                 this.logo.css('margin-right', '2rem');
             } */
+
         }
 
         // tmp

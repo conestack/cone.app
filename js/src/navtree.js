@@ -9,9 +9,7 @@ export class Navtree {
         if (!elem.length) { 
             return null;
         }
-/*         if (navtree !== null) {
-            navtree.unload();
-        } */
+
         navtree = new Navtree(elem);
         return navtree;
     }
@@ -31,7 +29,6 @@ export class Navtree {
     }
 
     unload() {
-        super.unload();
         this.heading.off('click');
         this.toggle_elems.off('mouseenter', this._mouseenter_handle)
                          .off('mouseleave', this._restore);

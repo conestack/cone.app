@@ -1,7 +1,7 @@
 import {Searchbar} from '../src/searchbar.js';
 import {ViewPortAware} from '../src/viewport.js';
 import {karma_vp_states} from './karma_viewport_states.js';
-import * as helpers from './helpers.js';
+import * as helpers from './test-helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Searchbar tests
@@ -23,18 +23,15 @@ QUnit.module('Searchbar', hooks => {
         hooks.beforeEach(() =>{
             // create dummy searchbar element
             helpers.create_searchbar_elem();
+            helpers.set_vp('large');
         });
 
         hooks.afterEach(() => {
             // unset searchbar
             sb = null;
             // remove dummy searchbar from DOM
-            $('#cone-searchbar').remove();
-        });
-
-        QUnit.test('blah', assert => {
-            assert.ok(true);
-            console.log(karma_vp_states.length)
+            $('#layout').remove();
+            helpers.set_vp('large');
         });
 
         for (let i=0; i<karma_vp_states.length; i++) {

@@ -1,7 +1,6 @@
 import $ from 'jquery'
 import {ScrollBarX} from '../src/scrollbar.js';
 import {MainMenuItem} from '../src/main_menu_item.js';
-import {vp_states} from '../src/viewport.js';
 
 export class MainMenuTop {
 
@@ -57,18 +56,6 @@ export class MainMenuTop {
             }
         }
     }
-/*     viewport_changed(state) {
-        for (let i in this.main_menu_items) {
-            let item = this.main_menu_items[i];
-            if (item.menu) {
-                if (state === vp_states.MOBILE) {
-                    item.mv_to_mobile();
-                } else {
-                    item.mv_to_top();
-                }
-            }
-        }
-    } */
 }
 
 export var mainmenu_top = MainMenuTop.initialize();

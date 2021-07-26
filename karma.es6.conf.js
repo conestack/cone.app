@@ -37,12 +37,36 @@ module.exports = function(config) {
         },
         // tests
         {
-            pattern: '../js/tests/test_mobile_nav.js',
+            pattern: '../js/tests/test_viewport.js',
             type: 'module'
         },
+        {
+            pattern: '../js/tests/test_searchbar.js',
+            type: 'module'
+        },
+        {
+            pattern: '../js/tests/test_sidebar_menu.js',
+            type: 'module'
+        },
+        {
+            pattern: '../js/tests/test_main_menu_sidebar.js',
+            type: 'module'
+        },
+        {
+            pattern: '../js/tests/test_navtree.js',
+            type: 'module'
+        },
+        {
+            pattern: '../js/tests/test_topnav.js',
+            type: 'module'
+        },
+        // {
+            // pattern: '../js/tests/test_mobile_nav.js',
+            // type: 'module'
+        // },
         // helpers
         {
-            pattern: '../js/tests/helpers.js',
+            pattern: '../js/tests/test-helpers.js',
             type: 'module',
             included: false
         }, 

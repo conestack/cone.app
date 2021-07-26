@@ -8,9 +8,12 @@ export class MainMenuSidebar {
 
     static initialize(context) {
         let elem = $('#mainmenu_sidebar', context);
-        if(!elem.length) {
+        if(!elem.length || sidebar_menu === null) {
             mainmenu_sidebar = null;
         } else {
+            if(mainmenu_sidebar !== null) {
+                mainmenu_sidebar.unload();
+            }
             mainmenu_sidebar = new MainMenuSidebar(elem);
         }
         return mainmenu_sidebar;
@@ -31,11 +34,10 @@ export class MainMenuSidebar {
         $(window).on('sidebar_expanded', this._expand);
     }
 
-    // unload() {
-    //     super.unload();
-    //     this.items.off();
-    //     this.arrows.off();
-    // }
+    unload() {
+        this.items.off();
+        this.arrows.off();
+    }
 
     initial_cookie() {
         let cookie = readCookie('sidebar menus');

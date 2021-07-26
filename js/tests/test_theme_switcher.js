@@ -1,5 +1,5 @@
 import {default_themes, ThemeSwitcher} from '../src/theme_switcher.js';
-import {create_theme_switcher_elem}from './helpers.js';
+import {create_theme_switcher_elem} from './test-helpers.js';
 import {createCookie} from '../src/cookie_functions.js';
 
 ///////////////////////////////////////////////////////////////////////////////

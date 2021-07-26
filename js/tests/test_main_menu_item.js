@@ -1,6 +1,6 @@
 import {MainMenuItem} from '../src/main_menu_item.js';
 import {MainMenuTop} from '../src/main_menu_top.js';
-import * as helpers from './helpers.js';
+import * as helpers from './test-helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuItem tests

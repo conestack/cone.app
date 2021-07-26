@@ -21,45 +21,6 @@ export class SidebarMenu extends ViewPortAware {
         this.elem = elem;
         this.content = $('#sidebar_content', elem);
 
-       /*  this.topnav = topnav;
-        this.mm_sb = MainMenuSidebar.initialize();
-        this.navtree = Navtree.initialize(); */
-
-        // if (this.vp_state === vp_states.MOBILE) {
-        //     // move mainmenu sidebar to mobile menu
-        //     if (this.mm_sb !== null) {
-        //         this.mm_sb.elem.detach()
-        //         .appendTo(this.topnav.content)
-        //         .addClass('mobile');
-                
-        //         this.topnav.elem.css('display', 'none');
-        //     }
-        //     if (this.navtree !== null && this.topnav !== null) {
-        //         this.navtree.elem.detach().appendTo(this.topnav.content).addClass('mobile');
-        //         this.navtree.content.hide();
-        //         this.navtree.heading.off('click').on('click', () => {
-        //             this.navtree.content.slideToggle('fast');
-        //         });
-        //     }
-        // } else {
-        //     if (this.navtree !== null) {
-        //         this.navtree.elem.detach().appendTo(this.content).removeClass('mobile');
-        //         this.navtree.heading.off('click');
-        //         this.navtree.content.show();
-        //     }
-        //     if (this.mm_sb !== null) {
-        //         this.mm_sb.elem.detach()
-        //         .prependTo(this.content)
-        //         .removeClass('mobile');
-        //     }
-        // }
-
-        // if (this.mm_sb === null && this.topnav === null && this.navtree === null) {
-        //     // hide if no children are in content
-        //     this.elem.hide();
-        //     super.unload();
-        // }
-
         // DOM elements
         this.toggle_btn = $('#sidebar-toggle-btn', elem);
         this.toggle_arrow_elem = $('i', this.toggle_btn);

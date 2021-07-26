@@ -796,7 +796,7 @@ QUnit.module('ScrollBarX', hooks => {
                     done();
                 }, 100);
             });
-        })
+        });
 
         QUnit.module('properties', hooks => {
             let test_scrollbar_x;
@@ -912,7 +912,7 @@ QUnit.module('ScrollBarX', hooks => {
                 test_scrollbar_x.contentsize = 400;
                 test_scrollbar_x.scrollsize = 200;
                 // calculate thumb size
-                let thumbsize = test_scrollbar_x.scrollsize ** 2
+                let thumbsize = Math.pow(test_scrollbar_x.scrollsize, 2)
                                 / test_scrollbar_x.contentsize;
 
                 // update
@@ -1208,7 +1208,7 @@ QUnit.module('ScrollBarY', hooks => {
                 test_scrollbar_y.contentsize = 400;
                 test_scrollbar_y.scrollsize = 200;
                 // calculate thumb size
-                let thumbsize = test_scrollbar_y.scrollsize ** 2
+                let thumbsize = Math.pow(test_scrollbar_y.scrollsize, 2)
                                 / test_scrollbar_y.contentsize;
 
                 // update

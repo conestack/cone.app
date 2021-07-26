@@ -48,9 +48,6 @@ export class MainMenuItem {
     }
 
     mv_to_mobile() {
-        // if(cone.main_menu_sidebar) {
-        //     return;
-        // }
         this.menu.off().detach().appendTo(this.elem).css('left', '0');
         this.elem.off();
         this.arrow.off().on('click', () => {
