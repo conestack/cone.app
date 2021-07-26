@@ -272,7 +272,7 @@ ajax_form_template = """\
     while(child != null && child.nodeType == 3) {
         child = child.nextSibling;
     }
-    parent.ts.ajax.render_ajax_form({
+    parent.ts.ajax.form({
         payload: child,
         selector: '%(selector)s',
         mode: '%(mode)s',
