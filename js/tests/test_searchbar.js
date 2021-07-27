@@ -7,15 +7,7 @@ import * as helpers from './test-helpers.js';
 // Searchbar tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('Searchbar', hooks => {
-
-    hooks.before(() => {
-        console.log('Set up Searchbar tests');
-    });
-
-    hooks.after(() => {
-        console.log('Tear down Searchbar tests');
-    });
+QUnit.module('Searchbar', () => {
 
     QUnit.module('constructor', hooks => {
         let sb;
@@ -91,14 +83,7 @@ QUnit.module('Searchbar', hooks => {
         }
     });
 
-    QUnit.module('methods', hooks => {
-        hooks.before(() => {
-            console.log('Set up Searchbar method tests');
-        });
-
-        hooks.after(() => {
-            console.log('Tear down Searchbar method tests');
-        });
+    QUnit.module('methods', () => {
 
         QUnit.module('vp_changed', hooks => {
             let VPA = ViewPortAware,

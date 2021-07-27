@@ -22,8 +22,6 @@ QUnit.module('ThemeSwitcher', hooks => {
     `;
 
     hooks.before(() => {
-        console.log('Set up ThemeSwitcher tests');
-
         // append dummy head styles to DOM
         $('head').append(head_styles);
     });
@@ -46,8 +44,6 @@ QUnit.module('ThemeSwitcher', hooks => {
     });
 
     hooks.after(() => {
-        console.log('Tear down ThemeSwitcher tests');
-
         // remove dummy head styles from head
         $(head_styles).remove();
     });

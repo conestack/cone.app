@@ -113,8 +113,10 @@
   border: 0;
   border-radius: 0;
   padding: 0;
-  background-color: transparent;
   font-size: 15px !important;
+}
+#cone-searchbar #livesearch-group * :not(#searchbar-button) {
+  background-color: transparent;
 }
 #cone-searchbar #searchbar-button {
   width: 2.2rem;
@@ -641,6 +643,7 @@ ul {
   display: none;
   flex-direction: column;
   width: 100%;
+  padding-bottom: 1rem;
   z-index: 1000;
 }
 #topnav.mobile #topnav-content > * {
@@ -766,6 +769,14 @@ ul {
 }
 
 /* ----- external scss files ----- */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
@@ -865,9 +876,9 @@ body {
 }
 
 #test {
-  height:22.5px;
-  width:1px;
-  display:grid;
+  height: 22.5px;
+  width: 1px;
+  display: grid;
 }
 
 /*# sourceMappingURL=style.css.map */

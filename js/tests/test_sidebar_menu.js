@@ -15,22 +15,13 @@ import {createCookie, readCookie} from '../src/cookie_functions.js';
 // SidebarMenu tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('SidebarMenu', hooks => {
-    hooks.before(() => {
-        console.log('Set up SidebarMenu tests');
-    });
-
-    hooks.after(() => {
-        console.log('Tear down SidebarMenu tests');
-    });
+QUnit.module('SidebarMenu', () => {
 
     QUnit.module('constructor', () => {
 
         QUnit.module('properties', hooks => {
 
             hooks.before(() => {
-                console.log('Set up SidebarMenu properties tests');
-
                 // set viewport to desktop size
                 helpers.set_vp('large');
 
@@ -39,8 +30,6 @@ QUnit.module('SidebarMenu', hooks => {
             });
 
             hooks.after(() =>{
-                console.log('Tear down SidebarMenu properties tests');
-
                 // remove dummy sidebar from DOM
                 $('#layout').remove();
             });
@@ -84,26 +73,16 @@ QUnit.module('SidebarMenu', hooks => {
         });
     });
 
-    QUnit.module('methods', hooks =>{
-        hooks.before(() => {
-            console.log('Set up SidebarMenu method tests');
-        });
-
-        hooks.after(() => {
-            console.log('Tear down SidebarMenu method tests');
-        });
+    QUnit.module('methods', () =>{
 
         QUnit.module('initial_load()', hooks => {
 
             hooks.beforeEach(() => {
-                console.log('Set up SidebarMenu.initial_load tests');
                 // create dummy sidebar html elem
                 helpers.create_sidebar_elem();
             });
 
             hooks.afterEach(() => {
-                console.log('Tear down SidebarMenu.initial_load tests');
-
                 // remove dummy element from DOM
                 $('#layout').remove();
             });
@@ -179,8 +158,6 @@ QUnit.module('SidebarMenu', hooks => {
         QUnit.module('toggle_lock()', hooks => {
 
             hooks.beforeEach(() => {
-                console.log('Set up SidebarMenu.toggle_lock tests');
-
                 // set viewport
                 helpers.set_vp('large');
 
@@ -189,8 +166,6 @@ QUnit.module('SidebarMenu', hooks => {
             });
 
             hooks.afterEach(() => {
-                console.log('Tear down SidebarMenu.toggle_lock tests');
-
                 // remove dummy element from DOM
                 $('#sidebar_left').remove();
 
@@ -247,19 +222,8 @@ QUnit.module('SidebarMenu', hooks => {
         });
 
         QUnit.module('viewport_changed()', hooks => {
-            let TestSidebarMenu,
-                sidebar,
-                VPA = ViewPortAware,
-                super_vp_changed_origin = VPA.prototype.viewport_changed;
-
-            hooks.beforeEach(() => {
-                console.log('Set up SidebarMenu.viewport_changed tests');
-
-            });
 
             hooks.afterEach(() => {
-                console.log('Tear down SidebarMenu.viewport_changed tests');
-
                 // remove dummy element from DOM
                 $('#layout').remove();
 
@@ -350,9 +314,7 @@ QUnit.module('SidebarMenu', hooks => {
 
         QUnit.module('assign_state()', hooks => {
 
-            hooks.beforeEach(assert => {
-                console.log('Set up SidebarMenu.toggle_lock tests');
-
+            hooks.beforeEach(() => {
                 // create dummy sidebar element
                 helpers.create_sidebar_elem();
 
@@ -361,8 +323,6 @@ QUnit.module('SidebarMenu', hooks => {
             });
 
             hooks.afterEach(() => {
-                console.log('Tear down SidebarMenu.toggle_lock tests');
-
                 // remove dummy element from DOM
                 $('#layout').remove();
 
@@ -398,16 +358,12 @@ QUnit.module('SidebarMenu', hooks => {
 
         QUnit.module('toggle_menu()', hooks => {
 
-            hooks.before(assert => {
-                console.log('Set up SidebarMenu.toggle_menu tests');
-
+            hooks.before(() => {
                 // create dummy sidebar element
                 helpers.create_sidebar_elem();
             });
 
             hooks.after(() => {
-                console.log('Tear down SidebarMenu.toggle_menu tests');
-
                 // remove dummy element from DOM
                 $('#layout').remove();
             });

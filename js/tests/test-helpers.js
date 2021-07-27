@@ -1,3 +1,42 @@
+import $ from 'jquery';
+
+///////////////////////////////////////////////////////////////////////////////
+// jQuery overrides
+///////////////////////////////////////////////////////////////////////////////
+
+$.fn._slideToggle = $.fn.slideToggle;
+$.fn.slideToggle = function(){
+    if(this.css('display') !== 'none') {
+        $.fn.hide.apply(this);
+    } else {
+        $.fn.show.apply(this);
+    }
+};
+
+$.fn._slideUp = $.fn.slideUp;
+$.fn.slideUp = function(){
+    $.fn.hide.apply(this);
+};
+
+$.fn._fadeToggle = $.fn.fadeToggle;
+$.fn.fadeToggle = function(){
+    if(this.css('display') !== 'none') {
+        $.fn.hide.apply(this);
+    } else {
+        $.fn.show.apply(this);
+    }
+};
+
+$.fn._fadeOut = $.fn.fadeOut;
+$.fn.fadeOut = function(){
+    $.fn.hide.apply(this);
+};
+
+$.fn._fadeIn = $.fn.fadeIn;
+$.fn.fadeIn = function(){
+    $.fn.show.apply(this);
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 // create layout element
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,44 +100,120 @@ export function create_topnav_elem() {
 
     // create html element
     let topnav_html = `
-        <div id="topnav"
-             style="
-               box-sizing: border-box;
-               height:4rem;
-               display:flex;
-               flex-direction:row;
-               align-items: center;
-               width: 100%;
-               padding-left: .75rem;">
-          <div id="cone-logo"
-               style="
-                 font-size:1.5rem;
-                 font-family: Arial;
-                 margin-right: auto;
-                 white-space: nowrap;
-                 width: 32px;
-                 height: 32px;">
+        <div id="topnav">
+          <div id="cone-logo">
             <a>
               <img class="logo"
-                   src="/static/images/cone-logo-cone.svg"
-                   style="height:32px;">
+                   src="../../src/cone/app/browser/static/images/cone-logo-cone.svg">
               <span>
                 Cone
               </span>
             </a>
           </div>
 
-          <div id="topnav-content" style="display:contents">
+          <div id="topnav-content">
           </div>
 
-          <div id="mobile-menu-toggle" style="display:none">
+          <div id="mobile-menu-toggle">
             <i class="bi bi-list"></i>
           </div>
         </div>
     `;
     // append element to DOM
-    $('#layout').append(topnav_html);
+    $('#layout').prepend(topnav_html);
 }
+
+// create dummy toolbar dropdowns element
+export function create_toolbar_elem() {
+
+  let tb_dropdown_elem = $(`
+      <ul id="toolbar-top">
+
+      <li class="dropdown" id="language">
+        <img class="dropdown-toggle"
+            role="button"
+            data-bs-toggle="dropdown"
+            src="../../src/cone/app/browser/static/images/flags/gb.svg"
+            height="15em">
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li class="toolbar-title">Language</li>
+          <li>
+            <a href="#">
+              <img src="/static/images/flags/fr.svg" height="15em">
+              <span>FR</span>
+            </a>
+            </li>
+          <li>
+            <a href="#">
+              <img src="/static/images/flags/de.svg" height="15em">
+              <span>DE</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <img src="/static/images/flags/at.svg" height="15em">
+              <span>AT</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="dropdown" id="settings">
+        <i class="dropdown-toggle bi bi-gear-fill" role="button" data-bs-toggle="dropdown"></i>
+        <ul class="dropdown-menu">
+          <li class="toolbar-title">Settings</li>
+          <li class="form-check form-switch">
+            <input class="form-check-input" id="switch_mode" type="checkbox">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Toggle dark mode</label>
+          </li>
+          <li>
+            <a href="#">Preferences</a>
+          </li>
+        </ul>
+      </li>
+
+    </ul>
+  `);
+  // append dummy element to DOM 
+  $('#topnav-content').append(tb_dropdown_elem);
+}
+
+// create dummy personaltools element
+export function create_pt_elem() {
+  let personaltools = $(`
+      <div class="dropdown" id="personaltools">
+      <div id="pt-wrapper" class="dropdown-toggle" role="button" data-bs-toggle="dropdown">
+        <div class="profile-image">
+          <!-- <img src=""> -->
+          <i class="bi bi-person bi-md"></i> 
+        </div>
+
+        <div class="user-specs">
+          <span class="user-account-name"
+                tal:content="context.user">
+            Admin
+          </span>
+          <span class="user-account-position">
+            position
+          </span>
+        </div>
+        <i class="dropdown-arrow bi bi-chevron-down"></i>
+      </div>
+
+      <div class="dropdown-menu dropdown-menu-end" id="user">
+        <ul class="list-unstyled">
+          <tal:li repeat="item context.items">
+            <tal:action replace="structure item" />
+          </tal:li>
+        </ul>
+      </div>
+    </div>
+  `);
+  // append dummy element to DOM 
+  $('#topnav-content').append(personaltools);
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuTop test helpers
@@ -107,22 +222,8 @@ export function create_topnav_elem() {
 export function create_mm_top_elem() {
     // create and append mainmenu DOM element
     let mainmenu_html = `
-        <div id="main-menu"
-             style="
-               display:flex;
-               flex-direction:row;
-               flex-wrap:nowrap;
-               align-items: center;
-               height: 100%;
-               margin-right: auto;
-               padding-top: .5rem;">
-          <ul id="mainmenu"
-              style="
-                display: inline-flex;
-                flex-wrap: nowrap;
-                height: 100%;
-                margin-bottom: 0;
-                padding: 0;">
+        <div id="main-menu">
+          <ul id="mainmenu">
           </ul>
         </div>
     `;
@@ -296,14 +397,14 @@ export function create_mm_sidebar_elem() {
           <li class="active node-child_1">
             <a href="#">
               <i class="bi bi-heart"></i>
-                <span">Title</span>
+                <span>Title</span>
             </a>
           </li>
 
           <li class="node-child_2 sb-menu">
             <a href="#">
               <i class="bi bi-heart"></i>
-                <span">Title</span>
+                <span>Title</span>
             </a>
             <a href="#" class="sidebar-arrow">
               <i class="dropdown-arrow bi bi-chevron-down"></i>
@@ -322,7 +423,7 @@ export function create_mm_sidebar_elem() {
           <li class="node-child_3 sb-menu">
             <a href="#">
               <i class="bi bi-heart"></i>
-                <span">Title</span>
+                <span>Title</span>
             </a>
             <a href="#" class="sidebar-arrow">
               <i class="dropdown-arrow bi bi-chevron-down"></i>

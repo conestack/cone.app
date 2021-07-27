@@ -138,8 +138,11 @@ $threshold_mobile: 560px;
     border: 0;
     border-radius: 0;
     padding: 0;
-    background-color: transparent;
     font-size: 15px!important;
+  }
+
+  #livesearch-group * :not(#searchbar-button) {
+    background-color: transparent;
   }
 
   #searchbar-button {

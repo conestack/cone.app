@@ -127,7 +127,6 @@ export class MainMenuSidebar {
             .appendTo(topnav.content)
             .addClass('mobile')
         ;
-        topnav.elem.css('display', 'none');
     }
 
     mv_to_sidebar() {

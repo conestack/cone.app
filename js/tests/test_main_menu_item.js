@@ -1,27 +1,19 @@
 import {MainMenuItem} from '../src/main_menu_item.js';
-import {MainMenuTop} from '../src/main_menu_top.js';
+import {MainMenuTop, mainmenu_top} from '../src/main_menu_top.js';
+import { MobileNav } from '../src/mobile_nav.js';
+import {Topnav, topnav} from '../src/topnav.js';
 import * as helpers from './test-helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuItem tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('MainMenuItem', hooks => {
-    hooks.before(() => {
-        console.log('Set up MainMenuItem tests');
-    });
+QUnit.module('MainMenuItem', () => {
 
-    hooks.after(() => {
-        console.log('Tear down MainMenuItem tests');
-    });
-
-    QUnit.module('constructor', () => {
-        QUnit.module('properties', hooks => {
-            let mm_item;
+    QUnit.module('constructor', hooks => {
 
             hooks.before(() => {
-                console.log('Set up MainMenuItem.constructor prop tests');
-
+                helpers.create_layout_elem();
                 // create dummy topnav DOM element
                 helpers.create_topnav_elem();
                 // create dummy mainmenu top DOM element
@@ -31,23 +23,17 @@ QUnit.module('MainMenuItem', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuItem.constructor prop tests');
-
                 // remove dummy DOM elements
-                $('#topnav').remove();
-                $('#main-menu').remove();
-
-                // remove mainmenu item elements
-                mm_item.menu.remove();
-                mm_item.elem.remove();
-
-                // delete dummy item
-                mm_item = null;
+                $('#layout').remove();
             });
 
             QUnit.test('properties', assert => {
                 // create instance
-                mm_item = new MainMenuItem($('.node-child_1'));
+                Topnav.initialize();
+                MainMenuTop.initialize();
+
+                assert.strictEqual(mainmenu_top.main_menu_items.length, 1);
+                let mm_item = mainmenu_top.main_menu_items[0];
 
                 // containing element
                 assert.ok(mm_item.elem.is('li'));
@@ -69,55 +55,38 @@ QUnit.module('MainMenuItem', hooks => {
                 // private methods
                 assert.ok(mm_item._toggle);
             });
-        });
     });
 
     QUnit.module('methods', hooks => {
-        hooks.before(() => {
-            console.log('- now running: methods');
-        })
-
-        hooks.beforeEach(() => {
-            // create dummy layout element, append to DOM
-            let layout = $('<div id="layout"></div>');
-            $('body').append(layout);
-
-            // create dummy DOM elements
-            helpers.create_topnav_elem();
-            helpers.create_mm_top_elem();
-            helpers.create_mm_items(2);
-        });
 
         hooks.afterEach(() => {
             // remove dummy DOM elements
-            $('#topnav').remove();
-            $('#main-menu').remove();
-            $('.cone-mainmenu-dropdown').remove();
-        });
-
-        hooks.after(() => {
-            // remove dummy layout element from DOM
             $('#layout').remove();
         });
 
         QUnit.module('render_dd()', hooks => {
-            let mm_item;
 
             hooks.before(() => {
-                console.log('Set up MainMenuItem.render_dd tests');
+                // create dummy layout element, append to DOM
+                helpers.create_layout_elem();
+
+                // create dummy DOM elements
+                helpers.create_topnav_elem();
+                helpers.create_mm_top_elem();
+                helpers.create_mm_items(1);
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuItem.render_dd tests');
-
-                // delete instance
-                mm_item = null;
+                $('#layout').remove();
             });
 
             QUnit.test('render_dd()', assert => {
                 // create instance
-                mm_item = new MainMenuItem($('.node-child_1'));
+                Topnav.initialize();
+                MainMenuTop.initialize();
 
+                assert.strictEqual(mainmenu_top.main_menu_items.length, 1);
+                let mm_item = mainmenu_top.main_menu_items[0];
                 // 3 default children appended
                 assert.strictEqual(mm_item.children.length, 3);
                 // menu appended to layout
@@ -131,29 +100,22 @@ QUnit.module('MainMenuItem', hooks => {
         });
 
         QUnit.module('mv_to_mobile()', hooks => {
-            let TestMainMenuItem,
-                mm_item;
-
             hooks.before(() => {
-                console.log('Set up MainMenuItem.mv_to_mobile tests');
-
-                // dummy class
-                TestMainMenuItem = class extends MainMenuItem {
-                    mouseenter_toggle() {
-                        assert.step('mouseenter_toggle()');
-                    }
-                }
+                helpers.create_layout_elem();
+                helpers.create_topnav_elem();
+                helpers.create_mm_top_elem();
+                helpers.create_mm_items(1);
             });
             hooks.after(() => {
-                console.log('Tear down MainMenuItem.mv_to_mobile tests');
-
-                // delete instance
-                mm_item = null;
+                $('#layout').remove();
             });
 
-            QUnit.test('without sidebar', assert => {
+            QUnit.test('mv_to_mobile', assert => {
                 // create instance
-                mm_item = new TestMainMenuItem($('.node-child_1'));
+                Topnav.initialize();
+                MainMenuTop.initialize();
+
+                let mm_item = mainmenu_top.main_menu_items[0];
 
                 // add mouseenter/leave event listener
                 mm_item.menu.on('mouseenter mouseleave', () => {
@@ -176,40 +138,41 @@ QUnit.module('MainMenuItem', hooks => {
                 // menu visible after click
                 assert.strictEqual(mm_item.menu.css('display'), 'block');
                 assert.ok(mm_item.arrow.hasClass('bi bi-chevron-up'));
+
+                // trigger click on dropdown arrow
+                mm_item.arrow.trigger('click');
+                assert.strictEqual(mm_item.menu.css('display'), 'none');
+                assert.ok(mm_item.arrow.hasClass('bi bi-chevron-down'));
             });
         });
 
         QUnit.module('mv_to_top()', hooks => {
-            let TestMainMenuItem,
-                mm_item;
+            let nav;
 
-            hooks.before(assert => {
-                console.log('Set up MainMenuItem.mv_to_top tests');
-
-                // dummy class
-                TestMainMenuItem = class extends MainMenuItem {
-                    mouseenter_toggle() {
-                        assert.step('mouseenter_toggle()');
-                    }
-                }
+            hooks.before(() => {
+                helpers.create_layout_elem();
+                helpers.create_topnav_elem();
+                helpers.create_mm_top_elem();
+                helpers.create_mm_items(1);
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuItem.mv_to_top tests');
-
-                // delete instance
-                mm_item = null;
+                $('#layout').remove();
+                nav = null;
             });
 
             QUnit.test('mv_to_top()', assert => {
                 // create instance
-                mm_item = new TestMainMenuItem($('.node-child_1'));
+                Topnav.initialize();
+                MainMenuTop.initialize();
+                nav = new MobileNav();
 
                 helpers.set_vp('mobile');
-                mm_item.mv_to_mobile();
+
+                let mm_item = mainmenu_top.main_menu_items[0];
 
                 // menu is in element - mobile viewport
-                assert.strictEqual($(mm_item.menu, mm_item.elem).length, 1);
+                assert.strictEqual($('.cone-mainmenu-dropdown', mm_item.elem).length, 1);
                 assert.strictEqual(
                     $('#layout > .cone-mainmenu-dropdown').length,
                     0
@@ -221,8 +184,6 @@ QUnit.module('MainMenuItem', hooks => {
                 });
 
                 helpers.set_vp('large');
-                // invoke move to top
-                mm_item.mv_to_top();
                 // menu appended to #layout
                 assert.strictEqual($('#layout > .cone-mainmenu-dropdown').length
                                    , 1);
@@ -232,12 +193,6 @@ QUnit.module('MainMenuItem', hooks => {
                 mm_item.elem.trigger('mouseenter');
                 mm_item.elem.trigger('mouseleave');
 
-                // verify method calls
-                assert.verifySteps([
-                    'mouseenter_toggle()',
-                    'mouseenter_toggle()'
-                ]);
-
                 // show menu
                 mm_item.menu.css('display', 'block');
                 // trigger mouseleave
@@ -246,37 +201,36 @@ QUnit.module('MainMenuItem', hooks => {
             });
         });
 
-        QUnit.test.skip('mouseenter_toggle()', assert => {
-            // TODO
-
-            $('body').append($('<div id="layout"></div>'));
-            // mock wrapper
-            $('#layout').css({
-                'width': '100vw',
-                'height': '100vh'
+        QUnit.module('toggle', hooks => {
+            hooks.before(() => {
+                helpers.create_layout_elem();
+                helpers.create_topnav_elem();
+                helpers.create_mm_top_elem();
+                helpers.create_mm_items(1);
             });
-            // detach from wrapper to layout for offset tests
-            $('#topnav').detach().appendTo('#layout');
-            // create dummy item instance
-            let mm_item = new MainMenuItem($('.node-child_1'));
-            mm_item.menu.css('display', 'none');
+            hooks.after(() => {
+                $('#layout').remove();
+            });
 
-            // set dropdown position absolute
-            $('.cone-mainmenu-dropdown').css('position', 'absolute');
+            QUnit.test('mouseenter_toggle()', assert => {
+                Topnav.initialize();
+                MainMenuTop.initialize();
 
-            // trigger mouseenter
-            mm_item.elem.trigger('mouseenter');
-            assert.strictEqual(
-                mm_item.menu.offset().left,
-                mm_item.elem.offset().left
-            );
-            assert.strictEqual(mm_item.menu.css('display'), 'block');
-
-            // trigger mouseleave
-            mm_item.elem.trigger('mouseleave');
-            assert.strictEqual(mm_item.menu.css('display'), 'none');
-
-            // mm_item = null;
+                let mm_item = mainmenu_top.main_menu_items[0];
+    
+                // trigger mouseenter
+                mm_item.elem.trigger('mouseenter');
+                assert.strictEqual(
+                    mm_item.menu.offset().left,
+                    mm_item.elem.offset().left
+                );
+                assert.strictEqual(mm_item.menu.css('display'), 'block');
+    
+                // trigger mouseleave
+                mm_item.elem.trigger('mouseleave');
+                assert.strictEqual(mm_item.menu.css('display'), 'none');
+            });
         });
+        
     });
 });

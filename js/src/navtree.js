@@ -7,10 +7,10 @@ export class Navtree {
     static initialize(context) {
         let elem = $('#navtree', context);
         if (!elem.length) { 
-            return null;
+            navtree = null;
+        } else {
+            navtree = new Navtree(elem);
         }
-
-        navtree = new Navtree(elem);
         return navtree;
     }
 

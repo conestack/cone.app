@@ -6,20 +6,8 @@ import * as helpers from './test-helpers.js';
 // MainMenuTop tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('MainMenuTop', hooks => {
-    hooks.before(() => {
-        console.log('Set up MainMenuTop tests');
-    });
-
-    hooks.after(() => {
-        console.log('Tear down MainMenuTop tests');
-    });
-
+QUnit.module('MainMenuTop', () => {
     QUnit.module('constructor', hooks => {
-        hooks.before(() => {
-            console.log('Set up MainMenuTop.constructor tests');
-        });
-
         hooks.beforeEach(() => {
             helpers.create_topnav_elem();
             helpers.create_mm_top_elem();

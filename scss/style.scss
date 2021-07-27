@@ -5,6 +5,13 @@
 @use "toolbar-top";
 @use "mobile-menu";
 
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 $threshold_desktop: 1200px;
 $threshold_tablet: 900px;
 $threshold_mobile: 560px;

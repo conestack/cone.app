@@ -9,25 +9,11 @@ import * as helpers from './test-helpers.js';
 QUnit.module('ViewPort', hooks => {
 
     hooks.before(() => {
-        console.log('Set up ViewPort tests');
-
         // set browser viewport
         helpers.set_vp('large');
     });
 
-    hooks.after(() => {
-        console.log('Tear down ViewPort tests');
-    });
-
-    QUnit.module('constructor', hooks => {
-
-        hooks.before(() => {
-            console.log('Set up ViewPort.constructor tests');
-        });
-
-        hooks.after(() => {
-            console.log('Tear down ViewPort.constructor tests');
-        });
+    QUnit.module('constructor', () => {
 
         QUnit.test('properties', assert => {
             // queries are set correctly
@@ -44,14 +30,7 @@ QUnit.module('ViewPort', hooks => {
     });
 
     QUnit.module('methods', () => {
-        QUnit.module('update_viewport()', hooks => {
-            hooks.before(() => {
-                console.log('Set up ViewPort methods tests');
-            });
-
-            hooks.after(() => {
-                console.log('Tear down ViewPort methods tests');
-            });
+        QUnit.module('update_viewport()', () => {
 
             // run through karma_vp_states array
             for	(let i = 0; i < karma_vp_states.length; i++) {
@@ -66,14 +45,7 @@ QUnit.module('ViewPort', hooks => {
             }
         });
 
-        QUnit.module('resize_handle()', hooks => {
-            hooks.before(() => {
-                console.log('Set up ViewPort.resize_handle tests');
-            });
-
-            hooks.after(() => {
-                console.log('Tear down ViewPort.resize_handle tests');
-            });
+        QUnit.module('resize_handle()', () => {
 
             QUnit.test('resize_handle', assert => {
                 /* NOTE: (viewport breakpoints are set in karma.conf.js) */
@@ -96,26 +68,16 @@ QUnit.module('ViewPort', hooks => {
 QUnit.module('ViewPortAware', hooks => {
 
     hooks.before(() => {
-        console.log('Set up ViewPortAware tests');
         // set viewport
         viewport.set('large');
-    });
-
-    hooks.after(() => {
-        console.log('Tear down ViewPortAware tests');
     });
 
     QUnit.module('constructor', hooks => {
         let test_vp_aware;
 
-        hooks.before(() => {
-            console.log('Set up ViewPortAware.constructor tests');
-        });
-
         hooks.after(() => {
             // delete instance
             test_vp_aware = null;
-            console.log('Tear down ViewPortAware.constructor tests');
         });
 
         QUnit.test('constructor', assert => {
@@ -140,7 +102,6 @@ QUnit.module('ViewPortAware', hooks => {
 
         QUnit.module('unload()', hooks => {
             hooks.before(assert => {
-                console.log('Set up ViewPortAware.unload tests');
                 // set browser viewport
                 viewport.set('large');
 
@@ -156,7 +117,6 @@ QUnit.module('ViewPortAware', hooks => {
             hooks.after(() => {
                 // delete instance
                 test_vp_aware = null;
-                console.log('Tear down ViewPortAware.unload tests');
             });
 
             QUnit.test('unload()', assert => {

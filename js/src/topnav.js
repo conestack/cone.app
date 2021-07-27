@@ -1,15 +1,17 @@
 import $ from 'jquery'
 import {ViewPortAware, vp_states} from './viewport.js';
 import {toggle_arrow} from './toggle_arrow.js';
+import { mainmenu_top } from './main_menu_top.js';
 
 export class Topnav extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#topnav', context);
         if (!elem.length) {
-            return null;
+            topnav = null;
+        } else {
+            topnav = new Topnav(elem);
         }
-        topnav = new Topnav(elem);
         return topnav;
     }
 
@@ -54,21 +56,10 @@ export class Topnav extends ViewPortAware {
             this.tb_dropdowns.off().on('show.bs.dropdown', () => {
                 this.content.hide();
             });
-
-/*             if(this.mm_top !== null) {
-                this.logo.css('margin-right', 'auto');
-            } */
-
         } else {
             this.content.show();
             this.elem.removeClass('mobile');
-
             this.tb_dropdowns.off();
-
-/*             if(this.mm_top !== null){
-                this.logo.css('margin-right', '2rem');
-            } */
-
         }
 
         // tmp

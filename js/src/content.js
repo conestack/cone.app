@@ -1,15 +1,15 @@
 import $ from 'jquery'
 
-let content = null;
-
 export class Content {
 
     static initialize(context) {
         let elem = $('#page-content-wrapper', context);
         if (!elem.length) {
-            return;
+            content = null;
+        } else {
+            content = new Content(elem);
         }
-        return new Content(elem);
+        return content;
     }
 
     constructor(elem) {
@@ -18,6 +18,4 @@ export class Content {
     }
 }
 
-$(function() {
-    content = Content.initialize();
-});
+export var content = Content.initialize();

@@ -7,29 +7,16 @@ import * as helpers from './test-helpers.js';
 // Navtree tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('Navtree', hooks => {
-    hooks.before(() => {
-        console.log('Set up Navtree tests');
-    });
+QUnit.module('Navtree', () => {
 
-    hooks.after(() => {
-        console.log('Tear down Navtree tests');
-    });
-
-    QUnit.module('constructor', () => {
-
-        QUnit.module('properties', hooks => {
+    QUnit.module('constructor', hooks => {
             hooks.before(() => {
-                console.log('Set up Navtree properties tests');
-
                 // create dummy html elements
                 helpers.create_sidebar_elem();
                 helpers.create_navtree_elem();
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree properties tests');
-
                 // remove dummy elements from DOM
                 $('#layout').remove();
             });
@@ -55,42 +42,12 @@ QUnit.module('Navtree', hooks => {
                 assert.ok(navtree._mouseenter_handle);
                 assert.ok(navtree._restore);
             });
-        });
-
-        QUnit.module('constructor calls', hooks => {
-            let TestNavtree,
-                test_navtree;
-
-            hooks.before(assert => {
-                console.log('Set up Navtree constructor calls tests');
-
-                // create dummy html elements
-                helpers.create_sidebar_elem();
-                helpers.create_navtree_elem();
-            });
-
-            hooks.after(() => {
-                console.log('Tear down Navtree constructor calls tests');
-
-                // remove dummy elements from DOM
-                $('#layout').remove();
-            });
-        });
     });
 
-    QUnit.module('methods', hooks => {
-        hooks.before(() => {
-            console.log('Set up Navtree methods tests');
-        });
-
-        hooks.after(() => {
-            console.log('Tear down Navtree methods tests');
-        });
+    QUnit.module('methods', () => {
 
         QUnit.module('mv_to_mobile()', hooks => {
             hooks.before(() => {
-                console.log('Set up Navtree.mv_to_mobile tests');
-
                 // create dummy DOM elements
                 helpers.create_topnav_elem();
                 helpers.create_sidebar_elem();
@@ -98,8 +55,6 @@ QUnit.module('Navtree', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree.mv_to_mobile tests');
-
                 // delete dummy DOM elements
                 $('#layout').remove();
             });
@@ -130,8 +85,6 @@ QUnit.module('Navtree', hooks => {
 
         QUnit.module('mv_to_sidebar()', hooks => {
             hooks.before(() => {
-                console.log('Set up Navtree.mv_to_sidebar tests');
-
                 // create dummy DOM elements
                 helpers.create_topnav_elem();
                 helpers.create_sidebar_elem();
@@ -139,8 +92,6 @@ QUnit.module('Navtree', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree.mv_to_sidebar tests');
-
                 // delete dummy DOM elements
                 $('#layout').remove();
             });
@@ -168,8 +119,6 @@ QUnit.module('Navtree', hooks => {
 
         QUnit.module('align_width', hooks => {
             hooks.before(() => {
-                console.log('Set up Navtree.align_width tests');
-
                 // create dummy DOM elements
                 helpers.create_topnav_elem();
                 helpers.create_sidebar_elem();
@@ -177,8 +126,6 @@ QUnit.module('Navtree', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree.align_width tests');
-
                 // delete dummy DOM elements
                 $('#layout').remove();
             });
@@ -225,8 +172,6 @@ QUnit.module('Navtree', hooks => {
 
         QUnit.module('restore_width', hooks => {
             hooks.before(() => {
-                console.log('Set up Navtree.restore_width tests');
-
                 // create dummy DOM elements
                 helpers.create_topnav_elem();
                 helpers.create_sidebar_elem();
@@ -234,8 +179,6 @@ QUnit.module('Navtree', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree.restore_width tests');
-
                 // delete dummy DOM elements
                 $('#layout').remove();
             });
@@ -273,8 +216,6 @@ QUnit.module('Navtree', hooks => {
                 restore_width_origin = Navtree.prototype.restore_width;
 
             hooks.before(assert => {
-                console.log('Set up Navtree.restore_width tests');
-
                 // create dummy DOM elements
                 helpers.create_sidebar_elem();
                 helpers.create_navtree_elem();
@@ -289,8 +230,6 @@ QUnit.module('Navtree', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree.restore_width tests');
-
                 // delete dummy DOM elements
                 $('#layout').remove();
 
@@ -322,8 +261,6 @@ QUnit.module('Navtree', hooks => {
                 test_navtree;
 
             hooks.before(assert => {
-                console.log('Set up Navtree.scrollbar_handle tests');
-
                 // create dummy DOM elements
                 helpers.create_sidebar_elem();
                 helpers.create_navtree_elem();
@@ -337,8 +274,6 @@ QUnit.module('Navtree', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down Navtree.scrollbar_handle tests');
-
                 // delete dummy DOM elements
                 $('#layout').remove();
             });

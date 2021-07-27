@@ -8,77 +8,57 @@ import {createCookie, readCookie} from '../src/cookie_functions.js';
 // MainMenuSidebar tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('MainMenuSidebar', hooks => {
-    hooks.before(() => {
-        console.log('Set up MainMenuSidebar tests');
+QUnit.module('MainMenuSidebar', () => {
 
-    });
+    QUnit.module('constructor', hooks => {
 
-    hooks.after(() => {
-        console.log('Tear down MainMenuSidebar tests');
-    });
+        hooks.after(() => {
+            // remove element from DOM
+            $('#layout').remove();
+        });
 
-    QUnit.module('constructor', () => {
-        QUnit.module('properties', hooks => {
-            hooks.before(() => {
-                console.log('Set up MainMenuSidebar properties tests');
-                $('#layout').remove();
-            });
+        QUnit.test('properties', assert => {
+            // create DOM elements
+            helpers.create_sidebar_elem();
+            helpers.create_mm_sidebar_elem();
 
-            hooks.after(() => {
-                console.log('Tear down MainMenuSidebar properties test');
+            // initialize instances
+            SidebarMenu.initialize();
+            MainMenuSidebar.initialize();
 
-                // remove element from DOM
-                $('#layout').remove();
-            });
+            // containing element
+            assert.ok(mainmenu_sidebar.elem.is('ul#mainmenu_sidebar'));
 
-            QUnit.test('properties', assert => {
-                // create DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_mm_sidebar_elem();
+            // items
+            assert.ok(mainmenu_sidebar.items);
+            // expected number of items in mainmenu
+            assert.strictEqual(mainmenu_sidebar.items.length, 3);
 
-                // initialize instances
-                SidebarMenu.initialize();
-                MainMenuSidebar.initialize();
+            // items are direct children of elem
+            assert.ok(
+                mainmenu_sidebar.items
+                .is('#mainmenu_sidebar > li:not("sidebar-heading")')
+            );
 
-                // containing element
-                assert.ok(mainmenu_sidebar.elem.is('ul#mainmenu_sidebar'));
+            // arrows
+            assert.ok(mainmenu_sidebar.arrows);
+            assert.ok(mainmenu_sidebar.arrows.is('i.dropdown-arrow'));
 
-                // items
-                assert.ok(mainmenu_sidebar.items);
-                // expected number of items in mainmenu
-                assert.strictEqual(mainmenu_sidebar.items.length, 3);
-
-                // items are direct children of elem
-                assert.ok(
-                    mainmenu_sidebar.items
-                    .is('#mainmenu_sidebar > li:not("sidebar-heading")')
-                );
-
-                // arrows
-                assert.ok(mainmenu_sidebar.arrows);
-                assert.ok(mainmenu_sidebar.arrows.is('i.dropdown-arrow'));
-
-                // menus
-                assert.ok(mainmenu_sidebar.menus.is('li.sb-menu'));
-            });
+            // menus
+            assert.ok(mainmenu_sidebar.menus.is('li.sb-menu'));
         });
     });
 
-    QUnit.module.skip('methods', () => {
+    QUnit.module('methods', () => {
 
         QUnit.module('unload()', hooks => {
             hooks.before(() => {
-                console.log('Set up MainMenuSidebar.unload tests');
-
                 // create DOM elements
                 helpers.create_sidebar_elem();
                 helpers.create_mm_sidebar_elem();
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuSidebar.unload tests');
-
                 $('#layout').remove();
             });
 
@@ -108,8 +88,6 @@ QUnit.module('MainMenuSidebar', hooks => {
 
         QUnit.module('initial_cookie()', hooks => {
             hooks.beforeEach(() => {
-                console.log('Set up MainMenuSidebar.initial_cookie tests');
-
                 // create DOM elements
                 helpers.create_sidebar_elem();
                 helpers.create_mm_sidebar_elem();
@@ -119,8 +97,6 @@ QUnit.module('MainMenuSidebar', hooks => {
             });
 
             hooks.afterEach(() => {
-                console.log('Tear down MainMenuSidebar.initial_cookie tests');
-
                 // remove elements from DOM
                 $('#layout').remove();
 
@@ -168,8 +144,6 @@ QUnit.module('MainMenuSidebar', hooks => {
         QUnit.module('mv_to_mobile()', hooks => {
 
             hooks.before(() => {
-                console.log('Set up MainMenuSidebar.mv_to_mobile tests');
-
                 // create DOM elements
                 helpers.create_topnav_elem();
                 helpers.create_sidebar_elem();
@@ -179,8 +153,6 @@ QUnit.module('MainMenuSidebar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuSidebar.mv_to_mobile tests');
-
                 // remove DOM elements
                 $('#layout').remove();
             });
@@ -213,8 +185,6 @@ QUnit.module('MainMenuSidebar', hooks => {
 
         QUnit.module('mv_to_sidebar()', hooks => {
             hooks.before(() => {
-                console.log('Set up MainMenuSidebar.mv_to_sidebar tests');
-
                 // create DOM elements
                 helpers.create_topnav_elem();
                 helpers.create_sidebar_elem();
@@ -224,8 +194,6 @@ QUnit.module('MainMenuSidebar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuSidebar.mv_to_sidebar tests');
-
                 // remove DOM elements
                 $('#layout').remove();
             });
@@ -268,16 +236,12 @@ QUnit.module('MainMenuSidebar', hooks => {
 
         QUnit.module('collapse', hooks => {
             hooks.before(() => {
-                console.log('Set up MainMenuSidebar.collapse tests');
-
                 // create DOM elements
                 helpers.create_sidebar_elem();
                 helpers.create_mm_sidebar_elem();
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuSidebar.collapse tests');
-
                 // remove DOM elements
                 $('#layout').remove();
             });
@@ -348,16 +312,12 @@ QUnit.module('MainMenuSidebar', hooks => {
 
         QUnit.module('expand', hooks => {
             hooks.before(() => {
-                console.log('Set up MainMenuSidebar.expand tests');
-
                 // create DOM elements
                 helpers.create_sidebar_elem();
                 helpers.create_mm_sidebar_elem();
             });
 
             hooks.after(() => {
-                console.log('Tear down MainMenuSidebar.expand tests');
-
                 // remove DOM elements
                 $('#layout').remove();
             });
@@ -420,16 +380,6 @@ QUnit.module('MainMenuSidebar', hooks => {
                         assert.ok(arrow.hasClass('bi-chevron-up'));
                         assert.notOk(arrow.hasClass('bi-chevron-down'));
 
-                        // save jQuery slideToggle origin
-                        let slide_toggle_origin = $.fn.slideToggle;
-
-                        // overwrite jQuery slideToggle for performance
-                        $.fn._slideToggle = $.fn.slideToggle;
-                        $.fn.slideToggle = function(){
-                            assert.step('slideToggle called');
-                            $.fn.hide.apply(this);
-                        };
-
                         // trigger click on arrow
                         arrow.trigger('click');
 
@@ -439,13 +389,6 @@ QUnit.module('MainMenuSidebar', hooks => {
 
                         // display data of element after click is none
                         assert.strictEqual(mainmenu_sidebar.display_data[i], 'none');
-
-                        // jQuery slideToggle has been called
-                        assert.verifySteps(['slideToggle called']);
-
-                        // reset jQuery slideToggle
-                        $.fn.slideToggle = slide_toggle_origin;
-                        $.fn._slideToggle = $.fn.slideToggle;
                     }
 
                     // cookie has been created

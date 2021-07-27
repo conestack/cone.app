@@ -15,6 +15,14 @@ module.exports = function(config) {
             pattern: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css', 
             included: true
         },
+        {   
+            pattern: '../src/cone/app/browser/static/bootstrap/js/bootstrap.bundle.min.js', 
+            included: true
+        },
+        {   
+            pattern: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', 
+            included: true
+        },
         // css
         {   
             pattern: '../src/cone/app/browser/static/light.css', included: true
@@ -36,34 +44,14 @@ module.exports = function(config) {
             included: false
         },
         // tests
-        {
-            pattern: '../js/tests/test_viewport.js',
-            type: 'module'
-        },
-        {
-            pattern: '../js/tests/test_searchbar.js',
-            type: 'module'
-        },
-        {
-            pattern: '../js/tests/test_sidebar_menu.js',
-            type: 'module'
-        },
-        {
-            pattern: '../js/tests/test_main_menu_sidebar.js',
-            type: 'module'
-        },
-        {
-            pattern: '../js/tests/test_navtree.js',
-            type: 'module'
-        },
-        {
-            pattern: '../js/tests/test_topnav.js',
-            type: 'module'
-        },
         // {
-            // pattern: '../js/tests/test_mobile_nav.js',
-            // type: 'module'
+        //     pattern: '../js/tests/test_*.js',
+        //     type: 'module'
         // },
+        {
+            pattern: '../js/tests/manual_browser_test.js',
+            type: 'module'
+        },
         // helpers
         {
             pattern: '../js/tests/test-helpers.js',
@@ -77,7 +65,7 @@ module.exports = function(config) {
         }
        ],
         browsers: [
-            'ChromeHeadless'
+            'Chrome'
         ],
         viewport: {
             breakpoints: [

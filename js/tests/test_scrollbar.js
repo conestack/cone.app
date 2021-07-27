@@ -127,13 +127,7 @@ function test_set_position(assert, test_scrollbar){
 // scrollbar tests
 ///////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('ScrollBar', hooks => {
-    hooks.before(() => {
-        console.log('Set up ScrollBar tests');
-    });
-    hooks.after(() => {
-        console.log('Tear down ScrollBar tests');
-    });
+QUnit.module('ScrollBar', () => {
 
     let test_container_dim = 400,
         test_content_dim = 800;
@@ -143,8 +137,6 @@ QUnit.module('ScrollBar', hooks => {
             test_scrollbar;
 
         hooks.before(assert => {
-            console.log('Set up ScrollBar.constructor tests');
-
             // add dummy scrollbar element to DOM
             create_scrollbar_elem('x');
 
@@ -160,8 +152,6 @@ QUnit.module('ScrollBar', hooks => {
         });
 
         hooks.after(() => {
-            console.log('Tear down ScrollBar.constructor tests');
-
             // remove dummy scrollbar fromDOM
             $('#test-container').remove();
 
@@ -220,8 +210,6 @@ QUnit.module('ScrollBar', hooks => {
                 test_scrollbar;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBar.resizeObserver test');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -234,8 +222,6 @@ QUnit.module('ScrollBar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.resizeObserver test');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -279,8 +265,6 @@ QUnit.module('ScrollBar', hooks => {
                 test_scrollbar;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBar.unload test');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -310,8 +294,6 @@ QUnit.module('ScrollBar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.unload test');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -342,51 +324,23 @@ QUnit.module('ScrollBar', hooks => {
         });
 
         QUnit.module('mouse_in_out()', hooks => {
-            let test_scrollbar,
-                fade_out_origin,
-                fade_in_origin;
+            let test_scrollbar;
 
-            hooks.before(assert => {
-                console.log('Set up ScrollBar.mouse_in_out tests');
-
+            hooks.before(() => {
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
-
-                // save jQuery fadeIn, fadeOut origin
-                fade_out_origin = $.fn.fadeOut;
-                fade_in_origin = $.fn.fadeIn;
-
-                // overwrite jQuery fadeIn, fadeOut functions
-                $.fn._fadeOut = $.fn.fadeOut;
-                $.fn.fadeOut = function(){
-                    assert.step('fadeOut called');
-                    $.fn.hide.apply(this);
-                };
-
-                $.fn._fadeIn = $.fn.fadeIn;
-                $.fn.fadeIn = function(){
-                    assert.step('fadeIn called');
-                    $.fn.show.apply(this);
-                };
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.mouse_in_out tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
                 // unload and delete scrollbar instance
                 test_scrollbar.unload();
                 test_scrollbar = null;
-
-                // reset jQuery fadeOut, fadeIn
-                $.fn.fadeOut = fade_out_origin;
-                $.fn.fadeIn = fade_in_origin;
             });
 
             QUnit.test('mouse_in_out()', assert => {
-
                 // create test scrollbar object
                 test_scrollbar = new ScrollBar($('#test-container'));
                 let test_sb = test_scrollbar.scrollbar;
@@ -405,12 +359,6 @@ QUnit.module('ScrollBar', hooks => {
                 // trigger mouseleave
                 test_scrollbar.elem.trigger('mouseleave');
                 assert.strictEqual(test_sb.css('display'), 'none');
-
-                // verify called functions
-                assert.verifySteps([
-                    'fadeIn called',
-                    'fadeOut called'
-                ]);
             });
         });
 
@@ -419,8 +367,6 @@ QUnit.module('ScrollBar', hooks => {
                 test_scrollbar;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBar.scroll_handle tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -433,8 +379,6 @@ QUnit.module('ScrollBar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.scroll_handle tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -489,15 +433,11 @@ QUnit.module('ScrollBar', hooks => {
             let test_scrollbar;
 
             hooks.before(() => {
-                console.log('Set up ScrollBar.prevent_overflow tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.prevent_overflow tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -533,8 +473,6 @@ QUnit.module('ScrollBar', hooks => {
                 test_scrollbar;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBar.set_position tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -553,8 +491,6 @@ QUnit.module('ScrollBar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.set_position tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -587,8 +523,6 @@ QUnit.module('ScrollBar', hooks => {
                 test_scrollbar;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBar.drag_handle tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -616,8 +550,6 @@ QUnit.module('ScrollBar', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBar.drag_handle tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -720,25 +652,14 @@ QUnit.module('ScrollBar', hooks => {
     });
 });
 
-QUnit.module('ScrollBarX', hooks => {
-    hooks.before(() => {
-        console.log('Set up ScrollBarX tests');
-    });
-
-    hooks.after(() => {
-        console.log('Tear down ScrollBarX tests');
-    });
-
+QUnit.module('ScrollBarX', () => {
     QUnit.module('constructor', () => {
-
         QUnit.module('constructor methods', hooks => {
             let TestScrollbarX,
                 test_scrollbar_x,
                 observe_container_origin;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBar.constructor method tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -768,8 +689,6 @@ QUnit.module('ScrollBarX', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarX.constructor method tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -802,8 +721,6 @@ QUnit.module('ScrollBarX', hooks => {
             let test_scrollbar_x;
 
             hooks.before(() => {
-                console.log('Set up ScrollBarX property tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -812,8 +729,6 @@ QUnit.module('ScrollBarX', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarX property tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -878,8 +793,6 @@ QUnit.module('ScrollBarX', hooks => {
                 test_scrollbar_x;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBarX.update tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -892,8 +805,6 @@ QUnit.module('ScrollBarX', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarX.update tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -949,8 +860,6 @@ QUnit.module('ScrollBarX', hooks => {
             test_scrollbar_x;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBarX.set_position tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
@@ -969,8 +878,6 @@ QUnit.module('ScrollBarX', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarX.set_position tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -1015,14 +922,7 @@ QUnit.module('ScrollBarX', hooks => {
     });
 });
 
-QUnit.module('ScrollBarY', hooks => {
-    hooks.before(() => {
-        console.log('Set up ScrollBarY tests');
-    });
-
-    hooks.after(() => {
-        console.log('Tear down ScrollBarY tests');
-    });
+QUnit.module('ScrollBarY', () => {
 
     QUnit.module('constructor', () => {
 
@@ -1032,8 +932,6 @@ QUnit.module('ScrollBarY', hooks => {
                 observe_container_origin;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBarY.constructor method tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('y');
 
@@ -1062,8 +960,6 @@ QUnit.module('ScrollBarY', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarY.constructor method tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -1096,8 +992,6 @@ QUnit.module('ScrollBarY', hooks => {
             let test_scrollbar_y;
 
             hooks.before(() => {
-                console.log('Set up ScrollBarY property tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('y');
 
@@ -1106,8 +1000,6 @@ QUnit.module('ScrollBarY', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarY property tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -1174,8 +1066,6 @@ QUnit.module('ScrollBarY', hooks => {
             test_scrollbar_y;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBarY.update tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('y');
 
@@ -1188,8 +1078,6 @@ QUnit.module('ScrollBarY', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarY.update tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 
@@ -1244,8 +1132,6 @@ QUnit.module('ScrollBarY', hooks => {
             test_scrollbar_y;
 
             hooks.before(assert => {
-                console.log('Set up ScrollBarY.set_position tests');
-
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('y');
 
@@ -1264,8 +1150,6 @@ QUnit.module('ScrollBarY', hooks => {
             });
 
             hooks.after(() => {
-                console.log('Tear down ScrollBarY.set_position tests');
-
                 // remove dummy scrollbar fromDOM
                 $('#test-container').remove();
 

@@ -5,8 +5,6 @@ import {toggle_arrow} from '../src/toggle_arrow.js'
 ///////////////////////////////////////////////////////////////////////////////
 
 QUnit.test('toggle_arrow', assert => {
-    console.log('Run toggle_arrow test');
-
     // set variables
     let up = 'bi-chevron-up',
         down = 'bi-chevron-down',

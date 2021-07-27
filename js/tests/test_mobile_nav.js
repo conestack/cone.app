@@ -17,17 +17,9 @@ QUnit.module('MobileNav', () => {
     QUnit.module('constructor', hooks => {
         let nav;
 
-        hooks.before(() => {
-            console.log('Set up constructor tests');
-        });
-
         hooks.afterEach(() => {
             nav = null;
             $('#layout').remove();
-        });
-
-        hooks.after(() => {
-            console.log('Tear down constructor tests');
         });
 
         QUnit.test('sidebar and topnav null', assert => {
@@ -39,11 +31,10 @@ QUnit.module('MobileNav', () => {
             Navtree.initialize();
 
             // create new mobile nav
-            nav = new MobileNav();
+            nav = MobileNav.initialize();
 
             // TODO:
-            assert.ok(true);
-            console.log(nav)
+            assert.strictEqual(nav, null);
         });
 
         QUnit.test('constructor', assert => {
@@ -52,7 +43,7 @@ QUnit.module('MobileNav', () => {
             SidebarMenu.initialize();
 
             // create mobile Nav
-            nav = new MobileNav();
+            nav = MobileNav.initialize();
 
             // sidebar is hidden if empty
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
@@ -62,6 +53,8 @@ QUnit.module('MobileNav', () => {
 
             // viewport_changed unbound
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
+
+            assert.notStrictEqual(nav, null);
         });
 
         QUnit.test('no children', assert => {
@@ -79,6 +72,11 @@ QUnit.module('MobileNav', () => {
             // create mobile Nav
             nav = new MobileNav();
 
+            // children are null
+            assert.strictEqual(mainmenu_sidebar, null);
+            assert.strictEqual(navtree, null);
+            assert.notStrictEqual(sidebar_menu, null);
+
             // sidebar is hidden
             assert.strictEqual(sidebar_menu.elem.css('display'), 'none');
 
@@ -94,13 +92,10 @@ QUnit.module('MobileNav', () => {
         let nav;
 
         hooks.beforeEach(() => {
-            console.log('Set up viewport_changed tests');
-
             // set viewport to dekstop for consistency
             helpers.set_vp('large');
         });
         hooks.afterEach(() => {
-            console.log('Tear down viewport_changed tests');
             nav = null;
             // remove DOM elements
             $('#layout').remove();
@@ -188,16 +183,6 @@ QUnit.module('MobileNav', () => {
             nav = new MobileNav();
 
             let items = mainmenu_top.main_menu_items;
-
-            // overwrite slideToggle for performance
-            $.fn._slideToggle = $.fn.slideToggle;
-            $.fn.slideToggle = function(){
-                if(this.css('display') !== 'none') {
-                    $.fn.hide.apply(this);
-                } else {
-                    $.fn.show.apply(this);
-                }
-            };
 
             // set viewport to mobile
             helpers.set_vp('mobile');
