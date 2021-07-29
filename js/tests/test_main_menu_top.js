@@ -1,6 +1,7 @@
-import {MainMenuTop, mainmenu_top} from '../src/main_menu_top.js';
-import { Topnav, topnav } from '../src/topnav.js';
+import {MainMenuTop} from '../src/main_menu_top.js';
+import {Topnav} from '../src/topnav.js';
 import * as helpers from './test-helpers.js';
+import {layout} from '../src/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuTop tests
@@ -22,9 +23,9 @@ QUnit.module('MainMenuTop', () => {
             MainMenuTop.initialize();
 
             // element is div
-            assert.ok(mainmenu_top.elem.is('div'));
+            assert.ok(layout.mainmenu_top.elem.is('div'));
             // mm items is empty array if no mm items in DOM
-            assert.deepEqual(mainmenu_top.main_menu_items, []);
+            assert.deepEqual(layout.mainmenu_top.main_menu_items, []);
         });
 
         QUnit.module('mm_items', hooks => {
@@ -35,6 +36,7 @@ QUnit.module('MainMenuTop', () => {
                 elem_count = 2;
 
                 // create DOM elements
+                helpers.create_layout_elem();
                 helpers.create_topnav_elem();
                 helpers.create_mm_top_elem();
                 // create dummy items
@@ -42,20 +44,18 @@ QUnit.module('MainMenuTop', () => {
             });
 
             hooks.after(() => {
-                // remove mainmenu items
-                $('.mainmenu-item').remove();
-
                 // remove topnav from DOM
-                $('#topnav').remove();
+                $('#layout').remove();
             });
 
             QUnit.test('MainMenuTop - MainMenuItems', assert => {
                 // initialize MainMenuTop
+                Topnav.initialize();
                 MainMenuTop.initialize();
 
                 // all mainmenu items get pushed into array
                 assert.strictEqual(
-                    mainmenu_top.main_menu_items.length,
+                    layout.mainmenu_top.main_menu_items.length,
                     elem_count
                 );
             });
@@ -84,7 +84,7 @@ QUnit.module('MainMenuTop', () => {
             Topnav.initialize();
             MainMenuTop.initialize();
 
-            let items = mainmenu_top.main_menu_items;
+            let items = layout.mainmenu_top.main_menu_items;
 
             // trigger dragstart
             $(window).trigger('dragstart');
@@ -115,11 +115,11 @@ QUnit.module('MainMenuTop', () => {
             Topnav.initialize();
             MainMenuTop.initialize();
 
-            let items = mainmenu_top.main_menu_items;
+            let items = layout.mainmenu_top.main_menu_items;
 
             // mobile viewport
             helpers.set_vp('mobile');
-            mainmenu_top.mv_to_mobile();
+            layout.mainmenu_top.mv_to_mobile();
 
             for(let i in items) {
                 let item = items[i];
@@ -134,11 +134,11 @@ QUnit.module('MainMenuTop', () => {
             Topnav.initialize();
             MainMenuTop.initialize();
 
-            let items = mainmenu_top.main_menu_items;
+            let items = layout.mainmenu_top.main_menu_items;
 
             // mobile viewport
             helpers.set_vp('large');
-            mainmenu_top.mv_to_top();
+            layout.mainmenu_top.mv_to_top();
 
             for(let i in items) {
                 let item = items[i];

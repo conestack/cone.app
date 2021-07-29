@@ -2,6 +2,7 @@
 import {ScrollBar} from '../src/scrollbar.js';
 import {ScrollBarX} from '../src/scrollbar.js';
 import {ScrollBarY} from '../src/scrollbar.js';
+import * as helpers from './test-helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // scrollbar test helpers

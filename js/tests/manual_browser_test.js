@@ -1,17 +1,16 @@
 import * as helpers from './test-helpers.js';
 
-import {vp} from '../src/viewport.js';
-
-import {Content, content} from '../src/content.js';
+import {layout} from '../src/layout.js';
+import {Content} from '../src/content.js';
 import {MainMenuItem} from '../src/main_menu_item.js';
-import {MainMenuSidebar, mainmenu_sidebar} from '../src/main_menu_sidebar.js';
-import {MainMenuTop, mainmenu_top} from '../src/main_menu_top.js';
-import {Navtree, navtree} from '../src/navtree.js';
+import {MainMenuSidebar} from '../src/main_menu_sidebar.js';
+import {MainMenuTop} from '../src/main_menu_top.js';
+import {Navtree} from '../src/navtree.js';
 import {Searchbar} from '../src/searchbar.js';
-import {SidebarMenu, sidebar_menu} from '../src/sidebar_menu.js';
+import {Sidebar} from '../src/sidebar.js';
 import {ThemeSwitcher, default_themes} from '../src/theme_switcher.js';
-import {Topnav, topnav} from '../src/topnav.js';
-import {MobileNav, mobile_nav} from '../src/mobile_nav.js';
+import {Topnav} from '../src/topnav.js';
+import {MobileNav} from '../src/mobile_nav.js';
 
 import {ScrollBarX, ScrollBarY} from '../src/scrollbar.js';
 
@@ -53,7 +52,8 @@ function create_test_sb() {
     $('#topnav-content').append(searchbar_html);
 }
 
-QUnit.module('jaja', hooks => {
+QUnit.module('layout', hooks => {
+
     hooks.before(()=> {
         helpers.create_layout_elem();
         helpers.create_topnav_elem();
@@ -63,21 +63,22 @@ QUnit.module('jaja', hooks => {
         create_test_sb();
         helpers.create_toolbar_elem();
         helpers.create_pt_elem();
-
+        helpers.create_theme_switcher_elem();
         helpers.create_sidebar_elem();
         helpers.create_mm_sidebar_elem();
         helpers.create_navtree_elem();
     });
 
-    QUnit.test('mh', assert => {
+    QUnit.test('test layout', assert => {
+   
         $('#layout').css('overflow', 'hidden');
         Topnav.initialize();
         MainMenuTop.initialize();
         Searchbar.initialize();
-        SidebarMenu.initialize();
+        Sidebar.initialize();
         Navtree.initialize();
         MainMenuSidebar.initialize();
-        let switcher = ThemeSwitcher.initialize($('body'), default_themes);
+        ThemeSwitcher.initialize($('#layout'), default_themes);
         let sb = Searchbar.initialize();
         let nav = MobileNav.initialize();
 

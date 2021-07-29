@@ -1,42 +1,39 @@
 import $ from 'jquery';
 import {ViewPortAware, vp_states} from './viewport.js';
-import {sidebar_menu} from './sidebar_menu.js';
-import {topnav} from './topnav.js';
-import {mainmenu_sidebar} from './main_menu_sidebar.js';
-import {navtree} from './navtree.js';
-import { mainmenu_top } from './main_menu_top.js';
+import {layout} from './layout.js';
 
 // mobile_nav singleton
-export let mobile_nav = null;
 
 export class MobileNav extends ViewPortAware {
-    static initialize() {
-        if(sidebar_menu === null && topnav === null) {
-            mobile_nav = null;
-        } else {
-            mobile_nav = new MobileNav();
-        }
+    static initialize(context) {
+        let elem = $('#topnav-content', context);
 
-        return mobile_nav;
+        if (!elem.length) {
+            layout.mobile_nav = null;
+        } else {
+            layout.mobile_nav = new MobileNav(elem);
+        }
+        return layout.mobile_nav;
     }
-    constructor() {
+
+    constructor(elem) {
         super();
 
+        this.elem = elem;
         // // TODO: create topnav if null
         // else if(topnav === null) {
         //     // create topnav or go with sidebar icon bar?
         // }
 
         // hide if no children are in content
-        if (sidebar_menu !== null &&
-            mainmenu_sidebar === null &&
-            navtree === null
-        ){
-            sidebar_menu.elem.hide();
-            // sidebar.unload();
-            $(window).off('viewport_changed', sidebar_menu._viewport_changed_handle);
-            return;
-        }
+        // if (layout.mainmenu_sidebar === null &&
+        //     layout.navtree === null
+        // ){
+        //     sidebar_menu.elem.hide();
+        //     // sidebar.unload();
+        //     $(window).off('viewport_changed', sidebar_menu._viewport_changed_handle);
+        //     return;
+        // }
 
         this.viewport_changed();
     }
@@ -46,34 +43,38 @@ export class MobileNav extends ViewPortAware {
             super.viewport_changed(e);
         }
 
-        if (mainmenu_sidebar !== null) {
+        if (layout.mainmenu_sidebar !== null) {
             if (this.vp_state === vp_states.MOBILE) {
-                mainmenu_sidebar.mv_to_mobile();
-                mainmenu_top.elem.hide();
+                layout.mainmenu_sidebar.mv_to_mobile(this.elem);
+                if(layout.mainmenu_top !== null){
+                    layout.mainmenu_top.elem.hide();
+                }
             } else {
-                mainmenu_sidebar.mv_to_sidebar();
-                mainmenu_top.elem.show();
+                layout.mainmenu_sidebar.mv_to_sidebar();
+                if(layout.mainmenu_top !== null) {
+                    layout.mainmenu_top.elem.show();
+                }
             }
-        } else if (mainmenu_sidebar === null && mainmenu_top !== null) {
+        } else if (layout.mainmenu_sidebar === null && layout.mainmenu_top !== null) {
             if (this.vp_state === vp_states.MOBILE) {
-                mainmenu_top.mv_to_mobile();
+                layout.mainmenu_top.mv_to_mobile();
             } else {
-                mainmenu_top.mv_to_top();
+                layout.mainmenu_top.mv_to_top();
             }
         }
 
-        if(mainmenu_top !== null){
+        if(layout.mainmenu_top !== null){
             if(this.vp_state === vp_states.MOBILE) {
-                topnav.logo.css('margin-right', 'auto');
+                $('#cone-logo').css('margin-right', 'auto');
             } else {
-                topnav.logo.css('margin-right', '2rem');
+                $('#cone-logo').css('margin-right', '2rem');
             }
         }
-        if (navtree !== null) {
+        if (layout.navtree !== null) {
             if (this.vp_state === vp_states.MOBILE) {
-                navtree.mv_to_mobile();
+                layout.navtree.mv_to_mobile(this.elem);
             } else {
-                navtree.mv_to_sidebar();
+                layout.navtree.mv_to_sidebar();
             }
         }
     }

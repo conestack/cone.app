@@ -282,6 +282,7 @@ export function create_mm_items(count) {
               <a>
                 <i class="bi bi-heart"></i>
                 <span class="mainmenu-title">
+                  Example Item
                 </span>
               </a>
               <i class="dropdown-arrow bi bi-chevron-down"></i>

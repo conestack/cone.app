@@ -1,7 +1,7 @@
-import {MainMenuItem} from '../src/main_menu_item.js';
-import {MainMenuTop, mainmenu_top} from '../src/main_menu_top.js';
+import {layout} from '../src/layout.js';
+import {MainMenuTop} from '../src/main_menu_top.js';
 import { MobileNav } from '../src/mobile_nav.js';
-import {Topnav, topnav} from '../src/topnav.js';
+import {Topnav} from '../src/topnav.js';
 import * as helpers from './test-helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ QUnit.module('MainMenuItem', () => {
                 Topnav.initialize();
                 MainMenuTop.initialize();
 
-                assert.strictEqual(mainmenu_top.main_menu_items.length, 1);
-                let mm_item = mainmenu_top.main_menu_items[0];
+                assert.strictEqual(layout.mainmenu_top.main_menu_items.length, 1);
+                let mm_item = layout.mainmenu_top.main_menu_items[0];
 
                 // containing element
                 assert.ok(mm_item.elem.is('li'));
@@ -54,6 +54,11 @@ QUnit.module('MainMenuItem', () => {
 
                 // private methods
                 assert.ok(mm_item._toggle);
+
+                // trigger on menu
+                mm_item.menu.show();
+                mm_item.menu.trigger('mouseleave');
+                assert.strictEqual(mm_item.menu.css('display'), 'none');
             });
     });
 
@@ -85,8 +90,8 @@ QUnit.module('MainMenuItem', () => {
                 Topnav.initialize();
                 MainMenuTop.initialize();
 
-                assert.strictEqual(mainmenu_top.main_menu_items.length, 1);
-                let mm_item = mainmenu_top.main_menu_items[0];
+                assert.strictEqual(layout.mainmenu_top.main_menu_items.length, 1);
+                let mm_item = layout.mainmenu_top.main_menu_items[0];
                 // 3 default children appended
                 assert.strictEqual(mm_item.children.length, 3);
                 // menu appended to layout
@@ -115,7 +120,7 @@ QUnit.module('MainMenuItem', () => {
                 Topnav.initialize();
                 MainMenuTop.initialize();
 
-                let mm_item = mainmenu_top.main_menu_items[0];
+                let mm_item = layout.mainmenu_top.main_menu_items[0];
 
                 // add mouseenter/leave event listener
                 mm_item.menu.on('mouseenter mouseleave', () => {
@@ -169,7 +174,7 @@ QUnit.module('MainMenuItem', () => {
 
                 helpers.set_vp('mobile');
 
-                let mm_item = mainmenu_top.main_menu_items[0];
+                let mm_item = layout.mainmenu_top.main_menu_items[0];
 
                 // menu is in element - mobile viewport
                 assert.strictEqual($('.cone-mainmenu-dropdown', mm_item.elem).length, 1);
@@ -216,7 +221,7 @@ QUnit.module('MainMenuItem', () => {
                 Topnav.initialize();
                 MainMenuTop.initialize();
 
-                let mm_item = mainmenu_top.main_menu_items[0];
+                let mm_item = layout.mainmenu_top.main_menu_items[0];
     
                 // trigger mouseenter
                 mm_item.elem.trigger('mouseenter');

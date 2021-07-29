@@ -2,11 +2,12 @@ import $ from 'jquery';
 import * as helpers from './test-helpers.js';
 
 import {MobileNav} from '../src/mobile_nav.js';
-import {SidebarMenu, sidebar_menu} from '../src/sidebar_menu.js';
-import {Topnav, topnav} from '../src/topnav.js';
-import {MainMenuSidebar, mainmenu_sidebar} from '../src/main_menu_sidebar.js';
-import {Navtree, navtree} from '../src/navtree.js';
-import {MainMenuTop, mainmenu_top} from '../src/main_menu_top.js';
+import {Sidebar} from '../src/sidebar.js';
+import {Topnav} from '../src/topnav.js';
+import {MainMenuSidebar} from '../src/main_menu_sidebar.js';
+import {Navtree} from '../src/navtree.js';
+import {MainMenuTop} from '../src/main_menu_top.js';
+import {layout} from '../src/layout.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,88 +16,34 @@ import {MainMenuTop, mainmenu_top} from '../src/main_menu_top.js';
 
 QUnit.module('MobileNav', () => {
     QUnit.module('constructor', hooks => {
-        let nav;
 
-        hooks.afterEach(() => {
-            nav = null;
+        hooks.after(() => {
             $('#layout').remove();
         });
 
         QUnit.test('sidebar and topnav null', assert => {
             // initialize
             Topnav.initialize();
-            SidebarMenu.initialize();
+            Sidebar.initialize();
             MainMenuSidebar.initialize();
             MainMenuTop.initialize();
             Navtree.initialize();
 
             // create new mobile nav
-            nav = MobileNav.initialize();
+            MobileNav.initialize();
 
             // TODO:
-            assert.strictEqual(nav, null);
-        });
-
-        QUnit.test('constructor', assert => {
-            // create sidebar DOM element and initialize
-            helpers.create_sidebar_elem();
-            SidebarMenu.initialize();
-
-            // create mobile Nav
-            nav = MobileNav.initialize();
-
-            // sidebar is hidden if empty
-            assert.strictEqual($('#sidebar_left').css('display'), 'none');
-
-            // set viewport to desktop size
-            helpers.set_vp('large');
-
-            // viewport_changed unbound
-            assert.strictEqual($('#sidebar_left').css('display'), 'none');
-
-            assert.notStrictEqual(nav, null);
-        });
-
-        QUnit.test('no children', assert => {
-            // create DOM elements
-            helpers.create_topnav_elem();
-            helpers.create_sidebar_elem();
-
-            // initialize
-            Topnav.initialize();
-            SidebarMenu.initialize();
-            MainMenuSidebar.initialize();
-            MainMenuTop.initialize();
-            Navtree.initialize();
-
-            // create mobile Nav
-            nav = new MobileNav();
-
-            // children are null
-            assert.strictEqual(mainmenu_sidebar, null);
-            assert.strictEqual(navtree, null);
-            assert.notStrictEqual(sidebar_menu, null);
-
-            // sidebar is hidden
-            assert.strictEqual(sidebar_menu.elem.css('display'), 'none');
-
-            // trigger viewport_changed
-            helpers.set_vp('large');
-
-            // sidebar is hidden
-            assert.strictEqual(sidebar_menu.elem.css('display'), 'none');
+            assert.strictEqual(layout.mobile_nav, null);
         });
     });
 
     QUnit.module('viewport_changed', hooks => {
-        let nav;
-
         hooks.beforeEach(() => {
+            helpers.create_layout_elem();
             // set viewport to dekstop for consistency
             helpers.set_vp('large');
         });
         hooks.afterEach(() => {
-            nav = null;
             // remove DOM elements
             $('#layout').remove();
         });
@@ -108,30 +55,30 @@ QUnit.module('MobileNav', () => {
             helpers.create_mm_sidebar_elem();
 
             // initialize
-            SidebarMenu.initialize();
-            Topnav.initialize();
+            Sidebar.initialize();
             MainMenuSidebar.initialize();
             Navtree.initialize();
+            Topnav.initialize();
 
             // create mobile Nav
-            nav = new MobileNav();
+            MobileNav.initialize();
 
             // sidebar is visible
             assert.strictEqual($('#sidebar_left').css('display'), 'block');
-            assert.strictEqual($('#mainmenu_sidebar', topnav.content).length, 0);
+            assert.strictEqual($('#topnav-content > #mainmenu_sidebar').length, 0);
 
             // set viewport to mobile
             helpers.set_vp('mobile');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
-            assert.strictEqual($('#mainmenu_sidebar', topnav.content).length, 1);
+            assert.strictEqual($('#topnav-content > #mainmenu_sidebar').length, 1);
 
             // set viewport to desktop
             helpers.set_vp('large');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'block');
-            assert.strictEqual($('#mainmenu_sidebar', topnav.content).length, 0);
-            assert.strictEqual($('#mainmenu_sidebar', sidebar_menu.content).length, 1);
+            assert.strictEqual($('#topnav-content > #mainmenu_sidebar').length, 0);
+            assert.strictEqual($('#mainmenu_sidebar', layout.sidebar.content).length, 1);
         });
 
         QUnit.test('viewport_changed: navtree', assert => {
@@ -142,32 +89,32 @@ QUnit.module('MobileNav', () => {
 
             // initialize
             Topnav.initialize();
-            SidebarMenu.initialize();
+            Sidebar.initialize();
             MainMenuSidebar.initialize();
             Navtree.initialize();
 
             // create mobile Nav
-            nav = new MobileNav();
+            MobileNav.initialize();
 
             // sidebar is visible
             assert.strictEqual($('#sidebar_left').css('display'), 'block');
-            assert.strictEqual($('#navtree', topnav.content).length, 0);
+            assert.strictEqual($('#topnav-content > #navtree').length, 0);
 
             // set viewport to mobile
             helpers.set_vp('mobile');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
-            assert.strictEqual($('#navtree', topnav.content).length, 1);
+            assert.strictEqual($('#topnav-content > #navtree').length, 1);
 
             // set viewport to desktop
             helpers.set_vp('large');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'block');
-            assert.strictEqual($('#navtree', topnav.content).length, 0);
-            assert.strictEqual($('#navtree', sidebar_menu.content).length, 1);
+            assert.strictEqual($('#topnav-content > #navtree').length, 0);
+            assert.strictEqual($('#navtree', layout.sidebar.content).length, 1);
         });
 
-        QUnit.test('viewport_changed: mainmenu_top', assert => {
+        QUnit.test('viewport_changed: layout.mainmenu_top', assert => {
             // create DOM elements
             helpers.create_topnav_elem();
             helpers.create_mm_top_elem();
@@ -180,16 +127,16 @@ QUnit.module('MobileNav', () => {
             Navtree.initialize();
 
             // create mobile Nav
-            nav = new MobileNav();
+            MobileNav.initialize();
 
-            let items = mainmenu_top.main_menu_items;
+            let items = layout.mainmenu_top.main_menu_items;
 
             // set viewport to mobile
             helpers.set_vp('mobile');
-            assert.strictEqual(topnav.content.css('display'), 'none');
+            assert.strictEqual($('#topnav-content').css('display'), 'none');
             // trigger mobile menu toggle
-            topnav.toggle_button.trigger('click');
-            assert.strictEqual(topnav.content.css('display'), 'flex');
+            $('#mobile-menu-toggle').trigger('click');
+            assert.strictEqual($('#topnav-content').css('display'), 'flex');
             // mainmenu dropdowns not in layout
             assert.strictEqual($(`#layout > .cone-mainmenu-dropdown`).length, 0);
 
@@ -206,8 +153,8 @@ QUnit.module('MobileNav', () => {
             }
 
             // trigger closing toggle of mobile menu
-            topnav.toggle_button.trigger('click');
-            assert.strictEqual(topnav.content.css('display'), 'none');
+            $('#mobile-menu-toggle').trigger('click');
+            assert.strictEqual($('#topnav-content').css('display'), 'none');
 
             // set viewport to desktop
             helpers.set_vp('large');

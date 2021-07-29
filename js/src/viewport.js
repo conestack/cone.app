@@ -64,8 +64,3 @@ export class ViewPortAware {
         this.vp_state = e.state;
     }
 }
-
-$(function() {
-    // create viewport singleton
-    // cone_viewport = new ViewPort();
-});

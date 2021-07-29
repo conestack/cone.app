@@ -28,9 +28,6 @@ module.exports = function(config) {
             pattern: '../src/cone/app/browser/static/light.css', included: true
         },
         {   
-            pattern: '../src/cone/app/browser/static/dark.css', included: true
-        },
-        {   
             pattern: '../src/cone/app/browser/static/style.css', included: true
         },
         // js    
@@ -44,12 +41,8 @@ module.exports = function(config) {
             included: false
         },
         // tests
-        // {
-        //     pattern: '../js/tests/test_*.js',
-        //     type: 'module'
-        // },
         {
-            pattern: '../js/tests/manual_browser_test.js',
+            pattern: '../js/tests/test_*.js',
             type: 'module'
         },
         // helpers

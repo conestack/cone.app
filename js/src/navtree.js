@@ -1,17 +1,16 @@
 import $ from 'jquery'
-import { topnav } from './topnav.js';
-import { sidebar_menu } from './sidebar_menu.js';
+import {layout} from './layout.js';
 
 export class Navtree {
 
     static initialize(context) {
         let elem = $('#navtree', context);
         if (!elem.length) { 
-            navtree = null;
+            layout.navtree = null;
         } else {
-            navtree = new Navtree(elem);
+            layout.navtree = new Navtree(elem);
         }
-        return navtree;
+        return layout.navtree;
     }
 
     constructor(elem) {
@@ -59,8 +58,8 @@ export class Navtree {
         });
     }
 
-    mv_to_mobile() {
-        this.elem.detach().appendTo(topnav.content).addClass('mobile');
+    mv_to_mobile(mobile_content) {
+        this.elem.detach().appendTo(mobile_content).addClass('mobile');
         this.content.hide();
         this.heading.off('click').on('click', () => {
             this.content.slideToggle('fast');
@@ -70,11 +69,9 @@ export class Navtree {
     mv_to_sidebar() {
         this.elem
             .detach()
-            .appendTo(sidebar_menu.content)
+            .appendTo(layout.sidebar.content)
             .removeClass('mobile');
         this.heading.off('click');
         this.content.show();
     }
 }
-
-export var navtree = Navtree.initialize();

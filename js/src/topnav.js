@@ -1,7 +1,8 @@
 import $ from 'jquery'
 import {ViewPortAware, vp_states} from './viewport.js';
 import {toggle_arrow} from './toggle_arrow.js';
-import { mainmenu_top } from './main_menu_top.js';
+
+let topnav = null;
 
 export class Topnav extends ViewPortAware {
 
@@ -90,5 +91,3 @@ export class Topnav extends ViewPortAware {
         }
     }
 }
-
-export var topnav = Topnav.initialize();

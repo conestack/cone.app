@@ -1,8 +1,10 @@
-import {MainMenuSidebar, mainmenu_sidebar} from '../src/main_menu_sidebar.js';
-import {SidebarMenu, sidebar_menu} from '../src/sidebar_menu.js';
-import {Topnav, topnav} from '../src/topnav.js';
+import {MainMenuSidebar} from '../src/main_menu_sidebar.js';
+import {Sidebar} from '../src/sidebar.js';
+import {Topnav} from '../src/topnav.js';
 import * as helpers from './test-helpers.js';
 import {createCookie, readCookie} from '../src/cookie_functions.js';
+import {layout} from '../src/layout.js';
+import {MobileNav} from '../src/mobile_nav.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuSidebar tests
@@ -12,40 +14,56 @@ QUnit.module('MainMenuSidebar', () => {
 
     QUnit.module('constructor', hooks => {
 
-        hooks.after(() => {
+        hooks.beforeEach(() => {
+            // create DOM elements
+            helpers.create_sidebar_elem();
+            helpers.create_mm_sidebar_elem();
+        });
+
+        hooks.afterEach(() => {
             // remove element from DOM
             $('#layout').remove();
         });
 
         QUnit.test('properties', assert => {
-            // create DOM elements
-            helpers.create_sidebar_elem();
-            helpers.create_mm_sidebar_elem();
-
             // initialize instances
-            SidebarMenu.initialize();
+            Sidebar.initialize();
             MainMenuSidebar.initialize();
 
             // containing element
-            assert.ok(mainmenu_sidebar.elem.is('ul#mainmenu_sidebar'));
+            assert.ok(layout.mainmenu_sidebar.elem.is('ul#mainmenu_sidebar'));
 
             // items
-            assert.ok(mainmenu_sidebar.items);
+            assert.ok(layout.mainmenu_sidebar.items);
             // expected number of items in mainmenu
-            assert.strictEqual(mainmenu_sidebar.items.length, 3);
+            assert.strictEqual(layout.mainmenu_sidebar.items.length, 3);
 
             // items are direct children of elem
             assert.ok(
-                mainmenu_sidebar.items
+                layout.mainmenu_sidebar.items
                 .is('#mainmenu_sidebar > li:not("sidebar-heading")')
             );
 
             // arrows
-            assert.ok(mainmenu_sidebar.arrows);
-            assert.ok(mainmenu_sidebar.arrows.is('i.dropdown-arrow'));
+            assert.ok(layout.mainmenu_sidebar.arrows);
+            assert.ok(layout.mainmenu_sidebar.arrows.is('i.dropdown-arrow'));
 
             // menus
-            assert.ok(mainmenu_sidebar.menus.is('li.sb-menu'));
+            assert.ok(layout.mainmenu_sidebar.menus.is('li.sb-menu'));
+        });
+
+        QUnit.test('collapsed sidebar', assert => {
+            helpers.set_vp('small');
+
+            // initialize instances
+            Sidebar.initialize();
+            MainMenuSidebar.initialize();
+
+            assert.strictEqual(layout.sidebar.collapsed, true);
+            assert.strictEqual(
+                $('ul', layout.mainmenu_sidebar.items[1]).css('display'),
+                'none'
+            );
         });
     });
 
@@ -64,13 +82,13 @@ QUnit.module('MainMenuSidebar', () => {
 
             QUnit.test('unload()', assert => {
                 // initialize instances
-                SidebarMenu.initialize();
+                Sidebar.initialize();
                 MainMenuSidebar.initialize();
 
-                mainmenu_sidebar.items.on('mouseenter mouseleave', () => {
+                layout.mainmenu_sidebar.items.on('mouseenter mouseleave', () => {
                     assert.step('mouseenter/mouseleave');
                 });
-                mainmenu_sidebar.arrows.on('click', () => {
+                layout.mainmenu_sidebar.arrows.on('click', () => {
                     assert.step('click');
                 });
 
@@ -78,9 +96,9 @@ QUnit.module('MainMenuSidebar', () => {
                 MainMenuSidebar.initialize();
 
                 // trigger events to check if evt listeners are unbound
-                mainmenu_sidebar.items.trigger('mouseenter');
-                mainmenu_sidebar.items.trigger('mouseleave');
-                mainmenu_sidebar.arrows.trigger('click');
+                layout.mainmenu_sidebar.items.trigger('mouseenter');
+                layout.mainmenu_sidebar.items.trigger('mouseleave');
+                layout.mainmenu_sidebar.arrows.trigger('click');
 
                 assert.verifySteps([]);
             });
@@ -106,7 +124,7 @@ QUnit.module('MainMenuSidebar', () => {
 
             QUnit.test('initial_cookie()', assert => {
                 // initialize instances
-                SidebarMenu.initialize();
+                Sidebar.initialize();
                 MainMenuSidebar.initialize();
 
                 // cookie does not exist
@@ -114,21 +132,21 @@ QUnit.module('MainMenuSidebar', () => {
 
                 // create empty array, push display none for hidden menus
                 let test_display_data = [];
-                for (let elem of mainmenu_sidebar.menus) {
+                for (let elem of layout.mainmenu_sidebar.menus) {
                     test_display_data.push('none');
                 }
                 // display_data shows all menus hidden
-                assert.deepEqual(mainmenu_sidebar.display_data, test_display_data);
+                assert.deepEqual(layout.mainmenu_sidebar.display_data, test_display_data);
             });
 
             QUnit.test('initial_cookie() with cookie', assert => {
                 // initialize instances
-                SidebarMenu.initialize();
+                Sidebar.initialize();
                 MainMenuSidebar.initialize();
 
                 // fill array with display block for visible menus
                 let test_display_data = [];
-                for (let elem of mainmenu_sidebar.menus) {
+                for (let elem of layout.mainmenu_sidebar.menus) {
                     test_display_data.push('block');
                 }
                 // create cookie
@@ -136,8 +154,8 @@ QUnit.module('MainMenuSidebar', () => {
                 assert.ok(readCookie('sidebar menus'));
 
                 // invoke inital_cookie method
-                mainmenu_sidebar.initial_cookie();
-                assert.deepEqual(mainmenu_sidebar.display_data, test_display_data);
+                layout.mainmenu_sidebar.initial_cookie();
+                assert.deepEqual(layout.mainmenu_sidebar.display_data, test_display_data);
             });
         });
 
@@ -158,17 +176,16 @@ QUnit.module('MainMenuSidebar', () => {
             });
 
             QUnit.test('mv_to_mobile()', assert => {
-                assert.ok(true);
-                
                 // initialize instances
                 Topnav.initialize();
-                SidebarMenu.initialize();
+                Sidebar.initialize();
                 
                 // initialize MainMenuSidebar
                 MainMenuSidebar.initialize();
+                MobileNav.initialize();
 
-                mainmenu_sidebar.mv_to_mobile();
-                
+                helpers.set_vp('mobile');
+
                 // mainmenu sidebar is not in sidebar content
                 assert.strictEqual(
                     $('#sidebar_content > #mainmenu_sidebar').length,
@@ -179,7 +196,7 @@ QUnit.module('MainMenuSidebar', () => {
                     $('#topnav-content > #mainmenu_sidebar').length,
                     1
                 );
-                assert.ok(mainmenu_sidebar.elem.hasClass('mobile'));
+                assert.ok(layout.mainmenu_sidebar.elem.hasClass('mobile'));
             });
         });
 
@@ -201,7 +218,7 @@ QUnit.module('MainMenuSidebar', () => {
             QUnit.test('mv_to_sidebar()', assert => {
                 // initialize instances
                 Topnav.initialize();
-                SidebarMenu.initialize(),
+                Sidebar.initialize(),
                 MainMenuSidebar.initialize();
 
                 // mainmenu sidebar is in sidebar content
@@ -211,14 +228,14 @@ QUnit.module('MainMenuSidebar', () => {
                 );
 
                 // invoke mv_to_mobile
-                mainmenu_sidebar.mv_to_mobile();
+                layout.mainmenu_sidebar.mv_to_mobile();
                 assert.strictEqual(
                     $('#sidebar_content > #mainmenu_sidebar').length,
                     0
                 );
 
                 // invoke mv_to_sidebar
-                mainmenu_sidebar.mv_to_sidebar();
+                layout.mainmenu_sidebar.mv_to_sidebar();
 
                 // mainmenu sidebar is in sidebar content
                 assert.strictEqual(
@@ -230,7 +247,7 @@ QUnit.module('MainMenuSidebar', () => {
                     $('#topnav-content > #mainmenu_sidebar').length,
                     0
                 );
-                assert.notOk(mainmenu_sidebar.elem.hasClass('mobile'));
+                assert.notOk(layout.mainmenu_sidebar.elem.hasClass('mobile'));
             });
         });
 
@@ -248,23 +265,23 @@ QUnit.module('MainMenuSidebar', () => {
 
             QUnit.test('collapse()', assert => {
                 // initialize instances
-                SidebarMenu.initialize();
+                Sidebar.initialize();
                 MainMenuSidebar.initialize();
 
                 // test if evt listener removed
-                mainmenu_sidebar.arrows.on('click', () => {
+                layout.mainmenu_sidebar.arrows.on('click', () => {
                     throw new Error('click');
                 });
 
                 // invoke collapse
-                mainmenu_sidebar.collapse();
+                layout.mainmenu_sidebar.collapse();
 
                 // menus are hidden
-                assert.ok($('ul', mainmenu_sidebar.items).is(':hidden'));
+                assert.ok($('ul', layout.mainmenu_sidebar.items).is(':hidden'));
                 // trigger click on arrows
-                mainmenu_sidebar.arrows.trigger('click');
+                layout.mainmenu_sidebar.arrows.trigger('click');
 
-                for (let item of mainmenu_sidebar.items) {
+                for (let item of layout.mainmenu_sidebar.items) {
                     let elem = $(item);
                     let menu = $('ul', elem);
 
@@ -324,11 +341,11 @@ QUnit.module('MainMenuSidebar', () => {
 
             QUnit.test('expand()', assert => {
                 // initialize instances
-                SidebarMenu.initialize();
+                Sidebar.initialize();
                 MainMenuSidebar.initialize();
 
                 // invoke collapse method
-                mainmenu_sidebar.collapse();
+                layout.mainmenu_sidebar.collapse();
 
                 // mock expanded menu
                 $('.node-child_3').trigger('mouseenter');
@@ -336,34 +353,34 @@ QUnit.module('MainMenuSidebar', () => {
 
                 // display data cookie tests
                 // empty array
-                mainmenu_sidebar.display_data = [];
+                layout.mainmenu_sidebar.display_data = [];
 
                 // add display state for every item
-                for (let i = 0; i < mainmenu_sidebar.menus.length; i++) {
-                    let data = $('ul', mainmenu_sidebar.menus[i]).css('display');
-                    mainmenu_sidebar.display_data.push(data);
+                for (let i = 0; i < layout.mainmenu_sidebar.menus.length; i++) {
+                    let data = $('ul', layout.mainmenu_sidebar.menus[i]).css('display');
+                    layout.mainmenu_sidebar.display_data.push(data);
                 }
 
                 // throw error on mouseenter/leave to test if unbound
-                mainmenu_sidebar.items.on('mouseenter mouseleave', () => {
+                layout.mainmenu_sidebar.items.on('mouseenter mouseleave', () => {
                     throw new Error('mouseenter/mouseleave');
                 })
 
                 // invoke expand method
-                mainmenu_sidebar.expand();
+                layout.mainmenu_sidebar.expand();
 
                 // trigger mouse events on items
-                mainmenu_sidebar.items.trigger('mouseenter').trigger('mouseleave');
+                layout.mainmenu_sidebar.items.trigger('mouseenter').trigger('mouseleave');
 
-                for (let i = 0; i < mainmenu_sidebar.menus.length; i++) {
-                    let elem = mainmenu_sidebar.menus[i],
+                for (let i = 0; i < layout.mainmenu_sidebar.menus.length; i++) {
+                    let elem = layout.mainmenu_sidebar.menus[i],
                         arrow = $('i.dropdown-arrow', elem),
                         menu = $('ul.cone-mainmenu-dropdown-sb', elem)
                     ;
                     // menu is correct value of display_data
                     assert.strictEqual(
                         menu.css('display'),
-                        mainmenu_sidebar.display_data[i]
+                        layout.mainmenu_sidebar.display_data[i]
                     );
 
                     if (menu.css('display') === 'none'){
@@ -372,7 +389,7 @@ QUnit.module('MainMenuSidebar', () => {
                         assert.ok(arrow.hasClass('bi-chevron-down'));
                         arrow.trigger('click');
                         assert.strictEqual(menu.css('display'), 'block');
-                        assert.strictEqual(mainmenu_sidebar.display_data[i], 'block');
+                        assert.strictEqual(layout.mainmenu_sidebar.display_data[i], 'block');
                         assert.notOk(arrow.hasClass('bi-chevron-down'));
                         assert.ok(arrow.hasClass('bi-chevron-up'));
                     } else if (menu.css('display') === 'block'){
@@ -388,7 +405,7 @@ QUnit.module('MainMenuSidebar', () => {
                         assert.ok(arrow.hasClass('bi-chevron-down'));
 
                         // display data of element after click is none
-                        assert.strictEqual(mainmenu_sidebar.display_data[i], 'none');
+                        assert.strictEqual(layout.mainmenu_sidebar.display_data[i], 'none');
                     }
 
                     // cookie has been created

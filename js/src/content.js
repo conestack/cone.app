@@ -1,5 +1,7 @@
 import $ from 'jquery'
 
+let content = null;
+
 export class Content {
 
     static initialize(context) {
@@ -17,5 +19,3 @@ export class Content {
         // this.scrollbar = new ScrollBarY(elem);
     }
 }
-
-export var content = Content.initialize();

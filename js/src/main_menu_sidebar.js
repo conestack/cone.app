@@ -1,22 +1,21 @@
 import $ from 'jquery';
-import { toggle_arrow } from './toggle_arrow.js';
+import {toggle_arrow} from './toggle_arrow.js';
 import {readCookie, createCookie} from './cookie_functions.js';
-import {topnav} from './topnav.js';
-import {sidebar_menu} from './sidebar_menu.js';
+import {layout} from './layout.js';
 
 export class MainMenuSidebar {
 
     static initialize(context) {
         let elem = $('#mainmenu_sidebar', context);
-        if(!elem.length || sidebar_menu === null) {
-            mainmenu_sidebar = null;
+        if(!elem.length || layout.sidebar === null) {
+            layout.mainmenu_sidebar = null;
         } else {
-            if(mainmenu_sidebar !== null) {
-                mainmenu_sidebar.unload();
+            if( layout.mainmenu_sidebar !== null) {
+                layout.mainmenu_sidebar.unload();
             }
-            mainmenu_sidebar = new MainMenuSidebar(elem);
+            layout.mainmenu_sidebar = new MainMenuSidebar(elem);
         }
-        return mainmenu_sidebar;
+        return layout.mainmenu_sidebar;
     }
 
     constructor(elem) {
@@ -29,6 +28,12 @@ export class MainMenuSidebar {
 
         this._collapse = this.collapse.bind(this);
         this._expand = this.expand.bind(this);
+
+        if (layout.sidebar.collapsed) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
 
         $(window).on('sidebar_collapsed', this._collapse);
         $(window).on('sidebar_expanded', this._expand);
@@ -52,7 +57,6 @@ export class MainMenuSidebar {
     }
 
     collapse() {
-        // console.log('collapse mm sb');
         $('ul', this.items).hide();
         this.arrows.off('click');
 
@@ -92,7 +96,6 @@ export class MainMenuSidebar {
     }
 
     expand() {
-        // console.log('expand mm sb');
         this.items.off('mouseenter mouseleave');
 
         for(let i = 0; i < this.menus.length; i++) {
@@ -121,21 +124,20 @@ export class MainMenuSidebar {
         }
     }
 
-    mv_to_mobile() {
+    mv_to_mobile(mobile_content) {
         this.elem
             .detach()
-            .appendTo(topnav.content)
+            .appendTo(mobile_content)
             .addClass('mobile')
         ;
+        this.expand();
     }
 
     mv_to_sidebar() {
         this.elem
             .detach()
-            .appendTo(sidebar_menu.content)
+            .appendTo(layout.sidebar.content)
             .removeClass('mobile')
         ;
     }
 }
-
-export var mainmenu_sidebar = MainMenuSidebar.initialize();

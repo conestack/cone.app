@@ -1,17 +1,18 @@
 import $ from 'jquery'
 import {ScrollBarX} from '../src/scrollbar.js';
 import {MainMenuItem} from '../src/main_menu_item.js';
+import {layout} from './layout.js';
 
 export class MainMenuTop {
 
     static initialize(context) {
         let elem = $('#main-menu', context);
         if(!elem.length) {
-            mainmenu_top = null;
+            layout.mainmenu_top = null;
         } else {
-            mainmenu_top = new MainMenuTop(elem);
+            layout.mainmenu_top = new MainMenuTop(elem);
         }
-        return mainmenu_top;
+        return layout.mainmenu_top;
     }
 
     constructor(elem) {
@@ -19,7 +20,9 @@ export class MainMenuTop {
         new ScrollBarX(elem);
         this.main_menu_items = [];
         let that = this;
-        $('li', elem).each(function() {
+
+        this.content = $('ul#mainmenu');
+        $('li', this.content).each(function() {
             let main_menu_item = new MainMenuItem($(this));
             that.main_menu_items.push(main_menu_item);
         });
@@ -57,5 +60,3 @@ export class MainMenuTop {
         }
     }
 }
-
-export var mainmenu_top = MainMenuTop.initialize();

@@ -6,7 +6,7 @@ export * from './main_menu_sidebar.js';
 export * from './main_menu_top.js';
 export * from './navtree.js';
 export * from './searchbar.js';
-export * from './sidebar_menu.js';
+export * from './sidebar.js';
 export * from './theme_switcher.js';
 export * from './topnav.js';
 export * from './mobile_nav.js';

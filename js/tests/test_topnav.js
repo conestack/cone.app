@@ -91,8 +91,7 @@ QUnit.module('Topnav', () => {
     QUnit.module('methods', () => {
 
         QUnit.module('toggle_menu', hooks => {
-            let slide_toggle_origin,
-                test_topnav;
+            let test_topnav;
 
             hooks.before(() => {
                 // create topnav DOM element

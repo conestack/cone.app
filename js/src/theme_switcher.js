@@ -1,22 +1,22 @@
 import $ from 'jquery'
 import {createCookie, readCookie} from './cookie_functions.js';
+import {layout} from './layout.js';
 
 export const default_themes = [
     '/static/light.css',
     '/static/dark.css'
 ];
 
-let theme_switcher = null;
-
 export class ThemeSwitcher {
 
     static initialize(context, modes) {
         let elem = $('#switch_mode', context);
         if (!elem.length) {
-            return;
+            layout.theme_switcher = null;
+        } else {
+            layout.theme_switcher = new ThemeSwitcher(elem, modes);
         }
-        theme_switcher = new ThemeSwitcher(elem, modes);
-        return theme_switcher;
+        return layout.theme_switcher;
     }
 
     constructor(elem, modes) {
