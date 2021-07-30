@@ -110,43 +110,5 @@ QUnit.module('MainMenuTop', () => {
                 }
             }
         });
-
-        QUnit.test('mv_to_mobile', assert => {
-            Topnav.initialize();
-            MainMenuTop.initialize();
-
-            let items = layout.mainmenu_top.main_menu_items;
-
-            // mobile viewport
-            helpers.set_vp('mobile');
-            layout.mainmenu_top.mv_to_mobile();
-
-            for(let i in items) {
-                let item = items[i];
-                if(item.menu) {
-                    assert.strictEqual($('.cone-mainmenu-dropdown', item.elem).length, 1);
-                    assert.strictEqual(item.menu.css('left'), '0px');
-                }
-            }
-        });
-
-        QUnit.test('mv_to_top', assert => {
-            Topnav.initialize();
-            MainMenuTop.initialize();
-
-            let items = layout.mainmenu_top.main_menu_items;
-
-            // mobile viewport
-            helpers.set_vp('large');
-            layout.mainmenu_top.mv_to_top();
-
-            for(let i in items) {
-                let item = items[i];
-                if(item.menu) {
-                    assert.strictEqual($('.cone-mainmenu-dropdown', item.elem).length, 0);
-                    assert.strictEqual($('#layout > .cone-mainmenu-dropdown').length, 1)
-                }
-            }
-        });
     });
 });

@@ -1,6 +1,7 @@
 import {ScrollBar} from '../src/scrollbar.js';
 import {ScrollBarX} from '../src/scrollbar.js';
 import {ScrollBarY} from '../src/scrollbar.js';
+// contains jquery override
 import * as helpers from './test-helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -215,6 +216,9 @@ QUnit.module('ScrollBar', () => {
 
                 // dummy scrollbar class
                 TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        // placeholder
+                    }
                     update() {
                         assert.step('update()');
                     }
@@ -270,6 +274,12 @@ QUnit.module('ScrollBar', () => {
 
                 // dummy scrollbar class
                 TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        // placeholder
+                    }
+                    update() {
+                        // placeholder
+                    }
                     scroll_handle() {
                         assert.step('scroll_handle()');
                     }
@@ -324,11 +334,22 @@ QUnit.module('ScrollBar', () => {
         });
 
         QUnit.module('mouse_in_out()', hooks => {
-            let test_scrollbar;
+            let TestScrollbar,
+                test_scrollbar;
 
             hooks.before(() => {
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
+
+            // dummy class
+            TestScrollbar = class extends ScrollBar {
+                compile() {
+                    // placeholder
+                }
+                update() {
+                    // placeholder
+                }
+            }
             });
 
             hooks.after(() => {
@@ -342,7 +363,7 @@ QUnit.module('ScrollBar', () => {
 
             QUnit.test('mouse_in_out()', assert => {
                 // create test scrollbar object
-                test_scrollbar = new ScrollBar($('#test-container'));
+                test_scrollbar = new TestScrollbar($('#test-container'));
                 let test_sb = test_scrollbar.scrollbar;
 
                 // hide scrollbar - initially done in css file
@@ -372,6 +393,12 @@ QUnit.module('ScrollBar', () => {
 
                 // dummy scrollbar class
                 TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        //
+                    }
+                    update() {
+                        //
+                    }
                     set_position() {
                         assert.step('set_position()');
                     }		
@@ -430,11 +457,22 @@ QUnit.module('ScrollBar', () => {
         });
 
         QUnit.module('prevent_overflow()', hooks => {
-            let test_scrollbar;
+            let TestScrollbar,
+                test_scrollbar;
 
             hooks.before(() => {
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
+
+                 // dummy class
+                 TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        //
+                    }
+                    update() {
+                        //
+                    }
+                }
             });
 
             hooks.after(() => {
@@ -448,7 +486,7 @@ QUnit.module('ScrollBar', () => {
 
             QUnit.test('prevent_overflow()', assert => {
                 // create scrollbar object
-                test_scrollbar = new ScrollBar($('#test-container'));
+                test_scrollbar = new TestScrollbar($('#test-container'));
 
                 // set dimensions
                 test_scrollbar.contentsize = 400;
@@ -478,6 +516,12 @@ QUnit.module('ScrollBar', () => {
 
                 // dummy scrollbar class
                 TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        //
+                    }
+                    update(){
+                        //
+                    }
                     set_position() {
                         assert.step('set_position()');
                     }
@@ -528,6 +572,12 @@ QUnit.module('ScrollBar', () => {
 
                 // dummy scrollbar class
                 TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        //
+                    }
+                    update(){
+                        //
+                    }
                     set_position() {
                         // prevent overflow
                         let threshold = this.contentsize - this.scrollsize;

@@ -57,21 +57,4 @@ export class Navtree {
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
         });
     }
-
-    mv_to_mobile(mobile_content) {
-        this.elem.detach().appendTo(mobile_content).addClass('mobile');
-        this.content.hide();
-        this.heading.off('click').on('click', () => {
-            this.content.slideToggle('fast');
-        });
-    }
-
-    mv_to_sidebar() {
-        this.elem
-            .detach()
-            .appendTo(layout.sidebar.content)
-            .removeClass('mobile');
-        this.heading.off('click');
-        this.content.show();
-    }
 }

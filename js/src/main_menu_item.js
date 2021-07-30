@@ -47,24 +47,6 @@ export class MainMenuItem {
         this.menu.appendTo('#layout');
     }
 
-    mv_to_mobile() {
-        this.menu.off().detach().appendTo(this.elem).css('left', '0');
-        this.elem.off();
-        this.arrow.off().on('click', () => {
-            this.menu.slideToggle('fast');
-            toggle_arrow(this.arrow);
-        });
-    }
-
-    mv_to_top() {
-        this.menu.detach().appendTo('#layout');
-        this.arrow.off();
-        this.elem.off().on('mouseenter mouseleave', this._toggle);
-        this.menu.off().on('mouseenter mouseleave', () => {
-            this.menu.toggle();
-        });
-    }
-
     mouseenter_toggle(e) {
         this.menu.offset({left: this.elem.offset().left});
         if(e.type === 'mouseenter') {

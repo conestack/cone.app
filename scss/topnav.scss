@@ -67,6 +67,10 @@ $threshold_mobile: 560px;
   margin-right: auto;
   white-space: nowrap;
 
+  &.m_right {
+    margin-right: 2rem;
+  }
+
   a {
     text-decoration: none;
 

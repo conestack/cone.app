@@ -41,11 +41,13 @@ export class ScrollBar {
     /* istanbul ignore next */
     compile() {
         // abstract, implemented in subclass
+        throw 'Abstract ScrollBar does not implement compile()';
     }
 
     /* istanbul ignore next */
     update() {
         // abstract, implemented in subclass
+        throw 'Abstract ScrollBar does not implement update()';
     }
 
     unload() {

@@ -1,5 +1,8 @@
 import $ from 'jquery'
-import {ViewPortAware, vp_states} from './viewport.js';
+import {
+    ViewPortAware,
+    VP_MOBILE
+} from './viewport.js';
 import {toggle_arrow} from './toggle_arrow.js';
 import {layout} from './layout.js';
 
@@ -48,7 +51,7 @@ export class Topnav extends ViewPortAware {
             super.viewport_changed(e);
         }
 
-        if (this.vp_state === vp_states.MOBILE) {
+        if (this.vp_state === VP_MOBILE) {
             this.content.hide();
             this.elem.addClass('mobile');
 
@@ -71,7 +74,7 @@ export class Topnav extends ViewPortAware {
 
     pt_handle() {
         // tmp
-        if (this.vp_state === vp_states.MOBILE) {
+        if (this.vp_state === VP_MOBILE) {
             this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
                 this.user.stop(true, true).slideDown('fast');
                 toggle_arrow($('i.dropdown-arrow', '#personaltools'));

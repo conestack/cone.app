@@ -1,5 +1,9 @@
 import $ from 'jquery';
-import {vp_states} from './viewport.js';
+import {
+    VP_MOBILE,
+    VP_SMALL,
+    VP_LARGE
+} from './viewport.js';
 import {createCookie, readCookie} from './cookie_functions.js';
 import {ViewPortAware} from './viewport.js';
 import {layout} from './layout.js';
@@ -44,11 +48,11 @@ export class Sidebar extends ViewPortAware {
 
     initial_load() {
         let cookie = readCookie('sidebar');
-        if (this.vp_state === vp_states.MOBILE) {
+        if (this.vp_state === VP_MOBILE) {
             this.elem.hide();
         }
         else if (cookie === null) {
-            if(this.vp_state !== vp_states.LARGE) {
+            if(this.vp_state !== VP_LARGE) {
                 this.collapsed = true;
             } else {
                 this.collapsed = false;
@@ -88,7 +92,7 @@ export class Sidebar extends ViewPortAware {
         if (e) {
             super.viewport_changed(e);
         }
-        if (this.vp_state === vp_states.MOBILE) {
+        if (this.vp_state === VP_MOBILE) {
             this.collapsed = false;
             this.elem.hide();
         }
@@ -96,9 +100,9 @@ export class Sidebar extends ViewPortAware {
             this.collapsed = this.cookie;
             this.elem.show();
         }
-        else if (this.vp_state === vp_states.SMALL) {
+        else if (this.vp_state === VP_SMALL) {
             this.elem.show();
-            let state = this.vp_state === vp_states.SMALL;
+            let state = this.vp_state === VP_SMALL;
             /* istanbul ignore else */
             if(state != this.collapsed) {
                 this.collapsed = state;

@@ -1,12 +1,9 @@
 import $ from 'jquery'
 
-// viewport states
-export const vp_states = {
-    MOBILE: 0,
-    SMALL: 1,
-    MEDIUM: 2,
-    LARGE: 3
-}
+export const VP_MOBILE = 0;
+export const VP_SMALL = 1;
+export const VP_MEDIUM = 2;
+export const VP_LARGE = 3;
 
 // viewport singleton
 
@@ -23,13 +20,13 @@ class ViewPort {
 
     update_viewport() {
         if (window.matchMedia(this._mobile_query).matches) {
-            this.state = vp_states.MOBILE;
+            this.state = VP_MOBILE;
         } else if (window.matchMedia(this._small_query).matches) {
-            this.state = vp_states.SMALL;
+            this.state = VP_SMALL;
         } else if (window.matchMedia(this._medium_query).matches) {
-            this.state = vp_states.MEDIUM;
+            this.state = VP_MEDIUM;
         } else {
-            this.state = vp_states.LARGE;
+            this.state = VP_LARGE;
         }
     }
 

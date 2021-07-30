@@ -26,6 +26,7 @@ export class MainMenuTop {
             let main_menu_item = new MainMenuItem($(this));
             that.main_menu_items.push(main_menu_item);
         });
+        layout.topnav.logo.addClass('m_right');
 
         this.handle_scrollbar();
     }
@@ -39,24 +40,6 @@ export class MainMenuTop {
             .on('dragend', () => {
                 item.elem.on('mouseenter mouseleave', item._toggle);
             });
-        }
-    }
-
-    mv_to_mobile() {
-        for (let i in this.main_menu_items) {
-            let item = this.main_menu_items[i];
-            if (item.menu) {
-                item.mv_to_mobile();
-            }
-        }
-    }
-
-    mv_to_top() {
-        for (let i in this.main_menu_items) {
-            let item = this.main_menu_items[i];
-            if (item.menu) {
-                item.mv_to_top();
-            }
         }
     }
 }

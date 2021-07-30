@@ -53,6 +53,9 @@
   margin-right: auto;
   white-space: nowrap;
 }
+#cone-logo.m_right {
+  margin-right: 2rem;
+}
 #cone-logo a {
   text-decoration: none;
 }

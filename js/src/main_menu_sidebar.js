@@ -7,7 +7,7 @@ export class MainMenuSidebar {
 
     static initialize(context) {
         let elem = $('#mainmenu_sidebar', context);
-        if(!elem.length || layout.sidebar === null) {
+        if(!elem.length) {
             return;
         } else {
             if( layout.mainmenu_sidebar !== null) {
@@ -122,22 +122,5 @@ export class MainMenuSidebar {
                 createCookie('sidebar menus', this.display_data, null);
             });
         }
-    }
-
-    mv_to_mobile(mobile_content) {
-        this.elem
-            .detach()
-            .appendTo(mobile_content)
-            .addClass('mobile')
-        ;
-        this.expand();
-    }
-
-    mv_to_sidebar() {
-        this.elem
-            .detach()
-            .appendTo(layout.sidebar.content)
-            .removeClass('mobile')
-        ;
     }
 }
