@@ -33,7 +33,7 @@ QUnit.module('Topnav', () => {
             hooks.afterEach(() => {
                 // unload and remove instance
                 test_topnav = null;
-                $('#topnav').remove();
+                $('#layout').remove();
             });
 
             QUnit.test('vp mobile', assert => {
@@ -101,7 +101,7 @@ QUnit.module('Topnav', () => {
             hooks.after(() => {
                 test_topnav = null;
                 // remove topnav element from DOM
-                $('#topnav').remove();
+                $('#layout').remove();
             });
 
             QUnit.test('toggle_menu()', assert => {
@@ -149,7 +149,7 @@ QUnit.module('Topnav', () => {
 
             hooks.after(() => {
                 // remove topnav element from DOM
-                $('#topnav').remove();
+                $('#layout').remove();
                 test_topnav = null;
             });
 
@@ -236,7 +236,7 @@ QUnit.module('Topnav', () => {
             hooks.after(() => {
                 // unset instance
                 test_topnav = null;
-                $('#topnav').remove();
+                $('#layout').remove();
             });
 
             QUnit.test('pt_handle()', assert => {

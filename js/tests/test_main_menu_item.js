@@ -1,6 +1,6 @@
 import {layout} from '../src/layout.js';
 import {MainMenuTop} from '../src/main_menu_top.js';
-import { MobileNav } from '../src/mobile_nav.js';
+import {MobileNav} from '../src/mobile_nav.js';
 import {Topnav} from '../src/topnav.js';
 import * as helpers from './test-helpers.js';
 
@@ -130,8 +130,10 @@ QUnit.module('MainMenuItem', () => {
                 // trigger move to mobile
                 mm_item.mv_to_mobile();
                 // menu is appended to elem
-                assert.strictEqual($(mm_item.menu, mm_item.elem).length
-                                    , 1);
+                assert.strictEqual(
+                    $(mm_item.menu, mm_item.elem).length,
+                    1
+                );
 
                 // trigger mouseenter/leave events
                 mm_item.elem.trigger('mouseenter');
@@ -190,8 +192,10 @@ QUnit.module('MainMenuItem', () => {
 
                 helpers.set_vp('large');
                 // menu appended to #layout
-                assert.strictEqual($('#layout > .cone-mainmenu-dropdown').length
-                                   , 1);
+                assert.strictEqual(
+                    $('#layout > .cone-mainmenu-dropdown').length,
+                    1
+                );
 
                 // trigger events to check for unbind
                 mm_item.arrow.trigger('click');
@@ -213,6 +217,7 @@ QUnit.module('MainMenuItem', () => {
                 helpers.create_mm_top_elem();
                 helpers.create_mm_items(1);
             });
+
             hooks.after(() => {
                 $('#layout').remove();
             });
@@ -222,7 +227,7 @@ QUnit.module('MainMenuItem', () => {
                 MainMenuTop.initialize();
 
                 let mm_item = layout.mainmenu_top.main_menu_items[0];
-    
+
                 // trigger mouseenter
                 mm_item.elem.trigger('mouseenter');
                 assert.strictEqual(
@@ -230,12 +235,11 @@ QUnit.module('MainMenuItem', () => {
                     mm_item.elem.offset().left
                 );
                 assert.strictEqual(mm_item.menu.css('display'), 'block');
-    
+
                 // trigger mouseleave
                 mm_item.elem.trigger('mouseleave');
                 assert.strictEqual(mm_item.menu.css('display'), 'none');
             });
         });
-        
     });
 });

@@ -20,7 +20,7 @@ class ViewPort {
         this.update_viewport();
         $(window).on('resize', this.resize_handle.bind(this));
     }
-  
+
     update_viewport() {
         if (window.matchMedia(this._mobile_query).matches) {
             this.state = vp_states.MOBILE;

@@ -4,6 +4,16 @@ QUnit.module('Content', hooks => {
     let test_content;
 
     hooks.before(() => {
+    });
+
+    hooks.afterEach(() => {
+        // unset instance
+        test_content = null;
+        // remove dummy content element from DOM
+        $('#page-content-wrapper').remove();
+    });
+
+    QUnit.test('content', assert => {
         // append dummy content html to DOM
         let content_html = `
             <div id="page-content-wrapper">
@@ -15,16 +25,14 @@ QUnit.module('Content', hooks => {
 
         // dummy class
         test_content = Content.initialize();
+
+        assert.notStrictEqual(test_content, null);
     });
 
-    hooks.after(() => {
-        // unset instance
-        test_content = null;
-        // remove dummy content element from DOM
-        $('#page-content-wrapper').remove();
-    });
+    QUnit.test('content null', assert => {
+        // dummy class
+        test_content = Content.initialize();
 
-    QUnit.test('content', assert => {
-        assert.ok(true);
+        assert.strictEqual(test_content, null);
     });
 });

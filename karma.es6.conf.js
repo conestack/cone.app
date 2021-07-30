@@ -58,7 +58,7 @@ module.exports = function(config) {
         }
        ],
         browsers: [
-            'Chrome'
+            'ChromeHeadless'
         ],
         viewport: {
             breakpoints: [

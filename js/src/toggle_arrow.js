@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 /* toggle vertical arrow icon */
 
 export function toggle_arrow(arrow) {

@@ -12,38 +12,38 @@ import {MobileNav} from '../src/mobile_nav.js';
 QUnit.module('Navtree', () => {
 
     QUnit.module('constructor', hooks => {
-            hooks.before(() => {
-                // create dummy html elements
-                helpers.create_sidebar_elem();
-                helpers.create_navtree_elem();
-            });
+        hooks.before(() => {
+            // create dummy html elements
+            helpers.create_sidebar_elem();
+            helpers.create_navtree_elem();
+        });
 
-            hooks.after(() => {
-                // remove dummy elements from DOM
-                $('#layout').remove();
-            });
+        hooks.after(() => {
+            // remove dummy elements from DOM
+            $('#layout').remove();
+        });
 
-            QUnit.test('properties', assert => {
-                // initialize instances
-                Sidebar.initialize();
-                Navtree.initialize();
+        QUnit.test('properties', assert => {
+            // initialize instances
+            Sidebar.initialize();
+            Navtree.initialize();
 
-                // containing element
-                assert.ok(layout.navtree.elem.is('#sidebar_content > #navtree'));
+            // containing element
+            assert.ok(layout.navtree.elem.is('#sidebar_content > #navtree'));
 
-                // content
-                assert.ok(layout.navtree.content.is('#navtree > #navtree-content'));
+            // content
+            assert.ok(layout.navtree.content.is('#navtree > #navtree-content'));
 
-                // heading
-                assert.ok(layout.navtree.heading.is('#navtree > #navtree-heading'));
+            // heading
+            assert.ok(layout.navtree.heading.is('#navtree > #navtree-heading'));
 
-                // toggle elements
-                assert.ok(layout.navtree.toggle_elems.is('li.navtreelevel_1'));
+            // toggle elements
+            assert.ok(layout.navtree.toggle_elems.is('li.navtreelevel_1'));
 
-                // private methods
-                assert.ok(layout.navtree._mouseenter_handle);
-                assert.ok(layout.navtree._restore);
-            });
+            // private methods
+            assert.ok(layout.navtree._mouseenter_handle);
+            assert.ok(layout.navtree._restore);
+        });
     });
 
     QUnit.module('methods', () => {
@@ -56,10 +56,10 @@ QUnit.module('Navtree', () => {
                 helpers.create_navtree_elem();
             });
 
-            // hooks.after(() => {
-            //     // delete dummy DOM elements
-            //     $('#layout').remove();
-            // });
+            hooks.after(() => {
+                // delete dummy DOM elements
+                $('#layout').remove();
+            });
 
             QUnit.test('mv_to_mobile', assert => {
                 // initialize topnav instance

@@ -1,4 +1,3 @@
-
 import {ScrollBar} from '../src/scrollbar.js';
 import {ScrollBarX} from '../src/scrollbar.js';
 import {ScrollBarY} from '../src/scrollbar.js';
@@ -25,7 +24,7 @@ function create_scrollbar_elem(dir) {
         content_width = 200;
         content_height = 400;
     }
-    
+
     // create dummy scrollbar elem
     let scrollbar_test_elem = `
         <div style="width:${container_width}px;
@@ -41,7 +40,7 @@ function create_scrollbar_elem(dir) {
           </div>
         </div>
     `;
-    
+
     // append dummy scrollbar to DOM
     $('body').append(scrollbar_test_elem);
 }

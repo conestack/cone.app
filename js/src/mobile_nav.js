@@ -37,7 +37,7 @@ export class MobileNav extends ViewPortAware {
 
         this.viewport_changed();
     }
-  
+
     viewport_changed(e) {
         if(e){
             super.viewport_changed(e);

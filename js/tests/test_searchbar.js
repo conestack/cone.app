@@ -105,7 +105,7 @@ QUnit.module('Searchbar', () => {
                 // unset searchbar
                 sb = null;
                 // remove dummy searchbar element from DOM
-                $('#cone-searchbar').remove();
+                $('#layout').remove();
 
                 // reset super class method
                 VPA.prototype.viewport_changed = super_vp_changed_origin;

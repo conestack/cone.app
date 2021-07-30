@@ -84,4 +84,4 @@ QUnit.module('layout', hooks => {
 
         assert.ok(true);
     });
-})
+});

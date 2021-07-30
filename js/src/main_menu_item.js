@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { toggle_arrow } from './toggle_arrow.js';
+import {toggle_arrow} from './toggle_arrow.js';
 
 /* cone Main Menu Item */
 
