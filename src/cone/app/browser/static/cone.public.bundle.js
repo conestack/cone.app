@@ -1,4 +1,4 @@
-var cone = (function (exports, $$1) {
+var cone = (function (exports, $) {
     'use strict';
 
     // viewport states
@@ -19,7 +19,7 @@ var cone = (function (exports, $$1) {
             this._small_query = `(min-width:560px) and (max-width: 989.9px)`;
             this._medium_query = `(min-width:560px) and (max-width: 1200px)`;
             this.update_viewport();
-            $$1(window).on('resize', this.resize_handle.bind(this));
+            $(window).on('resize', this.resize_handle.bind(this));
         }
 
         update_viewport() {
@@ -38,9 +38,9 @@ var cone = (function (exports, $$1) {
             let state = this.state;
             this.update_viewport();
             if (e && state != this.state) {
-                var evt = $$1.Event('viewport_changed');
+                var evt = $.Event('viewport_changed');
                 evt.state = this.state;
-                $$1(window).trigger(evt);
+                $(window).trigger(evt);
             }
         }
     }
@@ -54,11 +54,11 @@ var cone = (function (exports, $$1) {
             this.vp_state = vp.state;
 
             this._viewport_changed_handle = this.viewport_changed.bind(this);
-            $$1(window).on('viewport_changed', this._viewport_changed_handle);
+            $(window).on('viewport_changed', this._viewport_changed_handle);
         }
 
         unload() {
-            $$1(window).off('viewport_changed', this._viewport_changed_handle);
+            $(window).off('viewport_changed', this._viewport_changed_handle);
         }
 
         viewport_changed(e) {
@@ -112,7 +112,7 @@ var cone = (function (exports, $$1) {
 
     class Sidebar extends ViewPortAware {
         static initialize(context) {
-            let elem = $$1('#sidebar_left', context);
+            let elem = $('#sidebar_left', context);
 
             if(!elem.length) {
                 return;
@@ -126,12 +126,12 @@ var cone = (function (exports, $$1) {
         constructor(elem) {
             super();
             this.elem = elem;
-            this.content = $$1('#sidebar_content', elem);
+            this.content = $('#sidebar_content', elem);
 
             // DOM elements
-            this.toggle_btn = $$1('#sidebar-toggle-btn', elem);
-            this.toggle_arrow_elem = $$1('i', this.toggle_btn);
-            this.lock_switch = $$1('#toggle-fluid');
+            this.toggle_btn = $('#sidebar-toggle-btn', elem);
+            this.toggle_arrow_elem = $('i', this.toggle_btn);
+            this.lock_switch = $('#toggle-fluid');
 
             // properties
             this.cookie = null;
@@ -174,8 +174,8 @@ var cone = (function (exports, $$1) {
             this.elem.attr('class', elem_class);
             this.toggle_arrow_elem.attr('class', button_class);
 
-            var evt = $$1.Event(`sidebar_${elem_class}`);
-            $$1(window).trigger(evt);
+            var evt = $.Event(`sidebar_${elem_class}`);
+            $(window).trigger(evt);
         }
 
         toggle_lock() {
@@ -244,7 +244,7 @@ var cone = (function (exports, $$1) {
     class MainMenuSidebar {
 
         static initialize(context) {
-            let elem = $$1('#mainmenu_sidebar', context);
+            let elem = $('#mainmenu_sidebar', context);
             if(!elem.length || layout.sidebar === null) {
                 return;
             } else {
@@ -258,9 +258,9 @@ var cone = (function (exports, $$1) {
 
         constructor(elem) {
             this.elem = elem;
-            this.items = $$1('>li:not(".sidebar-heading")', this.elem);
-            this.arrows = $$1('i.dropdown-arrow', this.items);
-            this.menus = $$1('.sb-menu', this.elem);
+            this.items = $('>li:not(".sidebar-heading")', this.elem);
+            this.arrows = $('i.dropdown-arrow', this.items);
+            this.menus = $('.sb-menu', this.elem);
 
             this.initial_cookie();
 
@@ -273,8 +273,8 @@ var cone = (function (exports, $$1) {
                 this.expand();
             }
 
-            $$1(window).on('sidebar_collapsed', this._collapse);
-            $$1(window).on('sidebar_expanded', this._expand);
+            $(window).on('sidebar_collapsed', this._collapse);
+            $(window).on('sidebar_expanded', this._expand);
         }
 
         unload() {
@@ -295,12 +295,12 @@ var cone = (function (exports, $$1) {
         }
 
         collapse() {
-            $$1('ul', this.items).hide();
+            $('ul', this.items).hide();
             this.arrows.off('click');
 
             for(let item of this.items) {
-                let elem = $$1(item);
-                let menu = $$1('ul', elem);
+                let elem = $(item);
+                let menu = $('ul', elem);
 
                 elem.off().on('mouseenter', mouse_in);
 
@@ -323,7 +323,7 @@ var cone = (function (exports, $$1) {
                 });
 
                 // stop event on scrollbar drag
-                $$1(window)
+                $(window)
                 .on('dragstart', () => {
                     elem.off('mouseenter', mouse_in);
                 })
@@ -338,8 +338,8 @@ var cone = (function (exports, $$1) {
 
             for(let i = 0; i < this.menus.length; i++) {
                 let elem = this.menus[i],
-                    arrow = $$1('i.dropdown-arrow', elem),
-                    menu = $$1('ul.cone-mainmenu-dropdown-sb', elem)
+                    arrow = $('i.dropdown-arrow', elem),
+                    menu = $('ul.cone-mainmenu-dropdown-sb', elem)
                 ;
 
                 menu.css('display', this.display_data[i]);
@@ -386,9 +386,9 @@ var cone = (function (exports, $$1) {
             // scroll container
             this.elem = elem;
             // content to scroll
-            this.content = $$1('>', this.elem);
-            this.scrollbar = $$1('<div class="scrollbar" />');
-            this.thumb = $$1('<div class="scroll-handle" />');
+            this.content = $('>', this.elem);
+            this.scrollbar = $('<div class="scrollbar" />');
+            this.thumb = $('<div class="scroll-handle" />');
 
             this.position = 0;
             this.unit = 10;
@@ -489,8 +489,8 @@ var cone = (function (exports, $$1) {
 
         drag_handle(e) {
             e.preventDefault();
-            var evt = $$1.Event('dragstart');
-            $$1(window).trigger(evt);
+            var evt = $.Event('dragstart');
+            $(window).trigger(evt);
 
             let _on_move = on_move.bind(this),
                 _on_up = on_up.bind(this),
@@ -500,7 +500,7 @@ var cone = (function (exports, $$1) {
 
             this.elem.off('mouseenter mouseleave', this._mousehandle);
 
-            $$1(document)
+            $(document)
                 .on('mousemove', _on_move)
                 .on('mouseup', _on_up);
 
@@ -511,9 +511,9 @@ var cone = (function (exports, $$1) {
                 this.set_position();
             }
             function on_up() {
-                var evt = $$1.Event('dragend');
-                $$1(window).trigger(evt);
-                $$1(document)
+                var evt = $.Event('dragend');
+                $(window).trigger(evt);
+                $(document)
                     .off('mousemove', _on_move)
                     .off('mouseup', _on_up);
                 this.thumb.removeClass('active');
@@ -644,14 +644,14 @@ var cone = (function (exports, $$1) {
             if(!this.children){
                 return;
             }
-            this.menu = $$1(`
+            this.menu = $(`
             <div class="cone-mainmenu-dropdown">
                 <ul class="mainmenu-dropdown">
                 </ul>
             </div>
         `);
-            this.dd = $$1('ul', this.menu);
-            this.arrow = $$1('i.dropdown-arrow', this.elem);
+            this.dd = $('ul', this.menu);
+            this.arrow = $('i.dropdown-arrow', this.elem);
             this.render_dd();
 
             this._toggle = this.mouseenter_toggle.bind(this);
@@ -664,7 +664,7 @@ var cone = (function (exports, $$1) {
         render_dd() {
             for (let i in this.children) {
                 let menu_item = this.children[i];
-                let dd_item = $$1(`
+                let dd_item = $(`
               <li class="${menu_item.selected ? 'active': ''}">
                 <a href="${menu_item.url}"
                    title="${menu_item.title}">
@@ -711,7 +711,7 @@ var cone = (function (exports, $$1) {
     class MainMenuTop {
 
         static initialize(context) {
-            let elem = $$1('#main-menu', context);
+            let elem = $('#main-menu', context);
             if(!elem.length) {
                 return;
             } else {
@@ -726,9 +726,9 @@ var cone = (function (exports, $$1) {
             this.main_menu_items = [];
             let that = this;
 
-            this.content = $$1('ul#mainmenu');
-            $$1('li', this.content).each(function() {
-                let main_menu_item = new MainMenuItem($$1(this));
+            this.content = $('ul#mainmenu');
+            $('li', this.content).each(function() {
+                let main_menu_item = new MainMenuItem($(this));
                 that.main_menu_items.push(main_menu_item);
             });
 
@@ -737,7 +737,7 @@ var cone = (function (exports, $$1) {
 
         handle_scrollbar() {
             for(let item of this.main_menu_items) {
-                $$1(window)
+                $(window)
                 .on('dragstart', () => {
                     item.elem.off('mouseenter mouseleave', item._toggle);
                 })
@@ -769,7 +769,7 @@ var cone = (function (exports, $$1) {
     class Searchbar extends ViewPortAware {
 
         static initialize(context) {
-            let elem = $$1('#cone-searchbar', context);
+            let elem = $('#cone-searchbar', context);
             if (!elem.length) {
                 return;
             } else {
@@ -782,9 +782,9 @@ var cone = (function (exports, $$1) {
         constructor(elem) {
             super();
             this.elem = elem;
-            this.search_text = $$1('#livesearch-input', this.elem);
-            this.search_group = $$1('#livesearch-group', this.elem);
-            this.dd = $$1('#cone-livesearch-dropdown', this.elem);
+            this.search_text = $('#livesearch-input', this.elem);
+            this.search_group = $('#livesearch-group', this.elem);
+            this.dd = $('#cone-livesearch-dropdown', this.elem);
 
             if(this.vp_state === vp_states.SMALL || this.vp_state === vp_states.MEDIUM) {
                 this.dd.addClass('dropdown-menu-end');
@@ -807,7 +807,7 @@ var cone = (function (exports, $$1) {
     class Content {
 
         static initialize(context) {
-            let elem = $$1('#page-content-wrapper', context);
+            let elem = $('#page-content-wrapper', context);
             if (!elem.length) {
                 return;
             } else {
@@ -825,7 +825,7 @@ var cone = (function (exports, $$1) {
     class Topnav extends ViewPortAware {
 
         static initialize(context) {
-            let elem = $$1('#topnav', context);
+            let elem = $('#topnav', context);
             if (!elem.length) {
                 return;
             } else {
@@ -837,18 +837,18 @@ var cone = (function (exports, $$1) {
         constructor(elem) {
             super();
             this.elem = elem;
-            this.content = $$1('#topnav-content', elem);
-            this.toggle_button = $$1('#mobile-menu-toggle', elem);
-            this.logo = $$1('#cone-logo', elem);
-            this.tb_dropdowns = $$1('#toolbar-top>li.dropdown', elem);
+            this.content = $('#topnav-content', elem);
+            this.toggle_button = $('#mobile-menu-toggle', elem);
+            this.logo = $('#cone-logo', elem);
+            this.tb_dropdowns = $('#toolbar-top>li.dropdown', elem);
             this._toggle_menu_handle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle_menu_handle);
 
             this.viewport_changed();
 
             // tmp
-            this.pt = $$1('#personaltools');
-            this.user =  $$1('#user');
+            this.pt = $('#personaltools');
+            this.user =  $('#user');
             this.pt_handle();
             // end tmp
         }
@@ -893,11 +893,11 @@ var cone = (function (exports, $$1) {
             if (this.vp_state === vp_states.MOBILE) {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
                     this.user.stop(true, true).slideDown('fast');
-                    toggle_arrow($$1('i.dropdown-arrow', '#personaltools'));
+                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
                 });
                 this.pt.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
                     this.user.stop(true, true).slideUp('fast');
-                    toggle_arrow($$1('i.dropdown-arrow', '#personaltools'));
+                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
                 });
             } else {
                 this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
@@ -913,7 +913,7 @@ var cone = (function (exports, $$1) {
     class Navtree {
 
         static initialize(context) {
-            let elem = $$1('#navtree', context);
+            let elem = $('#navtree', context);
             if (!elem.length) { 
                 return;
             } else {
@@ -924,9 +924,9 @@ var cone = (function (exports, $$1) {
 
         constructor(elem) {
             this.elem = elem;
-            this.content = $$1('#navtree-content', elem);
-            this.heading = $$1('#navtree-heading', elem);
-            this.toggle_elems = $$1('li.navtreelevel_1', elem);
+            this.content = $('#navtree-content', elem);
+            this.heading = $('#navtree-heading', elem);
+            this.toggle_elems = $('li.navtreelevel_1', elem);
 
             this._mouseenter_handle = this.align_width.bind(this);
             this.toggle_elems.on('mouseenter', this._mouseenter_handle);
@@ -943,22 +943,22 @@ var cone = (function (exports, $$1) {
         }
 
         align_width(evt) {
-            let target = $$1(evt.currentTarget);
+            let target = $(evt.currentTarget);
             target.addClass('hover');
-            if (target.outerWidth() > $$1('ul', target).outerWidth()) {
-                $$1('ul', target).css('width', target.outerWidth());
+            if (target.outerWidth() > $('ul', target).outerWidth()) {
+                $('ul', target).css('width', target.outerWidth());
             } else {
-                target.css('width', $$1('ul', target).outerWidth());
+                target.css('width', $('ul', target).outerWidth());
             }
         }
 
         restore_width(evt) {
-            $$1(evt.currentTarget).css('width', 'auto');
-            $$1(evt.currentTarget).removeClass('hover');
+            $(evt.currentTarget).css('width', 'auto');
+            $(evt.currentTarget).removeClass('hover');
         }
 
         scrollbar_handle(){
-            $$1(window)
+            $(window)
             .on('dragstart', () => {
                 this.toggle_elems.off('mouseenter', this._mouseenter_handle);
             })
@@ -993,7 +993,7 @@ var cone = (function (exports, $$1) {
     class ThemeSwitcher {
 
         static initialize(context) {
-            let elem = $$1('#switch_mode', context);
+            let elem = $('#switch_mode', context);
             if (!elem.length) {
                 return;
             } else {
@@ -1005,7 +1005,7 @@ var cone = (function (exports, $$1) {
         constructor(elem) {
             this.elem = elem;
             this.modes = default_themes;
-            this.link = $$1('head #colormode-styles');
+            this.link = $('head #colormode-styles');
             this.elem.off('click').on('click', this.switch_theme.bind(this));
             let current = readCookie('modeswitch');
             if (!current) {
@@ -1036,7 +1036,7 @@ var cone = (function (exports, $$1) {
 
     class MobileNav extends ViewPortAware {
         static initialize(context) {
-            let elem = $$1('#topnav-content', context);
+            let elem = $('#topnav-content', context);
 
             if (!elem.length) {
                 return;
@@ -1080,9 +1080,9 @@ var cone = (function (exports, $$1) {
 
             if(layout.mainmenu_top !== null){
                 if(this.vp_state === vp_states.MOBILE) {
-                    $$1('#cone-logo').css('margin-right', 'auto');
+                    $('#cone-logo').css('margin-right', 'auto');
                 } else {
-                    $$1('#cone-logo').css('margin-right', '2rem');
+                    $('#cone-logo').css('margin-right', '2rem');
                 }
             }
             if (layout.navtree !== null) {

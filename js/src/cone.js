@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import {Sidebar} from './sidebar.js';
 import {MainMenuSidebar} from './main_menu_sidebar.js';
 import {MainMenuTop} from './main_menu_top.js';
