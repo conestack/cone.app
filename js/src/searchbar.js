@@ -8,9 +8,11 @@ export class Searchbar extends ViewPortAware {
     static initialize(context) {
         let elem = $('#cone-searchbar', context);
         if (!elem.length) {
-            return;
+            searchbar = null;
+        } else {
+            searchbar = new Searchbar(elem);
         }
-        searchbar = new Searchbar(elem);
+
         return searchbar;
     }
 

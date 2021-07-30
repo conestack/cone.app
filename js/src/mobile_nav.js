@@ -20,21 +20,6 @@ export class MobileNav extends ViewPortAware {
         super();
 
         this.elem = elem;
-        // // TODO: create topnav if null
-        // else if(topnav === null) {
-        //     // create topnav or go with sidebar icon bar?
-        // }
-
-        // hide if no children are in content
-        // if (layout.mainmenu_sidebar === null &&
-        //     layout.navtree === null
-        // ){
-        //     sidebar_menu.elem.hide();
-        //     // sidebar.unload();
-        //     $(window).off('viewport_changed', sidebar_menu._viewport_changed_handle);
-        //     return;
-        // }
-
         this.viewport_changed();
     }
 
