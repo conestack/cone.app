@@ -9,24 +9,24 @@ export const default_themes = [
 
 export class ThemeSwitcher {
 
-    static initialize(context, modes) {
+    static initialize(context) {
         let elem = $('#switch_mode', context);
         if (!elem.length) {
-            layout.theme_switcher = null;
+            return;
         } else {
-            layout.theme_switcher = new ThemeSwitcher(elem, modes);
+            layout.theme_switcher = new ThemeSwitcher(elem);
         }
         return layout.theme_switcher;
     }
 
-    constructor(elem, modes) {
+    constructor(elem) {
         this.elem = elem;
-        this.modes = modes;
+        this.modes = default_themes;
         this.link = $('head #colormode-styles');
         this.elem.off('click').on('click', this.switch_theme.bind(this));
         let current = readCookie('modeswitch');
         if (!current) {
-            current = modes[0];
+            current = this.modes[0];
         }
         this.current = current;
     }

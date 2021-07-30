@@ -1,19 +1,18 @@
 import $ from 'jquery'
 import {ViewPortAware, vp_states} from './viewport.js';
 import {toggle_arrow} from './toggle_arrow.js';
-
-let topnav = null;
+import {layout} from './layout.js';
 
 export class Topnav extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#topnav', context);
         if (!elem.length) {
-            topnav = null;
+            return;
         } else {
-            topnav = new Topnav(elem);
+            layout.topnav = new Topnav(elem);
         }
-        return topnav;
+        return layout.topnav;
     }
 
     constructor(elem) {

@@ -1,19 +1,18 @@
 import $ from 'jquery'
 import {ViewPortAware, vp_states} from '../src/viewport.js';
-
-let searchbar = null;
+import {layout} from './layout.js';
 
 export class Searchbar extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#cone-searchbar', context);
         if (!elem.length) {
-            searchbar = null;
+            return;
         } else {
-            searchbar = new Searchbar(elem);
+            layout.searchbar = new Searchbar(elem);
         }
 
-        return searchbar;
+        return layout.searchbar;
     }
 
     constructor(elem) {
@@ -40,7 +39,3 @@ export class Searchbar extends ViewPortAware {
         }
     }
 }
-
-$(function() {
-    searchbar = Searchbar.initialize();
-});

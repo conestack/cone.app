@@ -8,7 +8,7 @@ export class MainMenuTop {
     static initialize(context) {
         let elem = $('#main-menu', context);
         if(!elem.length) {
-            layout.mainmenu_top = null;
+            return;
         } else {
             layout.mainmenu_top = new MainMenuTop(elem);
         }
@@ -38,7 +38,7 @@ export class MainMenuTop {
             })
             .on('dragend', () => {
                 item.elem.on('mouseenter mouseleave', item._toggle);
-            })   
+            });
         }
     }
 

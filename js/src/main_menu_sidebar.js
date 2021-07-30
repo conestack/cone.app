@@ -8,7 +8,7 @@ export class MainMenuSidebar {
     static initialize(context) {
         let elem = $('#mainmenu_sidebar', context);
         if(!elem.length || layout.sidebar === null) {
-            layout.mainmenu_sidebar = null;
+            return;
         } else {
             if( layout.mainmenu_sidebar !== null) {
                 layout.mainmenu_sidebar.unload();

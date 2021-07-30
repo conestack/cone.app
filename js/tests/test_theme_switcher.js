@@ -49,7 +49,7 @@ QUnit.module('ThemeSwitcher', hooks => {
 
     QUnit.test('initial default check elems', assert => {
         // initialize ThemeSwitcher instance
-        ThemeSwitcher.initialize($('body'), default_themes);
+        ThemeSwitcher.initialize();
 
         // modes are default themes
         assert.strictEqual(layout.theme_switcher.modes, default_themes);
@@ -62,7 +62,7 @@ QUnit.module('ThemeSwitcher', hooks => {
         createCookie('modeswitch', default_themes[1], null);
 
         // initialize ThemeSwitcher instance
-        ThemeSwitcher.initialize($('body'), default_themes);
+        ThemeSwitcher.initialize();
 
         // theme switcher current is dark.css
         assert.strictEqual(layout.theme_switcher.current, layout.theme_switcher.modes[1]);
@@ -70,7 +70,7 @@ QUnit.module('ThemeSwitcher', hooks => {
 
     QUnit.test('switch_theme()', assert => {
         // initialize ThemeSwitcher instance
-        ThemeSwitcher.initialize($('body'), default_themes);
+        ThemeSwitcher.initialize();
 
         // defaut mode is light.css
         assert.strictEqual(layout.theme_switcher.current, layout.theme_switcher.modes[0]);
@@ -89,13 +89,4 @@ QUnit.module('ThemeSwitcher', hooks => {
         // link href is light.css in head
         assert.strictEqual(layout.theme_switcher.link.attr('href'), layout.theme_switcher.modes[0]);
     });
-
-    QUnit.test('null', assert => {
-        $('#switch_mode').remove();
-
-         // initialize ThemeSwitcher instance
-         ThemeSwitcher.initialize($('body'), default_themes);
-
-         assert.strictEqual(layout.theme_switcher, null);
-    })
 });

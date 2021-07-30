@@ -33,6 +33,6 @@ QUnit.module('Content', hooks => {
         // dummy class
         test_content = Content.initialize();
 
-        assert.strictEqual(test_content, null);
+        assert.strictEqual(test_content, undefined);
     });
 });

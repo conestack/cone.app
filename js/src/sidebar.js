@@ -9,7 +9,7 @@ export class Sidebar extends ViewPortAware {
         let elem = $('#sidebar_left', context);
 
         if(!elem.length) {
-            layout.sidebar = null;
+            return;
         } else {
             layout.sidebar = new Sidebar(elem);
         }
@@ -30,11 +30,11 @@ export class Sidebar extends ViewPortAware {
         // properties
         this.cookie = null;
         this.collapsed = false;
-       
+
         // bindings
         this._toggle_menu_handle = this.toggle_menu.bind(this);
         this.toggle_btn.off('click').on('click', this._toggle_menu_handle);
-        
+
         this._toggle_lock = this.toggle_lock.bind(this);
         this.lock_switch.off('click').on('click', this._toggle_lock);
 
@@ -46,7 +46,7 @@ export class Sidebar extends ViewPortAware {
         let cookie = readCookie('sidebar');
         if (this.vp_state === vp_states.MOBILE) {
             this.elem.hide();
-        } 
+        }
         else if (cookie === null) {
             if(this.vp_state !== vp_states.LARGE) {
                 this.collapsed = true;
@@ -114,7 +114,7 @@ export class Sidebar extends ViewPortAware {
 
     toggle_menu() {
         this.collapsed = !this.collapsed;
-        
+
         if (this.lock_switch.hasClass('active')) {
             createCookie('sidebar', this.collapsed, null);
             this.cookie = this.collapsed;

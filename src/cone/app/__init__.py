@@ -41,7 +41,7 @@ cfg.js.public = [
     '++resource++bdajax/bdajax.js',
     '++resource++bdajax/bdajax_bs3.js',
     'static/scrollbar.js',
-    'static/public.js'
+    'static/cone.public.bundle.js'
 ]
 cfg.js.protected = [
     'static/protected.js'

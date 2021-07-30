@@ -6,7 +6,7 @@ export class Navtree {
     static initialize(context) {
         let elem = $('#navtree', context);
         if (!elem.length) { 
-            layout.navtree = null;
+            return;
         } else {
             layout.navtree = new Navtree(elem);
         }

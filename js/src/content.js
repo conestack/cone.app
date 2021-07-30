@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import {layout} from './layout.js';
 
 let content = null;
 
@@ -7,11 +8,11 @@ export class Content {
     static initialize(context) {
         let elem = $('#page-content-wrapper', context);
         if (!elem.length) {
-            content = null;
+            return;
         } else {
-            content = new Content(elem);
+            layout.content = new Content(elem);
         }
-        return content;
+        return layout.content;
     }
 
     constructor(elem) {

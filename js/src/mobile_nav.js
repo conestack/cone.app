@@ -9,7 +9,7 @@ export class MobileNav extends ViewPortAware {
         let elem = $('#topnav-content', context);
 
         if (!elem.length) {
-            layout.mobile_nav = null;
+            return;
         } else {
             layout.mobile_nav = new MobileNav(elem);
         }

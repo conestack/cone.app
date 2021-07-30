@@ -4,5 +4,8 @@ export let layout = {
     mainmenu_sidebar: null,
     navtree: null,
     sidebar: null,
-    mobile_nav: null
+    mobile_nav: null,
+    content: null,
+    topnav: null,
+    searchbar: null
 }
