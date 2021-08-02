@@ -1,42 +1,32 @@
 import $ from 'jquery';
-import {Sidebar} from './sidebar.js';
-import {MainMenuSidebar, MainMenuTop} from './mainmenu.js';
-import {Searchbar} from './searchbar.js';
-import {layout} from './layout.js';
-import {Content} from './content.js';
-import {Topnav} from './topnav.js';
-import {Navtree} from './navtree.js';
-import {
-    ScrollBar,
-    ScrollBarX,
-    ScrollBarY
-} from './scrollbar.js';
-import {ThemeSwitcher} from './theme_switcher.js';
-import {MobileNav }from './mobile_nav.js';
 
-export * from './viewport.js';
+import * as sidebar from './sidebar.js';
+import * as content from './content.js';
+import * as layout from './layout.js';
+import * as mainmenu from './mainmenu.js';
+import * as mobilenav from './mobilenav.js';
+import * as navtree from './navtree.js';
+import * as scrollbar from './scrollbar.js';
+import * as searchbar from './searchbar.js';
+import * as theme from './theme.js';
+import * as topnav from './topnav.js';
+import * as utils from './utils.js';
+import * as viewport from './viewport.js';
 
-export * from './layout.js';
-export * from './content.js';
-export * from './mainmenu.js';
-export * from './navtree.js';
-export * from './searchbar.js';
-export * from './sidebar.js';
-export * from './theme_switcher.js';
-export * from './topnav.js';
-export * from './mobile_nav.js';
-export * from './utils.js';
+let api = {};
 
-export * from './scrollbar.js';
+Object.assign(api, sidebar);
+Object.assign(api, content);
+Object.assign(api, layout);
+Object.assign(api, mainmenu);
+Object.assign(api, mobilenav);
+Object.assign(api, navtree);
+Object.assign(api, scrollbar);
+Object.assign(api, searchbar);
+Object.assign(api, theme);
+Object.assign(api, topnav);
+Object.assign(api, utils);
+Object.assign(api, viewport);
 
-$(function() {
-    bdajax.register(Topnav.initialize, true);
-    bdajax.register(MainMenuTop.initialize, true);
-    bdajax.register(Searchbar.initialize, true);
-    bdajax.register(ThemeSwitcher.initialize, true);
-    bdajax.register(Sidebar.initialize, true);
-    bdajax.register(MainMenuSidebar.initialize, true);
-    bdajax.register(Navtree.initialize, true);
-    bdajax.register(Content.initialize, true);
-    bdajax.register(MobileNav.initialize, true);
-});
+let cone = api;
+export default cone;

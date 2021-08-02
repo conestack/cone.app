@@ -8,7 +8,7 @@ exports.noConflict = function() {
 window.cone = exports;`;
 
 export default {
-    input: 'js/src/cone.js',
+    input: 'js/src/public/bundle.js',
     output: [{
         file: 'src/cone/app/browser/static/cone.public.bundle.js',
         format: 'iife',

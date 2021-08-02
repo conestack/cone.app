@@ -63,6 +63,7 @@ var cone = (function (exports, $) {
         }
     }
 
+    /* cookie functions */
     /* Taken from Plone */
 
     function createCookie(name, value, days) {
@@ -93,6 +94,17 @@ var cone = (function (exports, $) {
             }
         }
         return null;
+    }
+
+    /* toggle vertical arrow icon */
+    function toggle_arrow(arrow) {
+        if (arrow.hasClass('bi-chevron-up')) {
+            arrow.removeClass('bi-chevron-up');
+            arrow.addClass('bi-chevron-down');
+        } else {
+            arrow.removeClass('bi-chevron-down');
+            arrow.addClass('bi-chevron-up');
+        }
     }
 
     let layout = {
@@ -223,140 +235,6 @@ var cone = (function (exports, $) {
                 this.cookie = this.collapsed;
             }
             this.assign_state();
-        }
-    }
-
-    /* toggle vertical arrow icon */
-
-    function toggle_arrow(arrow) {
-        if (arrow.hasClass('bi-chevron-up')) {
-            arrow.removeClass('bi-chevron-up');
-            arrow.addClass('bi-chevron-down');
-        } else {
-            arrow.removeClass('bi-chevron-down');
-            arrow.addClass('bi-chevron-up');
-        }
-    }
-
-    class MainMenuSidebar {
-
-        static initialize(context) {
-            let elem = $('#mainmenu_sidebar', context);
-            if(!elem.length) {
-                return;
-            } else {
-                if( layout.mainmenu_sidebar !== null) {
-                    layout.mainmenu_sidebar.unload();
-                }
-                layout.mainmenu_sidebar = new MainMenuSidebar(elem);
-            }
-            return layout.mainmenu_sidebar;
-        }
-
-        constructor(elem) {
-            this.elem = elem;
-            this.items = $('>li:not(".sidebar-heading")', this.elem);
-            this.arrows = $('i.dropdown-arrow', this.items);
-            this.menus = $('.sb-menu', this.elem);
-
-            this.initial_cookie();
-
-            this._collapse = this.collapse.bind(this);
-            this._expand = this.expand.bind(this);
-
-            if (layout.sidebar.collapsed) {
-                this.collapse();
-            } else {
-                this.expand();
-            }
-
-            $(window).on('sidebar_collapsed', this._collapse);
-            $(window).on('sidebar_expanded', this._expand);
-        }
-
-        unload() {
-            this.items.off();
-            this.arrows.off();
-        }
-
-        initial_cookie() {
-            let cookie = readCookie('sidebar menus');
-            if(cookie) {
-                this.display_data = cookie.split(',');
-            } else {
-                this.display_data = [];
-                for(let elem of this.menus) {
-                    this.display_data.push('none');
-                }
-            }
-        }
-
-        collapse() {
-            $('ul', this.items).hide();
-            this.arrows.off('click');
-
-            for(let item of this.items) {
-                let elem = $(item);
-                let menu = $('ul', elem);
-
-                elem.off().on('mouseenter', mouse_in);
-
-                function mouse_in() {
-                    elem.addClass('hover');
-                    let elem_w = elem.outerWidth(),
-                        menu_w = menu.outerWidth();
-                    if(elem_w > menu_w) {
-                        menu.css('width', elem_w);
-                    } else {
-                        elem.css('width', menu_w);
-                    }
-                    menu.show();
-                }
-
-                elem.on('mouseleave', () => {
-                    menu.hide();
-                    elem.removeClass('hover')
-                        .css('width', 'auto');
-                });
-
-                // stop event on scrollbar drag
-                $(window)
-                .on('dragstart', () => {
-                    elem.off('mouseenter', mouse_in);
-                })
-                .on('dragend', () => {
-                    elem.on('mouseenter', mouse_in);
-                });
-            }
-        }
-
-        expand() {
-            this.items.off('mouseenter mouseleave');
-
-            for(let i = 0; i < this.menus.length; i++) {
-                let elem = this.menus[i],
-                    arrow = $('i.dropdown-arrow', elem),
-                    menu = $('ul.cone-mainmenu-dropdown-sb', elem)
-                ;
-
-                menu.css('display', this.display_data[i]);
-
-                if(menu.css('display') === 'block') {
-                    arrow.removeClass('bi-chevron-down')
-                         .addClass('bi-chevron-up');
-                } else {
-                    arrow.removeClass('bi-chevron-up')
-                         .addClass('bi-chevron-down');
-                }
-
-                arrow.off().on('click', () => {
-                    let display = menu.css('display') === 'block' ? 'none' : 'block' ;
-                    menu.slideToggle('fast');
-                    toggle_arrow(arrow);
-                    this.display_data[i] = display; 
-                    createCookie('sidebar menus', this.display_data, null);
-                });
-            }
         }
     }
 
@@ -616,7 +494,168 @@ var cone = (function (exports, $) {
         }
     }
 
-    /* cone Main Menu Item */
+    class MainMenuSidebar {
+
+        static initialize(context) {
+            let elem = $('#mainmenu_sidebar', context);
+            if(!elem.length) {
+                return;
+            } else {
+                if( layout.mainmenu_sidebar !== null) {
+                    layout.mainmenu_sidebar.unload();
+                }
+                layout.mainmenu_sidebar = new MainMenuSidebar(elem);
+            }
+            return layout.mainmenu_sidebar;
+        }
+
+        constructor(elem) {
+            this.elem = elem;
+            this.items = $('>li:not(".sidebar-heading")', this.elem);
+            this.arrows = $('i.dropdown-arrow', this.items);
+            this.menus = $('.sb-menu', this.elem);
+
+            this.initial_cookie();
+
+            this._collapse = this.collapse.bind(this);
+            this._expand = this.expand.bind(this);
+
+            if (layout.sidebar.collapsed) {
+                this.collapse();
+            } else {
+                this.expand();
+            }
+
+            $(window).on('sidebar_collapsed', this._collapse);
+            $(window).on('sidebar_expanded', this._expand);
+        }
+
+        unload() {
+            this.items.off();
+            this.arrows.off();
+        }
+
+        initial_cookie() {
+            let cookie = readCookie('sidebar menus');
+            if(cookie) {
+                this.display_data = cookie.split(',');
+            } else {
+                this.display_data = [];
+                for(let elem of this.menus) {
+                    this.display_data.push('none');
+                }
+            }
+        }
+
+        collapse() {
+            $('ul', this.items).hide();
+            this.arrows.off('click');
+
+            for(let item of this.items) {
+                let elem = $(item);
+                let menu = $('ul', elem);
+
+                elem.off().on('mouseenter', mouse_in);
+
+                function mouse_in() {
+                    elem.addClass('hover');
+                    let elem_w = elem.outerWidth(),
+                        menu_w = menu.outerWidth();
+                    if(elem_w > menu_w) {
+                        menu.css('width', elem_w);
+                    } else {
+                        elem.css('width', menu_w);
+                    }
+                    menu.show();
+                }
+
+                elem.on('mouseleave', () => {
+                    menu.hide();
+                    elem.removeClass('hover')
+                        .css('width', 'auto');
+                });
+
+                // stop event on scrollbar drag
+                $(window)
+                .on('dragstart', () => {
+                    elem.off('mouseenter', mouse_in);
+                })
+                .on('dragend', () => {
+                    elem.on('mouseenter', mouse_in);
+                });
+            }
+        }
+
+        expand() {
+            this.items.off('mouseenter mouseleave');
+
+            for(let i = 0; i < this.menus.length; i++) {
+                let elem = this.menus[i],
+                    arrow = $('i.dropdown-arrow', elem),
+                    menu = $('ul.cone-mainmenu-dropdown-sb', elem)
+                ;
+
+                menu.css('display', this.display_data[i]);
+
+                if(menu.css('display') === 'block') {
+                    arrow.removeClass('bi-chevron-down')
+                         .addClass('bi-chevron-up');
+                } else {
+                    arrow.removeClass('bi-chevron-up')
+                         .addClass('bi-chevron-down');
+                }
+
+                arrow.off().on('click', () => {
+                    let display = menu.css('display') === 'block' ? 'none' : 'block' ;
+                    menu.slideToggle('fast');
+                    toggle_arrow(arrow);
+                    this.display_data[i] = display; 
+                    createCookie('sidebar menus', this.display_data, null);
+                });
+            }
+        }
+    }
+
+    class MainMenuTop {
+
+        static initialize(context) {
+            let elem = $('#main-menu', context);
+            if(!elem.length) {
+                return;
+            } else {
+                layout.mainmenu_top = new MainMenuTop(elem);
+            }
+            return layout.mainmenu_top;
+        }
+
+        constructor(elem) {
+            this.elem = elem;
+            new ScrollBarX(elem);
+            this.main_menu_items = [];
+            let that = this;
+
+            this.content = $('ul#mainmenu');
+            $('li', this.content).each(function() {
+                let main_menu_item = new MainMenuItem($(this));
+                that.main_menu_items.push(main_menu_item);
+            });
+            layout.topnav.logo.addClass('m_right');
+
+            this.handle_scrollbar();
+        }
+
+        handle_scrollbar() {
+            for(let item of this.main_menu_items) {
+                $(window)
+                .on('dragstart', () => {
+                    item.elem.off('mouseenter mouseleave', item._toggle);
+                })
+                .on('dragend', () => {
+                    item.elem.on('mouseenter mouseleave', item._toggle);
+                });
+            }
+        }
+    }
 
     class MainMenuItem {
 
@@ -668,47 +707,6 @@ var cone = (function (exports, $) {
                 this.menu.css('display', 'block');
             } else {
                 this.menu.css('display', 'none');
-            }
-        }
-    }
-
-    class MainMenuTop {
-
-        static initialize(context) {
-            let elem = $('#main-menu', context);
-            if(!elem.length) {
-                return;
-            } else {
-                layout.mainmenu_top = new MainMenuTop(elem);
-            }
-            return layout.mainmenu_top;
-        }
-
-        constructor(elem) {
-            this.elem = elem;
-            new ScrollBarX(elem);
-            this.main_menu_items = [];
-            let that = this;
-
-            this.content = $('ul#mainmenu');
-            $('li', this.content).each(function() {
-                let main_menu_item = new MainMenuItem($(this));
-                that.main_menu_items.push(main_menu_item);
-            });
-            layout.topnav.logo.addClass('m_right');
-
-            this.handle_scrollbar();
-        }
-
-        handle_scrollbar() {
-            for(let item of this.main_menu_items) {
-                $(window)
-                .on('dragstart', () => {
-                    item.elem.off('mouseenter mouseleave', item._toggle);
-                })
-                .on('dragend', () => {
-                    item.elem.on('mouseenter mouseleave', item._toggle);
-                });
             }
         }
     }
