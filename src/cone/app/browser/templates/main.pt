@@ -19,8 +19,6 @@
 
   <body role="document">
 
-    <tal:bdajax replace="structure tile('bdajax')" />
-
     <tal:layout replace="structure tile('layout')" />
 
   </body>

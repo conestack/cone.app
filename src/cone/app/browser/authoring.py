@@ -241,21 +241,28 @@ class OverlayForm(Behavior):
     """Form behavior rendering to overlay.
     """
     action_resource = override('overlayform')
-    # XXX: change ``overlay_selector`` to #ajax-form
-    overlay_selector = override('#ajax-overlay')
-    overlay_content_selector = override('.overlay_content')
+    content_selector = default('.modal-body')
+
+    @default
+    @property
+    def overlay_uid(self):
+        return self.request.params['ajax.overlay-uid']
+
+    @plumb
+    def prepare(_next, self):
+        _next(self)
+        self.form['ajax.overlay-uid'] = factory('proxy', value=self.overlay_uid)
 
     @plumb
     def __call__(_next, self, model, request):
         form = _next(self, model, request)
-        selector = '%s %s' % (self.overlay_selector,
-                              self.overlay_content_selector)
+        selector = '#{} {}'.format(self.overlay_uid, self.content_selector)
         ajax_form_fiddle(request, selector, 'inner')
         return form
 
     @default
     def next(self, request):
-        return [AjaxOverlay(selector=self.overlay_selector, close=True)]
+        return [AjaxOverlay(close=True, uid=self.overlay_uid)]
 
 
 # B/C

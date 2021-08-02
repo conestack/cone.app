@@ -2,8 +2,6 @@ from cone.app.browser.actions import ActionContext
 from cone.app.browser.utils import format_traceback
 from cone.app.interfaces import ILiveSearch
 from cone.tile import render_tile
-from cone.tile import Tile
-from cone.tile import tile
 from node.utils import safe_encode
 from pyramid.exceptions import Forbidden
 from pyramid.response import Response
@@ -12,23 +10,17 @@ import json
 import logging
 
 
-@tile(name='bdajax', path='bdajax:bdajax_bs3.pt', permission='login')
-class BDAjaxTile(Tile):
-    """Tile rendering bdajax markup.
-    """
-
-
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
-    """bdajax ``ajaxaction`` implementation for cone.
+    """Treibstoff ajax ``ajaxaction`` implementation for cone.
 
-    * Renders tile with name ``bdajax.action``.
+    * Renders tile with name ``ajax.action``.
 
     * Uses definitions from ``request.environ['cone.app.continuation']``
       for continuation definitions.
     """
     try:
-        name = request.params['bdajax.action']
+        name = request.params['ajax.action']
         ActionContext(model, request, name)
         rendered = render_tile(model, request, name)
         continuation = request.environ.get('cone.app.continuation')
@@ -37,8 +29,8 @@ def ajax_tile(model, request):
         else:
             continuation = False
         return {
-            'mode': request.params.get('bdajax.mode'),
-            'selector': request.params.get('bdajax.selector'),
+            'mode': request.params.get('ajax.mode'),
+            'selector': request.params.get('ajax.selector'),
             'payload': rendered,
             'continuation': continuation,
         }
@@ -103,6 +95,17 @@ class AjaxPath(object):
         self.overlay = overlay
         self.overlay_css = overlay_css
 
+    def as_json(self):
+        return {
+            'type': 'path',
+            'path': self.path,
+            'target': self.target,
+            'action': self.action,
+            'event': self.event,
+            'overlay': self.overlay,
+            'overlay_css': self.overlay_css
+        }
+
 
 class AjaxAction(object):
     """Ajax action configuration. Used to define continuation actions for
@@ -114,6 +117,15 @@ class AjaxAction(object):
         self.name = name
         self.mode = mode
         self.selector = selector
+
+    def as_json(self):
+        return {
+            'type': 'action',
+            'target': self.target,
+            'name': self.name,
+            'mode': self.mode,
+            'selector': self.selector
+        }
 
 
 class AjaxEvent(object):
@@ -127,6 +139,15 @@ class AjaxEvent(object):
         self.selector = selector
         self.data = data
 
+    def as_json(self):
+        return {
+            'type': 'event',
+            'target': self.target,
+            'name': self.name,
+            'selector': self.selector,
+            'data': self.data
+        }
+
 
 class AjaxMessage(object):
     """Ajax Message configuration. Used to define continuation messages for
@@ -138,26 +159,52 @@ class AjaxMessage(object):
         self.flavor = flavor
         self.selector = selector
 
+    def as_json(self):
+        return {
+            'type': 'message',
+            'payload': self.payload,
+            'flavor': self.flavor,
+            'selector': self.selector
+        }
+
 
 class AjaxOverlay(object):
     """Ajax overlay configuration. Used to display or close overlays on client
     side.
     """
 
-    def __init__(self, selector='#ajax-overlay', action=None, target=None,
-                 close=False, content_selector='.overlay_content', css=None):
-        self.selector = selector
-        self.content_selector = content_selector
+    def __init__(self, selector=None, action=None, target=None,
+                 close=False, content_selector=None, css=None, uid=None,
+                 title=None):
+        if selector or content_selector:
+            msg = '``selector`` and ``content_selector`` no longer supported.'
+            raise ValueError(msg)
+        if close and not uid:
+            msg = 'overlay ``uid`` must be given if ``close`` is True.'
+            raise ValueError(msg)
         self.css = css
         self.action = action
         self.target = target
         self.close = close
+        self.uid = uid
+        self.title = title
+
+    def as_json(self):
+        return {
+            'type': 'overlay',
+            'css': self.css,
+            'action': self.action,
+            'target': self.target,
+            'close': self.close,
+            'uid': self.uid,
+            'title': self.title
+        }
 
 
 class AjaxContinue(object):
     """Convert ``AjaxPath``, ``AjaxAction``, ``AjaxEvent``, ``AjaxMessage``
-    and  ``AjaxOverlay ``instances to JSON response definitions for bdajax
-    continuation.
+    and  ``AjaxOverlay ``instances to JSON response definitions for treibstoff
+    ajax continuation.
     """
 
     def __init__(self, continuation):
@@ -171,49 +218,7 @@ class AjaxContinue(object):
             return
         continuation = list()
         for definition in self.continuation:
-            if isinstance(definition, AjaxPath):
-                continuation.append({
-                    'type': 'path',
-                    'path': definition.path,
-                    'target': definition.target,
-                    'action': definition.action,
-                    'event': definition.event,
-                    'overlay': definition.overlay,
-                    'overlay_css': definition.overlay_css
-                })
-            if isinstance(definition, AjaxAction):
-                continuation.append({
-                    'type': 'action',
-                    'target': definition.target,
-                    'name': definition.name,
-                    'mode': definition.mode,
-                    'selector': definition.selector
-                })
-            if isinstance(definition, AjaxEvent):
-                continuation.append({
-                    'type': 'event',
-                    'target': definition.target,
-                    'name': definition.name,
-                    'selector': definition.selector,
-                    'data': definition.data
-                })
-            if isinstance(definition, AjaxMessage):
-                continuation.append({
-                    'type': 'message',
-                    'payload': definition.payload,
-                    'flavor': definition.flavor,
-                    'selector': definition.selector
-                })
-            if isinstance(definition, AjaxOverlay):
-                continuation.append({
-                    'type': 'overlay',
-                    'selector': definition.selector,
-                    'content_selector': definition.content_selector,
-                    'css': definition.css,
-                    'action': definition.action,
-                    'target': definition.target,
-                    'close': definition.close
-                })
+            continuation.append(definition.as_json())
         return continuation
 
     def dump(self):
@@ -270,7 +275,13 @@ ajax_form_template = """\
     while(child != null && child.nodeType == 3) {
         child = child.nextSibling;
     }
-    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s', %(next)s);
+    parent.ts.ajax.form({
+        payload: child,
+        selector: '%(selector)s',
+        mode: '%(mode)s',
+        next: %(next)s,
+        error: %(error)s
+    });
 </script>
 """
 
@@ -285,12 +296,13 @@ def render_ajax_form(model, request, name):
         continuation = request.environ.get('cone.app.continuation')
         form_continue = AjaxFormContinue(result, continuation)
         rendered_form = form_continue.form
-        rendered = ajax_form_template % {
-            'form': rendered_form,
-            'selector': selector,
-            'mode': mode,
-            'next': form_continue.next
-        }
+        rendered = ajax_form_template % dict(
+            form=rendered_form,
+            selector=selector,
+            mode=mode,
+            next=form_continue.next,
+            error='false'
+        )
         request.response.body = safe_encode(rendered)
         return request.response
     except Exception:
@@ -300,12 +312,13 @@ def render_ajax_form(model, request, name):
         tb = format_traceback()
         continuation = AjaxMessage(tb, 'error', None)
         form_continue = AjaxFormContinue(result, [continuation])
-        rendered = ajax_form_template % {
-            'form': form_continue.form.replace(u'\n', u' '),  # XXX: replace?
-            'selector': selector,
-            'mode': mode,
-            'next': form_continue.next
-        }
+        rendered = ajax_form_template % dict(
+            form=form_continue.form.replace(u'\n', u' '),
+            selector=selector,
+            mode=mode,
+            next=form_continue.next,
+            error='true'
+        )
         return Response(rendered)
 
 

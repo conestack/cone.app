@@ -3,7 +3,7 @@
  *
  * Requires:
  *     jquery
- *     bdajax
+ *     treibstoff
  */
 
 if (window.yafowil === undefined) yafowil = {};
@@ -14,7 +14,7 @@ if (window.yafowil === undefined) yafowil = {};
         // initial binding
         cone.key_binder();
 
-        // add binders to bdajax binding callbacks
+        // add binders to treibstoff binding callbacks
         bdajax.register(cone.settingstabsbinder.bind(cone), true);
         bdajax.register(cone.batcheditemsbinder.bind(cone), true);
         bdajax.register(cone.tabletoolbarbinder.bind(cone), true);

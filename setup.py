@@ -53,7 +53,7 @@ setup(
         'pyramid>=1.5',
         'pyramid_zcml',
         'pyramid_chameleon',
-        'bdajax>=1.11',
+        'treibstoff',
         'cone.tile>=1.0',
         'yafowil>=2.3.2',
         'yafowil.webob',
