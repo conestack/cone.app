@@ -1,7 +1,7 @@
-import {Searchbar} from '../src/searchbar.js';
-import {ViewPortAware} from '../src/viewport.js';
+import {Searchbar} from '../src/public/searchbar.js';
+import {ViewPortAware} from '../src/public/viewport.js';
 import {karma_vp_states} from './karma_viewport_states.js';
-import * as helpers from './test-helpers.js';
+import * as helpers from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Searchbar tests

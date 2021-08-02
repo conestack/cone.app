@@ -1,9 +1,7 @@
-import {Navtree} from '../src/navtree.js';
-import {Sidebar} from '../src/sidebar.js';
-import {Topnav} from '../src/topnav.js';
-import * as helpers from './test-helpers.js';
-import {layout} from '../src/layout.js';
-import {MobileNav} from '../src/mobile_nav.js';
+import {Navtree} from '../src/public/navtree.js';
+import {Sidebar} from '../src/public/sidebar.js';
+import * as helpers from './helpers.js';
+import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Navtree tests

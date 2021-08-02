@@ -4,7 +4,7 @@ import {
     VP_SMALL,
     VP_LARGE
 } from './viewport.js';
-import {createCookie, readCookie} from './cookie_functions.js';
+import {createCookie, readCookie} from './utils.js';
 import {ViewPortAware} from './viewport.js';
 import {layout} from './layout.js';
 

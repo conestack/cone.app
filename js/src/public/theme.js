@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import {createCookie, readCookie} from './cookie_functions.js';
+import {createCookie, readCookie} from './utils.js';
 import {layout} from './layout.js';
 
 export const default_themes = [

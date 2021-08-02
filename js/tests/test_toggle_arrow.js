@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {toggle_arrow} from '../src/toggle_arrow.js'
+import {toggle_arrow} from '../src/public/utils.js'
 
 ///////////////////////////////////////////////////////////////////////////////
 // cone.toggle_arrow function test

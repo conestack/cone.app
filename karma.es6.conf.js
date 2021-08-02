@@ -34,9 +34,9 @@ module.exports = function(config) {
         {
             pattern: '../node_modules/jquery/src/**/*.js',
             type: 'module',
-            included: false
+            included: true
         }, {
-            pattern: '../js/src/*.js',
+            pattern: '../js/src/public/*.js',
             type: 'module',
             included: false
         },
@@ -47,7 +47,7 @@ module.exports = function(config) {
         },
         // helpers
         {
-            pattern: '../js/tests/test-helpers.js',
+            pattern: '../js/tests/helpers.js',
             type: 'module',
             included: false
         }, 
@@ -98,7 +98,7 @@ module.exports = function(config) {
             'coverage'
         ],
         preprocessors: {
-            '../js/src/*.js': [
+            '../js/src/public/*.js': [
                 'coverage',
                 'module-resolver'
             ],

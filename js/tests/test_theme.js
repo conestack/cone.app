@@ -1,7 +1,7 @@
-import {default_themes, ThemeSwitcher} from '../src/theme_switcher.js';
-import {create_theme_switcher_elem} from './test-helpers.js';
-import {createCookie} from '../src/cookie_functions.js';
-import {layout} from '../src/layout.js';
+import {default_themes, ThemeSwitcher} from '../src/public/theme.js';
+import {create_theme_switcher_elem} from './helpers.js';
+import {createCookie} from '../src/public/utils.js';
+import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // ThemeSwitcher tests

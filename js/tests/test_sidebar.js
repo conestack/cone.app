@@ -1,11 +1,11 @@
 import $ from 'jquery';
-import * as helpers from './test-helpers.js';
+import * as helpers from './helpers.js';
 import {karma_vp_states} from './karma_viewport_states.js';
-import {createCookie, readCookie} from '../src/cookie_functions.js';
+import {createCookie, readCookie} from '../src/public/utils.js';
 
-import {layout} from '../src/layout.js';
-import {ViewPortAware} from '../src/viewport.js';
-import {Sidebar} from '../src/sidebar.js';
+import {layout} from '../src/public/layout.js';
+import {ViewPortAware} from '../src/public/viewport.js';
+import {Sidebar} from '../src/public/sidebar.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Sidebar tests

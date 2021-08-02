@@ -1,8 +1,6 @@
 import $ from 'jquery'
 import {layout} from './layout.js';
 
-let content = null;
-
 export class Content {
 
     static initialize(context) {

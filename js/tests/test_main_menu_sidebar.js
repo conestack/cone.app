@@ -1,10 +1,8 @@
-import {MainMenuSidebar} from '../src/main_menu_sidebar.js';
-import {Sidebar} from '../src/sidebar.js';
-import {Topnav} from '../src/topnav.js';
-import * as helpers from './test-helpers.js';
-import {createCookie, readCookie} from '../src/cookie_functions.js';
-import {layout} from '../src/layout.js';
-import {MobileNav} from '../src/mobile_nav.js';
+import {MainMenuSidebar} from '../src/public/mainmenu.js';
+import {Sidebar} from '../src/public/sidebar.js';
+import * as helpers from './helpers.js';
+import {createCookie, readCookie} from '../src/public/utils.js';
+import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuSidebar tests
@@ -185,7 +183,10 @@ QUnit.module('MainMenuSidebar', () => {
                 layout.mainmenu_sidebar.collapse();
 
                 // menus are hidden
-                assert.ok($('ul', layout.mainmenu_sidebar.items).is(':hidden'));
+                assert.strictEqual(
+                    $('ul', layout.mainmenu_sidebar.items).css('display'),
+                    'none'
+                );
                 // trigger click on arrows
                 layout.mainmenu_sidebar.arrows.trigger('click');
 
@@ -220,7 +221,7 @@ QUnit.module('MainMenuSidebar', () => {
                         // trigger mouseenter
                         elem.trigger('mouseenter');
                         // menu is hidden
-                        assert.notOk(menu.is(':visible'));
+                        assert.strictEqual(menu.css('display'), 'none');
 
                         $(window).trigger('dragend');
                         // trigger mouseenter

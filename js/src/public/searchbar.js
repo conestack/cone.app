@@ -3,7 +3,7 @@ import {
     ViewPortAware,
     VP_SMALL,
     VP_MEDIUM
-} from '../src/viewport.js';
+} from './viewport.js';
 import {layout} from './layout.js';
 
 export class Searchbar extends ViewPortAware {
