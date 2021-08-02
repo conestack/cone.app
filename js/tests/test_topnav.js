@@ -1,6 +1,6 @@
 import $ from 'jquery';
-import {Topnav} from '../src/topnav.js';
-import * as helpers from './test-helpers.js';
+import {Topnav} from '../src/public/topnav.js';
+import * as helpers from './helpers.js';
 import {karma_vp_states} from './karma_viewport_states.js';
 
 ///////////////////////////////////////////////////////////////////////////////

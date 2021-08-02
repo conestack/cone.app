@@ -1,8 +1,8 @@
-import {ScrollBar} from '../src/scrollbar.js';
-import {ScrollBarX} from '../src/scrollbar.js';
-import {ScrollBarY} from '../src/scrollbar.js';
+import {ScrollBar} from '../src/public/scrollbar.js';
+import {ScrollBarX} from '../src/public/scrollbar.js';
+import {ScrollBarY} from '../src/public/scrollbar.js';
 // contains jquery override
-import * as helpers from './test-helpers.js';
+import * as helpers from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // scrollbar test helpers

@@ -3,7 +3,7 @@ import {
     ViewPortAware,
     VP_MOBILE
 } from './viewport.js';
-import {toggle_arrow} from './toggle_arrow.js';
+import {toggle_arrow} from './utils.js';
 import {layout} from './layout.js';
 
 export class Topnav extends ViewPortAware {

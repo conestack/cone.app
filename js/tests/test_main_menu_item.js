@@ -1,8 +1,7 @@
-import {layout} from '../src/layout.js';
-import {MainMenuTop} from '../src/main_menu_top.js';
-import {MobileNav} from '../src/mobile_nav.js';
-import {Topnav} from '../src/topnav.js';
-import * as helpers from './test-helpers.js';
+import {layout} from '../src/public/layout.js';
+import {MainMenuTop} from '../src/public/mainmenu.js';
+import {Topnav} from '../src/public/topnav.js';
+import * as helpers from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuItem tests

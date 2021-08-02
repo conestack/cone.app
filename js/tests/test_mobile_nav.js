@@ -1,13 +1,12 @@
 import $ from 'jquery';
-import * as helpers from './test-helpers.js';
+import * as helpers from './helpers.js';
 
-import {MobileNav} from '../src/mobile_nav.js';
-import {Sidebar} from '../src/sidebar.js';
-import {Topnav} from '../src/topnav.js';
-import {MainMenuSidebar} from '../src/main_menu_sidebar.js';
-import {Navtree} from '../src/navtree.js';
-import {MainMenuTop} from '../src/main_menu_top.js';
-import {layout} from '../src/layout.js';
+import {MobileNav} from '../src/public/mobilenav.js';
+import {Sidebar} from '../src/public/sidebar.js';
+import {Topnav} from '../src/public/topnav.js';
+import {MainMenuSidebar, MainMenuTop} from '../src/public/mainmenu.js';
+import {Navtree} from '../src/public/navtree.js';
+import {layout} from '../src/public/layout.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////

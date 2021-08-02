@@ -1,4 +1,4 @@
-import {Content} from '../src/content.js';
+import {Content} from '../src/public/content.js';
 
 QUnit.module('Content', hooks => {
     let test_content;

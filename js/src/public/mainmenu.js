@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import {toggle_arrow} from './toggle_arrow.js';
-import {readCookie, createCookie} from './cookie_functions.js';
+import {toggle_arrow, readCookie, createCookie} from './utils.js';
 import {layout} from './layout.js';
+import {ScrollBarX} from './scrollbar.js';
 
 export class MainMenuSidebar {
 
@@ -121,6 +121,101 @@ export class MainMenuSidebar {
                 this.display_data[i] = display; 
                 createCookie('sidebar menus', this.display_data, null);
             });
+        }
+    }
+}
+
+export class MainMenuTop {
+
+    static initialize(context) {
+        let elem = $('#main-menu', context);
+        if(!elem.length) {
+            return;
+        } else {
+            layout.mainmenu_top = new MainMenuTop(elem);
+        }
+        return layout.mainmenu_top;
+    }
+
+    constructor(elem) {
+        this.elem = elem;
+        new ScrollBarX(elem);
+        this.main_menu_items = [];
+        let that = this;
+
+        this.content = $('ul#mainmenu');
+        $('li', this.content).each(function() {
+            let main_menu_item = new MainMenuItem($(this));
+            that.main_menu_items.push(main_menu_item);
+        });
+        layout.topnav.logo.addClass('m_right');
+
+        this.handle_scrollbar();
+    }
+
+    handle_scrollbar() {
+        for(let item of this.main_menu_items) {
+            $(window)
+            .on('dragstart', () => {
+                item.elem.off('mouseenter mouseleave', item._toggle);
+            })
+            .on('dragend', () => {
+                item.elem.on('mouseenter mouseleave', item._toggle);
+            });
+        }
+    }
+}
+
+export class MainMenuItem {
+
+    constructor(elem) {
+        this.elem = elem;
+        this.children = elem.data('menu-items');
+        if(!this.children){
+            return;
+        }
+        this.menu = $(`
+            <div class="cone-mainmenu-dropdown">
+                <ul class="mainmenu-dropdown">
+                </ul>
+            </div>
+        `);
+        this.dd = $('ul', this.menu);
+        this.arrow = $('i.dropdown-arrow', this.elem);
+        this.render_dd();
+
+        this._toggle = this.mouseenter_toggle.bind(this);
+        this.elem.off().on('mouseenter mouseleave', this._toggle);
+        this.menu.off().on('mouseenter mouseleave', () => {
+            this.menu.toggle();
+        });
+    }
+
+    render_dd() {
+        for (let i in this.children) {
+            let menu_item = this.children[i];
+            let dd_item = $(`
+              <li class="${menu_item.selected ? 'active': ''}">
+                <a href="${menu_item.url}"
+                   title="${menu_item.title}">
+                  <i class="${menu_item.icon}"></i>
+                  <span>
+                    ${menu_item.title ? menu_item.title : '&nbsp;'}
+                  </span>
+                </a>
+              </li>
+            `);
+            this.dd.append(dd_item);
+        }
+        this.menu.appendTo('#layout');
+    }
+
+    mouseenter_toggle(e) {
+        this.menu.offset({left: this.elem.offset().left});
+        if(e.type === 'mouseenter') {
+            this.menu.css('display', 'block');
+        } else {
+            this.menu.css('display', 'none');
         }
     }
 }
