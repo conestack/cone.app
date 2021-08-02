@@ -174,7 +174,8 @@ class AjaxOverlay(object):
     """
 
     def __init__(self, selector=None, action=None, target=None,
-                 close=False, content_selector=None, css=None, uid=None):
+                 close=False, content_selector=None, css=None, uid=None,
+                 title=None):
         if selector or content_selector:
             msg = '``selector`` and ``content_selector`` no longer supported.'
             raise ValueError(msg)
@@ -186,6 +187,7 @@ class AjaxOverlay(object):
         self.target = target
         self.close = close
         self.uid = uid
+        self.title = title
 
     def as_json(self):
         return {
@@ -194,7 +196,8 @@ class AjaxOverlay(object):
             'action': self.action,
             'target': self.target,
             'close': self.close,
-            'uid': self.uid
+            'uid': self.uid,
+            'title': self.title
         }
 
 
