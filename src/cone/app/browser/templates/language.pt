@@ -1,0 +1,29 @@
+<tal:language xmlns:tal="http://xml.zope.org/namespaces/tal"
+              xmlns:ajax="http://namespaces.conestack.org/ajax"
+              omit-tag="True">
+
+  <li class="dropdown" id="language">
+    <img class="dropdown-toggle"
+         role="button"
+         data-bs-toggle="dropdown"
+         src="/static/images/flags/gb.svg"
+         height="15em">
+
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li class="toolbar-title">Language</li>
+
+      <tal:li repeat="language context.languages">
+        <li tal:attributes="id language['id']">
+          <a href="#">
+            <img tal:attributes="src '/static/images/flags/' + language['flag']"
+                 height="15em">
+            <span tal:content="language['name']">
+              Language
+            </span>
+          </a>
+        </li>
+      </tal:li>
+    </ul>
+  </li>
+
+</tal:language>

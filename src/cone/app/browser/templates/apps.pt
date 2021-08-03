@@ -1,0 +1,26 @@
+<tal:apps xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namespaces.conestack.org/ajax"
+          omit-tag="True">
+
+  <li class="dropdown" id="apps">
+    <i class="dropdown-toggle bi bi-grid-3x3-gap-fill" 
+       role="button" 
+       data-bs-toggle="dropdown"></i>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li class="toolbar-title">Apps</li>
+
+      <ul id="apps-container">
+        <tal:li repeat="app context.apps">
+          <li>
+            <a  class="apps-link" tal:attributes="href app['link']">
+              <img tal:attributes="src 'static/images/tmp/' + app['img']">
+              <span tal:content="app['name']">Example App</span>
+            </a>
+          </li>
+        </tal:li>
+      </ul>
+    </ul>
+  </li>
+
+</tal:apps>

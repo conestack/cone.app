@@ -150,7 +150,7 @@ body {
     color: $fmedium;
 
     &:hover {
-      i {
+      > i {
         color: $fhover;
         transition: .5s;
         cursor: pointer;

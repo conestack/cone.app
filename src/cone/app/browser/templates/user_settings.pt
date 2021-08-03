@@ -1,0 +1,41 @@
+<tal:settings xmlns:tal="http://xml.zope.org/namespaces/tal"
+              xmlns:ajax="http://namesspaces.bluedynamics.eu/ajax"
+              omit-tag="True">
+
+  <li class="dropdown" id="settings">
+    <i class="dropdown-toggle bi bi-gear-fill"
+       role="button"
+       data-bs-toggle="dropdown"></i>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li class="toolbar-title">Settings</li>
+
+      <tal:li repeat="setting context.settings">
+        <li tal:condition="setting['type'] == 'switch'"
+            tal:attributes="id setting['id']"
+            class="form-check form-switch">
+          <input tal:attributes="id setting['id']"
+                 class="form-check-input"
+                 type="checkbox">
+          <label tal:content="setting['name']"
+                 class="form-check-label"
+                 for="flexSwitchCheckDefault">
+            Setting Name
+          </label>
+        </li>
+
+        <li tal:condition="setting['type'] == 'link'"
+            tal:attributes="id setting['id']">
+          <a tal:attributes="href setting['link']">
+            <i tal:condition="setting['icon']"
+               tal:attributes="class setting['icon']"></i>
+            <span tal:content="setting['name']">
+              Setting Name
+            </span>
+          </a>
+        </li>
+      </tal:li>
+    </ul>
+  </li>
+
+</tal:settings>

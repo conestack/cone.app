@@ -196,6 +196,115 @@ class ToolbarTop(LayoutConfigTile):
     pass
 
 
+@tile(name='language',
+      path='templates/language.pt',
+      permission='view',
+      strict=False)
+class Language(Tile):
+
+    @property
+    def languages(self):
+        return [{
+            'id': 'de',
+            'name': _('lang_de', default='German'),
+            'flag': 'at.svg'
+        }, {
+            'id': 'en',
+            'name': _('lang_en', default='English'),
+            'flag': 'gb.svg'
+        }, {
+            'id': 'fr',
+            'name': _('lang_fr', default='French'),
+            'flag': 'fr.svg'
+        }]
+
+@tile(name='notifications',
+      path='templates/notifications.pt',
+      permission='view',
+      strict=False)
+class Notification(Tile):
+
+    @property
+    def notifications(self):
+        return [{
+            'sender': {
+                'name': 'Kermit',
+                'img': 'kermit.jpg'
+            },
+            'id': 'noti1',
+            'name': ' sent you an example notification',
+            'read': False,
+            'timestamp': '5 minutes ago'
+        }, {
+            'sender': {
+                'name': 'Miss Piggy',
+                'img': ''
+            },
+            'id': 'noti2',
+            'name': ' sent you a file',
+            'read': True,
+            'timestamp': '10 hours ago'
+        }]
+
+
+@tile(name='apps',
+      path='templates/apps.pt',
+      permission='view',
+      strict=False)
+class Apps(Tile):
+
+    @property
+    def apps(self):
+        return [{
+            'name': 'Vs Code',
+            'img': 'vscode.png',
+            'link': '#'
+        } , {
+            'name': 'Sass',
+            'img': 'sass.png',
+            'link': '#'
+        }, {
+            'name': 'Chromium',
+            'img': 'chromium.png',
+            'link': '#'
+        }]
+
+
+@tile(name='settings',
+      path='templates/user_settings.pt',
+      permission='view',
+      strict=False)
+class Settings(Tile):
+
+    @property
+    def settings(self):
+        return [{
+            'name': 'Toggle dark mode',
+            'id': 'switch_mode',
+            'type': 'switch',
+            'link': '',
+            'icon': ''
+        }, {
+            'name': 'Settings',
+            'id': 'settings',
+            'type': 'link',
+            'link': '#',
+            'icon': 'bi bi-sliders'
+        }, {
+            'name': 'Appearance',
+            'id': 'appearance',
+            'type': 'link',
+            'link': '#',
+            'icon': 'bi bi-easel'
+        }, {
+            'name': 'Security',
+            'id': 'security',
+            'type': 'link',
+            'link': '#',
+            'icon': ''
+        }]
+
+
 @tile(name='mainmenu',
       path='templates/mainmenu.pt',
       permission='view',

@@ -131,7 +131,7 @@ body {
 #toolbar-top li {
   color: #717176;
 }
-#toolbar-top li:hover i {
+#toolbar-top li:hover > i {
   color: #5bc0de;
   transition: 0.5s;
   cursor: pointer;
