@@ -1,4 +1,5 @@
-import $ from 'jquery'
+import $ from 'jquery';
+// import ts from 'treibstoff';
 
 export const VP_MOBILE = 0;
 export const VP_SMALL = 1;

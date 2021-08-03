@@ -1,11 +1,8 @@
 import {terser} from 'rollup-plugin-terser';
 
-const outro = `var old_cone = window.cone;
-exports.noConflict = function() {
-    window.cone = old_cone;
-    return this;
-}
-window.cone = exports;`;
+const outro = `
+window.cone = exports;
+`;
 
 export default {
     input: 'js/src/public/bundle.js',
@@ -15,7 +12,8 @@ export default {
         name: 'cone',
         outro: outro,
         globals: {
-            jquery: 'jQuery'
+            jquery: 'jQuery',
+            treibstoff: 'treibstoff'
         },
         interop: 'default'
     }, {
@@ -27,11 +25,13 @@ export default {
         ],
         outro: outro,
         globals: {
-            jquery: 'jQuery'
+            jquery: 'jQuery',
+            treibstoff: 'treibstoff'
         },
         interop: 'default'
     }],
     external: [
-        'jquery'
+        'jquery',
+        'treibstoff'
     ],
 };

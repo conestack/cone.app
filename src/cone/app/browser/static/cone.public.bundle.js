@@ -1,6 +1,8 @@
 var cone = (function (exports, $) {
     'use strict';
 
+    // import ts from 'treibstoff';
+
     const VP_MOBILE = 0;
     const VP_SMALL = 1;
     const VP_MEDIUM = 2;
@@ -1146,12 +1148,9 @@ var cone = (function (exports, $) {
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-    var old_cone = window.cone;
-    exports.noConflict = function() {
-        window.cone = old_cone;
-        return this;
-    }
+
     window.cone = exports;
+
 
     return exports;
 
