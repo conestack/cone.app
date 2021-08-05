@@ -286,7 +286,7 @@ class Settings(Tile):
             'icon': ''
         }, {
             'name': 'Settings',
-            'id': 'settings',
+            'id': 'personalsettings',
             'type': 'link',
             'link': '#',
             'icon': 'bi bi-sliders'

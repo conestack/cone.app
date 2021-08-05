@@ -118,8 +118,13 @@
       box-shadow: none;
     }
 
-    i {
-      margin: 0 6px;
+    a > i {
+      position: absolute;
+      left: 24px;
+    }
+
+    a > span {
+      margin-left: 40px;
     }
   }
 }

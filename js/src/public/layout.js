@@ -7,5 +7,7 @@ export let layout = {
     mobile_nav: null,
     content: null,
     topnav: null,
-    searchbar: null
+    searchbar: null,
+    toolbar: null,
+    personaltools: null
 }

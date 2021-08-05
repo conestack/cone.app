@@ -45,15 +45,6 @@ QUnit.module('Topnav', () => {
                 // content to dropdown is hidden
                 assert.strictEqual(test_topnav.content.css('display'), 'none');
                 assert.ok(test_topnav.elem.hasClass('mobile'));
-
-                // show topnav content
-                test_topnav.content.show();
-                // trigger bootstap dropdown on toolbar dropdown show
-                test_topnav.tb_dropdowns.trigger('show.bs.dropdown');
-                // topnav content is hidden
-
-                // dropdown is hidden
-                assert.strictEqual(test_topnav.content.css('display'), 'none');
             });
 
             QUnit.test('vp desktop', assert => {
@@ -78,9 +69,6 @@ QUnit.module('Topnav', () => {
 
                 // logo
                 assert.ok(test_topnav.logo.is('div#cone-logo'));
-
-                // toolbar dropdowns
-                assert.ok(test_topnav.tb_dropdowns.is('#toolbar-top>li.dropdown'));
 
                 // private method toggle_menu_handle exists
                 assert.ok(test_topnav._toggle_menu_handle);
@@ -161,11 +149,6 @@ QUnit.module('Topnav', () => {
                     // set viewport
                     helpers.set_vp(karma_vp_states[i]);
 
-                    // assert click on dropdowns
-                    test_topnav.tb_dropdowns.on('click', () => {
-                        assert.step('click');
-                    });
-
                     assert.strictEqual(test_topnav.vp_state, i);
 
                     if (i === 0) {
@@ -174,96 +157,14 @@ QUnit.module('Topnav', () => {
                             'none'
                         );
                         assert.ok(test_topnav.elem.hasClass('mobile'));
-
-                        // show content
-                        test_topnav.content.show();
-
-                        // trigger dropdown on toolbar dropdowns
-                        test_topnav.tb_dropdowns.trigger('show.bs.dropdown');
-
-                        assert.strictEqual(
-                            test_topnav.content.css('display'),
-                            'none'
-                        );
                     } else {
                         assert.strictEqual(
                             test_topnav.content.css('display'),
                             'contents'
                         );
                         assert.notOk(test_topnav.elem.hasClass('mobile'));
-
-                        // trigger dropdown on toolbar dropdowns
-                        test_topnav.tb_dropdowns.trigger('show.bs.dropdown');
-
-                        assert.notStrictEqual(
-                            test_topnav.content.css('display'),
-                            'none'
-                        );
                     }
                 }
-            });
-        });
-
-        QUnit.module('pt_handle', hooks =>{
-            let test_topnav;
-
-            hooks.before(() => {
-                // create dummy topnav
-                helpers.create_topnav_elem();
-
-                // create dummy toolbar dropdowns element
-                let tb_dropdown_elem = $(`
-                    <div id="toolbar-top">
-                      <li class="dropdown">
-                      </li>
-                    </div>
-                `);
-                // create dummy personaltools element
-                let personaltools = $(`
-                    <div id="personaltools">
-                      <div id="user">
-                      </div>
-                    </div>
-                `);
-                // append dummy elements to DOM
-                $('#topnav-content').append(tb_dropdown_elem);
-                $('#topnav-content').append(personaltools);
-
-                // set viewport to mobile
-                helpers.set_vp('mobile');
-            });
-
-            hooks.after(() => {
-                // unset instance
-                test_topnav = null;
-                $('#layout').remove();
-            });
-
-            QUnit.test('pt_handle()', assert => {
-                // initialize Topnav instance
-                test_topnav = Topnav.initialize();
-
-                // trigger bootstrap dropdown on personaltools
-                test_topnav.pt.trigger('show.bs.dropdown');
-                assert.strictEqual(test_topnav.user.css('display'), 'block');
-
-                // trigger bootstrap hide.bs.dropdown
-                test_topnav.pt.trigger('hide.bs.dropdown');
-                assert.strictEqual(test_topnav.user.css('display'), 'none');
-
-                test_topnav = null;
-                
-                helpers.set_vp('large');
-                // initalize
-                test_topnav = Topnav.initialize();
-
-                // trigger bootstrap show.bs.dropdown
-                test_topnav.pt.trigger('show.bs.dropdown');
-                assert.strictEqual(test_topnav.user.css('display'), 'block');
-
-                // trigger bootstrap hide.bs.dropdown
-                test_topnav.pt.trigger('hide.bs.dropdown');
-                assert.strictEqual(test_topnav.user.css('display'), 'none');
             });
         });
     });

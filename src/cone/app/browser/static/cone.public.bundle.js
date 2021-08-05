@@ -118,7 +118,9 @@ var cone = (function (exports, $) {
         mobile_nav: null,
         content: null,
         topnav: null,
-        searchbar: null
+        searchbar: null,
+        toolbar: null,
+        personaltools: null
     };
 
     class Sidebar extends ViewPortAware {
@@ -717,6 +719,7 @@ var cone = (function (exports, $) {
 
         static initialize(context) {
             let elem = $('#cone-searchbar', context);
+            /* istanbul ignore if */
             if (!elem.length) {
                 return;
             } else {
@@ -787,17 +790,10 @@ var cone = (function (exports, $) {
             this.content = $('#topnav-content', elem);
             this.toggle_button = $('#mobile-menu-toggle', elem);
             this.logo = $('#cone-logo', elem);
-            this.tb_dropdowns = $('#toolbar-top>li.dropdown', elem);
             this._toggle_menu_handle = this.toggle_menu.bind(this);
             this.toggle_button.on('click', this._toggle_menu_handle);
 
             this.viewport_changed();
-
-            // tmp
-            this.pt = $('#personaltools');
-            this.user =  $('#user');
-            this.pt_handle();
-            // end tmp
         }
 
         toggle_menu() {
@@ -817,42 +813,9 @@ var cone = (function (exports, $) {
             if (this.vp_state === VP_MOBILE) {
                 this.content.hide();
                 this.elem.addClass('mobile');
-
-                // hide menu on toolbar click
-                this.tb_dropdowns.off().on('show.bs.dropdown', () => {
-                    this.content.hide();
-                });
             } else {
                 this.content.show();
                 this.elem.removeClass('mobile');
-                this.tb_dropdowns.off();
-            }
-
-            // tmp
-            if(this.pt) {
-                this.pt_handle();
-            }
-            // end tmp
-        }
-
-        pt_handle() {
-            // tmp
-            if (this.vp_state === VP_MOBILE) {
-                this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
-                    this.user.stop(true, true).slideDown('fast');
-                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
-                });
-                this.pt.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
-                    this.user.stop(true, true).slideUp('fast');
-                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
-                });
-            } else {
-                this.pt.off('show.bs.dropdown').on('show.bs.dropdown', () => {
-                    this.user.show();
-                });
-                this.pt.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
-                    this.user.hide();
-                });
             }
         }
     }
@@ -924,6 +887,7 @@ var cone = (function (exports, $) {
 
         static initialize(context) {
             let elem = $('#switch_mode', context);
+            /* istanbul ignore if */
             if (!elem.length) {
                 return;
             } else {
@@ -1109,10 +1073,95 @@ var cone = (function (exports, $) {
         }
     }
 
+    class Toolbar extends ViewPortAware {
+
+        static initialize(context) {
+            let elem = $('#toolbar-top', context);
+            /* istanbul ignore if */
+            if (!elem.length) {
+                return;
+            } else {
+                layout.toolbar = new Toolbar(elem);
+            }
+            return layout.toolbar;
+        }
+
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            this.dropdowns = $('li.dropdown', this.elem);
+
+            this.viewport_changed();
+        }
+
+        viewport_changed(e){
+            if (e) {
+                super.viewport_changed(e);
+            }
+
+            if(this.vp_state === VP_MOBILE){
+                 // hide menu on toolbar click
+                 this.dropdowns.off().on('show.bs.dropdown', () => {
+                    layout.topnav.content.hide();
+                });
+            } else {
+                this.dropdowns.off();
+            }
+        }
+    }
+
+    class Personaltools extends ViewPortAware {
+
+        static initialize(context) {
+            let elem = $('#personaltools', context);
+            /*  istanbul ignore if */
+            if (!elem.length) {
+                return;
+            } else {
+                layout.personaltools = new Personaltools(elem);
+            }
+            return layout.personaltools;
+        }
+
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            this.user_menu = $('#user', this.elem);
+
+            this.viewport_changed();
+        }
+
+        viewport_changed(e){
+            if(e) {
+                super.viewport_changed(e);
+            }
+
+            if (this.vp_state === VP_MOBILE) {
+                this.elem.off('show.bs.dropdown').on('show.bs.dropdown', () => {
+                    this.user_menu.stop(true, true).slideDown('fast');
+                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
+                });
+                this.elem.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
+                    this.user_menu.stop(true, true).slideUp('fast');
+                    toggle_arrow($('i.dropdown-arrow', '#personaltools'));
+                });
+            } else {
+                this.elem.off('show.bs.dropdown').on('show.bs.dropdown', () => {
+                    this.user_menu.show();
+                });
+                this.elem.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
+                    this.user_menu.hide();
+                });
+            }
+        }
+    }
+
     $(function() {
         bdajax.register(Topnav.initialize, true);
         bdajax.register(MainMenuTop.initialize, true);
         bdajax.register(Searchbar.initialize, true);
+        bdajax.register(Toolbar.initialize, true);
+        bdajax.register(Personaltools.initialize, true);
         bdajax.register(ThemeSwitcher.initialize, true);
         bdajax.register(Sidebar.initialize, true);
         bdajax.register(MainMenuSidebar.initialize, true);
@@ -1127,12 +1176,14 @@ var cone = (function (exports, $) {
     exports.MainMenuTop = MainMenuTop;
     exports.MobileNav = MobileNav;
     exports.Navtree = Navtree;
+    exports.Personaltools = Personaltools;
     exports.ScrollBar = ScrollBar;
     exports.ScrollBarX = ScrollBarX;
     exports.ScrollBarY = ScrollBarY;
     exports.Searchbar = Searchbar;
     exports.Sidebar = Sidebar;
     exports.ThemeSwitcher = ThemeSwitcher;
+    exports.Toolbar = Toolbar;
     exports.Topnav = Topnav;
     exports.VP_LARGE = VP_LARGE;
     exports.VP_MEDIUM = VP_MEDIUM;

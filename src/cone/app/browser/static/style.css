@@ -609,8 +609,12 @@ ul {
   width: 1.7em;
   box-shadow: none;
 }
-#toolbar-top #settings i {
-  margin: 0 6px;
+#toolbar-top #settings a > i {
+  position: absolute;
+  left: 24px;
+}
+#toolbar-top #settings a > span {
+  margin-left: 40px;
 }
 
 #topnav.mobile {

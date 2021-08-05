@@ -11,6 +11,7 @@ export class ThemeSwitcher {
 
     static initialize(context) {
         let elem = $('#switch_mode', context);
+        /* istanbul ignore if */
         if (!elem.length) {
             return;
         } else {

@@ -10,6 +10,7 @@ export class Searchbar extends ViewPortAware {
 
     static initialize(context) {
         let elem = $('#cone-searchbar', context);
+        /* istanbul ignore if */
         if (!elem.length) {
             return;
         } else {

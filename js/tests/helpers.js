@@ -181,7 +181,7 @@ export function create_toolbar_elem() {
 // create dummy personaltools element
 export function create_pt_elem() {
   let personaltools = $(`
-      <div class="dropdown" id="personaltools">
+    <div class="dropdown" id="personaltools">
       <div id="pt-wrapper" class="dropdown-toggle" role="button" data-bs-toggle="dropdown">
         <div class="profile-image">
           <!-- <img src=""> -->

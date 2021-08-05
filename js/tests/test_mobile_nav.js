@@ -118,6 +118,10 @@ QUnit.module('MobileNav', () => {
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
             assert.strictEqual($('#topnav-content > #navtree').length, 1);
 
+            assert.strictEqual(layout.navtree.content.css('display'), 'none');
+            layout.navtree.heading.trigger('click');
+            assert.strictEqual(layout.navtree.content.css('display'), 'block');
+
             // set viewport to desktop
             helpers.set_vp('large');
 
@@ -177,8 +181,25 @@ QUnit.module('MobileNav', () => {
                 assert.strictEqual($(item.menu).css('display'), 'block');
                 $(item.elem).trigger('mouseleave');
                 assert.strictEqual($(item.menu).css('display'), 'none');
+
+                $(item.elem).trigger('mouseenter');
+                $(item.menu).trigger('mouseleave');
+                assert.strictEqual($(item.menu).css('display'), 'none');
             }
             assert.strictEqual($(`#layout > .cone-mainmenu-dropdown`).length, 3);
+
+            helpers.set_vp('large');
+            // initalize mm sidebar
+            helpers.create_sidebar_elem();
+            helpers.create_mm_sidebar_elem();
+            Sidebar.initialize();
+            MainMenuSidebar.initialize();
+
+            helpers.set_vp('mobile');
+            assert.strictEqual(layout.mainmenu_top.elem.css('display'), 'none');
+
+            helpers.set_vp('large');
+            assert.strictEqual(layout.mainmenu_top.elem.css('display'), 'flex');
         });
     });
 });
