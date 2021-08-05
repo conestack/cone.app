@@ -195,6 +195,7 @@ QUnit.module('MobileNav', () => {
             Sidebar.initialize();
             MainMenuSidebar.initialize();
 
+            // mm top hidden if mm sidebar exists
             helpers.set_vp('mobile');
             assert.strictEqual(layout.mainmenu_top.elem.css('display'), 'none');
 

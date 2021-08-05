@@ -22,8 +22,31 @@ export class Toolbar extends ViewPortAware {
         super();
         this.elem = elem;
         this.dropdowns = $('li.dropdown', this.elem);
-
+        this.mark_read = $('#noti_mark_read', this.elem);
+        
+        this._mark = this.mark_as_read.bind(this);
+        this.mark_read.off().on('click', this._mark);
+        
+        this.handle_dd();
         this.viewport_changed();
+    }
+
+    handle_dd() {
+        for(let item of this.dropdowns){
+            let elem = $(item);
+            let icon = $('i', elem);
+            if (icon.length === 0) {
+                icon = $('img', elem);
+            }
+            let menu = $('ul', elem);
+
+            icon.off('show.bs.dropdown').on('show.bs.dropdown', () => {
+                menu.css('display', 'flex');
+            });
+            icon.off('hide.bs.dropdown').on('hide.bs.dropdown', () => {
+                menu.css('display', 'none');
+            });
+        }
     }
 
     viewport_changed(e){
@@ -39,5 +62,10 @@ export class Toolbar extends ViewPortAware {
         } else {
             this.dropdowns.off();
         }
+    }
+
+    mark_as_read(e) {
+        e.stopPropagation();
+        $('li.notification').removeClass('unread').addClass('read');
     }
 }

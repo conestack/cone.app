@@ -7,11 +7,16 @@
        role="button"
        data-bs-toggle="dropdown"></i>
     <ul class="dropdown-menu dropdown-menu-end">
-      <li class="toolbar-title">Notifications</li>
+      <li class="toolbar-title">
+        Notifications
+      </li>
+      <span id="noti_mark_read">
+        Mark all as read  
+      </span>
 
       <tal:li repeat="noti context.notifications">
-        <li tal:define="read noti['read'];
-                        css 'read ' if noti['read'] else 'unread ';
+        <li tal:condition="not noti['sticky']"
+            tal:define="css 'read ' if noti['read'] else 'unread ';
                         css css + 'notification ';"
             tal:attributes="id noti['id'];
                             class css">
@@ -27,6 +32,33 @@
               <p class="message"
                  tal:content="noti['sender']['name'] + noti['name']">
                  Notification
+              </p>
+              <p class="timestamp"
+                 tal:content="noti['timestamp']">
+                 Timestamp
+              </p>
+            </a>
+          </div>
+        </li>
+
+        <li tal:condition="noti['sticky']"
+            tal:define="css 'read ' if noti['read'] else 'unread ';
+                        css css + 'notification sticky';"
+            tal:attributes="id noti['id'];
+                            class css">
+          <div class="user-img">
+            <img tal:attributes="src 'static/images/cone-logo-cone.svg'">
+          </div>
+
+          <div class="msg">
+            <a href="#">
+              <p class="message"
+                 tal:content="noti['sender']['name'] + noti['name']">
+                 <b>Notification</b>
+              </p>
+              <p class="message-info"
+                 tal:content="noti['message']">
+                 Notification Information
               </p>
               <p class="timestamp"
                  tal:content="noti['timestamp']">

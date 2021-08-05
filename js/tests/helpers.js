@@ -158,6 +158,54 @@ export function create_toolbar_elem() {
         </ul>
       </li>
 
+      <li class="dropdown" id="notifications">
+        <i class="dropdown-toggle bi bi-bell-fill"
+          role="button"
+          data-bs-toggle="dropdown"></i>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li class="toolbar-title">
+            Notifications
+          </li>
+          <span id="noti_mark_read">
+            Mark all as read  
+          </span>
+
+        <li class="notification unread">
+          <div class="user-img">
+            <i class="bi bi-person"></i>
+          </div>
+
+          <div class="msg">
+            <a href="#">
+              <p class="message">
+                Notification
+              </p>
+              <p class="timestamp">
+                Timestamp
+              </p>
+            </a>
+          </div>
+        </li>
+        <li class="notification read">
+          <div class="user-img">
+            <i class="bi bi-person"></i>
+          </div>
+
+          <div class="msg">
+            <a href="#">
+              <p class="message">
+                Notification
+              </p>
+              <p class="timestamp">
+                Timestamp
+              </p>
+            </a>
+          </div>
+        </li>
+
+        </ul>
+      </li>
+
       <li class="dropdown" id="settings">
         <i class="dropdown-toggle bi bi-gear-fill" role="button" data-bs-toggle="dropdown"></i>
         <ul class="dropdown-menu">

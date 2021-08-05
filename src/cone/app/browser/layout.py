@@ -234,7 +234,9 @@ class Notification(Tile):
             'id': 'noti1',
             'name': ' sent you an example notification',
             'read': False,
-            'timestamp': '5 minutes ago'
+            'timestamp': '5 minutes ago',
+            'sticky': False,
+            'message': ''
         }, {
             'sender': {
                 'name': 'Miss Piggy',
@@ -243,7 +245,20 @@ class Notification(Tile):
             'id': 'noti2',
             'name': ' sent you a file',
             'read': True,
-            'timestamp': '10 hours ago'
+            'timestamp': '10 hours ago',
+            'sticky': False,
+            'message': ''
+        }, {
+            'sender': {
+                'name': 'Cone Team:',
+                'img': 'cone-logo-cone.svg'
+            },
+            'id': 'noti3',
+            'name': ' 3 updates are required',
+            'read': False,
+            'timestamp': 'a few seconds ago',
+            'sticky': True,
+            'message': 'This is an important extra message. Not updating may cause malfunction.'
         }]
 
 

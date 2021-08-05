@@ -147,6 +147,28 @@ body {
 #toolbar-top #notifications .user-img > i {
   color: #57575C;
 }
+#toolbar-top #notifications > ul {
+  display: none;
+}
+#toolbar-top .notification.sticky.unread {
+  background: #ffe6e6;
+}
+#toolbar-top .notification.sticky.unread * {
+  color: #e60000;
+}
+#toolbar-top .notification.sticky.unread:hover * {
+  color: #e60000;
+}
+#toolbar-top .notification.sticky.unread::before {
+  color: #e60000;
+}
+#toolbar-top .notification.sticky.read {
+  background: #F5F5FA;
+}
+#toolbar-top #noti_mark_read:hover {
+  cursor: pointer;
+  color: #5bc0de;
+}
 
 /* -- personal tools -- */
 #personaltools {

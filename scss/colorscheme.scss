@@ -172,6 +172,36 @@ body {
       color: $flight;
     }
   }
+
+  #notifications > ul {
+    display: none;
+  }
+
+  .notification.sticky {
+    &.unread {
+      background: $important;
+      * {
+        color: $fimportant;
+      }
+
+      &:hover * {
+        color: $fimportant;
+      }
+
+      &::before {
+        color: $fimportant;
+      }
+    }
+
+    &.read {
+      background: $bg;
+    }
+  }
+
+  #noti_mark_read:hover {
+    cursor: pointer;
+    color: $fhover;
+  }
 }
 
 

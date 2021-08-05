@@ -5,12 +5,12 @@ import {Topnav} from '../src/public/topnav.js';
 import * as helpers from './helpers.js';
 
 QUnit.module('toolbar', hooks => {
-    hooks.before(() => {
+    hooks.beforeEach(() => {
         helpers.create_layout_elem();
         helpers.create_topnav_elem();
         helpers.create_toolbar_elem();
     });
-    hooks.after(() => {
+    hooks.afterEach(() => {
         $('#layout').remove();
     });
 
@@ -36,5 +36,27 @@ QUnit.module('toolbar', hooks => {
         // trigger bootstrap dropdown
         layout.toolbar.dropdowns.trigger('show.bs.dropdown');
         assert.strictEqual(layout.topnav.content.css('display'), 'contents');
+    });
+
+    QUnit.test('mark_as_read', assert => {
+        // initialize
+        Topnav.initialize();
+        Toolbar.initialize();
+
+        assert.ok($('li.notification.unread').length > 0);
+        $('#noti_mark_read').trigger('click');
+        assert.strictEqual($('li.notification.unread').length, 0);
+    });
+
+    QUnit.test('handle_dropdown', assert => {
+        // initialize
+        Topnav.initialize();
+        Toolbar.initialize();
+
+        $('#notifications > i').trigger('click');
+        assert.strictEqual($('#notifications > ul').css('display'), 'flex');
+
+        $('#notifications > i').trigger('click');
+        assert.strictEqual($('#notifications > ul').css('display'), 'none');
     });
 });

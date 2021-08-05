@@ -531,6 +531,10 @@ ul {
   padding: 0 0.5rem;
   display: inline-block;
 }
+#toolbar-top > li > ul {
+  display: none;
+  flex-direction: column;
+}
 #toolbar-top > li ul {
   padding: 0;
   list-style: none;
@@ -546,12 +550,39 @@ ul {
 #toolbar-top #language img {
   margin-right: 0.5rem;
 }
+#toolbar-top #notifications #noti_mark_read {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-weight: 100;
+  font-size: 0.8em;
+  float: right;
+}
 #toolbar-top #notifications .notification {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
   padding: 0 1rem;
   cursor: pointer;
+  order: 1;
+}
+#toolbar-top #notifications .notification.sticky {
+  order: 0;
+  padding: 5px 1rem;
+  border-radius: 3px;
+}
+#toolbar-top #notifications .notification.sticky .user-img img {
+  width: 22px;
+  height: 22px;
+}
+#toolbar-top #notifications .notification.sticky .message-info {
+  font-size: 14px;
+}
+#toolbar-top #notifications .notification.sticky.unread::before {
+  content: "!";
+  font-size: 30px;
+  position: absolute;
+  transform: translate(-150%, 0%);
 }
 #toolbar-top #notifications .notification .user-img {
   display: inline-flex;
@@ -577,7 +608,7 @@ ul {
 #toolbar-top #notifications .notification .msg p.timestamp {
   font-size: 0.7rem;
 }
-#toolbar-top #notifications .notification.unread::before {
+#toolbar-top #notifications .notification.unread:not(.sticky)::before {
   content: "";
   position: absolute;
   transform: translateX(-150%);
