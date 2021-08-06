@@ -32,9 +32,10 @@ class TestWorkflow(NodeTestCase):
         self.assertTrue(isinstance(wf, Workflow))
 
     def test_lookup_state_data(self):
-        node = WorkflowNode()
-        state_data = lookup_state_data(node)
+        state_data = lookup_state_data(InexistentWorkflowNode)
+        self.assertEqual(state_data, {})
 
+        state_data = lookup_state_data(WorkflowNode())
         self.assertEqual(state_data, {
             'callback': None,
             'description': u'Foo',

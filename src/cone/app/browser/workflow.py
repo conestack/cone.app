@@ -70,6 +70,6 @@ class WfDropdown(Tile):
             if workflow_tsf:
                 props.title = workflow_tsf(transition['name'])
             else:
-                props.title = transition['name']
+                props.title = transition.get('title', transition['name'])
             ret.append(props)
         return ret

@@ -4,6 +4,10 @@ Changes
 1.0.2 (unreleased)
 ------------------
 
+- Workflow transition title is taken from zcml transition title if no
+  translation factory is defined.
+  [rnix, 2021-08-06]
+
 - Workflow state title is taken from zcml state title if no translation factory
   is defined.
   [rnix, 2021-08-06]

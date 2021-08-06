@@ -30,6 +30,8 @@ def lookup_state_data(node):
     """Lookup state data of current workflow state for node.
     """
     workflow = lookup_workflow(node)
+    if not workflow:
+        return {}
     return workflow._state_data[node.state]
 
 
