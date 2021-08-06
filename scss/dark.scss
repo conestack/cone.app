@@ -14,7 +14,7 @@ $dropdown: #48484D;
 $border:#2E2E33;
 
 $priority-high: #e60000;
-$priority-medium: #ffc107;
+$priority-medium: #ff9c07;
 $priority-low: #5bc0de;
 
 @import "colorscheme.scss";
@@ -25,31 +25,31 @@ $priority-low: #5bc0de;
           &.high {
             background: $priority-high;
             * {
-              color: black;
+              color: white;
             }
             &:hover * {
-              color: black;
+              color: white;
             }
             &::before {
-              color: black;
+              color: white;
             }
           }
           &.medium {
             background: $priority-medium;
             * {
-              color: black;
+              color: white;
             }
             &:hover * {
-              color: black;
+              color: white;
             }
           }
           &.low {
             background: $priority-low;
             * {
-              color: black;
+              color: white;
             }
             &:hover * {
-              color: black;
+              color: white;
             }
           }
         }

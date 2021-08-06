@@ -164,13 +164,13 @@ body {
   color: #e60000;
 }
 #toolbar-top .notification.priority.unread.medium {
-  background: rgba(255, 193, 7, 0.1);
+  background: rgba(255, 156, 7, 0.1);
 }
 #toolbar-top .notification.priority.unread.medium * {
-  color: #ffc107;
+  color: #ff9c07;
 }
 #toolbar-top .notification.priority.unread.medium:hover * {
-  color: #ffc107;
+  color: #ff9c07;
 }
 #toolbar-top .notification.priority.unread.low {
   background: rgba(91, 192, 222, 0.1);
@@ -321,31 +321,31 @@ a:hover {
   background: #e60000;
 }
 #notifications .notification.priority.unread.high * {
-  color: black;
+  color: white;
 }
 #notifications .notification.priority.unread.high:hover * {
-  color: black;
+  color: white;
 }
 #notifications .notification.priority.unread.high::before {
-  color: black;
+  color: white;
 }
 #notifications .notification.priority.unread.medium {
-  background: #ffc107;
+  background: #ff9c07;
 }
 #notifications .notification.priority.unread.medium * {
-  color: black;
+  color: white;
 }
 #notifications .notification.priority.unread.medium:hover * {
-  color: black;
+  color: white;
 }
 #notifications .notification.priority.unread.low {
   background: #5bc0de;
 }
 #notifications .notification.priority.unread.low * {
-  color: black;
+  color: white;
 }
 #notifications .notification.priority.unread.low:hover * {
-  color: black;
+  color: white;
 }
 
 /*# sourceMappingURL=dark.css.map */

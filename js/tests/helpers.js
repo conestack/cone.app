@@ -160,49 +160,28 @@ export function create_toolbar_elem() {
 
       <li class="dropdown" id="notifications">
         <i class="dropdown-toggle bi bi-bell-fill"
-          role="button"
-          data-bs-toggle="dropdown"></i>
+           role="button"
+           data-bs-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-end">
           <li class="toolbar-title">
             Notifications
           </li>
-          <span id="noti_mark_read">
-            Mark all as read  
-          </span>
-
-        <li class="notification unread">
-          <div class="user-img">
-            <i class="bi bi-person"></i>
+          <div id="toolbar_actions">
+            <span id="noti_sort_date">
+              <i class="bi bi-clock-history"></i>
+              <i class="arrow-small bi bi-arrow-up"></i>
+              <span class="tb-tooltip">Sort by date</span>
+            </span>
+            <span id="noti_sort_priority">
+              <i class="bi bi-exclamation-circle"></i>
+              <i class="arrow-small bi bi-arrow-up"></i>
+              <span class="tb-tooltip">Sort by priority</span>
+            </span>
+            <span id="noti_mark_read">
+              <i class="bi bi-eye-slash"></i>
+              <span class="tb-tooltip">Mark all as read</span>
+            </span>
           </div>
-
-          <div class="msg">
-            <a href="#">
-              <p class="message">
-                Notification
-              </p>
-              <p class="timestamp">
-                Timestamp
-              </p>
-            </a>
-          </div>
-        </li>
-        <li class="notification read">
-          <div class="user-img">
-            <i class="bi bi-person"></i>
-          </div>
-
-          <div class="msg">
-            <a href="#">
-              <p class="message">
-                Notification
-              </p>
-              <p class="timestamp">
-                Timestamp
-              </p>
-            </a>
-          </div>
-        </li>
-
         </ul>
       </li>
 
@@ -224,6 +203,66 @@ export function create_toolbar_elem() {
   `);
   // append dummy element to DOM 
   $('#topnav-content').append(tb_dropdown_elem);
+}
+
+// create dummy notification element
+export function create_noti_elem(date, priority, id) {
+  let noti_elem;
+
+  if(priority) {
+    noti_elem = $(`
+      <li class="unread notification priority ${priority}"
+          data-timestamp="${date}">
+        <div class="user-img">
+          <img src="#">
+        </div>
+
+        <div class="msg">
+          <a href="#">
+            <p class="message">
+              Example test Noti
+            </p>
+            <p class="message-info">
+              Notification Information
+            </p>
+            <p class="timestamp">
+              Timestamp
+            </p>
+          </a>
+        </div>
+        <i class="bi bi-x-circle"></i>
+      </li>
+    `);
+  } else {
+    noti_elem = $(`
+      <li class="unread notification"
+          data-timestamp="${date}">
+        <div class="user-img">
+          <img src="#">
+        </div>
+
+        <div class="msg">
+          <a href="#">
+            <p class="message">
+              Example test Noti
+            </p>
+            <p class="message-info">
+              Notification Information
+            </p>
+            <p class="timestamp">
+              Timestamp
+            </p>
+          </a>
+        </div>
+      </li>
+    `);
+  }
+
+  if(id) {
+    noti_elem.attr('id', id);
+  }
+
+  $('#notifications > ul').append(noti_elem);
 }
 
 // create dummy personaltools element

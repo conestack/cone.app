@@ -8,13 +8,6 @@
   padding-left: 0.75rem;
   box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
 }
-#topnav::before {
-  content: "";
-  background: red;
-  width: 20px;
-  height: 20px;
-  position: absolute;
-}
 #topnav #personaltools {
   order: 1;
 }
