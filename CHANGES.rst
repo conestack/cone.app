@@ -4,11 +4,23 @@ Changes
 1.0.2 (unreleased)
 ------------------
 
+- Workflow transition title is taken from zcml transition title if no
+  translation factory is defined.
+  [rnix, 2021-08-06]
+
+- Workflow state title is taken from zcml state title if no translation factory
+  is defined.
+  [rnix, 2021-08-06]
+
+- Main template can be defined in the application ini config file.
+  [rnix, 2021-08-06]
+
 - Get label ``lookup`` function in reference browser widget directly from widget
   instance instead of using ``attr_value``. Lookup function is expected to be a
   callable accepting a uuid as argument while ``attr_value`` tries to invoke
   callables with widget and data as arguments. The code worked due to a B/C
   fallback behavior in ``attr_value`` which was dropped in yafowil 3.0.
+  [rnix, 2021-07-08]
 
 - Deliver CSS before Javascript in HTML head.
   [rnix, 2021-06-30]
