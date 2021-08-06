@@ -5,6 +5,7 @@ from cone.app.testing.mock import InterfaceWorkflowNode
 from cone.app.testing.mock import StateACLWorkflowNode
 from cone.app.testing.mock import WorkflowNode
 from cone.app.workflow import initialize_workflow
+from cone.app.workflow import lookup_state_data
 from cone.app.workflow import lookup_workflow
 from node.tests import NodeTestCase
 from pyramid.security import ALL_PERMISSIONS
@@ -29,6 +30,16 @@ class TestWorkflow(NodeTestCase):
 
         wf = lookup_workflow(InterfaceWorkflowNode)
         self.assertTrue(isinstance(wf, Workflow))
+
+    def test_lookup_state_data(self):
+        node = WorkflowNode()
+        state_data = lookup_state_data(node)
+
+        self.assertEqual(state_data, {
+            'callback': None,
+            'description': u'Foo',
+            'title': u'Initial State'
+        })
 
     def test_workflow(self):
         node = WorkflowNode()

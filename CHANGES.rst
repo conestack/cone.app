@@ -4,6 +4,10 @@ Changes
 1.0.2 (unreleased)
 ------------------
 
+- Workflow state title is taken from zcml state title if no translation factory
+  is defined.
+  [rnix, 2021-08-06]
+
 - Main template can be defined in the application ini config file.
   [rnix, 2021-08-06]
 
