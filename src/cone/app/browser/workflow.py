@@ -2,6 +2,7 @@ from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.model import Properties
+from cone.app.workflow import lookup_state_data
 from cone.app.workflow import lookup_workflow
 from cone.tile import Tile
 from cone.tile import tile
@@ -46,7 +47,8 @@ class WfDropdown(Tile):
         workflow_tsf = self.model.workflow_tsf
         if workflow_tsf:
             return workflow_tsf(self.model.state)
-        return self.model.state
+        state_data = lookup_state_data(self.model)
+        return state_data.get('title', self.model.state)
 
     @property
     def transitions(self):
@@ -68,6 +70,6 @@ class WfDropdown(Tile):
             if workflow_tsf:
                 props.title = workflow_tsf(transition['name'])
             else:
-                props.title = transition['name']
+                props.title = transition.get('title', transition['name'])
             ret.append(props)
         return ret
