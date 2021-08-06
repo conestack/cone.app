@@ -28,7 +28,7 @@
        to_state="final"
        permission="change_state"
     />
-    
+
   </workflow>
 
 </configure>
