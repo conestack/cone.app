@@ -8,7 +8,7 @@
 
 if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
-(function($) {
+(function($, ts) {
 
     $(document).ready(function() {
 
@@ -16,15 +16,15 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         cone.key_binder();
 
         // add binders to treibstoff binding callbacks
-        bdajax.register(cone.settingstabsbinder.bind(cone), true);
-        bdajax.register(cone.batcheditemsbinder.bind(cone), true);
-        bdajax.register(cone.tabletoolbarbinder.bind(cone), true);
-        bdajax.register(cone.sharingbinder.bind(cone), true);
-        bdajax.register(cone.copysupportbinder.bind(cone), true);
+        ts.ajax.register(cone.settingstabsbinder.bind(cone), true);
+        ts.ajax.register(cone.batcheditemsbinder.bind(cone), true);
+        ts.ajax.register(cone.tabletoolbarbinder.bind(cone), true);
+        ts.ajax.register(cone.sharingbinder.bind(cone), true);
+        ts.ajax.register(cone.copysupportbinder.bind(cone), true);
         var refbrowser = yafowil.referencebrowser;
-        bdajax.register(refbrowser.browser_binder.bind(refbrowser), true);
-        bdajax.register(refbrowser.add_reference_binder.bind(refbrowser));
-        bdajax.register(refbrowser.remove_reference_binder.bind(refbrowser));
+        ts.ajax.register(refbrowser.browser_binder.bind(refbrowser), true);
+        ts.ajax.register(refbrowser.add_reference_binder.bind(refbrowser));
+        ts.ajax.register(refbrowser.remove_reference_binder.bind(refbrowser));
     });
 
     cone = {
@@ -63,8 +63,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             $('ul.settingstabs a', context).on('click', function(event) {
                 event.preventDefault();
                 var elem = $(this);
-                var target = bdajax.parsetarget(elem.attr('ajax:target'));
-                bdajax.request({
+                var target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+                ts.ajax.request({
                     url: target.url,
                     params: target.params,
                     success: function(data, status, request) {
@@ -74,7 +74,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                         $('.settingstabpane')
                             .html(data)
                             .css('display', 'block')
-                            .bdajax();
+                            .tsajax();
                     }
                 });
             }).first().trigger('click');
@@ -82,7 +82,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // XXX: better naming
         batcheditems_handle_filter: function(elem, param, val) {
-            var target = bdajax.parsetarget(elem.attr('ajax:target')),
+            var target = ts.ajax.parsetarget(elem.attr('ajax:target')),
                 event = elem.attr('ajax:event');
             target.params[param] = val;
             if (elem.attr('ajax:path')) {
@@ -91,14 +91,14 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     path_event = event;
                 }
                 // path always gets calculated from target
-                bdajax.path({
+                ts.ajax.path({
                     path: target.path + target.query + '&' + param + '=' + val,
                     event: path_event,
                     target: target
                 });
             }
             var defs = event.split(':');
-            bdajax.trigger(defs[0], defs[1], target);
+            ts.ajax.trigger(defs[0], defs[1], target);
         },
 
         batcheditems_size_binder: function(context, size_selector) {
@@ -190,7 +190,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                     id: checkbox.attr('name'),
                     role: checkbox.attr('value')
                 };
-                bdajax.action({
+                ts.ajax.action({
                     name: action,
                     mode: 'NONE',
                     selector: 'NONE',
@@ -301,8 +301,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             if (elem.hasClass('disabled')) {
                 return;
             }
-            var target = bdajax.parsetarget(elem.attr('ajax:target'));
-            bdajax.action({
+            var target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            ts.ajax.action({
                 name: 'paste',
                 mode: 'NONE',
                 selector: 'NONE',
@@ -456,7 +456,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             var wrapper = elem.parent();
             var sel = '[name="' + elem.data('reference-name') + '"]';
             yafowil.referencebrowser.target = $(sel, wrapper).get(0);
-            bdajax.overlay({
+            ts.ajax.overlay({
                 action: 'referencebrowser',
                 target: wrapper.attr('ajax:target')
             });
@@ -472,6 +472,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             target: null,
 
             overlay: function() {
+                // XXX
                 return $('#ajax-overlay').data('overlay');
             },
 
@@ -573,7 +574,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             },
 
             _set_selected_on_ajax_target: function(elem, selected) {
-                var target = bdajax.parsetarget(elem.attr('ajax:target'));
+                var target = ts.ajax.parsetarget(elem.attr('ajax:target'));
                 target.params.selected = selected.join(',');
                 var query = new Array();
                 for (var name in target.params) {
@@ -584,4 +585,4 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         }
     });
 
-})(jQuery);
+})(jQuery, treibstoff);

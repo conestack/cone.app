@@ -3,17 +3,17 @@
  *
  * Requires:
  *     jquery
- *     bdajax
+ *     treibstoff
  *     typeahead.js
  */
 
 // additional livesearch options
 var livesearch_options = new Object();
 
-(function($) {
+(function($, ts) {
 
     $(document).ready(function() {
-        bdajax.register(livesearch.binder.bind(livesearch), true);
+        ts.ajax.register(livesearch.binder.bind(livesearch), true);
     });
 
     livesearch = {
@@ -35,4 +35,4 @@ var livesearch_options = new Object();
         }
     };
 
-})(jQuery);
+})(jQuery, treibstoff);
