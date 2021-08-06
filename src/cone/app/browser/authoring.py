@@ -154,7 +154,7 @@ class CameFromNext(Behavior):
             # query without path
             else:
                 path = '{}'.format(parsed.path)
-        # ajax continuation definitions if ajax request
+        # ajax continuation operations if ajax request
         if self.ajax_request:
             event = AjaxEvent(url, 'contextchanged', '#layout')
             # return continuation path and event if browser history should be

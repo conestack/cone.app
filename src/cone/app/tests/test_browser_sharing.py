@@ -161,15 +161,15 @@ class TestBrowserSharing(TileTestCase):
         request = self.layer.new_request()
         request.params['id'] = 'viewer'
         request.params['role'] = 'manager'
-        request.params['bdajax.action'] = 'add_principal_role'
-        request.params['bdajax.mode'] = 'NONE'
-        request.params['bdajax.selector'] = 'NONE'
+        request.params['ajax.action'] = 'add_principal_role'
+        request.params['ajax.mode'] = 'NONE'
+        request.params['ajax.selector'] = 'NONE'
 
         # Nothing happens if success
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
-            'continuation': False,
+            'continuation': [],
             'payload': u'',
             'mode': 'NONE',
             'selector': 'NONE'
@@ -189,7 +189,7 @@ class TestBrowserSharing(TileTestCase):
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
-            'continuation': False,
+            'continuation': [],
             'payload': u'',
             'mode': 'NONE',
             'selector': 'NONE'
@@ -231,15 +231,15 @@ class TestBrowserSharing(TileTestCase):
         request = self.layer.new_request()
         request.params['id'] = 'viewer'
         request.params['role'] = 'manager'
-        request.params['bdajax.action'] = 'remove_principal_role'
-        request.params['bdajax.mode'] = 'NONE'
-        request.params['bdajax.selector'] = 'NONE'
+        request.params['ajax.action'] = 'remove_principal_role'
+        request.params['ajax.mode'] = 'NONE'
+        request.params['ajax.selector'] = 'NONE'
 
         # Nothing happens if success
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
-            'continuation': False,
+            'continuation': [],
             'payload': u'',
             'mode': 'NONE',
             'selector': 'NONE'
@@ -258,7 +258,7 @@ class TestBrowserSharing(TileTestCase):
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
-            'continuation': False,
+            'continuation': [],
             'payload': u'',
             'mode': 'NONE',
             'selector': 'NONE'
@@ -291,9 +291,9 @@ class TestBrowserSharing(TileTestCase):
         request = self.layer.new_request()
         request.params['id'] = 'foo'
         request.params['role'] = 'manager'
-        request.params['bdajax.action'] = 'remove_principal_role'
-        request.params['bdajax.mode'] = 'NONE'
-        request.params['bdajax.selector'] = 'NONE'
+        request.params['ajax.action'] = 'remove_principal_role'
+        request.params['ajax.mode'] = 'NONE'
+        request.params['ajax.selector'] = 'NONE'
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
         self.assertEqual(res, {

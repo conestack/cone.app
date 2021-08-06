@@ -33,9 +33,9 @@ class ActionContext(object):
         model = self.model
         request = self.request
         scope = self.tilename
-        # if ``bdajax.action`` found on request, use it as current scope
-        if 'bdajax.action' in request.params:
-            scope = request.params['bdajax.action']
+        # if ``ajax.action`` found on request, use it as current scope
+        if 'ajax.action' in request.params:
+            scope = request.params['ajax.action']
         # if action is ``layout``, content tile name is passed
         if scope == 'layout':
             scope = request.params.get('contenttile', 'content')
@@ -143,7 +143,9 @@ class DropdownAction(TemplateAction):
 
 
 class LinkAction(TemplateAction):
-    """Action rendering a HTML link, optional with bdajax attributes.
+    """Action rendering a HTML link, optional with treibstoff ajax attributes.
+
+    XXX: All treibstoff attributes.
     """
     template = 'cone.app.browser:templates/link_action.pt'
     bind = 'click'       # ajax:bind attribute

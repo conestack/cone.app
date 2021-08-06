@@ -45,6 +45,10 @@ https://www.chromestatus.com/feature/5745543795965952"
 1.1
 ---
 
+[ ] LinkAction additional ajax attributes.
+
+[ ] 'bdajax.*' fallback request parameters.
+
 [ ] Treibstoff migration docs.
 
 [ ] Treibtroff AjaxOverlay docs.

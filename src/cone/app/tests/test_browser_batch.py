@@ -840,7 +840,7 @@ class TestBrowserBatch(TileTestCase):
             'cone.app.browser:templates/batched_items.pt'
         )
 
-        # Batched items DOM element ID. Used for bdajax binding.
+        # Batched items DOM element ID. Used for treibstoff ajax binding.
         self.assertEqual(batched_items.items_id, 'batched_items')
 
         self.checkOutput("""

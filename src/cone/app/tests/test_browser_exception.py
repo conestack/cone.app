@@ -14,9 +14,9 @@ class TestBrowserException(TileTestCase):
     def test_internal_server_error(self):
         # When requests are performed, and an uncaught exception is raised,
         # ``internal_server_error`` view is invoked. Response either represents
-        # an error page or a JSON response containing bdajax continuation
-        # definitions which display the traceback in an error dialog if request
-        # was a bdajax action
+        # an error page or a JSON response containing treibstoff ajax continuation
+        # operations which display the traceback in an error dialog if request
+        # was a treibstoff ajax action
         request = self.layer.new_request()
         self.checkOutput("""
         200 OK

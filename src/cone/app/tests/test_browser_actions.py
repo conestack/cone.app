@@ -50,10 +50,10 @@ class TestBrowserActions(TileTestCase):
 
         self.assertEqual(ac.scope, 'tile')
 
-        request.params['bdajax.action'] = 'ajaxaction'
+        request.params['ajax.action'] = 'ajaxaction'
         self.assertEqual(ac.scope, 'ajaxaction')
 
-        request.params['bdajax.action'] = 'layout'
+        request.params['ajax.action'] = 'layout'
         self.assertEqual(ac.scope, 'content')
 
         request.params['contenttile'] = 'contenttile'
