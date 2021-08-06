@@ -10,16 +10,30 @@
       <li class="toolbar-title">
         Notifications
       </li>
-      <span id="noti_mark_read">
-        Mark all as read  
+      <div id="toolbar_actions">
+      <span id="noti_sort_date">
+        <i class="bi bi-clock-history"></i>
+        <i class="arrow-small bi bi-arrow-up"></i>
+        <span class="tb-tooltip">Sort by date</span>
       </span>
+      <span id="noti_sort_priority">
+        <i class="bi bi-exclamation-circle"></i>
+        <i class="arrow-small bi bi-arrow-up"></i>
+        <span class="tb-tooltip">Sort by priority</span>
+      </span>
+      <span id="noti_mark_read">
+        <i class="bi bi-eye-slash"></i>
+        <span class="tb-tooltip">Mark all as read</span>
+      </span>
+      </div>
 
       <tal:li repeat="noti context.notifications">
-        <li tal:condition="not noti['sticky']"
+        <li tal:condition="not noti['priority']"
             tal:define="css 'read ' if noti['read'] else 'unread ';
                         css css + 'notification ';"
             tal:attributes="id noti['id'];
-                            class css">
+                            class css;
+                            data-timestamp noti['timestamp']">
           <div class="user-img">
             <img tal:condition="noti['sender']['img']"
                  tal:attributes="src 'static/images/tmp/' + noti['sender']['img']">
@@ -41,11 +55,12 @@
           </div>
         </li>
 
-        <li tal:condition="noti['sticky']"
+        <li tal:condition="noti['priority']"
             tal:define="css 'read ' if noti['read'] else 'unread ';
-                        css css + 'notification sticky';"
+                        css css + 'notification priority ' + noti['priority'];"
             tal:attributes="id noti['id'];
-                            class css">
+                            class css;
+                            data-timestamp noti['timestamp']">
           <div class="user-img">
             <img tal:attributes="src 'static/images/cone-logo-cone.svg'">
           </div>
@@ -66,6 +81,7 @@
               </p>
             </a>
           </div>
+          <i class="bi bi-x-circle"></i>
         </li>
       </tal:li>
     </ul>

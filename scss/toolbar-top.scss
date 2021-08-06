@@ -39,17 +39,58 @@
       margin-right: .5rem;
     }
   }
-  
+
   /*notifications*/
   #notifications {
 
-    #noti_mark_read {
+    i.bi-x-circle {
+      position: absolute;
+      /* float: right; */
+      right: 0;
+      margin-right: 25px;
+      /* top: 0; */
+      /* margin-bottom: auto; */
+      align-self: flex-start;
+    }
+
+    #toolbar_actions {
       position: absolute;
       top: 15px;
       right: 20px;
       font-weight: 100;
       font-size: .8em;
       float: right;
+
+      .arrow-small {
+        font-size: 10px;
+        margin-left: -3px;
+      }
+
+      > span {
+        padding: 4px;
+        &::before {
+          content: "";
+          position: absolute;
+          z-index: 2000;
+          transform: translate(2px, 15px);
+          visibility: hidden;
+        }
+
+        .tb-tooltip {
+          position: absolute;
+          visibility: hidden;
+          display: block;
+          padding: 1px 5px;
+          border-radius: 3px;
+        }
+
+        &:hover > .tb-tooltip {
+          visibility: visible;
+        }
+        &:hover::before {
+          visibility: visible;
+        }
+      }
     }
 
     .notification {
@@ -60,7 +101,7 @@
       cursor: pointer;
       order: 1;
 
-      &.sticky {
+      &.priority {
         order: 0;
         padding: 5px 1rem;
         border-radius: 3px;
@@ -74,7 +115,7 @@
           font-size: 14px;
         }
 
-        &.unread {
+        &.unread.high {
           &::before {
             content: "!";
             font-size: 30px;
@@ -113,7 +154,7 @@
         }
       }
 
-      &.unread:not(.sticky)::before {
+      &.unread:not(.priority)::before {
         content: "";
         position: absolute;
         transform: translateX(-150%);

@@ -13,7 +13,45 @@ $info: #5bc0de;
 $dropdown: #48484D; 
 $border:#2E2E33;
 
-$important: #A32E51;
-$fimportant: #F3D7DF;
+$priority-high: #e60000;
+$priority-medium: #ffc107;
+$priority-low: #5bc0de;
 
 @import "colorscheme.scss";
+
+#notifications {
+    .notification.priority {
+        &.unread {
+          &.high {
+            background: $priority-high;
+            * {
+              color: black;
+            }
+            &:hover * {
+              color: black;
+            }
+            &::before {
+              color: black;
+            }
+          }
+          &.medium {
+            background: $priority-medium;
+            * {
+              color: black;
+            }
+            &:hover * {
+              color: black;
+            }
+          }
+          &.low {
+            background: $priority-low;
+            * {
+              color: black;
+            }
+            &:hover * {
+              color: black;
+            }
+          }
+        }
+    }
+}

@@ -142,22 +142,49 @@ body {
 #toolbar-top #notifications > ul {
   display: none;
 }
-#toolbar-top .notification.sticky.unread {
-  background: #A32E51;
+#toolbar-top .tb-tooltip {
+  background: #2E2E33;
+  color: #E6E6EB;
 }
-#toolbar-top .notification.sticky.unread * {
-  color: #F3D7DF;
+#toolbar-top #toolbar_actions > span::before {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #2E2E33;
 }
-#toolbar-top .notification.sticky.unread:hover * {
-  color: #F3D7DF;
+#toolbar-top .notification.priority.unread.high {
+  background: rgba(230, 0, 0, 0.1);
 }
-#toolbar-top .notification.sticky.unread::before {
-  color: #F3D7DF;
+#toolbar-top .notification.priority.unread.high * {
+  color: #e60000;
 }
-#toolbar-top .notification.sticky.read {
+#toolbar-top .notification.priority.unread.high:hover * {
+  color: #e60000;
+}
+#toolbar-top .notification.priority.unread.high::before {
+  color: #e60000;
+}
+#toolbar-top .notification.priority.unread.medium {
+  background: rgba(255, 193, 7, 0.1);
+}
+#toolbar-top .notification.priority.unread.medium * {
+  color: #ffc107;
+}
+#toolbar-top .notification.priority.unread.medium:hover * {
+  color: #ffc107;
+}
+#toolbar-top .notification.priority.unread.low {
+  background: rgba(91, 192, 222, 0.1);
+}
+#toolbar-top .notification.priority.unread.low * {
+  color: #5bc0de;
+}
+#toolbar-top .notification.priority.unread.low:hover * {
+  color: #5bc0de;
+}
+#toolbar-top .notification.priority.read {
   background: #2E2E33;
 }
-#toolbar-top #noti_mark_read:hover {
+#toolbar-top #toolbar_actions > span:hover {
   cursor: pointer;
   color: #dfe8f0;
 }
@@ -288,6 +315,37 @@ a:hover {
 }
 .scrollbar .scroll-handle:hover, .scrollbar .scroll-handle.active {
   background: #5bc0de;
+}
+
+#notifications .notification.priority.unread.high {
+  background: #e60000;
+}
+#notifications .notification.priority.unread.high * {
+  color: black;
+}
+#notifications .notification.priority.unread.high:hover * {
+  color: black;
+}
+#notifications .notification.priority.unread.high::before {
+  color: black;
+}
+#notifications .notification.priority.unread.medium {
+  background: #ffc107;
+}
+#notifications .notification.priority.unread.medium * {
+  color: black;
+}
+#notifications .notification.priority.unread.medium:hover * {
+  color: black;
+}
+#notifications .notification.priority.unread.low {
+  background: #5bc0de;
+}
+#notifications .notification.priority.unread.low * {
+  color: black;
+}
+#notifications .notification.priority.unread.low:hover * {
+  color: black;
 }
 
 /*# sourceMappingURL=dark.css.map */

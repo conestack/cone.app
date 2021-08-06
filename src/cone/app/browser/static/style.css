@@ -8,6 +8,13 @@
   padding-left: 0.75rem;
   box-shadow: 0 0.5rem 1rem rgba(53, 59, 65, 0.025);
 }
+#topnav::before {
+  content: "";
+  background: red;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+}
 #topnav #personaltools {
   order: 1;
 }
@@ -550,13 +557,49 @@ ul {
 #toolbar-top #language img {
   margin-right: 0.5rem;
 }
-#toolbar-top #notifications #noti_mark_read {
+#toolbar-top #notifications i.bi-x-circle {
+  position: absolute;
+  /* float: right; */
+  right: 0;
+  margin-right: 25px;
+  /* top: 0; */
+  /* margin-bottom: auto; */
+  align-self: flex-start;
+}
+#toolbar-top #notifications #toolbar_actions {
   position: absolute;
   top: 15px;
   right: 20px;
   font-weight: 100;
   font-size: 0.8em;
   float: right;
+}
+#toolbar-top #notifications #toolbar_actions .arrow-small {
+  font-size: 10px;
+  margin-left: -3px;
+}
+#toolbar-top #notifications #toolbar_actions > span {
+  padding: 4px;
+}
+#toolbar-top #notifications #toolbar_actions > span::before {
+  content: "";
+  position: absolute;
+  z-index: 2000;
+  transform: translate(2px, 15px);
+  visibility: hidden;
+}
+#toolbar-top #notifications #toolbar_actions > span .tb-tooltip {
+  position: absolute;
+  visibility: hidden;
+  display: block;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+#toolbar-top #notifications #toolbar_actions > span:hover > .tb-tooltip {
+  visibility: visible;
+}
+#toolbar-top #notifications #toolbar_actions > span:hover::before {
+  visibility: visible;
 }
 #toolbar-top #notifications .notification {
   display: flex;
@@ -566,19 +609,19 @@ ul {
   cursor: pointer;
   order: 1;
 }
-#toolbar-top #notifications .notification.sticky {
+#toolbar-top #notifications .notification.priority {
   order: 0;
   padding: 5px 1rem;
   border-radius: 3px;
 }
-#toolbar-top #notifications .notification.sticky .user-img img {
+#toolbar-top #notifications .notification.priority .user-img img {
   width: 22px;
   height: 22px;
 }
-#toolbar-top #notifications .notification.sticky .message-info {
+#toolbar-top #notifications .notification.priority .message-info {
   font-size: 14px;
 }
-#toolbar-top #notifications .notification.sticky.unread::before {
+#toolbar-top #notifications .notification.priority.unread.high::before {
   content: "!";
   font-size: 30px;
   position: absolute;
@@ -608,7 +651,7 @@ ul {
 #toolbar-top #notifications .notification .msg p.timestamp {
   font-size: 0.7rem;
 }
-#toolbar-top #notifications .notification.unread:not(.sticky)::before {
+#toolbar-top #notifications .notification.unread:not(.priority)::before {
   content: "";
   position: absolute;
   transform: translateX(-150%);

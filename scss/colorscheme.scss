@@ -177,19 +177,52 @@ body {
     display: none;
   }
 
-  .notification.sticky {
+  .tb-tooltip {
+    background: $border;
+    color: $flight;
+  }
+
+  #toolbar_actions > span::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid $border;
+  }
+
+  .notification.priority {
     &.unread {
-      background: $important;
-      * {
-        color: $fimportant;
-      }
+      &.high {
+        background: rgba($color: $priority-high, $alpha: 0.1);
+        * {
+          color: $priority-high;
+        }
 
-      &:hover * {
-        color: $fimportant;
-      }
+        &:hover * {
+          color: $priority-high;
+        }
 
-      &::before {
-        color: $fimportant;
+        &::before {
+          color: $priority-high;
+        }
+      }
+      &.medium {
+        background: rgba($color: $priority-medium, $alpha: 0.1);
+        * {
+          color: $priority-medium;
+        }
+
+        &:hover * {
+          color: $priority-medium;
+        }
+      }
+      &.low {
+        background: rgba($color: $priority-low, $alpha: 0.1);
+        * {
+          color: $priority-low;
+        }
+
+        &:hover * {
+          color: $priority-low;
+        }
       }
     }
 
@@ -198,7 +231,7 @@ body {
     }
   }
 
-  #noti_mark_read:hover {
+  #toolbar_actions > span:hover {
     cursor: pointer;
     color: $fhover;
   }

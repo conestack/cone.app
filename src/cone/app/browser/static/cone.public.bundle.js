@@ -108,6 +108,67 @@ var cone = (function (exports, $) {
             arrow.addClass('bi-chevron-up');
         }
     }
+    /* calculate passed time from timestamp */
+    function time_delta_str(time) {
+        let now = new Date();
+
+        // Compute time difference in milliseconds
+        let timeDiff = now.getTime() - time.getTime();
+
+        // Convert from milliseconds to seconds
+        let seconds = timeDiff / 1000;
+
+        // Convert from seconds to minutes
+        let minutes = Math.floor(seconds / 60);
+
+        // Convert from minutes to hours
+        let hours = Math.floor(minutes / 60);
+
+        // Convert from hours to days
+        let days = Math.floor(hours / 24);
+
+        // Convert from days to months
+        let months = Math.floor(days / 30);
+
+        // Convert from months to years
+        let years = Math.floor(days / 365);
+
+        if (years > 0) {
+            if (years > 2) {
+                return 'a long time ago';
+            } else if (years === 2) {
+                return '2 years ago';
+            } else if (years === 1) {
+                return 'a year ago';
+            }
+        } else if (months > 0) {
+            if (months > 1) {
+                return `${months} months ago`;
+            } else {
+                return 'a month ago';
+            }
+        } else if (days > 0) {
+            if (days === 1) {
+                return 'a day ago';
+            } else {
+                return `${days} days ago`;
+            }
+        } else if (hours > 0) {
+            if (hours === 1) {
+                return 'an hour ago';
+            } else {
+                return `${hours} hours ago`;
+            }
+        } else if (minutes > 0) {
+            if (minutes === 1) {
+                return 'a minute ago';
+            } else {
+                return `${minutes} minutes ago`;
+            }
+        } else if (seconds > 0) {
+            return 'just now';
+        }
+    }
 
     let layout = {
         theme_switcher: null,
@@ -1090,13 +1151,27 @@ var cone = (function (exports, $) {
             super();
             this.elem = elem;
             this.dropdowns = $('li.dropdown', this.elem);
-            this.mark_read = $('#noti_mark_read', this.elem);
-            
+            this.mark_read_btn = $('#noti_mark_read', this.elem);
+            this.sort_priority_btn = $('#noti_sort_priority', this.elem);
+            this.sort_date_btn =$('#noti_sort_date', this.elem);
+
             this._mark = this.mark_as_read.bind(this);
-            this.mark_read.off().on('click', this._mark);
+            this.mark_read_btn.off().on('click', this._mark);
+
+            this._sort_p = this.sort_priority.bind(this);
+            this.sort_priority_btn.off().on('click', this._sort_p);
+
+            this._sort_d = this.sort_date.bind(this);
+            this.sort_date_btn.on('click',this._sort_d);
+
+            $('i.bi-x-circle').on('click', function(e) {
+                e.stopPropagation();
+                $(this).parent('li').hide();
+            });
             
             this.handle_dd();
             this.viewport_changed();
+            this.set_noti_time();
         }
 
         handle_dd() {
@@ -1135,6 +1210,91 @@ var cone = (function (exports, $) {
         mark_as_read(e) {
             e.stopPropagation();
             $('li.notification').removeClass('unread').addClass('read');
+        }
+
+        sort_priority(e) {
+            e.stopPropagation();
+
+            let arrow = $('.arrow-small', this.sort_priority_btn);
+            if (arrow.hasClass('bi-arrow-up')) {
+                arrow.removeClass('bi-arrow-up').addClass('bi-arrow-down');
+                sort_descend();
+            } else if (arrow.hasClass('bi-arrow-down')) {
+                arrow.removeClass('bi-arrow-down').addClass('bi-arrow-up');
+                sort_ascend();
+            }
+
+            function sort_descend() {
+                for (let item of $('li.notification', '#notifications')){
+                    let elem = $(item);
+
+                    if (elem.hasClass('high')){
+                        elem.css('order', '0');
+                    } else if (elem.hasClass('medium')) {
+                        elem.css('order', '1');
+                    } else if (elem.hasClass('low')) {
+                        elem.css('order', '2');
+                    } else {
+                        elem.css('order', '3');
+                    }
+                }
+            }
+
+            function sort_ascend() {
+                for (let item of $('li.notification', '#notifications')){
+                    let elem = $(item);
+
+                    if (elem.hasClass('high')){
+                        elem.css('order', '3');
+                    } else if (elem.hasClass('medium')) {
+                        elem.css('order', '2');
+                    } else if (elem.hasClass('low')) {
+                        elem.css('order', '1');
+                    } else {
+                        elem.css('order', '0');
+                    }
+                }
+            }
+        }
+
+        set_noti_time() {
+            for (let item of $('li.notification', '#notifications')) {
+                let elem = $(item);
+
+                let time_stamp = new Date(elem.data('timestamp'));
+                let time_display = time_delta_str(time_stamp);
+
+                $('p.timestamp', elem).text(time_display);
+            }
+        }
+
+        sort_date(e) {
+            e.stopPropagation();
+
+            let msgs = [];
+            for (let item of $('li.notification', '#notifications')) {
+                let elem = $(item);
+                let timestamp = new Date(elem.data('timestamp'));
+                msgs.push({element: elem, timestamp: timestamp});
+            }
+
+            let arrow = $('.arrow-small', this.sort_date_btn);
+            if (arrow.hasClass('bi-arrow-up')) {
+                arrow.removeClass('bi-arrow-up').addClass('bi-arrow-down');
+                msgs.sort(function(a,b){
+                    return new Date(b.timestamp) - new Date(a.timestamp);
+                });
+            } else if (arrow.hasClass('bi-arrow-down')) {
+                arrow.removeClass('bi-arrow-down').addClass('bi-arrow-up');
+                msgs.sort(function(a,b){
+                    return new Date(a.timestamp) - new Date(b.timestamp);
+                });
+            }
+
+            for(let i in msgs) {
+                let msg = msgs[i];
+                msg.element.css('order', i);
+            }
         }
     }
 
@@ -1222,6 +1382,7 @@ var cone = (function (exports, $) {
     exports.default_themes = default_themes;
     exports.layout = layout;
     exports.readCookie = readCookie;
+    exports.time_delta_str = time_delta_str;
     exports.toggle_arrow = toggle_arrow;
     exports.vp = vp;
 

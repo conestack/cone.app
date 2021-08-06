@@ -13,7 +13,8 @@ $info: #5bc0de;
 $dropdown: white;
 $border:#EBEBF0;
 
-$important: #ffe6e6;
-$fimportant: #e60000;
+$priority-high: #e60000;
+$priority-medium: #ffc107;
+$priority-low: #5bc0de;
 
 @import "colorscheme.scss";
