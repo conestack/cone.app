@@ -23,7 +23,7 @@ class TestBrowserWorkflow(TileTestCase):
               title="Change state"
               data-toggle="dropdown">
           <span>State</span>:
-          <span>initial</span>
+          <span>Initial State</span>
         </a>...
         """, res)
 
@@ -34,7 +34,7 @@ class TestBrowserWorkflow(TileTestCase):
         ...<li class="dropdown">
           <span class="no-transitions state-final">
             <span>State</span>:
-            <span>final</span>
+            <span>Final State</span>
           </span>
         </li>...
         """, res)
