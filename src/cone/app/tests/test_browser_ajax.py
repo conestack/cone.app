@@ -29,8 +29,8 @@ class TestBrowserAjax(TileTestCase):
     layer = testing.security
 
     def test_ajax_tile(self):
-        # ``ajax_tile`` is the server side bdajax implementation for cone.
-        # Using ``bdajax.action`` with cone renders tiles by action name.
+        # ``ajax_tile`` is the server side treibstoff ajax implementation for
+        # cone. Using ``ts.ajax.action`` with cone renders tiles by action name.
         with self.layer.hook_tile_reg():
             @tile(name='testtile')
             class TestTile(Tile):
@@ -39,9 +39,9 @@ class TestBrowserAjax(TileTestCase):
 
         root = get_root()
         request = self.layer.new_request()
-        request.params['bdajax.action'] = 'testtile'
-        request.params['bdajax.mode'] = 'replace'
-        request.params['bdajax.selector'] = '.foo'
+        request.params['ajax.action'] = 'testtile'
+        request.params['ajax.mode'] = 'replace'
+        request.params['ajax.selector'] = '.foo'
 
         # Fails unauthenticated, since default permission for tiles is 'view'
         self.assertEqual(ajax_tile(root, request), {})
@@ -51,7 +51,7 @@ class TestBrowserAjax(TileTestCase):
         with self.layer.authenticated('max'):
             res = ajax_tile(root, request)
         self.assertEqual(res, {
-            'continuation': False,
+            'continuation': [],
             'payload': 'rendered test tile',
             'mode': 'replace',
             'selector': '.foo'
@@ -65,9 +65,9 @@ class TestBrowserAjax(TileTestCase):
                     raise Exception('Error while rendering')
 
         request = self.layer.new_request()
-        request.params['bdajax.action'] = 'errortile'
-        request.params['bdajax.mode'] = 'replace'
-        request.params['bdajax.selector'] = '.foo'
+        request.params['ajax.action'] = 'errortile'
+        request.params['ajax.mode'] = 'replace'
+        request.params['ajax.selector'] = '.foo'
 
         with self.layer.authenticated('max'):
             res = ajax_tile(root, request)
@@ -85,69 +85,115 @@ class TestBrowserAjax(TileTestCase):
         actionname = 'tilename'
         mode = 'replace'
         selector = '.someselector'
-        action = AjaxAction(target, actionname, mode, selector)
+
+        action = AjaxAction(
+            target=target,
+            name=actionname,
+            mode=mode,
+            selector=selector
+        )
+
         self.assertEqual(
             (action.name, action.selector, action.mode, action.target),
             (actionname, selector, mode, target)
         )
 
+        self.assertEqual(action.as_json(), {
+            'type': 'action',
+            'target': target,
+            'name': actionname,
+            'mode': mode,
+            'selector': selector
+        })
+
     def test_AjaxEvent(self):
         target = 'http://example.com'
         eventname = 'contextchanged'
         selector = '.contextsensitiv'
-        event = AjaxEvent(target, eventname, selector)
-        self.assertEqual(
-            (event.name, event.selector, event.target),
-            (eventname, selector, target)
+        data = {'key': 'value'}
+
+        event = AjaxEvent(
+            target=target,
+            name=eventname,
+            selector=selector,
+            data=data
         )
+
+        self.assertEqual(
+            (event.name, event.selector, event.target, event.data),
+            (eventname, selector, target, data)
+        )
+
+        self.assertEqual(event.as_json(), {
+            'type': 'event',
+            'target': target,
+            'name': eventname,
+            'selector': selector,
+            'data': data
+        })
 
     def test_AjaxMessage(self):
         payload = 'Some info message'
         flavor = 'info'
         selector = 'None'
-        message = AjaxMessage(payload, flavor, selector)
+
+        message = AjaxMessage(
+            payload=payload,
+            flavor=flavor,
+            selector=selector
+        )
+
         self.assertEqual(
             (message.payload, message.flavor, message.selector),
             (payload, flavor, selector)
         )
 
-    def test_AjaxOverlay(self):
-        selector = '#ajax-overlay'
-        action = None
-        target = None
-        close = False
-        content_selector = '.overlay_content'
-        css = None
-        overlay = AjaxOverlay()
-        self.assertEqual(
-            (
-                overlay.selector, overlay.action, overlay.target,
-                overlay.close, overlay.content_selector, overlay.css
-            ),
-            (selector, action, target, close, content_selector, css),
-        )
+        self.assertEqual(message.as_json(), {
+            'type': 'message',
+            'payload': payload,
+            'flavor': flavor,
+            'selector': selector
+        })
 
-        selector = '#ajax-overlay'
+    def test_AjaxOverlay(self):
+        self.assertRaises(ValueError, AjaxOverlay, selector='foo')
+        self.assertRaises(ValueError, AjaxOverlay, content_selector='foo')
+        self.assertRaises(ValueError, AjaxOverlay, close=True)
+
         action = 'someaction'
         target = 'http://example.com'
         close = False
-        content_selector = '.overlay_content'
-        css = 'additional-css-class'
+        css = 'css-class'
+        uid = '1234'
+        title = 'Overlay Title'
+
         overlay = AjaxOverlay(
-            selector=selector,
             action=action,
             target=target,
             close=close,
-            content_selector=content_selector,
-            css=css
+            css=css,
+            uid=uid,
+            title=title
         )
-        self.assertEqual(
-            (
-                overlay.selector, overlay.action, overlay.target,
-                overlay.close, overlay.content_selector, overlay.css
-            ),
-            (selector, action, target, close, content_selector, css),
-        )
+
+        self.assertEqual((
+            overlay.action,
+            overlay.target,
+            overlay.close,
+            overlay.css,
+            overlay.uid,
+            overlay.title
+        ), (action, target, close, css, uid, title))
+
+        self.assertEqual(overlay.as_json(), {
+            'type': 'overlay',
+            'action': action,
+            'target': target,
+            'close': close,
+            'css': css,
+            'uid': uid,
+            'title': title
+        })
 
     def test_AjaxPath(self):
         path = 'foo/bar'
@@ -156,36 +202,45 @@ class TestBrowserAjax(TileTestCase):
         event = None
         overlay = None
         overlay_css = None
-        apath = AjaxPath(path)
-        self.assertEqual(
-            (
-                apath.path, apath.target, apath.action, apath.event,
-                apath.overlay, apath.overlay_css
-            ),
-            (path, target, action, event, overlay, overlay_css)
-        )
+        overlay_uid = None
+        overlay_title = None
+
+        apath = AjaxPath(path=path)
+        self.assertEqual((
+            apath.path, apath.target, apath.action, apath.event,
+            apath.overlay, apath.overlay_css, apath.overlay_uid,
+            apath.overlay_title
+        ), (
+            path, target, action, event, overlay, overlay_css,
+            overlay_uid, overlay_title
+        ))
 
         path = 'foo/bar'
         target = 'http://example.com/foo/bar'
         action = 'layout:#layout:replace'
         event = 'contextchanged:#someid'
-        overlay = 'acionname:#custom-overlay:.custom_overlay_content'
-        overlay_css = 'additional-overlay-css-class'
+        overlay = 'acionname'
+        overlay_css = 'css-class'
+        overlay_uid = '1234'
+        overlay_title = 'Overlay Title'
         apath = AjaxPath(
-            path,
+            path=path,
             target=target,
             action=action,
             event=event,
             overlay=overlay,
-            overlay_css=overlay_css
+            overlay_css=overlay_css,
+            overlay_uid=overlay_uid,
+            overlay_title=overlay_title
         )
-        self.assertEqual(
-            (
-                apath.path, apath.target, apath.action, apath.event,
-                apath.overlay, apath.overlay_css
-            ),
-            (path, target, action, event, overlay, overlay_css)
-        )
+        self.assertEqual((
+            apath.path, apath.target, apath.action, apath.event,
+            apath.overlay, apath.overlay_css, apath.overlay_uid,
+            apath.overlay_title
+        ), (
+            path, target, action, event, overlay, overlay_css,
+            overlay_uid, overlay_title
+        ))
 
     def test_ajax_continue(self):
         with self.layer.hook_tile_reg():
@@ -200,9 +255,9 @@ class TestBrowserAjax(TileTestCase):
 
         root = get_root()
         request = self.layer.new_request()
-        request.params['bdajax.action'] = 'testtile2'
-        request.params['bdajax.mode'] = 'replace'
-        request.params['bdajax.selector'] = '.foo'
+        request.params['ajax.action'] = 'testtile2'
+        request.params['ajax.mode'] = 'replace'
+        request.params['ajax.selector'] = '.foo'
 
         with self.layer.authenticated('max'):
             self.assertEqual(ajax_tile(root, request), {
@@ -251,16 +306,16 @@ class TestBrowserAjax(TileTestCase):
         continuation = []
         afc = AjaxFormContinue(result, continuation)
         self.assertEqual(afc.form, '')
-        self.assertEqual(afc.next, 'false')
+        self.assertEqual(afc.next, '[]')
 
-        # If no continuation definitions, ``form`` returns result and ``next``
-        # returns 'false'
+        # If no continuation operations, ``form`` returns result and ``next``
+        # returns '[]'
         result = 'rendered form'
         afc = AjaxFormContinue(result, [])
         self.assertEqual(afc.form, 'rendered form')
-        self.assertEqual(afc.next, 'false')
+        self.assertEqual(afc.next, '[]')
 
-        # If continuation definitions and result, ``form`` returns empty
+        # If continuation operations and result, ``form`` returns empty
         # string, because form processing was successful. ``next`` returns a
         # JSON dump of given actions, which gets interpreted and executed on
         # client side
@@ -282,20 +337,22 @@ class TestBrowserAjax(TileTestCase):
             selector='None'
         )
         overlay = AjaxOverlay(
-            selector='#ajax-overlay',
             action='someaction',
             target='http://example.com',
             close=False,
-            content_selector='.overlay_content',
-            css='additional-css-class'
+            css='css-class',
+            uid='1234',
+            title='Overlay Title'
         )
         path = AjaxPath(
-            'foo/bar',
+            path='foo/bar',
             target='http://example.com/foo/bar',
             action='layout:#layout:replace',
             event='contextchanged:#someid',
-            overlay='acionname:#custom-overlay:.custom_overlay_content',
-            overlay_css='additional-overlay-css-class'
+            overlay='acionname',
+            overlay_css='css-class',
+            overlay_uid='1234',
+            overlay_title='Overlay Title'
         )
 
         continuation = [action, event, message, overlay, path]
@@ -304,40 +361,40 @@ class TestBrowserAjax(TileTestCase):
 
         afc_next = json.loads(afc.next)
         self.assertEqual(afc_next, [{
-            "mode": "replace",
-            "selector": ".someselector",
-            "type": "action",
-            "target": "http://example.com",
-            "name": "tilename"
+            'type': 'action',
+            'target': 'http://example.com',
+            'name': 'tilename',
+            'selector': '.someselector',
+            'mode': 'replace'
         }, {
-            "selector": ".contextsensitiv",
-            "type": "event",
-            "target": "http://example.com",
-            "name": "contextchanged",
-            "data": {
-                "key": "value"
-            }
+            'type': 'event',
+            'target': 'http://example.com',
+            'name': 'contextchanged',
+            'selector': '.contextsensitiv',
+            'data': {'key': 'value'}
         }, {
-            "flavor": "info",
-            "type": "message",
-            "payload": "Some info message",
-            "selector": "None"
+            'type': 'message',
+            'payload': 'Some info message',
+            'flavor': 'info',
+            'selector': 'None'
         }, {
-            "target": "http://example.com",
-            "content_selector": ".overlay_content",
-            "selector": "#ajax-overlay",
-            "action": "someaction",
-            "close": False,
-            "type": "overlay",
-            "css": "additional-css-class"
+            'type': 'overlay',
+            'action': 'someaction',
+            'target': 'http://example.com',
+            'close': False,
+            'css': 'css-class',
+            'uid': '1234',
+            'title': 'Overlay Title'
         }, {
-            "overlay_css": "additional-overlay-css-class",
-            "target": "http://example.com/foo/bar",
-            "overlay": "acionname:#custom-overlay:.custom_overlay_content",
-            "action": "layout:#layout:replace",
-            "path": "foo/bar",
-            "type": "path",
-            "event": "contextchanged:#someid"
+            'type': 'path',
+            'path': 'foo/bar',
+            'target': 'http://example.com/foo/bar',
+            'action': 'layout:#layout:replace',
+            'event': 'contextchanged:#someid',
+            'overlay': 'acionname',
+            'overlay_css': 'css-class',
+            'overlay_uid': '1234',
+            'overlay_title': 'Overlay Title'
         }])
 
     def test_render_ajax_form(self):
@@ -351,7 +408,13 @@ class TestBrowserAjax(TileTestCase):
             '    while(child != null && child.nodeType == 3) {',
             '        child = child.nextSibling;',
             '    }',
-            "    parent.bdajax.render_ajax_form(child, '%(selector)s', '%(mode)s', %(next)s);",
+            '    parent.ts.ajax.form({',
+            '        payload: child,',
+            "        selector: '%(selector)s',",
+            "        mode: '%(mode)s',",
+            '        next: %(next)s,',
+            '        error: %(error)s',
+            '    });',
             '</script>',
             ''
         ])
@@ -397,7 +460,9 @@ class TestBrowserAjax(TileTestCase):
         request = self.layer.new_request()
         res = render_ajax_form(root, request, 'ajaxtestform')
         self.checkOutput("""
-        <div id="ajaxform">\n    \n</div>\n<script language="javascript"
+        <div id="ajaxform">
+        </div>
+        <script language="javascript"
         ...HTTPForbidden: Unauthorized: tile <...AjaxTestForm object at ...>
         failed permission check...
         """, res.text)
@@ -412,7 +477,7 @@ class TestBrowserAjax(TileTestCase):
 
         self.assertTrue(result.find('<div class="errormessage">') != -1)
         self.assertTrue(result.find('<script language="javascript"') != -1)
-        self.assertTrue(result.find('parent.bdajax.render_ajax_form(child, ') != -1)
+        self.assertTrue(result.find('parent.ts.ajax.form({\n') != -1)
 
         # Test with form processing passing
         with self.layer.authenticated('max'):
@@ -420,7 +485,13 @@ class TestBrowserAjax(TileTestCase):
             response = render_ajax_form(root, request, 'ajaxtestform')
             result = str(response)
 
-        expected = 'parent.bdajax.render_ajax_form(child, \'#content\', \'inner\', [{'
+        expected = (
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#content\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [{'
+        )
         self.assertTrue(result.find(expected) != -1)
 
     def test_livesearch(self):

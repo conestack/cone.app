@@ -26,6 +26,10 @@ Roadmap
 1.1
 ---
 
+[ ] LinkAction additional ajax attributes.
+
+[ ] 'bdajax.*' fallback request parameters.
+
 [ ] Treibstoff migration docs.
 
 [ ] Treibtroff AjaxOverlay docs.

@@ -79,7 +79,7 @@ class TestBrowserAuthoring(TileTestCase):
         res = render_form(model, request, 'someform')
 
         self.assertTrue(res.text.find('<div id="ajaxform">') > -1)
-        self.assertTrue(res.text.find('parent.bdajax.render_ajax_form') > -1)
+        self.assertTrue(res.text.find('parent.ts.ajax.form') > -1)
 
         # Form rendering tile. Has been introduced to handle node information
         # in add forms and is used in overlay and edit forms as mixin as well.
@@ -617,7 +617,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['ajax'] = '1'
             res = str(add(root, request))
 
-        self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
+        self.assertTrue(res.find('parent.ts.ajax.form') != -1)
 
     @testing.reset_node_info_registry
     def test_EditFormHeading(self):
@@ -793,7 +793,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['ajax'] = '1'
             res = str(edit(root, request))
 
-        self.assertTrue(res.find('parent.bdajax.render_ajax_form') != -1)
+        self.assertTrue(res.find('parent.ts.ajax.form') != -1)
 
     def test_deleting(self):
         class CallableNode(BaseNode):
@@ -985,6 +985,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Overlay form invocation happens via overlay form entry tile
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'overlayformtile')
 
@@ -994,7 +995,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
         self.assertEqual(
             request.environ['cone.app.form.selector'],
-            '#ajax-overlay .overlay_content'
+            '#1234 .modal-body'
         )
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
@@ -1002,6 +1003,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Case form error
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayform.title'] = ''
         request.params['action.overlayform.update'] = '1'
         with self.layer.authenticated('max'):
@@ -1016,14 +1018,20 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '<script'
         self.assertTrue(res.text.find(expected) > -1)
         expected = (
-            "parent.bdajax.render_ajax_form("
-            "child, '#ajax-overlay .overlay_content', 'inner', false);"
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#1234 .modal-body\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [],\n'
+            '        error: false\n'
+            '    });\n'
         )
         self.assertTrue(res.text.find(expected) > -1)
 
         # Case form success
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayform.title'] = 'New Title'
         request.params['action.overlayform.update'] = '1'
         with self.layer.authenticated('max'):
@@ -1035,11 +1043,16 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '<script'
         self.assertTrue(res.text.find(expected) > -1)
         expected = (
-            "parent.bdajax.render_ajax_form("
-            "child, '#ajax-overlay .overlay_content', 'inner', ["
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#1234 .modal-body\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [{'
         )
         self.assertTrue(res.text.find(expected) > -1)
         expected = '"close": true'
+        self.assertTrue(res.text.find(expected) > -1)
+        expected = '"uid": "1234"'
         self.assertTrue(res.text.find(expected) > -1)
 
     @testing.reset_node_info_registry
@@ -1090,6 +1103,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Overlay addform invocation happens via entry tile
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['factory'] = 'mynode'
 
         with self.layer.authenticated('max'):
@@ -1101,7 +1115,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
         self.assertEqual(
             request.environ['cone.app.form.selector'],
-            '#ajax-overlay .overlay_content'
+            '#1234 .modal-body'
         )
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
@@ -1109,6 +1123,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Case form error
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['factory'] = 'mynode'
         request.params['overlayaddform.title'] = ''
         request.params['action.overlayaddform.add'] = '1'
@@ -1125,8 +1140,13 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '<script'
         self.assertTrue(res.text.find(expected) > -1)
         expected = (
-            "parent.bdajax.render_ajax_form("
-            "child, '#ajax-overlay .overlay_content', 'inner', false);"
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#1234 .modal-body\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [],\n'
+            '        error: false\n'
+            '    });\n'
         )
         self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(root.keys(), [])
@@ -1134,6 +1154,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Case form success
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['factory'] = 'mynode'
         request.params['overlayaddform.title'] = 'Child'
         request.params['action.overlayaddform.add'] = '1'
@@ -1147,11 +1168,16 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '<script'
         self.assertTrue(res.text.find(expected) > -1)
         expected = (
-            "parent.bdajax.render_ajax_form("
-            "child, '#ajax-overlay .overlay_content', 'inner', ["
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#1234 .modal-body\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [{'
         )
         self.assertTrue(res.text.find(expected) > -1)
         expected = '"close": true'
+        self.assertTrue(res.text.find(expected) > -1)
+        expected = '"uid": "1234"'
         self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(root.keys(), ['new'])
         self.assertEqual(root['new'].attrs.title, 'Child')
@@ -1200,6 +1226,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Overlay editform invocation happens via entry tile
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
 
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'overlayedit')
@@ -1212,7 +1239,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
         self.assertEqual(
             request.environ['cone.app.form.selector'],
-            '#ajax-overlay .overlay_content'
+            '#1234 .modal-body'
         )
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
@@ -1220,6 +1247,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Case form error
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayeditform.title'] = ''
         request.params['action.overlayeditform.update'] = '1'
 
@@ -1235,8 +1263,13 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '<script'
         self.assertTrue(res.text.find(expected) > -1)
         expected = (
-            "parent.bdajax.render_ajax_form("
-            "child, '#ajax-overlay .overlay_content', 'inner', false);"
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#1234 .modal-body\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [],\n'
+            '        error: false\n'
+            '    });\n'
         )
         self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(model.attrs.title, 'My Title')
@@ -1244,6 +1277,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Case form success
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayeditform.title'] = 'New Title'
         request.params['action.overlayeditform.update'] = '1'
 
@@ -1256,10 +1290,15 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '<script'
         self.assertTrue(res.text.find(expected) > -1)
         expected = (
-            "parent.bdajax.render_ajax_form("
-            "child, '#ajax-overlay .overlay_content', 'inner', ["
+            '    parent.ts.ajax.form({\n'
+            '        payload: child,\n'
+            '        selector: \'#1234 .modal-body\',\n'
+            '        mode: \'inner\',\n'
+            '        next: [{'
         )
         self.assertTrue(res.text.find(expected) > -1)
         expected = '"close": true'
         self.assertTrue(res.text.find(expected) > -1)
+        self.assertTrue(res.text.find(expected) > -1)
+        expected = '"uid": "1234"'
         self.assertEqual(model.attrs.title, 'New Title')
