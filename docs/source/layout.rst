@@ -16,6 +16,14 @@ The main template of ``cone.app`` can be altered by overriding
 
     cone.app.cfg.main_template = 'cone.example.browser:templates/main.pt'
 
+Alternatively, the main template can be defined in the Application ini config
+file::
+
+.. code-block:: ini
+
+    [app:example]
+    cone.main_template = cone.example.browser:templates/main.pt
+
 
 Application Layout
 ------------------

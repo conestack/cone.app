@@ -110,6 +110,9 @@ class TestApp(NodeTestCase):
             css=css
         )
 
+        # remember original main template
+        main_template_orgin = cone.app.cfg.main_template
+
         # settings
         settings = {
             'cone.admin_user': 'admin',
@@ -117,6 +120,7 @@ class TestApp(NodeTestCase):
             'cone.auth_secret': '12345',
             'cone.auth_reissue_time': '300',
             'cone.auth_max_age': '600',
+            'cone.main_template': 'package.browser:templates/main.pt',
             'cone.plugins': 'cone.app.tests'  # ensure dummy main hooks called
         }
 
@@ -128,6 +132,15 @@ class TestApp(NodeTestCase):
         # Remove custom main hook after testing
         cone.app.main_hooks.remove(custom_main_hook)
         cone.app.main_hooks.remove(decorated_main_hook)
+
+        # Check main template was set properly
+        self.assertEqual(
+            cone.app.cfg.main_template,
+            'package.browser:templates/main.pt'
+        )
+
+        # reset main template
+        cone.app.cfg.main_template = main_template_orgin
 
         # Check created yafowil addon static view
         self.assertTrue(isinstance(

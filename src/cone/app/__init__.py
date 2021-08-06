@@ -316,6 +316,11 @@ def main(global_config, **settings):
     config.include(pyramid_chameleon)
     config.include(pyramid_zcml)
 
+    # main template
+    main_template = settings.get('cone.main_template')
+    if main_template:
+        cfg.main_template = main_template
+
     # add translation
     config.add_translation_dirs('cone.app:locale/')
 

@@ -147,6 +147,7 @@ Create ``example.ini`` and add:
     # cone.app admin user and password
     cone.admin_user = admin
     cone.admin_password = admin
+    #cone.authenticator =
 
     # cone.app auth tkt settings
     cone.auth_secret = 12345
@@ -159,6 +160,9 @@ Create ``example.ini`` and add:
     #cone.auth_http_only =
     #cone.auth_path =
     #cone.auth_wild_domain =
+
+    # application main template
+    #cone.main_template = package.browser:templates/main.pt
 
     # plugins to be loaded
     cone.plugins = cone.example

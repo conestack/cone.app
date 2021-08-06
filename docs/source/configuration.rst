@@ -32,6 +32,9 @@ deployments.
 
 - **cone.admin_password**: Password of superuser.
 
+- **cone.authenticator**: Utility registration name of a
+  ``cone.app.interfaces.IAuthenticator`` impementation.
+
 
 Authentication Policy Configuration
 -----------------------------------
@@ -100,6 +103,14 @@ Configuration is done through the following parameters.
 
 NOTE: If no UGM backend is configured, the only available user in the
       application is the one defined as ``cone.admin_user``.
+
+
+Main Template
+-------------
+
+The main template can be set in the application configuration file.
+
+- **cone.main_template**: Main template to use.
 
 
 Plugin Loading
