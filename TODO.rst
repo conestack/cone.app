@@ -20,22 +20,12 @@ Docs
 [ ] Add proper API docs to code and include in docs.
 
 
-Roadmap
-=======
-
-1.1
----
-
-[ ] LinkAction additional ajax attributes.
-
-[ ] 'bdajax.*' fallback request parameters.
+Upcoming
+========
 
 [ ] Treibstoff migration docs.
 
 [ ] Treibtroff AjaxOverlay docs.
-
-[ ] Check ``title`` of transition names before using ``name`` in workflow
-    dropdown.
 
 [ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
 
@@ -98,11 +88,6 @@ options and datasets instead of just datasets.
 
 [ ] Bind navtree to ``list`` permission?
 
-1.2
----
-
 [ ] Update jQuery.
 
 [ ] Update bootstrap.
-
-[ ] Drop python 2.

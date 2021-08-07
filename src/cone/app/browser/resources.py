@@ -6,6 +6,14 @@ from webob import Response
 import cone.app
 import os
 import pkg_resources
+import warnings
+
+
+def bdajax_warning(attr):
+    warnings.warn((
+        '``bdajax.{}`` parameter received. Bdajax is no longer '
+        'supported. Please migrate your code to ``treibstoff``.'
+    ).format(attr))
 
 
 def is_remote_resource(resource):

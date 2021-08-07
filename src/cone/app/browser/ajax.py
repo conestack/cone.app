@@ -1,4 +1,5 @@
 from cone.app.browser.actions import ActionContext
+from cone.app.browser.resources import bdajax_warning
 from cone.app.browser.utils import format_traceback
 from cone.app.interfaces import ILiveSearch
 from cone.tile import render_tile
@@ -14,23 +15,37 @@ import logging
 def ajax_tile(model, request):
     """Treibstoff ajax ``ajaxaction`` implementation for cone.
 
-    * Renders tile with name ``ajax.action``.
+    * Renders tile with name found on request ``ajax.action``.
 
     * Uses operations from ``request.environ['cone.app.continuation']``
-      for continuation operations.
+      for continuation.
     """
     try:
-        name = request.params['ajax.action']
+        if 'bdajax.action' in request.params:
+            bdajax_warning('action')
+            name = request.params['bdajax.action']
+        else:
+            name = request.params['ajax.action']
         ActionContext(model, request, name)
         rendered = render_tile(model, request, name)
         operations = request.environ.get('cone.app.continuation', [])
         continuation = AjaxContinue(operations)
-        return {
-            'mode': request.params.get('ajax.mode'),
-            'selector': request.params.get('ajax.selector'),
-            'payload': rendered,
-            'continuation': continuation.operations,
-        }
+        if 'bdajax.mode' in request.params:
+            bdajax_warning('mode')
+            mode = request.params['bdajax.mode']
+        else:
+            mode = request.params.get('ajax.mode')
+        if 'bdajax.selector' in request.params:
+            bdajax_warning('selector')
+            selector = request.params['bdajax.selector']
+        else:
+            selector = request.params.get('ajax.selector')
+        return dict(
+            mode=mode,
+            selector=selector,
+            payload=rendered,
+            continuation=continuation.operations,
+        )
     except Forbidden:
         request.response.status = 403
         return {}
@@ -38,12 +53,12 @@ def ajax_tile(model, request):
         logging.exception('Error within ajax tile')
         tb = format_traceback()
         continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
-        return {
-            'mode': 'NONE',
-            'selector': 'NONE',
-            'payload': '',
-            'continuation': continuation.operations
-        }
+        return dict(
+            mode='NONE',
+            selector='NONE',
+            payload='',
+            continuation=continuation.operations
+        )
 
 
 def ajax_continue(request, operations):

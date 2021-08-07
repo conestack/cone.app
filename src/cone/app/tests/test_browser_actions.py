@@ -53,6 +53,9 @@ class TestBrowserActions(TileTestCase):
         request.params['ajax.action'] = 'ajaxaction'
         self.assertEqual(ac.scope, 'ajaxaction')
 
+        request.params['bdajax.action'] = 'ajaxaction'
+        self.assertEqual(ac.scope, 'ajaxaction')
+
         request.params['ajax.action'] = 'layout'
         self.assertEqual(ac.scope, 'content')
 
@@ -191,11 +194,17 @@ class TestBrowserActions(TileTestCase):
         action.event = 'contextchanged:.contextsensitiv'
         action.confirm = 'Do you want to perform?'
         action.overlay = 'someaction'
+        action.overlay_css = 'some-css'
+        action.overlay_uid = '1234'
+        action.overlay_title = 'Overlay Title'
         action.path = '/foo'
         action.path_target = 'target'
         action.path_action = action.action
         action.path_event = action.event
         action.path_overlay = action.overlay
+        action.path_overlay_css = 'some-css'
+        action.path_overlay_uid = '1234'
+        action.path_overlay_title = 'Overlay Title'
         action.text = 'Foo'
         rendered = action(model, request)
         self.checkOutput("""
@@ -210,11 +219,17 @@ class TestBrowserActions(TileTestCase):
         ajax:action="actionname:#content:replace"
         ajax:confirm="Do you want to perform?"
         ajax:overlay="someaction"
+        ajax:overlay-css="some-css"
+        ajax:overlay-uid="1234"
+        ajax:overlay-title="Overlay Title"
         ajax:path="/foo"
         ajax:path-target="target"
         ajax:path-action="actionname:#content:replace"
         ajax:path-event="contextchanged:.contextsensitiv"
         ajax:path-overlay="someaction"
+        ajax:path-overlay-css="some-css"
+        ajax:path-overlay-uid="1234"
+        ajax:path-overlay-title="Overlay Title"
         >&nbsp;Foo</a>...
         """, rendered)
 

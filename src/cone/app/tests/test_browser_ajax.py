@@ -57,6 +57,21 @@ class TestBrowserAjax(TileTestCase):
             'selector': '.foo'
         })
 
+        # Test bdajax warning
+        request = self.layer.new_request()
+        request.params['bdajax.action'] = 'testtile'
+        request.params['bdajax.mode'] = 'replace'
+        request.params['bdajax.selector'] = '.foo'
+
+        with self.layer.authenticated('max'):
+            res = ajax_tile(root, request)
+        self.assertEqual(res, {
+            'continuation': [],
+            'payload': 'rendered test tile',
+            'mode': 'replace',
+            'selector': '.foo'
+        })
+
         # Test with error raising tile
         with self.layer.hook_tile_reg():
             @tile(name='errortile')
