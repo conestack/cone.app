@@ -8,13 +8,15 @@ Elements of ``cone.app`` are organized as
 
 The use of tiles has the following advantages:
 
-- Abstraction of the site to several "subapplications" which act as
-  views, widgets and/or controllers.
+- Abstraction of the site to several parts which can act as
+  views and/or controllers.
+
+- Tiles can be nested.
 
 - The possibility to create generic tiles expecting model nodes providing the
   contract of ``cone.app.interfaces.IApplicationNode``.
 
-- AJAX is easily integrateable.
+- SSR Ajax is easily integrateable.
 
 ``cone.app`` ships with several commonly needed tiles. One of this is
 registered by name ``content``, which is reserved for rendering the
@@ -45,24 +47,6 @@ When providing your own main template, add to HTML header.
       <tal:resources replace="structure tile('resources')" />
       ...
     </head>
-
-
-Bdajax Integration
-------------------
-
-**Tile registration name**: ``bdajax``
-
-Renders `bdajax <http://pypi.python.org/pypi/bdajax>`_ related markup.
-
-When providing your own main template, add to HTML body.
-
-.. code-block:: html
-
-    <body>
-      ...
-      <tal:resources replace="structure tile('bdajax')" />
-      ...
-    </body>
 
 
 Authentication related
@@ -109,7 +93,7 @@ node in order to get a reasonable result.
                 'icon': 'ion-ios7-gear'
             }]
 
-Another option to implement serverside search logic is to overwrite the
+Another option to implement the serverside search logic is to overwrite the
 ``livesearch`` JSON view.
 
 .. code-block:: python
@@ -130,13 +114,10 @@ Another option to implement serverside search logic is to overwrite the
         }]
 
 ``cone.app`` uses `typeahead.js <https://github.com/twitter/typeahead.js>`_
-on the client side for the livesearch implementation. Since cone makes no
-assumptions about what should happen with the livesearch results, a plugin
-must provide some JS handling it. Cone not even makes assumptions about the
-format of the received suggestions from the server. This is all up to the
-integration. The following example renders suggestions with icon and value
-text. When suggestion gets clicked, layout rendering is triggered on target
-URL.
+on the client side for the livesearch implementation. To customize the behavior
+of the livesearch on the client side, like custom rendering of suggestions
+or custom handling of item selection, a custom LiveSearch class must be
+implemented.
 
 .. note::
 
@@ -146,41 +127,28 @@ URL.
 
 .. code-block:: js
 
-    (function($) {
+    (function($, ts) {
 
-        $(document).ready(function() {
-            bdajax.register(example.binder.bind(example), true);
+        class CustomLiveSearch extends cone.LiveSearch {
+
+            static initialize(context) {
+                cone.LiveSearch.initialize(context, CustomLiveSearch);
+            }
+
+            on_select(evt, suggestion, dataset) {
+                // custom item select handling goes here.
+            }
+
+            render_suggestion(suggestion) {
+                // custom sugestion rendering goes here.
+            }
+        }
+
+        $(function() {
+            ts.ajax.register(CustomLiveSearch.initialize, true);
         });
 
-        example = {
-
-            binder: function(context) {
-                var input = $('input#search-text', context);
-                var event = 'typeahead:selected';
-                input.off(event).on(event, function(e, suggestion, dataset) {
-                    // trigger layout rendering on target URL
-                    bdajax.trigger(
-                        'contextchanged',
-                        '#layout',
-                        suggestion.target
-                    );
-                });
-            },
-
-            // render livesearch suggestion
-            render_livesearch_suggestion: function (suggestion) {
-                return '<span class="' + suggestion.icon + '"></span> ' +
-                       suggestion.value;
-            }
-        };
-
-        // extend livesearch options by suggestion renderer. this options gets
-        // passed to typeahead as datasets
-        livesearch_options.templates = {
-            suggestion: example.render_livesearch_suggestion
-        };
-
-    })(jQuery);
+    })(jQuery, treibstoff);
 
 
 Personal Tools
@@ -730,9 +698,9 @@ Delete
 
 Triggered via ``ActionDelete``.
 
-Deletes node from model. Uses bdajax continuation mechanism. Triggers rendering
-layout on containing node and displays info message after performing delete
-action.
+Deletes node from model. Uses treibstoff continuation operations mechanism.
+Triggers rendering layout on containing node and displays info message after
+performing delete action.
 
 Expected ``metadata``:
 
@@ -1293,8 +1261,8 @@ scope. The scope is a tile name and used by actions to check it's own state,
 e.g. if action is selected, disabled or should be displayed at all. The scope
 gets calculated by a set of rules.
 
-- If ``bdajax.action`` found on request, use it as current scope.
-  ``bdajax.action`` is always a tile name in ``cone.app`` context.
+- If ``ajax.action`` found on request, use it as current scope.
+  ``ajax.action`` is always a tile name in ``cone.app`` context.
 
 - If tile name is ``layout``, content tile name is used. The layout tile
   renders the entire page, thus the user is normally interested in the content
@@ -1368,32 +1336,38 @@ are used as dropdown menu items.
             item.title = 'Example Action'
             return [item]
 
-``LinkAction`` represents a HTML link offering integration to ``bdajax``,
-enabled and selected state and optionally rendering an icon.
+``LinkAction`` represents a HTML link offering integration to treibstoff Ajax
+operations, enabled and selected state and optionally rendering an icon.
 
 .. code-block:: python
 
     from cone.app.browser.actions import LinkAction
 
     class ExampleAction(LinkAction):
-        bind = 'click'       # ``ajax:bind`` attribute
-        id = None            # ``id`` attribute
-        href = '#'           # ``href`` attribute
-        css = None           # in addition for computed ``class`` attribute
-        title = None         # ``title`` attribute
-        action = None        # ``ajax:action`` attribute
-        event = None         # ``ajax:event`` attribute
-        confirm = None       # ``ajax:confirm`` attribute
-        overlay = None       # ``ajax:overlay`` attribute
-        path = None          # ``ajax:path`` attribute
-        path_target = None   # ``ajax:path-target`` attribute
-        path_action = None   # ``ajax:path-action`` attribute
-        path_event = None    # ``ajax:path-event`` attribute
-        path_overlay = None  # ``ajax:path-overlay`` attribute
-        text = None          # link text
-        enabled = True       # if ``False``, link gets 'disabled' CSS class
-        selected = False     # if ``True``, link get 'selected' CSS class
-        icon = None          # if set, render span tag with value as CSS class in link
+        bind = 'click'             # ``ajax:bind`` attribute
+        id = None                  # ``id`` attribute
+        href = '#'                 # ``href`` attribute
+        css = None                 # in addition for computed ``class`` attribute
+        title = None               # ``title`` attribute
+        action = None              # ``ajax:action`` attribute
+        event = None               # ``ajax:event`` attribute
+        confirm = None             # ``ajax:confirm`` attribute
+        overlay = None             # ``ajax:overlay`` attribute
+        overlay_css = None         # ajax:overlay-css attribute
+        overlay_uid = None         # ajax:overlay-uid attribute
+        overlay_title = None       # ajax:overlay-title attribute
+        path = None                # ``ajax:path`` attribute
+        path_target = None         # ``ajax:path-target`` attribute
+        path_action = None         # ``ajax:path-action`` attribute
+        path_event = None          # ``ajax:path-event`` attribute
+        path_overlay = None        # ``ajax:path-overlay`` attribute
+        path_overlay_css = None    # ajax:path-overlay-css
+        path_overlay_uid = None    # ajax:path-overlay-uid
+        path_overlay_title = None  # ajax:path-overlay-title
+        text = None                # link text
+        enabled = True             # if ``False``, link gets 'disabled' CSS class
+        selected = False           # if ``True``, link get 'selected' CSS class
+        icon = None                # if set, render span tag with value as CSS class
 
 ``Toolbar`` can be used to create a set of actions.
 

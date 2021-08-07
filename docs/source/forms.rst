@@ -74,12 +74,12 @@ by this name as well.
     def exampleform(model, request):
         return render_form(model, request, tilename='exampleform')
 
-Forms are performed AJAXified by default. This can be changed by setting
+Forms are performed ajaxified by default. This can be changed by setting
 ``ajax`` flag to ``False`` on form tile. The ``render_form`` function handles
-both AJAX an non AJAX form submission. If form is submitted without AJAX
+both Ajax an non Ajax form submission. If form is submitted without Ajax
 configured, the main template gets rendered with tile ``tilename`` as content
 tile, otherwise ``render_ajax_form`` is called, which renders the tile wrapped
-by some JavaScript calls into a script tag. The AJAX response will be rendered
+by some JavaScript calls into a script tag. The Ajax response will be rendered
 to a hidden iframe on client side, from where continuation is processed.
 
 
@@ -87,8 +87,8 @@ YAML Forms
 ----------
 
 ``cone.app.browser.form.YAMLForm`` is a plumbing behavior for building the
-form from YAML definitions. The above form tile implementation using YAML looks
-like so.
+form from YAML files. The above form tile implementation using YAML looks
+like:
 
 .. code-block:: python
 
@@ -254,13 +254,13 @@ target as follows:
 
 - If ``came_from`` is set to empty value, URL of current model is computed.
 
-If the form was submitted by AJAX call, the ``next`` function returns the
-appropriate AJAX continuation definitions to render the application layout on
+If the form was submitted by Ajax call, the ``next`` function returns the
+appropriate Ajax continuation operations to render the application layout on
 new target, otherwise a ``HTTPFound`` instance used to perform a regular
 browser redirect.
 
-By setting ``write_history_on_next`` to ``True`` on AJAX forms, an ``AjaxPath``
-continuation definition gets returned as well writing the browser history on
+By setting ``write_history_on_next`` to ``True`` on Ajax forms, an ``AjaxPath``
+continuation operation gets returned as well writing the browser history on
 the client.
 
 .. code-block:: python
@@ -367,7 +367,7 @@ to the overlay happens, and extends the form tile by a ``next`` handler
 callback, which actually return an event for closing the overlay on the client
 side.
 
-Needless to say that overlay forms only works for AJAXified form tiles.
+Needless to say that overlay forms only works for ajaxified form tiles.
 
 When providing an overlay form for a specific model, it is expected under
 tile registration name ``overlayform``.
@@ -462,7 +462,7 @@ used to create form action string.
 Overlay form invocation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Overlay form invocation happens via ``bdajax`` overlay integration.
+Overlay form invocation happens via Ajax overlay integration.
 
 In markup this looks like.
 
@@ -479,7 +479,7 @@ In JavaScript this looks like.
 
 .. code-block:: js
 
-    var overlay_api = bdajax.overlay({
+    let overlay = ts.ajax.overlay({
         action: 'overlayform',
         target: 'http://fubar.com/baz?a=a'
     });

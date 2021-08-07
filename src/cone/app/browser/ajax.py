@@ -98,6 +98,17 @@ class AjaxPath(object):
     def __init__(self, path, target=None, action=None, event=None,
                  overlay=None, overlay_css=None, overlay_uid=None,
                  overlay_title=None):
+        """Create ajax path continuation operation.
+
+        :param path: Browser path to be set.
+        :param target: Traversable target URL without trailing server view.
+        :param action: Name of action which should be performed.
+        :param event: Event to trigger.
+        :param overlay: Overlay to display.
+        :param overlay_css: Additional overlay CSS class.
+        :param overlay_uid: UID of the overlay
+        :param overlay_title: Title of the overlay.
+        """
         self.path = path
         self.target = target
         self.action = action
@@ -126,6 +137,13 @@ class AjaxAction(object):
     """
 
     def __init__(self, target, name, mode, selector):
+        """Create ajax action continuation operation.
+
+        :param target: Traversable target URL without trailing server view.
+        :param name: Action name.
+        :param mode: DOM modification mode. Either ``inner`` and ``replace``.
+        :param selector: DOM modification selector.
+        """
         self.target = target
         self.name = name
         self.mode = mode
@@ -146,6 +164,13 @@ class AjaxEvent(object):
     """
 
     def __init__(self, target, name, selector, data=None):
+        """Create ajax event continuation operation.
+
+        :param target: Traversable target URL without trailing server view.
+        :param name: Event name.
+        :param selector: Selector of DOM elements on which to trigger the event
+        :param data: Optional data set on event.
+        """
         self.target = target
         self.name = name
         self.selector = selector
@@ -166,6 +191,14 @@ class AjaxMessage(object):
     """
 
     def __init__(self, payload, flavor, selector):
+        """Create ajax message continuation operation.
+
+        :param payload: Message payload as text or markup.
+        :param flavor: XOR with ``selector``. One out of ``message``, ``info``,
+            ``warning`` or ``error``.
+        :param selector: XOR with ``flavor``. If given, render message to DOM
+            element found by selector.
+        """
         self.payload = payload
         self.flavor = flavor
         self.selector = selector
@@ -186,6 +219,17 @@ class AjaxOverlay(object):
     def __init__(self, selector=None, action=None, target=None,
                  close=False, content_selector=None, css=None, uid=None,
                  title=None):
+        """Create ajax overlay continuation operation.
+
+        :param action: Name of action which should be displayed in overlay.
+        :param target: Traversable target URL without trailing server view.
+        :param close: Flag whether to close an open overlay.
+        :param css: Additional overlay CSS class.
+        :param uid: Overlay UID. Must be given if ``close`` is ``True``. The
+            overlay UID gets passed on request as ``ajax.overlay-uid`` parameter
+            if the overlay was displayed with ``ajax:overlay`` in the browser.
+        :param title: Overlay title.
+        """
         if selector or content_selector:
             msg = '``selector`` and ``content_selector`` no longer supported.'
             raise ValueError(msg)
