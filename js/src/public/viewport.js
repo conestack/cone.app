@@ -1,5 +1,4 @@
 import $ from 'jquery';
-// import ts from 'treibstoff';
 
 export const VP_MOBILE = 0;
 export const VP_SMALL = 1;
@@ -9,6 +8,7 @@ export const VP_LARGE = 3;
 // viewport singleton
 
 class ViewPort {
+
     constructor() {
         this.state = null;
 

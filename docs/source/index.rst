@@ -30,7 +30,8 @@ The same contracts make it possibe to build generic reusable User Interface
 components. This components are primarily implemented as Tiles utilizing
 `cone.tile <http://pypi.python.org/pypi/cone.tile>`_.
 
-For AJAX operations `bdajax <http://pypi.python.org/pypi/bdajax>`_ is utilized.
+For SSR Ajax integration `treibstoff <http://treibstoff.readthedocs.io>`_ is
+utilized.
 
 `YAFOWIL <http://pypi.python.org/pypi/yafowil>`_ is used as Form processing
 library.
@@ -49,19 +50,12 @@ Features
 --------
 
 * Base Application UI
-
 * Authentication and Authorization
-
 * Basic Application Model
-
 * CRUD
-
 * Workflows
-
 * Common UI Elements
-
-* AJAX Helpers
-
+* SSR Ajax integration
 * Application Extensions as Plugins
 
 
@@ -81,4 +75,4 @@ Contents
    Translations <translations>
    Security <security>
    Workflows <workflows>
-   AJAX <ajax>
+   Ajax <ajax>

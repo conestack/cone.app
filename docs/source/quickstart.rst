@@ -339,9 +339,9 @@ gets executed.
 Working with JavaScript
 -----------------------
 
-``cone.app`` utilizes `bdajax <http://pypi.python.org/pypi/bdajax>`_ for it's
+``cone.app`` utilizes `treibstoff <http://treibstoff.readthedocs.io>`_ for it's
 user interface. The documentation how to properly integrate custom JavaScript
-can be found :ref:`here <ajax_custom_javascript>`.
+into Ajax SSR can be found :ref:`here <ajax_custom_javascript>`.
 
 
 Installation

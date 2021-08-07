@@ -148,36 +148,61 @@ class DropdownAction(TemplateAction):
 
 class LinkAction(TemplateAction):
     """Action rendering a HTML link, optional with treibstoff ajax attributes.
-
-    XXX: All treibstoff attributes.
     """
     template = 'cone.app.browser:templates/link_action.pt'
-    bind = 'click'             # ajax:bind attribute
-    id = None                  # id attribute
-    href = '#'                 # href attribute
-    css = None                 # in addition for computed class attribute
-    title = None               # title attribute
-    action = None              # ajax:action attribute
-    event = None               # ajax:event attribute
-    confirm = None             # ajax:confirm attribute
-    overlay = None             # ajax:overlay attribute
-    overlay_css = None         # ajax:overlay-css attribute
-    overlay_uid = None         # ajax:overlay-uid attribute
-    overlay_title = None       # ajax:overlay-title attribute
-    path = None                # ajax:path attribute
-    path_target = None         # ajax:path-target attribute
-    path_action = None         # ajax:path-action attribute
-    path_event = None          # ajax:path-event attribute
-    path_overlay = None        # ajax:path-overlay attribute
-    path_overlay_css = None    # ajax:path-overlay-css
-    path_overlay_uid = None    # ajax:path-overlay-uid
-    path_overlay_title = None  # ajax:path-overlay-title
-    text = None                # link text
-    enabled = True             # if false, link gets 'disabled' css class
-    selected = False           # if true, link get 'selected' css class
-    icon = None                # if set, add span tag with value as CSS class
+    bind = 'click'
+    id = None
+    href = '#'
+    css = None
+    title = None
+    action = None
+    event = None
+    confirm = None
+    overlay = None
+    overlay_css = None
+    overlay_uid = None
+    overlay_title = None
+    path = None
+    path_target = None
+    path_action = None
+    path_event = None
+    path_overlay = None
+    path_overlay_css = None
+    path_overlay_uid = None
+    path_overlay_title = None
+    text = None
+    enabled = True
+    selected = False
+    icon = None
 
     def __init__(self, **kw):
+        """Create link action.
+
+        :param bind: ajax:bind attribute.
+        :param id: id attribute.
+        :param href: href attribute.
+        :param css: in addition for computed class attribute.
+        :param title: title attribute.
+        :param action: ajax:action attribute.
+        :param event: ajax:event attribute.
+        :param confirm: ajax:confirm attribute.
+        :param overlay: ajax:overlay attribute.
+        :param overlay_css: ajax:overlay-css attribute.
+        :param overlay_uid: ajax:overlay-uid attribute.
+        :param overlay_title: ajax:overlay-title attribute.
+        :param path: ajax:path attribute.
+        :param path_target: ajax:path-target attribute.
+        :param path_action: ajax:path-action attribute.
+        :param path_event: ajax:path-event attribute.
+        :param path_overlay: ajax:path-overlay attribute.
+        :param path_overlay_css: ajax:path-overlay-css.
+        :param path_overlay_uid: ajax:path-overlay-uid.
+        :param path_overlay_title: ajax:path-overlay-title.
+        :param text: link text.
+        :param enabled: if false, link gets 'disabled' css class.
+        :param selected: if true, link get 'selected' css class.
+        :param icon: if set, add span tag with value as CSS class.
+        """
         self.__dict__.update(kw)
 
     @property
