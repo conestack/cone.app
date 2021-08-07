@@ -1,3 +1,4 @@
+from cone.app.browser.resources import bdajax_warning
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport
@@ -34,6 +35,9 @@ class ActionContext(object):
         request = self.request
         scope = self.tilename
         # if ``ajax.action`` found on request, use it as current scope
+        if 'bdajax.action' in request.params:
+            bdajax_warning('action')
+            scope = request.params['bdajax.action']
         if 'ajax.action' in request.params:
             scope = request.params['ajax.action']
         # if action is ``layout``, content tile name is passed
@@ -148,24 +152,30 @@ class LinkAction(TemplateAction):
     XXX: All treibstoff attributes.
     """
     template = 'cone.app.browser:templates/link_action.pt'
-    bind = 'click'       # ajax:bind attribute
-    id = None            # id attribute
-    href = '#'           # href attribute
-    css = None           # in addition for computed class attribute
-    title = None         # title attribute
-    action = None        # ajax:action attribute
-    event = None         # ajax:event attribute
-    confirm = None       # ajax:confirm attribute
-    overlay = None       # ajax:overlay attribute
-    path = None          # ajax:path attribute
-    path_target = None   # ajax:path-target attribute
-    path_action = None   # ajax:path-action attribute
-    path_event = None    # ajax:path-event attribute
-    path_overlay = None  # ajax:path-overlay attribute
-    text = None          # link text
-    enabled = True       # if false, link gets 'disabled' css class
-    selected = False     # if true, link get 'selected' css class
-    icon = None          # if set, add span tag with value as CSS class in link
+    bind = 'click'             # ajax:bind attribute
+    id = None                  # id attribute
+    href = '#'                 # href attribute
+    css = None                 # in addition for computed class attribute
+    title = None               # title attribute
+    action = None              # ajax:action attribute
+    event = None               # ajax:event attribute
+    confirm = None             # ajax:confirm attribute
+    overlay = None             # ajax:overlay attribute
+    overlay_css = None         # ajax:overlay-css attribute
+    overlay_uid = None         # ajax:overlay-uid attribute
+    overlay_title = None       # ajax:overlay-title attribute
+    path = None                # ajax:path attribute
+    path_target = None         # ajax:path-target attribute
+    path_action = None         # ajax:path-action attribute
+    path_event = None          # ajax:path-event attribute
+    path_overlay = None        # ajax:path-overlay attribute
+    path_overlay_css = None    # ajax:path-overlay-css
+    path_overlay_uid = None    # ajax:path-overlay-uid
+    path_overlay_title = None  # ajax:path-overlay-title
+    text = None                # link text
+    enabled = True             # if false, link gets 'disabled' css class
+    selected = False           # if true, link get 'selected' css class
+    icon = None                # if set, add span tag with value as CSS class
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
