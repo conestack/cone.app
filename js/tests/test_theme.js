@@ -1,6 +1,9 @@
-import {default_themes, ThemeSwitcher} from '../src/public/theme.js';
+import {
+    default_themes,
+    ThemeSwitcher
+} from '../src/public/theme.js';
 import {create_theme_switcher_elem} from './helpers.js';
-import {createCookie} from '../src/public/utils.js';
+import {create_cookie} from '../src/public/utils.js';
 import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,7 +42,7 @@ QUnit.module('ThemeSwitcher', hooks => {
         $('#colormode-styles').remove();
 
         // delete dummy cookie
-        createCookie('modeswitch', '', -1);
+        create_cookie('modeswitch', '', -1);
     });
 
     hooks.after(() => {
@@ -59,7 +62,7 @@ QUnit.module('ThemeSwitcher', hooks => {
 
     QUnit.test('initial check cookie', assert => {
         // create dummy cookie for dark mode
-        createCookie('modeswitch', default_themes[1], null);
+        create_cookie('modeswitch', default_themes[1], null);
 
         // initialize ThemeSwitcher instance
         ThemeSwitcher.initialize();

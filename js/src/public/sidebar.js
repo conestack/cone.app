@@ -4,7 +4,10 @@ import {
     VP_SMALL,
     VP_LARGE
 } from './viewport.js';
-import {createCookie, readCookie} from './utils.js';
+import {
+    create_cookie,
+    read_cookie
+} from './utils.js';
 import {ViewPortAware} from './viewport.js';
 import {layout} from './layout.js';
 
@@ -47,7 +50,7 @@ export class Sidebar extends ViewPortAware {
     }
 
     initial_load() {
-        let cookie = readCookie('sidebar');
+        let cookie = read_cookie('sidebar');
         if (this.vp_state === VP_MOBILE) {
             this.elem.hide();
         }
@@ -77,13 +80,13 @@ export class Sidebar extends ViewPortAware {
     }
 
     toggle_lock() {
-        if(readCookie('sidebar')) {
-            createCookie('sidebar', '', -1);
+        if(read_cookie('sidebar')) {
+            create_cookie('sidebar', '', -1);
             this.lock_switch.removeClass('active');
             this.cookie = null;
         } else {
             this.lock_switch.addClass('active');
-            createCookie('sidebar', this.collapsed, null);
+            create_cookie('sidebar', this.collapsed, null);
             this.cookie = this.collapsed;
         }
     }
@@ -120,7 +123,7 @@ export class Sidebar extends ViewPortAware {
         this.collapsed = !this.collapsed;
 
         if (this.lock_switch.hasClass('active')) {
-            createCookie('sidebar', this.collapsed, null);
+            create_cookie('sidebar', this.collapsed, null);
             this.cookie = this.collapsed;
         }
         this.assign_state();

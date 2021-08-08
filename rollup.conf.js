@@ -2,6 +2,10 @@ import {terser} from 'rollup-plugin-terser';
 
 const outro = `
 window.cone = exports;
+
+// B/C
+window.createCookie = exports.create_cookie;
+window.readCookie = exports.read_cookie;
 `;
 
 export default {

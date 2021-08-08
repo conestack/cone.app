@@ -1,5 +1,9 @@
 import $ from 'jquery';
-import {toggle_arrow, readCookie, createCookie} from './utils.js';
+import {
+    toggle_arrow,
+    read_cookie,
+    create_cookie
+} from './utils.js';
 import {layout} from './layout.js';
 import {ScrollBarX} from './scrollbar.js';
 
@@ -45,7 +49,7 @@ export class MainMenuSidebar {
     }
 
     initial_cookie() {
-        let cookie = readCookie('sidebar menus');
+        let cookie = read_cookie('sidebar menus');
         if(cookie) {
             this.display_data = cookie.split(',');
         } else {
@@ -119,7 +123,7 @@ export class MainMenuSidebar {
                 menu.slideToggle('fast');
                 toggle_arrow(arrow);
                 this.display_data[i] = display; 
-                createCookie('sidebar menus', this.display_data, null);
+                create_cookie('sidebar menus', this.display_data, null);
             });
         }
     }

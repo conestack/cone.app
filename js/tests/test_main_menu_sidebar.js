@@ -1,7 +1,10 @@
 import {MainMenuSidebar} from '../src/public/mainmenu.js';
 import {Sidebar} from '../src/public/sidebar.js';
 import * as helpers from './helpers.js';
-import {createCookie, readCookie} from '../src/public/utils.js';
+import {
+    create_cookie,
+    read_cookie
+} from '../src/public/utils.js';
 import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,7 +112,7 @@ QUnit.module('MainMenuSidebar', () => {
                 helpers.create_mm_sidebar_elem();
 
                 // delete any cookies --- make sure to tear down properly!
-                createCookie('sidebar menus', '', -1);
+                create_cookie('sidebar menus', '', -1);
             });
 
             hooks.afterEach(() => {
@@ -117,7 +120,7 @@ QUnit.module('MainMenuSidebar', () => {
                 $('#layout').remove();
 
                 // remove dummy cookie
-                createCookie('sidebar menus', '', -1);
+                create_cookie('sidebar menus', '', -1);
             });
 
             QUnit.test('initial_cookie()', assert => {
@@ -126,7 +129,7 @@ QUnit.module('MainMenuSidebar', () => {
                 MainMenuSidebar.initialize();
 
                 // cookie does not exist
-                assert.notOk(readCookie('sidebar menus'));
+                assert.notOk(read_cookie('sidebar menus'));
 
                 // create empty array, push display none for hidden menus
                 let test_display_data = [];
@@ -148,8 +151,8 @@ QUnit.module('MainMenuSidebar', () => {
                     test_display_data.push('block');
                 }
                 // create cookie
-                createCookie('sidebar menus', test_display_data, null);
-                assert.ok(readCookie('sidebar menus'));
+                create_cookie('sidebar menus', test_display_data, null);
+                assert.ok(read_cookie('sidebar menus'));
 
                 // invoke inital_cookie method
                 layout.mainmenu_sidebar.initial_cookie();
@@ -318,7 +321,7 @@ QUnit.module('MainMenuSidebar', () => {
                     }
 
                     // cookie has been created
-                    assert.ok(readCookie('sidebar menus'));
+                    assert.ok(read_cookie('sidebar menus'));
                 }
             });
         });

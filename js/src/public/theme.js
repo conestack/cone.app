@@ -1,5 +1,8 @@
 import $ from 'jquery'
-import {createCookie, readCookie} from './utils.js';
+import {
+    create_cookie,
+    read_cookie
+} from './utils.js';
 import {layout} from './layout.js';
 
 export const default_themes = [
@@ -25,7 +28,7 @@ export class ThemeSwitcher {
         this.modes = default_themes;
         this.link = $('head #colormode-styles');
         this.elem.off('click').on('click', this.switch_theme.bind(this));
-        let current = readCookie('modeswitch');
+        let current = read_cookie('modeswitch');
         if (!current) {
             current = this.modes[0];
         }
@@ -38,7 +41,7 @@ export class ThemeSwitcher {
 
     set current(value) {
         this.link.attr('href', value);
-        createCookie('modeswitch', value, null);
+        create_cookie('modeswitch', value, null);
         let checked = value === this.modes[0] ? false : true;
         this.elem.prop('checked', checked);
     }

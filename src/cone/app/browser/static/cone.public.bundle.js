@@ -64,10 +64,7 @@ var cone = (function (exports, $, ts) {
         }
     }
 
-    /* cookie functions */
-    /* Taken from Plone */
-
-    function createCookie(name, value, days) {
+    function create_cookie(name, value, days) {
         var date,
             expires;
         if (days) {
@@ -80,7 +77,12 @@ var cone = (function (exports, $, ts) {
         document.cookie = name + "=" + escape(value) + expires + "; path=/;";
     }
 
-    function readCookie(name) {
+    function createCookie(name, value, days) {
+        ts.deprecate('createCookie', 'cone.create_cookie', '2.0');
+        create_cookie(name, value, days);
+    }
+
+    function read_cookie(name) {
         var nameEQ = name + "=",
             ca = document.cookie.split(';'),
             i,
@@ -95,6 +97,11 @@ var cone = (function (exports, $, ts) {
             }
         }
         return null;
+    }
+
+    function readCookie(name) {
+        ts.deprecate('readCookie', 'cone.read_cookie', '2.0');
+        return read_cookie(name);
     }
 
     /* toggle vertical arrow icon */
@@ -222,7 +229,7 @@ var cone = (function (exports, $, ts) {
         }
 
         initial_load() {
-            let cookie = readCookie('sidebar');
+            let cookie = read_cookie('sidebar');
             if (this.vp_state === VP_MOBILE) {
                 this.elem.hide();
             }
@@ -252,13 +259,13 @@ var cone = (function (exports, $, ts) {
         }
 
         toggle_lock() {
-            if(readCookie('sidebar')) {
-                createCookie('sidebar', '', -1);
+            if(read_cookie('sidebar')) {
+                create_cookie('sidebar', '', -1);
                 this.lock_switch.removeClass('active');
                 this.cookie = null;
             } else {
                 this.lock_switch.addClass('active');
-                createCookie('sidebar', this.collapsed, null);
+                create_cookie('sidebar', this.collapsed, null);
                 this.cookie = this.collapsed;
             }
         }
@@ -295,7 +302,7 @@ var cone = (function (exports, $, ts) {
             this.collapsed = !this.collapsed;
 
             if (this.lock_switch.hasClass('active')) {
-                createCookie('sidebar', this.collapsed, null);
+                create_cookie('sidebar', this.collapsed, null);
                 this.cookie = this.collapsed;
             }
             this.assign_state();
@@ -600,7 +607,7 @@ var cone = (function (exports, $, ts) {
         }
 
         initial_cookie() {
-            let cookie = readCookie('sidebar menus');
+            let cookie = read_cookie('sidebar menus');
             if(cookie) {
                 this.display_data = cookie.split(',');
             } else {
@@ -674,7 +681,7 @@ var cone = (function (exports, $, ts) {
                     menu.slideToggle('fast');
                     toggle_arrow(arrow);
                     this.display_data[i] = display; 
-                    createCookie('sidebar menus', this.display_data, null);
+                    create_cookie('sidebar menus', this.display_data, null);
                 });
             }
         }
@@ -974,7 +981,7 @@ var cone = (function (exports, $, ts) {
             this.modes = default_themes;
             this.link = $('head #colormode-styles');
             this.elem.off('click').on('click', this.switch_theme.bind(this));
-            let current = readCookie('modeswitch');
+            let current = read_cookie('modeswitch');
             if (!current) {
                 current = this.modes[0];
             }
@@ -987,7 +994,7 @@ var cone = (function (exports, $, ts) {
 
         set current(value) {
             this.link.attr('href', value);
-            createCookie('modeswitch', value, null);
+            create_cookie('modeswitch', value, null);
             let checked = value === this.modes[0] ? false : true;
             this.elem.prop('checked', checked);
         }
@@ -1391,9 +1398,11 @@ var cone = (function (exports, $, ts) {
     exports.VP_SMALL = VP_SMALL;
     exports.ViewPortAware = ViewPortAware;
     exports.createCookie = createCookie;
+    exports.create_cookie = create_cookie;
     exports.default_themes = default_themes;
     exports.layout = layout;
     exports.readCookie = readCookie;
+    exports.read_cookie = read_cookie;
     exports.time_delta_str = time_delta_str;
     exports.toggle_arrow = toggle_arrow;
     exports.vp = vp;
@@ -1402,6 +1411,10 @@ var cone = (function (exports, $, ts) {
 
 
     window.cone = exports;
+
+    // B/C
+    window.createCookie = exports.create_cookie;
+    window.readCookie = exports.read_cookie;
 
 
     return exports;

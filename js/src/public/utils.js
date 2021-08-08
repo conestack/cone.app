@@ -1,7 +1,6 @@
-/* cookie functions */
-/* Taken from Plone */
+import ts from 'treibstoff';
 
-export function createCookie(name, value, days) {
+export function create_cookie(name, value, days) {
     var date,
         expires;
     if (days) {
@@ -14,7 +13,12 @@ export function createCookie(name, value, days) {
     document.cookie = name + "=" + escape(value) + expires + "; path=/;";
 }
 
-export function readCookie(name) {
+export function createCookie(name, value, days) {
+    ts.deprecate('createCookie', 'cone.create_cookie', '2.0');
+    create_cookie(name, value, days);
+}
+
+export function read_cookie(name) {
     var nameEQ = name + "=",
         ca = document.cookie.split(';'),
         i,
@@ -29,6 +33,11 @@ export function readCookie(name) {
         }
     }
     return null;
+}
+
+export function readCookie(name) {
+    ts.deprecate('readCookie', 'cone.read_cookie', '2.0');
+    return read_cookie(name);
 }
 
 /* toggle vertical arrow icon */

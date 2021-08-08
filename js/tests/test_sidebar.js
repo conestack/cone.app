@@ -1,8 +1,10 @@
 import $ from 'jquery';
 import * as helpers from './helpers.js';
 import {karma_vp_states} from './karma_viewport_states.js';
-import {createCookie, readCookie} from '../src/public/utils.js';
-
+import {
+    create_cookie,
+    read_cookie
+} from '../src/public/utils.js';
 import {layout} from '../src/public/layout.js';
 import {ViewPortAware} from '../src/public/viewport.js';
 import {Sidebar} from '../src/public/sidebar.js';
@@ -97,7 +99,7 @@ QUnit.module('Sidebar', () => {
                     );
 
                     // sidebar cookie is null
-                    assert.strictEqual(readCookie('sidebar'), null);
+                    assert.strictEqual(read_cookie('sidebar'), null);
 
                     if (i === 0) {
                         // containing element is hidden on mobile viewport
@@ -119,7 +121,7 @@ QUnit.module('Sidebar', () => {
                     helpers.set_vp(karma_vp_states[i]);
 
                     // create dummy cookie
-                    createCookie('sidebar', true, null);
+                    create_cookie('sidebar', true, null);
 
                     // initialize Test Sidebar
                     Sidebar.initialize();
@@ -129,7 +131,7 @@ QUnit.module('Sidebar', () => {
                         i
                     );
 
-                    assert.strictEqual(readCookie('sidebar'), 'true');
+                    assert.strictEqual(read_cookie('sidebar'), 'true');
 
                     if (i !== 0) {
                         // cookie state === collapsed if viewport is not mobile
@@ -146,7 +148,7 @@ QUnit.module('Sidebar', () => {
                     }
 
                     // remove dummy cookie
-                    createCookie('sidebar', '', -1);
+                    create_cookie('sidebar', '', -1);
                 });
             }
         });
@@ -166,7 +168,7 @@ QUnit.module('Sidebar', () => {
                 $('#sidebar_left').remove();
 
                 // delete dummy cookie
-                createCookie('sidebar', '', -1);
+                create_cookie('sidebar', '', -1);
             });
 
             QUnit.test('toggle_lock()', assert => {
@@ -177,7 +179,7 @@ QUnit.module('Sidebar', () => {
                 assert.strictEqual(layout.sidebar.collapsed, false);
 
                 // cookie is null
-                assert.strictEqual(readCookie('sidebar'), null);
+                assert.strictEqual(read_cookie('sidebar'), null);
 
                 // trigger click on lock switch (lock state)
                 layout.sidebar.lock_switch.trigger('click');
@@ -194,8 +196,8 @@ QUnit.module('Sidebar', () => {
 
             QUnit.test('toggle_lock() with cookie', assert => {
                 // create dummy cookie
-                createCookie('sidebar', true, null);
-                assert.strictEqual(readCookie('sidebar'), 'true');
+                create_cookie('sidebar', true, null);
+                assert.strictEqual(read_cookie('sidebar'), 'true');
 
                 // create new Sidebar instance
                 Sidebar.initialize();
@@ -206,7 +208,7 @@ QUnit.module('Sidebar', () => {
                 // trigger unclick on lock switch
                 layout.sidebar.lock_switch.trigger('click');
                 // cookie is deleted
-                assert.strictEqual(readCookie('sidebar'), null);
+                assert.strictEqual(read_cookie('sidebar'), null);
 
                 // lock switch is not active after click
                 assert.notOk(layout.sidebar.lock_switch.hasClass('active'));
@@ -224,7 +226,7 @@ QUnit.module('Sidebar', () => {
                 $('#layout').remove();
 
                 // delete dummy cookie
-                createCookie('sidebar', '', -1);
+                create_cookie('sidebar', '', -1);
             });
 
             QUnit.test('viewport_changed()', assert => {

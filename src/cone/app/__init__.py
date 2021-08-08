@@ -33,13 +33,12 @@ cfg.main_template = 'cone.app.browser:templates/main.pt'
 cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 
 # XXX: move resource registration to browser package
-# XXX: support developmenet and production mode
+# XXX: use webresource to declare browser resources
 
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
     'treibstoff-static/treibstoff.bundle.js',
-    'static/scrollbar.js',
     'static/cone.public.bundle.js'
 ]
 cfg.js.protected = [
