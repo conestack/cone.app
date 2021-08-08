@@ -38,9 +38,18 @@ Install deployment requirements::
         rollup-plugin-cleanup \
         rollup-plugin-terser
 
-Install --save-dev sass::
+Install sass::
 
-    sudo npm install sass
+    npm --save-dev install sass
+
+Install treibstoff. When developing with a local buildout, install from
+development sources::
+
+    npm install devsrc/treibstoff
+
+Else install from git::
+
+    npm install https://github.com/conestack/treibstoff#master
 
 
 Javascript Tests
