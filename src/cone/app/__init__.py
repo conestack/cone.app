@@ -83,8 +83,7 @@ cfg.merged.js.public = [
     (browser.static_resources, 'jquery/jquery-3.5.1.js'),
     (browser.static_resources, 'jquery/jquery-migrate-3.3.2.js'),
     # (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
-    (browser.static_resources, 'bootstrap/js/bootstrap.bundle.js'),
-    (browser.static_resources, 'cookie_functions.js')
+    (browser.static_resources, 'bootstrap/js/bootstrap.bundle.js')
 ]
 
 # production
@@ -92,8 +91,7 @@ cfg.merged.js.public = [
 #     (browser.static_resources, 'jquery/jquery-3.5.1.min.js'),
 #     (browser.static_resources, 'jquery/jquery-migrate-3.3.2.min.js'),
 #     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
-#     (browser.static_resources, 'bootstrap/js/bootstrap.bundle.min.js'),
-#     (browser.static_resources, 'cookie_functions.js')
+#     (browser.static_resources, 'bootstrap/js/bootstrap.bundle.min.js')
 # ]
 
 cfg.merged.js.protected = list()
