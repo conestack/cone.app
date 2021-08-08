@@ -11,10 +11,13 @@ Install virtualenv and run buildout::
     ./bin/pip install zc.buildout
     ./bin/buildout -c waitress.cfg
 
-Install npm and karma::
+Install npm::
 
     sudo apt install npm
-    npm install \
+
+Install test requirements::
+
+    npm --save-dev install \
         qunit \
         karma \
         karma-qunit \
@@ -26,7 +29,7 @@ Install npm and karma::
 Install jquery from git as jquery 4 is not released yet but required to run
 tests as modules and import from jquery sources works::
 
-    npm install https://github.com/jquery/jquery#main
+    npm --save-dev install https://github.com/jquery/jquery#main
 
 Install deployment requirements::
 
@@ -35,9 +38,9 @@ Install deployment requirements::
         rollup-plugin-cleanup \
         rollup-plugin-terser
 
-Install sass::
+Install --save-dev sass::
 
-    sudo npm install -g sass
+    sudo npm install sass
 
 
 Javascript Tests
