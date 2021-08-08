@@ -28,6 +28,13 @@ tests as modules and import from jquery sources works::
 
     npm install https://github.com/jquery/jquery#main
 
+Install deployment requirements::
+
+    npm --save-dev install \
+        rollup \
+        rollup-plugin-cleanup \
+        rollup-plugin-terser
+
 Install sass::
 
     sudo npm install -g sass
@@ -50,15 +57,19 @@ Following plugins are used:
 
 Start karma server (immediately run tests)::
 
-    node_modules/karma/bin/karma start karma.conf.js
-
-Re-run tests (needs karma server to be started)::
-
-    node_modules/karma/bin/karma run karma.conf.js
+    ./karma.sh
 
 To view coverage report, open::
 
     karma/coverage/[browser name]/index.html
+
+
+Bundle Javascript
+=================
+
+Create JS bundle with rollup::
+
+    ./rollup.sh
 
 
 Compile CSS

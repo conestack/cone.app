@@ -5,27 +5,32 @@ import {Topnav} from '../src/public/topnav.js';
 import * as helpers from './helpers.js';
 
 QUnit.module('toolbar', () => {
+
     QUnit.module('constructor', hooks=> {
+
         hooks.beforeEach(() => {
             helpers.create_layout_elem();
             helpers.create_topnav_elem();
             helpers.create_toolbar_elem();
         });
+
         hooks.afterEach(() => {
             $('#layout').remove();
         });
-    
+
         QUnit.test('true', assert=> {
             assert.ok(true);
         });
     });
 
     QUnit.module('methods', hooks => {
+
         hooks.beforeEach(() => {
             helpers.create_layout_elem();
             helpers.create_topnav_elem();
             helpers.create_toolbar_elem();
         });
+
         hooks.afterEach(() => {
             $('#layout').remove();
         });
@@ -130,7 +135,7 @@ QUnit.module('toolbar', () => {
             }
         });
 
-        QUnit.test.only('sort_date', assert => {
+        QUnit.test('sort_date', assert => {
             let date0 = 'August 06, 2021 09:00:00',
                 date1 = 'August 05, 2021 10:24:00',
                 date2 = 'August 04, 2021 10:24:00',
@@ -159,8 +164,8 @@ QUnit.module('toolbar', () => {
             for (let i=3; i>=0; i--) {
                 let elem = notis[i];
                 // assert.strictEqual($(elem).css('order'), i);
-                console.log($(elem).css('order'));
-                console.log(i)
+                // console.log($(elem).css('order'));
+                // console.log(i)
             }
         });
     });

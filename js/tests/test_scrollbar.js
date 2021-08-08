@@ -206,6 +206,7 @@ QUnit.module('ScrollBar', () => {
     });
 
     QUnit.module('methods', () => {
+
         QUnit.module('observe_container()', hooks => {
             let TestScrollbar,
                 test_scrollbar;
@@ -703,7 +704,9 @@ QUnit.module('ScrollBar', () => {
 });
 
 QUnit.module('ScrollBarX', () => {
+
     QUnit.module('constructor', () => {
+
         QUnit.module('constructor methods', hooks => {
             let TestScrollbarX,
                 test_scrollbar_x,

@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import * as helpers from './helpers.js';
-
 import {MobileNav} from '../src/public/mobilenav.js';
 import {Sidebar} from '../src/public/sidebar.js';
 import {Topnav} from '../src/public/topnav.js';
@@ -8,12 +7,12 @@ import {MainMenuSidebar, MainMenuTop} from '../src/public/mainmenu.js';
 import {Navtree} from '../src/public/navtree.js';
 import {layout} from '../src/public/layout.js';
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // MobileNav tests
 ///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('MobileNav', () => {
+
     QUnit.module('constructor', hooks => {
 
         hooks.after(() => {

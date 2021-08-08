@@ -34,23 +34,23 @@ export class Searchbar extends ViewPortAware {
             this.search_text.detach().prependTo(this.dd);
         }
 
-        let source = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: 'livesearch?term=%QUERY'
-        });
-        source.initialize();
-        this._render_suggestion_hande = this.render_suggestion.bind(this);
-        this.search_text.typeahead(null, {
-            name: 'livesearch',
-            displayKey: 'value',
-            source: source.ttAdapter(),
-            templates: {
-                suggestion: this._render_suggestion_handle
-            }
-        });
-        this._on_select_handle = this.on_select.bind(this);
-        this.search_text.off(event).on(event, this._on_select_handle);
+        // let source = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     remote: 'livesearch?term=%QUERY'
+        // });
+        // source.initialize();
+        // this._render_suggestion_hande = this.render_suggestion.bind(this);
+        // this.search_text.typeahead(null, {
+        //     name: 'livesearch',
+        //     displayKey: 'value',
+        //     source: source.ttAdapter(),
+        //     templates: {
+        //         suggestion: this._render_suggestion_handle
+        //     }
+        // });
+        // this._on_select_handle = this.on_select.bind(this);
+        // this.search_text.off(event).on(event, this._on_select_handle);
     }
 
     viewport_changed(e) {

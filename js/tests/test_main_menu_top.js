@@ -8,6 +8,7 @@ import {layout} from '../src/public/layout.js';
 ///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('MainMenuTop', () => {
+
     QUnit.module('constructor', hooks => {
         hooks.beforeEach(() => {
             helpers.create_topnav_elem();
