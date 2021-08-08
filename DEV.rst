@@ -102,4 +102,5 @@ Included resources:
 
 - https://github.com/twbs/bootstrap/releases/tag/v5.0.2
 - https://github.com/twbs/icons/archive/v1.5.0.zip
-- https://github.com/twitter/typeahead.js/releases/tag/v0.11.1
+- https://github.com/corejavascript/typeahead.js/releases/tag/v1.3.1
+
