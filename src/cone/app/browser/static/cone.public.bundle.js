@@ -1,7 +1,5 @@
-var cone = (function (exports, $) {
+var cone = (function (exports, $, ts) {
     'use strict';
-
-    // import ts from 'treibstoff';
 
     const VP_MOBILE = 0;
     const VP_SMALL = 1;
@@ -11,6 +9,7 @@ var cone = (function (exports, $) {
     // viewport singleton
 
     class ViewPort {
+
         constructor() {
             this.state = null;
 
@@ -778,15 +777,16 @@ var cone = (function (exports, $) {
 
     class Searchbar extends ViewPortAware {
 
-        static initialize(context) {
+        static initialize(context, factory=null) {
             let elem = $('#cone-searchbar', context);
             /* istanbul ignore if */
             if (!elem.length) {
                 return;
-            } else {
-                layout.searchbar = new Searchbar(elem);
             }
-
+            if (factory === null) {
+                factory = Searchbar;
+            }
+            layout.searchbar = new factory(elem);
             return layout.searchbar;
         }
 
@@ -812,6 +812,18 @@ var cone = (function (exports, $) {
                 this.search_text.detach().prependTo(this.search_group);
                 this.dd.removeClass('dropdown-menu-end');
             }
+        }
+
+        on_select(e, suggestion, dataset) {
+            ts.ajax.trigger(
+                'contextchanged',
+                '#layout',
+                suggestion.target
+            );
+        }
+
+        render_suggestion(suggestion) {
+            return `<span class="${suggestion.icon}"></span>${suggestion.value}`;
         }
     }
 
@@ -1345,17 +1357,17 @@ var cone = (function (exports, $) {
     }
 
     $(function() {
-        bdajax.register(Topnav.initialize, true);
-        bdajax.register(MainMenuTop.initialize, true);
-        bdajax.register(Searchbar.initialize, true);
-        bdajax.register(Toolbar.initialize, true);
-        bdajax.register(Personaltools.initialize, true);
-        bdajax.register(ThemeSwitcher.initialize, true);
-        bdajax.register(Sidebar.initialize, true);
-        bdajax.register(MainMenuSidebar.initialize, true);
-        bdajax.register(Navtree.initialize, true);
-        bdajax.register(Content.initialize, true);
-        bdajax.register(MobileNav.initialize, true);
+        ts.ajax.register(Topnav.initialize, true);
+        ts.ajax.register(MainMenuTop.initialize, true);
+        ts.ajax.register(Searchbar.initialize, true);
+        ts.ajax.register(Toolbar.initialize, true);
+        ts.ajax.register(Personaltools.initialize, true);
+        ts.ajax.register(ThemeSwitcher.initialize, true);
+        ts.ajax.register(Sidebar.initialize, true);
+        ts.ajax.register(MainMenuSidebar.initialize, true);
+        ts.ajax.register(Navtree.initialize, true);
+        ts.ajax.register(Content.initialize, true);
+        ts.ajax.register(MobileNav.initialize, true);
     });
 
     exports.Content = Content;
@@ -1394,4 +1406,4 @@ var cone = (function (exports, $) {
 
     return exports;
 
-}({}, jQuery));
+}({}, jQuery, treibstoff));
