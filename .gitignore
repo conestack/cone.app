@@ -41,6 +41,5 @@ include/
 /.coverage
 /htmlcov/
 /node_modules/
-/package.json
 /package-lock.json
 /karma/
