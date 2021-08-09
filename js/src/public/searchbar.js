@@ -46,6 +46,7 @@ export class Searchbar extends ViewPortAware {
         }
     }
 
+    /* istanbul ignore next */
     on_select(e, suggestion, dataset) {
         ts.ajax.trigger(
             'contextchanged',
@@ -54,6 +55,7 @@ export class Searchbar extends ViewPortAware {
         );
     }
 
+    /* istanbul ignore next */
     render_suggestion(suggestion) {
         return `<span class="${suggestion.icon}"></span>${suggestion.value}`;
     }
