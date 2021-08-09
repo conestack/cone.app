@@ -52,8 +52,14 @@ export function toggle_arrow(arrow) {
 };
 
 /* calculate passed time from timestamp */
-export function time_delta_str(time) {
-    let now = new Date();
+export function time_delta_str(time, end) {
+    let now;
+    /* istanbul ignore else */
+    if (end) {
+        now = end;
+    } else {
+        now = new Date();
+    }
 
     // Compute time difference in milliseconds
     let timeDiff = now.getTime() - time.getTime();

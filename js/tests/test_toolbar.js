@@ -12,14 +12,31 @@ QUnit.module('toolbar', () => {
             helpers.create_layout_elem();
             helpers.create_topnav_elem();
             helpers.create_toolbar_elem();
+            let date = 'August 06, 2021 09:00:00';
+            helpers.create_noti_elem(date, 'high', 'elem1');
         });
 
         hooks.afterEach(() => {
             $('#layout').remove();
         });
 
-        QUnit.test('true', assert=> {
-            assert.ok(true);
+        QUnit.test('true', assert => {
+            Topnav.initialize();
+            Toolbar.initialize();
+            let tb = layout.toolbar;
+
+            assert.ok(tb.elem.is('ul#toolbar-top'));
+            assert.ok(tb.dropdowns.is('li.dropdown'));
+            assert.ok(tb.mark_read_btn.is('span#noti_mark_read'));
+            assert.ok(tb.sort_priority_btn.is('span#noti_sort_priority'));
+            assert.ok(tb.sort_date_btn.is('span#noti_sort_date'));
+            assert.ok(tb._mark);
+            assert.ok(tb._sort_p);
+            assert.ok(tb._sort_d);
+
+            // trigger close
+            $('i.bi-x-circle', '#elem1').trigger('click');
+            assert.strictEqual($('#elem1').css('display'), 'none');
         });
     });
 
@@ -59,14 +76,18 @@ QUnit.module('toolbar', () => {
             assert.strictEqual(layout.topnav.content.css('display'), 'contents');
         });
     
-        QUnit.test.skip('mark_as_read', assert => {
+        QUnit.test('mark_as_read', assert => {
+            let date = 'August 06, 2021 09:00:00';
+            helpers.create_noti_elem(date, '', '1');
+            helpers.create_noti_elem(date, '', '2');
+            
             // initialize
             Topnav.initialize();
             Toolbar.initialize();
-    
+
             assert.ok($('li.notification.unread').length > 0);
             $('#noti_mark_read').trigger('click');
-            assert.strictEqual($('li.notification.unread').length, 0);
+            assert.strictEqual($('li.unread').length, 0);
         });
     
         QUnit.test('handle_dropdown', assert => {
@@ -161,11 +182,13 @@ QUnit.module('toolbar', () => {
 
             $('#noti_sort_date').trigger('click');
 
-            for (let i=3; i>=0; i--) {
-                let elem = notis[i];
-                // assert.strictEqual($(elem).css('order'), i);
-                // console.log($(elem).css('order'));
-                // console.log(i)
+            for (let i=0; i<4; i++) {
+                let elem = $(`#${i}`);
+                let id = i;
+                let order = 3 - i;
+
+                assert.strictEqual(elem.attr('id'), `${id}`);
+                assert.strictEqual(elem.css('order'), `${order}`);
             }
         });
     });
