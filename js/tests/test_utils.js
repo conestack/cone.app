@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {time_delta_str} from '../src/public/utils.js';
+import {createCookie, create_cookie, readCookie, read_cookie, time_delta_str} from '../src/public/utils.js';
 
 
 QUnit.module('time_delta_str', () => {
@@ -55,5 +55,20 @@ QUnit.module('time_delta_str', () => {
             end = new Date('August 05, 2021 10:00:00');
 
         assert.strictEqual(time_delta_str(date1, end), 'just now');
+    });
+});
+
+QUnit.module('cookie functions', hooks => {
+    hooks.after(() => {
+        create_cookie('test', '', -1);
+    });
+
+    QUnit.test('createCookie deprecated', assert => {
+        createCookie('test', 'test', null);
+        assert.ok(read_cookie('test'));
+    });
+
+    QUnit.test('readCookie deprecated', assert => {
+        assert.strictEqual(readCookie('test'), read_cookie('test'));
     });
 });
