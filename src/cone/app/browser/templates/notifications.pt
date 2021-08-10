@@ -6,6 +6,7 @@
     <i class="dropdown-toggle bi bi-bell-fill"
        role="button"
        data-bs-toggle="dropdown"></i>
+
     <ul class="dropdown-menu dropdown-menu-end">
       <li class="toolbar-title">
         Notifications
@@ -81,7 +82,9 @@
               </p>
             </a>
           </div>
+
           <i class="bi bi-x-circle"></i>
+
         </li>
       </tal:li>
     </ul>

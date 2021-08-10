@@ -6,6 +6,20 @@ import * as helpers from './helpers.js';
 ///////////////////////////////////////////////////////////////////////////////
 // Searchbar tests
 ///////////////////////////////////////////////////////////////////////////////
+QUnit.test.only('test sb visual', assert => {
+    // TEMP:
+    // to develop livesearch functions
+
+    assert.ok(true);
+
+    helpers.create_layout_elem();
+    helpers.create_topnav_elem();
+    helpers.create_pt_elem();
+    helpers.create_searchbar_elem('#topnav');
+
+    let sb = Searchbar.initialize();
+});
+
 
 QUnit.module('Searchbar', () => {
 

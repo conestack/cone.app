@@ -406,7 +406,7 @@ export function create_empty_item() {
 // Searchbar test helper
 ///////////////////////////////////////////////////////////////////////////////
 
-export function create_searchbar_elem() {
+export function create_searchbar_elem(elem) {
     if ($('#layout').length === 0) {
       create_layout_elem();
     }
@@ -434,16 +434,19 @@ export function create_searchbar_elem() {
             <li class="dropdown-title">
               Search Results
             </li>
-            <div id="cone-livesearch-results">
-              <li>
-                <span>Example Livesearch Result</span>
+            <ul id="cone-livesearch-results">
+              <li id="livesearch-result-header">
               </li>
-            </div>
+            </ul>
           </ul>
         </div>
     `;
     // append dummy element to DOM
-    $('#layout').append(searchbar_html);
+    if(elem) {
+      $(elem).append(searchbar_html);
+    } else {
+      $('#layout').append(searchbar_html);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

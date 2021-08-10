@@ -50,7 +50,7 @@ const test_files = [{
     type: 'module',
     included: false
 }, {
-    pattern: '../js/tests/test_*.js',
+    pattern: '../js/tests/test_searchbar.js',
     type: 'module'
 }, {
     pattern: '../js/tests/helpers.js',
@@ -113,7 +113,7 @@ module.exports = function(config) {
         ],
         files: files,
         browsers: [
-            'ChromeHeadless'
+            'Chrome'
         ],
         viewport: viewport,
         singlerun: true,
