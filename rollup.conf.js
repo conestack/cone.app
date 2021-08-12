@@ -1,30 +1,40 @@
 import cleanup from 'rollup-plugin-cleanup';
 import {terser} from 'rollup-plugin-terser';
 
-const outro = `
+const out_dir = 'src/cone/app/browser/static';
+
+const default_outro = `
 if (window.cone === undefined) {
     window.cone = {};
 }
 Object.assign(window.cone, exports);
+`;
 
+const protected_outro = default_outro + `
 window.createCookie = createCookie;
 window.readCookie = readCookie;
 `;
 
-export default args => {
+const protected_globals = {
+    jquery: 'jQuery',
+    treibstoff: 'treibstoff'
+};
+
+const public_globals = {
+    jquery: 'jQuery',
+    treibstoff: 'treibstoff',
+    Bloodhound: 'Bloodhound'
+};
+
+const create_bundle = function(name, globals, outro, debug) {
     let conf = {
-        input: 'js/src/bundles/protected.js',
-        plugins: [
-            cleanup()
-        ],
+        input: `js/src/bundles/${name}.js`,
+        plugins: [cleanup()],
         output: [{
-            file: 'src/cone/app/browser/static/cone.protected.js',
+            file: `${out_dir}/cone.${name}.js`,
             format: 'iife',
             outro: outro,
-            globals: {
-                jquery: 'jQuery',
-                treibstoff: 'treibstoff'
-            },
+            globals: globals,
             interop: 'default'
         }],
         external: [
@@ -32,20 +42,23 @@ export default args => {
             'treibstoff'
         ]
     };
-    if (args.configDebug !== true) {
+    if (debug !== true) {
         conf.output.push({
-            file: 'src/cone/app/browser/static/cone.protected.min.js',
+            file: `${out_dir}/cone.${name}.min.js`,
             format: 'iife',
-            plugins: [
-                terser()
-            ],
+            plugins: [terser()],
             outro: outro,
-            globals: {
-                jquery: 'jQuery',
-                treibstoff: 'treibstoff'
-            },
+            globals: globals,
             interop: 'default'
         });
     }
     return conf;
+}
+
+export default args => {
+    let debug = args.configDebug;
+    return [
+        create_bundle('public', public_globals, default_outro, debug),
+        create_bundle('protected', protected_globals, protected_outro, debug)
+    ];
 };
