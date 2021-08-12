@@ -7,6 +7,89 @@ var cone_protected = (function (exports, $, ts) {
     }
 
 
+    class BatchedItems {
+
+        static initialize(context) {
+            new BatchedItems(
+                context,
+                '.batched_items_slice_size select',
+                '.batched_items_filter input',
+                'term'
+            );
+        }
+
+        constructor(context, size_selector, filter_selector, filter_name) {
+            this.context = context;
+            this.size_selector = size_selector;
+            this.filter_selector = filter_selector;
+            this.filter_name = filter_name;
+            this.bind_size();
+            this.bind_search();
+        }
+
+        bind_size() {
+            $(
+                this.size_selector,
+                this.context
+            ).off('change').on('change', function(evt) {
+                let selection = $(evt.currentTarget),
+                    option = $('option:selected', selection).first();
+                this.set_filter(selection, 'size', option.val());
+            }.bind(this));
+        }
+
+        bind_search() {
+            let search_input = $(this.filter_selector, this.context);
+            // reset filter input field if marked as empty filter
+            if (search_input.hasClass('empty_filter')) {
+                search_input.on('focus', function() {
+                    this.value = '';
+                    $(this).removeClass('empty_filter');
+                });
+            }
+            // prevent default action when pressing enter
+            search_input.off('keypress').on('keypress', function(evt) {
+                if (evt.keyCode == 13) {
+                    evt.preventDefault();
+                }
+            });
+            // trigger search when releasing enter
+            search_input.off('keyup').on('keyup', function(evt) {
+                if (evt.keyCode == 13) {
+                    evt.preventDefault();
+                    let input = $(evt.currentTarget);
+                    this.set_filter(input, this.filter_name, input.attr('value'));
+                }
+            }.bind(this));
+            // trigger search on input change
+            search_input.off('change').on('change', function(evt) {
+                evt.preventDefault();
+                let input = $(evt.currentTarget);
+                this.set_filter(input, this.filter_name, input.attr('value'));
+            }.bind(this));
+        }
+
+        set_filter(elem, param, val) {
+            let target = ts.ajax.parsetarget(elem.attr('ajax:target')),
+                event = elem.attr('ajax:event');
+            target.params[param] = val;
+            if (elem.attr('ajax:path')) {
+                let path_event = elem.attr('ajax:path-event');
+                if (!path_event) {
+                    path_event = event;
+                }
+                // path always gets calculated from target
+                ts.ajax.path({
+                    path: target.path + target.query + '&' + param + '=' + val,
+                    event: path_event,
+                    target: target
+                });
+            }
+            let defs = event.split(':');
+            ts.ajax.trigger(defs[0], defs[1], target);
+        }
+    }
+
     class CopySupport {
 
         static initialize(context) {
@@ -119,6 +202,218 @@ var cone_protected = (function (exports, $, ts) {
         }
     }
 
+    let keys = {
+        shift_down: false,
+        ctrl_down: false
+    };
+
+    /**
+     * XXX: Use ``ts.KeyState`` instead.
+     *      Need a mechanism to attach and unload instances with ``ts.ajax`` first.
+     */
+    class KeyBinder {
+
+        constructor() {
+            $(window).on('keydown', this.key_down.bind(this));
+            $(window).on('keyup', this.key_up.bind(this));
+        }
+
+        key_down(e) {
+            switch (e.keyCode || e.which) {
+                case 16:
+                    keys.shift_down = true;
+                    break;
+                case 17:
+                    keys.ctrl_down = true;
+                    break;
+            }
+        }
+
+        key_up(e) {
+            switch (e.keyCode || e.which) {
+                case 16:
+                    keys.shift_down = false;
+                       break;
+                case 17:
+                    keys.ctrl_down = false;
+                    break;
+            }
+        }
+    }
+
+    class ReferenceHandle {
+
+        static initialize(context) {
+            if (!context) {
+                return;
+            }
+            let ol_elem = context.parents('div.modal');
+            if (!ol_elem.length) {
+                return;
+            }
+            let ol = ol_elem.data('overlay'),
+                target = ol.ref_target;
+            $('a.addreference', context).each(function() {
+                new AddReferenceHandle($(this), target, ol);
+            });
+            $('a.removereference', context).each(function() {
+                new RemoveReferenceHandle($(this), target);
+            });
+        }
+
+        constructor(target) {
+            this.target = target;
+            this.target_tag = target.get(0).tagName;
+        }
+
+        single_value() {
+            return this.target_tag == 'INPUT';
+        }
+
+        multi_value() {
+            return this.target_tag.tagName == 'SELECT';
+        }
+
+        toggle_enabled(elem) {
+            $('a', elem.parent()).toggleClass('disabled');
+        }
+
+        reset_selected(elem) {
+            let selected = new Array();
+            if (this.single_value()) {
+                selected.push(elem.attr('value'));
+            }
+            if (this.multi_value()) {
+                $('[selected=selected]', elem).each(function() {
+                    selected.push($(this).attr('value'));
+                });
+            }
+            this.set_selected_on_ajax_target(elem.parent(), selected);
+            let overlay = this.overlay().getOverlay();
+            let that = this;
+            $('div.referencebrowser a', overlay.elem).each(function() {
+                let link = $(this);
+                if (link.attr('ajax:target')) {
+                    that.set_selected_on_ajax_target(link, selected);
+                }
+            });
+        }
+
+        set_selected_on_ajax_target(elem, selected) {
+            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            target.params.selected = selected.join(',');
+            let query = new Array();
+            for (let name in target.params) {
+                query.push(name + '=' + target.params[name]);
+            }
+            elem.attr('ajax:target', target.url + '?' + query.join('&'));
+        }
+    }
+
+    class AddReferenceHandle extends ReferenceHandle {
+
+        constructor(elem, target, overlay) {
+            super(target);
+            this.elem = elem;
+            this.overlay = overlay;
+            elem.off('click').on('click', this.add_reference.bind(this));
+        }
+
+        add_reference(evt) {
+            evt.preventDefault();
+            let elem = this.elem;
+            let target = this.target;
+            let uid = elem.attr('id');
+            uid = uid.substring(4, uid.length);
+            let label = $('.reftitle', elem.parent()).html();
+            if (this.single_value()) {
+                target.attr('value', label);
+                let sel = '[name="' + target.attr('name') + '.uid"]';
+                $(sel).attr('value', uid);
+                this.set_selected_on_ajax_target(target.parent(), [uid]);
+                this.overlay.close();
+                return;
+            }
+            if (this.multi_value()) {
+                if ($('[value="' + uid + '"]', target.parent()).length) {
+                    return;
+                }
+                let option = $('<option></option>');
+                option.val(uid).html(label).attr('selected', 'selected');
+                target.append(option);
+            }
+            this.reset_selected(target);
+            this.toggle_enabled(elem);
+        }
+    }
+
+    class RemoveReferenceHandle extends ReferenceHandle {
+
+        constructor(elem, target) {
+            super(target);
+            this.elem = elem;
+            elem.off('click').on('click', this.remove_reference.bind(this));
+        }
+
+        remove_reference(evt) {
+            evt.preventDefault();
+            let elem = this.elem;
+            let target = this.target;
+            let uid = elem.attr('id');
+            uid = uid.substring(4, uid.length);
+            if (this.single_value()) {
+                target.attr('value', '');
+                let sel = '[name="' + target.attr('name') + '.uid"]';
+                $(sel).attr('value', '');
+            }
+            if (this.multi_value()) {
+                let sel = '[value="' + uid + '"]';
+                if (!$(sel, target.parent()).length) {
+                    return;
+                }
+                $(sel, target).remove();
+            }
+            this.reset_selected(target);
+            this.toggle_enabled(elem);
+        }
+    }
+
+    class ReferenceBrowserLoader {
+
+        static initialize(context) {
+            $('.referencebrowser_trigger', context).each(function() {
+                new ReferenceBrowserLoader($(this));
+            });
+        }
+
+        constructor(elem) {
+            this.wrapper = elem.parent();
+            let sel = `[name="${elem.data('reference-name')}"]`;
+            this.target = $(sel, this.wrapper);
+            elem.off('click').on('click', this.load_ref_browser.bind(this));
+        }
+
+        load_ref_browser(evt) {
+            evt.preventDefault();
+            let ol = ts.ajax.overlay({
+                action: 'referencebrowser',
+                target: this.wrapper.attr('ajax:target'),
+                on_complete: this.on_complete.bind(this)
+            });
+            ol.ref_target = this.target;
+        }
+
+        on_complete(inst) {
+            let target = this.target;
+            $('a.addreference', inst.elem).each(function() {
+                new AddReferenceHandle($(this), target, inst);
+            });
+            $('a.removereference', inst.elem).each(function() {
+                new RemoveReferenceHandle($(this), target);
+            });
+        }
+    }
+
     class SettingsTabs {
 
         static initialize(context) {
@@ -147,105 +442,6 @@ var cone_protected = (function (exports, $, ts) {
                         .tsajax();
                 }
             });
-        }
-    }
-
-    class BatchedItems {
-
-        static initialize(context) {
-            new BatchedItems(
-                context,
-                '.batched_items_slice_size select',
-                '.batched_items_filter input',
-                'term'
-            );
-        }
-
-        constructor(context, size_selector, filter_selector, filter_name) {
-            this.context = context;
-            this.size_selector = size_selector;
-            this.filter_selector = filter_selector;
-            this.filter_name = filter_name;
-            this.bind_size();
-            this.bind_search();
-        }
-
-        bind_size() {
-            $(
-                this.size_selector,
-                this.context
-            ).off('change').on('change', function(evt) {
-                let selection = $(evt.currentTarget),
-                    option = $('option:selected', selection).first();
-                this.set_filter(selection, 'size', option.val());
-            }.bind(this));
-        }
-
-        bind_search() {
-            let search_input = $(this.filter_selector, this.context);
-            // reset filter input field if marked as empty filter
-            if (search_input.hasClass('empty_filter')) {
-                search_input.on('focus', function() {
-                    this.value = '';
-                    $(this).removeClass('empty_filter');
-                });
-            }
-            // prevent default action when pressing enter
-            search_input.off('keypress').on('keypress', function(evt) {
-                if (evt.keyCode == 13) {
-                    evt.preventDefault();
-                }
-            });
-            // trigger search when releasing enter
-            search_input.off('keyup').on('keyup', function(evt) {
-                if (evt.keyCode == 13) {
-                    evt.preventDefault();
-                    let input = $(evt.currentTarget);
-                    this.set_filter(input, this.filter_name, input.attr('value'));
-                }
-            }.bind(this));
-            // trigger search on input change
-            search_input.off('change').on('change', function(evt) {
-                evt.preventDefault();
-                let input = $(evt.currentTarget);
-                this.set_filter(input, this.filter_name, input.attr('value'));
-            }.bind(this));
-        }
-
-        set_filter(elem, param, val) {
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target')),
-                event = elem.attr('ajax:event');
-            target.params[param] = val;
-            if (elem.attr('ajax:path')) {
-                let path_event = elem.attr('ajax:path-event');
-                if (!path_event) {
-                    path_event = event;
-                }
-                // path always gets calculated from target
-                ts.ajax.path({
-                    path: target.path + target.query + '&' + param + '=' + val,
-                    event: path_event,
-                    target: target
-                });
-            }
-            let defs = event.split(':');
-            ts.ajax.trigger(defs[0], defs[1], target);
-        }
-    }
-
-    class TableToolBar extends BatchedItems {
-
-        static initialize(context) {
-            new TableToolBar(
-                context,
-                '.table_length select',
-                '.table_filter input',
-                'term'
-            );
-        }
-
-        constructor(context, size_selector, filter_selector, filter_name) {
-            super(context, size_selector, filter_selector, filter_name);
         }
     }
 
@@ -284,42 +480,19 @@ var cone_protected = (function (exports, $, ts) {
         }
     }
 
-    let keys = {
-        shift_down: false,
-        ctrl_down: false
-    };
+    class TableToolBar extends BatchedItems {
 
-    /**
-     * XXX: Use ``ts.KeyState`` instead.
-     *      Need a mechanism to attach and unload instances with ``ts.ajax`` first.
-     */
-    class KeyBinder {
-
-        constructor() {
-            $(window).on('keydown', this.key_down.bind(this));
-            $(window).on('keyup', this.key_up.bind(this));
+        static initialize(context) {
+            new TableToolBar(
+                context,
+                '.table_length select',
+                '.table_filter input',
+                'term'
+            );
         }
 
-        key_down(e) {
-            switch (e.keyCode || e.which) {
-                case 16:
-                    keys.shift_down = true;
-                    break;
-                case 17:
-                    keys.ctrl_down = true;
-                    break;
-            }
-        }
-
-        key_up(e) {
-            switch (e.keyCode || e.which) {
-                case 16:
-                    keys.shift_down = false;
-                       break;
-                case 17:
-                    keys.ctrl_down = false;
-                    break;
-            }
+        constructor(context, size_selector, filter_selector, filter_name) {
+            super(context, size_selector, filter_selector, filter_name);
         }
     }
 
@@ -464,20 +637,22 @@ var cone_protected = (function (exports, $, ts) {
     $(function() {
         new KeyBinder();
 
-        ts.ajax.register(SettingsTabs.initialize, true);
         ts.ajax.register(BatchedItems.initialize, true);
-        ts.ajax.register(TableToolBar.initialize, true);
-        ts.ajax.register(Sharing.initialize, true);
         ts.ajax.register(CopySupport.initialize, true);
-        //var refbrowser = yafowil.referencebrowser;
-        //ts.ajax.register(refbrowser.browser_binder.bind(refbrowser), true);
-        //ts.ajax.register(refbrowser.add_reference_binder.bind(refbrowser));
-        //ts.ajax.register(refbrowser.remove_reference_binder.bind(refbrowser));
+        ts.ajax.register(ReferenceBrowserLoader.initialize, true);
+        ts.ajax.register(ReferenceHandle.initialize, true);
+        ts.ajax.register(SettingsTabs.initialize, true);
+        ts.ajax.register(Sharing.initialize, true);
+        ts.ajax.register(TableToolBar.initialize, true);
     });
 
+    exports.AddReferenceHandle = AddReferenceHandle;
     exports.BatchedItems = BatchedItems;
     exports.CopySupport = CopySupport;
     exports.KeyBinder = KeyBinder;
+    exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
+    exports.ReferenceHandle = ReferenceHandle;
+    exports.RemoveReferenceHandle = RemoveReferenceHandle;
     exports.Selectable = Selectable;
     exports.SettingsTabs = SettingsTabs;
     exports.Sharing = Sharing;
