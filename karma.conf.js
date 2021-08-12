@@ -9,21 +9,6 @@ const jquery_files = [{
     included: true
 }];
 
-// const bootstrap_files = [{
-//     pattern: `${cone_static}/bootstrap/css/bootstrap.min.css`,
-//     included: true
-// }, {
-//     pattern: `${cone_static}/bootstrap-icons/fonts/*`,
-//     included: false,
-//     served: true
-// }, {
-//     pattern: `${cone_static}/bootstrap-icons/bootstrap-icons.css`,
-//     included: true
-// }, {
-//     pattern: `${cone_static}/bootstrap/js/bootstrap.bundle.min.js`,
-//     included: true
-// }];
-
 const treibstoff_files = [{
     pattern: `${node_modules}/treibstoff/src/**/*.js`,
     type: 'module',

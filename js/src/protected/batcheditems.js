@@ -1,77 +1,71 @@
 import $ from 'jquery';
+import ts from 'treibstoff';
 
 export class BatchedItems {
-    constructor(context) {
-        //
+
+    static initialize(context) {
+        new BatchedItems(
+            context,
+            '.batched_items_slice_size select',
+            '.batched_items_filter input',
+            'term'
+        );
     }
 
-    size_binder(context, size_selector) {
-         // use default selector if not passed
-        if (!size_selector) {
-            size_selector = '.batched_items_slice_size select';
-        }
-        // lookup selection field by selector
-        let selection = $(size_selector, context);
-        // handle filter on selection change
-        selection.off('change').on('change', function(event) {
-            let option = $('option:selected', $(this)).first();
-            let size = option.val();
-            cone.batcheditems_handle_filter(selection, 'size', size);
-        });
+    constructor(context, size_selector, filter_selector, filter_name) {
+        this.context = context;
+        this.size_selector = size_selector;
+        this.filter_selector = filter_selector;
+        this.filter_name = filter_name;
+        this.bind_size();
+        this.bind_search();
     }
 
-    filter_binder(context, filter_selector, filter_name) {
-        // use default selector if not passed
-        if (!filter_selector) {
-            filter_selector = '.batched_items_filter input';
-        }
-        // use default filter name if not passed
-        if (!filter_name) {
-            filter_name = 'term';
-        }
-        // lookup search field by selector
-        let searchfield = $(filter_selector, context);
-        // trigger search function
-        let trigger_search = function(input) {
-            let term = input.attr('value');
-            cone.batcheditems_handle_filter(input, filter_name, term);
-        };
+    bind_size() {
+        $(
+            this.size_selector,
+            this.context
+        ).off('change').on('change', function(evt) {
+            let selection = $(evt.currentTarget),
+                option = $('option:selected', selection).first();
+            this.set_filter(selection, 'size', option.val());
+        }.bind(this));
+    }
+
+    bind_search() {
+        let search_input = $(this.filter_selector, this.context);
         // reset filter input field if marked as empty filter
-        if (searchfield.hasClass('empty_filter')) {
-            searchfield.on('focus', function() {
-            this.value = '';
-            $(this).removeClass('empty_filter');
+        if (search_input.hasClass('empty_filter')) {
+            search_input.on('focus', function() {
+                this.value = '';
+                $(this).removeClass('empty_filter');
             });
         }
         // prevent default action when pressing enter
-        searchfield.off('keypress').on('keypress', function(event) {
-            if (event.keyCode == 13) {
-                event.preventDefault();
+        search_input.off('keypress').on('keypress', function(evt) {
+            if (evt.keyCode == 13) {
+                evt.preventDefault();
             }
         });
         // trigger search when releasing enter
-        searchfield.off('keyup').on('keyup', function(event) {
-            if (event.keyCode == 13) {
-                event.preventDefault();
-                trigger_search($(this));
+        search_input.off('keyup').on('keyup', function(evt) {
+            if (evt.keyCode == 13) {
+                evt.preventDefault();
+                let input = $(evt.currentTarget);
+                this.set_filter(input, this.filter_name, input.attr('value'));
             }
-        });
+        }.bind(this));
         // trigger search on input change
-        searchfield.off('change').on('change', function(event) {
-            event.preventDefault();
-            trigger_search($(this));
-        });
+        search_input.off('change').on('change', function(evt) {
+            evt.preventDefault();
+            let input = $(evt.currentTarget);
+            this.set_filter(input, this.filter_name, input.attr('value'));
+        }.bind(this));
     }
 
-    items_binder(context, size_selector, filter_selector) {
-       this.size_binder(context, size_selector);
-       this.filter_binder(context, filter_selector);
-    }
-
-    handle_filter(elem, param, val) {
+    set_filter(elem, param, val) {
         let target = ts.ajax.parsetarget(elem.attr('ajax:target')),
             event = elem.attr('ajax:event');
-
         target.params[param] = val;
         if (elem.attr('ajax:path')) {
             let path_event = elem.attr('ajax:path-event');

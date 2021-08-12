@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 export class CopySupport {
+
     constructor(context) {
         this.context = context;
 

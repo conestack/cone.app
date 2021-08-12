@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 export class Settingstabs {
+
     constructor(context) {
         this.elems = $('ul.settingstabs a', context);
 

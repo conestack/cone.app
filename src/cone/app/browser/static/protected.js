@@ -6,7 +6,7 @@
  *     treibstoff
  */
 
-if (typeof(window['yafowil']) == "undefined") yafowil = {};
+if (window.yafowil === undefined) yafowil = {};
 
 (function($, ts) {
 
@@ -17,8 +17,8 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
 
         // add binders to treibstoff binding callbacks
         ts.ajax.register(cone.settingstabsbinder.bind(cone), true);
-        ts.ajax.register(cone.batcheditemsbinder.bind(cone), true);
-        ts.ajax.register(cone.tabletoolbarbinder.bind(cone), true);
+//        ts.ajax.register(cone.batcheditemsbinder.bind(cone), true);
+//        ts.ajax.register(cone.tabletoolbarbinder.bind(cone), true);
         ts.ajax.register(cone.sharingbinder.bind(cone), true);
         ts.ajax.register(cone.copysupportbinder.bind(cone), true);
         var refbrowser = yafowil.referencebrowser;
@@ -102,6 +102,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         },
 
         batcheditems_size_binder: function(context, size_selector) {
+            ts.deprecate('batcheditems_size_binder', 'BatchedItems', 'next release');
             // use default selector if not passed
             if (!size_selector) {
                 size_selector = '.batched_items_slice_size select';
@@ -119,6 +120,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         batcheditems_filter_binder: function(context,
                                              filter_selector,
                                              filter_name) {
+            ts.deprecate('batcheditems_filter_binder', 'BatchedItems', 'next release');
             // use default selector if not passed
             if (!filter_selector) {
                 filter_selector = '.batched_items_filter input';
@@ -161,18 +163,18 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         },
 
-        batcheditemsbinder: function(context, size_selector, filter_selector) {
-            cone.batcheditems_size_binder(context, size_selector);
-            cone.batcheditems_filter_binder(context, filter_selector);
-        },
+//        batcheditemsbinder: function(context, size_selector, filter_selector) {
+//            cone.batcheditems_size_binder(context, size_selector);
+//            cone.batcheditems_filter_binder(context, filter_selector);
+//        },
 
-        tabletoolbarbinder: function(context) {
-            this.batcheditemsbinder(
-                context,
-                '.table_length select',
-                '.table_filter input'
-            );
-        },
+//        tabletoolbarbinder: function(context) {
+//            this.batcheditemsbinder(
+//                context,
+//                '.table_length select',
+//                '.table_filter input'
+//            );
+//        },
 
         sharingbinder: function(context) {
             var checkboxes = $('input.add_remove_role_for_principal', context);

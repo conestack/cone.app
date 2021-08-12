@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 export class Sharing {
+
     constructor(context) {
         //
     }

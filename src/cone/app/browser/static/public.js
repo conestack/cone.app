@@ -13,7 +13,7 @@ if (window.cone === undefined) {
 
 (function($, ts) {
 
-    cone.LiveSearch = class {
+    class LiveSearch {
 
         static initialize(context, factory=null) {
             let elem = $('input#search-text', context);
@@ -60,8 +60,10 @@ if (window.cone === undefined) {
         }
     }
 
+    window.cone.LiveSearch = LiveSearch;
+
     $(function() {
-        ts.ajax.register(CustomLiveSearch.initialize, true);
+        ts.ajax.register(LiveSearch.initialize, true);
     });
 
 })(jQuery, treibstoff);

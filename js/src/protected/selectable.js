@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 export class Selectable {
+
     constructor(options) {
         // on_firstclick, on_select callbacks in options
         this.options = options;

@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 export class ReferenceBrowser {
+
     constructor(context) {
         // target: null
     }

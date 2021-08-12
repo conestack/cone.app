@@ -3,6 +3,7 @@ import $ from 'jquery';
 // keydown / keyup binder for shift and ctrl keys
 
 export class KeyBinder {
+
     constructor() {
         this._keydown = this.key_down.bind(this);
         this._keyup = this.key_up.bind(this);
