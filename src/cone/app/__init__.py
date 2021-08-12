@@ -39,10 +39,9 @@ cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 cfg.js = Properties()
 cfg.js.public = [
     'treibstoff-static/treibstoff.bundle.js',
-    'static/public.js'
+    'static/cone.public.js'
 ]
 cfg.js.protected = [
-    'static/protected.js',
     'static/cone.protected.js'
 ]
 
@@ -83,8 +82,7 @@ cfg.merged.js.public = [
     (browser.static_resources, 'jquery.migrate-1.2.1.js'),
     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
     (browser.static_resources, 'bootstrap/js/bootstrap.js'),
-    (browser.static_resources, 'typeahead/typeahead.bundle.js'),
-    (browser.static_resources, 'cookie_functions.js')
+    (browser.static_resources, 'typeahead/typeahead.bundle.js')
 ]
 
 # production
@@ -93,8 +91,7 @@ cfg.merged.js.public = [
 #     (browser.static_resources, 'jquery.migrate-1.2.1.min.js'),
 #     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
 #     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
-#     (browser.static_resources, 'typeahead/typeahead.bundle.js'),
-#     (browser.static_resources, 'cookie_functions.js')
+#     (browser.static_resources, 'typeahead/typeahead.bundle.js')
 # ]
 
 cfg.merged.js.protected = list()
