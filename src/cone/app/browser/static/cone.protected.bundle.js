@@ -137,6 +137,41 @@ var cone_protected = (function (exports, $, ts) {
         }
     }
 
+    class Sharing {
+
+        static initialize(context) {
+            new Sharing(context);
+        }
+
+        constructor(context) {
+            let checkboxes = $('input.add_remove_role_for_principal', context);
+            checkboxes.off('change').on('change', this.set_principal_role);
+        }
+
+        set_principal_role(evt) {
+            evt.preventDefault();
+            let checkbox = $(this);
+            let action;
+            if (this.checked) {
+                action = 'add_principal_role';
+            } else {
+                action = 'remove_principal_role';
+            }
+            let url = checkbox.parent().attr('ajax:target');
+            let params = {
+                id: checkbox.attr('name'),
+                role: checkbox.attr('value')
+            };
+            ts.ajax.action({
+                name: action,
+                mode: 'NONE',
+                selector: 'NONE',
+                url: url,
+                params: params
+            });
+        }
+    }
+
     let keys = {
         shift_down: false,
         ctrl_down: false
@@ -182,7 +217,7 @@ var cone_protected = (function (exports, $, ts) {
         ts.ajax.register(SettingsTabs.initialize, true);
         ts.ajax.register(BatchedItems.initialize, true);
         ts.ajax.register(TableToolBar.initialize, true);
-        //ts.ajax.register(cone.Sharing.bind(cone), true);
+        ts.ajax.register(Sharing.initialize, true);
         //ts.ajax.register(cone.CopySupport.bind(cone), true);
         //var refbrowser = yafowil.referencebrowser;
         //ts.ajax.register(refbrowser.browser_binder.bind(refbrowser), true);
@@ -193,6 +228,7 @@ var cone_protected = (function (exports, $, ts) {
     exports.BatchedItems = BatchedItems;
     exports.KeyBinder = KeyBinder;
     exports.SettingsTabs = SettingsTabs;
+    exports.Sharing = Sharing;
     exports.TableToolBar = TableToolBar;
     exports.keys = keys;
 

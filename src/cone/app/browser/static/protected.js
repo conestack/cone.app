@@ -11,7 +11,6 @@ if (window.yafowil === undefined) yafowil = {};
 (function($, ts) {
 
     $(document).ready(function() {
-        ts.ajax.register(cone.sharingbinder.bind(cone), true);
         ts.ajax.register(cone.copysupportbinder.bind(cone), true);
         var refbrowser = yafowil.referencebrowser;
         ts.ajax.register(refbrowser.browser_binder.bind(refbrowser), true);
@@ -103,32 +102,6 @@ if (window.yafowil === undefined) yafowil = {};
             searchfield.off('change').on('change', function(event) {
                 event.preventDefault();
                 trigger_search($(this));
-            });
-        },
-
-        sharingbinder: function(context) {
-            var checkboxes = $('input.add_remove_role_for_principal', context);
-            checkboxes.off('change').on('change', function(event) {
-                event.preventDefault();
-                var checkbox = $(this);
-                var action;
-                if (this.checked) {
-                    action = 'add_principal_role';
-                } else {
-                    action = 'remove_principal_role';
-                }
-                var url = checkbox.parent().attr('ajax:target');
-                var params = {
-                    id: checkbox.attr('name'),
-                    role: checkbox.attr('value')
-                };
-                ts.ajax.action({
-                    name: action,
-                    mode: 'NONE',
-                    selector: 'NONE',
-                    url: url,
-                    params: params
-                });
             });
         },
 
