@@ -11,14 +11,8 @@ if (window.yafowil === undefined) yafowil = {};
 (function($, ts) {
 
     $(document).ready(function() {
-
-        // initial binding
-        cone.key_binder();
-
         // add binders to treibstoff binding callbacks
         ts.ajax.register(cone.settingstabsbinder.bind(cone), true);
-//        ts.ajax.register(cone.batcheditemsbinder.bind(cone), true);
-//        ts.ajax.register(cone.tabletoolbarbinder.bind(cone), true);
         ts.ajax.register(cone.sharingbinder.bind(cone), true);
         ts.ajax.register(cone.copysupportbinder.bind(cone), true);
         var refbrowser = yafowil.referencebrowser;
@@ -31,33 +25,6 @@ if (window.yafowil === undefined) yafowil = {};
 
         // object to store global flags
         flags: {},
-
-        // keyboard control keys status
-        keys: {},
-
-        // keydown / keyup binder for shift and ctrl keys
-        key_binder: function() {
-            $(document).on('keydown', function(event) {
-                switch (event.keyCode || event.which) {
-                    case 16:
-                        cone.keys.shift_down = true;
-                        break;
-                    case 17:
-                        cone.keys.ctrl_down = true;
-                        break;
-                }
-            });
-            $(document).on('keyup', function(event) {
-                switch (event.keyCode || event.which) {
-                    case 16:
-                        cone.keys.shift_down = false;
-                           break;
-                    case 17:
-                        cone.keys.ctrl_down = false;
-                        break;
-                }
-            });
-        },
 
         settingstabsbinder: function(context) {
             $('ul.settingstabs a', context).on('click', function(event) {
@@ -162,19 +129,6 @@ if (window.yafowil === undefined) yafowil = {};
                 trigger_search($(this));
             });
         },
-
-//        batcheditemsbinder: function(context, size_selector, filter_selector) {
-//            cone.batcheditems_size_binder(context, size_selector);
-//            cone.batcheditems_filter_binder(context, filter_selector);
-//        },
-
-//        tabletoolbarbinder: function(context) {
-//            this.batcheditemsbinder(
-//                context,
-//                '.table_length select',
-//                '.table_filter input'
-//            );
-//        },
 
         sharingbinder: function(context) {
             var checkboxes = $('input.add_remove_role_for_principal', context);

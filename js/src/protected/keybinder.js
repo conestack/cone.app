@@ -1,23 +1,28 @@
 import $ from 'jquery';
 
-// keydown / keyup binder for shift and ctrl keys
+export let keys = {
+    shift_down: false,
+    ctrl_down: false
+};
 
+/**
+ * XXX: Use ``ts.KeyState`` instead.
+ *      Need a mechanism to attach and unload instances with ``ts.ajax`` first.
+ */
 export class KeyBinder {
 
     constructor() {
-        this._keydown = this.key_down.bind(this);
-        this._keyup = this.key_up.bind(this);
-        $(document).on('keydown', this._keydown);
-        $(document).on('keyup', this._keyup);
+        $(window).on('keydown', this.key_down.bind(this));
+        $(window).on('keyup', this.key_up.bind(this));
     }
 
     key_down(e) {
         switch (e.keyCode || e.which) {
             case 16:
-                cone.keys.shift_down = true;
+                keys.shift_down = true;
                 break;
             case 17:
-                cone.keys.ctrl_down = true;
+                keys.ctrl_down = true;
                 break;
         }
     }
@@ -25,10 +30,10 @@ export class KeyBinder {
     key_up(e) {
         switch (e.keyCode || e.which) {
             case 16:
-                cone.keys.shift_down = false;
+                keys.shift_down = false;
                    break;
             case 17:
-                cone.keys.ctrl_down = false;
+                keys.ctrl_down = false;
                 break;
         }
     }
