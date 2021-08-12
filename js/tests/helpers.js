@@ -407,9 +407,6 @@ export function create_empty_item() {
 ///////////////////////////////////////////////////////////////////////////////
 
 export function create_searchbar_elem(elem) {
-    if ($('#layout').length === 0) {
-      create_layout_elem();
-    }
     // create dummy searchber element
     let searchbar_html = `
         <div id="cone-searchbar">
@@ -447,6 +444,7 @@ export function create_searchbar_elem(elem) {
     } else {
       $('#layout').append(searchbar_html);
     }
+    return searchbar_html;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

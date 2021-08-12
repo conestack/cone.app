@@ -116,6 +116,9 @@ body {
 #cone-searchbar .input-group {
   background-color: #F5F5FA;
 }
+#cone-searchbar .loading-dots {
+  color: #717176;
+}
 #cone-searchbar #searchbar-button {
   background-color: #5bc0de;
   color: #ECF5FD;

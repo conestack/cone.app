@@ -26,6 +26,9 @@
 #topnav #cone-searchbar {
   margin: 0 1rem;
 }
+#topnav #cone-searchbar .search-result span::before {
+  margin-right: 10px;
+}
 #topnav ul {
   margin-bottom: 0;
   list-style: none;
@@ -69,6 +72,10 @@
 }
 
 /* ----- searchbar ----- */
+#topnav.mobile #livesearch-input {
+  margin-bottom: 20px;
+}
+
 #cone-searchbar {
   min-height: 2.2rem;
 }

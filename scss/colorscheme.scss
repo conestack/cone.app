@@ -116,7 +116,6 @@ body {
   background-color: $menus;
 }
 
-
 /* ----- searchbar ----- */
 #cone-searchbar {
   .dropdown-title, span {
@@ -129,6 +128,10 @@ body {
 
   .input-group {
     background-color: $sb;
+  }
+
+  .loading-dots {
+    color: $fmedium;
   }
 
   #searchbar-button {

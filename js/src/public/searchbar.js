@@ -40,8 +40,11 @@ export class Searchbar extends ViewPortAware {
     }
 
     livesearch_handle(e) {
+        
+        this.dd.on('click', (e) => {
+            e.preventDefault();
+        });
         // TODO: work on livesearch
-        this.dd.hide();
         let dots = $(
             `<div class="loading-dots">
                 <i class="bi bi-circle-fill"></i>
@@ -53,30 +56,47 @@ export class Searchbar extends ViewPortAware {
         this.result_header.append(dots);
 
         let timeout = 0;
+        let characters = 0;
 
-        this.search_text.off().on('keydown', () => {
-            this.dd.show();
-            $('.search-result').remove();
-            $('.loading-dots').show();
-            clearTimeout(timeout);
-
-            timeout = setTimeout(() => {
-                // send request to server
-                let data = [];
-                // get data from server
-                data = ['result1', 'result2', 'result3'];
-                this.display_results(data);
-            }, 800);
+        this.search_text.off().on('keydown', (e) => {
+            e.preventDefault();
         });
-    }
 
-    display_results(data) {
-        $('.loading-dots').hide();
-
-        for (let result of data) {
-            let li_elem = $(`<li class="search-result">${result}</li>`);
-            this.results.append(li_elem);
-        }
+        this.search_text.off().on('keyup', (e) => {
+            if (e.code === 'Backspace' && characters > 0) {
+                characters -= 1;
+            } else {
+                characters += 1;
+            }
+            if (characters >= 3) {
+                $('.search-result').remove();
+                $('.loading-dots').show();
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    $('.loading-dots').hide();
+                    ts.ajax.request({
+                        url: 'livesearch',
+                        params: {
+                            term: this.search_text.val(),
+                        },
+                        type: 'json',
+                        success: (data, status, request) => {
+                            console.log('request response received here');
+                            console.log(data);
+                            for (let result of data) {
+                                let res = this.render_suggestion(result);
+                                let li_elem = $(`<li class="search-result">${res}</li>`);
+                                this.results.append(li_elem);
+                            }
+                        }
+                    });
+                }, 800);
+            } else {
+                $('.search-result').remove();
+                $('.loading-dots').show();
+                clearTimeout(timeout);
+            }
+        });
     }
 
     viewport_changed(e) {
@@ -101,6 +121,6 @@ export class Searchbar extends ViewPortAware {
 
     /* istanbul ignore next */
     render_suggestion(suggestion) {
-        return `<span class="${suggestion.icon}"></span>${suggestion.value}`;
+        return `<span class="${suggestion.icon}">${suggestion.value}</span>`;
     }
 }

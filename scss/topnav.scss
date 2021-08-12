@@ -34,6 +34,10 @@ $threshold_mobile: 560px;
 
   #cone-searchbar {
     margin: 0 1rem;
+
+    .search-result span::before {
+      margin-right: 10px;
+    }
   }
 
   ul {
@@ -87,6 +91,11 @@ $threshold_mobile: 560px;
 }
 
 /* ----- searchbar ----- */
+
+#topnav.mobile #livesearch-input {
+  margin-bottom: 20px;
+}
+
 #cone-searchbar {
   min-height: 2.2rem;
 

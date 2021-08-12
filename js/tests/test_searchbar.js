@@ -2,11 +2,66 @@ import {Searchbar} from '../src/public/searchbar.js';
 import {ViewPortAware} from '../src/public/viewport.js';
 import {karma_vp_states} from './karma_viewport_states.js';
 import * as helpers from './helpers.js';
+import {ajax} from '../../node_modules/treibstoff/src/ajax.js';
+
+
+QUnit.module('server request', hooks => {
+    let ajax_orgin = $.ajax;
+
+    hooks.afterEach(() => {
+        // Reset $.ajax patch if any
+        $.ajax = ajax_orgin;
+    });
+
+    QUnit.test.only('Test', assert => {
+        assert.ok(true);
+
+        // create dummy element
+        helpers.create_topnav_elem();
+        let elem = helpers.create_searchbar_elem($('#topnav'));
+
+        // patch ajax
+        let response_data;
+        $.ajax = function(opts) {
+            opts.success(response_data, '200', {});
+        };
+
+        // create mock json
+        response_data = [{
+            "icon":"bi bi-circle",
+            "value":"Example result 1",
+            "target":"example-link1"
+        }, {
+            "icon":"bi bi-heart",
+            "value":"Example result 2",
+            "target":"example-link2"
+        }];
+
+        // create Searchbar obj
+        let sb = new Searchbar($('body'));
+        // let evt = new $.Event('keyup');
+        // evt.code = 'a';
+
+        
+        sb.search_text.trigger('click');
+
+        for(let i=0; i<4; i++) {
+            var e = $.Event('keypress');
+            e.code = 'KeyA'; // Character 'A'
+            sb.search_text.trigger(evt);
+        }
+
+
+        assert.strictEqual($('.loading-dots').css('display'), 'none');
+
+
+    });
+});
 
 ///////////////////////////////////////////////////////////////////////////////
 // Searchbar tests
 ///////////////////////////////////////////////////////////////////////////////
-QUnit.test.only('test sb visual', assert => {
+QUnit.test.skip('test sb visual', assert => {
     // TEMP:
     // to develop livesearch functions
 

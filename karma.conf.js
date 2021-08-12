@@ -113,7 +113,7 @@ module.exports = function(config) {
         ],
         files: files,
         browsers: [
-            'Chrome'
+            'ChromeHeadless'
         ],
         viewport: viewport,
         singlerun: true,
