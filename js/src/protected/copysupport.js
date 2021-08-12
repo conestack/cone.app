@@ -1,8 +1,16 @@
 import $ from 'jquery';
+import ts from 'treibstoff';
 
 export class CopySupport {
 
+    static initialize(context) {
+        new CopySupport(context);
+    }
+
     constructor(context) {
+        this.cut_cookie = 'cone.app.copysupport.cut';
+        this.copy_cookie = 'cone.app.copysupport.copy';
+
         this.context = context;
 
         this.paste_action = $('a#toolbaraction-paste', context);
@@ -28,17 +36,10 @@ export class CopySupport {
         this.read_selected_from_cookie(this.copy_cookie, '');
     }
 
-    // cut_cookie: 'cone.app.copysupport.cut',
-    // copy_cookie: 'cone.app.copysupport.copy',
-
     on_firstclick(selectable, elem) {
-        // tmp
-        console.log('click');
-        // end tmp
     }
 
     on_select(selectable) {
-        //
     }
 
     write_selected_to_cookie(name) {
@@ -48,7 +49,7 @@ export class CopySupport {
             ids.push($(this).attr('ajax:target'));
         });
         let cookie = ids.join('::');
-        createCookie(name, cookie);
+        ts.create_cookie(name, cookie);
         if (cookie.length) {
             $(this.paste_action).removeClass('disabled');
         } else {
@@ -57,7 +58,7 @@ export class CopySupport {
     }
 
     read_selected_from_cookie(name, css) {
-        let cookie = readCookie(name);
+        let cookie = ts.read_cookie(name);
         if (!cookie) {
             return;
         }
@@ -80,24 +81,24 @@ export class CopySupport {
         });
     }
 
-    handle_cut(e) {
-        e.preventDefault();
-        createCookie(this.copy_cookie, '', 0);
+    handle_cut(evt) {
+        evt.preventDefault();
+        ts.create_cookie(this.copy_cookie, '', 0);
         this.write_selected_to_cookie(this.cut_cookie);
         this.copyable.removeClass('copysupport_cut');
         $(this.selectable.selected).addClass('copysupport_cut');
     }
 
-    handle_copy(e) {
-        e.preventDefault();
-        createCookie(this.cut_cookie, '', 0);
+    handle_copy(evt) {
+        evt.preventDefault();
+        ts.create_cookie(this.cut_cookie, '', 0);
         this.write_selected_to_cookie(this.copy_cookie);
         this.copyable.removeClass('copysupport_cut');
     }
 
-    handle_paste(e) {
-        e.preventDefault();
-        let elem = $(e.currentTarget);
+    handle_paste(evt) {
+        evt.preventDefault();
+        let elem = $(evt.currentTarget);
         if (elem.hasClass('disabled')) {
             return;
         }

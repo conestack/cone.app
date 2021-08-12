@@ -7,6 +7,118 @@ var cone_protected = (function (exports, $, ts) {
     }
 
 
+    class CopySupport {
+
+        static initialize(context) {
+            new CopySupport(context);
+        }
+
+        constructor(context) {
+            this.cut_cookie = 'cone.app.copysupport.cut';
+            this.copy_cookie = 'cone.app.copysupport.copy';
+
+            this.context = context;
+
+            this.paste_action = $('a#toolbaraction-paste', context);
+            this.paste_action.off('click').on('click', this.handle_paste.bind(this));
+
+            this.copyable = $('table tr.selectable.copysupportitem', context);
+            if (!this.copyable.length) {
+                return;
+            }
+
+            this.cut_action = $('a#toolbaraction-cut', context);
+            this.cut_action.off('click').on('click', this.handle_cut.bind(this));
+
+            this.copy_action = $('a#toolbaraction-copy', context);
+            this.copy_action.off('click').on('click', this.handle_copy.bind(this));
+
+            this.selectable = this.copyable.selectable({
+                on_firstclick: this.on_firstclick.bind(this),
+                on_select: this.on_select.bind(this)
+            }).data('selectable');
+
+            this.read_selected_from_cookie(this.cut_cookie, 'copysupport_cut');
+            this.read_selected_from_cookie(this.copy_cookie, '');
+        }
+
+        on_firstclick(selectable, elem) {
+        }
+
+        on_select(selectable) {
+        }
+
+        write_selected_to_cookie(name) {
+            let selected = $(this.selectable.selected);
+            let ids = new Array();
+            selected.each(function() {
+                ids.push($(this).attr('ajax:target'));
+            });
+            let cookie = ids.join('::');
+            ts.create_cookie(name, cookie);
+            if (cookie.length) {
+                $(this.paste_action).removeClass('disabled');
+            } else {
+                $(this.paste_action).addClass('disabled');
+            }
+        }
+
+        read_selected_from_cookie(name, css) {
+            let cookie = ts.read_cookie(name);
+            if (!cookie) {
+                return;
+            }
+            let ids = cookie.split('::');
+            let that = this;
+            let elem, target;
+            $('table tr.selectable', this.context).each(function() {
+                elem = $(this);
+                target = elem.attr('ajax:target');
+                for (let idx in ids) {
+                    if (ids[idx] == target) {
+                        elem.addClass('selected');
+                        if (css) {
+                            elem.addClass(css);
+                        }
+                        that.selectable.add(elem.get(0));
+                        break;
+                    }
+                }
+            });
+        }
+
+        handle_cut(evt) {
+            evt.preventDefault();
+            ts.create_cookie(this.copy_cookie, '', 0);
+            this.write_selected_to_cookie(this.cut_cookie);
+            this.copyable.removeClass('copysupport_cut');
+            $(this.selectable.selected).addClass('copysupport_cut');
+        }
+
+        handle_copy(evt) {
+            evt.preventDefault();
+            ts.create_cookie(this.cut_cookie, '', 0);
+            this.write_selected_to_cookie(this.copy_cookie);
+            this.copyable.removeClass('copysupport_cut');
+        }
+
+        handle_paste(evt) {
+            evt.preventDefault();
+            let elem = $(evt.currentTarget);
+            if (elem.hasClass('disabled')) {
+                return;
+            }
+            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            ts.ajax.action({
+                name: 'paste',
+                mode: 'NONE',
+                selector: 'NONE',
+                url: target.url,
+                params: target.params
+            });
+        }
+    }
+
     class SettingsTabs {
 
         static initialize(context) {
@@ -211,6 +323,144 @@ var cone_protected = (function (exports, $, ts) {
         }
     }
 
+    class Selectable {
+
+        constructor(options) {
+            // on_firstclick, on_select callbacks in options
+            this.options = options;
+            this.selected = [];
+            this.select_direction = 0;
+            this.firstclick = true;
+        }
+
+        reset() {
+            this.selected = [];
+        }
+
+        add(elem) {
+            this.remove(elem);
+            this.selected.push(elem);
+        }
+
+        remove(elem) {
+            let reduced = $.grep(this.selected, function(item, index) {
+                return item !== elem;
+            });
+            this.selected = reduced;
+        }
+
+        select_no_key(container, elem) {
+            container.children().removeClass('selected');
+            elem.addClass('selected');
+            this.reset();
+            this.add(elem.get(0));
+        }
+
+        select_ctrl_down(elem) {
+            elem.toggleClass('selected');
+            if (elem.hasClass('selected')) {
+                this.add(elem.get(0));
+            } else {
+                this.remove(elem.get(0));
+            }
+        }
+
+        get_nearest(container, current_index) {
+            // get nearest next selected item from current index
+            let selected = container.children('.selected');
+            // -1 means no other selected item
+            let nearest = -1;
+            let selected_index, selected_elem;
+            $(selected).each(function() {
+                selected_elem = $(this);
+                selected_index = selected_elem.index();
+                if (nearest == -1) {
+                    nearest = selected_index;
+                } else if (current_index > selected_index) {
+                    if (this.select_direction > 0) {
+                        if (selected_index < nearest) {
+                            nearest = selected_index;
+                        }
+                    } else {
+                        if (selected_index > nearest) {
+                            nearest = selected_index;
+                        }
+                    }
+                } else if (current_index < selected_index) {
+                    if (selected_index < nearest) {
+                        nearest = selected_index;
+                    }
+                }
+            });
+            return nearest;
+        }
+
+        select_shift_down(container, elem) {
+            let current_index = elem.index();
+            let nearest = this.get_nearest(container, current_index);
+            if (nearest == -1) {
+                elem.addClass('selected');
+                this.add(elem.get(0));
+            } else {
+                container.children().removeClass('selected');
+                let start, end;
+                if (current_index < nearest) {
+                    this.select_direction = -1;
+                    start = current_index;
+                    end = nearest;
+                } else {
+                    this.select_direction = 1;
+                    start = nearest;
+                    end = current_index;
+                }
+                this.reset();
+                let that = this;
+                container.children()
+                         .slice(start, end + 1)
+                         .addClass('selected')
+                         .each(function() {
+                             that.add(this);
+                         });
+            }
+        }
+
+        handle_click(evt) {
+            evt.preventDefault();
+            let elem = $(evt.currentTarget);
+            let container = elem.parent();
+            if (!keys.ctrl_down && !keys.shift_down) {
+                this.select_no_key(container, elem);
+            } else if (keys.ctrl_down) {
+                this.select_ctrl_down(elem);
+            } else if (keys.shift_down) {
+                this.select_shift_down(container, elem);
+            }
+            if (this.firstclick) {
+                this.firstclick = false;
+                this.notify('on_firstclick', this, elem);
+            }
+            this.notify('on_select', this);
+        }
+
+        notify(e, ...args) {
+            if (this.options && this.options[e]) {
+                this.options[e](...args);
+            }
+        }
+
+        bind(elem) {
+            elem.off('click').on('click', this.handle_click.bind(this));
+        }
+    }
+
+    // Selectable items
+    $.fn.selectable = function(options) {
+        var api = new Selectable(options);
+        api.bind(this);
+        this.data('selectable', api);
+        return this;
+    };
+
     $(function() {
         new KeyBinder();
 
@@ -218,7 +468,7 @@ var cone_protected = (function (exports, $, ts) {
         ts.ajax.register(BatchedItems.initialize, true);
         ts.ajax.register(TableToolBar.initialize, true);
         ts.ajax.register(Sharing.initialize, true);
-        //ts.ajax.register(cone.CopySupport.bind(cone), true);
+        ts.ajax.register(CopySupport.initialize, true);
         //var refbrowser = yafowil.referencebrowser;
         //ts.ajax.register(refbrowser.browser_binder.bind(refbrowser), true);
         //ts.ajax.register(refbrowser.add_reference_binder.bind(refbrowser));
@@ -226,7 +476,9 @@ var cone_protected = (function (exports, $, ts) {
     });
 
     exports.BatchedItems = BatchedItems;
+    exports.CopySupport = CopySupport;
     exports.KeyBinder = KeyBinder;
+    exports.Selectable = Selectable;
     exports.SettingsTabs = SettingsTabs;
     exports.Sharing = Sharing;
     exports.TableToolBar = TableToolBar;

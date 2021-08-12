@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import {keys} from './keybinder.js';
 
 export class Selectable {
 
@@ -101,15 +102,15 @@ export class Selectable {
         }
     }
 
-    handle_click(e) {
-        e.preventDefault();
-        let elem = $(e.currentTarget);
+    handle_click(evt) {
+        evt.preventDefault();
+        let elem = $(evt.currentTarget);
         let container = elem.parent();
-        if (!cone.keys.ctrl_down && !cone.keys.shift_down) {
+        if (!keys.ctrl_down && !keys.shift_down) {
             this.select_no_key(container, elem);
-        } else if (cone.keys.ctrl_down) {
+        } else if (keys.ctrl_down) {
             this.select_ctrl_down(elem);
-        } else if (cone.keys.shift_down) {
+        } else if (keys.shift_down) {
             this.select_shift_down(container, elem);
         }
         if (this.firstclick) {
@@ -129,3 +130,11 @@ export class Selectable {
         elem.off('click').on('click', this.handle_click.bind(this));
     }
 }
+
+// Selectable items
+$.fn.selectable = function(options) {
+    var api = new Selectable(options);
+    api.bind(this);
+    this.data('selectable', api);
+    return this;
+};
