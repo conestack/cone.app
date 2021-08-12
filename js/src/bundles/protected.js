@@ -21,6 +21,7 @@ export * from '../selectable.js';
 export * from '../settingstabs.js';
 export * from '../sharing.js';
 export * from '../tabletoolbar.js';
+export * from '../utils.js';
 
 $(function() {
     new KeyBinder();

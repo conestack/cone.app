@@ -6,6 +6,9 @@ if (window.cone === undefined) {
     window.cone = {};
 }
 Object.assign(window.cone, exports);
+
+window.createCookie = createCookie;
+window.readCookie = readCookie;
 `;
 
 export default args => {

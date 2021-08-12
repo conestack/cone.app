@@ -554,6 +554,15 @@
         return this;
     };
 
+    function createCookie(name, value, days) {
+        ts.deprecate('createCookie', 'ts.create_cookie', '1.1');
+        ts.create_cookie(name, value, days);
+    }
+    function readCookie(name) {
+        ts.deprecate('readCookie', 'ts.read_cookie', '1.1');
+        return ts.read_cookie(name);
+    }
+
     $(function() {
         new KeyBinder();
         ts.ajax.register(BatchedItems.initialize, true);
@@ -579,7 +588,9 @@
     exports.batcheditems_filter_binder = batcheditems_filter_binder;
     exports.batcheditems_handle_filter = batcheditems_handle_filter;
     exports.batcheditems_size_binder = batcheditems_size_binder;
+    exports.createCookie = createCookie;
     exports.keys = keys;
+    exports.readCookie = readCookie;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
@@ -588,6 +599,9 @@
         window.cone = {};
     }
     Object.assign(window.cone, exports);
+
+    window.createCookie = createCookie;
+    window.readCookie = readCookie;
 
 
     return exports;
