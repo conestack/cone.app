@@ -1,9 +1,9 @@
 import {BatchedItems} from "./batcheditems.js";
 
-export class TableToolBar extends BatchedItems {
+export class TableToolbar extends BatchedItems {
 
     static initialize(context) {
-        new TableToolBar(
+        new TableToolbar(
             context,
             '.table_length select',
             '.table_filter input',

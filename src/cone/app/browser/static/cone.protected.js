@@ -1,14 +1,7 @@
-var cone_protected = (function (exports, $, ts) {
+(function (exports, $, ts) {
     'use strict';
 
-    
-    if (window.cone === undefined) {
-        window.cone = {};
-    }
-
-
     class BatchedItems {
-
         static initialize(context) {
             new BatchedItems(
                 context,
@@ -17,7 +10,6 @@ var cone_protected = (function (exports, $, ts) {
                 'term'
             );
         }
-
         constructor(context, size_selector, filter_selector, filter_name) {
             this.context = context;
             this.size_selector = size_selector;
@@ -26,7 +18,6 @@ var cone_protected = (function (exports, $, ts) {
             this.bind_size();
             this.bind_search();
         }
-
         bind_size() {
             $(
                 this.size_selector,
@@ -37,23 +28,19 @@ var cone_protected = (function (exports, $, ts) {
                 this.set_filter(selection, 'size', option.val());
             }.bind(this));
         }
-
         bind_search() {
             let search_input = $(this.filter_selector, this.context);
-            // reset filter input field if marked as empty filter
             if (search_input.hasClass('empty_filter')) {
                 search_input.on('focus', function() {
                     this.value = '';
                     $(this).removeClass('empty_filter');
                 });
             }
-            // prevent default action when pressing enter
             search_input.off('keypress').on('keypress', function(evt) {
                 if (evt.keyCode == 13) {
                     evt.preventDefault();
                 }
             });
-            // trigger search when releasing enter
             search_input.off('keyup').on('keyup', function(evt) {
                 if (evt.keyCode == 13) {
                     evt.preventDefault();
@@ -61,14 +48,12 @@ var cone_protected = (function (exports, $, ts) {
                     this.set_filter(input, this.filter_name, input.attr('value'));
                 }
             }.bind(this));
-            // trigger search on input change
             search_input.off('change').on('change', function(evt) {
                 evt.preventDefault();
                 let input = $(evt.currentTarget);
                 this.set_filter(input, this.filter_name, input.attr('value'));
             }.bind(this));
         }
-
         set_filter(elem, param, val) {
             let target = ts.ajax.parsetarget(elem.attr('ajax:target')),
                 event = elem.attr('ajax:event');
@@ -78,7 +63,6 @@ var cone_protected = (function (exports, $, ts) {
                 if (!path_event) {
                     path_event = event;
                 }
-                // path always gets calculated from target
                 ts.ajax.path({
                     path: target.path + target.query + '&' + param + '=' + val,
                     event: path_event,
@@ -91,46 +75,34 @@ var cone_protected = (function (exports, $, ts) {
     }
 
     class CopySupport {
-
         static initialize(context) {
             new CopySupport(context);
         }
-
         constructor(context) {
             this.cut_cookie = 'cone.app.copysupport.cut';
             this.copy_cookie = 'cone.app.copysupport.copy';
-
             this.context = context;
-
             this.paste_action = $('a#toolbaraction-paste', context);
             this.paste_action.off('click').on('click', this.handle_paste.bind(this));
-
             this.copyable = $('table tr.selectable.copysupportitem', context);
             if (!this.copyable.length) {
                 return;
             }
-
             this.cut_action = $('a#toolbaraction-cut', context);
             this.cut_action.off('click').on('click', this.handle_cut.bind(this));
-
             this.copy_action = $('a#toolbaraction-copy', context);
             this.copy_action.off('click').on('click', this.handle_copy.bind(this));
-
             this.selectable = this.copyable.selectable({
                 on_firstclick: this.on_firstclick.bind(this),
                 on_select: this.on_select.bind(this)
             }).data('selectable');
-
             this.read_selected_from_cookie(this.cut_cookie, 'copysupport_cut');
             this.read_selected_from_cookie(this.copy_cookie, '');
         }
-
         on_firstclick(selectable, elem) {
         }
-
         on_select(selectable) {
         }
-
         write_selected_to_cookie(name) {
             let selected = $(this.selectable.selected);
             let ids = new Array();
@@ -145,7 +117,6 @@ var cone_protected = (function (exports, $, ts) {
                 $(this.paste_action).addClass('disabled');
             }
         }
-
         read_selected_from_cookie(name, css) {
             let cookie = ts.read_cookie(name);
             if (!cookie) {
@@ -169,7 +140,6 @@ var cone_protected = (function (exports, $, ts) {
                 }
             });
         }
-
         handle_cut(evt) {
             evt.preventDefault();
             ts.create_cookie(this.copy_cookie, '', 0);
@@ -177,14 +147,12 @@ var cone_protected = (function (exports, $, ts) {
             this.copyable.removeClass('copysupport_cut');
             $(this.selectable.selected).addClass('copysupport_cut');
         }
-
         handle_copy(evt) {
             evt.preventDefault();
             ts.create_cookie(this.cut_cookie, '', 0);
             this.write_selected_to_cookie(this.copy_cookie);
             this.copyable.removeClass('copysupport_cut');
         }
-
         handle_paste(evt) {
             evt.preventDefault();
             let elem = $(evt.currentTarget);
@@ -206,18 +174,11 @@ var cone_protected = (function (exports, $, ts) {
         shift_down: false,
         ctrl_down: false
     };
-
-    /**
-     * XXX: Use ``ts.KeyState`` instead.
-     *      Need a mechanism to attach and unload instances with ``ts.ajax`` first.
-     */
     class KeyBinder {
-
         constructor() {
             $(window).on('keydown', this.key_down.bind(this));
             $(window).on('keyup', this.key_up.bind(this));
         }
-
         key_down(e) {
             switch (e.keyCode || e.which) {
                 case 16:
@@ -228,7 +189,6 @@ var cone_protected = (function (exports, $, ts) {
                     break;
             }
         }
-
         key_up(e) {
             switch (e.keyCode || e.which) {
                 case 16:
@@ -242,7 +202,6 @@ var cone_protected = (function (exports, $, ts) {
     }
 
     class ReferenceHandle {
-
         static initialize(context) {
             if (!context) {
                 return;
@@ -260,24 +219,19 @@ var cone_protected = (function (exports, $, ts) {
                 new RemoveReferenceHandle($(this), target);
             });
         }
-
         constructor(target) {
             this.target = target;
             this.target_tag = target.get(0).tagName;
         }
-
         single_value() {
             return this.target_tag == 'INPUT';
         }
-
         multi_value() {
             return this.target_tag.tagName == 'SELECT';
         }
-
         toggle_enabled(elem) {
             $('a', elem.parent()).toggleClass('disabled');
         }
-
         reset_selected(elem) {
             let selected = new Array();
             if (this.single_value()) {
@@ -298,7 +252,6 @@ var cone_protected = (function (exports, $, ts) {
                 }
             });
         }
-
         set_selected_on_ajax_target(elem, selected) {
             let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
             target.params.selected = selected.join(',');
@@ -309,16 +262,13 @@ var cone_protected = (function (exports, $, ts) {
             elem.attr('ajax:target', target.url + '?' + query.join('&'));
         }
     }
-
     class AddReferenceHandle extends ReferenceHandle {
-
         constructor(elem, target, overlay) {
             super(target);
             this.elem = elem;
             this.overlay = overlay;
             elem.off('click').on('click', this.add_reference.bind(this));
         }
-
         add_reference(evt) {
             evt.preventDefault();
             let elem = this.elem;
@@ -346,15 +296,12 @@ var cone_protected = (function (exports, $, ts) {
             this.toggle_enabled(elem);
         }
     }
-
     class RemoveReferenceHandle extends ReferenceHandle {
-
         constructor(elem, target) {
             super(target);
             this.elem = elem;
             elem.off('click').on('click', this.remove_reference.bind(this));
         }
-
         remove_reference(evt) {
             evt.preventDefault();
             let elem = this.elem;
@@ -377,22 +324,18 @@ var cone_protected = (function (exports, $, ts) {
             this.toggle_enabled(elem);
         }
     }
-
     class ReferenceBrowserLoader {
-
         static initialize(context) {
             $('.referencebrowser_trigger', context).each(function() {
                 new ReferenceBrowserLoader($(this));
             });
         }
-
         constructor(elem) {
             this.wrapper = elem.parent();
             let sel = `[name="${elem.data('reference-name')}"]`;
             this.target = $(sel, this.wrapper);
             elem.off('click').on('click', this.load_ref_browser.bind(this));
         }
-
         load_ref_browser(evt) {
             evt.preventDefault();
             let ol = ts.ajax.overlay({
@@ -402,7 +345,6 @@ var cone_protected = (function (exports, $, ts) {
             });
             ol.ref_target = this.target;
         }
-
         on_complete(inst) {
             let target = this.target;
             $('a.addreference', inst.elem).each(function() {
@@ -415,16 +357,13 @@ var cone_protected = (function (exports, $, ts) {
     }
 
     class SettingsTabs {
-
         static initialize(context) {
             new SettingsTabs(context);
         }
-
         constructor(context) {
             this.tabs = $('ul.settingstabs a', context);
             this.tabs.on('click', this.load_tab).first().trigger('click');
         }
-
         load_tab(evt) {
             evt.preventDefault();
             let elem = $(this);
@@ -446,16 +385,13 @@ var cone_protected = (function (exports, $, ts) {
     }
 
     class Sharing {
-
         static initialize(context) {
             new Sharing(context);
         }
-
         constructor(context) {
             let checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.off('change').on('change', this.set_principal_role);
         }
-
         set_principal_role(evt) {
             evt.preventDefault();
             let checkbox = $(this);
@@ -480,55 +416,46 @@ var cone_protected = (function (exports, $, ts) {
         }
     }
 
-    class TableToolBar extends BatchedItems {
-
+    class TableToolbar extends BatchedItems {
         static initialize(context) {
-            new TableToolBar(
+            new TableToolbar(
                 context,
                 '.table_length select',
                 '.table_filter input',
                 'term'
             );
         }
-
         constructor(context, size_selector, filter_selector, filter_name) {
             super(context, size_selector, filter_selector, filter_name);
         }
     }
 
     class Selectable {
-
         constructor(options) {
-            // on_firstclick, on_select callbacks in options
             this.options = options;
             this.selected = [];
             this.select_direction = 0;
             this.firstclick = true;
         }
-
         reset() {
             this.selected = [];
         }
-
         add(elem) {
             this.remove(elem);
             this.selected.push(elem);
         }
-
         remove(elem) {
             let reduced = $.grep(this.selected, function(item, index) {
                 return item !== elem;
             });
             this.selected = reduced;
         }
-
         select_no_key(container, elem) {
             container.children().removeClass('selected');
             elem.addClass('selected');
             this.reset();
             this.add(elem.get(0));
         }
-
         select_ctrl_down(elem) {
             elem.toggleClass('selected');
             if (elem.hasClass('selected')) {
@@ -537,11 +464,8 @@ var cone_protected = (function (exports, $, ts) {
                 this.remove(elem.get(0));
             }
         }
-
         get_nearest(container, current_index) {
-            // get nearest next selected item from current index
             let selected = container.children('.selected');
-            // -1 means no other selected item
             let nearest = -1;
             let selected_index, selected_elem;
             $(selected).each(function() {
@@ -567,7 +491,6 @@ var cone_protected = (function (exports, $, ts) {
             });
             return nearest;
         }
-
         select_shift_down(container, elem) {
             let current_index = elem.index();
             let nearest = this.get_nearest(container, current_index);
@@ -596,7 +519,6 @@ var cone_protected = (function (exports, $, ts) {
                          });
             }
         }
-
         handle_click(evt) {
             evt.preventDefault();
             let elem = $(evt.currentTarget);
@@ -614,19 +536,15 @@ var cone_protected = (function (exports, $, ts) {
             }
             this.notify('on_select', this);
         }
-
         notify(e, ...args) {
             if (this.options && this.options[e]) {
                 this.options[e](...args);
             }
         }
-
         bind(elem) {
             elem.off('click').on('click', this.handle_click.bind(this));
         }
     }
-
-    // Selectable items
     $.fn.selectable = function(options) {
         var api = new Selectable(options);
         api.bind(this);
@@ -636,14 +554,13 @@ var cone_protected = (function (exports, $, ts) {
 
     $(function() {
         new KeyBinder();
-
         ts.ajax.register(BatchedItems.initialize, true);
         ts.ajax.register(CopySupport.initialize, true);
         ts.ajax.register(ReferenceBrowserLoader.initialize, true);
         ts.ajax.register(ReferenceHandle.initialize, true);
         ts.ajax.register(SettingsTabs.initialize, true);
         ts.ajax.register(Sharing.initialize, true);
-        ts.ajax.register(TableToolBar.initialize, true);
+        ts.ajax.register(TableToolbar.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -656,12 +573,15 @@ var cone_protected = (function (exports, $, ts) {
     exports.Selectable = Selectable;
     exports.SettingsTabs = SettingsTabs;
     exports.Sharing = Sharing;
-    exports.TableToolBar = TableToolBar;
+    exports.TableToolbar = TableToolbar;
     exports.keys = keys;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
+    if (window.cone === undefined) {
+        window.cone = {};
+    }
     Object.assign(window.cone, exports);
 
 

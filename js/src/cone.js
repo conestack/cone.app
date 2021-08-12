@@ -17,3 +17,6 @@ Object.assign(api, selectable);
 Object.assign(api, settingstabs);
 Object.assign(api, sharing);
 Object.assign(api, tabletoolbar);
+
+let cone = api;
+export default cone;

@@ -16,7 +16,7 @@ const treibstoff_files = [{
 }];
 
 const test_files = [{
-    pattern: '../js/src/protected/*.js',
+    pattern: '../js/src/*.js',
     type: 'module',
     included: false
 }, {
@@ -32,7 +32,7 @@ const files = [].concat(
 
 let preprocessors = {};
 preprocessors[`${node_modules}/treibstoff/src/**/*.js`] = ['module-resolver'];
-preprocessors['../js/src/protected/*.js'] = ['coverage', 'module-resolver'];
+preprocessors['../js/src/*.js'] = ['coverage', 'module-resolver'];
 preprocessors['../js/tests/*.js'] = ['coverage', 'module-resolver'];
 
 // karma config

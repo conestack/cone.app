@@ -43,7 +43,7 @@ cfg.js.public = [
 ]
 cfg.js.protected = [
     'static/protected.js',
-    'static/cone.protected.bundle.js'
+    'static/cone.protected.js'
 ]
 
 # CSS Resources
