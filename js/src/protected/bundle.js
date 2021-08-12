@@ -3,7 +3,7 @@ import ts from 'treibstoff';
 
 //import {CopySupport} from './copysupport.js';
 //import {Selectable} from './selectable.js';
-//import {Settingstabs} from './settingstabs.js';
+import {SettingsTabs} from './settingstabs.js';
 import {BatchedItems} from './batcheditems.js';
 //import {ReferenceBrowser} from './referencebrowser.js';
 import {TableToolBar} from './tabletoolbar.js';
@@ -12,7 +12,7 @@ import {KeyBinder} from './keybinder.js';
 
 //export * from './copysupport.js';
 //export * from './selectable.js';
-//export * from './settingstabs.js';
+export * from './settingstabs.js';
 export * from './batcheditems.js';
 //export * from './referencebrowser.js';
 export * from './tabletoolbar.js';
@@ -23,7 +23,7 @@ export * from './keybinder.js';
 $(function() {
     new KeyBinder();
 
-    //ts.ajax.register(cone.Settingstabs.bind(cone), true);
+    ts.ajax.register(SettingsTabs.initialize, true);
     ts.ajax.register(BatchedItems.initialize, true);
     ts.ajax.register(TableToolBar.initialize, true);
     //ts.ajax.register(cone.Sharing.bind(cone), true);

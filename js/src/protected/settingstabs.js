@@ -1,16 +1,19 @@
 import $ from 'jquery';
+import ts from 'treibstoff';
 
-export class Settingstabs {
+export class SettingsTabs {
 
-    constructor(context) {
-        this.elems = $('ul.settingstabs a', context);
-
-        this._bind = this.bind_settings.bind(this);
-        this.elems.on('click', this._bind);
+    static initialize(context) {
+        new SettingsTabs(context);
     }
 
-    bind_settings(e) {
-        e.preventDefault();
+    constructor(context) {
+        this.tabs = $('ul.settingstabs a', context);
+        this.tabs.on('click', this.load_tab).first().trigger('click');
+    }
+
+    load_tab(evt) {
+        evt.preventDefault();
         let elem = $(this);
         let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
         ts.ajax.request({
@@ -26,6 +29,5 @@ export class Settingstabs {
                     .tsajax();
             }
         });
-        this.elems.first().trigger('click');
     }
 }

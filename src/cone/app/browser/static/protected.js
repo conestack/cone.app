@@ -11,8 +11,6 @@ if (window.yafowil === undefined) yafowil = {};
 (function($, ts) {
 
     $(document).ready(function() {
-        // add binders to treibstoff binding callbacks
-        ts.ajax.register(cone.settingstabsbinder.bind(cone), true);
         ts.ajax.register(cone.sharingbinder.bind(cone), true);
         ts.ajax.register(cone.copysupportbinder.bind(cone), true);
         var refbrowser = yafowil.referencebrowser;
@@ -26,28 +24,6 @@ if (window.yafowil === undefined) yafowil = {};
         // object to store global flags
         flags: {},
 
-        settingstabsbinder: function(context) {
-            $('ul.settingstabs a', context).on('click', function(event) {
-                event.preventDefault();
-                var elem = $(this);
-                var target = ts.ajax.parsetarget(elem.attr('ajax:target'));
-                ts.ajax.request({
-                    url: target.url,
-                    params: target.params,
-                    success: function(data, status, request) {
-                        var tabs = $(elem).parent().parent();
-                        $('li', tabs).removeClass('active');
-                        elem.parent().addClass('active');
-                        $('.settingstabpane')
-                            .html(data)
-                            .css('display', 'block')
-                            .tsajax();
-                    }
-                });
-            }).first().trigger('click');
-        },
-
-        // XXX: better naming
         batcheditems_handle_filter: function(elem, param, val) {
             var target = ts.ajax.parsetarget(elem.attr('ajax:target')),
                 event = elem.attr('ajax:event');
