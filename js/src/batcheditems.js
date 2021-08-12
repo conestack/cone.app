@@ -4,66 +4,11 @@ import ts from 'treibstoff';
 export class BatchedItems {
 
     static initialize(context) {
-        new BatchedItems(
-            context,
-            '.batched_items_slice_size select',
-            '.batched_items_filter input',
-            'term'
-        );
+        BatchedItems.bind_size(context);
+        BatchedItems.bind_search(context);
     }
 
-    constructor(context, size_selector, filter_selector, filter_name) {
-        this.context = context;
-        this.size_selector = size_selector;
-        this.filter_selector = filter_selector;
-        this.filter_name = filter_name;
-        this.bind_size();
-        this.bind_search();
-    }
-
-    bind_size() {
-        $(
-            this.size_selector,
-            this.context
-        ).off('change').on('change', function(evt) {
-            let selection = $(evt.currentTarget),
-                option = $('option:selected', selection).first();
-            this.set_filter(selection, 'size', option.val());
-        }.bind(this));
-    }
-
-    bind_search() {
-        let search_input = $(this.filter_selector, this.context);
-        // reset filter input field if marked as empty filter
-        if (search_input.hasClass('empty_filter')) {
-            search_input.on('focus', function() {
-                this.value = '';
-                $(this).removeClass('empty_filter');
-            });
-        }
-        // prevent default action when pressing enter
-        search_input.off('keypress').on('keypress', function(evt) {
-            if (evt.keyCode == 13) {
-                evt.preventDefault();
-            }
-        });
-        // trigger search when releasing enter
-        search_input.off('keyup').on('keyup', function(evt) {
-            if (evt.keyCode == 13) {
-                evt.preventDefault();
-                let input = $(evt.currentTarget);
-                this.set_filter(input, this.filter_name, input.attr('value'));
-            }
-        }.bind(this));
-        // trigger search on input change
-        search_input.off('change').on('change', function(evt) {
-            evt.preventDefault();
-            let input = $(evt.currentTarget);
-            this.set_filter(input, this.filter_name, input.attr('value'));
-        }.bind(this));
-    }
-
-    set_filter(elem, param, val) {
+    static set_filter(elem, param, val) {
         let target = ts.ajax.parsetarget(elem.attr('ajax:target')),
             event = elem.attr('ajax:event');
         target.params[param] = val;
@@ -82,4 +27,70 @@ export class BatchedItems {
         let defs = event.split(':');
         ts.ajax.trigger(defs[0], defs[1], target);
     }
+
+    static bind_size(context,
+                     size_selector='.batched_items_slice_size select') {
+        $(size_selector, context).off('change').on('change', function(evt) {
+            let selection = $(evt.currentTarget),
+                option = $('option:selected', selection).first();
+            BatchedItems.set_filter(selection, 'size', option.val());
+        });
+    }
+
+    static bind_search(context,
+                       filter_selector='.batched_items_filter input',
+                       filter_name='term') {
+        let search_input = $(filter_selector, context);
+        // reset filter input field if marked as empty filter
+        if (search_input.hasClass('empty_filter')) {
+            search_input.on('focus', function() {
+                this.value = '';
+                $(this).removeClass('empty_filter');
+            });
+        }
+        // prevent default action when pressing enter
+        search_input.off('keypress').on('keypress', function(evt) {
+            if (evt.keyCode == 13) {
+                evt.preventDefault();
+            }
+        });
+        // trigger search when releasing enter
+        search_input.off('keyup').on('keyup', function(evt) {
+            if (evt.keyCode == 13) {
+                evt.preventDefault();
+                let input = $(this);
+                BatchedItems.set_filter(input, filter_name, input.attr('value'));
+            }
+        });
+        // trigger search on input change
+        search_input.off('change').on('change', function(evt) {
+            evt.preventDefault();
+            let input = $(this);
+            BatchedItems.set_filter(input, filter_name, input.attr('value'));
+        });
+    }
+}
+
+export function batcheditems_handle_filter(elem, param, val) {
+    ts.deprecate('batcheditems_handle_filter', 'BatchedItems.set_filter', '1.1');
+    BatchedItems.set_filter(elem, param, val);
+}
+
+export function batcheditems_size_binder(context, size_selector) {
+    ts.deprecate('batcheditems_size_binder', 'BatchedItems.bind_size', '1.1');
+    if (!size_selector) {
+        size_selector = '.batched_items_slice_size select';
+    }
+    BatchedItems.bind_size(context, size_selector);
+}
+
+export function batcheditems_filter_binder(context, filter_selector, filter_name) {
+    ts.deprecate('batcheditems_filter_binder', 'BatchedItems.bind_search', '1.1');
+    if (!filter_selector) {
+        filter_selector = '.batched_items_filter input';
+    }
+    if (!filter_name) {
+        filter_name = 'term';
+    }
+    BatchedItems.bind_search(context, filter_selector, filter_name);
 }

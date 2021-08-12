@@ -25,7 +25,8 @@ export default args => {
             interop: 'default'
         }],
         external: [
-            'jquery'
+            'jquery',
+            'treibstoff'
         ]
     };
     if (args.configDebug !== true) {

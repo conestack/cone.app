@@ -1,17 +1,9 @@
 import {BatchedItems} from "./batcheditems.js";
 
-export class TableToolbar extends BatchedItems {
+export class TableToolbar {
 
     static initialize(context) {
-        new TableToolbar(
-            context,
-            '.table_length select',
-            '.table_filter input',
-            'term'
-        );
-    }
-
-    constructor(context, size_selector, filter_selector, filter_name) {
-        super(context, size_selector, filter_selector, filter_name);
+        BatchedItems.bind_size(context, '.table_length select');
+        BatchedItems.bind_search(context, '.table_filter input');
     }
 }
