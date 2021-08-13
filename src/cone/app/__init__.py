@@ -39,10 +39,10 @@ cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 cfg.js = Properties()
 cfg.js.public = [
     'treibstoff-static/treibstoff.bundle.js',
-    'static/cone.public.bundle.js'
+    'static/cone.public.js'
 ]
 cfg.js.protected = [
-    'static/protected.js'
+    'static/cone.protected.js'
 ]
 
 # CSS Resources
@@ -91,6 +91,7 @@ cfg.merged.js.public = [
 #     (browser.static_resources, 'jquery/jquery-migrate-3.3.2.min.js'),
 #     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
 #     (browser.static_resources, 'bootstrap/js/bootstrap.bundle.min.js')
+#     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
 # ]
 
 cfg.merged.js.protected = list()

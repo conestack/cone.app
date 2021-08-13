@@ -1,5 +1,11 @@
 import $ from 'jquery';
-import {createCookie, create_cookie, readCookie, read_cookie, time_delta_str} from '../src/public/utils.js';
+import {
+    create_cookie,
+    createCookie,
+    read_cookie,
+    readCookie,
+    time_delta_str
+} from '../src/public/utils.js';
 
 
 QUnit.module('time_delta_str', () => {
