@@ -1,4 +1,4 @@
-QUnit.module('cone.app.copysupport', hooks => {
+QUnit.module('cone.app.cone', hooks => {
 
     QUnit.test('Test stub', assert => {
         assert.ok(true);
