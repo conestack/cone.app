@@ -1,7 +1,7 @@
 import * as batcheditems from './batcheditems.js';
 import * as copysupport from './copysupport.js';
 import * as keybinder from './keybinder.js';
-import * as livesearch from '../livesearch.js';
+import * as livesearch from './livesearch.js';
 import * as referencebrowser from './referencebrowser.js';
 import * as selectable from './selectable.js';
 import * as settingstabs from './settingstabs.js';
