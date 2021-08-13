@@ -44,7 +44,7 @@ export class Searchbar extends ViewPortAware {
         this.dd.on('click', (e) => {
             e.preventDefault();
         });
-        // TODO: work on livesearch
+
         let dots = $(
             `<div class="loading-dots">
                 <i class="bi bi-circle-fill"></i>
@@ -56,19 +56,18 @@ export class Searchbar extends ViewPortAware {
         this.result_header.append(dots);
 
         let timeout = 0;
-        let characters = 0;
 
+        /* istanbul ignore next */
         this.search_text.off().on('keydown', (e) => {
             e.preventDefault();
         });
 
         this.search_text.off().on('keyup', (e) => {
-            if (e.code === 'Backspace' && characters > 0) {
-                characters -= 1;
-            } else {
-                characters += 1;
-            }
-            if (characters >= 3) {
+            /* e.keyCode ASCII key is deprecated, use e.code instead if needed
+             * ! keyup does not catch Shift/Ctrl/Alt key*/
+            let charlength = this.search_text.attr('value').length;
+
+            if (charlength >= 3) {
                 $('.search-result').remove();
                 $('.loading-dots').show();
                 clearTimeout(timeout);
@@ -82,7 +81,6 @@ export class Searchbar extends ViewPortAware {
                         type: 'json',
                         success: (data, status, request) => {
                             console.log('request response received here');
-                            console.log(data);
                             for (let result of data) {
                                 let res = this.render_suggestion(result);
                                 let li_elem = $(`<li class="search-result">${res}</li>`);
@@ -121,6 +119,6 @@ export class Searchbar extends ViewPortAware {
 
     /* istanbul ignore next */
     render_suggestion(suggestion) {
-        return `<span class="${suggestion.icon}">${suggestion.value}</span>`;
+        return `<a href="${suggestion.target}"><span class="${suggestion.icon}">${suggestion.value}</span></a>`;
     }
 }

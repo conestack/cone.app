@@ -825,7 +825,7 @@ var cone = (function (exports, $, ts) {
             this.dd.on('click', (e) => {
                 e.preventDefault();
             });
-            // TODO: work on livesearch
+
             let dots = $(
                 `<div class="loading-dots">
                 <i class="bi bi-circle-fill"></i>
@@ -839,14 +839,18 @@ var cone = (function (exports, $, ts) {
             let timeout = 0;
             let characters = 0;
 
+            
             this.search_text.off().on('keydown', (e) => {
                 e.preventDefault();
             });
 
             this.search_text.off().on('keyup', (e) => {
+                /* e.keyCode ASCII key is deprecated, use e.code instead
+                 * ! keyup does not catch Shift/Ctrl/Alt key*/
                 if (e.code === 'Backspace' && characters > 0) {
                     characters -= 1;
                 } else {
+                    console.log(e.code);
                     characters += 1;
                 }
                 if (characters >= 3) {
@@ -863,7 +867,6 @@ var cone = (function (exports, $, ts) {
                             type: 'json',
                             success: (data, status, request) => {
                                 console.log('request response received here');
-                                console.log(data);
                                 for (let result of data) {
                                     let res = this.render_suggestion(result);
                                     let li_elem = $(`<li class="search-result">${res}</li>`);
@@ -902,7 +905,7 @@ var cone = (function (exports, $, ts) {
 
         /* istanbul ignore next */
         render_suggestion(suggestion) {
-            return `<span class="${suggestion.icon}">${suggestion.value}</span>`;
+            return `<a href="${suggestion.target}"><span class="${suggestion.icon}">${suggestion.value}</span></a>`;
         }
     }
 

@@ -50,7 +50,7 @@ const test_files = [{
     type: 'module',
     included: false
 }, {
-    pattern: '../js/tests/test_searchbar.js',
+    pattern: '../js/tests/test_*.js',
     type: 'module'
 }, {
     pattern: '../js/tests/helpers.js',

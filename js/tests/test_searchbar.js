@@ -4,18 +4,21 @@ import {karma_vp_states} from './karma_viewport_states.js';
 import * as helpers from './helpers.js';
 import {ajax} from '../../node_modules/treibstoff/src/ajax.js';
 
+///////////////////////////////////////////////////////////////////////////////
+// Searchbar tests
+///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('server request', hooks => {
     let ajax_orgin = $.ajax;
 
-    hooks.afterEach(() => {
+    hooks.after(() => {
         // Reset $.ajax patch if any
         $.ajax = ajax_orgin;
+
+        $('#topnav').remove();
     });
 
-    QUnit.test.only('Test', assert => {
-        assert.ok(true);
-
+    QUnit.test('Test Ajax', assert => {
         // create dummy element
         helpers.create_topnav_elem();
         let elem = helpers.create_searchbar_elem($('#topnav'));
@@ -32,35 +35,98 @@ QUnit.module('server request', hooks => {
             "value":"Example result 1",
             "target":"example-link1"
         }, {
-            "icon":"bi bi-heart",
+            "icon":"bi bi-asterisk",
             "value":"Example result 2",
             "target":"example-link2"
         }];
 
         // create Searchbar obj
         let sb = new Searchbar($('body'));
-        // let evt = new $.Event('keyup');
-        // evt.code = 'a';
 
-        
+        // trigger click to open dropdown
         sb.search_text.trigger('click');
+        sb.dd.trigger('click');
+        sb.search_text.trigger('keydown');
 
-        for(let i=0; i<4; i++) {
-            var e = $.Event('keypress');
-            e.code = 'KeyA'; // Character 'A'
-            sb.search_text.trigger(evt);
+        sb.search_text.attr('value', '');
+
+        // keypress helper
+        function pressKey(code, key) {
+            let e = $.Event('keypress');
+            let e2 = $.Event('keyup');
+            let e3 = $.Event('keydown');
+
+            e3.key, e2.key, e.key = code;
+            sb.search_text.trigger(e3).trigger(e).trigger(e2);
+            let val = sb.search_text.attr('value');
+
+            if(code === 'Backspace') {
+                let res = '';
+                for (let i = 0; i < val.length - 1; i++) {
+                    res += val.charAt(i);
+                }
+                sb.search_text.attr('value', res);
+            } else {
+                sb.search_text.attr('value', `${val}${key}`);
+            }
         }
 
+        // input helper
+        function addInput(str) {
+            for (let i = 0; i < str.length; i++) {
+                let letter = str.charAt(i);
 
-        assert.strictEqual($('.loading-dots').css('display'), 'none');
+                let e = $.Event('keypress');
+                let e2 = $.Event('keyup');
+                let e3 = $.Event('keydown');
 
+                e3.key, e2.key, e.key = letter;
+                sb.search_text.trigger(e3).trigger(e).trigger(e2);
 
+                let val = sb.search_text.attr('value');
+                sb.search_text.attr('value', `${val}${letter}`);
+            }
+        }
+
+        // can change to any string
+        // 3+ letters send ajax request
+        addInput('Foo');
+
+        // timeout after last input - code executed after 800ms
+        let done = assert.async();
+        setTimeout(() => {
+            // loading animation not visible
+            assert.strictEqual($('.loading-dots').css('display'), 'none');
+
+            // two result elements have been created
+            assert.strictEqual($('li.search-result').length, 2);
+
+            let res1 = $('li.search-result')[0],
+            res2 = $('li.search-result')[1];
+
+            assert.strictEqual($('a > span', res1).attr('class'), 'bi bi-circle');
+            assert.strictEqual($('a > span', res1).html(), 'Example result 1');
+            assert.strictEqual($('a', res1).attr('href'), 'example-link1');
+
+            assert.strictEqual($('a > span', res2).attr('class'), 'bi bi-asterisk');
+            assert.strictEqual($('a > span', res2).html(), 'Example result 2');
+            assert.strictEqual($('a', res2).attr('href'), 'example-link2');
+
+            done();
+        }, 1000);
+
+        // trigger backspace to delete 1 character
+        pressKey('Backspace');
+        // no ajax request if under 3 characters
+        assert.strictEqual(sb.search_text.attr('value'), 'Fo');
+
+        // loading animation showing
+        assert.strictEqual($('.loading-dots').css('display'), 'block');
+        // results removed
+        assert.strictEqual( $('li.search-result').length, 0);
     });
 });
 
-///////////////////////////////////////////////////////////////////////////////
-// Searchbar tests
-///////////////////////////////////////////////////////////////////////////////
 QUnit.test.skip('test sb visual', assert => {
     // TEMP:
     // to develop livesearch functions
@@ -83,7 +149,7 @@ QUnit.module('Searchbar', () => {
 
         hooks.beforeEach(() =>{
             // create dummy searchbar element
-            helpers.create_searchbar_elem();
+            helpers.create_searchbar_elem($('body'));
             helpers.set_vp('large');
         });
 
@@ -91,12 +157,13 @@ QUnit.module('Searchbar', () => {
             // unset searchbar
             sb = null;
             // remove dummy searchbar from DOM
-            $('#layout').remove();
+            $('#cone-searchbar').remove();
             helpers.set_vp('large');
         });
 
         for (let i=0; i<karma_vp_states.length; i++) {
             QUnit.test('constructor', assert => {
+
                 // set viewport state
                 helpers.set_vp(karma_vp_states[i]);
 
@@ -161,7 +228,7 @@ QUnit.module('Searchbar', () => {
 
             hooks.before(assert => {
                 // create dummy searchbar element
-                helpers.create_searchbar_elem();
+                helpers.create_searchbar_elem($('body'));
 
                 // overwrite super class method to test for call
                 VPA.prototype.viewport_changed = function(e) {
@@ -174,13 +241,14 @@ QUnit.module('Searchbar', () => {
                 // unset searchbar
                 sb = null;
                 // remove dummy searchbar element from DOM
-                $('#layout').remove();
+                $('#cone-searchbar').remove();
 
                 // reset super class method
                 VPA.prototype.viewport_changed = super_vp_changed_origin;
             });
 
             QUnit.test('vp_changed()', assert => {
+                assert.ok(true)
                 // create dummy resize event
                 let resize_evt = $.Event('viewport_changed');
 
