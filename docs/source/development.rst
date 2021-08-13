@@ -1,5 +1,5 @@
-Cone Development
-================
+Development
+===========
 
 Install
 =======
@@ -47,7 +47,7 @@ development sources::
 
     npm install devsrc/treibstoff
 
-Else install from git::
+else install from git::
 
     npm install https://github.com/conestack/treibstoff#master
 
@@ -59,7 +59,6 @@ Cone uses karma testrunner for JS testing:
 
 - Karma: https://karma-runner.github.io/6.3/intro/installation.html
 - Istanbul: https://istanbul.js.org/
-- Puppeteer: https://pptr.dev/
 
 Following plugins are used:
 
@@ -112,4 +111,3 @@ Included resources:
 - https://github.com/twbs/bootstrap/releases/tag/v5.0.2
 - https://github.com/twbs/icons/archive/v1.5.0.zip
 - https://github.com/corejavascript/typeahead.js/releases/tag/v1.3.1
-
