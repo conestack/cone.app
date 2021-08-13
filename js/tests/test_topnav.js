@@ -1,15 +1,11 @@
 import $ from 'jquery';
-import {Topnav} from '../src/public/topnav.js';
+import {Topnav} from '../src/topnav.js';
 import {
     create_topnav_elem,
     jQuery_slideToggle,
     karma_vp_states,
     set_vp
 } from './helpers.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// Topnav tests
-///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('Topnav', () => {
 

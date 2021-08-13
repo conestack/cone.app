@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import {layout} from '../src/public/layout.js';
-import {Personaltools} from '../src/public/personaltools.js';
-import {Topnav} from '../src/public/topnav.js';
+import {layout} from '../src/layout.js';
+import {Personaltools} from '../src/personaltools.js';
+import {Topnav} from '../src/topnav.js';
 import {
     create_layout_elem,
     create_pt_elem,

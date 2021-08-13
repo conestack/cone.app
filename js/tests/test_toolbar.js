@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import {layout} from '../src/public/layout.js';
-import {Toolbar} from '../src/public/toolbar.js';
-import {Topnav} from '../src/public/topnav.js';
+import {layout} from '../src/layout.js';
+import {Toolbar} from '../src/toolbar.js';
+import {Topnav} from '../src/topnav.js';
 import {
     create_layout_elem,
     create_noti_elem,

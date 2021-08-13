@@ -2,16 +2,13 @@ import {
     ScrollBar,
     ScrollBarX,
     ScrollBarY
-} from '../src/public/scrollbar.js';
+} from '../src/scrollbar.js';
+
 // contains jquery override
 import {
     jQuery_fadeIn,
     jQuery_fadeOut
 } from './helpers.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// scrollbar test helpers
-///////////////////////////////////////////////////////////////////////////////
 
 function create_scrollbar_elem(dir) {
     let container_height,

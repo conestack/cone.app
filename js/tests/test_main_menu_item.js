@@ -1,16 +1,12 @@
-import {layout} from '../src/public/layout.js';
-import {MainMenuTop} from '../src/public/mainmenu.js';
-import {Topnav} from '../src/public/topnav.js';
+import {layout} from '../src/layout.js';
+import {MainMenuTop} from '../src/mainmenu.js';
+import {Topnav} from '../src/topnav.js';
 import {
     create_layout_elem,
     create_mm_items,
     create_mm_top_elem,
     create_topnav_elem
 } from './helpers.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// MainMenuItem tests
-///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('MainMenuItem', () => {
 

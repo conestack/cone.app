@@ -46,7 +46,7 @@ const cone_files = [{
 }];
 
 const test_files = [{
-    pattern: '../js/src/public/*.js',
+    pattern: '../js/src/*.js',
     type: 'module',
     included: false
 }, {
@@ -54,10 +54,6 @@ const test_files = [{
     type: 'module'
 }, {
     pattern: '../js/tests/helpers.js',
-    type: 'module',
-    included: false
-}, {
-    pattern: '../js/tests/karma_viewport_states.js',
     type: 'module',
     included: false
 }];
@@ -100,8 +96,9 @@ const viewport = {
 
 let preprocessors = {};
 preprocessors[`${node_modules}/treibstoff/src/**/*.js`] = ['module-resolver'];
-preprocessors['../js/src/public/*.js'] = ['coverage', 'module-resolver'];
+preprocessors['../js/src/*.js'] = ['coverage', 'module-resolver'];
 preprocessors['../js/tests/*.js'] = ['coverage', 'module-resolver'];
+
 
 // karma config
 module.exports = function(config) {

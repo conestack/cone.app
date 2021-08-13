@@ -1,16 +1,12 @@
-import {layout} from '../src/public/layout.js';
-import {Navtree} from '../src/public/navtree.js';
-import {Sidebar} from '../src/public/sidebar.js';
+import {layout} from '../src/layout.js';
+import {Navtree} from '../src/navtree.js';
+import {Sidebar} from '../src/sidebar.js';
 import {
     create_navtree_elem,
     create_sidebar_elem,
     create_topnav_elem,
     set_vp
 } from './helpers.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// Navtree tests
-///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('Navtree', () => {
 

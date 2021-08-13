@@ -1,13 +1,13 @@
 import $ from 'jquery';
-import {MobileNav} from '../src/public/mobilenav.js';
-import {Sidebar} from '../src/public/sidebar.js';
-import {Topnav} from '../src/public/topnav.js';
+import {MobileNav} from '../src/mobilenav.js';
+import {Sidebar} from '../src/sidebar.js';
+import {Topnav} from '../src/topnav.js';
 import {
     MainMenuSidebar,
     MainMenuTop
-} from '../src/public/mainmenu.js';
-import {Navtree} from '../src/public/navtree.js';
-import {layout} from '../src/public/layout.js';
+} from '../src/mainmenu.js';
+import {Navtree} from '../src/navtree.js';
+import {layout} from '../src/layout.js';
 import {
     create_layout_elem,
     create_mm_items,
@@ -19,10 +19,6 @@ import {
     jQuery_slideToggle,
     set_vp
 } from './helpers.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// MobileNav tests
-///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('MobileNav', () => {
 

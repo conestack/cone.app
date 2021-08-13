@@ -1,12 +1,10 @@
 import $ from 'jquery';
+import ts from 'treibstoff';
 import {
-    create_cookie,
     createCookie,
-    read_cookie,
     readCookie,
     time_delta_str
-} from '../src/public/utils.js';
-
+} from '../src/utils.js';
 
 QUnit.module('time_delta_str', () => {
     QUnit.test('years', assert => {
@@ -65,16 +63,17 @@ QUnit.module('time_delta_str', () => {
 });
 
 QUnit.module('cookie functions', hooks => {
-    hooks.after(() => {
-        create_cookie('test', '', -1);
+    hooks.afterEach(() => {
+        ts.create_cookie('test', '', -1);
     });
 
     QUnit.test('createCookie deprecated', assert => {
         createCookie('test', 'test', null);
-        assert.ok(read_cookie('test'));
+        assert.ok(ts.read_cookie('test'));
     });
 
     QUnit.test('readCookie deprecated', assert => {
-        assert.strictEqual(readCookie('test'), read_cookie('test'));
+        ts.create_cookie('test', 'test', null);
+        assert.strictEqual(readCookie('test'), ts.read_cookie('test'));
     });
 });

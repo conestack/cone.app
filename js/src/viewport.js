@@ -5,8 +5,6 @@ export const VP_SMALL = 1;
 export const VP_MEDIUM = 2;
 export const VP_LARGE = 3;
 
-// viewport singleton
-
 class ViewPort {
 
     constructor() {
@@ -42,7 +40,6 @@ class ViewPort {
     }
 }
 
-// create viewport singleton
 export const vp = new ViewPort();
 
 export class ViewPortAware {
