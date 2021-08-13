@@ -1,12 +1,7 @@
-import {Searchbar} from '../src/public/searchbar.js';
-import {ViewPortAware} from '../src/public/viewport.js';
+import {Searchbar} from '../src/searchbar.js';
+import {ViewPortAware} from '../src/viewport.js';
 import {karma_vp_states} from './karma_viewport_states.js';
 import * as helpers from './helpers.js';
-import {ajax} from '../../node_modules/treibstoff/src/ajax.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// Searchbar tests
-///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('server request', hooks => {
     let ajax_orgin = $.ajax;

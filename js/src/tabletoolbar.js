@@ -1,4 +1,4 @@
-import {BatchedItems} from "./batcheditems.js";
+import {BatchedItems} from './batcheditems.js';
 
 export class TableToolbar {
 

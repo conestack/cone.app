@@ -1,18 +1,14 @@
 import $ from 'jquery';
 import * as helpers from './helpers.js';
-import {MobileNav} from '../src/public/mobilenav.js';
-import {Sidebar} from '../src/public/sidebar.js';
-import {Topnav} from '../src/public/topnav.js';
+import {MobileNav} from '../src/mobilenav.js';
+import {Sidebar} from '../src/sidebar.js';
+import {Topnav} from '../src/topnav.js';
 import {
     MainMenuSidebar,
     MainMenuTop
-} from '../src/public/mainmenu.js';
-import {Navtree} from '../src/public/navtree.js';
-import {layout} from '../src/public/layout.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// MobileNav tests
-///////////////////////////////////////////////////////////////////////////////
+} from '../src/mainmenu.js';
+import {Navtree} from '../src/navtree.js';
+import {layout} from '../src/layout.js';
 
 QUnit.module('MobileNav', () => {
 

@@ -1,14 +1,10 @@
+import ts from 'treibstoff';
 import {
     default_themes,
     ThemeSwitcher
-} from '../src/public/theme.js';
+} from '../src/theme.js';
 import {create_theme_switcher_elem} from './helpers.js';
-import {create_cookie} from '../src/public/utils.js';
-import {layout} from '../src/public/layout.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// ThemeSwitcher tests
-///////////////////////////////////////////////////////////////////////////////
+import {layout} from '../src/layout.js';
 
 QUnit.module('ThemeSwitcher', hooks => {
 
@@ -42,7 +38,7 @@ QUnit.module('ThemeSwitcher', hooks => {
         $('#colormode-styles').remove();
 
         // delete dummy cookie
-        create_cookie('modeswitch', '', -1);
+        ts.create_cookie('modeswitch', '', -1);
     });
 
     hooks.after(() => {
@@ -62,7 +58,7 @@ QUnit.module('ThemeSwitcher', hooks => {
 
     QUnit.test('initial check cookie', assert => {
         // create dummy cookie for dark mode
-        create_cookie('modeswitch', default_themes[1], null);
+        ts.create_cookie('modeswitch', default_themes[1], null);
 
         // initialize ThemeSwitcher instance
         ThemeSwitcher.initialize();

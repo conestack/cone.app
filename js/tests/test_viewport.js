@@ -1,13 +1,9 @@
 import {
     ViewPortAware,
     vp
-} from '../src/public/viewport.js';
+} from '../src/viewport.js';
 import {karma_vp_states} from './karma_viewport_states.js';
 import * as helpers from './helpers.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// ViewPort tests
-///////////////////////////////////////////////////////////////////////////////
 
 QUnit.module('ViewPort', hooks => {
 

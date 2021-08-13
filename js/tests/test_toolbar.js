@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import {layout} from '../src/public/layout.js';
-import {Toolbar} from '../src/public/toolbar.js';
-import {Topnav} from '../src/public/topnav.js';
+import {layout} from '../src/layout.js';
+import {Toolbar} from '../src/toolbar.js';
+import {Topnav} from '../src/topnav.js';
 import * as helpers from './helpers.js';
 
 QUnit.module('toolbar', () => {

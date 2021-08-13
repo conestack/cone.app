@@ -6,8 +6,6 @@ import {
 import {toggle_arrow} from './utils.js';
 import {layout} from './layout.js';
 
-// mobile_nav singleton
-
 export class MobileNav extends ViewPortAware {
     static initialize(context) {
         let elem = $('#topnav-content', context);

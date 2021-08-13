@@ -1,9 +1,5 @@
 import $ from 'jquery';
-import {toggle_arrow} from '../src/public/utils.js'
-
-///////////////////////////////////////////////////////////////////////////////
-// cone.toggle_arrow function test
-///////////////////////////////////////////////////////////////////////////////
+import {toggle_arrow} from '../src/utils.js'
 
 QUnit.test('toggle_arrow', assert => {
     // set variables
