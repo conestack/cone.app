@@ -1,7 +1,13 @@
 import {Searchbar} from '../src/public/searchbar.js';
 import {ViewPortAware} from '../src/public/viewport.js';
-import {karma_vp_states} from './karma_viewport_states.js';
-import * as helpers from './helpers.js';
+import {
+    create_layout_elem,
+    create_pt_elem,
+    create_searchbar_elem,
+    create_topnav_elem,
+    karma_vp_states,
+    set_vp
+} from './helpers.js';
 import {ajax} from '../../node_modules/treibstoff/src/ajax.js';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,8 +26,8 @@ QUnit.module('server request', hooks => {
 
     QUnit.test('Test Ajax', assert => {
         // create dummy element
-        helpers.create_topnav_elem();
-        let elem = helpers.create_searchbar_elem($('#topnav'));
+        create_topnav_elem();
+        let elem = create_searchbar_elem($('#topnav'));
 
         // patch ajax
         let response_data;
@@ -133,10 +139,10 @@ QUnit.test.skip('test sb visual', assert => {
 
     assert.ok(true);
 
-    helpers.create_layout_elem();
-    helpers.create_topnav_elem();
-    helpers.create_pt_elem();
-    helpers.create_searchbar_elem('#topnav');
+    create_layout_elem();
+    create_topnav_elem();
+    create_pt_elem();
+    create_searchbar_elem('#topnav');
 
     let sb = Searchbar.initialize();
 });
@@ -149,8 +155,8 @@ QUnit.module('Searchbar', () => {
 
         hooks.beforeEach(() =>{
             // create dummy searchbar element
-            helpers.create_searchbar_elem($('body'));
-            helpers.set_vp('large');
+            create_searchbar_elem($('body'));
+            set_vp('large');
         });
 
         hooks.afterEach(() => {
@@ -158,14 +164,14 @@ QUnit.module('Searchbar', () => {
             sb = null;
             // remove dummy searchbar from DOM
             $('#cone-searchbar').remove();
-            helpers.set_vp('large');
+            set_vp('large');
         });
 
         for (let i=0; i<karma_vp_states.length; i++) {
             QUnit.test('constructor', assert => {
 
                 // set viewport state
-                helpers.set_vp(karma_vp_states[i]);
+                set_vp(karma_vp_states[i]);
 
                 // initialize instance
                 sb = Searchbar.initialize();
@@ -228,7 +234,7 @@ QUnit.module('Searchbar', () => {
 
             hooks.before(assert => {
                 // create dummy searchbar element
-                helpers.create_searchbar_elem($('body'));
+                create_searchbar_elem($('body'));
 
                 // overwrite super class method to test for call
                 VPA.prototype.viewport_changed = function(e) {

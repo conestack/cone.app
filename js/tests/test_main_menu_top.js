@@ -1,6 +1,13 @@
 import {MainMenuTop} from '../src/public/mainmenu.js';
 import {Topnav} from '../src/public/topnav.js';
-import * as helpers from './helpers.js';
+import {
+    create_empty_item,
+    create_layout_elem,
+    create_mm_items,
+    create_mm_top_elem,
+    create_topnav_elem,
+    set_vp
+} from './helpers.js';
 import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,8 +18,8 @@ QUnit.module('MainMenuTop', () => {
 
     QUnit.module('constructor', hooks => {
         hooks.beforeEach(() => {
-            helpers.create_topnav_elem();
-            helpers.create_mm_top_elem();
+            create_topnav_elem();
+            create_mm_top_elem();
         });
 
         hooks.afterEach(() => {
@@ -20,6 +27,7 @@ QUnit.module('MainMenuTop', () => {
         });
 
         QUnit.test('properties', assert => {
+            Topnav.initialize();
             // initialize MainMenuTop
             MainMenuTop.initialize();
 
@@ -37,11 +45,11 @@ QUnit.module('MainMenuTop', () => {
                 elem_count = 2;
 
                 // create DOM elements
-                helpers.create_layout_elem();
-                helpers.create_topnav_elem();
-                helpers.create_mm_top_elem();
+                create_layout_elem();
+                create_topnav_elem();
+                create_mm_top_elem();
                 // create dummy items
-                helpers.create_mm_items(elem_count);
+                create_mm_items(elem_count);
             });
 
             hooks.after(() => {
@@ -66,14 +74,14 @@ QUnit.module('MainMenuTop', () => {
     QUnit.module('methods', hooks => {
 
         hooks.beforeEach(() => {
-            helpers.set_vp('large');
+            set_vp('large');
 
             // create DOM elements
-            helpers.create_topnav_elem();
-            helpers.create_mm_top_elem();
+            create_topnav_elem();
+            create_mm_top_elem();
             // create dummy main menu DOM items
-            helpers.create_mm_items(1);
-            helpers.create_empty_item();
+            create_mm_items(1);
+            create_empty_item();
         });
 
         hooks.afterEach(() => {

@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import * as helpers from './helpers.js';
 import {MobileNav} from '../src/public/mobilenav.js';
 import {Sidebar} from '../src/public/sidebar.js';
 import {Topnav} from '../src/public/topnav.js';
@@ -9,6 +8,17 @@ import {
 } from '../src/public/mainmenu.js';
 import {Navtree} from '../src/public/navtree.js';
 import {layout} from '../src/public/layout.js';
+import {
+    create_layout_elem,
+    create_mm_items,
+    create_mm_sidebar_elem,
+    create_mm_top_elem,
+    create_navtree_elem,
+    create_sidebar_elem,
+    create_topnav_elem,
+    jQuery_slideToggle,
+    set_vp
+} from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MobileNav tests
@@ -46,9 +56,9 @@ QUnit.module('MobileNav', () => {
 
     QUnit.module('viewport_changed', hooks => {
         hooks.beforeEach(() => {
-            helpers.create_layout_elem();
+            create_layout_elem();
             // set viewport to dekstop for consistency
-            helpers.set_vp('large');
+            set_vp('large');
         });
         hooks.afterEach(() => {
             // remove DOM elements
@@ -63,9 +73,9 @@ QUnit.module('MobileNav', () => {
 
         QUnit.test('viewport_changed: mainmenu sidebar', assert => {
             // create DOM elements
-            helpers.create_topnav_elem();
-            helpers.create_sidebar_elem();
-            helpers.create_mm_sidebar_elem();
+            create_topnav_elem();
+            create_sidebar_elem();
+            create_mm_sidebar_elem();
 
             // initialize
             Topnav.initialize();
@@ -82,13 +92,13 @@ QUnit.module('MobileNav', () => {
             assert.strictEqual($('#topnav-content > #mainmenu_sidebar').length, 0);
 
             // set viewport to mobile
-            helpers.set_vp('mobile');
+            set_vp('mobile');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
             assert.strictEqual($('#topnav-content > #mainmenu_sidebar').length, 1);
 
             // set viewport to desktop
-            helpers.set_vp('large');
+            set_vp('large');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'block');
             assert.strictEqual($('#topnav-content > #mainmenu_sidebar').length, 0);
@@ -97,9 +107,9 @@ QUnit.module('MobileNav', () => {
 
         QUnit.test('viewport_changed: navtree', assert => {
             // create DOM elements
-            helpers.create_sidebar_elem();
-            helpers.create_topnav_elem();
-            helpers.create_navtree_elem();
+            create_sidebar_elem();
+            create_topnav_elem();
+            create_navtree_elem();
 
             // initialize
             Topnav.initialize();
@@ -115,7 +125,7 @@ QUnit.module('MobileNav', () => {
             assert.strictEqual($('#topnav-content > #navtree').length, 0);
 
             // set viewport to mobile
-            helpers.set_vp('mobile');
+            set_vp('mobile');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'none');
             assert.strictEqual($('#topnav-content > #navtree').length, 1);
@@ -125,7 +135,7 @@ QUnit.module('MobileNav', () => {
             assert.strictEqual(layout.navtree.content.css('display'), 'block');
 
             // set viewport to desktop
-            helpers.set_vp('large');
+            set_vp('large');
 
             assert.strictEqual($('#sidebar_left').css('display'), 'block');
             assert.strictEqual($('#topnav-content > #navtree').length, 0);
@@ -133,10 +143,12 @@ QUnit.module('MobileNav', () => {
         });
 
         QUnit.test('viewport_changed: layout.mainmenu_top', assert => {
+            jQuery_slideToggle.override();
+
             // create DOM elements
-            helpers.create_topnav_elem();
-            helpers.create_mm_top_elem();
-            helpers.create_mm_items(3);
+            create_topnav_elem();
+            create_mm_top_elem();
+            create_mm_items(3);
 
             // initialize
             Topnav.initialize();
@@ -149,7 +161,7 @@ QUnit.module('MobileNav', () => {
             let items = layout.mainmenu_top.main_menu_items;
 
             // set viewport to mobile
-            helpers.set_vp('mobile');
+            set_vp('mobile');
             assert.strictEqual($('#topnav-content').css('display'), 'none');
             // trigger mobile menu toggle
             $('#mobile-menu-toggle').trigger('click');
@@ -174,7 +186,7 @@ QUnit.module('MobileNav', () => {
             assert.strictEqual($('#topnav-content').css('display'), 'none');
 
             // set viewport to desktop
-            helpers.set_vp('large');
+            set_vp('large');
             for(let i in items) {
                 // mainmenu item menus are moved to layout
                 let item = items[i];
@@ -190,19 +202,21 @@ QUnit.module('MobileNav', () => {
             }
             assert.strictEqual($(`#layout > .cone-mainmenu-dropdown`).length, 3);
 
-            helpers.set_vp('large');
+            set_vp('large');
             // initalize mm sidebar
-            helpers.create_sidebar_elem();
-            helpers.create_mm_sidebar_elem();
+            create_sidebar_elem();
+            create_mm_sidebar_elem();
             Sidebar.initialize();
             MainMenuSidebar.initialize();
 
             // mm top hidden if mm sidebar exists
-            helpers.set_vp('mobile');
+            set_vp('mobile');
             assert.strictEqual(layout.mainmenu_top.elem.css('display'), 'none');
 
-            helpers.set_vp('large');
+            set_vp('large');
             assert.strictEqual(layout.mainmenu_top.elem.css('display'), 'flex');
+
+            jQuery_slideToggle.reset();
         });
     });
 });

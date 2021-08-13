@@ -1,41 +1,85 @@
 import $ from 'jquery';
 
+
+/* Viewport states for responsive tests */
+export var karma_vp_states = ['mobile', 'small', 'medium', 'large'];
+
 ///////////////////////////////////////////////////////////////////////////////
 // jQuery overrides
 ///////////////////////////////////////////////////////////////////////////////
 
-$.fn._slideToggle = $.fn.slideToggle;
-$.fn.slideToggle = function(){
-    if(this.css('display') !== 'none') {
-        $.fn.hide.apply(this);
-    } else {
-        $.fn.show.apply(this);
+export let jQuery_slideToggle = {
+    origin: $.fn.slideToggle,
+    override: function() {
+      console.log('override');
+        $.fn._slideToggle = $.fn.slideToggle;
+        $.fn.slideToggle = function(){
+            if(this.css('display') !== 'none') {
+                $.fn.hide.apply(this);
+            } else {
+                $.fn.show.apply(this);
+            }
+        };
+      },
+    reset: function() {
+      console.log('reset');
+      $.fn.slideToggle = this.origin;
     }
-};
+}
 
-$.fn._slideUp = $.fn.slideUp;
-$.fn.slideUp = function(){
-    $.fn.hide.apply(this);
-};
-
-$.fn._fadeToggle = $.fn.fadeToggle;
-$.fn.fadeToggle = function(){
-    if(this.css('display') !== 'none') {
-        $.fn.hide.apply(this);
-    } else {
-        $.fn.show.apply(this);
+export let jQuery_slideUp = {
+    origin:  $.fn.slideUp,
+    override: function() {
+        $.fn._slideUp = $.fn.slideUp;
+        $.fn.slideUp = function(){
+            $.fn.hide.apply(this);
+        };
+    },
+    reset: function() {
+        $.fn.slideUp = this.origin;
     }
-};
+}
 
-$.fn._fadeOut = $.fn.fadeOut;
-$.fn.fadeOut = function(){
-    $.fn.hide.apply(this);
-};
+export let jQuery_fadeToggle = {
+    origin: $.fn.fadeToggle,
+    override: function() {
+        $.fn._fadeToggle = $.fn.fadeToggle;
+        $.fn.fadeToggle = function(){
+            if(this.css('display') !== 'none') {
+                $.fn.hide.apply(this);
+            } else {
+                $.fn.show.apply(this);
+            }
+        };
+    },
+    reset: function() {
+      $.fn.fadeToggle = this.origin;
+    }
+}
 
-$.fn._fadeIn = $.fn.fadeIn;
-$.fn.fadeIn = function(){
-    $.fn.show.apply(this);
-};
+export let jQuery_fadeOut = {
+    origin: $.fn.fadeOut,
+    override: function() {
+        $.fn.fadeOut = function(){
+            $.fn.hide.apply(this);
+        };
+    },
+    reset: function() {
+        $.fn.fadeOut = this.origin;
+    }
+}
+
+export let jQuery_fadeIn = {
+  origin: $.fn.fadeIn,
+  override: function() {
+      $.fn.fadeIn= function(){
+          $.fn.show.apply(this);
+      };
+  },
+  reset: function() {
+      $.fn.fadeIn = this.origin;
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // create layout element

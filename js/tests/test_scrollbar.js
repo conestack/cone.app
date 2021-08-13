@@ -1,8 +1,13 @@
-import {ScrollBar} from '../src/public/scrollbar.js';
-import {ScrollBarX} from '../src/public/scrollbar.js';
-import {ScrollBarY} from '../src/public/scrollbar.js';
+import {
+    ScrollBar,
+    ScrollBarX,
+    ScrollBarY
+} from '../src/public/scrollbar.js';
 // contains jquery override
-import * as helpers from './helpers.js';
+import {
+    jQuery_fadeIn,
+    jQuery_fadeOut
+} from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // scrollbar test helpers
@@ -342,15 +347,19 @@ QUnit.module('ScrollBar', () => {
                 // add dummy scrollbar element to DOM
                 create_scrollbar_elem('x');
 
-            // dummy class
-            TestScrollbar = class extends ScrollBar {
-                compile() {
-                    // placeholder
+                // dummy class
+                TestScrollbar = class extends ScrollBar {
+                    compile() {
+                        // placeholder
+                    }
+                    update() {
+                        // placeholder
+                    }
                 }
-                update() {
-                    // placeholder
-                }
-            }
+
+                // override jQuery
+                jQuery_fadeIn.override();
+                jQuery_fadeOut.override();
             });
 
             hooks.after(() => {
@@ -360,6 +369,10 @@ QUnit.module('ScrollBar', () => {
                 // unload and delete scrollbar instance
                 test_scrollbar.unload();
                 test_scrollbar = null;
+
+                // reset jQuery
+                jQuery_fadeIn.reset();
+                jQuery_fadeOut.reset();
             });
 
             QUnit.test('mouse_in_out()', assert => {

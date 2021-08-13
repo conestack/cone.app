@@ -1,7 +1,12 @@
 import {layout} from '../src/public/layout.js';
 import {MainMenuTop} from '../src/public/mainmenu.js';
 import {Topnav} from '../src/public/topnav.js';
-import * as helpers from './helpers.js';
+import {
+    create_layout_elem,
+    create_mm_items,
+    create_mm_top_elem,
+    create_topnav_elem
+} from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // MainMenuItem tests
@@ -12,13 +17,13 @@ QUnit.module('MainMenuItem', () => {
     QUnit.module('constructor', hooks => {
 
         hooks.before(() => {
-            helpers.create_layout_elem();
+            create_layout_elem();
             // create dummy topnav DOM element
-            helpers.create_topnav_elem();
+            create_topnav_elem();
             // create dummy mainmenu top DOM element
-            helpers.create_mm_top_elem();
+            create_mm_top_elem();
             // create dummy mainmenu item DOM elements
-            helpers.create_mm_items(1);
+            create_mm_items(1);
         });
 
         hooks.after(() => {
@@ -72,12 +77,12 @@ QUnit.module('MainMenuItem', () => {
 
             hooks.before(() => {
                 // create dummy layout element, append to DOM
-                helpers.create_layout_elem();
+                create_layout_elem();
 
                 // create dummy DOM elements
-                helpers.create_topnav_elem();
-                helpers.create_mm_top_elem();
-                helpers.create_mm_items(1);
+                create_topnav_elem();
+                create_mm_top_elem();
+                create_mm_items(1);
             });
 
             hooks.after(() => {
@@ -105,10 +110,10 @@ QUnit.module('MainMenuItem', () => {
 
         QUnit.module('toggle', hooks => {
             hooks.before(() => {
-                helpers.create_layout_elem();
-                helpers.create_topnav_elem();
-                helpers.create_mm_top_elem();
-                helpers.create_mm_items(1);
+                create_layout_elem();
+                create_topnav_elem();
+                create_mm_top_elem();
+                create_mm_items(1);
             });
 
             hooks.after(() => {

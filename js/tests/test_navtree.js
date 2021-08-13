@@ -1,7 +1,12 @@
+import {layout} from '../src/public/layout.js';
 import {Navtree} from '../src/public/navtree.js';
 import {Sidebar} from '../src/public/sidebar.js';
-import * as helpers from './helpers.js';
-import {layout} from '../src/public/layout.js';
+import {
+    create_navtree_elem,
+    create_sidebar_elem,
+    create_topnav_elem,
+    set_vp
+} from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Navtree tests
@@ -12,8 +17,8 @@ QUnit.module('Navtree', () => {
     QUnit.module('constructor', hooks => {
         hooks.before(() => {
             // create dummy html elements
-            helpers.create_sidebar_elem();
-            helpers.create_navtree_elem();
+            create_sidebar_elem();
+            create_navtree_elem();
         });
 
         hooks.after(() => {
@@ -48,9 +53,9 @@ QUnit.module('Navtree', () => {
         QUnit.module('align_width', hooks => {
             hooks.before(() => {
                 // create dummy DOM elements
-                helpers.create_topnav_elem();
-                helpers.create_sidebar_elem();
-                helpers.create_navtree_elem();
+                create_topnav_elem();
+                create_sidebar_elem();
+                create_navtree_elem();
             });
 
             hooks.after(() => {
@@ -101,9 +106,9 @@ QUnit.module('Navtree', () => {
         QUnit.module('restore_width', hooks => {
             hooks.before(() => {
                 // create dummy DOM elements
-                helpers.create_topnav_elem();
-                helpers.create_sidebar_elem();
-                helpers.create_navtree_elem();
+                create_topnav_elem();
+                create_sidebar_elem();
+                create_navtree_elem();
             });
 
             hooks.after(() => {
@@ -112,7 +117,7 @@ QUnit.module('Navtree', () => {
             });
 
             QUnit.test('restore_width()', assert => {
-                helpers.set_vp('large');
+                set_vp('large');
 
                 // initialize instances
                 Sidebar.initialize();
@@ -145,8 +150,8 @@ QUnit.module('Navtree', () => {
 
             hooks.before(assert => {
                 // create dummy DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_navtree_elem();
+                create_sidebar_elem();
+                create_navtree_elem();
 
                 // overwrite methods to check for calls
                 Navtree.prototype.align_width = function() {
@@ -190,8 +195,8 @@ QUnit.module('Navtree', () => {
 
             hooks.before(assert => {
                 // create dummy DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_navtree_elem();
+                create_sidebar_elem();
+                create_navtree_elem();
 
                 // dummy class
                 TestNavtree = class extends Navtree {

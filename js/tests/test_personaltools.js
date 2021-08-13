@@ -2,17 +2,25 @@ import $ from 'jquery';
 import {layout} from '../src/public/layout.js';
 import {Personaltools} from '../src/public/personaltools.js';
 import {Topnav} from '../src/public/topnav.js';
-import * as helpers from './helpers.js';
+import {
+    create_layout_elem,
+    create_pt_elem,
+    create_topnav_elem,
+    jQuery_slideUp,
+    set_vp
+} from './helpers.js';
 
 QUnit.module('personaltools', hooks => {
 
     hooks.before(() => {
-        helpers.create_layout_elem();
-        helpers.create_topnav_elem();
-        helpers.create_pt_elem();
+        create_layout_elem();
+        create_topnav_elem();
+        create_pt_elem();
+        jQuery_slideUp.override();
     });
 
     hooks.after(() => {
+        jQuery_slideUp.reset();
         $('#layout').remove();
     });
 
@@ -21,7 +29,7 @@ QUnit.module('personaltools', hooks => {
         Topnav.initialize();
         Personaltools.initialize();
 
-        helpers.set_vp('mobile');
+        set_vp('mobile');
 
         // trigger bootstrap dropdown on personaltools
         layout.personaltools.elem.trigger('show.bs.dropdown');
@@ -31,7 +39,7 @@ QUnit.module('personaltools', hooks => {
         layout.personaltools.elem.trigger('hide.bs.dropdown');
         assert.strictEqual(layout.personaltools.user_menu.css('display'), 'none');
 
-        helpers.set_vp('large');
+        set_vp('large');
 
         // trigger bootstrap show.bs.dropdown
         layout.personaltools.elem.trigger('show.bs.dropdown');

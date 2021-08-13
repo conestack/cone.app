@@ -1,7 +1,11 @@
 import $ from 'jquery';
 import {Topnav} from '../src/public/topnav.js';
-import * as helpers from './helpers.js';
-import {karma_vp_states} from './karma_viewport_states.js';
+import {
+    create_topnav_elem,
+    jQuery_slideToggle,
+    karma_vp_states,
+    set_vp
+} from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Topnav tests
@@ -15,10 +19,10 @@ QUnit.module('Topnav', () => {
 
             hooks.beforeEach(() => {
                 // set vp to ensure consistency
-                helpers.set_vp('large');
+                set_vp('large');
 
                 // create topnav DOM element
-                helpers.create_topnav_elem();
+                create_topnav_elem();
 
                 // append toolbar dropdowns dummy element to DOM
                 let tb_dropdown_elem = $(`
@@ -37,7 +41,7 @@ QUnit.module('Topnav', () => {
             });
 
             QUnit.test('vp mobile', assert => {
-                helpers.set_vp('mobile');
+                set_vp('mobile');
 
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
@@ -49,7 +53,7 @@ QUnit.module('Topnav', () => {
 
             QUnit.test('vp desktop', assert => {
                 // set viewport to desktop
-                helpers.set_vp('large');
+                set_vp('large');
 
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
@@ -83,18 +87,24 @@ QUnit.module('Topnav', () => {
 
             hooks.before(() => {
                 // create topnav DOM element
-                helpers.create_topnav_elem();
+                create_topnav_elem();
+
+                // override jQuery
+                jQuery_slideToggle.override();
             });
 
             hooks.after(() => {
                 test_topnav = null;
                 // remove topnav element from DOM
                 $('#layout').remove();
+
+                // reset jQuery
+                jQuery_slideToggle.reset();
             });
 
             QUnit.test('toggle_menu()', assert => {
                 // set viewport state to mobile
-                helpers.set_vp('mobile');
+                set_vp('mobile');
 
                 // initialize Topnav instance
                 test_topnav = Topnav.initialize();
@@ -123,7 +133,7 @@ QUnit.module('Topnav', () => {
 
             hooks.before(() => {
                 // create topnav DOM element
-                helpers.create_topnav_elem();
+                create_topnav_elem();
 
                 // append dummy toolbar dropdowns to DOM
                 let tb_dropdown_elem = $(`
@@ -147,7 +157,7 @@ QUnit.module('Topnav', () => {
 
                 for (let i=0; i<3; i++) {
                     // set viewport
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
 
                     assert.strictEqual(test_topnav.vp_state, i);
 

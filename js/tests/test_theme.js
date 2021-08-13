@@ -2,8 +2,8 @@ import {
     default_themes,
     ThemeSwitcher
 } from '../src/public/theme.js';
-import {create_theme_switcher_elem} from './helpers.js';
 import {create_cookie} from '../src/public/utils.js';
+import {create_theme_switcher_elem} from './helpers.js';
 import {layout} from '../src/public/layout.js';
 
 ///////////////////////////////////////////////////////////////////////////////

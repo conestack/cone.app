@@ -1,6 +1,10 @@
 import {MainMenuSidebar} from '../src/public/mainmenu.js';
 import {Sidebar} from '../src/public/sidebar.js';
-import * as helpers from './helpers.js';
+import {
+    create_mm_sidebar_elem,
+    create_sidebar_elem,
+    set_vp
+} from './helpers.js';
 import {
     create_cookie,
     read_cookie
@@ -17,8 +21,8 @@ QUnit.module('MainMenuSidebar', () => {
 
         hooks.beforeEach(() => {
             // create DOM elements
-            helpers.create_sidebar_elem();
-            helpers.create_mm_sidebar_elem();
+            create_sidebar_elem();
+            create_mm_sidebar_elem();
         });
 
         hooks.afterEach(() => {
@@ -54,7 +58,7 @@ QUnit.module('MainMenuSidebar', () => {
         });
 
         QUnit.test('collapsed sidebar', assert => {
-            helpers.set_vp('small');
+            set_vp('small');
 
             // initialize instances
             Sidebar.initialize();
@@ -73,8 +77,8 @@ QUnit.module('MainMenuSidebar', () => {
         QUnit.module('unload()', hooks => {
             hooks.before(() => {
                 // create DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_mm_sidebar_elem();
+                create_sidebar_elem();
+                create_mm_sidebar_elem();
             });
 
             hooks.after(() => {
@@ -108,8 +112,8 @@ QUnit.module('MainMenuSidebar', () => {
         QUnit.module('initial_cookie()', hooks => {
             hooks.beforeEach(() => {
                 // create DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_mm_sidebar_elem();
+                create_sidebar_elem();
+                create_mm_sidebar_elem();
 
                 // delete any cookies --- make sure to tear down properly!
                 create_cookie('sidebar menus', '', -1);
@@ -163,8 +167,8 @@ QUnit.module('MainMenuSidebar', () => {
         QUnit.module('collapse', hooks => {
             hooks.before(() => {
                 // create DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_mm_sidebar_elem();
+                create_sidebar_elem();
+                create_mm_sidebar_elem();
             });
 
             hooks.after(() => {
@@ -242,8 +246,8 @@ QUnit.module('MainMenuSidebar', () => {
         QUnit.module('expand', hooks => {
             hooks.before(() => {
                 // create DOM elements
-                helpers.create_sidebar_elem();
-                helpers.create_mm_sidebar_elem();
+                create_sidebar_elem();
+                create_mm_sidebar_elem();
             });
 
             hooks.after(() => {

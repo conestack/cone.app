@@ -2,8 +2,10 @@ import {
     ViewPortAware,
     vp
 } from '../src/public/viewport.js';
-import {karma_vp_states} from './karma_viewport_states.js';
-import * as helpers from './helpers.js';
+import {
+    karma_vp_states,
+    set_vp
+} from './helpers.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // ViewPort tests
@@ -13,7 +15,7 @@ QUnit.module('ViewPort', hooks => {
 
     hooks.before(() => {
         // set browser viewport
-        helpers.set_vp('large');
+        set_vp('large');
     });
 
     QUnit.module('constructor', () => {
@@ -40,7 +42,7 @@ QUnit.module('ViewPort', hooks => {
                 QUnit.test(`Viewport ${i}`, assert => {
                     /* set actual viewport (viewport breakpoints are set
                        in karma.conf.js) */
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
 
                     // assert viewport state
                     assert.strictEqual(vp.state, i);
@@ -55,7 +57,7 @@ QUnit.module('ViewPort', hooks => {
 
                 for (let i=0; i<karma_vp_states.length; i++) {
                     // set browser viewport
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
                     // assert viewport state
                     assert.strictEqual(vp.state, i);
                 }

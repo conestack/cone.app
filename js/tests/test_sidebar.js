@@ -1,13 +1,17 @@
 import $ from 'jquery';
-import * as helpers from './helpers.js';
-import {karma_vp_states} from './karma_viewport_states.js';
+import {
+    create_mm_sidebar_elem,
+    create_sidebar_elem,
+    karma_vp_states,
+    set_vp
+} from './helpers.js';
 import {
     create_cookie,
     read_cookie
 } from '../src/public/utils.js';
 import {layout} from '../src/public/layout.js';
-import {ViewPortAware} from '../src/public/viewport.js';
 import {Sidebar} from '../src/public/sidebar.js';
+import {ViewPortAware} from '../src/public/viewport.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Sidebar tests
@@ -21,10 +25,10 @@ QUnit.module('Sidebar', () => {
 
             hooks.before(() => {
                 // set viewport to desktop size
-                helpers.set_vp('large');
+                set_vp('large');
 
                 // create dummy sidebar
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
             });
 
             hooks.after(() =>{
@@ -77,7 +81,7 @@ QUnit.module('Sidebar', () => {
 
             hooks.beforeEach(() => {
                 // create dummy sidebar html elem
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
             });
 
             hooks.afterEach(() => {
@@ -88,7 +92,7 @@ QUnit.module('Sidebar', () => {
             for (let i=0; i<karma_vp_states.length; i++) {
                 QUnit.test(`Viewport ${i}`, assert => {
                     // set viewport
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
 
                     // initialize Test Sidebar
                     Sidebar.initialize();
@@ -118,7 +122,7 @@ QUnit.module('Sidebar', () => {
 
                 QUnit.test(`Viewport ${i} with cookie`, assert => {
                     // set viewport
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
 
                     // create dummy cookie
                     create_cookie('sidebar', true, null);
@@ -157,10 +161,10 @@ QUnit.module('Sidebar', () => {
 
             hooks.beforeEach(() => {
                 // set viewport
-                helpers.set_vp('large');
+                set_vp('large');
 
                 // create dummy sidebar element
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
             });
 
             hooks.afterEach(() => {
@@ -231,11 +235,11 @@ QUnit.module('Sidebar', () => {
 
             QUnit.test('viewport_changed()', assert => {
                 // create new Sidebar instance
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
                 Sidebar.initialize();
 
                 for (let i=0; i<karma_vp_states.length; i++) {
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
 
                     if (i === 0) {
                         // sidebar is expanded on mobile viewport
@@ -268,10 +272,10 @@ QUnit.module('Sidebar', () => {
 
             QUnit.test('viewport small', assert => {
                 // create new Sidebar instance
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
                 Sidebar.initialize();
 
-                helpers.set_vp('small');
+                set_vp('small');
                 // sidebar is collapsed
                 assert.strictEqual(layout.sidebar.collapsed, true);
                 // elem is visible
@@ -283,7 +287,7 @@ QUnit.module('Sidebar', () => {
 
             QUnit.test('with cookie', assert => {
                 // create new Sidebar instance
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
                 Sidebar.initialize();
 
                 let state;
@@ -297,7 +301,7 @@ QUnit.module('Sidebar', () => {
                     // create dummy cookie
                     layout.sidebar.cookie = state;
 
-                    helpers.set_vp(karma_vp_states[i]);
+                    set_vp(karma_vp_states[i]);
 
                     if (i === 0) {
                         // collapsed state can't change on mobile
@@ -314,10 +318,10 @@ QUnit.module('Sidebar', () => {
 
             hooks.beforeEach(() => {
                 // create dummy sidebar element
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
 
                 // create dummy mainmenu sidebar element
-                helpers.create_mm_sidebar_elem();
+                create_mm_sidebar_elem();
             });
 
             hooks.afterEach(() => {
@@ -358,7 +362,7 @@ QUnit.module('Sidebar', () => {
 
             hooks.before(() => {
                 // create dummy sidebar element
-                helpers.create_sidebar_elem();
+                create_sidebar_elem();
             });
 
             hooks.after(() => {

@@ -2,18 +2,24 @@ import $ from 'jquery';
 import {layout} from '../src/public/layout.js';
 import {Toolbar} from '../src/public/toolbar.js';
 import {Topnav} from '../src/public/topnav.js';
-import * as helpers from './helpers.js';
+import {
+    create_layout_elem,
+    create_noti_elem,
+    create_toolbar_elem,
+    create_topnav_elem,
+    set_vp
+} from './helpers.js';
 
 QUnit.module('toolbar', () => {
 
     QUnit.module('constructor', hooks=> {
 
         hooks.beforeEach(() => {
-            helpers.create_layout_elem();
-            helpers.create_topnav_elem();
-            helpers.create_toolbar_elem();
+            create_layout_elem();
+            create_topnav_elem();
+            create_toolbar_elem();
             let date = 'August 06, 2021 09:00:00';
-            helpers.create_noti_elem(date, 'high', 'elem1');
+            create_noti_elem(date, 'high', 'elem1');
         });
 
         hooks.afterEach(() => {
@@ -43,9 +49,9 @@ QUnit.module('toolbar', () => {
     QUnit.module('methods', hooks => {
 
         hooks.beforeEach(() => {
-            helpers.create_layout_elem();
-            helpers.create_topnav_elem();
-            helpers.create_toolbar_elem();
+            create_layout_elem();
+            create_topnav_elem();
+            create_toolbar_elem();
         });
 
         hooks.afterEach(() => {
@@ -58,7 +64,7 @@ QUnit.module('toolbar', () => {
             Toolbar.initialize();
     
             // set viewport mobile
-            helpers.set_vp('mobile');
+            set_vp('mobile');
     
             // toggle mobile menu
             layout.topnav.toggle_button.trigger('click');
@@ -68,7 +74,7 @@ QUnit.module('toolbar', () => {
             assert.strictEqual(layout.topnav.content.css('display'), 'none');
     
             // set viewport desktop
-            helpers.set_vp('large');
+            set_vp('large');
     
             assert.strictEqual(layout.topnav.content.css('display'), 'contents');
             // trigger bootstrap dropdown
@@ -78,8 +84,8 @@ QUnit.module('toolbar', () => {
     
         QUnit.test('mark_as_read', assert => {
             let date = 'August 06, 2021 09:00:00';
-            helpers.create_noti_elem(date, '', '1');
-            helpers.create_noti_elem(date, '', '2');
+            create_noti_elem(date, '', '1');
+            create_noti_elem(date, '', '2');
             
             // initialize
             Topnav.initialize();
@@ -108,10 +114,10 @@ QUnit.module('toolbar', () => {
                 date3 = 'August 04, 2021 10:24:00',
                 date4 = 'August 03, 2021 10:24:00';
 
-            helpers.create_noti_elem(date2, 'high');
-            helpers.create_noti_elem(date4, 'medium');
-            helpers.create_noti_elem(date3, 'low');
-            helpers.create_noti_elem(date1);
+            create_noti_elem(date2, 'high');
+            create_noti_elem(date4, 'medium');
+            create_noti_elem(date3, 'low');
+            create_noti_elem(date1);
 
             // initialize
             Topnav.initialize();
@@ -162,10 +168,10 @@ QUnit.module('toolbar', () => {
                 date2 = 'August 04, 2021 10:24:00',
                 date3 = 'August 03, 2021 10:24:00';
 
-            helpers.create_noti_elem(date1, '', '1');
-            helpers.create_noti_elem(date2, '', '2');
-            helpers.create_noti_elem(date3, '', '3');
-            helpers.create_noti_elem(date0, '', '0');
+            create_noti_elem(date1, '', '1');
+            create_noti_elem(date2, '', '2');
+            create_noti_elem(date3, '', '3');
+            create_noti_elem(date0, '', '0');
 
             // initialize
             Topnav.initialize();
