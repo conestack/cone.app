@@ -23,6 +23,9 @@ Docs
 Upcoming
 ========
 
+[ ] JS -> ``BatchedItemsFilter``, ``BatchedItemsSearch``, ``BatchedItemsSize``
+    classes.
+
 [ ] Treibstoff migration docs.
 
 [ ] Treibtroff AjaxOverlay docs.
