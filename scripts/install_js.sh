@@ -17,5 +17,8 @@ npm --save-dev install \
     rollup \
     rollup-plugin-cleanup \
     rollup-plugin-terser \
-    https://github.com/jquery/jquery#main \
-    ../treibstoff
+    sass
+
+npm --no-save install \
+    ../treibstoff \
+    https://github.com/jquery/jquery#main
