@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -x "$(which python)" ]; then
-    rm -r py2
+set -e
 
+if [ -x "$(which python)" ]; then
     virtualenv --clear --no-site-packages -p python py2
 
     ./py2/bin/pip install wheel
@@ -19,8 +19,6 @@ if [ -x "$(which python)" ]; then
     ./py2/bin/pip install -e .[test]
 fi
 if [ -x "$(which python3)" ]; then
-    rm -r py3
-
     virtualenv --clear --no-site-packages -p python3 py3
 
     ./py3/bin/pip install wheel

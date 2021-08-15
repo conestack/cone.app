@@ -1,6 +1,7 @@
 #!/bin/sh
-set -e
+
 export TESTRUN_MARKER=True
+
 TEST="bin/python -m cone.app.tests.__init__"
 
 clear

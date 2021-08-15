@@ -100,7 +100,7 @@ Cone uses sphinx for generating it's documentation.
 
 To generate sphinx, run::
 
-    ./build_docs.sh
+    ./docs.sh
 
 
 Browser Resources
