@@ -1,4 +1,7 @@
 #!/bin/sh
+
+set -e
+
 export TESTRUN_MARKER=True
 
 ./$1/bin/coverage run --source src/cone/app -m cone.app.tests.__init__

@@ -1,4 +1,6 @@
+from cone.app import get_root
 from cone.app import model
+from cone.app import security as security_module
 from cone.app.security import authenticate
 from contextlib import contextmanager
 from pyramid.security import AuthenticationAPIMixin
@@ -170,6 +172,10 @@ class Security(object):
         print("Security set up.")
 
     def tearDown(self):
+        root = get_root()
+        root.factories.clear()
+        root['settings'].factories.clear()
+        security_module.AUTHENTICATOR = None
         # XXX: something is wrong here.
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
