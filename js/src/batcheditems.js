@@ -1,17 +1,18 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 
-export class BatchedItems {
+export class BatchedItemsFilter {
 
-    static initialize(context) {
-        BatchedItems.bind_size(context);
-        BatchedItems.bind_search(context);
+    constructor(elem, name) {
+        this.elem = elem;
+        this.name = name;
     }
 
-    static set_filter(elem, param, val) {
-        let target = ts.ajax.parsetarget(elem.attr('ajax:target')),
+    set_filter(val) {
+        let elem = this.elem,
+            target = ts.ajax.parsetarget(elem.attr('ajax:target')),
             event = elem.attr('ajax:event');
-        target.params[param] = val;
+        target.params[this.name] = val;
         if (elem.attr('ajax:path')) {
             let path_event = elem.attr('ajax:path-event');
             if (!path_event) {
@@ -19,7 +20,7 @@ export class BatchedItems {
             }
             // path always gets calculated from target
             ts.ajax.path({
-                path: target.path + target.query + '&' + param + '=' + val,
+                path: target.path + target.query + '&' + this.name + '=' + val,
                 event: path_event,
                 target: target
             });
@@ -27,53 +28,80 @@ export class BatchedItems {
         let defs = event.split(':');
         ts.ajax.trigger(defs[0], defs[1], target);
     }
+}
 
-    static bind_size(context,
-                     size_selector='.batched_items_slice_size select') {
-        $(size_selector, context).off('change').on('change', function(evt) {
-            let selection = $(evt.currentTarget),
-                option = $('option:selected', selection).first();
-            BatchedItems.set_filter(selection, 'size', option.val());
+export class BatchedItemsSize extends BatchedItemsFilter {
+
+    static initialize(context,
+                      selector='.batched_items_slice_size select') {
+        $(selector, context).each(function() {
+            new BatchedItemsSize($(this));
         });
     }
 
-    static bind_search(context,
-                       filter_selector='.batched_items_filter input',
-                       filter_name='term') {
-        let search_input = $(filter_selector, context);
+    constructor(elem) {
+        super(elem, 'size');
+        elem.off('change').on('change', this.change_handle.bind(this));
+    }
+
+    change_handle(evt) {
+        let option = $('option:selected', this.elem).first();
+        this.set_filter(option.val());
+    }
+}
+
+export class BatchedItemsSearch extends BatchedItemsFilter {
+
+    static initialize(context,
+                      selector='.batched_items_filter input',
+                      name='term') {
+        $(selector, context).each(function() {
+            new BatchedItemsSearch($(this), name);
+        });
+    }
+
+    constructor(elem, name) {
+        super(elem, name);
+        elem.off('focus').on('focus', this.focus_handle.bind(this));
+        elem.off('keypress').on('keypress', this.keypress_handle.bind(this));
+        elem.off('keyup').on('keyup', this.keyup_handle.bind(this));
+        elem.off('change').on('change', this.change_handle.bind(this));
+    }
+
+    focus_handle(evt) {
         // reset filter input field if marked as empty filter
-        if (search_input.hasClass('empty_filter')) {
-            search_input.on('focus', function() {
-                this.value = '';
-                $(this).removeClass('empty_filter');
-            });
+        let elem = this.elem;
+        if (elem.hasClass('empty_filter')) {
+            elem.value = '';
+            elem.removeClass('empty_filter');
         }
+    }
+
+    keypress_handle(evt) {
         // prevent default action when pressing enter
-        search_input.off('keypress').on('keypress', function(evt) {
-            if (evt.keyCode == 13) {
-                evt.preventDefault();
-            }
-        });
-        // trigger search when releasing enter
-        search_input.off('keyup').on('keyup', function(evt) {
-            if (evt.keyCode == 13) {
-                evt.preventDefault();
-                let input = $(this);
-                BatchedItems.set_filter(input, filter_name, input.attr('value'));
-            }
-        });
-        // trigger search on input change
-        search_input.off('change').on('change', function(evt) {
+        if (evt.keyCode == 13) {
             evt.preventDefault();
-            let input = $(this);
-            BatchedItems.set_filter(input, filter_name, input.attr('value'));
-        });
+        }
+    }
+
+    keyup_handle(evt) {
+        // trigger search when releasing enter
+        if (evt.keyCode == 13) {
+            evt.preventDefault();
+            this.set_filter(this.elem.attr('value'));
+        }
+    }
+
+    change_handle(evt) {
+        // trigger search on input change
+        evt.preventDefault();
+        this.set_filter(this.elem.attr('value'));
     }
 }
 
 export function batcheditems_handle_filter(elem, param, val) {
     ts.deprecate('batcheditems_handle_filter', 'BatchedItems.set_filter', '1.1');
-    BatchedItems.set_filter(elem, param, val);
+    new BatchedItemsFilter(elem, param).set_filter(val);
 }
 
 export function batcheditems_size_binder(context, size_selector) {
@@ -81,7 +109,7 @@ export function batcheditems_size_binder(context, size_selector) {
     if (!size_selector) {
         size_selector = '.batched_items_slice_size select';
     }
-    BatchedItems.bind_size(context, size_selector);
+    BatchedItemsSize.initialize(context, size_selector);
 }
 
 export function batcheditems_filter_binder(context, filter_selector, filter_name) {
@@ -92,5 +120,5 @@ export function batcheditems_filter_binder(context, filter_selector, filter_name
     if (!filter_name) {
         filter_name = 'term';
     }
-    BatchedItems.bind_search(context, filter_selector, filter_name);
+    BatchedItemsSearch.initialize(context, filter_selector, filter_name);
 }

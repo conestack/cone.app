@@ -26,7 +26,8 @@ export * from '../utils.js';
 $(function() {
     new KeyBinder();
 
-    ts.ajax.register(BatchedItems.initialize, true);
+    ts.ajax.register(BatchedItemsSize.initialize, true);
+    ts.ajax.register(BatchedItemsSearch.initialize, true);
     ts.ajax.register(CopySupport.initialize, true);
     ts.ajax.register(ReferenceBrowserLoader.initialize, true);
     ts.ajax.register(ReferenceHandle.initialize, true);
