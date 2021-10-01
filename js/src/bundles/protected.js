@@ -1,7 +1,10 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 
-import {BatchedItems} from '../batcheditems.js';
+import {
+    BatchedItemsSize,
+    BatchedItemsSearch
+} from '../batcheditems.js';
 import {CopySupport} from '../copysupport.js';
 import {KeyBinder} from '../keybinder.js';
 import {
