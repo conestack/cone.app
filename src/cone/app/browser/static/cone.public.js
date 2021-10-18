@@ -61,4 +61,4 @@
 
     return exports;
 
-})({}, jQuery, treibstoff);
+}({}, jQuery, treibstoff));

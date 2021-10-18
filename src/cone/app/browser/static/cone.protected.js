@@ -8,7 +8,7 @@
         }
         set_filter(val) {
             let elem = this.elem,
-                target = ts.ajax.parsetarget(elem.attr('ajax:target')),
+                target = ts.ajax.parse_target(elem.attr('ajax:target')),
                 event = elem.attr('ajax:event');
             target.params[this.name] = val;
             if (elem.attr('ajax:path')) {
@@ -60,7 +60,7 @@
         focus_handle(evt) {
             let elem = this.elem;
             if (elem.hasClass('empty_filter')) {
-                elem.value = '';
+                elem.val('');
                 elem.removeClass('empty_filter');
             }
         }
@@ -628,4 +628,4 @@
 
     return exports;
 
-})({}, jQuery, treibstoff);
+}({}, jQuery, treibstoff));
