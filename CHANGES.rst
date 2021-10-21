@@ -1,7 +1,13 @@
 Changes
 =======
 
-1.0.2 (unreleased)
+1.0.3 (unreleased)
+------------------
+
+- No changes yet.
+
+
+1.0.2 (2021-10-21)
 ------------------
 
 - Workflow transition title is taken from zcml transition title if no
