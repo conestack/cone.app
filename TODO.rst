@@ -26,6 +26,8 @@ Roadmap
 1.1
 ---
 
+[ ] Consolidate "Unauthorized" and "Insufficient Privileges" tiles.
+
 [ ] Check ``title`` of transition names before using ``name`` in workflow
     dropdown.
 
