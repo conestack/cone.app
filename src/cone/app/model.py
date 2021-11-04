@@ -2,6 +2,7 @@ from cone.app.compat import configparser
 from cone.app.compat import IS_PY2
 from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
+from cone.app.interfaces import IApplicationEnvironment
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
@@ -9,10 +10,12 @@ from cone.app.interfaces import ILayoutConfig
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
+from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
+from node import schema
 from node.behaviors import Adopt
 from node.behaviors import AsAttrAccess
 from node.behaviors import Attributes
@@ -23,6 +26,7 @@ from node.behaviors import NodeChildValidate
 from node.behaviors import Nodespaces
 from node.behaviors import Nodify
 from node.behaviors import OdictStorage
+from node.behaviors import Schema
 from node.behaviors import UUIDAware
 from node.behaviors import VolatileStorageInvalidate
 from node.interfaces import IOrdered
@@ -35,12 +39,15 @@ from odict import odict
 from plumber import Behavior
 from plumber import default
 from plumber import finalize
+from plumber import override
 from plumber import plumbing
+from pyramid.i18n import negotiate_locale_name
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
+from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
 import copy
@@ -106,6 +113,20 @@ class node_info(object):
         info.icon = self.icon
         register_node_info(cls.node_info_name, info)
         return cls
+
+
+@implementer(IApplicationEnvironment)
+class AppEnvironment(Behavior):
+
+    @default
+    @property
+    def request(self):
+        return get_current_request()
+
+    @default
+    @property
+    def registry(self):
+        return get_current_registry()
 
 
 @implementer(IApplicationNode)
@@ -300,6 +321,48 @@ class CopySupport(Behavior):
     supports_cut = default(True)
     supports_copy = default(True)
     supports_paste = default(True)
+
+
+class LanguageSchema:
+
+    def __iter__(self):
+        from cone.app import cfg
+        return iter(cfg.available_languages)
+
+    def __contains__(self, key):
+        return key in iter(self)
+
+    def __getitem__(self, key):
+        if key in self:
+            return schema.Str()
+        raise KeyError(key)
+
+    def get(self, key, default=None):
+        if key in self:
+            return self[key]
+        return default
+
+    def keys(self):
+        return list(iter(self))
+
+
+@implementer(ITranslation)
+class Translation(Schema, AppEnvironment):
+    schema = override(LanguageSchema())
+
+    @default
+    @property
+    def value(self):
+        request = self.request
+        if request:
+            lang = negotiate_locale_name(request)
+        else:
+            settings = self.registry.settings or {}
+            lang = settings.get('default_locale_name', 'en')
+        value = self.get(lang)
+        if not value:
+            value = self.name
+        return value
 
 
 o_getattr = object.__getattribute__

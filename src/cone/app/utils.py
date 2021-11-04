@@ -36,6 +36,11 @@ def format_traceback():
     return ''.join(traceback.format_exception(etype, value, tb))
 
 
+def node_path(node):
+    # XXX: move to ``cone.app.utils``
+    return [safe_decode(p) for p in node.path if p is not None]
+
+
 class DatetimeHelper(object):
 
     def w_value(self, val):

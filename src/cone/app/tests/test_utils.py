@@ -5,6 +5,7 @@ from cone.app.model import Properties
 from cone.app.utils import add_creation_metadata
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
+from cone.app.utils import node_path
 from cone.app.utils import safe_decode
 from cone.app.utils import safe_encode
 from cone.app.utils import timestamp
@@ -28,6 +29,11 @@ class TestUtils(NodeTestCase):
     def test_safe_decode(self):
         self.assertEqual(safe_decode(b'\xc3\xa4\xc3\xb6\xc3\xbc'), u'äöü')
         self.assertEqual(safe_decode(u'already_unicode'), u'already_unicode')
+
+    def test_node_path(self):
+        root = BaseNode()
+        root['child'] = BaseNode()
+        self.assertEqual(node_path(root['child']), [u'child'])
 
     def test_DatetimeHelper(self):
         # Helper object for read/write operations with datetime values

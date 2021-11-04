@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
+from cone.app.interfaces import IApplicationNode
 from cone.app.model import AppRoot
 from cone.app.model import AppSettings
 from cone.app.model import LayoutConfig
 from cone.app.model import Properties
 from cone.app.ugm import ugm_backend
 from cone.app.utils import format_traceback
+from cone.app.utils import node_path
+from node.interfaces import INode
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.static import static_view
+from pyramid.traversal import ResourceTreeTraverser
 from yafowil.resources import YafowilResources as YafowilResourcesBase
+from zope.component import adapter
 from zope.component import getGlobalSiteManager
 import importlib
 import logging
@@ -24,6 +29,9 @@ logger = logging.getLogger('cone.app')
 
 # configuration
 cfg = Properties()
+
+# available languages
+cfg.available_languages = []
 
 # used main template
 cfg.main_template = 'cone.app.browser:templates/main.pt'
@@ -259,6 +267,24 @@ def configure_yafowil_addon_resources(config):
         cfg.css.public.insert(0, css)
 
 
+@adapter(IApplicationNode)
+class ApplicationNodeTraverser(ResourceTreeTraverser):
+
+    def __call__(self, request):
+        result = super(ApplicationNodeTraverser, self).__call__(request)
+        context = result['context']
+        if not IApplicationNode.providedBy(context):
+            if INode.providedBy(context):
+                result['context'] = context.acquire(IApplicationNode)
+                result['view_name'] = context.name
+                result['traversed'] = tuple(node_path(result['context']))
+            else:
+                result['context'] = get_root()
+                result['view_name'] = ''
+                result['traversed'] = tuple()
+        return result
+
+
 def main(global_config, **settings):
     """Returns WSGI application.
     """
@@ -315,6 +341,15 @@ def main(global_config, **settings):
     # include general dependencies
     config.include(pyramid_chameleon)
     config.include(pyramid_zcml)
+
+    # add custom traverser
+    config.registry.registerAdapter(ApplicationNodeTraverser)
+
+    # available languages
+    available_languages = settings.get('cone.available_languages', '')
+    cfg.available_languages = [
+        lang.strip() for lang in available_languages.split(',') if lang
+    ]
 
     # main template
     main_template = settings.get('cone.main_template')
