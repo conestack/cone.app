@@ -4,7 +4,8 @@ Changes
 1.0.3 (unreleased)
 ------------------
 
-- No changes yet.
+- Add language selection dropdown.
+  [rnix]
 
 
 1.0.2 (2021-10-21)
