@@ -485,7 +485,9 @@ class RootContent(ProtectedContentTile):
 
 
 class LanguageTile(Tile):
-    param_blacklist = ['_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector']
+    param_blacklist = [
+        '_', '_LOCALE_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector'
+    ]
 
     def make_query(self, lang=None):
         params = dict()
@@ -493,8 +495,7 @@ class LanguageTile(Tile):
             if k in self.param_blacklist:
                 continue
             params[k] = v
-        if lang:
-            params['lang'] = lang
+        params['lang'] = lang
         return make_query(**params)
 
 

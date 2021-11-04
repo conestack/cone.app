@@ -4,6 +4,12 @@ Changes
 1.0.3 (unreleased)
 ------------------
 
+- Add ``request`` and ``registry`` properties to ``cone.app.model.AppNode``.
+  [rnix]
+
+- Introduce ``cone.app.model.Translation`` behavior.
+  [rnix]
+
 - Add language selection dropdown.
   [rnix]
 

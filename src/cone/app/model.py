@@ -9,10 +9,12 @@ from cone.app.interfaces import ILayoutConfig
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
+from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
+from node import schema
 from node.behaviors import Adopt
 from node.behaviors import AsAttrAccess
 from node.behaviors import Attributes
@@ -23,6 +25,7 @@ from node.behaviors import NodeChildValidate
 from node.behaviors import Nodespaces
 from node.behaviors import Nodify
 from node.behaviors import OdictStorage
+from node.behaviors import Schema
 from node.behaviors import UUIDAware
 from node.behaviors import VolatileStorageInvalidate
 from node.interfaces import IOrdered
@@ -35,12 +38,15 @@ from odict import odict
 from plumber import Behavior
 from plumber import default
 from plumber import finalize
+from plumber import override
 from plumber import plumbing
+from pyramid.i18n import negotiate_locale_name
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
+from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
 import copy
@@ -144,6 +150,16 @@ class AppNode(Behavior):
             info.node = self.__class__
             info.icon = app_config().default_node_icon
         return info
+
+    @default
+    @property
+    def request(self):
+        return get_current_request()
+
+    @default
+    @property
+    def registry(self):
+        return get_current_registry()
 
 
 @plumbing(
@@ -302,6 +318,48 @@ class CopySupport(Behavior):
     supports_paste = default(True)
 
 
+class LanguageSchema:
+
+    def __iter__(self):
+        from cone.app import cfg
+        return iter(cfg.available_languages)
+
+    def __contains__(self, key):
+        return key in iter(self)
+
+    def __getitem__(self, key):
+        if key in self:
+            return schema.Str()
+        raise KeyError(key)
+
+    def get(self, key, default=None):
+        if key in self:
+            return self[key]
+        return default
+
+    def keys(self):
+        return list(iter(self))
+
+
+@implementer(ITranslation)
+class Translation(Schema):
+    schema = override(LanguageSchema())
+
+    @default
+    @property
+    def value(self):
+        request = self.request
+        if request:
+            lang = negotiate_locale_name(request)
+        else:
+            settings = self.registry.settings or {}
+            lang = settings.get('default_locale_name', 'en')
+        value = self.get(lang)
+        if not value:
+            value = self.name
+        return value
+
+
 o_getattr = object.__getattribute__
 o_setattr = object.__setattr__
 
@@ -370,7 +428,7 @@ class ProtectedProperties(Properties):
         if not required:
             # no security check
             return True
-        request = get_current_request()
+        request = context.request
         for permission in required:
             if request.has_permission(permission, context):
                 return True

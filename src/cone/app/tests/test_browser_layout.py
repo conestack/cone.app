@@ -1,8 +1,11 @@
+from cone.app import cfg
 from cone.app import DefaultLayoutConfig
 from cone.app import layout_config
 from cone.app import testing
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.layout import LanguageTile
 from cone.app.browser.layout import LayoutConfigTile
 from cone.app.browser.layout import NavTree
 from cone.app.browser.layout import personal_tools
@@ -601,3 +604,80 @@ class TestBrowserLayout(TileTestCase):
         self.assertIsInstance(config, ChildNodeLayout)
 
         del layout_config._registry[ChildNode]
+
+    def test_LanguageTile(self):
+        tile = LanguageTile()
+        request = tile.request = self.layer.new_request()
+        self.assertEqual(tile.param_blacklist, [
+            '_',
+            '_LOCALE_',
+            'bdajax.action',
+            'bdajax.mode',
+            'bdajax.selector'
+        ])
+        request.params['_'] = '123'
+        request.params['existing'] = 'value'
+        self.assertEqual(tile.make_query(), '?existing=value')
+        self.assertEqual(tile.make_query(lang='en'), '?existing=value&lang=en')
+
+    def test_language(self):
+        self.assertEqual(cfg.available_languages, ['en', 'de'])
+        root = BaseNode()
+        request = self.layer.new_request()
+
+        res = render_tile(root, request, 'language')
+        self.checkOutput("""
+        <li class="dropdown">
+          <a href="#"
+             class="dropdown-toggle"
+             data-toggle="dropdown">
+             <span>Language</span>
+             <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="languagemenu">
+            <li>
+              <a href="#"
+                 ajax:bind="click"
+                 ajax:target="http://example.com/?lang=en"
+                 ajax:action="change_language:NONE:NONE">
+                 <span class="icon-lang-en"></span>
+                EN
+              </a>
+            </li>
+            <li>
+              <a href="#"
+                 ajax:bind="click"
+                 ajax:target="http://example.com/?lang=de"
+                 ajax:action="change_language:NONE:NONE">
+                 <span class="icon-lang-de"></span>
+                DE
+              </a>
+            </li>
+          </ul>
+        </li>
+        """, res)
+
+        cfg.available_languages = []
+        res = render_tile(root, request, 'language')
+        cfg.available_languages = ['en', 'de']
+        self.assertEqual(res, '')
+
+    def test_change_language(self):
+        self.assertEqual(cfg.available_languages, ['en', 'de'])
+        root = BaseNode()
+        request = self.layer.new_request()
+
+        request.params['lang'] = 'de'
+        render_tile(root, request, 'change_language')
+
+        cookie = request.response.headers['Set-Cookie']
+        self.assertTrue(cookie.startswith('_LOCALE_=de;'))
+
+        continuation = request.environ['cone.app.continuation']
+        self.assertEqual(len(continuation), 1)
+
+        event = continuation[0]
+        self.assertIsInstance(event, AjaxEvent)
+        self.assertEqual(event.target, 'http://example.com/')
+        self.assertEqual(event.name, 'contextchanged')
+        self.assertEqual(event.selector, '#layout')
