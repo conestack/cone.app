@@ -1,0 +1,30 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namespaces.conestack.org/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <li class="dropdown">
+
+    <a href="#"
+       class="dropdown-toggle"
+       data-toggle="dropdown">
+      <span i18n:translate="language">Language</span>
+      <span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="languagemenu">
+      <li tal:repeat="lang context.languages">
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${lang.target}"
+           ajax:action="change_language:NONE:NONE">
+          <span class="${lang.icon}"></span>
+          <tal:title replace="lang.title" />
+        </a>
+      </li>
+    </ul>
+
+  </li>
+
+</tal:block>

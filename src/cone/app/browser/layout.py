@@ -1,6 +1,9 @@
+from cone.app import cfg
 from cone.app import layout_config
 from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -18,6 +21,7 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
+from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
 import warnings
 
@@ -478,3 +482,64 @@ class RootContent(ProtectedContentTile):
             model=self.model,
             request=self.request,
             context=self)
+
+
+class LanguageTile(Tile):
+    param_blacklist = ['_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector']
+
+    def make_query(self, lang=None):
+        params = dict()
+        for k, v in self.request.params.items():
+            if k in self.param_blacklist:
+                continue
+            params[k] = v
+        if lang:
+            params['lang'] = lang
+        return make_query(**params)
+
+
+@tile(name='language',
+      path='templates/language.pt',
+      permission='login',
+      strict=False)
+class Language(LanguageTile):
+
+    @property
+    def show(self):
+        return bool(cfg.available_languages)
+
+    @property
+    def languages(self):
+        languages = list()
+        localizer = get_localizer(self.request)
+        for lang in cfg.available_languages:
+            target = make_url(
+                self.request,
+                node=self.model,
+                query=self.make_query(lang=lang)
+            )
+            languages.append({
+                'target': target,
+                'icon': 'icon-lang-{}'.format(lang),
+                'title': localizer.translate(_(
+                    'lang_{}'.format(lang),
+                    default=lang.upper()
+                ))
+            })
+        return languages
+
+
+@tile(name='change_language', permission='login')
+class ChangeLanguage(LanguageTile):
+
+    @property
+    def continuation(self):
+        url = make_url(self.request, node=self.model, query=self.make_query())
+        return [AjaxEvent(url, 'contextchanged', '#layout')]
+
+    def render(self):
+        lang = self.request.params['lang']
+        response = self.request.response
+        response.set_cookie('_LOCALE_', value=lang, max_age=31536000)
+        ajax_continue(self.request, self.continuation)
+        return u''

@@ -25,6 +25,9 @@ logger = logging.getLogger('cone.app')
 # configuration
 cfg = Properties()
 
+# available languages
+cfg.available_languages = []
+
 # used main template
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
@@ -315,6 +318,12 @@ def main(global_config, **settings):
     # include general dependencies
     config.include(pyramid_chameleon)
     config.include(pyramid_zcml)
+
+    # available languages
+    available_languages = settings.get('cone.available_languages', '')
+    cfg.available_languages = [
+        lang.strip() for lang in available_languages.split(',') if lang
+    ]
 
     # main template
     main_template = settings.get('cone.main_template')
