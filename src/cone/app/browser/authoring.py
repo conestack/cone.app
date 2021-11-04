@@ -20,6 +20,7 @@ from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import Tile
 from cone.tile import tile
+from node.interfaces import IOrder
 from plumber import Behavior
 from plumber import default
 from plumber import override
@@ -493,7 +494,7 @@ class OverlayEditForm(OverlayForm,
 # deleting
 ###############################################################################
 
-@tile(name='delete', permission="delete")
+@tile(name='delete', permission='delete')
 class DeleteAction(Tile):
     show_confirm_deleted = True
 
@@ -529,3 +530,74 @@ class DeleteAction(Tile):
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'info')
         return u''
+
+
+###############################################################################
+# moving
+###############################################################################
+
+class MoveAction(Tile):
+
+    def move(self):
+        raise NotImplementedError(
+            'Abstract ``MoveAction`` does not implement ``move``'
+        )
+
+    def continuation(self, url):
+        return [AjaxEvent(url, 'contextchanged', '#layout')]
+
+    def show_error(self, message):
+        localizer = get_localizer(self.request)
+        ajax_message(self.request, localizer.translate(message), 'error')
+
+    def render(self):
+        model = self.model
+        parent = model.parent
+        if not IOrder.providedBy(parent):
+            title = model.metadata.get('title', model.name)
+            message = _(
+                'object_not_movable',
+                default='Object "${title}" not movable',
+                mapping={'title': title}
+            )
+            self.show_error(message)
+            return u''
+        if (
+            not parent.properties.action_move
+            or not self.request.has_permission('change_order', parent)
+        ):
+            message = _(
+                'object_moving_not_permitted',
+                default='You are not permitted to move this object'
+            )
+            self.show_error(message)
+            return u''
+        self.move()
+        query = make_query(
+            contenttile='listing',
+            b_page=self.request.params.get('b_page'),
+            size=self.request.params.get('size')
+        )
+        url = make_url(self.request, node=parent, query=query)
+        ajax_continue(self.request, self.continuation(url))
+        return u''
+
+
+@tile(name='move_up', permission='view')
+class MoveUpAction(MoveAction):
+
+    def move(self):
+        print('##### move_up')
+        model = self.model
+        parent = model.parent
+        parent.swap(model, parent[parent.prev_key(model.name)])
+
+
+@tile(name='move_down', permission='view')
+class MoveDownAction(MoveAction):
+
+    def move(self):
+        print('##### move_down')
+        model = self.model
+        parent = model.parent
+        parent.swap(model, parent[parent.next_key(model.name)])

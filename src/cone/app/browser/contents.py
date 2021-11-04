@@ -1,9 +1,10 @@
-from cone.app.browser import RelatedViewProvider
 from cone.app.browser import get_related_view
+from cone.app.browser import RelatedViewProvider
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit
 from cone.app.browser.actions import ActionView
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import Toolbar
 from cone.app.browser.actions import ViewLink
 from cone.app.browser.copysupport import extract_copysupport_cookie
@@ -11,12 +12,13 @@ from cone.app.browser.table import RowData
 from cone.app.browser.table import Table
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
+from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
-from cone.app.interfaces import IApplicationNode
 from cone.tile import Tile
 from cone.tile import tile
 from node.interfaces import ILeaf
+from node.interfaces import IOrder
 from node.utils import instance_property
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
@@ -60,6 +62,51 @@ class ContentsActionDelete(ActionDelete):
         return self.model.properties.action_delete \
             and self.request.has_permission('delete', self.model.parent) \
             and self.permitted('delete')
+
+
+class ContentsMoveAction(LinkAction):
+
+    @property
+    def display(self):
+        if self.request.params.get('sort'):
+            return False
+        parent = self.model.parent
+        return parent.properties.action_move \
+            and IOrder.providedBy(parent) \
+            and self.request.has_permission('change_order', parent)
+
+    @property
+    def target(self):
+        request = self.request
+        query = make_query(
+            b_page=request.params.get('b_page'),
+            size=request.params.get('size')
+        )
+        return make_url(self.request, node=self.model, query=query)
+
+
+class ContentsActionMoveUp(ContentsMoveAction):
+    id = 'toolbaraction-move-up'
+    icon = 'glyphicon glyphicon-chevron-up'
+    action = 'move_up:NONE:NONE'
+
+    @property
+    def display(self):
+        if not super().display:
+            return False
+        return self.model.parent.first_key != self.model.name
+
+
+class ContentsActionMoveDown(ContentsMoveAction):
+    id = 'toolbaraction-move-down'
+    icon = 'glyphicon glyphicon-chevron-down'
+    action = 'move_down:NONE:NONE'
+
+    @property
+    def display(self):
+        if not super().display:
+            return False
+        return self.model.parent.last_key != self.model.name
 
 
 class ContentsViewLink(ViewLink):
@@ -134,6 +181,8 @@ class ContentsTile(Table):
     @instance_property
     def row_actions(self):
         row_actions = Toolbar()
+        row_actions['up'] = ContentsActionMoveUp()
+        row_actions['down'] = ContentsActionMoveDown()
         row_actions['view'] = ContentsActionView()
         row_actions['edit'] = ContentsActionEdit()
         row_actions['delete'] = ContentsActionDelete()

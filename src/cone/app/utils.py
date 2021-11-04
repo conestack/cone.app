@@ -38,7 +38,7 @@ def format_traceback():
 
 def node_path(node):
     # XXX: move to ``cone.app.utils``
-    return [safe_decode(p) for p in node.path if p is not None]
+    return [_safe_decode(p) for p in node.path if p is not None]
 
 
 class DatetimeHelper(object):
