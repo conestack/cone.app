@@ -7,6 +7,7 @@ from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
 from cone.app.model import AdapterNode
+from cone.app.model import AppEnvironment
 from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
@@ -96,15 +97,6 @@ class TestModel(NodeTestCase):
         self.assertTrue(info.node is BaseNode)
         self.assertEqual(info.title, "<class 'cone.app.model.BaseNode'>")
         self.assertTrue(info.inexistent is None)
-
-        # Request
-        self.layer.forget_request()
-        self.assertTrue(root.request is None)
-        request = self.layer.new_request()
-        self.assertTrue(root.request is request)
-
-        # Registry
-        self.assertIsInstance(root.registry, BaseGlobalComponents)
 
     def test_FactoryNode(self):
         class TestFactoryNode(FactoryNode):
@@ -315,6 +307,22 @@ class TestModel(NodeTestCase):
         self.assertEqual(info.icon, 'icon')
         self.assertEqual(MyNode.node_info_name, 'mynode')
 
+    def test_AppEnvironment(self):
+        @plumbing(AppEnvironment)
+        class AppEnvironmentNode(BaseNode):
+            pass
+
+        node = AppEnvironmentNode()
+
+        # Request
+        self.layer.forget_request()
+        self.assertTrue(node.request is None)
+        request = self.layer.new_request()
+        self.assertTrue(node.request is request)
+
+        # Registry
+        self.assertIsInstance(node.registry, BaseGlobalComponents)
+
     def test_NamespaceUUID(self):
         @plumbing(NamespaceUUID)
         class NamespaceUUIDNode(BaseNode):
@@ -413,6 +421,8 @@ class TestModel(NodeTestCase):
         self.assertIsInstance(ls['en'], schema.Str)
         self.assertTrue(ls.get('de') is not None)
         self.assertTrue(ls.get('it') is None)
+        with self.assertRaises(KeyError):
+            ls['it']
 
         @plumbing(Translation)
         class TranslationNode(BaseNode):

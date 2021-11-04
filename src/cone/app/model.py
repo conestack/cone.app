@@ -2,6 +2,7 @@ from cone.app.compat import configparser
 from cone.app.compat import IS_PY2
 from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
+from cone.app.interfaces import IApplicationEnvironment
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
@@ -114,6 +115,20 @@ class node_info(object):
         return cls
 
 
+@implementer(IApplicationEnvironment)
+class AppEnvironment(Behavior):
+
+    @default
+    @property
+    def request(self):
+        return get_current_request()
+
+    @default
+    @property
+    def registry(self):
+        return get_current_registry()
+
+
 @implementer(IApplicationNode)
 class AppNode(Behavior):
     node_info_name = default('')
@@ -150,16 +165,6 @@ class AppNode(Behavior):
             info.node = self.__class__
             info.icon = app_config().default_node_icon
         return info
-
-    @default
-    @property
-    def request(self):
-        return get_current_request()
-
-    @default
-    @property
-    def registry(self):
-        return get_current_registry()
 
 
 @plumbing(
@@ -342,7 +347,7 @@ class LanguageSchema:
 
 
 @implementer(ITranslation)
-class Translation(Schema):
+class Translation(Schema, AppEnvironment):
     schema = override(LanguageSchema())
 
     @default
@@ -428,7 +433,7 @@ class ProtectedProperties(Properties):
         if not required:
             # no security check
             return True
-        request = context.request
+        request = get_current_request()
         for permission in required:
             if request.has_permission(permission, context):
                 return True

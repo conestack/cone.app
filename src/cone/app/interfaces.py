@@ -15,13 +15,19 @@ class ISecured(Interface):
     __acl__ = Attribute(u'ACL')
 
 
+class IApplicationEnvironment(Interface):
+    """Application environment.
+    """
+    request = Attribute(u'The current request if any.')
+    registry = Attribute(u'The current registry.')
+
+
 class IApplicationNode(ISecured, INode, IAttributes):
     """Application Node interface.
     """
     properties = Attribute(u'cone.app.interfaces.IProperties providing object')
     metadata = Attribute(u'cone.app.interfaces.IMetadata implementation')
     nodeinfo = Attribute(u'cone.app.interfaces.INodeInfo providing object')
-    request = Attribute(u'The current request if any.')
 
 
 class IFactoryNode(IApplicationNode, IChildFactory):

@@ -4,7 +4,7 @@ Changes
 1.0.3 (unreleased)
 ------------------
 
-- Add ``request`` and ``registry`` properties to ``cone.app.model.AppNode``.
+- Introduce ``cone.app.model.AppEnvironment`` behavior.
   [rnix]
 
 - Introduce ``cone.app.model.Translation`` behavior.
