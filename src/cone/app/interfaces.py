@@ -2,6 +2,7 @@ from node.interfaces import IAttributes
 from node.interfaces import IChildFactory
 from node.interfaces import ILeaf
 from node.interfaces import INode
+from node.interfaces import ISchema
 from node.interfaces import IUUIDAware
 from zope.interface import Attribute
 from zope.interface import Interface
@@ -11,15 +12,22 @@ from zope.interface.common.mapping import IReadMapping
 class ISecured(Interface):
     """Secured object.
     """
-    __acl__ = Attribute(u"ACL")
+    __acl__ = Attribute(u'ACL')
+
+
+class IApplicationEnvironment(Interface):
+    """Application environment.
+    """
+    request = Attribute(u'The current request if any.')
+    registry = Attribute(u'The current registry.')
 
 
 class IApplicationNode(ISecured, INode, IAttributes):
     """Application Node interface.
     """
-    properties = Attribute(u"cone.app.interfaces.IProperties providing object")
-    metadata = Attribute(u"cone.app.interfaces.IMetadata implementation")
-    nodeinfo = Attribute(u"cone.app.interfaces.INodeInfo providing object")
+    properties = Attribute(u'cone.app.interfaces.IProperties providing object')
+    metadata = Attribute(u'cone.app.interfaces.IMetadata implementation')
+    nodeinfo = Attribute(u'cone.app.interfaces.INodeInfo providing object')
 
 
 class IFactoryNode(IApplicationNode, IChildFactory):
@@ -34,7 +42,7 @@ class IAdapterNode(IApplicationNode):
          - no attrs on this interface
          - self.context insetad of self.model
     """
-    attrs = Attribute(u"Return self.model.attrs")
+    attrs = Attribute(u'Return self.model.attrs')
 
     def __init__(model, name, parent):
         """Name and parent are used to hook the correct application hierarchy.
@@ -63,15 +71,15 @@ class IProperties(IReadMapping):
 class ILayoutConfig(IProperties):
     """Layout configuration.
     """
-    mainmenu = Attribute(u"Flag whether to display mainmenu")
-    mainmenu_fluid = Attribute(u"Flag whether mainmenu is fluid")
-    livesearch = Attribute(u"Flag whether to display livesearch")
-    personaltools = Attribute(u"Flag whether to display personaltools")
-    columns_fluid = Attribute(u"Flag whether columns are fluid")
-    pathbar = Attribute(u"Flag whether to display pathbar")
-    sidebar_left = Attribute(u"Tiles which should be rendered in sidebar")
-    sidebar_left_grid_width = Attribute(u"Sidebar grid width")
-    content_grid_width = Attribute(u"Content grid width")
+    mainmenu = Attribute(u'Flag whether to display mainmenu')
+    mainmenu_fluid = Attribute(u'Flag whether mainmenu is fluid')
+    livesearch = Attribute(u'Flag whether to display livesearch')
+    personaltools = Attribute(u'Flag whether to display personaltools')
+    columns_fluid = Attribute(u'Flag whether columns are fluid')
+    pathbar = Attribute(u'Flag whether to display pathbar')
+    sidebar_left = Attribute(u'Tiles which should be rendered in sidebar')
+    sidebar_left_grid_width = Attribute(u'Sidebar grid width')
+    content_grid_width = Attribute(u'Content grid width')
 
 
 # B/C, removed as of cone.app 1.1
@@ -86,12 +94,12 @@ class IMetadata(IProperties):
 class INodeInfo(IProperties):
     """Interface for providing node information.
     """
-    title = Attribute(u"Node meta title.")
-    description = Attribute(u"Node meta description.")
-    node = Attribute(u"Node implementing class.")
-    factory = Attribute(u"Add model factory.")
-    addables = Attribute(u"List of valid children node info names.")
-    icon = Attribute(u"Node icon.")
+    title = Attribute(u'Node meta title.')
+    description = Attribute(u'Node meta description.')
+    node = Attribute(u'Node implementing class.')
+    factory = Attribute(u'Add model factory.')
+    addables = Attribute(u'List of valid children node info names.')
+    icon = Attribute(u'Node icon.')
 
 
 class INavigationLeaf(ILeaf):
@@ -105,7 +113,7 @@ class IWorkflowState(INode):
     workflow_name = Attribute(u'Name of registered workflow.')
     workflow_tsf = Attribute(u'Translation string factory used to translate '
                              u'states and transitions')
-    state = Attribute(u"Current workflow state.")
+    state = Attribute(u'Current workflow state.')
 
 
 class IOwnerSupport(ISecured):
@@ -113,7 +121,7 @@ class IOwnerSupport(ISecured):
 
     Plumbs __acl__ property.
     """
-    owner = Attribute(u"User id of node owner")
+    owner = Attribute(u'User id of node owner')
 
 
 class IPrincipalACL(ISecured):
@@ -121,11 +129,11 @@ class IPrincipalACL(ISecured):
 
     Plumbs __acl__ property.
     """
-    role_inheritance = Attribute(u"Flag whether principal roles are "
-                                 u"additionally aggregated from parent.")
-    principal_roles = Attribute(u"Attribute containing principal roles for "
-                                u"secured object.")
-    aggregated_roles = Attribute(u"Aggregated roles.")
+    role_inheritance = Attribute(u'Flag whether principal roles are '
+                                 u'additionally aggregated from parent.')
+    principal_roles = Attribute(u'Attribute containing principal roles for '
+                                u'secured object.')
+    aggregated_roles = Attribute(u'Aggregated roles.')
 
     def aggregated_roles_for(principal_id):
         """Return aggregated roles for principal by principal_id.
@@ -135,15 +143,21 @@ class IPrincipalACL(ISecured):
 class ICopySupport(INode):
     """Copysupport for nodes.
     """
-    supports_cut = Attribute(u"Supports cut")
-    supports_copy = Attribute(u"Supports copy")
-    supports_paste = Attribute(u"Supports paste")
+    supports_cut = Attribute(u'Supports cut')
+    supports_copy = Attribute(u'Supports copy')
+    supports_paste = Attribute(u'Supports paste')
 
 
 class IUUIDAsName(IUUIDAware):
     """Exposes ``self.uuid`` as ``self.__name__``. Considers key changes in
     node trees at copy time.
     """
+
+
+class ITranslation(ISchema):
+    """A translation.
+    """
+    value = Attribute(u'The translated value according to the curren language')
 
 
 class ILiveSearch(Interface):

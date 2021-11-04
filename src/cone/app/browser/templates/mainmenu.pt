@@ -58,6 +58,8 @@
 
     </tal:item>
 
+    <tal:language replace="structure tile('language')" />
+
     <tal:personaltools
       condition="config.personaltools"
       replace="structure tile('personaltools')" />

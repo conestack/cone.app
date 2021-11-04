@@ -1,14 +1,18 @@
+from cone.app import cfg
 from cone.app import DefaultLayoutConfig
 from cone.app import layout_config
 from cone.app import testing
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.layout import LanguageTile
 from cone.app.browser.layout import LayoutConfigTile
 from cone.app.browser.layout import NavTree
 from cone.app.browser.layout import personal_tools
 from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.interfaces import ILayoutConfig
+from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
@@ -21,6 +25,8 @@ from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
+from node.base import BaseNode as NodeBaseNode
+from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
 
@@ -244,6 +250,8 @@ class TestBrowserLayout(TileTestCase):
         root['1'].properties.in_navtree = True
         root['1']['11'] = BaseNode()
         root['1']['11'].properties.in_navtree = True
+        root['1']['11']['111'] = BaseNode()
+        root['1']['11']['111'].properties.in_navtree = True
         root['2'] = BaseNode()
         root['2'].properties.in_navtree = True
 
@@ -268,6 +276,27 @@ class TestBrowserLayout(TileTestCase):
         ...<li class="active navtreelevel_2">
         <a href="http://example.com/1/11"...
         """, res)
+
+        # Child nodes which not provide IApplicationNode are skipped
+        root['3'] = NodeBaseNode()
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'navtree')
+        self.assertFalse(res.find('ajax:target="http://example.com/3"') > -1)
+
+        # Subtree rendering stops if node provides INaviationLeaf
+        @implementer(INavigationLeaf)
+        class LeafNode(BaseNode):
+            pass
+
+        root['3'] = LeafNode()
+        root['3'].properties.in_navtree = True
+        root['3']['3'] = BaseNode()
+        root['3']['3'].properties.in_navtree = True
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['3'], request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/3"') > -1)
+        self.assertFalse(res.find('ajax:target="http://example.com/3/3"') > -1)
 
         # Child nodes which do not grant permission 'view' are skipped
         class InvisibleNavNode(BaseNode):
@@ -601,3 +630,80 @@ class TestBrowserLayout(TileTestCase):
         self.assertIsInstance(config, ChildNodeLayout)
 
         del layout_config._registry[ChildNode]
+
+    def test_LanguageTile(self):
+        tile = LanguageTile()
+        request = tile.request = self.layer.new_request()
+        self.assertEqual(tile.param_blacklist, [
+            '_',
+            '_LOCALE_',
+            'bdajax.action',
+            'bdajax.mode',
+            'bdajax.selector'
+        ])
+        request.params['_'] = '123'
+        request.params['existing'] = 'value'
+        self.assertEqual(tile.make_query(), '?existing=value')
+        self.assertEqual(tile.make_query(lang='en'), '?existing=value&lang=en')
+
+    def test_language(self):
+        self.assertEqual(cfg.available_languages, ['en', 'de'])
+        root = BaseNode()
+        request = self.layer.new_request()
+
+        res = render_tile(root, request, 'language')
+        self.checkOutput("""
+        <li class="dropdown">
+          <a href="#"
+             class="dropdown-toggle"
+             data-toggle="dropdown">
+             <span>Language</span>
+             <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="languagemenu">
+            <li>
+              <a href="#"
+                 ajax:bind="click"
+                 ajax:target="http://example.com/?lang=en"
+                 ajax:action="change_language:NONE:NONE">
+                 <span class="icon-lang-en"></span>
+                EN
+              </a>
+            </li>
+            <li>
+              <a href="#"
+                 ajax:bind="click"
+                 ajax:target="http://example.com/?lang=de"
+                 ajax:action="change_language:NONE:NONE">
+                 <span class="icon-lang-de"></span>
+                DE
+              </a>
+            </li>
+          </ul>
+        </li>
+        """, res)
+
+        cfg.available_languages = []
+        res = render_tile(root, request, 'language')
+        cfg.available_languages = ['en', 'de']
+        self.assertEqual(res, '')
+
+    def test_change_language(self):
+        self.assertEqual(cfg.available_languages, ['en', 'de'])
+        root = BaseNode()
+        request = self.layer.new_request()
+
+        request.params['lang'] = 'de'
+        render_tile(root, request, 'change_language')
+
+        cookie = request.response.headers['Set-Cookie']
+        self.assertTrue(cookie.startswith('_LOCALE_=de;'))
+
+        continuation = request.environ['cone.app.continuation']
+        self.assertEqual(len(continuation), 1)
+
+        event = continuation[0]
+        self.assertIsInstance(event, AjaxEvent)
+        self.assertEqual(event.target, 'http://example.com/')
+        self.assertEqual(event.name, 'contextchanged')
+        self.assertEqual(event.selector, '#layout')

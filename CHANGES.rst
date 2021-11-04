@@ -4,7 +4,34 @@ Changes
 1.0.3 (unreleased)
 ------------------
 
-- No changes yet.
+- Move ``cone.app.browser.utils.node_path`` to ``cone.app.browser.node_path``.
+  Import from old location is deprecated.
+  [rnix]
+
+- Introduce ``cone.app.NodeTraverser``. It ensures only ``IApplicationNode``
+  implementing children get traversed.
+  [rnix]
+
+- Ignore children which not implements ``IApplicationNode`` in ``navtree``,
+  ``mainmenu`` and ``listing`` tiles.
+  [rnix]
+
+- Consider ``INavigationLeaf`` interface in ``navtree`` tile.
+  [rnix]
+
+- Introduce ``cone.app.model.AppEnvironment`` behavior.
+  [rnix]
+
+- Introduce ``cone.app.model.Translation`` behavior.
+  [rnix]
+
+- Add language selection dropdown.
+  [rnix]
+
+**Breaking changes:**
+
+- Change signature of internal ``MainMenu.ignore_node`` and
+  ``MainMenu.create_item``. They do not expect the ``props`` argument any more.
 
 
 1.0.2 (2021-10-21)

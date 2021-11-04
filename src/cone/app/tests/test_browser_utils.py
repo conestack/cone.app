@@ -6,7 +6,6 @@ from cone.app.browser.utils import format_traceback
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
-from cone.app.browser.utils import node_path
 from cone.app.browser.utils import request_property
 from cone.app.model import BaseNode
 from cone.app.model import node_info
@@ -22,11 +21,6 @@ class TestBrowserUtils(TileTestCase):
         self.assertEqual(authenticated(request), None)
         with self.layer.authenticated('max'):
             self.assertEqual(authenticated(request), 'max')
-
-    def test_node_path(self):
-        root = BaseNode()
-        root['child'] = BaseNode()
-        self.assertEqual(node_path(root['child']), [u'child'])
 
     def test_make_query(self):
         self.assertEqual(make_query(foo=None), None)

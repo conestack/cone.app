@@ -14,6 +14,7 @@ from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
+from node.base import BaseNode as NodeBaseNode
 from pyramid.exceptions import HTTPForbidden
 from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
@@ -45,6 +46,7 @@ class TestBrowserContents(TileTestCase):
             created = created + delta
             modified = modified + delta
         model['nevershown'] = NeverShownChild()
+        model['no_app_node'] = NodeBaseNode()
         return model
 
     def test_sorted_rows(self):
