@@ -4,6 +4,14 @@ Changes
 1.0.3 (unreleased)
 ------------------
 
+- Move ``cone.app.browser.utils.node_path`` to ``cone.app.browser.node_path``.
+  Import from old location is deprecated.
+  [rnix]
+
+- Introduce ``cone.app.NodeTraverser``. It ensures only ``IApplicationNode``
+  implementing children get traversed.
+  [rnix]
+
 - Ignore children which not implements ``IApplicationNode`` in ``navtree``,
   ``mainmenu`` and ``listing`` tiles.
   [rnix]

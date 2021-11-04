@@ -1,10 +1,14 @@
+from cone.app import ApplicationNodeTraverser
 from cone.app import DefaultLayoutConfig
+from cone.app import get_root
 from cone.app import layout_config
 from cone.app import main_hook
 from cone.app import make_remote_addr_middleware
+from cone.app import testing
 from cone.app.interfaces import ILayoutConfig
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
+from node.base import BaseNode as NodeBaseNode
 from node.tests import NodeTestCase
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -212,3 +216,41 @@ class TestApp(NodeTestCase):
         del layout_config._registry[BaseNode]
         del layout_config._registry[CustomNode1]
         del layout_config._registry[CustomNode2]
+
+
+class TestTraversal(NodeTestCase):
+    layer = testing.security
+
+    def test_ApplicationNodeTraverser(self):
+        root = BaseNode()
+        root.allow_non_node_children = True
+        root['appnode_child'] = BaseNode()
+        root['node_child'] = NodeBaseNode()
+        root['non_node_child'] = {}
+
+        traverser = ApplicationNodeTraverser(root)
+        request = self.layer.new_request()
+
+        request.matchdict['traverse'] = '/view'
+        result = traverser(request)
+        self.assertTrue(result['context'] is root)
+        self.assertEqual(result['view_name'], 'view')
+        self.assertEqual(result['traversed'], ())
+
+        request.matchdict['traverse'] = '/appnode_child/view'
+        result = traverser(request)
+        self.assertTrue(result['context'] is root['appnode_child'])
+        self.assertEqual(result['view_name'], 'view')
+        self.assertEqual(result['traversed'], ('appnode_child',))
+
+        request.matchdict['traverse'] = '/node_child'
+        result = traverser(request)
+        self.assertTrue(result['context'] is root)
+        self.assertEqual(result['view_name'], 'node_child')
+        self.assertEqual(result['traversed'], ())
+
+        request.matchdict['traverse'] = '/non_node_child'
+        result = traverser(request)
+        self.assertTrue(result['context'] is get_root())
+        self.assertEqual(result['view_name'], '')
+        self.assertEqual(result['traversed'], ())

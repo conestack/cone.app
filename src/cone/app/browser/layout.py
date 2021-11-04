@@ -8,7 +8,6 @@ from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
-from cone.app.browser.utils import node_path
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ILayout
 from cone.app.interfaces import INavigationLeaf
@@ -16,6 +15,7 @@ from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
+from cone.app.utils import node_path
 from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import Tile
