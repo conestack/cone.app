@@ -113,6 +113,18 @@ The main template can be set in the application configuration file.
 - **cone.main_template**: Main template to use.
 
 
+Available Languages
+-------------------
+
+If it's desired to allow the user to change UI language on the fly, define
+available languages in configuration file.
+
+- **cone.available_languages**: Comma separated list of available languages.
+
+If available languages are defined, a language selection dropdown menu gets
+displayed in the mainmenu.
+
+
 Plugin Loading
 --------------
 

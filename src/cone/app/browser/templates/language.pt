@@ -1,5 +1,7 @@
 <tal:language xmlns:tal="http://xml.zope.org/namespaces/tal"
               xmlns:ajax="http://namespaces.conestack.org/ajax"
+              xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+              i18n:domain="cone.app"
               omit-tag="True">
 
   <li class="dropdown" id="language">
@@ -10,19 +12,17 @@
          height="15em">
 
     <ul class="dropdown-menu dropdown-menu-end">
-      <li class="toolbar-title">Language</li>
+      <li class="toolbar-title" i18n:translate="language">Language</li>
 
-      <tal:li repeat="language context.languages">
-        <li tal:attributes="id language['id']">
-          <a href="#">
-            <img tal:attributes="src '/static/images/flags/' + language['flag']"
-                 height="15em">
-            <span tal:content="language['name']">
-              Language
-            </span>
-          </a>
-        </li>
-      </tal:li>
+      <li tal:repeat="lang context.languages">
+        <a href="#"
+           ajax:bind="click"
+           ajax:target="${lang.target}"
+           ajax:action="change_language:NONE:NONE">
+          <img src="/static/images/flags/{lang.flag}" height="15em">
+          <span tal:content="lang.title">Language</span>
+        </a>
+      </li>
     </ul>
   </li>
 

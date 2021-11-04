@@ -1,7 +1,7 @@
 from cone.app import compat
 from cone.app.utils import app_config
 from cone.app.utils import format_traceback as _format_traceback
-from node.utils import safe_decode
+from cone.app.utils import node_path
 from node.utils import safe_encode
 from pyramid.i18n import TranslationStringFactory
 import copy
@@ -15,11 +15,6 @@ _ = TranslationStringFactory('cone.app')
 # B/C. use ``authenticated_userid`` directly.
 def authenticated(request):
     return request.authenticated_userid
-
-
-def node_path(node):
-    # XXX: implement in ``BaseNode``.
-    return [safe_decode(p) for p in node.path if p is not None]
 
 
 # B/C, removed as of cone.app 1.1

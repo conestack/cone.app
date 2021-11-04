@@ -1,6 +1,9 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import {BatchedItems} from '../batcheditems.js';
+import {
+    BatchedItemsSize,
+    BatchedItemsSearch
+} from '../batcheditems.js';
 import {CopySupport} from '../copysupport.js';
 import {KeyBinder} from '../keybinder.js';
 import {
@@ -25,7 +28,8 @@ export * from '../utils.js';
 $(function() {
     new KeyBinder();
 
-    ts.ajax.register(BatchedItems.initialize, true);
+    ts.ajax.register(BatchedItemsSize.initialize, true);
+    ts.ajax.register(BatchedItemsSearch.initialize, true);
     ts.ajax.register(CopySupport.initialize, true);
     ts.ajax.register(ReferenceBrowserLoader.initialize, true);
     ts.ajax.register(ReferenceHandle.initialize, true);

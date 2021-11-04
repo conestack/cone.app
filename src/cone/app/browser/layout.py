@@ -1,16 +1,21 @@
+from cone.app import cfg
 from cone.app import layout_config
 from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
-from cone.app.browser.utils import node_path
+from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ILayout
+from cone.app.interfaces import INavigationLeaf
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
+from cone.app.utils import node_path
 from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import Tile
@@ -18,6 +23,7 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
+from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
 import warnings
 
@@ -196,152 +202,6 @@ class ToolbarTop(LayoutConfigTile):
     pass
 
 
-@tile(name='language',
-      path='templates/language.pt',
-      permission='view',
-      strict=False)
-class Language(Tile):
-
-    @property
-    def languages(self):
-        return [{
-            'id': 'de',
-            'name': _('lang_de', default='German'),
-            'flag': 'at.svg'
-        }, {
-            'id': 'en',
-            'name': _('lang_en', default='English'),
-            'flag': 'gb.svg'
-        }, {
-            'id': 'fr',
-            'name': _('lang_fr', default='French'),
-            'flag': 'fr.svg'
-        }]
-
-@tile(name='notifications',
-      path='templates/notifications.pt',
-      permission='view',
-      strict=False)
-class Notification(Tile):
-
-    @property
-    def notifications(self):
-        return [{
-            'sender': {
-                'name': 'Kermit',
-                'img': 'kermit.jpg'
-            },
-            'id': 'noti1',
-            'name': ' sent you an example notification',
-            'read': False,
-            'timestamp': 'August 06, 2021 10:24:00',
-            'priority': '',
-            'message': ''
-        }, {
-            'sender': {
-                'name': 'Cone Team:',
-                'img': 'cone-logo-cone.svg'
-            },
-            'id': 'noti5',
-            'name': ' not that important',
-            'read': False,
-            'timestamp': 'July 05, 2019 08:24:00',
-            'priority': 'low',
-            'message': 'Here is something you might want to know.'
-        }, {
-            'sender': {
-                'name': 'Miss Piggy',
-                'img': ''
-            },
-            'id': 'noti2',
-            'name': ' sent you a file',
-            'read': True,
-            'timestamp': 'July 28, 2021 08:24:00',
-            'priority': '',
-            'message': ''
-        }, {
-            'sender': {
-                'name': 'Cone Team:',
-                'img': 'cone-logo-cone.svg'
-            },
-            'id': 'noti3',
-            'name': ' 3 updates are required',
-            'read': False,
-            'timestamp': 'July 1, 2020 08:24:00',
-            'priority': 'high',
-            'message': 'This is an important extra message. Not updating may cause malfunction.'
-        }, {
-            'sender': {
-                'name': 'Cone Team:',
-                'img': 'cone-logo-cone.svg'
-            },
-            'id': 'noti4',
-            'name': ' this is mildly important',
-            'read': False,
-            'timestamp': 'July 06, 2021 04:24:00',
-            'priority': 'medium',
-            'message': 'Do this please. Urgently.'
-        }]
-
-
-@tile(name='apps',
-      path='templates/apps.pt',
-      permission='view',
-      strict=False)
-class Apps(Tile):
-
-    @property
-    def apps(self):
-        return [{
-            'name': 'Vs Code',
-            'img': 'vscode.png',
-            'link': '#'
-        } , {
-            'name': 'Sass',
-            'img': 'sass.png',
-            'link': '#'
-        }, {
-            'name': 'Chromium',
-            'img': 'chromium.png',
-            'link': '#'
-        }]
-
-
-@tile(name='settings',
-      path='templates/user_settings.pt',
-      permission='view',
-      strict=False)
-class Settings(Tile):
-
-    @property
-    def settings(self):
-        return [{
-            'name': 'Toggle dark mode',
-            'id': 'switch_mode',
-            'type': 'switch',
-            'link': '',
-            'icon': ''
-        }, {
-            'name': 'Settings',
-            'id': 'personalsettings',
-            'type': 'link',
-            'link': '#',
-            'icon': 'bi bi-sliders'
-        }, {
-            'name': 'Appearance',
-            'id': 'appearance',
-            'type': 'link',
-            'link': '#',
-            'icon': 'bi bi-easel'
-        }, {
-            'name': 'Security',
-            'id': 'security',
-            'type': 'link',
-            'link': '#',
-            'icon': ''
-        }]
-
-
 @tile(name='mainmenu',
       path='templates/mainmenu.pt',
       permission='view',
@@ -385,12 +245,11 @@ class MainMenu(LayoutConfigTile):
         # XXX: icons
         for key in root.keys():
             child = root[key]
-            props = child.properties
-            if self.ignore_node(child, props):
+            if self.ignore_node(child):
                 continue
             selected = curpath == key
-            item = self.create_item(child, props, empty_title, selected)
-            if props.mainmenu_display_children:
+            item = self.create_item(child, empty_title, selected)
+            if child.properties.mainmenu_display_children:
                 item['children'] = self.create_children(child, selected)
             else:
                 item['children'] = None
@@ -406,22 +265,23 @@ class MainMenu(LayoutConfigTile):
             curpath = ''
         for key in node.keys():
             child = node[key]
-            props = child.properties
-            if self.ignore_node(child, props):
+            if self.ignore_node(child):
                 continue
             selected = curpath == key
-            item = self.create_item(child, props, False, selected)
+            item = self.create_item(child, False, selected)
             children.append(item)
         return children
 
-    def ignore_node(self, node, props):
-        if props.skip_mainmenu:
+    def ignore_node(self, node):
+        if not IApplicationNode.providedBy(node):
+            return True
+        if node.properties.skip_mainmenu:
             return True
         if not self.request.has_permission('view', node):
             return True
         return False
 
-    def create_item(self, node, props, empty_title, selected):
+    def create_item(self, node, empty_title, selected):
         md = node.metadata
         item = dict()
         item['id'] = node.name
@@ -432,7 +292,7 @@ class MainMenu(LayoutConfigTile):
             item['title'] = md.title
             item['description'] = md.description
         item['url'] = make_url(self.request, node=node)
-        query = make_query(contenttile=props.default_content_tile)
+        query = make_query(contenttile=node.properties.default_content_tile)
         item['target'] = make_url(self.request, node=node, query=query)
         item['selected'] = selected
         item['icon'] = node_icon(node)
@@ -542,8 +402,8 @@ class NavTree(Tile):
         return item
 
     def fillchildren(self, model, path, tree):
-        """XXX: consider cone.app.interfaces.INavigationLeaf
-        """
+        if INavigationLeaf.providedBy(model):
+            return
         curpath = None
         if path:
             curpath = path[0]
@@ -563,9 +423,11 @@ class NavTree(Tile):
                 curpath = model.properties.default_child
         for key in model:
             node = model[key]
+            if not IApplicationNode.providedBy(node):
+                continue
             if not self.request.has_permission('view', node):
                 continue
-            if not node.properties.get('in_navtree'):
+            if not node.properties.in_navtree:
                 continue
             title = node.metadata.title
             if title:
@@ -644,3 +506,189 @@ class RootContent(ProtectedContentTile):
             model=self.model,
             request=self.request,
             context=self)
+
+
+class LanguageTile(Tile):
+    param_blacklist = [
+        '_', '_LOCALE_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector'
+    ]
+
+    def make_query(self, lang=None):
+        params = dict()
+        for k, v in self.request.params.items():
+            if k in self.param_blacklist:
+                continue
+            params[k] = v
+        params['lang'] = lang
+        return make_query(**params)
+
+
+@tile(name='language',
+      path='templates/language.pt',
+      permission='login',
+      strict=False)
+class Language(LanguageTile):
+
+    @property
+    def show(self):
+        return bool(cfg.available_languages)
+
+    @property
+    def languages(self):
+        languages = list()
+        localizer = get_localizer(self.request)
+        for lang in cfg.available_languages:
+            target = make_url(
+                self.request,
+                node=self.model,
+                query=self.make_query(lang=lang)
+            )
+            languages.append({
+                'target': target,
+                'flag': '{}.svg'.format(lang),
+                'title': localizer.translate(_(
+                    'lang_{}'.format(lang),
+                    default=lang.upper()
+                ))
+            })
+        return languages
+
+
+@tile(name='change_language', permission='login')
+class ChangeLanguage(LanguageTile):
+
+    @property
+    def continuation(self):
+        url = make_url(self.request, node=self.model, query=self.make_query())
+        return [AjaxEvent(url, 'contextchanged', '#layout')]
+
+    def render(self):
+        lang = self.request.params['lang']
+        response = self.request.response
+        response.set_cookie('_LOCALE_', value=lang, max_age=31536000)
+        ajax_continue(self.request, self.continuation)
+        return u''
+
+
+@tile(name='notifications',
+      path='templates/notifications.pt',
+      permission='view',
+      strict=False)
+class Notification(Tile):
+
+    @property
+    def notifications(self):
+        return [{
+            'sender': {
+                'name': 'Kermit',
+                'img': 'kermit.jpg'
+            },
+            'id': 'noti1',
+            'name': ' sent you an example notification',
+            'read': False,
+            'timestamp': 'August 06, 2021 10:24:00',
+            'priority': '',
+            'message': ''
+        }, {
+            'sender': {
+                'name': 'Cone Team:',
+                'img': 'cone-logo-cone.svg'
+            },
+            'id': 'noti5',
+            'name': ' not that important',
+            'read': False,
+            'timestamp': 'July 05, 2019 08:24:00',
+            'priority': 'low',
+            'message': 'Here is something you might want to know.'
+        }, {
+            'sender': {
+                'name': 'Miss Piggy',
+                'img': ''
+            },
+            'id': 'noti2',
+            'name': ' sent you a file',
+            'read': True,
+            'timestamp': 'July 28, 2021 08:24:00',
+            'priority': '',
+            'message': ''
+        }, {
+            'sender': {
+                'name': 'Cone Team:',
+                'img': 'cone-logo-cone.svg'
+            },
+            'id': 'noti3',
+            'name': ' 3 updates are required',
+            'read': False,
+            'timestamp': 'July 1, 2020 08:24:00',
+            'priority': 'high',
+            'message': 'This is an important extra message. Not updating may cause malfunction.'
+        }, {
+            'sender': {
+                'name': 'Cone Team:',
+                'img': 'cone-logo-cone.svg'
+            },
+            'id': 'noti4',
+            'name': ' this is mildly important',
+            'read': False,
+            'timestamp': 'July 06, 2021 04:24:00',
+            'priority': 'medium',
+            'message': 'Do this please. Urgently.'
+        }]
+
+
+@tile(name='apps',
+      path='templates/apps.pt',
+      permission='view',
+      strict=False)
+class Apps(Tile):
+
+    @property
+    def apps(self):
+        return [{
+            'name': 'Vs Code',
+            'img': 'vscode.png',
+            'link': '#'
+        }, {
+            'name': 'Sass',
+            'img': 'sass.png',
+            'link': '#'
+        }, {
+            'name': 'Chromium',
+            'img': 'chromium.png',
+            'link': '#'
+        }]
+
+
+@tile(name='settings',
+      path='templates/user_settings.pt',
+      permission='view',
+      strict=False)
+class Settings(Tile):
+
+    @property
+    def settings(self):
+        return [{
+            'name': 'Toggle dark mode',
+            'id': 'switch_mode',
+            'type': 'switch',
+            'link': '',
+            'icon': ''
+        }, {
+            'name': 'Settings',
+            'id': 'personalsettings',
+            'type': 'link',
+            'link': '#',
+            'icon': 'bi bi-sliders'
+        }, {
+            'name': 'Appearance',
+            'id': 'appearance',
+            'type': 'link',
+            'link': '#',
+            'icon': 'bi bi-easel'
+        }, {
+            'name': 'Security',
+            'id': 'security',
+            'type': 'link',
+            'link': '#',
+            'icon': ''
+        }]

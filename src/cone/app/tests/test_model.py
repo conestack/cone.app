@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from cone.app import cfg
 from cone.app import testing
 from cone.app.compat import configparser
 from cone.app.compat import StringIO
@@ -6,11 +7,13 @@ from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
 from cone.app.model import AdapterNode
+from cone.app.model import AppEnvironment
 from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
 from cone.app.model import get_node_info
+from cone.app.model import LanguageSchema
 from cone.app.model import Metadata
 from cone.app.model import NamespaceUUID
 from cone.app.model import node_info
@@ -19,10 +22,12 @@ from cone.app.model import o_getattr
 from cone.app.model import Properties
 from cone.app.model import ProtectedProperties
 from cone.app.model import register_node_info
+from cone.app.model import Translation
 from cone.app.model import UUIDAsName
 from cone.app.model import UUIDAttributeAware
 from cone.app.model import XMLProperties
 from datetime import datetime
+from node import schema
 from node.behaviors import Adopt
 from node.behaviors import DefaultInit
 from node.behaviors import DictStorage
@@ -33,6 +38,7 @@ from node.tests import NodeTestCase
 from odict import odict
 from plumber import plumbing
 from pyramid.security import ALL_PERMISSIONS
+from zope.component.globalregistry import BaseGlobalComponents
 import copy
 import os
 import shutil
@@ -301,6 +307,22 @@ class TestModel(NodeTestCase):
         self.assertEqual(info.icon, 'icon')
         self.assertEqual(MyNode.node_info_name, 'mynode')
 
+    def test_AppEnvironment(self):
+        @plumbing(AppEnvironment)
+        class AppEnvironmentNode(BaseNode):
+            pass
+
+        node = AppEnvironmentNode()
+
+        # Request
+        self.layer.forget_request()
+        self.assertTrue(node.request is None)
+        request = self.layer.new_request()
+        self.assertTrue(node.request is request)
+
+        # Registry
+        self.assertIsInstance(node.registry, BaseGlobalComponents)
+
     def test_NamespaceUUID(self):
         @plumbing(NamespaceUUID)
         class NamespaceUUIDNode(BaseNode):
@@ -391,6 +413,36 @@ class TestModel(NodeTestCase):
 
         self.assertFalse(copy.uuid == node.uuid)
         self.assertFalse(copy[copy.keys()[0]] == child.uuid)
+
+    def test_Translation(self):
+        self.assertEqual(cfg.available_languages, ['en', 'de'])
+        ls = LanguageSchema()
+        self.assertEqual(ls.keys(), ['en', 'de'])
+        self.assertIsInstance(ls['en'], schema.Str)
+        self.assertTrue(ls.get('de') is not None)
+        self.assertTrue(ls.get('it') is None)
+        with self.assertRaises(KeyError):
+            ls['it']
+
+        @plumbing(Translation)
+        class TranslationNode(BaseNode):
+            allow_non_node_children = True
+
+        translation = TranslationNode(name='translation')
+        translation['en'] = u'English Translation'
+        translation['de'] = u'German Translation'
+
+        self.assertEqual(translation['en'], 'English Translation')
+        self.assertEqual(translation['de'], 'German Translation')
+
+        self.layer.forget_request()
+        self.assertEqual(translation.value, 'English Translation')
+        self.layer.set_lang('de')
+        self.assertEqual(translation.value, 'German Translation')
+        self.layer.set_lang('en')
+        self.assertEqual(translation.value, 'English Translation')
+        self.layer.set_lang('it')
+        self.assertEqual(translation.value, 'translation')
 
     def test_Properties(self):
         # ``Properties`` object can be used for any kind of mapping.

@@ -144,6 +144,9 @@ Create ``example.ini`` and add:
     # default language
     pyramid.default_locale_name = en
 
+    # available languages
+    #cone.available_languages = en, de
+
     # cone.app admin user and password
     cone.admin_user = admin
     cone.admin_password = admin

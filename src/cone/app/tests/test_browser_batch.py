@@ -5,8 +5,8 @@ from cone.app.browser.batch import BatchedItems
 from cone.app.browser.batch import BatchedItemsBatch
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
-from cone.app.browser.utils import node_path
 from cone.app.model import BaseNode
+from cone.app.utils import node_path
 from cone.tile import render_tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase

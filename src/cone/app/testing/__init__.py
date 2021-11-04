@@ -100,6 +100,15 @@ class Security(object):
         self.current_request = request
         return request
 
+    def forget_request(self):
+        self.current_request = None
+
+    def set_lang(self, lang):
+        request = self.current_request
+        if not request:
+            request = self.new_request()
+        request.params['_LOCALE_'] = lang
+
     def login(self, login, password=None):
         request = self.current_request
         if not request:
@@ -145,6 +154,7 @@ class Security(object):
         pyramid.threadlocal.manager.default = self.defaults
         settings = {
             'default_locale_name': 'en',
+            'cone.available_languages': 'en, de',
             'cone.admin_user': 'superuser',
             'cone.admin_password': 'superuser',
             'cone.auth_secret': '12345',

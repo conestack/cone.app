@@ -183,6 +183,14 @@ The settings node is available at ``settings`` on application model root.
     settings = get_root()['settings']
 
 
+AppEnvironment
+--------------
+
+``cone.app.model.AppEnvironment`` is a plumbing behavior implementing
+``node.interfaces.IApplicationEnvironment``. It is useful for objects which
+need to know about the current request and/or the current registry.
+
+
 CopySupport
 -----------
 
@@ -197,7 +205,7 @@ NamespaceUUID
 -------------
 
 ``cone.app.model.NamespaceUUID`` is a plumbing behavior for application model
-nodes implementing ``node.interfaces.IUUID``. The ``uuid`` attribute is
+nodes and implements ``node.interfaces.IUUID``. The ``uuid`` attribute is
 implemented as read-only property which computes the UUID as ``uuid.uuid5``
 from a namespace and the node path. The uuid namespace can be overwritten
 via ``uuid_namespace`` attribute.
@@ -224,6 +232,16 @@ persistent UUID.
 
 ``self.set_uuid_for(node, override=False, recursiv=False)`` can be used to
 recursively update UUID's on copies of a node.
+
+
+Translation
+-----------
+
+``cone.app.model.Translation`` is a plumbing behavior for nodes
+and implements ``node.interfaces.ITranslation``. Using this behavior turns
+the node into a container holding different translations for a specific string
+or text. Accessing ``value`` attribute returns the translated value by current
+locale setting or the node ``name`` if no translation found for locale.
 
 
 Properties

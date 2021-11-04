@@ -12,7 +12,6 @@
 
       <li tal:define="children item['children'];
                       css 'active ' if item['selected'] else '';
-                      
                       css css + 'menu ' if children else '';
                       css css + 'mainmenu-item';
                       css ' '.join([css, 'node-%s' % item['id']]);"

@@ -46,9 +46,6 @@ https://www.chromestatus.com/feature/5745543795965952"
 1.1
 ===
 
-[ ] JS -> ``BatchedItemsFilter``, ``BatchedItemsSearch``, ``BatchedItemsSize``
-    classes.
-
 [ ] Treibstoff migration docs.
 
 [ ] Treibtroff AjaxOverlay docs.
