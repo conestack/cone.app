@@ -14,6 +14,7 @@ from cone.app.browser.authoring import edit
 from cone.app.browser.authoring import EditFormHeading
 from cone.app.browser.authoring import FormHeading
 from cone.app.browser.authoring import is_ajax
+from cone.app.browser.authoring import MoveAction
 from cone.app.browser.authoring import overlayadd
 from cone.app.browser.authoring import OverlayAddForm
 from cone.app.browser.authoring import overlayedit
@@ -23,6 +24,7 @@ from cone.app.browser.authoring import overlayform
 from cone.app.browser.authoring import render_form
 from cone.app.browser.form import Form
 from cone.app.model import AdapterNode
+from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
 from cone.app.model import node_info
@@ -31,6 +33,12 @@ from cone.app.model import register_node_info
 from cone.tile import render_tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
+from node.behaviors import Adopt
+from node.behaviors import DefaultInit
+from node.behaviors import DictStorage
+from node.behaviors import Nodify
+from node.behaviors import Order
+from node.interfaces import IOrder
 from plumber import plumbing
 from webob.exc import HTTPFound
 from yafowil.base import factory
@@ -1263,3 +1271,58 @@ class TestBrowserAuthoring(TileTestCase):
         expected = '"close": true'
         self.assertTrue(res.text.find(expected) > -1)
         self.assertEqual(model.attrs.title, 'New Title')
+
+    def test_moving(self):
+        move_action = MoveAction()
+        with self.assertRaises(NotImplementedError):
+            move_action.move()
+
+        @plumbing(
+            AppNode,
+            Adopt,
+            DefaultInit,
+            Nodify,
+            DictStorage)
+        class UnorderedNode(object):
+            pass
+
+        node = UnorderedNode()
+        node['child'] = BaseNode()
+
+        self.assertFalse(IOrder.providedBy(node))
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(render_tile(node['child'], request, 'move_up'), u'')
+        self.assertEqual(
+            request.environ['cone.app.continuation'][0].payload,
+            u'Object "child" not movable'
+        )
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            def __call__(self):
+                pass
+
+        node = OrderableNode()
+        node['a'] = BaseNode()
+        node['b'] = BaseNode()
+
+        self.assertEqual(node.properties.action_move, None)
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(render_tile(node['b'], request, 'move_up'), u'')
+        self.assertEqual(
+            request.environ['cone.app.continuation'][0].payload,
+            u'You are not permitted to move this object'
+        )
+
+        node.properties.action_move = True
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(render_tile(node['a'], request, 'move_down'), u'')
+        self.assertEqual(node.keys(), ['b', 'a'])
+
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            self.assertEqual(render_tile(node['a'], request, 'move_up'), u'')
+        self.assertEqual(node.keys(), ['a', 'b'])

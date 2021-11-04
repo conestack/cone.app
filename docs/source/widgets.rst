@@ -492,6 +492,9 @@ Considered ``properties`` on children:
 
 - **action_delete**: Flag whether to render delete action.
 
+- **action_move**: Flag whether to render move up and move down actions.
+  Must be set on container.
+
 .. code-block:: python
 
     from cone.app import model
@@ -1488,6 +1491,26 @@ Considered ``nodeinfo``:
 
 - **default_content_tile**: If set, used to check if scope is ``view`` when
   calculating whether to display action.
+
+
+ContentsActionMoveUp
+--------------------
+
+Invokes ``move_up`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move up action.
+
+
+ContentsActionMoveDown
+----------------------
+
+Invokes ``move_down`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move down action.
 
 
 ActionCut

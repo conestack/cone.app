@@ -92,7 +92,7 @@ class ContentsActionMoveUp(ContentsMoveAction):
 
     @property
     def display(self):
-        if not super().display:
+        if not super(ContentsActionMoveUp, self).display:
             return False
         return self.model.parent.first_key != self.model.name
 
@@ -104,7 +104,7 @@ class ContentsActionMoveDown(ContentsMoveAction):
 
     @property
     def display(self):
-        if not super().display:
+        if not super(ContentsActionMoveDown, self).display:
             return False
         return self.model.parent.last_key != self.model.name
 

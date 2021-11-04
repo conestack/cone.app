@@ -573,6 +573,7 @@ class MoveAction(Tile):
             self.show_error(message)
             return u''
         self.move()
+        parent()
         query = make_query(
             contenttile='listing',
             b_page=self.request.params.get('b_page'),
@@ -587,7 +588,6 @@ class MoveAction(Tile):
 class MoveUpAction(MoveAction):
 
     def move(self):
-        print('##### move_up')
         model = self.model
         parent = model.parent
         parent.swap(model, parent[parent.prev_key(model.name)])
@@ -597,7 +597,6 @@ class MoveUpAction(MoveAction):
 class MoveDownAction(MoveAction):
 
     def move(self):
-        print('##### move_down')
         model = self.model
         parent = model.parent
         parent.swap(model, parent[parent.next_key(model.name)])
