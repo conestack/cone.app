@@ -4,6 +4,13 @@ Changes
 1.0.3 (unreleased)
 ------------------
 
+- Ignore children which not implements ``IApplicationNode`` in ``navtree``,
+  ``mainmenu`` and ``listing`` tiles.
+  [rnix]
+
+- Consider ``INavigationLeaf`` interface in ``navtree`` tile.
+  [rnix]
+
 - Introduce ``cone.app.model.AppEnvironment`` behavior.
   [rnix]
 
@@ -12,6 +19,11 @@ Changes
 
 - Add language selection dropdown.
   [rnix]
+
+**Breaking changes:**
+
+- Change signature of internal ``MainMenu.ignore_node`` and
+  ``MainMenu.create_item``. They do not expect the ``props`` argument any more.
 
 
 1.0.2 (2021-10-21)

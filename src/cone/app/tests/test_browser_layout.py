@@ -12,6 +12,7 @@ from cone.app.browser.layout import personal_tools
 from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.interfaces import ILayoutConfig
+from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
@@ -24,6 +25,8 @@ from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
+from node.base import BaseNode as NodeBaseNode
+from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
 
@@ -247,6 +250,8 @@ class TestBrowserLayout(TileTestCase):
         root['1'].properties.in_navtree = True
         root['1']['11'] = BaseNode()
         root['1']['11'].properties.in_navtree = True
+        root['1']['11']['111'] = BaseNode()
+        root['1']['11']['111'].properties.in_navtree = True
         root['2'] = BaseNode()
         root['2'].properties.in_navtree = True
 
@@ -271,6 +276,27 @@ class TestBrowserLayout(TileTestCase):
         ...<li class="active navtreelevel_2">
         <a href="http://example.com/1/11"...
         """, res)
+
+        # Child nodes which not provide IApplicationNode are skipped
+        root['3'] = NodeBaseNode()
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'navtree')
+        self.assertFalse(res.find('ajax:target="http://example.com/3"') > -1)
+
+        # Subtree rendering stops if node provides INaviationLeaf
+        @implementer(INavigationLeaf)
+        class LeafNode(BaseNode):
+            pass
+
+        root['3'] = LeafNode()
+        root['3'].properties.in_navtree = True
+        root['3']['3'] = BaseNode()
+        root['3']['3'].properties.in_navtree = True
+
+        with self.layer.authenticated('manager'):
+            res = render_tile(root['3'], request, 'navtree')
+        self.assertTrue(res.find('ajax:target="http://example.com/3"') > -1)
+        self.assertFalse(res.find('ajax:target="http://example.com/3/3"') > -1)
 
         # Child nodes which do not grant permission 'view' are skipped
         class InvisibleNavNode(BaseNode):

@@ -13,6 +13,7 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
+from cone.app.interfaces import IApplicationNode
 from cone.tile import Tile
 from cone.tile import tile
 from node.interfaces import ILeaf
@@ -173,7 +174,10 @@ class ContentsTile(Table):
 
     @property
     def listable_children(self):
-        return self.model.values()
+        return [
+            child for child in self.model.values()
+            if IApplicationNode.providedBy(child)
+        ]
 
     @property
     def filtered_children(self):
