@@ -3,8 +3,9 @@ from cone.app.browser import RelatedViewProvider
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit
+from cone.app.browser.actions import ActionMoveDown
+from cone.app.browser.actions import ActionMoveUp
 from cone.app.browser.actions import ActionView
-from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import Toolbar
 from cone.app.browser.actions import ViewLink
 from cone.app.browser.copysupport import extract_copysupport_cookie
@@ -18,7 +19,6 @@ from cone.app.interfaces import IWorkflowState
 from cone.tile import Tile
 from cone.tile import tile
 from node.interfaces import ILeaf
-from node.interfaces import IOrder
 from node.utils import instance_property
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
@@ -33,6 +33,10 @@ FAR_PAST = datetime.datetime(2000, 1, 1)
 
 
 class ContentsActionView(ActionView):
+    """View action for contents table.
+
+    Gets displayed in actions column.
+    """
     title = ActionView.text
     text = None
     action = None
@@ -40,6 +44,10 @@ class ContentsActionView(ActionView):
 
 
 class ContentsActionEdit(ActionEdit):
+    """Edit action for contents table.
+
+    Gets displayed in actions column.
+    """
     title = ActionEdit.text
     text = None
     action = None
@@ -53,6 +61,8 @@ class ContentsActionEdit(ActionEdit):
 
 class ContentsActionDelete(ActionDelete):
     """Delete action for contents table.
+
+    Gets displayed in actions column.
     """
     title = ActionDelete.text
     text = None
@@ -64,53 +74,28 @@ class ContentsActionDelete(ActionDelete):
             and self.permitted('delete')
 
 
-class ContentsMoveAction(LinkAction):
+class ContentsActionMoveUp(ActionMoveUp):
+    """Move up action for contents table.
 
-    @property
-    def display(self):
-        if self.request.params.get('sort'):
-            return False
-        parent = self.model.parent
-        return parent.properties.action_move \
-            and IOrder.providedBy(parent) \
-            and self.request.has_permission('change_order', parent)
-
-    @property
-    def target(self):
-        request = self.request
-        query = make_query(
-            b_page=request.params.get('b_page'),
-            size=request.params.get('size')
-        )
-        return make_url(self.request, node=self.model, query=query)
+    Gets displayed in actions column.
+    """
+    title = ActionMoveUp.text
+    text = None
 
 
-class ContentsActionMoveUp(ContentsMoveAction):
-    id = 'toolbaraction-move-up'
-    icon = 'glyphicon glyphicon-chevron-up'
-    action = 'move_up:NONE:NONE'
+class ContentsActionMoveDown(ActionMoveDown):
+    """Move down action for contents table.
 
-    @property
-    def display(self):
-        if not super(ContentsActionMoveUp, self).display:
-            return False
-        return self.model.parent.first_key != self.model.name
-
-
-class ContentsActionMoveDown(ContentsMoveAction):
-    id = 'toolbaraction-move-down'
-    icon = 'glyphicon glyphicon-chevron-down'
-    action = 'move_down:NONE:NONE'
-
-    @property
-    def display(self):
-        if not super(ContentsActionMoveDown, self).display:
-            return False
-        return self.model.parent.last_key != self.model.name
+    Gets displayed in actions column.
+    """
+    title = ActionMoveDown.text
+    text = None
 
 
 class ContentsViewLink(ViewLink):
     """View link for contents table.
+
+    Title column uses this to turn title into view link.
     """
     css = 'title'
     event = 'contextchanged:#layout'

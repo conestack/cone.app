@@ -1493,26 +1493,6 @@ Considered ``nodeinfo``:
   calculating whether to display action.
 
 
-ContentsActionMoveUp
---------------------
-
-Invokes ``move_up`` tile on node.
-
-Considered ``properties``:
-
-- **action_move**: Flag on parent whether to render move up action.
-
-
-ContentsActionMoveDown
-----------------------
-
-Invokes ``move_down`` tile on node.
-
-Considered ``properties``:
-
-- **action_move**: Flag on parent whether to render move down action.
-
-
 ActionCut
 ---------
 
@@ -1544,8 +1524,28 @@ Considered ``properties``:
   ``listing`` if undefined.
 
 
-ActionShare
------------
+ActionMoveUp
+------------
+
+Invokes ``move_up`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move up action.
+
+
+ActionMoveDown
+--------------
+
+Invokes ``move_down`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move down action.
+
+
+ActionSharing
+-------------
 
 Renders ``sharing`` tile on node to main content area.
 
