@@ -1,4 +1,5 @@
 from cone.app import testing
+from cone.app.browser.actions import _ActionMove
 from cone.app.browser.actions import Action
 from cone.app.browser.actions import ActionAdd
 from cone.app.browser.actions import ActionContext
@@ -8,6 +9,8 @@ from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionDeleteChildren
 from cone.app.browser.actions import ActionEdit
 from cone.app.browser.actions import ActionList
+from cone.app.browser.actions import ActionMoveDown
+from cone.app.browser.actions import ActionMoveUp
 from cone.app.browser.actions import ActionPaste
 from cone.app.browser.actions import ActionSharing
 from cone.app.browser.actions import ActionState
@@ -33,6 +36,8 @@ from cone.app.testing.mock import WorkflowNode
 from cone.tile import tile
 from cone.tile import Tile
 from cone.tile.tests import TileTestCase
+from node.behaviors import Order
+from plumber import plumbing
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 
@@ -709,3 +714,102 @@ class TestBrowserActions(TileTestCase):
 
             model.supports_paste = False
             self.assertEqual(action(model, request), u'')
+
+    def test__ActionMove(self):
+        node = BaseNode()
+        model = node['child'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = _ActionMove()
+        action.model = model
+        action.request = request
+
+        request.params['sort'] = 'asc'
+        self.assertFalse(action.display)
+
+        del request.params['sort']
+        node.properties.action_move = True
+        self.assertFalse(action.display)
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        model = node['child'] = BaseNode()
+        action.model = model
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
+        self.assertEqual(action.target, 'http://example.com/child')
+        request.params['size'] = '10'
+        request.params['b_page'] = '1'
+        self.assertEqual(
+            action.target,
+            'http://example.com/child?b_page=1&size=10'
+        )
+
+    def test_ActionMoveUp(self):
+        action = ActionMoveUp()
+        self.assertEqual(action.id, 'toolbaraction-move-up')
+        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-up')
+        self.assertEqual(action.action, 'move_up:NONE:NONE')
+        self.assertEqual(action.text, 'move_up')
+
+        node = BaseNode()
+        model = node['child'] = BaseNode()
+        request = self.layer.new_request()
+
+        action.model = model
+        action.request = request
+        self.assertFalse(action.display)
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        node['a'] = BaseNode()
+        node['b'] = BaseNode()
+
+        action.model = node['a']
+        with self.layer.authenticated('manager'):
+            self.assertFalse(action.display)
+
+        action.model = node['b']
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
+    def test_ActionMoveDown(self):
+        action = ActionMoveDown()
+        self.assertEqual(action.id, 'toolbaraction-move-down')
+        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-down')
+        self.assertEqual(action.action, 'move_down:NONE:NONE')
+        self.assertEqual(action.text, 'move_down')
+
+        node = BaseNode()
+        model = node['child'] = BaseNode()
+        request = self.layer.new_request()
+
+        action.model = model
+        action.request = request
+        self.assertFalse(action.display)
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        node['a'] = BaseNode()
+        node['b'] = BaseNode()
+
+        action.model = node['a']
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
+        action.model = node['b']
+        with self.layer.authenticated('manager'):
+            self.assertFalse(action.display)

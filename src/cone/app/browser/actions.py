@@ -5,6 +5,7 @@ from cone.app.interfaces import IPrincipalACL
 from cone.app.interfaces import IWorkflowState
 from cone.tile import render_template
 from cone.tile import render_tile
+from node.interfaces import IOrder
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
 
@@ -443,3 +444,56 @@ class ActionPaste(LinkAction):
     def enabled(self):
         return self.request.cookies.get('cone.app.copysupport.cut') \
             or self.request.cookies.get('cone.app.copysupport.copy')
+
+
+class _ActionMove(LinkAction):
+    """Basic move action.
+    """
+
+    @property
+    def display(self):
+        if self.request.params.get('sort'):
+            return False
+        parent = self.model.parent
+        return parent.properties.action_move \
+            and IOrder.providedBy(parent) \
+            and self.request.has_permission('change_order', parent)
+
+    @property
+    def target(self):
+        request = self.request
+        query = make_query(
+            b_page=request.params.get('b_page'),
+            size=request.params.get('size')
+        )
+        return make_url(self.request, node=self.model, query=query)
+
+
+class ActionMoveUp(_ActionMove):
+    """Move up action.
+    """
+    id = 'toolbaraction-move-up'
+    icon = 'glyphicon glyphicon-chevron-up'
+    action = 'move_up:NONE:NONE'
+    text = _('move_up', default='Move up')
+
+    @property
+    def display(self):
+        if not super(ActionMoveUp, self).display:
+            return False
+        return self.model.parent.first_key != self.model.name
+
+
+class ActionMoveDown(_ActionMove):
+    """Move down action.
+    """
+    id = 'toolbaraction-move-down'
+    icon = 'glyphicon glyphicon-chevron-down'
+    action = 'move_down:NONE:NONE'
+    text = _('move_down', default='Move down')
+
+    @property
+    def display(self):
+        if not super(ActionMoveDown, self).display:
+            return False
+        return self.model.parent.last_key != self.model.name

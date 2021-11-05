@@ -493,7 +493,7 @@ class OverlayEditForm(OverlayForm,
 # deleting
 ###############################################################################
 
-@tile(name='delete', permission="delete")
+@tile(name='delete', permission='delete')
 class DeleteAction(Tile):
     show_confirm_deleted = True
 

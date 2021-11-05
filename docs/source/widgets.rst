@@ -492,6 +492,9 @@ Considered ``properties`` on children:
 
 - **action_delete**: Flag whether to render delete action.
 
+- **action_move**: Flag whether to render move up and move down actions.
+  Must be set on container.
+
 .. code-block:: python
 
     from cone.app import model
@@ -1521,8 +1524,28 @@ Considered ``properties``:
   ``listing`` if undefined.
 
 
-ActionShare
------------
+ActionMoveUp
+------------
+
+Invokes ``move_up`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move up action.
+
+
+ActionMoveDown
+--------------
+
+Invokes ``move_down`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move down action.
+
+
+ActionSharing
+-------------
 
 Renders ``sharing`` tile on node to main content area.
 
