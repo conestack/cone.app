@@ -35,19 +35,19 @@ viewer_permissions = [
     'view', 'list',
 ]
 editor_permissions = [
-    'view', 'list', 'add', 'edit',
+    'view', 'list', 'add', 'edit', 'change_order'
 ]
 owner_permissions = [
-    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-    'manage_permissions', 'change_state',
+    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+    'copy', 'paste', 'manage_permissions', 'change_state',
 ]
 admin_permissions = [
-    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-    'manage_permissions', 'change_state',
+    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+    'copy', 'paste', 'manage_permissions', 'change_state',
 ]
 manager_permissions = [
-    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-    'manage_permissions', 'change_state', 'manage',
+    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+    'copy', 'paste', 'manage_permissions', 'change_state', 'manage',
 ]
 everyone_permissions = [
     'login',

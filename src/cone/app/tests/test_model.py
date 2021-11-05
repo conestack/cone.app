@@ -55,18 +55,20 @@ class TestModel(NodeTestCase):
         self.assertEqual(root.__acl__, [
             ('Allow', 'system.Authenticated', ['view']),
             ('Allow', 'role:viewer', ['view', 'list']),
-            ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']),
+            ('Allow', 'role:editor', [
+                'view', 'list', 'add', 'edit', 'change_order'
+            ]),
             ('Allow', 'role:admin', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
+                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+                'copy', 'paste', 'manage_permissions', 'change_state'
             ]),
             ('Allow', 'role:manager', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state', 'manage'
+                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+                'copy', 'paste', 'manage_permissions', 'change_state', 'manage'
             ]),
             ('Allow', 'role:owner', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
+                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+                'copy', 'paste', 'manage_permissions', 'change_state'
             ]),
             ('Allow', 'system.Everyone', ['login']),
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)

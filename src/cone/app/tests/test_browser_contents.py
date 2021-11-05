@@ -15,6 +15,8 @@ from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
 from node.base import BaseNode as NodeBaseNode
+from node.behaviors import Order
+from plumber import plumbing
 from pyramid.exceptions import HTTPForbidden
 from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
@@ -380,3 +382,20 @@ class TestBrowserContents(TileTestCase):
         with self.layer.authenticated('max'):
             res = listing(model, request)
         self.assertTrue(res.text.startswith('<!DOCTYPE html>'))
+
+    def test_move_actions(self):
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        node['a'] = BaseNode()
+        node['b'] = BaseNode()
+        node['c'] = BaseNode()
+
+        with self.layer.authenticated('manager'):
+            rendered = render_tile(node, self.layer.new_request(), 'contents')
+
+        self.assertEqual(rendered.count('toolbaraction-move-up'), 2)
+        self.assertEqual(rendered.count('toolbaraction-move-down'), 2)
