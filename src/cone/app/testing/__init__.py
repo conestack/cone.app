@@ -5,6 +5,7 @@ from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
 from pyramid.tests.test_view import DummyVenusianContext
 from pyramid.tests.test_view import DummyVenusianInfo
+from webob.acceptparse import create_accept_header
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 from zope.configuration.xmlconfig import XMLConfig
@@ -26,10 +27,25 @@ def reset_node_info_registry(fn):
 
 
 class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
+    _accept = None
 
     @property
     def is_xhr(self):
         return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    @property
+    def accept(self):
+        if self._accept is None:
+            self._accept = create_accept_header(None)
+        return self._accept
+
+    @accept.setter
+    def accept(self, value):
+        self._accept = create_accept_header(value)
+
+    @accept.deleter
+    def accept(self):
+        self._accept = None
 
 
 class DummyVenusian(object):
@@ -90,6 +106,7 @@ class Security(object):
         request.environ['AUTH_TYPE'] = 'cookie'
         request.environ.update(auth)
         request.params['_LOCALE_'] = 'en'
+        request.accept = 'text/html'
         if type == 'json':
             request.headers['X-Request'] = 'JSON'
             request.accept = 'application/json'
