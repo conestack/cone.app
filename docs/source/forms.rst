@@ -585,7 +585,7 @@ overlay versions may look like so.
             # add save button
             form['save'] = factory(
                 'submit',
-                props = {
+                props={
                     'action': 'save',
                     'expression': True,
                     'handler': self.save,
@@ -595,7 +595,7 @@ overlay versions may look like so.
             # add cancel button
             form['cancel'] = factory(
                 'submit',
-                props = {
+                props={
                     'action': 'cancel',
                     'expression': True,
                     'skip': True,
@@ -645,17 +645,20 @@ overlay versions may look like so.
         """Content add form for ExampleNode.
         """
 
+
     @tile(name='editform', interface=ExampleNode, permission="edit")
     @plumbing(ContentEditForm)
     class ExampleEditForm(ExampleEditing):
         """Content edit form for ExampleNode.
         """
 
+
     @tile(name='overlayaddform', interface=ExampleNode, permission="add")
     @plumbing(OverlayAddForm)
     class ExampleOverlayAddForm(ExampleAdding):
         """Overlay add form for ExampleNode.
         """
+
 
     @tile(name='overlayeditform', interface=ExampleNode, permission="edit")
     @plumbing(OverlayEditForm)

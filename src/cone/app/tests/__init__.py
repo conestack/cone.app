@@ -31,6 +31,7 @@ def test_suite():
     from cone.app.tests import test_browser_settings
     from cone.app.tests import test_browser_sharing
     from cone.app.tests import test_browser_table
+    from cone.app.tests import test_browser_translation
     from cone.app.tests import test_browser_utils
     from cone.app.tests import test_browser_workflow
 
@@ -64,6 +65,7 @@ def test_suite():
     suite.addTest(unittest.findTestCases(test_browser_settings))
     suite.addTest(unittest.findTestCases(test_browser_sharing))
     suite.addTest(unittest.findTestCases(test_browser_table))
+    suite.addTest(unittest.findTestCases(test_browser_translation))
     suite.addTest(unittest.findTestCases(test_browser_utils))
     suite.addTest(unittest.findTestCases(test_browser_workflow))
 
