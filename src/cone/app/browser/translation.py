@@ -3,12 +3,20 @@ from node.utils import UNSET
 from yafowil.base import factory
 from yafowil.base import Widget
 from yafowil.compound import compound_renderer
+from yafowil.compound import compound_extractor
 from yafowil.utils import managedprops
+from yafowil.utils import attr_value
 
 
-@managedprops()
+@managedprops('factory', 'required')
 def translation_extractor(widget, data):
-    return data.extracted
+    widget()
+    compound_extractor(widget, data)
+    translation_factory = widget.attrs.get('factory', dict)
+    extracted = translation_factory()
+    for lang in cfg.available_languages:
+        extracted[lang] = data[lang].extracted
+    return extracted
 
 
 def filtered_chain(chain, keep):
@@ -31,13 +39,13 @@ def duplicate_widget(widget, keep):
 
 def translation_tabs_renderer(widget, data):
     li = list()
-    for idx, lang in enumerate(widget.attrs['languages']):
+    for idx, lang in enumerate(cfg.available_languages):
         a = data.tag('a', lang, href=u'#input-{}-{}'.format(
             widget.dottedpath.replace(u'.', u'-'),
             lang
         ))
         li.append(data.tag('li', a, class_='active' if idx == 0 else None))
-    return data.tag('ul', *li, class_='nav nav-tabs')
+    return data.tag('ul', *li, class_='nav nav-tabs translation-nav')
 
 
 factory.register(
@@ -57,15 +65,16 @@ def translation_edit_renderer(widget, data):
         'translationtabs',
         props={
             'structural': True,
-            'languages': cfg.available_languages
         }
     )
+    # import pdb;pdb.set_trace()
+    #value = data.extracted
     for lang in cfg.available_languages:
         translation = widget[lang] = duplicate_widget(
             widget,
             widget.blueprints[-1]
         )
-        translation.getter = widget.getter.get(lang, UNSET) if widget.getter else UNSET
+        #translation.getter = widget.getter.get(lang, UNSET) if widget.getter else UNSET
 
 
 @managedprops()
