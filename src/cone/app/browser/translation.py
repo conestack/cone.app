@@ -55,7 +55,7 @@ def translation_tabs_renderer(widget, data):
         has_errors = lang_data and lang_data.has_errors
         lang_text = lang.upper()
         if has_errors:
-            lang_text += u' *'
+            lang_text = u'* {}'.format(lang_text)
         a = data.tag('a', lang_text, href=u'#input-{}-{}'.format(
             widget.dottedpath.replace(u'.', u'-'),
             lang

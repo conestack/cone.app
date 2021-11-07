@@ -274,7 +274,7 @@ class TestBrowserTranslation(NodeTestCase):
             <div class="errormessage">Field is mandatory</div>
             <ul class="nav nav-pills translation-nav">
               <li class="active error">
-                <a href="#input-field-en">EN *</a>
+                <a href="#input-field-en">* EN</a>
               </li>
               <li>
                 <a href="#input-field-de">DE</a>

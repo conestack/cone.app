@@ -190,6 +190,27 @@ a.removereference.disabled {
     color:#ddd;
 }
 
+/* translation */
+.translation-nav > li > a {
+    padding: 5px 10px;
+}
+.translation-nav > li.error > a,
+.translation-nav > li.error > a:hover,
+.translation-nav > li.error > a:focus {
+    color: #a94442;
+    background-color: #fff;
+}
+.translation-nav > li.active.error > a,
+.translation-nav > li.active.error > a:hover,
+.translation-nav > li.active.error > a:focus {
+    color: #fff;
+    background-color: #a94442;
+}
+.translation-fields {
+    display: none;
+    margin-top: 3px;
+}
+
 /* settings */
 .settingstabpane {
     margin-top:12px;
