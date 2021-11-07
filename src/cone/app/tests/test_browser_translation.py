@@ -127,10 +127,12 @@ class TestBrowserTranslation(NodeTestCase):
               <a href="#input-field-de">DE</a>
             </li>
           </ul>
-          <input class="text" id="input-field-en" name="field.en"
-                 type="text" value=""/>
-          <input class="text" id="input-field-de" name="field.de"
-                 type="text" value=""/>
+          <div class="translation-fields">
+            <input class="text" id="input-field-en" name="field.en"
+                   type="text" value=""/>
+            <input class="text" id="input-field-de" name="field.de"
+                   type="text" value=""/>
+          </div>
         </div>
         """, fxml(widget()))
 
@@ -147,13 +149,12 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         self.checkOutput("""
-        <div class="field" id="field-field">
-          ...
-          <input class="text" id="input-field-en" name="field.en"
-                 type="text" value="Value EN"/>
-          <input class="text" id="input-field-de" name="field.de"
-                 type="text" value="Value DE"/>
-        </div>
+        ...
+        <input class="text" id="input-field-en" name="field.en"
+               type="text" value="Value EN"/>
+        <input class="text" id="input-field-de" name="field.de"
+               type="text" value="Value DE"/>
+        ...
         """, fxml(widget()))
 
     def test_translation_edit_renderer_preset_translation_value(self):
@@ -170,13 +171,12 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         self.checkOutput("""
-        <div class="field" id="field-field">
-          ...
-          <input class="text" id="input-field-en" name="field.en"
-                 type="text" value="Value EN"/>
-          <input class="text" id="input-field-de" name="field.de"
-                 type="text" value="Value DE"/>
-        </div>
+        ...
+        <input class="text" id="input-field-en" name="field.en"
+               type="text" value="Value EN"/>
+        <input class="text" id="input-field-de" name="field.de"
+               type="text" value="Value DE"/>
+        ...
         """, fxml(widget()))
 
     def test_render_after_extraction_no_preset_value(self):
@@ -192,13 +192,12 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = u'Value DE'
         data = widget.extract(request)
         self.checkOutput("""
-        <div class="field" id="field-field">
-          ...
-          <input class="text" id="input-field-en" name="field.en"
-                 type="text" value="Value EN"/>
-          <input class="text" id="input-field-de" name="field.de"
-                 type="text" value="Value DE"/>
-        </div>
+        ...
+        <input class="text" id="input-field-en" name="field.en"
+               type="text" value="Value EN"/>
+        <input class="text" id="input-field-de" name="field.de"
+               type="text" value="Value DE"/>
+        ...
         """, fxml(widget(data=data)))
 
     def test_render_after_extraction_preset_value(self):
@@ -218,13 +217,12 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = u'Value DE new'
         data = widget.extract(request)
         self.checkOutput("""
-        <div class="field" id="field-field">
-          ...
-          <input class="text" id="input-field-en" name="field.en"
-                 type="text" value="Value EN new"/>
-          <input class="text" id="input-field-de" name="field.de"
-                 type="text" value="Value DE new"/>
-        </div>
+        ...
+        <input class="text" id="input-field-en" name="field.en"
+               type="text" value="Value EN new"/>
+        <input class="text" id="input-field-de" name="field.de"
+               type="text" value="Value DE new"/>
+        ...
         """, fxml(widget(data=data)))
 
     def test_render_after_extraction_preset_translation_value(self):
@@ -245,13 +243,12 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = u'Value DE new'
         data = widget.extract(request)
         self.checkOutput("""
-        <div class="field" id="field-field">
-          ...
-          <input class="text" id="input-field-en" name="field.en"
-                 type="text" value="Value EN new"/>
-          <input class="text" id="input-field-de" name="field.de"
-                 type="text" value="Value DE new"/>
-        </div>
+        ...
+        <input class="text" id="input-field-en" name="field.en"
+             type="text" value="Value EN new"/>
+        <input class="text" id="input-field-de" name="field.de"
+             type="text" value="Value DE new"/>
+        ...
         """, fxml(widget(data=data)))
 
     def test_required(self):
@@ -283,10 +280,12 @@ class TestBrowserTranslation(NodeTestCase):
                 <a href="#input-field-de">DE</a>
               </li>
             </ul>
-            <input class="required text" id="input-field-en" name="field.en"
-                   required="required" type="text" value=""/>
-            <input class="required text" id="input-field-de" name="field.de"
-                   required="required" type="text" value="Value DE"/>
+            <div class="translation-fields">
+              <input class="required text" id="input-field-en" name="field.en"
+                     required="required" type="text" value=""/>
+              <input class="required text" id="input-field-de" name="field.de"
+                     required="required" type="text" value="Value DE"/>
+            </div>
           </div>
         </div>
         """, fxml(widget(data=data)))

@@ -86,8 +86,14 @@ def translation_edit_renderer(widget, data):
             'structural': True,
         }
     )
+    translations = widget['translations'] = factory(
+        'div',
+        props={
+            'class': 'translation-fields',
+            'structural': True
+        })
     for lang in cfg.available_languages:
-        widget[lang] = duplicate_widget(widget, widget.blueprints[-1])
+        translations[lang] = duplicate_widget(widget, widget.blueprints[-1])
 
 
 def translation_display_renderer(widget, data):
