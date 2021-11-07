@@ -2,19 +2,22 @@ from cone.app import cfg
 from node.utils import UNSET
 from yafowil.base import factory
 from yafowil.base import Widget
-from yafowil.compound import compound_renderer
 from yafowil.compound import compound_extractor
+from yafowil.compound import compound_renderer
 from yafowil.utils import managedprops
-from yafowil.utils import attr_value
 
 
-@managedprops('factory', 'required')
+@managedprops('factory')
 def translation_extractor(widget, data):
     widget()
     compound_extractor(widget, data)
     translation_factory = widget.attrs.get('factory', dict)
     extracted = translation_factory()
     for lang in cfg.available_languages:
+        value = data[lang].extracted
+        if value is UNSET:
+            extracted = UNSET
+            break
         extracted[lang] = data[lang].extracted
     return extracted
 
@@ -59,7 +62,6 @@ factory.register(
 )
 
 
-@managedprops()
 def translation_edit_renderer(widget, data):
     widget['tabs'] = factory(
         'translationtabs',
@@ -67,17 +69,10 @@ def translation_edit_renderer(widget, data):
             'structural': True,
         }
     )
-    # import pdb;pdb.set_trace()
-    #value = data.extracted
     for lang in cfg.available_languages:
-        translation = widget[lang] = duplicate_widget(
-            widget,
-            widget.blueprints[-1]
-        )
-        #translation.getter = widget.getter.get(lang, UNSET) if widget.getter else UNSET
+        widget[lang] = duplicate_widget(widget, widget.blueprints[-1])
 
 
-@managedprops()
 def translation_display_renderer(widget, data):
     return u''
 
@@ -95,3 +90,12 @@ factory.register(
         translation_display_renderer
     ]
 )
+
+factory.doc['blueprint']['translation'] = """\
+Widget for rendering translations.
+"""
+
+factory.defaults['translation.factory'] = None
+factory.doc['props']['translation.factory'] = """\
+A class used as factory for creating translations at extraction time.
+"""
