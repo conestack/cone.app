@@ -121,17 +121,21 @@ class TestBrowserTranslation(NodeTestCase):
         <div class="field" id="field-field">
           <ul class="nav nav-pills translation-nav">
             <li class="active">
-              <a href="#input-field-en">EN</a>
+              <a href="#translation-field-en">EN</a>
             </li>
             <li>
-              <a href="#input-field-de">DE</a>
+              <a href="#translation-field-de">DE</a>
             </li>
           </ul>
           <div class="translation-fields">
-            <input class="text" id="input-field-en" name="field.en"
-                   type="text" value=""/>
-            <input class="text" id="input-field-de" name="field.de"
-                   type="text" value=""/>
+            <div id="translation-field-en">
+              <input class="text" id="input-field-en" name="field.en"
+                     type="text" value=""/>
+            </div>
+            <div id="translation-field-de">
+              <input class="text" id="input-field-de" name="field.de"
+                     type="text" value=""/>
+            </div>
           </div>
         </div>
         """, fxml(widget()))
@@ -150,10 +154,14 @@ class TestBrowserTranslation(NodeTestCase):
 
         self.checkOutput("""
         ...
-        <input class="text" id="input-field-en" name="field.en"
-               type="text" value="Value EN"/>
-        <input class="text" id="input-field-de" name="field.de"
-               type="text" value="Value DE"/>
+        <div id="translation-field-en">
+          <input class="text" id="input-field-en" name="field.en"
+                 type="text" value="Value EN"/>
+        </div>
+        <div id="translation-field-de">
+          <input class="text" id="input-field-de" name="field.de"
+                 type="text" value="Value DE"/>
+        </div>
         ...
         """, fxml(widget()))
 
@@ -172,10 +180,14 @@ class TestBrowserTranslation(NodeTestCase):
 
         self.checkOutput("""
         ...
-        <input class="text" id="input-field-en" name="field.en"
-               type="text" value="Value EN"/>
-        <input class="text" id="input-field-de" name="field.de"
-               type="text" value="Value DE"/>
+        <div id="translation-field-en">
+          <input class="text" id="input-field-en" name="field.en"
+                 type="text" value="Value EN"/>
+        </div>
+        <div id="translation-field-de">
+          <input class="text" id="input-field-de" name="field.de"
+                 type="text" value="Value DE"/>
+        </div>
         ...
         """, fxml(widget()))
 
@@ -193,10 +205,14 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.checkOutput("""
         ...
-        <input class="text" id="input-field-en" name="field.en"
-               type="text" value="Value EN"/>
-        <input class="text" id="input-field-de" name="field.de"
-               type="text" value="Value DE"/>
+        <div id="translation-field-en">
+          <input class="text" id="input-field-en" name="field.en"
+                 type="text" value="Value EN"/>
+        </div>
+        <div id="translation-field-de">
+          <input class="text" id="input-field-de" name="field.de"
+                 type="text" value="Value DE"/>
+        </div>
         ...
         """, fxml(widget(data=data)))
 
@@ -218,10 +234,14 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.checkOutput("""
         ...
-        <input class="text" id="input-field-en" name="field.en"
-               type="text" value="Value EN new"/>
-        <input class="text" id="input-field-de" name="field.de"
-               type="text" value="Value DE new"/>
+        <div id="translation-field-en">
+          <input class="text" id="input-field-en" name="field.en"
+                 type="text" value="Value EN new"/>
+        </div>
+        <div id="translation-field-de">
+          <input class="text" id="input-field-de" name="field.de"
+                 type="text" value="Value DE new"/>
+        </div>
         ...
         """, fxml(widget(data=data)))
 
@@ -244,10 +264,14 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.checkOutput("""
         ...
-        <input class="text" id="input-field-en" name="field.en"
-             type="text" value="Value EN new"/>
-        <input class="text" id="input-field-de" name="field.de"
-             type="text" value="Value DE new"/>
+        <div id="translation-field-en">
+          <input class="text" id="input-field-en" name="field.en"
+               type="text" value="Value EN new"/>
+        </div>
+        <div id="translation-field-de">
+          <input class="text" id="input-field-de" name="field.de"
+               type="text" value="Value DE new"/>
+        </div>
         ...
         """, fxml(widget(data=data)))
 
@@ -274,17 +298,21 @@ class TestBrowserTranslation(NodeTestCase):
             <div class="errormessage">Field is mandatory</div>
             <ul class="nav nav-pills translation-nav">
               <li class="active error">
-                <a href="#input-field-en">* EN</a>
+                <a href="#translation-field-en">* EN</a>
               </li>
               <li>
-                <a href="#input-field-de">DE</a>
+                <a href="#translation-field-de">DE</a>
               </li>
             </ul>
             <div class="translation-fields">
-              <input class="required text" id="input-field-en" name="field.en"
-                     required="required" type="text" value=""/>
-              <input class="required text" id="input-field-de" name="field.de"
-                     required="required" type="text" value="Value DE"/>
+              <div id="translation-field-en">
+                <input class="required text" id="input-field-en" name="field.en"
+                       required="required" type="text" value=""/>
+              </div>
+              <div id="translation-field-de">
+                <input class="required text" id="input-field-de" name="field.de"
+                       required="required" type="text" value="Value DE"/>
+              </div>
             </div>
           </div>
         </div>

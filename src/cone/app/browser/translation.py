@@ -56,7 +56,7 @@ def translation_tabs_renderer(widget, data):
         lang_text = lang.upper()
         if has_errors:
             lang_text = u'* {}'.format(lang_text)
-        a = data.tag('a', lang_text, href=u'#input-{}-{}'.format(
+        a = data.tag('a', lang_text, href=u'#translation-{}-{}'.format(
             widget.dottedpath.replace(u'.', u'-'),
             lang
         ))
@@ -93,7 +93,16 @@ def translation_edit_renderer(widget, data):
             'structural': True
         })
     for lang in cfg.available_languages:
-        translations[lang] = duplicate_widget(widget, widget.blueprints[-1])
+        translation = translations['translation_{}'.format(lang)] = factory(
+            'div',
+            props={
+                'id': 'translation-{}-{}'.format(
+                    widget.dottedpath.replace(u'.', u'-'),
+                    lang
+                ),
+                'structural': True
+            })
+        translation[lang] = duplicate_widget(widget, widget.blueprints[-1])
 
 
 def translation_display_renderer(widget, data):

@@ -607,6 +607,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         }
 
         show_lang_handle(evt) {
+            evt.preventDefault();
             this.nav_elem.children().removeClass('active');
             this.fields_elem.children().hide();
             let elem = $(evt.currentTarget);
