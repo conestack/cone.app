@@ -13,12 +13,20 @@ def translation_extractor(widget, data):
     compound_extractor(widget, data)
     translation_factory = widget.attrs.get('factory', dict)
     extracted = translation_factory()
+    errors = list()
     for lang in cfg.available_languages:
-        value = data[lang].extracted
+        lang_data = data[lang]
+        value = lang_data.extracted
         if value is UNSET:
             extracted = UNSET
             break
-        extracted[lang] = data[lang].extracted
+        extracted[lang] = lang_data.extracted
+        errors += lang_data.errors
+    if errors:
+        # Raise first occured error. If we encounter a case where we need
+        # to display multiple error messages, we need to hook them up to
+        # data.errors directly here
+        raise errors[0]
     return extracted
 
 
@@ -32,7 +40,7 @@ def duplicate_widget(widget, keep):
         filtered_chain(widget.extractors, keep),
         filtered_chain(widget.edit_renderers, keep),
         filtered_chain(widget.display_renderers, keep),
-        widget.preprocessors,
+        filtered_chain(widget.preprocessors, keep),
         properties=widget.properties,
         custom=widget.custom,
         defaults=widget.defaults,
@@ -43,12 +51,21 @@ def duplicate_widget(widget, keep):
 def translation_tabs_renderer(widget, data):
     li = list()
     for idx, lang in enumerate(cfg.available_languages):
-        a = data.tag('a', lang, href=u'#input-{}-{}'.format(
+        lang_data = data.get(lang)
+        has_errors = lang_data and lang_data.has_errors
+        lang_text = lang.upper()
+        if has_errors:
+            lang_text += u' *'
+        a = data.tag('a', lang_text, href=u'#input-{}-{}'.format(
             widget.dottedpath.replace(u'.', u'-'),
             lang
         ))
-        li.append(data.tag('li', a, class_='active' if idx == 0 else None))
-    return data.tag('ul', *li, class_='nav nav-tabs translation-nav')
+        li_css = ['active'] if idx == 0 else []
+        if has_errors:
+            li_css.append('error')
+        li_css = ' '.join(li_css) if li_css else None
+        li.append(data.tag('li', a, class_=li_css))
+    return data.tag('ul', *li, class_='nav nav-pills translation-nav')
 
 
 factory.register(

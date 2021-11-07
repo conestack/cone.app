@@ -119,12 +119,12 @@ class TestBrowserTranslation(NodeTestCase):
 
         self.checkOutput("""
         <div class="field" id="field-field">
-          <ul class="nav nav-tabs translation-nav">
+          <ul class="nav nav-pills translation-nav">
             <li class="active">
-              <a href="#input-field-en">en</a>
+              <a href="#input-field-en">EN</a>
             </li>
             <li>
-              <a href="#input-field-de">de</a>
+              <a href="#input-field-de">DE</a>
             </li>
           </ul>
           <input class="text" id="input-field-en" name="field.en"
@@ -251,5 +251,42 @@ class TestBrowserTranslation(NodeTestCase):
                  type="text" value="Value EN new"/>
           <input class="text" id="input-field-de" name="field.de"
                  type="text" value="Value DE new"/>
+        </div>
+        """, fxml(widget(data=data)))
+
+    def test_required(self):
+        widget = factory(
+            'field:error:translation:text',
+            'field',
+            value={
+                'en': u'Value EN',
+                'de': u'Value DE'
+            },
+            props={
+                'label': 'Field',
+                'required': 'Field is mandatory'
+            })
+
+        request = self.layer.new_request()
+        request.params['field.en'] = u''
+        request.params['field.de'] = u'Value DE'
+        data = widget.extract(request)
+        self.checkOutput("""
+        <div class="field" id="field-field">
+          <div class="error">
+            <div class="errormessage">Field is mandatory</div>
+            <ul class="nav nav-pills translation-nav">
+              <li class="active error">
+                <a href="#input-field-en">EN *</a>
+              </li>
+              <li>
+                <a href="#input-field-de">DE</a>
+              </li>
+            </ul>
+            <input class="required text" id="input-field-en" name="field.en"
+                   required="required" type="text" value=""/>
+            <input class="required text" id="input-field-de" name="field.de"
+                   required="required" type="text" value="Value DE"/>
+          </div>
         </div>
         """, fxml(widget(data=data)))
