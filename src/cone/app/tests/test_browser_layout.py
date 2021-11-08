@@ -26,6 +26,9 @@ from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
 from node.base import BaseNode as NodeBaseNode
+from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import Deny
+from pyramid.security import Everyone
 from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
@@ -421,26 +424,35 @@ class TestBrowserLayout(TileTestCase):
 
         # Unauthorized
         res = render_tile(root, request, 'personaltools')
-        self.assertFalse(res.find('id="personaltools"') != -1)
+        self.assertFalse(res.find('id="personaltools"') > -1)
 
         # Authorized
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'personaltools')
-        self.assertTrue(res.find('id="personaltools"') != -1)
-        self.assertTrue(res.find('href="http://example.com/logout"') != -1)
-        self.assertFalse(res.find('href="http://example.com/settings"') != -1)
+        self.assertTrue(res.find('id="personaltools"') > -1)
+        self.assertTrue(res.find('href="http://example.com/logout"') > -1)
+        self.assertFalse(res.find('href="http://example.com/settings"') > -1)
 
         # No settings link if empty settings
         root['settings'] = BaseNode()
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'personaltools')
-        self.assertFalse(res.find('href="http://example.com/settings"') != -1)
+        self.assertFalse(res.find('href="http://example.com/settings"') > -1)
 
         # Settings link if settings container contains children
         root['settings']['mysettings'] = BaseNode()
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'personaltools')
-        self.assertTrue(res.find('href="http://example.com/settings"') != -1)
+        self.assertTrue(res.find('href="http://example.com/settings"') > -1)
+
+        # No settings if no view permission
+        class NoAccessSettings(BaseNode):
+            __acl__ = [(Deny, Everyone, ALL_PERMISSIONS)]
+
+        root['settings'] = NoAccessSettings()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'personaltools')
+        self.assertFalse(res.find('href="http://example.com/settings"') > -1)
 
     def test_pathbar(self):
         root = BaseNode()

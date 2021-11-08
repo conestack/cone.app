@@ -27,6 +27,11 @@ Upcoming
 
 [ ] Treibtroff AjaxOverlay docs.
 
+[ ] Consolidate "Unauthorized" and "Insufficient Privileges" tiles.
+
+[ ] Check ``title`` of transition names before using ``name`` in workflow
+    dropdown.
+
 [ ] Bind sharing view to ``cone.app.interfaces.IPrincipalACL``.
 
 [ ] Fix ACL registry lookup. First check by cls and node info name, then by

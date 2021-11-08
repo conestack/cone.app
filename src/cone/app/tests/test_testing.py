@@ -58,7 +58,20 @@ class TestTesting(unittest.TestCase):
             req = self.layer.current_request
             self.assertTrue(isinstance(req, DummyRequest))
 
+        # Request accept property
+        req = self.layer.new_request()
+        self.assertEqual(
+            req.accept.parsed,
+            [('text/html', 1.0, [], [])]
+        )
+
+        del req.accept
+        self.assertEqual(req.accept.parsed, None)
+
         # Create JSON request
         req = self.layer.new_request(type='json')
         self.assertEqual(req.headers, {'X-Request': 'JSON'})
-        self.assertEqual(req.accept, 'application/json')
+        self.assertEqual(
+            req.accept.parsed,
+            [('application/json', 1.0, [], [])]
+        )

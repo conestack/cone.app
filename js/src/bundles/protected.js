@@ -14,6 +14,7 @@ import {
 import {SettingsTabs} from '../settingstabs.js';
 import {Sharing} from '../sharing.js';
 import {TableToolbar} from '../tabletoolbar.js';
+import {Translation} from '../translation.js'
 
 export * from '../batcheditems.js';
 export * from '../copysupport.js';
@@ -24,6 +25,7 @@ export * from '../selectable.js';
 export * from '../settingstabs.js';
 export * from '../sharing.js';
 export * from '../tabletoolbar.js';
+export * from '../translation.js';
 export * from '../utils.js';
 
 $(function() {
@@ -37,4 +39,5 @@ $(function() {
     ts.ajax.register(SettingsTabs.initialize, true);
     ts.ajax.register(Sharing.initialize, true);
     ts.ajax.register(TableToolbar.initialize, true);
+    ts.ajax.register(Translation.initialize, true);
 });
