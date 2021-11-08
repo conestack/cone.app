@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0.3 (unreleased)
+1.0.3 (2021-11-08)
 ------------------
 
 - Add ``translation`` YAFOWIL blueprint.
