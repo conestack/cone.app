@@ -846,6 +846,63 @@ Reference widget properties:
 See :doc:`forms documentation <forms>` for more information about writing forms.
 
 
+Translation
+-----------
+
+``cone.app`` provides the ``translation`` YAFOWIL form widget for editing
+translations.
+
+It renders a tab containing the widget for each language defined at
+``cone.available_languages`` in the application config file.
+
+The value of a translation can be any kind of container object, like a
+dictionary or a node. By default, the extracted value gets returned as
+dictionary.
+
+.. code-block:: python
+
+    from yafowil.base import factory
+
+    translation_field = factory(
+        'field:error:translation:text',
+        value={
+            'en': u'English Translation',
+            'de': u'German Translation'
+        },
+        props={
+            'label': 'Translation',
+            'required': 'Translation is mandatory'
+        })
+
+The following example demonstrates the use with a
+:ref:`translation <model_translation>` node. To ensure the widget extrator
+return the correct type, we need to pass it via the ``factory`` property.
+
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+    from cone.app.model import Translation
+    from plumber import plumbing
+    from yafowil.base import factory
+
+    @plumbing(Translation)
+    class TranslationNode(BaseNode):
+        allow_non_node_children = True
+
+    value = TranslationNode()
+    value['en'] = u'English Translation'
+    value['de'] = u'German Translation'
+
+    translation_field = factory(
+        'field:error:translation:text',
+        value=value,
+        props={
+            'label': 'Translation',
+            'required': 'Translation is mandatory',
+            'factory': TranslationNode
+        })
+
+
 Abstract tiles
 ==============
 

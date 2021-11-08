@@ -1,8 +1,24 @@
 Changes
 =======
 
-1.0.3 (unreleased)
+1.0.4 (unreleased)
 ------------------
+
+- No changes yet.
+
+
+1.0.3 (2021-11-08)
+------------------
+
+- Add ``translation`` YAFOWIL blueprint.
+  [rnix]
+
+- Provide dedicated forbidden and not found views for request types `text/html`
+  and `application/json`.
+  [rnix]
+
+- Implement move actions for changing order of children within it's container.
+  [rnix]
 
 - Move ``cone.app.browser.utils.node_path`` to ``cone.app.browser.node_path``.
   Import from old location is deprecated.

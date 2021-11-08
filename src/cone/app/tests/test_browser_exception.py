@@ -1,4 +1,3 @@
-from cone.app import get_root
 from cone.app import testing
 from cone.app.browser.exception import forbidden_view
 from cone.app.browser.exception import internal_server_error
@@ -6,6 +5,9 @@ from cone.app.browser.exception import not_found_view
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
+from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPNotFound
+from pyramid.view import render_view_to_response
 
 
 class TestBrowserException(TileTestCase):
@@ -78,7 +80,7 @@ class TestBrowserException(TileTestCase):
 
     def test_forbidden(self):
         # Forbidden tile
-        root = get_root()
+        root = BaseNode()
         model = root['model'] = BaseNode()
         request = self.layer.new_request()
 
@@ -87,27 +89,29 @@ class TestBrowserException(TileTestCase):
         <p>You are not allowed to access this resource.</p>\n  </div>\n\n\n
         """, render_tile(model, request, 'unauthorized'))
 
-        del root['model']
-
-        # Forbidden view
-        root = get_root()
-        model = root['model'] = BaseNode()
+        # Forbidden view. Unauthenticated renders login form.
+        context = HTTPForbidden()
         request = self.layer.new_request()
-        request.context = model
-        res = forbidden_view(request).text
+        request.context = BaseNode()
+        res = render_view_to_response(context, request=request).text
         self.assertTrue(res.find('id="input-loginform-login"') > -1)
 
+        # Authenticated renders unauthorized as content tile.
         with self.layer.authenticated('admin'):
-            request = self.layer.new_request()
-            request.context = model
-            res = forbidden_view(request).text
+            res = render_view_to_response(context, request=request).text
             self.assertTrue(res.find('<h1>Unauthorized</h1>') > -1)
 
-        del root['model']
+    def test_json_forbidden(self):
+        context = HTTPForbidden()
+        request = self.layer.new_request(type='json')
+        request.context = BaseNode()
+        res = render_view_to_response(context, request=request)
+        self.assertEqual(res.text, '{}')
+        self.assertEqual(res.status, '403 Forbidden')
 
     def test_not_found(self):
         # Not Found tile
-        root = get_root()
+        root = BaseNode()
         model = root['model'] = BaseNode()
         request = self.layer.new_request()
 
@@ -116,20 +120,21 @@ class TestBrowserException(TileTestCase):
         <p>The requested resource cannot be found.</p>\n  </div>\n\n\n
         """, render_tile(model, request, 'not_found'))
 
-        del root['model']
-
-        # Not Found view
-        root = get_root()
-        model = root['model'] = BaseNode()
+        # Not Found view. Always renders not found as content tile.
+        context = HTTPNotFound()
         request = self.layer.new_request()
-        request.context = model
-        res = not_found_view(request).text
+        request.context = BaseNode()
+        res = render_view_to_response(context, request=request).text
         self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
 
         with self.layer.authenticated('admin'):
-            request = self.layer.new_request()
-            request.context = model
-            res = not_found_view(request).text
+            res = render_view_to_response(context, request=request).text
             self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
 
-        del root['model']
+    def test_json_not_found(self):
+        context = HTTPNotFound()
+        request = self.layer.new_request(type='json')
+        request.context = BaseNode()
+        res = render_view_to_response(context, request=request)
+        self.assertEqual(res.text, '{}')
+        self.assertEqual(res.status, '404 Not Found')
