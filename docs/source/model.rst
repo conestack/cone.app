@@ -234,14 +234,22 @@ persistent UUID.
 recursively update UUID's on copies of a node.
 
 
+.. _model_translation:
+
 Translation
 -----------
 
 ``cone.app.model.Translation`` is a plumbing behavior for nodes
 and implements ``node.interfaces.ITranslation``. Using this behavior turns
 the node into a container holding different translations for a specific string
-or text. Accessing ``value`` attribute returns the translated value by current
-locale setting or the node ``name`` if no translation found for locale.
+or text. Accessing the ``value`` attribute returns the translated value by
+current locale setting or the node ``name`` if no translation found for locale.
+
+The ``Translation`` behavior derives from ``node.behaviors.Schema``. The
+default schema on translations is a ``cone.app.model.LanguageSchema`` instance.
+This schema implementation reads the available languages set at
+``cone.available_languages`` in the application config file and provides them
+as ``node.schema.Str`` fields.
 
 
 Properties
