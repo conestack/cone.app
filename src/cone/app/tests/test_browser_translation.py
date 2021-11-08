@@ -317,3 +317,37 @@ class TestBrowserTranslation(NodeTestCase):
           </div>
         </div>
         """, fxml(widget(data=data)))
+
+    def test_translation_display_renderer(self):
+        widget = factory(
+            'field:translation:text',
+            'field',
+            value={
+                'en': u'Value EN',
+                'de': u'Value DE'
+            },
+            props={
+                'label': 'Field'
+            },
+            mode='display')
+
+        self.checkOutput("""
+        <div class="field" id="field-field">
+          <ul class="nav nav-pills translation-nav">
+            <li class="active">
+              <a href="#translation-field-en">EN</a>
+            </li>
+            <li>
+              <a href="#translation-field-de">DE</a>
+            </li>
+          </ul>
+          <div class="translation-fields">
+            <div id="translation-field-en">
+              <div class="display-text" id="display-field-en">Value EN</div>
+            </div>
+            <div id="translation-field-de">
+              <div class="display-text" id="display-field-de">Value DE</div>
+            </div>
+          </div>
+        </div>
+        """, fxml(widget()))

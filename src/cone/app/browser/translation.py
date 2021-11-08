@@ -106,7 +106,11 @@ def translation_edit_renderer(widget, data):
 
 
 def translation_display_renderer(widget, data):
-    return u''
+    translation_edit_renderer(widget, data)
+    translations = widget['translations']
+    for lang in cfg.available_languages:
+        translation = translations['translation_{}'.format(lang)]
+        translation[lang].mode = 'display'
 
 
 factory.register(
@@ -119,7 +123,8 @@ factory.register(
         compound_renderer
     ],
     display_renderers=[
-        translation_display_renderer
+        translation_display_renderer,
+        compound_renderer
     ]
 )
 
