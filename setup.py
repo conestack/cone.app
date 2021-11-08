@@ -9,7 +9,7 @@ def read_file(name):
         return f.read()
 
 
-version = '1.0.3.dev0'
+version = '1.0.4.dev0'
 shortdesc = 'Web application stub'
 longdesc = '\n\n'.join([read_file(name) for name in [
     'README.rst',
@@ -48,8 +48,8 @@ setup(
     install_requires=[
         'Chameleon',
         'cone.tile>=1.0',
-        'node.ext.ugm>=0.9.9',
-        'node>=0.9.26',
+        'node.ext.ugm>=0.9.13',
+        'node>=0.9.28',
         'pyramid>=1.5',
         'pyramid_chameleon',
         'pyramid_zcml',
@@ -59,7 +59,7 @@ setup(
         'webresource',
         'yafowil.bootstrap',
         'yafowil.webob',
-        'yafowil>=2.3.2',
+        'yafowil>=2.3.4'
     ],
     extras_require=dict(
         lxml=[
