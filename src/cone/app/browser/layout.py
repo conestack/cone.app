@@ -503,6 +503,14 @@ class LanguageTile(Tile):
         return make_query(**params)
 
 
+language_names = {
+    'en': _('lang_en', default='English'),
+    'de': _('lang_de', default='German'),
+    'fr': _('lang_fr', default='French'),
+    'it': _('lang_it', default='Italian')
+}
+
+
 @tile(name='language',
       path='templates/language.pt',
       permission='login',
@@ -523,13 +531,11 @@ class Language(LanguageTile):
                 node=self.model,
                 query=self.make_query(lang=lang)
             )
+            title = localizer.translate(language_names.get(lang, lang.upper()))
             languages.append({
                 'target': target,
                 'icon': 'icon-lang-{}'.format(lang),
-                'title': localizer.translate(_(
-                    'lang_{}'.format(lang),
-                    default=lang.upper()
-                ))
+                'title': title
             })
         return languages
 

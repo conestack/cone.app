@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-11 14:40+0200\n"
+"POT-Creation-Date: 2021-11-08 09:08+0100\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -17,16 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
-
-#. Default: No Title
-#: src/cone/app/model.py:137
-msgid "no_title"
-msgstr "No Title"
-
-#. Default: Settings
-#: src/cone/app/model.py:212 src/cone/app/browser/layout.py:57
-msgid "settings"
-msgstr "Settings"
 
 #. Default: Viewer
 #: src/cone/app/security.py:24
@@ -48,106 +38,41 @@ msgstr "Admin"
 msgid "role_manager"
 msgstr "Manager"
 
-#. Default: Nothing to paste
-#: src/cone/app/browser/copysupport.py:47
-msgid "nothing_to_paste"
-msgstr "Nothing to paste"
+#. Default: No Title
+#: src/cone/app/model.py:153
+msgid "no_title"
+msgstr "No Title"
 
-#. Default: Cannot paste '${name}'. Unknown source
-#: src/cone/app/browser/copysupport.py:61
-msgid "cannot_paste_unknown_source"
-msgstr "Cannot paste '${name}'. Unknown source"
-
-#. Default: Cannot paste to '${name}'. Unknown target
-#: src/cone/app/browser/copysupport.py:68
-msgid "cannot_paste_unknown_target"
-msgstr "Cannot paste to '${name}'. Unknown target"
-
-#. Default: Violation. '${target}' is not allowed to contain '${source}'
-#: src/cone/app/browser/copysupport.py:75
-msgid "cannot_paste_cardinality_violation"
-msgstr "Violation. '${target}' is not allowed to contain '${source}'"
-
-#. Default: Cannot paste cut object to child of it: ${name}
-#: src/cone/app/browser/copysupport.py:91
-msgid "cannot_paste_self_containment"
-msgstr "Cannot paste cut object to child of it: ${name}"
-
-#. Default: Pasted ${count} items
-#: src/cone/app/browser/copysupport.py:111
-msgid "pasted_items"
-msgstr "Pasted ${count} items"
-
-#. Default: Pasting of ${count} items failed
-#: src/cone/app/browser/copysupport.py:116
-msgid "pasting_items_failed"
-msgstr "Pasting of ${count} items failed"
+#. Default: Settings
+#: src/cone/app/model.py:228 src/cone/app/browser/layout.py:132
+msgid "settings"
+msgstr "Settings"
 
 #. Default: Add reference
-#: src/cone/app/browser/referencebrowser.py:140
+#: src/cone/app/browser/referencebrowser.py:147
 msgid "add_reference"
 msgstr "Add reference"
 
 #. Default: Remove reference
-#: src/cone/app/browser/referencebrowser.py:152
+#: src/cone/app/browser/referencebrowser.py:159
 msgid "remove_reference"
 msgstr "Remove reference"
 
 #. Default: Actions
-#: src/cone/app/browser/referencebrowser.py:206
+#: src/cone/app/browser/referencebrowser.py:214
 msgid "table_actions"
 msgstr "Actions"
 
 #. Default: Title
-#: src/cone/app/browser/referencebrowser.py:213
-#: src/cone/app/browser/contents.py:93
+#: src/cone/app/browser/referencebrowser.py:221
+#: src/cone/app/browser/contents.py:125
 msgid "title"
 msgstr "Title"
 
-#. Default: Logout
-#: src/cone/app/browser/layout.py:86
-msgid "logout"
-msgstr "Logout"
-
-#. Default: Navigation
-#: src/cone/app/browser/layout.py:274
-msgid "navigation"
-msgstr "Navigation"
-
-#. Default: Error
-#: src/cone/app/browser/settings.py:29
-msgid "error"
-msgstr "Error"
-
-#. Default: No username given
-#: src/cone/app/browser/login.py:63
-msgid "no_username_given"
-msgstr "No username given"
-
-#. Default: Username
-#: src/cone/app/browser/login.py:64
-msgid "username"
-msgstr "Username"
-
-#. Default: No password given
-#: src/cone/app/browser/login.py:71
-msgid "no_password_given"
-msgstr "No password given"
-
-#. Default: Password
-#: src/cone/app/browser/login.py:72
-msgid "password"
-msgstr "Password"
-
-#. Default: Login
-#: src/cone/app/browser/login.py:92
-msgid "login"
-msgstr "Login"
-
-#. Default: Invalid Credentials
-#: src/cone/app/browser/login.py:107
-msgid "invalid_credentials"
-msgstr "Invalid Credentials"
+#. Default: Browse
+#: src/cone/app/browser/referencebrowser.py:316
+msgid "browse"
+msgstr "Browse"
 
 #. Default: One level up
 #: src/cone/app/browser/actions.py:192
@@ -185,82 +110,165 @@ msgid "action_delete"
 msgstr "Delete"
 
 #. Default: Do you really want to delete selected Items?
-#: src/cone/app/browser/actions.py:382
+#: src/cone/app/browser/actions.py:381
 msgid "delete_items_confirm"
 msgstr "Do you really want to delete selected Items?"
 
 #. Default: Delete selected children
-#: src/cone/app/browser/actions.py:384
+#: src/cone/app/browser/actions.py:383
 msgid "action_delete_selected_children"
 msgstr "Delete selected children"
 
 #. Default: Cut
-#: src/cone/app/browser/actions.py:402
+#: src/cone/app/browser/actions.py:401
 msgid "action_cut"
 msgstr "Cut"
 
 #. Default: Copy
-#: src/cone/app/browser/actions.py:418
+#: src/cone/app/browser/actions.py:417
 msgid "action_copy"
 msgstr "Copy"
 
 #. Default: Paste
-#: src/cone/app/browser/actions.py:434
+#: src/cone/app/browser/actions.py:433
 msgid "action_paste"
 msgstr "Paste"
 
-#. Default: Display
-#: src/cone/app/browser/contextmenu.py:88
-msgid "display"
-msgstr "Display"
+#. Default: Move up
+#: src/cone/app/browser/actions.py:478
+msgid "move_up"
+msgstr "Move up"
 
-#. Default: Actions
-#: src/cone/app/browser/contextmenu.py:95 src/cone/app/browser/contents.py:87
-msgid "actions"
-msgstr "Actions"
+#. Default: Move down
+#: src/cone/app/browser/actions.py:493
+msgid "move_down"
+msgstr "Move down"
 
 #. Default: Content Form Heading
-#: src/cone/app/browser/authoring.py:200
+#: src/cone/app/browser/authoring.py:201
 msgid "content_form_heading"
 msgstr "Content Form Heading"
 
 #. Default: Unknown factory
-#: src/cone/app/browser/authoring.py:332
+#: src/cone/app/browser/authoring.py:340
 msgid "unknown_factory"
 msgstr "Unknown factory"
 
 #. Default: Add: ${title}
-#: src/cone/app/browser/authoring.py:373
+#: src/cone/app/browser/authoring.py:381
 msgid "add_form_heading"
 msgstr "Add: ${title}"
 
 #. Default: Edit
-#: src/cone/app/browser/authoring.py:440
+#: src/cone/app/browser/authoring.py:449
 msgid "edit"
 msgstr "Edit"
 
 #. Default: Edit: ${title}
-#: src/cone/app/browser/authoring.py:443
+#: src/cone/app/browser/authoring.py:452
 msgid "edit_form_heading"
 msgstr "Edit: ${title}"
 
 #. Default: Object "${title}" not deletable
-#: src/cone/app/browser/authoring.py:496
+#: src/cone/app/browser/authoring.py:507
 msgid "object_not_deletable"
 msgstr "Object \"${title}\" not deletable"
 
 #. Default: Deleted: ${title}
-#: src/cone/app/browser/authoring.py:513
+#: src/cone/app/browser/authoring.py:525
 msgid "deleted_object"
 msgstr "Deleted: ${title}"
 
+#. Default: Object "${title}" not movable
+#: src/cone/app/browser/order.py:35
+msgid "object_not_movable"
+msgstr "Object \"${title}\" not movable"
+
+#. Default: You are not permitted to move this object
+#: src/cone/app/browser/order.py:46
+msgid "object_moving_not_permitted"
+msgstr "You are not permitted to move this object"
+
+#. Default: No username given
+#: src/cone/app/browser/login.py:63
+msgid "no_username_given"
+msgstr "No username given"
+
+#. Default: Username
+#: src/cone/app/browser/login.py:64
+msgid "username"
+msgstr "Username"
+
+#. Default: No password given
+#: src/cone/app/browser/login.py:71
+msgid "no_password_given"
+msgstr "No password given"
+
+#. Default: Password
+#: src/cone/app/browser/login.py:72
+msgid "password"
+msgstr "Password"
+
+#. Default: Login
+#: src/cone/app/browser/login.py:92
+msgid "login"
+msgstr "Login"
+
+#. Default: Invalid Credentials
+#: src/cone/app/browser/login.py:107
+msgid "invalid_credentials"
+msgstr "Invalid Credentials"
+
+#. Default: Display
+#: src/cone/app/browser/contextmenu.py:127
+msgid "display"
+msgstr "Display"
+
+#. Default: Actions
+#: src/cone/app/browser/contextmenu.py:140 src/cone/app/browser/contents.py:119
+msgid "actions"
+msgstr "Actions"
+
+#. Default: Nothing to paste
+#: src/cone/app/browser/copysupport.py:46
+msgid "nothing_to_paste"
+msgstr "Nothing to paste"
+
+#. Default: Cannot paste '${name}'. Unknown source
+#: src/cone/app/browser/copysupport.py:60
+msgid "cannot_paste_unknown_source"
+msgstr "Cannot paste '${name}'. Unknown source"
+
+#. Default: Cannot paste to '${name}'. Unknown target
+#: src/cone/app/browser/copysupport.py:70
+msgid "cannot_paste_unknown_target"
+msgstr "Cannot paste to '${name}'. Unknown target"
+
+#: src/cone/app/browser/copysupport.py:80
+msgid "cannot_paste_cardinality_violation"
+msgstr "Violation. '${target}' is not allowed to contain '${source}'"
+
+#: src/cone/app/browser/copysupport.py:102
+msgid "cannot_paste_self_containment"
+msgstr "Cannot paste cut object to child of it: ${name}"
+
+#. Default: Pasted ${count} items
+#: src/cone/app/browser/copysupport.py:127
+msgid "pasted_items"
+msgstr "Pasted ${count} items"
+
+#. Default: Pasting of ${count} items failed
+#: src/cone/app/browser/copysupport.py:135
+msgid "pasting_items_failed"
+msgstr "Pasting of ${count} items failed"
+
 #. Default: Principal
-#: src/cone/app/browser/sharing.py:52
+#: src/cone/app/browser/sharing.py:53
 msgid "principal"
 msgstr "Principal"
 
 #. Default: Sort by principal
-#: src/cone/app/browser/sharing.py:54
+#: src/cone/app/browser/sharing.py:55
 msgid "sort_by_principal"
 msgstr "Sort by principal"
 
@@ -270,54 +278,93 @@ msgid "sharing_table_title"
 msgstr "Sharing: ${title}"
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:160
+#: src/cone/app/browser/sharing.py:166
 msgid "cannot_add_role_for_principal"
 msgstr "Can not add role '${role}' for principal '${pid}'"
 
-#. Default: Can not remove role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:189
+#: src/cone/app/browser/sharing.py:198
 msgid "cannot_remove_role_for_principal"
 msgstr "Can not remove role '${role}' for principal '${pid}'"
 
+#. Default: Error
+#: src/cone/app/browser/settings.py:29
+msgid "error"
+msgstr "Error"
+
+#. Default: Unknown
+#: src/cone/app/browser/utils.py:81
+msgid "unknown"
+msgstr "Unknown"
+
+#. Default: Logout
+#: src/cone/app/browser/layout.py:162
+msgid "logout"
+msgstr "Logout"
+
+#. Default: Navigation
+#: src/cone/app/browser/layout.py:356
+msgid "navigation"
+msgstr "Navigation"
+
+#. Default: English
+#: src/cone/app/browser/layout.py:507
+msgid "lang_en"
+msgstr "English"
+
+#. Default: German
+#: src/cone/app/browser/layout.py:508
+msgid "lang_de"
+msgstr "German"
+
+#. Default: French
+#: src/cone/app/browser/layout.py:509
+msgid "lang_fr"
+msgstr "French"
+
+#. Default: Italian
+#: src/cone/app/browser/layout.py:510
+msgid "lang_it"
+msgstr "Italian"
+
 #. Default: Sort on title
-#: src/cone/app/browser/contents.py:95
+#: src/cone/app/browser/contents.py:127
 msgid "sort_on_title"
 msgstr "Sort on title"
 
 #. Default: Creator
-#: src/cone/app/browser/contents.py:99
+#: src/cone/app/browser/contents.py:131
 msgid "creator"
 msgstr "Creator"
 
 #. Default: Sort on creator
-#: src/cone/app/browser/contents.py:101
+#: src/cone/app/browser/contents.py:133
 msgid "sort_on_creator"
 msgstr "Sort on creator"
 
 #. Default: Created
-#: src/cone/app/browser/contents.py:105
+#: src/cone/app/browser/contents.py:137
 msgid "created"
 msgstr "Created"
 
 #. Default: Sort on created
-#: src/cone/app/browser/contents.py:107
+#: src/cone/app/browser/contents.py:139
 msgid "sort_on_created"
 msgstr "Sort on created"
 
 #. Default: Modified
-#: src/cone/app/browser/contents.py:111
+#: src/cone/app/browser/contents.py:143
 msgid "modified"
 msgstr "Modified"
 
 #. Default: Sort on modified
-#: src/cone/app/browser/contents.py:113
+#: src/cone/app/browser/contents.py:145
 msgid "sort_on_modified"
 msgstr "Sort on modified"
 
-#. Default: Unknown
-#: src/cone/app/browser/utils.py:89
-msgid "unknown"
-msgstr "Unknown"
+#. Default: You are here
+#: src/cone/app/browser/templates/pathbar.pt:13
+msgid "you_are_here"
+msgstr "You are here"
 
 #. Default: Not Found
 #: src/cone/app/browser/templates/not_found.pt:7
@@ -329,10 +376,30 @@ msgstr "Not Found"
 msgid "not_found_text"
 msgstr "The requested resource cannot be found."
 
-#. Default: You are here
-#: src/cone/app/browser/templates/pathbar.pt:13
-msgid "you_are_here"
-msgstr "You are here"
+#. Default: Show
+#: src/cone/app/browser/templates/batched_items_header.pt:23
+#: src/cone/app/browser/templates/table.pt:32
+msgid "show"
+msgstr "Show"
+
+#. Default: entries
+#: src/cone/app/browser/templates/batched_items_header.pt:44
+#: src/cone/app/browser/templates/table.pt:53
+#: src/cone/app/browser/templates/table.pt:199
+#: src/cone/app/browser/templates/batched_items_footer.pt:20
+msgid "entries"
+msgstr "entries"
+
+#. Default: Search
+#: src/cone/app/browser/templates/batched_items_header.pt:56
+#: src/cone/app/browser/templates/table.pt:65
+msgid "search"
+msgstr "Search"
+
+#. Default: search database ...
+#: src/cone/app/browser/templates/livesearch.pt:18
+msgid "search_database"
+msgstr "search database ..."
 
 #. Default: Add
 #: src/cone/app/browser/templates/add_dropdown.pt:12
@@ -348,6 +415,65 @@ msgstr "Unauthorized"
 #: src/cone/app/browser/templates/unauthorized.pt:8
 msgid "unauthorized_text"
 msgstr "You are not allowed to access this resource."
+
+#. Default: Created by
+#: src/cone/app/browser/templates/byline.pt:7
+msgid "created_by"
+msgstr "Created by"
+
+#. Default: on
+#: src/cone/app/browser/templates/byline.pt:9
+msgid "created_on"
+msgstr "on"
+
+#. Default: Last modified
+#: src/cone/app/browser/templates/byline.pt:13
+msgid "last_modified"
+msgstr "Last modified"
+
+#. Default: Showing
+#: src/cone/app/browser/templates/table.pt:190
+#: src/cone/app/browser/templates/batched_items_footer.pt:11
+msgid "showing"
+msgstr "Show"
+
+#. Default: to
+#: src/cone/app/browser/templates/table.pt:193
+#: src/cone/app/browser/templates/batched_items_footer.pt:14
+msgid "to"
+msgstr "to"
+
+#. Default: of
+#: src/cone/app/browser/templates/table.pt:196
+#: src/cone/app/browser/templates/batched_items_footer.pt:17
+msgid "of"
+msgstr "of"
+
+#. Default: Insufficient privileges
+#: src/cone/app/browser/templates/insufficient_privileges.pt:6
+msgid "insufficient_privileges"
+msgstr "Insufficient privileges"
+
+#. Default: You do not have the required permission to access this resource.
+#: src/cone/app/browser/templates/insufficient_privileges.pt:8
+msgid "insufficient_privileges_help"
+msgstr "You do not have the required permission to access this resource."
+
+#. Default: Change state
+#: src/cone/app/browser/templates/wf_dropdown.pt:16
+msgid "change_state"
+msgstr "Change state"
+
+#. Default: State
+#: src/cone/app/browser/templates/wf_dropdown.pt:20
+#: src/cone/app/browser/templates/wf_dropdown.pt:40
+msgid "state"
+msgstr "State"
+
+#. Default: Language
+#: src/cone/app/browser/templates/language.pt:12
+msgid "language"
+msgstr "Language"
 
 #. Default: First
 #: src/cone/app/browser/templates/batch.pt:22
@@ -372,72 +498,3 @@ msgstr "Next"
 #: src/cone/app/browser/templates/batch.pt:123
 msgid "last"
 msgstr "Last"
-
-#. Default: Created by
-#: src/cone/app/browser/templates/byline.pt:7
-msgid "created_by"
-msgstr "Created by"
-
-#. Default: on
-#: src/cone/app/browser/templates/byline.pt:9
-msgid "created_on"
-msgstr "on"
-
-#. Default: Last modified
-#: src/cone/app/browser/templates/byline.pt:13
-msgid "last_modified"
-msgstr "Last modified"
-
-#. Default: Show
-#: src/cone/app/browser/templates/batched_items_header.pt:23
-#: src/cone/app/browser/templates/table.pt:32
-msgid "show"
-msgstr "Show"
-
-#. Default: entries
-#: src/cone/app/browser/templates/batched_items_header.pt:44
-#: src/cone/app/browser/templates/table.pt:53
-#: src/cone/app/browser/templates/table.pt:199
-#: src/cone/app/browser/templates/batched_items_footer.pt:20
-msgid "entries"
-msgstr "entries"
-
-#. Default: Search
-#: src/cone/app/browser/templates/batched_items_header.pt:56
-#: src/cone/app/browser/templates/table.pt:65
-msgid "search"
-msgstr "Search"
-
-#. Default: Showing
-#: src/cone/app/browser/templates/table.pt:190
-#: src/cone/app/browser/templates/batched_items_footer.pt:11
-msgid "showing"
-msgstr "Show"
-
-#. Default: to
-#: src/cone/app/browser/templates/table.pt:193
-#: src/cone/app/browser/templates/batched_items_footer.pt:14
-msgid "to"
-msgstr "to"
-
-#. Default: of
-#: src/cone/app/browser/templates/table.pt:196
-#: src/cone/app/browser/templates/batched_items_footer.pt:17
-msgid "of"
-msgstr "of"
-
-#. Default: Change state
-#: src/cone/app/browser/templates/wf_dropdown.pt:16
-msgid "change_state"
-msgstr "Change state"
-
-#. Default: State
-#: src/cone/app/browser/templates/wf_dropdown.pt:20
-#: src/cone/app/browser/templates/wf_dropdown.pt:39
-msgid "state"
-msgstr "State"
-
-#. Default: search database ...
-#: src/cone/app/browser/templates/livesearch.pt:18
-msgid "search_database"
-msgstr "search database ..."
