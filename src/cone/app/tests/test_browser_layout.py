@@ -679,7 +679,7 @@ class TestBrowserLayout(TileTestCase):
                  ajax:target="http://example.com/?lang=en"
                  ajax:action="change_language:NONE:NONE">
                  <span class="icon-lang-en"></span>
-                EN
+                English
               </a>
             </li>
             <li>
@@ -688,7 +688,7 @@ class TestBrowserLayout(TileTestCase):
                  ajax:target="http://example.com/?lang=de"
                  ajax:action="change_language:NONE:NONE">
                  <span class="icon-lang-de"></span>
-                DE
+                German
               </a>
             </li>
           </ul>
