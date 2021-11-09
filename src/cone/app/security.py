@@ -296,7 +296,11 @@ class AdapterACL(Behavior):
     @property
     def __acl__(self):
         request = get_current_request()
-        adapter = request.registry.queryAdapter(self, IACLAdapter, default=None)
-        if adapter:
-            return adapter.acl
+        acl_adapter = request.registry.queryAdapter(
+            self,
+            IACLAdapter,
+            default=None
+        )
+        if acl_adapter:
+            return acl_adapter.acl
         return self.default_acl

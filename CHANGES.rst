@@ -4,6 +4,9 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Introduce ``cone.app.security.AdapterACL`` plumbing behavior.
+  [rnix]
+
 - Prevent auto persistence of generated language child widgets in translation
   widget.
   [rnix]
