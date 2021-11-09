@@ -431,20 +431,29 @@ class TestModel(NodeTestCase):
             allow_non_node_children = True
 
         translation = TranslationNode(name='translation')
+        self.assertEqual(translation.value, 'translation')
+        self.assertEqual(translation.canonical_value, 'translation')
+
         translation['en'] = u'English Translation'
         translation['de'] = u'German Translation'
-
         self.assertEqual(translation['en'], 'English Translation')
         self.assertEqual(translation['de'], 'German Translation')
 
         self.layer.forget_request()
         self.assertEqual(translation.value, 'English Translation')
+        self.assertEqual(translation.canonical_value, 'English Translation')
+
         self.layer.set_lang('de')
         self.assertEqual(translation.value, 'German Translation')
+        self.assertEqual(translation.canonical_value, 'English Translation')
+
         self.layer.set_lang('en')
         self.assertEqual(translation.value, 'English Translation')
+        self.assertEqual(translation.canonical_value, 'English Translation')
+
         self.layer.set_lang('it')
         self.assertEqual(translation.value, 'translation')
+        self.assertEqual(translation.canonical_value, 'English Translation')
 
     def test_Properties(self):
         # ``Properties`` object can be used for any kind of mapping.

@@ -364,6 +364,16 @@ class Translation(Schema, AppEnvironment):
             value = self.name
         return value
 
+    @default
+    @property
+    def canonical_value(self):
+        settings = self.registry.settings or {}
+        lang = settings.get('default_locale_name', 'en')
+        value = self.get(lang)
+        if not value:
+            value = self.name
+        return value
+
 
 o_getattr = object.__getattribute__
 o_setattr = object.__setattr__
