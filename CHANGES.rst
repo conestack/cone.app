@@ -4,7 +4,8 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
-- No changes yet.
+- Add ``canonical_value`` to ``cone.app.model.Translation``.
+  [rnix]
 
 
 1.0.3 (2021-11-08)
