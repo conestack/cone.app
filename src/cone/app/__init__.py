@@ -23,6 +23,7 @@ import logging
 import pyramid_chameleon
 import pyramid_zcml
 import sys
+import threading
 
 
 logger = logging.getLogger('cone.app')
@@ -210,6 +211,19 @@ def register_main_hook(callback):
     main_hooks.append(callback)
 
 
+thread_shutdown_hooks = list()
+
+
+def thread_shutdown_hook(func):  # pragma: no cover
+    """decorator to register thread shutdown hook.
+
+    Decorated function gets called when main thread joins. Thread shutdown
+    hooks are used for graceful joining of non daemon threads.
+    """
+    thread_shutdown_hooks.append(func)
+    return func
+
+
 def get_root(environ=None):
     return root
 
@@ -283,6 +297,21 @@ class ApplicationNodeTraverser(ResourceTreeTraverser):
                 result['view_name'] = ''
                 result['traversed'] = tuple()
         return result
+
+
+def start_thread_monitor():  # pragma: no cover
+    if not thread_shutdown_hooks:
+        return
+
+    def _monitor():
+        main_thread = threading.main_thread()
+        main_thread.join()
+        for hook in thread_shutdown_hooks:
+            hook()
+
+    monitor = threading.Thread(target=_monitor)
+    monitor.daemon = True
+    monitor.start()
 
 
 def main(global_config, **settings):
@@ -434,6 +463,9 @@ def main(global_config, **settings):
 
     # end configuration
     config.end()
+
+    # start thread monitor if thread shutdown hooks registered
+    start_thread_monitor()
 
     # return wsgi app
     return config.make_wsgi_app()

@@ -203,3 +203,18 @@ at ``app_root['settings']`` and can be registered to the application via
     @main_hook
     def example_main_hook(config, global_config, local_config):
         register_config('example', ExampleSettings)
+
+
+Custom Threads
+--------------
+
+If a plugin starts non-daemon threads, a mechanism is provided to monitor
+them and invoke a graceful shutdown when the main thread ends.
+
+.. code-block:: python
+
+    from cone.app import thread_shutdown_hook
+
+    @thread_shutdown_hook
+    def stop_non_daemon_thread():
+        # graceful thread shutdown happens here

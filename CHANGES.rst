@@ -4,6 +4,9 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Introduce ``cone.app.thread_shutdown_hook``.
+  [rnix]
+
 - Introduce ``cone.app.security.AdapterACL`` plumbing behavior.
   [rnix]
 
