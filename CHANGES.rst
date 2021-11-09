@@ -4,6 +4,10 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Prevent auto persistence of generated language child widgets in translation
+  widget.
+  [rnix]
+
 - Add ``canonical_value`` to ``cone.app.model.Translation``.
   [rnix]
 
