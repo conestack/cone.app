@@ -4,6 +4,9 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Introduce ``cone.app.browser.actions.ButtonAction``.
+  [rnix]
+
 - Introduce ``cone.app.thread_shutdown_hook``.
   [rnix]
 
