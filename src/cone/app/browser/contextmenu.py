@@ -13,9 +13,11 @@ from cone.app.browser.actions import ActionView
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import TemplateAction
 from cone.app.browser.actions import Toolbar
+from cone.app.browser.utils import filter_bound_context
 from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import tile
+from node.interfaces import IBoundContext
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
 
@@ -29,7 +31,7 @@ class ContextMenuToolbar(Toolbar):
         if not self.display:
             return u''
         rendered_actions = list()
-        for action in self.values():
+        for action in filter_bound_context(model, self.values()):
             rendered = action(model, request)
             if not rendered:
                 continue
@@ -91,10 +93,13 @@ class context_menu_group(object):
     """Decorator defining a context menu group.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, context=None):
         self.name = name
+        self.context = context
 
     def __call__(self, factory):
+        if IBoundContext.providedBy(factory):
+            factory.bind_context(self.context)
         context_menu[self.name] = factory()
         return factory
 
@@ -103,11 +108,14 @@ class context_menu_item(object):
     """Decorator defining a context menu item inside a group.
     """
 
-    def __init__(self, group, name):
+    def __init__(self, group, name, context=None):
         self.group = group
         self.name = name
+        self.context = context
 
     def __call__(self, factory):
+        if IBoundContext.providedBy(factory):
+            factory.bind_context(self.context)
         context_menu[self.group][self.name] = factory()
         return factory
 
@@ -163,4 +171,4 @@ class ContextMenu(Tile):
 
     @property
     def toolbars(self):
-        return context_menu.values()
+        return list(filter_bound_context(self.model, context_menu.values()))
