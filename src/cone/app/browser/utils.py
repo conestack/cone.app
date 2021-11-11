@@ -2,7 +2,6 @@ from cone.app import compat
 from cone.app.utils import app_config
 from cone.app.utils import format_traceback as _format_traceback
 from cone.app.utils import node_path
-from node.interfaces import IBoundContext
 from node.utils import safe_encode
 from pyramid.i18n import TranslationStringFactory
 import copy
@@ -118,11 +117,3 @@ def request_property(func):
 
 def format_traceback():
     return '<pre>{}</pre>'.format(_format_traceback())
-
-
-def filter_bound_context(model, items):
-    for item in items:
-        if IBoundContext.providedBy(item):
-            if not item.context_matches(model):
-                continue
-        yield item

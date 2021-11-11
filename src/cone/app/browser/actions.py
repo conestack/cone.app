@@ -1,4 +1,4 @@
-from cone.app.browser.utils import filter_bound_context
+from cone.app.browser.context import ContextBoundContainer
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport
@@ -8,7 +8,6 @@ from cone.tile import render_template
 from cone.tile import render_tile
 from node.behaviors import BoundContext
 from node.interfaces import IOrder
-from odict import odict
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
 
@@ -54,7 +53,7 @@ class ActionContext(object):
 
 
 @plumbing(BoundContext)
-class Toolbar(odict):
+class Toolbar(ContextBoundContainer):
     """A toolbar rendering actions.
     """
     display = True
@@ -67,7 +66,7 @@ class Toolbar(odict):
         if not self.display:
             return u''
         rendered_actions = list()
-        for action in filter_bound_context(model, self.values()):
+        for action in self.values():
             rendered = action(model, request)
             if not rendered:
                 continue
