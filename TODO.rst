@@ -26,6 +26,9 @@ Roadmap
 1.1
 ---
 
+[ ] Reference blueprint -> use lookup function also for single value references
+    if present.
+
 [ ] Consolidate "Unauthorized" and "Insufficient Privileges" tiles.
 
 [ ] Check ``title`` of transition names before using ``name`` in workflow
