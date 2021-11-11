@@ -39,6 +39,13 @@ class ContextBoundContainer(odict):
                 unbound = obj
         return bound if bound else unbound
 
+    def add_to(self, key, child_key, child, context=None):
+        for obj in self._get_all(key):
+            if isinstance(obj, ContextBoundContainer):
+                obj.add_object(child_key, child, context)
+            else:
+                obj[child_key] = child
+
     # B/C code below. Will be removed in future versions.
 
     def __setitem__(self, key, value):
@@ -58,7 +65,7 @@ class ContextBoundContainer(odict):
         )
         # Returns the most recent added value. This equates to the original
         # behavior when elements were overwritten
-        return self._dict_impl().__getitem__(self, key)[1][0]
+        return self._get_all(key)[0]
 
     def get(self, key, default=None):
         warnings.warn(
@@ -82,8 +89,10 @@ class ContextBoundContainer(odict):
         return [val[0] for val in odict.values(self)]
 
     def setdefault(self, key, default=None):
-        # remove this function when dict overrides get removed
         if key in self:
-            return self._dict_impl().__getitem__(self, key)[1]
+            return self._get_all(key)
         odict.__setitem__(self, key, default)
         return default
+
+    def _get_all(self, key):
+        return self._dict_impl().__getitem__(self, key)[1]

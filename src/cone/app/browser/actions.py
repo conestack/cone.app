@@ -66,7 +66,7 @@ class Toolbar(ContextBoundContainer):
         if not self.display:
             return u''
         rendered_actions = list()
-        for action in self.values():
+        for action in self.filtered_objects(model):
             rendered = action(model, request)
             if not rendered:
                 continue

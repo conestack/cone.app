@@ -19,6 +19,7 @@ def test_suite():
     from cone.app.tests import test_browser_batch
     from cone.app.tests import test_browser_content
     from cone.app.tests import test_browser_contents
+    from cone.app.tests import test_browser_context
     from cone.app.tests import test_browser_contextmenu
     from cone.app.tests import test_browser_copysupport
     from cone.app.tests import test_browser_exception
@@ -53,6 +54,7 @@ def test_suite():
     suite.addTest(unittest.findTestCases(test_browser_batch))
     suite.addTest(unittest.findTestCases(test_browser_content))
     suite.addTest(unittest.findTestCases(test_browser_contents))
+    suite.addTest(unittest.findTestCases(test_browser_context))
     suite.addTest(unittest.findTestCases(test_browser_contextmenu))
     suite.addTest(unittest.findTestCases(test_browser_copysupport))
     suite.addTest(unittest.findTestCases(test_browser_exception))

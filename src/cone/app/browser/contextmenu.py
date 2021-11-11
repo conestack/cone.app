@@ -17,7 +17,6 @@ from cone.app.browser.context import ContextBoundContainer
 from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import tile
-from node.interfaces import IBoundContext
 from pyramid.i18n import TranslationStringFactory
 
 
@@ -30,7 +29,7 @@ class ContextMenuToolbar(Toolbar):
         if not self.display:
             return u''
         rendered_actions = list()
-        for action in self.values():
+        for action in self.filtered_objects(model):
             rendered = action(model, request)
             if not rendered:
                 continue
@@ -60,7 +59,7 @@ class ContextMenuDropdown(Toolbar):
 
     @property
     def display(self):
-        for val in self.values():
+        for val in self.filtered_objects(self.model):
             val.model = self.model
             val.request = self.request
             if val.display:
@@ -101,7 +100,7 @@ class context_menu_group(object):
         self.context = context
 
     def __call__(self, factory):
-        context_menu[self.name] = factory()
+        context_menu.add_object(self.name, factory(), self.context)
         return factory
 
 
@@ -115,7 +114,7 @@ class context_menu_item(object):
         self.context = context
 
     def __call__(self, factory):
-        context_menu[self.group][self.name] = factory()
+        context_menu.add_to(self.group, self.name, factory(), self.context)
         return factory
 
 

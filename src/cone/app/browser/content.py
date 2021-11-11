@@ -113,11 +113,11 @@ class content_view_action(object):
         self.icon = icon
 
     def __call__(self, ob):
-        context_menu['contentviews'][self.name] = ContentViewAction(
+        context_menu.add_to('contentviews', self.name, ContentViewAction(
             name=self.tilename,
             interface=self.interface,
             permission=self.permission,
             text=self.text,
             icon=self.icon
-        )
+        ))
         return ob
