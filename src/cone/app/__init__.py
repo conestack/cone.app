@@ -46,9 +46,6 @@ cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
-    '++resource++bdajax/overlay.js',
-    '++resource++bdajax/bdajax.js',
-    '++resource++bdajax/bdajax_bs3.js',
     'static/public.js'
 ]
 cfg.js.protected = [
@@ -278,13 +275,20 @@ def configure_yafowil_addon_resources(config, public):
         css_skip=cfg.yafowil.css_skip,
         config=config
     )
+    js_resources = cfg.js.public if public else cfg.js.protected
+    css_resources = cfg.css.public if public else cfg.css.protected
     for js in reversed(resources.js_resources):
-        # bdajax needs to be loaded first in order to avoid double binding on
-        # document ready
-        idx = cfg.js.public.index('++resource++bdajax/bdajax.js') + 1
-        cfg.js.public.insert(idx, js)
+        js_resources.insert(0, js)
     for css in resources.css_resources:
-        cfg.css.public.insert(0, css)
+        css_resources.insert(0, css)
+
+
+def configure_bdajax_resources():
+    # bdajax needs to be loaded before resources depending on it order to
+    # avoid double binding on document ready
+    cfg.js.public.insert(0, '++resource++bdajax/bdajax_bs3.js')
+    cfg.js.public.insert(0, '++resource++bdajax/bdajax.js')
+    cfg.js.public.insert(0, '++resource++bdajax/overlay.js')
 
 
 @adapter(IApplicationNode)
@@ -441,11 +445,10 @@ def main(global_config, **settings):
 
     # execute main hooks
     filtered_hooks = list()
-    for hook in main_hooks:
-        for plugin in plugins:
+    for plugin in plugins:
+        for hook in main_hooks:
             if hook.__module__.startswith(plugin):
                 filtered_hooks.append(hook)
-                continue
     for hook in filtered_hooks:
         hook(config, global_config, settings)
 
@@ -478,6 +481,9 @@ def main(global_config, **settings):
     yafowil_resources_public = settings.get('yafowil.resources_public')
     yafowil_resources_public = yafowil_resources_public in ['1', 'True', 'true']
     configure_yafowil_addon_resources(config, yafowil_resources_public)
+
+    # ensure bdajax resources gets loaded before resources depending on it
+    configure_bdajax_resources()
 
     # end configuration
     config.end()

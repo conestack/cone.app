@@ -4,6 +4,10 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Fix execution order of main hooks. They get now executed in plugin loading
+  order.
+  [rnix]
+
 - Custom application root node factory can be set via ``cone.root.node_factory``
   property in application config file.
   [rnix]
