@@ -272,7 +272,7 @@ class YafowilResources(YafowilResourcesBase):
         return resource_base
 
 
-def configure_yafowil_addon_resources(config):
+def configure_yafowil_addon_resources(config, public):
     resources = YafowilResources(
         js_skip=cfg.yafowil.js_skip,
         css_skip=cfg.yafowil.css_skip,
@@ -472,7 +472,12 @@ def main(global_config, **settings):
 
     # register yafowil static resources
     # done after addon config - addon code may disable yafowil resource groups
-    configure_yafowil_addon_resources(config)
+    # XXX: ``yafowil.resources_public`` is a temporary hack and stays
+    # undocumented. In 1.1. ``webresource`` will be used for resource
+    # registration and resource delivery configuration.
+    yafowil_resources_public = settings.get('yafowil.resources_public')
+    yafowil_resources_public = yafowil_resources_public in ['1', 'True', 'true']
+    configure_yafowil_addon_resources(config, yafowil_resources_public)
 
     # end configuration
     config.end()
