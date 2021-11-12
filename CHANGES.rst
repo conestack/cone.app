@@ -4,6 +4,10 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Custom application root node factory can be set via ``cone.root.node_factory``
+  property in application config file.
+  [rnix]
+
 - Introduce ``cone.app.browser.actions.ButtonAction``.
   [rnix]
 

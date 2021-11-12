@@ -118,10 +118,6 @@ cfg.merged.print_css.public = [
 ]
 cfg.merged.print_css.protected = list()
 
-# root node
-root = AppRoot()
-root.factories['settings'] = AppSettings
-
 
 class layout_config(object):
     _registry = dict()
@@ -158,16 +154,26 @@ class DefaultLayoutConfig(LayoutConfig):
         self.content_grid_width = 9
 
 
-def configure_root(settings):
+root = None
+
+
+def configure_root(root, settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
     root.properties.default_child = settings.get('cone.root.default_child')
-    root.properties.mainmenu_empty_title = \
-        settings.get('cone.root.mainmenu_empty_title', 'false') \
-        in ['True', 'true', '1']
+    mainmenu_empty_title = settings.get('cone.root.mainmenu_empty_title')
+    mainmenu_empty_title = mainmenu_empty_title in ['True', 'true', '1']
+    root.properties.mainmenu_empty_title = mainmenu_empty_title
     default_content_tile = settings.get('cone.root.default_content_tile')
     if default_content_tile:
         root.properties.default_content_tile = default_content_tile
     root.properties.in_navtree = False
+
+
+def default_root_node_factory(settings):
+    root = AppRoot()
+    root.factories['settings'] = AppSettings
+    configure_root(root, settings)
+    return root
 
 
 def register_config(key, factory):
@@ -350,7 +356,14 @@ def main(global_config, **settings):
         wild_domain=auth_wild_domain,
     )
 
-    configure_root(settings)
+    # create root node
+    global root
+    root_node_factory = settings.pop('cone.root.node_factory', None)
+    if root_node_factory:
+        mod, fn = root_node_factory.rsplit('.', 1)
+        root = getattr(importlib.import_module(mod), fn)(settings)
+    else:
+        root = default_root_node_factory(settings)
 
     if settings.get('testing.hook_global_registry'):
         globalreg = getGlobalSiteManager()

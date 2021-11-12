@@ -171,6 +171,7 @@ Create ``example.ini`` and add:
     cone.plugins = cone.example
 
     # application root node settings
+    #cone.root.node_factory = package.root_node_factory
     cone.root.title = cone.example
     cone.root.default_child = example
     #cone.root.default_content_tile = 
