@@ -151,6 +151,11 @@ class DefaultLayoutConfig(LayoutConfig):
         self.content_grid_width = 9
 
 
+def import_from_string(path):
+    mod, ob = path.rsplit('.', 1)
+    return getattr(importlib.import_module(mod), ob)
+
+
 root = None
 
 
@@ -364,8 +369,7 @@ def main(global_config, **settings):
     global root
     root_node_factory = settings.pop('cone.root.node_factory', None)
     if root_node_factory:
-        mod, fn = root_node_factory.rsplit('.', 1)
-        root = getattr(importlib.import_module(mod), fn)(settings)
+        root = import_from_string(root_node_factory)(settings)
     else:
         root = default_root_node_factory(settings)
 

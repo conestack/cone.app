@@ -4,6 +4,9 @@ Changes
 1.0.4 (unreleased)
 ------------------
 
+- Introduce ``cone.app.import_from_string``.
+  [rnix]
+
 - Fix execution order of main hooks. They get now executed in plugin loading
   order.
   [rnix]
