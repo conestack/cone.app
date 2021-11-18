@@ -94,8 +94,8 @@ def authenticate(request, login, password):
                 return remember(request, pid)
     ugm = ugm_backend.ugm
     try:
-        if ugm.users.authenticate(login, password):
-            pid = ugm.users.id_for_login(login)
+        pid = ugm.users.id_for_login(login)
+        if ugm.users.authenticate(pid, password):
             return remember(request, pid)
     except Exception as e:
         logger.warning((
