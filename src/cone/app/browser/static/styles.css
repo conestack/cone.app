@@ -1,9 +1,3 @@
-/* general */
-body {
-    padding-bottom:44px;
-    overflow-y:scroll;
-}
-
 /* main nav bar */
 .navbar-top {
     border-radius:0;
@@ -237,4 +231,8 @@ a.removereference.disabled {
 /* footer */
 footer p {
     margin:12px;
+}
+#sidebar_left,
+#content {
+    padding-bottom: 44px;
 }
