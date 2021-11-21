@@ -26,9 +26,9 @@ Roadmap
 1.1
 ---
 
-[ ] Context bound toolbar and action (names utilities?).
+[ ] Context bound toolbar and action (named utilities?).
 
-[ ] Layout property for including entire navbar.
+[ ] Layout property for excluding entire navbar.
 
 [ ] Reference blueprint -> use lookup function also for single value references
     if present.

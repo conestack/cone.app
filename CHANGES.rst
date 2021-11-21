@@ -1,8 +1,11 @@
 Changes
 =======
 
-1.0.4 (unreleased)
+1.0.4 (2021-11-21)
 ------------------
+
+- Visual padding for footer on sidebar and content instead of body.
+  [rnix]
 
 - Introduce ``cone.app.import_from_string``.
   [rnix]
