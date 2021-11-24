@@ -1,8 +1,10 @@
-from cone.app.browser import RelatedViewProvider
 from cone.app.browser import get_related_view
+from cone.app.browser import RelatedViewProvider
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit
+from cone.app.browser.actions import ActionMoveDown
+from cone.app.browser.actions import ActionMoveUp
 from cone.app.browser.actions import ActionView
 from cone.app.browser.actions import Toolbar
 from cone.app.browser.actions import ViewLink
@@ -11,6 +13,7 @@ from cone.app.browser.table import RowData
 from cone.app.browser.table import Table
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
+from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
 from cone.tile import Tile
@@ -30,6 +33,10 @@ FAR_PAST = datetime.datetime(2000, 1, 1)
 
 
 class ContentsActionView(ActionView):
+    """View action for contents table.
+
+    Gets displayed in actions column.
+    """
     title = ActionView.text
     text = None
     action = None
@@ -37,6 +44,10 @@ class ContentsActionView(ActionView):
 
 
 class ContentsActionEdit(ActionEdit):
+    """Edit action for contents table.
+
+    Gets displayed in actions column.
+    """
     title = ActionEdit.text
     text = None
     action = None
@@ -50,6 +61,8 @@ class ContentsActionEdit(ActionEdit):
 
 class ContentsActionDelete(ActionDelete):
     """Delete action for contents table.
+
+    Gets displayed in actions column.
     """
     title = ActionDelete.text
     text = None
@@ -61,8 +74,28 @@ class ContentsActionDelete(ActionDelete):
             and self.permitted('delete')
 
 
+class ContentsActionMoveUp(ActionMoveUp):
+    """Move up action for contents table.
+
+    Gets displayed in actions column.
+    """
+    title = ActionMoveUp.text
+    text = None
+
+
+class ContentsActionMoveDown(ActionMoveDown):
+    """Move down action for contents table.
+
+    Gets displayed in actions column.
+    """
+    title = ActionMoveDown.text
+    text = None
+
+
 class ContentsViewLink(ViewLink):
     """View link for contents table.
+
+    Title column uses this to turn title into view link.
     """
     css = 'title'
     event = 'contextchanged:#layout'
@@ -133,6 +166,8 @@ class ContentsTile(Table):
     @instance_property
     def row_actions(self):
         row_actions = Toolbar()
+        row_actions['up'] = ContentsActionMoveUp()
+        row_actions['down'] = ContentsActionMoveDown()
         row_actions['view'] = ContentsActionView()
         row_actions['edit'] = ContentsActionEdit()
         row_actions['delete'] = ContentsActionDelete()
@@ -173,7 +208,10 @@ class ContentsTile(Table):
 
     @property
     def listable_children(self):
-        return self.model.values()
+        return [
+            child for child in self.model.values()
+            if IApplicationNode.providedBy(child)
+        ]
 
     @property
     def filtered_children(self):

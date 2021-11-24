@@ -113,6 +113,18 @@ The main template can be set in the application configuration file.
 - **cone.main_template**: Main template to use.
 
 
+Available Languages
+-------------------
+
+If it's desired to allow the user to change UI language on the fly, define
+available languages in configuration file.
+
+- **cone.available_languages**: Comma separated list of available languages.
+
+If available languages are defined, a language selection dropdown menu gets
+displayed in the mainmenu.
+
+
 Plugin Loading
 --------------
 
@@ -125,18 +137,31 @@ Then all :ref:`Plugin main hook functions <plugin_main_hook>` are called.
 - **cone.plugins**: List of plugin package names.
 
 
-Root Model Configuration
-------------------------
+Application Root
+----------------
 
-Some aspects of the model root node can be set via the application
+By default, a ``cone.app.model.AppRoot`` node is created as root node.
+This node contains ``cone.app.model.AppSettings`` at ``settings`` key.
+
+Some aspects of the default root node can be configured in the application
 configuration file.
 
 - **cone.root.title**: Title of the application.
 
 - **cone.root.default_child**: Key of the default child which should be
-  displayed instead of root model node when accessing root URL.
+  displayed instead of root node when accessing root URL.
 
-- **cone.root.default_content_tile**: Default content tile for root model node.
+- **cone.root.default_content_tile**: Default content tile for root node.
 
 - **cone.root.mainmenu_empty_title**: Flag whether to suppress rendering main
   menu titles.
+
+Root node creation can be customized. Therefor a factory must be defined.
+
+- **cone.root.node_factory**: Import path of the factory function
+
+This factory gets passed the settings dict as argument and returns an
+``IApplicationNode`` implementing instance. If it's desired to consider the
+root node properties above on the custom root object, call
+``cone.app.configure_root`` with the root node and the settings dict as
+arguments.

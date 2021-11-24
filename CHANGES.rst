@@ -1,10 +1,87 @@
 Changes
 =======
 
-1.0.3 (unreleased)
+1.0.5 (unreleased)
 ------------------
 
 - No changes yet.
+
+
+1.0.4 (2021-11-21)
+------------------
+
+- Visual padding for footer on sidebar and content instead of body.
+  [rnix]
+
+- Introduce ``cone.app.import_from_string``.
+  [rnix]
+
+- Fix execution order of main hooks. They get now executed in plugin loading
+  order.
+  [rnix]
+
+- Custom application root node factory can be set via ``cone.root.node_factory``
+  property in application config file.
+  [rnix]
+
+- Introduce ``cone.app.browser.actions.ButtonAction``.
+  [rnix]
+
+- Introduce ``cone.app.thread_shutdown_hook``.
+  [rnix]
+
+- Introduce ``cone.app.security.AdapterACL`` plumbing behavior.
+  [rnix]
+
+- Prevent auto persistence of generated language child widgets in translation
+  widget.
+  [rnix]
+
+- Add ``canonical_value`` to ``cone.app.model.Translation``.
+  [rnix]
+
+
+1.0.3 (2021-11-08)
+------------------
+
+- Add ``translation`` YAFOWIL blueprint.
+  [rnix]
+
+- Provide dedicated forbidden and not found views for request types `text/html`
+  and `application/json`.
+  [rnix]
+
+- Implement move actions for changing order of children within it's container.
+  [rnix]
+
+- Move ``cone.app.browser.utils.node_path`` to ``cone.app.browser.node_path``.
+  Import from old location is deprecated.
+  [rnix]
+
+- Introduce ``cone.app.NodeTraverser``. It ensures only ``IApplicationNode``
+  implementing children get traversed.
+  [rnix]
+
+- Ignore children which not implements ``IApplicationNode`` in ``navtree``,
+  ``mainmenu`` and ``listing`` tiles.
+  [rnix]
+
+- Consider ``INavigationLeaf`` interface in ``navtree`` tile.
+  [rnix]
+
+- Introduce ``cone.app.model.AppEnvironment`` behavior.
+  [rnix]
+
+- Introduce ``cone.app.model.Translation`` behavior.
+  [rnix]
+
+- Add language selection dropdown.
+  [rnix]
+
+**Breaking changes:**
+
+- Change signature of internal ``MainMenu.ignore_node`` and
+  ``MainMenu.create_item``. They do not expect the ``props`` argument any more.
 
 
 1.0.2 (2021-10-21)

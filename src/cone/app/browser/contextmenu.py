@@ -11,6 +11,7 @@ from cone.app.browser.actions import ActionState
 from cone.app.browser.actions import ActionUp
 from cone.app.browser.actions import ActionView
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.actions import TemplateAction
 from cone.app.browser.actions import Toolbar
 from cone.tile import Tile
 from cone.tile import render_template
@@ -76,8 +77,8 @@ class ContextMenuDropdown(Toolbar):
         )
 
     def __setitem__(self, name, value):
-        if not isinstance(value, LinkAction):
-            raise ValueError(u'Only ``LinkAction`` deriving objects can be '
+        if not isinstance(value, TemplateAction):
+            raise ValueError(u'Only ``TemplateAction`` deriving objects can be '
                              u'added to ``ContextMenuDropdown`` instances.')
         super(ContextMenuDropdown, self).__setitem__(name, value)
 

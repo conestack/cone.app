@@ -492,6 +492,9 @@ Considered ``properties`` on children:
 
 - **action_delete**: Flag whether to render delete action.
 
+- **action_move**: Flag whether to render move up and move down actions.
+  Must be set on container.
+
 .. code-block:: python
 
     from cone.app import model
@@ -873,6 +876,63 @@ Reference widget properties:
   node names.
 
 See :doc:`forms documentation <forms>` for more information about writing forms.
+
+
+Translation
+-----------
+
+``cone.app`` provides the ``translation`` YAFOWIL form widget for editing
+translations.
+
+It renders a tab containing the widget for each language defined at
+``cone.available_languages`` in the application config file.
+
+The value of a translation can be any kind of container object, like a
+dictionary or a node. By default, the extracted value gets returned as
+dictionary.
+
+.. code-block:: python
+
+    from yafowil.base import factory
+
+    translation_field = factory(
+        'field:error:translation:text',
+        value={
+            'en': u'English Translation',
+            'de': u'German Translation'
+        },
+        props={
+            'label': 'Translation',
+            'required': 'Translation is mandatory'
+        })
+
+The following example demonstrates the use with a
+:ref:`translation <model_translation>` node. To ensure the widget extrator
+return the correct type, we need to pass it via the ``factory`` property.
+
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+    from cone.app.model import Translation
+    from plumber import plumbing
+    from yafowil.base import factory
+
+    @plumbing(Translation)
+    class TranslationNode(BaseNode):
+        allow_non_node_children = True
+
+    value = TranslationNode()
+    value['en'] = u'English Translation'
+    value['de'] = u'German Translation'
+
+    translation_field = factory(
+        'field:error:translation:text',
+        value=value,
+        props={
+            'label': 'Translation',
+            'required': 'Translation is mandatory',
+            'factory': TranslationNode
+        })
 
 
 Abstract tiles
@@ -1395,6 +1455,41 @@ enabled and selected state and optionally rendering an icon.
         selected = False     # if ``True``, link get 'selected' CSS class
         icon = None          # if set, render span tag with value as CSS class in link
 
+``ButtonAction`` represents a HTML button offering integration to ``bdajax``
+and optionally rendering an icon.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import ButtonAction
+
+    class ExampleAction(ButtonAction):
+        bind = 'click'         # ajax:bind attribute
+        id = None              # id attribute
+        css = None             # in addition for computed class attribute
+        title = None           # title attribute
+        type = None            # type of button
+        name = None            # name for the button
+        value = None           # initial value for the button
+        autofocus = None       # button gets focus on page load
+        disabled = None        # button should be disabled
+        form = None            # form the button belongs to
+        formaction = None      # where to send the data when form is submitted
+        formenctype = None     # how form-data should be encoded before sending
+        formmethod = None      # specifies http method
+        formnovalidate = None  # data should not be validated on submission
+        formtarget = None      # where to display response after form submission
+        action = None          # ajax:action attribute
+        event = None           # ajax:event attribute
+        confirm = None         # ajax:confirm attribute
+        overlay = None         # ajax:overlay attribute
+        path = None            # ajax:path attribute
+        path_target = None     # ajax:path-target attribute
+        path_action = None     # ajax:path-action attribute
+        path_event = None      # ajax:path-event attribute
+        path_overlay = None    # ajax:path-overlay attribute
+        text = None            # button text
+        icon = None            # if set, add i tag with value as CSS class
+
 ``Toolbar`` can be used to create a set of actions.
 
 .. code-block:: python
@@ -1521,8 +1616,28 @@ Considered ``properties``:
   ``listing`` if undefined.
 
 
-ActionShare
------------
+ActionMoveUp
+------------
+
+Invokes ``move_up`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move up action.
+
+
+ActionMoveDown
+--------------
+
+Invokes ``move_down`` tile on node.
+
+Considered ``properties``:
+
+- **action_move**: Flag on parent whether to render move down action.
+
+
+ActionSharing
+-------------
 
 Renders ``sharing`` tile on node to main content area.
 

@@ -1,16 +1,21 @@
+from cone.app import cfg
 from cone.app import layout_config
 from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
-from cone.app.browser.utils import node_path
+from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ILayout
+from cone.app.interfaces import INavigationLeaf
 from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
+from cone.app.utils import node_path
 from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import Tile
@@ -18,6 +23,7 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
+from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
 import warnings
 
@@ -231,12 +237,11 @@ class MainMenu(LayoutConfigTile):
         # XXX: icons
         for key in root.keys():
             child = root[key]
-            props = child.properties
-            if self.ignore_node(child, props):
+            if self.ignore_node(child):
                 continue
             selected = curpath == key
-            item = self.create_item(child, props, empty_title, selected)
-            if props.mainmenu_display_children:
+            item = self.create_item(child, empty_title, selected)
+            if child.properties.mainmenu_display_children:
                 item['children'] = self.create_children(child, selected)
             else:
                 item['children'] = None
@@ -252,22 +257,23 @@ class MainMenu(LayoutConfigTile):
             curpath = ''
         for key in node.keys():
             child = node[key]
-            props = child.properties
-            if self.ignore_node(child, props):
+            if self.ignore_node(child):
                 continue
             selected = curpath == key
-            item = self.create_item(child, props, False, selected)
+            item = self.create_item(child, False, selected)
             children.append(item)
         return children
 
-    def ignore_node(self, node, props):
-        if props.skip_mainmenu:
+    def ignore_node(self, node):
+        if not IApplicationNode.providedBy(node):
+            return True
+        if node.properties.skip_mainmenu:
             return True
         if not self.request.has_permission('view', node):
             return True
         return False
 
-    def create_item(self, node, props, empty_title, selected):
+    def create_item(self, node, empty_title, selected):
         md = node.metadata
         item = dict()
         item['id'] = node.name
@@ -278,7 +284,7 @@ class MainMenu(LayoutConfigTile):
             item['title'] = md.title
             item['description'] = md.description
         item['url'] = make_url(self.request, node=node)
-        query = make_query(contenttile=props.default_content_tile)
+        query = make_query(contenttile=node.properties.default_content_tile)
         item['target'] = make_url(self.request, node=node, query=query)
         item['selected'] = selected
         item['icon'] = node_icon(node)
@@ -376,8 +382,8 @@ class NavTree(Tile):
         return item
 
     def fillchildren(self, model, path, tree):
-        """XXX: consider cone.app.interfaces.INavigationLeaf
-        """
+        if INavigationLeaf.providedBy(model):
+            return
         curpath = None
         if path:
             curpath = path[0]
@@ -397,9 +403,11 @@ class NavTree(Tile):
                 curpath = model.properties.default_child
         for key in model:
             node = model[key]
+            if not IApplicationNode.providedBy(node):
+                continue
             if not self.request.has_permission('view', node):
                 continue
-            if not node.properties.get('in_navtree'):
+            if not node.properties.in_navtree:
                 continue
             title = node.metadata.title
             if title:
@@ -478,3 +486,71 @@ class RootContent(ProtectedContentTile):
             model=self.model,
             request=self.request,
             context=self)
+
+
+class LanguageTile(Tile):
+    param_blacklist = [
+        '_', '_LOCALE_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector'
+    ]
+
+    def make_query(self, lang=None):
+        params = dict()
+        for k, v in self.request.params.items():
+            if k in self.param_blacklist:
+                continue
+            params[k] = v
+        params['lang'] = lang
+        return make_query(**params)
+
+
+language_names = {
+    'en': _('lang_en', default='English'),
+    'de': _('lang_de', default='German'),
+    'fr': _('lang_fr', default='French'),
+    'it': _('lang_it', default='Italian')
+}
+
+
+@tile(name='language',
+      path='templates/language.pt',
+      permission='login',
+      strict=False)
+class Language(LanguageTile):
+
+    @property
+    def show(self):
+        return bool(cfg.available_languages)
+
+    @property
+    def languages(self):
+        languages = list()
+        localizer = get_localizer(self.request)
+        for lang in cfg.available_languages:
+            target = make_url(
+                self.request,
+                node=self.model,
+                query=self.make_query(lang=lang)
+            )
+            title = localizer.translate(language_names.get(lang, lang.upper()))
+            languages.append({
+                'target': target,
+                'icon': 'icon-lang-{}'.format(lang),
+                'title': title
+            })
+        return languages
+
+
+@tile(name='change_language', permission='login')
+class ChangeLanguage(LanguageTile):
+
+    @property
+    def continuation(self):
+        url = make_url(self.request, node=self.model, query=self.make_query())
+        return [AjaxEvent(url, 'contextchanged', '#layout')]
+
+    def render(self):
+        lang = self.request.params['lang']
+        response = self.request.response
+        response.set_cookie('_LOCALE_', value=lang, max_age=31536000)
+        ajax_continue(self.request, self.continuation)
+        return u''

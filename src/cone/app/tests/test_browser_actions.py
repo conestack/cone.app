@@ -1,4 +1,5 @@
 from cone.app import testing
+from cone.app.browser.actions import _ActionMove
 from cone.app.browser.actions import Action
 from cone.app.browser.actions import ActionAdd
 from cone.app.browser.actions import ActionContext
@@ -8,11 +9,14 @@ from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionDeleteChildren
 from cone.app.browser.actions import ActionEdit
 from cone.app.browser.actions import ActionList
+from cone.app.browser.actions import ActionMoveDown
+from cone.app.browser.actions import ActionMoveUp
 from cone.app.browser.actions import ActionPaste
 from cone.app.browser.actions import ActionSharing
 from cone.app.browser.actions import ActionState
 from cone.app.browser.actions import ActionUp
 from cone.app.browser.actions import ActionView
+from cone.app.browser.actions import ButtonAction
 from cone.app.browser.actions import DropdownAction
 from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
@@ -33,6 +37,8 @@ from cone.app.testing.mock import WorkflowNode
 from cone.tile import tile
 from cone.tile import Tile
 from cone.tile.tests import TileTestCase
+from node.behaviors import Order
+from plumber import plumbing
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 
@@ -179,7 +185,13 @@ class TestBrowserActions(TileTestCase):
 
         rendered = LinkAction()(model, request)
         self.checkOutput("""
-        ...<a\n...ajax:bind="click"\n...ajax:target="http://example.com/"\n...></a>...
+        <a
+         href="#"
+         data-toggle="tooltip"
+         data-placement="top"
+         ajax:bind="click"
+         ajax:target="http://example.com/"
+        ></a>
         """, rendered)
 
         action = LinkAction()
@@ -199,29 +211,103 @@ class TestBrowserActions(TileTestCase):
         action.text = 'Foo'
         rendered = action(model, request)
         self.checkOutput("""
-        ...<a
-        id="link_id"
-        href="http://example.com/foo"
-        class="link_action"
-        title="Foo"
-        ajax:bind="click"
-        ajax:target="http://example.com/"
-        ajax:event="contextchanged:.contextsensitiv"
-        ajax:action="actionname:#content:replace"
-        ajax:confirm="Do you want to perform?"
-        ajax:overlay="someaction"
-        ajax:path="/foo"
-        ajax:path-target="target"
-        ajax:path-action="actionname:#content:replace"
-        ajax:path-event="contextchanged:.contextsensitiv"
-        ajax:path-overlay="someaction"
-        >&nbsp;Foo</a>...
+        <a
+         id="link_id"
+         href="http://example.com/foo"
+         class="link_action"
+         title="Foo"
+         ajax:bind="click"
+         ajax:target="http://example.com/"
+         ajax:event="contextchanged:.contextsensitiv"
+         ajax:action="actionname:#content:replace"
+         ajax:confirm="Do you want to perform?"
+         ajax:overlay="someaction"
+         ajax:path="/foo"
+         ajax:path-target="target"
+         ajax:path-action="actionname:#content:replace"
+         ajax:path-event="contextchanged:.contextsensitiv"
+         ajax:path-overlay="someaction"
+        >&nbsp;Foo</a>
         """, rendered)
 
         action.enabled = False
         self.assertTrue(
             action(model, request).find('class="link_action disabled"') > -1
         )
+
+        action.display = False
+        self.assertEqual(action(model, request), u'')
+
+    def test_ButtonAction(self):
+        model = BaseNode()
+        request = self.layer.new_request()
+
+        rendered = ButtonAction()(model, request)
+        self.checkOutput("""
+        <button
+          ajax:bind="click"
+          ajax:target="http://example.com/">
+        </button>
+        """, rendered)
+
+        action = ButtonAction()
+        action.id = 'button_id'
+        action.css = 'button_class'
+        action.title = 'Button Title'
+        action.type = 'submit'
+        action.name = 'submit-form'
+        action.value = 'Submit'
+        action.autofocus = 'autofocus'
+        action.disabled = 'disabled'
+        action.form = '#form-id'
+        action.formaction = 'http://example.com/form'
+        action.formenctype = 'text/plain'
+        action.formmethod = 'post'
+        action.formnovalidate = 'formnovalidate'
+        action.formtarget = '_blank'
+        action.action = 'action:NONE:NONE'
+        action.event = 'event:.selector'
+        action.confirm = 'Really?'
+        action.overlay = 'overlay'
+        action.path = '/foo'
+        action.path_target = 'target'
+        action.path_action = action.action
+        action.path_event = action.event
+        action.path_overlay = action.overlay
+        action.text = 'Button Text'
+        action.icon = 'button-icon'
+
+        rendered = action(model, request)
+        self.checkOutput("""
+        <button id="button_id"
+          title="Button Title"
+          class="button_class"
+          name="submit-form"
+          type="submit"
+          value="Submit"
+          autofocus="autofocus"
+          disabled="disabled"
+          form="#form-id"
+          formaction="http://example.com/form"
+          formenctype="text/plain"
+          formmethod="post"
+          formnovalidate="formnovalidate"
+          formtarget="_blank"
+          ajax:bind="click"
+          ajax:target="http://example.com/"
+          ajax:event="event:.selector"
+          ajax:action="action:NONE:NONE"
+          ajax:confirm="Really?"
+          ajax:overlay="overlay"
+          ajax:path="/foo"
+          ajax:path-target="target"
+          ajax:path-action="action:NONE:NONE"
+          ajax:path-event="event:.selector"
+          ajax:path-overlay="overlay">
+          <i class="button-icon"></i>
+          <span>Button Text</span>
+        </button>
+        """, rendered)
 
         action.display = False
         self.assertEqual(action(model, request), u'')
@@ -709,3 +795,102 @@ class TestBrowserActions(TileTestCase):
 
             model.supports_paste = False
             self.assertEqual(action(model, request), u'')
+
+    def test__ActionMove(self):
+        node = BaseNode()
+        model = node['child'] = BaseNode()
+        request = self.layer.new_request()
+
+        action = _ActionMove()
+        action.model = model
+        action.request = request
+
+        request.params['sort'] = 'asc'
+        self.assertFalse(action.display)
+
+        del request.params['sort']
+        node.properties.action_move = True
+        self.assertFalse(action.display)
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        model = node['child'] = BaseNode()
+        action.model = model
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
+        self.assertEqual(action.target, 'http://example.com/child')
+        request.params['size'] = '10'
+        request.params['b_page'] = '1'
+        self.assertEqual(
+            action.target,
+            'http://example.com/child?b_page=1&size=10'
+        )
+
+    def test_ActionMoveUp(self):
+        action = ActionMoveUp()
+        self.assertEqual(action.id, 'toolbaraction-move-up')
+        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-up')
+        self.assertEqual(action.action, 'move_up:NONE:NONE')
+        self.assertEqual(action.text, 'move_up')
+
+        node = BaseNode()
+        model = node['child'] = BaseNode()
+        request = self.layer.new_request()
+
+        action.model = model
+        action.request = request
+        self.assertFalse(action.display)
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        node['a'] = BaseNode()
+        node['b'] = BaseNode()
+
+        action.model = node['a']
+        with self.layer.authenticated('manager'):
+            self.assertFalse(action.display)
+
+        action.model = node['b']
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
+    def test_ActionMoveDown(self):
+        action = ActionMoveDown()
+        self.assertEqual(action.id, 'toolbaraction-move-down')
+        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-down')
+        self.assertEqual(action.action, 'move_down:NONE:NONE')
+        self.assertEqual(action.text, 'move_down')
+
+        node = BaseNode()
+        model = node['child'] = BaseNode()
+        request = self.layer.new_request()
+
+        action.model = model
+        action.request = request
+        self.assertFalse(action.display)
+
+        @plumbing(Order)
+        class OrderableNode(BaseNode):
+            pass
+
+        node = OrderableNode()
+        node.properties.action_move = True
+        node['a'] = BaseNode()
+        node['b'] = BaseNode()
+
+        action.model = node['a']
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
+        action.model = node['b']
+        with self.layer.authenticated('manager'):
+            self.assertFalse(action.display)

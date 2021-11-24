@@ -1,0 +1,36 @@
+<tal:link xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:ajax="http://namespaces.conestack.org/ajax"
+          omit-tag="True">
+
+  <button id="${context.id|nothing}"
+          title="${context.title|nothing}"
+          class="${context.css|nothing}"
+          name="${context.name|nothing}"
+          type="${context.type|nothing}"
+          value="${context.value|nothing}"
+          autofocus="${context.autofocus|nothing}"
+          disabled="${context.disabled|nothing}"
+          form="${context.form|nothing}"
+          formaction="${context.formaction|nothing}"
+          formenctype="${context.formenctype|nothing}"
+          formmethod="${context.formmethod|nothing}"
+          formnovalidate="${context.formnovalidate|nothing}"
+          formtarget="${context.formtarget|nothing}"
+          ajax:bind="${context.bind|nothing}"
+          ajax:target="${context.target|nothing}"
+          ajax:event="${context.event|nothing}"
+          ajax:action="${context.action|nothing}"
+          ajax:confirm="${context.confirm|nothing}"
+          ajax:overlay="${context.overlay|nothing}"
+          ajax:path="${context.path|nothing}"
+          ajax:path-target="${context.path_target|nothing}"
+          ajax:path-action="${context.path_action|nothing}"
+          ajax:path-event="${context.path_event|nothing}"
+          ajax:path-overlay="${context.path_overlay|nothing}">
+    <i class="${context.icon}"
+       tal:condition="context.icon"></i>
+    <span tal:content="context.text"
+          tal:condition="context.text">Text</span>
+  </button>
+
+</tal:link>

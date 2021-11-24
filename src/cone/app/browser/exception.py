@@ -61,7 +61,7 @@ class UnauthorizedTile(Tile):
     """
 
 
-@view_config(context=HTTPForbidden)
+@view_config(context=HTTPForbidden, accept='text/html')
 def forbidden_view(request):
     """Unauthorized view.
     """
@@ -69,6 +69,15 @@ def forbidden_view(request):
     if not request.authenticated_userid:
         return login_view(model, request)
     return render_main_template(model, request, contenttile='unauthorized')
+
+
+@view_config(
+    context=HTTPForbidden,
+    accept='application/json',
+    renderer='json')
+def json_forbidden_view(request):
+    request.response.status = 403
+    return {}
 
 
 ###############################################################################
@@ -81,9 +90,18 @@ class NotFoundTile(Tile):
     """
 
 
-@view_config(context=HTTPNotFound)
+@view_config(context=HTTPNotFound, accept='text/html')
 def not_found_view(request):
     """Not Found view.
     """
     model = request.context
     return render_main_template(model, request, contenttile='not_found')
+
+
+@view_config(
+    context=HTTPNotFound,
+    accept='application/json',
+    renderer='json')
+def json_not_found_view(request):
+    request.response.status = 404
+    return {}

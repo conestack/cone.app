@@ -1,9 +1,12 @@
+from cone.app.interfaces import IACLAdapter
+from cone.app.interfaces import IAdapterACL
 from cone.app.interfaces import IAuthenticator
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
 from cone.app.ugm import ugm_backend
 from plumber import Behavior
 from plumber import default
+from plumber import override
 from plumber import plumb
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import ALL_PERMISSIONS
@@ -35,19 +38,19 @@ viewer_permissions = [
     'view', 'list',
 ]
 editor_permissions = [
-    'view', 'list', 'add', 'edit',
+    'view', 'list', 'add', 'edit', 'change_order'
 ]
 owner_permissions = [
-    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-    'manage_permissions', 'change_state',
+    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+    'copy', 'paste', 'manage_permissions', 'change_state',
 ]
 admin_permissions = [
-    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-    'manage_permissions', 'change_state',
+    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+    'copy', 'paste', 'manage_permissions', 'change_state',
 ]
 manager_permissions = [
-    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-    'manage_permissions', 'change_state', 'manage',
+    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+    'copy', 'paste', 'manage_permissions', 'change_state', 'manage',
 ]
 everyone_permissions = [
     'login',
@@ -175,6 +178,8 @@ def groups_callback(name, request):
 
 
 class ACLRegistry(dict):
+    """ACL registry.
+    """
 
     def register(self, acl, obj=None, node_info_name=''):
         self[(obj, node_info_name)] = acl
@@ -279,3 +284,23 @@ class PrincipalACL(Behavior):
             if ace[1] == 'role:%s' % role:
                 return ace[2]
         return list()
+
+
+@implementer(IAdapterACL)
+class AdapterACL(Behavior):
+    """Plumbing behavior providing ACL from ``IACLAdapter``
+    """
+    default_acl = default(DEFAULT_ACL)
+
+    @override
+    @property
+    def __acl__(self):
+        request = get_current_request()
+        acl_adapter = request.registry.queryAdapter(
+            self,
+            IACLAdapter,
+            default=None
+        )
+        if acl_adapter:
+            return acl_adapter.acl
+        return self.default_acl

@@ -1,10 +1,14 @@
 from cone.app import security
 from cone.app import testing
+from cone.app.interfaces import IACLAdapter
+from cone.app.interfaces import IAdapterACL
+from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import IAuthenticator
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
 from cone.app.model import BaseNode
 from cone.app.security import acl_registry
+from cone.app.security import AdapterACL
 from cone.app.security import authenticate
 from cone.app.security import authenticated_user
 from cone.app.security import DEFAULT_ACL
@@ -27,6 +31,7 @@ from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.threadlocal import get_current_registry
+from zope.component import adapter
 from zope.component.globalregistry import BaseGlobalComponents
 from zope.interface import implementer
 import logging
@@ -79,18 +84,20 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(security.DEFAULT_ACL, [
             ('Allow', 'system.Authenticated', ['view']),
             ('Allow', 'role:viewer', ['view', 'list']),
-            ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']),
+            ('Allow', 'role:editor', [
+                'view', 'list', 'add', 'edit', 'change_order'
+            ]),
             ('Allow', 'role:admin', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
+                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+                'copy', 'paste', 'manage_permissions', 'change_state'
             ]),
             ('Allow', 'role:manager', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state', 'manage'
+                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+                'copy', 'paste', 'manage_permissions', 'change_state', 'manage'
             ]),
             ('Allow', 'role:owner', [
-                'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                'paste', 'manage_permissions', 'change_state'
+                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
+                'copy', 'paste', 'manage_permissions', 'change_state'
             ]),
             ('Allow', 'system.Everyone', ['login']),
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
@@ -188,23 +195,28 @@ class SecurityTest(NodeTestCase):
             self.assertEqual(ownersupportnode.attrs['owner'], 'sepp')
             self.assertEqual(ownersupportnode.__acl__, [
                 ('Allow', 'sepp', [
-                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                    'paste', 'manage_permissions', 'change_state'
+                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
+                    'cut', 'copy', 'paste', 'manage_permissions', 'change_state'
                 ]),
                 ('Allow', 'system.Authenticated', ['view']),
                 ('Allow', 'role:viewer', ['view', 'list']),
-                ('Allow', 'role:editor', ['view', 'list', 'add', 'edit']),
+                ('Allow', 'role:editor', [
+                    'view', 'list', 'add', 'edit', 'change_order'
+                ]),
                 ('Allow', 'role:admin', [
-                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                    'paste', 'manage_permissions', 'change_state'
+                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
+                    'cut', 'copy', 'paste', 'manage_permissions',
+                    'change_state'
                 ]),
                 ('Allow', 'role:manager', [
-                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                    'paste', 'manage_permissions', 'change_state', 'manage'
+                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
+                    'cut', 'copy', 'paste', 'manage_permissions',
+                    'change_state', 'manage'
                 ]),
                 ('Allow', 'role:owner', [
-                    'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy',
-                    'paste', 'manage_permissions', 'change_state'
+                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
+                    'cut', 'copy', 'paste', 'manage_permissions',
+                    'change_state'
                 ]),
                 ('Allow', 'system.Everyone', ['login']),
                 ('Deny', 'system.Everyone', ALL_PERMISSIONS)
@@ -279,15 +291,15 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'someuser')
         self.assertEqual(sorted(rule[2]), sorted([
-            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete'
+            'cut', 'change_order', 'edit', 'copy', 'manage', 'list', 'add',
+            'change_state', 'view', 'paste', 'manage_permissions', 'delete'
         ]))
 
         rule = find_rule(node.__acl__, 'otheruser')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'otheruser')
         self.assertEqual(sorted(rule[2]), sorted([
-            'edit', 'add', 'list', 'view'
+            'edit', 'add', 'list', 'view', 'change_order'
         ]))
 
         rule = find_rule(node.__acl__, 'group:some_group')
@@ -295,7 +307,7 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[1], 'group:some_group')
         self.assertEqual(sorted(rule[2]), sorted([
             'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete'
+            'view', 'paste', 'manage_permissions', 'delete', 'change_order'
         ]))
 
         rule = find_rule(node.__acl__, 'system.Authenticated')
@@ -321,7 +333,7 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'someuser')
         self.assertEqual(sorted(rule[2]), sorted([
-            'edit', 'add', 'list', 'view'
+            'edit', 'add', 'list', 'view', 'change_order'
         ]))
 
         rule = find_rule(child.__acl__, 'system.Authenticated')
@@ -357,7 +369,7 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[1], 'someuser')
         self.assertEqual(sorted(rule[2]), sorted([
             'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete'
+            'view', 'paste', 'manage_permissions', 'delete', 'change_order'
         ]))
 
         rule = find_rule(subchild.__acl__, 'otheruser')
@@ -365,7 +377,7 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[1], 'otheruser')
         self.assertEqual(sorted(rule[2]), sorted([
             'cut', 'edit', 'copy', 'list', 'add', 'change_state', 'view',
-            'paste', 'manage_permissions', 'delete'
+            'paste', 'manage_permissions', 'delete', 'change_order'
         ]))
 
         rule = find_rule(subchild.__acl__, 'group:some_group')
@@ -373,7 +385,7 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[1], 'group:some_group')
         self.assertEqual(sorted(rule[2]), sorted([
             'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete'
+            'view', 'paste', 'manage_permissions', 'delete', 'change_order'
         ]))
 
         rule = find_rule(subchild.__acl__, 'system.Authenticated')
@@ -423,6 +435,41 @@ class SecurityTest(NodeTestCase):
             node.__acl__[-1],
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
         )
+
+    def test_AdapterACL(self):
+        @plumbing(AdapterACL)
+        class AdapterACLNode(BaseNode):
+            pass
+
+        node = AdapterACLNode()
+        self.assertEqual(node.__acl__, security.DEFAULT_ACL)
+        self.assertTrue(IAdapterACL.providedBy(node))
+
+        acl = [('Allow', 'role:viewer', ['view'])]
+
+        @implementer(IACLAdapter)
+        @adapter(IApplicationNode)
+        class ACLAdapter(object):
+            def __init__(self, model):
+                self.model = model
+
+            @property
+            def acl(self):
+                return acl
+
+        request = self.layer.new_request()
+        request.registry.registerAdapter(ACLAdapter)
+
+        acl_adapter = request.registry.queryAdapter(
+            node,
+            IACLAdapter,
+            default=None
+        )
+        self.assertIsInstance(acl_adapter, ACLAdapter)
+        self.assertEqual(acl_adapter.acl, acl)
+        self.assertEqual(node.__acl__, acl)
+
+        request.registry.unregisterAdapter(ACLAdapter)
 
     def test_authentication_logging(self):
         # If an authentication plugin raises an error when calling

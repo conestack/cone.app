@@ -26,6 +26,15 @@ Roadmap
 1.1
 ---
 
+[ ] Context bound toolbar and action (named utilities?).
+
+[ ] Layout property for excluding entire navbar.
+
+[ ] Reference blueprint -> use lookup function also for single value references
+    if present.
+
+[ ] Consolidate "Unauthorized" and "Insufficient Privileges" tiles.
+
 [ ] Check ``title`` of transition names before using ``name`` in workflow
     dropdown.
 

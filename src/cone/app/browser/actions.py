@@ -5,6 +5,7 @@ from cone.app.interfaces import IPrincipalACL
 from cone.app.interfaces import IWorkflowState
 from cone.tile import render_template
 from cone.tile import render_tile
+from node.interfaces import IOrder
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
 
@@ -176,6 +177,45 @@ class LinkAction(TemplateAction):
             css = '%s %s' % (self.css, css)
         css = css.strip()
         return css and css or None
+
+    @property
+    def target(self):
+        return make_url(self.request, node=self.model)
+
+
+class ButtonAction(TemplateAction):
+    """Action rendering a HTML button, optional with bdajax attributes.
+    """
+    template = 'cone.app.browser:templates/button_action.pt'
+    bind = 'click'         # ajax:bind attribute
+    id = None              # id attribute
+    css = None             # in addition for computed class attribute
+    title = None           # title attribute
+    type = None            # type of button
+    name = None            # name for the button
+    value = None           # initial value for the button
+    autofocus = None       # button gets focus on page load
+    disabled = None        # button should be disabled
+    form = None            # form the button belongs to
+    formaction = None      # where to send the data when form is submitted
+    formenctype = None     # how form-data should be encoded before sending
+    formmethod = None      # specifies http method
+    formnovalidate = None  # data should not be validated on submission
+    formtarget = None      # where to display response after form submission
+    action = None          # ajax:action attribute
+    event = None           # ajax:event attribute
+    confirm = None         # ajax:confirm attribute
+    overlay = None         # ajax:overlay attribute
+    path = None            # ajax:path attribute
+    path_target = None     # ajax:path-target attribute
+    path_action = None     # ajax:path-action attribute
+    path_event = None      # ajax:path-event attribute
+    path_overlay = None    # ajax:path-overlay attribute
+    text = None            # button text
+    icon = None            # if set, add i tag with value as CSS class
+
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
 
     @property
     def target(self):
@@ -443,3 +483,56 @@ class ActionPaste(LinkAction):
     def enabled(self):
         return self.request.cookies.get('cone.app.copysupport.cut') \
             or self.request.cookies.get('cone.app.copysupport.copy')
+
+
+class _ActionMove(LinkAction):
+    """Basic move action.
+    """
+
+    @property
+    def display(self):
+        if self.request.params.get('sort'):
+            return False
+        parent = self.model.parent
+        return parent.properties.action_move \
+            and IOrder.providedBy(parent) \
+            and self.request.has_permission('change_order', parent)
+
+    @property
+    def target(self):
+        request = self.request
+        query = make_query(
+            b_page=request.params.get('b_page'),
+            size=request.params.get('size')
+        )
+        return make_url(self.request, node=self.model, query=query)
+
+
+class ActionMoveUp(_ActionMove):
+    """Move up action.
+    """
+    id = 'toolbaraction-move-up'
+    icon = 'glyphicon glyphicon-chevron-up'
+    action = 'move_up:NONE:NONE'
+    text = _('move_up', default='Move up')
+
+    @property
+    def display(self):
+        if not super(ActionMoveUp, self).display:
+            return False
+        return self.model.parent.first_key != self.model.name
+
+
+class ActionMoveDown(_ActionMove):
+    """Move down action.
+    """
+    id = 'toolbaraction-move-down'
+    icon = 'glyphicon glyphicon-chevron-down'
+    action = 'move_down:NONE:NONE'
+    text = _('move_down', default='Move down')
+
+    @property
+    def display(self):
+        if not super(ActionMoveDown, self).display:
+            return False
+        return self.model.parent.last_key != self.model.name
