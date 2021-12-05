@@ -20,8 +20,19 @@ from yafowil.base import factory as yafowil_factory
 import cone.app
 
 
+def tmp_root_node(fn):
+    def wrapper(*a):
+        cone.app.root = cone.app.default_root_node_factory({})
+        try:
+            fn(*a)
+        finally:
+            cone.app.root = None
+    return wrapper
+
+
 class TestApp(NodeTestCase):
 
+    @tmp_root_node
     def test_get_root(self):
         root = cone.app.get_root()
         self.assertTrue(str(root).startswith("<AppRoot object 'None' at"))
@@ -41,6 +52,7 @@ class TestApp(NodeTestCase):
         self.assertFalse(root['settings'].properties.in_navtree)
         self.assertTrue(root['settings'].properties.skip_mainmenu)
 
+    @tmp_root_node
     def test_register_plugin(self):
         cone.app.register_plugin('dummy', BaseNode)
 
@@ -54,6 +66,7 @@ class TestApp(NodeTestCase):
         expected = "Entry with name 'dummy' already registered."
         self.assertEqual(str(err), expected)
 
+    @tmp_root_node
     def test_register_plugin_config(self):
         cone.app.register_plugin_config('dummy', BaseNode)
 
@@ -125,7 +138,10 @@ class TestApp(NodeTestCase):
             'cone.auth_reissue_time': '300',
             'cone.auth_max_age': '600',
             'cone.main_template': 'package.browser:templates/main.pt',
-            'cone.plugins': 'cone.app.tests'  # ensure dummy main hooks called
+            # ensure custom root node factory gets invoked
+            'cone.root.node_factory': 'cone.app.default_root_node_factory',
+            # ensure dummy main hooks called
+            'cone.plugins': 'cone.app.tests'
         }
 
         # main

@@ -24,6 +24,7 @@ import logging
 import pyramid_chameleon
 import pyramid_zcml
 import sys
+import threading
 
 
 logger = logging.getLogger('cone.app')
@@ -46,7 +47,6 @@ cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
 # JS resources
 cfg.js = Properties()
 cfg.js.public = [
-    'treibstoff-static/treibstoff.bundle.js',
     'static/cone.public.js'
 ]
 cfg.js.protected = [
@@ -114,10 +114,6 @@ cfg.merged.print_css.public = [
 ]
 cfg.merged.print_css.protected = list()
 
-# root node
-root = AppRoot()
-root.factories['settings'] = AppSettings
-
 
 class layout_config(object):
     _registry = dict()
@@ -154,16 +150,31 @@ class DefaultLayoutConfig(LayoutConfig):
         self.content_grid_width = 9
 
 
-def configure_root(settings):
+def import_from_string(path):
+    mod, ob = path.rsplit('.', 1)
+    return getattr(importlib.import_module(mod), ob)
+
+
+root = None
+
+
+def configure_root(root, settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
     root.properties.default_child = settings.get('cone.root.default_child')
-    root.properties.mainmenu_empty_title = \
-        settings.get('cone.root.mainmenu_empty_title', 'false') \
-        in ['True', 'true', '1']
+    mainmenu_empty_title = settings.get('cone.root.mainmenu_empty_title')
+    mainmenu_empty_title = mainmenu_empty_title in ['True', 'true', '1']
+    root.properties.mainmenu_empty_title = mainmenu_empty_title
     default_content_tile = settings.get('cone.root.default_content_tile')
     if default_content_tile:
         root.properties.default_content_tile = default_content_tile
     root.properties.in_navtree = False
+
+
+def default_root_node_factory(settings):
+    root = AppRoot()
+    root.factories['settings'] = AppSettings
+    configure_root(root, settings)
+    return root
 
 
 def register_config(key, factory):
@@ -205,6 +216,19 @@ def register_main_hook(callback):
     """Register function to get called on application startup.
     """
     main_hooks.append(callback)
+
+
+thread_shutdown_hooks = list()
+
+
+def thread_shutdown_hook(func):  # pragma: no cover
+    """decorator to register thread shutdown hook.
+
+    Decorated function gets called when main thread joins. Thread shutdown
+    hooks are used for graceful joining of non daemon threads.
+    """
+    thread_shutdown_hooks.append(func)
+    return func
 
 
 def get_root(environ=None):
@@ -249,19 +273,24 @@ class YafowilResources(YafowilResourcesBase):
         return resource_base
 
 
-def configure_yafowil_addon_resources(config):
+def configure_yafowil_addon_resources(config, public):
     resources = YafowilResources(
         js_skip=cfg.yafowil.js_skip,
         css_skip=cfg.yafowil.css_skip,
         config=config
     )
+    js_resources = cfg.js.public if public else cfg.js.protected
+    css_resources = cfg.css.public if public else cfg.css.protected
     for js in reversed(resources.js_resources):
-        # treibstoff needs to be loaded first in order to avoid double binding on
-        # document ready
-        idx = cfg.js.public.index('treibstoff-static/treibstoff.bundle.js') + 1
-        cfg.js.public.insert(idx, js)
+        js_resources.insert(0, js)
     for css in resources.css_resources:
-        cfg.css.public.insert(0, css)
+        css_resources.insert(0, css)
+
+
+def configure_treibstoff_resources():
+    # treibstoff needs to be loaded before resources depending on it order to
+    # avoid double binding on document ready
+    cfg.js.public.insert(0, 'treibstoff-static/treibstoff.bundle.js')
 
 
 @adapter(IApplicationNode)
@@ -280,6 +309,21 @@ class ApplicationNodeTraverser(ResourceTreeTraverser):
                 result['view_name'] = ''
                 result['traversed'] = tuple()
         return result
+
+
+def start_thread_monitor():  # pragma: no cover
+    if not thread_shutdown_hooks:
+        return
+
+    def _monitor():
+        main_thread = threading.main_thread()
+        main_thread.join()
+        for hook in thread_shutdown_hooks:
+            hook()
+
+    monitor = threading.Thread(target=_monitor)
+    monitor.daemon = True
+    monitor.start()
 
 
 def main(global_config, **settings):
@@ -318,7 +362,13 @@ def main(global_config, **settings):
         wild_domain=auth_wild_domain,
     )
 
-    configure_root(settings)
+    # create root node
+    global root
+    root_node_factory = settings.pop('cone.root.node_factory', None)
+    if root_node_factory:
+        root = import_from_string(root_node_factory)(settings)
+    else:
+        root = default_root_node_factory(settings)
 
     if settings.get('testing.hook_global_registry'):
         globalreg = getGlobalSiteManager()
@@ -397,11 +447,10 @@ def main(global_config, **settings):
 
     # execute main hooks
     filtered_hooks = list()
-    for hook in main_hooks:
-        for plugin in plugins:
+    for plugin in plugins:
+        for hook in main_hooks:
             if hook.__module__.startswith(plugin):
                 filtered_hooks.append(hook)
-                continue
     for hook in filtered_hooks:
         hook(config, global_config, settings)
 
@@ -428,10 +477,21 @@ def main(global_config, **settings):
 
     # register yafowil static resources
     # done after addon config - addon code may disable yafowil resource groups
-    configure_yafowil_addon_resources(config)
+    # XXX: ``yafowil.resources_public`` is a temporary hack and stays
+    # undocumented. In 1.1. ``webresource`` will be used for resource
+    # registration and resource delivery configuration.
+    yafowil_resources_public = settings.get('yafowil.resources_public')
+    yafowil_resources_public = yafowil_resources_public in ['1', 'True', 'true']
+    configure_yafowil_addon_resources(config, yafowil_resources_public)
+
+    # ensure treibstoff resources gets loaded before resources depending on it
+    configure_treibstoff_resources()
 
     # end configuration
     config.end()
+
+    # start thread monitor if thread shutdown hooks registered
+    start_thread_monitor()
 
     # return wsgi app
     return config.make_wsgi_app()

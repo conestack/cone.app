@@ -1,8 +1,41 @@
 Changes
 =======
 
-1.0.4 (unreleased)
+1.0.5 (unreleased)
 ------------------
+
+- No changes yet.
+
+
+1.0.4 (2021-11-21)
+------------------
+
+- Visual padding for footer on sidebar and content instead of body.
+  [rnix]
+
+- Introduce ``cone.app.import_from_string``.
+  [rnix]
+
+- Fix execution order of main hooks. They get now executed in plugin loading
+  order.
+  [rnix]
+
+- Custom application root node factory can be set via ``cone.root.node_factory``
+  property in application config file.
+  [rnix]
+
+- Introduce ``cone.app.browser.actions.ButtonAction``.
+  [rnix]
+
+- Introduce ``cone.app.thread_shutdown_hook``.
+  [rnix]
+
+- Introduce ``cone.app.security.AdapterACL`` plumbing behavior.
+  [rnix]
+
+- Prevent auto persistence of generated language child widgets in translation
+  widget.
+  [rnix]
 
 - Add ``canonical_value`` to ``cone.app.model.Translation``.
   [rnix]

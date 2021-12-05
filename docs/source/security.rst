@@ -271,6 +271,56 @@ A concrete shareable node looks like.
             return dict()
 
 
+Adapter ACL
+-----------
+
+The ``cone.app.security.AdapterACL`` looks up the ACL via
+``cone.app.interfaces.IACLAdapter`` interface. This can be useful to support
+ALC customization on generic application model nodes.
+
+Therefor the model node needs to plumb ``AdapterACL`` behavior.
+
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+    from cone.app.security import AdapterACL
+    from plumber import plumbing
+
+    @plumbing(AdapterACL)
+    class AdapterACLNode(BaseNode):
+        pass
+
+An ``IACLAdapter`` must be implemented.
+
+.. code-block:: python
+
+    from cone.app.interfaces import IACLAdapter
+    from cone.app.interfaces import IApplicationNode
+    from zope.component import adapter
+    from zope.interface import implementer
+
+    @implementer(IACLAdapter)
+    @adapter(IApplicationNode)
+    class ACLAdapter(object):
+        def __init__(self, model):
+            self.model = model
+
+        @property
+        def acl(self):
+            return [('Allow', 'role:viewer', ['view'])]
+
+The adapter must be registered. This usually happens in the application main
+hook.
+
+.. code-block:: python
+
+    from cone.app import main_hook
+
+    @main_hook
+    def initialize_plugin(config, global_config, settings):
+        config.registry.registerAdapter(ACLAdapter)
+
+
 .. _user_and_group_management:
 
 User and Group Management

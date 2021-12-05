@@ -140,6 +140,18 @@ class IPrincipalACL(ISecured):
         """
 
 
+class IACLAdapter(Interface):
+    """Interface for providing ACL as adapter.
+    """
+    acl = Attribute(u'ACL')
+
+
+class IAdapterACL(ISecured):
+    """ACL from ``IACLAdapter`` on nodes.
+    """
+    default_acl = Attribute(u'Default ACL if no ``IAclAdapter`` found for node')
+
+
 class ICopySupport(INode):
     """Copysupport for nodes.
     """

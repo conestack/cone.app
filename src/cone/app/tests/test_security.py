@@ -1,10 +1,14 @@
 from cone.app import security
 from cone.app import testing
+from cone.app.interfaces import IACLAdapter
+from cone.app.interfaces import IAdapterACL
+from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import IAuthenticator
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
 from cone.app.model import BaseNode
 from cone.app.security import acl_registry
+from cone.app.security import AdapterACL
 from cone.app.security import authenticate
 from cone.app.security import authenticated_user
 from cone.app.security import DEFAULT_ACL
@@ -27,6 +31,7 @@ from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.threadlocal import get_current_registry
+from zope.component import adapter
 from zope.component.globalregistry import BaseGlobalComponents
 from zope.interface import implementer
 import logging
@@ -430,6 +435,41 @@ class SecurityTest(NodeTestCase):
             node.__acl__[-1],
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
         )
+
+    def test_AdapterACL(self):
+        @plumbing(AdapterACL)
+        class AdapterACLNode(BaseNode):
+            pass
+
+        node = AdapterACLNode()
+        self.assertEqual(node.__acl__, security.DEFAULT_ACL)
+        self.assertTrue(IAdapterACL.providedBy(node))
+
+        acl = [('Allow', 'role:viewer', ['view'])]
+
+        @implementer(IACLAdapter)
+        @adapter(IApplicationNode)
+        class ACLAdapter(object):
+            def __init__(self, model):
+                self.model = model
+
+            @property
+            def acl(self):
+                return acl
+
+        request = self.layer.new_request()
+        request.registry.registerAdapter(ACLAdapter)
+
+        acl_adapter = request.registry.queryAdapter(
+            node,
+            IACLAdapter,
+            default=None
+        )
+        self.assertIsInstance(acl_adapter, ACLAdapter)
+        self.assertEqual(acl_adapter.acl, acl)
+        self.assertEqual(node.__acl__, acl)
+
+        request.registry.unregisterAdapter(ACLAdapter)
 
     def test_authentication_logging(self):
         # If an authentication plugin raises an error when calling

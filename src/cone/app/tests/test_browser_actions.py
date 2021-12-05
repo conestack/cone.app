@@ -16,6 +16,7 @@ from cone.app.browser.actions import ActionSharing
 from cone.app.browser.actions import ActionState
 from cone.app.browser.actions import ActionUp
 from cone.app.browser.actions import ActionView
+from cone.app.browser.actions import ButtonAction
 from cone.app.browser.actions import DropdownAction
 from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
@@ -187,7 +188,13 @@ class TestBrowserActions(TileTestCase):
 
         rendered = LinkAction()(model, request)
         self.checkOutput("""
-        ...<a\n...ajax:bind="click"\n...ajax:target="http://example.com/"\n...></a>...
+        <a
+         href="#"
+         data-toggle="tooltip"
+         data-placement="top"
+         ajax:bind="click"
+         ajax:target="http://example.com/"
+        ></a>
         """, rendered)
 
         action = LinkAction()
@@ -213,35 +220,109 @@ class TestBrowserActions(TileTestCase):
         action.text = 'Foo'
         rendered = action(model, request)
         self.checkOutput("""
-        ...<a
-        id="link_id"
-        href="http://example.com/foo"
-        class="link_action"
-        title="Foo"
-        ajax:bind="click"
-        ajax:target="http://example.com/"
-        ajax:event="contextchanged:.contextsensitiv"
-        ajax:action="actionname:#content:replace"
-        ajax:confirm="Do you want to perform?"
-        ajax:overlay="someaction"
-        ajax:overlay-css="some-css"
-        ajax:overlay-uid="1234"
-        ajax:overlay-title="Overlay Title"
-        ajax:path="/foo"
-        ajax:path-target="target"
-        ajax:path-action="actionname:#content:replace"
-        ajax:path-event="contextchanged:.contextsensitiv"
-        ajax:path-overlay="someaction"
-        ajax:path-overlay-css="some-css"
-        ajax:path-overlay-uid="1234"
-        ajax:path-overlay-title="Overlay Title"
-        >&nbsp;Foo</a>...
+        <a
+         id="link_id"
+         href="http://example.com/foo"
+         class="link_action"
+         title="Foo"
+         ajax:bind="click"
+         ajax:target="http://example.com/"
+         ajax:event="contextchanged:.contextsensitiv"
+         ajax:action="actionname:#content:replace"
+         ajax:confirm="Do you want to perform?"
+         ajax:overlay="someaction"
+         ajax:overlay-css="some-css"
+         ajax:overlay-uid="1234"
+         ajax:overlay-title="Overlay Title"
+         ajax:path="/foo"
+         ajax:path-target="target"
+         ajax:path-action="actionname:#content:replace"
+         ajax:path-event="contextchanged:.contextsensitiv"
+         ajax:path-overlay="someaction"
+         ajax:path-overlay-css="some-css"
+         ajax:path-overlay-uid="1234"
+         ajax:path-overlay-title="Overlay Title"
+        >&nbsp;Foo</a>
         """, rendered)
 
         action.enabled = False
         self.assertTrue(
             action(model, request).find('class="link_action disabled"') > -1
         )
+
+        action.display = False
+        self.assertEqual(action(model, request), u'')
+
+    def test_ButtonAction(self):
+        model = BaseNode()
+        request = self.layer.new_request()
+
+        rendered = ButtonAction()(model, request)
+        self.checkOutput("""
+        <button
+          ajax:bind="click"
+          ajax:target="http://example.com/">
+        </button>
+        """, rendered)
+
+        action = ButtonAction()
+        action.id = 'button_id'
+        action.css = 'button_class'
+        action.title = 'Button Title'
+        action.type = 'submit'
+        action.name = 'submit-form'
+        action.value = 'Submit'
+        action.autofocus = 'autofocus'
+        action.disabled = 'disabled'
+        action.form = '#form-id'
+        action.formaction = 'http://example.com/form'
+        action.formenctype = 'text/plain'
+        action.formmethod = 'post'
+        action.formnovalidate = 'formnovalidate'
+        action.formtarget = '_blank'
+        action.action = 'action:NONE:NONE'
+        action.event = 'event:.selector'
+        action.confirm = 'Really?'
+        action.overlay = 'overlay'
+        action.path = '/foo'
+        action.path_target = 'target'
+        action.path_action = action.action
+        action.path_event = action.event
+        action.path_overlay = action.overlay
+        action.text = 'Button Text'
+        action.icon = 'button-icon'
+
+        rendered = action(model, request)
+        self.checkOutput("""
+        <button id="button_id"
+          title="Button Title"
+          class="button_class"
+          name="submit-form"
+          type="submit"
+          value="Submit"
+          autofocus="autofocus"
+          disabled="disabled"
+          form="#form-id"
+          formaction="http://example.com/form"
+          formenctype="text/plain"
+          formmethod="post"
+          formnovalidate="formnovalidate"
+          formtarget="_blank"
+          ajax:bind="click"
+          ajax:target="http://example.com/"
+          ajax:event="event:.selector"
+          ajax:action="action:NONE:NONE"
+          ajax:confirm="Really?"
+          ajax:overlay="overlay"
+          ajax:path="/foo"
+          ajax:path-target="target"
+          ajax:path-action="action:NONE:NONE"
+          ajax:path-event="event:.selector"
+          ajax:path-overlay="overlay">
+          <i class="button-icon"></i>
+          <span>Button Text</span>
+        </button>
+        """, rendered)
 
         action.display = False
         self.assertEqual(action(model, request), u'')

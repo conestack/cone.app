@@ -102,7 +102,10 @@ def translation_edit_renderer(widget, data):
                 ),
                 'structural': True
             })
-        translation[lang] = duplicate_widget(widget, widget.blueprints[-1])
+        lang_widget = duplicate_widget(widget, widget.blueprints[-1])
+        # prevent persiting on generated child widgets
+        lang_widget.attrs['persist'] = False
+        translation[lang] = lang_widget
 
 
 def translation_display_renderer(widget, data):

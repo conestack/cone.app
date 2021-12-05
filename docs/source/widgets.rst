@@ -1429,6 +1429,41 @@ operations, enabled and selected state and optionally rendering an icon.
         selected = False           # if ``True``, link get 'selected' CSS class
         icon = None                # if set, render span tag with value as CSS class
 
+``ButtonAction`` represents a HTML button offering integration to ``bdajax``
+and optionally rendering an icon.
+
+.. code-block:: python
+
+    from cone.app.browser.actions import ButtonAction
+
+    class ExampleAction(ButtonAction):
+        bind = 'click'         # ajax:bind attribute
+        id = None              # id attribute
+        css = None             # in addition for computed class attribute
+        title = None           # title attribute
+        type = None            # type of button
+        name = None            # name for the button
+        value = None           # initial value for the button
+        autofocus = None       # button gets focus on page load
+        disabled = None        # button should be disabled
+        form = None            # form the button belongs to
+        formaction = None      # where to send the data when form is submitted
+        formenctype = None     # how form-data should be encoded before sending
+        formmethod = None      # specifies http method
+        formnovalidate = None  # data should not be validated on submission
+        formtarget = None      # where to display response after form submission
+        action = None          # ajax:action attribute
+        event = None           # ajax:event attribute
+        confirm = None         # ajax:confirm attribute
+        overlay = None         # ajax:overlay attribute
+        path = None            # ajax:path attribute
+        path_target = None     # ajax:path-target attribute
+        path_action = None     # ajax:path-action attribute
+        path_event = None      # ajax:path-event attribute
+        path_overlay = None    # ajax:path-overlay attribute
+        text = None            # button text
+        icon = None            # if set, add i tag with value as CSS class
+
 ``Toolbar`` can be used to create a set of actions.
 
 .. code-block:: python
