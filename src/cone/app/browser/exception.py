@@ -3,7 +3,7 @@ from cone.app.browser.login import login_view
 from cone.app.browser.utils import format_traceback
 from cone.tile import Tile
 from cone.tile import tile
-from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPForbidden, HTTPBadRequest
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.view import view_config
@@ -60,7 +60,6 @@ class UnauthorizedTile(Tile):
     """Unauthorized tile.
     """
 
-
 @view_config(context=HTTPForbidden, accept='text/html')
 def forbidden_view(request):
     """Unauthorized view.
@@ -105,3 +104,33 @@ def not_found_view(request):
 def json_not_found_view(request):
     request.response.status = 404
     return {}
+
+###############################################################################
+# BadRequest
+###############################################################################
+
+@tile(name='bad_request', path='templates/bad_request.pt', permission='login')
+class BadRequestTile(Tile):
+    """Unauthorized tile.
+    """
+
+
+@view_config(context=HTTPBadRequest, accept='text/html')
+def bad_request_view(request):
+    """Unauthorized view.
+    """
+    model = request.context
+    if not request.authenticated_userid:
+        return login_view(model, request)
+    return render_main_template(model, request, contenttile='bad_request')
+
+
+@view_config(
+    context=HTTPBadRequest,
+    accept='application/json',
+    renderer='json')
+def json_bad_request_view(request):
+    request.response.status = 400
+    return {}
+
+
