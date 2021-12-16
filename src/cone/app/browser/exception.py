@@ -1,3 +1,5 @@
+import traceback
+
 from cone.app.browser import render_main_template
 from cone.app.browser.login import login_view
 from cone.app.browser.utils import format_traceback
@@ -56,6 +58,7 @@ def internal_server_error(request):
     renderer='json')
 def json_internal_server_error(request):
     request.response.status = 500
+    traceback.print_exc()
     return {}
 
 
