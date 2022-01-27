@@ -201,7 +201,8 @@ class Security(object):
     def tearDown(self):
         root = get_root()
         root.factories.clear()
-        root['settings'].factories.clear()
+        if root.get('settings'):
+            root['settings'].factories.clear()
         security_module.AUTHENTICATOR = None
         # XXX: something is wrong here.
         import pyramid.threadlocal
