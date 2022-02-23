@@ -4,7 +4,8 @@ Changes
 1.0.5 (unreleased)
 ------------------
 
-- No changes yet.
+- Use ``get_root`` in ``register_config`` and ``register_entry``.
+  [rnix]
 
 
 1.0.4 (2021-11-21)

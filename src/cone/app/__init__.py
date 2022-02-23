@@ -158,6 +158,10 @@ def import_from_string(path):
 root = None
 
 
+def get_root(environ=None):
+    return root
+
+
 def configure_root(root, settings):
     root.metadata.title = settings.get('cone.root.title', 'CONE')
     root.properties.default_child = settings.get('cone.root.default_child')
@@ -178,6 +182,7 @@ def default_root_node_factory(settings):
 
 
 def register_config(key, factory):
+    root = get_root()
     factories = root['settings'].factories
     if key in factories:
         raise ValueError(u"Config with name '%s' already registered." % key)
@@ -189,6 +194,7 @@ register_plugin_config = register_config
 
 
 def register_entry(key, factory):
+    root = get_root()
     factories = root.factories
     if key in factories:
         raise ValueError(u"Entry with name '%s' already registered." % key)
@@ -229,10 +235,6 @@ def thread_shutdown_hook(func):  # pragma: no cover
     """
     thread_shutdown_hooks.append(func)
     return func
-
-
-def get_root(environ=None):
-    return root
 
 
 def auth_tkt_factory(**kwargs):
