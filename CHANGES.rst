@@ -4,6 +4,9 @@ Changes
 1.0.5 (unreleased)
 ------------------
 
+- Use ``get_root`` in ``register_config`` and ``register_entry``.
+  [rnix]
+
 - Remove usage of ``Nodespaces`` behavior.
   [rnix]
 
