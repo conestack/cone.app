@@ -16,10 +16,10 @@ from node.interfaces import IUUID
 from node.utils import instance_property
 from node.utils import LocationIterator
 from node.utils import node_by_path
+from node.utils import UNSET
 from pyramid.i18n import TranslationStringFactory
 from pyramid.threadlocal import get_current_request
 from yafowil.base import factory
-from yafowil.base import UNSET
 from yafowil.common import generic_required_extractor
 from yafowil.common import select_display_renderer
 from yafowil.common import select_edit_renderer
