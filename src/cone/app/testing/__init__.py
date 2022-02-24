@@ -21,10 +21,12 @@ def reset_node_info_registry(fn):
     """Decorator for tests using node info registry
     """
     def wrapper(*a, **kw):
+        node_info_registry_orgin = model._node_info_registry
+        model._node_info_registry = dict()
         try:
             fn(*a, **kw)
         finally:
-            model._node_info_registry = dict()
+            model._node_info_registry = node_info_registry_orgin
     return wrapper
 
 
@@ -196,7 +198,6 @@ class Security(object):
     def setUp(self, args=None):
         self.make_app()
         XMLConfig('testing/dummy_workflow.zcml', cone.app)()
-        print("Security set up.")
 
     def tearDown(self):
         root = get_root()
@@ -204,11 +205,9 @@ class Security(object):
         if root.get('settings'):
             root['settings'].factories.clear()
         security_module.AUTHENTICATOR = None
-        # XXX: something is wrong here.
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         resetHooks()
-        print("Security torn down.")
 
 
 security = Security()
