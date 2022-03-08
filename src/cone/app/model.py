@@ -24,7 +24,6 @@ from node.behaviors import Lifecycle
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingConstraints
 from node.behaviors import MappingNode
-from node.behaviors import Nodespaces
 from node.behaviors import OdictStorage
 from node.behaviors import Schema
 from node.behaviors import UUIDAware
@@ -172,7 +171,6 @@ class AppNode(Behavior):
     AsAttrAccess,
     MappingConstraints,
     MappingAdopt,
-    Nodespaces,
     Attributes,
     DefaultInit,
     MappingNode,

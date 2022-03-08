@@ -12,7 +12,6 @@ from node.behaviors import Attributes
 from node.behaviors import DefaultInit
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingNode
-from node.behaviors import Nodespaces
 from node.behaviors import OdictStorage
 from node.utils import instance_property
 from plumber import plumbing
@@ -78,7 +77,6 @@ class InterfaceWorkflowNode(BaseNode):
     PrincipalACL,
     AppNode,
     MappingAdopt,
-    Nodespaces,
     Attributes,
     DefaultInit,
     MappingNode,

@@ -7,6 +7,9 @@ Changes
 - Use ``get_root`` in ``register_config`` and ``register_entry``.
   [rnix]
 
+- Remove usage of ``Nodespaces`` behavior.
+  [rnix]
+
 - Replace deprecated use of ``Nodify`` by ``MappingNode``.
   [rnix]
 
