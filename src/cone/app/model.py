@@ -16,15 +16,15 @@ from cone.app.security import acl_registry
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
 from node import schema
-from node.behaviors import Adopt
 from node.behaviors import AsAttrAccess
 from node.behaviors import Attributes
 from node.behaviors import ChildFactory
 from node.behaviors import DefaultInit
 from node.behaviors import Lifecycle
-from node.behaviors import NodeChildValidate
+from node.behaviors import MappingAdopt
+from node.behaviors import MappingConstraints
+from node.behaviors import MappingNode
 from node.behaviors import Nodespaces
-from node.behaviors import Nodify
 from node.behaviors import OdictStorage
 from node.behaviors import Schema
 from node.behaviors import UUIDAware
@@ -170,12 +170,12 @@ class AppNode(Behavior):
 @plumbing(
     AppNode,
     AsAttrAccess,
-    NodeChildValidate,
-    Adopt,
+    MappingConstraints,
+    MappingAdopt,
     Nodespaces,
     Attributes,
     DefaultInit,
-    Nodify,
+    MappingNode,
     Lifecycle,
     OdictStorage)
 class BaseNode(object):

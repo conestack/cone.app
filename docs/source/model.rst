@@ -66,12 +66,12 @@ the class directly.
     @plumbing(
         behaviors.AppNode,
         behaviors.AsAttrAccess,
-        behaviors.NodeChildValidate,
-        behaviors.Adopt,
+        behaviors.MappingConstraints,
+        behaviors.MappingAdopt,
         behaviors.Nodespaces,
         behaviors.Attributes,
         behaviors.DefaultInit,
-        behaviors.Nodify,
+        behaviors.MappingNode,
         behaviors.Lifecycle,
         behaviors.OdictStorage)
     class AdvancedNode(object)

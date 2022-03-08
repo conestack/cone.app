@@ -887,7 +887,7 @@ return the correct type, we need to pass it via the ``factory`` property.
 
     @plumbing(Translation)
     class TranslationNode(BaseNode):
-        allow_non_node_children = True
+        child_constraints = None
 
     value = TranslationNode()
     value['en'] = u'English Translation'

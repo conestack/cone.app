@@ -8,11 +8,11 @@ from cone.app.security import DEFAULT_ACL
 from cone.app.security import PrincipalACL
 from cone.app.workflow import WorkflowACL
 from cone.app.workflow import WorkflowState
-from node.behaviors import Adopt
 from node.behaviors import Attributes
 from node.behaviors import DefaultInit
+from node.behaviors import MappingAdopt
+from node.behaviors import MappingNode
 from node.behaviors import Nodespaces
-from node.behaviors import Nodify
 from node.behaviors import OdictStorage
 from node.utils import instance_property
 from plumber import plumbing
@@ -77,11 +77,11 @@ class InterfaceWorkflowNode(BaseNode):
 @plumbing(
     PrincipalACL,
     AppNode,
-    Adopt,
+    MappingAdopt,
     Nodespaces,
     Attributes,
     DefaultInit,
-    Nodify,
+    MappingNode,
     OdictStorage)
 class SharingNode(object):
 

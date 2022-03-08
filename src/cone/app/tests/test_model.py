@@ -28,11 +28,11 @@ from cone.app.model import UUIDAttributeAware
 from cone.app.model import XMLProperties
 from datetime import datetime
 from node import schema
-from node.behaviors import Adopt
 from node.behaviors import DefaultInit
 from node.behaviors import DictStorage
-from node.behaviors import NodeChildValidate
-from node.behaviors import Nodify
+from node.behaviors import MappingAdopt
+from node.behaviors import MappingConstraints
+from node.behaviors import MappingNode
 from node.interfaces import IInvalidate
 from node.tests import NodeTestCase
 from odict import odict
@@ -399,10 +399,10 @@ class TestModel(NodeTestCase):
 
         @plumbing(
             AppNode,
-            NodeChildValidate,
-            Adopt,
+            MappingConstraints,
+            MappingAdopt,
             DefaultInit,
-            Nodify,
+            MappingNode,
             DictStorage,
             UUIDAsName)
         class UnorderedUUIDAsNameNode(object):
@@ -428,7 +428,7 @@ class TestModel(NodeTestCase):
 
         @plumbing(Translation)
         class TranslationNode(BaseNode):
-            allow_non_node_children = True
+            child_constraints = None
 
         translation = TranslationNode(name='translation')
         self.assertEqual(translation.value, 'translation')

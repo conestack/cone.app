@@ -239,7 +239,7 @@ class TestTraversal(NodeTestCase):
 
     def test_ApplicationNodeTraverser(self):
         root = BaseNode()
-        root.allow_non_node_children = True
+        root.child_constraints = None
         root['appnode_child'] = BaseNode()
         root['node_child'] = NodeBaseNode()
         root['non_node_child'] = {}
