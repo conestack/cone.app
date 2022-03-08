@@ -4,7 +4,17 @@ Changes
 1.0.5 (unreleased)
 ------------------
 
-- No changes yet.
+- Replace deprecated use of ``Nodify`` by ``MappingNode``.
+  [rnix]
+
+- Replace deprecated use of ``NodeChildValidate`` by ``MappingConstraints``.
+  [rnix]
+
+- Replace deprecated use of ``Adopt`` by ``MappingAdopt``.
+  [rnix]
+
+- Replace deprecated use of ``allow_non_node_childs`` by ``child_constraints``.
+  [rnix]
 
 
 1.0.4 (2021-11-21)

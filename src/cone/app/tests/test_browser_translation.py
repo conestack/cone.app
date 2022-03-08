@@ -10,7 +10,7 @@ from yafowil.tests import NodeTestCase
 
 @plumbing(Translation)
 class TranslationNode(BaseNode):
-    allow_non_node_children = True
+    child_constraints = None
 
 
 class TestBrowserTranslation(NodeTestCase):

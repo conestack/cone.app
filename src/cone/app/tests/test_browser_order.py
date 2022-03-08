@@ -4,10 +4,10 @@ from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
-from node.behaviors import Adopt
 from node.behaviors import DefaultInit
 from node.behaviors import DictStorage
-from node.behaviors import Nodify
+from node.behaviors import MappingAdopt
+from node.behaviors import MappingNode
 from node.behaviors import Order
 from node.interfaces import IOrder
 from plumber import plumbing
@@ -23,9 +23,9 @@ class TestBrowserOrder(TileTestCase):
 
         @plumbing(
             AppNode,
-            Adopt,
+            MappingAdopt,
             DefaultInit,
-            Nodify,
+            MappingNode,
             DictStorage)
         class UnorderedNode(object):
             pass
