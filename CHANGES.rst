@@ -4,6 +4,9 @@ Changes
 1.0.5 (unreleased)
 ------------------
 
+- Remove usage of ``Nodespaces`` behavior.
+  [rnix]
+
 - Replace deprecated use of ``Nodify`` by ``MappingNode``.
   [rnix]
 

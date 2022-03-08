@@ -68,7 +68,6 @@ the class directly.
         behaviors.AsAttrAccess,
         behaviors.MappingConstraints,
         behaviors.MappingAdopt,
-        behaviors.Nodespaces,
         behaviors.Attributes,
         behaviors.DefaultInit,
         behaviors.MappingNode,
