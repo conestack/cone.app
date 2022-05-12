@@ -117,7 +117,7 @@ class TestBrowserContextmenu(TileTestCase):
 
     def test_contextmenu(self):
         with self.layer.authenticated('manager'):
-            parent = BaseNode('root')
+            parent = BaseNode(name='root')
             model = parent['model'] = SharingNode()
             model.properties.action_up = True
             model.properties.action_view = True
