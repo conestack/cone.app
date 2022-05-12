@@ -230,11 +230,9 @@ class AppSettings(FactoryNode):
 @implementer(IAdapterNode)
 class AdapterNode(BaseNode):
 
-    def __init__(self, model, name, parent):
-        BaseNode.__init__(self, name)
+    def __init__(self, model, name=None, parent=None):
+        BaseNode.__init__(self, name=name, parent=parent)
         self.model = model
-        self.__name__ = name
-        self.__parent__ = parent
 
     def __iter__(self):
         for key in self.model:
