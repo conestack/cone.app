@@ -110,7 +110,7 @@ class TestModel(NodeTestCase):
         # static factories
         self.assertTrue(str(node['foo']).startswith("<BaseNode object 'foo' at"))
         self.assertTrue(str(node['bar']).startswith("<BaseNode object 'bar' at"))
-        self.expect_error(KeyError, lambda: node['baz'])
+        self.expectError(KeyError, lambda: node['baz'])
         self.assertEqual(list([it for it in node]), ['foo', 'bar'])
         self.assertTrue(IInvalidate.providedBy(node))
         self.assertEqual(node.values(), [node['foo'], node['bar']])
@@ -373,19 +373,19 @@ class TestModel(NodeTestCase):
         node[child.name][sub.name] = sub
         sub = UUIDAsNameNode()
         node[child.name][sub.name] = sub
-        self.check_output("""\
+        self.checkOutput("""\
         <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
             <class '...UUIDAsNameNode'>: ...
             <class '...UUIDAsNameNode'>: ...
         """, node.treerepr())
 
-        err = self.expect_error(RuntimeError, node[child.name].copy)
+        err = self.expectError(RuntimeError, node[child.name].copy)
         expected = 'Shallow copy useless on UUID aware node trees, use deepcopy.'
         self.assertEqual(str(err), expected)
 
         copy = child.deepcopy()
-        self.check_output("""\
+        self.checkOutput("""\
         <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
@@ -514,7 +514,7 @@ class TestModel(NodeTestCase):
         self.assertTrue(props.get('viewprotected') is None)
         self.assertTrue(props.get('unprotected'))
 
-        err = self.expect_error(KeyError, lambda: props['viewprotected'])
+        err = self.expectError(KeyError, lambda: props['viewprotected'])
         expected = '"No permission to access \'viewprotected\'"'
         self.assertEqual(str(err).strip('u'), expected)
 
@@ -697,7 +697,7 @@ class TestModel(NodeTestCase):
             ['effective', 'empty', 'keywords', 'dictlike', 'bar']
         )
 
-        err = self.expect_error(
+        err = self.expectError(
             KeyError,
             lambda: props.__delitem__('inexistent')
         )
@@ -864,7 +864,7 @@ class TestModel(NodeTestCase):
 
         # Test ``__getitem__``
         self.assertEqual(props['foo'], u'foo')
-        self.expect_error(KeyError, lambda: props['inexistent'])
+        self.expectError(KeyError, lambda: props['inexistent'])
 
         # Test ``get``
         self.assertEqual(props.get('foo'), u'foo')
@@ -875,7 +875,7 @@ class TestModel(NodeTestCase):
         self.assertFalse('inexistent' in props)
 
         # Delete property
-        err = self.expect_error(KeyError, lambda: props.__delitem__('inexistent'))
+        err = self.expectError(KeyError, lambda: props.__delitem__('inexistent'))
         expected = "'property inexistent does not exist'"
         self.assertEqual(str(err).strip('u'), expected)
 

@@ -74,7 +74,7 @@ class TestUtils(NodeTestCase):
         self.assertEqual(helper.w_value(False), u'False')
 
     def test_timestamp(self):
-        self.check_output("""
+        self.checkOutput("""
         datetime.datetime(..., ..., ..., ..., ..., ..., ...)
         """, repr(timestamp()))
 

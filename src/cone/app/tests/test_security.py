@@ -257,7 +257,7 @@ class SecurityTest(NodeTestCase):
             pass
 
         node = PrincipalACLNode()
-        err = self.expect_error(NotImplementedError, lambda: node.__acl__)
+        err = self.expectError(NotImplementedError, lambda: node.__acl__)
         expected = (
             'Abstract ``PrincipalACL`` does not implement ``principal_roles``.'
         )
@@ -490,7 +490,7 @@ class SecurityTest(NodeTestCase):
 
         authenticate(self.layer.new_request(), 'foo', 'foo')
 
-        self.check_output("""
+        self.checkOutput("""
         <LogRecord: cone.app, ..., ...security.py, ...,
         "Authentication plugin <... 'object'> raised an Exception while trying
         to authenticate: 'object' object has no attribute 'users'">
@@ -504,7 +504,7 @@ class SecurityTest(NodeTestCase):
             )
 
         groups_callback('foo', self.layer.new_request())
-        self.check_output("""
+        self.checkOutput("""
         <LogRecord: cone.app, 40,
         ...security.py, ..., "'object' object has no attribute 'users'">
         """, str(handler.record))

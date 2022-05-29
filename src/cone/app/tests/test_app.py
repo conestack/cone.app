@@ -59,7 +59,7 @@ class TestApp(NodeTestCase):
         root = cone.app.get_root()
         self.assertTrue('dummy' in root.factories.keys())
 
-        err = self.expect_error(
+        err = self.expectError(
             ValueError,
             lambda: cone.app.register_plugin('dummy', BaseNode)
         )
@@ -73,7 +73,7 @@ class TestApp(NodeTestCase):
         root = cone.app.get_root()
         self.assertTrue('dummy' in root['settings'].factories.keys())
 
-        err = self.expect_error(
+        err = self.expectError(
             ValueError,
             lambda: cone.app.register_plugin_config('dummy', BaseNode)
         )
