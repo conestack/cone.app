@@ -108,43 +108,73 @@ resources.add(wr.StyleResource(
 ))
 
 
+def register_resources_view(config, module, name, directory):
+    print(config, module, name, directory)
+    resources_view = static_view(directory, use_subpath=True)
+    view_name = '{}_static_view'.format(name.replace('-', '_').replace('.', '_'))
+    setattr(module, view_name, resources_view)
+    view_path = 'cone.app.browser.resources.{}'.format(view_name)
+    config.add_view(view_path, name=name, context=AppResources)
+
+
 def configure_treibstoff_resources(settings, config):
     treibstoff_resources = copy.deepcopy(treibstoff.resources)
     resources.add(treibstoff_resources)
     for member in treibstoff_resources.members:
         member.path = 'resources/{}'.format(member.path)
-    resources_directory = treibstoff_resources.directory
-    resources_view = static_view(resources_directory, use_subpath=True)
-    setattr(sys.modules[__name__], 'treibstoff_static_view', resources_view)
-    view_path = 'cone.app.browser.resources.treibstoff_static_view'
-    config.add_view(view_path, name='treibstoff', context=AppResources)
+    register_resources_view(
+        config,
+        sys.modules[__name__],
+        'treibstoff',
+        treibstoff_resources.directory
+    )
+
+
+class YafowilResourceInclude(object):
+
+    def __init__(self, settings):
+        resources_public = settings.get('yafowil.resources_public')
+        self.resources_public = resources_public in ['1', 'True', 'true']
+
+    def __call__(self):
+        if self.resources_public:
+            return True
+        return include_authenticated()
 
 
 def configure_yafowil_resources(settings, config):
     configure_factory('bootstrap3')
-    yafowil_resources_public = settings.get('yafowil.resources_public')
-    yafowil_resources_public = yafowil_resources_public in ['1', 'True', 'true']
+    include = YafowilResourceInclude(settings)
     yafowil_resources = factory.get_resources()
     module = sys.modules[__name__]
     for group in yafowil_resources.members:
-        if group.name == 'yafowil.bootstrap':
-            continue
         resources.add(group)
         for script in group.scripts:
             script.path = 'resources/{}'.format(script.path)
+            script.include = include
         for style in group.styles:
             style.path = 'resources/{}'.format(style.path)
-        resources_view = static_view(group.directory, use_subpath=True)
-        view_name = '{}_static_view'.format(group.name.replace('-', '_'))
-        setattr(module, view_name, resources_view)
-        view_path = 'cone.app.browser.resources.{}'.format(view_name)
-        config.add_view(view_path, name=group.name, context=AppResources)
+            style.include = include
+        register_resources_view(config, module, group.path, group.directory)
+
+
+def configure_duplicate_resources():
+    seen = []
+    for script in resources.scripts:
+        if script.name in seen:
+            script.include = False
+            seen.append(script.name)
+    for style in resources.styles:
+        if style.name in seen:
+            style.include = False
+            seen.append(style.name)
 
 
 def configure_resources(settings, config):
     config.add_view(cone_static_view, name='cone', context=AppResources)
     configure_treibstoff_resources(settings, config)
     configure_yafowil_resources(settings, config)
+    configure_duplicate_resources()
 
 
 def bdajax_warning(attr):
