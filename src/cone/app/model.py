@@ -24,6 +24,7 @@ from node.behaviors import Lifecycle
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingConstraints
 from node.behaviors import MappingNode
+from node.behaviors import Node
 from node.behaviors import OdictStorage
 from node.behaviors import Schema
 from node.behaviors import UUIDAware
@@ -225,6 +226,12 @@ class AppSettings(FactoryNode):
         metadata = Metadata()
         metadata.title = _('settings', default='Settings')
         return metadata
+
+
+@plumbing(AppNode, Node)
+class AppResources(object):
+    """Traversal context for static resources.
+    """
 
 
 @implementer(IAdapterNode)

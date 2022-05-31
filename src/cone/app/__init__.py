@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
+from cone.app.browser.resources import configure_resources
 from cone.app.interfaces import IApplicationNode
+from cone.app.model import AppResources
 from cone.app.model import AppRoot
 from cone.app.model import AppSettings
 from cone.app.model import LayoutConfig
@@ -15,8 +17,6 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.static import static_view
 from pyramid.traversal import ResourceTreeTraverser
-from treibstoff import static as treibstoff_static
-from yafowil.resources import YafowilResources as YafowilResourcesBase
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 import importlib
@@ -40,79 +40,6 @@ cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
 cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
-
-# XXX: move resource registration to browser package
-# XXX: support developmenet and production mode
-
-# JS resources
-cfg.js = Properties()
-cfg.js.public = [
-    'static/cone.public.js'
-]
-cfg.js.protected = [
-    'static/cone.protected.js'
-]
-
-# CSS Resources
-cfg.css = Properties()
-
-# development
-cfg.css.public = [
-    'static/jqueryui/jquery-ui-1.10.3.custom.css',
-    'static/bootstrap/css/bootstrap.css',
-    'static/bootstrap/css/bootstrap-theme.css',
-    'static/ionicons/css/ionicons.css',
-    'static/typeahead/typeahead.css',
-    'treibstoff-static/treibstoff.css',
-    'static/styles.css'
-]
-
-# production
-# cfg.css.public = [
-#     'static/jqueryui/jquery-ui-1.10.3.custom.css',
-#     'static/bootstrap/css/bootstrap.min.css',
-#     'static/bootstrap/css/bootstrap-theme.min.css',
-#     'static/ionicons/css/ionicons.css',
-#     'static/typeahead/typeahead.css',
-#     'treibstoff-static/treibstoff.css',
-#     'static/styles.css'
-# ]
-
-cfg.css.protected = list()
-
-# JS and CSS Assets to publish merged
-cfg.merged = Properties()
-cfg.merged.js = Properties()
-
-# development
-cfg.merged.js.public = [
-    (browser.static_resources, 'jquery-1.9.1.js'),
-    (browser.static_resources, 'jquery.migrate-1.2.1.js'),
-    (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.js'),
-    (browser.static_resources, 'bootstrap/js/bootstrap.js'),
-    (browser.static_resources, 'typeahead/typeahead.bundle.js')
-]
-
-# production
-# cfg.merged.js.public = [
-#     (browser.static_resources, 'jquery-1.9.1.min.js'),
-#     (browser.static_resources, 'jquery.migrate-1.2.1.min.js'),
-#     (browser.static_resources, 'jqueryui/jquery-ui-1.10.3.custom.min.js'),
-#     (browser.static_resources, 'bootstrap/js/bootstrap.min.js'),
-#     (browser.static_resources, 'typeahead/typeahead.bundle.js')
-# ]
-
-cfg.merged.js.protected = list()
-
-cfg.merged.css = Properties()
-cfg.merged.css.public = list()
-cfg.merged.css.protected = list()
-
-cfg.merged.print_css = Properties()
-cfg.merged.print_css.public = [
-    (browser.static_resources, 'print.css')
-]
-cfg.merged.print_css.protected = list()
 
 
 class layout_config(object):
@@ -177,6 +104,7 @@ def configure_root(root, settings):
 def default_root_node_factory(settings):
     root = AppRoot()
     root.factories['settings'] = AppSettings
+    root.factories['resources'] = AppResources
     configure_root(root, settings)
     return root
 
@@ -244,55 +172,6 @@ def auth_tkt_factory(**kwargs):
 
 def acl_factory(**kwargs):
     return ACLAuthorizationPolicy()
-
-
-cfg.yafowil = Properties()
-cfg.yafowil.js_skip = set()
-cfg.yafowil.css_skip = set()
-
-# ignore bootstrap dependencies delivered by yafowil.bootstrap
-cfg.yafowil.js_skip.add('bootstrap.dependencies')
-cfg.yafowil.css_skip.add('bootstrap.dependencies')
-
-
-class YafowilResources(YafowilResourcesBase):
-
-    def __init__(self, js_skip=[], css_skip=[], config=None):
-        self.config = config
-        super(YafowilResources, self).__init__(
-            js_skip=js_skip,
-            css_skip=css_skip
-        )
-
-    def configure_resource_directory(self, plugin_name, resourc_edir):
-        app = sys.modules[__name__]
-        resources_view = static_view(resourc_edir, use_subpath=True)
-        view_name = '%s_resources' % plugin_name.replace('.', '_')
-        setattr(app, view_name, resources_view)
-        view_path = 'cone.app.%s' % view_name
-        resource_base = '++resource++%s' % plugin_name
-        self.config.add_view(view_path, name=resource_base)
-        return resource_base
-
-
-def configure_yafowil_addon_resources(config, public):
-    resources = YafowilResources(
-        js_skip=cfg.yafowil.js_skip,
-        css_skip=cfg.yafowil.css_skip,
-        config=config
-    )
-    js_resources = cfg.js.public if public else cfg.js.protected
-    css_resources = cfg.css.public if public else cfg.css.protected
-    for js in reversed(resources.js_resources):
-        js_resources.insert(0, js)
-    for css in resources.css_resources:
-        css_resources.insert(0, css)
-
-
-def configure_treibstoff_resources():
-    # treibstoff needs to be loaded before resources depending on it order to
-    # avoid double binding on document ready
-    cfg.js.public.insert(0, 'treibstoff-static/treibstoff.bundle.js')
 
 
 @adapter(IApplicationNode)
@@ -417,9 +296,8 @@ def main(global_config, **settings):
     # XXX: robots.txt
     # XXX: humans.txt
 
-    # register static resources
-    config.add_view(treibstoff_static, name='treibstoff-static')
-    config.add_view(browser.static_resources, name='static')
+    # configure static resources
+    configure_resources(settings, config)
 
     # scan browser package
     config.scan(browser)
@@ -476,18 +354,6 @@ def main(global_config, **settings):
     group_display_attr = settings.get('ugm.group_display_attr')
     if group_display_attr:
         ugm_backend.group_display_attr = group_display_attr
-
-    # register yafowil static resources
-    # done after addon config - addon code may disable yafowil resource groups
-    # XXX: ``yafowil.resources_public`` is a temporary hack and stays
-    # undocumented. In 1.1. ``webresource`` will be used for resource
-    # registration and resource delivery configuration.
-    yafowil_resources_public = settings.get('yafowil.resources_public')
-    yafowil_resources_public = yafowil_resources_public in ['1', 'True', 'true']
-    configure_yafowil_addon_resources(config, yafowil_resources_public)
-
-    # ensure treibstoff resources gets loaded before resources depending on it
-    configure_treibstoff_resources()
 
     # end configuration
     config.end()

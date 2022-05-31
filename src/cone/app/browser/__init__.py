@@ -4,14 +4,10 @@ from plumber import Behavior
 from plumber import default
 from plumber import plumb
 from pyramid.response import Response
-from pyramid.static import static_view
 from pyramid.view import view_config
 import cone.app
 import os
 import yafowil.loader  # noqa
-
-
-static_resources = static_view('static', use_subpath=True)
 
 
 def render_main_template(model, request, contenttile='content'):

@@ -14,8 +14,10 @@ if [ -x "$(which python)" ]; then
     ./py2/bin/pip install https://github.com/conestack/node/archive/master.zip
     ./py2/bin/pip install https://github.com/conestack/node.ext.ugm/archive/master.zip
     ./py2/bin/pip install https://github.com/conestack/yafowil/archive/master.zip
+    ./py2/bin/pip install https://github.com/conestack/yafowil.bootstrap/archive/2.0.zip
     ./py2/bin/pip install https://github.com/conestack/cone.tile/archive/master.zip
     ./py2/bin/pip install https://github.com/conestack/treibstoff/archive/master.zip
+    ./py2/bin/pip install https://github.com/conestack/webresource/archive/master.zip
     ./py2/bin/pip install -e .[test]
 fi
 if [ -x "$(which python3)" ]; then
@@ -30,7 +32,9 @@ if [ -x "$(which python3)" ]; then
     ./py3/bin/pip install https://github.com/conestack/node/archive/master.zip
     ./py3/bin/pip install https://github.com/conestack/node.ext.ugm/archive/master.zip
     ./py3/bin/pip install https://github.com/conestack/yafowil/archive/master.zip
+    ./py3/bin/pip install https://github.com/conestack/yafowil.bootstrap/archive/2.0.zip
     ./py3/bin/pip install https://github.com/conestack/cone.tile/archive/master.zip
-    ./py2/bin/pip install https://github.com/conestack/treibstoff/archive/master.zip
+    ./py3/bin/pip install https://github.com/conestack/treibstoff/archive/master.zip
+    ./py3/bin/pip install https://github.com/conestack/webresource/archive/master.zip
     ./py3/bin/pip install -e .[test,docs]
 fi
