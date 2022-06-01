@@ -296,9 +296,6 @@ def main(global_config, **settings):
     # XXX: robots.txt
     # XXX: humans.txt
 
-    # configure static resources
-    configure_resources(settings, config)
-
     # scan browser package
     config.scan(browser)
 
@@ -333,6 +330,10 @@ def main(global_config, **settings):
                 filtered_hooks.append(hook)
     for hook in filtered_hooks:
         hook(config, global_config, settings)
+
+    # configure static resources
+    # this is done after main hooks, so plugins can add their resources
+    configure_resources(settings, config)
 
     # load and initialize UGM
     backend_name = settings.get('ugm.backend')

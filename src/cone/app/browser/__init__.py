@@ -30,7 +30,12 @@ def main_view(model, request):
     return render_main_template(model, request)
 
 
-FAVICON_FILE = os.path.join(os.path.dirname(__file__), 'static', 'favicon.ico')
+FAVICON_FILE = os.path.join(
+    os.path.dirname(__file__),
+    'static',
+    'cone',
+    'favicon.ico'
+)
 
 
 @view_config(route_name='favicon')
