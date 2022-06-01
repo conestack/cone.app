@@ -20,12 +20,12 @@ logger = logging.getLogger('cone.app')
 
 
 resources_dir = os.path.join(os.path.dirname(__file__), 'static')
-resources = wr.ResourceGroup(name='resources')
+resources = wr.ResourceGroup(name='cone.app')
 
 
 # jquery
 jquery_resources = wr.ResourceGroup(
-    name='jquery',
+    name='cone.app-jquery',
     directory=os.path.join(resources_dir, 'jquery'),
     path='jquery',
     group=resources
@@ -39,7 +39,7 @@ jquery_resources.add(wr.ScriptResource(
 
 # bootstrap
 bootstrap_resources = wr.ResourceGroup(
-    name='bootstrap',
+    name='cone.app-bootstrap',
     directory=os.path.join(resources_dir, 'bootstrap'),
     path='bootstrap',
     group=resources
@@ -71,7 +71,7 @@ bootstrap_resources.add(wr.StyleResource(
 
 # typeahead
 typeahead_resources = wr.ResourceGroup(
-    name='typeahead',
+    name='cone.app-typeahead',
     directory=os.path.join(resources_dir, 'typeahead'),
     path='typeahead',
     group=resources
@@ -89,7 +89,7 @@ typeahead_resources.add(wr.StyleResource(
 
 # ionicons
 ionicons_resources = wr.ResourceGroup(
-    name='ionicons',
+    name='cone.app-ionicons',
     directory=os.path.join(resources_dir, 'ionicons'),
     path='ionicons',
     group=resources
@@ -104,7 +104,7 @@ ionicons_resources.add(wr.StyleResource(
 
 # cone
 cone_resources = wr.ResourceGroup(
-    name='cone',
+    name='cone.app-cone',
     directory=os.path.join(resources_dir, 'cone'),
     path='cone',
     group=resources
@@ -214,7 +214,8 @@ def configure_resources(settings, config, development):
             ).format(resource.name))
             resource.remove()
             continue
-        resource.path = 'resources/{}'.format(resource.path)
+        if not resource.path.startswith('resources'):
+            resource.path = 'resources/{}'.format(resource.path)
         resource.include = ResourceInclude(settings, resource.name)
         handled_resources.append(resource.name)
 

@@ -302,7 +302,7 @@ def main(global_config, **settings):
     # this is necessary because tests are written against default yafowil
     # blueprint rendering. in future versions, tests should be adopted to
     # run against adopted blueprint rendering
-    if not os.environ.get('TESTRUN_MARKER'):
+    if not os.environ.get('TESTRUN_MARKER'):  # pragma: no cover
         configure_factory('bootstrap3')
     configure_default_resource_includes(settings)
 

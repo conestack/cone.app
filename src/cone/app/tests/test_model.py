@@ -9,6 +9,7 @@ from cone.app.interfaces import IProperties
 from cone.app.model import AdapterNode
 from cone.app.model import AppEnvironment
 from cone.app.model import AppNode
+from cone.app.model import AppResources
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
@@ -123,6 +124,11 @@ class TestModel(NodeTestCase):
 
         node.invalidate('foo')
         self.assertEqual(node.storage.values(), [node['bar']])
+
+    def test_AppResources(self):
+        resources = AppResources()
+        self.assertFalse(resources.properties.in_navtree)
+        self.assertTrue(resources.properties.skip_mainmenu)
 
     def test_AdapterNode(self):
         toadapt = BaseNode()
