@@ -20,19 +20,25 @@ var cone_public = (function (exports, $, ts) {
                 remote: 'livesearch?term=%QUERY'
             });
             source.initialize();
-            this._render_suggestion_hande = this.render_suggestion.bind(this);
+            this.render_suggestion = this.render_suggestion.bind(this);
             elem.typeahead(null, {
                 name: 'livesearch',
                 displayKey: 'value',
                 source: source.ttAdapter(),
                 templates: {
-                    suggestion: this._render_suggestion_handle
+                    suggestion: this.render_suggestion,
+                    empty: '<div class="empty-message">No search results</div>'
                 }
             });
-            this._on_select_handle = this.on_select.bind(this);
-            elem.off(event).on(event, this._on_select_handle);
+            this.on_select = this.on_select.bind(this);
+            let event = 'typeahead:selected';
+            elem.off(event).on(event, this.on_select);
         }
         on_select(evt, suggestion, dataset) {
+            if (!suggestion.target) {
+                console.log('No suggestion target defined.');
+                return;
+            }
             ts.ajax.trigger(
                 'contextchanged',
                 '#layout',

@@ -179,10 +179,9 @@ class ILiveSearch(Interface):
     def search(request, query):
         """Return search result for query.
 
-        Return value is a list of dicts. Each result dict must contain at least
-        the key ``value`` which contains the display value for the suggestions
-        dropdown. Any other keys are optional, they are accessible in the JS
-        callback when ``typeahead:selected`` gets triggered.
+        Return value is a list of dicts. Each dict is a suggestion. The default
+        live search implementation expects the keys ``value``, ``icon`` and
+        ``target`` in the suggestion dicts.
         """
 
 

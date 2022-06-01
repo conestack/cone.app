@@ -159,7 +159,10 @@ def configure_default_resource_includes(settings):
     # configure default inclusion of yafowil resources
     yafowil_public = settings.get('yafowil.resources_public')
     if yafowil_public not in ['1', 'True', 'true']:
-        yafowil_resources = factory.get_resources(copy_resources=False)
+        yafowil_resources = factory.get_resources(
+            copy_resources=False,
+            exclude=['yafowil.bootstrap']
+        )
         for resource in yafowil_resources.scripts + yafowil_resources.styles:
             set_resource_include(settings, resource.name, 'authenticated')
 
@@ -186,7 +189,7 @@ def configure_resources(settings, config, development):
     resources.add(treibstoff.resources.copy())
 
     # add and configure yafowil resources
-    for group in factory.get_resources().members:
+    for group in factory.get_resources(exclude=['yafowil.bootstrap']).members:
         # hardcoded skipping of yafowil.bootstrap.
         # we deliver our own bootstrap resources
         if group.path == 'bootstrap':
