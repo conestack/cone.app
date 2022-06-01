@@ -161,17 +161,12 @@ class ViewSettingsAction(LinkAction):
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
     icon = 'ion-log-out'
-    action = 'logout:NONE:NONE'
-    path_action = ''
-    path_event = ''
+    bind = None
+    target = None
 
     @property
     def href(self):
         return make_url(self.request, resource='logout')
-
-    @property
-    def path(self):
-        return '/'
 
 
 @tile(name='personaltools',
