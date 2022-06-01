@@ -11,8 +11,8 @@ from pyramid.threadlocal import get_current_request
 from pyramid.view import view_config
 from webob import Response
 from yafowil.base import factory
-from yafowil.bootstrap import configure_factory
 import cone.app
+import logging
 import os
 import pkg_resources
 import sys
@@ -20,11 +20,7 @@ import treibstoff
 import webresource as wr
 
 
-cone_static_view = static_view('static', use_subpath=True)
-
-
-def include_authenticated():
-    return get_current_request().authenticated_userid
+logger = logging.getLogger('cone.app')
 
 
 resources_dir = os.path.join(os.path.dirname(__file__), 'static')
@@ -126,7 +122,6 @@ cone_resources.add(wr.ScriptResource(
 cone_resources.add(wr.ScriptResource(
     name='cone-app-protected-js',
     depends='jquery-js',
-    include=include_authenticated,
     resource='cone.protected.js',
     compressed='cone.protected.min.js'
 ))
@@ -149,37 +144,83 @@ def register_resources_view(config, module, name, directory):
     config.add_view(view_path, name=name, context=AppResources)
 
 
-# class YafowilResourceInclude(object):
-# 
-#     def __init__(self, settings):
-#         resources_public = settings.get('yafowil.resources_public')
-#         self.resources_public = resources_public in ['1', 'True', 'true']
-# 
-#     def __call__(self):
-#         if self.resources_public:
-#             return True
-#         return include_authenticated()
+RESOURCE_INCLUDES_KEY = 'cone._resource_includes'
 
 
-def configure_resources(settings, config):
-    configure_factory('bootstrap3')
+def set_resource_include(settings, name, value):
+    resouce_settings = settings.setdefault(RESOURCE_INCLUDES_KEY, {})
+    resouce_settings[name] = value
+
+
+def configure_default_resource_includes(settings):
+    # configure default inclusion of cone protectes JS
+    set_resource_include(settings, 'cone-app-protected-js', 'authenticated')
+
+    # configure default inclusion of yafowil resources
+    yafowil_public = settings.get('yafowil.resources_public')
+    if yafowil_public not in ['1', 'True', 'true']:
+        yafowil_resources = factory.get_resources(copy_resources=False)
+        for resource in yafowil_resources.scripts + yafowil_resources.styles:
+            set_resource_include(settings, resource.name, 'authenticated')
+
+
+class ResourceInclude(object):
+
+    def __init__(self, settings, name):
+        self.settings = settings
+        self.name = name
+
+    def __call__(self):
+        resouce_settings = self.settings.get(RESOURCE_INCLUDES_KEY, {})
+        include = resouce_settings.get(self.name, True)
+        if include == 'authenticated':
+            return get_current_request().authenticated_userid
+        return include
+
+
+def configure_resources(settings, config, development):
+    # set resource development mode
+    wr.config.development = development
+
+    # add treibstoff resources
     resources.add(treibstoff.resources.copy())
+
+    # add and configure yafowil resources
     for group in factory.get_resources().members:
+        # hardcoded skipping of yafowil.bootstrap.
+        # we deliver our own bootstrap resources
+        if group.path == 'bootstrap':
+            continue
         resources.add(group)
+
+    # register static views for resource groups
     handled_groups = []
     module = sys.modules[__name__]
     for group in resources.members[:]:
+        # ignore subsequent group in case path was defined multiple times.
+        # otherwise we get an error when trying to register static view.
         if group.path in handled_groups:
+            logger.warning((
+                'Resource group for path "{}" already included.'
+                'Skipping "{}"'
+            ).format(group.path, group.name))
             group.remove()
             continue
         register_resources_view(config, module, group.path, group.directory)
         handled_groups.append(group.path)
+
+    # configure scripts and styles contained in resources
     handled_resources = []
     for resource in resources.scripts + resources.styles:
+        # ignore subsequent resource in case path was defined multiple times.
         if resource.name in handled_resources:
+            logger.debug((
+                'Resource with name "{}" already included. Skipping.'
+            ).format(resource.name))
             resource.remove()
             continue
         resource.path = 'resources/{}'.format(resource.path)
+        resource.include = ResourceInclude(settings, resource.name)
         handled_resources.append(resource.name)
 
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
+from cone.app.browser.resources import configure_default_resource_includes
 from cone.app.browser.resources import configure_resources
 from cone.app.interfaces import IApplicationNode
 from cone.app.model import AppResources
@@ -17,6 +18,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.static import static_view
 from pyramid.traversal import ResourceTreeTraverser
+from yafowil.bootstrap import configure_factory
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 import importlib
@@ -296,6 +298,10 @@ def main(global_config, **settings):
     # XXX: robots.txt
     # XXX: humans.txt
 
+    # basic resource configuration
+    configure_factory('bootstrap3')
+    configure_default_resource_includes(settings)
+
     # scan browser package
     config.scan(browser)
 
@@ -333,7 +339,8 @@ def main(global_config, **settings):
 
     # configure static resources
     # this is done after main hooks, so plugins can add their resources
-    configure_resources(settings, config)
+    development = global_config.get('debug') in ['true', 'True', '1']
+    configure_resources(settings, config, development)
 
     # load and initialize UGM
     backend_name = settings.get('ugm.backend')
