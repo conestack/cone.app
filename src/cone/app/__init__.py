@@ -22,6 +22,7 @@ from zope.component import adapter
 from zope.component import getGlobalSiteManager
 import importlib
 import logging
+import os
 import pyramid_chameleon
 import pyramid_zcml
 import threading
@@ -67,10 +68,10 @@ class DefaultLayoutConfig(LayoutConfig):
     def __init__(self, model=None, request=None):
         super(DefaultLayoutConfig, self).__init__(model=model, request=request)
         self.mainmenu = True
-        self.mainmenu_fluid = False
+        self.mainmenu_fluid = True
         self.livesearch = True
         self.personaltools = True
-        self.columns_fluid = False
+        self.columns_fluid = True
         self.pathbar = True
         self.sidebar_left = ['navtree']
         self.sidebar_left_grid_width = 3
@@ -297,7 +298,12 @@ def main(global_config, **settings):
     # XXX: humans.txt
 
     # basic resource configuration
-    configure_factory('bootstrap3')
+    # skip configuration of yafowil.bootstrap if tests running.
+    # this is necessary because tests are written against default yafowil
+    # blueprint rendering. in future versions, tests should be adopted to
+    # run against adopted blueprint rendering
+    if not os.environ.get('TESTRUN_MARKER'):
+        configure_factory('bootstrap3')
     configure_default_resource_includes(settings)
 
     # scan browser package

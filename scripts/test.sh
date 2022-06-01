@@ -6,7 +6,7 @@ TEST="bin/python -m cone.app.tests.__init__"
 
 clear
 
-if [ -x "$(which python)" ]; then
+if [ -x "$(which python2)" ]; then
     ./py2/$TEST
 fi
 

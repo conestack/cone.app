@@ -186,10 +186,6 @@ def configure_resources(settings, config, development):
 
     # add and configure yafowil resources
     for group in factory.get_resources(exclude=['yafowil.bootstrap']).members:
-        # hardcoded skipping of yafowil.bootstrap.
-        # we deliver our own bootstrap resources
-        if group.path == 'bootstrap':
-            continue
         resources.add(group)
 
     # register static views for resource groups
