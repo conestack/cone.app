@@ -1,4 +1,4 @@
-(function (exports, $, ts) {
+var cone_protected = (function (exports, $, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -451,6 +451,34 @@
         }
     }
 
+    class Translation {
+        static initialize(context) {
+            $('.translation-nav', context).each(function() {
+                new Translation($(this));
+            });
+        }
+        constructor(nav_elem) {
+            this.nav_elem = nav_elem;
+            this.fields_elem = nav_elem.next();
+            this.show_lang_handle = this.show_lang_handle.bind(this);
+            $('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($('li.error', nav_elem).length) {
+                $('li.error:first > a', nav_elem).click();
+            } else {
+                $('li.active > a', nav_elem).click();
+            }
+            this.fields_elem.show();
+        }
+        show_lang_handle(evt) {
+            evt.preventDefault();
+            this.nav_elem.children().removeClass('active');
+            this.fields_elem.children().hide();
+            let elem = $(evt.currentTarget);
+            elem.parent().addClass('active');
+            $(elem.attr('href'), this.fields_elem).show();
+        }
+    }
+
     class Selectable {
         constructor(options) {
             this.options = options;
@@ -592,6 +620,7 @@
         ts.ajax.register(SettingsTabs.initialize, true);
         ts.ajax.register(Sharing.initialize, true);
         ts.ajax.register(TableToolbar.initialize, true);
+        ts.ajax.register(Translation.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -607,6 +636,7 @@
     exports.SettingsTabs = SettingsTabs;
     exports.Sharing = Sharing;
     exports.TableToolbar = TableToolbar;
+    exports.Translation = Translation;
     exports.batcheditems_filter_binder = batcheditems_filter_binder;
     exports.batcheditems_handle_filter = batcheditems_handle_filter;
     exports.batcheditems_size_binder = batcheditems_size_binder;
@@ -628,4 +658,4 @@
 
     return exports;
 
-}({}, jQuery, treibstoff));
+})({}, jQuery, treibstoff);

@@ -3,7 +3,14 @@ import {terser} from 'rollup-plugin-terser';
 
 const out_dir = 'src/cone/app/browser/static/cone';
 
-const protected_outro = `
+const default_outro = `
+if (window.cone === undefined) {
+    window.cone = {};
+}
+Object.assign(window.cone, exports);
+`
+
+const protected_outro = default_outro + `
 window.createCookie = createCookie;
 window.readCookie = readCookie;
 `;
@@ -24,7 +31,7 @@ const create_bundle = function(name, globals, outro, debug) {
         input: `js/src/bundles/${name}.js`,
         plugins: [cleanup()],
         output: [{
-            name: 'cone',
+            name: `cone_${name}`,
             file: `${out_dir}/cone.${name}.js`,
             format: 'iife',
             outro: outro,
@@ -38,7 +45,7 @@ const create_bundle = function(name, globals, outro, debug) {
     };
     if (debug !== true) {
         conf.output.push({
-            name: 'cone',
+            name: `cone_${name}`,
             file: `${out_dir}/cone.${name}.min.js`,
             format: 'iife',
             plugins: [terser()],
@@ -53,7 +60,7 @@ const create_bundle = function(name, globals, outro, debug) {
 export default args => {
     let debug = args.configDebug;
     return [
-        create_bundle('public', public_globals, '', debug),
+        create_bundle('public', public_globals, default_outro, debug),
         create_bundle('protected', protected_globals, protected_outro, debug)
     ];
 };

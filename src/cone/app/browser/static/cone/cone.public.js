@@ -1,4 +1,4 @@
-(function (exports, $, ts) {
+var cone_public = (function (exports, $, ts) {
     'use strict';
 
     class LiveSearch {
@@ -61,4 +61,4 @@
 
     return exports;
 
-}({}, jQuery, treibstoff));
+})({}, jQuery, treibstoff);
