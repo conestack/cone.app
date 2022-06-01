@@ -177,21 +177,21 @@ class ResourceInclude(object):
         return include
 
 
-def configure_resources(settings, config, development):
+def configure_resources(settings, config, development, resources_=resources):
     # set resource development mode
     wr.config.development = development
 
     # add treibstoff resources
-    resources.add(treibstoff.resources.copy())
+    resources_.add(treibstoff.resources.copy())
 
     # add and configure yafowil resources
     for group in factory.get_resources(exclude=['yafowil.bootstrap']).members:
-        resources.add(group)
+        resources_.add(group)
 
     # register static views for resource groups
     handled_groups = []
     module = sys.modules[__name__]
-    for group in resources.members[:]:
+    for group in resources_.members[:]:
         # ignore subsequent group in case path was defined multiple times.
         # otherwise we get an error when trying to register static view.
         if group.path in handled_groups:
@@ -206,7 +206,7 @@ def configure_resources(settings, config, development):
 
     # configure scripts and styles contained in resources
     handled_resources = []
-    for resource in resources.scripts + resources.styles:
+    for resource in resources_.scripts + resources_.styles:
         # ignore subsequent resource in case path was defined multiple times.
         if resource.name in handled_resources:
             logger.debug((
@@ -214,6 +214,7 @@ def configure_resources(settings, config, development):
             ).format(resource.name))
             resource.remove()
             continue
+        # prevent double prefixing, happens in tests
         if not resource.path.startswith('resources'):
             resource.path = 'resources/{}'.format(resource.path)
         resource.include = ResourceInclude(settings, resource.name)
