@@ -1,6 +1,6 @@
 process.env.CHROME_BIN = '/usr/bin/chromium';
 
-const node_modules = '../node_modules';
+const node_modules = '../../node_modules';
 
 const jquery_files = [{
     pattern: `${node_modules}/jquery/src/**/*.js`,
@@ -15,11 +15,11 @@ const treibstoff_files = [{
 }];
 
 const test_files = [{
-    pattern: '../js/src/*.js',
+    pattern: '../src/*.js',
     type: 'module',
     included: false
 }, {
-    pattern: '../js/tests/test_*.js',
+    pattern: '../tests/test_*.js',
     type: 'module'
 }];
 
@@ -31,13 +31,14 @@ const files = [].concat(
 
 let preprocessors = {};
 preprocessors[`${node_modules}/treibstoff/src/**/*.js`] = ['module-resolver'];
-preprocessors['../js/src/*.js'] = ['coverage', 'module-resolver'];
-preprocessors['../js/tests/*.js'] = ['coverage', 'module-resolver'];
+preprocessors['../src/*.js'] = ['coverage', 'module-resolver'];
+preprocessors['../tests/*.js'] = ['coverage', 'module-resolver'];
 
 // karma config
 module.exports = function(config) {
     config.set({
         basePath: 'karma',
+        singleRun: true,
         frameworks: [
             'qunit'
         ],

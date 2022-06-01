@@ -233,6 +233,13 @@ class AppResources(object):
     """Traversal context for static resources.
     """
 
+    @instance_property
+    def properties(self):
+        props = Properties()
+        props.in_navtree = False
+        props.skip_mainmenu = True
+        return props
+
 
 @implementer(IAdapterNode)
 class AdapterNode(BaseNode):

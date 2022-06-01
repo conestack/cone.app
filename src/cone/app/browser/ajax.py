@@ -1,5 +1,5 @@
 from cone.app.browser.actions import ActionContext
-from cone.app.browser.resources import bdajax_warning
+from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import format_traceback
 from cone.app.interfaces import ILiveSearch
 from cone.tile import render_tile

@@ -1,7 +1,11 @@
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import AjaxPath
 from cone.app.model import AppResources
 from cone.app.utils import app_config
 from cone.tile import Tile
 from cone.tile import tile
+from pyramid.httpexceptions import HTTPFound
 from pyramid.static import static_view
 from pyramid.threadlocal import get_current_request
 from pyramid.view import view_config
@@ -13,7 +17,6 @@ import os
 import pkg_resources
 import sys
 import treibstoff
-import warnings
 import webresource as wr
 
 
@@ -180,13 +183,6 @@ def configure_resources(settings, config):
         handled_resources.append(resource.name)
 
 
-def bdajax_warning(attr):
-    warnings.warn((
-        '``bdajax.{}`` parameter received. Bdajax is no longer '
-        'supported. Please migrate your code to ``treibstoff``.'
-    ).format(attr))
-
-
 @tile(name='resources', path='templates/resources.pt', permission='login')
 class Resources(Tile):
     """Resources tile."""
@@ -204,3 +200,19 @@ class Resources(Tile):
             wr.ResourceResolver(resources.styles),
             base_url=self.request.application_url
         ).render()
+
+
+@view_config(permission='login', context=AppResources)
+def resources_view(model, request):
+    return HTTPFound(location=request.application_url)
+
+
+@tile(name='content', interface=AppResources, permission='login')
+class ResourcesContent(Tile):
+
+    def render(self):
+        url = self.request.application_url
+        path = AjaxPath(path='/', target=url, event='contextchanged:#layout')
+        event = AjaxEvent(target=url, name='contextchanged', selector='#layout')
+        ajax_continue(self.request, [path, event])
+        return u''
