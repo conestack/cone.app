@@ -1,7 +1,6 @@
 process.env.CHROME_BIN = '/usr/bin/chromium';
 
 const node_modules = '../node_modules';
-const cone_static = '../src/cone/app/browser/static';
 
 const jquery_files = [{
     pattern: `${node_modules}/jquery/src/**/*.js`,

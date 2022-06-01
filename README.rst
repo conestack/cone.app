@@ -32,7 +32,7 @@ The sources are in a GIT DVCS with its main branches at
 Copyright
 =========
 
-- Copyright (c) 2009-2021 Cone Contributors
+- Copyright (c) 2009-2022 Cone Contributors
 
 
 Contributors
