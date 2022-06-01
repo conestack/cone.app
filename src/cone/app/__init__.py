@@ -16,7 +16,6 @@ from node.interfaces import INode
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
-from pyramid.static import static_view
 from pyramid.traversal import ResourceTreeTraverser
 from yafowil.bootstrap import configure_factory
 from zope.component import adapter
@@ -25,7 +24,6 @@ import importlib
 import logging
 import pyramid_chameleon
 import pyramid_zcml
-import sys
 import threading
 
 

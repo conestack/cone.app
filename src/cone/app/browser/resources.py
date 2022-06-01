@@ -1,20 +1,16 @@
-from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxPath
+from cone.app.browser.ajax import ajax_continue
 from cone.app.model import AppResources
-from cone.app.utils import app_config
 from cone.tile import Tile
 from cone.tile import tile
 from pyramid.httpexceptions import HTTPFound
 from pyramid.static import static_view
 from pyramid.threadlocal import get_current_request
 from pyramid.view import view_config
-from webob import Response
 from yafowil.base import factory
-import cone.app
 import logging
 import os
-import pkg_resources
 import sys
 import treibstoff
 import webresource as wr
