@@ -1,9 +1,12 @@
 from cone.app import get_root
 from cone.app import testing
 from cone.app.browser import resources
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import AjaxPath
 from cone.app.model import AppResources
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
+from pyramid.httpexceptions import HTTPFound
 from pyramid.static import static_view
 from yafowil.base import factory
 import os
@@ -342,3 +345,49 @@ class TestBrowserResources(TileTestCase):
                 del resources.test_addon_resources_static_view
             factory.pop_state()
             wr.config.development = False
+
+    def test_Resources(self):
+        model = get_root()
+        request = self.layer.new_request()
+        res = render_tile(model, request, 'resources')
+
+        self.checkOutput("""
+        <!-- stylesheets -->
+        <link ...
+
+        <!-- javascripts -->
+        <script ...
+        """, res)
+
+        self.assertFalse(res.find('cone.protected') > -1)
+
+        with self.layer.authenticated('admin'):
+            res = render_tile(model, request, 'resources')
+
+        self.assertTrue(res.find('cone.protected') > -1)
+
+    def test_resources_view(self):
+        model = get_root()
+        request = self.layer.new_request()
+        res = resources.resources_view(model, request)
+
+        self.assertIsInstance(res, HTTPFound)
+        self.assertEqual(res.location, 'http://example.com')
+
+    def test_ResourcesContent(self):
+        model = get_root()['resources']
+        request = self.layer.new_request()
+        render_tile(model, request, 'content')
+        continuation = request.environ['cone.app.continuation']
+
+        self.assertEqual(len(continuation), 2)
+        self.assertIsInstance(continuation[0], AjaxPath)
+        self.assertIsInstance(continuation[1], AjaxEvent)
+
+        self.assertEqual(continuation[0].path, '/')
+        self.assertEqual(continuation[0].target, 'http://example.com')
+        self.assertEqual(continuation[0].event, 'contextchanged:#layout')
+
+        self.assertEqual(continuation[1].target, 'http://example.com')
+        self.assertEqual(continuation[1].name, 'contextchanged')
+        self.assertEqual(continuation[1].selector, '#layout')
