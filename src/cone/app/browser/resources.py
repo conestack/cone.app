@@ -177,9 +177,16 @@ class ResourceInclude(object):
         return include
 
 
+# the configured resources which gets delivered
+configured_resources = None
+
+
 def configure_resources(settings, config, development, resources_=resources):
     # set resource development mode
     wr.config.development = development
+
+    global configured_resources
+    configured_resources = resources_ = resources_.copy()
 
     # add treibstoff resources
     resources_.add(treibstoff.resources.copy())
@@ -214,9 +221,7 @@ def configure_resources(settings, config, development, resources_=resources):
             ).format(resource.name))
             resource.remove()
             continue
-        # prevent double prefixing, happens in tests
-        if not resource.path.startswith('resources'):
-            resource.path = 'resources/{}'.format(resource.path)
+        resource.path = 'resources/{}'.format(resource.path)
         resource.include = ResourceInclude(settings, resource.name)
         handled_resources.append(resource.name)
 
@@ -227,15 +232,17 @@ class Resources(Tile):
 
     @property
     def rendered_scripts(self):
+        global configured_resources
         return wr.ResourceRenderer(
-            wr.ResourceResolver(resources.scripts),
+            wr.ResourceResolver(configured_resources.scripts),
             base_url=self.request.application_url
         ).render()
 
     @property
     def rendered_styles(self):
+        global configured_resources
         return wr.ResourceRenderer(
-            wr.ResourceResolver(resources.styles),
+            wr.ResourceResolver(configured_resources.styles),
             base_url=self.request.application_url
         ).render()
 
