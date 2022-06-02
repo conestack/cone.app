@@ -341,11 +341,6 @@ def main(global_config, **settings):
     for hook in filtered_hooks:
         hook(config, global_config, settings)
 
-    # configure static resources
-    # this is done after main hooks, so plugins can add their resources
-    development = global_config.get('debug') in ['true', 'True', '1']
-    configure_resources(settings, config, development)
-
     # load and initialize UGM
     backend_name = settings.get('ugm.backend')
     # B/C
@@ -366,6 +361,11 @@ def main(global_config, **settings):
     group_display_attr = settings.get('ugm.group_display_attr')
     if group_display_attr:
         ugm_backend.group_display_attr = group_display_attr
+
+    # configure static resources
+    # this is done after main hooks, so plugins can add their resources
+    development = global_config.get('debug') in ['true', 'True', '1']
+    configure_resources(settings, config, development)
 
     # end configuration
     config.end()
