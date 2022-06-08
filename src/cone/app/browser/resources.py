@@ -148,6 +148,9 @@ def set_resource_include(settings, name, value):
     resouce_settings[name] = value
 
 
+DEFAULT_EXCLUDES = ['yafowil.bootstrap']
+
+
 def configure_default_resource_includes(settings):
     # configure default inclusion of cone protectes JS
     set_resource_include(settings, 'cone-app-protected-js', 'authenticated')
@@ -157,7 +160,7 @@ def configure_default_resource_includes(settings):
     if yafowil_public not in ['1', 'True', 'true']:
         yafowil_resources = factory.get_resources(
             copy_resources=False,
-            exclude=['yafowil.bootstrap']
+            exclude=DEFAULT_EXCLUDES
         )
         for resource in yafowil_resources.scripts + yafowil_resources.styles:
             set_resource_include(settings, resource.name, 'authenticated')
@@ -192,7 +195,7 @@ def configure_resources(settings, config, development, resources_=resources):
     resources_.add(treibstoff.resources.copy())
 
     # add and configure yafowil resources
-    for group in factory.get_resources(exclude=['yafowil.bootstrap']).members:
+    for group in factory.get_resources(exclude=DEFAULT_EXCLUDES).members:
         resources_.add(group)
 
     # register static views for resource groups
@@ -206,6 +209,13 @@ def configure_resources(settings, config, development, resources_=resources):
                 'Resource group for path "{}" already included.'
                 'Skipping "{}"'
             ).format(group.path, group.name))
+            group.remove()
+            continue
+        if not group.path or not group.directory:  # pragma: no cover
+            logger.warning((
+                'Resource group "{}" path or directory '
+                'missing. Skip configuration'
+            ).format(group.name))
             group.remove()
             continue
         register_resources_view(config, module, group.path, group.directory)
