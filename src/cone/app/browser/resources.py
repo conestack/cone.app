@@ -123,7 +123,7 @@ cone_resources.add(wr.ScriptResource(
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-css',
-    resource='cone.app.styles.css'
+    resource='cone.app.css'
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-print-css',

@@ -127,7 +127,7 @@ class TestBrowserResources(TileTestCase):
 
         self.assertTrue(styles[0].directory.endswith(np('/static/cone')))
         self.assertEqual(styles[0].path, 'cone')
-        self.assertEqual(styles[0].file_name, 'cone.app.styles.css')
+        self.assertEqual(styles[0].file_name, 'cone.app.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
 
         self.assertTrue(styles[1].directory.endswith(np('/static/cone')))
