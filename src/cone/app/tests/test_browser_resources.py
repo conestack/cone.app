@@ -188,24 +188,21 @@ class TestBrowserResources(TileTestCase):
 
             settings = {}
             resources.configure_default_resource_includes(settings)
-            self.assertEqual(settings, {
-                resources.RESOURCE_INCLUDES_KEY: {
-                    'addon-css': 'authenticated',
-                    'addon-js': 'authenticated',
-                    'cone-app-protected-js': 'authenticated'
-                }
-            })
+            includes = settings[resources.RESOURCE_INCLUDES_KEY]
+            self.assertEqual(includes['addon-css'], 'authenticated')
+            self.assertEqual(includes['addon-js'], 'authenticated')
+            self.assertEqual(
+                includes['cone-app-protected-js'],
+                'authenticated'
+            )
 
-            settings = {
-                'yafowil.resources_public': 'true'
-            }
+            settings = {'yafowil.resources_public': 'true'}
             resources.configure_default_resource_includes(settings)
-            self.assertEqual(settings, {
-                'yafowil.resources_public': 'true',
-                resources.RESOURCE_INCLUDES_KEY: {
-                    'cone-app-protected-js': 'authenticated'
-                }
-            })
+            includes = settings[resources.RESOURCE_INCLUDES_KEY]
+            self.assertEqual(
+                includes['cone-app-protected-js'],
+                'authenticated'
+            )
         finally:
             factory.pop_state()
 
