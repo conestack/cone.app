@@ -114,12 +114,12 @@ class TestBrowserResources(TileTestCase):
 
         self.assertTrue(scripts[0].directory.endswith(np('/static/cone')))
         self.assertEqual(scripts[0].path, 'cone')
-        self.assertEqual(scripts[0].file_name, 'cone.public.min.js')
+        self.assertEqual(scripts[0].file_name, 'cone.app.public.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
         self.assertTrue(scripts[1].directory.endswith(np('/static/cone')))
         self.assertEqual(scripts[1].path, 'cone')
-        self.assertEqual(scripts[1].file_name, 'cone.protected.min.js')
+        self.assertEqual(scripts[1].file_name, 'cone.app.protected.min.js')
         self.assertTrue(os.path.exists(scripts[1].file_path))
 
         styles = resources_.styles
@@ -127,12 +127,12 @@ class TestBrowserResources(TileTestCase):
 
         self.assertTrue(styles[0].directory.endswith(np('/static/cone')))
         self.assertEqual(styles[0].path, 'cone')
-        self.assertEqual(styles[0].file_name, 'styles.css')
+        self.assertEqual(styles[0].file_name, 'cone.app.styles.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
 
         self.assertTrue(styles[1].directory.endswith(np('/static/cone')))
         self.assertEqual(styles[1].path, 'cone')
-        self.assertEqual(styles[1].file_name, 'print.css')
+        self.assertEqual(styles[1].file_name, 'cone.app.print.css')
         self.assertTrue(os.path.exists(styles[1].file_path))
 
     def test_register_resources_view(self):

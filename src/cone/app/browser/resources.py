@@ -112,22 +112,22 @@ cone_resources = wr.ResourceGroup(
 cone_resources.add(wr.ScriptResource(
     name='cone-app-public-js',
     depends='typeahead-js',
-    resource='cone.public.js',
-    compressed='cone.public.min.js'
+    resource='cone.app.public.js',
+    compressed='cone.app.public.min.js'
 ))
 cone_resources.add(wr.ScriptResource(
     name='cone-app-protected-js',
     depends='jquery-js',
-    resource='cone.protected.js',
-    compressed='cone.protected.min.js'
+    resource='cone.app.protected.js',
+    compressed='cone.app.protected.min.js'
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-css',
-    resource='styles.css'
+    resource='cone.app.styles.css'
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-print-css',
-    resource='print.css',
+    resource='cone.app.print.css',
     media='print'
 ))
 
