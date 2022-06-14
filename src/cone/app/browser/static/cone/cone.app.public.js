@@ -1,4 +1,4 @@
-var cone_public = (function (exports, $, ts) {
+var cone_app_public = (function (exports, $, ts) {
     'use strict';
 
     class LiveSearch {

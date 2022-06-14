@@ -60,7 +60,7 @@ export class ReferenceHandle {
     }
 
     set_selected_on_ajax_target(elem, selected) {
-        let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+        let target = ts.ajax.parse_target(elem.attr('ajax:target'));
         target.params.selected = selected.join(',');
         let query = new Array();
         for (let name in target.params) {

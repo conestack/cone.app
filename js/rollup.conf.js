@@ -29,8 +29,8 @@ const create_bundle = function(name, globals, outro, debug) {
         input: `js/src/bundles/${name}.js`,
         plugins: [cleanup()],
         output: [{
-            name: `cone_${name}`,
             file: `${out_dir}/cone.app.${name}.js`,
+            name: `cone_app_${name}`,
             format: 'iife',
             outro: outro,
             globals: globals,
@@ -43,8 +43,8 @@ const create_bundle = function(name, globals, outro, debug) {
     };
     if (debug !== true) {
         conf.output.push({
-            name: `cone_${name}`,
             file: `${out_dir}/cone.app.${name}.min.js`,
+            name: `cone_app_${name}`,
             format: 'iife',
             plugins: [terser()],
             outro: outro,

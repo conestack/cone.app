@@ -1,4 +1,4 @@
-var cone_protected = (function (exports, $, ts) {
+var cone_app_protected = (function (exports, $, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -187,7 +187,7 @@ var cone_protected = (function (exports, $, ts) {
             if (elem.hasClass('disabled')) {
                 return;
             }
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
             ts.ajax.action({
                 name: 'paste',
                 mode: 'NONE',
@@ -281,7 +281,7 @@ var cone_protected = (function (exports, $, ts) {
             });
         }
         set_selected_on_ajax_target(elem, selected) {
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
             target.params.selected = selected.join(',');
             let query = new Array();
             for (let name in target.params) {
@@ -395,7 +395,7 @@ var cone_protected = (function (exports, $, ts) {
         load_tab(evt) {
             evt.preventDefault();
             let elem = $(this);
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
             ts.ajax.request({
                 url: target.url,
                 params: target.params,

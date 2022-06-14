@@ -15,7 +15,7 @@ export class SettingsTabs {
     load_tab(evt) {
         evt.preventDefault();
         let elem = $(this);
-        let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+        let target = ts.ajax.parse_target(elem.attr('ajax:target'));
         ts.ajax.request({
             url: target.url,
             params: target.params,

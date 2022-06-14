@@ -102,7 +102,7 @@ export class CopySupport {
         if (elem.hasClass('disabled')) {
             return;
         }
-        let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+        let target = ts.ajax.parse_target(elem.attr('ajax:target'));
         ts.ajax.action({
             name: 'paste',
             mode: 'NONE',
