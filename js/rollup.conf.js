@@ -4,9 +4,7 @@ import {terser} from 'rollup-plugin-terser';
 const out_dir = 'src/cone/app/browser/static/cone';
 
 const default_outro = `
-if (window.cone === undefined) {
-    window.cone = {};
-}
+window.cone = window.cone || {};
 Object.assign(window.cone, exports);
 `
 

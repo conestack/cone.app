@@ -294,7 +294,7 @@ class TestBrowserResources(TileTestCase):
 
             self.assertTrue(wr.config.development)
 
-            self.assertEqual(config.views, [{
+            self.assertEqual(config.views[:3], [{
                 'view_path': 'cone.app.browser.resources.test_resources_static_view',
                 'name': 'test-resources',
                 'context': AppResources
@@ -313,7 +313,6 @@ class TestBrowserResources(TileTestCase):
             self.assertTrue(hasattr(resources, 'test_addon_resources_static_view'))
 
             configured_resources = resources.configured_resources
-            self.assertEqual(len(configured_resources.members), 3)
             self.assertEqual(
                 configured_resources.members[0].name,
                 'test-resources'
@@ -356,12 +355,12 @@ class TestBrowserResources(TileTestCase):
         <script ...
         """, res)
 
-        self.assertFalse(res.find('cone.protected') > -1)
+        self.assertFalse(res.find('cone.app.protected') > -1)
 
         with self.layer.authenticated('admin'):
             res = render_tile(model, request, 'resources')
 
-        self.assertTrue(res.find('cone.protected') > -1)
+        self.assertTrue(res.find('cone.app.protected') > -1)
 
     def test_resources_view(self):
         model = get_root()
