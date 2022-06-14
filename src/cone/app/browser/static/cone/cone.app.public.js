@@ -59,9 +59,7 @@ var cone_public = (function (exports, $, ts) {
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    if (window.cone === undefined) {
-        window.cone = {};
-    }
+    window.cone = window.cone || {};
     Object.assign(window.cone, exports);
 
 
