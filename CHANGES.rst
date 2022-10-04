@@ -4,6 +4,10 @@ Changes
 1.0.5 (unreleased)
 ------------------
 
+- Extend ``yafowil.referencebrowser`` by ``register_array_hooks``, ``array_add``,
+  ``array_index`` methods to enable usage in ``yafowil.widget.array``.
+  [lenadax]
+
 - Use ``get_root`` in ``register_config`` and ``register_entry``.
   [rnix]
 

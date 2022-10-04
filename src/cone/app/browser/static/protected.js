@@ -22,6 +22,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         bdajax.register(cone.sharingbinder.bind(cone), true);
         bdajax.register(cone.copysupportbinder.bind(cone), true);
         var refbrowser = yafowil.referencebrowser;
+        refbrowser.register_array_hooks();
         bdajax.register(refbrowser.browser_binder.bind(refbrowser), true);
         bdajax.register(refbrowser.add_reference_binder.bind(refbrowser));
         bdajax.register(refbrowser.remove_reference_binder.bind(refbrowser));
@@ -471,6 +472,38 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
         referencebrowser: {
 
             target: null,
+
+            register_array_hooks() {
+                if (yafowil.array === undefined) {
+                    return;
+                }
+                $.extend(yafowil.array.hooks.add, {
+                    referencebrowser_add: this.array_add
+                });
+                $.extend(yafowil.array.hooks.index, {
+                    referencebrowser_index: this.array_index
+                });
+            },
+
+            array_add: function(context) {
+                $('.referencebrowser_trigger', context).referencebrowser();
+            },
+
+            array_index: function(row, index) {
+                $('.referencebrowser_trigger', row).each(function() {
+                    let trigger = $(this);
+                    let ref_name = trigger.data('reference-name');
+                    let base_id = yafowil.array.base_id(row);
+                    let base_name = base_id.replace(/\-/g, '.');
+                    ref_name = yafowil.array.set_value_index(
+                        ref_name,
+                        base_name,
+                        index,
+                        '.'
+                    );
+                    trigger.data('reference-name', ref_name);
+                });
+            },
 
             overlay: function() {
                 return $('#ajax-overlay').data('overlay');
