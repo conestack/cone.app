@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0.5 (unreleased)
+1.0.5 (2022-10-06)
 ------------------
 
 - Extend ``yafowil.referencebrowser`` JS by ``register_array_hooks``,
