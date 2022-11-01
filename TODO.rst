@@ -66,7 +66,7 @@ security integration.
 [ ] Use ``BatchedItems`` as base for ``Table``.
 
 [ ] Rename ``cone.app.browser.batch.Batch`` to
-``cone.app.browser.batch.Pagination`` provoding B/C.
+``cone.app.browser.batch.Pagination`` providing B/C.
 
 [ ] Provide a ``form_action`` property on ``cone.app.browser.form.Form``
 considering ``action_resource`` attribute. Consolidate with

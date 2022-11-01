@@ -40,7 +40,7 @@ class IAdapterNode(IApplicationNode):
 
     XXX: - currently designed to adapt nodes, more generic
          - no attrs on this interface
-         - self.context insetad of self.model
+         - self.context instead of self.model
     """
     attrs = Attribute(u'Return self.model.attrs')
 
