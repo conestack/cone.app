@@ -147,7 +147,7 @@ AppRoot
 ``cone.app.model.AppRoot`` derives from :ref:`FactoryNode <model_factory_node>`
 and represents the application model root node.
 
-This node gets instanciated only once on application startup. Every plugin
+This node gets instantiated only once on application startup. Every plugin
 entry point registered with :ref:`register_entry <plugins_application_model>`
 gets written to the ``factories`` attribute of the root node.
 
@@ -432,7 +432,7 @@ used:
   `Ionicons <http://ionicons.com>`_ are shipped and delivered with ``cone.app`` by
   default.
 
-``NodeInfo`` objects are not instanciated directly, instead the
+``NodeInfo`` objects are not instantiated directly, instead the
 ``cone.app.model.node_info`` decorator is used to register node types.
 
 .. code-block:: python

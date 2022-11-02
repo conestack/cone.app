@@ -101,7 +101,7 @@ class WorkflowState(Behavior):
 
 
 class WorkflowACL(Behavior):
-    """Behavior providing ACL's by worfklow state.
+    """Behavior providing ACL's by workflow state.
 
     Requires ``WorkflowState`` behavior.
     """
