@@ -10,29 +10,41 @@ from zope.interface.common.mapping import IReadMapping
 
 
 class ISecured(Interface):
-    """Secured object.
-    """
+    """Secured object."""
     __acl__ = Attribute(u'ACL')
 
 
 class IApplicationEnvironment(Interface):
-    """Application environment.
-    """
+    """Application environment."""
     request = Attribute(u'The current request if any.')
     registry = Attribute(u'The current registry.')
 
 
 class IApplicationNode(ISecured, INode, IAttributes):
-    """Application Node interface.
-    """
+    """Application Node interface."""
     properties = Attribute(u'cone.app.interfaces.IProperties providing object')
     metadata = Attribute(u'cone.app.interfaces.IMetadata implementation')
     nodeinfo = Attribute(u'cone.app.interfaces.INodeInfo providing object')
 
 
+class ILeafNode(IApplicationNode, ILeaf):
+    """Application node with no children."""
+
+    def __getitem__(name):
+        """Raise ``KeyError``"""
+
+    def __setitem__(name, value):
+        """Raise ``KeyError``"""
+
+    def __delitem__(name):
+        """Raise ``KeyError``"""
+
+    def __iter__():
+        """Empty iterator."""
+
+
 class IFactoryNode(IApplicationNode, IChildFactory):
-    """Application node for static children.
-    """
+    """Application node for static children."""
 
 
 class IAdapterNode(IApplicationNode):
@@ -50,8 +62,8 @@ class IAdapterNode(IApplicationNode):
 
 
 class IProperties(IReadMapping):
-    """Interface for providing any kind of properties.
-    """
+    """Interface for providing any kind of properties."""
+
     def __getattr__(name):
         """Return property by attribute access.
 
@@ -69,8 +81,7 @@ class IProperties(IReadMapping):
 
 
 class ILayoutConfig(IProperties):
-    """Layout configuration.
-    """
+    """Layout configuration."""
     mainmenu = Attribute(u'Flag whether to display mainmenu')
     mainmenu_fluid = Attribute(u'Flag whether mainmenu is fluid')
     livesearch = Attribute(u'Flag whether to display livesearch')
@@ -87,13 +98,11 @@ ILayout = ILayoutConfig
 
 
 class IMetadata(IProperties):
-    """Interface for providing metadata for application nodes.
-    """
+    """Interface for providing metadata for application nodes."""
 
 
 class INodeInfo(IProperties):
-    """Interface for providing node information.
-    """
+    """Interface for providing node information."""
     title = Attribute(u'Node meta title.')
     description = Attribute(u'Node meta description.')
     node = Attribute(u'Node implementing class.')
@@ -103,13 +112,11 @@ class INodeInfo(IProperties):
 
 
 class INavigationLeaf(ILeaf):
-    """Marker interface for nodes which have no navigatable children.
-    """
+    """Marker interface for nodes which have no navigatable children."""
 
 
 class IWorkflowState(INode):
-    """Workflow support on nodes.
-    """
+    """Workflow support on nodes."""
     workflow_name = Attribute(u'Name of registered workflow.')
     workflow_tsf = Attribute(u'Translation string factory used to translate '
                              u'states and transitions')
@@ -141,20 +148,18 @@ class IPrincipalACL(ISecured):
 
 
 class IACLAdapter(Interface):
-    """Interface for providing ACL as adapter.
-    """
+    """Interface for providing ACL as adapter."""
     acl = Attribute(u'ACL')
 
 
 class IAdapterACL(ISecured):
-    """ACL from ``IACLAdapter`` on nodes.
-    """
+    """ACL from ``IACLAdapter`` on nodes."""
     default_acl = Attribute(u'Default ACL if no ``IAclAdapter`` found for node')
 
 
 class ICopySupport(INode):
-    """Copysupport for nodes.
-    """
+    """Copysupport for nodes."""
+
     supports_cut = Attribute(u'Supports cut')
     supports_copy = Attribute(u'Supports copy')
     supports_paste = Attribute(u'Supports paste')
@@ -167,14 +172,12 @@ class IUUIDAsName(IUUIDAware):
 
 
 class ITranslation(ISchema):
-    """A translation.
-    """
+    """A translation."""
     value = Attribute(u'The translated value according to the curren language')
 
 
 class ILiveSearch(Interface):
-    """Livesearch adapter.
-    """
+    """Livesearch adapter."""
 
     def search(request, query):
         """Return search result for query.

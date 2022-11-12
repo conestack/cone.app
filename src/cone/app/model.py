@@ -7,6 +7,7 @@ from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
 from cone.app.interfaces import ILayoutConfig
+from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
@@ -166,6 +167,26 @@ class AppNode(Behavior):
             info.node = self.__class__
             info.icon = app_config().default_node_icon
         return info
+
+
+@implementer(ILeafNode)
+class LeafNode(AppNode):
+
+    @default
+    def __getitem__(self, name):
+        raise KeyError(name)
+
+    @default
+    def __setitem__(self, name, value):
+        raise KeyError(name)
+
+    @default
+    def __delitem__(self, name):
+        raise KeyError(name)
+
+    @default
+    def __iter__(self):
+        return iter([])
 
 
 @plumbing(
