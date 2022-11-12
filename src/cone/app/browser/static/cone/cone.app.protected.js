@@ -383,6 +383,30 @@ var cone_app_protected = (function (exports, $, ts) {
             });
         }
     }
+    function referencebrowser_on_array_add(inst, context) {
+        $('.referencebrowser_trigger', context).referencebrowser();
+    }
+    function referencebrowser_on_array_index(inst, row, index) {
+        $('.referencebrowser_trigger', row).each(function() {
+            let trigger = $(this),
+                ref_name = trigger.data('reference-name'),
+                base_id = inst.base_id(row),
+                base_name = base_id.replace(/\-/g, '.');
+            trigger.data('reference-name', inst.set_value_index(
+                ref_name,
+                base_name,
+                index,
+                '.'
+            ));
+        });
+    }
+    $(function() {
+        if (yafowil_array === undefined) {
+            return;
+        }
+        yafowil_array.on_array_event('on_add', referencebrowser_on_array_add);
+        yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
+    });
 
     class SettingsTabs {
         static initialize(context) {
