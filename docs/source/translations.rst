@@ -100,7 +100,7 @@ Python
 ~~~~~~
 
 Defining translation strings in python. A translation string factory must be
-instanciated with the correct i18n domain which is used for creating
+instantiated with the correct i18n domain which is used for creating
 translation strings.
 
 .. code-block:: python

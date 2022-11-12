@@ -24,7 +24,7 @@ For retrieval of users, groups and the assigned roles, ``node.ext.ugm`` is
 used. See :ref:`User and Group Management <user_and_group_management>` for
 details.
 
-By default, unauthenticed access to all application model nodes is prohibited.
+By default, unauthenticated access to all application model nodes is prohibited.
 
 
 Permissions
@@ -70,7 +70,7 @@ The roles which come out of the box with ``cone.app`` are:
   to this role are ``view``.
 
 - **viewer**: This role is supposed to grant users permissions needed to
-  view addidional information the default ``authenticated`` role forbids. By
+  view additional information the default ``authenticated`` role forbids. By
   default, permissions assigned to this role are ``authenticated`` role
   permissions and ``list``.
 

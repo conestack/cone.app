@@ -1,8 +1,19 @@
 Changes
 =======
 
-1.0.5 (unreleased)
+1.0.6 (unreleased)
 ------------------
+
+- Nothing changed yet.
+
+
+1.0.5 (2022-10-06)
+------------------
+
+- Extend ``yafowil.referencebrowser`` JS by ``register_array_hooks``,
+  ``array_add``, ``array_index`` methods to enable usage in
+  ``yafowil.widget.array``.
+  [lenadax]
 
 - Use ``get_root`` in ``register_config`` and ``register_entry``.
   [rnix]

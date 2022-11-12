@@ -363,6 +363,6 @@ Run Application
 
 .. code-block:: sh
 
-    ./bin/pserve serve example.ini
+    ./bin/pserve example.ini
 
 The application is now available at ``localhost:8081``.
