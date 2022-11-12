@@ -3,6 +3,7 @@ from cone.app import cfg
 from cone.app import testing
 from cone.app.compat import configparser
 from cone.app.compat import StringIO
+from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
@@ -14,6 +15,7 @@ from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
 from cone.app.model import get_node_info
 from cone.app.model import LanguageSchema
+from cone.app.model import LeafNode
 from cone.app.model import Metadata
 from cone.app.model import NamespaceUUID
 from cone.app.model import node_info
@@ -33,7 +35,10 @@ from node.behaviors import DictStorage
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingConstraints
 from node.behaviors import MappingNode
+from node.behaviors import Node
+from node.behaviors import NodeInit
 from node.interfaces import IInvalidate
+from node.interfaces import ILeaf
 from node.tests import NodeTestCase
 from odict import odict
 from plumber import plumbing
@@ -99,6 +104,22 @@ class TestModel(NodeTestCase):
         self.assertTrue(info.node is BaseNode)
         self.assertEqual(info.title, "<class 'cone.app.model.BaseNode'>")
         self.assertTrue(info.inexistent is None)
+
+    def test_LeafNode(self):
+        @plumbing(NodeInit, Node, LeafNode)
+        class TestLeafNode(object):
+            pass
+
+        node = TestLeafNode()
+        self.assertTrue(ILeaf.providedBy(node))
+        self.assertTrue(ILeafNode.providedBy(node))
+        with self.assertRaises(KeyError):
+            node['child']
+        with self.assertRaises(KeyError):
+            node['child'] = BaseNode()
+        with self.assertRaises(KeyError):
+            del node['child']
+        self.assertEqual(list(node), [])
 
     def test_FactoryNode(self):
         class TestFactoryNode(FactoryNode):

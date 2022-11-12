@@ -4,7 +4,8 @@ Changes
 1.0.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
+  [rnix]
 
 
 1.0.5 (2022-10-06)
