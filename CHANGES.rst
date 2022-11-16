@@ -4,6 +4,10 @@ Changes
 1.0.6 (unreleased)
 ------------------
 
+- Add ``contents`` tile for application root. Does not display settings and
+  resources nodes.
+  [rnix]
+
 - Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
   [rnix]
 
