@@ -384,7 +384,7 @@ var cone_app_protected = (function (exports, $, ts) {
         }
     }
     function referencebrowser_on_array_add(inst, context) {
-        $('.referencebrowser_trigger', context).referencebrowser();
+        ReferenceBrowserLoader.initialize(context);
     }
     function referencebrowser_on_array_index(inst, row, index) {
         $('.referencebrowser_trigger', row).each(function() {
