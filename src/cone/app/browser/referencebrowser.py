@@ -238,7 +238,7 @@ class ReferenceListing(ContentsTile):
     def referencable_children_link(self):
         return ReferencableChildrenLink(self.table_tile_name, self.table_id)
 
-    @instance_property
+    @property
     def navigable_types(self):
         navigable = self.request.params.get('navigable')
         if not navigable:
@@ -258,11 +258,12 @@ class ReferenceListing(ContentsTile):
 
     def sorted_children(self, sort, order):
         children = super(ReferenceListing, self).sorted_children(sort, order)
-        if not self.navigable_types:
+        navigable_types = self.navigable_types
+        if not navigable_types:
             return children
         return [
             child for child in children
-            if child.node_info_name in self.navigable_types
+            if child.node_info_name in navigable_types
         ]
 
 
