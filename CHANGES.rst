@@ -17,6 +17,9 @@ Changes
   change in ``node.behaviors.UUIDAware.__init__`` in ``node`` 1.2.
   [rnix]
 
+- Add support for defining ``navigable`` types in referencebrowser.
+  [rnix]
+
 - Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
   [rnix]
 
