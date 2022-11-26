@@ -128,6 +128,7 @@ class IOwnerSupport(ISecured):
 
     Plumbs __acl__ property.
     """
+    owner_attribute_name = Attribute(u'Attribute name of the owner field.')
     owner = Attribute(u'User id of node owner')
 
 

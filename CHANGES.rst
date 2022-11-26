@@ -4,14 +4,27 @@ Changes
 1.0.6 (unreleased)
 ------------------
 
+- Introduce ``OwnerSupport.owner_attribute_name`` which defines the
+  attribute name on which the owner is stored.
+  [rnix]
+
+- Introduce ``UUIDAttributeAware.uuid_attribute_name`` which defines the
+  attribute name on which the UUID is stored.
+  [rnix]
+
+- Use ``get`` instead of ``__getitem__`` in ``UUIDAttributeAware.uuid`` to
+  lookup UUID from attributes to prevent ``KeyError`` due to behavioral
+  change in ``node.behaviors.UUIDAware.__init__`` in ``node`` 1.2.
+  [rnix]
+
+- Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
+  [rnix]
+
 - Assing bottom space CSS to prevent fixed footer oberlap to layout container.
   [rnix]
 
 - Add ``contents`` tile for application root. Does not display settings and
   resources nodes.
-  [rnix]
-
-- Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
   [rnix]
 
 

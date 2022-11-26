@@ -306,15 +306,16 @@ class NamespaceUUID(Behavior):
 class UUIDAttributeAware(UUIDAware):
     """UUIDAware deriving behavior storing the uid on node attributes.
     """
+    uuid_attribute_name = default('uuid')
 
     @property
     def uuid(self):
-        return self.attrs['uuid']
+        return self.attrs.get(self.uuid_attribute_name)
 
     @default
     @uuid.setter
     def uuid(self, value):
-        self.attrs['uuid'] = value
+        self.attrs[self.uuid_attribute_name] = value
 
 
 @implementer(IUUIDAsName)

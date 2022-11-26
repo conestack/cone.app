@@ -44,6 +44,7 @@ def make_refbrowser_query(request, **kw):
         'root': request.params['root'],
         'referencable': request.params['referencable'],
         'selected': request.params['selected'],
+        'navigable': request.params['navigable'],
     }
     params.update(kw)
     return make_query(**params)
@@ -224,7 +225,7 @@ class ReferenceListing(ContentsTile):
             'content': 'structure',
         },
     ]
-    query_whitelist = ['root', 'referencable', 'selected']
+    query_whitelist = ['root', 'referencable', 'selected', 'navigable']
 
     @instance_property
     def row_actions(self):
@@ -237,6 +238,13 @@ class ReferenceListing(ContentsTile):
     def referencable_children_link(self):
         return ReferencableChildrenLink(self.table_tile_name, self.table_id)
 
+    @property
+    def navigable_types(self):
+        navigable = self.request.params.get('navigable')
+        if not navigable:
+            return []
+        return navigable.split(',')
+
     def sorted_rows(self, start, end, sort, order):
         children = self.sorted_children(sort, order)
         rows = list()
@@ -247,6 +255,16 @@ class ReferenceListing(ContentsTile):
                 self.referencable_children_link(child, self.request)
             rows.append(row_data)
         return rows
+
+    def sorted_children(self, sort, order):
+        children = super(ReferenceListing, self).sorted_children(sort, order)
+        navigable_types = self.navigable_types
+        if not navigable_types:
+            return children
+        return [
+            child for child in children
+            if child.node_info_name in navigable_types
+        ]
 
 
 def fetch_reference_value(widget, data):
@@ -284,6 +302,13 @@ def wrap_ajax_target(rendered, widget, data):
         referencable = ','.join(referencable)
     if not referencable:
         referencable = ''
+    navigable = widget.attrs['navigable']
+    if callable(navigable):
+        navigable = navigable(widget, data)
+    if type(navigable) in compat.ITER_TYPES:
+        navigable = ','.join(navigable)
+    if not navigable:
+        navigable = ''
     root = widget.attrs['root']
     if callable(root):
         root = root(widget, data)
@@ -297,6 +322,7 @@ def wrap_ajax_target(rendered, widget, data):
         'root': root,
         'referencable': referencable,
         'selected': selected,
+        'navigable': navigable,
     })
     target = '{}{}'.format(target, query)
     attrs = {
@@ -361,7 +387,7 @@ def fetch_reference_label(widget, data):
 
 @managedprops(
     'multivalued', 'vocabulary', 'target',
-    'root', 'referencable', 'lookup')
+    'root', 'referencable', 'lookup', 'navigable')
 def reference_edit_renderer(widget, data):
     if widget.attrs.get('multivalued'):
         prepare_vocab_property(widget, data)
@@ -433,6 +459,13 @@ factory.doc['props']['reference.referencable'] = """\
 Node info name or list of node info names which are referencable. Defaults to
 None which means all objects are referenceable, given they implement
 ``node.interfaces.IUUID`` and provide a node info.
+"""
+
+factory.defaults['reference.navigable'] = None
+factory.doc['props']['reference.navigable'] = """\
+Node info name or list of node info names which are navigable. Defaults to
+None which means all objects are navigable, given they implement provide a
+node info.
 """
 
 factory.defaults['reference.multivalued'] = False
