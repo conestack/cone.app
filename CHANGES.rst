@@ -4,6 +4,11 @@ Changes
 1.0.6 (unreleased)
 ------------------
 
+- Use ``get`` instead of ``__getitem__`` in ``UUIDAttributeAware.uuid`` to
+  lookup UUID from attributes to prevent ``KeyError`` due to behavioral
+  change in ``node.behaviors.UUIDAware.__init__`` in ``node`` 1.2.
+  [rnix]
+
 - Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
   [rnix]
 

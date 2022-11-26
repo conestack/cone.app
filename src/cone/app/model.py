@@ -294,7 +294,7 @@ class UUIDAttributeAware(UUIDAware):
 
     @property
     def uuid(self):
-        return self.attrs['uuid']
+        return self.attrs.get('uuid')
 
     @default
     @uuid.setter
