@@ -250,6 +250,11 @@ class SecurityTest(NodeTestCase):
                 [('Allow', 'role:viewer', ['view'])]
             )
 
+        OwnerSupportNode.owner_attribute_name = 'userid'
+        with self.layer.authenticated('sepp'):
+            node = OwnerSupportNode()
+        self.assertEqual(node.attrs['userid'], 'sepp')
+
     def test_PrincipalACL(self):
         # PrincipalACL is an abstract class. Directly use causes an error
         @plumbing(PrincipalACL)

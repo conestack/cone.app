@@ -195,6 +195,7 @@ acl_registry = ACLRegistry()
 class OwnerSupport(Behavior):
     """Plumbing behavior providing ownership information.
     """
+    owner_attribute_name = default('owner')
 
     @plumb
     def __init__(_next, self, *args, **kw):
@@ -215,12 +216,12 @@ class OwnerSupport(Behavior):
 
     @property
     def owner(self):
-        return self.attrs.get('owner')
+        return self.attrs.get(self.owner_attribute_name)
 
     @default
     @owner.setter
     def owner(self, value):
-        self.attrs['owner'] = value
+        self.attrs[self.owner_attribute_name] = value
 
 
 @implementer(IPrincipalACL)
