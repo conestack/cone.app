@@ -4,6 +4,10 @@ Changes
 1.0.6 (unreleased)
 ------------------
 
+- Introduce ``UUIDAttributeAware.uuid_attribute_name`` which defines the
+  attribute name on which the UUID is stored.
+  [rnix]
+
 - Use ``get`` instead of ``__getitem__`` in ``UUIDAttributeAware.uuid`` to
   lookup UUID from attributes to prevent ``KeyError`` due to behavioral
   change in ``node.behaviors.UUIDAware.__init__`` in ``node`` 1.2.

@@ -379,6 +379,11 @@ class TestModel(NodeTestCase):
         self.assertTrue(isinstance(node.uuid, uuid.UUID))
         self.assertTrue(node.attrs['uuid'] is node.uuid)
 
+        UUIDNode.uuid_attribute_name = 'id'
+        node = UUIDNode()
+        self.assertTrue(isinstance(node.uuid, uuid.UUID))
+        self.assertTrue(node.attrs['id'] is node.uuid)
+
     def test_UUIDAsName(self):
         @plumbing(UUIDAsName)
         class UUIDAsNameNode(BaseNode):
