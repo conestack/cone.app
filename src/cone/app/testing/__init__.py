@@ -185,6 +185,7 @@ class Security(object):
             'ugm.groups_file': os.path.join(DATADIR, 'groups'),
             'ugm.roles_file': os.path.join(DATADIR, 'roles'),
             'ugm.datadir': os.path.join(DATADIR, 'userdata'),
+            'ugm.user_expires_attr': 'expires',
             'testing.hook_global_registry': True,
         }
         settings.update(**kw)

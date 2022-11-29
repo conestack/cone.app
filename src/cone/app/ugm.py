@@ -65,6 +65,7 @@ class FileUGMFactory(UGMFactory):
         self.groups_file = settings.get('ugm.groups_file')
         self.roles_file = settings.get('ugm.roles_file')
         self.datadir = settings.get('ugm.datadir')
+        self.user_expires_attr = settings.get('ugm.user_expires_attr')
 
     def __call__(self):
         return FileUgm(
@@ -72,7 +73,8 @@ class FileUGMFactory(UGMFactory):
             users_file=self.users_file,
             groups_file=self.groups_file,
             roles_file=self.roles_file,
-            data_directory=self.datadir
+            data_directory=self.datadir,
+            user_expires_attr=self.user_expires_attr,
         )
 
 
@@ -88,6 +90,7 @@ class BCFileUGMFactory(FileUGMFactory):
         self.groups_file = settings.get('node.ext.ugm.groups_file')
         self.roles_file = settings.get('node.ext.ugm.roles_file')
         self.datadir = settings.get('node.ext.ugm.datadir')
+        self.user_expires_attr = settings.get('node.ext.ugm.user_expires_attr')
 
 
 def principal_data(principal_id):

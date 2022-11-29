@@ -88,7 +88,8 @@ class TestUgm(NodeTestCase):
             'ugm.users_file': 'users',
             'ugm.groups_file': 'groups',
             'ugm.roles_file': 'roles',
-            'ugm.datadir': 'userdata'
+            'ugm.datadir': 'userdata',
+            'ugm.user_expires_attr': 'expires'
         })
         ugm_backend.initialize()
         ugm = ugm_backend.ugm
@@ -98,6 +99,7 @@ class TestUgm(NodeTestCase):
         self.assertEqual(ugm.groups_file, 'groups')
         self.assertEqual(ugm.roles_file, 'roles')
         self.assertEqual(ugm.data_directory, 'userdata')
+        self.assertEqual(ugm.user_expires_attr, 'expires')
 
     @restore_ugm_backend
     def test_BCFileUGMFactory(self):
@@ -108,7 +110,8 @@ class TestUgm(NodeTestCase):
             'node.ext.ugm.users_file': 'users',
             'node.ext.ugm.groups_file': 'groups',
             'node.ext.ugm.roles_file': 'roles',
-            'node.ext.ugm.datadir': 'userdata'
+            'node.ext.ugm.datadir': 'userdata',
+            'node.ext.ugm.user_expires_attr': 'expires'
         })
         ugm_backend.initialize()
         ugm = ugm_backend.ugm
@@ -118,6 +121,7 @@ class TestUgm(NodeTestCase):
         self.assertEqual(ugm.groups_file, 'groups')
         self.assertEqual(ugm.roles_file, 'roles')
         self.assertEqual(ugm.data_directory, 'userdata')
+        self.assertEqual(ugm.user_expires_attr, 'expires')
 
     def test_principal_data(self):
         # Fetch principal data
