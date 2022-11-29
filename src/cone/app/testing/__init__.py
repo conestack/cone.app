@@ -18,11 +18,13 @@ import venusian
 def reset_node_info_registry(fn):
     """Decorator for tests using node info registry
     """
+    node_info_registry = model._node_info_registry
     def wrapper(*a, **kw):
         try:
+            model._node_info_registry = dict()
             fn(*a, **kw)
         finally:
-            model._node_info_registry = dict()
+            model._node_info_registry = node_info_registry
     return wrapper
 
 
