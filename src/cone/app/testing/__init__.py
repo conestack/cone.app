@@ -22,8 +22,8 @@ def reset_node_info_registry(fn):
     """
     def wrapper(*a, **kw):
         node_info_registry_orgin = model._node_info_registry
-        model._node_info_registry = dict()
         try:
+            model._node_info_registry = dict()
             fn(*a, **kw)
         finally:
             model._node_info_registry = node_info_registry_orgin
@@ -189,6 +189,7 @@ class Security(object):
             'ugm.groups_file': os.path.join(DATADIR, 'groups'),
             'ugm.roles_file': os.path.join(DATADIR, 'roles'),
             'ugm.datadir': os.path.join(DATADIR, 'userdata'),
+            'ugm.user_expires_attr': 'expires',
             'testing.hook_global_registry': True,
         }
         settings.update(**kw)

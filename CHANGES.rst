@@ -4,6 +4,10 @@ Changes
 1.0.6 (unreleased)
 ------------------
 
+- Consider ``ugm.user_expires_attr`` setting in application configuration
+  ini file and pass it to ``cone.ugm.file.Ugm``.
+  [rnix]
+
 - Introduce ``OwnerSupport.owner_attribute_name`` which defines the
   attribute name on which the owner is stored.
   [rnix]

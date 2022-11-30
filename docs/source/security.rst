@@ -341,9 +341,10 @@ ini file.
     ugm.groups_file = /path/to/groups
     ugm.roles_file = /path/to/roles
     ugm.datadir = /path/to/userdata
+    ugm.user_expires_attr = expires
 
 ``cone.app`` displays user and group names at several places. The attribute to
-use as display names can be configured and defaults to ``fullname```for users
+use as display names can be configured and defaults to ``fullname`` for users
 and ``groupname`` for groups.
 
 .. code-block:: ini
