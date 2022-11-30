@@ -6,7 +6,7 @@ if ! which npm &> /dev/null; then
     sudo apt-get install npm
 fi
 
-npm --save-dev install \
+npm --prefix . --save-dev install \
     qunit \
     karma \
     karma-qunit \
@@ -19,6 +19,6 @@ npm --save-dev install \
     rollup-plugin-terser \
     sass
 
-npm --no-save install \
+npm --prefix . --no-save install \
     ../treibstoff \
     https://github.com/jquery/jquery#main

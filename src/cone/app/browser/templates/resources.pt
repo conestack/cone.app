@@ -1,23 +1,9 @@
-<tal:resources xmlns:tal="http://xml.zope.org/namespaces/tal"
-               define="js context.js;
-                       css context.css;">
+<tal:resources xmlns:tal="http://xml.zope.org/namespaces/tal">
 
   <!-- stylesheets -->
-  <link href="${request.application_url}/cone.css"
-        rel="stylesheet" type="text/css" media="all" />
-  <link href="${request.application_url}/print.css"
-        rel="stylesheet" type="text/css" media="print" />
-
-  <tal:public repeat="res css">
-    <link href="${res}"
-          rel="stylesheet" type="text/css" media="all" />
-  </tal:public>
+  <tal:styles replace="structure context.rendered_styles" />
 
   <!-- javascripts -->
-  <script src="${request.application_url}/cone.js"></script>
-
-  <tal:public repeat="res js">
-    <script src="${res}"></script>
-  </tal:public>
+  <tal:scripts replace="structure context.rendered_scripts" />
 
 </tal:resources>

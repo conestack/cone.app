@@ -23,17 +23,14 @@ class TestBrowserLogin(TileTestCase):
         request = self.layer.new_request()
         response = logout_view(root, request)
         self.assertTrue(isinstance(response, HTTPFound))
-
-    def test_logout_tile(self):
-        root = get_root()
-        request = self.layer.new_request()
-        with self.layer.authenticated('admin'):
-            render_tile(root, request, 'logout')
-            self.checkOutput("""
-            ResponseHeaders([('Set-Cookie', 'auth_tkt=; Max-Age=0; Path=/; expires=...'),
-            ('Set-Cookie', 'auth_tkt=; Domain=example.com; Max-Age=0; Path=/; expires=...'),
-            ('Set-Cookie', 'auth_tkt=; Domain=.example.com; Max-Age=0; Path=/; expires=...')])
-            """, str(request.response.headers))
+        self.checkOutput("""
+        ResponseHeaders([('Content-Type', 'text/html; charset=UTF-8'),
+        ('Content-Length', '0'),
+        ('Set-Cookie', 'auth_tkt=; Max-Age=0; Path=/; expires=...'),
+        ('Set-Cookie', 'auth_tkt=; Domain=example.com; Max-Age=0; Path=/; expires=...'),
+        ('Set-Cookie', 'auth_tkt=; Domain=.example.com; Max-Age=0; Path=/; expires=...'),
+        ('Location', 'http://example.com')])
+        """, str(response.headers))
 
     def test_login_form(self):
         root = get_root()

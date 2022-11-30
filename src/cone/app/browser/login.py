@@ -1,10 +1,7 @@
 from cone.app.browser import render_main_template
-from cone.app.browser.ajax import AjaxEvent
-from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.form import Form
 from cone.app.browser.utils import make_url
 from cone.app.security import authenticate
-from cone.tile import Tile
 from cone.tile import tile
 from pyramid.i18n import TranslationStringFactory
 from pyramid.security import forget
@@ -27,21 +24,6 @@ def logout_view(model, request):
     headers = forget(request)
     location = request.params.get('came_from', request.application_url)
     return HTTPFound(location=location, headers=headers)
-
-
-@tile(name='logout')
-class Logout(Tile):
-
-    def render(self):
-        request = self.request
-        request.response.headers = forget(request)
-        location = request.params.get('came_from', request.application_url)
-        ajax_continue(self.request, AjaxEvent(
-            target=location,
-            name='contextchanged',
-            selector='#layout'
-        ))
-        return u''
 
 
 @tile(name='loginform', permission='login')
@@ -103,9 +85,13 @@ class LoginForm(Form):
         webob_req = data.request.request
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
-            raise ExtractionError(
-                _('invalid_credentials', default='Invalid Credentials'))
+            raise ExtractionError(_(
+                'invalid_credentials',
+                default='Invalid Credentials'
+            ))
 
     def next(self, request):
-        return HTTPFound(location=request.request.application_url,
-                         headers=self.headers)
+        return HTTPFound(
+            location=request.request.application_url,
+            headers=self.headers
+        )

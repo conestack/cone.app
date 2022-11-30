@@ -7,6 +7,7 @@ from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
 from cone.app.interfaces import ILayoutConfig
+from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
@@ -24,6 +25,8 @@ from node.behaviors import Lifecycle
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingConstraints
 from node.behaviors import MappingNode
+from node.behaviors import Node
+from node.behaviors import NodeInit
 from node.behaviors import OdictStorage
 from node.behaviors import Schema
 from node.behaviors import UUIDAware
@@ -166,6 +169,26 @@ class AppNode(Behavior):
         return info
 
 
+@implementer(ILeafNode)
+class LeafNode(AppNode):
+
+    @default
+    def __getitem__(self, name):
+        raise KeyError(name)
+
+    @default
+    def __setitem__(self, name, value):
+        raise KeyError(name)
+
+    @default
+    def __delitem__(self, name):
+        raise KeyError(name)
+
+    @default
+    def __iter__(self):
+        return iter([])
+
+
 @plumbing(
     AppNode,
     AsAttrAccess,
@@ -227,6 +250,19 @@ class AppSettings(FactoryNode):
         return metadata
 
 
+@plumbing(AppNode, NodeInit, Node)
+class AppResources(object):
+    """Traversal context for static resources.
+    """
+
+    @instance_property
+    def properties(self):
+        props = Properties()
+        props.in_navtree = False
+        props.skip_mainmenu = True
+        return props
+
+
 @implementer(IAdapterNode)
 class AdapterNode(BaseNode):
 
@@ -270,15 +306,16 @@ class NamespaceUUID(Behavior):
 class UUIDAttributeAware(UUIDAware):
     """UUIDAware deriving behavior storing the uid on node attributes.
     """
+    uuid_attribute_name = default('uuid')
 
     @property
     def uuid(self):
-        return self.attrs['uuid']
+        return self.attrs.get(self.uuid_attribute_name)
 
     @default
     @uuid.setter
     def uuid(self, value):
-        self.attrs['uuid'] = value
+        self.attrs[self.uuid_attribute_name] = value
 
 
 @implementer(IUUIDAsName)

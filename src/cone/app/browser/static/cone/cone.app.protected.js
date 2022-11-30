@@ -1,4 +1,4 @@
-(function (exports, $, ts) {
+var cone_app_protected = (function (exports, $, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -187,7 +187,7 @@
             if (elem.hasClass('disabled')) {
                 return;
             }
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
             ts.ajax.action({
                 name: 'paste',
                 mode: 'NONE',
@@ -281,7 +281,7 @@
             });
         }
         set_selected_on_ajax_target(elem, selected) {
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
             target.params.selected = selected.join(',');
             let query = new Array();
             for (let name in target.params) {
@@ -383,6 +383,30 @@
             });
         }
     }
+    function referencebrowser_on_array_add(inst, context) {
+        ReferenceBrowserLoader.initialize(context);
+    }
+    function referencebrowser_on_array_index(inst, row, index) {
+        $('.referencebrowser_trigger', row).each(function() {
+            let trigger = $(this),
+                ref_name = trigger.data('reference-name'),
+                base_id = inst.base_id(row),
+                base_name = base_id.replace(/\-/g, '.');
+            trigger.data('reference-name', inst.set_value_index(
+                ref_name,
+                base_name,
+                index,
+                '.'
+            ));
+        });
+    }
+    $(function() {
+        if (yafowil_array === undefined) {
+            return;
+        }
+        yafowil_array.on_array_event('on_add', referencebrowser_on_array_add);
+        yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
+    });
 
     class SettingsTabs {
         static initialize(context) {
@@ -395,7 +419,7 @@
         load_tab(evt) {
             evt.preventDefault();
             let elem = $(this);
-            let target = ts.ajax.parsetarget(elem.attr('ajax:target'));
+            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
             ts.ajax.request({
                 url: target.url,
                 params: target.params,
@@ -448,6 +472,34 @@
         static initialize(context) {
             BatchedItemsSize.initialize(context, '.table_length select');
             BatchedItemsSearch.initialize(context, '.table_filter input');
+        }
+    }
+
+    class Translation {
+        static initialize(context) {
+            $('.translation-nav', context).each(function() {
+                new Translation($(this));
+            });
+        }
+        constructor(nav_elem) {
+            this.nav_elem = nav_elem;
+            this.fields_elem = nav_elem.next();
+            this.show_lang_handle = this.show_lang_handle.bind(this);
+            $('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($('li.error', nav_elem).length) {
+                $('li.error:first > a', nav_elem).click();
+            } else {
+                $('li.active > a', nav_elem).click();
+            }
+            this.fields_elem.show();
+        }
+        show_lang_handle(evt) {
+            evt.preventDefault();
+            this.nav_elem.children().removeClass('active');
+            this.fields_elem.children().hide();
+            let elem = $(evt.currentTarget);
+            elem.parent().addClass('active');
+            $(elem.attr('href'), this.fields_elem).show();
         }
     }
 
@@ -592,6 +644,7 @@
         ts.ajax.register(SettingsTabs.initialize, true);
         ts.ajax.register(Sharing.initialize, true);
         ts.ajax.register(TableToolbar.initialize, true);
+        ts.ajax.register(Translation.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -607,6 +660,7 @@
     exports.SettingsTabs = SettingsTabs;
     exports.Sharing = Sharing;
     exports.TableToolbar = TableToolbar;
+    exports.Translation = Translation;
     exports.batcheditems_filter_binder = batcheditems_filter_binder;
     exports.batcheditems_handle_filter = batcheditems_handle_filter;
     exports.batcheditems_size_binder = batcheditems_size_binder;
@@ -617,9 +671,7 @@
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    if (window.cone === undefined) {
-        window.cone = {};
-    }
+    window.cone = window.cone || {};
     Object.assign(window.cone, exports);
 
     window.createCookie = createCookie;
@@ -628,4 +680,4 @@
 
     return exports;
 
-}({}, jQuery, treibstoff));
+})({}, jQuery, treibstoff);

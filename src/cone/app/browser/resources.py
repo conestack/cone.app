@@ -1,117 +1,273 @@
-from cone.app.utils import app_config
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import AjaxPath
+from cone.app.browser.ajax import ajax_continue
+from cone.app.model import AppResources
 from cone.tile import Tile
 from cone.tile import tile
+from pyramid.httpexceptions import HTTPFound
+from pyramid.static import static_view
+from pyramid.threadlocal import get_current_request
 from pyramid.view import view_config
-from webob import Response
-import cone.app
+from yafowil.base import factory
+import logging
 import os
-import pkg_resources
-import warnings
+import sys
+import treibstoff
+import webresource as wr
 
 
-def bdajax_warning(attr):
-    warnings.warn((
-        '``bdajax.{}`` parameter received. Bdajax is no longer '
-        'supported. Please migrate your code to ``treibstoff``.'
-    ).format(attr))
+logger = logging.getLogger('cone.app')
 
 
-def is_remote_resource(resource):
-    return resource.startswith('http://') \
-        or resource.startswith('https://') \
-        or resource.startswith('//')
+resources_dir = os.path.join(os.path.dirname(__file__), 'static')
+resources = wr.ResourceGroup(name='cone.app')
 
 
-class MergedAssets(object):
-
-    def __init__(self, request):
-        self.request = request
-        self.merged_js_assets = cone.app.cfg.merged.js
-        self.merged_css_assets = cone.app.cfg.merged.css
-        self.merged_print_css_assets = cone.app.cfg.merged.print_css
-
-    def merged_assets(self, assets):
-        if self.request.authenticated_userid:
-            assets = assets.public + assets.protected
-        else:
-            assets = assets.public
-        data = ''
-        for view, subpath in assets:
-            path = pkg_resources.resource_filename(
-                view.package_name,
-                os.path.join(view.docroot, subpath)
-            )
-            with open(path, 'r') as asset:
-                data += asset.read() + '\n\n'
-        return data
-
-    @property
-    def merged_js(self):
-        return self.merged_assets(self.merged_js_assets)
-
-    @property
-    def merged_css(self):
-        return self.merged_assets(self.merged_css_assets)
-
-    @property
-    def merged_print_css(self):
-        return self.merged_assets(self.merged_print_css_assets)
+# jquery
+jquery_resources = wr.ResourceGroup(
+    name='cone.app-jquery',
+    directory=os.path.join(resources_dir, 'jquery'),
+    path='jquery',
+    group=resources
+)
+jquery_resources.add(wr.ScriptResource(
+    name='jquery-js',
+    resource='jquery-3.6.0.js',
+    compressed='jquery-3.6.0.min.js'
+))
 
 
-@view_config(name='cone.js')
-def cone_js(model, request):
-    assets = MergedAssets(request)
-    response = Response(assets.merged_js)
-    response.headers['Content-Type'] = 'application/javascript'
-    return response
+# bootstrap
+bootstrap_resources = wr.ResourceGroup(
+    name='cone.app-bootstrap',
+    directory=os.path.join(resources_dir, 'bootstrap'),
+    path='bootstrap',
+    group=resources
+)
+bootstrap_resources.add(wr.ScriptResource(
+    name='bootstrap-js',
+    depends='jquery-js',
+    directory=os.path.join(resources_dir, 'bootstrap', 'js'),
+    path='bootstrap/js',
+    resource='bootstrap.js',
+    compressed='bootstrap.min.js'
+))
+bootstrap_resources.add(wr.StyleResource(
+    name='bootstrap-css',
+    directory=os.path.join(resources_dir, 'bootstrap', 'css'),
+    path='bootstrap/css',
+    resource='bootstrap.css',
+    compressed='bootstrap.min.css'
+))
+bootstrap_resources.add(wr.StyleResource(
+    name='bootstrap-theme-css',
+    depends='bootstrap-css',
+    directory=os.path.join(resources_dir, 'bootstrap', 'css'),
+    path='bootstrap/css',
+    resource='bootstrap-theme.css',
+    compressed='bootstrap-theme.min.css'
+))
 
 
-@view_config(name='cone.css')
-def cone_css(model, request):
-    assets = MergedAssets(request)
-    response = Response(assets.merged_css)
-    response.headers['Content-Type'] = 'text/css'
-    return response
+# typeahead
+typeahead_resources = wr.ResourceGroup(
+    name='cone.app-typeahead',
+    directory=os.path.join(resources_dir, 'typeahead'),
+    path='typeahead',
+    group=resources
+)
+typeahead_resources.add(wr.ScriptResource(
+    name='typeahead-js',
+    depends='jquery-js',
+    resource='typeahead.bundle.js'
+))
+typeahead_resources.add(wr.StyleResource(
+    name='typeahead-css',
+    resource='typeahead.css'
+))
 
 
-@view_config(name='print.css')
-def print_css(model, request):
-    assets = MergedAssets(request)
-    response = Response(assets.merged_print_css)
-    response.headers['Content-Type'] = 'text/css'
-    return response
+# ionicons
+ionicons_resources = wr.ResourceGroup(
+    name='cone.app-ionicons',
+    directory=os.path.join(resources_dir, 'ionicons'),
+    path='ionicons',
+    group=resources
+)
+ionicons_resources.add(wr.StyleResource(
+    name='ionicons-css',
+    directory=os.path.join(resources_dir, 'ionicons', 'css'),
+    path='ionicons/css',
+    resource='ionicons.css'
+))
+
+
+# cone
+cone_resources = wr.ResourceGroup(
+    name='cone.app-cone',
+    directory=os.path.join(resources_dir, 'cone'),
+    path='cone',
+    group=resources
+)
+cone_resources.add(wr.ScriptResource(
+    name='cone-app-public-js',
+    depends='typeahead-js',
+    resource='cone.app.public.js',
+    compressed='cone.app.public.min.js'
+))
+cone_resources.add(wr.ScriptResource(
+    name='cone-app-protected-js',
+    depends='jquery-js',
+    resource='cone.app.protected.js',
+    compressed='cone.app.protected.min.js'
+))
+cone_resources.add(wr.StyleResource(
+    name='cone-app-css',
+    resource='cone.app.css'
+))
+cone_resources.add(wr.StyleResource(
+    name='cone-app-print-css',
+    resource='cone.app.print.css',
+    media='print'
+))
+
+
+def register_resources_view(config, module, name, directory):
+    resources_view = static_view(directory, use_subpath=True)
+    view_name = '{}_static_view'.format(name.replace('-', '_').replace('.', '_'))
+    setattr(module, view_name, resources_view)
+    view_path = 'cone.app.browser.resources.{}'.format(view_name)
+    config.add_view(view_path, name=name, context=AppResources)
+
+
+RESOURCE_INCLUDES_KEY = 'cone._resource_includes'
+
+
+def set_resource_include(settings, name, value):
+    resouce_settings = settings.setdefault(RESOURCE_INCLUDES_KEY, {})
+    resouce_settings[name] = value
+
+
+DEFAULT_EXCLUDES = ['yafowil.bootstrap']
+
+
+def configure_default_resource_includes(settings):
+    # configure default inclusion of cone protectes JS
+    set_resource_include(settings, 'cone-app-protected-js', 'authenticated')
+
+    # configure default inclusion of yafowil resources
+    yafowil_public = settings.get('yafowil.resources_public')
+    if yafowil_public not in ['1', 'True', 'true']:
+        yafowil_resources = factory.get_resources(
+            copy_resources=False,
+            exclude=DEFAULT_EXCLUDES
+        )
+        for resource in yafowil_resources.scripts + yafowil_resources.styles:
+            set_resource_include(settings, resource.name, 'authenticated')
+
+
+class ResourceInclude(object):
+
+    def __init__(self, settings, name):
+        self.settings = settings
+        self.name = name
+
+    def __call__(self):
+        resouce_settings = self.settings.get(RESOURCE_INCLUDES_KEY, {})
+        include = resouce_settings.get(self.name, True)
+        if include == 'authenticated':
+            return get_current_request().authenticated_userid
+        return include
+
+
+# the configured resources which gets delivered
+configured_resources = None
+
+
+def configure_resources(settings, config, development, resources_=resources):
+    # set resource development mode
+    wr.config.development = development
+
+    global configured_resources
+    configured_resources = resources_ = resources_.copy()
+
+    # add treibstoff resources
+    resources_.add(treibstoff.resources.copy())
+
+    # add and configure yafowil resources
+    for group in factory.get_resources(exclude=DEFAULT_EXCLUDES).members:
+        resources_.add(group)
+
+    # register static views for resource groups
+    handled_groups = []
+    module = sys.modules[__name__]
+    for group in resources_.members[:]:
+        # ignore subsequent group in case path was defined multiple times.
+        # otherwise we get an error when trying to register static view.
+        if group.path in handled_groups:
+            logger.warning((
+                'Resource group for path "{}" already included.'
+                'Skipping "{}"'
+            ).format(group.path, group.name))
+            group.remove()
+            continue
+        if not group.path or not group.directory:  # pragma: no cover
+            logger.warning((
+                'Resource group "{}" path or directory '
+                'missing. Skip configuration'
+            ).format(group.name))
+            group.remove()
+            continue
+        register_resources_view(config, module, group.path, group.directory)
+        handled_groups.append(group.path)
+
+    # configure scripts and styles contained in resources
+    handled_resources = []
+    for resource in resources_.scripts + resources_.styles:
+        # ignore subsequent resource in case path was defined multiple times.
+        if resource.name in handled_resources:
+            logger.debug((
+                'Resource with name "{}" already included. Skipping.'
+            ).format(resource.name))
+            resource.remove()
+            continue
+        resource.path = 'resources/{}'.format(resource.path)
+        resource.include = ResourceInclude(settings, resource.name)
+        handled_resources.append(resource.name)
 
 
 @tile(name='resources', path='templates/resources.pt', permission='login')
 class Resources(Tile):
-    """Resources tile.
-
-    XXX: either switch to resource management lib here or use resource
-         management middleware.
-    """
+    """Resources tile."""
 
     @property
-    def authenticated(self):
-        return self.request.authenticated_userid
+    def rendered_scripts(self):
+        global configured_resources
+        return wr.ResourceRenderer(
+            wr.ResourceResolver(configured_resources.scripts),
+            base_url=self.request.application_url
+        ).render()
 
     @property
-    def js(self):
-        return self.resources(app_config().js)
+    def rendered_styles(self):
+        global configured_resources
+        return wr.ResourceRenderer(
+            wr.ResourceResolver(configured_resources.styles),
+            base_url=self.request.application_url
+        ).render()
 
-    @property
-    def css(self):
-        return self.resources(app_config().css)
 
-    def resources(self, reg):
-        ret = list()
-        for res in reg['public']:
-            ret.append(self.resource_url(res))
-        if self.authenticated:
-            for res in reg['protected']:
-                ret.append(self.resource_url(res))
-        return ret
+@view_config(permission='login', context=AppResources)
+def resources_view(model, request):
+    return HTTPFound(location=request.application_url)
 
-    def resource_url(self, resource):
-        if is_remote_resource(resource):
-            return resource
-        return '{}/{}'.format(self.request.application_url, resource)
+
+@tile(name='content', interface=AppResources, permission='login')
+class ResourcesContent(Tile):
+
+    def render(self):
+        url = self.request.application_url
+        path = AjaxPath(path='/', target=url, event='contextchanged:#layout')
+        event = AjaxEvent(target=url, name='contextchanged', selector='#layout')
+        ajax_continue(self.request, [path, event])
+        return u''

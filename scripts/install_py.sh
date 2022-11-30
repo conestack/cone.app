@@ -2,8 +2,8 @@
 
 set -e
 
-if [ -x "$(which python)" ]; then
-    virtualenv --clear --no-site-packages -p python py2
+if [ -x "$(which python2)" ]; then
+    virtualenv --clear -p python2 py2
 
     ./py2/bin/pip install wheel
     ./py2/bin/pip install coverage
@@ -14,12 +14,14 @@ if [ -x "$(which python)" ]; then
     ./py2/bin/pip install https://github.com/conestack/node/archive/master.zip
     ./py2/bin/pip install https://github.com/conestack/node.ext.ugm/archive/master.zip
     ./py2/bin/pip install https://github.com/conestack/yafowil/archive/master.zip
+    ./py2/bin/pip install https://github.com/conestack/yafowil.bootstrap/archive/2.0.zip
     ./py2/bin/pip install https://github.com/conestack/cone.tile/archive/master.zip
     ./py2/bin/pip install https://github.com/conestack/treibstoff/archive/master.zip
+    ./py2/bin/pip install https://github.com/conestack/webresource/archive/master.zip
     ./py2/bin/pip install -e .[test]
 fi
 if [ -x "$(which python3)" ]; then
-    virtualenv --clear --no-site-packages -p python3 py3
+    virtualenv --clear -p python3 py3
 
     ./py3/bin/pip install wheel
     ./py3/bin/pip install coverage
@@ -30,7 +32,9 @@ if [ -x "$(which python3)" ]; then
     ./py3/bin/pip install https://github.com/conestack/node/archive/master.zip
     ./py3/bin/pip install https://github.com/conestack/node.ext.ugm/archive/master.zip
     ./py3/bin/pip install https://github.com/conestack/yafowil/archive/master.zip
+    ./py3/bin/pip install https://github.com/conestack/yafowil.bootstrap/archive/2.0.zip
     ./py3/bin/pip install https://github.com/conestack/cone.tile/archive/master.zip
-    ./py2/bin/pip install https://github.com/conestack/treibstoff/archive/master.zip
+    ./py3/bin/pip install https://github.com/conestack/treibstoff/archive/master.zip
+    ./py3/bin/pip install https://github.com/conestack/webresource/archive/master.zip
     ./py3/bin/pip install -e .[test,docs]
 fi

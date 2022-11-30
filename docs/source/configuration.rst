@@ -99,7 +99,10 @@ Configuration is done through the following parameters.
 
 - **ugm.roles_file**: Path to roles file
 
-- **ugm.datadir** Path to userdata directory
+- **ugm.datadir**: Path to userdata directory
+
+- **ugm.user_expires_attr**: Name of the attribute used to store account
+      expiration information.
 
 NOTE: If no UGM backend is configured, the only available user in the
       application is the one defined as ``cone.admin_user``.

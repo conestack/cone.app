@@ -1,8 +1,10 @@
 from cone.app import compat
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser import set_related_view
 from cone.app.browser.contents import ContentsTile
 from cone.app.browser.contents import ContentsViewLink
+from cone.app.browser.contents import RootContentsTile
 from cone.app.browser.contents import listing
 from cone.app.browser.table import TableSlice
 from cone.app.browser.utils import make_url
@@ -399,3 +401,14 @@ class TestBrowserContents(TileTestCase):
 
         self.assertEqual(rendered.count('toolbaraction-move-up'), 2)
         self.assertEqual(rendered.count('toolbaraction-move-down'), 2)
+
+    def test_RootContentsTile(self):
+        model = get_root()
+        self.assertTrue('settings' in model)
+        self.assertTrue('resources' in model)
+
+        tile = RootContentsTile()
+        tile.model = model
+        children = [node.name for node in tile.listable_children]
+        self.assertFalse('settings' in children)
+        self.assertFalse('resources' in children)

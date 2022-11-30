@@ -1,8 +1,47 @@
 Changes
 =======
 
-1.0.5 (unreleased)
+1.0.6 (unreleased)
 ------------------
+
+- Consider ``ugm.user_expires_attr`` setting in application configuration
+  ini file and pass it to ``cone.ugm.file.Ugm``.
+  [rnix]
+
+- Introduce ``OwnerSupport.owner_attribute_name`` which defines the
+  attribute name on which the owner is stored.
+  [rnix]
+
+- Introduce ``UUIDAttributeAware.uuid_attribute_name`` which defines the
+  attribute name on which the UUID is stored.
+  [rnix]
+
+- Use ``get`` instead of ``__getitem__`` in ``UUIDAttributeAware.uuid`` to
+  lookup UUID from attributes to prevent ``KeyError`` due to behavioral
+  change in ``node.behaviors.UUIDAware.__init__`` in ``node`` 1.2.
+  [rnix]
+
+- Add support for defining ``navigable`` types in referencebrowser.
+  [rnix]
+
+- Introduce ``cone.app.interfaces.ILeafNode`` and ``cone.app.model.LeafNode``.
+  [rnix]
+
+- Assing bottom space CSS to prevent fixed footer oberlap to layout container.
+  [rnix]
+
+- Add ``contents`` tile for application root. Does not display settings and
+  resources nodes.
+  [rnix]
+
+
+1.0.5 (2022-10-06)
+------------------
+
+- Extend ``yafowil.referencebrowser`` JS by ``register_array_hooks``,
+  ``array_add``, ``array_index`` methods to enable usage in
+  ``yafowil.widget.array``.
+  [lenadax]
 
 - Use ``get_root`` in ``register_config`` and ``register_entry``.
   [rnix]

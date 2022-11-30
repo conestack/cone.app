@@ -15,8 +15,6 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.router import Router
 from pyramid.static import static_view
 from pyramid.testing import DummyRequest
-from yafowil import resources
-from yafowil.base import factory as yafowil_factory
 import cone.app
 
 
@@ -101,32 +99,6 @@ class TestApp(NodeTestCase):
         factory = cone.app.acl_factory()
         self.assertTrue(isinstance(factory, ACLAuthorizationPolicy))
 
-        # yafowil resources
-        def dummy_get_plugin_names(ns=None):
-            return ['yafowil.addon']
-
-        get_plugin_names_origin = resources.get_plugin_names
-        resources.get_plugin_names = dummy_get_plugin_names
-
-        yafowil_addon_name = 'yafowil.addon'
-        js = [{
-            'group': 'yafowil.addon.common',
-            'resource': 'widget.js',
-            'order': 20,
-        }]
-        css = [{
-            'group': 'yafowil.addon.common',
-            'resource': 'widget.css',
-            'order': 20,
-        }]
-        yafowil_factory.register_theme(
-            'default',
-            yafowil_addon_name,
-            'yafowil_addon_resources',
-            js=js,
-            css=css
-        )
-
         # remember original main template
         main_template_orgin = cone.app.cfg.main_template
 
@@ -162,18 +134,6 @@ class TestApp(NodeTestCase):
         # reset main template
         cone.app.cfg.main_template = main_template_orgin
 
-        # Check created yafowil addon static view
-        self.assertTrue(isinstance(
-            cone.app.yafowil_addon_resources,
-            static_view
-        ))
-
-        # Remove dummy yafowil theme, reset get_plugin_names patch
-        # and delete created yafowil addon static view
-        resources.get_plugin_names = get_plugin_names_origin
-        del yafowil_factory._themes['default'][yafowil_addon_name]
-        del cone.app.yafowil_addon_resources
-
     def test_remote_addr_middleware(self):
         # Remote address middleware
         class DummyApp(object):
@@ -197,10 +157,10 @@ class TestApp(NodeTestCase):
         self.assertTrue(ILayoutConfig.providedBy(config))
 
         self.assertTrue(config.mainmenu)
-        self.assertFalse(config.mainmenu_fluid)
+        self.assertTrue(config.mainmenu_fluid)
         self.assertTrue(config.livesearch)
         self.assertTrue(config.personaltools)
-        self.assertFalse(config.columns_fluid)
+        self.assertTrue(config.columns_fluid)
         self.assertTrue(config.pathbar)
         self.assertEqual(config.sidebar_left, ['navtree'])
         self.assertEqual(config.sidebar_left_grid_width, 3)

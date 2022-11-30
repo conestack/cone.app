@@ -1,4 +1,4 @@
-from cone.app.browser.resources import bdajax_warning
+from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICopySupport

@@ -1,5 +1,5 @@
-from cone.app.browser import get_related_view
 from cone.app.browser import RelatedViewProvider
+from cone.app.browser import get_related_view
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit
@@ -16,6 +16,7 @@ from cone.app.browser.utils import make_url
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IWorkflowState
+from cone.app.model import AppRoot
 from cone.tile import Tile
 from cone.tile import tile
 from node.interfaces import ILeaf
@@ -258,3 +259,19 @@ def listing(model, request):
     """Listing view.
     """
     return render_main_template(model, request, 'listing')
+
+
+@tile(
+    name='contents',
+    path='templates/table.pt',
+    interface=AppRoot,
+    permission='list')
+class RootContentsTile(ContentsTile):
+
+    @property
+    def listable_children(self):
+        return [
+            child for child in self.model.values()
+            if IApplicationNode.providedBy(child)
+            and child.name not in ['settings', 'resources']
+        ]
