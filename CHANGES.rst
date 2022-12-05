@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0.6 (unreleased)
+1.0.6 (2022-12-05)
 ------------------
 
 - Consider ``ugm.user_expires_attr`` setting in application configuration
