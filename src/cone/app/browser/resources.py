@@ -132,6 +132,117 @@ cone_resources.add(wr.StyleResource(
 ))
 
 
+class ResourceInclude(object):
+
+    def __init__(self, settings, name):
+        self.settings = settings
+        self.name = name
+
+    def __call__(self):
+        resouce_settings = self.settings.get(RESOURCE_INCLUDES_KEY, {})
+        include = resouce_settings.get(self.name, True)
+        if include == 'authenticated':
+            return bool(get_current_request().authenticated_userid)
+        return include
+
+
+DEFAULT_EXCLUDES = ['yafowil.bootstrap']
+
+
+class ResourceRegistry(object):
+
+    def __init__(self, settings):
+        self._settings = settings
+        self._resource_stack = []
+        self._includes = {}
+
+    def register_resources_view(self, config, module, name, directory):
+        resources_view = static_view(directory, use_subpath=True)
+        view_name = '{}_static_view'.format(
+            name.replace('-', '_').replace('.', '_')
+        )
+        setattr(module, view_name, resources_view)
+        view_path = 'cone.app.browser.resources.{}'.format(view_name)
+        config.add_view(view_path, name=name, context=AppResources)
+
+    def set_resource_include(self, name, value):
+        self._includes[name] = value
+
+    def configure_default_resource_includes(self):
+        # configure default inclusion of cone protectes JS
+        self.set_resource_include('cone-app-protected-js', 'authenticated')
+
+        # configure default inclusion of yafowil resources
+        yafowil_public = self._settings.get('yafowil.resources_public')
+        if yafowil_public not in ['1', 'True', 'true']:
+            yafowil_resources = factory.get_resources(
+                copy_resources=False,
+                exclude=DEFAULT_EXCLUDES
+            )
+            for resource in yafowil_resources.scripts + yafowil_resources.styles:
+                set_resource_include(
+                    self._settings,
+                    resource.name,
+                    'authenticated'
+                )
+
+    def configure_resources(self, config, development, resources_=resources):
+        # set resource development mode
+        wr.config.development = development
+
+        global configured_resources
+        configured_resources = resources_ = resources_.copy()
+
+        # add treibstoff resources
+        resources_.add(treibstoff.resources.copy())
+
+        # add and configure yafowil resources
+        for group in factory.get_resources(exclude=DEFAULT_EXCLUDES).members:
+            resources_.add(group)
+
+        # register static views for resource groups
+        handled_groups = []
+        module = sys.modules[__name__]
+        for group in resources_.members[:]:
+            # ignore subsequent group in case path was defined multiple times.
+            # otherwise we get an error when trying to register static view.
+            if group.path in handled_groups:
+                logger.warning((
+                    'Resource group for path "{}" already included.'
+                    'Skipping "{}"'
+                ).format(group.path, group.name))
+                group.remove()
+                continue
+            if not group.path or not group.directory:  # pragma: no cover
+                logger.warning((
+                    'Resource group "{}" path or directory '
+                    'missing. Skip configuration'
+                ).format(group.name))
+                group.remove()
+                continue
+            self.register_resources_view(
+                config,
+                module,
+                group.path,
+                group.directory
+            )
+            handled_groups.append(group.path)
+
+        # configure scripts and styles contained in resources
+        handled_resources = []
+        for resource in resources_.scripts + resources_.styles:
+            # ignore subsequent resource in case path was defined multiple times.
+            if resource.name in handled_resources:
+                logger.debug((
+                    'Resource with name "{}" already included. Skipping.'
+                ).format(resource.name))
+                resource.remove()
+                continue
+            resource.path = 'resources/{}'.format(resource.path)
+            resource.include = ResourceInclude(settings, resource.name)
+            handled_resources.append(resource.name)
+
+
 def register_resources_view(config, module, name, directory):
     resources_view = static_view(directory, use_subpath=True)
     view_name = '{}_static_view'.format(name.replace('-', '_').replace('.', '_'))
@@ -176,7 +287,7 @@ class ResourceInclude(object):
         resouce_settings = self.settings.get(RESOURCE_INCLUDES_KEY, {})
         include = resouce_settings.get(self.name, True)
         if include == 'authenticated':
-            return get_current_request().authenticated_userid
+            return bool(get_current_request().authenticated_userid)
         return include
 
 
