@@ -1,6 +1,7 @@
 from cone.app import get_root
 from cone.app import model
 from cone.app import security as security_module
+from cone.app.browser import resources
 from cone.app.security import authenticate
 from contextlib import contextmanager
 from pyramid.security import AuthenticationAPIMixin
@@ -27,6 +28,18 @@ def reset_node_info_registry(fn):
             fn(*a, **kw)
         finally:
             model._node_info_registry = node_info_registry_orgin
+    return wrapper
+
+
+def reset_resource_registry(fn):
+    """Decorator for tests using resource registry
+    """
+    def wrapper(*a, **kw):
+        resource_registry_orgin = resources._registry
+        try:
+            fn(*a, **kw)
+        finally:
+            resources._registry = resource_registry_orgin
     return wrapper
 
 

@@ -4,11 +4,14 @@ from cone.app.browser import resources
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxPath
 from cone.app.model import AppResources
+from cone.app.testing import reset_resource_registry
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
+from pyramid.config import Configurator
 from pyramid.httpexceptions import HTTPFound
 from pyramid.static import static_view
 from yafowil.base import factory
+import functools
 import os
 import webresource as wr
 
@@ -135,6 +138,7 @@ class TestBrowserResources(TileTestCase):
         self.assertEqual(styles[1].file_name, 'cone.app.print.css')
         self.assertTrue(os.path.exists(styles[1].file_path))
 
+    @reset_resource_registry
     def test_register_resources_view(self):
         class TestConfigurator:
             def add_view(self, view_path, name, context):
@@ -142,12 +146,21 @@ class TestBrowserResources(TileTestCase):
                 self.name = name
                 self.context = context
 
-        self.assertFalse(hasattr(resources, 'test_resources_static_view'))
+            def add_directive(self, name, callback):
+                setattr(self, name, functools.partial(callback, self))
 
         config = TestConfigurator()
+        resources.ResourceRegistry.initialize(config, {})
+        registry = resources._registry
+
+        self.assertFalse(hasattr(resources, 'test_resources_static_view'))
+
         directory = os.path.join('path', 'to', 'resources')
-        resources.register_resources_view(
-            config, resources, 'test-resources', directory
+        registry._register_resources_view(
+            config,
+            resources,
+            'test-resources',
+            directory
         )
 
         self.assertTrue(hasattr(resources, 'test_resources_static_view'))
@@ -161,17 +174,19 @@ class TestBrowserResources(TileTestCase):
 
         del resources.test_resources_static_view
 
+    @reset_resource_registry
     def test_set_resource_include(self):
-        settings = {}
-        resources.set_resource_include(settings, 'name-1', True)
-        resources.set_resource_include(settings, 'name-2', False)
-        self.assertEqual(settings, {
-            resources.RESOURCE_INCLUDES_KEY: {
-                'name-1': True,
-                'name-2': False
-            }
+        config = Configurator()
+        resources.ResourceRegistry.initialize(config, {})
+
+        config.set_resource_include('name-1', True)
+        config.set_resource_include('name-2', False)
+        self.assertEqual(resources._registry._includes, {
+            'name-1': True,
+            'name-2': False
         })
 
+    @reset_resource_registry
     def test_configure_default_resource_includes(self):
         addon_resources = wr.ResourceGroup(name='addon', path='test-addon')
         addon_resources.add(wr.ScriptResource(
@@ -186,9 +201,11 @@ class TestBrowserResources(TileTestCase):
             factory.push_state()
             factory.register_resources('default', 'addon', addon_resources)
 
-            settings = {}
-            resources.configure_default_resource_includes(settings)
-            includes = settings[resources.RESOURCE_INCLUDES_KEY]
+            config = Configurator()
+            resources.ResourceRegistry.initialize(config, {})
+            config.configure_default_resource_includes()
+
+            includes = resources._registry._includes
             self.assertEqual(includes['addon-css'], 'authenticated')
             self.assertEqual(includes['addon-js'], 'authenticated')
             self.assertEqual(
@@ -197,8 +214,8 @@ class TestBrowserResources(TileTestCase):
             )
 
             settings = {'yafowil.resources_public': 'true'}
-            resources.configure_default_resource_includes(settings)
-            includes = settings[resources.RESOURCE_INCLUDES_KEY]
+            config.configure_default_resource_includes()
+            includes = resources._registry._includes
             self.assertEqual(
                 includes['cone-app-protected-js'],
                 'authenticated'
@@ -206,57 +223,68 @@ class TestBrowserResources(TileTestCase):
         finally:
             factory.pop_state()
 
+    @reset_resource_registry
     def test_ResourceInclude(self):
-        settings = {
-            resources.RESOURCE_INCLUDES_KEY: {
-                'authenticated-resource': 'authenticated',
-                'excluded-resource': False,
-                'included-resource': True
-            }
+        includes = {
+            'authenticated-resource': 'authenticated',
+            'excluded-resource': False,
+            'included-resource': True
         }
 
-        include = resources.ResourceInclude(settings, 'authenticated-resource')
+        include = resources.ResourceInclude(includes, 'authenticated-resource')
         self.assertFalse(include())
         with self.layer.authenticated('admin'):
             self.assertTrue(include())
 
-        include = resources.ResourceInclude(settings, 'excluded-resource')
+        include = resources.ResourceInclude(includes, 'excluded-resource')
         self.assertFalse(include())
 
-        include = resources.ResourceInclude(settings, 'included-resource')
+        include = resources.ResourceInclude(includes, 'included-resource')
         self.assertTrue(include())
 
-        include = resources.ResourceInclude(settings, 'any-resource')
+        include = resources.ResourceInclude(includes, 'any-resource')
         self.assertTrue(include())
 
+    @reset_resource_registry
     def test_configure_resources(self):
-        directory = os.path.join('path', 'to', 'resources')
+        class TestConfigurator:
+            views = []
 
-        resources_ = wr.ResourceGroup(name='base', path='test-resources')
+            def add_view(self, view_path, name, context):
+                self.views.append(dict(
+                    view_path=view_path,
+                    name=name,
+                    context=context
+                ))
+
+            def add_directive(self, name, callback):
+                setattr(self, name, functools.partial(callback, self))
+
+        config = TestConfigurator()
+        resources.ResourceRegistry.initialize(config, {})
+        directory = os.path.join('path', 'to', 'resources')
 
         test_resources = wr.ResourceGroup(
             name='test-resources',
             directory=directory,
             path='test-resources',
-            group=resources_
         )
         test_resources.add(wr.ScriptResource(
             name='base-js',
             resource='base.js'
         ))
-
         # add duplicate resource, gets removed
         test_resources.add(wr.ScriptResource(
             name='base-js',
             resource='duplcate-base.js'
         ))
+        config.register_resource(test_resources)
 
         # add duplicate group, gets removed
-        wr.ResourceGroup(
+        config.register_resource(wr.ResourceGroup(
             name='duplcate-test-resources',
             path='test-resources',
-            group=resources_
-        )
+        ))
 
         # yafowil addon resources
         addon_resources = wr.ResourceGroup(
@@ -273,28 +301,37 @@ class TestBrowserResources(TileTestCase):
             resource='addon.css'
         ))
 
-        class TestConfigurator:
-            views = []
-            def add_view(self, view_path, name, context):
-                self.views.append(dict(
-                    view_path=view_path,
-                    name=name,
-                    context=context
-                ))
-
         try:
-            configured_resources_orgin = resources.configured_resources
             factory.push_state()
             factory.register_resources('default', 'addon', addon_resources)
 
             self.assertFalse(wr.config.development)
 
-            config = TestConfigurator()
-            resources.configure_resources({}, config, True, resources_)
+            config.configure_resources(True)
 
             self.assertTrue(wr.config.development)
 
-            self.assertEqual(config.views[:3], [{
+            self.assertEqual(config.views[:8], [{
+                'view_path': 'cone.app.browser.resources.jquery_static_view',
+                'name': 'jquery',
+                'context': AppResources
+            }, {
+                'view_path': 'cone.app.browser.resources.bootstrap_static_view',
+                'name': 'bootstrap',
+                'context': AppResources
+            }, {
+                'view_path': 'cone.app.browser.resources.typeahead_static_view',
+                'name': 'typeahead',
+                'context': AppResources
+            }, {
+                'view_path': 'cone.app.browser.resources.ionicons_static_view',
+                'name': 'ionicons',
+                'context': AppResources
+            }, {
+                'view_path': 'cone.app.browser.resources.cone_static_view',
+                'name': 'cone',
+                'context': AppResources
+            }, {
                 'view_path': 'cone.app.browser.resources.test_resources_static_view',
                 'name': 'test-resources',
                 'context': AppResources
@@ -312,27 +349,25 @@ class TestBrowserResources(TileTestCase):
             self.assertTrue(hasattr(resources, 'treibstoff_static_view'))
             self.assertTrue(hasattr(resources, 'test_addon_resources_static_view'))
 
-            configured_resources = resources.configured_resources
+            configured_resources = resources._registry.resources
             self.assertEqual(
-                configured_resources.members[0].name,
+                configured_resources.members[5].name,
                 'test-resources'
             )
             self.assertEqual(
-                configured_resources.members[1].name,
+                configured_resources.members[6].name,
                 'treibstoff'
             )
             self.assertEqual(
-                configured_resources.members[2].name,
+                configured_resources.members[7].name,
                 'yafowil-addon-resources'
             )
-            self.assertEqual(len(configured_resources.members[0].members), 1)
+            self.assertEqual(len(configured_resources.members[5].members), 1)
             self.assertEqual(
-                configured_resources.members[0].members[0].resource,
+                configured_resources.members[5].members[0].resource,
                 'base.js'
             )
-
         finally:
-            resources.configured_resources = configured_resources_orgin
             if hasattr(resources, 'test_resources_static_view'):
                 del resources.test_resources_static_view
             if hasattr(resources, 'treibstoff_static_view'):

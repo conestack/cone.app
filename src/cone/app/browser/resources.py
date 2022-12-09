@@ -159,10 +159,11 @@ class ResourceRegistry(object):
     def initialize(cls, config, settings):
         global _registry
         _registry = reg = cls(settings)
+
         config.add_directive('register_resource', reg.register_resource)
         config.add_directive('set_resource_include', reg.set_resource_include)
         config.add_directive(
-            'configure_default_resource_includes,
+            'configure_default_resource_includes',
             reg.configure_default_resource_includes
         )
         config.add_directive('configure_resources', reg.configure_resources)
