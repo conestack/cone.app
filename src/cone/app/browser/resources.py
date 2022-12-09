@@ -17,18 +17,13 @@ import webresource as wr
 
 
 logger = logging.getLogger('cone.app')
-
-
 resources_dir = os.path.join(os.path.dirname(__file__), 'static')
-resources = wr.ResourceGroup(name='cone.app')
-
 
 # jquery
 jquery_resources = wr.ResourceGroup(
     name='cone.app-jquery',
     directory=os.path.join(resources_dir, 'jquery'),
-    path='jquery',
-    group=resources
+    path='jquery'
 )
 jquery_resources.add(wr.ScriptResource(
     name='jquery-js',
@@ -36,13 +31,11 @@ jquery_resources.add(wr.ScriptResource(
     compressed='jquery-3.6.0.min.js'
 ))
 
-
 # bootstrap
 bootstrap_resources = wr.ResourceGroup(
     name='cone.app-bootstrap',
     directory=os.path.join(resources_dir, 'bootstrap'),
-    path='bootstrap',
-    group=resources
+    path='bootstrap'
 )
 bootstrap_resources.add(wr.ScriptResource(
     name='bootstrap-js',
@@ -68,13 +61,11 @@ bootstrap_resources.add(wr.StyleResource(
     compressed='bootstrap-theme.min.css'
 ))
 
-
 # typeahead
 typeahead_resources = wr.ResourceGroup(
     name='cone.app-typeahead',
     directory=os.path.join(resources_dir, 'typeahead'),
-    path='typeahead',
-    group=resources
+    path='typeahead'
 )
 typeahead_resources.add(wr.ScriptResource(
     name='typeahead-js',
@@ -86,13 +77,11 @@ typeahead_resources.add(wr.StyleResource(
     resource='typeahead.css'
 ))
 
-
 # ionicons
 ionicons_resources = wr.ResourceGroup(
     name='cone.app-ionicons',
     directory=os.path.join(resources_dir, 'ionicons'),
-    path='ionicons',
-    group=resources
+    path='ionicons'
 )
 ionicons_resources.add(wr.StyleResource(
     name='ionicons-css',
@@ -101,13 +90,11 @@ ionicons_resources.add(wr.StyleResource(
     resource='ionicons.css'
 ))
 
-
 # cone
 cone_resources = wr.ResourceGroup(
     name='cone.app-cone',
     directory=os.path.join(resources_dir, 'cone'),
-    path='cone',
-    group=resources
+    path='cone'
 )
 cone_resources.add(wr.ScriptResource(
     name='cone-app-public-js',
@@ -139,71 +126,144 @@ class ResourceInclude(object):
         self.name = name
 
     def __call__(self):
-        resouce_settings = self.settings.get(RESOURCE_INCLUDES_KEY, {})
-        include = resouce_settings.get(self.name, True)
+        include = self.settings.get(self.name, True)
         if include == 'authenticated':
             return bool(get_current_request().authenticated_userid)
         return include
 
 
-DEFAULT_EXCLUDES = ['yafowil.bootstrap']
+# Registry singleton
+_registry = None
 
 
 class ResourceRegistry(object):
+    """Resource registry."""
+
+    default_excludes = [
+        'yafowil.bootstrap'
+    ]
+    """List of resource names which gets excluded by default."""
+
+    resources = None
+    """``webresource.ResourceGroup`` instance containing configured resources.
+
+    Gets set from ``configure_resources``.
+    """
 
     def __init__(self, settings):
         self._settings = settings
-        self._resource_stack = []
         self._includes = {}
+        self._resources = wr.ResourceGroup(name='cone.app')
 
-    def register_resources_view(self, config, module, name, directory):
-        resources_view = static_view(directory, use_subpath=True)
-        view_name = '{}_static_view'.format(
-            name.replace('-', '_').replace('.', '_')
+    @classmethod
+    def initialize(cls, config, settings):
+        global _registry
+        _registry = reg = cls(settings)
+        config.add_directive('register_resource', reg.register_resource)
+        config.add_directive('set_resource_include', reg.set_resource_include)
+        config.add_directive(
+            'configure_default_resource_includes,
+            reg.configure_default_resource_includes
         )
-        setattr(module, view_name, resources_view)
-        view_path = 'cone.app.browser.resources.{}'.format(view_name)
-        config.add_view(view_path, name=name, context=AppResources)
+        config.add_directive('configure_resources', reg.configure_resources)
 
-    def set_resource_include(self, name, value):
+        # register default resources
+        config.register_resource(jquery_resources)
+        config.register_resource(bootstrap_resources)
+        config.register_resource(typeahead_resources)
+        config.register_resource(ionicons_resources)
+        config.register_resource(cone_resources)
+
+    def register_resource(self, config, resource):
+        """Register resource in registry.
+
+        This function is a pyramid configurator directive, thus automatically
+        gets passed the configurator instance. The only argument a user
+        has to pass is the resource. Resource registration happens at
+        application initialization time and normally is done from inside a
+        plugin ``main_hook``.
+
+        .. code-block:: python
+
+            from cone.app import main_hook
+            import webresource as wr
+
+            res = wr.ResourceGroup()
+
+            @main_hook
+            def initialize_plugin(config, global_config, settings)
+                config.register_resource(res)
+
+        :param resource: Either a ``webresource.Resource`` deriving object or
+            a ``webresource.ResourceGroup`` instance.
+        """
+        self._resources.add(resource)
+
+    def set_resource_include(self, config, name, value):
+        """Configure inclusion of specific resource.
+
+        This function is a pyramid configurator directive, thus automatically
+        gets passed the configurator instance. The only arguments a user
+        has to pass are name and value. Configuration of resource inclusion
+        happens at application initialization time and normally is done from
+        inside a plugin ``main_hook``.
+
+        :param name: Name if the resource to configure inclusion as string.
+        :param value: Inclusion setting. Either ``True``, ``False`` or
+            ``'authenticated'``.
+        """
         self._includes[name] = value
 
-    def configure_default_resource_includes(self):
+    def configure_default_resource_includes(self, config):
+        """Configure default resource includes.
+
+        This function is a pyramid configurator directive and gets called from
+        ``cone.app.main``.
+        """
         # configure default inclusion of cone protectes JS
-        self.set_resource_include('cone-app-protected-js', 'authenticated')
+        self.set_resource_include(
+            config,
+            'cone-app-protected-js',
+            'authenticated'
+        )
 
         # configure default inclusion of yafowil resources
         yafowil_public = self._settings.get('yafowil.resources_public')
         if yafowil_public not in ['1', 'True', 'true']:
             yafowil_resources = factory.get_resources(
                 copy_resources=False,
-                exclude=DEFAULT_EXCLUDES
+                exclude=self.default_excludes
             )
             for resource in yafowil_resources.scripts + yafowil_resources.styles:
-                set_resource_include(
-                    self._settings,
+                self.set_resource_include(
+                    config,
                     resource.name,
                     'authenticated'
                 )
 
-    def configure_resources(self, config, development, resources_=resources):
+    def configure_resources(self, config, development):
+        """Configure resources.
+
+        This function is a pyramid configurator directive and gets called from
+        ``cone.app.main``.
+        """
         # set resource development mode
         wr.config.development = development
 
-        global configured_resources
-        configured_resources = resources_ = resources_.copy()
+        # copy registered resources
+        resources = self._resources.copy()
 
         # add treibstoff resources
-        resources_.add(treibstoff.resources.copy())
+        resources.add(treibstoff.resources.copy())
 
         # add and configure yafowil resources
-        for group in factory.get_resources(exclude=DEFAULT_EXCLUDES).members:
-            resources_.add(group)
+        for group in factory.get_resources(exclude=self.default_excludes).members:
+            resources.add(group)
 
         # register static views for resource groups
         handled_groups = []
         module = sys.modules[__name__]
-        for group in resources_.members[:]:
+        for group in resources.members[:]:
             # ignore subsequent group in case path was defined multiple times.
             # otherwise we get an error when trying to register static view.
             if group.path in handled_groups:
@@ -220,7 +280,7 @@ class ResourceRegistry(object):
                 ).format(group.name))
                 group.remove()
                 continue
-            self.register_resources_view(
+            self._register_resources_view(
                 config,
                 module,
                 group.path,
@@ -230,7 +290,7 @@ class ResourceRegistry(object):
 
         # configure scripts and styles contained in resources
         handled_resources = []
-        for resource in resources_.scripts + resources_.styles:
+        for resource in resources.scripts + resources.styles:
             # ignore subsequent resource in case path was defined multiple times.
             if resource.name in handled_resources:
                 logger.debug((
@@ -239,112 +299,20 @@ class ResourceRegistry(object):
                 resource.remove()
                 continue
             resource.path = 'resources/{}'.format(resource.path)
-            resource.include = ResourceInclude(settings, resource.name)
+            resource.include = ResourceInclude(self._includes, resource.name)
             handled_resources.append(resource.name)
 
+        # Set configured resources for subsequenct access from resource views.
+        self.resources = resources
 
-def register_resources_view(config, module, name, directory):
-    resources_view = static_view(directory, use_subpath=True)
-    view_name = '{}_static_view'.format(name.replace('-', '_').replace('.', '_'))
-    setattr(module, view_name, resources_view)
-    view_path = 'cone.app.browser.resources.{}'.format(view_name)
-    config.add_view(view_path, name=name, context=AppResources)
-
-
-RESOURCE_INCLUDES_KEY = 'cone._resource_includes'
-
-
-def set_resource_include(settings, name, value):
-    resouce_settings = settings.setdefault(RESOURCE_INCLUDES_KEY, {})
-    resouce_settings[name] = value
-
-
-DEFAULT_EXCLUDES = ['yafowil.bootstrap']
-
-
-def configure_default_resource_includes(settings):
-    # configure default inclusion of cone protectes JS
-    set_resource_include(settings, 'cone-app-protected-js', 'authenticated')
-
-    # configure default inclusion of yafowil resources
-    yafowil_public = settings.get('yafowil.resources_public')
-    if yafowil_public not in ['1', 'True', 'true']:
-        yafowil_resources = factory.get_resources(
-            copy_resources=False,
-            exclude=DEFAULT_EXCLUDES
+    def _register_resources_view(self, config, module, name, directory):
+        resources_view = static_view(directory, use_subpath=True)
+        view_name = '{}_static_view'.format(
+            name.replace('-', '_').replace('.', '_')
         )
-        for resource in yafowil_resources.scripts + yafowil_resources.styles:
-            set_resource_include(settings, resource.name, 'authenticated')
-
-
-class ResourceInclude(object):
-
-    def __init__(self, settings, name):
-        self.settings = settings
-        self.name = name
-
-    def __call__(self):
-        resouce_settings = self.settings.get(RESOURCE_INCLUDES_KEY, {})
-        include = resouce_settings.get(self.name, True)
-        if include == 'authenticated':
-            return bool(get_current_request().authenticated_userid)
-        return include
-
-
-# the configured resources which gets delivered
-configured_resources = None
-
-
-def configure_resources(settings, config, development, resources_=resources):
-    # set resource development mode
-    wr.config.development = development
-
-    global configured_resources
-    configured_resources = resources_ = resources_.copy()
-
-    # add treibstoff resources
-    resources_.add(treibstoff.resources.copy())
-
-    # add and configure yafowil resources
-    for group in factory.get_resources(exclude=DEFAULT_EXCLUDES).members:
-        resources_.add(group)
-
-    # register static views for resource groups
-    handled_groups = []
-    module = sys.modules[__name__]
-    for group in resources_.members[:]:
-        # ignore subsequent group in case path was defined multiple times.
-        # otherwise we get an error when trying to register static view.
-        if group.path in handled_groups:
-            logger.warning((
-                'Resource group for path "{}" already included.'
-                'Skipping "{}"'
-            ).format(group.path, group.name))
-            group.remove()
-            continue
-        if not group.path or not group.directory:  # pragma: no cover
-            logger.warning((
-                'Resource group "{}" path or directory '
-                'missing. Skip configuration'
-            ).format(group.name))
-            group.remove()
-            continue
-        register_resources_view(config, module, group.path, group.directory)
-        handled_groups.append(group.path)
-
-    # configure scripts and styles contained in resources
-    handled_resources = []
-    for resource in resources_.scripts + resources_.styles:
-        # ignore subsequent resource in case path was defined multiple times.
-        if resource.name in handled_resources:
-            logger.debug((
-                'Resource with name "{}" already included. Skipping.'
-            ).format(resource.name))
-            resource.remove()
-            continue
-        resource.path = 'resources/{}'.format(resource.path)
-        resource.include = ResourceInclude(settings, resource.name)
-        handled_resources.append(resource.name)
+        setattr(module, view_name, resources_view)
+        view_path = 'cone.app.browser.resources.{}'.format(view_name)
+        config.add_view(view_path, name=name, context=AppResources)
 
 
 @tile(name='resources', path='templates/resources.pt', permission='login')
@@ -353,17 +321,17 @@ class Resources(Tile):
 
     @property
     def rendered_scripts(self):
-        global configured_resources
+        global _registry
         return wr.ResourceRenderer(
-            wr.ResourceResolver(configured_resources.scripts),
+            wr.ResourceResolver(_registry.resources.scripts),
             base_url=self.request.application_url
         ).render()
 
     @property
     def rendered_styles(self):
-        global configured_resources
+        global _registry
         return wr.ResourceRenderer(
-            wr.ResourceResolver(configured_resources.styles),
+            wr.ResourceResolver(_registry.resources.styles),
             base_url=self.request.application_url
         ).render()
 

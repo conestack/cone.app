@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
-from cone.app.browser.resources import configure_default_resource_includes
-from cone.app.browser.resources import configure_resources
+from cone.app.browser.resources import ResourceRegistry
 from cone.app.interfaces import IApplicationNode
 from cone.app.model import AppResources
 from cone.app.model import AppRoot
@@ -259,6 +258,9 @@ def main(global_config, **settings):
     else:
         config = Configurator(root_factory=get_root, settings=settings)
 
+    # Initialize resource registry
+    ResourceRegistry.initialize(config, settings)
+
     # set authentication and authorization policies
     config.set_authentication_policy(auth_policy)
     config.set_authorization_policy(acl_factory())
@@ -304,7 +306,7 @@ def main(global_config, **settings):
     # run against adopted blueprint rendering
     if not os.environ.get('TESTRUN_MARKER'):  # pragma: no cover
         configure_factory('bootstrap3')
-    configure_default_resource_includes(settings)
+    config.configure_default_resource_includes()
 
     # scan browser package
     config.scan(browser)
@@ -363,9 +365,9 @@ def main(global_config, **settings):
         ugm_backend.group_display_attr = group_display_attr
 
     # configure static resources
-    # this is done after main hooks, so plugins can add their resources
+    # this is done after main hooks, so plugins can register their resources
     development = global_config.get('debug') in ['true', 'True', '1']
-    configure_resources(settings, config, development)
+    config.configure_resources(development)
 
     # end configuration
     config.end()
