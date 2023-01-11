@@ -846,7 +846,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Add reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="glyphicons glyphicons-plus-sign">'
+        expected = '<span class="glyphicon glyphicon-plus-sign">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -880,7 +880,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Remove reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="glyphicons glyphicons-minus-sign">'
+        expected = '<span class="glyphicon glyphicon-minus-sign">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -1077,7 +1077,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
-        ><span class="glyphicons glyphicons-plus-sign"></span></a>...
+        ><span class="glyphicon glyphicon-plus-sign"></span></a>...
         """, res)
 
         # Non navigable nodes are not rendered

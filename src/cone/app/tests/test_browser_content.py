@@ -55,7 +55,7 @@ class TestBrowserLayout(TileTestCase):
             interface=Model,
             permission='view',
             text='Model Action',
-            icon='glyphicons glyphicons-star')
+            icon='glyphicon glyphicon-star')
         class ModelContentTile(Tile):
             pass
 
@@ -67,7 +67,7 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(action.interface, Model)
         self.assertEqual(action.permission, 'view')
         self.assertEqual(action.text, 'Model Action')
-        self.assertEqual(action.icon, 'glyphicons glyphicons-star')
+        self.assertEqual(action.icon, 'glyphicon glyphicon-star')
 
         del context_menu['contentviews']['model_action']
 

@@ -4,7 +4,8 @@ Changes
 1.0.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix plus and minus icon CSS classes in referencebrowser.
+  [rnix]
 
 
 1.0.6 (2022-12-05)
