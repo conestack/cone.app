@@ -17,13 +17,15 @@ export class ReferenceHandle {
             new AddReferenceHandle($(this), target, ol);
         });
         $('a.removereference', context).each(function() {
-            new RemoveReferenceHandle($(this), target);
+            new RemoveReferenceHandle($(this), target, ol);
         });
     }
 
-    constructor(target) {
+    constructor(elem, target, overlay) {
+        this.elem = elem;
         this.target = target;
         this.target_tag = target.get(0).tagName;
+        this.overlay = overlay;
     }
 
     single_value() {
@@ -31,7 +33,7 @@ export class ReferenceHandle {
     }
 
     multi_value() {
-        return this.target_tag.tagName == 'SELECT';
+        return this.target_tag == 'SELECT';
     }
 
     toggle_enabled(elem) {
@@ -49,7 +51,7 @@ export class ReferenceHandle {
             });
         }
         this.set_selected_on_ajax_target(elem.parent(), selected);
-        let overlay = this.overlay().getOverlay();
+        let overlay = this.overlay;
         let that = this;
         $('div.referencebrowser a', overlay.elem).each(function() {
             let link = $(this);
@@ -73,9 +75,7 @@ export class ReferenceHandle {
 export class AddReferenceHandle extends ReferenceHandle {
 
     constructor(elem, target, overlay) {
-        super(target);
-        this.elem = elem;
-        this.overlay = overlay;
+        super(elem, target, overlay);
         elem.off('click').on('click', this.add_reference.bind(this));
     }
 
@@ -109,9 +109,8 @@ export class AddReferenceHandle extends ReferenceHandle {
 
 export class RemoveReferenceHandle extends ReferenceHandle {
 
-    constructor(elem, target) {
-        super(target);
-        this.elem = elem;
+    constructor(elem, target, overlay) {
+        super(elem, target, overlay);
         elem.off('click').on('click', this.remove_reference.bind(this));
     }
 
@@ -169,7 +168,7 @@ export class ReferenceBrowserLoader {
             new AddReferenceHandle($(this), target, inst);
         });
         $('a.removereference', inst.elem).each(function() {
-            new RemoveReferenceHandle($(this), target);
+            new RemoveReferenceHandle($(this), target, inst);
         });
     }
 }
