@@ -101,6 +101,7 @@ export class AddReferenceHandle extends ReferenceHandle {
             let option = $('<option></option>');
             option.val(uid).html(label).attr('selected', 'selected');
             target.append(option);
+            target.trigger('change');
         }
         this.reset_selected(target);
         this.toggle_enabled(elem);
@@ -131,6 +132,7 @@ export class RemoveReferenceHandle extends ReferenceHandle {
                 return;
             }
             $(sel, target).remove();
+            target.trigger('change');
         }
         this.reset_selected(target);
         this.toggle_enabled(elem);

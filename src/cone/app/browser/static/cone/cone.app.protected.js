@@ -319,6 +319,7 @@ var cone_app_protected = (function (exports, $, ts) {
                 let option = $('<option></option>');
                 option.val(uid).html(label).attr('selected', 'selected');
                 target.append(option);
+                target.trigger('change');
             }
             this.reset_selected(target);
             this.toggle_enabled(elem);
@@ -346,6 +347,7 @@ var cone_app_protected = (function (exports, $, ts) {
                     return;
                 }
                 $(sel, target).remove();
+                target.trigger('change');
             }
             this.reset_selected(target);
             this.toggle_enabled(elem);
