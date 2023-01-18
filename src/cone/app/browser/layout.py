@@ -316,7 +316,7 @@ class PathBar(Tile):
                 'id': node.name,
                 'default_child': node.properties.default_child,
             })
-            if node is breakpoint:
+            if breakpoint is not None and node.path == breakpoint.path:
                 break
         items.reverse()
         ret = list()

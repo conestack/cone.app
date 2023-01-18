@@ -14,7 +14,6 @@ from cone.tile import Tile
 from cone.tile import tile
 from node.interfaces import IUUID
 from node.utils import instance_property
-from node.utils import LocationIterator
 from node.utils import node_by_path
 from node.utils import UNSET
 from pyramid.i18n import TranslationStringFactory
@@ -62,7 +61,8 @@ class ReferenceBrowserModelMixin(object):
     @request_property
     def referencebrowser_model(self):
         root = self.referencable_root
-        if root in LocationIterator(self.model):
+        root_path = root.path
+        if self.model.path[:len(root_path)] == root_path:
             return self.model
         return root
 

@@ -4,6 +4,13 @@ Changes
 1.0.7 (unreleased)
 ------------------
 
+- Check breakpoint against node path in ``PathBar.items_for`` instead of using
+  ``is`` and check for referencable root against node path in
+  ``ReferenceBrowserModelMixin.referencebrowser_model`` instead of checking
+  node containment with ``LocationIterator``. Application nodes might not be
+  cached in tree so comparison with ``is`` not works.
+  [rnix]
+
 - Fix plus and minus icon CSS classes in referencebrowser.
   [rnix]
 
