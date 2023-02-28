@@ -16,7 +16,7 @@ npm --prefix . --save-dev install \
     karma-module-resolver-preprocessor \
     rollup \
     rollup-plugin-cleanup \
-    rollup-plugin-terser \
+    @rollup/plugin-terser \
     sass
 
 npm --prefix . --no-save install \

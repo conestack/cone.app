@@ -199,7 +199,7 @@ function referencebrowser_on_array_index(inst, row, index) {
 }
 
 $(function() {
-    if (yafowil_array === undefined) {
+    if (window.yafowil_array === undefined) {
         return;
     }
     yafowil_array.on_array_event('on_add', referencebrowser_on_array_add);

@@ -1,5 +1,5 @@
 import cleanup from 'rollup-plugin-cleanup';
-import {terser} from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 const out_dir = 'src/cone/app/browser/static/cone';
 
