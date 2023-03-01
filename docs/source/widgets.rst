@@ -1404,29 +1404,29 @@ operations, enabled and selected state and optionally rendering an icon.
     from cone.app.browser.actions import LinkAction
 
     class ExampleAction(LinkAction):
-        bind = 'click'             # ``ajax:bind`` attribute
-        id = None                  # ``id`` attribute
-        href = '#'                 # ``href`` attribute
-        css = None                 # in addition for computed ``class`` attribute
-        title = None               # ``title`` attribute
-        action = None              # ``ajax:action`` attribute
-        event = None               # ``ajax:event`` attribute
-        confirm = None             # ``ajax:confirm`` attribute
-        overlay = None             # ``ajax:overlay`` attribute
+        bind = 'click'             # ajax:bind attribute
+        id = None                  # id attribute
+        href = '#'                 # href attribute
+        css = None                 # in addition for computed class attribute
+        title = None               # title attribute
+        action = None              # ajax:action attribute
+        event = None               # ajax:event attribute
+        confirm = None             # ajax:confirm attribute
+        overlay = None             # ajax:overlay attribute
         overlay_css = None         # ajax:overlay-css attribute
         overlay_uid = None         # ajax:overlay-uid attribute
         overlay_title = None       # ajax:overlay-title attribute
-        path = None                # ``ajax:path`` attribute
-        path_target = None         # ``ajax:path-target`` attribute
-        path_action = None         # ``ajax:path-action`` attribute
-        path_event = None          # ``ajax:path-event`` attribute
-        path_overlay = None        # ``ajax:path-overlay`` attribute
-        path_overlay_css = None    # ajax:path-overlay-css
-        path_overlay_uid = None    # ajax:path-overlay-uid
-        path_overlay_title = None  # ajax:path-overlay-title
+        path = None                # ajax:path attribute
+        path_target = None         # ajax:path-target attribute
+        path_action = None         # ajax:path-action attribute
+        path_event = None          # ajax:path-event attribute
+        path_overlay = None        # ajax:path-overlay attribute
+        path_overlay_css = None    # ajax:path-overlay-css attribute
+        path_overlay_uid = None    # ajax:path-overlay-uid attribute
+        path_overlay_title = None  # ajax:path-overlay-title attribute
         text = None                # link text
-        enabled = True             # if ``False``, link gets 'disabled' CSS class
-        selected = False           # if ``True``, link get 'selected' CSS class
+        enabled = True             # if False, link gets 'disabled' CSS class
+        selected = False           # if True, link get 'selected' CSS class
         icon = None                # if set, render span tag with value as CSS class
 
 ``ButtonAction`` represents a HTML button offering integration to ``bdajax``
