@@ -26,7 +26,11 @@ export class BatchedItemsFilter {
             });
         }
         let defs = event.split(':');
-        ts.ajax.trigger(defs[0], defs[1], target);
+        ts.ajax.trigger({
+            name: defs[0],
+            selector: defs[1],
+            target: target
+        });
     }
 }
 
