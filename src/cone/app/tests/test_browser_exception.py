@@ -20,6 +20,10 @@ class TestBrowserException(TileTestCase):
         # operations which display the traceback in an error dialog if request
         # was a treibstoff ajax action
         request = self.layer.new_request()
+        try:
+            raise Exception()
+        except:
+            res = str(internal_server_error(request))
         self.checkOutput("""
         200 OK
         Content-Type: text/html; charset=UTF-8
@@ -30,12 +34,15 @@ class TestBrowserException(TileTestCase):
           <hr />
         </p>
         <pre>Traceback (most recent call last):
-          None...
+          ...
         </pre>
-        """, str(internal_server_error(request)))
+        """, res)
 
         request = self.layer.new_request(xhr=1)
-        res = str(internal_server_error(request))
+        try:
+            raise Exception()
+        except:
+            res = str(internal_server_error(request))
         self.assertTrue(res.find('200 OK') > -1)
         self.assertTrue(res.find('Content-Type: application/json') > -1)
         self.assertTrue(res.find('"continuation"') > -1)
@@ -49,6 +56,10 @@ class TestBrowserException(TileTestCase):
 
         with self.layer.authenticated('admin'):
             request = self.layer.new_request()
+            try:
+                raise Exception()
+            except:
+                res = str(internal_server_error(request))
 
             self.checkOutput("""
             200 OK
@@ -60,12 +71,15 @@ class TestBrowserException(TileTestCase):
               <hr />
             </p>
             <pre>Traceback (most recent call last):
-              None...
+              ...
             </pre>
-            """, str(internal_server_error(request)))
+            """, res)
 
             request = self.layer.new_request(xhr=1)
-            res = str(internal_server_error(request))
+            try:
+                raise Exception()
+            except:
+                res = str(internal_server_error(request))
 
         self.assertTrue(res.find('200 OK') > -1)
         self.assertTrue(res.find('Content-Type: application/json') > -1)
