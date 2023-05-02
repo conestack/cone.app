@@ -395,7 +395,7 @@ var cone_app_protected = (function (exports, $, ts) {
         $('.referencebrowser_trigger', row).each(function() {
             let trigger = $(this),
                 ref_name = trigger.data('reference-name'),
-                base_id = inst.base_id(row),
+                base_id = inst.base_id,
                 base_name = base_id.replace(/\-/g, '.');
             trigger.data('reference-name', inst.set_value_index(
                 ref_name,
