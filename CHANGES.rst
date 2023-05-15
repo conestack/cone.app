@@ -1,8 +1,8 @@
 Changes
 =======
 
-1.1.a1 (unreleased)
--------------------
+1.1a1 (2023-05-15)
+------------------
 
 - JavaScript rewrite. Update ``Bootstrap`` and ``jQuery``. Drop ``jquery-ui``.
   [rnix]
