@@ -1,10 +1,23 @@
 Changes
 =======
 
-1.0.8 (unreleased)
+1.1a1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- JavaScript rewrite. Update ``Bootstrap`` and ``jQuery``. Drop ``jquery-ui``.
+  [rnix]
+
+- Use ``webresource`` for resource registration.
+  [rnix]
+
+- Drop ``bdajax``. Use ``treibstoff`` instead.
+  [rnix]
+
+- Add ``contents`` tile for ``AppRoot``.
+  [rnix]
+
+- Default layout ``mainmenu_fluid`` setting is now ``True`` by default.
+  [rnix]
 
 
 1.0.7 (2023-05-15)
