@@ -184,6 +184,7 @@ class ContentsTile(Table):
         row_data['creator'] = node.metadata.get('creator', 'unknown')
         row_data['created'] = node.metadata.get('created')
         row_data['modified'] = node.metadata.get('modified')
+        row_data['workflow_state'] = node.metadata.get('workflow_state')
         return row_data
 
     def sorted_rows(self, start, end, sort, order):
