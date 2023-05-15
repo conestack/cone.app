@@ -1,7 +1,13 @@
 Changes
 =======
 
-1.0.7 (unreleased)
+1.0.8 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
+1.0.7 (2023-05-15)
 ------------------
 
 - Check breakpoint against node path in ``PathBar.items_for`` instead of using
