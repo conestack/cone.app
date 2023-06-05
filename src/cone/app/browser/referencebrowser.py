@@ -20,9 +20,9 @@ from pyramid.i18n import TranslationStringFactory
 from pyramid.threadlocal import get_current_request
 from yafowil.base import factory
 from yafowil.common import generic_required_extractor
-from yafowil.common import select_display_renderer
-from yafowil.common import select_edit_renderer
-from yafowil.common import select_extractor
+from yafowil.select import select_display_renderer
+from yafowil.select import select_edit_renderer
+from yafowil.select import select_extractor
 from yafowil.utils import attr_value
 from yafowil.utils import cssclasses
 from yafowil.utils import cssid
