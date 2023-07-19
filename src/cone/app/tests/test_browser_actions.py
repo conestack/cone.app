@@ -37,7 +37,7 @@ from cone.app.testing.mock import WorkflowNode
 from cone.tile import tile
 from cone.tile import Tile
 from cone.tile.tests import TileTestCase
-from node.behaviors import Order
+from node.behaviors import MappingOrder
 from plumber import plumbing
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
@@ -827,7 +827,7 @@ class TestBrowserActions(TileTestCase):
         node.properties.action_move = True
         self.assertFalse(action.display)
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 
@@ -861,7 +861,7 @@ class TestBrowserActions(TileTestCase):
         action.request = request
         self.assertFalse(action.display)
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 
@@ -893,7 +893,7 @@ class TestBrowserActions(TileTestCase):
         action.request = request
         self.assertFalse(action.display)
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 

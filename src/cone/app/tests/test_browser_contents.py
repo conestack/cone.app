@@ -17,7 +17,7 @@ from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
 from node.base import BaseNode as NodeBaseNode
-from node.behaviors import Order
+from node.behaviors import MappingOrder
 from plumber import plumbing
 from pyramid.exceptions import HTTPForbidden
 from pyramid.security import ACLDenied
@@ -386,7 +386,7 @@ class TestBrowserContents(TileTestCase):
         self.assertTrue(res.text.startswith('<!DOCTYPE html>'))
 
     def test_move_actions(self):
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 
