@@ -6,7 +6,7 @@ from cone.app.interfaces import IPrincipalACL
 from cone.app.interfaces import IWorkflowState
 from cone.tile import render_template
 from cone.tile import render_tile
-from node.interfaces import IOrder
+from node.interfaces import IMappingOrder
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
 
@@ -532,7 +532,7 @@ class _ActionMove(LinkAction):
             return False
         parent = self.model.parent
         return parent.properties.action_move \
-            and IOrder.providedBy(parent) \
+            and IMappingOrder.providedBy(parent) \
             and self.request.has_permission('change_order', parent)
 
     @property
