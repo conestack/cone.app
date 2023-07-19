@@ -485,7 +485,14 @@ class RootContent(ProtectedContentTile):
 
 class LanguageTile(Tile):
     param_blacklist = [
-        '_', '_LOCALE_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector'
+        '_',
+        '_LOCALE_',
+        'ajax.action',
+        'ajax.mode',
+        'ajax.selector',
+        'bdajax.action',  # B/C
+        'bdajax.mode',  # B/C
+        'bdajax.selector'  # B/C
     ]
 
     def make_query(self, lang=None):

@@ -649,6 +649,9 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(tile.param_blacklist, [
             '_',
             '_LOCALE_',
+            'ajax.action',
+            'ajax.mode',
+            'ajax.selector',
             'bdajax.action',
             'bdajax.mode',
             'bdajax.selector'
