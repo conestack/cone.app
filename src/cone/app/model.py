@@ -214,6 +214,8 @@ class FactoryNode(BaseNode):
 class AppRoot(FactoryNode):
     """Application root.
     """
+    # XXX: we always want AppSettings and AppResources in factories
+    #      by default
     factories = odict()
 
     @instance_property
