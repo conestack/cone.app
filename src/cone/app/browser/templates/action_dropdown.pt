@@ -13,7 +13,7 @@
     </a>
 
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-      <li  role="presentation" tal:repeat="item context.items">
+      <li role="presentation" tal:repeat="item context.items">
         <a href="${item.url|nothing}"
            role="menuitem"
            tabindex="-1"

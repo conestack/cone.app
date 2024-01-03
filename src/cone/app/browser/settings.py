@@ -1,3 +1,5 @@
+from cone.app import DefaultLayoutConfig
+from cone.app import layout_config
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import ajax_form_fiddle
 from cone.app.browser.utils import format_traceback
@@ -16,6 +18,33 @@ from webob import Response
 
 
 _ = TranslationStringFactory('cone.app')
+
+
+@layout_config(AppSettings)
+class SettingsLayoutConfig(DefaultLayoutConfig):
+
+    def __init__(self, model=None, request=None):
+        super(SettingsLayoutConfig, self).__init__(model=model, request=request)
+        self.sidebar_left = ['settings_sidebar']
+
+
+@tile(name='settings_sidebar',
+      path='templates/settings_sidebar.pt',
+      permission='manage',
+      strict=False)
+class SettingsSidebar(Tile):
+    """Settings sidebar tile."""
+
+    @property
+    def settings_nodes(self):
+        ret = list()
+        for child in self.model.values():
+            ret.append({
+                'title': child.metadata.title,
+                'icon': child.nodeinfo.icon,
+                'target': make_url(self.request, node=child)
+            })
+        return ret
 
 
 @view_config(name='settings_tab_content', xhr=True, permission='manage')

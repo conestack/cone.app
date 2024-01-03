@@ -1,0 +1,32 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namespaces.conestack.org/ajax"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <div id="settings_sidebar"
+       class="contextsensitiv list-group"
+       ajax:bind="contextchanged"
+       ajax:action="settings_sidebar:#settings_sidebar:replace">
+
+    <div class="list-group-item active"
+         i18n:translate="settings">
+      Settings
+    </div>
+
+    <ul class="list-group-item">
+      <li tal:repeat="item context.settings_nodes">
+        <a href="${item['target']}"
+           ajax:bind="click"
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           ajax:path="href">
+          <i class="${item['icon']}" alt="..."></i>
+          <span tal:replace="item['title']">Title</span>
+        </a>
+      </li>
+    </ul>
+
+  </div>
+
+</tal:block>
