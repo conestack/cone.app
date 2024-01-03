@@ -92,14 +92,14 @@ export class BatchedItemsSearch extends BatchedItemsFilter {
         // trigger search when releasing enter
         if (evt.keyCode == 13) {
             evt.preventDefault();
-            this.set_filter(this.elem.attr('value'));
+            this.set_filter(this.elem.val());
         }
     }
 
     change_handle(evt) {
         // trigger search on input change
         evt.preventDefault();
-        this.set_filter(this.elem.attr('value'));
+        this.set_filter(this.elem.val());
     }
 }
 

@@ -76,12 +76,12 @@ var cone_app_protected = (function (exports, $, ts) {
         keyup_handle(evt) {
             if (evt.keyCode == 13) {
                 evt.preventDefault();
-                this.set_filter(this.elem.attr('value'));
+                this.set_filter(this.elem.val());
             }
         }
         change_handle(evt) {
             evt.preventDefault();
-            this.set_filter(this.elem.attr('value'));
+            this.set_filter(this.elem.val());
         }
     }
     function batcheditems_handle_filter(elem, param, val) {

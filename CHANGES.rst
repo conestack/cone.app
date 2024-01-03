@@ -4,7 +4,8 @@ Changes
 1.1a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix reading search term in ``BatchedItemsSearch``.
+  [rnix]
 
 
 1.1a1 (2023-05-15)
