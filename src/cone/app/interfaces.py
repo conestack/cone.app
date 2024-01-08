@@ -43,6 +43,11 @@ class ILeafNode(IApplicationNode, ILeaf):
         """Empty iterator."""
 
 
+class ISettingsNode(ILeafNode):
+    """Application node for managing plugin specific settings."""
+    category = Attribute(u'Settings category as (translation) string.')
+
+
 class IFactoryNode(IApplicationNode, IChildFactory):
     """Application node for static children."""
 

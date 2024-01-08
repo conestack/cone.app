@@ -14,7 +14,7 @@
       Settings
     </div>
 
-    <ul class="list-group-item">
+    <ul class="list-group-item" tal:condition="None">
       <li tal:repeat="item context.settings_nodes">
         <a href="${item['target']}"
            ajax:bind="click"

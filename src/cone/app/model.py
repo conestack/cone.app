@@ -11,6 +11,7 @@ from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
+from cone.app.interfaces import ISettingsNode
 from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
@@ -187,6 +188,14 @@ class LeafNode(AppNode):
     @default
     def __iter__(self):
         return iter([])
+
+
+NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
+
+
+@implementer(ISettingsNode)
+class SettingsNode(LeafNode):
+    category = default(NO_SETTINGS_CATEGORY)
 
 
 @plumbing(
