@@ -14,17 +14,22 @@
       Settings
     </div>
 
-    <ul class="list-group-item" tal:condition="None">
-      <li tal:repeat="item context.settings_nodes">
-        <a href="${item['target']}"
-           ajax:bind="click"
-           ajax:target="${item['target']}"
-           ajax:event="contextchanged:#layout"
-           ajax:path="href">
-          <i class="${item['icon']}" alt="..."></i>
-          <span tal:replace="item['title']">Title</span>
-        </a>
-      </li>
+    <ul tal:define="items context.categorized_children">
+      <tal:setting repeat="item items">
+          <span class="list-group-item settings_header" tal:content="item"></span>
+          <li tal:repeat="item_data items[item]"
+              class="list-group-item">
+            <a href="${item_data['target']}"
+               ajax:bind="click"
+               ajax:target="${item_data['target']}"
+               ajax:event="contextchanged:#layout"
+               ajax:path="href">
+              <i class="${item_data['icon']}" alt="..."></i>
+              <span tal:replace="item_data['title']">Title</span>
+            </a>
+          </li>
+      </tal:setting>
+
     </ul>
 
   </div>

@@ -70,8 +70,8 @@ class SettingsTile(Tile):
                 'target': make_url(self.request, node=child)
             })
         ret = odict()
-        for name, in sorted(categories):
-            ret[name] = sorted(categories[name])
+        for name in sorted(categories):
+            ret[name] = categories[name]
         return ret
 
 

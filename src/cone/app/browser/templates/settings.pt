@@ -2,22 +2,24 @@
            xmlns:ajax="http://namespaces.conestack.org/ajax"
            omit-tag="True">
 
-  <ul class="nav nav-pills settingstabs"
-      tal:define="tabs context.tabs">
-
-    <li tal:repeat="tab tabs">
-      <a href="#"
-         ajax:target="${tab['target']}"
-         tal:attributes="title tab['title']"
-         tal:content="tab['title']">
-        Title
-      </a>
-    </li>
-
-  </ul>
-
-  <div class="visualClear"></div>
-
-  <div class="settingstabpane"></div>
+    <div id="settings-grid-container"
+         class="list-group"
+         tal:define="items context.categorized_children">
+      <tal:item repeat="item items">
+        <span class="list-group-item active" tal:content="item"></span>
+        <div class="settings-grid">
+          <a tal:repeat="item_data items[item]"
+             href="${item_data['target']}"
+             class="settings-grid-item"
+             ajax:bind="click"
+             ajax:target="${item_data['target']}"
+             ajax:event="contextchanged:#layout"
+             ajax:path="href">
+            <i class="${item_data['icon']}"></i>
+            <span tal:content="item_data['title']"></span>
+          </a>
+        </div>
+      </tal:item>
+    </div>
 
 </tal:block>
