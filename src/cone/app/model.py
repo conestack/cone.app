@@ -258,7 +258,18 @@ NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
 @plumbing(LeafNode, NodeInit, Node)
 class SettingsNode(object):
     """Application node for managing plugin specific settings."""
+    __acl__ = [
+        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, Everyone, 'login'),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
     category = NO_SETTINGS_CATEGORY
+
+    @instance_property
+    def metadata(self):
+        metadata = Metadata()
+        metadata.title = self.nodeinfo.title
+        return metadata
 
 
 @plumbing(AppNode, NodeInit, Node)
