@@ -110,6 +110,12 @@ class SettingsForm(ContentEditForm):
     def form_heading(self):
         return self.model.nodeinfo.title
 
+    @plumb
+    def prepare(next_, self):
+        if not self.model.display:
+            raise HTTPUnauthorized()
+        next_(self)
+
 
 class settings_form(tile):
     """Settings form tile decorator."""
@@ -127,13 +133,13 @@ class SettingsBehavior(Behavior):
     """Settings node form behavior."""
 
     @plumb
-    def prepare(_next, self):
+    def prepare(next_, self):
         warnings.warn(
             '``SettingsBehavior`` is deprecated and will be removed as '
             'of cone.app 1.2. Use ``SettingsEditForm`` instead.',
             DeprecationWarning
         )
-        _next(self)
+        next_(self)
         selector = '#form-{}'.format('-'.join(self.form.path))
         ajax_form_fiddle(self.request, selector, 'replace')
 
