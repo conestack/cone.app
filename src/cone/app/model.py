@@ -264,6 +264,7 @@ class SettingsNode(object):
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
     category = NO_SETTINGS_CATEGORY
+    display = True
 
     @instance_property
     def metadata(self):

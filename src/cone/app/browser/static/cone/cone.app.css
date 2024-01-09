@@ -235,6 +235,9 @@ a.removereference.disabled {
 #settings_sidebar > ul .settings_header {
     background-image: linear-gradient(to bottom, #bbdbf7 0%, #a4cced 100%);
 }
+#settings_sidebar > ul > li.selected {
+    font-weight: bold;
+}
 #settings-grid-container .settings-grid {
     display: flex;
     flex-wrap: wrap;

@@ -21,7 +21,7 @@
               tal:condition="category_name != context.no_category"
               tal:content="category_name"></span>
         <li tal:repeat="item categories[category_name]"
-            class="list-group-item">
+            class="list-group-item ${'selected' if item['current'] else ''}">
           <a href="${item['target']}"
              ajax:bind="click"
              ajax:target="${item['target']}"

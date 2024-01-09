@@ -44,8 +44,11 @@ class YAMLForm(Behavior):
     def form_action(self, widget, data):
         resource = self.action_resource
         if self.form_flavor == 'add':
-            return make_url(self.request, node=self.model.parent,
-                            resource=resource)
+            return make_url(
+                self.request,
+                node=self.model.parent,
+                resource=resource
+            )
         return make_url(self.request, node=self.model, resource=resource)
 
     @override
