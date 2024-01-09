@@ -190,14 +190,6 @@ class LeafNode(AppNode):
         return iter([])
 
 
-NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
-
-
-@implementer(ISettingsNode)
-class SettingsNode(LeafNode):
-    category = default(NO_SETTINGS_CATEGORY)
-
-
 @plumbing(
     AppNode,
     AsAttrAccess,
@@ -221,8 +213,7 @@ class FactoryNode(BaseNode):
 
 
 class AppRoot(FactoryNode):
-    """Application root.
-    """
+    """Application root."""
     # XXX: we always want AppSettings and AppResources in factories
     #      by default
     factories = odict()
@@ -237,8 +228,7 @@ class AppRoot(FactoryNode):
 
 
 class AppSettings(FactoryNode):
-    """Applications Settings container.
-    """
+    """Applications Settings container."""
     __acl__ = [
         (Allow, 'role:manager', ['view', 'manage']),
         (Allow, Everyone, 'login'),
@@ -261,10 +251,19 @@ class AppSettings(FactoryNode):
         return metadata
 
 
+NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
+
+
+@implementer(ISettingsNode)
+@plumbing(LeafNode, NodeInit, Node)
+class SettingsNode(object):
+    """Application node for managing plugin specific settings."""
+    category = NO_SETTINGS_CATEGORY
+
+
 @plumbing(AppNode, NodeInit, Node)
 class AppResources(object):
-    """Traversal context for static resources.
-    """
+    """Traversal context for static resources."""
 
     @instance_property
     def properties(self):

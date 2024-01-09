@@ -229,9 +229,6 @@ a.removereference.disabled {
 }
 
 /* settings */
-.settingstabpane {
-    margin-top:12px;
-}
 #settings_sidebar > ul {
     padding: 0;
 }
