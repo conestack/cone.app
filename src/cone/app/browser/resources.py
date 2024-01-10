@@ -110,7 +110,8 @@ cone_resources.add(wr.ScriptResource(
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-css',
-    resource='cone.app.css'
+    resource='cone.app.css',
+    compressed='cone.app.min.css'
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-print-css',
