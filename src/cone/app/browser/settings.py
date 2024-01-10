@@ -82,7 +82,7 @@ class SettingsSidebar(SettingsTile):
       path='templates/settings.pt',
       interface=AppSettings,
       permission='view')
-class AppSettings(SettingsTile):
+class SettingsContent(SettingsTile):
     """Settings content tile."""
 
 
