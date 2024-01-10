@@ -9,7 +9,7 @@ const jquery_files = [{
 }];
 
 const treibstoff_files = [{
-    pattern: `${node_modules}/treibstoff/src/**/*.js`,
+    pattern: `../../sources/treibstoff/src/*.js`,
     type: 'module',
     included: true
 }];
@@ -30,7 +30,7 @@ const files = [].concat(
 )
 
 let preprocessors = {};
-preprocessors[`${node_modules}/treibstoff/src/**/*.js`] = ['module-resolver'];
+preprocessors['../../sources/treibstoff/src/**/*.js'] = ['module-resolver'];
 preprocessors['../src/*.js'] = ['coverage', 'module-resolver'];
 preprocessors['../tests/*.js'] = ['coverage', 'module-resolver'];
 
@@ -58,7 +58,7 @@ module.exports = function(config) {
             ecmaVersion: 6,
             aliases: {
                 jquery: `${node_modules}/jquery/src/jquery.js`,
-                treibstoff: `${node_modules}/treibstoff/src/treibstoff.js`
+                treibstoff: '../../sources/treibstoff/src/treibstoff.js'
             }
         }
     });
