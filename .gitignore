@@ -1,11 +1,13 @@
 *.egg-info
 *.pyc
 /.coverage
+/.mxmake/
 /.project
 /.pydevproject
 /.pydevproject.bak
 /.settings/
 /.vscode/
+/constraints-mxdev.txt
 /coverage/
 /dist/
 /docs/Makefile
@@ -20,6 +22,7 @@
 /package-lock.json
 /pip-selfcheck.json
 /pyvenv.cfg
+/requirements-mxdev.txt
 /sources/
 /twistd.pid
 /venv/
