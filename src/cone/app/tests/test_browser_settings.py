@@ -19,7 +19,7 @@ from cone.tile import render_tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from plumber import plumbing
-from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPUnauthorized
 from pyramid.view import render_view_to_response
 from yafowil.base import factory
 
@@ -211,12 +211,17 @@ class TestBrowserSettings(TileTestCase):
         self.assertEqual(res, '<form id="editform" />')
 
         with self.layer.authenticated('manager'):
-            res = render_view_to_response(test_settings, request=request).text
+            res = render_view_to_response(
+                test_settings,
+                request=request,
+                name='edit'
+            ).text
         self.assertTrue(res.find('<form id="editform" />') > -1)
 
         test_settings.display = False
-        with self.assertRaises(HTTPForbidden):
-            render_tile(test_settings, request, 'content')
+        with self.layer.authenticated('manager'):
+            with self.assertRaises(HTTPUnauthorized):
+                render_tile(test_settings, request, 'content')
 
     def test_SettingsForm(self):
         root = get_root()
@@ -272,8 +277,9 @@ class TestBrowserSettings(TileTestCase):
         self.assertEqual(event.target, 'http://example.com/settings/test_settings')
 
         test_settings.display = False
-        with self.assertRaises(HTTPForbidden):
-            render_tile(test_settings, request, 'editform')
+        with self.layer.authenticated('manager'):
+            with self.assertRaises(HTTPUnauthorized):
+                render_tile(test_settings, request, 'editform')
 
     def test_SettingsBehavior(self):
         root = get_root()
