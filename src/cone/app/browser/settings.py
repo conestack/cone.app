@@ -120,13 +120,20 @@ class SettingsForm(ContentEditForm):
 class settings_form(tile):
     """Settings form tile decorator."""
 
-    def __init__(self, interface, permission='manage'):
-        self.name = 'editform'
-        self.path = None
-        self.attribute = None
-        self.interface = interface
-        self.permission = permission
-        self.strict = True
+    def __init__(
+        self,
+        interface=None,
+        permission='manage',
+        path='cone.app.browser:templates/settings_form.pt'
+    ):
+        super(settings_form, self).__init__(
+            name='editform',
+            path=path,
+            attribute=None,
+            interface=interface,
+            permission=permission,
+            strict=True
+        )
 
 
 class SettingsBehavior(Behavior):
