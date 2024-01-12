@@ -270,6 +270,7 @@ class SettingsNode(object):
     def metadata(self):
         metadata = Metadata()
         metadata.title = self.nodeinfo.title
+        metadata.description = self.nodeinfo.description
         return metadata
 
 
