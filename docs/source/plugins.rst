@@ -51,9 +51,9 @@ are loaded. This happens in defined plugin registration order in application
 
 The hook gets passed the
 `pyramid.config.Configurator <http://docs.pylonsproject.org/projects/pyramid/en/latest/api/config.html>`_
-object and the ``global_config`` and ``local_config`` dictionaries.
+object and the ``global_config`` and ``settings`` dictionaries.
 
-Configuration ``.ini`` file settings are contained in ``local_config``. Thus
+Configuration ``.ini`` file settings are contained in ``settings``. Thus
 plugin related custom settings can be added to the application ``.ini`` file
 and read inside the main hook.
 
@@ -77,7 +77,7 @@ package ``__init__.py`` module.
     from cone.app import main_hook
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         """Initialization code goes here.
         """
 
@@ -88,75 +88,54 @@ Static Resources
 ----------------
 
 A plugin may provide resources like JavaScipt and CSS files, images, and so
-forth. Such resources are located in a seperate folder, which gets provided as
-pyramid static resource.
+forth. `webresource <http://pypi.python.org/pypi/webresource>`_ is utilized
+for handling static resources.
+
+Static resources need to be registered, this usually happens in the
+``browser`` package's ``__init__`` file of the plugin.
 
 .. code-block:: python
 
-    from pyramid.static import static_view
+    import os
+    import webresource as wr
 
-    static_resources = static_view('static', use_subpath=True)
+    # expect resource files in ``static`` subfolder of ``browser`` package.
+    resources_dir = os.path.join(os.path.dirname(__file__), 'static')
 
-The static view gets registered in the plugin main hook.
+    cone_example_resources = wr.ResourceGroup(
+        name='cone.example',
+        directory=resources_dir,
+        path='example'
+    )
+    cone_example_resources.add(wr.ScriptResource(
+        name='cone-example-js',
+        depends='cone-app-protected-js',
+        resource='cone.example.js',
+        compressed='cone.example.min.js'
+    ))
+    cone_example_resources.add(wr.StyleResource(
+        name='cone-example-css',
+        resource='cone.example.css',
+        compressed='cone.example.min.css'
+    ))
+
+    def configure_resources(config, settings):
+        # see ``cone.app.browser.resources.ResourceRegistry``
+        config.register_resource(cone_example_resources)
+        config.set_resource_include('cone-example-js', 'authenticated')
+        config.set_resource_include('cone-example-css', 'authenticated')
+
+``configure_resources`` must be called in the plugin main hook.
 
 .. code-block:: python
 
     from cone.app import main_hook
-    from cone.example.browser import static_resources
+    from cone.example.browser import configure_resources
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
-
+    def example_main_hook(config, global_config, settings):
         # static resources
-        config.add_view(static_resources, name='example-static')
-
-This configuration makes the resources available to the browser by URL, but no
-CSS or JS files are delivered yet on page load. CSS and JS files can be
-published for authenticated users only or for all users.
-
-Resource registries are simple lists on the global application config object
-``cone.app.cfg``. Resources can be delivered either as is, or merged with
-other resources in one file.
-
-For delivering resources as is, register them in ``cone.app.cfg.css``
-respective ``cone.app.cfg.js``.
-
-Resources which can be merged to one file are registered in
-``cone.app.cfg.merged.css`` respective ``cone.app.cfg.merged.js``.
-
-To register the resources for all users of the site, authenticated or not, add them
-to the ``public`` resources list, e.g. ``cone.app.cfg.css.public``. If
-resources should only be delivered for authenticated users, add them to the
-``protected`` list, e.g. ``cone.app.cfg.css.protected``.
-
-.. note::
-
-    If you need to depend on resources delivered by another plugin make sure to
-    register the resources inside the main hook function and that the plugin
-    containing the dependencies are placed before your plugin is loaded at
-    ``cone.plugins`` in the ini configuration.
-
-    If you provide a plugin which is desired to be used as dependency for other
-    plugins this also applies.
-
-.. code-block:: python
-
-    from cone.app import main_hook
-    import cone.app
-
-    @main_hook
-    def example_main_hook(config, global_config, local_config):
-        # public CSS
-        cone.app.cfg.css.public.append('example-static/public.css')
-
-        # protected CSS
-        cone.app.cfg.css.protected.append('example-static/protected.css')
-
-        # public JavaScript
-        cone.app.cfg.js.public.append('example-static/public.js')
-
-        # protected javaScript
-        cone.app.cfg.js.protected.append('example-static/protected.js')
+        configure_resources(config, settings)
 
 
 .. _plugins_application_model:
@@ -174,7 +153,7 @@ Plugin root node factories are registered to the application via
     import cone.example.model import ExamplePlugin
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         # register plugin entry node
         register_entry('example', ExamplePlugin)
 
@@ -198,7 +177,7 @@ at ``app_root['settings']`` and can be registered to the application via
     from cone.app.model import node_info
 
     @node_info(
-        name='example_plugin_settings',
+        name='cone_example_settings',
         title='Example Plugin Settings',
         description='Settings related to example plugin',
         icon='glyphicon glyphicon-asterisk')
@@ -213,7 +192,7 @@ at ``app_root['settings']`` and can be registered to the application via
             return True
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         register_config('example', ExampleSettings)
 
 
