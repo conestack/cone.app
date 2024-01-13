@@ -21,12 +21,10 @@
   background-color: #e8e8e8;
   background-image: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);
 }
-
 .dropdown-menu > li > a.disabled {
   cursor: not-allowed;
   color: #aaa;
 }
-
 .dropdown-menu > li > button {
   display: block;
   background: none;
@@ -41,7 +39,6 @@
   width: 100%;
   text-align: left;
 }
-
 .dropdown-menu > li > button:hover {
   background-color: #e8e8e8;
   background-image: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);
@@ -51,65 +48,51 @@
 #navtree li {
   padding-left: 8px;
 }
-
 #navtree li > a {
   padding: 6px 10px 6px 0px;
 }
-
 #navtree li > a:hover {
   color: #333;
   background-color: transparent;
 }
-
 #navtree li.active > a {
   font-weight: bold;
 }
-
 #navtree li.navtreelevel_1 {
   padding-left: 0px;
 }
-
 #navtree li.navtreelevel_2 {
   margin-left: 6px;
   border-left: #cdcdcd 3px solid;
 }
-
 #navtree li.navtreelevel_2 > a {
   padding: 5px 10px 5px 0px;
 }
-
 #navtree li.navtreelevel_3 {
   margin-left: 5px;
   border-left: #dddddd 3px solid;
 }
-
 #navtree li.navtreelevel_3 > a {
   padding: 4px 10px 4px 0px;
 }
-
 #navtree li.navtreelevel_4 {
   margin-left: 4px;
   border-left: #dedede 3px solid;
 }
-
 #navtree li.navtreelevel_4 > a {
   padding: 3px 10px 3px 0px;
 }
-
 #navtree li.navtreelevel_5 {
   margin-left: 4px;
   border-left: #eeeeee 3px solid;
 }
-
 #navtree li.navtreelevel_5 > a {
   padding: 2px 10px 2px 0px;
 }
-
 #navtree li.navtreelevel_6 {
   margin-left: 4px;
   border-left: #efefef 3px solid;
 }
-
 #navtree li.navtreelevel_6 > a {
   padding: 2px 10px 2px 0px;
 }
@@ -208,7 +191,6 @@ tr.selectable.selected td {
   display: block;
   text-decoration: underline;
 }
-
 .referencebrowser_trigger i {
   margin-right: 0.6em;
 }
@@ -232,7 +214,6 @@ div#referencebrowser {
   border-right: none;
   border-bottom: none;
 }
-
 div#referencebrowser .panel-heading,
 div#referencebrowser .panel-footer {
   border-radius: 0px;
@@ -247,14 +228,12 @@ a.removereference.disabled {
 .translation-nav > li > a {
   padding: 5px 10px;
 }
-
 .translation-nav > li.error > a,
 .translation-nav > li.error > a:hover,
 .translation-nav > li.error > a:focus {
   color: #a94442;
   background-color: #fff;
 }
-
 .translation-nav > li.active.error > a,
 .translation-nav > li.active.error > a:hover,
 .translation-nav > li.active.error > a:focus {
@@ -271,11 +250,9 @@ a.removereference.disabled {
 #settings_sidebar > ul {
   padding: 0;
 }
-
 #settings_sidebar > ul .settings_header {
   background-image: linear-gradient(to bottom, #bbdbf7 0%, #a4cced 100%);
 }
-
 #settings_sidebar > ul > li.selected {
   font-weight: bold;
 }
@@ -285,7 +262,6 @@ a.removereference.disabled {
   flex-wrap: wrap;
   padding: 2rem 1rem 1rem 2rem;
 }
-
 #settings-grid-container .settings-grid .settings-grid-item {
   display: flex;
   justify-content: center;
@@ -302,18 +278,15 @@ a.removereference.disabled {
   border-radius: 14px;
   text-decoration: none;
 }
-
-#settings-grid-container .settings-grid .settings-grid-item:hover {
-  background: rgb(233, 233, 233);
-}
-
 #settings-grid-container .settings-grid .settings-grid-item > i {
   font-size: 50px;
 }
-
 #settings-grid-container .settings-grid .settings-grid-item > span {
   text-align: center;
   line-height: normal;
+}
+#settings-grid-container .settings-grid .settings-grid-item:hover {
+  background: rgb(233, 233, 233);
 }
 
 /* footer */
