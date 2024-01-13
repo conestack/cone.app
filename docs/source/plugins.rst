@@ -186,7 +186,7 @@ This makes the plugin model available to the browser via traversal.
 Application Settings
 --------------------
 
-Plugin Settings are realized as well as application nodes. They are located
+Plugin Settings are implemented as application nodes. They are located
 at ``app_root['settings']`` and can be registered to the application via
 ``cone.app.register_config``.
 
@@ -194,11 +194,23 @@ at ``app_root['settings']`` and can be registered to the application via
 
     from cone.app import main_hook
     from cone.app import register_config
-    from cone.app.model import BaseNode
+    from cone.app.model import SettingsNode
+    from cone.app.model import node_info
 
-    class ExampleSettings(BaseNode):
-        """Plugin settings are provided by this node.
-        """
+    @node_info(
+        name='example_plugin_settings',
+        title='Example Plugin Settings',
+        description='Settings related to example plugin',
+        icon='glyphicon glyphicon-asterisk')
+    class ExampleSettings(SettingsNode):
+        """Plugin settings are provided by this node."""
+        category = 'Settings Category'
+
+        @property
+        def display(self):
+            # Logic like permission checks whether settings node is available
+            # to the user via UI.
+            return True
 
     @main_hook
     def example_main_hook(config, global_config, local_config):

@@ -667,28 +667,6 @@ overlay versions may look like so.
         """
 
 
-Settings Model Forms
---------------------
-
-``cone.app`` renders forms for application settings in tabs, all at once.
-To provide a edit form for your settings node,
-``cone.app.browser.settings.SettingsBehavior`` shall be used.
-
-.. code-block:: python
-
-    from cone.app.browser.form import Form
-    from cone.app.browser.settings import SettingsBehavior
-    from cone.example.model import ExampleSettings
-    from cone.tile import tile
-    from plumber import plumbing
-
-    @tile(name='editform', interface=ExampleSettings, permission="manage")
-    @plumbing(SettingsBehavior)
-    class ExampleSettingsForm(Form):
-        """Form for ExampleSettings node.
-        """
-
-
 Extending Forms with Plumbing Behaviors
 ---------------------------------------
 
@@ -758,3 +736,32 @@ form tiles.
     class ExampleEditForm(Form):
         """Content edit form using our generic form extension.
         """
+
+
+.. _forms_settings_forms:
+
+Settings Forms
+--------------
+
+Forms for settings nodes are essentially content edit forms, rendered on
+``cone.app.model.SettingNode`` instances, but with a dedicated wrapper template.
+
+.. code-block:: python
+
+    from cone.app.browser.form import Form
+    from cone.app.browser.settings import SettingsForm
+    from cone.app.browser.settings import settings_form
+    from cone.example.model import ExampleSettings
+    from plumber import plumbing
+
+    @settings_form(interface=ExampleSettings)
+    @plumbing(SettingsForm)
+    class ExampleSettingsForm(Form):
+        """Form for ExampleSettings node."""
+
+The ``settings_form`` decorator additionally accepts ``permission`` keyword
+argument if settings node shall be editable for users without ``manage``
+permission.
+
+If it is necessary to render additional markup around the form, the wrapper
+template can be customized by passing the ``path`` keyword argument.
