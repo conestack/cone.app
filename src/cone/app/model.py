@@ -11,6 +11,7 @@ from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
+from cone.app.interfaces import ISettingsNode
 from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
@@ -212,8 +213,7 @@ class FactoryNode(BaseNode):
 
 
 class AppRoot(FactoryNode):
-    """Application root.
-    """
+    """Application root."""
     # XXX: we always want AppSettings and AppResources in factories
     #      by default
     factories = odict()
@@ -228,8 +228,7 @@ class AppRoot(FactoryNode):
 
 
 class AppSettings(FactoryNode):
-    """Applications Settings container.
-    """
+    """Applications Settings container."""
     __acl__ = [
         (Allow, 'role:manager', ['view', 'manage']),
         (Allow, Everyone, 'login'),
@@ -252,10 +251,32 @@ class AppSettings(FactoryNode):
         return metadata
 
 
+NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
+
+
+@implementer(ISettingsNode)
+@plumbing(LeafNode, NodeInit, Node)
+class SettingsNode(object):
+    """Application node for managing plugin specific settings."""
+    __acl__ = [
+        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, Everyone, 'login'),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+    category = NO_SETTINGS_CATEGORY
+    display = True
+
+    @instance_property
+    def metadata(self):
+        metadata = Metadata()
+        metadata.title = self.nodeinfo.title
+        metadata.description = self.nodeinfo.description
+        return metadata
+
+
 @plumbing(AppNode, NodeInit, Node)
 class AppResources(object):
-    """Traversal context for static resources.
-    """
+    """Traversal context for static resources."""
 
     @instance_property
     def properties(self):

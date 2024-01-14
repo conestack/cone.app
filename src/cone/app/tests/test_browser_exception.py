@@ -1,7 +1,5 @@
 from cone.app import testing
-from cone.app.browser.exception import forbidden_view
 from cone.app.browser.exception import internal_server_error
-from cone.app.browser.exception import not_found_view
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase

@@ -204,45 +204,57 @@ Static Resources
 ----------------
 
 Delivering :ref:`static resources <plugin_static_resources>` is done by
-registering a directory for serving the assets and telling the application
+creating a directory for serving the assets and telling the application
 which files to deliver to the browser.
 
 Create ``src/cone/example/browser/static`` directory containing ``example.css``
 and ``example.js``.
 
-Create a static view for the ``static`` directory in
-``src/cone/example/browser/__init__.py``:
+Register the resources in ``src/cone/example/browser/__init__.py``:
 
 .. code-block:: python
 
-    from pyramid.static import static_view
+    import os
+    import webresource as wr
 
-    static_resources = static_view('static', use_subpath=True)
+    resources_dir = os.path.join(os.path.dirname(__file__), 'static')
+    cone_example_resources = wr.ResourceGroup(
+        name='cone.example',
+        directory=resources_dir,
+        path='example'
+    )
+    cone_example_resources.add(wr.ScriptResource(
+        name='cone-example-js',
+        depends='cone-app-protected-js',
+        resource='example.js'
+    ))
+    cone_example_resources.add(wr.StyleResource(
+        name='cone-example-css',
+        resource='example.css'
+    ))
 
-Register the static view and tell the application to deliver the
-CSS and JS file to the browser. This is done inside the
-:ref:`Plugin main hook function <plugin_main_hook>`.
+    def configure_resources(config, settings):
+        # see ``cone.app.browser.resources.ResourceRegistry``
+        config.register_resource(cone_example_resources)
+        config.set_resource_include('cone-example-js', 'authenticated')
+        config.set_resource_include('cone-example-css', 'authenticated')
 
-Add the plugin main hook function in ``src/cone/example/__init__.py``
-containing.
+Add a :ref:`Plugin main hook function <plugin_main_hook>` function in
+``src/cone/example/__init__.py`` and call ``configure_resources`` inside this
+function to tell the application to deliver the CSS and JS file to the browser.
 
 .. code-block:: python
 
     from cone.app import main_hook
-    from cone.example.browser import static_resources
-    import cone.app
+    from cone.example.browser import configure_resources
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         """Function which gets called at application startup to initialize
         this plugin.
         """
-        # register static resources view
-        config.add_view(static_resources, name='example-static')
-
-        # register static resources to be delivered
-        cone.app.cfg.css.public.append('example-static/example.css')
-        cone.app.cfg.js.public.append('example-static/example.js')
+        # static resources
+        configure_resources(config, settings)
 
 
 Application Model
@@ -282,7 +294,7 @@ the model.
     from cone.example.model import ExamplePlugin
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         # register plugin entry node
         register_entry('example', ExamplePlugin)
 
@@ -335,7 +347,7 @@ gets executed.
     from cone.app import main_hook
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         # scan browser package
         config.scan('cone.example.browser')
 

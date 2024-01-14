@@ -13,7 +13,6 @@ from node.tests import NodeTestCase
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.router import Router
-from pyramid.static import static_view
 from pyramid.testing import DummyRequest
 import cone.app
 
@@ -51,29 +50,29 @@ class TestApp(NodeTestCase):
         self.assertTrue(root['settings'].properties.skip_mainmenu)
 
     @tmp_root_node
-    def test_register_plugin(self):
-        cone.app.register_plugin('dummy', BaseNode)
+    def test_register_entry(self):
+        cone.app.register_entry('dummy', BaseNode)
 
         root = cone.app.get_root()
         self.assertTrue('dummy' in root.factories.keys())
 
         err = self.expectError(
             ValueError,
-            lambda: cone.app.register_plugin('dummy', BaseNode)
+            lambda: cone.app.register_entry('dummy', BaseNode)
         )
         expected = "Entry with name 'dummy' already registered."
         self.assertEqual(str(err), expected)
 
     @tmp_root_node
-    def test_register_plugin_config(self):
-        cone.app.register_plugin_config('dummy', BaseNode)
+    def test_register_config(self):
+        cone.app.register_config('dummy', BaseNode)
 
         root = cone.app.get_root()
         self.assertTrue('dummy' in root['settings'].factories.keys())
 
         err = self.expectError(
             ValueError,
-            lambda: cone.app.register_plugin_config('dummy', BaseNode)
+            lambda: cone.app.register_config('dummy', BaseNode)
         )
         expected = "Config with name 'dummy' already registered."
         self.assertEqual(str(err), expected)

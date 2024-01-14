@@ -1,106 +1,37 @@
 Development
 ===========
 
-Install
-=======
+Install project::
 
-Install virtualenv and run buildout::
+    make install
 
-    python3 -m venv .
-    ./bin/pip install -U pip
-    ./bin/pip install zc.buildout
-    ./bin/buildout -c waitress.cfg
+Run python tests::
 
-Install npm::
+    make test
 
-    sudo apt install npm
+Run python tests with coverage::
 
-Install test requirements::
+    make coverage
 
-    npm --save-dev install \
-        qunit \
-        karma \
-        karma-qunit \
-        karma-coverage \
-        karma-chrome-launcher \
-        karma-viewport \
-        karma-module-resolver-preprocessor
+Run JavaScript tests::
 
-Install jquery from git as jquery 4 is not released yet but required to run
-tests as modules and import from jquery sources works::
+    make karma
 
-    npm --save-dev install https://github.com/jquery/jquery#main
+Build JavaScript bundles::
 
-Install deployment requirements::
+    make rollup
 
-    npm --save-dev install \
-        rollup \
-        rollup-plugin-cleanup \
-        rollup-plugin-terser
+Build CSS Styles::
 
-Install sass::
+    make scss
 
-    npm --save-dev install sass
+Extract i18n translation messages and build message catalogs::
 
-Install treibstoff. When developing with a local buildout, install from
-development sources::
+    make lingua
 
-    npm install devsrc/treibstoff
+Generate sphinx docs::
 
-else install from git::
-
-    npm install https://github.com/conestack/treibstoff#master
-
-
-Javascript Tests
-================
-
-Cone uses karma testrunner for JS testing:
-
-- Karma: https://karma-runner.github.io/6.3/intro/installation.html
-- Istanbul: https://istanbul.js.org/
-
-Following plugins are used:
-
-- karma-qunit
-- karma-chrome
-- karma-viewport
-
-Start karma server (immediately run tests)::
-
-    ./karma.sh
-
-To view coverage report, open::
-
-    karma/coverage/[browser name]/index.html
-
-
-Bundle Javascript
-=================
-
-Create JS bundle with rollup::
-
-    ./rollup.sh
-
-
-Compile CSS
-===========
-
-Cone uses sass as CSS preprocessor.
-
-To compile CSS files, run::
-
-    ./compile_styles.sh
-
-
-Build documentation
-===================
-
-Cone uses sphinx for generating it's documentation.
-
-To generate sphinx, run::
-
-    ./docs.sh
+    make docs
 
 
 Browser Resources

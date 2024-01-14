@@ -413,34 +413,6 @@ var cone_app_protected = (function (exports, $, ts) {
         yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
     });
 
-    class SettingsTabs {
-        static initialize(context) {
-            new SettingsTabs(context);
-        }
-        constructor(context) {
-            this.tabs = $('ul.settingstabs a', context);
-            this.tabs.on('click', this.load_tab).first().trigger('click');
-        }
-        load_tab(evt) {
-            evt.preventDefault();
-            let elem = $(this);
-            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
-            ts.ajax.request({
-                url: target.url,
-                params: target.params,
-                success: function(data, status, request) {
-                    let tabs = $(elem).parent().parent();
-                    $('li', tabs).removeClass('active');
-                    elem.parent().addClass('active');
-                    $('.settingstabpane')
-                        .html(data)
-                        .css('display', 'block')
-                        .tsajax();
-                }
-            });
-        }
-    }
-
     class Sharing {
         static initialize(context) {
             new Sharing(context);
@@ -646,7 +618,6 @@ var cone_app_protected = (function (exports, $, ts) {
         ts.ajax.register(CopySupport.initialize, true);
         ts.ajax.register(ReferenceBrowserLoader.initialize, true);
         ts.ajax.register(ReferenceHandle.initialize, true);
-        ts.ajax.register(SettingsTabs.initialize, true);
         ts.ajax.register(Sharing.initialize, true);
         ts.ajax.register(TableToolbar.initialize, true);
         ts.ajax.register(Translation.initialize, true);
@@ -662,7 +633,6 @@ var cone_app_protected = (function (exports, $, ts) {
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;
     exports.Selectable = Selectable;
-    exports.SettingsTabs = SettingsTabs;
     exports.Sharing = Sharing;
     exports.TableToolbar = TableToolbar;
     exports.Translation = Translation;

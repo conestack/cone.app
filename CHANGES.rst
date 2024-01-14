@@ -4,6 +4,13 @@ Changes
 1.1a2 (unreleased)
 ------------------
 
+- Refactor settings UI. Introduce ``cone.app.model.SettingsNode`` as base class
+  for plugin related settings application models. Introduce
+  ``cone.app.browser.settings.SettingsForm`` plumbing behavior and
+  ``cone.app.browser.settings.settings_form`` decorator for implementing
+  settings forms.
+  [rnix]
+
 - Fix reading search term in ``BatchedItemsSearch``.
   [rnix]
 

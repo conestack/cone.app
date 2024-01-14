@@ -2,7 +2,7 @@ import sys
 import unittest
 
 
-def test_suite():
+def test_suite():  # pragma: no cover
     from cone.app.tests import test_testing
 
     from cone.app.tests import test_app
@@ -72,7 +72,7 @@ def test_suite():
     return suite
 
 
-def run_tests():
+def run_tests():  # pragma: no cover
     from zope.testrunner.runner import Runner
 
     runner = Runner(found_suites=[test_suite()])
@@ -80,5 +80,5 @@ def run_tests():
     sys.exit(int(runner.failed))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     run_tests()

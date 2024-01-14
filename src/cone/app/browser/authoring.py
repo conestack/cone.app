@@ -216,7 +216,11 @@ class ContentForm(FormHeading):
         if not path:
             path = 'cone.app.browser:templates/content_form.pt'
         return render_template(
-            path, request=request, model=model, context=self)
+            path,
+            request=request,
+            model=model,
+            context=self
+        )
 
 
 ###############################################################################

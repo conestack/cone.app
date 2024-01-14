@@ -1,0 +1,11 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namespaces.conestack.org/ajax"
+           omit-tag="True">
+  <div>
+
+    <h1 tal:content="context.form_heading">Title</h1>
+
+    <tal:form replace="structure context.rendered_form" />
+
+  </div>
+</tal:block>
