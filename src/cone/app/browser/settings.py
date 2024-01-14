@@ -1,9 +1,11 @@
 from cone.app import DefaultLayoutConfig
 from cone.app import layout_config
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import ajax_form_fiddle
 from cone.app.browser.authoring import ContentEditForm
 from cone.app.browser.authoring import render_form
+from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import request_property
 from cone.app.interfaces import ISettingsNode
@@ -36,6 +38,46 @@ class SettingsLayoutConfig(DefaultLayoutConfig):
         self.sidebar_left = ['settings_sidebar']
 
 
+@personal_tools_action(name='settings')
+class ViewSettingsAction(LinkAction):
+    text = _('settings', default='Settings')
+    icon = 'ion-ios7-gear'
+    event = 'contextchanged:#layout'
+    path = 'href'
+
+    @property
+    def settings(self):
+        root = self.model.root
+        return root.get('settings') if root else None
+
+    @property
+    def target(self):
+        return make_url(self.request, node=self.settings)
+
+    href = target
+
+    @property
+    def display(self):
+        settings = self.settings
+        if not settings:
+            return False
+        if not self.request.has_permission('view', settings):
+            return False
+        visible = []
+        for child in settings.values():
+            if not ISettingsNode.providedBy(child):
+                warnings.warn(
+                    'Node "{}" not implements ``ISettingsNode`` and gets ignored '
+                    'as of cone.app 1.2.'.format(child.__class__),
+                    DeprecationWarning
+                )
+                if self.request.has_permission('manage', child):
+                    visible.append(child)
+            elif child.display:
+                visible.append(child)
+        return len(visible) > 0
+
+
 class SettingsTile(Tile):
     no_category = NO_SETTINGS_CATEGORY
 
@@ -45,8 +87,8 @@ class SettingsTile(Tile):
         for child in self.model.root['settings'].values():
             if not ISettingsNode.providedBy(child):
                 warnings.warn(
-                    'Node {} not implements ``ISettingsNode`` and gets '
-                    'ignored as of cone.app 1.2.'.format(child.path),
+                    'Node "{}" not implements ``ISettingsNode`` and gets ignored '
+                    'as of cone.app 1.2.'.format(child.__class__),
                     DeprecationWarning
                 )
                 category = categories.setdefault(self.no_category, [])

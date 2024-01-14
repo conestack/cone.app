@@ -5,11 +5,13 @@ from cone.app import testing
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.form import Form
+from cone.app.browser.layout import personal_tools
 from cone.app.browser.settings import SettingsBehavior
 from cone.app.browser.settings import SettingsForm
 from cone.app.browser.settings import SettingsLayoutConfig
 from cone.app.browser.settings import SettingsTile
 from cone.app.browser.settings import settings_form
+from cone.app.browser.settings import ViewSettingsAction
 from cone.app.model import BaseNode
 from cone.app.model import NO_SETTINGS_CATEGORY
 from cone.app.model import SettingsNode
@@ -65,6 +67,45 @@ class TestBrowserSettings(TileTestCase):
 
         self.assertEqual(lc.sidebar_left, ['settings_sidebar'])
 
+    def test_ViewSettingsAction(self):
+        self.assertTrue('settings' in personal_tools)
+
+        root = get_root()
+        settings = root['settings']
+        settings.invalidate()
+        settings.factories.clear()
+
+        action = ViewSettingsAction()
+        action.model = settings
+        action.request = self.layer.new_request()
+
+        self.assertEqual(action.text, 'settings')
+        self.assertEqual(action.icon, 'ion-ios7-gear')
+        self.assertEqual(action.event, 'contextchanged:#layout')
+        self.assertEqual(action.path, 'href')
+        self.assertEqual(action.target, 'http://example.com/settings')
+        self.assertTrue(action.__class__.href is action.__class__.target)
+        self.assertTrue(action.settings is settings)
+
+        class TestSettings(SettingsNode):
+            pass
+
+        class IgnoreSettings(SettingsNode):
+            display = False
+
+        class LegacySettings(BaseNode):
+            pass
+
+        register_config('test', TestSettings)
+        register_config('ignore', IgnoreSettings)
+        register_config('legacy', LegacySettings)
+
+        self.assertFalse(action.display)
+        with self.layer.authenticated('max'):
+            self.assertFalse(action.display)
+        with self.layer.authenticated('manager'):
+            self.assertTrue(action.display)
+
     @testing.reset_node_info_registry
     def test_SettingsTile(self):
         root = get_root()
@@ -105,7 +146,8 @@ class TestBrowserSettings(TileTestCase):
         tile.model = settings
         tile.request = self.layer.new_request()
 
-        cc = tile.categorized_children
+        with self.layer.authenticated('manager'):
+            cc = tile.categorized_children
         self.assertEqual(cc.keys(), [NO_SETTINGS_CATEGORY, 'cat'])
         self.assertEqual(cc[NO_SETTINGS_CATEGORY], [{
             'title': 'No Cat',
@@ -128,7 +170,8 @@ class TestBrowserSettings(TileTestCase):
         tile = SettingsTile()
         tile.model = settings['cat']
         tile.request = self.layer.new_request()
-        cc = tile.categorized_children
+        with self.layer.authenticated('manager'):
+            cc = tile.categorized_children
         self.assertEqual(cc['cat'], [{
             'title': 'Cat',
             'icon': 'cat-icon',
@@ -195,7 +238,7 @@ class TestBrowserSettings(TileTestCase):
             title='Test Settings',
             icon='test-settings-icon')
         class TestSettings(SettingsNode):
-            pass
+            display = True
 
         register_config('test_settings', TestSettings)
         with self.layer.hook_tile_reg():
@@ -234,7 +277,7 @@ class TestBrowserSettings(TileTestCase):
             title='Test Settings',
             icon='test-settings-icon')
         class TestSettings(SettingsNode):
-            pass
+            display = True
 
         register_config('test_settings', TestSettings)
         with self.layer.hook_tile_reg():

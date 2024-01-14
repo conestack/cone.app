@@ -1,5 +1,6 @@
-from cone.app import cfg
 from cone.app import DefaultLayoutConfig
+from cone.app import cfg
+from cone.app import get_root
 from cone.app import layout_config
 from cone.app import testing
 from cone.app.browser import render_main_template
@@ -8,25 +9,28 @@ from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.layout import LanguageTile
 from cone.app.browser.layout import LayoutConfigTile
 from cone.app.browser.layout import NavTree
+from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.layout import personal_tools
 from cone.app.browser.layout import personal_tools_action
-from cone.app.browser.layout import ProtectedContentTile
 from cone.app.interfaces import ILayoutConfig
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
+from cone.app.model import AppSettings
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
+from cone.app.model import SettingsNode
 from cone.app.security import DEFAULT_SETTINGS_ACL
-from cone.app.testing.mock import default_layout
 from cone.app.testing.mock import LayoutConfigNode
 from cone.app.testing.mock import WorkflowNode
-from cone.tile import render_tile
+from cone.app.testing.mock import default_layout
 from cone.tile import Tile
+from cone.tile import render_tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
 from node.base import BaseNode as NodeBaseNode
 from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
 from zope.interface import implementer
@@ -190,10 +194,13 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
 
         # Child nodes which do not grant permission 'view' are skipped
-        class SettingsNode(BaseNode):
-            __acl__ = DEFAULT_SETTINGS_ACL
+        class RestrictedViewNode(BaseNode):
+            __acl__ = [
+                (Allow, 'role:manager', ['view']),
+                (Deny, Everyone, ALL_PERMISSIONS)
+            ]
 
-        model['3'] = SettingsNode()
+        model['3'] = RestrictedViewNode()
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
         self.assertFalse(res.find('<li class=" node-3">') > -1)
@@ -419,7 +426,7 @@ class TestBrowserLayout(TileTestCase):
         del personal_tools['testaction']
 
     def test_personaltools(self):
-        root = BaseNode()
+        root = get_root()
         request = self.layer.new_request()
 
         # Unauthorized
@@ -431,28 +438,6 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root, request, 'personaltools')
         self.assertTrue(res.find('id="personaltools"') > -1)
         self.assertTrue(res.find('href="http://example.com/logout"') > -1)
-        self.assertFalse(res.find('href="http://example.com/settings"') > -1)
-
-        # No settings link if empty settings
-        root['settings'] = BaseNode()
-        with self.layer.authenticated('max'):
-            res = render_tile(root, request, 'personaltools')
-        self.assertFalse(res.find('href="http://example.com/settings"') > -1)
-
-        # Settings link if settings container contains children
-        root['settings']['mysettings'] = BaseNode()
-        with self.layer.authenticated('max'):
-            res = render_tile(root, request, 'personaltools')
-        self.assertTrue(res.find('href="http://example.com/settings"') > -1)
-
-        # No settings if no view permission
-        class NoAccessSettings(BaseNode):
-            __acl__ = [(Deny, Everyone, ALL_PERMISSIONS)]
-
-        root['settings'] = NoAccessSettings()
-        with self.layer.authenticated('max'):
-            res = render_tile(root, request, 'personaltools')
-        self.assertFalse(res.find('href="http://example.com/settings"') > -1)
 
     def test_pathbar(self):
         root = BaseNode()

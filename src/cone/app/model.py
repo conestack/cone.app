@@ -230,7 +230,7 @@ class AppRoot(FactoryNode):
 class AppSettings(FactoryNode):
     """Applications Settings container."""
     __acl__ = [
-        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, 'system.Authenticated', ['view']),
         (Allow, Everyone, 'login'),
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
@@ -255,7 +255,7 @@ NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
 
 
 @implementer(ISettingsNode)
-@plumbing(LeafNode, NodeInit, Node)
+@plumbing(LeafNode, NodeInit, Node, AppEnvironment)
 class SettingsNode(object):
     """Application node for managing plugin specific settings."""
     __acl__ = [
@@ -264,7 +264,13 @@ class SettingsNode(object):
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
     category = NO_SETTINGS_CATEGORY
-    display = True
+
+    @property
+    def display(self):
+        request = self.request
+        if not request:
+            return False
+        return request.has_permission('manage', self)
 
     @instance_property
     def metadata(self):
