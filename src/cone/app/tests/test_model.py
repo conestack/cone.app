@@ -140,6 +140,7 @@ class TestModel(NodeTestCase):
 
         self.assertEqual(node.category, NO_SETTINGS_CATEGORY)
 
+        self.layer.forget_request()
         self.assertFalse(node.display)
         self.layer.new_request()
         self.assertFalse(node.display)

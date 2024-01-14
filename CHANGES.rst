@@ -8,7 +8,8 @@ Changes
   for plugin related settings application models. Introduce
   ``cone.app.browser.settings.SettingsForm`` plumbing behavior and
   ``cone.app.browser.settings.settings_form`` decorator for implementing
-  settings forms.
+  settings forms. Allow access to settings UI for users without ``manager``
+  permission.
   [rnix]
 
 - Fix reading search term in ``BatchedItemsSearch``.
