@@ -12,6 +12,6 @@
     "qunit": "^2.19.4",
     "rollup": "^2.79.1",
     "rollup-plugin-cleanup": "^3.2.1",
-    "sass": "^1.69.7"
+    "sass": "^1.70.0"
   }
 }
