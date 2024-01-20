@@ -697,6 +697,12 @@ class TestBrowserAuthoring(TileTestCase):
         <form action="http://example.com/somechild"...
         """, res)
 
+        # Render B/C edit tile
+        with self.layer.authenticated('editor'):
+            request = self.layer.new_request()
+            bc_res = render_tile(root['somechild'], request, 'edit')
+        self.assertEqual(bc_res, res)
+
         # Render with submitted data. Default next URL of EditForm is the
         # edited node
         with self.layer.authenticated('editor'):
@@ -1239,6 +1245,11 @@ class TestBrowserAuthoring(TileTestCase):
             '#1234 .modal-body'
         )
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
+
+        # Render B/C overlayedit tile
+        with self.layer.authenticated('editor'):
+            bc_res = render_tile(model, request, 'overlayedit')
+        self.assertEqual(bc_res, res)
 
         # Overlay editform sumbmission happens via related pyramid view
         # Case form error

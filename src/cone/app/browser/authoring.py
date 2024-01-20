@@ -454,6 +454,20 @@ def edit(model, request):
     return render_form(model, request, 'editform')
 
 
+# B/C
+@tile(name='edit', permission='edit')
+class EditTile(Tile):
+
+    def render(self):
+        warnings.warn(
+            '``EditTile`` is deprecated and will be removed as of '
+            'cone.app 1.2. Please adopt your code to use ``editform`` tile '
+            'directly instead.',
+            DeprecationWarning
+        )
+        return render_tile(self.model, self.request, 'editform')
+
+
 class EditFormHeading(FormHeading):
 
     @default
@@ -492,6 +506,20 @@ EditBehavior = ContentEditForm
 @view_config(name='overlayedit', permission='editform')
 def overlayedit(model, request):
     return render_form(model, request, 'overlayeditform')
+
+
+# B/C
+@tile(name='overlayedit', permission='edit')
+class OverlayEditTile(Tile):
+
+    def render(self):
+        warnings.warn(
+            '``OverlayEditTile`` is deprecated and will be removed as of '
+            'cone.app 1.2. Please adopt your code to use ``overlayeditform`` '
+            'tile directly instead.',
+            DeprecationWarning
+        )
+        return render_tile(self.model, self.request, 'overlayeditform')
 
 
 class OverlayEditForm(OverlayForm, EditFormHeading):
