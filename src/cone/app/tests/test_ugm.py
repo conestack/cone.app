@@ -28,13 +28,15 @@ class TestUgm(NodeTestCase):
     layer = testing.security
 
     def test_UGMFactory(self):
-        self.expectError(NotImplementedError, UGMFactory, {})
+        with self.assertRaises(NotImplementedError):
+            UGMFactory({})
 
         class DummyUGMFactory(UGMFactory):
             def __init__(self, settings):
                 pass
 
-        self.expectError(NotImplementedError, DummyUGMFactory({}).__call__)
+        with self.assertRaises(NotImplementedError):
+            DummyUGMFactory({})()
 
     @restore_ugm_backend
     def test_ugm_backend(self):
@@ -56,11 +58,16 @@ class TestUgm(NodeTestCase):
 
         self.assertEqual(ugm_backend.registry, {'dummy': DummyUGMFactory})
 
-        err = self.expectError(ValueError, ugm_backend.load, 'inexistent', {})
-        self.assertEqual(str(err), 'Unknown UGM backend "inexistent"')
+        with self.assertRaises(ValueError) as arc:
+            ugm_backend.load('inexistent', {})
+        self.assertEqual(
+            str(arc.exception),
+            'Unknown UGM backend "inexistent"'
+        )
 
-        err = self.expectError(ValueError, ugm_backend.initialize)
-        self.assertEqual(str(err), 'UGM backend not loaded')
+        with self.assertRaises(ValueError) as arc:
+            ugm_backend.initialize()
+        self.assertEqual(str(arc.exception), 'UGM backend not loaded')
 
         self.assertEqual(ugm_backend.name, None)
         self.assertEqual(ugm_backend.factory, None)

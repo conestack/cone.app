@@ -96,8 +96,12 @@ class TestWorkflow(NodeTestCase):
 
         # If not set, and ACL not found in ``state_acls``, raise on access
         node.default_acl = None
-        err = self.expectError(ValueError, lambda: node.__acl__)
-        self.assertEqual(str(err), "No ACL found for state 'initial'")
+        with self.assertRaises(ValueError) as arc:
+            node.__acl__
+        self.assertEqual(
+            str(arc.exception),
+            "No ACL found for state 'initial'"
+        )
 
     def test_state_acl(self):
         node = StateACLWorkflowNode()

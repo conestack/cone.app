@@ -217,18 +217,13 @@ class TestBrowserContents(TileTestCase):
         rule = request.has_permission('list', model)
         self.assertTrue(isinstance(rule, ACLDenied))
 
-        err = self.expectError(
-            HTTPForbidden,
-            render_tile,
-            model,
-            request,
-            'contents'
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            render_tile(model, request, 'contents')
         self.checkOutput("""
         Unauthorized: tile
         <cone.app.browser.contents.ContentsTile object at ...> failed
         permission check
-        """, str(err))
+        """, str(arc.exception))
 
         # Render authenticated
         with self.layer.authenticated('manager'):

@@ -444,23 +444,19 @@ class TestBrowserBatch(TileTestCase):
         batched_items.model = BaseNode()
         batched_items.request = self.layer.new_request()
 
-        err = self.expectError(
-            NotImplementedError,
-            lambda: batched_items.item_count
-        )
-        expected = (
+        with self.assertRaises(NotImplementedError) as arc:
+            batched_items.item_count
+        self.assertEqual(
+            str(arc.exception),
             'Abstract ``BatchedItems`` does not implement ``item_count``'
         )
-        self.assertEqual(str(err), expected)
 
-        err = self.expectError(
-            NotImplementedError,
-            lambda: batched_items.slice_items
-        )
-        expected = (
+        with self.assertRaises(NotImplementedError) as arc:
+            batched_items.slice_items
+        self.assertEqual(
+            str(arc.exception),
             'Abstract ``BatchedItems`` does not implement ``items``'
         )
-        self.assertEqual(str(err), expected)
 
         self.assertTrue(batched_items.slice_template is None)
 

@@ -394,12 +394,12 @@ class TestBrowserAuthoring(TileTestCase):
             pass
 
         form_with_heading = FormWithHeading()
-        err = self.expectError(
-            NotImplementedError,
-            lambda: form_with_heading.form_heading
+        with self.assertRaises(NotImplementedError) as arc:
+            form_with_heading.form_heading
+        self.assertEqual(
+            str(arc.exception),
+            'Abstract ``FormHeading`` does not implement ``form_heading``'
         )
-        expected = 'Abstract ``FormHeading`` does not implement ``form_heading``'
-        self.assertEqual(str(err), expected)
 
     def test_ContentForm(self):
         @plumbing(ContentForm)

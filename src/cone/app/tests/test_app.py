@@ -56,12 +56,12 @@ class TestApp(NodeTestCase):
         root = cone.app.get_root()
         self.assertTrue('dummy' in root.factories.keys())
 
-        err = self.expectError(
-            ValueError,
-            lambda: cone.app.register_entry('dummy', BaseNode)
+        with self.assertRaises(ValueError) as arc:
+            cone.app.register_entry('dummy', BaseNode)
+        self.assertEqual(
+            str(arc.exception),
+            "Entry with name 'dummy' already registered."
         )
-        expected = "Entry with name 'dummy' already registered."
-        self.assertEqual(str(err), expected)
 
     @tmp_root_node
     def test_register_config(self):
@@ -70,12 +70,12 @@ class TestApp(NodeTestCase):
         root = cone.app.get_root()
         self.assertTrue('dummy' in root['settings'].factories.keys())
 
-        err = self.expectError(
-            ValueError,
-            lambda: cone.app.register_config('dummy', BaseNode)
+        with self.assertRaises(ValueError) as arc:
+            cone.app.register_config('dummy', BaseNode)
+        self.assertEqual(
+            str(arc.exception),
+            "Config with name 'dummy' already registered."
         )
-        expected = "Config with name 'dummy' already registered."
-        self.assertEqual(str(err), expected)
 
     def test_main(self):
         # main hook

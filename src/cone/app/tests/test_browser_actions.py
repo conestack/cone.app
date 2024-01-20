@@ -86,14 +86,10 @@ class TestBrowserActions(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        err = self.expectError(
-            NotImplementedError,
-            Action(),
-            model,
-            request
-        )
+        with self.assertRaises(NotImplementedError) as arc:
+            Action()(model, request)
         self.assertEqual(
-            str(err),
+            str(arc.exception),
             'Abstract ``Action`` does not implement render.'
         )
 
@@ -102,13 +98,9 @@ class TestBrowserActions(TileTestCase):
         Tile with name '' not found:...
         """, result)
 
-        err = self.expectError(
-            ValueError,
-            TemplateAction(),
-            model,
-            request
-        )
-        self.assertEqual(str(err), 'Relative path not supported: ')
+        with self.assertRaises(ValueError) as arc:
+            TemplateAction()(model, request)
+        self.assertEqual(str(arc.exception), 'Relative path not supported: ')
 
         class DummyAction(Action):
             def render(self):
@@ -172,15 +164,11 @@ class TestBrowserActions(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        err = self.expectError(
-            NotImplementedError,
-            DropdownAction(),
-            model,
-            request
-        )
+        with self.assertRaises(NotImplementedError) as arc:
+            DropdownAction()(model, request)
         self.checkOutput("""
         ...Abstract ``DropdownAction`` does not implement  ``items``...
-        """, str(err))
+        """, str(arc.exception))
 
     def test_LinkAction(self):
         model = BaseNode()
