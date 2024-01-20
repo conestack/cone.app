@@ -1,35 +1,37 @@
 from cone.app import compat
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionContext
-from cone.app.browser.ajax import ajax_continue
-from cone.app.browser.ajax import ajax_form_fiddle
-from cone.app.browser.ajax import ajax_message
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxOverlay
 from cone.app.browser.ajax import AjaxPath
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import ajax_form_fiddle
+from cone.app.browser.ajax import ajax_message
 from cone.app.browser.ajax import render_ajax_form
+from cone.app.browser.form import FormTarget
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
-from cone.app.model import get_node_info
 from cone.app.model import Properties
+from cone.app.model import get_node_info
 from cone.app.utils import app_config
 from cone.app.utils import node_path
+from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
-from cone.tile import Tile
 from cone.tile import tile
 from plumber import Behavior
 from plumber import default
 from plumber import override
 from plumber import plumb
-from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
+from pyramid.i18n import get_localizer
 from pyramid.view import view_config
 from webob.exc import HTTPFound
 from yafowil.base import factory
 import logging
+import warnings
 
 
 logger = logging.getLogger('cone.app')
@@ -59,10 +61,22 @@ def render_form(model, request, tilename):
     return render_main_template(model, request, contenttile=tilename)
 
 
+# B/C
 class _FormRenderingTile(Tile):
+    """This class has been introduced as base class for intermediate tiles
+    rendering authoring forms. Actually intermediate tile rendering is only
+    needed for add forms to create the correct context (aka add model) for the
+    add form tile, and useless for edit forms.
+    """
     form_tile_name = ''
 
     def render(self):
+        warnings.warn(
+            '``_FormRenderingTile`` is deprecated and will be removed as of '
+            'cone.app 1.2. Please implement as regular tile if intermediate '
+            'tile rendering is needed ``instead.',
+            DeprecationWarning
+        )
         return render_tile(self.model, self.request, self.form_tile_name)
 
 
@@ -181,8 +195,9 @@ class FormHeading(Behavior):
     @default
     @property
     def form_heading(self):
-        raise NotImplementedError(u'Abstract ``FormHeading`` does not '
-                                  u'implement ``form_heading``')
+        raise NotImplementedError(
+            u'Abstract ``FormHeading`` does not implement ``form_heading``'
+        )
 
 
 ###############################################################################
@@ -190,8 +205,7 @@ class FormHeading(Behavior):
 ###############################################################################
 
 class ContentForm(FormHeading):
-    """Form behavior rendering to content area.
-    """
+    """Form behavior rendering to content area."""
     show_heading = default(True)
     show_contextmenu = default(True)
 
@@ -207,6 +221,9 @@ class ContentForm(FormHeading):
 
     @plumb
     def __call__(_next, self, model, request):
+        # XXX: first render form and return empty string if nothing gets
+        #      rendered, otherwise call ajax_form_fiddle and return wrapped
+        #      rendered form.
         ajax_form_fiddle(request, '#content', 'inner')
         form = _next(self, model, request)
         if not form:
@@ -229,21 +246,12 @@ class ContentForm(FormHeading):
 
 @view_config(name='overlayform', permission='view')
 def overlayform(model, request):
-    """View for posting overlay forms to.
-    """
-    return render_form(model, request, 'overlayformtile')
+    """View for posting overlay forms to."""
+    return render_form(model, request, 'overlayform')
 
 
-@tile(name='overlayformtile', permission='view')
-class OverlayFormTile(_FormRenderingTile):
-    """Entry tile for rendering forms in overlays.
-    """
-    form_tile_name = 'overlayform'
-
-
-class OverlayForm(Behavior):
-    """Form behavior rendering to overlay.
-    """
+class OverlayForm(FormTarget):
+    """Form behavior rendering to overlay."""
     action_resource = override('overlayform')
     content_selector = default('.modal-body')
 
@@ -338,10 +346,13 @@ def add(model, request):
 
 
 @tile(name='add', permission='add')
-class AddTile(_FormRenderingTile):
-    """The add tile is responsible to render add forms depending on given
-    factory name. Factory information is fetched from NodeInfo implementation
-    registered by factory name.
+class AddTile(Tile):
+    """Add forms are called on a container application node as context. To
+    make sure the form gets rendered on the correct model context (aka the add
+    model), this tile provides intermediate logic to create a this context by
+    factory name, which corresponds to the node info name of the
+    node to add. The add context gets created from factory provided on the
+    ``NodeInfo`` instance.
     """
     form_tile_name = 'addform'
 
@@ -371,8 +382,7 @@ class AddFactoryProxy(Behavior):
 
     @plumb
     def prepare(_next, self):
-        """Hook after prepare and set 'factory' as proxy field to form.
-        """
+        """Hook after prepare and set 'factory' as proxy field to form."""
         _next(self)
         self.form['factory'] = factory(
             'proxy',
@@ -395,12 +405,14 @@ class AddFormHeading(FormHeading):
         return heading
 
 
-class ContentAddForm(AddFactoryProxy,
-                     AddFormHeading,
-                     ContentForm,
-                     CameFromNext):
-    """Form behavior rendering add form to content area.
-    """
+class ContentAddForm(
+    FormTarget,
+    AddFactoryProxy,
+    AddFormHeading,
+    ContentForm,
+    CameFromNext
+):
+    """Form behavior rendering add form to content area."""
     action_resource = override('add')
 
     @default
@@ -428,11 +440,8 @@ class OverlayAddTile(AddTile):
     form_tile_name = 'overlayaddform'
 
 
-class OverlayAddForm(OverlayForm,
-                     AddFactoryProxy,
-                     AddFormHeading):
-    """Add form behavior rendering to overlay.
-    """
+class OverlayAddForm(OverlayForm, AddFactoryProxy, AddFormHeading):
+    """Add form behavior rendering to overlay."""
     action_resource = override('overlayadd')
 
 
@@ -442,12 +451,7 @@ class OverlayAddForm(OverlayForm,
 
 @view_config(name='edit', permission='edit')
 def edit(model, request):
-    return render_form(model, request, 'edit')
-
-
-@tile(name='edit', permission='edit')
-class EditTile(_FormRenderingTile):
-    form_tile_name = 'editform'
+    return render_form(model, request, 'editform')
 
 
 class EditFormHeading(FormHeading):
@@ -466,11 +470,13 @@ class EditFormHeading(FormHeading):
         return heading
 
 
-class ContentEditForm(EditFormHeading,
-                      ContentForm,
-                      CameFromNext):
-    """Form behavior rendering edit form to content area.
-    """
+class ContentEditForm(
+    FormTarget,
+    EditFormHeading,
+    ContentForm,
+    CameFromNext
+):
+    """Form behavior rendering edit form to content area."""
     action_resource = override('edit')
 
 
@@ -483,20 +489,13 @@ EditBehavior = ContentEditForm
 # overlay editing
 ###############################################################################
 
-@view_config(name='overlayedit', permission='edit')
+@view_config(name='overlayedit', permission='editform')
 def overlayedit(model, request):
-    return render_form(model, request, 'overlayedit')
+    return render_form(model, request, 'overlayeditform')
 
 
-@tile(name='overlayedit', permission='edit')
-class OverlayEditTile(_FormRenderingTile):
-    form_tile_name = 'overlayeditform'
-
-
-class OverlayEditForm(OverlayForm,
-                      EditFormHeading):
-    """Edit form behavior rendering to overlay.
-    """
+class OverlayEditForm(OverlayForm, EditFormHeading):
+    """Edit form behavior rendering to overlay."""
     action_resource = override('overlayedit')
 
 

@@ -81,10 +81,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.text.find('<div id="ajaxform">') > -1)
         self.assertTrue(res.text.find('parent.ts.ajax.form') > -1)
 
-        # Form rendering tile. Has been introduced to handle node information
-        # in add forms and is used in overlay and edit forms as mixin as well.
-        # Simply renders another tile as form on ``render``.
-        # XXX: Feels superfluous. Should be refactored and removed somwhen
+        # B/C Form rendering tile.
         with self.layer.hook_tile_reg():
             @tile(name='someformrenderingtile', permission='login')
             class SomeFormTileRenderingTile(_FormRenderingTile):
@@ -693,7 +690,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Render form with value from model
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
-            res = render_tile(root['somechild'], request, 'edit')
+            res = render_tile(root['somechild'], request, 'editform')
 
         self.checkOutput("""
         ...<span class="label label-primary">Edit: My Node</span>...
@@ -706,7 +703,7 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
-            res = render_tile(root['somechild'], request, 'edit')
+            res = render_tile(root['somechild'], request, 'editform')
 
         self.assertEqual(
             request.environ['redirect'].location,
@@ -719,7 +716,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             request.params['came_from'] = 'parent'
-            res = render_tile(root['somechild'], request, 'edit')
+            res = render_tile(root['somechild'], request, 'editform')
 
         self.assertEqual(
             request.environ['redirect'].location,
@@ -733,7 +730,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['editform.title'] = 'Changed title'
             came_from = compat.quote('http://example.com/other/node/in/tree')
             request.params['came_from'] = came_from
-            res = render_tile(root['somechild'], request, 'edit')
+            res = render_tile(root['somechild'], request, 'editform')
 
         self.assertEqual(
             request.environ['redirect'].location,
@@ -746,7 +743,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             request.params['ajax'] = '1'
-            res = render_tile(root['somechild'], request, 'edit')
+            res = render_tile(root['somechild'], request, 'editform')
 
         self.assertTrue(isinstance(
             request.environ['cone.app.continuation'][0],
@@ -767,7 +764,7 @@ class TestBrowserAuthoring(TileTestCase):
             came_from = compat.quote('http://example.com/other/node/in/tree')
             request.params['came_from'] = came_from
             request.params['ajax'] = '1'
-            res = render_tile(root['somechild'], request, 'edit')
+            res = render_tile(root['somechild'], request, 'editform')
 
         self.assertEqual(
             request.environ['cone.app.continuation'][0].target,
@@ -982,12 +979,12 @@ class TestBrowserAuthoring(TileTestCase):
         model = BaseNode(name='root')
         model.attrs.title = u'Title'
 
-        # Overlay form invocation happens via overlay form entry tile
+        # Render overlayform tile
         request = self.layer.new_request()
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
         with self.layer.authenticated('max'):
-            res = render_tile(model, request, 'overlayformtile')
+            res = render_tile(model, request, 'overlayform')
 
         expected = '<form action="http://example.com/root/overlayform"'
         self.assertTrue(res.startswith(expected))
@@ -1100,14 +1097,14 @@ class TestBrowserAuthoring(TileTestCase):
 
         root = MyNode(name='root')
 
-        # Overlay addform invocation happens via entry tile
+        # Render overlayaddform tile
         request = self.layer.new_request()
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
         request.params['factory'] = 'mynode'
 
         with self.layer.authenticated('max'):
-            res = render_tile(root, request, 'overlayadd')
+            res = render_tile(root, request, 'overlayaddform')
 
         expected = '<form action="http://example.com/root/overlayadd"'
         self.assertTrue(res.startswith(expected))
@@ -1223,13 +1220,13 @@ class TestBrowserAuthoring(TileTestCase):
         model = MyNode(name='model')
         model.attrs.title = 'My Title'
 
-        # Overlay editform invocation happens via entry tile
+        # Render overlayeditform tile
         request = self.layer.new_request()
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
 
         with self.layer.authenticated('max'):
-            res = render_tile(model, request, 'overlayedit')
+            res = render_tile(model, request, 'overlayeditform')
 
         expected = '<form action="http://example.com/model/overlayedit"'
         self.assertTrue(res.startswith(expected))

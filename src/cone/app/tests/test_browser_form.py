@@ -3,6 +3,11 @@ from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.form import Form
 from cone.app.browser.form import ProtectedAttributesForm
 from cone.app.browser.form import YAMLForm
+from cone.app.browser.form import FormTarget
+from cone.app.browser.form import AddFormTarget
+from cone.app.browser.form import EditFormTarget
+from cone.app.browser.form import YAMLAddFormTarget
+from cone.app.browser.form import YAMLEditFormTarget
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile import tile
@@ -17,14 +22,90 @@ from yafowil.base import factory
 class TestBrowserForm(TileTestCase):
     layer = testing.security
 
+    def test_FormTarget(self):
+        @plumbing(FormTarget)
+        class TestForm(object):
+            pass
+
+        form = TestForm()
+        self.assertEqual(form.action_resource, u'')
+
+    def test_AddFormTarget(self):
+        parent = BaseNode(name='parent')
+        model = parent['model'] = BaseNode()
+
+        @plumbing(AddFormTarget)
+        class TestAddForm(object):
+            action_resource = 'add'
+
+            def __init__(self, model, request):
+                self.model = model
+                self.request = request
+
+        form = TestAddForm(model, self.layer.new_request())
+        self.assertEqual(form.form_action, u'http://example.com/parent/add')
+
+    def test_EditFormTarget(self):
+        model = BaseNode(name='model')
+
+        @plumbing(EditFormTarget)
+        class TestEditForm(object):
+            action_resource = 'edit'
+
+            def __init__(self, model, request):
+                self.model = model
+                self.request = request
+
+        form = TestEditForm(model, self.layer.new_request())
+        self.assertEqual(form.form_action, u'http://example.com/model/edit')
+
+    def test_YAMLAddFormTarget(self):
+        parent = BaseNode(name='parent')
+        model = parent['model'] = BaseNode()
+
+        @plumbing(YAMLAddFormTarget)
+        class TestYAMLAddForm(object):
+            action_resource = 'add'
+
+            def __init__(self, model, request):
+                self.model = model
+                self.request = request
+
+        widget = object()
+        data = object()
+        form = TestYAMLAddForm(model, self.layer.new_request())
+        self.assertEqual(
+            form.form_action(widget, data),
+            u'http://example.com/parent/add'
+        )
+
+    def test_YAMLEditFormTarget(self):
+        model = BaseNode(name='model')
+
+        @plumbing(YAMLEditFormTarget)
+        class TestYAMLEditForm(object):
+            action_resource = 'edit'
+
+            def __init__(self, model, request):
+                self.model = model
+                self.request = request
+
+        widget = object()
+        data = object()
+        form = TestYAMLEditForm(model, self.layer.new_request())
+        self.assertEqual(
+            form.form_action(widget, data),
+            u'http://example.com/model/edit'
+        )
+
     def test_Form(self):
         formtile = Form(None, None, 'plainform')
-        err = self.expectError(
-            NotImplementedError,
-            formtile.prepare
+        with self.assertRaises(NotImplementedError) as arc:
+            formtile.prepare()
+        self.assertEqual(
+            str(arc.exception),
+            '``prepare`` function must be provided by deriving object.'
         )
-        expected = '``prepare`` function must be provided by deriving object.'
-        self.assertEqual(str(err), expected)
 
         subscriptions = []
 
