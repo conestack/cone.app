@@ -503,7 +503,7 @@ EditBehavior = ContentEditForm
 # overlay editing
 ###############################################################################
 
-@view_config(name='overlayedit', permission='editform')
+@view_config(name='overlayedit', permission='edit')
 def overlayedit(model, request):
     return render_form(model, request, 'overlayeditform')
 
