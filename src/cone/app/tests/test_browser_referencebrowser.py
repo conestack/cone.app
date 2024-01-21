@@ -756,10 +756,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         request = ref_model_mixin.request = self.layer.new_request()
         request.params['root'] = 'c'
-        self.expectError(
-            KeyError,
-            lambda: ref_model_mixin.referencable_root
-        )
+        with self.assertRaises(KeyError):
+            ref_model_mixin.referencable_root
 
         ref_model_mixin.model = aa
 
@@ -970,18 +968,13 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['root'] = '/'
 
         # Case Unauthorized
-        err = self.expectError(
-            HTTPForbidden,
-            render_tile,
-            node,
-            request,
-            'referencebrowser_pathbar'
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            render_tile(node, request, 'referencebrowser_pathbar')
         self.checkOutput("""
         Unauthorized: tile
         <cone.app.browser.referencebrowser.ReferenceBrowserPathBar object at ...>
         failed permission check
-        """, str(err))
+        """, str(arc.exception))
 
         # Case reference root is application root
         request = self.layer.new_request()
@@ -1047,18 +1040,13 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['selected'] = ''
         request.params['root'] = '/'
 
-        err = self.expectError(
-            HTTPForbidden,
-            render_tile,
-            model,
-            request,
-            'referencelisting'
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            render_tile(model, request, 'referencelisting')
         self.checkOutput("""
             Unauthorized: tile
             <cone.app.browser.referencebrowser.ReferenceListing object at ...>
             failed permission check
-        """, str(err))
+        """, str(arc.exception))
 
         # Authorized
         with self.layer.authenticated('max'):
@@ -1112,18 +1100,13 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['root'] = '/'
 
         # Case unauthorized
-        err = self.expectError(
-            HTTPForbidden,
-            render_tile,
-            model,
-            request,
-            'referencebrowser'
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            render_tile(model, request, 'referencebrowser')
         self.checkOutput("""
             Unauthorized: tile
             <cone.app.browser.referencebrowser.ReferenceBrowser object at ...>
             failed permission check
-        """, str(err))
+        """, str(arc.exception))
 
         # Case authorized
         with self.layer.authenticated('max'):

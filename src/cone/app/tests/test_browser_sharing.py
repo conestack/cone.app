@@ -15,16 +15,12 @@ class TestBrowserSharing(TileTestCase):
         model = SharingNode(name='root')
         request = self.layer.new_request()
 
-        err = self.expectError(
-            HTTPForbidden,
-            sharing,
-            model,
-            request
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            sharing(model, request)
         self.checkOutput("""
         ...Unauthorized: tile <cone.app.browser.sharing.SharingTile object at ...>
         failed permission check...
-        """, str(err))
+        """, str(arc.exception))
 
         with self.layer.authenticated('manager'):
             res = sharing(model, request)

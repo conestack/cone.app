@@ -4,6 +4,38 @@ Changes
 1.1a2 (unreleased)
 ------------------
 
+- Introduce ``cone.app.browser.form.``,
+  ``cone.app.browser.form.FormTarget``,
+  ``cone.app.browser.form.AddFormTarget``,
+  ``cone.app.browser.form.EditFormTarget``,
+  ``cone.app.browser.form.YAMLAddFormTarget`` and
+  ``cone.app.browser.form.YAMLEditFormTarget``.
+  [rnix]
+
+- ``editform`` tile gets rendered by ``cone.app.browser.authoring.edit`` view
+  in directly. ``overlayeditform`` tile gets rendered by
+  ``cone.app.browser.authoring.overlayedit`` view directly.
+  [rnix]
+
+- Add ``cone.app.browser.form.FormTarget`` to base classes of
+  ``cone.app.browser.authoring.ContentAddForm``,
+  ``cone.app.browser.authoring.ContentEditForm`` and
+  ``cone.app.browser.authoring.OverlayForm``.
+  [rnix]
+
+- Remove ``cone.app.browser.authoring.OverlayFormTile``. ``overlayform`` tile
+  gets rendered by ``cone.app.browser.authoring.overlayform`` view directly.
+  [rnix]
+
+- Deprecate ``form_flavor`` and ``form_action`` in
+  ``cone.app.browser.form.YAMLForm``.
+  [rnix]
+
+- Deprecate ``cone.app.browser.authoring.EditTile``,
+  ``cone.app.browser.authoring.OverlayEditTile`` and
+  ``cone.app.browser.authoring._FormRenderingTile``.
+  [rnix]
+
 - Refactor settings UI. Introduce ``cone.app.model.SettingsNode`` as base class
   for plugin related settings application models. Introduce
   ``cone.app.browser.settings.SettingsForm`` plumbing behavior and

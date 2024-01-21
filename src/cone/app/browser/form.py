@@ -8,6 +8,7 @@ from plumber import override
 from webob.exc import HTTPFound
 from yafowil.controller import Controller
 import logging
+import warnings
 
 
 logger = logging.getLogger('cone.app')
@@ -18,22 +19,77 @@ try:
 except ImportError:  # pragma: no cover
     logger.warning(
         '``yafowil.yaml`` not present. '
-        '``cone.app.browser.form.YAMLForm`` will not work')
+        '``cone.app.browser.form.YAMLForm`` will not work'
+    )
 
 
-class YAMLForm(Behavior):
-    """Plumbing behavior for rendering yaml forms.
-    """
+class FormTarget(Behavior):
+    """Behavior defining the form submission resource."""
     action_resource = default(u'')
 
-    # B/C
+
+class AddFormTarget(FormTarget):
+    """Behavior providing form action URL for add forms."""
+
+    @override
+    @property
+    def form_action(self):
+        return make_url(
+            self.request,
+            node=self.model.parent,
+            resource=self.action_resource
+        )
+
+
+class EditFormTarget(FormTarget):
+    """Behavior providing form action URL for edit forms."""
+
+    @override
+    @property
+    def form_action(self):
+        return make_url(
+            self.request,
+            node=self.model,
+            resource=self.action_resource
+        )
+
+
+class YAMLAddFormTarget(FormTarget):
+    """Behavior providing form action URL for yaml based add forms."""
+
+    @override
+    def form_action(self, widget, data):
+        return make_url(
+            self.request,
+            node=self.model.parent,
+            resource=self.action_resource
+        )
+
+
+class YAMLEditFormTarget(FormTarget):
+    """Behavior providing form action URL for yaml based edit forms."""
+
+    @override
+    def form_action(self, widget, data):
+        return make_url(
+            self.request,
+            node=self.model,
+            resource=self.action_resource
+        )
+
+
+class YAMLForm(FormTarget):
+    """Plumbing behavior for rendering yaml based forms."""
+
+    # B/C: will be removed in cone.app 1.2
+    # considered in legacy form_action, either 'add' or 'edit'
+    form_flavor = default('edit')
+
+    # B/C: will be removed in cone.app 1.2
     form_template_path = default(None)
 
     # use form_template for pointing yaml files
     form_template = default(None)
-
-    # considered in form_action, either 'add' or 'edit'
-    form_flavor = default('edit')
 
     @default
     @property
@@ -42,6 +98,12 @@ class YAMLForm(Behavior):
 
     @default
     def form_action(self, widget, data):
+        warnings.warn(
+            '``YAMLForm.form_action`` is deprecated and will be removed as of '
+            'cone.app 1.2. Please use ``YAMLAddFormTarget`` and '
+            '``YAMLEditFormTarget`` instead.',
+            DeprecationWarning
+        )
         resource = self.action_resource
         if self.form_flavor == 'add':
             return make_url(
@@ -53,13 +115,12 @@ class YAMLForm(Behavior):
 
     @override
     def prepare(self):
-        if self.form_template:
-            self.form = parse_from_YAML(
-                self.form_template, self, self.message_factory)
-            return
-        # BBB
-        self.form = parse_from_YAML(
-            self.form_template_path, self, self.message_factory)
+        template = (
+            self.form_template if
+            self.form_template else
+            self.form_template_path  # B/C
+        )
+        self.form = parse_from_YAML(template, self, self.message_factory)
 
 
 class ProtectedAttributesForm(Behavior):
@@ -92,20 +153,19 @@ class ProtectedAttributesForm(Behavior):
 
 
 class Form(Tile):
-    """A form tile.
-    """
+    """A form tile."""
     form = None  # yafowil compound expected.
     ajax = True  # render ajax form related by default.
 
     def prepare(self):
-        """Responsible to prepare ``self.form``.
-        """
-        raise NotImplementedError(u"``prepare`` function must be provided "
-                                  u"by deriving object.")
+        """Responsible to prepare ``self.form``."""
+        raise NotImplementedError(
+            u"``prepare`` function must be provided "
+            u"by deriving object."
+        )
 
     def prepare_ajax(self):
-        """Set ajax class attribute on self.form.
-        """
+        """Set ajax class attribute on self.form."""
         if not self.ajax:
             return
         if self.form.attrs.get('class_add') \
@@ -116,8 +176,7 @@ class Form(Tile):
 
     @property
     def ajax_request(self):
-        """Flag whether to handle current request as ajax request.
-        """
+        """Flag whether to handle current request as ajax request."""
         return self.request.params.get('ajax') and self.ajax
 
     def __call__(self, model, request):

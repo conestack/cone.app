@@ -262,11 +262,12 @@ class SecurityTest(NodeTestCase):
             pass
 
         node = PrincipalACLNode()
-        err = self.expectError(NotImplementedError, lambda: node.__acl__)
-        expected = (
+        with self.assertRaises(NotImplementedError) as arc:
+            node.__acl__
+        self.assertEqual(
+            str(arc.exception),
             'Abstract ``PrincipalACL`` does not implement ``principal_roles``.'
         )
-        self.assertEqual(str(err), expected)
 
         # Concrete PrincipalACL implementation. Implements principal_roles
         # property
