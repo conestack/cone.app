@@ -430,7 +430,7 @@ An implementation gets registered as named utility.
             return login
 
     @main_hook
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         # register custom authenticator as named utility.
         config.registry.registerUtility(
             MyAuthenticator(),

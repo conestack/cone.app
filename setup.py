@@ -9,7 +9,7 @@ def read_file(name):
         return f.read()
 
 
-version = '1.0.8.dev0'
+version = '1.1a3.dev0'
 shortdesc = 'Web application stub'
 longdesc = '\n\n'.join([read_file(name) for name in [
     'README.rst',
@@ -46,19 +46,20 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'setuptools',
         'Chameleon',
-        'node>=0.9.28',
-        'node.ext.ugm>=0.9.13',
-        'pyramid>=1.5',
-        'pyramid_zcml',
-        'pyramid_chameleon',
-        'bdajax>=1.11',
         'cone.tile>=1.0',
-        'yafowil>=2.3.4',
-        'yafowil.webob',
-        'yafowil.bootstrap',
+        'node.ext.ugm>=0.9.13',
+        'node>=0.9.28',
+        'pyramid>=1.5',
+        'pyramid_chameleon',
+        'pyramid_zcml',
         'repoze.workflow',
+        'setuptools',
+        'treibstoff',
+        'webresource',
+        'yafowil.bootstrap',
+        'yafowil.webob',
+        'yafowil>=2.3.4'
     ],
     extras_require=dict(
         lxml=[

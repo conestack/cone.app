@@ -11,6 +11,7 @@ from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
+from cone.app.interfaces import ISettingsNode
 from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
 from cone.app.security import acl_registry
@@ -25,6 +26,8 @@ from node.behaviors import Lifecycle
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingConstraints
 from node.behaviors import MappingNode
+from node.behaviors import Node
+from node.behaviors import NodeInit
 from node.behaviors import OdictStorage
 from node.behaviors import Schema
 from node.behaviors import UUIDAware
@@ -210,8 +213,9 @@ class FactoryNode(BaseNode):
 
 
 class AppRoot(FactoryNode):
-    """Application root.
-    """
+    """Application root."""
+    # XXX: we always want AppSettings and AppResources in factories
+    #      by default
     factories = odict()
 
     @instance_property
@@ -224,10 +228,9 @@ class AppRoot(FactoryNode):
 
 
 class AppSettings(FactoryNode):
-    """Applications Settings container.
-    """
+    """Applications Settings container."""
     __acl__ = [
-        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, 'system.Authenticated', ['view']),
         (Allow, Everyone, 'login'),
         (Deny, Everyone, ALL_PERMISSIONS),
     ]
@@ -246,6 +249,47 @@ class AppSettings(FactoryNode):
         metadata = Metadata()
         metadata.title = _('settings', default='Settings')
         return metadata
+
+
+NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
+
+
+@implementer(ISettingsNode)
+@plumbing(LeafNode, NodeInit, Node, AppEnvironment)
+class SettingsNode(object):
+    """Application node for managing plugin specific settings."""
+    __acl__ = [
+        (Allow, 'role:manager', ['view', 'manage']),
+        (Allow, Everyone, 'login'),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+    category = NO_SETTINGS_CATEGORY
+
+    @property
+    def display(self):
+        request = self.request
+        if not request:
+            return False
+        return request.has_permission('manage', self)
+
+    @instance_property
+    def metadata(self):
+        metadata = Metadata()
+        metadata.title = self.nodeinfo.title
+        metadata.description = self.nodeinfo.description
+        return metadata
+
+
+@plumbing(AppNode, NodeInit, Node)
+class AppResources(object):
+    """Traversal context for static resources."""
+
+    @instance_property
+    def properties(self):
+        props = Properties()
+        props.in_navtree = False
+        props.skip_mainmenu = True
+        return props
 
 
 @implementer(IAdapterNode)

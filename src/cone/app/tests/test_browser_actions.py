@@ -37,7 +37,7 @@ from cone.app.testing.mock import WorkflowNode
 from cone.tile import tile
 from cone.tile import Tile
 from cone.tile.tests import TileTestCase
-from node.behaviors import Order
+from node.behaviors import MappingOrder
 from plumber import plumbing
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
@@ -56,10 +56,13 @@ class TestBrowserActions(TileTestCase):
 
         self.assertEqual(ac.scope, 'tile')
 
+        request.params['ajax.action'] = 'ajaxaction'
+        self.assertEqual(ac.scope, 'ajaxaction')
+
         request.params['bdajax.action'] = 'ajaxaction'
         self.assertEqual(ac.scope, 'ajaxaction')
 
-        request.params['bdajax.action'] = 'layout'
+        request.params['ajax.action'] = 'layout'
         self.assertEqual(ac.scope, 'content')
 
         request.params['contenttile'] = 'contenttile'
@@ -83,14 +86,10 @@ class TestBrowserActions(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        err = self.expectError(
-            NotImplementedError,
-            Action(),
-            model,
-            request
-        )
+        with self.assertRaises(NotImplementedError) as arc:
+            Action()(model, request)
         self.assertEqual(
-            str(err),
+            str(arc.exception),
             'Abstract ``Action`` does not implement render.'
         )
 
@@ -99,13 +98,9 @@ class TestBrowserActions(TileTestCase):
         Tile with name '' not found:...
         """, result)
 
-        err = self.expectError(
-            ValueError,
-            TemplateAction(),
-            model,
-            request
-        )
-        self.assertEqual(str(err), 'Relative path not supported: ')
+        with self.assertRaises(ValueError) as arc:
+            TemplateAction()(model, request)
+        self.assertEqual(str(arc.exception), 'Relative path not supported: ')
 
         class DummyAction(Action):
             def render(self):
@@ -169,15 +164,11 @@ class TestBrowserActions(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        err = self.expectError(
-            NotImplementedError,
-            DropdownAction(),
-            model,
-            request
-        )
+        with self.assertRaises(NotImplementedError) as arc:
+            DropdownAction()(model, request)
         self.checkOutput("""
         ...Abstract ``DropdownAction`` does not implement  ``items``...
-        """, str(err))
+        """, str(arc.exception))
 
     def test_LinkAction(self):
         model = BaseNode()
@@ -203,11 +194,17 @@ class TestBrowserActions(TileTestCase):
         action.event = 'contextchanged:.contextsensitiv'
         action.confirm = 'Do you want to perform?'
         action.overlay = 'someaction'
+        action.overlay_css = 'some-css'
+        action.overlay_uid = '1234'
+        action.overlay_title = 'Overlay Title'
         action.path = '/foo'
         action.path_target = 'target'
         action.path_action = action.action
         action.path_event = action.event
         action.path_overlay = action.overlay
+        action.path_overlay_css = 'some-css'
+        action.path_overlay_uid = '1234'
+        action.path_overlay_title = 'Overlay Title'
         action.text = 'Foo'
         rendered = action(model, request)
         self.checkOutput("""
@@ -222,11 +219,17 @@ class TestBrowserActions(TileTestCase):
          ajax:action="actionname:#content:replace"
          ajax:confirm="Do you want to perform?"
          ajax:overlay="someaction"
+         ajax:overlay-css="some-css"
+         ajax:overlay-uid="1234"
+         ajax:overlay-title="Overlay Title"
          ajax:path="/foo"
          ajax:path-target="target"
          ajax:path-action="actionname:#content:replace"
          ajax:path-event="contextchanged:.contextsensitiv"
          ajax:path-overlay="someaction"
+         ajax:path-overlay-css="some-css"
+         ajax:path-overlay-uid="1234"
+         ajax:path-overlay-title="Overlay Title"
         >&nbsp;Foo</a>
         """, rendered)
 
@@ -812,7 +815,7 @@ class TestBrowserActions(TileTestCase):
         node.properties.action_move = True
         self.assertFalse(action.display)
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 
@@ -846,7 +849,7 @@ class TestBrowserActions(TileTestCase):
         action.request = request
         self.assertFalse(action.display)
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 
@@ -878,7 +881,7 @@ class TestBrowserActions(TileTestCase):
         action.request = request
         self.assertFalse(action.display)
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 

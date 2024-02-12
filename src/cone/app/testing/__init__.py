@@ -1,4 +1,7 @@
+from cone.app import get_root
 from cone.app import model
+from cone.app import security as security_module
+from cone.app.browser import resources
 from cone.app.security import authenticate
 from contextlib import contextmanager
 from pyramid.security import AuthenticationAPIMixin
@@ -18,13 +21,25 @@ import venusian
 def reset_node_info_registry(fn):
     """Decorator for tests using node info registry
     """
-    node_info_registry = model._node_info_registry
     def wrapper(*a, **kw):
+        node_info_registry_orgin = model._node_info_registry
         try:
             model._node_info_registry = dict()
             fn(*a, **kw)
         finally:
-            model._node_info_registry = node_info_registry
+            model._node_info_registry = node_info_registry_orgin
+    return wrapper
+
+
+def reset_resource_registry(fn):
+    """Decorator for tests using resource registry
+    """
+    def wrapper(*a, **kw):
+        resource_registry_orgin = resources._registry
+        try:
+            fn(*a, **kw)
+        finally:
+            resources._registry = resource_registry_orgin
     return wrapper
 
 
@@ -197,14 +212,16 @@ class Security(object):
     def setUp(self, args=None):
         self.make_app()
         XMLConfig('testing/dummy_workflow.zcml', cone.app)()
-        print("Security set up.")
 
     def tearDown(self):
-        # XXX: something is wrong here.
+        root = get_root()
+        root.factories.clear()
+        if root.get('settings'):
+            root['settings'].factories.clear()
+        security_module.AUTHENTICATOR = None
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         resetHooks()
-        print("Security torn down.")
 
 
 security = Security()

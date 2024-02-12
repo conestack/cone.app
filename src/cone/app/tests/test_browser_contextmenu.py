@@ -67,12 +67,13 @@ class TestBrowserContextmenu(TileTestCase):
 
         def add_action():
             cmd['invalid'] = Action()
-        err = self.expectError(ValueError, add_action)
+        with self.assertRaises(ValueError) as arc:
+            add_action()
         expected = (
             'Only ``TemplateAction`` deriving objects can be added '
             'to ``ContextMenuDropdown`` instances.'
         )
-        self.assertEqual(str(err), expected)
+        self.assertEqual(str(arc.exception), expected)
 
         class MyLinkAction(LinkAction):
             id = 'myaction'

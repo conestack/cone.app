@@ -8,8 +8,8 @@ from node.behaviors import DefaultInit
 from node.behaviors import DictStorage
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingNode
-from node.behaviors import Order
-from node.interfaces import IOrder
+from node.behaviors import MappingOrder
+from node.interfaces import IMappingOrder
 from plumber import plumbing
 
 
@@ -33,7 +33,7 @@ class TestBrowserOrder(TileTestCase):
         node = UnorderedNode()
         node['child'] = BaseNode()
 
-        self.assertFalse(IOrder.providedBy(node))
+        self.assertFalse(IMappingOrder.providedBy(node))
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
             self.assertEqual(render_tile(node['child'], request, 'move_up'), u'')
@@ -42,7 +42,7 @@ class TestBrowserOrder(TileTestCase):
             u'Object "child" not movable'
         )
 
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             def __call__(self):
                 pass

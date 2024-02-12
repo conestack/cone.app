@@ -5,7 +5,7 @@ from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.tile import Tile
 from cone.tile import tile
-from node.interfaces import IOrder
+from node.interfaces import IMappingOrder
 from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
 
@@ -30,7 +30,7 @@ class MoveAction(Tile):
     def render(self):
         model = self.model
         parent = model.parent
-        if not IOrder.providedBy(parent):
+        if not IMappingOrder.providedBy(parent):
             title = model.metadata.get('title', model.name)
             message = _(
                 'object_not_movable',

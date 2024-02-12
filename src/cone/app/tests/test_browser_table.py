@@ -38,23 +38,15 @@ class TestBrowserTable(TileTestCase):
 
     def test_Table(self):
         table = Table('cone.app:browser/templates/table.pt', None, 'table')
-        err = self.expectError(
-            NotImplementedError,
-            lambda: table.item_count
-        )
+        with self.assertRaises(NotImplementedError) as arc:
+            table.item_count
         expected = 'Abstract table does not implement ``item_count``.'
-        self.assertEqual(str(err), expected)
+        self.assertEqual(str(arc.exception), expected)
 
-        err = self.expectError(
-            NotImplementedError,
-            table.sorted_rows,
-            None,
-            None,
-            None,
-            None
-        )
+        with self.assertRaises(NotImplementedError) as arc:
+            table.sorted_rows(None, None, None, None)
         expected = 'Abstract table does not implement ``sorted_rows``.'
-        self.assertEqual(str(err), expected)
+        self.assertEqual(str(arc.exception), expected)
 
     def test_TableBatch(self):
         model = BaseNode()
@@ -197,16 +189,11 @@ class TestBrowserTable(TileTestCase):
         request = self.layer.new_request()
 
         # Rendering fails unauthorized, 'view' permission is required
-        err = self.expectError(
-            HTTPForbidden,
-            render_tile,
-            model,
-            request,
-            'mytabletile'
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            render_tile(model, request, 'mytabletile')
         self.checkOutput("""
         Unauthorized: tile <...MyTable object at ...> failed permission check
-        """, str(err))
+        """, str(arc.exception))
 
         # Render authenticated
         request.params['foo'] = 'bar'

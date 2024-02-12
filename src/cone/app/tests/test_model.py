@@ -1,33 +1,37 @@
 # -*- coding: utf-8 -*-
 from cone.app import cfg
 from cone.app import testing
-from cone.app.compat import configparser
 from cone.app.compat import StringIO
+from cone.app.compat import configparser
 from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
 from cone.app.interfaces import IProperties
+from cone.app.interfaces import ISettingsNode
 from cone.app.model import AdapterNode
 from cone.app.model import AppEnvironment
 from cone.app.model import AppNode
+from cone.app.model import AppResources
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
-from cone.app.model import get_node_info
 from cone.app.model import LanguageSchema
 from cone.app.model import LeafNode
 from cone.app.model import Metadata
+from cone.app.model import NO_SETTINGS_CATEGORY
 from cone.app.model import NamespaceUUID
-from cone.app.model import node_info
 from cone.app.model import NodeInfo
-from cone.app.model import o_getattr
 from cone.app.model import Properties
 from cone.app.model import ProtectedProperties
-from cone.app.model import register_node_info
+from cone.app.model import SettingsNode
 from cone.app.model import Translation
 from cone.app.model import UUIDAsName
 from cone.app.model import UUIDAttributeAware
 from cone.app.model import XMLProperties
+from cone.app.model import get_node_info
+from cone.app.model import node_info
+from cone.app.model import o_getattr
+from cone.app.model import register_node_info
 from datetime import datetime
 from node import schema
 from node.behaviors import DefaultInit
@@ -121,6 +125,34 @@ class TestModel(NodeTestCase):
             del node['child']
         self.assertEqual(list(node), [])
 
+    @testing.reset_node_info_registry
+    def test_SettingsNode(self):
+        @node_info(
+            name='test_settings_node',
+            title='Test Settings',
+            description='Test Settings Description')
+        class TestSettingsNode(SettingsNode):
+            pass
+
+        node = TestSettingsNode()
+        self.assertTrue(ILeafNode.providedBy(node))
+        self.assertTrue(ISettingsNode.providedBy(node))
+
+        self.assertEqual(node.category, NO_SETTINGS_CATEGORY)
+
+        self.layer.forget_request()
+        self.assertFalse(node.display)
+        self.layer.new_request()
+        self.assertFalse(node.display)
+        with self.layer.authenticated('max'):
+            self.assertFalse(node.display)
+        with self.layer.authenticated('manager'):
+            self.assertTrue(node.display)
+
+        md = node.metadata
+        self.assertEqual(md.title, 'Test Settings')
+        self.assertEqual(md.description, 'Test Settings Description')
+
     def test_FactoryNode(self):
         class TestFactoryNode(FactoryNode):
             factories = odict()
@@ -131,7 +163,8 @@ class TestModel(NodeTestCase):
         # static factories
         self.assertTrue(str(node['foo']).startswith("<BaseNode object 'foo' at"))
         self.assertTrue(str(node['bar']).startswith("<BaseNode object 'bar' at"))
-        self.expect_error(KeyError, lambda: node['baz'])
+        with self.assertRaises(KeyError):
+            node['baz']
         self.assertEqual(list([it for it in node]), ['foo', 'bar'])
         self.assertTrue(IInvalidate.providedBy(node))
         self.assertEqual(node.values(), [node['foo'], node['bar']])
@@ -144,6 +177,11 @@ class TestModel(NodeTestCase):
 
         node.invalidate('foo')
         self.assertEqual(node.storage.values(), [node['bar']])
+
+    def test_AppResources(self):
+        resources = AppResources()
+        self.assertFalse(resources.properties.in_navtree)
+        self.assertTrue(resources.properties.skip_mainmenu)
 
     def test_AdapterNode(self):
         toadapt = BaseNode()
@@ -399,19 +437,22 @@ class TestModel(NodeTestCase):
         node[child.name][sub.name] = sub
         sub = UUIDAsNameNode()
         node[child.name][sub.name] = sub
-        self.check_output("""\
+        self.checkOutput("""\
         <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
             <class '...UUIDAsNameNode'>: ...
             <class '...UUIDAsNameNode'>: ...
         """, node.treerepr())
 
-        err = self.expect_error(RuntimeError, node[child.name].copy)
-        expected = 'Shallow copy useless on UUID aware node trees, use deepcopy.'
-        self.assertEqual(str(err), expected)
+        with self.assertRaises(RuntimeError) as arc:
+            node[child.name].copy()
+        self.assertEqual(
+            str(arc.exception),
+            'Shallow copy useless on UUID aware node trees, use deepcopy.'
+        )
 
         copy = child.deepcopy()
-        self.check_output("""\
+        self.checkOutput("""\
         <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
@@ -540,9 +581,12 @@ class TestModel(NodeTestCase):
         self.assertTrue(props.get('viewprotected') is None)
         self.assertTrue(props.get('unprotected'))
 
-        err = self.expect_error(KeyError, lambda: props['viewprotected'])
-        expected = '"No permission to access \'viewprotected\'"'
-        self.assertEqual(str(err).strip('u'), expected)
+        with self.assertRaises(KeyError) as arc:
+            props['viewprotected']
+        self.assertEqual(
+            str(arc.exception).strip('u'),
+            '"No permission to access \'viewprotected\'"'
+        )
 
         self.assertTrue(props['unprotected'])
 
@@ -723,12 +767,10 @@ class TestModel(NodeTestCase):
             ['effective', 'empty', 'keywords', 'dictlike', 'bar']
         )
 
-        err = self.expect_error(
-            KeyError,
-            lambda: props.__delitem__('inexistent')
-        )
+        with self.assertRaises(KeyError) as arc:
+            props.__delitem__('inexistent')
         self.assertEqual(
-            str(err).strip('u'),
+            str(arc.exception).strip('u'),
             "'property inexistent does not exist'"
         )
 
@@ -890,7 +932,8 @@ class TestModel(NodeTestCase):
 
         # Test ``__getitem__``
         self.assertEqual(props['foo'], u'foo')
-        self.expect_error(KeyError, lambda: props['inexistent'])
+        with self.assertRaises(KeyError):
+            props['inexistent']
 
         # Test ``get``
         self.assertEqual(props.get('foo'), u'foo')
@@ -901,9 +944,12 @@ class TestModel(NodeTestCase):
         self.assertFalse('inexistent' in props)
 
         # Delete property
-        err = self.expect_error(KeyError, lambda: props.__delitem__('inexistent'))
-        expected = "'property inexistent does not exist'"
-        self.assertEqual(str(err).strip('u'), expected)
+        with self.assertRaises(KeyError) as arc:
+            del props['inexistent']
+        self.assertEqual(
+            str(arc.exception).strip('u'),
+            "'property inexistent does not exist'"
+        )
 
         del props['foo']
         self.assertTrue(props.foo is None)

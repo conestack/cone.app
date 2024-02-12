@@ -33,18 +33,18 @@ def internal_server_error(request):
         # XXX: request.response.status = 500
         #      return {'errors': error_dict}
         return Response(ERROR_PAGE % {'error': tb})
-    # XXX: Check request relates to bdajax action
+    # XXX: Check request relates to ajax action
     #      Check if json request and modify response as needed
     from cone.app.browser.ajax import (
         AjaxContinue,
         AjaxMessage,
     )
-    continuation = AjaxContinue([AjaxMessage(tb, 'error', None)]).definitions
+    continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
     ret = {
         'mode': 'NONE',
         'selector': 'NONE',
         'payload': '',
-        'continuation': continuation,
+        'continuation': continuation.operations,
     }
     response = Response(json.dumps(ret))
     response.content_type = 'application/json'

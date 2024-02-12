@@ -444,23 +444,19 @@ class TestBrowserBatch(TileTestCase):
         batched_items.model = BaseNode()
         batched_items.request = self.layer.new_request()
 
-        err = self.expectError(
-            NotImplementedError,
-            lambda: batched_items.item_count
-        )
-        expected = (
+        with self.assertRaises(NotImplementedError) as arc:
+            batched_items.item_count
+        self.assertEqual(
+            str(arc.exception),
             'Abstract ``BatchedItems`` does not implement ``item_count``'
         )
-        self.assertEqual(str(err), expected)
 
-        err = self.expectError(
-            NotImplementedError,
-            lambda: batched_items.slice_items
-        )
-        expected = (
+        with self.assertRaises(NotImplementedError) as arc:
+            batched_items.slice_items
+        self.assertEqual(
+            str(arc.exception),
             'Abstract ``BatchedItems`` does not implement ``items``'
         )
-        self.assertEqual(str(err), expected)
 
         self.assertTrue(batched_items.slice_template is None)
 
@@ -840,7 +836,7 @@ class TestBrowserBatch(TileTestCase):
             'cone.app.browser:templates/batched_items.pt'
         )
 
-        # Batched items DOM element ID. Used for bdajax binding.
+        # Batched items DOM element ID. Used for treibstoff ajax binding.
         self.assertEqual(batched_items.items_id, 'batched_items')
 
         self.checkOutput("""

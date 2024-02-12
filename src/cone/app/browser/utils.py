@@ -7,6 +7,7 @@ from pyramid.i18n import TranslationStringFactory
 import copy
 import datetime
 import re
+import warnings
 
 
 _ = TranslationStringFactory('cone.app')
@@ -117,3 +118,10 @@ def request_property(func):
 
 def format_traceback():
     return '<pre>{}</pre>'.format(_format_traceback())
+
+
+def bdajax_warning(attr):
+    warnings.warn((
+        '``bdajax.{}`` parameter received. Bdajax is no longer '
+        'supported. Please migrate your code to ``treibstoff``.'
+    ).format(attr))

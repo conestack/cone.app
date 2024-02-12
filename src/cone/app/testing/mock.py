@@ -25,9 +25,6 @@ from zope.interface import implementer
 from zope.interface import Interface
 
 
-static_resources = static_view('static', use_subpath=True)
-
-
 @plumbing(WorkflowState, WorkflowACL)
 class WorkflowNode(BaseNode):
     workflow_name = u'dummy'

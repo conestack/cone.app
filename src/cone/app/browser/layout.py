@@ -1,9 +1,9 @@
 from cone.app import cfg
 from cone.app import layout_config
-from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
-from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.actions import get_action_context
 from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -16,15 +16,15 @@ from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
 from cone.app.utils import node_path
+from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
-from cone.tile import Tile
 from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
-from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
+from pyramid.i18n import get_localizer
 import warnings
 
 
@@ -127,51 +127,16 @@ class personal_tools_action(object):
         return factory
 
 
-@personal_tools_action(name='settings')
-class ViewSettingsAction(LinkAction):
-    text = _('settings', default='Settings')
-    icon = 'ion-ios7-gear'
-    event = 'contextchanged:#layout'
-    path = 'href'
-
-    @property
-    def settings(self):
-        root = self.model.root
-        return root and root.get('settings') or None
-
-    @property
-    def target(self):
-        return make_url(self.request, node=self.settings)
-
-    href = target
-
-    @property
-    def display(self):
-        settings = self.settings
-        if not settings:
-            return False
-        if not self.request.has_permission('view', settings):
-            return False
-        if not len(settings):
-            return False
-        return True
-
-
 @personal_tools_action(name='logout')
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
     icon = 'ion-log-out'
-    action = 'logout:NONE:NONE'
-    path_action = ''
-    path_event = ''
+    bind = None
+    target = None
 
     @property
     def href(self):
         return make_url(self.request, resource='logout')
-
-    @property
-    def path(self):
-        return '/'
 
 
 @tile(name='personaltools',
@@ -490,7 +455,14 @@ class RootContent(ProtectedContentTile):
 
 class LanguageTile(Tile):
     param_blacklist = [
-        '_', '_LOCALE_', 'bdajax.action', 'bdajax.mode', 'bdajax.selector'
+        '_',
+        '_LOCALE_',
+        'ajax.action',
+        'ajax.mode',
+        'ajax.selector',
+        'bdajax.action',  # B/C
+        'bdajax.mode',  # B/C
+        'bdajax.selector'  # B/C
     ]
 
     def make_query(self, lang=None):

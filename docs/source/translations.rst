@@ -88,7 +88,7 @@ be registered inside the :ref:`Plugin main hook function <plugin_main_hook>`.
 
 .. code-block:: python
 
-    def example_main_hook(config, global_config, local_config):
+    def example_main_hook(config, global_config, settings):
         # add translation
         config.add_translation_dirs('cone.example:locale/')
 

@@ -182,6 +182,13 @@ The settings node is available at ``settings`` on application model root.
     settings = get_root()['settings']
 
 
+SettingsNode
+------------
+
+The ``cone.app.model.SettingsNode`` is used to implement plugin specific
+settings. See :ref:`register_config <plugins_application_settings>`.
+
+
 AppEnvironment
 --------------
 
@@ -405,15 +412,18 @@ containing initial properties as arguments.
     props()  # persist to file
 
 
+.. _model_node_info:
+
 NodeInfo
 --------
 
 ``cone.app.model.NodeInfo`` class inherits from ``cone.app.model.Properties``
 and adds the marker interface ``cone.app.interfaces.INodeInfo``.
 
-``NodeInfo`` provides cardinality information and general node information
-which is primary needed for authoring operations. The following properties are
-used:
+``NodeInfo`` provides general node information and cardinality information
+which is primarily needed for authoring operations.
+
+The following general properties are available:
 
 - **name**: Unique name as string of node type.
 
@@ -421,16 +431,18 @@ used:
 
 - **description**: Description of this node type.
 
+- **icon**: Icon for node type. Icon support is implemented using icon fonts.
+  `Ionicons <http://ionicons.com>`_ are shipped and delivered with ``cone.app`` by
+  default.
+
+The following authoring related properties are available:
+
 - **factory**: Add model factory. Function used to instanciate a non persistent
   instance of node type used to render add forms. Defaults to
   ``cone.app.browser.authoring.default_addmodel_factory``.
 
 - **addables**: List of node info names. Defines which node types are allowed
   as children in this node.
-
-- **icon**: Icon for node type. Icon support is implemented using icon fonts.
-  `Ionicons <http://ionicons.com>`_ are shipped and delivered with ``cone.app`` by
-  default.
 
 ``NodeInfo`` objects are not instantiated directly, instead the
 ``cone.app.model.node_info`` decorator is used to register node types.

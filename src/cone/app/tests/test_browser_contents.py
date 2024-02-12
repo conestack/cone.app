@@ -1,8 +1,10 @@
 from cone.app import compat
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser import set_related_view
 from cone.app.browser.contents import ContentsTile
 from cone.app.browser.contents import ContentsViewLink
+from cone.app.browser.contents import RootContentsTile
 from cone.app.browser.contents import listing
 from cone.app.browser.table import TableSlice
 from cone.app.browser.utils import make_url
@@ -15,7 +17,7 @@ from cone.tile.tests import TileTestCase
 from datetime import datetime
 from datetime import timedelta
 from node.base import BaseNode as NodeBaseNode
-from node.behaviors import Order
+from node.behaviors import MappingOrder
 from plumber import plumbing
 from pyramid.exceptions import HTTPForbidden
 from pyramid.security import ACLDenied
@@ -215,18 +217,13 @@ class TestBrowserContents(TileTestCase):
         rule = request.has_permission('list', model)
         self.assertTrue(isinstance(rule, ACLDenied))
 
-        err = self.expectError(
-            HTTPForbidden,
-            render_tile,
-            model,
-            request,
-            'contents'
-        )
+        with self.assertRaises(HTTPForbidden) as arc:
+            render_tile(model, request, 'contents')
         self.checkOutput("""
         Unauthorized: tile
         <cone.app.browser.contents.ContentsTile object at ...> failed
         permission check
-        """, str(err))
+        """, str(arc.exception))
 
         # Render authenticated
         with self.layer.authenticated('manager'):
@@ -384,7 +381,7 @@ class TestBrowserContents(TileTestCase):
         self.assertTrue(res.text.startswith('<!DOCTYPE html>'))
 
     def test_move_actions(self):
-        @plumbing(Order)
+        @plumbing(MappingOrder)
         class OrderableNode(BaseNode):
             pass
 
@@ -399,3 +396,14 @@ class TestBrowserContents(TileTestCase):
 
         self.assertEqual(rendered.count('toolbaraction-move-up'), 2)
         self.assertEqual(rendered.count('toolbaraction-move-down'), 2)
+
+    def test_RootContentsTile(self):
+        model = get_root()
+        self.assertTrue('settings' in model)
+        self.assertTrue('resources' in model)
+
+        tile = RootContentsTile()
+        tile.model = model
+        children = [node.name for node in tile.listable_children]
+        self.assertFalse('settings' in children)
+        self.assertFalse('resources' in children)
