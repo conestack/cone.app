@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.1a2 (unreleased)
+1.1a2 (2024-02-12)
 ------------------
 
 - Introduce ``cone.app.browser.form.``,
