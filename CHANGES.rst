@@ -4,7 +4,7 @@ Changes
 1.1a3 (unreleased)
 ------------------
 
-- Add ``NodeInfo.available`` callback to check whether node is allowed to be
+- Add ``node_available`` callback to check whether node is allowed to be
   used in application.
   [rnix]
 
