@@ -1,3 +1,4 @@
+from cone.app import security
 from cone.app.compat import configparser
 from cone.app.compat import IS_PY2
 from cone.app.compat import ITER_TYPES
@@ -14,7 +15,6 @@ from cone.app.interfaces import IProperties
 from cone.app.interfaces import ISettingsNode
 from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
-from cone.app.security import acl_registry
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
 from node import schema
@@ -117,15 +117,6 @@ class node_info(object):
         return cls
 
 
-def default_node_available(model, nodeinfo):
-    """Default callback for checking node availability in UI.
-
-    :param model: application node to gain access to the application model.
-    :param nodeinfo: ``NodeInfo`` instance of the node to check availability.
-    """
-    return True
-
-
 @implementer(IApplicationEnvironment)
 class AppEnvironment(Behavior):
 
@@ -147,7 +138,9 @@ class AppNode(Behavior):
     @default
     @property
     def __acl__(self):
-        return acl_registry.lookup(self.__class__, self.node_info_name)
+        if not security.node_available(self, self.node_info_name):
+            return [(Deny, Everyone, ALL_PERMISSIONS)]
+        return security.acl_registry.lookup(self.__class__, self.node_info_name)
 
     @default
     @instance_property

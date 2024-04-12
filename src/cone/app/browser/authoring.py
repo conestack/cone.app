@@ -1,5 +1,5 @@
-from cone.app import cfg
 from cone.app import compat
+from cone.app import security
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.ajax import ajax_continue
@@ -26,7 +26,6 @@ from plumber import Behavior
 from plumber import default
 from plumber import override
 from plumber import plumb
-from pyramid.httpexceptions import HTTPUnauthorized
 from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
 from pyramid.view import view_config
@@ -336,7 +335,7 @@ class AddDropdown(Tile):
             return ret
         for addable in addables:
             info = get_node_info(addable)
-            if not info or not cfg.node_available(self.model, info):
+            if not info or not security.node_available(self.model, addable):
                 continue
             ret.append(self.make_item(addable, info))
         return ret
@@ -362,8 +361,6 @@ class AddTile(Tile):
         nodeinfo = self.info
         if not nodeinfo:
             return _('unknown_factory', default='Unknown factory')
-        if not cfg.node_available(self.model, nodeinfo):
-            raise HTTPUnauthorized()
         factory = nodeinfo.factory
         if not factory:
             factory = default_addmodel_factory

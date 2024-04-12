@@ -6,7 +6,9 @@ from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import IAuthenticator
 from cone.app.interfaces import IOwnerSupport
 from cone.app.interfaces import IPrincipalACL
+from cone.app.model import AppNode
 from cone.app.model import BaseNode
+from cone.app.model import node_info
 from cone.app.security import acl_registry
 from cone.app.security import AdapterACL
 from cone.app.security import authenticate
@@ -30,6 +32,8 @@ from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.security import ACLAllowed
 from pyramid.security import ACLDenied
 from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import Deny
+from pyramid.security import Everyone
 from pyramid.threadlocal import get_current_registry
 from zope.component import adapter
 from zope.component.globalregistry import BaseGlobalComponents
@@ -442,6 +446,7 @@ class SecurityTest(NodeTestCase):
             ('Deny', 'system.Everyone', ALL_PERMISSIONS)
         )
 
+    @testing.reset_node_available
     def test_AdapterACL(self):
         @plumbing(AdapterACL)
         class AdapterACLNode(BaseNode):
@@ -474,6 +479,11 @@ class SecurityTest(NodeTestCase):
         self.assertIsInstance(acl_adapter, ACLAdapter)
         self.assertEqual(acl_adapter.acl, acl)
         self.assertEqual(node.__acl__, acl)
+
+        def node_available(model, node_info_name):
+            return False
+        security.node_available = node_available
+        self.assertEqual(node.__acl__, [(Deny, Everyone, ALL_PERMISSIONS)])
 
         request.registry.unregisterAdapter(ACLAdapter)
 
@@ -538,3 +548,28 @@ class SecurityTest(NodeTestCase):
 
         security.AUTHENTICATOR = authenticator_origin
         registry.unregisterUtility(authenticator)
+
+    @testing.reset_node_info_registry
+    @testing.reset_node_available
+    def test_node_available(self):
+        def node_available(model, node_info_name):
+            if node_info_name == 'denied':
+                return False
+            return True
+        security.node_available = node_available
+
+        @node_info(name='allowed')
+        @plumbing(AppNode)
+        class AllowedNode:
+            ...
+
+        @node_info(name='denied')
+        @plumbing(AppNode)
+        class DeniedNode:
+            ...
+
+        self.assertEqual(AllowedNode().__acl__, DEFAULT_ACL)
+        self.assertEqual(
+            DeniedNode().__acl__,
+            [(Deny, Everyone, ALL_PERMISSIONS)]
+        )

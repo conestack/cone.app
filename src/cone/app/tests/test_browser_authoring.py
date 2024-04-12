@@ -1,4 +1,5 @@
 from cone.app import compat
+from cone.app import security
 from cone.app import testing
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxMessage
@@ -845,6 +846,7 @@ class TestBrowserAuthoring(TileTestCase):
         """, node.treerepr())
 
     @testing.reset_node_info_registry
+    @testing.reset_node_available
     def test_add_items_dropdown(self):
         @node_info(
             name='mynode',
@@ -896,6 +898,23 @@ class TestBrowserAuthoring(TileTestCase):
 
         expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
         self.assertTrue(rendered.find(expected) != -1)
+
+        # now disable this other node type globally
+        def node_available(model, node_info_name):
+            if node_info_name == 'anothernode':
+                return False
+            return True
+        security.node_available = node_available
+
+        with self.layer.authenticated('manager'):
+            request = self.layer.new_request()
+            rendered = render_tile(root['somechild'], request, 'add_dropdown')
+
+        expected = 'ajax:target="http://example.com/somechild?factory=mynode"'
+        self.assertTrue(rendered.find(expected) != -1)
+
+        expected = 'ajax:target="http://example.com/somechild?factory=anothernode"'
+        self.assertFalse(rendered.find(expected) != -1)
 
         # Test node without addables, results in empty listing.
         # XXX: hide entire widget if no items
