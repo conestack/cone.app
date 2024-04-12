@@ -537,6 +537,7 @@ class TestBrowserActions(TileTestCase):
         info = NodeInfo()
         info.title = 'Addable'
         info.addables = ['addable']
+        info.available = lambda: True
         register_node_info('addable', info)
 
         action = ActionAdd()

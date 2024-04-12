@@ -652,6 +652,9 @@ Considered ``nodeinfo``:
 - **addables**: Build addable dropdown by ``cone.app.model.NodeInfo`` instances
   registered by names defined in ``node.nodeinfo.addables``.
 
+- **available**: Called on addable ``cone.app.model.NodeInfo`` instances to
+  check whether the addable node is allowed in the application.
+
 In the following example the add dropdown shows an add link for ``ChildNode``
 if rendered on ``ContainerNode``.
 
@@ -1535,13 +1538,16 @@ Considered ``nodeinfo``:
 
 - **addables**: Addable children defined for node.
 
+- **available**: Called on addable ``cone.app.model.NodeInfo`` instances to
+  check whether the addable node is allowed in the application.
+
 
 ActionEdit
 ----------
 
 Renders ``edit`` tile to main content area.
 
-Considered ``nodeinfo``:
+Considered ``properties``:
 
 - **action_edit**: Flag whether to render edit action.
 
@@ -1551,7 +1557,7 @@ ActionDelete
 
 Invokes ``delete`` tile on node after confirming action.
 
-Considered ``nodeinfo``:
+Considered ``properties``:
 
 - **action_delete**: Flag whether to render delete action.
 

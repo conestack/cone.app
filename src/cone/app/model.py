@@ -97,13 +97,14 @@ class node_info(object):
     """
 
     def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=[]):
+                 factory=None, icon=None, addables=[], available=lambda: True):
         self.name = name
         self.title = title
         self.description = description
         self.factory = factory
         self.icon = icon
         self.addables = addables
+        self.available = available
 
     def __call__(self, cls):
         cls.node_info_name = self.name
@@ -113,6 +114,7 @@ class node_info(object):
         info.description = self.description
         info.factory = self.factory
         info.addables = self.addables
+        info.available = self.available
         info.icon = self.icon
         register_node_info(cls.node_info_name, info)
         return cls
@@ -167,6 +169,7 @@ class AppNode(Behavior):
             info.title = str(self.__class__)
             info.node = self.__class__
             info.icon = app_config().default_node_icon
+            info.available = lambda: True
         return info
 
 

@@ -114,6 +114,7 @@ class INodeInfo(IProperties):
     node = Attribute(u'Node implementing class.')
     factory = Attribute(u'Add model factory.')
     addables = Attribute(u'List of valid children node info names.')
+    available = Attribute(u'Callable whether node is available in application.')
     icon = Attribute(u'Node icon.')
 
 

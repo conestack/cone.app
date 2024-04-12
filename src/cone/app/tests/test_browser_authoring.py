@@ -876,6 +876,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         # Allow another node type as child
         nodeinfo = NodeInfo()
+        nodeinfo.available = lambda: True
         register_node_info('anothernode', nodeinfo)
         get_node_info('mynode').addables = ['mynode', 'anothernode']
 

@@ -4,7 +4,9 @@ Changes
 1.1a3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add ``NodeInfo.available`` callback to check whether node is allowed to be
+  used in application.
+  [rnix]
 
 
 1.1a2 (2024-02-12)
