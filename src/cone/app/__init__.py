@@ -6,6 +6,7 @@ from cone.app.interfaces import IApplicationNode
 from cone.app.model import AppResources
 from cone.app.model import AppRoot
 from cone.app.model import AppSettings
+from cone.app.model import default_node_available
 from cone.app.model import LayoutConfig
 from cone.app.model import Properties
 from cone.app.ugm import ugm_backend
@@ -40,6 +41,9 @@ cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
 cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
+
+# callbak for application node availability
+cfg.node_available = default_node_available
 
 
 class layout_config(object):
@@ -286,6 +290,11 @@ def main(global_config, **settings):
     main_template = settings.get('cone.main_template')
     if main_template:
         cfg.main_template = main_template
+
+    # cone.root.node_available
+    node_available_callback = settings.pop('cone.root.node_available', None)
+    if node_available_callback:
+        cfg.node_available = import_from_string(node_available_callback)
 
     # add translation
     config.add_translation_dirs('cone.app:locale/')

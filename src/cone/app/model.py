@@ -93,18 +93,16 @@ getNodeInfo = get_node_info
 
 
 class node_info(object):
-    """Node info decorator.
-    """
+    """Node info decorator."""
 
     def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=[], available=lambda: True):
+                 factory=None, icon=None, addables=[]):
         self.name = name
         self.title = title
         self.description = description
         self.factory = factory
         self.icon = icon
         self.addables = addables
-        self.available = available
 
     def __call__(self, cls):
         cls.node_info_name = self.name
@@ -114,10 +112,18 @@ class node_info(object):
         info.description = self.description
         info.factory = self.factory
         info.addables = self.addables
-        info.available = self.available
         info.icon = self.icon
         register_node_info(cls.node_info_name, info)
         return cls
+
+
+def default_node_available(model, nodeinfo):
+    """Default callback for checking node availability in UI.
+
+    :param model: application node to gain access to the application model.
+    :param nodeinfo: ``NodeInfo`` instance of the node to check availability.
+    """
+    return True
 
 
 @implementer(IApplicationEnvironment)
@@ -169,7 +175,6 @@ class AppNode(Behavior):
             info.title = str(self.__class__)
             info.node = self.__class__
             info.icon = app_config().default_node_icon
-            info.available = lambda: True
         return info
 
 

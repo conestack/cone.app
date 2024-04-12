@@ -1,3 +1,4 @@
+from cone.app import cfg
 from cone.app import compat
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionContext
@@ -335,7 +336,7 @@ class AddDropdown(Tile):
             return ret
         for addable in addables:
             info = get_node_info(addable)
-            if not info or not info.available():
+            if not info or not cfg.node_available(self.model, info):
                 continue
             ret.append(self.make_item(addable, info))
         return ret
@@ -361,7 +362,7 @@ class AddTile(Tile):
         nodeinfo = self.info
         if not nodeinfo:
             return _('unknown_factory', default='Unknown factory')
-        if not nodeinfo.available():
+        if not cfg.node_available(self.model, nodeinfo):
             raise HTTPUnauthorized()
         factory = nodeinfo.factory
         if not factory:

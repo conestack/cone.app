@@ -444,10 +444,6 @@ The following authoring related properties are available:
 - **addables**: List of node info names. Defines which node types are allowed
   as children in this node.
 
-- **available**: Callable returning whether the node is allowed to be used in
-  this application. Defaults to ``lambda: True``. Gets considered in add dropdown
-  and authoring forms.
-
 ``NodeInfo`` objects are not instantiated directly, instead the
 ``cone.app.model.node_info`` decorator is used to register node types.
 

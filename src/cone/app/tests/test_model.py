@@ -108,7 +108,6 @@ class TestModel(NodeTestCase):
         self.assertTrue(info.node is BaseNode)
         self.assertEqual(info.title, "<class 'cone.app.model.BaseNode'>")
         self.assertTrue(info.inexistent is None)
-        self.assertTrue(info.available())
 
     def test_LeafNode(self):
         @plumbing(NodeInit, Node, LeafNode)

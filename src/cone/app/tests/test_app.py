@@ -8,6 +8,7 @@ from cone.app import testing
 from cone.app.interfaces import ILayoutConfig
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
+from cone.app.model import default_node_available
 from node.base import BaseNode as NodeBaseNode
 from node.tests import NodeTestCase
 from pyramid.authentication import AuthTktAuthenticationPolicy
@@ -111,6 +112,8 @@ class TestApp(NodeTestCase):
             'cone.main_template': 'package.browser:templates/main.pt',
             # ensure custom root node factory gets invoked
             'cone.root.node_factory': 'cone.app.default_root_node_factory',
+            # ensure custom node_available factory gets invoked
+            'cone.root.node_available': 'cone.app.model.default_node_available',
             # ensure dummy main hooks called
             'cone.plugins': 'cone.app.tests'
         }

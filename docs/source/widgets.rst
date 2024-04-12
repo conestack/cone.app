@@ -652,9 +652,6 @@ Considered ``nodeinfo``:
 - **addables**: Build addable dropdown by ``cone.app.model.NodeInfo`` instances
   registered by names defined in ``node.nodeinfo.addables``.
 
-- **available**: Called on addable ``cone.app.model.NodeInfo`` instances to
-  check whether the addable node is allowed in the application.
-
 In the following example the add dropdown shows an add link for ``ChildNode``
 if rendered on ``ContainerNode``.
 
@@ -1537,9 +1534,6 @@ Renders add dropdown menu.
 Considered ``nodeinfo``:
 
 - **addables**: Addable children defined for node.
-
-- **available**: Called on addable ``cone.app.model.NodeInfo`` instances to
-  check whether the addable node is allowed in the application.
 
 
 ActionEdit
