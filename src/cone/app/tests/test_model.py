@@ -355,7 +355,8 @@ class TestModel(NodeTestCase):
             description='My Node Descriptrion',
             factory=None,
             icon='icon',
-            addables=['othernode'])
+            addables=['othernode'],
+            custom_prop='custom_value')
         class MyNode(BaseNode):
             pass
 
@@ -366,6 +367,7 @@ class TestModel(NodeTestCase):
         self.assertEqual(info.factory, None)
         self.assertEqual(info.addables, ['othernode'])
         self.assertEqual(info.icon, 'icon')
+        self.assertEqual(info.custom_prop, 'custom_value')
         self.assertEqual(MyNode.node_info_name, 'mynode')
 
     def test_AppEnvironment(self):

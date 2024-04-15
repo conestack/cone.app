@@ -4,6 +4,9 @@ Changes
 1.1a3 (unreleased)
 ------------------
 
+- ``node_info`` accepts additional keyword arguments to add custom properties.
+  [rnix]
+
 - Add ``node_available`` callback to check whether node is allowed to be
   used in application.
   [rnix]

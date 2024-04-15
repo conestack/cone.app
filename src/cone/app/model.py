@@ -96,13 +96,14 @@ class node_info(object):
     """Node info decorator."""
 
     def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=[]):
+                 factory=None, icon=None, addables=[], **kw):
         self.name = name
         self.title = title
         self.description = description
         self.factory = factory
         self.icon = icon
         self.addables = addables
+        self.kw = kw
 
     def __call__(self, cls):
         cls.node_info_name = self.name
@@ -113,6 +114,8 @@ class node_info(object):
         info.factory = self.factory
         info.addables = self.addables
         info.icon = self.icon
+        for name, value in self.kw.items():
+            setattr(info, name, value)
         register_node_info(cls.node_info_name, info)
         return cls
 
