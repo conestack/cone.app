@@ -12,7 +12,6 @@
 /* search field */
 #search {
   padding-left: 10px;
-  padding-top: 10px;
   padding-right: 10px;
 }
 #search #search-text, #search input.form-control.tt-hint {

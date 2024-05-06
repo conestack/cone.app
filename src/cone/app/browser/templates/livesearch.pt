@@ -6,7 +6,7 @@
   <ul class="nav navbar-nav navbar-right">
     <li id="search">
 
-    <div class="input-group mb-3">
+    <div class="input-group">
       <span class="input-group-text" style="position: absolute; transform: translateX(-100%);">
         <i class="bi-search"></i>
       </span>
