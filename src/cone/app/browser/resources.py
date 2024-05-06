@@ -27,8 +27,8 @@ jquery_resources = wr.ResourceGroup(
 )
 jquery_resources.add(wr.ScriptResource(
     name='jquery-js',
-    resource='jquery-3.6.0.js',
-    compressed='jquery-3.6.0.min.js'
+    resource='jquery-4.0.0-beta.js',
+    compressed='jquery-4.0.0-beta.min.js'
 ))
 
 # bootstrap
@@ -39,11 +39,10 @@ bootstrap_resources = wr.ResourceGroup(
 )
 bootstrap_resources.add(wr.ScriptResource(
     name='bootstrap-js',
-    depends='jquery-js',
     directory=os.path.join(resources_dir, 'bootstrap', 'js'),
     path='bootstrap/js',
-    resource='bootstrap.js',
-    compressed='bootstrap.min.js'
+    resource='bootstrap.bundle.js',
+    compressed='bootstrap.bundle.min.js'
 ))
 bootstrap_resources.add(wr.StyleResource(
     name='bootstrap-css',
@@ -53,12 +52,11 @@ bootstrap_resources.add(wr.StyleResource(
     compressed='bootstrap.min.css'
 ))
 bootstrap_resources.add(wr.StyleResource(
-    name='bootstrap-theme-css',
-    depends='bootstrap-css',
-    directory=os.path.join(resources_dir, 'bootstrap', 'css'),
-    path='bootstrap/css',
-    resource='bootstrap-theme.css',
-    compressed='bootstrap-theme.min.css'
+    name='bootstrap-icons',
+    directory=os.path.join(resources_dir, 'bootstrap', 'icons'),
+    path='bootstrap/icons',
+    resource='bootstrap-icons.css',
+    compressed='bootstrap-icons.min.css'
 ))
 
 # typeahead
@@ -67,15 +65,15 @@ typeahead_resources = wr.ResourceGroup(
     directory=os.path.join(resources_dir, 'typeahead'),
     path='typeahead'
 )
-typeahead_resources.add(wr.ScriptResource(
-    name='typeahead-js',
-    depends='jquery-js',
-    resource='typeahead.bundle.js'
-))
-typeahead_resources.add(wr.StyleResource(
-    name='typeahead-css',
-    resource='typeahead.css'
-))
+# typeahead_resources.add(wr.ScriptResource(
+#     name='typeahead-js',
+#     depends='jquery-js',
+#     resource='typeahead.bundle.js'
+# ))
+# typeahead_resources.add(wr.StyleResource(
+#     name='typeahead-css',
+#     resource='typeahead.css'
+# ))
 
 # ionicons
 ionicons_resources = wr.ResourceGroup(
@@ -98,7 +96,7 @@ cone_resources = wr.ResourceGroup(
 )
 cone_resources.add(wr.ScriptResource(
     name='cone-app-public-js',
-    depends='typeahead-js',
+    # depends='typeahead-js',
     resource='cone.app.public.js',
     compressed='cone.app.public.min.js'
 ))

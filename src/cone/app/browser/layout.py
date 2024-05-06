@@ -156,7 +156,13 @@ class PersonalTools(Tile):
 
     @property
     def items(self):
-        return [_(self.model, self.request) for _ in personal_tools.values()]
+        items = []
+        for item in personal_tools.values():
+            rendered = item(self.model, self.request)
+            if not rendered:
+                continue
+            items.append(rendered)
+        return items
 
 
 @tile(name='mainmenu',

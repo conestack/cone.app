@@ -16,25 +16,25 @@ export class LiveSearch {
 
     constructor(elem) {
         this.elem = elem;
-        let source = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: 'livesearch?term=%QUERY'
-        });
-        source.initialize();
-        this.render_suggestion = this.render_suggestion.bind(this);
-        elem.typeahead(null, {
-            name: 'livesearch',
-            displayKey: 'value',
-            source: source.ttAdapter(),
-            templates: {
-                suggestion: this.render_suggestion,
-                empty: '<div class="empty-message">No search results</div>'
-            }
-        });
-        this.on_select = this.on_select.bind(this);
-        let event = 'typeahead:selected';
-        elem.off(event).on(event, this.on_select);
+        // let source = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     remote: 'livesearch?term=%QUERY'
+        // });
+        // source.initialize();
+        // this.render_suggestion = this.render_suggestion.bind(this);
+        // elem.typeahead(null, {
+        //     name: 'livesearch',
+        //     displayKey: 'value',
+        //     source: source.ttAdapter(),
+        //     templates: {
+        //         suggestion: this.render_suggestion,
+        //         empty: '<div class="empty-message">No search results</div>'
+        //     }
+        // });
+        // this.on_select = this.on_select.bind(this);
+        // let event = 'typeahead:selected';
+        // elem.off(event).on(event, this.on_select);
     }
 
     on_select(evt, suggestion, dataset) {

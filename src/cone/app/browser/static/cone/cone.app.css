@@ -15,6 +15,10 @@
   padding-top: 10px;
   padding-right: 10px;
 }
+#search #search-text, #search input.form-control.tt-hint {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 
 /* dropdown */
 .dropdown-menu > li > a.selected {

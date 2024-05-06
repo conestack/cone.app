@@ -1,3 +1,7 @@
+@import "bootstrap/_functions";
+@import "bootstrap/_variables";
+@import "bootstrap/mixins/_border-radius";
+
 /* layout */
 #layout {
     > div.container-fluid {
@@ -16,6 +20,10 @@
     padding-left: 10px;
     padding-top: 10px;
     padding-right: 10px;
+
+    #search-text, input.form-control.tt-hint {
+        @include border-start-radius(0);
+    }
 }
 
 /* dropdown */
