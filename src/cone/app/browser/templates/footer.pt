@@ -1,13 +1,11 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-  <footer class="navbar-default navbar-fixed-bottom">
+  <footer class="navbar bg-light fixed-bottom">
 
-    <div class="container">
-      <p>
-        Copyright (c) 2009-2024
-        <a href="http://conestack.org/">Cone Contributors</a>.
-      </p>
+    <div class="container align-items-center justify-content-center">
+        <span id="copyright">Copyright (c) 2009-2024</span>
+        <a href="http://conestack.org/" class="ms-2">Cone Contributors</a>.
     </div>
 
   </footer>

@@ -4,31 +4,28 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <ol id="pathbar"
-      class="contextsensitiv breadcrumb"
-      ajax:bind="contextchanged"
-      ajax:action="pathbar:#pathbar:replace">
+  <nav id="pathbar"
+       class="contextsensitiv position-relative px-3 py-2 shadow-sm"
+       ajax:bind="contextchanged"
+       ajax:action="pathbar:#pathbar:replace">
 
-    <li>
-      <span i18n:translate="you_are_here">You are here</span>:
-    </li>
-
-    <tal:li repeat="item context.items">
-      <li tal:attributes="class item['selected'] and 'active' or ''">
-        <a href="${item['url']}"
-           ajax:bind="click"
-           ajax:target="${item['target']}"
-           ajax:event="contextchanged:#layout"
-           ajax:path="href"
-           tal:content="item['title']"
-           tal:condition="not item['selected']">
-          Title
-        </a>
-        <strong tal:content="item['title']"
-                tal:condition="item['selected']">Title</strong>
-      </li>
-    </tal:li>
-
-  </ol>
+    <ol class="breadcrumb m-0">
+      <tal:li repeat="item context.items">
+        <li tal:attributes="class item['selected'] and 'breadcrumb-item active' or 'breadcrumb-item'">
+          <a href="${item['url']}"
+             ajax:bind="click"
+             ajax:target="${item['target']}"
+             ajax:event="contextchanged:#layout"
+             ajax:path="href"
+             tal:content="item['title']"
+             tal:condition="not item['selected']">
+            Title
+          </a>
+          <strong tal:content="item['title']"
+                  tal:condition="item['selected']">Title</strong>
+        </li>
+      </tal:li>
+    </ol>
+  </nav>
 
 </tal:block>

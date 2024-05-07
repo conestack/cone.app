@@ -2,30 +2,41 @@
            xmlns:ajax="http://namespaces.conestack.org/ajax"
            omit-tag="True">
 
-  <tal:li repeat="item children">
+  <ul class="list-group list-unstyled fw-normal pb-1">
+    <tal:li repeat="item children">
 
-    <li tal:define="css item['selected'] and 'active' or '';
-                    css ' '.join([item['css'], css, 'navtreelevel_%i' % level]);
-                    css css.strip()"
-        tal:attributes="class css">
+      <li tal:define="css item['selected'] and 'active' or '';
+                      css ' '.join([
+                        item['css'],
+                        css,
+                        'navtreelevel_%i' % level,
+                        'list-group-item bg-dark text-light ps-4 p-0 border-0'
+                      ]);
+                      css css.strip()"
+          tal:attributes="class css">
 
-      <a href="${item['url']}"
-         ajax:bind="click"
-         ajax:target="${item['target']}"
-         ajax:event="contextchanged:#layout"
-         ajax:path="href">
-        <i class="${item['icon']}" alt="..."></i>
-        <span tal:replace="item['title']">Title</span>
-      </a>
+        <a href="${item['url']}"
+           tal:define="active item['selected'] and 'active' or ''"
+           class="link-light text-decoration-none rounded nav-link 
+                  position-relative shadow-sm ${active}"
+           ajax:bind="click"
+           ajax:target="${item['target']}"
+           ajax:event="contextchanged:#layout"
+           ajax:path="href">
+          <i tal:condition="item['icon']"
+             class="${item['icon']} me-2" alt="..."></i>
+          <span tal:replace="item['title']">Title</span>
+          <i tal:condition="not item['leaf']" class="bi-chevron-right float-end"></i>
+        </a>
 
-      <ul tal:condition="item['children']"
-          class="nav ${'navtreelevel_%i' % level}">
-        <tal:tree replace="structure context.rendertree(item['children'],
-                                                        level + 1)" />
-      </ul>
+        <ul tal:condition="item['children']"
+            class="list-group list-unstyled fw-normal pb-1 ${'navtreelevel_%i' % level}">
+          <tal:tree replace="structure context.rendertree(item['children'], level + 1)" />
+        </ul>
 
-    </li>
+      </li>
 
-  </tal:li>
+    </tal:li>
+  </ul>
 
 </tal:block>

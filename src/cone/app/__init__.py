@@ -39,7 +39,7 @@ cfg.available_languages = []
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
-cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
+cfg.default_node_icon = 'bi-asterisk'
 
 
 class layout_config(object):

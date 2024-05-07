@@ -348,6 +348,7 @@ class NavTree(Tile):
         item['path'] = path
         item['icon'] = icon
         item['css'] = css
+        item['leaf'] = False
         item['showchildren'] = False
         item['children'] = list()
         return item
@@ -385,6 +386,7 @@ class NavTree(Tile):
                 title = safe_decode(title)
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
+            # XXX: if open children inside, use parent as target
             target = make_url(self.request, node=node, query=query)
             curnode = curpath == safe_decode(key)
             icon = node_icon(node)
@@ -394,6 +396,7 @@ class NavTree(Tile):
             child = self.navtreeitem(
                 title, url, target, node_path(node), icon, css)
             child['showchildren'] = curnode
+            child['leaf'] = INavigationLeaf.providedBy(node)
             if curnode:
                 child['selected'] = True
                 if default_child:

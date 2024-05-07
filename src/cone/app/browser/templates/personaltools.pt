@@ -1,8 +1,8 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-  <li id="personaltools"
-      class="nav-item dropdown">
+  <div id="personaltools"
+       class="nav-item dropdown ms-3 me-3">
 
     <a href="#"
        class="nav-link dropdown-toggle"
@@ -11,7 +11,7 @@
       <span class="caret"></span>
     </a>
 
-    <ul class="dropdown-menu" role="menu">
+    <ul class="dropdown-menu dropdown-menu-end" role="menu">
 
       <li tal:repeat="item context.items">
           <div class="dropdown-item">
@@ -21,6 +21,6 @@
 
     </ul>
 
-  </li>
+  </div>
 
 </tal:block>
