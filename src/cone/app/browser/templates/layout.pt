@@ -19,8 +19,6 @@
              class="d-none d-xxl-flex flex-column flex-shrink-0 p-3 pb-5 text-white bg-dark"
              style="width: 300px;">
 
-          <!-- <tal:logo replace="structure tile('logo')" /> -->
-
           <hr style="margin-top: 56px;">
 
           <ul class="nav nav-pills flex-column mb-auto">
@@ -65,11 +63,14 @@
                   <span class="navbar-toggler-icon"></span>
               </button>
 
-              <div class="collapse navbar-collapse bg-white p-3 p-lg-0" id="navbar-content">
+              <div class="collapse navbar-collapse p-3 p-lg-0" id="navbar-content">
 
               <tal:mainmenu
                   condition="config.mainmenu"
                   replace="structure tile('mainmenu')" />
+
+              <tal:colortoggler
+                   replace="structure tile('colortoggler')" />
 
               <tal:livesearch
                   condition="config.livesearch"
@@ -87,7 +88,7 @@
 
           <!-- content -->
           <div id="content"
-               class="px-3 pb-5 py-2 overflow-auto bg-light"
+               class="px-3 pb-5 py-2 overflow-auto"
                ajax:bind="contextchanged"
                ajax:action="content:#content:inner">
             <tal:content

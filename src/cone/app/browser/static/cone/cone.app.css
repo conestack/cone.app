@@ -1,3 +1,21 @@
+[data-bs-theme=dark] #content {
+  color: #f8f9fa;
+  background-color: #212529;
+}
+[data-bs-theme=dark] #navbar-content {
+  color: #f8f9fa;
+  background-color: #212529;
+}
+
+[data-bs-theme=light] #content {
+  color: #212529;
+  background-color: #f8f9fa;
+}
+[data-bs-theme=light] #navbar-content {
+  color: #212529;
+  background-color: #fff;
+}
+
 :root {
   --sidebar-width: 300px;
   --navbar-height: 50px;
@@ -44,4 +62,9 @@ body {
 
 #navbar-content {
   z-index: 3000;
+}
+
+#colortoggle-switch {
+  width: 2rem;
+  height: 1rem;
 }

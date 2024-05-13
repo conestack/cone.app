@@ -8,6 +8,7 @@ import * as settingstabs from './settingstabs.js';
 import * as sharing from './sharing.js';
 import * as tabletoolbar from './tabletoolbar.js';
 import * as utils from './utils.js';
+import * as colormode from './colormode.js';
 
 let api = {};
 
@@ -21,6 +22,7 @@ Object.assign(api, settingstabs);
 Object.assign(api, sharing);
 Object.assign(api, tabletoolbar);
 Object.assign(api, utils);
+Object.assign(api, colormode);
 
 let cone = api;
 export default cone;

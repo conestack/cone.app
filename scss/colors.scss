@@ -1,0 +1,29 @@
+@import "bootstrap/_functions";
+@import "bootstrap/_variables";
+@import "bootstrap/mixins/color-mode";
+
+$color-mode-type: data;
+
+@include color-mode(dark) {
+  #content {
+    color: $light;
+    background-color: $dark;
+  }
+
+  #navbar-content {
+    color: $light;
+    background-color: $dark;
+  }
+}
+
+@include color-mode(light) {
+    #content {
+      color: $dark;
+      background-color: $gray-100;
+    }
+
+    #navbar-content {
+        color: $dark;
+        background-color: $white;
+    }
+}

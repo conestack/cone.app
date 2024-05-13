@@ -13,7 +13,8 @@ import {
 } from '../referencebrowser.js';
 import {Sharing} from '../sharing.js';
 import {TableToolbar} from '../tabletoolbar.js';
-import {Translation} from '../translation.js'
+import {Translation} from '../translation.js';
+import {Colormode} from '../colormode.js';
 
 export * from '../batcheditems.js';
 export * from '../copysupport.js';
@@ -25,6 +26,7 @@ export * from '../sharing.js';
 export * from '../tabletoolbar.js';
 export * from '../translation.js';
 export * from '../utils.js';
+export * from '../colormode.js';
 
 $(function() {
     new KeyBinder();
@@ -37,4 +39,5 @@ $(function() {
     ts.ajax.register(Sharing.initialize, true);
     ts.ajax.register(TableToolbar.initialize, true);
     ts.ajax.register(Translation.initialize, true);
+    ts.ajax.register(Colormode.initialize, true);
 });

@@ -43,6 +43,12 @@ class LivesearchTile(Tile):
     """
 
 
+@tile(name='colortoggler', path='templates/colortoggler.pt', permission='login')
+class ColorTogglerTile(Tile):
+    """Tile rendering the color mode toggler.
+    """
+
+
 @tile(name='footer', path='templates/footer.pt', permission='login')
 class FooterTile(Tile):
     """Tile rendering the page footer.

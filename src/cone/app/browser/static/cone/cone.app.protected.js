@@ -1,4 +1,4 @@
-var cone_app_protected = (function (exports, $, ts) {
+var cone_app_protected = (function (exports, $$1, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -33,8 +33,8 @@ var cone_app_protected = (function (exports, $, ts) {
     class BatchedItemsSize extends BatchedItemsFilter {
         static initialize(context,
                           selector='.batched_items_slice_size select') {
-            $(selector, context).each(function() {
-                new BatchedItemsSize($(this));
+            $$1(selector, context).each(function() {
+                new BatchedItemsSize($$1(this));
             });
         }
         constructor(elem) {
@@ -42,7 +42,7 @@ var cone_app_protected = (function (exports, $, ts) {
             elem.off('change').on('change', this.change_handle.bind(this));
         }
         change_handle(evt) {
-            let option = $('option:selected', this.elem).first();
+            let option = $$1('option:selected', this.elem).first();
             this.set_filter(option.val());
         }
     }
@@ -50,8 +50,8 @@ var cone_app_protected = (function (exports, $, ts) {
         static initialize(context,
                           selector='.batched_items_filter input',
                           name='term') {
-            $(selector, context).each(function() {
-                new BatchedItemsSearch($(this), name);
+            $$1(selector, context).each(function() {
+                new BatchedItemsSearch($$1(this), name);
             });
         }
         constructor(elem, name) {
@@ -114,15 +114,15 @@ var cone_app_protected = (function (exports, $, ts) {
             this.cut_cookie = 'cone.app.copysupport.cut';
             this.copy_cookie = 'cone.app.copysupport.copy';
             this.context = context;
-            this.paste_action = $('a#toolbaraction-paste', context);
+            this.paste_action = $$1('a#toolbaraction-paste', context);
             this.paste_action.off('click').on('click', this.handle_paste.bind(this));
-            this.copyable = $('table tr.selectable.copysupportitem', context);
+            this.copyable = $$1('table tr.selectable.copysupportitem', context);
             if (!this.copyable.length) {
                 return;
             }
-            this.cut_action = $('a#toolbaraction-cut', context);
+            this.cut_action = $$1('a#toolbaraction-cut', context);
             this.cut_action.off('click').on('click', this.handle_cut.bind(this));
-            this.copy_action = $('a#toolbaraction-copy', context);
+            this.copy_action = $$1('a#toolbaraction-copy', context);
             this.copy_action.off('click').on('click', this.handle_copy.bind(this));
             this.selectable = this.copyable.selectable({
                 on_firstclick: this.on_firstclick.bind(this),
@@ -136,17 +136,17 @@ var cone_app_protected = (function (exports, $, ts) {
         on_select(selectable) {
         }
         write_selected_to_cookie(name) {
-            let selected = $(this.selectable.selected);
+            let selected = $$1(this.selectable.selected);
             let ids = new Array();
             selected.each(function() {
-                ids.push($(this).attr('ajax:target'));
+                ids.push($$1(this).attr('ajax:target'));
             });
             let cookie = ids.join('::');
             ts.create_cookie(name, cookie);
             if (cookie.length) {
-                $(this.paste_action).removeClass('disabled');
+                $$1(this.paste_action).removeClass('disabled');
             } else {
-                $(this.paste_action).addClass('disabled');
+                $$1(this.paste_action).addClass('disabled');
             }
         }
         read_selected_from_cookie(name, css) {
@@ -157,8 +157,8 @@ var cone_app_protected = (function (exports, $, ts) {
             let ids = cookie.split('::');
             let that = this;
             let elem, target;
-            $('table tr.selectable', this.context).each(function() {
-                elem = $(this);
+            $$1('table tr.selectable', this.context).each(function() {
+                elem = $$1(this);
                 target = elem.attr('ajax:target');
                 for (let idx in ids) {
                     if (ids[idx] == target) {
@@ -177,7 +177,7 @@ var cone_app_protected = (function (exports, $, ts) {
             ts.create_cookie(this.copy_cookie, '', 0);
             this.write_selected_to_cookie(this.cut_cookie);
             this.copyable.removeClass('copysupport_cut');
-            $(this.selectable.selected).addClass('copysupport_cut');
+            $$1(this.selectable.selected).addClass('copysupport_cut');
         }
         handle_copy(evt) {
             evt.preventDefault();
@@ -187,7 +187,7 @@ var cone_app_protected = (function (exports, $, ts) {
         }
         handle_paste(evt) {
             evt.preventDefault();
-            let elem = $(evt.currentTarget);
+            let elem = $$1(evt.currentTarget);
             if (elem.hasClass('disabled')) {
                 return;
             }
@@ -208,8 +208,8 @@ var cone_app_protected = (function (exports, $, ts) {
     };
     class KeyBinder {
         constructor() {
-            $(window).on('keydown', this.key_down.bind(this));
-            $(window).on('keyup', this.key_up.bind(this));
+            $$1(window).on('keydown', this.key_down.bind(this));
+            $$1(window).on('keyup', this.key_up.bind(this));
         }
         key_down(e) {
             switch (e.keyCode || e.which) {
@@ -244,11 +244,11 @@ var cone_app_protected = (function (exports, $, ts) {
             }
             let ol = ol_elem.data('overlay'),
                 target = ol.ref_target;
-            $('a.addreference', context).each(function() {
-                new AddReferenceHandle($(this), target, ol);
+            $$1('a.addreference', context).each(function() {
+                new AddReferenceHandle($$1(this), target, ol);
             });
-            $('a.removereference', context).each(function() {
-                new RemoveReferenceHandle($(this), target, ol);
+            $$1('a.removereference', context).each(function() {
+                new RemoveReferenceHandle($$1(this), target, ol);
             });
         }
         constructor(elem, target, overlay) {
@@ -264,7 +264,7 @@ var cone_app_protected = (function (exports, $, ts) {
             return this.target_tag == 'SELECT';
         }
         toggle_enabled(elem) {
-            $('a', elem.parent()).toggleClass('disabled');
+            $$1('a', elem.parent()).toggleClass('disabled');
         }
         reset_selected(elem) {
             let selected = new Array();
@@ -272,15 +272,15 @@ var cone_app_protected = (function (exports, $, ts) {
                 selected.push(elem.attr('value'));
             }
             if (this.multi_value()) {
-                $('[selected=selected]', elem).each(function() {
-                    selected.push($(this).attr('value'));
+                $$1('[selected=selected]', elem).each(function() {
+                    selected.push($$1(this).attr('value'));
                 });
             }
             this.set_selected_on_ajax_target(elem.parent(), selected);
             let overlay = this.overlay;
             let that = this;
-            $('div.referencebrowser a', overlay.elem).each(function() {
-                let link = $(this);
+            $$1('div.referencebrowser a', overlay.elem).each(function() {
+                let link = $$1(this);
                 if (link.attr('ajax:target')) {
                     that.set_selected_on_ajax_target(link, selected);
                 }
@@ -307,20 +307,20 @@ var cone_app_protected = (function (exports, $, ts) {
             let target = this.target;
             let uid = elem.attr('id');
             uid = uid.substring(4, uid.length);
-            let label = $('.reftitle', elem.parent()).html();
+            let label = $$1('.reftitle', elem.parent()).html();
             if (this.single_value()) {
                 target.attr('value', label);
                 let sel = '[name="' + target.attr('name') + '.uid"]';
-                $(sel).attr('value', uid);
+                $$1(sel).attr('value', uid);
                 this.set_selected_on_ajax_target(target.parent(), [uid]);
                 this.overlay.close();
                 return;
             }
             if (this.multi_value()) {
-                if ($('[value="' + uid + '"]', target.parent()).length) {
+                if ($$1('[value="' + uid + '"]', target.parent()).length) {
                     return;
                 }
-                let option = $('<option></option>');
+                let option = $$1('<option></option>');
                 option.val(uid).html(label).attr('selected', 'selected');
                 target.append(option);
                 target.trigger('change');
@@ -343,14 +343,14 @@ var cone_app_protected = (function (exports, $, ts) {
             if (this.single_value()) {
                 target.attr('value', '');
                 let sel = '[name="' + target.attr('name') + '.uid"]';
-                $(sel).attr('value', '');
+                $$1(sel).attr('value', '');
             }
             if (this.multi_value()) {
                 let sel = '[value="' + uid + '"]';
-                if (!$(sel, target.parent()).length) {
+                if (!$$1(sel, target.parent()).length) {
                     return;
                 }
-                $(sel, target).remove();
+                $$1(sel, target).remove();
                 target.trigger('change');
             }
             this.reset_selected(target);
@@ -359,14 +359,14 @@ var cone_app_protected = (function (exports, $, ts) {
     }
     class ReferenceBrowserLoader {
         static initialize(context) {
-            $('.referencebrowser_trigger', context).each(function() {
-                new ReferenceBrowserLoader($(this));
+            $$1('.referencebrowser_trigger', context).each(function() {
+                new ReferenceBrowserLoader($$1(this));
             });
         }
         constructor(elem) {
             this.wrapper = elem.parent();
             let sel = `[name="${elem.data('reference-name')}"]`;
-            this.target = $(sel, this.wrapper);
+            this.target = $$1(sel, this.wrapper);
             elem.off('click').on('click', this.load_ref_browser.bind(this));
         }
         load_ref_browser(evt) {
@@ -380,11 +380,11 @@ var cone_app_protected = (function (exports, $, ts) {
         }
         on_complete(inst) {
             let target = this.target;
-            $('a.addreference', inst.elem).each(function() {
-                new AddReferenceHandle($(this), target, inst);
+            $$1('a.addreference', inst.elem).each(function() {
+                new AddReferenceHandle($$1(this), target, inst);
             });
-            $('a.removereference', inst.elem).each(function() {
-                new RemoveReferenceHandle($(this), target, inst);
+            $$1('a.removereference', inst.elem).each(function() {
+                new RemoveReferenceHandle($$1(this), target, inst);
             });
         }
     }
@@ -392,8 +392,8 @@ var cone_app_protected = (function (exports, $, ts) {
         ReferenceBrowserLoader.initialize(context);
     }
     function referencebrowser_on_array_index(inst, row, index) {
-        $('.referencebrowser_trigger', row).each(function() {
-            let trigger = $(this),
+        $$1('.referencebrowser_trigger', row).each(function() {
+            let trigger = $$1(this),
                 ref_name = trigger.data('reference-name'),
                 base_id = inst.base_id,
                 base_name = base_id.replace(/\-/g, '.');
@@ -405,7 +405,7 @@ var cone_app_protected = (function (exports, $, ts) {
             ));
         });
     }
-    $(function() {
+    $$1(function() {
         if (window.yafowil_array === undefined) {
             return;
         }
@@ -418,12 +418,12 @@ var cone_app_protected = (function (exports, $, ts) {
             new Sharing(context);
         }
         constructor(context) {
-            let checkboxes = $('input.add_remove_role_for_principal', context);
+            let checkboxes = $$1('input.add_remove_role_for_principal', context);
             checkboxes.off('change').on('change', this.set_principal_role);
         }
         set_principal_role(evt) {
             evt.preventDefault();
-            let checkbox = $(this);
+            let checkbox = $$1(this);
             let action;
             if (this.checked) {
                 action = 'add_principal_role';
@@ -454,19 +454,19 @@ var cone_app_protected = (function (exports, $, ts) {
 
     class Translation {
         static initialize(context) {
-            $('.translation-nav', context).each(function() {
-                new Translation($(this));
+            $$1('.translation-nav', context).each(function() {
+                new Translation($$1(this));
             });
         }
         constructor(nav_elem) {
             this.nav_elem = nav_elem;
             this.fields_elem = nav_elem.next();
             this.show_lang_handle = this.show_lang_handle.bind(this);
-            $('li > a', nav_elem).on('click', this.show_lang_handle);
-            if ($('li.error', nav_elem).length) {
-                $('li.error:first > a', nav_elem).click();
+            $$1('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($$1('li.error', nav_elem).length) {
+                $$1('li.error:first > a', nav_elem).click();
             } else {
-                $('li.active > a', nav_elem).click();
+                $$1('li.active > a', nav_elem).click();
             }
             this.fields_elem.show();
         }
@@ -474,9 +474,55 @@ var cone_app_protected = (function (exports, $, ts) {
             evt.preventDefault();
             this.nav_elem.children().removeClass('active');
             this.fields_elem.children().hide();
-            let elem = $(evt.currentTarget);
+            let elem = $$1(evt.currentTarget);
             elem.parent().addClass('active');
-            $(elem.attr('href'), this.fields_elem).show();
+            $$1(elem.attr('href'), this.fields_elem).show();
+        }
+    }
+
+    class Colormode {
+        static initialize(context) {
+            new Colormode(context);
+        }
+        constructor(context) {
+            this.elem = $('#colortoggle-switch', context);
+            this.compile();
+            this.set_theme(this.preferred_theme);
+            this.elem.on('change', (c) => {
+                if (this.elem.is(':checked')) {
+                    this.set_theme('dark');
+                } else {
+                    this.set_theme('light');
+                }
+            });
+        }
+        get stored_theme() {
+            return localStorage.getItem('bootstrap-theme') || null;
+        }
+        get preferred_theme() {
+            if (this.stored_theme) {
+                return this.stored_theme;
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        compile() {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if (this.stored_theme !== 'light' || this.stored_theme !== 'dark') {
+                  this.set_theme(this.preferred_theme);
+                }
+            });
+        }
+        set_theme(theme) {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              document.documentElement.setAttribute('data-bs-theme', 'dark');
+              this.elem.trigger('click');
+            } else {
+              document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+            localStorage.setItem('bootstrap-theme', theme);
+            if (theme === 'dark' && !this.elem.is(':checked')) {
+                this.elem.trigger('click');
+            }
         }
     }
 
@@ -495,7 +541,7 @@ var cone_app_protected = (function (exports, $, ts) {
             this.selected.push(elem);
         }
         remove(elem) {
-            let reduced = $.grep(this.selected, function(item, index) {
+            let reduced = $$1.grep(this.selected, function(item, index) {
                 return item !== elem;
             });
             this.selected = reduced;
@@ -518,8 +564,8 @@ var cone_app_protected = (function (exports, $, ts) {
             let selected = container.children('.selected');
             let nearest = -1;
             let selected_index, selected_elem;
-            $(selected).each(function() {
-                selected_elem = $(this);
+            $$1(selected).each(function() {
+                selected_elem = $$1(this);
                 selected_index = selected_elem.index();
                 if (nearest == -1) {
                     nearest = selected_index;
@@ -571,7 +617,7 @@ var cone_app_protected = (function (exports, $, ts) {
         }
         handle_click(evt) {
             evt.preventDefault();
-            let elem = $(evt.currentTarget);
+            let elem = $$1(evt.currentTarget);
             let container = elem.parent();
             if (!keys.ctrl_down && !keys.shift_down) {
                 this.select_no_key(container, elem);
@@ -595,7 +641,7 @@ var cone_app_protected = (function (exports, $, ts) {
             elem.off('click').on('click', this.handle_click.bind(this));
         }
     }
-    $.fn.selectable = function(options) {
+    $$1.fn.selectable = function(options) {
         var api = new Selectable(options);
         api.bind(this);
         this.data('selectable', api);
@@ -611,7 +657,7 @@ var cone_app_protected = (function (exports, $, ts) {
         return ts.read_cookie(name);
     }
 
-    $(function() {
+    $$1(function() {
         new KeyBinder();
         ts.ajax.register(BatchedItemsSize.initialize, true);
         ts.ajax.register(BatchedItemsSearch.initialize, true);
@@ -621,12 +667,14 @@ var cone_app_protected = (function (exports, $, ts) {
         ts.ajax.register(Sharing.initialize, true);
         ts.ajax.register(TableToolbar.initialize, true);
         ts.ajax.register(Translation.initialize, true);
+        ts.ajax.register(Colormode.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
     exports.BatchedItemsFilter = BatchedItemsFilter;
     exports.BatchedItemsSearch = BatchedItemsSearch;
     exports.BatchedItemsSize = BatchedItemsSize;
+    exports.Colormode = Colormode;
     exports.CopySupport = CopySupport;
     exports.KeyBinder = KeyBinder;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
