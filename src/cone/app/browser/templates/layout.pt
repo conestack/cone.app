@@ -48,11 +48,11 @@
         </div>
 
         <!-- content area -->
-        <div class="col p-0 pb-5 h-100">
+        <div id="main-area" class="col h-100 p-0 pb-5">
 
-            <!-- this no collapse -->
-          <nav class="position-relative navbar navbar-expand-lg navbar-light shadow-sm">
-            <div class="${config.mainmenu_fluid and 'container-fluid justify-content-end' or 'container justify-content-end'}">
+          <nav id="header-main"
+               class="position-relative p-0 navbar navbar-expand-lg navbar-light shadow-sm">
+            <div class="${config.mainmenu_fluid and 'container-fluid justify-content-end h-100 px-0' or 'container justify-content-end h-100 px-0'}">
 
               <tal:personaltools
                    condition="config.personaltools"
@@ -65,7 +65,7 @@
                   <span class="navbar-toggler-icon"></span>
               </button>
 
-              <div class="collapse navbar-collapse" id="navbar-content">
+              <div class="collapse navbar-collapse bg-white p-3 p-lg-0" id="navbar-content">
 
               <tal:mainmenu
                   condition="config.mainmenu"

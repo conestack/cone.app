@@ -1,3 +1,8 @@
+:root {
+  --sidebar-width: 300px;
+  --navbar-height: 50px;
+}
+
 body {
   height: 100vh;
 }
@@ -15,7 +20,7 @@ body {
     order: 1;
   }
 }
-@media (min-width: 992px) and (max-width: 1400px) {
+@media (min-width: 992px) and (max-width: 1399.98px) {
   #navbar-content {
     margin-left: 200px;
   }
@@ -24,4 +29,19 @@ body {
   #header-logo {
     color: #fff;
   }
+}
+#header-logo > span {
+  font-size: 1.5rem !important;
+}
+
+#main-area {
+  width: 0 !important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+#header-main {
+  height: 50px;
+}
+
+#navbar-content {
+  z-index: 3000;
 }

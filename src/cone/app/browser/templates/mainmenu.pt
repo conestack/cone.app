@@ -3,7 +3,7 @@
               omit-tag="True">
 
   <nav id="mainmenu"
-       class="navbar mx-3 mb-2 mb-lg-0 me-auto contextsensitiv"
+       class="navbar ms-0 me-auto p-0 contextsensitiv"
        ajax:bind="contextchanged"
        ajax:action="mainmenu:#mainmenu:replace"
        tal:define="config context.config">

@@ -1,6 +1,9 @@
 // @import "bootstrap/_functions";
-// @import "bootstrap/_variables";
 // @import "bootstrap/mixins/_border-radius";
+
+@import "bootstrap/_functions";
+@import "bootstrap/_variables";
+@import "bootstrap/mixins/_breakpoints";
 
 // /* layout */
 // #layout {
@@ -345,6 +348,10 @@
 //     margin:12px;
 // }
 
+:root {
+    --sidebar-width: 300px;
+    --navbar-height: 50px;
+}
 
 // general layout
 body {
@@ -361,18 +368,34 @@ body {
     }
 }
 
-@media(min-width:992px) {
+@include media-breakpoint-up(lg) {
     #personaltools {
         order:1;
     }
 }
-@media(min-width:992px) and (max-width:1400px) {
+@include media-breakpoint-between(lg, xxl) {
     #navbar-content {
         margin-left: 200px;
     }
 }
-@media(min-width:1400px) {
+@include media-breakpoint-up(xxl) {
     #header-logo {
         color: #fff;
     }
+}
+
+#header-logo > span {
+    font-size: 1.5rem!important;
+}
+
+#main-area {
+    width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+#header-main {
+    height: 50px;
+}
+
+#navbar-content {
+    z-index: 3000;
 }
