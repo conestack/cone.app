@@ -2,6 +2,13 @@
 @import "bootstrap/_variables";
 @import "bootstrap/mixins/color-mode";
 
+/* squarewave colors */
+$primary: #4e7bba;
+$secondary: #4e2889;
+
+/* sidebar colors */
+$sidebar-bg: #414c5b;
+
 $color-mode-type: data;
 
 @include color-mode(dark) {
@@ -13,6 +20,10 @@ $color-mode-type: data;
   #navbar-content {
     color: $light;
     background-color: $dark;
+  }
+
+  #sidebar_left {
+    background-color: #343b45;
   }
 }
 
@@ -26,4 +37,11 @@ $color-mode-type: data;
         color: $dark;
         background-color: $white;
     }
+
+    #sidebar_left {
+        background-color: $sidebar-bg;
+    }
 }
+
+/* import everything where we need changed bootstrap variables for here */
+// @import "bootstrap/bootstrap";

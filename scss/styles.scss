@@ -11,6 +11,12 @@ body {
     height: 100vh;
 }
 
+#sidebar_left {
+    ul.list-group, ul.list-group li {
+        background-color: inherit;
+    }
+  }
+
 #content {
     height: calc(100% - 40px);
 }
@@ -23,6 +29,9 @@ body {
 
 @include media-breakpoint-up(lg) {
     #personaltools {
+        order:2;
+    }
+    #colortoggler {
         order:1;
     }
 }

@@ -24,7 +24,7 @@
                ajax:path="href">
               <i class="${item['icon']|nothing}"></i>
               <span tal:content="item['title'] | string:'&nbsp;'"
-                    class="d-none d-xxl-inline">Title</span></a>
+                    class="d-inline d-lg-none d-xxl-inline">Title</span></a>
           </li>
 
           <tal:comment replace="None">Main menu item as dropdown</tal:comment>

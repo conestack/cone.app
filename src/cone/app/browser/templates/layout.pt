@@ -16,7 +16,7 @@
         <!-- sidebar -->
         <div id="sidebar_left"
              tal:condition="config.sidebar_left"
-             class="d-none d-xxl-flex flex-column flex-shrink-0 p-3 pb-5 text-white bg-dark"
+             class="d-none d-xxl-flex flex-column flex-shrink-0 p-3 pb-5"
              style="width: 300px;">
 
           <hr style="margin-top: 56px;">
@@ -52,6 +52,9 @@
                class="position-relative p-0 navbar navbar-expand-lg navbar-light shadow-sm">
             <div class="${config.mainmenu_fluid and 'container-fluid justify-content-end h-100 px-0' or 'container justify-content-end h-100 px-0'}">
 
+              <tal:colortoggler
+                   replace="structure tile('colortoggler')" />
+
               <tal:personaltools
                    condition="config.personaltools"
                    replace="structure tile('personaltools')" />
@@ -68,9 +71,6 @@
               <tal:mainmenu
                   condition="config.mainmenu"
                   replace="structure tile('mainmenu')" />
-
-              <tal:colortoggler
-                   replace="structure tile('colortoggler')" />
 
               <tal:livesearch
                   condition="config.livesearch"

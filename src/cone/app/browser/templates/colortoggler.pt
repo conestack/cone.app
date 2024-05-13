@@ -2,10 +2,10 @@
            omit-tag="True">
 
   <div id="colortoggler"
-       class="nav-item dropdown d-flex h-100 form-check form-switch">
+       class="nav-item dropdown d-flex align-items-center h-100 form-check form-switch">
 
     <i class="bi-sun-fill me-2"></i>
-    <div class="form-check form-switch d-inline-block">
+    <div class="form-check form-switch m-0 d-inline-block">
       <input class="form-check-input" type="checkbox" id="colortoggle-switch">
     </div>
     <i class="bi-moon-fill"></i>

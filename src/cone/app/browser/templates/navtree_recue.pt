@@ -10,7 +10,7 @@
                         item['css'],
                         css,
                         'navtreelevel_%i' % level,
-                        'list-group-item bg-dark text-light ps-4 p-0 border-0'
+                        'list-group-item ps-4 p-0 border-0'
                       ]);
                       css css.strip()"
           tal:attributes="class css">
@@ -18,7 +18,7 @@
         <a href="${item['url']}"
            tal:define="active item['selected'] and 'active' or ''"
            class="link-light text-decoration-none rounded nav-link 
-                  position-relative shadow-sm ${active}"
+                  position-relative ${active}"
            ajax:bind="click"
            ajax:target="${item['target']}"
            ajax:event="contextchanged:#layout"

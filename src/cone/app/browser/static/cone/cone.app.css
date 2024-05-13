@@ -1,3 +1,5 @@
+/* squarewave colors */
+/* sidebar colors */
 [data-bs-theme=dark] #content {
   color: #f8f9fa;
   background-color: #212529;
@@ -5,6 +7,9 @@
 [data-bs-theme=dark] #navbar-content {
   color: #f8f9fa;
   background-color: #212529;
+}
+[data-bs-theme=dark] #sidebar_left {
+  background-color: #343b45;
 }
 
 [data-bs-theme=light] #content {
@@ -15,7 +20,11 @@
   color: #212529;
   background-color: #fff;
 }
+[data-bs-theme=light] #sidebar_left {
+  background-color: #414c5b;
+}
 
+/* import everything where we need changed bootstrap variables for here */
 :root {
   --sidebar-width: 300px;
   --navbar-height: 50px;
@@ -23,6 +32,10 @@
 
 body {
   height: 100vh;
+}
+
+#sidebar_left ul.list-group, #sidebar_left ul.list-group li {
+  background-color: inherit;
 }
 
 #content {
@@ -35,6 +48,9 @@ body {
 
 @media (min-width: 992px) {
   #personaltools {
+    order: 2;
+  }
+  #colortoggler {
     order: 1;
   }
 }
