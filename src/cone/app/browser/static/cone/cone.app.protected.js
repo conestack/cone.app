@@ -526,6 +526,167 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
     }
 
+    class Scrollbar {
+        static initialize(context) {
+            const y_elements = $$1('.scrollable-y', context);
+            y_elements.each(function() {
+                new ScrollbarY($$1(this));
+            });
+        }
+        constructor(elem) {
+            this.elem = elem;
+            this.content = $$1('.scrollable-content', this.elem);
+            this.scrollbar = $$1('<div class="scrollbar" />').css('position', 'absolute');
+            this.thumb = $$1('<div class="scroll-handle" />');
+            this.position = 0;
+            this.unit = 50;
+            this.compile();
+            this._scroll = this.scroll_handle.bind(this);
+            this.elem.on('mousewheel wheel', this._scroll);
+            this._click_handle = this.click_handle.bind(this);
+            this.scrollbar.on('click', this._click_handle);
+            this._drag_handle = this.drag_handle.bind(this);
+            this.thumb.on('mousedown', this._drag_handle);
+            this._mousehandle = this.mouse_in_out.bind(this);
+            this.elem.on('mouseenter mouseleave', this._mousehandle);
+        }
+        compile() {
+            throw 'Abstract Scrollbar does not implement compile()';
+        }
+        update() {
+            throw 'Abstract Scrollbar does not implement update()';
+        }
+        unload() {
+            this.scrollbar.off('click', this._click_handle);
+            this.elem.off('mousewheel wheel', this._scroll);
+            this.elem.off('mouseenter mouseleave', this._mousehandle);
+            this.thumb.off('mousedown', this._drag_handle);
+        }
+        mouse_in_out(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const container = this.elem.get(0);
+            const isInsideContainer = $$1(container).has(e.target).length > 0 || $$1(container).is(e.target);
+            if (isInsideContainer && this.contentsize > this.scrollsize) {
+                if (e.type === 'mouseenter') {
+                    this.scrollbar.fadeIn();
+                } else if (e.type === 'mouseleave') {
+                    if (e.relatedTarget !== this.elem.get(0)) {
+                        this.scrollbar.fadeOut();
+                    }
+                }
+            }
+        }
+        scroll_handle(e) {
+            if(this.contentsize <= this.scrollsize) {
+                return;
+            }
+            let evt = e.originalEvent;
+            if (typeof evt.deltaY === 'number') {
+                if(evt.deltaY > 0) {
+                    this.position += this.unit;
+                }
+                else if(evt.deltaY < 0) {
+                    this.position -= this.unit;
+                }
+            }
+            this.set_position();
+        }
+        prevent_overflow() {
+            let threshold = this.contentsize - this.scrollsize;
+            if(this.position >= threshold) {
+                this.position = threshold;
+            } else if(this.position <= 0) {
+                this.position = 0;
+            }
+        }
+        click_handle(e) {
+            e.preventDefault();
+            this.thumb.addClass('active');
+            let evt_data = this.get_evt_data(e),
+                new_thumb_pos = evt_data - this.get_offset() - this.thumbsize / 2;
+            this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+            this.set_position();
+            this.thumb.removeClass('active');
+        }
+        drag_handle(e) {
+            e.preventDefault();
+            var evt = $$1.Event('dragstart');
+            $$1(window).trigger(evt);
+            let _on_move = on_move.bind(this),
+                _on_up = on_up.bind(this),
+                mouse_pos = this.get_evt_data(e) - this.get_offset(),
+                thumb_position = this.position / (this.contentsize / this.scrollsize);
+            this.thumb.addClass('active');
+            this.elem.off('mouseenter mouseleave', this._mousehandle);
+            $$1(document)
+                .on('mousemove', _on_move)
+                .on('mouseup', _on_up);
+            function on_move(e) {
+                let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
+                    new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
+                this.position = this.contentsize * new_thumb_pos / this.scrollsize;
+                this.set_position();
+            }
+            function on_up() {
+                var evt = $$1.Event('dragend');
+                $$1(window).trigger(evt);
+                $$1(document)
+                    .off('mousemove', _on_move)
+                    .off('mouseup', _on_up);
+                this.thumb.removeClass('active');
+                this.elem.on('mouseenter mouseleave', this._mousehandle);
+            }
+        }
+    }
+    class ScrollbarY extends Scrollbar {
+        constructor(elem) {
+            super(elem);
+        }
+        compile() {
+            this.content.addClass('scroll-content');
+            this.elem
+                .addClass('scroll-container')
+                .prepend(this.scrollbar);
+            this.scrollbar.append(this.thumb);
+            this.thumb.css('width', '6px');
+            this.scrollbar.css('width', '6px');
+            this.scrollbar.css('right', '0px');
+            this.scrollsize = this.elem.outerHeight();
+            this.contentsize = this.content.outerHeight();
+            this.scrollbar.css('height', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('height', this.thumbsize);
+            this.update();
+        }
+        update() {
+            this.scrollsize = this.elem.outerHeight();
+            this.scrollbar.css('height', this.scrollsize);
+            if(this.content.outerHeight() !== this.contentsize) {
+                this.contentsize = this.content.outerHeight();
+            }
+            if(this.contentsize <= this.scrollsize) {
+                this.thumbsize = this.scrollsize;
+            } else {
+                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+            }
+            this.thumb.css('height', this.thumbsize);
+            this.set_position();
+        }
+        set_position() {
+            this.prevent_overflow();
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('bottom', this.position + 'px');
+            this.thumb.css('top', thumb_pos + 'px');
+        }
+        get_evt_data(e) {
+            return e.pageY;
+        }
+        get_offset() {
+            return this.elem.offset().top;
+        }
+    }
+
     class Selectable {
         constructor(options) {
             this.options = options;
@@ -668,6 +829,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
         ts.ajax.register(TableToolbar.initialize, true);
         ts.ajax.register(Translation.initialize, true);
         ts.ajax.register(Colormode.initialize, true);
+        ts.ajax.register(Scrollbar.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -680,6 +842,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;
+    exports.Scrollbar = Scrollbar;
+    exports.ScrollbarY = ScrollbarY;
     exports.Selectable = Selectable;
     exports.Sharing = Sharing;
     exports.TableToolbar = TableToolbar;

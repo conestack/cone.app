@@ -16,33 +16,36 @@
         <!-- sidebar -->
         <div id="sidebar_left"
              tal:condition="config.sidebar_left"
-             class="d-none d-xxl-flex flex-column flex-shrink-0 p-3 pb-5"
+             class="d-none d-xxl-flex flex-column flex-shrink-0 p-3 px-0 pb-5"
              style="width: 300px;">
 
-          <hr style="margin-top: 56px;">
+          <div class="scrollable-y">
 
-          <ul class="nav nav-pills flex-column mb-auto">
+            <div class="scrollable-content px-3">
+              <ul class="nav nav-pills flex-column mb-auto">
 
-            <tal:tiles repeat="tilename config.sidebar_left">
-              <tal:tile replace="structure tile(tilename)" />
-            </tal:tiles>
+                <tal:tiles repeat="tilename config.sidebar_left">
+                  <tal:tile replace="structure tile(tilename)" />
+                </tal:tiles>
 
-            <!-- example items -->
-            <li class="nav-item">
-                <a href="#" class="nav-link text-light" aria-current="page">
-                <i class="bi-heart me-2"></i>
-                An Item
-                </a>
-            </li>
+                <!-- example items -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-light" aria-current="page">
+                    <i class="bi-heart me-2"></i>
+                    An Item
+                    </a>
+                </li>
 
-            <li class="nav-item">
-                <a href="#" class="nav-link text-light active" aria-current="page">
-                <i class="bi-cloud me-2"></i>
-                Active item
-                </a>
-            </li>
-            <!-- end example items -->
-          </ul>
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-light active" aria-current="page">
+                    <i class="bi-cloud me-2"></i>
+                    Active item
+                    </a>
+                </li>
+                <!-- end example items -->
+              </ul>
+            </div>
+          </div>
         </div>
 
         <!-- content area -->

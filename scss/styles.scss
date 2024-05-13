@@ -12,6 +12,13 @@ body {
 }
 
 #sidebar_left {
+    height: 100vh;
+    max-height: 100vh;
+
+    .scroll-container {
+        margin-top: 34px;
+    }
+
     ul.list-group, ul.list-group li {
         background-color: inherit;
     }
@@ -66,3 +73,25 @@ body {
     width: 2rem;
     height: 1rem;
 }
+
+// scrollbars
+.scroll-container {
+    overflow: hidden;
+  }
+  .scroll-content {
+    position: relative;
+  }
+  .scrollbar {
+    background: $gray-300;
+    display: none;
+    position: absolute;
+    left: 0;
+    border-radius: 3px;
+    z-index: 1000;
+
+    .scroll-handle {
+      position: relative;
+      border-radius: 3px;
+      background: $primary;
+    }
+  }

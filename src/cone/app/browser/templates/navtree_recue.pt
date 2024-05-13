@@ -9,7 +9,6 @@
                       css ' '.join([
                         item['css'],
                         css,
-                        'navtreelevel_%i' % level,
                         'list-group-item ps-4 p-0 border-0'
                       ]);
                       css css.strip()"
@@ -30,7 +29,7 @@
         </a>
 
         <ul tal:condition="item['children']"
-            class="list-group list-unstyled fw-normal pb-1 ${'navtreelevel_%i' % level}">
+            class="list-group list-unstyled fw-normal pb-1">
           <tal:tree replace="structure context.rendertree(item['children'], level + 1)" />
         </ul>
 

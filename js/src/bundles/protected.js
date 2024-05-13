@@ -15,6 +15,7 @@ import {Sharing} from '../sharing.js';
 import {TableToolbar} from '../tabletoolbar.js';
 import {Translation} from '../translation.js';
 import {Colormode} from '../colormode.js';
+import {Scrollbar} from '../scrollbar.js';
 
 export * from '../batcheditems.js';
 export * from '../copysupport.js';
@@ -27,6 +28,7 @@ export * from '../tabletoolbar.js';
 export * from '../translation.js';
 export * from '../utils.js';
 export * from '../colormode.js';
+export * from '../scrollbar.js';
 
 $(function() {
     new KeyBinder();
@@ -40,4 +42,5 @@ $(function() {
     ts.ajax.register(TableToolbar.initialize, true);
     ts.ajax.register(Translation.initialize, true);
     ts.ajax.register(Colormode.initialize, true);
+    ts.ajax.register(Scrollbar.initialize, true);
 });
