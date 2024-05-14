@@ -1,6 +1,7 @@
 import $ from 'jquery';
+import ts from 'treibstoff';
 
-export class Scrollbar {
+export class Scrollbar extends ts.Events {
 
     static initialize(context) {
         $('.scrollable-x', context).each(function() {
@@ -12,37 +13,48 @@ export class Scrollbar {
     }
 
     constructor(elem) {
-        // scroll container
+        super();
+
         this.elem = elem;
-        // content to scroll
-        this.content = $('.scrollable-content', this.elem).addClass('scroll-content');
-        this.scrollbar = $('<div class="scrollbar" />').css('position', 'absolute');
-        this.thumb = $('<div class="scroll-handle" />').appendTo(this.scrollbar);
-        this.elem
-            .addClass('scroll-container')
-            .prepend(this.scrollbar);
+        this.elem.data('scrollbar', this);
+
+        // scrollable content
+        this.content = $('.scrollable-content', this.elem);
 
         this.position = 0;
         this.unit = 50;
-
         this.compile();
 
-        this._scroll = this.scroll_handle.bind(this);
-        this.elem.on('mousewheel wheel', this._scroll);
+        this.on_scroll = this.on_scroll.bind(this);
+        this.elem.on('mousewheel wheel', this.on_scroll);
 
-        this._click_handle = this.click_handle.bind(this);
-        this.scrollbar.on('click', this._click_handle);
+        this.on_click = this.on_click.bind(this);
+        this.scrollbar.on('click', this.on_click);
 
-        this._drag_handle = this.drag_handle.bind(this);
-        this.thumb.on('mousedown', this._drag_handle);
+        this.on_drag = this.on_drag.bind(this);
+        this.thumb.on('mousedown', this.on_drag);
 
-        this._mousehandle = this.mouse_in_out.bind(this);
-        this.elem.on('mouseenter mouseleave', this._mousehandle);
+        this.on_hover = this.on_hover.bind(this);
+        this.elem.on('mouseenter mouseleave', this.on_hover);
+
+        this.on_resize = this.on_resize.bind(this);
+        $(window).on('resize', this.on_resize);
+
+        ts.ajax.attach(this, this.elem);
+        this.update();
+    }
+
+    destroy() {
+        $(window).off('resize', this.on_resize);
     }
 
     compile() {
-        // abstract, implemented in subclass
-        throw 'Abstract Scrollbar does not implement compile()';
+        ts.compile_template(this, `
+        <div class="scrollbar" t-elem="scrollbar">
+          <div class="scroll-handle" t-elem="thumb">
+          </div>
+        </div>
+        `, this.elem);
     }
 
     update() {
@@ -51,13 +63,13 @@ export class Scrollbar {
     }
 
     unload() {
-        this.scrollbar.off('click', this._click_handle);
-        this.elem.off('mousewheel wheel', this._scroll);
-        this.elem.off('mouseenter mouseleave', this._mousehandle);
-        this.thumb.off('mousedown', this._drag_handle);
+        this.scrollbar.off('click', this.on_click);
+        this.elem.off('mousewheel wheel', this.on_scroll);
+        this.elem.off('mouseenter mouseleave', this.on_hover);
+        this.thumb.off('mousedown', this.on_drag);
     }
 
-    mouse_in_out(e) {
+    on_hover(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -75,7 +87,7 @@ export class Scrollbar {
         }
     }
 
-    scroll_handle(e) {
+    on_scroll(e) {
         if(this.contentsize <= this.scrollsize) {
             return;
         }
@@ -102,39 +114,28 @@ export class Scrollbar {
         }
     }
 
-    click_handle(e) {
+    on_click(e) {
         e.preventDefault(); // prevent text selection
         this.thumb.addClass('active');
         let evt_data = this.get_evt_data(e),
-            new_thumb_pos = evt_data - this.get_offset() - this.thumbsize / 2;
+            new_thumb_pos = evt_data - this.offset - this.thumbsize / 2;
         this.position = this.contentsize * new_thumb_pos / this.scrollsize;
         this.set_position();
         this.thumb.removeClass('active');
     }
 
-    drag_handle(e) {
+    on_drag(e) {
         e.preventDefault();
         var evt = $.Event('dragstart');
         $(window).trigger(evt);
 
-        let _on_move = on_move.bind(this),
-            _on_up = on_up.bind(this),
-            mouse_pos = this.get_evt_data(e) - this.get_offset(),
-            thumb_position = this.position / (this.contentsize / this.scrollsize);
-        this.thumb.addClass('active');
-
-        this.elem.off('mouseenter mouseleave', this._mousehandle);
-
-        $(document)
-            .on('mousemove', _on_move)
-            .on('mouseup', _on_up);
-
         function on_move(e) {
-            let mouse_pos_on_move = this.get_evt_data(e) - this.get_offset(),
+            let mouse_pos_on_move = this.get_evt_data(e) - this.offset,
                 new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
             this.position = this.contentsize * new_thumb_pos / this.scrollsize;
             this.set_position();
         }
+
         function on_up() {
             var evt = $.Event('dragend');
             $(window).trigger(evt);
@@ -142,19 +143,35 @@ export class Scrollbar {
                 .off('mousemove', _on_move)
                 .off('mouseup', _on_up);
             this.thumb.removeClass('active');
-            this.elem.on('mouseenter mouseleave', this._mousehandle);
+            this.elem.on('mouseenter mouseleave', this.on_hover);
         }
+
+        let _on_move = on_move.bind(this),
+            _on_up = on_up.bind(this),
+            mouse_pos = this.get_evt_data(e) - this.offset,
+            thumb_position = this.position / (this.contentsize / this.scrollsize);
+        this.thumb.addClass('active');
+
+        this.elem.off('mouseenter mouseleave', this.on_hover);
+
+        $(document)
+            .on('mousemove', _on_move)
+            .on('mouseup', _on_up);
     }
 }
 
 export class ScrollbarX extends Scrollbar {
 
     constructor(elem) {
-        console.log('XXX')
         super(elem);
     }
 
+    get offset() {
+        return this.elem.offset().left;
+    }
+
     compile() {
+        super.compile();
         this.thumb.css('height', '6px');
         this.scrollbar.css('height', '6px');
 
@@ -164,8 +181,6 @@ export class ScrollbarX extends Scrollbar {
         this.scrollbar.css('width', this.scrollsize);
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('width', this.thumbsize);
-
-        this.update();
     }
 
     update() {
@@ -185,20 +200,20 @@ export class ScrollbarX extends Scrollbar {
         this.set_position();
     }
 
+    on_resize() {
+        this.update();
+    }
+
     set_position() {
-        console.log('E')
         this.prevent_overflow();
         let thumb_pos = this.position / (this.contentsize / this.scrollsize);
         this.content.css('right', this.position + 'px');
         this.thumb.css('left', thumb_pos + 'px');
+        this.trigger('on_position');
     }
 
     get_evt_data(e) {
         return e.pageX;
-    }
-
-    get_offset() {
-        return this.elem.offset().left;
     }
 };
 
@@ -208,10 +223,15 @@ export class ScrollbarY extends Scrollbar {
         super(elem);
     }
 
+    get offset() {
+        return this.elem.offset().top;
+    }
+
     compile() {
+        super.compile();
         this.thumb.css('width', '6px');
         this.scrollbar.css('width', '6px');
-        this.scrollbar.css('right', '0px');
+        this.scrollbar.css('top', '0px');
 
         this.scrollsize = this.elem.outerHeight();
         this.contentsize = this.content.outerHeight();
@@ -219,8 +239,6 @@ export class ScrollbarY extends Scrollbar {
         this.scrollbar.css('height', this.scrollsize);
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('height', this.thumbsize);
-
-        this.update();
     }
 
     update() {
@@ -240,18 +258,20 @@ export class ScrollbarY extends Scrollbar {
         this.set_position();
     }
 
+
+    on_resize() {
+        this.update();
+    }
+
     set_position() {
         this.prevent_overflow();
         let thumb_pos = this.position / (this.contentsize / this.scrollsize);
         this.content.css('bottom', this.position + 'px');
         this.thumb.css('top', thumb_pos + 'px');
+        this.trigger('on_position');
     }
 
     get_evt_data(e) {
         return e.pageY;
-    }
-
-    get_offset() {
-        return this.elem.offset().top;
     }
 }

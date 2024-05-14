@@ -15,7 +15,7 @@ body {
     height: 100vh;
     max-height: 100vh;
 
-    .scroll-container {
+    .scrollable-y {
         margin-top: 34px;
     }
 
@@ -45,7 +45,12 @@ body {
     height: 1rem;
 }
 #mainmenu {
-    // width: 0;
+    > ul {
+        white-space: nowrap;
+    }
+}
+#navbar-content {
+    min-width: 0;
 }
 
 /* content */
@@ -57,17 +62,17 @@ body {
 }
 
 /* scrollbar */
-.scroll-container {
+.scrollable-x, .scrollable-y {
+    position: relative;
     overflow: hidden;
 }
-.scroll-content {
+.scrollable-content {
     position: relative;
 }
 .scrollbar {
-    background: $gray-300;
     display: none;
     position: absolute;
-    left: 0;
+    background: $gray-300;
     border-radius: 3px;
     z-index: 1000;
 
@@ -77,9 +82,32 @@ body {
         background: $primary;
     }
 }
+.scrollbar-top {
+    .scrollbar {
+        top: 0;
+    }
+}
+.scrollbar-bottom {
+    .scrollbar {
+        bottom: 0;
+    }
+}
+.scrollbar-left {
+    .scrollbar {
+        left: 0;
+    }
+}
+.scrollbar-right {
+    .scrollbar {
+        right: 0;
+    }
+}
 
 /* responsive changes */
 @include media-breakpoint-up(lg) {
+    #navbar-content, #mainmenu {
+        height: 100%;
+    }
     #personaltools {
         order:2;
     }
