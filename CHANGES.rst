@@ -4,7 +4,11 @@ Changes
 1.1a3 (unreleased)
 ------------------
 
-- ``node_info`` accepts additional keyword arguments to add custom properties.
+- ``node_info`` decorator stores name on node info instance.
+  [rnix]
+
+- ``node_info`` decorator accepts additional keyword arguments to add custom
+  properties.
   [rnix]
 
 - Add ``node_available`` callback to check whether node is allowed to be

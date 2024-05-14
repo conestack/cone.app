@@ -361,6 +361,7 @@ class TestModel(NodeTestCase):
             pass
 
         info = get_node_info('mynode')
+        self.assertEqual(info.name, 'mynode')
         self.assertTrue(info.node is MyNode)
         self.assertEqual(info.title, 'My Node')
         self.assertEqual(info.description, 'My Node Descriptrion')

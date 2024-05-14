@@ -108,6 +108,7 @@ class node_info(object):
     def __call__(self, cls):
         cls.node_info_name = self.name
         info = NodeInfo()
+        info.name = self.name
         info.node = cls
         info.title = self.title
         info.description = self.description
