@@ -3,20 +3,20 @@
               omit-tag="True">
 
   <nav id="mainmenu"
-       class="navbar ms-0 me-auto p-0 contextsensitiv"
+       class="scrollable-x navbar ms-0 me-auto p-0 contextsensitiv"
        ajax:bind="contextchanged"
        ajax:action="mainmenu:#mainmenu:replace"
        tal:define="config context.config">
-    <div class="container-fluid">
-      <ul class="navbar-nav">
+      <ul class="d-block navbar-nav scrollable-content">
         <tal:item repeat="item context.menuitems">
           <tal:comment replace="None">Main menu item as link</tal:comment>
           <li tal:condition="not item['children']"
               tal:define="css item['selected'] and 'active nav-item' or 'nav-item';
                           css ' '.join([css, 'node-%s' % item['id']]);"
-              tal:attributes="class css">
+              tal:attributes="class css"
+              style="display: inline;">
             <a href="${item['url']}"
-               class="nav-link overflow-hidden text-nowrap"
+               class="d-lg-inline nav-link text-nowrap"
                title="${item['description']}"
                ajax:bind="click"
                ajax:target="${item['target']}"
@@ -58,7 +58,6 @@
           </li>
         </tal:item>
       </ul>
-    </div>
   </nav>
 
 </tal:mainmenu>

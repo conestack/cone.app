@@ -11,6 +11,7 @@ $sidebar-bg: #414c5b;
 
 $color-mode-type: data;
 
+/* dark mode */
 @include color-mode(dark) {
   #content {
     color: $light;
@@ -25,8 +26,14 @@ $color-mode-type: data;
   #sidebar_left {
     background-color: #343b45;
   }
+
+  #footer {
+    color: $light;
+    background-color: $black;
+  }
 }
 
+/* light mode */
 @include color-mode(light) {
     #content {
       color: $dark;
@@ -40,6 +47,11 @@ $color-mode-type: data;
 
     #sidebar_left {
         background-color: $sidebar-bg;
+    }
+
+    #footer {
+        color: $dark;
+        background-color: $light;
     }
 }
 

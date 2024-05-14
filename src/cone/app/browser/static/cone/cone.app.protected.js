@@ -528,16 +528,21 @@ var cone_app_protected = (function (exports, $$1, ts) {
 
     class Scrollbar {
         static initialize(context) {
-            const y_elements = $$1('.scrollable-y', context);
-            y_elements.each(function() {
+            $$1('.scrollable-x', context).each(function() {
+                new ScrollbarX($$1(this));
+            });
+            $$1('.scrollable-y', context).each(function() {
                 new ScrollbarY($$1(this));
             });
         }
         constructor(elem) {
             this.elem = elem;
-            this.content = $$1('.scrollable-content', this.elem);
+            this.content = $$1('.scrollable-content', this.elem).addClass('scroll-content');
             this.scrollbar = $$1('<div class="scrollbar" />').css('position', 'absolute');
-            this.thumb = $$1('<div class="scroll-handle" />');
+            this.thumb = $$1('<div class="scroll-handle" />').appendTo(this.scrollbar);
+            this.elem
+                .addClass('scroll-container')
+                .prepend(this.scrollbar);
             this.position = 0;
             this.unit = 50;
             this.compile();
@@ -566,8 +571,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
             e.preventDefault();
             e.stopPropagation();
             const container = this.elem.get(0);
-            const isInsideContainer = $$1(container).has(e.target).length > 0 || $$1(container).is(e.target);
-            if (isInsideContainer && this.contentsize > this.scrollsize) {
+            const is_inside_container = $$1(container).has(e.target).length > 0 || $$1(container).is(e.target);
+            if (is_inside_container && this.contentsize > this.scrollsize) {
                 if (e.type === 'mouseenter') {
                     this.scrollbar.fadeIn();
                 } else if (e.type === 'mouseleave') {
@@ -639,16 +644,53 @@ var cone_app_protected = (function (exports, $$1, ts) {
             }
         }
     }
-    class ScrollbarY extends Scrollbar {
+    class ScrollbarX extends Scrollbar {
+        constructor(elem) {
+            console.log('XXX');
+            super(elem);
+        }
+        compile() {
+            this.thumb.css('height', '6px');
+            this.scrollbar.css('height', '6px');
+            this.scrollsize = this.elem.outerWidth();
+            this.contentsize = this.content.outerWidth();
+            this.scrollbar.css('width', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('width', this.thumbsize);
+            this.update();
+        }
+        update() {
+            this.scrollsize = this.elem.outerWidth();
+            this.scrollbar.css('width', this.scrollsize);
+            if(this.content.outerWidth() !== this.contentsize) {
+                this.contentsize = this.content.outerWidth();
+            }
+            if(this.contentsize <= this.scrollsize) {
+                this.thumbsize = this.scrollsize;
+            } else {
+                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+            }
+            this.thumb.css('width', this.thumbsize);
+            this.set_position();
+        }
+        set_position() {
+            console.log('E');
+            this.prevent_overflow();
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('right', this.position + 'px');
+            this.thumb.css('left', thumb_pos + 'px');
+        }
+        get_evt_data(e) {
+            return e.pageX;
+        }
+        get_offset() {
+            return this.elem.offset().left;
+        }
+    }class ScrollbarY extends Scrollbar {
         constructor(elem) {
             super(elem);
         }
         compile() {
-            this.content.addClass('scroll-content');
-            this.elem
-                .addClass('scroll-container')
-                .prepend(this.scrollbar);
-            this.scrollbar.append(this.thumb);
             this.thumb.css('width', '6px');
             this.scrollbar.css('width', '6px');
             this.scrollbar.css('right', '0px');
@@ -843,6 +885,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;
     exports.Scrollbar = Scrollbar;
+    exports.ScrollbarX = ScrollbarX;
     exports.ScrollbarY = ScrollbarY;
     exports.Selectable = Selectable;
     exports.Sharing = Sharing;

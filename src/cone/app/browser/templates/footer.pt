@@ -1,7 +1,7 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-  <footer class="navbar bg-light fixed-bottom">
+  <footer id="footer" class="navbar fixed-bottom shadow">
 
     <div class="container align-items-center justify-content-center">
         <span id="copyright">Copyright (c) 2009-2024</span>

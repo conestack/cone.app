@@ -1,5 +1,6 @@
 /* squarewave colors */
 /* sidebar colors */
+/* dark mode */
 [data-bs-theme=dark] #content {
   color: #f8f9fa;
   background-color: #212529;
@@ -11,7 +12,12 @@
 [data-bs-theme=dark] #sidebar_left {
   background-color: #343b45;
 }
+[data-bs-theme=dark] #footer {
+  color: #f8f9fa;
+  background-color: #000;
+}
 
+/* light mode */
 [data-bs-theme=light] #content {
   color: #212529;
   background-color: #f8f9fa;
@@ -22,6 +28,10 @@
 }
 [data-bs-theme=light] #sidebar_left {
   background-color: #414c5b;
+}
+[data-bs-theme=light] #footer {
+  color: #212529;
+  background-color: #f8f9fa;
 }
 
 /* import everything where we need changed bootstrap variables for here */
@@ -34,6 +44,7 @@ body {
   height: 100vh;
 }
 
+/* sidebar */
 #sidebar_left {
   height: 100vh;
   max-height: 100vh;
@@ -44,39 +55,13 @@ body {
 #sidebar_left ul.list-group, #sidebar_left ul.list-group li {
   background-color: inherit;
 }
-
-#content {
-  height: calc(100% - 40px);
-}
-
-#navtree a.nav-link {
+#sidebar_left #navtree a.nav-link {
   z-index: 2000;
 }
 
-@media (min-width: 992px) {
-  #personaltools {
-    order: 2;
-  }
-  #colortoggler {
-    order: 1;
-  }
-}
-@media (min-width: 992px) and (max-width: 1399.98px) {
-  #navbar-content {
-    margin-left: 200px;
-  }
-}
-@media (min-width: 1400px) {
-  #header-logo {
-    color: #fff;
-  }
-}
+/* header */
 #header-logo > span {
   font-size: 1.5rem !important;
-}
-
-#main-area {
-  width: 0 !important; /* prevent 'jumping' between 1400 and 1440px */
 }
 
 #header-main {
@@ -92,6 +77,16 @@ body {
   height: 1rem;
 }
 
+/* content */
+#content {
+  height: calc(100% - 40px);
+}
+
+#main-area {
+  width: 0 !important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+/* scrollbar */
 .scroll-container {
   overflow: hidden;
 }
@@ -112,4 +107,24 @@ body {
   position: relative;
   border-radius: 3px;
   background: #4e7bba;
+}
+
+/* responsive changes */
+@media (min-width: 992px) {
+  #personaltools {
+    order: 2;
+  }
+  #colortoggler {
+    order: 1;
+  }
+}
+@media (min-width: 992px) and (max-width: 1399.98px) {
+  #navbar-content {
+    margin-left: 200px;
+  }
+}
+@media (min-width: 1400px) {
+  #header-logo {
+    color: #fff;
+  }
 }

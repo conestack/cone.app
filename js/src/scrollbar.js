@@ -3,8 +3,10 @@ import $ from 'jquery';
 export class Scrollbar {
 
     static initialize(context) {
-        const y_elements = $('.scrollable-y', context);
-        y_elements.each(function() {
+        $('.scrollable-x', context).each(function() {
+            new ScrollbarX($(this));
+        });
+        $('.scrollable-y', context).each(function() {
             new ScrollbarY($(this));
         });
     }
@@ -13,9 +15,12 @@ export class Scrollbar {
         // scroll container
         this.elem = elem;
         // content to scroll
-        this.content = $('.scrollable-content', this.elem);
+        this.content = $('.scrollable-content', this.elem).addClass('scroll-content');
         this.scrollbar = $('<div class="scrollbar" />').css('position', 'absolute');
-        this.thumb = $('<div class="scroll-handle" />');
+        this.thumb = $('<div class="scroll-handle" />').appendTo(this.scrollbar);
+        this.elem
+            .addClass('scroll-container')
+            .prepend(this.scrollbar);
 
         this.position = 0;
         this.unit = 50;
@@ -57,9 +62,9 @@ export class Scrollbar {
         e.stopPropagation();
 
         const container = this.elem.get(0);
-        const isInsideContainer = $(container).has(e.target).length > 0 || $(container).is(e.target);
-    
-        if (isInsideContainer && this.contentsize > this.scrollsize) {
+        const is_inside_container = $(container).has(e.target).length > 0 || $(container).is(e.target);
+
+        if (is_inside_container && this.contentsize > this.scrollsize) {
             if (e.type === 'mouseenter') {
                 this.scrollbar.fadeIn();
             } else if (e.type === 'mouseleave') {
@@ -142,6 +147,61 @@ export class Scrollbar {
     }
 }
 
+export class ScrollbarX extends Scrollbar {
+
+    constructor(elem) {
+        console.log('XXX')
+        super(elem);
+    }
+
+    compile() {
+        this.thumb.css('height', '6px');
+        this.scrollbar.css('height', '6px');
+
+        this.scrollsize = this.elem.outerWidth();
+        this.contentsize = this.content.outerWidth();
+
+        this.scrollbar.css('width', this.scrollsize);
+        this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+        this.thumb.css('width', this.thumbsize);
+
+        this.update();
+    }
+
+    update() {
+        this.scrollsize = this.elem.outerWidth();
+        this.scrollbar.css('width', this.scrollsize);
+
+        if(this.content.outerWidth() !== this.contentsize) {
+            this.contentsize = this.content.outerWidth();
+        }
+        if(this.contentsize <= this.scrollsize) {
+            this.thumbsize = this.scrollsize;
+        } else {
+            this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+        }
+
+        this.thumb.css('width', this.thumbsize);
+        this.set_position();
+    }
+
+    set_position() {
+        console.log('E')
+        this.prevent_overflow();
+        let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+        this.content.css('right', this.position + 'px');
+        this.thumb.css('left', thumb_pos + 'px');
+    }
+
+    get_evt_data(e) {
+        return e.pageX;
+    }
+
+    get_offset() {
+        return this.elem.offset().left;
+    }
+};
+
 export class ScrollbarY extends Scrollbar {
 
     constructor(elem) {
@@ -149,11 +209,6 @@ export class ScrollbarY extends Scrollbar {
     }
 
     compile() {
-        this.content.addClass('scroll-content');
-        this.elem
-            .addClass('scroll-container')
-            .prepend(this.scrollbar);
-        this.scrollbar.append(this.thumb);
         this.thumb.css('width', '6px');
         this.scrollbar.css('width', '6px');
         this.scrollbar.css('right', '0px');

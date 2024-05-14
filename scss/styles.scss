@@ -6,11 +6,11 @@
     --navbar-height: 50px;
 }
 
-// general layout
 body {
     height: 100vh;
 }
 
+/* sidebar */
 #sidebar_left {
     height: 100vh;
     max-height: 100vh;
@@ -22,18 +22,63 @@ body {
     ul.list-group, ul.list-group li {
         background-color: inherit;
     }
-  }
 
-#content {
-    height: calc(100% - 40px);
-}
-
-#navtree {
-    a.nav-link {
-        z-index: 2000;
+    #navtree {
+        a.nav-link {
+            z-index: 2000;
+        }
     }
 }
 
+/* header */
+#header-logo > span {
+    font-size: 1.5rem!important;
+}
+#header-main {
+    height: 50px;
+}
+#navbar-content {
+    z-index: 3000;
+}
+#colortoggle-switch {
+    width: 2rem;
+    height: 1rem;
+}
+#mainmenu {
+    // width: 0;
+}
+
+/* content */
+#content {
+    height: calc(100% - 40px);
+}
+#main-area {
+    width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+/* scrollbar */
+.scroll-container {
+    overflow: hidden;
+}
+.scroll-content {
+    position: relative;
+}
+.scrollbar {
+    background: $gray-300;
+    display: none;
+    position: absolute;
+    left: 0;
+    border-radius: 3px;
+    z-index: 1000;
+
+    .scroll-handle {
+        position: relative;
+        border-radius: 3px;
+        background: $primary;
+    }
+}
+
+/* responsive changes */
 @include media-breakpoint-up(lg) {
     #personaltools {
         order:2;
@@ -52,46 +97,3 @@ body {
         color: #fff;
     }
 }
-
-#header-logo > span {
-    font-size: 1.5rem!important;
-}
-
-#main-area {
-    width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
-}
-
-#header-main {
-    height: 50px;
-}
-
-#navbar-content {
-    z-index: 3000;
-}
-
-#colortoggle-switch {
-    width: 2rem;
-    height: 1rem;
-}
-
-// scrollbars
-.scroll-container {
-    overflow: hidden;
-  }
-  .scroll-content {
-    position: relative;
-  }
-  .scrollbar {
-    background: $gray-300;
-    display: none;
-    position: absolute;
-    left: 0;
-    border-radius: 3px;
-    z-index: 1000;
-
-    .scroll-handle {
-      position: relative;
-      border-radius: 3px;
-      background: $primary;
-    }
-  }

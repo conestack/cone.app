@@ -10,9 +10,11 @@
 
     <div class="${config.columns_fluid and 'container-fluid h-100' or 'container h-100'}">
 
+      <!-- logo -->
       <tal:logo replace="structure tile('logo')" />
 
       <div class="row h-100">
+
         <!-- sidebar -->
         <div id="sidebar_left"
              tal:condition="config.sidebar_left"
@@ -20,7 +22,6 @@
              style="width: 300px;">
 
           <div class="scrollable-y">
-
             <div class="scrollable-content px-3">
               <ul class="nav nav-pills flex-column mb-auto">
 
@@ -29,7 +30,7 @@
                 </tal:tiles>
 
                 <!-- example items -->
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="#" class="nav-link text-light" aria-current="page">
                     <i class="bi-heart me-2"></i>
                     An Item
@@ -41,16 +42,18 @@
                     <i class="bi-cloud me-2"></i>
                     Active item
                     </a>
-                </li>
+                </li> -->
                 <!-- end example items -->
               </ul>
             </div>
           </div>
         </div>
+        <!-- end sidebar -->
 
         <!-- content area -->
         <div id="main-area" class="col h-100 p-0 pb-5">
 
+          <!-- header -->
           <nav id="header-main"
                class="position-relative p-0 navbar navbar-expand-lg navbar-light shadow-sm">
             <div class="${config.mainmenu_fluid and 'container-fluid justify-content-end h-100 px-0' or 'container justify-content-end h-100 px-0'}">
@@ -81,7 +84,6 @@
 
               <tal:language replace="structure tile('language')" />
 
-
               </div>
             </div>
           </nav>
@@ -96,8 +98,10 @@
                ajax:action="content:#content:inner">
             <tal:content
               replace="structure tile(context.contenttile)" />
+
           </div>
         </div>
+        <!-- end content area -->
       </div>
     </div>
 
@@ -105,5 +109,4 @@
     <tal:footer replace="structure tile('footer')" />
 
   </div>
-
 </tal:layout>
