@@ -15,6 +15,10 @@
   color: #f8f9fa;
   background-color: #000;
 }
+[data-bs-theme=dark] #contextmenu {
+  color: #f8f9fa;
+  background-color: #343a40;
+}
 
 /* light mode */
 [data-bs-theme=light] #content {
@@ -31,6 +35,10 @@
 [data-bs-theme=light] #footer {
   color: #212529;
   background-color: #f8f9fa;
+}
+[data-bs-theme=light] #contextmenu {
+  color: #212529;
+  background-color: #fff;
 }
 
 /* import everything where we need changed bootstrap variables for here */
@@ -153,4 +161,7 @@ body {
   #header-logo {
     color: #fff;
   }
+}
+.table_length, .table_filter {
+  width: unset;
 }

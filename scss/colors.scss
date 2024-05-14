@@ -30,6 +30,11 @@ $color-mode-type: data;
     color: $light;
     background-color: $black;
   }
+
+  #contextmenu {
+    color: $light;
+    background-color: $dropdown-dark-bg;
+  }
 }
 
 /* light mode */
@@ -51,6 +56,11 @@ $color-mode-type: data;
     #footer {
         color: $dark;
         background-color: $light;
+    }
+
+    #contextmenu {
+        color: $dark;
+        background-color: $white;
     }
 }
 
