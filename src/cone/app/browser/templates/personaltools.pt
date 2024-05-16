@@ -2,7 +2,7 @@
            omit-tag="True">
 
   <div id="personaltools"
-       class="nav-item dropdown h-100 ms-3 me-3 d-flex align-items-center">
+       class="nav-item in_header_sm dropdown h-100 mx-0 mx-sm-3 d-flex align-items-start align-items-sm-center">
 
     <a href="#"
        class="nav-link dropdown-toggle"

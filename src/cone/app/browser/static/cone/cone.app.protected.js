@@ -543,18 +543,31 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.position = 0;
             this.unit = 50;
             this.compile();
+            this.disabled = null;
             this.on_scroll = this.on_scroll.bind(this);
-            this.elem.on('mousewheel wheel', this.on_scroll);
             this.on_click = this.on_click.bind(this);
-            this.scrollbar.on('click', this.on_click);
             this.on_drag = this.on_drag.bind(this);
-            this.thumb.on('mousedown', this.on_drag);
             this.on_hover = this.on_hover.bind(this);
-            this.elem.on('mouseenter mouseleave', this.on_hover);
             this.on_resize = this.on_resize.bind(this);
-            $$1(window).on('resize', this.on_resize);
             ts.ajax.attach(this, this.elem);
             this.update();
+            this.bind();
+        }
+        bind() {
+            this.disabled = false;
+            this.elem.on('mousewheel wheel', this.on_scroll);
+            this.scrollbar.on('click', this.on_click);
+            this.thumb.on('mousedown', this.on_drag);
+            this.elem.on('mouseenter mouseleave', this.on_hover);
+            $$1(window).on('resize', this.on_resize);
+        }
+        disable() {
+            this.disabled = true;
+            this.elem.off('mousewheel wheel', this.on_scroll);
+            this.scrollbar.off('click', this.on_click);
+            this.thumb.off('mousedown', this.on_drag);
+            this.elem.off('mouseenter mouseleave', this.on_hover);
+            $$1(window).off('resize', this.on_resize);
         }
         destroy() {
             $$1(window).off('resize', this.on_resize);
@@ -809,6 +822,68 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
     }
 
+    class Header extends ts.Events {
+        static initialize(context) {
+            new Header(context);
+        }
+        constructor(context) {
+            super();
+            this.elem = $$1('#header-main', context);
+            this.elements = $$1('.in_header_sm', this.elem);
+            this.navbar_content = $$1('#navbar-content', this.elem);
+            this.header_content = $$1('#header-content', this.elem);
+            this.scrollable = $$1('.scrollable-x', this.elem);
+            this.place_elements = this.place_elements.bind(this);
+            $$1(window).on('resize', this.place_elements);
+            this.place_elements();
+            ts.ajax.attach(this, this.elem);
+        }
+        destroy() {
+            $$1(window).off('resize', this.place_elements);
+        }
+        place_elements() {
+            const window_width = $$1(window).width();
+            const window_sm = window_width <= 576;
+            const window_lg = window_width <= 992;
+            const in_navbar_content = $$1('.in_header_sm', this.navbar_content).length > 0;
+            if (window_sm) {
+                if (!in_navbar_content) {
+                    this.elements.each((i, item) => {
+                        $$1(item).detach().prependTo(this.navbar_content);
+                    });
+                }
+            } else if (in_navbar_content) {
+                const elements = this.elements.toArray().reverse();
+                $$1.each(elements, (i, item) => {
+                    $$1(item).detach().prependTo(this.header_content);
+                });
+                $$1(".dropdown-menu.show").removeClass('show');
+            }
+            if (window_lg) {
+                this.disable_horizontal_scrolling();
+            } else {
+                this.navbar_content.removeClass('show');
+                this.enable_horizontal_scrolling();
+            }
+        }
+        disable_horizontal_scrolling() {
+            this.scrollable.each((i, item) => {
+                const scrollbar = $$1(item).data('scrollbar');
+                if (!scrollbar.disabled) {
+                    scrollbar.disable();
+                }
+            });
+        }
+        enable_horizontal_scrolling() {
+            this.scrollable.each((i, item) => {
+                const scrollbar = $$1(item).data('scrollbar');
+                if (scrollbar.disabled) {
+                    scrollbar.bind();
+                }
+            });
+        }
+    }
+
     class Selectable {
         constructor(options) {
             this.options = options;
@@ -953,6 +1028,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
         ts.ajax.register(Colormode.initialize, true);
         ts.ajax.register(Scrollbar.initialize, true);
         ts.ajax.register(Sidebar.initialize, true);
+        ts.ajax.register(Header.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -961,6 +1037,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
     exports.BatchedItemsSize = BatchedItemsSize;
     exports.Colormode = Colormode;
     exports.CopySupport = CopySupport;
+    exports.Header = Header;
     exports.KeyBinder = KeyBinder;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;

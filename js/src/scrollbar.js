@@ -24,24 +24,36 @@ export class Scrollbar extends ts.Events {
         this.position = 0;
         this.unit = 50;
         this.compile();
+        this.disabled = null;
 
         this.on_scroll = this.on_scroll.bind(this);
-        this.elem.on('mousewheel wheel', this.on_scroll);
-
         this.on_click = this.on_click.bind(this);
-        this.scrollbar.on('click', this.on_click);
-
         this.on_drag = this.on_drag.bind(this);
-        this.thumb.on('mousedown', this.on_drag);
-
         this.on_hover = this.on_hover.bind(this);
-        this.elem.on('mouseenter mouseleave', this.on_hover);
-
         this.on_resize = this.on_resize.bind(this);
-        $(window).on('resize', this.on_resize);
 
         ts.ajax.attach(this, this.elem);
+
         this.update();
+        this.bind();
+    }
+
+    bind() {
+        this.disabled = false;
+        this.elem.on('mousewheel wheel', this.on_scroll);
+        this.scrollbar.on('click', this.on_click);
+        this.thumb.on('mousedown', this.on_drag);
+        this.elem.on('mouseenter mouseleave', this.on_hover);
+        $(window).on('resize', this.on_resize);
+    }
+
+    disable() {
+        this.disabled = true;
+        this.elem.off('mousewheel wheel', this.on_scroll);
+        this.scrollbar.off('click', this.on_click);
+        this.thumb.off('mousedown', this.on_drag);
+        this.elem.off('mouseenter mouseleave', this.on_hover);
+        $(window).off('resize', this.on_resize);
     }
 
     destroy() {
