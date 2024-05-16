@@ -583,10 +583,10 @@ var cone_app_protected = (function (exports, $$1, ts) {
             const is_inside_container = $$1(container).has(e.target).length > 0 || $$1(container).is(e.target);
             if (is_inside_container && this.contentsize > this.scrollsize) {
                 if (e.type === 'mouseenter') {
-                    this.scrollbar.fadeIn();
+                    this.scrollbar.stop(true, true).fadeIn();
                 } else if (e.type === 'mouseleave') {
                     if (e.relatedTarget !== this.elem.get(0)) {
-                        this.scrollbar.fadeOut();
+                        this.scrollbar.stop(true, true).fadeOut();
                     }
                 }
             }
@@ -744,6 +744,71 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
     }
 
+    class Sidebar extends ts.Events {
+        static initialize(context) {
+            new Sidebar(context);
+        }
+        constructor(context) {
+            super();
+            this.elem = $$1('#sidebar_left', context);
+            this.resizer_elem = $$1('#sidebar_resizer', context);
+            this.collapse_elem = $$1('#sidebar_collapse', context);
+            this.on_click = this.on_click.bind(this);
+            this.on_mousedown = this.on_mousedown.bind(this);
+            this.on_mousemove = this.on_mousemove.bind(this);
+            this.on_mouseup = this.on_mouseup.bind(this);
+            this.resizer_elem.on('mousedown', this.on_mousedown.bind(this));
+            this.collapse_elem.on('click', this.on_click);
+            const sidebar_width = localStorage.getItem('cone.app.sidebar_width') || 300;
+            this.elem.css('width', sidebar_width + 'px');
+            const pad_left = $$1('.scrollable-content', this.elem).css('padding-left');
+            const pad_right = $$1('.scrollable-content', this.elem).css('padding-right');
+            const logo_width = $$1('#header-logo').outerWidth(true);
+            this.elem.css(
+                'min-width',
+                `calc(${logo_width}px + ${pad_left} + ${pad_right})`
+            );
+        }
+        get collapsed() {
+            return this.elem.css('width') === '0px';
+        }
+        on_click(evt) {
+            if (this.collapsed) {
+                this.expand();
+            } else {
+                this.collapse();
+            }
+        }
+        collapse() {
+            this.elem.removeClass('expanded');
+            this.elem.addClass('collapsed');
+        }
+        expand() {
+            this.elem.removeClass('collapsed');
+            this.elem.addClass('expanded');
+        }
+        on_mousedown(evt) {
+            $$1('body').on('mousemove', this.on_mousemove);
+            $$1('body').one('mouseup', this.on_mouseup.bind(this));
+        }
+        on_mousemove(evt) {
+            $$1('.scrollable-y', this.elem).css('pointer-events', 'none');
+            if (evt.pageX <= 115) {
+                evt.pageX = 115;
+            }
+            this.sidebar_width = parseInt(evt.pageX);
+            this.elem.css('width', this.sidebar_width);
+        }
+        on_mouseup(evt) {
+            $$1('body').off('mousemove', this.on_mousemove(evt));
+            $$1('.scrollable-y', this.elem).css('pointer-events', 'all');
+            localStorage.setItem(
+                'cone.app.sidebar_width',
+                this.sidebar_width
+            );
+        }
+    }
+
     class Selectable {
         constructor(options) {
             this.options = options;
@@ -887,6 +952,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
         ts.ajax.register(Translation.initialize, true);
         ts.ajax.register(Colormode.initialize, true);
         ts.ajax.register(Scrollbar.initialize, true);
+        ts.ajax.register(Sidebar.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -904,6 +970,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
     exports.ScrollbarY = ScrollbarY;
     exports.Selectable = Selectable;
     exports.Sharing = Sharing;
+    exports.Sidebar = Sidebar;
     exports.TableToolbar = TableToolbar;
     exports.Translation = Translation;
     exports.batcheditems_filter_binder = batcheditems_filter_binder;

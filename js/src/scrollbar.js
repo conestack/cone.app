@@ -78,10 +78,10 @@ export class Scrollbar extends ts.Events {
 
         if (is_inside_container && this.contentsize > this.scrollsize) {
             if (e.type === 'mouseenter') {
-                this.scrollbar.fadeIn();
+                this.scrollbar.stop(true, true).fadeIn();
             } else if (e.type === 'mouseleave') {
                 if (e.relatedTarget !== this.elem.get(0)) {
-                    this.scrollbar.fadeOut();
+                    this.scrollbar.stop(true, true).fadeOut();
                 }
             }
         }

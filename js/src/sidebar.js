@@ -1,0 +1,82 @@
+import $ from 'jquery';
+import ts from 'treibstoff';
+
+export class Sidebar extends ts.Events {
+
+    static initialize(context) {
+        new Sidebar(context);
+    }
+
+    constructor(context) {
+        super();
+        this.elem = $('#sidebar_left', context);
+        this.resizer_elem = $('#sidebar_resizer', context);
+        this.collapse_elem = $('#sidebar_collapse', context);
+
+        this.on_click = this.on_click.bind(this);
+        this.on_mousedown = this.on_mousedown.bind(this);
+        this.on_mousemove = this.on_mousemove.bind(this);
+        this.on_mouseup = this.on_mouseup.bind(this);
+
+        this.resizer_elem.on('mousedown', this.on_mousedown.bind(this));
+        this.collapse_elem.on('click', this.on_click);
+
+        const sidebar_width = localStorage.getItem('cone.app.sidebar_width') || 300;
+        this.elem.css('width', sidebar_width + 'px');
+
+        const pad_left = $('.scrollable-content', this.elem).css('padding-left');
+        const pad_right = $('.scrollable-content', this.elem).css('padding-right');
+        const logo_width = $('#header-logo').outerWidth(true);
+        this.elem.css(
+            'min-width',
+            `calc(${logo_width}px + ${pad_left} + ${pad_right})`
+        )
+    }
+
+    get collapsed() {
+        return this.elem.css('width') === '0px';
+    }
+
+    on_click(evt) {
+        if (this.collapsed) {
+            this.expand();
+        } else {
+            this.collapse();
+        }
+    }
+
+    collapse() {
+        this.elem.removeClass('expanded');
+        this.elem.addClass('collapsed');
+    }
+
+    expand() {
+        this.elem.removeClass('collapsed');
+        this.elem.addClass('expanded');
+    }
+
+    on_mousedown(evt) {
+        $('body').on('mousemove', this.on_mousemove);
+        $('body').one('mouseup', this.on_mouseup.bind(this));
+    }
+
+    on_mousemove(evt) {
+        // prevent scrollbar from toggling
+        $('.scrollable-y', this.elem).css('pointer-events', 'none');
+        if (evt.pageX <= 115) {
+            evt.pageX = 115;
+        }
+        this.sidebar_width = parseInt(evt.pageX);
+        this.elem.css('width', this.sidebar_width);
+    }
+
+    on_mouseup(evt) {
+        $('body').off('mousemove', this.on_mousemove(evt));
+        // enable scrollbar toggling again
+        $('.scrollable-y', this.elem).css('pointer-events', 'all');
+        localStorage.setItem(
+            'cone.app.sidebar_width',
+            this.sidebar_width
+        );
+    }
+}

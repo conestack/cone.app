@@ -24,14 +24,12 @@
            ajax:path="href">
           <i tal:condition="item['icon']"
              class="${item['icon']} me-2" alt="..."></i>
-          <span tal:replace="item['title']">Title</span>
-          <i tal:condition="not item['leaf']" class="bi-chevron-right float-end"></i>
+          <span tal:content="item['title']">Title</span>
+          <i tal:condition="not item['leaf']" class="bi-chevron-right"></i>
         </a>
 
-        <ul tal:condition="item['children']"
-            class="list-group list-unstyled fw-normal pb-1">
-          <tal:tree replace="structure context.rendertree(item['children'], level + 1)" />
-        </ul>
+        <tal:tree condition="item['children']"
+                  replace="structure context.rendertree(item['children'], level + 1)" />
 
       </li>
 

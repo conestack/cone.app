@@ -18,11 +18,21 @@
         <!-- sidebar -->
         <div id="sidebar_left"
              tal:condition="config.sidebar_left"
-             class="d-none d-xxl-flex flex-column flex-shrink-0 p-3 px-0 pb-5"
-             style="width: 300px;">
+             class="d-flex flex-column flex-shrink-0 p-3 px-0 pb-5">
+
+          <div id="sidebar_collapse">
+              <div class="collapse_btn btn btn-primary">
+                  <i class="bi-chevron-right text-light"></i>
+                  <i class="bi-chevron-left text-light"></i>
+              </div>
+          </div>
+
+          <div id="sidebar_resize">
+            <div id="sidebar_resizer"></div>
+          </div>
 
           <div class="scrollable-y scrollbar-left">
-            <div class="scrollable-content px-3">
+            <div class="scrollable-content px-2">
               <ul class="nav nav-pills flex-column mb-auto">
 
                 <tal:tiles repeat="tilename config.sidebar_left">

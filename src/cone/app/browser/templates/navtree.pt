@@ -11,7 +11,7 @@
          class="nav-item nav-link text-light">
       <i class="bi-star me-2"></i>
       <span tal:content="context.title">Navigation</span>
-      <i class="bi-chevron-right float-end"
+      <i class="bi-chevron-right"
          data-bs-toggle="collapse"
          data-bs-target="#navigation-collapse"></i>
     </div>
