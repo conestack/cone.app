@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 
-export class Sidebar extends ts.Events {
+export class Sidebar extends ts.Motion {
 
     static initialize(context) {
         new Sidebar(context);
@@ -14,11 +14,6 @@ export class Sidebar extends ts.Events {
         this.collapse_elem = $('#sidebar_collapse', context);
 
         this.on_click = this.on_click.bind(this);
-        this.on_mousedown = this.on_mousedown.bind(this);
-        this.on_mousemove = this.on_mousemove.bind(this);
-        this.on_mouseup = this.on_mouseup.bind(this);
-
-        this.resizer_elem.on('mousedown', this.on_mousedown.bind(this));
         this.collapse_elem.on('click', this.on_click);
 
         const sidebar_width = localStorage.getItem('cone.app.sidebar_width') || 300;
@@ -31,6 +26,7 @@ export class Sidebar extends ts.Events {
             'min-width',
             `calc(${logo_width}px + ${pad_left} + ${pad_right})`
         )
+        this.set_scope(this.resizer_elem, $(document));
     }
 
     get collapsed() {
@@ -55,12 +51,7 @@ export class Sidebar extends ts.Events {
         this.elem.addClass('expanded');
     }
 
-    on_mousedown(evt) {
-        $('body').on('mousemove', this.on_mousemove);
-        $('body').one('mouseup', this.on_mouseup.bind(this));
-    }
-
-    on_mousemove(evt) {
+    move(evt) {
         // prevent scrollbar from toggling
         $('.scrollable-y', this.elem).css('pointer-events', 'none');
         if (evt.pageX <= 115) {
@@ -70,8 +61,7 @@ export class Sidebar extends ts.Events {
         this.elem.css('width', this.sidebar_width);
     }
 
-    on_mouseup(evt) {
-        $('body').off('mousemove', this.on_mousemove(evt));
+    up(evt) {
         // enable scrollbar toggling again
         $('.scrollable-y', this.elem).css('pointer-events', 'all');
         localStorage.setItem(

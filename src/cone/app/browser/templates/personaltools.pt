@@ -2,7 +2,7 @@
            omit-tag="True">
 
   <div id="personaltools"
-       class="nav-item in_header_sm dropdown h-100 mx-0 mx-sm-3 d-flex align-items-start align-items-sm-center">
+       class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0 d-flex align-items-end align-items-sm-center">
 
     <a href="#"
        class="nav-link dropdown-toggle"
@@ -11,7 +11,7 @@
       <span class="caret"></span>
     </a>
 
-    <ul class="dropdown-menu dropdown-menu-end mt-0" role="menu">
+    <ul class="dropdown-menu dropdown-menu-end mt-2 mt-sm-0" role="menu">
 
       <li tal:repeat="item context.items">
           <div class="dropdown-item">

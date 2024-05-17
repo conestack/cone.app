@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 export class Colormode {
 
     static initialize(context) {

@@ -3,7 +3,7 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-  <ul class="list-unstyled mb-0 ps-5">
+  <ul id="livesearch" class="list-unstyled mb-0 ps-5">
     <li id="search">
 
     <div class="input-group">

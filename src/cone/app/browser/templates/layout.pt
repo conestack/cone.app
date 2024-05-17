@@ -67,14 +67,19 @@
           <nav id="header-main"
                class="position-relative p-0 navbar navbar-expand-lg navbar-light shadow-sm">
             <div id="header-content"
-                 class="${config.mainmenu_fluid and 'container-fluid justify-content-end h-100 px-0' or 'container justify-content-end h-100 px-0'}">
+                 tal:define="css config.mainmenu_fluid
+                             and 'justify-content-end h-100 px-0 flex-row flex-lg-row-reverse container-fluid'"
+                 tal:attributes="class css">
 
-              <tal:colortoggler
-                   replace="structure tile('colortoggler')" />
+              <div id="header-tools"
+                   class="d-flex align-self-stretch h-100 flex-direction-row">
+                <tal:colortoggler
+                     replace="structure tile('colortoggler')" />
 
-              <tal:personaltools
-                   condition="config.personaltools"
-                   replace="structure tile('personaltools')" />
+                <tal:personaltools
+                     condition="config.personaltools"
+                     replace="structure tile('personaltools')" />
+              </div>
 
               <button class="navbar-toggler border-0 shadow-none h-100"
                       data-bs-target="#navbar-content"

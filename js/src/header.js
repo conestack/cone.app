@@ -10,7 +10,7 @@ export class Header extends ts.Events {
     constructor(context) {
         super();
         this.elem = $('#header-main', context);
-        this.elements = $('.in_header_sm', this.elem);
+        this.header_tools = $('#header-tools', this.elem);
         this.navbar_content = $('#navbar-content', this.elem);
         this.header_content = $('#header-content', this.elem);
         this.scrollable = $('.scrollable-x', this.elem);
@@ -31,20 +31,14 @@ export class Header extends ts.Events {
         // boostrap 5 breakpoints
         const window_sm = window_width <= 576;
         const window_lg = window_width <= 992;
-        const in_navbar_content = $('.in_header_sm', this.navbar_content).length > 0;
+        const in_navbar_content = $('#header-tools', this.navbar_content).length > 0;
 
         if (window_sm) {
             if (!in_navbar_content) {
-                this.elements.each((i, item) => {
-                    $(item).detach().prependTo(this.navbar_content);
-                });
+                this.header_tools.detach().appendTo(this.navbar_content);
             }
         } else if (in_navbar_content) {
-            // reverse for correct positioning
-            const elements = this.elements.toArray().reverse();
-            $.each(elements, (i, item) => {
-                $(item).detach().prependTo(this.header_content);
-            });
+            this.header_tools.detach().prependTo(this.header_content);
             // close any header dropdowns
             $(".dropdown-menu.show").removeClass('show');
         }
@@ -52,8 +46,8 @@ export class Header extends ts.Events {
         if (window_lg) {
             this.disable_horizontal_scrolling();
         } else {
-            // prevent content from expanding again on resize
             this.navbar_content.removeClass('show');
+            // prevent content from expanding again on resize
             this.enable_horizontal_scrolling();
         }
     }
@@ -62,6 +56,7 @@ export class Header extends ts.Events {
         this.scrollable.each((i, item) => {
             const scrollbar = $(item).data('scrollbar');
             if (!scrollbar.disabled) {
+                scrollbar.reset();
                 scrollbar.disable();
             }
         });

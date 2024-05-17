@@ -159,16 +159,31 @@ body {
             white-space: nowrap;
         }
     }
+    @include media-breakpoint-down(lg) {
+        #navbar-content.show, #navbar-content.collapsing {
+            display: flex;
+            flex-direction: column;
+        }
+        #mainmenu {
+            order: 1;
+        }
+        #livesearch {
+            width: 100%;
+            padding-left: 40px!important;
+        }
+    }
     @include media-breakpoint-down(sm) {
-        .in_header_sm {
+        #header-tools > div {
             padding: 5px 0;
+            width: 50%;
+            display:inline-flex!important; 
         }
         #personaltools {
             flex-direction: column;
 
             .dropdown-menu {
                 position: relative;
-                width: 100%;
+                width: 200%;
             }
         }
     }

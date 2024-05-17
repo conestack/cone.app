@@ -23,9 +23,8 @@ export class Scrollbar extends ts.Events {
 
         this.position = 0;
         this.unit = 50;
-        this.compile();
         this.disabled = null;
-
+        
         this.on_scroll = this.on_scroll.bind(this);
         this.on_click = this.on_click.bind(this);
         this.on_drag = this.on_drag.bind(this);
@@ -34,8 +33,9 @@ export class Scrollbar extends ts.Events {
 
         ts.ajax.attach(this, this.elem);
 
-        this.update();
+        this.compile();
         this.bind();
+        ts.clock.schedule_frame(() => this.update());
     }
 
     bind() {
@@ -74,6 +74,22 @@ export class Scrollbar extends ts.Events {
         throw 'Abstract Scrollbar does not implement update()';
     }
 
+    update(attr) {
+        this.scrollbar.css(attr, this.scrollsize);
+        if(this.contentsize <= this.scrollsize) {
+            this.thumbsize = this.scrollsize;
+        } else {
+            this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+        }
+        this.thumb.css(attr, this.thumbsize);
+        this.set_position();
+    }
+
+    reset() {
+        this.position = 0;
+        this.set_position();
+    }
+
     unload() {
         this.scrollbar.off('click', this.on_click);
         this.elem.off('mousewheel wheel', this.on_scroll);
@@ -100,7 +116,7 @@ export class Scrollbar extends ts.Events {
     }
 
     on_scroll(e) {
-        if(this.contentsize <= this.scrollsize) {
+        if (this.contentsize <= this.scrollsize) {
             return;
         }
         let evt = e.originalEvent;
@@ -174,42 +190,30 @@ export class Scrollbar extends ts.Events {
 
 export class ScrollbarX extends Scrollbar {
 
-    constructor(elem) {
-        super(elem);
-    }
-
     get offset() {
         return this.elem.offset().left;
+    }
+
+    get contentsize() {
+        return this.content.outerWidth();
+    }
+
+    get scrollsize() {
+        return this.elem.outerWidth();
     }
 
     compile() {
         super.compile();
         this.thumb.css('height', '6px');
-        this.scrollbar.css('height', '6px');
-
-        this.scrollsize = this.elem.outerWidth();
-        this.contentsize = this.content.outerWidth();
-
-        this.scrollbar.css('width', this.scrollsize);
+        this.scrollbar
+            .css('height', '6px')
+            .css('width', this.scrollsize);
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('width', this.thumbsize);
     }
 
     update() {
-        this.scrollsize = this.elem.outerWidth();
-        this.scrollbar.css('width', this.scrollsize);
-
-        if(this.content.outerWidth() !== this.contentsize) {
-            this.contentsize = this.content.outerWidth();
-        }
-        if(this.contentsize <= this.scrollsize) {
-            this.thumbsize = this.scrollsize;
-        } else {
-            this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
-        }
-
-        this.thumb.css('width', this.thumbsize);
-        this.set_position();
+        super.update('width');
     }
 
     on_resize() {
@@ -231,45 +235,32 @@ export class ScrollbarX extends Scrollbar {
 
 export class ScrollbarY extends Scrollbar {
 
-    constructor(elem) {
-        super(elem);
-    }
-
     get offset() {
         return this.elem.offset().top;
+    }
+
+    get contentsize() {
+        return this.content.outerHeight();
+    }
+
+    get scrollsize() {
+        return this.elem.outerHeight();
     }
 
     compile() {
         super.compile();
         this.thumb.css('width', '6px');
-        this.scrollbar.css('width', '6px');
-        this.scrollbar.css('top', '0px');
-
-        this.scrollsize = this.elem.outerHeight();
-        this.contentsize = this.content.outerHeight();
-
-        this.scrollbar.css('height', this.scrollsize);
+        this.scrollbar
+            .css('width', '6px')
+            .css('top', '0px')
+            .css('height', this.scrollsize);
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('height', this.thumbsize);
     }
 
     update() {
-        this.scrollsize = this.elem.outerHeight();
-        this.scrollbar.css('height', this.scrollsize);
-
-        if(this.content.outerHeight() !== this.contentsize) {
-            this.contentsize = this.content.outerHeight();
-        }
-        if(this.contentsize <= this.scrollsize) {
-            this.thumbsize = this.scrollsize;
-        } else {
-            this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
-        }
-
-        this.thumb.css('height', this.thumbsize);
-        this.set_position();
+        super.update('height');
     }
-
 
     on_resize() {
         this.update();

@@ -1,4 +1,4 @@
-var cone_app_protected = (function (exports, $$1, ts) {
+var cone_app_protected = (function (exports, $, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -33,8 +33,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
     class BatchedItemsSize extends BatchedItemsFilter {
         static initialize(context,
                           selector='.batched_items_slice_size select') {
-            $$1(selector, context).each(function() {
-                new BatchedItemsSize($$1(this));
+            $(selector, context).each(function() {
+                new BatchedItemsSize($(this));
             });
         }
         constructor(elem) {
@@ -42,7 +42,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             elem.off('change').on('change', this.change_handle.bind(this));
         }
         change_handle(evt) {
-            let option = $$1('option:selected', this.elem).first();
+            let option = $('option:selected', this.elem).first();
             this.set_filter(option.val());
         }
     }
@@ -50,8 +50,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
         static initialize(context,
                           selector='.batched_items_filter input',
                           name='term') {
-            $$1(selector, context).each(function() {
-                new BatchedItemsSearch($$1(this), name);
+            $(selector, context).each(function() {
+                new BatchedItemsSearch($(this), name);
             });
         }
         constructor(elem, name) {
@@ -114,15 +114,15 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.cut_cookie = 'cone.app.copysupport.cut';
             this.copy_cookie = 'cone.app.copysupport.copy';
             this.context = context;
-            this.paste_action = $$1('a#toolbaraction-paste', context);
+            this.paste_action = $('a#toolbaraction-paste', context);
             this.paste_action.off('click').on('click', this.handle_paste.bind(this));
-            this.copyable = $$1('table tr.selectable.copysupportitem', context);
+            this.copyable = $('table tr.selectable.copysupportitem', context);
             if (!this.copyable.length) {
                 return;
             }
-            this.cut_action = $$1('a#toolbaraction-cut', context);
+            this.cut_action = $('a#toolbaraction-cut', context);
             this.cut_action.off('click').on('click', this.handle_cut.bind(this));
-            this.copy_action = $$1('a#toolbaraction-copy', context);
+            this.copy_action = $('a#toolbaraction-copy', context);
             this.copy_action.off('click').on('click', this.handle_copy.bind(this));
             this.selectable = this.copyable.selectable({
                 on_firstclick: this.on_firstclick.bind(this),
@@ -136,17 +136,17 @@ var cone_app_protected = (function (exports, $$1, ts) {
         on_select(selectable) {
         }
         write_selected_to_cookie(name) {
-            let selected = $$1(this.selectable.selected);
+            let selected = $(this.selectable.selected);
             let ids = new Array();
             selected.each(function() {
-                ids.push($$1(this).attr('ajax:target'));
+                ids.push($(this).attr('ajax:target'));
             });
             let cookie = ids.join('::');
             ts.create_cookie(name, cookie);
             if (cookie.length) {
-                $$1(this.paste_action).removeClass('disabled');
+                $(this.paste_action).removeClass('disabled');
             } else {
-                $$1(this.paste_action).addClass('disabled');
+                $(this.paste_action).addClass('disabled');
             }
         }
         read_selected_from_cookie(name, css) {
@@ -157,8 +157,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
             let ids = cookie.split('::');
             let that = this;
             let elem, target;
-            $$1('table tr.selectable', this.context).each(function() {
-                elem = $$1(this);
+            $('table tr.selectable', this.context).each(function() {
+                elem = $(this);
                 target = elem.attr('ajax:target');
                 for (let idx in ids) {
                     if (ids[idx] == target) {
@@ -177,7 +177,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             ts.create_cookie(this.copy_cookie, '', 0);
             this.write_selected_to_cookie(this.cut_cookie);
             this.copyable.removeClass('copysupport_cut');
-            $$1(this.selectable.selected).addClass('copysupport_cut');
+            $(this.selectable.selected).addClass('copysupport_cut');
         }
         handle_copy(evt) {
             evt.preventDefault();
@@ -187,7 +187,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
         handle_paste(evt) {
             evt.preventDefault();
-            let elem = $$1(evt.currentTarget);
+            let elem = $(evt.currentTarget);
             if (elem.hasClass('disabled')) {
                 return;
             }
@@ -208,8 +208,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
     };
     class KeyBinder {
         constructor() {
-            $$1(window).on('keydown', this.key_down.bind(this));
-            $$1(window).on('keyup', this.key_up.bind(this));
+            $(window).on('keydown', this.key_down.bind(this));
+            $(window).on('keyup', this.key_up.bind(this));
         }
         key_down(e) {
             switch (e.keyCode || e.which) {
@@ -244,11 +244,11 @@ var cone_app_protected = (function (exports, $$1, ts) {
             }
             let ol = ol_elem.data('overlay'),
                 target = ol.ref_target;
-            $$1('a.addreference', context).each(function() {
-                new AddReferenceHandle($$1(this), target, ol);
+            $('a.addreference', context).each(function() {
+                new AddReferenceHandle($(this), target, ol);
             });
-            $$1('a.removereference', context).each(function() {
-                new RemoveReferenceHandle($$1(this), target, ol);
+            $('a.removereference', context).each(function() {
+                new RemoveReferenceHandle($(this), target, ol);
             });
         }
         constructor(elem, target, overlay) {
@@ -264,7 +264,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             return this.target_tag == 'SELECT';
         }
         toggle_enabled(elem) {
-            $$1('a', elem.parent()).toggleClass('disabled');
+            $('a', elem.parent()).toggleClass('disabled');
         }
         reset_selected(elem) {
             let selected = new Array();
@@ -272,15 +272,15 @@ var cone_app_protected = (function (exports, $$1, ts) {
                 selected.push(elem.attr('value'));
             }
             if (this.multi_value()) {
-                $$1('[selected=selected]', elem).each(function() {
-                    selected.push($$1(this).attr('value'));
+                $('[selected=selected]', elem).each(function() {
+                    selected.push($(this).attr('value'));
                 });
             }
             this.set_selected_on_ajax_target(elem.parent(), selected);
             let overlay = this.overlay;
             let that = this;
-            $$1('div.referencebrowser a', overlay.elem).each(function() {
-                let link = $$1(this);
+            $('div.referencebrowser a', overlay.elem).each(function() {
+                let link = $(this);
                 if (link.attr('ajax:target')) {
                     that.set_selected_on_ajax_target(link, selected);
                 }
@@ -307,20 +307,20 @@ var cone_app_protected = (function (exports, $$1, ts) {
             let target = this.target;
             let uid = elem.attr('id');
             uid = uid.substring(4, uid.length);
-            let label = $$1('.reftitle', elem.parent()).html();
+            let label = $('.reftitle', elem.parent()).html();
             if (this.single_value()) {
                 target.attr('value', label);
                 let sel = '[name="' + target.attr('name') + '.uid"]';
-                $$1(sel).attr('value', uid);
+                $(sel).attr('value', uid);
                 this.set_selected_on_ajax_target(target.parent(), [uid]);
                 this.overlay.close();
                 return;
             }
             if (this.multi_value()) {
-                if ($$1('[value="' + uid + '"]', target.parent()).length) {
+                if ($('[value="' + uid + '"]', target.parent()).length) {
                     return;
                 }
-                let option = $$1('<option></option>');
+                let option = $('<option></option>');
                 option.val(uid).html(label).attr('selected', 'selected');
                 target.append(option);
                 target.trigger('change');
@@ -343,14 +343,14 @@ var cone_app_protected = (function (exports, $$1, ts) {
             if (this.single_value()) {
                 target.attr('value', '');
                 let sel = '[name="' + target.attr('name') + '.uid"]';
-                $$1(sel).attr('value', '');
+                $(sel).attr('value', '');
             }
             if (this.multi_value()) {
                 let sel = '[value="' + uid + '"]';
-                if (!$$1(sel, target.parent()).length) {
+                if (!$(sel, target.parent()).length) {
                     return;
                 }
-                $$1(sel, target).remove();
+                $(sel, target).remove();
                 target.trigger('change');
             }
             this.reset_selected(target);
@@ -359,14 +359,14 @@ var cone_app_protected = (function (exports, $$1, ts) {
     }
     class ReferenceBrowserLoader {
         static initialize(context) {
-            $$1('.referencebrowser_trigger', context).each(function() {
-                new ReferenceBrowserLoader($$1(this));
+            $('.referencebrowser_trigger', context).each(function() {
+                new ReferenceBrowserLoader($(this));
             });
         }
         constructor(elem) {
             this.wrapper = elem.parent();
             let sel = `[name="${elem.data('reference-name')}"]`;
-            this.target = $$1(sel, this.wrapper);
+            this.target = $(sel, this.wrapper);
             elem.off('click').on('click', this.load_ref_browser.bind(this));
         }
         load_ref_browser(evt) {
@@ -380,11 +380,11 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
         on_complete(inst) {
             let target = this.target;
-            $$1('a.addreference', inst.elem).each(function() {
-                new AddReferenceHandle($$1(this), target, inst);
+            $('a.addreference', inst.elem).each(function() {
+                new AddReferenceHandle($(this), target, inst);
             });
-            $$1('a.removereference', inst.elem).each(function() {
-                new RemoveReferenceHandle($$1(this), target, inst);
+            $('a.removereference', inst.elem).each(function() {
+                new RemoveReferenceHandle($(this), target, inst);
             });
         }
     }
@@ -392,8 +392,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
         ReferenceBrowserLoader.initialize(context);
     }
     function referencebrowser_on_array_index(inst, row, index) {
-        $$1('.referencebrowser_trigger', row).each(function() {
-            let trigger = $$1(this),
+        $('.referencebrowser_trigger', row).each(function() {
+            let trigger = $(this),
                 ref_name = trigger.data('reference-name'),
                 base_id = inst.base_id,
                 base_name = base_id.replace(/\-/g, '.');
@@ -405,7 +405,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             ));
         });
     }
-    $$1(function() {
+    $(function() {
         if (window.yafowil_array === undefined) {
             return;
         }
@@ -418,12 +418,12 @@ var cone_app_protected = (function (exports, $$1, ts) {
             new Sharing(context);
         }
         constructor(context) {
-            let checkboxes = $$1('input.add_remove_role_for_principal', context);
+            let checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.off('change').on('change', this.set_principal_role);
         }
         set_principal_role(evt) {
             evt.preventDefault();
-            let checkbox = $$1(this);
+            let checkbox = $(this);
             let action;
             if (this.checked) {
                 action = 'add_principal_role';
@@ -454,19 +454,19 @@ var cone_app_protected = (function (exports, $$1, ts) {
 
     class Translation {
         static initialize(context) {
-            $$1('.translation-nav', context).each(function() {
-                new Translation($$1(this));
+            $('.translation-nav', context).each(function() {
+                new Translation($(this));
             });
         }
         constructor(nav_elem) {
             this.nav_elem = nav_elem;
             this.fields_elem = nav_elem.next();
             this.show_lang_handle = this.show_lang_handle.bind(this);
-            $$1('li > a', nav_elem).on('click', this.show_lang_handle);
-            if ($$1('li.error', nav_elem).length) {
-                $$1('li.error:first > a', nav_elem).click();
+            $('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($('li.error', nav_elem).length) {
+                $('li.error:first > a', nav_elem).click();
             } else {
-                $$1('li.active > a', nav_elem).click();
+                $('li.active > a', nav_elem).click();
             }
             this.fields_elem.show();
         }
@@ -474,9 +474,9 @@ var cone_app_protected = (function (exports, $$1, ts) {
             evt.preventDefault();
             this.nav_elem.children().removeClass('active');
             this.fields_elem.children().hide();
-            let elem = $$1(evt.currentTarget);
+            let elem = $(evt.currentTarget);
             elem.parent().addClass('active');
-            $$1(elem.attr('href'), this.fields_elem).show();
+            $(elem.attr('href'), this.fields_elem).show();
         }
     }
 
@@ -528,21 +528,20 @@ var cone_app_protected = (function (exports, $$1, ts) {
 
     class Scrollbar extends ts.Events {
         static initialize(context) {
-            $$1('.scrollable-x', context).each(function() {
-                new ScrollbarX($$1(this));
+            $('.scrollable-x', context).each(function() {
+                new ScrollbarX($(this));
             });
-            $$1('.scrollable-y', context).each(function() {
-                new ScrollbarY($$1(this));
+            $('.scrollable-y', context).each(function() {
+                new ScrollbarY($(this));
             });
         }
         constructor(elem) {
             super();
             this.elem = elem;
             this.elem.data('scrollbar', this);
-            this.content = $$1('.scrollable-content', this.elem);
+            this.content = $('.scrollable-content', this.elem);
             this.position = 0;
             this.unit = 50;
-            this.compile();
             this.disabled = null;
             this.on_scroll = this.on_scroll.bind(this);
             this.on_click = this.on_click.bind(this);
@@ -550,8 +549,9 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.on_hover = this.on_hover.bind(this);
             this.on_resize = this.on_resize.bind(this);
             ts.ajax.attach(this, this.elem);
-            this.update();
+            this.compile();
             this.bind();
+            ts.clock.schedule_frame(() => this.update());
         }
         bind() {
             this.disabled = false;
@@ -559,7 +559,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.scrollbar.on('click', this.on_click);
             this.thumb.on('mousedown', this.on_drag);
             this.elem.on('mouseenter mouseleave', this.on_hover);
-            $$1(window).on('resize', this.on_resize);
+            $(window).on('resize', this.on_resize);
         }
         disable() {
             this.disabled = true;
@@ -567,10 +567,10 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.scrollbar.off('click', this.on_click);
             this.thumb.off('mousedown', this.on_drag);
             this.elem.off('mouseenter mouseleave', this.on_hover);
-            $$1(window).off('resize', this.on_resize);
+            $(window).off('resize', this.on_resize);
         }
         destroy() {
-            $$1(window).off('resize', this.on_resize);
+            $(window).off('resize', this.on_resize);
         }
         compile() {
             ts.compile_template(this, `
@@ -583,6 +583,20 @@ var cone_app_protected = (function (exports, $$1, ts) {
         update() {
             throw 'Abstract Scrollbar does not implement update()';
         }
+        update(attr) {
+            this.scrollbar.css(attr, this.scrollsize);
+            if(this.contentsize <= this.scrollsize) {
+                this.thumbsize = this.scrollsize;
+            } else {
+                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+            }
+            this.thumb.css(attr, this.thumbsize);
+            this.set_position();
+        }
+        reset() {
+            this.position = 0;
+            this.set_position();
+        }
         unload() {
             this.scrollbar.off('click', this.on_click);
             this.elem.off('mousewheel wheel', this.on_scroll);
@@ -593,7 +607,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             e.preventDefault();
             e.stopPropagation();
             const container = this.elem.get(0);
-            const is_inside_container = $$1(container).has(e.target).length > 0 || $$1(container).is(e.target);
+            const is_inside_container = $(container).has(e.target).length > 0 || $(container).is(e.target);
             if (is_inside_container && this.contentsize > this.scrollsize) {
                 if (e.type === 'mouseenter') {
                     this.scrollbar.stop(true, true).fadeIn();
@@ -605,7 +619,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             }
         }
         on_scroll(e) {
-            if(this.contentsize <= this.scrollsize) {
+            if (this.contentsize <= this.scrollsize) {
                 return;
             }
             let evt = e.originalEvent;
@@ -638,8 +652,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
         on_drag(e) {
             e.preventDefault();
-            var evt = $$1.Event('dragstart');
-            $$1(window).trigger(evt);
+            var evt = $.Event('dragstart');
+            $(window).trigger(evt);
             function on_move(e) {
                 let mouse_pos_on_move = this.get_evt_data(e) - this.offset,
                     new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
@@ -647,9 +661,9 @@ var cone_app_protected = (function (exports, $$1, ts) {
                 this.set_position();
             }
             function on_up() {
-                var evt = $$1.Event('dragend');
-                $$1(window).trigger(evt);
-                $$1(document)
+                var evt = $.Event('dragend');
+                $(window).trigger(evt);
+                $(document)
                     .off('mousemove', _on_move)
                     .off('mouseup', _on_up);
                 this.thumb.removeClass('active');
@@ -661,41 +675,32 @@ var cone_app_protected = (function (exports, $$1, ts) {
                 thumb_position = this.position / (this.contentsize / this.scrollsize);
             this.thumb.addClass('active');
             this.elem.off('mouseenter mouseleave', this.on_hover);
-            $$1(document)
+            $(document)
                 .on('mousemove', _on_move)
                 .on('mouseup', _on_up);
         }
     }
     class ScrollbarX extends Scrollbar {
-        constructor(elem) {
-            super(elem);
-        }
         get offset() {
             return this.elem.offset().left;
+        }
+        get contentsize() {
+            return this.content.outerWidth();
+        }
+        get scrollsize() {
+            return this.elem.outerWidth();
         }
         compile() {
             super.compile();
             this.thumb.css('height', '6px');
-            this.scrollbar.css('height', '6px');
-            this.scrollsize = this.elem.outerWidth();
-            this.contentsize = this.content.outerWidth();
-            this.scrollbar.css('width', this.scrollsize);
+            this.scrollbar
+                .css('height', '6px')
+                .css('width', this.scrollsize);
             this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
             this.thumb.css('width', this.thumbsize);
         }
         update() {
-            this.scrollsize = this.elem.outerWidth();
-            this.scrollbar.css('width', this.scrollsize);
-            if(this.content.outerWidth() !== this.contentsize) {
-                this.contentsize = this.content.outerWidth();
-            }
-            if(this.contentsize <= this.scrollsize) {
-                this.thumbsize = this.scrollsize;
-            } else {
-                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
-            }
-            this.thumb.css('width', this.thumbsize);
-            this.set_position();
+            super.update('width');
         }
         on_resize() {
             this.update();
@@ -711,36 +716,27 @@ var cone_app_protected = (function (exports, $$1, ts) {
             return e.pageX;
         }
     }class ScrollbarY extends Scrollbar {
-        constructor(elem) {
-            super(elem);
-        }
         get offset() {
             return this.elem.offset().top;
+        }
+        get contentsize() {
+            return this.content.outerHeight();
+        }
+        get scrollsize() {
+            return this.elem.outerHeight();
         }
         compile() {
             super.compile();
             this.thumb.css('width', '6px');
-            this.scrollbar.css('width', '6px');
-            this.scrollbar.css('top', '0px');
-            this.scrollsize = this.elem.outerHeight();
-            this.contentsize = this.content.outerHeight();
-            this.scrollbar.css('height', this.scrollsize);
+            this.scrollbar
+                .css('width', '6px')
+                .css('top', '0px')
+                .css('height', this.scrollsize);
             this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
             this.thumb.css('height', this.thumbsize);
         }
         update() {
-            this.scrollsize = this.elem.outerHeight();
-            this.scrollbar.css('height', this.scrollsize);
-            if(this.content.outerHeight() !== this.contentsize) {
-                this.contentsize = this.content.outerHeight();
-            }
-            if(this.contentsize <= this.scrollsize) {
-                this.thumbsize = this.scrollsize;
-            } else {
-                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
-            }
-            this.thumb.css('height', this.thumbsize);
-            this.set_position();
+            super.update('height');
         }
         on_resize() {
             this.update();
@@ -757,30 +753,27 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
     }
 
-    class Sidebar extends ts.Events {
+    class Sidebar extends ts.Motion {
         static initialize(context) {
             new Sidebar(context);
         }
         constructor(context) {
             super();
-            this.elem = $$1('#sidebar_left', context);
-            this.resizer_elem = $$1('#sidebar_resizer', context);
-            this.collapse_elem = $$1('#sidebar_collapse', context);
+            this.elem = $('#sidebar_left', context);
+            this.resizer_elem = $('#sidebar_resizer', context);
+            this.collapse_elem = $('#sidebar_collapse', context);
             this.on_click = this.on_click.bind(this);
-            this.on_mousedown = this.on_mousedown.bind(this);
-            this.on_mousemove = this.on_mousemove.bind(this);
-            this.on_mouseup = this.on_mouseup.bind(this);
-            this.resizer_elem.on('mousedown', this.on_mousedown.bind(this));
             this.collapse_elem.on('click', this.on_click);
             const sidebar_width = localStorage.getItem('cone.app.sidebar_width') || 300;
             this.elem.css('width', sidebar_width + 'px');
-            const pad_left = $$1('.scrollable-content', this.elem).css('padding-left');
-            const pad_right = $$1('.scrollable-content', this.elem).css('padding-right');
-            const logo_width = $$1('#header-logo').outerWidth(true);
+            const pad_left = $('.scrollable-content', this.elem).css('padding-left');
+            const pad_right = $('.scrollable-content', this.elem).css('padding-right');
+            const logo_width = $('#header-logo').outerWidth(true);
             this.elem.css(
                 'min-width',
                 `calc(${logo_width}px + ${pad_left} + ${pad_right})`
             );
+            this.set_scope(this.resizer_elem, $(document));
         }
         get collapsed() {
             return this.elem.css('width') === '0px';
@@ -800,21 +793,16 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.elem.removeClass('collapsed');
             this.elem.addClass('expanded');
         }
-        on_mousedown(evt) {
-            $$1('body').on('mousemove', this.on_mousemove);
-            $$1('body').one('mouseup', this.on_mouseup.bind(this));
-        }
-        on_mousemove(evt) {
-            $$1('.scrollable-y', this.elem).css('pointer-events', 'none');
+        move(evt) {
+            $('.scrollable-y', this.elem).css('pointer-events', 'none');
             if (evt.pageX <= 115) {
                 evt.pageX = 115;
             }
             this.sidebar_width = parseInt(evt.pageX);
             this.elem.css('width', this.sidebar_width);
         }
-        on_mouseup(evt) {
-            $$1('body').off('mousemove', this.on_mousemove(evt));
-            $$1('.scrollable-y', this.elem).css('pointer-events', 'all');
+        up(evt) {
+            $('.scrollable-y', this.elem).css('pointer-events', 'all');
             localStorage.setItem(
                 'cone.app.sidebar_width',
                 this.sidebar_width
@@ -828,36 +816,31 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
         constructor(context) {
             super();
-            this.elem = $$1('#header-main', context);
-            this.elements = $$1('.in_header_sm', this.elem);
-            this.navbar_content = $$1('#navbar-content', this.elem);
-            this.header_content = $$1('#header-content', this.elem);
-            this.scrollable = $$1('.scrollable-x', this.elem);
+            this.elem = $('#header-main', context);
+            this.header_tools = $('#header-tools', this.elem);
+            this.navbar_content = $('#navbar-content', this.elem);
+            this.header_content = $('#header-content', this.elem);
+            this.scrollable = $('.scrollable-x', this.elem);
             this.place_elements = this.place_elements.bind(this);
-            $$1(window).on('resize', this.place_elements);
+            $(window).on('resize', this.place_elements);
             this.place_elements();
             ts.ajax.attach(this, this.elem);
         }
         destroy() {
-            $$1(window).off('resize', this.place_elements);
+            $(window).off('resize', this.place_elements);
         }
         place_elements() {
-            const window_width = $$1(window).width();
+            const window_width = $(window).width();
             const window_sm = window_width <= 576;
             const window_lg = window_width <= 992;
-            const in_navbar_content = $$1('.in_header_sm', this.navbar_content).length > 0;
+            const in_navbar_content = $('#header-tools', this.navbar_content).length > 0;
             if (window_sm) {
                 if (!in_navbar_content) {
-                    this.elements.each((i, item) => {
-                        $$1(item).detach().prependTo(this.navbar_content);
-                    });
+                    this.header_tools.detach().appendTo(this.navbar_content);
                 }
             } else if (in_navbar_content) {
-                const elements = this.elements.toArray().reverse();
-                $$1.each(elements, (i, item) => {
-                    $$1(item).detach().prependTo(this.header_content);
-                });
-                $$1(".dropdown-menu.show").removeClass('show');
+                this.header_tools.detach().prependTo(this.header_content);
+                $(".dropdown-menu.show").removeClass('show');
             }
             if (window_lg) {
                 this.disable_horizontal_scrolling();
@@ -868,15 +851,16 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
         disable_horizontal_scrolling() {
             this.scrollable.each((i, item) => {
-                const scrollbar = $$1(item).data('scrollbar');
+                const scrollbar = $(item).data('scrollbar');
                 if (!scrollbar.disabled) {
+                    scrollbar.reset();
                     scrollbar.disable();
                 }
             });
         }
         enable_horizontal_scrolling() {
             this.scrollable.each((i, item) => {
-                const scrollbar = $$1(item).data('scrollbar');
+                const scrollbar = $(item).data('scrollbar');
                 if (scrollbar.disabled) {
                     scrollbar.bind();
                 }
@@ -899,7 +883,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             this.selected.push(elem);
         }
         remove(elem) {
-            let reduced = $$1.grep(this.selected, function(item, index) {
+            let reduced = $.grep(this.selected, function(item, index) {
                 return item !== elem;
             });
             this.selected = reduced;
@@ -922,8 +906,8 @@ var cone_app_protected = (function (exports, $$1, ts) {
             let selected = container.children('.selected');
             let nearest = -1;
             let selected_index, selected_elem;
-            $$1(selected).each(function() {
-                selected_elem = $$1(this);
+            $(selected).each(function() {
+                selected_elem = $(this);
                 selected_index = selected_elem.index();
                 if (nearest == -1) {
                     nearest = selected_index;
@@ -975,7 +959,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
         }
         handle_click(evt) {
             evt.preventDefault();
-            let elem = $$1(evt.currentTarget);
+            let elem = $(evt.currentTarget);
             let container = elem.parent();
             if (!keys.ctrl_down && !keys.shift_down) {
                 this.select_no_key(container, elem);
@@ -999,7 +983,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
             elem.off('click').on('click', this.handle_click.bind(this));
         }
     }
-    $$1.fn.selectable = function(options) {
+    $.fn.selectable = function(options) {
         var api = new Selectable(options);
         api.bind(this);
         this.data('selectable', api);
@@ -1015,7 +999,7 @@ var cone_app_protected = (function (exports, $$1, ts) {
         return ts.read_cookie(name);
     }
 
-    $$1(function() {
+    $(function() {
         new KeyBinder();
         ts.ajax.register(BatchedItemsSize.initialize, true);
         ts.ajax.register(BatchedItemsSearch.initialize, true);

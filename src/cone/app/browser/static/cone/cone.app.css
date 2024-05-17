@@ -180,16 +180,31 @@ body {
 #header-main #mainmenu > ul {
   white-space: nowrap;
 }
+@media (max-width: 991.98px) {
+  #header-main #navbar-content.show, #header-main #navbar-content.collapsing {
+    display: flex;
+    flex-direction: column;
+  }
+  #header-main #mainmenu {
+    order: 1;
+  }
+  #header-main #livesearch {
+    width: 100%;
+    padding-left: 40px !important;
+  }
+}
 @media (max-width: 575.98px) {
-  #header-main .in_header_sm {
+  #header-main #header-tools > div {
     padding: 5px 0;
+    width: 50%;
+    display: inline-flex !important;
   }
   #header-main #personaltools {
     flex-direction: column;
   }
   #header-main #personaltools .dropdown-menu {
     position: relative;
-    width: 100%;
+    width: 200%;
   }
 }
 @media (min-width: 992px) {
