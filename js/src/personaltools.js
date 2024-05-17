@@ -4,12 +4,16 @@ import ts from 'treibstoff';
 export class PersonalTools extends ts.Events {
 
     static initialize(context) {
-        new PersonalTools(context);
+        const elem = $('#header-main', context);
+        if (!elem.length) {
+            return;
+        }
+        new PersonalTools(elem);
     }
 
-    constructor(context) {
+    constructor(elem) {
         super();
-        this.elem = $('#header-main', context);
+        this.elem = elem;
         this.personal_tools = $('#personaltools', this.elem);
         this.navbar_content = $('#navbar-content', this.elem);
         this.header_content = $('#header-content', this.elem);

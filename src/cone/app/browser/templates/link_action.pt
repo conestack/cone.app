@@ -1,7 +1,6 @@
 <tal:link xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:ajax="http://namespaces.conestack.org/ajax"
           omit-tag="True">
-
   <a tal:condition="context.text"
      id="${context.id|nothing}"
      href="${context.href|nothing}"

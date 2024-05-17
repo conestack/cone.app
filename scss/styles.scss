@@ -162,7 +162,14 @@ body {
         > ul {
             white-space: nowrap;
         }
+        .nav-item.active .nav-link {
+            color: $primary;
+        }
     }
+    #personaltools .dropdown-toggle.show {
+        background-color: $dropdown-border-color;
+    }
+
     @include media-breakpoint-down(lg) {
         #navbar-content.show, #navbar-content.collapsing {
             display: flex;

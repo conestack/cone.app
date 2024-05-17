@@ -262,11 +262,11 @@ class ActionUp(LinkAction):
     """One level up action.
     """
     id = 'toolbaraction-up'
-    icon = 'glyphicon glyphicon-arrow-up'
+    icon = 'bi-arrow-up'
     event = 'contextchanged:#layout'
     text = _('action_one_level_up', default='One level up')
     path = 'href'
-    css_class = 'nav-link py-1 pe-3'
+    css_class = 'nav-link py-0'
 
     @property
     def display(self):
@@ -299,11 +299,11 @@ class ActionView(LinkAction):
     """View action.
     """
     id = 'toolbaraction-view'
-    icon = 'glyphicon glyphicon-eye-open'
+    icon = 'bi-eye-fill'
     text = _('action_view', default='View')
     href = LinkAction.target
     path = 'href'
-    css_class = 'nav-link p-0'
+    css_class = 'p-0'
 
     @property
     def action(self):
@@ -344,11 +344,11 @@ class ActionList(LinkAction):
     """Contents listing action.
     """
     id = 'toolbaraction-list'
-    icon = 'glyphicon glyphicon-th-list'
+    icon = 'bi-list-task'
     action = 'listing:#content:inner'
     path = 'href'
     text = _('action_listing', default='Listing')
-    css_class = 'nav-link p-0'
+    css_class = 'p-0'
 
     @property
     def href(self):
@@ -366,8 +366,8 @@ class ActionList(LinkAction):
 class ActionSharing(LinkAction):
     """Sharing action.
     """
-    id = 'toolbaraction-share'
-    icon = 'glyphicon glyphicon-share'
+    id = 'share'
+    icon = 'bi-share-fill'
     action = 'sharing:#content:inner'
     path = 'href'
     text = _('action_sharing', default='Sharing')
@@ -412,11 +412,11 @@ class ActionEdit(LinkAction):
     """Edit action.
     """
     id = 'toolbaraction-edit'
-    icon = 'glyphicon glyphicon-pencil'
+    icon = 'bi-pencil'
     action = 'edit:#content:inner'
     path = 'href'
     text = _('action_edit', default='Edit')
-    css_class = 'nav-link p-0'
+    css_class = 'p-0'
 
     @property
     def href(self):
@@ -440,7 +440,7 @@ class ActionDelete(LinkAction):
     confirm = _('delete_item_confirm',
                 default='Do you really want to delete this Item?')
     text = _('action_delete', default='Delete')
-    css_class = 'nav-link p-0'
+    css_class = 'p-0'
 
     @property
     def display(self):
@@ -554,7 +554,7 @@ class ActionMoveUp(_ActionMove):
     """Move up action.
     """
     id = 'toolbaraction-move-up'
-    icon = 'glyphicon glyphicon-chevron-up'
+    icon = 'bi-chevron-up'
     action = 'move_up:NONE:NONE'
     text = _('move_up', default='Move up')
 
@@ -569,7 +569,7 @@ class ActionMoveDown(_ActionMove):
     """Move down action.
     """
     id = 'toolbaraction-move-down'
-    icon = 'glyphicon glyphicon-chevron-down'
+    icon = 'bi-chevron-down'
     action = 'move_down:NONE:NONE'
     text = _('move_down', default='Move down')
 

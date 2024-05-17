@@ -46,7 +46,7 @@ class ContextMenuToolbar(Toolbar):
         if not rendered_actions:
             return u''
         rendered_actions = u'\n'.join(rendered_actions)
-        css = u'nav navbar-nav'
+        css = u'nav navbar-nav py-2'
         if self.css:
             css += ' ' + self.css
         return u'<ul class="%s">%s</ul>' % (css, rendered_actions)

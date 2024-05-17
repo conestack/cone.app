@@ -183,6 +183,12 @@ body {
 #header-main #mainmenu > ul {
   white-space: nowrap;
 }
+#header-main #mainmenu .nav-item.active .nav-link {
+  color: #4e7bba;
+}
+#header-main #personaltools .dropdown-toggle.show {
+  background-color: var(--bs-border-color-translucent);
+}
 @media (max-width: 991.98px) {
   #header-main #navbar-content.show, #header-main #navbar-content.collapsing {
     display: flex;

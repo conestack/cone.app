@@ -6,7 +6,7 @@
        role="contextmenu"
        ajax:bind="contextactionschanged"
        ajax:action="contextmenu:#contextmenu:replace"
-       class="navbar p-0 contextsensitiv navbar-expand rounded shadow-sm">
+       class="navbar mt-2 p-0 contextsensitiv navbar-expand rounded shadow-sm card">
     <div class="container-fluid p-0">
       <ul class="navbar-nav">
         <tal:toolbars repeat="toolbar context.toolbars">
