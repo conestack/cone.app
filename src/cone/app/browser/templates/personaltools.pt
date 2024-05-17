@@ -2,25 +2,31 @@
            omit-tag="True">
 
   <div id="personaltools"
-       class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0 d-flex align-items-end align-items-sm-center">
+       class="d-flex align-self-stretch h-100 flex-direction-row">
 
-    <a href="#"
-       class="nav-link dropdown-toggle"
-       data-bs-toggle="dropdown">
-      <span tal:replace="context.user">Admin</span>
-      <span class="caret"></span>
-    </a>
+    <tal:colortoggler replace="structure tile('colortoggler')" />
 
-    <ul class="dropdown-menu dropdown-menu-end mt-2 mt-sm-0" role="menu">
+    <div id="personaltools-dropdown"
+         class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0 d-flex align-items-end align-items-sm-center">
 
-      <li tal:repeat="item context.items">
-          <div class="dropdown-item">
-            <tal:action replace="structure item" />
-          </div>
-      </li>
+      <a href="#"
+         class="nav-link dropdown-toggle"
+         data-bs-toggle="dropdown">
+        <span tal:replace="context.user">Admin</span>
+        <span class="caret"></span>
+      </a>
 
-    </ul>
+      <ul class="dropdown-menu dropdown-menu-end mt-2 mt-sm-0" role="menu">
 
+        <li tal:repeat="item context.items">
+            <div class="dropdown-item">
+              <tal:action replace="structure item" />
+            </div>
+        </li>
+
+      </ul>
+
+    </div>
   </div>
 
 </tal:block>

@@ -810,14 +810,14 @@ var cone_app_protected = (function (exports, $, ts) {
         }
     }
 
-    class Header extends ts.Events {
+    class PersonalTools extends ts.Events {
         static initialize(context) {
-            new Header(context);
+            new PersonalTools(context);
         }
         constructor(context) {
             super();
             this.elem = $('#header-main', context);
-            this.header_tools = $('#header-tools', this.elem);
+            this.personal_tools = $('#personaltools', this.elem);
             this.navbar_content = $('#navbar-content', this.elem);
             this.header_content = $('#header-content', this.elem);
             this.scrollable = $('.scrollable-x', this.elem);
@@ -833,13 +833,13 @@ var cone_app_protected = (function (exports, $, ts) {
             const window_width = $(window).width();
             const window_sm = window_width <= 576;
             const window_lg = window_width <= 992;
-            const in_navbar_content = $('#header-tools', this.navbar_content).length > 0;
+            const in_navbar_content = $('#personaltools', this.navbar_content).length > 0;
             if (window_sm) {
                 if (!in_navbar_content) {
-                    this.header_tools.detach().appendTo(this.navbar_content);
+                    this.personal_tools.detach().appendTo(this.navbar_content);
                 }
             } else if (in_navbar_content) {
-                this.header_tools.detach().prependTo(this.header_content);
+                this.personal_tools.detach().prependTo(this.header_content);
                 $(".dropdown-menu.show").removeClass('show');
             }
             if (window_lg) {
@@ -1012,7 +1012,7 @@ var cone_app_protected = (function (exports, $, ts) {
         ts.ajax.register(Colormode.initialize, true);
         ts.ajax.register(Scrollbar.initialize, true);
         ts.ajax.register(Sidebar.initialize, true);
-        ts.ajax.register(Header.initialize, true);
+        ts.ajax.register(PersonalTools.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1021,8 +1021,8 @@ var cone_app_protected = (function (exports, $, ts) {
     exports.BatchedItemsSize = BatchedItemsSize;
     exports.Colormode = Colormode;
     exports.CopySupport = CopySupport;
-    exports.Header = Header;
     exports.KeyBinder = KeyBinder;
+    exports.PersonalTools = PersonalTools;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;

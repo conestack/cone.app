@@ -10,7 +10,7 @@ import * as tabletoolbar from './tabletoolbar.js';
 import * as utils from './utils.js';
 import * as colormode from './colormode.js';
 import * as sidebar from './sidebar.js';
-import * as header from './header.js';
+import * as personaltools from './personaltools.js';
 
 let api = {};
 
@@ -26,7 +26,7 @@ Object.assign(api, tabletoolbar);
 Object.assign(api, utils);
 Object.assign(api, colormode);
 Object.assign(api, sidebar);
-Object.assign(api, header);
+Object.assign(api, personaltools);
 
 let cone = api;
 export default cone;

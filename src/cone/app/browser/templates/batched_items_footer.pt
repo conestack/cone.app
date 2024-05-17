@@ -24,8 +24,6 @@
       <tal:pagination replace="structure context.rendered_pagination" />
     </div>
 
-    <div class="clearfix"></div>
-
   </div>
 
 </tal:block>

@@ -13,8 +13,6 @@
               tal:content="context.form_heading">Title</span>
       </h4>
 
-      <div class="clearfix"></div>
-
     </div>
 
     <div class="panel-body">

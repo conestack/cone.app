@@ -1,16 +1,16 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 
-export class Header extends ts.Events {
+export class PersonalTools extends ts.Events {
 
     static initialize(context) {
-        new Header(context);
+        new PersonalTools(context);
     }
 
     constructor(context) {
         super();
         this.elem = $('#header-main', context);
-        this.header_tools = $('#header-tools', this.elem);
+        this.personal_tools = $('#personaltools', this.elem);
         this.navbar_content = $('#navbar-content', this.elem);
         this.header_content = $('#header-content', this.elem);
         this.scrollable = $('.scrollable-x', this.elem);
@@ -31,14 +31,14 @@ export class Header extends ts.Events {
         // boostrap 5 breakpoints
         const window_sm = window_width <= 576;
         const window_lg = window_width <= 992;
-        const in_navbar_content = $('#header-tools', this.navbar_content).length > 0;
+        const in_navbar_content = $('#personaltools', this.navbar_content).length > 0;
 
         if (window_sm) {
             if (!in_navbar_content) {
-                this.header_tools.detach().appendTo(this.navbar_content);
+                this.personal_tools.detach().appendTo(this.navbar_content);
             }
         } else if (in_navbar_content) {
-            this.header_tools.detach().prependTo(this.header_content);
+            this.personal_tools.detach().prependTo(this.header_content);
             // close any header dropdowns
             $(".dropdown-menu.show").removeClass('show');
         }

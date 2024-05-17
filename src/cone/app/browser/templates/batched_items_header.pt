@@ -73,8 +73,6 @@
       Additional Header Markup.
     </tal:additional>
 
-    <div class="clearfix"></div>
-
   </div>
 
 </tal:block>

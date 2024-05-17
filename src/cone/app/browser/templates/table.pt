@@ -15,15 +15,16 @@
     <div class="card-body"
          tal:condition="context.display_table_header">
 
-      <h4 class="card-title mb-4">
-        <span class="label label-primary"
-              tal:condition="context.show_title"
-              tal:content="context.table_title">Title</span>
-      </h4>
-
       <div class="row">
 
+        <h4 class="card-title mb-0" style="max-width:max-content;">
+          <span class="label label-primary"
+                tal:condition="context.show_title"
+                tal:content="context.table_title">Title</span>
+        </h4>
+
         <div class="table_length
+                    ms-auto
                     input-group
                     input-group-sm
                     ${context.table_length_size}"
@@ -74,14 +75,12 @@
           Additional Header Markup.
         </div>
 
-        <div class="clearfix"></div>
-
       </div>
 
     </div>
 
-    <div class="card-body">
-    <table class="table table-striped"
+    <div class="card-body py-0">
+    <table class="table table-striped mb-1"
            id="${context.table_id}_table">
 
       <thead>
@@ -121,6 +120,7 @@
 
                 <a href="${defs[1]}"
                    title="${col_def['sort_title']}"
+                   class="text-decoration-none"
                    ajax:bind="click"
                    ajax:target="${defs[1]}"
                    ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
@@ -177,7 +177,7 @@
     </table>
     </div>
 
-    <div class="card-body"
+    <div class="card-body pb-1"
          tal:condition="context.display_table_footer">
 
       <div class="table_info float-start"
@@ -197,8 +197,6 @@
       <div class="float-end">
         <tal:batch replace="structure context.batch" />
       </div>
-
-      <div class="clearfix"></div>
 
     </div>
 
