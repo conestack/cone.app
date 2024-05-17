@@ -1,5 +1,6 @@
 *.egg-info
 *.pyc
+build
 /.coverage
 /.mxmake/
 /.project
