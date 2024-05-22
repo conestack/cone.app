@@ -1541,7 +1541,7 @@ ActionEdit
 
 Renders ``edit`` tile to main content area.
 
-Considered ``nodeinfo``:
+Considered ``properties``:
 
 - **action_edit**: Flag whether to render edit action.
 
@@ -1551,7 +1551,7 @@ ActionDelete
 
 Invokes ``delete`` tile on node after confirming action.
 
-Considered ``nodeinfo``:
+Considered ``properties``:
 
 - **action_delete**: Flag whether to render delete action.
 

@@ -1,32 +1,33 @@
 from cone.app import compat
+from cone.app import security
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionContext
-from cone.app.browser.ajax import AjaxEvent
-from cone.app.browser.ajax import AjaxOverlay
-from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import ajax_form_fiddle
 from cone.app.browser.ajax import ajax_message
+from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.ajax import AjaxOverlay
+from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.form import FormTarget
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
-from cone.app.model import Properties
 from cone.app.model import get_node_info
+from cone.app.model import Properties
 from cone.app.utils import app_config
 from cone.app.utils import node_path
-from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
+from cone.tile import Tile
 from cone.tile import tile
 from plumber import Behavior
 from plumber import default
 from plumber import override
 from plumber import plumb
-from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
+from pyramid.i18n import TranslationStringFactory
 from pyramid.view import view_config
 from webob.exc import HTTPFound
 from yafowil.base import factory
@@ -334,7 +335,7 @@ class AddDropdown(Tile):
             return ret
         for addable in addables:
             info = get_node_info(addable)
-            if not info:
+            if not info or not security.node_available(self.model, addable):
                 continue
             ret.append(self.make_item(addable, info))
         return ret
@@ -369,8 +370,8 @@ class AddTile(Tile):
     @property
     def info(self):
         factory = self.request.params.get('factory')
-        allowed = self.model.nodeinfo.addables
-        if not factory or not allowed or factory not in allowed:
+        addables = self.model.nodeinfo.addables
+        if not factory or not addables or factory not in addables:
             return None
         return get_node_info(factory)
 

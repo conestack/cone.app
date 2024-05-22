@@ -4,6 +4,7 @@ from cone.app import get_root
 from cone.app import layout_config
 from cone.app import main_hook
 from cone.app import make_remote_addr_middleware
+from cone.app import security
 from cone.app import testing
 from cone.app.interfaces import ILayoutConfig
 from cone.app.model import BaseNode
@@ -77,6 +78,7 @@ class TestApp(NodeTestCase):
             "Config with name 'dummy' already registered."
         )
 
+    @testing.reset_node_available
     def test_main(self):
         # main hook
         hooks = dict(called=0)
@@ -111,6 +113,8 @@ class TestApp(NodeTestCase):
             'cone.main_template': 'package.browser:templates/main.pt',
             # ensure custom root node factory gets invoked
             'cone.root.node_factory': 'cone.app.default_root_node_factory',
+            # ensure custom node_available factory gets invoked
+            'cone.root.node_available': 'cone.app.testing.mock.testing_node_available',
             # ensure dummy main hooks called
             'cone.plugins': 'cone.app.tests'
         }
@@ -119,6 +123,11 @@ class TestApp(NodeTestCase):
         router = cone.app.main({}, **settings)
         self.assertTrue(isinstance(router, Router))
         self.assertEqual(hooks['called'], 2)
+
+        # Check custom node_available
+        self.assertTrue(
+            security.node_available is testing.mock.testing_node_available
+        )
 
         # Remove custom main hook after testing
         cone.app.main_hooks.remove(custom_main_hook)

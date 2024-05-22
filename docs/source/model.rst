@@ -32,7 +32,7 @@ and implements the following contracts:
 
     - **nodeinfo**: Property containing ``cone.app.INodeInfo`` implementing object.
       NodeInfo provides cardinality information and general node information which
-      is primary needed for authoring operations.
+      is primarily needed for authoring operations.
 
 
 BaseNode

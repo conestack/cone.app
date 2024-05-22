@@ -355,17 +355,20 @@ class TestModel(NodeTestCase):
             description='My Node Descriptrion',
             factory=None,
             icon='icon',
-            addables=['othernode'])
+            addables=['othernode'],
+            custom_prop='custom_value')
         class MyNode(BaseNode):
             pass
 
         info = get_node_info('mynode')
+        self.assertEqual(info.name, 'mynode')
         self.assertTrue(info.node is MyNode)
         self.assertEqual(info.title, 'My Node')
         self.assertEqual(info.description, 'My Node Descriptrion')
         self.assertEqual(info.factory, None)
         self.assertEqual(info.addables, ['othernode'])
         self.assertEqual(info.icon, 'icon')
+        self.assertEqual(info.custom_prop, 'custom_value')
         self.assertEqual(MyNode.node_info_name, 'mynode')
 
     def test_AppEnvironment(self):

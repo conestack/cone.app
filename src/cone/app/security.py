@@ -191,6 +191,19 @@ class ACLRegistry(dict):
 acl_registry = ACLRegistry()
 
 
+def default_node_available(model, node_info_name):
+    """Default callback for checking node availability in UI.
+
+    :param model: application node to gain access to the application model.
+    :param node_info_name: Node info name the node to check availability.
+    """
+    return True
+
+
+# callbak for application node availability
+node_available = default_node_available
+
+
 @implementer(IOwnerSupport)
 class OwnerSupport(Behavior):
     """Plumbing behavior providing ownership information.
@@ -296,6 +309,8 @@ class AdapterACL(Behavior):
     @override
     @property
     def __acl__(self):
+        if not node_available(self, self.node_info_name):
+            return [(Deny, Everyone, ALL_PERMISSIONS)]
         request = get_current_request()
         acl_adapter = request.registry.queryAdapter(
             self,
