@@ -10,11 +10,12 @@
 #: docs.sphinx
 #: i18n.gettext
 #: i18n.lingua
-#: js.karma
 #: js.npm
 #: js.rollup
 #: js.scss
+#: js.wtr
 #: qa.coverage
+#: qa.ruff
 #: qa.test
 #
 # SETTINGS (ALL CHANGES MADE BELOW SETTINGS WILL BE LOST)
@@ -72,6 +73,16 @@ NPM_OPT_PACKAGES?=
 # No default value.
 NPM_INSTALL_OPTS?=
 
+## js.wtr
+
+# Web test runner config file.
+# Default: wtr.config.mjs
+WTR_CONFIG?=js/wtr.config.mjs
+
+# Web test runner additional command line options.
+# Default: --coverage
+WTR_OPTIONS?=--coverage
+
 ## js.scss
 
 # The SCSS root source file.
@@ -95,16 +106,6 @@ SCSS_OPTIONS?=--no-source-map=none
 # Rollup config file.
 # Default: rollup.conf.js
 ROLLUP_CONFIG?=js/rollup.conf.js
-
-## js.karma
-
-# Karma config file.
-# Default: karma.conf.js
-KARMA_CONFIG?=js/karma.conf.js
-
-# Karma additional command line options.
-# Default: --single-run
-KARMA_OPTIONS?=--single-run
 
 ## core.mxenv
 
@@ -157,6 +158,12 @@ MXDEV?=mxdev
 # mxmake to install in virtual environment.
 # Default: mxmake
 MXMAKE?=mxmake
+
+## qa.ruff
+
+# Source folder to scan for Python files to run ruff on.
+# Default: src
+RUFF_SRC?=src
 
 ## docs.sphinx
 
@@ -319,6 +326,19 @@ DIRTY_TARGETS+=npm-dirty
 CLEAN_TARGETS+=npm-clean
 
 ##############################################################################
+# web test runner
+##############################################################################
+
+# extend npm dev packages
+NPM_DEV_PACKAGES+=\
+	@web/test-runner \
+	@web/dev-server-import-maps
+
+.PHONY: wtr
+wtr: $(NPM_TARGET)
+	@web-test-runner $(WTR_OPTIONS) --config $(WTR_CONFIG)
+
+##############################################################################
 # scss
 ##############################################################################
 
@@ -343,21 +363,6 @@ NPM_DEV_PACKAGES+=\
 .PHONY: rollup
 rollup: $(NPM_TARGET)
 	@rollup --config $(ROLLUP_CONFIG)
-
-##############################################################################
-# karma
-##############################################################################
-
-# extend npm dev packages
-NPM_DEV_PACKAGES+=\
-	karma \
-	karma-coverage \
-	karma-chrome-launcher \
-	karma-module-resolver-preprocessor
-
-.PHONY: karma
-karma: $(NPM_TARGET)
-	@karma start $(KARMA_CONFIG) $(KARMA_OPTIONS)
 
 ##############################################################################
 # mxenv
@@ -436,6 +441,41 @@ endif
 INSTALL_TARGETS+=mxenv
 DIRTY_TARGETS+=mxenv-dirty
 CLEAN_TARGETS+=mxenv-clean
+
+##############################################################################
+# ruff
+##############################################################################
+
+RUFF_TARGET:=$(SENTINEL_FOLDER)/ruff.sentinel
+$(RUFF_TARGET): $(MXENV_TARGET)
+	@echo "Install Ruff"
+	@$(PYTHON_PACKAGE_COMMAND) install ruff
+	@touch $(RUFF_TARGET)
+
+.PHONY: ruff-check
+ruff-check: $(RUFF_TARGET)
+	@echo "Run ruff check"
+	@ruff check $(RUFF_SRC)
+
+.PHONY: ruff-format
+ruff-format: $(RUFF_TARGET)
+	@echo "Run ruff format"
+	@ruff format $(RUFF_SRC)
+
+.PHONY: ruff-dirty
+ruff-dirty:
+	@rm -f $(RUFF_TARGET)
+
+.PHONY: ruff-clean
+ruff-clean: ruff-dirty
+	@test -e $(MXENV_PYTHON) && $(MXENV_PYTHON) -m pip uninstall -y ruff || :
+	@rm -rf .ruff_cache
+
+INSTALL_TARGETS+=$(RUFF_TARGET)
+CHECK_TARGETS+=ruff-check
+FORMAT_TARGETS+=ruff-format
+DIRTY_TARGETS+=ruff-dirty
+CLEAN_TARGETS+=ruff-clean
 
 ##############################################################################
 # sphinx

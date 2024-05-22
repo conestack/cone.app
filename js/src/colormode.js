@@ -1,56 +1,65 @@
-import $ from 'jquery';
+import ts from 'treibstoff';
 
-export class Colormode {
+export class Colormode extends ts.ChangeListener {
 
     static initialize(context) {
-        new Colormode(context);
+        const elem = ts.query_elem('#colortoggle-switch', context);
+        if (!elem) {
+            return;
+        }
+        new Colormode(elem);
     }
 
-    constructor(context) {
-        this.elem = $('#colortoggle-switch', context);
-        this.compile();
-
+    constructor(elem) {
+        super({elem: elem});
+        this.bind();
         this.set_theme(this.preferred_theme);
+    }
 
-        this.elem.on('change', (c) => {
-            if (this.elem.is(':checked')) {
-                this.set_theme('dark')
-            } else {
-                this.set_theme('light')
-            }
-        })
+    get match_media() {
+        return window.matchMedia('(prefers-color-scheme: dark)');
     }
 
     get stored_theme() {
-        return localStorage.getItem('bootstrap-theme') || null;
+        return localStorage.getItem('cone-app-color-theme');
+    }
+
+    set stored_theme(theme) {
+        localStorage.setItem('cone-app-color-theme', theme);
     }
 
     get preferred_theme() {
         if (this.stored_theme) {
             return this.stored_theme;
         }
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return this.match_media.matches ? 'dark' : 'light';
     }
 
-    compile() {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            if (this.stored_theme !== 'light' || this.stored_theme !== 'dark') {
-              this.set_theme(this.preferred_theme);
+    bind() {
+        const stored_theme = this.stored_theme;
+        this.match_media.addEventListener('change', () => {
+            if (stored_theme !== 'light' || stored_theme !== 'dark') {
+                this.set_theme(this.preferred_theme);
             }
         });
     }
 
     set_theme(theme) {
-        if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          document.documentElement.setAttribute('data-bs-theme', 'dark');
-          this.elem.trigger('click');
+        const document_elem = document.documentElement;
+        if (theme === 'auto' && this.match_media.matches) {
+            document_elem.setAttribute('data-bs-theme', 'dark');
+            this.elem.trigger('click');
         } else {
-          document.documentElement.setAttribute('data-bs-theme', theme);
+            document_elem.setAttribute('data-bs-theme', theme);
         }
-        localStorage.setItem('bootstrap-theme', theme);
-
+        this.stored_theme = theme;
         if (theme === 'dark' && !this.elem.is(':checked')) {
             this.elem.trigger('click');
         }
     }
-};
+
+    on_change() {
+        const theme = this.elem.is(':checked') ? 'dark' : 'light';
+        this.set_theme(theme);
+    }
+}
