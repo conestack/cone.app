@@ -79,6 +79,14 @@ class Toolbar(odict):
             return u'<div>%s</div>' % rendered_actions
         return u'<div class="%s">%s</div>' % (self.css, rendered_actions)
 
+    def __repr__(self):
+        return (
+            f'<{self.__class__.__module__}.{self.__class__.__name__} '
+            f'({self.keys()}) at {id(self)}>'
+        )
+
+    __str__ = __repr__
+
 
 class Action(object):
     """Abstract Action.

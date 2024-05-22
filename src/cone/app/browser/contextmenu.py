@@ -69,6 +69,8 @@ class ContextMenuDropdown(Toolbar):
     def __call__(self, model, request):
         self.model = model
         self.request = request
+        if not self.display:
+            return u''
         return render_template(
             self.template,
             request=request,
@@ -162,5 +164,11 @@ context_menu_item(group='contextactions', name='delete')(ActionDelete)
 class ContextMenu(Tile):
 
     @property
-    def toolbars(self):
-        return context_menu.values()
+    def rendered_toolbars(self):
+        rendered_toolbars = []
+        for toolbar in context_menu.values():
+            rendered_toolbar = toolbar(self.model, self.request)
+            if not rendered_toolbar:
+                continue
+            rendered_toolbars.append(rendered_toolbar)
+        return rendered_toolbars

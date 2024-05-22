@@ -1,7 +1,7 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-  <li tal:condition="context.display" class="nav-item dropdown py-2">
+  <li class="nav-item dropdown py-2">
     <a class="nav-link dropdown-toggle py-0 px-3" href="#" role="button" data-bs-toggle="dropdown">
       <span tal:condition="context.icon"
             class="${context.icon}"></span>
