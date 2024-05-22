@@ -60,8 +60,8 @@ export class PersonalTools extends ts.Events {
         this.scrollable.each((i, item) => {
             const scrollbar = $(item).data('scrollbar');
             if (!scrollbar.disabled) {
-                scrollbar.reset();
-                scrollbar.disable();
+                scrollbar.position = 0;
+                scrollbar.disabled = true;
             }
         });
     }
@@ -70,7 +70,7 @@ export class PersonalTools extends ts.Events {
         this.scrollable.each((i, item) => {
             const scrollbar = $(item).data('scrollbar');
             if (scrollbar.disabled) {
-                scrollbar.bind();
+                scrollbar.disabled = false;
             }
         });
     }
