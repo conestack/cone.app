@@ -43,6 +43,18 @@ def reset_resource_registry(fn):
     return wrapper
 
 
+def reset_node_available(fn):
+    """Decorator for tests modifying node_available callback
+    """
+    def wrapper(*a, **kw):
+        node_available_orgin = security_module.node_available
+        try:
+            fn(*a, **kw)
+        finally:
+            security_module.node_available = node_available_orgin
+    return wrapper
+
+
 class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
     _accept = None
 

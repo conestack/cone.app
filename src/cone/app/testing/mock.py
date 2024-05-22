@@ -19,10 +19,13 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
-from pyramid.static import static_view
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
+
+
+def testing_node_available(model, node_info_name):
+    return True
 
 
 @plumbing(WorkflowState, WorkflowACL)

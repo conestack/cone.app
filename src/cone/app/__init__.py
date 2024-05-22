@@ -215,6 +215,11 @@ def main(global_config, **settings):
     security.ADMIN_PASSWORD = settings.get('cone.admin_password')
     security.AUTHENTICATOR = settings.get('cone.authenticator')
 
+    # set node availability callback
+    node_available_callback = settings.pop('cone.root.node_available', None)
+    if node_available_callback:
+        security.node_available = import_from_string(node_available_callback)
+
     auth_secret = settings.pop('cone.auth_secret', 'secret')
     auth_cookie_name = settings.pop('cone.auth_cookie_name', 'auth_tkt')
     auth_secure = settings.pop('cone.auth_secure', False)

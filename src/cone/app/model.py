@@ -1,3 +1,4 @@
+from cone.app import security
 from cone.app.compat import configparser
 from cone.app.compat import IS_PY2
 from cone.app.compat import ITER_TYPES
@@ -14,7 +15,6 @@ from cone.app.interfaces import IProperties
 from cone.app.interfaces import ISettingsNode
 from cone.app.interfaces import ITranslation
 from cone.app.interfaces import IUUIDAsName
-from cone.app.security import acl_registry
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
 from node import schema
@@ -93,27 +93,30 @@ getNodeInfo = get_node_info
 
 
 class node_info(object):
-    """Node info decorator.
-    """
+    """Node info decorator."""
 
     def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=[]):
+                 factory=None, icon=None, addables=[], **kw):
         self.name = name
         self.title = title
         self.description = description
         self.factory = factory
         self.icon = icon
         self.addables = addables
+        self.kw = kw
 
     def __call__(self, cls):
         cls.node_info_name = self.name
         info = NodeInfo()
+        info.name = self.name
         info.node = cls
         info.title = self.title
         info.description = self.description
         info.factory = self.factory
         info.addables = self.addables
         info.icon = self.icon
+        for name, value in self.kw.items():
+            setattr(info, name, value)
         register_node_info(cls.node_info_name, info)
         return cls
 
@@ -139,7 +142,9 @@ class AppNode(Behavior):
     @default
     @property
     def __acl__(self):
-        return acl_registry.lookup(self.__class__, self.node_info_name)
+        if not security.node_available(self, self.node_info_name):
+            return [(Deny, Everyone, ALL_PERMISSIONS)]
+        return security.acl_registry.lookup(self.__class__, self.node_info_name)
 
     @default
     @instance_property

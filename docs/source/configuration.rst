@@ -168,3 +168,16 @@ This factory gets passed the settings dict as argument and returns an
 root node properties above on the custom root object, call
 ``cone.app.configure_root`` with the root node and the settings dict as
 arguments.
+
+
+Application node availability
+-----------------------------
+
+In some applications it might be desired to have a dedicated mechanism to
+decide whether specific nodes are allowed to be used, e.g. if a specific
+feature set is available, etc. You can hook up such a custom logic via the
+application config file:
+
+- **cone.root.node_available**: Callable returning whether the node is allowed
+  to be used in this application. Gets passed the application model and a
+  node info instane as arguments.
