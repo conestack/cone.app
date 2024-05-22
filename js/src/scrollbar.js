@@ -24,7 +24,7 @@ export class Scrollbar extends ts.Events {
         this.position = 0;
         this.unit = 50;
         this.disabled = null;
-        
+
         this.on_scroll = this.on_scroll.bind(this);
         this.on_click = this.on_click.bind(this);
         this.on_drag = this.on_drag.bind(this);

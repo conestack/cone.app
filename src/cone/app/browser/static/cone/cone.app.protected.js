@@ -768,25 +768,32 @@ var cone_app_protected = (function (exports, $, ts) {
             if (!elem) {
                 return;
             }
-            new Sidebar(context, elem);
+            new Sidebar(elem);
         }
-        constructor(context, elem) {
+        constructor(elem) {
             super();
             this.elem = elem;
-            this.resizer_elem = $('#sidebar_resizer', context);
-            this.collapse_elem = $('#sidebar_collapse', context);
-            this.on_click = this.on_click.bind(this);
-            this.collapse_elem.on('click', this.on_click);
-            const sidebar_width = localStorage.getItem('cone.app.sidebar_width') || 300;
-            this.elem.css('width', sidebar_width + 'px');
-            const pad_left = $('.scrollable-content', this.elem).css('padding-left');
-            const pad_right = $('.scrollable-content', this.elem).css('padding-right');
+            elem.css('width', this.sidebar_width + 'px');
+            this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
+            const scrollable_content = ts.query_elem('.scrollable-content', elem);
+            const pad_left = scrollable_content.css('padding-left');
+            const pad_right = scrollable_content.css('padding-right');
             const logo_width = $('#header-logo').outerWidth(true);
-            this.elem.css(
+            elem.css(
                 'min-width',
                 `calc(${logo_width}px + ${pad_left} + ${pad_right})`
             );
-            this.set_scope(this.resizer_elem, $(document));
+            this.on_click = this.on_click.bind(this);
+            const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
+            collapse_elem.on('click', this.on_click);
+            const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
+            this.set_scope(resizer_elem, $(document));
+        }
+        get sidebar_width() {
+            return localStorage.getItem('cone-app-sidebar-width') || 300;
+        }
+        set sidebar_width(width) {
+            localStorage.setItem('cone-app-sidebar-width', width);
         }
         get collapsed() {
             return this.elem.css('width') === '0px';
@@ -799,27 +806,25 @@ var cone_app_protected = (function (exports, $, ts) {
             }
         }
         collapse() {
-            this.elem.removeClass('expanded');
-            this.elem.addClass('collapsed');
+            this.elem
+                .removeClass('expanded')
+                .addClass('collapsed');
         }
         expand() {
-            this.elem.removeClass('collapsed');
-            this.elem.addClass('expanded');
+            this.elem
+                .removeClass('collapsed')
+                .addClass('expanded');
         }
         move(evt) {
-            $('.scrollable-y', this.elem).css('pointer-events', 'none');
+            this.scrollbar.elem.css('pointer-events', 'none');
             if (evt.pageX <= 115) {
                 evt.pageX = 115;
             }
             this.sidebar_width = parseInt(evt.pageX);
             this.elem.css('width', this.sidebar_width);
         }
-        up(evt) {
-            $('.scrollable-y', this.elem).css('pointer-events', 'all');
-            localStorage.setItem(
-                'cone.app.sidebar_width',
-                this.sidebar_width
-            );
+        up() {
+            this.scrollbar.elem.css('pointer-events', 'all');
         }
     }
 
