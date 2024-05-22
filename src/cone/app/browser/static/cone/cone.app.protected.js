@@ -225,7 +225,7 @@ var cone_app_protected = (function (exports, $, ts) {
             switch (e.keyCode || e.which) {
                 case 16:
                     keys.shift_down = false;
-                       break;
+                    break;
                 case 17:
                     keys.ctrl_down = false;
                     break;
@@ -764,11 +764,15 @@ var cone_app_protected = (function (exports, $, ts) {
 
     class Sidebar extends ts.Motion {
         static initialize(context) {
-            new Sidebar(context);
+            const elem = ts.query_elem('#sidebar_left', context);
+            if (!elem) {
+                return;
+            }
+            new Sidebar(context, elem);
         }
-        constructor(context) {
+        constructor(context, elem) {
             super();
-            this.elem = $('#sidebar_left', context);
+            this.elem = elem;
             this.resizer_elem = $('#sidebar_resizer', context);
             this.collapse_elem = $('#sidebar_collapse', context);
             this.on_click = this.on_click.bind(this);
@@ -821,8 +825,8 @@ var cone_app_protected = (function (exports, $, ts) {
 
     class PersonalTools extends ts.Events {
         static initialize(context) {
-            const elem = $('#header-main', context);
-            if (!elem.length) {
+            const elem = ts.query_elem('#header-main', context);
+            if (!elem) {
                 return;
             }
             new PersonalTools(elem);

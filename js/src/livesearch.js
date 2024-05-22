@@ -1,11 +1,10 @@
-import $ from 'jquery';
 import ts from 'treibstoff';
 
 export class LiveSearch {
 
     static initialize(context, factory=null) {
-        let elem = $('input#search-text', context);
-        if (!elem.length) {
+        const elem = ts.query_elem('input#search-text', context);
+        if (!elem) {
             return;
         }
         if (factory === null) {

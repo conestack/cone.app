@@ -4,8 +4,8 @@ import ts from 'treibstoff';
 export class PersonalTools extends ts.Events {
 
     static initialize(context) {
-        const elem = $('#header-main', context);
-        if (!elem.length) {
+        const elem = ts.query_elem('#header-main', context);
+        if (!elem) {
             return;
         }
         new PersonalTools(elem);

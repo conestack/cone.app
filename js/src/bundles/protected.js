@@ -20,19 +20,18 @@ import {Sidebar} from '../sidebar.js';
 import {PersonalTools} from '../personaltools.js';
 
 export * from '../batcheditems.js';
+export * from '../colormode.js';
 export * from '../copysupport.js';
 export * from '../keybinder.js';
-export * from '../keybinder.js';
+export * from '../personaltools.js';
 export * from '../referencebrowser.js';
+export * from '../scrollbar.js';
 export * from '../selectable.js';
 export * from '../sharing.js';
+export * from '../sidebar.js';
 export * from '../tabletoolbar.js';
 export * from '../translation.js';
 export * from '../utils.js';
-export * from '../colormode.js';
-export * from '../scrollbar.js';
-export * from '../sidebar.js';
-export * from '../personaltools.js';
 
 $(function() {
     new KeyBinder();

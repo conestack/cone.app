@@ -3,8 +3,8 @@ var cone_app_public = (function (exports, $, ts) {
 
     class LiveSearch {
         static initialize(context, factory=null) {
-            let elem = $('input#search-text', context);
-            if (!elem.length) {
+            const elem = ts.query_elem('input#search-text', context);
+            if (!elem) {
                 return;
             }
             if (factory === null) {

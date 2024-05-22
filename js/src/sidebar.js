@@ -4,12 +4,16 @@ import ts from 'treibstoff';
 export class Sidebar extends ts.Motion {
 
     static initialize(context) {
-        new Sidebar(context);
+        const elem = ts.query_elem('#sidebar_left', context);
+        if (!elem) {
+            return;
+        }
+        new Sidebar(context, elem);
     }
 
-    constructor(context) {
+    constructor(context, elem) {
         super();
-        this.elem = $('#sidebar_left', context);
+        this.elem = elem;
         this.resizer_elem = $('#sidebar_resizer', context);
         this.collapse_elem = $('#sidebar_collapse', context);
 
