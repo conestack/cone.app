@@ -71,7 +71,7 @@ export class Sidebar extends ts.Motion {
     }
 
     move(evt) {
-        this.scrollbar.disabled = true;
+        this.scrollbar.pointer_events = false;
         if (evt.pageX <= 115) {
             evt.pageX = 115;
         }
@@ -81,7 +81,7 @@ export class Sidebar extends ts.Motion {
     }
 
     up() {
-        this.scrollbar.disabled = false;
+        this.scrollbar.pointer_events = true;
         global_events.trigger('on_sidebar_resize', this);
     }
 }

@@ -607,7 +607,14 @@ var cone = (function (exports, $, ts) {
             this.update();
             this.trigger('on_position', this._position);
         }
+        get pointer_events() {
+            return this.elem.css('pointer-events') === 'all';
+        }
+        set pointer_events(value) {
+            this.elem.css('pointer-events', value ? 'all' : 'none');
+        }
         bind() {
+            this.pointer_events = true;
             this.elem.css('pointer-events', 'all');
             this.elem.on('mousewheel wheel', this.on_scroll);
             this.scrollbar.on('click', this.on_click);
@@ -616,7 +623,6 @@ var cone = (function (exports, $, ts) {
             $(window).on('resize', this.on_resize);
         }
         unbind() {
-            this.elem.css('pointer-events', 'none');
             this.elem.off('mousewheel wheel', this.on_scroll);
             this.scrollbar.off('click', this.on_click);
             this.thumb.off('mousedown', this.on_drag);
@@ -880,7 +886,7 @@ var cone = (function (exports, $, ts) {
             }
         }
         move(evt) {
-            this.scrollbar.disabled = true;
+            this.scrollbar.pointer_events = false;
             if (evt.pageX <= 115) {
                 evt.pageX = 115;
             }
@@ -889,7 +895,7 @@ var cone = (function (exports, $, ts) {
             global_events.trigger('on_sidebar_resize', this);
         }
         up() {
-            this.scrollbar.disabled = false;
+            this.scrollbar.pointer_events = true;
             global_events.trigger('on_sidebar_resize', this);
         }
     }

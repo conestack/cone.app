@@ -44,7 +44,16 @@ export class Scrollbar extends ts.Events {
         this.trigger('on_position', this._position);
     }
 
+    get pointer_events() {
+        return this.elem.css('pointer-events') === 'all';
+    }
+
+    set pointer_events(value) {
+        this.elem.css('pointer-events', value ? 'all' : 'none');
+    }
+
     bind() {
+        this.pointer_events = true;
         this.elem.css('pointer-events', 'all');
         this.elem.on('mousewheel wheel', this.on_scroll);
         this.scrollbar.on('click', this.on_click);
@@ -54,7 +63,6 @@ export class Scrollbar extends ts.Events {
     }
 
     unbind() {
-        this.elem.css('pointer-events', 'none');
         this.elem.off('mousewheel wheel', this.on_scroll);
         this.scrollbar.off('click', this.on_click);
         this.thumb.off('mousedown', this.on_drag);
