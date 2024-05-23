@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.1rc1 (unreleased)
+1.1rc1 (2024-05-23)
 -------------------
 
 - ``node_info`` decorator stores name on node info instance.
