@@ -810,7 +810,7 @@ var cone_app_protected = (function (exports, $, ts) {
                 .addClass('expanded');
         }
         move(evt) {
-            this.scrollbar.elem.css('pointer-events', 'none');
+            this.scrollbar.disabled = true;
             if (evt.pageX <= 115) {
                 evt.pageX = 115;
             }
@@ -818,7 +818,7 @@ var cone_app_protected = (function (exports, $, ts) {
             this.elem.css('width', this.sidebar_width);
         }
         up() {
-            this.scrollbar.elem.css('pointer-events', 'all');
+            this.scrollbar.disabled = false;
         }
     }
 

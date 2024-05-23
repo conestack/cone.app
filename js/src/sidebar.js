@@ -68,8 +68,7 @@ export class Sidebar extends ts.Motion {
     }
 
     move(evt) {
-        // prevent scrollbar from toggling
-        this.scrollbar.elem.css('pointer-events', 'none');
+        this.scrollbar.disabled = true;
         if (evt.pageX <= 115) {
             evt.pageX = 115;
         }
@@ -78,7 +77,6 @@ export class Sidebar extends ts.Motion {
     }
 
     up() {
-        // enable scrollbar toggling again
-        this.scrollbar.elem.css('pointer-events', 'all');
+        this.scrollbar.disabled = false;
     }
 }
