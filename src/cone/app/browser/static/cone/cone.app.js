@@ -1,4 +1,4 @@
-var cone_app_protected = (function (exports, $, ts) {
+var cone = (function (exports, $, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -104,6 +104,61 @@ var cone_app_protected = (function (exports, $, ts) {
             filter_name = 'term';
         }
         BatchedItemsSearch.initialize(context, filter_selector, filter_name);
+    }
+
+    class Colormode extends ts.ChangeListener {
+        static initialize(context) {
+            const elem = ts.query_elem('#colortoggle-switch', context);
+            if (!elem) {
+                return;
+            }
+            new Colormode(elem);
+        }
+        constructor(elem) {
+            super({elem: elem});
+            this.bind();
+            this.set_theme(this.preferred_theme);
+        }
+        get match_media() {
+            return window.matchMedia('(prefers-color-scheme: dark)');
+        }
+        get stored_theme() {
+            return localStorage.getItem('cone-app-color-theme');
+        }
+        set stored_theme(theme) {
+            localStorage.setItem('cone-app-color-theme', theme);
+        }
+        get preferred_theme() {
+            if (this.stored_theme) {
+                return this.stored_theme;
+            }
+            return this.match_media.matches ? 'dark' : 'light';
+        }
+        bind() {
+            const stored_theme = this.stored_theme;
+            this.match_media.addEventListener('change', () => {
+                if (stored_theme !== 'light' || stored_theme !== 'dark') {
+                    this.set_theme(this.preferred_theme);
+                }
+            });
+        }
+        set_theme(theme) {
+            const document_elem = document.documentElement;
+            if (theme === 'auto' && this.match_media.matches) {
+                document_elem.setAttribute('data-bs-theme', 'dark');
+                this.elem.trigger('click');
+            } else {
+                document_elem.setAttribute('data-bs-theme', theme);
+            }
+            this.stored_theme = theme;
+            if (theme === 'dark' && !this.elem.is(':checked')) {
+                this.elem.trigger('click');
+            }
+        }
+        on_change() {
+            const theme = this.elem.is(':checked') ? 'dark' : 'light';
+            this.set_theme(theme);
+        }
     }
 
     class CopySupport {
@@ -229,6 +284,111 @@ var cone_app_protected = (function (exports, $, ts) {
                 case 17:
                     keys.ctrl_down = false;
                     break;
+            }
+        }
+    }
+
+    class LiveSearch {
+        static initialize(context, factory=null) {
+            const elem = ts.query_elem('input#search-text', context);
+            if (!elem) {
+                return;
+            }
+            if (factory === null) {
+                factory = cone.LiveSearch;
+            }
+            new factory(elem);
+        }
+        constructor(elem) {
+            this.elem = elem;
+        }
+        on_select(evt, suggestion, dataset) {
+            if (!suggestion.target) {
+                console.log('No suggestion target defined.');
+                return;
+            }
+            ts.ajax.trigger(
+                'contextchanged',
+                '#layout',
+                suggestion.target
+            );
+        }
+        render_suggestion(suggestion) {
+            return `<span class="${suggestion.icon}"></span>${suggestion.value}`;
+        }
+    }
+
+    class GlobalEvents extends ts.Events {
+        on_sidebar_resize(inst) {
+        }
+    }
+    const global_events = new GlobalEvents();
+
+    class PersonalTools extends ts.Events {
+        static initialize(context) {
+            const elem = ts.query_elem('#header-main', context);
+            if (!elem) {
+                return;
+            }
+            new PersonalTools(elem);
+        }
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            this.personal_tools = ts.query_elem('#personaltools', elem);
+            this.navbar_content = ts.query_elem('#navbar-content', elem);
+            this.header_content = ts.query_elem('#header-content', elem);
+            this.scrollbar = ts.query_elem('.scrollable-x', elem).data('scrollbar');
+            this.render = this.render.bind(this);
+            $(window).on('resize', this.render);
+            this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
+            global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+            this.render();
+            ts.ajax.attach(this, elem);
+        }
+        destroy() {
+            $(window).off('resize', this.render);
+            global_events.off('on_sidebar_resize', this.on_sidebar_resize);
+        }
+        on_sidebar_resize(inst) {
+            this.scrollbar.render();
+            this.scrollbar.position = this.scrollbar.position;
+        }
+        render() {
+            const window_width = $(window).width();
+            const window_sm = window_width <= 576;
+            const window_lg = window_width <= 992;
+            const navbar_content = this.navbar_content;
+            const in_navbar_content = ts.query_elem(
+                '#personaltools',
+                navbar_content
+            ) !== null;
+            if (window_sm) {
+                if (!in_navbar_content) {
+                    this.personal_tools.detach().appendTo(navbar_content);
+                }
+            } else if (in_navbar_content) {
+                this.personal_tools.detach().prependTo(this.header_content);
+                $(".dropdown-menu.show").removeClass('show');
+            }
+            if (window_lg) {
+                this.disable_scrolling();
+            } else {
+                navbar_content.removeClass('show');
+                this.enable_scrolling();
+            }
+        }
+        disable_scrolling() {
+            const scrollbar = this.scrollbar;
+            if (!scrollbar.disabled) {
+                scrollbar.position = 0;
+                scrollbar.disabled = true;
+            }
+        }
+        enable_scrolling() {
+            const scrollbar = this.scrollbar;
+            if (scrollbar.disabled) {
+                scrollbar.disabled = false;
             }
         }
     }
@@ -413,128 +573,6 @@ var cone_app_protected = (function (exports, $, ts) {
         yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
     });
 
-    class Sharing {
-        static initialize(context) {
-            new Sharing(context);
-        }
-        constructor(context) {
-            let checkboxes = $('input.add_remove_role_for_principal', context);
-            checkboxes.off('change').on('change', this.set_principal_role);
-        }
-        set_principal_role(evt) {
-            evt.preventDefault();
-            let checkbox = $(this);
-            let action;
-            if (this.checked) {
-                action = 'add_principal_role';
-            } else {
-                action = 'remove_principal_role';
-            }
-            let url = checkbox.parent().attr('ajax:target');
-            let params = {
-                id: checkbox.attr('name'),
-                role: checkbox.attr('value')
-            };
-            ts.ajax.action({
-                name: action,
-                mode: 'NONE',
-                selector: 'NONE',
-                url: url,
-                params: params
-            });
-        }
-    }
-
-    class TableToolbar {
-        static initialize(context) {
-            BatchedItemsSize.initialize(context, '.table_length select');
-            BatchedItemsSearch.initialize(context, '.table_filter input');
-        }
-    }
-
-    class Translation {
-        static initialize(context) {
-            $('.translation-nav', context).each(function() {
-                new Translation($(this));
-            });
-        }
-        constructor(nav_elem) {
-            this.nav_elem = nav_elem;
-            this.fields_elem = nav_elem.next();
-            this.show_lang_handle = this.show_lang_handle.bind(this);
-            $('li > a', nav_elem).on('click', this.show_lang_handle);
-            if ($('li.error', nav_elem).length) {
-                $('li.error:first > a', nav_elem).click();
-            } else {
-                $('li.active > a', nav_elem).click();
-            }
-            this.fields_elem.show();
-        }
-        show_lang_handle(evt) {
-            evt.preventDefault();
-            this.nav_elem.children().removeClass('active');
-            this.fields_elem.children().hide();
-            let elem = $(evt.currentTarget);
-            elem.parent().addClass('active');
-            $(elem.attr('href'), this.fields_elem).show();
-        }
-    }
-
-    class Colormode extends ts.ChangeListener {
-        static initialize(context) {
-            const elem = ts.query_elem('#colortoggle-switch', context);
-            if (!elem) {
-                return;
-            }
-            new Colormode(elem);
-        }
-        constructor(elem) {
-            super({elem: elem});
-            this.bind();
-            this.set_theme(this.preferred_theme);
-        }
-        get match_media() {
-            return window.matchMedia('(prefers-color-scheme: dark)');
-        }
-        get stored_theme() {
-            return localStorage.getItem('cone-app-color-theme');
-        }
-        set stored_theme(theme) {
-            localStorage.setItem('cone-app-color-theme', theme);
-        }
-        get preferred_theme() {
-            if (this.stored_theme) {
-                return this.stored_theme;
-            }
-            return this.match_media.matches ? 'dark' : 'light';
-        }
-        bind() {
-            const stored_theme = this.stored_theme;
-            this.match_media.addEventListener('change', () => {
-                if (stored_theme !== 'light' || stored_theme !== 'dark') {
-                    this.set_theme(this.preferred_theme);
-                }
-            });
-        }
-        set_theme(theme) {
-            const document_elem = document.documentElement;
-            if (theme === 'auto' && this.match_media.matches) {
-                document_elem.setAttribute('data-bs-theme', 'dark');
-                this.elem.trigger('click');
-            } else {
-                document_elem.setAttribute('data-bs-theme', theme);
-            }
-            this.stored_theme = theme;
-            if (theme === 'dark' && !this.elem.is(':checked')) {
-                this.elem.trigger('click');
-            }
-        }
-        on_change() {
-            const theme = this.elem.is(':checked') ? 'dark' : 'light';
-            this.set_theme(theme);
-        }
-    }
-
     class Scrollbar extends ts.Events {
         static initialize(context) {
             $('.scrollable-x', context).each(function() {
@@ -635,10 +673,8 @@ var cone_app_protected = (function (exports, $, ts) {
             ) {
                 if (e.type === 'mouseenter') {
                     this.scrollbar.stop(true, true).fadeIn();
-                } else if (e.type === 'mouseleave') {
-                    if (e.relatedTarget !== elem.get(0)) {
-                        this.scrollbar.stop(true, true).fadeOut();
-                    }
+                } else if (e.type === 'mouseleave' && e.relatedTarget !== elem.get(0)) {
+                    this.scrollbar.stop(true, true).fadeOut();
                 }
             }
         }
@@ -756,6 +792,38 @@ var cone_app_protected = (function (exports, $, ts) {
         }
     }
 
+    class Sharing {
+        static initialize(context) {
+            new Sharing(context);
+        }
+        constructor(context) {
+            let checkboxes = $('input.add_remove_role_for_principal', context);
+            checkboxes.off('change').on('change', this.set_principal_role);
+        }
+        set_principal_role(evt) {
+            evt.preventDefault();
+            let checkbox = $(this);
+            let action;
+            if (this.checked) {
+                action = 'add_principal_role';
+            } else {
+                action = 'remove_principal_role';
+            }
+            let url = checkbox.parent().attr('ajax:target');
+            let params = {
+                id: checkbox.attr('name'),
+                role: checkbox.attr('value')
+            };
+            ts.ajax.action({
+                name: action,
+                mode: 'NONE',
+                selector: 'NONE',
+                url: url,
+                params: params
+            });
+        }
+    }
+
     class Sidebar extends ts.Motion {
         static initialize(context) {
             const elem = ts.query_elem('#sidebar_left', context);
@@ -792,22 +860,24 @@ var cone_app_protected = (function (exports, $, ts) {
         get collapsed() {
             return this.elem.css('width') === '0px';
         }
+        collapse() {
+            this.elem
+                .removeClass('expanded')
+                .addClass('collapsed');
+            global_events.trigger('on_sidebar_resize', this);
+        }
+        expand() {
+            this.elem
+                .removeClass('collapsed')
+                .addClass('expanded');
+            global_events.trigger('on_sidebar_resize', this);
+        }
         on_click(evt) {
             if (this.collapsed) {
                 this.expand();
             } else {
                 this.collapse();
             }
-        }
-        collapse() {
-            this.elem
-                .removeClass('expanded')
-                .addClass('collapsed');
-        }
-        expand() {
-            this.elem
-                .removeClass('collapsed')
-                .addClass('expanded');
         }
         move(evt) {
             this.scrollbar.disabled = true;
@@ -816,71 +886,46 @@ var cone_app_protected = (function (exports, $, ts) {
             }
             this.sidebar_width = parseInt(evt.pageX);
             this.elem.css('width', this.sidebar_width);
+            global_events.trigger('on_sidebar_resize', this);
         }
         up() {
             this.scrollbar.disabled = false;
+            global_events.trigger('on_sidebar_resize', this);
         }
     }
 
-    class PersonalTools extends ts.Events {
+    class TableToolbar {
         static initialize(context) {
-            const elem = ts.query_elem('#header-main', context);
-            if (!elem) {
-                return;
-            }
-            new PersonalTools(elem);
+            BatchedItemsSize.initialize(context, '.table_length select');
+            BatchedItemsSearch.initialize(context, '.table_filter input');
         }
-        constructor(elem) {
-            super();
-            this.elem = elem;
-            this.personal_tools = $('#personaltools', this.elem);
-            this.navbar_content = $('#navbar-content', this.elem);
-            this.header_content = $('#header-content', this.elem);
-            this.scrollable = $('.scrollable-x', this.elem);
-            this.place_elements = this.place_elements.bind(this);
-            $(window).on('resize', this.place_elements);
-            this.place_elements();
-            ts.ajax.attach(this, this.elem);
+    }
+
+    class Translation {
+        static initialize(context) {
+            $('.translation-nav', context).each(function() {
+                new Translation($(this));
+            });
         }
-        destroy() {
-            $(window).off('resize', this.place_elements);
-        }
-        place_elements() {
-            const window_width = $(window).width();
-            const window_sm = window_width <= 576;
-            const window_lg = window_width <= 992;
-            const in_navbar_content = $('#personaltools', this.navbar_content).length > 0;
-            if (window_sm) {
-                if (!in_navbar_content) {
-                    this.personal_tools.detach().appendTo(this.navbar_content);
-                }
-            } else if (in_navbar_content) {
-                this.personal_tools.detach().prependTo(this.header_content);
-                $(".dropdown-menu.show").removeClass('show');
-            }
-            if (window_lg) {
-                this.disable_horizontal_scrolling();
+        constructor(nav_elem) {
+            this.nav_elem = nav_elem;
+            this.fields_elem = nav_elem.next();
+            this.show_lang_handle = this.show_lang_handle.bind(this);
+            $('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($('li.error', nav_elem).length) {
+                $('li.error:first > a', nav_elem).click();
             } else {
-                this.navbar_content.removeClass('show');
-                this.enable_horizontal_scrolling();
+                $('li.active > a', nav_elem).click();
             }
+            this.fields_elem.show();
         }
-        disable_horizontal_scrolling() {
-            this.scrollable.each((i, item) => {
-                const scrollbar = $(item).data('scrollbar');
-                if (!scrollbar.disabled) {
-                    scrollbar.position = 0;
-                    scrollbar.disabled = true;
-                }
-            });
-        }
-        enable_horizontal_scrolling() {
-            this.scrollable.each((i, item) => {
-                const scrollbar = $(item).data('scrollbar');
-                if (scrollbar.disabled) {
-                    scrollbar.disabled = false;
-                }
-            });
+        show_lang_handle(evt) {
+            evt.preventDefault();
+            this.nav_elem.children().removeClass('active');
+            this.fields_elem.children().hide();
+            let elem = $(evt.currentTarget);
+            elem.parent().addClass('active');
+            $(elem.attr('href'), this.fields_elem).show();
         }
     }
 
@@ -1029,6 +1074,7 @@ var cone_app_protected = (function (exports, $, ts) {
         ts.ajax.register(Scrollbar.initialize, true);
         ts.ajax.register(Sidebar.initialize, true);
         ts.ajax.register(PersonalTools.initialize, true);
+        ts.ajax.register(LiveSearch.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1037,7 +1083,9 @@ var cone_app_protected = (function (exports, $, ts) {
     exports.BatchedItemsSize = BatchedItemsSize;
     exports.Colormode = Colormode;
     exports.CopySupport = CopySupport;
+    exports.GlobalEvents = GlobalEvents;
     exports.KeyBinder = KeyBinder;
+    exports.LiveSearch = LiveSearch;
     exports.PersonalTools = PersonalTools;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
@@ -1054,14 +1102,12 @@ var cone_app_protected = (function (exports, $, ts) {
     exports.batcheditems_handle_filter = batcheditems_handle_filter;
     exports.batcheditems_size_binder = batcheditems_size_binder;
     exports.createCookie = createCookie;
+    exports.global_events = global_events;
     exports.keys = keys;
     exports.readCookie = readCookie;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-
-    window.cone = window.cone || {};
-    Object.assign(window.cone, exports);
 
     window.createCookie = createCookie;
     window.readCookie = readCookie;

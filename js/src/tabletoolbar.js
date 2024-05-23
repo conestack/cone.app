@@ -1,7 +1,7 @@
 import {
     BatchedItemsSize,
     BatchedItemsSearch
-} from "./batcheditems.js";
+} from './batcheditems.js';
 
 export class TableToolbar {
 

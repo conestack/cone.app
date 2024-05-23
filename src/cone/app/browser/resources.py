@@ -95,16 +95,10 @@ cone_resources = wr.ResourceGroup(
     path='cone'
 )
 cone_resources.add(wr.ScriptResource(
-    name='cone-app-public-js',
+    name='cone-app-js',
     # depends='typeahead-js',
-    resource='cone.app.public.js',
-    compressed='cone.app.public.min.js'
-))
-cone_resources.add(wr.ScriptResource(
-    name='cone-app-protected-js',
-    depends='jquery-js',
-    resource='cone.app.protected.js',
-    compressed='cone.app.protected.min.js'
+    resource='cone.app.js',
+    compressed='cone.app.min.js'
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-css',
@@ -220,13 +214,6 @@ class ResourceRegistry(object):
         This function is a pyramid configurator directive and gets called from
         ``cone.app.main``.
         """
-        # configure default inclusion of cone protectes JS
-        self.set_resource_include(
-            config,
-            'cone-app-protected-js',
-            'authenticated'
-        )
-
         # configure default inclusion of yafowil resources
         yafowil_public = self._settings.get('yafowil.resources_public')
         if yafowil_public not in ['1', 'True', 'true']:

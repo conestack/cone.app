@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
+import {global_events} from './globals.js';
 
 export class PersonalTools extends ts.Events {
 
@@ -14,32 +15,45 @@ export class PersonalTools extends ts.Events {
     constructor(elem) {
         super();
         this.elem = elem;
-        this.personal_tools = $('#personaltools', this.elem);
-        this.navbar_content = $('#navbar-content', this.elem);
-        this.header_content = $('#header-content', this.elem);
-        this.scrollable = $('.scrollable-x', this.elem);
+        this.personal_tools = ts.query_elem('#personaltools', elem);
+        this.navbar_content = ts.query_elem('#navbar-content', elem);
+        this.header_content = ts.query_elem('#header-content', elem);
+        this.scrollbar = ts.query_elem('.scrollable-x', elem).data('scrollbar');
 
-        this.place_elements = this.place_elements.bind(this);
-        $(window).on('resize', this.place_elements);
-        this.place_elements();
+        this.render = this.render.bind(this);
+        $(window).on('resize', this.render);
 
-        ts.ajax.attach(this, this.elem);
+        this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
+        global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+
+        this.render();
+        ts.ajax.attach(this, elem);
     }
 
     destroy() {
-        $(window).off('resize', this.place_elements);
+        $(window).off('resize', this.render);
+        global_events.off('on_sidebar_resize', this.on_sidebar_resize);
     }
 
-    place_elements() {
+    on_sidebar_resize(inst) {
+        this.scrollbar.render();
+        this.scrollbar.position = this.scrollbar.position;
+    }
+
+    render() {
         const window_width = $(window).width();
         // boostrap 5 breakpoints
         const window_sm = window_width <= 576;
         const window_lg = window_width <= 992;
-        const in_navbar_content = $('#personaltools', this.navbar_content).length > 0;
+        const navbar_content = this.navbar_content;
+        const in_navbar_content = ts.query_elem(
+            '#personaltools',
+            navbar_content
+        ) !== null;
 
         if (window_sm) {
             if (!in_navbar_content) {
-                this.personal_tools.detach().appendTo(this.navbar_content);
+                this.personal_tools.detach().appendTo(navbar_content);
             }
         } else if (in_navbar_content) {
             this.personal_tools.detach().prependTo(this.header_content);
@@ -48,30 +62,26 @@ export class PersonalTools extends ts.Events {
         }
 
         if (window_lg) {
-            this.disable_horizontal_scrolling();
+            this.disable_scrolling();
         } else {
-            this.navbar_content.removeClass('show');
+            navbar_content.removeClass('show');
             // prevent content from expanding again on resize
-            this.enable_horizontal_scrolling();
+            this.enable_scrolling();
         }
     }
 
-    disable_horizontal_scrolling() {
-        this.scrollable.each((i, item) => {
-            const scrollbar = $(item).data('scrollbar');
-            if (!scrollbar.disabled) {
-                scrollbar.position = 0;
-                scrollbar.disabled = true;
-            }
-        });
+    disable_scrolling() {
+        const scrollbar = this.scrollbar;
+        if (!scrollbar.disabled) {
+            scrollbar.position = 0;
+            scrollbar.disabled = true;
+        }
     }
 
-    enable_horizontal_scrolling() {
-        this.scrollable.each((i, item) => {
-            const scrollbar = $(item).data('scrollbar');
-            if (scrollbar.disabled) {
-                scrollbar.disabled = false;
-            }
-        });
+    enable_scrolling() {
+        const scrollbar = this.scrollbar;
+        if (scrollbar.disabled) {
+            scrollbar.disabled = false;
+        }
     }
 }

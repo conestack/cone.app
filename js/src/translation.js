@@ -1,6 +1,5 @@
 import $ from 'jquery';
 
-
 export class Translation {
 
     static initialize(context) {

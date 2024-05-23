@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
+import {global_events} from './globals.js';
 
 export class Sidebar extends ts.Motion {
 
@@ -47,24 +48,26 @@ export class Sidebar extends ts.Motion {
         return this.elem.css('width') === '0px';
     }
 
-    on_click(evt) {
-        if (this.collapsed) {
-            this.expand();
-        } else {
-            this.collapse();
-        }
-    }
-
     collapse() {
         this.elem
             .removeClass('expanded')
             .addClass('collapsed');
+        global_events.trigger('on_sidebar_resize', this);
     }
 
     expand() {
         this.elem
             .removeClass('collapsed')
             .addClass('expanded');
+        global_events.trigger('on_sidebar_resize', this);
+    }
+
+    on_click(evt) {
+        if (this.collapsed) {
+            this.expand();
+        } else {
+            this.collapse();
+        }
     }
 
     move(evt) {
@@ -74,9 +77,11 @@ export class Sidebar extends ts.Motion {
         }
         this.sidebar_width = parseInt(evt.pageX);
         this.elem.css('width', this.sidebar_width);
+        global_events.trigger('on_sidebar_resize', this);
     }
 
     up() {
         this.scrollbar.disabled = false;
+        global_events.trigger('on_sidebar_resize', this);
     }
 }
