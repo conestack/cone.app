@@ -1,8 +1,8 @@
 Changes
 =======
 
-1.1a3 (unreleased)
-------------------
+1.1rc1 (unreleased)
+-------------------
 
 - ``node_info`` decorator stores name on node info instance.
   [rnix]

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-29 17:34+0100\n"
+"POT-Creation-Date: 2024-05-23 15:41+0200\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -19,12 +19,14 @@ msgstr ""
 "Generated-By: Babel 0.9.4\n"
 
 #. Default: No Title
-#: src/cone/app/model.py:153
+#: src/cone/app/model.py:161
 msgid "no_title"
 msgstr "Kein Titel"
 
 #. Default: Settings
-#: src/cone/app/model.py:247 src/cone/app/browser/layout.py:132
+#: src/cone/app/model.py:255 src/cone/app/browser/settings.py:43
+#: src/cone/app/browser/templates/settings_sidebar.pt:13
+#: src/cone/app/browser/templates/settings.pt:12
 msgid "settings"
 msgstr "Einstellungen"
 
@@ -49,78 +51,78 @@ msgid "role_manager"
 msgstr "Superuser"
 
 #. Default: Actions
-#: src/cone/app/browser/contents.py:119 src/cone/app/browser/contextmenu.py:141
+#: src/cone/app/browser/contents.py:120 src/cone/app/browser/contextmenu.py:141
 msgid "actions"
 msgstr "Aktionen"
 
 #. Default: Title
-#: src/cone/app/browser/contents.py:125
+#: src/cone/app/browser/contents.py:126
 #: src/cone/app/browser/referencebrowser.py:222
 msgid "title"
 msgstr "Titel"
 
 #. Default: Sort on title
-#: src/cone/app/browser/contents.py:127
+#: src/cone/app/browser/contents.py:128
 msgid "sort_on_title"
 msgstr "Sortiere nach Titel"
 
 #. Default: Creator
-#: src/cone/app/browser/contents.py:131
+#: src/cone/app/browser/contents.py:132
 msgid "creator"
 msgstr "Ersteller"
 
 #. Default: Sort on creator
-#: src/cone/app/browser/contents.py:133
+#: src/cone/app/browser/contents.py:134
 msgid "sort_on_creator"
 msgstr "Sortiere nach Ersteller"
 
 #. Default: Created
-#: src/cone/app/browser/contents.py:137
+#: src/cone/app/browser/contents.py:138
 msgid "created"
 msgstr "Erstellt"
 
 #. Default: Sort on created
-#: src/cone/app/browser/contents.py:139
+#: src/cone/app/browser/contents.py:140
 msgid "sort_on_created"
 msgstr "Sortiere nach Erstellt"
 
 #. Default: Modified
-#: src/cone/app/browser/contents.py:143
+#: src/cone/app/browser/contents.py:144
 msgid "modified"
 msgstr "Geändert"
 
 #. Default: Sort on modified
-#: src/cone/app/browser/contents.py:145
+#: src/cone/app/browser/contents.py:146
 msgid "sort_on_modified"
 msgstr "Sortiere nach Geändert"
 
 #. Default: No username given
-#: src/cone/app/browser/login.py:63
+#: src/cone/app/browser/login.py:45
 msgid "no_username_given"
 msgstr "Kein Benutzername angegeben"
 
 #. Default: Username
-#: src/cone/app/browser/login.py:64
+#: src/cone/app/browser/login.py:46
 msgid "username"
 msgstr "Benutzername"
 
 #. Default: No password given
-#: src/cone/app/browser/login.py:71
+#: src/cone/app/browser/login.py:53
 msgid "no_password_given"
 msgstr "Kein Passwort angegeben"
 
 #. Default: Password
-#: src/cone/app/browser/login.py:72
+#: src/cone/app/browser/login.py:54
 msgid "password"
 msgstr "Passwort"
 
 #. Default: Login
-#: src/cone/app/browser/login.py:92
+#: src/cone/app/browser/login.py:74
 msgid "login"
 msgstr "Anmelden"
 
 #. Default: Invalid Credentials
-#: src/cone/app/browser/login.py:107
+#: src/cone/app/browser/login.py:88
 msgid "invalid_credentials"
 msgstr "Anmeldung fehlgeschlagen"
 
@@ -187,7 +189,7 @@ msgid "pasting_items_failed"
 msgstr "${count} Objekte konnten nicht eingefügt werden"
 
 #. Default: Unknown
-#: src/cone/app/browser/utils.py:81
+#: src/cone/app/browser/utils.py:82
 msgid "unknown"
 msgstr "Unbekannt"
 
@@ -211,108 +213,103 @@ msgstr "Aktionen"
 msgid "browse"
 msgstr "Durchsuchen"
 
-#. Default: Error
-#: src/cone/app/browser/settings.py:29
-msgid "error"
-msgstr "Fehler"
-
 #. Default: One level up
-#: src/cone/app/browser/actions.py:231
+#: src/cone/app/browser/actions.py:268
 msgid "action_one_level_up"
 msgstr "Eine Ebene höher"
 
 #. Default: View
-#: src/cone/app/browser/actions.py:266
+#: src/cone/app/browser/actions.py:303
 msgid "action_view"
 msgstr "Anzeigen"
 
 #. Default: Listing
-#: src/cone/app/browser/actions.py:312
+#: src/cone/app/browser/actions.py:349
 msgid "action_listing"
 msgstr "Liste"
 
 #. Default: Sharing
-#: src/cone/app/browser/actions.py:334
+#: src/cone/app/browser/actions.py:371
 msgid "action_sharing"
 msgstr "Freigabe"
 
 #. Default: Edit
-#: src/cone/app/browser/actions.py:378
+#: src/cone/app/browser/actions.py:415
 msgid "action_edit"
 msgstr "Editieren"
 
 #. Default: Do you really want to delete this Item?
-#: src/cone/app/browser/actions.py:399
+#: src/cone/app/browser/actions.py:436
 msgid "delete_item_confirm"
 msgstr "Wollen Sie dieses Objekt wirklich löschen?"
 
 #. Default: Delete
-#: src/cone/app/browser/actions.py:401
+#: src/cone/app/browser/actions.py:438
 msgid "action_delete"
 msgstr "Löschen"
 
 #. Default: Do you really want to delete selected Items?
-#: src/cone/app/browser/actions.py:420
+#: src/cone/app/browser/actions.py:457
 msgid "delete_items_confirm"
 msgstr "Wollen Sie die ausgewählten Objekte wirklich löschen?"
 
 #. Default: Delete selected children
-#: src/cone/app/browser/actions.py:422
+#: src/cone/app/browser/actions.py:459
 msgid "action_delete_selected_children"
 msgstr "Wollen Sie die ausgewählten Objekte wirklich löschen?"
 
 #. Default: Cut
-#: src/cone/app/browser/actions.py:440
+#: src/cone/app/browser/actions.py:477
 msgid "action_cut"
 msgstr "Ausschneiden"
 
 #. Default: Copy
-#: src/cone/app/browser/actions.py:456
+#: src/cone/app/browser/actions.py:493
 msgid "action_copy"
 msgstr "Kopieren"
 
 #. Default: Paste
-#: src/cone/app/browser/actions.py:472
+#: src/cone/app/browser/actions.py:509
 msgid "action_paste"
 msgstr "Einfügen"
 
 #. Default: Move up
-#: src/cone/app/browser/actions.py:517
+#: src/cone/app/browser/actions.py:554
 msgid "move_up"
 msgstr "Nach oben verschieben"
 
 #. Default: Move down
-#: src/cone/app/browser/actions.py:532
+#: src/cone/app/browser/actions.py:569
 msgid "move_down"
 msgstr "Nach unten verschieben"
 
 #. Default: Logout
-#: src/cone/app/browser/layout.py:162
+#: src/cone/app/browser/layout.py:132
 msgid "logout"
 msgstr "Abmelden"
 
 #. Default: Navigation
-#: src/cone/app/browser/layout.py:356
+#: src/cone/app/browser/layout.py:321
 msgid "navigation"
 msgstr "Navigation"
 
 #. Default: English
-#: src/cone/app/browser/layout.py:507
+#: src/cone/app/browser/layout.py:479
 msgid "lang_en"
 msgstr "Englisch"
 
 #. Default: German
-#: src/cone/app/browser/layout.py:508
+#: src/cone/app/browser/layout.py:480
 msgid "lang_de"
 msgstr "Deutsch"
 
 #. Default: French
-#: src/cone/app/browser/layout.py:509
+#: src/cone/app/browser/layout.py:481
 msgid "lang_fr"
 msgstr "Französisch"
 
 #. Default: Italian
-#: src/cone/app/browser/layout.py:510
+#: src/cone/app/browser/layout.py:482
 msgid "lang_it"
 msgstr "Italienisch"
 
@@ -327,37 +324,37 @@ msgid "object_moving_not_permitted"
 msgstr "Sie haben nicht die Berechtigung um dieses Objekt zu verschieben"
 
 #. Default: Content Form Heading
-#: src/cone/app/browser/authoring.py:201
+#: src/cone/app/browser/authoring.py:216
 msgid "content_form_heading"
 msgstr "Content Formular Überschrift"
 
 #. Default: Unknown factory
-#: src/cone/app/browser/authoring.py:340
+#: src/cone/app/browser/authoring.py:363
 msgid "unknown_factory"
 msgstr "Unbekannt"
 
 #. Default: Add: ${title}
-#: src/cone/app/browser/authoring.py:381
+#: src/cone/app/browser/authoring.py:403
 msgid "add_form_heading"
 msgstr "Hinzufügen: ${title}"
 
 #. Default: Edit
-#: src/cone/app/browser/authoring.py:449
+#: src/cone/app/browser/authoring.py:479
 msgid "edit"
 msgstr "Editieren"
 
 #. Default: Edit: ${title}
-#: src/cone/app/browser/authoring.py:452
+#: src/cone/app/browser/authoring.py:482
 msgid "edit_form_heading"
 msgstr "Editieren: ${title}"
 
 #. Default: Object "${title}" not deletable
-#: src/cone/app/browser/authoring.py:507
+#: src/cone/app/browser/authoring.py:546
 msgid "object_not_deletable"
 msgstr "Objekt \"${title}\" kann nicht gelöscht werden"
 
 #. Default: Deleted: ${title}
-#: src/cone/app/browser/authoring.py:525
+#: src/cone/app/browser/authoring.py:564
 msgid "deleted_object"
 msgstr "Gelöscht: ${title}"
 
