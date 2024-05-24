@@ -16,7 +16,7 @@
 
         <a href="${item['url']}"
            tal:define="active item['selected'] and 'active' or ''"
-           class="link-light text-decoration-none rounded nav-link 
+           class="link-light text-decoration-none nav-link 
                   position-relative ${active}"
            ajax:bind="click"
            ajax:target="${item['target']}"

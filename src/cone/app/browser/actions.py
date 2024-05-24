@@ -274,7 +274,6 @@ class ActionUp(LinkAction):
     event = 'contextchanged:#layout'
     text = _('action_one_level_up', default='One level up')
     path = 'href'
-    css_class = 'nav-link py-0'
 
     @property
     def display(self):
@@ -311,7 +310,6 @@ class ActionView(LinkAction):
     text = _('action_view', default='View')
     href = LinkAction.target
     path = 'href'
-    css_class = 'p-0'
 
     @property
     def action(self):
@@ -356,7 +354,6 @@ class ActionList(LinkAction):
     action = 'listing:#content:inner'
     path = 'href'
     text = _('action_listing', default='Listing')
-    css_class = 'p-0'
 
     @property
     def href(self):
@@ -409,7 +406,6 @@ class ActionAdd(TileAction):
     """Add dropdown action.
     """
     tile = 'add_dropdown'
-    css_class = 'nav-link p-0'
 
     @property
     def display(self):
@@ -424,7 +420,6 @@ class ActionEdit(LinkAction):
     action = 'edit:#content:inner'
     path = 'href'
     text = _('action_edit', default='Edit')
-    css_class = 'p-0'
 
     @property
     def href(self):
@@ -448,7 +443,6 @@ class ActionDelete(LinkAction):
     confirm = _('delete_item_confirm',
                 default='Do you really want to delete this Item?')
     text = _('action_delete', default='Delete')
-    css_class = 'p-0'
 
     @property
     def display(self):

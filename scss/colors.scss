@@ -17,7 +17,7 @@ $color-mode-type: data;
     background-color: $dark;
   }
 
-  #navbar-content {
+  #navbar-content-wrapper {
     color: $light;
     background-color: $dark;
   }
@@ -44,7 +44,7 @@ $color-mode-type: data;
       background-color: $gray-100;
     }
 
-    #navbar-content {
+    #navbar-content-wrapper {
         color: $dark;
         background-color: $white;
     }

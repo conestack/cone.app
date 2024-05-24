@@ -80,25 +80,25 @@
                 replace="structure tile('personaltools')" />
 
               <button class="navbar-toggler border-0 shadow-none h-100"
-                      data-bs-target="#navbar-content"
+                      data-bs-target="#navbar-content-wrapper"
                       data-bs-toggle="collapse"
                       type="button">
                 <span class="navbar-toggler-icon"></span>
               </button>
 
-              <div id="navbar-content"
+              <div id="navbar-content-wrapper"
                    class="collapse shadow navbar-collapse p-3 p-lg-0">
+                <div id="navbar-content" class="d-flex align-items-center">
+                  <tal:mainmenu
+                    condition="config.mainmenu"
+                    replace="structure tile('mainmenu')" />
 
-                <tal:mainmenu
-                  condition="config.mainmenu"
-                  replace="structure tile('mainmenu')" />
+                  <tal:livesearch
+                    condition="config.livesearch"
+                    replace="structure tile('livesearch')" />
 
-                <tal:livesearch
-                  condition="config.livesearch"
-                  replace="structure tile('livesearch')" />
-
-                <tal:language replace="structure tile('language')" />
-
+                  <tal:language replace="structure tile('language')" />
+                </div>
               </div>
             </div>
 
