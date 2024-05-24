@@ -335,10 +335,11 @@ body {
     #field-loginform-user, #field-loginform-password {
         display: grid;
         grid-template-columns: 1fr 2fr;
+        margin-bottom: 0.5rem;
     }
 
     #input-loginform-login {
-        margin-top: 2rem;
+        margin-top: 1.5rem;
         width: 200px;
     }
 }

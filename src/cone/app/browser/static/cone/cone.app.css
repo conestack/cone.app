@@ -40,9 +40,6 @@
   color: #212529;
   background-color: #fff;
 }
-[data-bs-theme=light] #input-loginform-login {
-  color: #f8f9fa;
-}
 
 /* import everything where we need changed bootstrap variables for here */
 :root {
@@ -343,8 +340,9 @@ body {
 #form-loginform #field-loginform-user, #form-loginform #field-loginform-password {
   display: grid;
   grid-template-columns: 1fr 2fr;
+  margin-bottom: 0.5rem;
 }
 #form-loginform #input-loginform-login {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   width: 200px;
 }
