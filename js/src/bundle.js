@@ -6,6 +6,7 @@ import {
     BatchedItemsSearch
 } from './batcheditems.js';
 import {Colormode} from './colormode.js';
+import {ColorToggler} from './colormode.js';
 import {CopySupport} from './copysupport.js';
 import {KeyBinder} from './keybinder.js';
 import {LiveSearch} from './livesearch.js';
@@ -38,6 +39,7 @@ export * from './utils.js';
 
 $(function() {
     new KeyBinder();
+    new Colormode();
 
     ts.ajax.register(BatchedItemsSize.initialize, true);
     ts.ajax.register(BatchedItemsSearch.initialize, true);
@@ -47,7 +49,7 @@ $(function() {
     ts.ajax.register(Sharing.initialize, true);
     ts.ajax.register(TableToolbar.initialize, true);
     ts.ajax.register(Translation.initialize, true);
-    ts.ajax.register(Colormode.initialize, true);
+    ts.ajax.register(ColorToggler.initialize, true);
     ts.ajax.register(Scrollbar.initialize, true);
     ts.ajax.register(Sidebar.initialize, true);
     ts.ajax.register(PersonalTools.initialize, true);
