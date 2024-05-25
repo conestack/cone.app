@@ -1,5 +1,6 @@
-<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-           omit-tag="True">
+<tal:personaltools
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  omit-tag="True">
 
   <div id="personaltools"
        class="d-flex align-self-stretch h-100 flex-direction-row">
@@ -9,8 +10,8 @@
     <div id="personaltools-dropdown"
          class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0">
 
-      <div class="h-100 dropdown-toggle d-flex justify-content-end justify-content-end-sm-center
-                  align-items-center"
+      <div class="h-100 dropdown-toggle d-flex justify-content-end
+                  justify-content-end-sm-center align-items-center"
            data-bs-toggle="dropdown">
         <a href="#"
            class="nav-link d-inline-block px-0 px-md-3">
@@ -19,17 +20,17 @@
         </a>
       </div>
 
-      <ul class="dropdown-menu rounded-0 rounded-bottom dropdown-menu-end mt-2 mt-sm-0" role="menu">
-
+      <ul role="menu"
+          class="dropdown-menu rounded-0 rounded-bottom
+                 dropdown-menu-end mt-2 mt-sm-0">
         <li tal:repeat="item context.items">
-            <div class="dropdown-item">
-              <tal:action replace="structure item" />
-            </div>
+          <div class="dropdown-item">
+            <tal:action replace="structure item" />
+          </div>
         </li>
-
       </ul>
 
     </div>
   </div>
 
-</tal:block>
+</tal:personaltools>

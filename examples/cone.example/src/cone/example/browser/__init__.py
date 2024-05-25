@@ -1,10 +1,6 @@
 from cone.app.browser.layout import ProtectedContentTile
 from cone.example.model import ExampleNode
 from cone.tile import tile
-from pyramid.static import static_view
-
-
-#static_resources = static_view('static', use_subpath=True)
 
 
 @tile(name='content',
