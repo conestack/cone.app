@@ -1,3 +1,7 @@
+##############################################################################
+# custom bootstrap
+##############################################################################
+
 # The bootstrap SCSS root source file.
 # Default: scss/styles.scss
 SCSS_BOOTSTRAP_SOURCE?=scss/bootstrap/bootstrap.scss
@@ -14,3 +18,16 @@ SCSS_BOOTSTRAP_MIN_TARGET?=src/cone/app/browser/static/bootstrap/css/bootstrap.m
 bootstrap: $(NPM_TARGET)
 	@sass $(SCSS_OPTIONS) $(SCSS_BOOTSTRAP_SOURCE) $(SCSS_BOOTSTRAP_TARGET)
 	@sass $(SCSS_OPTIONS) --style compressed $(SCSS_BOOTSTRAP_SOURCE) $(SCSS_BOOTSTRAP_MIN_TARGET)
+
+##############################################################################
+# example
+##############################################################################
+
+.PHONY: install-example
+install-example: install
+	@$(PYTHON_PACKAGE_COMMAND) install -e examples/cone.example
+
+.PHONY: run-example
+run-example:
+	@cd examples/cone.example
+	@../../venv/bin/pserve example.ini
