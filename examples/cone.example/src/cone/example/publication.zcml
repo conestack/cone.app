@@ -1,0 +1,54 @@
+<configure xmlns="http://namespaces.repoze.org/bfg"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.example">
+
+  <include package="repoze.workflow" file="meta.zcml"/>
+
+  <workflow type="publication"
+            name="Publication Workflow"
+            state_attr="state"
+            initial_state="private"
+            content_types=".model.EntryFolder"
+            permission_checker="cone.app.workflow.permission_checker">
+
+    <state name="private"
+           title="Private"
+           i18n:attributes="name">
+
+      <key name="description"
+           value="Object is private"
+           i18n:attributes="value" />
+    </state>
+
+    <state name="public"
+           title="Public"
+           i18n:attributes="name">
+
+      <key name="description"
+           value="Object is public"
+           i18n:attributes="value" />
+    </state>
+
+    <transition
+       name="private_to_public"
+       title="Publish"
+       callback="cone.app.workflow.persist_state"
+       from_state="private"
+       to_state="public"
+       permission="change_state"
+       i18n:attributes="name"
+    />
+
+    <transition
+       name="public_to_private"
+       title="Retract"
+       callback="cone.app.workflow.persist_state"
+       from_state="public"
+       to_state="private"
+       permission="change_state"
+       i18n:attributes="name"
+    />
+
+  </workflow>
+
+</configure>

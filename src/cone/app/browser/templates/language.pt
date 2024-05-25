@@ -22,15 +22,14 @@
         class="dropdown-menu rounded-0 rounded-bottom
                dropdown-menu-end mt-2 mt-sm-0">
       <li tal:repeat="lang context.languages">
-        <div class="dropdown-item">
-          <a href="#"
-             ajax:bind="click"
-             ajax:target="${lang.target}"
-             ajax:action="change_language:NONE:NONE">
-            <span class="${lang.icon}"></span>
-            <tal:title replace="lang.title" />
-          </a>
-        </div>
+        <a href="#"
+           class="${lang.css}"
+           ajax:bind="click"
+           ajax:target="${lang.target}"
+           ajax:action="change_language:NONE:NONE">
+          <span class="${lang.icon}"></span>
+          <tal:title replace="lang.title" />
+        </a>
       </li>
     </ul>
 

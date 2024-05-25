@@ -10,14 +10,8 @@ import uuid
 def create_app_data():
     """Create example application data"""
     # register plugin entry nodes
-    root = get_root()
-    for i in range(10):
-        name = str(uuid.uuid4())[:8]
-        register_entry(name, EntryFolder)
-        folder = root[name]
-        title = folder.attrs['title'] = Translation()
-        title['en'] = f'Folder {i}'
-        title['de'] = f'Ordner {i}'
+    for i in range(1, 11):
+        register_entry(f'folder_{i}', EntryFolder)
 
 
 @main_hook

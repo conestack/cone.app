@@ -24,9 +24,7 @@
           class="dropdown-menu rounded-0 rounded-bottom
                  dropdown-menu-end mt-2 mt-sm-0">
         <li tal:repeat="item context.items">
-          <div class="dropdown-item">
-            <tal:action replace="structure item" />
-          </div>
+          <tal:action replace="structure item" />
         </li>
       </ul>
 

@@ -2,17 +2,19 @@
            omit-tag="True">
 
   <li class="nav-item dropdown py-0">
-    <a class="nav-link dropdown-toggle py-2 px-3" href="#" role="button" data-bs-toggle="dropdown">
+    <a href="#"
+       role="button"
+       class="nav-link dropdown-toggle py-2 px-3"
+       data-bs-toggle="dropdown">
       <span tal:condition="context.icon"
             class="${context.icon}"></span>
       <span tal:content="context.title">Title</span>
       <span class="caret"></span>
     </a>
+
     <ul class="dropdown-menu rounded-0 rounded-bottom mt-0">
       <li tal:repeat="action context.values()">
-        <div class="dropdown-item">
-          <tal:action replace="structure action(model, request)" />
-        </div>
+        <tal:action replace="structure action(model, request)" />
       </li>
     </ul>
   </li>

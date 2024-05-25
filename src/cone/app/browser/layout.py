@@ -1,9 +1,9 @@
 from cone.app import cfg
 from cone.app import layout_config
-from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import get_action_context
-from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -16,15 +16,16 @@ from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
 from cone.app.utils import node_path
-from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
+from cone.tile import Tile
 from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
-from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
+from pyramid.i18n import negotiate_locale_name
+from pyramid.i18n import TranslationStringFactory
 import warnings
 
 
@@ -139,6 +140,7 @@ class LogoutAction(LinkAction):
     icon = 'ion-log-out'
     bind = None
     target = None
+    css = 'dropdown-item'
 
     @property
     def href(self):
@@ -512,6 +514,7 @@ class Language(LanguageTile):
     def languages(self):
         languages = list()
         localizer = get_localizer(self.request)
+        current = negotiate_locale_name(self.request)
         for lang in cfg.available_languages:
             target = make_url(
                 self.request,
@@ -522,7 +525,8 @@ class Language(LanguageTile):
             languages.append({
                 'target': target,
                 'icon': 'icon-lang-{}'.format(lang),
-                'title': title
+                'title': title,
+                'css': f'dropdown-item{" active" if lang == current else ""}'
             })
         return languages
 
