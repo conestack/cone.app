@@ -7,6 +7,8 @@
 
     <tal:colortoggler replace="structure tile('colortoggler')" />
 
+    <tal:language replace="structure tile('language')" />
+
     <div id="personaltools-dropdown"
          class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0">
 

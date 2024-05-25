@@ -193,37 +193,42 @@ body {
         #livesearch {
             order: 1;
             width: 100%;
-            padding-left: 40px!important;
+            padding-left: 40px !important;
         }
     }
     @include media-breakpoint-down(sm) {
+        #personaltools {
+            flex-direction: row-reverse;
+        }
         #personaltools > div {
-            padding: 5px 0;
-            width: 50%;
-            display:inline-flex!important; 
+            padding-left: 15px !important;
+            padding-right: 5px !important;
         }
         #personaltools-dropdown {
-            flex-direction: column;
-
-            .dropdown-menu {
-                position: relative;
-                width: 200%;
-                transform: translateX(-50%);
-            }
+            order: 1;
+        }
+        #language-dropdown {
+            order: 2;
+        }
+        #colortoggler {
+            order: 3;
         }
     }
     @include media-breakpoint-up(lg) {
         #navbar-content-wrapper {
-            box-shadow:none!important;
+            box-shadow: none !important;
         }
         #navbar-content-wrapper, #navbar-content, #mainmenu {
             height: 100%;
         }
         #personaltools-dropdown {
-            order:2;
+            order: 3;
+        }
+        #language-dropdown {
+            order: 2;
         }
         #colortoggler {
-            order:1;
+            order: 1;
         }
     }
     @include media-breakpoint-between(lg, xxl) {

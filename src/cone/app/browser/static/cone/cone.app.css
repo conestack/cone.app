@@ -214,18 +214,21 @@ body {
   }
 }
 @media (max-width: 575.98px) {
+  #header-main #personaltools {
+    flex-direction: row-reverse;
+  }
   #header-main #personaltools > div {
-    padding: 5px 0;
-    width: 50%;
-    display: inline-flex !important;
+    padding-left: 15px !important;
+    padding-right: 5px !important;
   }
   #header-main #personaltools-dropdown {
-    flex-direction: column;
+    order: 1;
   }
-  #header-main #personaltools-dropdown .dropdown-menu {
-    position: relative;
-    width: 200%;
-    transform: translateX(-50%);
+  #header-main #language-dropdown {
+    order: 2;
+  }
+  #header-main #colortoggler {
+    order: 3;
   }
 }
 @media (min-width: 992px) {
@@ -236,6 +239,9 @@ body {
     height: 100%;
   }
   #header-main #personaltools-dropdown {
+    order: 3;
+  }
+  #header-main #language-dropdown {
     order: 2;
   }
   #header-main #colortoggler {

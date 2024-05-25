@@ -97,8 +97,6 @@
                   <tal:livesearch
                     condition="config.livesearch"
                     replace="structure tile('livesearch')" />
-
-                  <tal:language replace="structure tile('language')" />
                 </div>
               </div>
             </div>
