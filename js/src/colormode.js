@@ -2,16 +2,7 @@ import ts from 'treibstoff';
 
 export class ColorMode {
 
-    static set_theme(theme) {
-        const elem = document.documentElement;
-        if (theme === 'auto' && this.query.matches) {
-            elem.setAttribute('data-bs-theme', 'dark');
-        } else {
-            elem.setAttribute('data-bs-theme', theme);
-        }
-    }
-
-    static get query() {
+    static get media_query() {
         return window.matchMedia('(prefers-color-scheme: dark)');
     }
 
@@ -27,19 +18,32 @@ export class ColorMode {
         if (this.stored_theme) {
             return this.stored_theme;
         }
-        return this.query.matches ? 'dark' : 'light';
+        return this.media_query.matches ? 'dark' : 'light';
+    }
+
+    static watch(handle) {
+        this.media_query.addEventListener('change', handle);
+    }
+
+    static set_theme(theme) {
+        const elem = document.documentElement;
+        if (theme === 'auto' && this.media_query.matches) {
+            elem.setAttribute('data-bs-theme', 'dark');
+        } else {
+            elem.setAttribute('data-bs-theme', theme);
+        }
     }
 
     constructor() {
         this.bind();
-        this.constructor.set_theme(this.constructor.preferred_theme);
+        ColorMode.set_theme(ColorMode.preferred_theme);
     }
 
     bind() {
-        const stored_theme = this.stored_theme;
-        this.constructor.query.addEventListener('change', () => {
+        ColorMode.watch(() => {
+            const stored_theme = this.stored_theme;
             if (stored_theme !== 'light' || stored_theme !== 'dark') {
-                this.constructor.set_theme(this.constructor.preferred_theme);
+                ColorMode.set_theme(ColorMode.preferred_theme);
             }
         });
     }
@@ -58,7 +62,7 @@ export class ColorToggler extends ts.ChangeListener {
     constructor(elem) {
         super({elem: elem});
         this.update();
-        ColorMode.query.addEventListener('change', () => {
+        ColorMode.watch(() => {
             this.update();
         });
     }
