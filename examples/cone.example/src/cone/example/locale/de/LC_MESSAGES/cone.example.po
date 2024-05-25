@@ -1,0 +1,40 @@
+#
+# SOME DESCRIPTIVE TITLE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE 1.0\n"
+"POT-Creation-Date: 2024-05-25 18:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Lingua 4.15.0\n"
+
+#: examples/cone.example/src/cone/example/publication.zcml:14
+msgid "private"
+msgstr "Privat"
+
+#: examples/cone.example/src/cone/example/publication.zcml:19
+msgid "Object is private"
+msgstr "Object ist privat"
+
+#: examples/cone.example/src/cone/example/publication.zcml:23
+msgid "public"
+msgstr "Öffentlich"
+
+#: examples/cone.example/src/cone/example/publication.zcml:28
+msgid "Object is public"
+msgstr "Objekt ist öffentlich"
+
+#: examples/cone.example/src/cone/example/publication.zcml:33
+msgid "private_to_public"
+msgstr "veröffentlichen"
+
+#: examples/cone.example/src/cone/example/publication.zcml:43
+msgid "public_to_private"
+msgstr "zurückziehen"

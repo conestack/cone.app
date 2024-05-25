@@ -239,6 +239,10 @@ LINGUA_SEARCH_PATH?=src/cone/app
 # No default value.
 LINGUA_PLUGINS?=
 
+# Command line options passed to `pot-create`
+# No default value.
+LINGUA_OPTIONS?=
+
 ##############################################################################
 # END SETTINGS - DO NOT EDIT BELOW THIS LINE
 ##############################################################################
@@ -757,7 +761,7 @@ PHONY: lingua-extract
 lingua-extract: $(LINGUA_TARGET)
 	@echo "Extract messages"
 	@pot-create \
-		"$(LINGUA_SEARCH_PATH)" \
+		"$(LINGUA_SEARCH_PATH)" $(LINGUA_OPTIONS) \
 		-o "$(GETTEXT_LOCALES_PATH)/$(GETTEXT_DOMAIN).pot"
 
 PHONY: lingua

@@ -23,11 +23,28 @@ bootstrap: $(NPM_TARGET)
 # example
 ##############################################################################
 
-.PHONY: install-example
-install-example: install
+.PHONY: example-install
+example-install: install
 	@$(PYTHON_PACKAGE_COMMAND) install -e examples/cone.example
 
-.PHONY: run-example
-run-example:
+.PHONY: example-run
+example-run:
 	@cd examples/cone.example
 	@../../venv/bin/pserve example.ini
+
+EXAMPLE_GETTEXT_LOCALES_PATH=examples/cone.example/src/cone/example/locale
+EXAMPLE_GETTEXT_DOMAIN=cone.example
+EXAMPLE_GETTEXT_LANGUAGES=en de
+EXAMPLE_LINGUA_SEARCH_PATH=examples/cone.example/src/cone/example
+EXAMPLE_LINGUA_OPTIONS="-c examples/cone.example/lingua.cfg"
+OS:=$(OS)
+
+PHONY: example-lingua
+example-lingua:
+	make OS=$(OS) \
+		GETTEXT_LOCALES_PATH=$(EXAMPLE_GETTEXT_LOCALES_PATH) \
+		GETTEXT_DOMAIN=$(EXAMPLE_GETTEXT_DOMAIN) \
+		GETTEXT_LANGUAGES="$(EXAMPLE_GETTEXT_LANGUAGES)" \
+		LINGUA_SEARCH_PATH=$(EXAMPLE_LINGUA_SEARCH_PATH) \
+		LINGUA_OPTIONS=$(EXAMPLE_LINGUA_OPTIONS) \
+		lingua

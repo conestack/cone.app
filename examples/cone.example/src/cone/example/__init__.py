@@ -19,11 +19,10 @@ def example_main_hook(config, global_config, local_config):
     """Function which gets called at application startup to initialize
     this plugin.
     """
-    create_app_data()
+    # add translation
+    config.add_translation_dirs('cone.example:locale/')
 
-    # register plugin entry node
-    #for i in range(10):
-    #    register_entry(f'node_{i}', ExampleNode)
+    create_app_data()
 
     # scan browser package
     config.scan('cone.example.browser')
