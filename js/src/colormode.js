@@ -1,16 +1,17 @@
 import ts from 'treibstoff';
 
-export class Colormode extends ts.ChangeListener {
+export class ColorMode {
 
-    static set_theme(theme, elem) {
-        if (theme === 'auto' && this.match_media.matches) {
-            elem.get(0).setAttribute('data-bs-theme', 'dark');
+    static set_theme(theme) {
+        const elem = document.documentElement;
+        if (theme === 'auto' && this.query.matches) {
+            elem.setAttribute('data-bs-theme', 'dark');
         } else {
-            elem.get(0).setAttribute('data-bs-theme', theme);
+            elem.setAttribute('data-bs-theme', theme);
         }
     }
 
-    static get match_media() {
+    static get query() {
         return window.matchMedia('(prefers-color-scheme: dark)');
     }
 
@@ -26,20 +27,19 @@ export class Colormode extends ts.ChangeListener {
         if (this.stored_theme) {
             return this.stored_theme;
         }
-        return this.match_media.matches ? 'dark' : 'light';
+        return this.query.matches ? 'dark' : 'light';
     }
 
     constructor() {
-        super({elem: $(document.documentElement)});
         this.bind();
-        this.constructor.set_theme(this.constructor.preferred_theme, this.elem);
+        this.constructor.set_theme(this.constructor.preferred_theme);
     }
 
     bind() {
         const stored_theme = this.stored_theme;
-        this.constructor.match_media.addEventListener('change', () => {
+        this.constructor.query.addEventListener('change', () => {
             if (stored_theme !== 'light' || stored_theme !== 'dark') {
-                this.constructor.set_theme(this.constructor.preferred_theme, this.elem);
+                this.constructor.set_theme(this.constructor.preferred_theme);
             }
         });
     }
@@ -58,24 +58,25 @@ export class ColorToggler extends ts.ChangeListener {
     constructor(elem) {
         super({elem: elem});
         this.update();
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        ColorMode.query.addEventListener('change', () => {
             this.update();
         });
     }
 
     update() {
-        const preferred_theme = Colormode.preferred_theme;
-        if (preferred_theme === 'dark' && !this.elem.is(':checked')) {
-            this.elem.get(0).checked = true;
-        } else if (preferred_theme == 'light' && this.elem.is(':checked')) {
-            this.elem.get(0).checked = false;
+        const preferred_theme = ColorMode.preferred_theme;
+        const elem = this.elem;
+        const checked = elem.is(':checked');
+        if (preferred_theme === 'dark' && !checked) {
+            elem.prop('checked', true);
+        } else if (preferred_theme === 'light' && checked) {
+            elem.prop('checked', false);
         }
     }
 
     on_change() {
-        const document_elem = $(document.documentElement);
         const theme = this.elem.is(':checked') ? 'dark' : 'light';
-        Colormode.set_theme(theme, document_elem);
-        Colormode.stored_theme = theme;
+        ColorMode.set_theme(theme);
+        ColorMode.stored_theme = theme;
     }
 }

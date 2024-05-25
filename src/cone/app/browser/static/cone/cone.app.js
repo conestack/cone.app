@@ -1,4 +1,4 @@
-var cone = (function (exports, $$1, ts) {
+var cone = (function (exports, $, ts) {
     'use strict';
 
     class BatchedItemsFilter {
@@ -33,8 +33,8 @@ var cone = (function (exports, $$1, ts) {
     class BatchedItemsSize extends BatchedItemsFilter {
         static initialize(context,
                           selector='.batched_items_slice_size select') {
-            $$1(selector, context).each(function() {
-                new BatchedItemsSize($$1(this));
+            $(selector, context).each(function() {
+                new BatchedItemsSize($(this));
             });
         }
         constructor(elem) {
@@ -42,7 +42,7 @@ var cone = (function (exports, $$1, ts) {
             elem.off('change').on('change', this.change_handle.bind(this));
         }
         change_handle(evt) {
-            let option = $$1('option:selected', this.elem).first();
+            let option = $('option:selected', this.elem).first();
             this.set_filter(option.val());
         }
     }
@@ -50,8 +50,8 @@ var cone = (function (exports, $$1, ts) {
         static initialize(context,
                           selector='.batched_items_filter input',
                           name='term') {
-            $$1(selector, context).each(function() {
-                new BatchedItemsSearch($$1(this), name);
+            $(selector, context).each(function() {
+                new BatchedItemsSearch($(this), name);
             });
         }
         constructor(elem, name) {
@@ -106,15 +106,16 @@ var cone = (function (exports, $$1, ts) {
         BatchedItemsSearch.initialize(context, filter_selector, filter_name);
     }
 
-    class Colormode extends ts.ChangeListener {
-        static set_theme(theme, elem) {
-            if (theme === 'auto' && this.match_media.matches) {
-                elem.get(0).setAttribute('data-bs-theme', 'dark');
+    class ColorMode {
+        static set_theme(theme) {
+            const elem = document.documentElement;
+            if (theme === 'auto' && this.query.matches) {
+                elem.setAttribute('data-bs-theme', 'dark');
             } else {
-                elem.get(0).setAttribute('data-bs-theme', theme);
+                elem.setAttribute('data-bs-theme', theme);
             }
         }
-        static get match_media() {
+        static get query() {
             return window.matchMedia('(prefers-color-scheme: dark)');
         }
         static get stored_theme() {
@@ -127,18 +128,17 @@ var cone = (function (exports, $$1, ts) {
             if (this.stored_theme) {
                 return this.stored_theme;
             }
-            return this.match_media.matches ? 'dark' : 'light';
+            return this.query.matches ? 'dark' : 'light';
         }
         constructor() {
-            super({elem: $(document.documentElement)});
             this.bind();
-            this.constructor.set_theme(this.constructor.preferred_theme, this.elem);
+            this.constructor.set_theme(this.constructor.preferred_theme);
         }
         bind() {
             const stored_theme = this.stored_theme;
-            this.constructor.match_media.addEventListener('change', () => {
+            this.constructor.query.addEventListener('change', () => {
                 if (stored_theme !== 'light' || stored_theme !== 'dark') {
-                    this.constructor.set_theme(this.constructor.preferred_theme, this.elem);
+                    this.constructor.set_theme(this.constructor.preferred_theme);
                 }
             });
         }
@@ -154,23 +154,24 @@ var cone = (function (exports, $$1, ts) {
         constructor(elem) {
             super({elem: elem});
             this.update();
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            ColorMode.query.addEventListener('change', () => {
                 this.update();
             });
         }
         update() {
-            const preferred_theme = Colormode.preferred_theme;
-            if (preferred_theme === 'dark' && !this.elem.is(':checked')) {
-                this.elem.get(0).checked = true;
-            } else if (preferred_theme == 'light' && this.elem.is(':checked')) {
-                this.elem.get(0).checked = false;
+            const preferred_theme = ColorMode.preferred_theme;
+            const elem = this.elem;
+            const checked = elem.is(':checked');
+            if (preferred_theme === 'dark' && !checked) {
+                elem.prop('checked', true);
+            } else if (preferred_theme === 'light' && checked) {
+                elem.prop('checked', false);
             }
         }
         on_change() {
-            const document_elem = $(document.documentElement);
             const theme = this.elem.is(':checked') ? 'dark' : 'light';
-            Colormode.set_theme(theme, document_elem);
-            Colormode.stored_theme = theme;
+            ColorMode.set_theme(theme);
+            ColorMode.stored_theme = theme;
         }
     }
 
@@ -182,15 +183,15 @@ var cone = (function (exports, $$1, ts) {
             this.cut_cookie = 'cone.app.copysupport.cut';
             this.copy_cookie = 'cone.app.copysupport.copy';
             this.context = context;
-            this.paste_action = $$1('a#toolbaraction-paste', context);
+            this.paste_action = $('a#toolbaraction-paste', context);
             this.paste_action.off('click').on('click', this.handle_paste.bind(this));
-            this.copyable = $$1('table tr.selectable.copysupportitem', context);
+            this.copyable = $('table tr.selectable.copysupportitem', context);
             if (!this.copyable.length) {
                 return;
             }
-            this.cut_action = $$1('a#toolbaraction-cut', context);
+            this.cut_action = $('a#toolbaraction-cut', context);
             this.cut_action.off('click').on('click', this.handle_cut.bind(this));
-            this.copy_action = $$1('a#toolbaraction-copy', context);
+            this.copy_action = $('a#toolbaraction-copy', context);
             this.copy_action.off('click').on('click', this.handle_copy.bind(this));
             this.selectable = this.copyable.selectable({
                 on_firstclick: this.on_firstclick.bind(this),
@@ -204,17 +205,17 @@ var cone = (function (exports, $$1, ts) {
         on_select(selectable) {
         }
         write_selected_to_cookie(name) {
-            let selected = $$1(this.selectable.selected);
+            let selected = $(this.selectable.selected);
             let ids = new Array();
             selected.each(function() {
-                ids.push($$1(this).attr('ajax:target'));
+                ids.push($(this).attr('ajax:target'));
             });
             let cookie = ids.join('::');
             ts.create_cookie(name, cookie);
             if (cookie.length) {
-                $$1(this.paste_action).removeClass('disabled');
+                $(this.paste_action).removeClass('disabled');
             } else {
-                $$1(this.paste_action).addClass('disabled');
+                $(this.paste_action).addClass('disabled');
             }
         }
         read_selected_from_cookie(name, css) {
@@ -225,8 +226,8 @@ var cone = (function (exports, $$1, ts) {
             let ids = cookie.split('::');
             let that = this;
             let elem, target;
-            $$1('table tr.selectable', this.context).each(function() {
-                elem = $$1(this);
+            $('table tr.selectable', this.context).each(function() {
+                elem = $(this);
                 target = elem.attr('ajax:target');
                 for (let idx in ids) {
                     if (ids[idx] == target) {
@@ -245,7 +246,7 @@ var cone = (function (exports, $$1, ts) {
             ts.create_cookie(this.copy_cookie, '', 0);
             this.write_selected_to_cookie(this.cut_cookie);
             this.copyable.removeClass('copysupport_cut');
-            $$1(this.selectable.selected).addClass('copysupport_cut');
+            $(this.selectable.selected).addClass('copysupport_cut');
         }
         handle_copy(evt) {
             evt.preventDefault();
@@ -255,7 +256,7 @@ var cone = (function (exports, $$1, ts) {
         }
         handle_paste(evt) {
             evt.preventDefault();
-            let elem = $$1(evt.currentTarget);
+            let elem = $(evt.currentTarget);
             if (elem.hasClass('disabled')) {
                 return;
             }
@@ -276,8 +277,8 @@ var cone = (function (exports, $$1, ts) {
     };
     class KeyBinder {
         constructor() {
-            $$1(window).on('keydown', this.key_down.bind(this));
-            $$1(window).on('keyup', this.key_up.bind(this));
+            $(window).on('keydown', this.key_down.bind(this));
+            $(window).on('keyup', this.key_up.bind(this));
         }
         key_down(e) {
             switch (e.keyCode || e.which) {
@@ -353,14 +354,14 @@ var cone = (function (exports, $$1, ts) {
             this.header_content = ts.query_elem('#header-content', elem);
             this.scrollbar = ts.query_elem('.scrollable-x', elem).data('scrollbar');
             this.render = this.render.bind(this);
-            $$1(window).on('resize', this.render);
+            $(window).on('resize', this.render);
             this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
             global_events.on('on_sidebar_resize', this.on_sidebar_resize);
             this.render();
             ts.ajax.attach(this, elem);
         }
         destroy() {
-            $$1(window).off('resize', this.render);
+            $(window).off('resize', this.render);
             global_events.off('on_sidebar_resize', this.on_sidebar_resize);
         }
         on_sidebar_resize(inst) {
@@ -368,7 +369,7 @@ var cone = (function (exports, $$1, ts) {
             this.scrollbar.position = this.scrollbar.position;
         }
         render() {
-            const window_width = $$1(window).width();
+            const window_width = $(window).width();
             const window_sm = window_width <= 576;
             const window_lg = window_width <= 992;
             const navbar_content = this.navbar_content;
@@ -382,7 +383,7 @@ var cone = (function (exports, $$1, ts) {
                 }
             } else if (in_navbar_content) {
                 this.personal_tools.detach().prependTo(this.header_content);
-                $$1(".dropdown-menu.show").removeClass('show');
+                $(".dropdown-menu.show").removeClass('show');
             }
             if (window_lg) {
                 this.disable_scrolling();
@@ -417,11 +418,11 @@ var cone = (function (exports, $$1, ts) {
             }
             let ol = ol_elem.data('overlay'),
                 target = ol.ref_target;
-            $$1('a.addreference', context).each(function() {
-                new AddReferenceHandle($$1(this), target, ol);
+            $('a.addreference', context).each(function() {
+                new AddReferenceHandle($(this), target, ol);
             });
-            $$1('a.removereference', context).each(function() {
-                new RemoveReferenceHandle($$1(this), target, ol);
+            $('a.removereference', context).each(function() {
+                new RemoveReferenceHandle($(this), target, ol);
             });
         }
         constructor(elem, target, overlay) {
@@ -437,7 +438,7 @@ var cone = (function (exports, $$1, ts) {
             return this.target_tag == 'SELECT';
         }
         toggle_enabled(elem) {
-            $$1('a', elem.parent()).toggleClass('disabled');
+            $('a', elem.parent()).toggleClass('disabled');
         }
         reset_selected(elem) {
             let selected = new Array();
@@ -445,15 +446,15 @@ var cone = (function (exports, $$1, ts) {
                 selected.push(elem.attr('value'));
             }
             if (this.multi_value()) {
-                $$1('[selected=selected]', elem).each(function() {
-                    selected.push($$1(this).attr('value'));
+                $('[selected=selected]', elem).each(function() {
+                    selected.push($(this).attr('value'));
                 });
             }
             this.set_selected_on_ajax_target(elem.parent(), selected);
             let overlay = this.overlay;
             let that = this;
-            $$1('div.referencebrowser a', overlay.elem).each(function() {
-                let link = $$1(this);
+            $('div.referencebrowser a', overlay.elem).each(function() {
+                let link = $(this);
                 if (link.attr('ajax:target')) {
                     that.set_selected_on_ajax_target(link, selected);
                 }
@@ -480,20 +481,20 @@ var cone = (function (exports, $$1, ts) {
             let target = this.target;
             let uid = elem.attr('id');
             uid = uid.substring(4, uid.length);
-            let label = $$1('.reftitle', elem.parent()).html();
+            let label = $('.reftitle', elem.parent()).html();
             if (this.single_value()) {
                 target.attr('value', label);
                 let sel = '[name="' + target.attr('name') + '.uid"]';
-                $$1(sel).attr('value', uid);
+                $(sel).attr('value', uid);
                 this.set_selected_on_ajax_target(target.parent(), [uid]);
                 this.overlay.close();
                 return;
             }
             if (this.multi_value()) {
-                if ($$1('[value="' + uid + '"]', target.parent()).length) {
+                if ($('[value="' + uid + '"]', target.parent()).length) {
                     return;
                 }
-                let option = $$1('<option></option>');
+                let option = $('<option></option>');
                 option.val(uid).html(label).attr('selected', 'selected');
                 target.append(option);
                 target.trigger('change');
@@ -516,14 +517,14 @@ var cone = (function (exports, $$1, ts) {
             if (this.single_value()) {
                 target.attr('value', '');
                 let sel = '[name="' + target.attr('name') + '.uid"]';
-                $$1(sel).attr('value', '');
+                $(sel).attr('value', '');
             }
             if (this.multi_value()) {
                 let sel = '[value="' + uid + '"]';
-                if (!$$1(sel, target.parent()).length) {
+                if (!$(sel, target.parent()).length) {
                     return;
                 }
-                $$1(sel, target).remove();
+                $(sel, target).remove();
                 target.trigger('change');
             }
             this.reset_selected(target);
@@ -532,14 +533,14 @@ var cone = (function (exports, $$1, ts) {
     }
     class ReferenceBrowserLoader {
         static initialize(context) {
-            $$1('.referencebrowser_trigger', context).each(function() {
-                new ReferenceBrowserLoader($$1(this));
+            $('.referencebrowser_trigger', context).each(function() {
+                new ReferenceBrowserLoader($(this));
             });
         }
         constructor(elem) {
             this.wrapper = elem.parent();
             let sel = `[name="${elem.data('reference-name')}"]`;
-            this.target = $$1(sel, this.wrapper);
+            this.target = $(sel, this.wrapper);
             elem.off('click').on('click', this.load_ref_browser.bind(this));
         }
         load_ref_browser(evt) {
@@ -553,11 +554,11 @@ var cone = (function (exports, $$1, ts) {
         }
         on_complete(inst) {
             let target = this.target;
-            $$1('a.addreference', inst.elem).each(function() {
-                new AddReferenceHandle($$1(this), target, inst);
+            $('a.addreference', inst.elem).each(function() {
+                new AddReferenceHandle($(this), target, inst);
             });
-            $$1('a.removereference', inst.elem).each(function() {
-                new RemoveReferenceHandle($$1(this), target, inst);
+            $('a.removereference', inst.elem).each(function() {
+                new RemoveReferenceHandle($(this), target, inst);
             });
         }
     }
@@ -565,8 +566,8 @@ var cone = (function (exports, $$1, ts) {
         ReferenceBrowserLoader.initialize(context);
     }
     function referencebrowser_on_array_index(inst, row, index) {
-        $$1('.referencebrowser_trigger', row).each(function() {
-            let trigger = $$1(this),
+        $('.referencebrowser_trigger', row).each(function() {
+            let trigger = $(this),
                 ref_name = trigger.data('reference-name'),
                 base_id = inst.base_id,
                 base_name = base_id.replace(/\-/g, '.');
@@ -578,7 +579,7 @@ var cone = (function (exports, $$1, ts) {
             ));
         });
     }
-    $$1(function() {
+    $(function() {
         if (window.yafowil_array === undefined) {
             return;
         }
@@ -586,13 +587,13 @@ var cone = (function (exports, $$1, ts) {
         yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
     });
 
-    class Scrollbar extends ts.Events {
+    class Scrollbar extends ts.Motion {
         static initialize(context) {
-            $$1('.scrollable-x', context).each(function() {
-                new ScrollbarX($$1(this));
+            $('.scrollable-x', context).each(function() {
+                new ScrollbarX($(this));
             });
-            $$1('.scrollable-y', context).each(function() {
-                new ScrollbarY($$1(this));
+            $('.scrollable-y', context).each(function() {
+                new ScrollbarY($(this));
             });
         }
         constructor(elem) {
@@ -602,7 +603,6 @@ var cone = (function (exports, $$1, ts) {
             this.content = ts.query_elem('.scrollable-content', elem);
             this.on_scroll = this.on_scroll.bind(this);
             this.on_click = this.on_click.bind(this);
-            this.on_drag = this.on_drag.bind(this);
             this.on_hover = this.on_hover.bind(this);
             this.on_resize = this.on_resize.bind(this);
             this.compile();
@@ -628,19 +628,18 @@ var cone = (function (exports, $$1, ts) {
         }
         bind() {
             this.pointer_events = true;
-            this.elem.css('pointer-events', 'all');
             this.elem.on('mousewheel wheel', this.on_scroll);
-            this.scrollbar.on('click', this.on_click);
-            this.thumb.on('mousedown', this.on_drag);
             this.elem.on('mouseenter mouseleave', this.on_hover);
-            $$1(window).on('resize', this.on_resize);
+            this.scrollbar.on('click', this.on_click);
+            this.set_scope(this.thumb, $(document));
+            $(window).on('resize', this.on_resize);
         }
         unbind() {
             this.elem.off('mousewheel wheel', this.on_scroll);
-            this.scrollbar.off('click', this.on_click);
-            this.thumb.off('mousedown', this.on_drag);
             this.elem.off('mouseenter mouseleave', this.on_hover);
-            $$1(window).off('resize', this.on_resize);
+            this.scrollbar.off('click', this.on_click);
+            $(this.thumb).off('mousedown', this._down_handle);
+            $(window).off('resize', this.on_resize);
         }
         destroy() {
             this.unbind();
@@ -682,70 +681,61 @@ var cone = (function (exports, $$1, ts) {
         on_resize() {
             this.render();
         }
-        on_hover(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        on_hover(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
             const elem = this.elem;
             if (
-                (elem.has(e.target).length > 0 || elem.is(e.target)) &&
+                (elem.has(evt.target).length > 0 || elem.is(evt.target)) &&
                 this.contentsize > this.scrollsize
             ) {
-                if (e.type === 'mouseenter') {
+                if (evt.type === 'mouseenter') {
                     this.scrollbar.stop(true, true).fadeIn();
-                } else if (e.type === 'mouseleave' && e.relatedTarget !== elem.get(0)) {
+                } else if (
+                    evt.type === 'mouseleave' &&
+                    evt.relatedTarget !== elem.get(0)
+                ) {
                     this.scrollbar.stop(true, true).fadeOut();
                 }
             }
         }
-        on_scroll(e) {
+        on_scroll(evt) {
             if (this.contentsize <= this.scrollsize) {
                 return;
             }
-            let evt = e.originalEvent;
-            if (typeof evt.deltaY === 'number') {
-                if(evt.deltaY > 0) {
+            let evt_ = evt.originalEvent;
+            if (typeof evt_.deltaY === 'number') {
+                if (evt_.deltaY > 0) {
                     this.position += this.scroll_step;
-                }
-                else if(evt.deltaY < 0) {
+                } else if (evt_.deltaY < 0) {
                     this.position -= this.scroll_step;
                 }
             }
         }
-        on_click(e) {
-            e.preventDefault();
+        on_click(evt) {
+            evt.preventDefault();
             this.thumb.addClass('active');
-            let position = this.pos_from_evt(e),
+            let position = this.pos_from_evt(evt),
                 thumb_pos = position - this.offset - this.thumbsize / 2;
             this.position = this.contentsize * thumb_pos / this.scrollsize;
             this.thumb.removeClass('active');
         }
-        on_drag(e) {
-            e.preventDefault();
-            var evt = $$1.Event('dragstart');
-            $$1(window).trigger(evt);
-            function on_move(e) {
-                let mouse_pos_on_move = this.pos_from_evt(e) - this.offset,
-                    new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
-                this.position = this.contentsize * new_thumb_pos / this.scrollsize;
-            }
-            function on_up() {
-                var evt = $$1.Event('dragend');
-                $$1(window).trigger(evt);
-                $$1(document)
-                    .off('mousemove', _on_move)
-                    .off('mouseup', _on_up);
-                this.thumb.removeClass('active');
-                this.elem.on('mouseenter mouseleave', this.on_hover);
-            }
-            let _on_move = on_move.bind(this),
-                _on_up = on_up.bind(this),
-                mouse_pos = this.pos_from_evt(e) - this.offset,
-                thumb_position = this.position / (this.contentsize / this.scrollsize);
-            this.thumb.addClass('active');
+        down(evt) {
+            this._mouse_pos = this.pos_from_evt(evt) - this.offset;
+            this._thumb_pos = this.position / (this.contentsize / this.scrollsize);
             this.elem.off('mouseenter mouseleave', this.on_hover);
-            $$1(document)
-                .on('mousemove', _on_move)
-                .on('mouseup', _on_up);
+            this.thumb.addClass('active');
+        }
+        move(evt) {
+            let mouse_pos = this.pos_from_evt(evt) - this.offset,
+                thumb_pos = this._thumb_pos + mouse_pos - this._mouse_pos;
+            this.position = this.contentsize * thumb_pos / this.scrollsize;
+        }
+        up(evt) {
+            delete this._mouse_pos;
+            delete this._thumb_pos;
+            this.elem.on('mouseenter mouseleave', this.on_hover);
+            this.thumb.removeClass('active');
         }
     }
     class ScrollbarX extends Scrollbar {
@@ -816,12 +806,12 @@ var cone = (function (exports, $$1, ts) {
             new Sharing(context);
         }
         constructor(context) {
-            let checkboxes = $$1('input.add_remove_role_for_principal', context);
+            let checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.off('change').on('change', this.set_principal_role);
         }
         set_principal_role(evt) {
             evt.preventDefault();
-            let checkbox = $$1(this);
+            let checkbox = $(this);
             let action;
             if (this.checked) {
                 action = 'add_principal_role';
@@ -859,7 +849,7 @@ var cone = (function (exports, $$1, ts) {
             const scrollable_content = ts.query_elem('.scrollable-content', elem);
             const pad_left = scrollable_content.css('padding-left');
             const pad_right = scrollable_content.css('padding-right');
-            const logo_width = $$1('#header-logo').outerWidth(true);
+            const logo_width = $('#header-logo').outerWidth(true);
             elem.css(
                 'min-width',
                 `calc(${logo_width}px + ${pad_left} + ${pad_right})`
@@ -868,7 +858,7 @@ var cone = (function (exports, $$1, ts) {
             const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
             collapse_elem.on('click', this.on_click);
             const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
-            this.set_scope(resizer_elem, $$1(document));
+            this.set_scope(resizer_elem, $(document));
         }
         get sidebar_width() {
             return localStorage.getItem('cone-app-sidebar-width') || 300;
@@ -922,19 +912,19 @@ var cone = (function (exports, $$1, ts) {
 
     class Translation {
         static initialize(context) {
-            $$1('.translation-nav', context).each(function() {
-                new Translation($$1(this));
+            $('.translation-nav', context).each(function() {
+                new Translation($(this));
             });
         }
         constructor(nav_elem) {
             this.nav_elem = nav_elem;
             this.fields_elem = nav_elem.next();
             this.show_lang_handle = this.show_lang_handle.bind(this);
-            $$1('li > a', nav_elem).on('click', this.show_lang_handle);
-            if ($$1('li.error', nav_elem).length) {
-                $$1('li.error:first > a', nav_elem).click();
+            $('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($('li.error', nav_elem).length) {
+                $('li.error:first > a', nav_elem).click();
             } else {
-                $$1('li.active > a', nav_elem).click();
+                $('li.active > a', nav_elem).click();
             }
             this.fields_elem.show();
         }
@@ -942,9 +932,9 @@ var cone = (function (exports, $$1, ts) {
             evt.preventDefault();
             this.nav_elem.children().removeClass('active');
             this.fields_elem.children().hide();
-            let elem = $$1(evt.currentTarget);
+            let elem = $(evt.currentTarget);
             elem.parent().addClass('active');
-            $$1(elem.attr('href'), this.fields_elem).show();
+            $(elem.attr('href'), this.fields_elem).show();
         }
     }
 
@@ -963,7 +953,7 @@ var cone = (function (exports, $$1, ts) {
             this.selected.push(elem);
         }
         remove(elem) {
-            let reduced = $$1.grep(this.selected, function(item, index) {
+            let reduced = $.grep(this.selected, function(item, index) {
                 return item !== elem;
             });
             this.selected = reduced;
@@ -986,8 +976,8 @@ var cone = (function (exports, $$1, ts) {
             let selected = container.children('.selected');
             let nearest = -1;
             let selected_index, selected_elem;
-            $$1(selected).each(function() {
-                selected_elem = $$1(this);
+            $(selected).each(function() {
+                selected_elem = $(this);
                 selected_index = selected_elem.index();
                 if (nearest == -1) {
                     nearest = selected_index;
@@ -1039,7 +1029,7 @@ var cone = (function (exports, $$1, ts) {
         }
         handle_click(evt) {
             evt.preventDefault();
-            let elem = $$1(evt.currentTarget);
+            let elem = $(evt.currentTarget);
             let container = elem.parent();
             if (!keys.ctrl_down && !keys.shift_down) {
                 this.select_no_key(container, elem);
@@ -1063,7 +1053,7 @@ var cone = (function (exports, $$1, ts) {
             elem.off('click').on('click', this.handle_click.bind(this));
         }
     }
-    $$1.fn.selectable = function(options) {
+    $.fn.selectable = function(options) {
         var api = new Selectable(options);
         api.bind(this);
         this.data('selectable', api);
@@ -1079,9 +1069,9 @@ var cone = (function (exports, $$1, ts) {
         return ts.read_cookie(name);
     }
 
-    $$1(function() {
+    $(function() {
         new KeyBinder();
-        new Colormode();
+        new ColorMode();
         ts.ajax.register(BatchedItemsSize.initialize, true);
         ts.ajax.register(BatchedItemsSearch.initialize, true);
         ts.ajax.register(CopySupport.initialize, true);
@@ -1101,8 +1091,8 @@ var cone = (function (exports, $$1, ts) {
     exports.BatchedItemsFilter = BatchedItemsFilter;
     exports.BatchedItemsSearch = BatchedItemsSearch;
     exports.BatchedItemsSize = BatchedItemsSize;
+    exports.ColorMode = ColorMode;
     exports.ColorToggler = ColorToggler;
-    exports.Colormode = Colormode;
     exports.CopySupport = CopySupport;
     exports.GlobalEvents = GlobalEvents;
     exports.KeyBinder = KeyBinder;

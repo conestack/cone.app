@@ -5,7 +5,7 @@ import {
     BatchedItemsSize,
     BatchedItemsSearch
 } from './batcheditems.js';
-import {Colormode} from './colormode.js';
+import {ColorMode} from './colormode.js';
 import {ColorToggler} from './colormode.js';
 import {CopySupport} from './copysupport.js';
 import {KeyBinder} from './keybinder.js';
@@ -39,7 +39,7 @@ export * from './utils.js';
 
 $(function() {
     new KeyBinder();
-    new Colormode();
+    new ColorMode();
 
     ts.ajax.register(BatchedItemsSize.initialize, true);
     ts.ajax.register(BatchedItemsSearch.initialize, true);

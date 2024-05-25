@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 
-export class Scrollbar extends ts.Events {
+export class Scrollbar extends ts.Motion {
 
     static initialize(context) {
         $('.scrollable-x', context).each(function() {
@@ -21,7 +21,6 @@ export class Scrollbar extends ts.Events {
 
         this.on_scroll = this.on_scroll.bind(this);
         this.on_click = this.on_click.bind(this);
-        this.on_drag = this.on_drag.bind(this);
         this.on_hover = this.on_hover.bind(this);
         this.on_resize = this.on_resize.bind(this);
 
@@ -54,19 +53,18 @@ export class Scrollbar extends ts.Events {
 
     bind() {
         this.pointer_events = true;
-        this.elem.css('pointer-events', 'all');
         this.elem.on('mousewheel wheel', this.on_scroll);
-        this.scrollbar.on('click', this.on_click);
-        this.thumb.on('mousedown', this.on_drag);
         this.elem.on('mouseenter mouseleave', this.on_hover);
+        this.scrollbar.on('click', this.on_click);
+        this.set_scope(this.thumb, $(document));
         $(window).on('resize', this.on_resize);
     }
 
     unbind() {
         this.elem.off('mousewheel wheel', this.on_scroll);
-        this.scrollbar.off('click', this.on_click);
-        this.thumb.off('mousedown', this.on_drag);
         this.elem.off('mouseenter mouseleave', this.on_hover);
+        this.scrollbar.off('click', this.on_click);
+        $(this.thumb).off('mousedown', this._down_handle);
         $(window).off('resize', this.on_resize);
     }
 
@@ -116,80 +114,66 @@ export class Scrollbar extends ts.Events {
         this.render();
     }
 
-    on_hover(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    on_hover(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
         const elem = this.elem;
         if (
-            (elem.has(e.target).length > 0 || elem.is(e.target)) &&
+            (elem.has(evt.target).length > 0 || elem.is(evt.target)) &&
             this.contentsize > this.scrollsize
         ) {
-            if (e.type === 'mouseenter') {
+            if (evt.type === 'mouseenter') {
                 this.scrollbar.stop(true, true).fadeIn();
-            } else if (e.type === 'mouseleave' && e.relatedTarget !== elem.get(0)) {
+            } else if (
+                evt.type === 'mouseleave' &&
+                evt.relatedTarget !== elem.get(0)
+            ) {
                 this.scrollbar.stop(true, true).fadeOut();
             }
         }
     }
 
-    on_scroll(e) {
+    on_scroll(evt) {
         if (this.contentsize <= this.scrollsize) {
             return;
         }
-        let evt = e.originalEvent;
-        if (typeof evt.deltaY === 'number') {
-            // down
-            if(evt.deltaY > 0) {
+        let evt_ = evt.originalEvent;
+        if (typeof evt_.deltaY === 'number') {
+            if (evt_.deltaY > 0) { // down
                 this.position += this.scroll_step;
-            }
-            // up
-            else if(evt.deltaY < 0) {
+            } else if (evt_.deltaY < 0) { // up
                 this.position -= this.scroll_step;
             }
         }
     }
 
-    on_click(e) {
-        e.preventDefault(); // prevent text selection
+    on_click(evt) {
+        evt.preventDefault(); // prevent text selection
         this.thumb.addClass('active');
-        let position = this.pos_from_evt(e),
+        let position = this.pos_from_evt(evt),
             thumb_pos = position - this.offset - this.thumbsize / 2;
         this.position = this.contentsize * thumb_pos / this.scrollsize;
         this.thumb.removeClass('active');
     }
 
-    on_drag(e) {
-        e.preventDefault();
-        var evt = $.Event('dragstart');
-        $(window).trigger(evt);
-
-        function on_move(e) {
-            let mouse_pos_on_move = this.pos_from_evt(e) - this.offset,
-                new_thumb_pos = thumb_position + mouse_pos_on_move - mouse_pos;
-            this.position = this.contentsize * new_thumb_pos / this.scrollsize;
-        }
-
-        function on_up() {
-            var evt = $.Event('dragend');
-            $(window).trigger(evt);
-            $(document)
-                .off('mousemove', _on_move)
-                .off('mouseup', _on_up);
-            this.thumb.removeClass('active');
-            this.elem.on('mouseenter mouseleave', this.on_hover);
-        }
-
-        let _on_move = on_move.bind(this),
-            _on_up = on_up.bind(this),
-            mouse_pos = this.pos_from_evt(e) - this.offset,
-            thumb_position = this.position / (this.contentsize / this.scrollsize);
-        this.thumb.addClass('active');
-
+    down(evt) {
+        this._mouse_pos = this.pos_from_evt(evt) - this.offset;
+        this._thumb_pos = this.position / (this.contentsize / this.scrollsize);
         this.elem.off('mouseenter mouseleave', this.on_hover);
+        this.thumb.addClass('active');
+    }
 
-        $(document)
-            .on('mousemove', _on_move)
-            .on('mouseup', _on_up);
+    move(evt) {
+        let mouse_pos = this.pos_from_evt(evt) - this.offset,
+            thumb_pos = this._thumb_pos + mouse_pos - this._mouse_pos;
+        this.position = this.contentsize * thumb_pos / this.scrollsize;
+    }
+
+    up(evt) {
+        delete this._mouse_pos;
+        delete this._thumb_pos;
+        this.elem.on('mouseenter mouseleave', this.on_hover);
+        this.thumb.removeClass('active');
     }
 }
 
