@@ -112,9 +112,9 @@
                    ajax:target="${defs[1]}"
                    ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv">
 
-                <span tal:define="css order == '' and 'glyphicon glyphicon-stop' or '';
-                                  css order == 'asc' and 'glyphicon glyphicon-chevron-up' or css;
-                                  css order == 'desc' and 'glyphicon glyphicon-chevron-down' or css;
+                <span tal:define="css order == '' and 'bi-stop' or '';
+                                  css order == 'asc' and 'bi-chevron-up' or css;
+                                  css order == 'desc' and 'bi-chevron-down' or css;
                                   css 'table_sort %s' % css"
                       tal:attributes="class css"></span>
 

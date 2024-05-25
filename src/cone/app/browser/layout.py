@@ -137,7 +137,7 @@ class personal_tools_action(object):
 @personal_tools_action(name='logout')
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
-    icon = 'ion-log-out'
+    icon = 'bi-door-open'
     bind = None
     target = None
     css = 'dropdown-item'

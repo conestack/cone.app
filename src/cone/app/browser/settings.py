@@ -41,7 +41,7 @@ class SettingsLayoutConfig(DefaultLayoutConfig):
 @personal_tools_action(name='settings')
 class ViewSettingsAction(LinkAction):
     text = _('settings', default='Settings')
-    icon = 'ion-ios7-gear'
+    icon = 'bi-gear'
     event = 'contextchanged:#layout'
     path = 'href'
 

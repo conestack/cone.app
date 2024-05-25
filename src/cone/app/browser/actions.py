@@ -430,7 +430,7 @@ class ActionEdit(LinkAction):
 class ActionDelete(LinkAction):
     """Delete action."""
     id = 'toolbaraction-delete'
-    icon = 'ion-trash-a'
+    icon = 'bi-trash3'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
                 default='Do you really want to delete this Item?')
@@ -450,7 +450,7 @@ class ActionDelete(LinkAction):
 class ActionDeleteChildren(LinkAction):
     """Delete children action."""
     id = 'toolbaraction-delete-children'
-    icon = 'ion-trash-a'
+    icon = 'bi-trash3'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
                 default='Do you really want to delete selected Items?')
@@ -470,7 +470,7 @@ class ActionDeleteChildren(LinkAction):
 class ActionCut(LinkAction):
     """Cut children action."""
     id = 'toolbaraction-cut'
-    icon = 'ion-scissors'
+    icon = 'bi-scissors'
     text = _('action_cut', default='Cut')
     bind = None
 
@@ -485,7 +485,7 @@ class ActionCut(LinkAction):
 class ActionCopy(LinkAction):
     """Copy children action."""
     id = 'toolbaraction-copy'
-    icon = 'ion-ios7-copy-outline'
+    icon = 'bi-copy'
     text = _('action_copy', default='Copy')
     bind = None
 
@@ -500,7 +500,7 @@ class ActionCopy(LinkAction):
 class ActionPaste(LinkAction):
     """Paste children action."""
     id = 'toolbaraction-paste'
-    icon = 'ion-clipboard'
+    icon = 'bi-clipboard'
     text = _('action_paste', default='Paste')
     bind = None
 

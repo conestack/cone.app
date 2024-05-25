@@ -8,7 +8,8 @@
             name="Publication Workflow"
             state_attr="state"
             initial_state="private"
-            content_types=".model.EntryFolder"
+            content_types=".model.EntryFolder
+                           .model.Folder"
             permission_checker="cone.app.workflow.permission_checker">
 
     <state name="private"

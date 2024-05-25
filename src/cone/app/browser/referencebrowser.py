@@ -146,7 +146,7 @@ class ReferenceAction(LinkAction):
 class ActionAddReference(ReferenceAction):
     css = 'addreference'
     title = _('add_reference', default='Add reference')
-    icon = 'glyphicon glyphicon-plus-sign'
+    icon = 'bi-plus-circle'
 
     @property
     def enabled(self):
@@ -158,7 +158,7 @@ class ActionAddReference(ReferenceAction):
 class ActionRemoveReference(ReferenceAction):
     css = 'removereference'
     title = _('remove_reference', default='Remove reference')
-    icon = 'glyphicon glyphicon-minus-sign'
+    icon = 'bi-minus-circle'
 
     @property
     def enabled(self):
@@ -338,7 +338,7 @@ def reference_trigger_renderer(widget, data):
     }
     return data.tag(
         'span',
-        tag('i', '', class_='ion-android-share'),
+        tag('i', '', class_='bi-link'),
         _('browse', default='Browse'),
         **attrs
     )

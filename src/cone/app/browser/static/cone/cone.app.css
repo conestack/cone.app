@@ -307,6 +307,22 @@ body {
   right: 0;
 }
 
+/* copysupport */
+tr.selectable td {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+tr.selectable.selected td {
+  background-color: #dfeefb;
+}
+
+.table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+  background-color: #cfdce7;
+}
+
 /* responsive changes */
 @media (min-width: 1400px) {
   #header-logo {

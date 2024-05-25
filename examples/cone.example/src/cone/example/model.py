@@ -12,6 +12,7 @@ from node.behaviors import Attributes
 from node.behaviors import DictStorage
 from node.behaviors import MappingAdopt
 from node.behaviors import MappingNode
+from node.behaviors import MappingOrder
 from node.behaviors import NodeInit
 from node.behaviors import OdictStorage
 from node.utils import instance_property
@@ -75,6 +76,7 @@ class Translation:
     Attributes,
     NodeInit,
     MappingNode,
+    MappingOrder,
     OdictStorage)
 class PublicationWorkflowNode:
     workflow_name = 'publication'
@@ -83,15 +85,16 @@ class PublicationWorkflowNode:
         (Allow, 'system.Authenticated', ['view']),
         (Allow, 'role:viewer', ['view', 'list']),
         (Allow, 'role:editor', [
-            'view', 'list', 'add', 'edit', 'cut', 'copy', 'paste'
+            'view', 'list', 'add', 'edit', 'cut', 'copy', 'paste',
+            'change_order'
         ]),
         (Allow, 'role:admin', [
             'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-            'change_state', 'manage_permissions'
+            'change_order', 'change_state', 'manage_permissions'
         ]),
         (Allow, 'role:manager', [
             'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
-            'change_state', 'manage_permissions', 'manage'
+            'change_order', 'change_state', 'manage_permissions', 'manage'
         ]),
         (Allow, Everyone, ['login']),
         (Deny, Everyone, ALL_PERMISSIONS),
@@ -118,6 +121,7 @@ class BaseContainer(PublicationWorkflowNode):
         props.action_add = True
         props.action_list = True
         props.action_sharing = True
+        props.action_move = True
         return props
 
     @property
@@ -131,7 +135,7 @@ class BaseContainer(PublicationWorkflowNode):
 @node_info(
     name='entry_folder',
     title=_('folder', default='Folder'),
-    icon='bi bi-folder',
+    icon='bi-folder',
     addables=['folder'])
 class EntryFolder(BaseContainer):
 
@@ -140,12 +144,17 @@ class EntryFolder(BaseContainer):
         title = self.attrs['title'] = Translation()
         title['en'] = f'Folder {name[name.rfind("_") + 1:]}'
         title['de'] = f'Ordner {name[name.rfind("_") + 1:]}'
+        for i in range(1, 21):
+            folder = self[f'folder_{i}'] = Folder()
+            title = folder.attrs['title'] = Translation()
+            title['en'] = f'Folder {i}'
+            title['de'] = f'Ordner {i}'
 
 
 @node_info(
     name='folder',
     title=_('folder', default='Folder'),
-    icon='bi bi-folder',
+    icon='bi-folder',
     addables=['folder'])
 class Folder(BaseContainer):
 

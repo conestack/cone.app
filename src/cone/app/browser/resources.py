@@ -75,19 +75,6 @@ typeahead_resources = wr.ResourceGroup(
 #     resource='typeahead.css'
 # ))
 
-# ionicons
-ionicons_resources = wr.ResourceGroup(
-    name='cone.app-ionicons',
-    directory=os.path.join(resources_dir, 'ionicons'),
-    path='ionicons'
-)
-ionicons_resources.add(wr.StyleResource(
-    name='ionicons-css',
-    directory=os.path.join(resources_dir, 'ionicons', 'css'),
-    path='ionicons/css',
-    resource='ionicons.css'
-))
-
 # cone
 cone_resources = wr.ResourceGroup(
     name='cone.app-cone',
@@ -165,7 +152,6 @@ class ResourceRegistry(object):
         config.register_resource(jquery_resources)
         config.register_resource(bootstrap_resources)
         config.register_resource(typeahead_resources)
-        config.register_resource(ionicons_resources)
         config.register_resource(cone_resources)
 
     def register_resource(self, config, resource):

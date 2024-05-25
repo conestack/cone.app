@@ -198,7 +198,7 @@ class ContextMenuActionAdd(ActionAdd):
 
 @context_menu_item(group='contextactions', name='delete')
 class ContextMenuActionDelete(ActionDelete):
-    ...
+    css = 'nav-link'
 
 
 @tile(name='contextmenu', path='templates/contextmenu.pt', permission='view')
