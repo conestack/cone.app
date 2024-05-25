@@ -251,29 +251,6 @@ body {
 #main-area {
     width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
 }
-#contextmenu {
-    li.nav-item.dropdown .nav-link.dropdown-toggle.show {
-        background-color: $dropdown-border-color;
-    }
-    a {
-        padding: 0 8px;
-        text-decoration: none;
-        color: $form-text-color;
-    }
-    .dropdown-item {
-        &:active {
-            background-color: var(--bs-dropdown-link-hover-bg);
-        }
-
-        a {
-            padding: 0;
-
-            &.selected {
-                color: $primary;
-            }
-        }
-    }
-}
 
 /* scrollbar */
 .scrollable-x, .scrollable-y {

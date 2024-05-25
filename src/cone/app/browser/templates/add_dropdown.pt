@@ -4,16 +4,16 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <li class="dropdown">
+  <li class="nav-item dropdown py-0">
 
     <a href="#"
-       class="dropdown-toggle"
+       class="nav-link dropdown-toggle py-2 px-3"
        data-bs-toggle="dropdown">
       <span i18n:translate="add">Add</span>
       <span class="caret"></span>
     </a>
 
-    <ul class="dropdown-menu" role="addmenu">
+    <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
       <li tal:repeat="item context.items">
         <a href="${item.url}"
            class="dropdown-item"

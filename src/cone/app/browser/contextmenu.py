@@ -24,7 +24,7 @@ _ = TranslationStringFactory('cone.app')
 
 
 class ContextMenuToolbar(Toolbar):
-    css = u'nav-item py-2'
+    css = u'nav-item py-0'
 
     def __call__(self, model, request):
         if not self.display:
@@ -40,7 +40,7 @@ class ContextMenuToolbar(Toolbar):
                 continue
             # wrap link action in list item
             rendered_actions.append(
-                f'<li class="nav-item py-2">{rendered}</li>'
+                f'<li class="nav-item py-0">{rendered}</li>'
             )
         if not rendered_actions:
             return ''

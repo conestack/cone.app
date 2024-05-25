@@ -1,4 +1,5 @@
 from cone.app.model import AppNode
+from cone.app.model import CopySupport
 from cone.app.model import FactoryNode
 from cone.app.model import Metadata
 from cone.app.model import node_info
@@ -81,14 +82,16 @@ class PublicationWorkflowNode:
     default_acl = [
         (Allow, 'system.Authenticated', ['view']),
         (Allow, 'role:viewer', ['view', 'list']),
-        (Allow, 'role:editor', ['view', 'list', 'add', 'edit']),
+        (Allow, 'role:editor', [
+            'view', 'list', 'add', 'edit', 'cut', 'copy', 'paste'
+        ]),
         (Allow, 'role:admin', [
-            'view', 'list', 'add', 'edit', 'delete', 'change_state',
-            'manage_permissions'
+            'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
+            'change_state', 'manage_permissions'
         ]),
         (Allow, 'role:manager', [
-            'view', 'list', 'add', 'edit', 'delete', 'change_state',
-            'manage_permissions', 'manage'
+            'view', 'list', 'add', 'edit', 'delete', 'cut', 'copy', 'paste',
+            'change_state', 'manage_permissions', 'manage'
         ]),
         (Allow, Everyone, ['login']),
         (Deny, Everyone, ALL_PERMISSIONS),
@@ -98,7 +101,7 @@ class PublicationWorkflowNode:
         ...
 
 
-@plumbing(PrincipalACL)
+@plumbing(PrincipalACL, CopySupport)
 class BaseContainer(PublicationWorkflowNode):
     role_inheritance = True
 
@@ -114,7 +117,6 @@ class BaseContainer(PublicationWorkflowNode):
         props.action_up = True
         props.action_add = True
         props.action_list = True
-        props.action_edit = True
         props.action_sharing = True
         return props
 
@@ -122,9 +124,15 @@ class BaseContainer(PublicationWorkflowNode):
     def metadata(self):
         md = Metadata()
         md.title = self.attrs['title'].value
+        md.icon = self.nodeinfo.icon
         return md
 
 
+@node_info(
+    name='entry_folder',
+    title=_('folder', default='Folder'),
+    icon='bi bi-folder',
+    addables=['folder'])
 class EntryFolder(BaseContainer):
 
     def __init__(self, name=None, parent=None):
@@ -135,6 +143,15 @@ class EntryFolder(BaseContainer):
 
 
 @node_info(
-    name='folder')
+    name='folder',
+    title=_('folder', default='Folder'),
+    icon='bi bi-folder',
+    addables=['folder'])
 class Folder(BaseContainer):
-    ...
+
+    @property
+    def properties(self):
+        props = super().properties
+        props.action_edit = True
+        props.action_delete = True
+        return props

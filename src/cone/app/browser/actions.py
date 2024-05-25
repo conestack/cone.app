@@ -264,6 +264,7 @@ class ButtonAction(TemplateAction):
     def target(self):
         return make_url(self.request, node=self.model)
 
+
 class ActionUp(LinkAction):
     """One level up action."""
     id = 'toolbaraction-up'
