@@ -1,7 +1,6 @@
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppNode
 from cone.app.model import CopySupport
-from cone.app.model import FactoryNode
 from cone.app.model import Metadata
 from cone.app.model import node_info
 from cone.app.model import Properties

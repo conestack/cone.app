@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2024-05-26 07:48+0200\n"
+"POT-Creation-Date: 2024-05-26 08:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Generated-By: Lingua 4.15.0\n"
 
 #. Default: Folder
-#: examples/cone.example/src/cone/example/model.py:146
-#: examples/cone.example/src/cone/example/model.py:183
+#: examples/cone.example/src/cone/example/model.py:113
+#: examples/cone.example/src/cone/example/model.py:125
 msgid "folder"
 msgstr "Folder"
 
 #. Default: Item
-#: examples/cone.example/src/cone/example/model.py:198
+#: examples/cone.example/src/cone/example/model.py:140
 msgid "item"
 msgstr "Item"
 

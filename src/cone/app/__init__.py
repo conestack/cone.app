@@ -310,7 +310,7 @@ def main(global_config, **settings):
     # blueprint rendering. in future versions, tests should be adopted to
     # run against adopted blueprint rendering
     if not os.environ.get('TESTRUN_MARKER'):  # pragma: no cover
-        configure_factory('bootstrap3')
+        configure_factory('bootstrap5')
     config.configure_default_resource_includes()
 
     # scan browser package
