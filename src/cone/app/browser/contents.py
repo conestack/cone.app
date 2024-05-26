@@ -167,11 +167,11 @@ class ContentsTile(Table):
     @instance_property
     def row_actions(self):
         row_actions = Toolbar()
-        row_actions['up'] = ContentsActionMoveUp()
-        row_actions['down'] = ContentsActionMoveDown()
         row_actions['view'] = ContentsActionView()
         row_actions['edit'] = ContentsActionEdit()
         row_actions['delete'] = ContentsActionDelete()
+        row_actions['up'] = ContentsActionMoveUp()
+        row_actions['down'] = ContentsActionMoveDown()
         return row_actions
 
     @instance_property
