@@ -1,3 +1,4 @@
+from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppNode
 from cone.app.model import CopySupport
 from cone.app.model import FactoryNode
@@ -6,6 +7,7 @@ from cone.app.model import node_info
 from cone.app.model import Properties
 from cone.app.model import Translation as TranslationBehavior
 from cone.app.security import PrincipalACL
+from cone.app.utils import add_creation_metadata
 from cone.app.workflow import WorkflowACL
 from cone.app.workflow import WorkflowState
 from node.behaviors import Attributes
@@ -22,41 +24,11 @@ from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
+from pyramid.threadlocal import get_current_request
+from zope.interface import implementer
 
 
 _ = TranslationStringFactory('cone.example')
-
-
-@plumbing(PrincipalACL)
-class ExampleNode(FactoryNode):
-    factories = dict()
-
-    @property
-    def principal_roles(self):
-        return dict(
-            max=['manager'],
-            sepp=['editor']
-        )
-
-    @property
-    def properties(self):
-        props = super(ExampleNode, self).properties
-        props.in_navtree = True
-        props.default_content_tile = 'listing'
-        props.action_up = True
-        props.action_view = True
-        props.action_edit = True
-        props.action_sharing = True
-        return props
-    
-    @property
-    def metadata(self):
-        md = super(ExampleNode, self).metadata
-        md.title = self.name.replace('_', ' ').capitalize()
-        return md
-
-for i in range(40):
-    ExampleNode.factories[f'node_{i}'] = ExampleNode
 
 
 @plumbing(
@@ -118,17 +90,22 @@ class BaseContainer(PublicationWorkflowNode):
         props.in_navtree = True
         props.default_content_tile = 'listing'
         props.action_up = True
-        props.action_add = True
+        props.action_view = True
         props.action_list = True
         props.action_sharing = True
         props.action_move = True
+        props.action_add = True
         return props
 
     @property
     def metadata(self):
         md = Metadata()
-        md.title = self.attrs['title'].value
         md.icon = self.nodeinfo.icon
+        md.title = self.attrs['title'].value
+        md.description = self.attrs['description'].value
+        md.creator = self.attrs['creator']
+        md.created = self.attrs['created']
+        md.modified = self.attrs['modified']
         return md
 
 
@@ -136,26 +113,19 @@ class BaseContainer(PublicationWorkflowNode):
     name='entry_folder',
     title=_('folder', default='Folder'),
     icon='bi-folder',
-    addables=['folder'])
+    addables=['folder', 'item'])
 class EntryFolder(BaseContainer):
 
     def __init__(self, name=None, parent=None):
         super().__init__(name=name, parent=parent)
-        title = self.attrs['title'] = Translation()
-        title['en'] = f'Folder {name[name.rfind("_") + 1:]}'
-        title['de'] = f'Ordner {name[name.rfind("_") + 1:]}'
-        for i in range(1, 21):
-            folder = self[f'folder_{i}'] = Folder()
-            title = folder.attrs['title'] = Translation()
-            title['en'] = f'Folder {i}'
-            title['de'] = f'Ordner {i}'
+        create_content(self)
 
 
 @node_info(
     name='folder',
     title=_('folder', default='Folder'),
     icon='bi-folder',
-    addables=['folder'])
+    addables=['folder', 'item'])
 class Folder(BaseContainer):
 
     @property
@@ -164,3 +134,78 @@ class Folder(BaseContainer):
         props.action_edit = True
         props.action_delete = True
         return props
+
+
+@node_info(
+    name='item',
+    title=_('item', default='Item'),
+    icon='bi-file')
+@plumbing(PrincipalACL)
+@implementer(INavigationLeaf)
+class Item(PublicationWorkflowNode):
+    role_inheritance = True
+
+    @instance_property
+    def principal_roles(self):
+        return {}
+
+    @property
+    def properties(self):
+        props = Properties()
+        props.in_navtree = True
+        props.action_up = True
+        props.action_view = True
+        props.action_edit = True
+        props.action_delete = True
+        props.action_sharing = True
+        return props
+
+    @property
+    def metadata(self):
+        md = Metadata()
+        md.icon = self.nodeinfo.icon
+        md.title = self.attrs['title'].value
+        md.description = self.attrs['description'].value
+        md.creator = self.attrs['creator']
+        md.created = self.attrs['created']
+        md.modified = self.attrs['modified']
+        return md
+
+
+def create_content(node):
+    request = get_current_request()
+    name = node.name
+
+    add_creation_metadata(request, node.attrs)
+
+    title = node.attrs['title'] = Translation()
+    title['en'] = f'Folder {name[name.rfind("_") + 1:]}'
+    title['de'] = f'Ordner {name[name.rfind("_") + 1:]}'
+
+    description = node.attrs['description'] = Translation()
+    description['en'] = f'Folder Description'
+    description['de'] = f'Ordner Beschreibung'
+
+    for i in range(1, 21):
+        folder = node[f'folder_{i}'] = Folder()
+        add_creation_metadata(request, folder.attrs)
+
+        title = folder.attrs['title'] = Translation()
+        title['en'] = f'Folder {i}'
+        title['de'] = f'Ordner {i}'
+
+        description = folder.attrs['description'] = Translation()
+        description['en'] = f'Folder Description'
+        description['de'] = f'Ordner Beschreibung'
+
+        for j in range(1, 21):
+            item = folder[f'item_{j}'] = Item()
+            add_creation_metadata(request, item.attrs)
+
+            title = item.attrs['title'] = Translation()
+            title['en'] = f'Item {j}'
+            title['de'] = f'Object {j}'
+
+            description = item.attrs['description'] = Translation()
+            description['en'] = f'Item Description'
+            description['de'] = f'Object Beschreibung'

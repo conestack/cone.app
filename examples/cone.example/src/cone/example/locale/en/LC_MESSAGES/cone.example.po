@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2024-05-25 18:52+0200\n"
+"POT-Creation-Date: 2024-05-26 07:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,26 +15,37 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Lingua 4.15.0\n"
 
-#: examples/cone.example/src/cone/example/publication.zcml:14
+#. Default: Folder
+#: examples/cone.example/src/cone/example/model.py:146
+#: examples/cone.example/src/cone/example/model.py:183
+msgid "folder"
+msgstr "Folder"
+
+#. Default: Item
+#: examples/cone.example/src/cone/example/model.py:198
+msgid "item"
+msgstr "Item"
+
+#: examples/cone.example/src/cone/example/publication.zcml:16
 msgid "private"
 msgstr "Private"
 
-#: examples/cone.example/src/cone/example/publication.zcml:19
+#: examples/cone.example/src/cone/example/publication.zcml:21
 msgid "Object is private"
 msgstr "Object is private"
 
-#: examples/cone.example/src/cone/example/publication.zcml:23
+#: examples/cone.example/src/cone/example/publication.zcml:25
 msgid "public"
 msgstr "Public"
 
-#: examples/cone.example/src/cone/example/publication.zcml:28
+#: examples/cone.example/src/cone/example/publication.zcml:30
 msgid "Object is public"
 msgstr "Object is public"
 
-#: examples/cone.example/src/cone/example/publication.zcml:33
+#: examples/cone.example/src/cone/example/publication.zcml:35
 msgid "private_to_public"
 msgstr "publish"
 
-#: examples/cone.example/src/cone/example/publication.zcml:43
+#: examples/cone.example/src/cone/example/publication.zcml:45
 msgid "public_to_private"
 msgstr "retract"

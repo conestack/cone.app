@@ -1,0 +1,8 @@
+#contextmenu a.state-private,
+tr.state-private td.title a {
+    color: red;
+}
+#contextmenu a.state-public,
+tr.state-public td.title a {
+    color: green;
+}
