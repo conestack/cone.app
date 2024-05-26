@@ -15,6 +15,7 @@
              id="search-text"
              placeholder="search database ..."
              name="term"
+             data-search-target="${context.nodeurl}"
              i18n:attributes="placeholder search_database" />
     </div>
 

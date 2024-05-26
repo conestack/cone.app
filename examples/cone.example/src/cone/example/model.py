@@ -1,3 +1,6 @@
+from cone.app.browser.utils import make_url
+from cone.app.interfaces import IApplicationNode
+from cone.app.interfaces import ILiveSearch
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppNode
 from cone.app.model import CopySupport
@@ -24,6 +27,7 @@ from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import Everyone
 from pyramid.threadlocal import get_current_request
+from zope.component import adapter
 from zope.interface import implementer
 
 
@@ -208,3 +212,26 @@ def create_content(node):
             description = item.attrs['description'] = Translation()
             description['en'] = f'Item Description'
             description['de'] = f'Object Beschreibung'
+
+
+@implementer(ILiveSearch)
+@adapter(IApplicationNode)
+class LiveSearch(object):
+
+    def __init__(self, model):
+        self.model = model
+
+    def search(self, request, query):
+        result = []
+        for child in self.model.values():
+            md = child.metadata
+            if (
+                md.title.lower().find(query.lower()) > -1 or
+                md.description.lower().find(query.lower()) > -1
+            ):
+                result.append({
+                    'value': md.title,
+                    'target': make_url(request, node=child),
+                    'icon': md.icon
+                })
+        return result
