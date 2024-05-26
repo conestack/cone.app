@@ -29,6 +29,14 @@ The sources are in a GIT DVCS with its main branches at
 `github <http://github.com/conestack/cone.app>`_.
 
 
+Third Party Resources
+=====================
+
+- https://github.com/jquery/jquery
+- https://github.com/twbs/bootstrap
+- https://github.com/HatScripts/circle-flags
+
+
 Copyright
 =========
 

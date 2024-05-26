@@ -12,8 +12,12 @@
                 justify-content-end-sm-center align-items-center"
          data-bs-toggle="dropdown">
       <a href="#"
-         class="nav-link d-inline-block px-0 px-md-3">
-        <span i18n:translate="language">Language</span>
+         class="nav-link d-inline-block px-0 px-md-2">
+        <img src="${context.flag}"
+             width="20"
+             height="20"
+             alt="language"
+             i18n:attributes="alt" />
         <span class="caret"></span>
       </a>
     </div>

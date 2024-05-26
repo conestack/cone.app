@@ -8,6 +8,7 @@ from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
+from cone.app.browser.utils import request_property
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ILayout
 from cone.app.interfaces import INavigationLeaf
@@ -492,6 +493,7 @@ class LanguageTile(Tile):
         return make_query(**params)
 
 
+# XXX: complete list
 language_names = {
     'en': _('lang_en', default='English'),
     'de': _('lang_de', default='German'),
@@ -510,11 +512,23 @@ class Language(LanguageTile):
     def show(self):
         return bool(cfg.available_languages)
 
+    @request_property
+    def current_lang(self):
+        return negotiate_locale_name(self.request)
+
+    @property
+    def flag(self):
+        return make_url(
+            self.request,
+            node=self.model.root['resources'],
+            resource='/'.join(['cone', 'flags', f'{self.current_lang}.svg'])
+        )
+
     @property
     def languages(self):
         languages = list()
         localizer = get_localizer(self.request)
-        current = negotiate_locale_name(self.request)
+        current = self.current_lang
         for lang in cfg.available_languages:
             target = make_url(
                 self.request,

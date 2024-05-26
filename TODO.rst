@@ -1,7 +1,12 @@
 TODO
 ====
 
-- Dropdowns - do we need <div class="dropdown-item" /> wrappers? causes
-  rendering problems in all sorts of dropdowns.
-
-- Contextmenu - wrong html semantics. ul in ul.
+- Live search.
+- Table actions sorting.
+- SCSS splitting.
+- Reduce CSS class noise and add some custom rules to SCSS files.
+- Check if we can retrieve Bootstrap sources other than including in this repo
+  for development.
+- Translation widget.
+- Referencebrowser widget.
+- Treibstoff styles.

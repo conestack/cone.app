@@ -16,7 +16,7 @@
                   justify-content-end-sm-center align-items-center"
            data-bs-toggle="dropdown">
         <a href="#"
-           class="nav-link d-inline-block px-0 px-md-3">
+           class="nav-link d-inline-block px-0 px-md-2">
           <span tal:content="context.user">Admin</span>
           <span class="caret"></span>
         </a>
