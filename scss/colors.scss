@@ -12,36 +12,44 @@ $color-mode-type: data;
 
 /* dark mode */
 @include color-mode(dark) {
-  #content {
-    color: $light;
-    background-color: $dark;
-  }
+    #content {
+        color: $light;
+        background-color: $dark;
+    }
 
-  #navbar-content-wrapper {
-    color: $light;
-    background-color: $dark;
-  }
+    #navbar-content-wrapper {
+        color: $light;
+        background-color: $dark;
+    }
 
-  #sidebar_left {
-    background-color: #343b45;
-  }
+    #sidebar_left {
+        background-color: #343b45;
+    }
 
-  #footer {
-    color: $light;
-    background-color: $black;
-  }
+    #footer {
+        color: $light;
+        background-color: $black;
+    }
 
-  #contextmenu {
-    color: $light;
-    background-color: $dropdown-dark-bg;
-  }
+    #contextmenu {
+        color: $light;
+        background-color: $dropdown-dark-bg;
+    }
+
+    tr.selectable.selected td {
+        background-color: #344555;
+    }
+
+    .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+        background-color: #485f76;
+    }
 }
 
 /* light mode */
 @include color-mode(light) {
     #content {
-      color: $dark;
-      background-color: $gray-100;
+        color: $dark;
+        background-color: $gray-100;
     }
 
     #navbar-content-wrapper {
@@ -61,6 +69,14 @@ $color-mode-type: data;
     #contextmenu {
         color: $dark;
         background-color: $white;
+    }
+
+    tr.selectable.selected td {
+        background-color: #dfeefb;
+    }
+
+    .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+        background-color: #cfdce7;
     }
 }
 

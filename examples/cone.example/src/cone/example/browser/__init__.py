@@ -42,11 +42,11 @@ def configure_resources(config, settings):
     config.set_resource_include('cone-example-css', 'authenticated')
 
 
-@tile(name='content',
+@tile(name='view',
       path='templates/view.pt',
       interface=EntryFolder,
       permission='login')
-@tile(name='content',
+@tile(name='view',
       path='templates/view.pt',
       interface=Folder,
       permission='login')

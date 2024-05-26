@@ -90,6 +90,7 @@ class BaseContainer(PublicationWorkflowNode):
         props.default_content_tile = 'listing'
         props.action_up = True
         props.action_view = True
+        props.action_edit = True
         props.action_list = True
         props.action_sharing = True
         props.action_move = True
@@ -130,7 +131,6 @@ class Folder(BaseContainer):
     @property
     def properties(self):
         props = super().properties
-        props.action_edit = True
         props.action_delete = True
         return props
 

@@ -19,6 +19,12 @@
   color: #f8f9fa;
   background-color: #343a40;
 }
+[data-bs-theme=dark] tr.selectable.selected td {
+  background-color: #344555;
+}
+[data-bs-theme=dark] .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+  background-color: #485f76;
+}
 
 /* light mode */
 [data-bs-theme=light] #content {
@@ -39,6 +45,12 @@
 [data-bs-theme=light] #contextmenu {
   color: #212529;
   background-color: #fff;
+}
+[data-bs-theme=light] tr.selectable.selected td {
+  background-color: #dfeefb;
+}
+[data-bs-theme=light] .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+  background-color: #cfdce7;
 }
 
 /* import everything where we need changed bootstrap variables for here */
@@ -313,14 +325,6 @@ tr.selectable td {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-}
-
-tr.selectable.selected td {
-  background-color: #dfeefb;
-}
-
-.table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
-  background-color: #cfdce7;
 }
 
 /* responsive changes */
