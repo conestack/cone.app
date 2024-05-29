@@ -1,7 +1,8 @@
 TODO
 ====
 
-- Live search.
+- Main menu display children.
+- Custom root node in example.
 - Referencebrowser widget.
 - Treibstoff styles.
 - Yafowil bootstrap 5 styles.

@@ -39,12 +39,6 @@ class LogoTile(Tile):
     """
 
 
-@tile(name='livesearch', path='templates/livesearch.pt', permission='login')
-class LivesearchTile(Tile):
-    """Tile rendering the live search.
-    """
-
-
 @tile(name='colortoggler', path='templates/colortoggler.pt', permission='login')
 class ColorTogglerTile(Tile):
     """Tile rendering the color mode toggler.

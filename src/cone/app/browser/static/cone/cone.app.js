@@ -319,10 +319,8 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             this.elem = elem;
             this.target = `${elem.data('search-target')}/livesearch`;
-            this.result = $('<ul />')
-                .attr('id', 'livesearch-result')
-                .attr('class', 'dropdown-menu')
-                .insertAfter(elem.parents('.input-group'));
+            this.content = $('#content');
+            this.result = null;
             this._term = '';
             this._minlen = 3;
             this._delay = 250;
@@ -331,7 +329,6 @@ var cone = (function (exports, $, ts) {
             this.on_keydown = this.on_keydown.bind(this);
             this.on_change = this.on_change.bind(this);
             this.on_result = this.on_result.bind(this);
-            this.on_select = this.on_select.bind(this);
             elem.on('keydown', this.on_keydown);
             elem.on('change', this.on_change);
         }
@@ -344,6 +341,52 @@ var cone = (function (exports, $, ts) {
                 success: this.on_result
             });
             this._in_progress = false;
+        }
+        render_no_results() {
+            ts.compile_template(this, `
+        <h5 class="card-title">No search results</h5>
+        `, this.result);
+        }
+        render_suggestion(item) {
+            ts.compile_template(this, `
+        <div class="mb-4">
+          <h5 class="card-title">
+            <a href="${item.target}"
+               ajax:bind="click"
+               ajax:event="contextchanged:#layout"
+               ajax:target="${item.target}">
+              <i class="${item.icon}"></i>
+              ${item.value}
+            </a>
+          </h5>
+          <p class="card-text">
+            ${item.description === undefined ? '' : item.description}
+          </p>
+        </div>
+        `, this.result);
+        }
+        on_result(data, status, request) {
+            this.content.empty();
+            ts.compile_template(this, `
+        <div class="card mt-2">
+          <div class="card-body" t-elem="result">
+            <h3 class="card-title mb-3">Search results for "${this._term}"</h3>
+          </div>
+        </div>
+        `, this.content);
+            if (!data.length) {
+                this.render_no_results();
+            } else {
+                ts.compile_template(this, `
+            <p class="card-text mb-3">
+              <span>${data.length} Results</span>
+            </p>
+            `, this.result);
+                for (const item of data) {
+                    this.render_suggestion(item);
+                }
+            }
+            this.result.tsajax();
         }
         on_keydown(evt) {
             if (evt.keyCode === 13) {
@@ -374,23 +417,6 @@ var cone = (function (exports, $, ts) {
                 this._timeout_event = null;
                 this.search();
             }, this._delay);
-        }
-        on_result(data, status, request) {
-            console.log(data);
-        }
-        on_select(evt, suggestion, dataset) {
-            if (!suggestion.target) {
-                console.log('No suggestion target defined.');
-                return;
-            }
-            ts.ajax.trigger(
-                'contextchanged',
-                '#layout',
-                suggestion.target
-            );
-        }
-        render_suggestion(suggestion) {
-            return `<span class="${suggestion.icon}"></span>${suggestion.value}`;
         }
     }
 

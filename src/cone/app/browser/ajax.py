@@ -1,7 +1,6 @@
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import format_traceback
-from cone.app.interfaces import ILiveSearch
 from cone.tile import render_tile
 from node.utils import safe_encode
 from pyramid.exceptions import Forbidden
@@ -363,11 +362,3 @@ def render_ajax_form(model, request, name):
             error='true'
         )
         return Response(rendered)
-
-
-@view_config(name='livesearch', accept='application/json', renderer='json')
-def livesearch(model, request):
-    adapter = request.registry.queryAdapter(model, ILiveSearch)
-    if not adapter:
-        return list()
-    return adapter.search(request, request.params['term'])

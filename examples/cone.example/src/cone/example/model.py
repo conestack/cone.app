@@ -232,6 +232,7 @@ class LiveSearch(object):
                 result.append({
                     'value': md.title,
                     'target': make_url(request, node=child),
-                    'icon': md.icon
+                    'icon': md.icon,
+                    'description': md.description,
                 })
         return result

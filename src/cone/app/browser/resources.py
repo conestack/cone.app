@@ -59,22 +59,6 @@ bootstrap_resources.add(wr.StyleResource(
     compressed='bootstrap-icons.min.css'
 ))
 
-# typeahead
-typeahead_resources = wr.ResourceGroup(
-    name='cone.app-typeahead',
-    directory=os.path.join(resources_dir, 'typeahead'),
-    path='typeahead'
-)
-# typeahead_resources.add(wr.ScriptResource(
-#     name='typeahead-js',
-#     depends='jquery-js',
-#     resource='typeahead.bundle.js'
-# ))
-# typeahead_resources.add(wr.StyleResource(
-#     name='typeahead-css',
-#     resource='typeahead.css'
-# ))
-
 # cone
 cone_resources = wr.ResourceGroup(
     name='cone.app-cone',
@@ -151,7 +135,6 @@ class ResourceRegistry(object):
         # register default resources
         config.register_resource(jquery_resources)
         config.register_resource(bootstrap_resources)
-        config.register_resource(typeahead_resources)
         config.register_resource(cone_resources)
 
     def register_resource(self, config, resource):
