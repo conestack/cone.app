@@ -17,7 +17,7 @@ def example_main_hook(config, global_config, settings):
     config.add_translation_dirs('cone.example:locale/')
 
     # register plugin entry nodes
-    for i in range(1, 11):
+    for i in range(1, 6):
         register_entry(f'folder_{i}', EntryFolder)
 
     # static resources

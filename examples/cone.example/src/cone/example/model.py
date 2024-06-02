@@ -124,6 +124,12 @@ class EntryFolder(BaseContainer):
         super().__init__(name=name, parent=parent)
         create_content(self)
 
+    @property
+    def properties(self):
+        props = super().properties
+        #props.mainmenu_display_children = True
+        return props
+
 
 @node_info(
     name='folder',
