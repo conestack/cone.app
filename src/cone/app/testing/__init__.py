@@ -231,6 +231,7 @@ class Security(object):
         if root.get('settings'):
             root['settings'].factories.clear()
         security_module.AUTHENTICATOR = None
+        security_module.node_available = security_module.default_node_available
         import pyramid.threadlocal
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         resetHooks()
