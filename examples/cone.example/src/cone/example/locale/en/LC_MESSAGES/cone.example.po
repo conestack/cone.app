@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2024-05-26 08:17+0200\n"
+"POT-Creation-Date: 2024-06-02 08:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Generated-By: Lingua 4.15.0\n"
 
 #. Default: Folder
-#: examples/cone.example/src/cone/example/model.py:113
-#: examples/cone.example/src/cone/example/model.py:125
+#: examples/cone.example/src/cone/example/model.py:118
+#: examples/cone.example/src/cone/example/model.py:136
 msgid "folder"
 msgstr "Folder"
 
 #. Default: Item
-#: examples/cone.example/src/cone/example/model.py:140
+#: examples/cone.example/src/cone/example/model.py:150
 msgid "item"
 msgstr "Item"
 
@@ -49,3 +49,38 @@ msgstr "publish"
 #: examples/cone.example/src/cone/example/publication.zcml:45
 msgid "public_to_private"
 msgstr "retract"
+
+#. Default: Title
+#: examples/cone.example/src/cone/example/browser/__init__.py:76
+msgid "title"
+msgstr "Title"
+
+#. Default: Enter a title
+#: examples/cone.example/src/cone/example/browser/__init__.py:77
+msgid "title_description"
+msgstr "Enter a title"
+
+#. Default: Title is mandatory
+#: examples/cone.example/src/cone/example/browser/__init__.py:78
+msgid "title_required"
+msgstr "Title is mandatory"
+
+#. Default: Description
+#: examples/cone.example/src/cone/example/browser/__init__.py:85
+msgid "description"
+msgstr "Description"
+
+#. Default: Enter a description
+#: examples/cone.example/src/cone/example/browser/__init__.py:86
+msgid "description_description"
+msgstr "Enter a description"
+
+#. Default: Save
+#: examples/cone.example/src/cone/example/browser/__init__.py:99
+msgid "save"
+msgstr "Save"
+
+#. Default: Cancel
+#: examples/cone.example/src/cone/example/browser/__init__.py:108
+msgid "cancel"
+msgstr "Cancel"
