@@ -693,6 +693,9 @@ var cone = (function (exports, $, ts) {
             this.on_click = this.on_click.bind(this);
             this.on_hover = this.on_hover.bind(this);
             this.on_resize = this.on_resize.bind(this);
+            this.on_touch_start = this.on_touch_start.bind(this);
+            this.on_touch_move = this.on_touch_move.bind(this);
+            this.on_touch_end = this.on_touch_end.bind(this);
             this.compile();
             this.position = 0;
             this.scroll_step = 50;
@@ -718,6 +721,9 @@ var cone = (function (exports, $, ts) {
             this.pointer_events = true;
             this.elem.on('mousewheel wheel', this.on_scroll);
             this.elem.on('mouseenter mouseleave', this.on_hover);
+            this.elem.on('touchstart', this.on_touch_start);
+            this.elem.on('touchmove', this.on_touch_move);
+            this.elem.on('touchend', this.on_touch_end);
             this.scrollbar.on('click', this.on_click);
             this.set_scope(this.thumb, $(document));
             $(window).on('resize', this.on_resize);
@@ -725,6 +731,9 @@ var cone = (function (exports, $, ts) {
         unbind() {
             this.elem.off('mousewheel wheel', this.on_scroll);
             this.elem.off('mouseenter mouseleave', this.on_hover);
+            this.elem.off('touchstart', this.on_touch_start);
+            this.elem.off('touchmove', this.on_touch_move);
+            this.elem.off('touchend', this.on_touch_end);
             this.scrollbar.off('click', this.on_click);
             $(this.thumb).off('mousedown', this._down_handle);
             $(window).off('resize', this.on_resize);
@@ -807,6 +816,29 @@ var cone = (function (exports, $, ts) {
                 thumb_pos = position - this.offset - this.thumbsize / 2;
             this.position = this.contentsize * thumb_pos / this.scrollsize;
             this.thumb.removeClass('active');
+        }
+        on_touch_start(evt) {
+            const touch = evt.originalEvent.touches[0];
+            this._touch_start_y = touch.pageY;
+            this._start_position = this.position;
+            let target = $(evt.target);
+            if (
+                target.is('a, button, input') ||
+                target.parents('a, button, input').length > 0
+            ) {
+                return;
+            }
+            evt.preventDefault();
+        }
+        on_touch_move(evt) {
+            const touch = evt.originalEvent.touches[0];
+            const deltaY = touch.pageY - this._touch_start_y;
+            this.position = this._start_position - deltaY;
+            evt.preventDefault();
+        }
+        on_touch_end(evt) {
+            delete this._touch_start_y;
+            delete this._start_position;
         }
         down(evt) {
             this._mouse_pos = this.pos_from_evt(evt) - this.offset;
