@@ -59,14 +59,19 @@
   --navbar-height: 50px;
 }
 
+html {
+  height: 100%;
+  width: 100%;
+}
+
 body {
-  height: 100vh;
+  height: 100%;
 }
 
 /* sidebar */
 #sidebar_left {
-  height: 100vh;
-  max-height: 100vh;
+  height: 100%;
+  max-height: 100%;
   user-select: none;
 }
 #sidebar_left .scrollable-y {
@@ -105,7 +110,7 @@ body {
 #sidebar_left #sidebar_resize #sidebar_resizer {
   position: absolute;
   z-index: 3;
-  height: 100vh;
+  height: 100%;
   width: 20px;
   transform: translateX(-50%);
   cursor: col-resize;
