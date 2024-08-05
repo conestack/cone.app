@@ -20,6 +20,7 @@ import {Sharing} from './sharing.js';
 import {Sidebar} from './sidebar.js';
 import {TableToolbar} from './tabletoolbar.js';
 import {Translation} from './translation.js';
+import {MainMenu} from './mainmenu.js';
 
 export * from './batcheditems.js';
 export * from './colormode.js';
@@ -36,6 +37,7 @@ export * from './sidebar.js';
 export * from './tabletoolbar.js';
 export * from './translation.js';
 export * from './utils.js';
+export * from './mainmenu.js';
 
 $(function() {
     new KeyBinder();
@@ -54,4 +56,5 @@ $(function() {
     ts.ajax.register(Sidebar.initialize, true);
     ts.ajax.register(PersonalTools.initialize, true);
     ts.ajax.register(LiveSearch.initialize, true);
+    ts.ajax.register(MainMenu.initialize, true);
 });

@@ -1027,6 +1027,51 @@ var cone = (function (exports, $, ts) {
         }
     }
 
+    class MainMenu extends ts.Events {
+        static initialize(context) {
+            const elem = ts.query_elem('#mainmenu', context);
+            if (!elem) {
+                return;
+            }
+            new MainMenu(elem);
+        }
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            this.height = this.elem.outerHeight();
+            this.scrollbar = elem.data('scrollbar');
+            this.elems = $('.nav-link.dropdown-toggle', elem);
+            this.open_dropdown = null;
+            this.elems.each((i, el) => {
+                $(el).on('shown.bs.dropdown', () => {
+                    this.open_dropdown = el;
+                    this.elem.css('height', '200vh');
+                    const dropdown = $(el).siblings('ul.dropdown-menu');
+                    dropdown.css({
+                        position: 'fixed',
+                        top: `${this.height}px`,
+                        left: `${$(el).offset().left}px`
+                    });
+                });
+                $(el).on('hidden.bs.dropdown', () => {
+                    if (this.open_dropdown !== el) {
+                        return;
+                    }
+                    this.elem.css('height', '100%');
+                    this.open_dropdown = null;
+                });
+            });
+            this.hide_dropdowns = this.hide_dropdowns.bind(this);
+            this.scrollbar.on('on_position', this.hide_dropdowns);
+            ts.ajax.attach(this, elem);
+        }
+        hide_dropdowns() {
+            this.elems.each((i, el) => {
+                $(el).dropdown('hide');
+            });
+        }
+    }
+
     class Selectable {
         constructor(options) {
             this.options = options;
@@ -1174,6 +1219,7 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(Sidebar.initialize, true);
         ts.ajax.register(PersonalTools.initialize, true);
         ts.ajax.register(LiveSearch.initialize, true);
+        ts.ajax.register(MainMenu.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1186,6 +1232,7 @@ var cone = (function (exports, $, ts) {
     exports.GlobalEvents = GlobalEvents;
     exports.KeyBinder = KeyBinder;
     exports.LiveSearch = LiveSearch;
+    exports.MainMenu = MainMenu;
     exports.PersonalTools = PersonalTools;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
