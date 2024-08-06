@@ -1081,11 +1081,55 @@ var cone = (function (exports, $, ts) {
             this.hide_dropdowns = this.hide_dropdowns.bind(this);
             this.scrollbar.on('on_position', this.hide_dropdowns);
             ts.ajax.attach(this, elem);
+            this.navbar_toggler = ts.query_elem('.navbar-toggler[data-bs-target="#navbar-content-wrapper"]', $('body'));
+            this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', $('body'));
+            this.handle = this.handle.bind(this);
+            global_events.on('on_sidebar_resize', this.handle);
+            $(window).on('resize', this.handle);
         }
         hide_dropdowns() {
             this.elems.each((i, el) => {
                 $(el).dropdown('hide');
             });
+        }
+        handle() {
+            const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
+            if ($('#header-main').outerWidth() < taken + 500) {
+                if ($('#header-main').hasClass('navbar-expand')) {
+                    $('#header-main').removeClass('navbar-expand');
+                }
+            } else {
+                if (!$('#header-main').hasClass('navbar-expand')) {
+                    $('#header-main').addClass('navbar-expand');
+                }
+            }
+        }
+    }
+
+    class Header extends ts.Events {
+        static initialize(context) {
+            const elem = ts.query_elem('#header-main', context);
+            if (!elem) {
+                return;
+            }
+            new Header(elem);
+        }
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
+            this.toggle_placeholder = this.toggle_placeholder.bind(this);
+            global_events.on('on_sidebar_resize', this.toggle_placeholder);
+            $(window).on('resize', this.toggle_placeholder);
+            ts.ajax.attach(this, elem);
+            this.toggle_placeholder();
+        }
+        toggle_placeholder() {
+            if ($(window).width() > this.elem.outerWidth()) {
+                this.logo_placeholder.hide();
+            } else {
+                this.logo_placeholder.show();
+            }
         }
     }
 
@@ -1237,6 +1281,7 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(PersonalTools.initialize, true);
         ts.ajax.register(LiveSearch.initialize, true);
         ts.ajax.register(MainMenu.initialize, true);
+        ts.ajax.register(Header.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1247,6 +1292,7 @@ var cone = (function (exports, $, ts) {
     exports.ColorToggler = ColorToggler;
     exports.CopySupport = CopySupport;
     exports.GlobalEvents = GlobalEvents;
+    exports.Header = Header;
     exports.KeyBinder = KeyBinder;
     exports.LiveSearch = LiveSearch;
     exports.MainMenu = MainMenu;

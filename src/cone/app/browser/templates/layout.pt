@@ -51,11 +51,11 @@
           <!-- header -->
           <nav id="header-main"
                tal:condition="request.has_permission('view', model)"
-               class="position-relative p-0 navbar navbar-expand-lg navbar-light shadow-sm">
+               class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm">
 
             <div id="header-content"
                  tal:define="css config.mainmenu_fluid
-                             and 'justify-content-end h-100 px-0 flex-row flex-lg-row-reverse container-fluid'"
+                             and 'justify-content-end h-100 px-0 container-fluid'"
                  tal:attributes="class css">
 
               <tal:personaltools
@@ -72,6 +72,11 @@
               <div id="navbar-content-wrapper"
                    class="collapse shadow navbar-collapse p-3 p-lg-0">
                 <div id="navbar-content" class="d-flex align-items-center">
+                    <div id="header-logo-placeholder"
+                         class="position-relative mx-4">
+                        <span class="fs-4" tal:content="model.root.metadata.title">Cone</span>
+                    </div>
+
                   <tal:mainmenu
                     condition="config.mainmenu"
                     replace="structure tile('mainmenu')" />
