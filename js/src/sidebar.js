@@ -34,6 +34,9 @@ export class Sidebar extends ts.Motion {
 
         const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
         this.set_scope(resizer_elem, $(document));
+
+        // enable scroll to refresh page on mobile devices
+        $('html, body').css('overscroll-behavior', 'auto');
     }
 
     get sidebar_width() {
@@ -49,6 +52,8 @@ export class Sidebar extends ts.Motion {
     }
 
     collapse() {
+        // enable scroll to refresh page on mobile devices
+        $('html, body').css('overscroll-behavior', 'auto');
         this.elem
             .removeClass('expanded')
             .addClass('collapsed');
@@ -56,6 +61,8 @@ export class Sidebar extends ts.Motion {
     }
 
     expand() {
+        // disable scroll to refresh page on mobile devices
+        $('html, body').css('overscroll-behavior', 'none');
         this.elem
             .removeClass('collapsed')
             .addClass('expanded');
