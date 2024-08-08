@@ -54,6 +54,7 @@ export class MainMenu extends ts.Events {
         this.handle = this.handle.bind(this);
         global_events.on('on_sidebar_resize', this.handle);
         $(window).on('resize', this.handle);
+        this.handle();
     }
 
     hide_dropdowns() {

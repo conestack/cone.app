@@ -31,6 +31,9 @@ export class Scrollbar extends ts.Motion {
 
         ts.ajax.attach(this, this.elem);
         ts.clock.schedule_frame(() => this.render());
+
+        const is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
+        new ts.Property(this, 'is_mobile', is_mobile);
     }
 
     get position() {
@@ -51,10 +54,19 @@ export class Scrollbar extends ts.Motion {
         this.elem.css('pointer-events', value ? 'all' : 'none');
     }
 
+    on_is_mobile(val) {
+        if (val && this.contentsize > this.scrollsize) {
+            this.scrollbar.stop(true, true).show();
+            this.elem.off('mouseenter mouseleave', this.on_hover);
+        } else {
+            this.scrollbar.stop(true, true).hide();
+            this.elem.on('mouseenter mouseleave', this.on_hover);
+        }
+    }
+
     bind() {
         this.pointer_events = true;
         this.elem.on('mousewheel wheel', this.on_scroll);
-        this.elem.on('mouseenter mouseleave', this.on_hover);
         this.scrollbar.on('click', this.on_click);
         this.set_scope(this.thumb, $(document), this.elem);
         $(window).on('resize', this.on_resize);
@@ -111,6 +123,7 @@ export class Scrollbar extends ts.Motion {
     }
 
     on_resize() {
+        this.is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
         this.render();
     }
 

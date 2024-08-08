@@ -699,6 +699,8 @@ var cone = (function (exports, $, ts) {
             new ts.Property(this, 'disabled', false);
             ts.ajax.attach(this, this.elem);
             ts.clock.schedule_frame(() => this.render());
+            const is_mobile = $(window).width() <= 768;
+            new ts.Property(this, 'is_mobile', is_mobile);
         }
         get position() {
             return this._position || 0;
@@ -714,10 +716,19 @@ var cone = (function (exports, $, ts) {
         set pointer_events(value) {
             this.elem.css('pointer-events', value ? 'all' : 'none');
         }
+        on_is_mobile(val) {
+            console.log(val);
+            if (val && this.contentsize > this.scrollsize) {
+                this.scrollbar.stop(true, true).show();
+                this.elem.off('mouseenter mouseleave', this.on_hover);
+            } else {
+                this.scrollbar.stop(true, true).hide();
+                this.elem.on('mouseenter mouseleave', this.on_hover);
+            }
+        }
         bind() {
             this.pointer_events = true;
             this.elem.on('mousewheel wheel', this.on_scroll);
-            this.elem.on('mouseenter mouseleave', this.on_hover);
             this.scrollbar.on('click', this.on_click);
             this.set_scope(this.thumb, $(document), this.elem);
             $(window).on('resize', this.on_resize);
@@ -767,6 +778,7 @@ var cone = (function (exports, $, ts) {
             }
         }
         on_resize() {
+            this.is_mobile = $(window).width() <= 768;
             this.render();
         }
         on_hover(evt) {
@@ -1086,6 +1098,7 @@ var cone = (function (exports, $, ts) {
             this.handle = this.handle.bind(this);
             global_events.on('on_sidebar_resize', this.handle);
             $(window).on('resize', this.handle);
+            this.handle();
         }
         hide_dropdowns() {
             this.elems.each((i, el) => {
