@@ -17,20 +17,30 @@ export class Header extends ts.Events {
         this.elem = elem;
         this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
 
-        this.toggle_placeholder = this.toggle_placeholder.bind(this);
-        global_events.on('on_sidebar_resize', this.toggle_placeholder);
-        $(window).on('resize', this.toggle_placeholder);
+        this.set_mobile = this.set_mobile.bind(this);
+        global_events.on('on_sidebar_resize', this.set_mobile);
+        $(window).on('resize', this.set_mobile);
 
         ts.ajax.attach(this, elem);
 
-        this.toggle_placeholder();
+        const is_mobile = $(window).width() > this.elem.outerWidth();
+        new ts.Property(this, 'is_mobile', is_mobile);
     }
 
-    toggle_placeholder() {
-        if ($(window).width() > this.elem.outerWidth()) {
+    on_is_mobile(val) {
+        console.log(val)
+        // XXX: move stuff from mainmenu here
+        // XXX: append mobile css class
+        if (val) {
+            console.log('header mobile')
             this.logo_placeholder.hide();
         } else {
+            console.log('header desktop')
             this.logo_placeholder.show();
         }
+    }
+
+    set_mobile() {
+        this.is_mobile = ($(window).width() > this.elem.outerWidth());
     }
 }

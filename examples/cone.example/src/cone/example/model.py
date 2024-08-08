@@ -127,7 +127,7 @@ class EntryFolder(BaseContainer):
     @property
     def properties(self):
         props = super().properties
-        #props.mainmenu_display_children = True
+        props.mainmenu_display_children = True
         return props
 
 

@@ -687,8 +687,12 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             super();
             this.elem = elem;
+            if (this.elem.data('scrollbar')) {
+                console.warn('cone.app: Only one Scrollbar can be bound to each element.');
+                return;
+            }
             this.elem.data('scrollbar', this);
-            this.content = ts.query_elem('.scrollable-content', elem);
+            this.content = ts.query_elem('> .scrollable-content', elem);
             this.on_scroll = this.on_scroll.bind(this);
             this.on_click = this.on_click.bind(this);
             this.on_hover = this.on_hover.bind(this);
@@ -741,6 +745,8 @@ var cone = (function (exports, $, ts) {
         }
         destroy() {
             this.unbind();
+            this.scrollbar.remove();
+            this.elem.data('scrollbar', null);
         }
         compile() {
             ts.compile_template(this, `
@@ -752,7 +758,7 @@ var cone = (function (exports, $, ts) {
         }
         render(attr) {
             this.scrollbar.css(attr, this.scrollsize);
-            if(this.contentsize <= this.scrollsize) {
+            if (this.contentsize <= this.scrollsize) {
                 this.thumbsize = this.scrollsize;
             } else {
                 this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
@@ -761,6 +767,9 @@ var cone = (function (exports, $, ts) {
             this.update();
         }
         safe_position(position) {
+            if (this.contentsize <= this.scrollsize) {
+                return position;
+            }
             const max_pos = this.contentsize - this.scrollsize;
             if (position >= max_pos) {
                 position = max_pos;
@@ -825,6 +834,9 @@ var cone = (function (exports, $, ts) {
             this._start_position = this.position;
         }
         touchmove(evt) {
+            if (this.contentsize <= this.scrollsize) {
+                return;
+            }
             const touch = evt.originalEvent.touches[0];
             const deltaY = touch.pageY - this._touch_start_y;
             this.position = this._start_position - deltaY;
@@ -1069,35 +1081,80 @@ var cone = (function (exports, $, ts) {
             this.height = this.elem.outerHeight();
             this.scrollbar = elem.data('scrollbar');
             this.elems = $('.nav-link.dropdown-toggle', elem);
-            this.open_dropdown = null;
-            this.elems.each((i, el) => {
-                $(el).on('shown.bs.dropdown', () => {
-                    this.open_dropdown = el;
-                    this.elem.css('height', '200vh');
-                    const dropdown = $(el).siblings('ul.dropdown-menu');
-                    dropdown.css({
-                        position: 'fixed',
-                        top: `${this.height}px`,
-                        left: `${$(el).offset().left}px`
-                    });
-                });
-                $(el).on('hidden.bs.dropdown', () => {
-                    if (this.open_dropdown !== el) {
-                        return;
-                    }
-                    this.elem.css('height', '100%');
-                    this.open_dropdown = null;
-                });
-            });
-            this.hide_dropdowns = this.hide_dropdowns.bind(this);
-            this.scrollbar.on('on_position', this.hide_dropdowns);
-            ts.ajax.attach(this, elem);
             this.navbar_toggler = ts.query_elem('.navbar-toggler[data-bs-target="#navbar-content-wrapper"]', $('body'));
             this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', $('body'));
+            this.open_dropdown = null;
+            ts.ajax.attach(this, elem);
+            this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
+            this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
+            this.hide_dropdowns = this.hide_dropdowns.bind(this);
             this.handle = this.handle.bind(this);
             global_events.on('on_sidebar_resize', this.handle);
             $(window).on('resize', this.handle);
             this.handle();
+            const is_mobile = $(window).width() <= 768;
+            new ts.Property(this, 'is_mobile', is_mobile);
+        }
+        on_is_mobile(val) {
+            if (val) {
+                this.scrollbar.off('on_position', this.hide_dropdowns);
+                this.unbind_dropdowns_desktop();
+                this.elem.addClass('mobile');
+                $('#navbar-content').addClass('scrollable-content');
+                this.mobile_scrollbar = new ScrollbarY($('#navbar-content-wrapper'));
+                $('#navbar-content-wrapper').on('shown.bs.collapse', () => {
+                    $('html, body').css('overscroll-behavior', 'none');
+                    this.mobile_scrollbar.render();
+                    this.mobile_scrollbar.scrollbar.fadeIn();
+                });
+                $('#navbar-content-wrapper').on('hide.bs.collapse', () => {
+                    $('html, body').css('overscroll-behavior', 'auto');
+                    this.mobile_scrollbar.scrollbar.hide();
+                });
+                this.elems.each((i, el) => {
+                    $(el).on('shown.bs.dropdown', () => {
+                        this.mobile_scrollbar.render();
+                    });
+                    $(el).on('hidden.bs.dropdown', () => {
+                        this.mobile_scrollbar.render();
+                    });
+                });
+            } else {
+                this.bind_dropdowns_desktop();
+                this.scrollbar.on('on_position', this.hide_dropdowns);
+                this.elem.removeClass('mobile');
+            }
+        }
+        on_show_dropdown_desktop(evt) {
+            const el = evt.target;
+            this.open_dropdown = el;
+            this.elem.css('height', '200vh');
+            const dropdown = $(el).siblings('ul.dropdown-menu');
+            dropdown.css({
+                position: 'fixed',
+                top: `${this.height}px`,
+                left: `${$(el).offset().left}px`
+            });
+        }
+        on_hide_dropdown_desktop(evt) {
+            const el = evt.target;
+            if (this.open_dropdown !== el) {
+                return;
+            }
+            this.elem.css('height', '100%');
+            this.open_dropdown = null;
+        }
+        bind_dropdowns_desktop() {
+            this.elems.each((i, el) => {
+                $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
+                $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
+            });
+        }
+        unbind_dropdowns_desktop() {
+            this.elems.each((i, el) => {
+                $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
+                $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
+            });
         }
         hide_dropdowns() {
             this.elems.each((i, el) => {
@@ -1105,6 +1162,7 @@ var cone = (function (exports, $, ts) {
             });
         }
         handle() {
+            this.is_mobile = $(window).width() <= 768;
             const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
             if ($('#header-main').outerWidth() < taken + 500) {
                 if ($('#header-main').hasClass('navbar-expand')) {
@@ -1130,18 +1188,25 @@ var cone = (function (exports, $, ts) {
             super();
             this.elem = elem;
             this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
-            this.toggle_placeholder = this.toggle_placeholder.bind(this);
-            global_events.on('on_sidebar_resize', this.toggle_placeholder);
-            $(window).on('resize', this.toggle_placeholder);
+            this.set_mobile = this.set_mobile.bind(this);
+            global_events.on('on_sidebar_resize', this.set_mobile);
+            $(window).on('resize', this.set_mobile);
             ts.ajax.attach(this, elem);
-            this.toggle_placeholder();
+            const is_mobile = $(window).width() > this.elem.outerWidth();
+            new ts.Property(this, 'is_mobile', is_mobile);
         }
-        toggle_placeholder() {
-            if ($(window).width() > this.elem.outerWidth()) {
+        on_is_mobile(val) {
+            console.log(val);
+            if (val) {
+                console.log('header mobile');
                 this.logo_placeholder.hide();
             } else {
+                console.log('header desktop');
                 this.logo_placeholder.show();
             }
+        }
+        set_mobile() {
+            this.is_mobile = ($(window).width() > this.elem.outerWidth());
         }
     }
 

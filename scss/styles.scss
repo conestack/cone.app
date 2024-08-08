@@ -195,6 +195,32 @@ body {
         }
     }
 
+    &:has(.mobile):has(.show) {
+        height: 100%;
+
+        #header-logo-placeholder {
+            display: none;
+        }
+
+        #navbar-content-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: calc(100% - 80px);
+            padding: 0 !important;
+
+            #navbar-content {
+                padding-bottom: 80px;
+            }
+        }
+        #header-content {
+            align-items: flex-start;
+        }
+        .navbar-toggler {
+            height: 50px!important; // XXX variable
+            // margin-top: -.5rem;
+        }
+    }
+
     #navbar-content-wrapper {
         min-width: 0;
         z-index: 1;
@@ -213,6 +239,23 @@ body {
         }
         .nav-item.active .nav-link {
             color: $primary;
+        }
+
+        &.mobile {
+            .dropdown-menu {
+                border: none;
+
+                > li {
+                    .dropdown-item {
+                        padding: 8px 20px;
+                    }
+                    &:first-child {
+                        .dropdown-item {
+                            padding-top: 0;
+                        }
+                    }
+                }
+            }
         }
     }
 }

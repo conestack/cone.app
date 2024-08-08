@@ -16,8 +16,12 @@ export class Scrollbar extends ts.Motion {
         super();
 
         this.elem = elem;
+        if (this.elem.data('scrollbar')) {
+            console.warn('cone.app: Only one Scrollbar can be bound to each element.');
+            return;
+        }
         this.elem.data('scrollbar', this);
-        this.content = ts.query_elem('.scrollable-content', elem);
+        this.content = ts.query_elem('> .scrollable-content', elem);
 
         this.on_scroll = this.on_scroll.bind(this);
         this.on_click = this.on_click.bind(this);
@@ -82,6 +86,8 @@ export class Scrollbar extends ts.Motion {
 
     destroy() {
         this.unbind();
+        this.scrollbar.remove();
+        this.elem.data('scrollbar', null);
     }
 
     compile() {
@@ -95,7 +101,7 @@ export class Scrollbar extends ts.Motion {
 
     render(attr) {
         this.scrollbar.css(attr, this.scrollsize);
-        if(this.contentsize <= this.scrollsize) {
+        if (this.contentsize <= this.scrollsize) {
             this.thumbsize = this.scrollsize;
         } else {
             this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
@@ -105,6 +111,10 @@ export class Scrollbar extends ts.Motion {
     }
 
     safe_position(position) {
+        if (this.contentsize <= this.scrollsize) {
+            // "safe" position will be a negative value if content smaller than scrollsize
+            return position;
+        }
         const max_pos = this.contentsize - this.scrollsize;
         if (position >= max_pos) {
             position = max_pos;
@@ -176,6 +186,9 @@ export class Scrollbar extends ts.Motion {
     }
 
     touchmove(evt) {
+        if (this.contentsize <= this.scrollsize) {
+            return;
+        }
         const touch = evt.originalEvent.touches[0];
         const deltaY = touch.pageY - this._touch_start_y;
         this.position = this._start_position - deltaY;
