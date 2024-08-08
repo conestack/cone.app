@@ -717,7 +717,6 @@ var cone = (function (exports, $, ts) {
             this.elem.css('pointer-events', value ? 'all' : 'none');
         }
         on_is_mobile(val) {
-            console.log(val);
             if (val && this.contentsize > this.scrollsize) {
                 this.scrollbar.stop(true, true).show();
                 this.elem.off('mouseenter mouseleave', this.on_hover);
