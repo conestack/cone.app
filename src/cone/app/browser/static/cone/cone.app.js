@@ -420,83 +420,6 @@ var cone = (function (exports, $, ts) {
         }
     }
 
-    class GlobalEvents extends ts.Events {
-        on_sidebar_resize(inst) {
-        }
-        on_header_mode_toggle(inst) {
-        }
-    }
-    const global_events = new GlobalEvents();
-
-    class PersonalTools extends ts.Events {
-        static initialize(context) {
-            const elem = ts.query_elem('#header-main', context);
-            if (!elem) {
-                return;
-            }
-            new PersonalTools(elem);
-        }
-        constructor(elem) {
-            super();
-            this.elem = elem;
-            this.personal_tools = ts.query_elem('#personaltools', elem);
-            this.navbar_content = ts.query_elem('#navbar-content', elem);
-            this.header_content = ts.query_elem('#header-content', elem);
-            this.scrollbar = ts.query_elem('.scrollable-x', elem).data('scrollbar');
-            this.render = this.render.bind(this);
-            $(window).on('resize', this.render);
-            this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
-            global_events.on('on_sidebar_resize', this.on_sidebar_resize);
-            this.render();
-            ts.ajax.attach(this, elem);
-        }
-        destroy() {
-            $(window).off('resize', this.render);
-            global_events.off('on_sidebar_resize', this.on_sidebar_resize);
-        }
-        on_sidebar_resize(inst) {
-            this.scrollbar.render();
-            this.scrollbar.position = this.scrollbar.position;
-        }
-        render() {
-            const window_width = $(window).width();
-            const window_sm = window_width <= 576;
-            const window_lg = window_width <= 992;
-            const navbar_content = this.navbar_content;
-            const in_navbar_content = ts.query_elem(
-                '#personaltools',
-                navbar_content
-            ) !== null;
-            if (window_sm) {
-                if (!in_navbar_content) {
-                    this.personal_tools.detach().appendTo(navbar_content);
-                }
-            } else if (in_navbar_content) {
-                this.personal_tools.detach().prependTo(this.header_content);
-                $(".dropdown-menu.show").removeClass('show');
-            }
-            if (window_lg) {
-                this.disable_scrolling();
-            } else {
-                navbar_content.removeClass('show');
-                this.enable_scrolling();
-            }
-        }
-        disable_scrolling() {
-            const scrollbar = this.scrollbar;
-            if (!scrollbar.disabled) {
-                scrollbar.position = 0;
-                scrollbar.disabled = true;
-            }
-        }
-        enable_scrolling() {
-            const scrollbar = this.scrollbar;
-            if (scrollbar.disabled) {
-                scrollbar.disabled = false;
-            }
-        }
-    }
-
     class ReferenceHandle {
         static initialize(context) {
             if (!context) {
@@ -960,6 +883,14 @@ var cone = (function (exports, $, ts) {
         }
     }
 
+    class GlobalEvents extends ts.Events {
+        on_sidebar_resize(inst) {
+        }
+        on_header_mode_toggle(inst) {
+        }
+    }
+    const global_events = new GlobalEvents();
+
     class Sidebar extends ts.Motion {
         static initialize(context) {
             const elem = ts.query_elem('#sidebar_left', context);
@@ -1126,16 +1057,16 @@ var cone = (function (exports, $, ts) {
             this.elems.each((i, el) => {
                 $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
                 $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-                $(el).off('shown.bs.dropdown', header.render_scrollbar.bind(header));
-                $(el).off('hidden.bs.dropdown', header.render_scrollbar.bind(header));
+                $(el).off('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
+                $(el).off('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
             });
         }
         bind_dropdowns_mobile(header) {
             this.elems.each((i, el) => {
                 $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
                 $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-                $(el).on('shown.bs.dropdown', header.render_scrollbar.bind(header));
-                $(el).on('hidden.bs.dropdown', header.render_scrollbar.bind(header));
+                $(el).on('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
+                $(el).on('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
             });
         }
         hide_dropdowns() {
@@ -1157,26 +1088,30 @@ var cone = (function (exports, $, ts) {
             super();
             this.elem = elem;
             this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
-            this.navbar_content_wrapper = $('#navbar-content-wrapper', elem);
-            this.navbar_content = $('#navbar-content', elem);
+            this.header_content = ts.query_elem('#header-content', elem);
+            this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
+            this.navbar_content = ts.query_elem('#navbar-content', elem);
+            this.personal_tools = ts.query_elem('#personaltools', elem);
             this.set_mode = this.set_mode.bind(this);
             global_events.on('on_sidebar_resize', this.set_mode);
             $(window).on('resize', this.set_mode);
             ts.ajax.attach(this, elem);
-            const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
-            const is_compact = $(window).width() < 768 ||
-                (this.elem.outerWidth() < taken + 500);
-            new ts.Property(this, 'is_compact', is_compact);
-            this.render_scrollbar = this.render_scrollbar.bind(this);
-            this.fade_scrollbar = this.fade_scrollbar.bind(this);
+            new ts.Property(this, 'is_compact', null);
+            new ts.Property(this, 'is_super_compact', null);
+            this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
+            this.fade_mobile_scrollbar = this.fade_mobile_scrollbar.bind(this);
             this.set_mode();
         }
-        render_scrollbar() {
+        destroy() {
+            $(window).off('resize', this.set_mode);
+            global_events.off('on_sidebar_resize', this.set_mode);
+        }
+        render_mobile_scrollbar() {
             if (this.is_compact && this.mobile_scrollbar) {
                 this.mobile_scrollbar.render();
             }
         }
-        fade_scrollbar() {
+        fade_mobile_scrollbar() {
             if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
                 this.mobile_scrollbar.scrollbar.fadeIn('fast');
             }
@@ -1189,13 +1124,11 @@ var cone = (function (exports, $, ts) {
         }
         on_is_compact(val) {
             if (val) {
-                console.log('header compact');
                 this.elem.removeClass('full').removeClass('navbar-expand');
                 this.elem.addClass('compact');
-                this.logo_placeholder.hide();
                 this.navbar_content.addClass('scrollable-content');
                 this.mobile_scrollbar = new ScrollbarY(this.navbar_content_wrapper);
-                this.mobile_scrollbar.on('on_position', this.fade_scrollbar);
+                this.mobile_scrollbar.on('on_position', this.fade_mobile_scrollbar);
                 this.navbar_content_wrapper.on('shown.bs.collapse', () => {
                     $('html, body').css('overscroll-behavior', 'none');
                     this.mobile_scrollbar.render();
@@ -1206,23 +1139,41 @@ var cone = (function (exports, $, ts) {
                 });
                 this.mainmenu = $('#mainmenu', this.elem).data();
             } else {
-                console.log('header desktop');
                 this.elem.removeClass('compact');
                 this.elem.addClass('full').addClass('navbar-expand');
-                this.logo_placeholder.show();
                 this.navbar_content.removeClass('scrollable-content');
                 if (this.mobile_scrollbar) {
-                    this.mobile_scrollbar.off('on_position', this.fade_scrollbar);
+                    this.mobile_scrollbar.off('on_position', this.fade_mobile_scrollbar);
                     this.mobile_scrollbar.destroy();
                     this.mobile_scrollbar = null;
                 }
             }
             global_events.trigger('on_header_mode_toggle', this);
         }
-        set_mode() {
-            const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
-            this.is_compact = $(window).width() < 768 ||
-                (this.elem.outerWidth() < taken + 500);
+        on_is_super_compact(val) {
+            const in_navbar_content = ts.query_elem(
+                '#personaltools',
+                this.navbar_content
+            ) !== null;
+            if (val) {
+                if (!in_navbar_content) {
+                    this.personal_tools.detach().appendTo(this.navbar_content);
+                }
+            } else {
+                if (in_navbar_content) {
+                    this.personal_tools.detach().prependTo(this.header_content);
+                }
+                $(".dropdown-menu.show").removeClass('show');
+            }
+        }
+        set_mode(inst, sidebar) {
+            if ($(window).width() > this.elem.outerWidth(true)) {
+                this.logo_placeholder.hide();
+            } else {
+                this.logo_placeholder.show();
+            }
+            this.is_compact = this.elem.outerWidth() < 768;
+            this.is_super_compact = this.elem.outerWidth() < 576;
         }
     }
 
@@ -1371,7 +1322,6 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(ColorToggler.initialize, true);
         ts.ajax.register(Scrollbar.initialize, true);
         ts.ajax.register(Sidebar.initialize, true);
-        ts.ajax.register(PersonalTools.initialize, true);
         ts.ajax.register(LiveSearch.initialize, true);
         ts.ajax.register(MainMenu.initialize, true);
         ts.ajax.register(Header.initialize, true);
@@ -1389,7 +1339,6 @@ var cone = (function (exports, $, ts) {
     exports.KeyBinder = KeyBinder;
     exports.LiveSearch = LiveSearch;
     exports.MainMenu = MainMenu;
-    exports.PersonalTools = PersonalTools;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;

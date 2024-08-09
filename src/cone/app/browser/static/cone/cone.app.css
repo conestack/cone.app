@@ -246,6 +246,9 @@ body {
 #header-main.compact:has(.show) .navbar-toggler, #header-main.compact:has(.collapsing) .navbar-toggler {
   height: 50px !important;
 }
+#header-main.compact:has(.show) #mainmenu .scrollable-content, #header-main.compact:has(.collapsing) #mainmenu .scrollable-content {
+  right: 0 !important;
+}
 #header-main.compact:has(.show) #mainmenu .dropdown-menu, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu {
   border: none;
 }

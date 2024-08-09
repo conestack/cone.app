@@ -221,6 +221,10 @@ body {
         }
 
         #mainmenu {
+            .scrollable-content {
+                right: 0!important;
+            }
+
             .dropdown-menu {
                 border: none;
 

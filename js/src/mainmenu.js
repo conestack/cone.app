@@ -73,8 +73,8 @@ export class MainMenu extends ts.Events {
         this.elems.each((i, el) => {
             $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
             $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-            $(el).off('shown.bs.dropdown', header.render_scrollbar.bind(header));
-            $(el).off('hidden.bs.dropdown', header.render_scrollbar.bind(header));
+            $(el).off('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
+            $(el).off('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
         });
     }
 
@@ -82,8 +82,8 @@ export class MainMenu extends ts.Events {
         this.elems.each((i, el) => {
             $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
             $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-            $(el).on('shown.bs.dropdown', header.render_scrollbar.bind(header));
-            $(el).on('hidden.bs.dropdown', header.render_scrollbar.bind(header));
+            $(el).on('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
+            $(el).on('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
         });
     }
 

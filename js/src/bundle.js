@@ -10,7 +10,6 @@ import {ColorToggler} from './colormode.js';
 import {CopySupport} from './copysupport.js';
 import {KeyBinder} from './keybinder.js';
 import {LiveSearch} from './livesearch.js';
-import {PersonalTools} from './personaltools.js';
 import {
     ReferenceBrowserLoader,
     ReferenceHandle
@@ -29,7 +28,6 @@ export * from './copysupport.js';
 export * from './globals.js';
 export * from './keybinder.js';
 export * from './livesearch.js';
-export * from './personaltools.js';
 export * from './referencebrowser.js';
 export * from './scrollbar.js';
 export * from './selectable.js';
@@ -56,7 +54,6 @@ $(function() {
     ts.ajax.register(ColorToggler.initialize, true);
     ts.ajax.register(Scrollbar.initialize, true);
     ts.ajax.register(Sidebar.initialize, true);
-    ts.ajax.register(PersonalTools.initialize, true);
     ts.ajax.register(LiveSearch.initialize, true);
     ts.ajax.register(MainMenu.initialize, true);
     ts.ajax.register(Header.initialize, true);
