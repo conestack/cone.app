@@ -195,9 +195,10 @@ body {
         }
     }
 
-    &:has(.mobile):has(.show) {
+    &.compact:has(.show) {
         height: 100%;
-
+    }
+    &.compact:has(.show), &.compact:has(.collapsing) {
         #header-logo-placeholder {
             display: none;
         }
@@ -205,11 +206,11 @@ body {
         #navbar-content-wrapper {
             position: relative;
             overflow: hidden;
-            height: calc(100% - 80px);
+            height: 100%;
             padding: 0 !important;
 
-            #navbar-content {
-                padding-bottom: 80px;
+            @media screen and (max-width: 768px) {
+                z-index: 1200;
             }
         }
         #header-content {
@@ -217,7 +218,38 @@ body {
         }
         .navbar-toggler {
             height: 50px!important; // XXX variable
-            // margin-top: -.5rem;
+        }
+
+        #mainmenu {
+            .dropdown-menu {
+                border: none;
+
+                > li {
+                    .dropdown-item {
+                        padding: 8px 20px;
+                    }
+                    &:first-child {
+                        .dropdown-item {
+                            padding-top: 0;
+                        }
+                    }
+                }
+            }
+        }
+        #personaltools {
+            height: 50px;
+            justify-content: space-between;
+        }
+    }
+
+    &.full {
+        #mainmenu {
+            .dropdown-menu {
+                position: fixed;
+            }
+        }
+        #personaltools {
+            height: 100%;
         }
     }
 
@@ -239,23 +271,6 @@ body {
         }
         .nav-item.active .nav-link {
             color: $primary;
-        }
-
-        &.mobile {
-            .dropdown-menu {
-                border: none;
-
-                > li {
-                    .dropdown-item {
-                        padding: 8px 20px;
-                    }
-                    &:first-child {
-                        .dropdown-item {
-                            padding-top: 0;
-                        }
-                    }
-                }
-            }
         }
     }
 }

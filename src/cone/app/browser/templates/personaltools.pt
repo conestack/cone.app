@@ -3,7 +3,7 @@
   omit-tag="True">
 
   <div id="personaltools"
-       class="d-flex align-self-stretch h-100 flex-direction-row">
+       class="d-flex align-self-stretch flex-direction-row">
 
     <tal:colortoggler replace="structure tile('colortoggler')" />
 

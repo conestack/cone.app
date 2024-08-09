@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 import {global_events} from './globals.js';
-import { ScrollbarY } from './scrollbar.js';
 
 export class MainMenu extends ts.Events {
 
@@ -29,53 +28,21 @@ export class MainMenu extends ts.Events {
         this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
         this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
         this.hide_dropdowns = this.hide_dropdowns.bind(this);
-        this.handle = this.handle.bind(this);
-        // this.scrollbar.on('on_position', this.hide_dropdowns);
-        global_events.on('on_sidebar_resize', this.handle);
-        $(window).on('resize', this.handle);
-        this.handle();
+        this.scrollbar.on('on_position', this.hide_dropdowns);
 
-        const is_mobile = $(window).width() <= 768; // XXX: is mobile from header
-        new ts.Property(this, 'is_mobile', is_mobile);
+        this.on_header_mode_toggle = this.on_header_mode_toggle.bind(this);
+        global_events.on('on_header_mode_toggle', this.on_header_mode_toggle);
     }
 
-    on_is_mobile(val) {
-        // XXX: move some stuff to header!! mobile menu is not only bound to
-        // viewport size but also to sidebar width!
+    on_header_mode_toggle(inst, header) {
+        this.hide_dropdowns();
 
-        if (val) {
+        if (header.is_compact) {
             this.scrollbar.off('on_position', this.hide_dropdowns);
-            this.unbind_dropdowns_desktop();
-            this.elem.addClass('mobile');
-
-            // create mobile scrollbar
-            $('#navbar-content').addClass('scrollable-content');
-            this.mobile_scrollbar = new ScrollbarY($('#navbar-content-wrapper'));
-            
-            $('#navbar-content-wrapper').on('shown.bs.collapse', () => {
-                // disable scroll to refresh page on mobile devices
-                $('html, body').css('overscroll-behavior', 'none');
-                this.mobile_scrollbar.render();
-                this.mobile_scrollbar.scrollbar.fadeIn();
-            });
-            $('#navbar-content-wrapper').on('hide.bs.collapse', () => {
-                // enable scroll to refresh page on mobile devices
-                $('html, body').css('overscroll-behavior', 'auto');
-                // this.mobile_scrollbar.destroy();
-                this.mobile_scrollbar.scrollbar.hide();
-            });
-            this.elems.each((i, el) => {
-                $(el).on('shown.bs.dropdown', () => {
-                    this.mobile_scrollbar.render();
-                });
-                $(el).on('hidden.bs.dropdown', () => {
-                    this.mobile_scrollbar.render();
-                });
-            });
+            this.bind_dropdowns_mobile(header);
         } else {
-            this.bind_dropdowns_desktop();
+            this.bind_dropdowns_desktop(header);
             this.scrollbar.on('on_position', this.hide_dropdowns);
-            this.elem.removeClass('mobile');
         }
     }
 
@@ -87,7 +54,6 @@ export class MainMenu extends ts.Events {
         // prevent element being cut by scrollbar while open
         const dropdown = $(el).siblings('ul.dropdown-menu');
         dropdown.css({
-            position: 'fixed',
             top: `${this.height}px`,
             left: `${$(el).offset().left}px`
         });
@@ -103,17 +69,21 @@ export class MainMenu extends ts.Events {
         this.open_dropdown = null;
     }
 
-    bind_dropdowns_desktop() {
+    bind_dropdowns_desktop(header) {
         this.elems.each((i, el) => {
             $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
             $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
+            $(el).off('shown.bs.dropdown', header.render_scrollbar.bind(header));
+            $(el).off('hidden.bs.dropdown', header.render_scrollbar.bind(header));
         });
     }
 
-    unbind_dropdowns_desktop() {
+    bind_dropdowns_mobile(header) {
         this.elems.each((i, el) => {
             $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
             $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
+            $(el).on('shown.bs.dropdown', header.render_scrollbar.bind(header));
+            $(el).on('hidden.bs.dropdown', header.render_scrollbar.bind(header));
         });
     }
 
@@ -121,19 +91,5 @@ export class MainMenu extends ts.Events {
         this.elems.each((i, el) => {
             $(el).dropdown('hide');
         });
-    }
-
-    handle() {
-        this.is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
-        const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
-        if ($('#header-main').outerWidth() < taken + 500) {
-            if ($('#header-main').hasClass('navbar-expand')) {
-                $('#header-main').removeClass('navbar-expand');
-            }
-        } else {
-            if (!$('#header-main').hasClass('navbar-expand')) {
-                $('#header-main').addClass('navbar-expand');
-            }
-        }
     }
 }

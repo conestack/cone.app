@@ -9,6 +9,14 @@ export class GlobalEvents extends ts.Events {
      */
     on_sidebar_resize(inst) {
     }
+
+    /**
+     * Gets triggered when header toggles between compact and full mode.
+     *
+     * @param {Header} inst
+     */
+    on_header_mode_toggle(inst) {
+    }
 }
 
 export const global_events = new GlobalEvents();

@@ -223,26 +223,47 @@ body {
 #header-main:not(.navbar-expand) #mainmenu ul > li {
   display: block !important;
 }
-#header-main:has(.mobile):has(.show) {
+#header-main.compact:has(.show) {
   height: 100%;
 }
-#header-main:has(.mobile):has(.show) #header-logo-placeholder {
+#header-main.compact:has(.show) #header-logo-placeholder, #header-main.compact:has(.collapsing) #header-logo-placeholder {
   display: none;
 }
-#header-main:has(.mobile):has(.show) #navbar-content-wrapper {
+#header-main.compact:has(.show) #navbar-content-wrapper, #header-main.compact:has(.collapsing) #navbar-content-wrapper {
   position: relative;
   overflow: hidden;
-  height: calc(100% - 80px);
+  height: 100%;
   padding: 0 !important;
 }
-#header-main:has(.mobile):has(.show) #navbar-content-wrapper #navbar-content {
-  padding-bottom: 80px;
+@media screen and (max-width: 768px) {
+  #header-main.compact:has(.show) #navbar-content-wrapper, #header-main.compact:has(.collapsing) #navbar-content-wrapper {
+    z-index: 1200;
+  }
 }
-#header-main:has(.mobile):has(.show) #header-content {
+#header-main.compact:has(.show) #header-content, #header-main.compact:has(.collapsing) #header-content {
   align-items: flex-start;
 }
-#header-main:has(.mobile):has(.show) .navbar-toggler {
+#header-main.compact:has(.show) .navbar-toggler, #header-main.compact:has(.collapsing) .navbar-toggler {
   height: 50px !important;
+}
+#header-main.compact:has(.show) #mainmenu .dropdown-menu, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu {
+  border: none;
+}
+#header-main.compact:has(.show) #mainmenu .dropdown-menu > li .dropdown-item, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu > li .dropdown-item {
+  padding: 8px 20px;
+}
+#header-main.compact:has(.show) #mainmenu .dropdown-menu > li:first-child .dropdown-item, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu > li:first-child .dropdown-item {
+  padding-top: 0;
+}
+#header-main.compact:has(.show) #personaltools, #header-main.compact:has(.collapsing) #personaltools {
+  height: 50px;
+  justify-content: space-between;
+}
+#header-main.full #mainmenu .dropdown-menu {
+  position: fixed;
+}
+#header-main.full #personaltools {
+  height: 100%;
 }
 #header-main #navbar-content-wrapper {
   min-width: 0;
@@ -261,15 +282,6 @@ body {
 }
 #header-main #mainmenu .nav-item.active .nav-link {
   color: #4e7bba;
-}
-#header-main #mainmenu.mobile .dropdown-menu {
-  border: none;
-}
-#header-main #mainmenu.mobile .dropdown-menu > li .dropdown-item {
-  padding: 8px 20px;
-}
-#header-main #mainmenu.mobile .dropdown-menu > li:first-child .dropdown-item {
-  padding-top: 0;
 }
 
 #personaltools-dropdown .dropdown-item a {

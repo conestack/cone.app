@@ -70,7 +70,7 @@
               </button>
 
               <div id="navbar-content-wrapper"
-                   class="collapse shadow navbar-collapse p-3 p-lg-0">
+                   class="collapse shadow navbar-collapse p-0">
                 <div id="navbar-content" class="d-flex align-items-center">
                     <div id="header-logo-placeholder"
                          class="position-relative mx-4">

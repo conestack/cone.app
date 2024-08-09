@@ -423,6 +423,8 @@ var cone = (function (exports, $, ts) {
     class GlobalEvents extends ts.Events {
         on_sidebar_resize(inst) {
         }
+        on_header_mode_toggle(inst) {
+        }
     }
     const global_events = new GlobalEvents();
 
@@ -1088,41 +1090,18 @@ var cone = (function (exports, $, ts) {
             this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
             this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
             this.hide_dropdowns = this.hide_dropdowns.bind(this);
-            this.handle = this.handle.bind(this);
-            global_events.on('on_sidebar_resize', this.handle);
-            $(window).on('resize', this.handle);
-            this.handle();
-            const is_mobile = $(window).width() <= 768;
-            new ts.Property(this, 'is_mobile', is_mobile);
+            this.scrollbar.on('on_position', this.hide_dropdowns);
+            this.on_header_mode_toggle = this.on_header_mode_toggle.bind(this);
+            global_events.on('on_header_mode_toggle', this.on_header_mode_toggle);
         }
-        on_is_mobile(val) {
-            if (val) {
+        on_header_mode_toggle(inst, header) {
+            this.hide_dropdowns();
+            if (header.is_compact) {
                 this.scrollbar.off('on_position', this.hide_dropdowns);
-                this.unbind_dropdowns_desktop();
-                this.elem.addClass('mobile');
-                $('#navbar-content').addClass('scrollable-content');
-                this.mobile_scrollbar = new ScrollbarY($('#navbar-content-wrapper'));
-                $('#navbar-content-wrapper').on('shown.bs.collapse', () => {
-                    $('html, body').css('overscroll-behavior', 'none');
-                    this.mobile_scrollbar.render();
-                    this.mobile_scrollbar.scrollbar.fadeIn();
-                });
-                $('#navbar-content-wrapper').on('hide.bs.collapse', () => {
-                    $('html, body').css('overscroll-behavior', 'auto');
-                    this.mobile_scrollbar.scrollbar.hide();
-                });
-                this.elems.each((i, el) => {
-                    $(el).on('shown.bs.dropdown', () => {
-                        this.mobile_scrollbar.render();
-                    });
-                    $(el).on('hidden.bs.dropdown', () => {
-                        this.mobile_scrollbar.render();
-                    });
-                });
+                this.bind_dropdowns_mobile(header);
             } else {
-                this.bind_dropdowns_desktop();
+                this.bind_dropdowns_desktop(header);
                 this.scrollbar.on('on_position', this.hide_dropdowns);
-                this.elem.removeClass('mobile');
             }
         }
         on_show_dropdown_desktop(evt) {
@@ -1131,7 +1110,6 @@ var cone = (function (exports, $, ts) {
             this.elem.css('height', '200vh');
             const dropdown = $(el).siblings('ul.dropdown-menu');
             dropdown.css({
-                position: 'fixed',
                 top: `${this.height}px`,
                 left: `${$(el).offset().left}px`
             });
@@ -1144,35 +1122,26 @@ var cone = (function (exports, $, ts) {
             this.elem.css('height', '100%');
             this.open_dropdown = null;
         }
-        bind_dropdowns_desktop() {
+        bind_dropdowns_desktop(header) {
             this.elems.each((i, el) => {
                 $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
                 $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
+                $(el).off('shown.bs.dropdown', header.render_scrollbar.bind(header));
+                $(el).off('hidden.bs.dropdown', header.render_scrollbar.bind(header));
             });
         }
-        unbind_dropdowns_desktop() {
+        bind_dropdowns_mobile(header) {
             this.elems.each((i, el) => {
                 $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
                 $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
+                $(el).on('shown.bs.dropdown', header.render_scrollbar.bind(header));
+                $(el).on('hidden.bs.dropdown', header.render_scrollbar.bind(header));
             });
         }
         hide_dropdowns() {
             this.elems.each((i, el) => {
                 $(el).dropdown('hide');
             });
-        }
-        handle() {
-            this.is_mobile = $(window).width() <= 768;
-            const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
-            if ($('#header-main').outerWidth() < taken + 500) {
-                if ($('#header-main').hasClass('navbar-expand')) {
-                    $('#header-main').removeClass('navbar-expand');
-                }
-            } else {
-                if (!$('#header-main').hasClass('navbar-expand')) {
-                    $('#header-main').addClass('navbar-expand');
-                }
-            }
         }
     }
 
@@ -1188,25 +1157,72 @@ var cone = (function (exports, $, ts) {
             super();
             this.elem = elem;
             this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
-            this.set_mobile = this.set_mobile.bind(this);
-            global_events.on('on_sidebar_resize', this.set_mobile);
-            $(window).on('resize', this.set_mobile);
+            this.navbar_content_wrapper = $('#navbar-content-wrapper', elem);
+            this.navbar_content = $('#navbar-content', elem);
+            this.set_mode = this.set_mode.bind(this);
+            global_events.on('on_sidebar_resize', this.set_mode);
+            $(window).on('resize', this.set_mode);
             ts.ajax.attach(this, elem);
-            const is_mobile = $(window).width() > this.elem.outerWidth();
-            new ts.Property(this, 'is_mobile', is_mobile);
+            const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
+            const is_compact = $(window).width() < 768 ||
+                (this.elem.outerWidth() < taken + 500);
+            new ts.Property(this, 'is_compact', is_compact);
+            this.render_scrollbar = this.render_scrollbar.bind(this);
+            this.fade_scrollbar = this.fade_scrollbar.bind(this);
+            this.set_mode();
         }
-        on_is_mobile(val) {
-            console.log(val);
-            if (val) {
-                console.log('header mobile');
-                this.logo_placeholder.hide();
-            } else {
-                console.log('header desktop');
-                this.logo_placeholder.show();
+        render_scrollbar() {
+            if (this.is_compact && this.mobile_scrollbar) {
+                this.mobile_scrollbar.render();
             }
         }
-        set_mobile() {
-            this.is_mobile = ($(window).width() > this.elem.outerWidth());
+        fade_scrollbar() {
+            if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
+                this.mobile_scrollbar.scrollbar.fadeIn('fast');
+            }
+            if (this.fade_out_timeout) {
+                clearTimeout(this.fade_out_timeout);
+            }
+            this.fade_out_timeout = setTimeout(() => {
+                this.mobile_scrollbar.scrollbar.fadeOut('slow');
+            }, 700);
+        }
+        on_is_compact(val) {
+            if (val) {
+                console.log('header compact');
+                this.elem.removeClass('full').removeClass('navbar-expand');
+                this.elem.addClass('compact');
+                this.logo_placeholder.hide();
+                this.navbar_content.addClass('scrollable-content');
+                this.mobile_scrollbar = new ScrollbarY(this.navbar_content_wrapper);
+                this.mobile_scrollbar.on('on_position', this.fade_scrollbar);
+                this.navbar_content_wrapper.on('shown.bs.collapse', () => {
+                    $('html, body').css('overscroll-behavior', 'none');
+                    this.mobile_scrollbar.render();
+                });
+                this.navbar_content_wrapper.on('hide.bs.collapse', () => {
+                    $('html, body').css('overscroll-behavior', 'auto');
+                    this.mobile_scrollbar.scrollbar.hide();
+                });
+                this.mainmenu = $('#mainmenu', this.elem).data();
+            } else {
+                console.log('header desktop');
+                this.elem.removeClass('compact');
+                this.elem.addClass('full').addClass('navbar-expand');
+                this.logo_placeholder.show();
+                this.navbar_content.removeClass('scrollable-content');
+                if (this.mobile_scrollbar) {
+                    this.mobile_scrollbar.off('on_position', this.fade_scrollbar);
+                    this.mobile_scrollbar.destroy();
+                    this.mobile_scrollbar = null;
+                }
+            }
+            global_events.trigger('on_header_mode_toggle', this);
+        }
+        set_mode() {
+            const taken = $('#personaltools').outerWidth() + $('#header-logo').outerWidth();
+            this.is_compact = $(window).width() < 768 ||
+                (this.elem.outerWidth() < taken + 500);
         }
     }
 
