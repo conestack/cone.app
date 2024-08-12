@@ -690,8 +690,12 @@ var cone = (function (exports, $, ts) {
             }
             this.thumb.css(attr, this.thumbsize);
             this.update();
+            this.position = this.safe_position(this.position);
         }
         safe_position(position) {
+            if (typeof position !== 'number') {
+                throw `Scrollbar position must be a Number, position is: "${position}".`;
+            }
             if (this.contentsize <= this.scrollsize) {
                 return position;
             }
@@ -712,6 +716,7 @@ var cone = (function (exports, $, ts) {
         }
         on_resize() {
             this.is_mobile = $(window).width() <= 768;
+            this.position = this.safe_position(this.position);
             this.render();
         }
         on_hover(evt) {
@@ -1024,6 +1029,13 @@ var cone = (function (exports, $, ts) {
             this.scrollbar.on('on_position', this.hide_dropdowns);
             this.on_header_mode_toggle = this.on_header_mode_toggle.bind(this);
             global_events.on('on_header_mode_toggle', this.on_header_mode_toggle);
+            this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
+            global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+        }
+        on_sidebar_resize(inst, sidebar) {
+            requestAnimationFrame(() => {
+                this.scrollbar.render();
+            });
         }
         on_header_mode_toggle(inst, header) {
             this.hide_dropdowns();
@@ -1112,15 +1124,19 @@ var cone = (function (exports, $, ts) {
             }
         }
         fade_mobile_scrollbar() {
-            if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
-                this.mobile_scrollbar.scrollbar.fadeIn('fast');
+            if (this.mobile_scrollbar) {
+                if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
+                    this.mobile_scrollbar.scrollbar.fadeIn('fast');
+                }
+                if (this.fade_out_timeout) {
+                    clearTimeout(this.fade_out_timeout);
+                }
+                this.fade_out_timeout = setTimeout(() => {
+                    if (this.mobile_scrollbar) {
+                        this.mobile_scrollbar.scrollbar.fadeOut('slow');
+                    }
+                }, 700);
             }
-            if (this.fade_out_timeout) {
-                clearTimeout(this.fade_out_timeout);
-            }
-            this.fade_out_timeout = setTimeout(() => {
-                this.mobile_scrollbar.scrollbar.fadeOut('slow');
-            }, 700);
         }
         on_is_compact(val) {
             if (val) {

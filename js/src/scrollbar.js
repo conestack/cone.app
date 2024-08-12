@@ -108,9 +108,14 @@ export class Scrollbar extends ts.Motion {
         }
         this.thumb.css(attr, this.thumbsize);
         this.update();
+         // ensure correct scroll position when outside of safe bounds
+        this.position = this.safe_position(this.position);
     }
 
     safe_position(position) {
+        if (typeof position !== 'number') {
+            throw `Scrollbar position must be a Number, position is: "${position}".`;
+        }
         if (this.contentsize <= this.scrollsize) {
             // "safe" position will be a negative value if content smaller than scrollsize
             return position;
@@ -134,6 +139,7 @@ export class Scrollbar extends ts.Motion {
 
     on_resize() {
         this.is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
+        this.position = this.safe_position(this.position)
         this.render();
     }
 

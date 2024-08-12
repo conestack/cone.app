@@ -32,6 +32,16 @@ export class MainMenu extends ts.Events {
 
         this.on_header_mode_toggle = this.on_header_mode_toggle.bind(this);
         global_events.on('on_header_mode_toggle', this.on_header_mode_toggle);
+
+        this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
+        global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+    }
+
+    on_sidebar_resize(inst, sidebar) {
+        // defer to next frame to ensure elements have correct dimensions
+        requestAnimationFrame(() => {
+            this.scrollbar.render();
+        });
     }
 
     on_header_mode_toggle(inst, header) {

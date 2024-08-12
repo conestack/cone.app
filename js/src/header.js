@@ -49,15 +49,20 @@ export class Header extends ts.Events {
     }
 
     fade_mobile_scrollbar() {
-        if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
-            this.mobile_scrollbar.scrollbar.fadeIn('fast');
+        if (this.mobile_scrollbar) {
+            if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
+                this.mobile_scrollbar.scrollbar.fadeIn('fast');
+            }
+            if (this.fade_out_timeout) {
+                clearTimeout(this.fade_out_timeout);
+            }
+            this.fade_out_timeout = setTimeout(() => {
+                // Scrollbar may already be destroyed when resize happens
+                if (this.mobile_scrollbar) {
+                    this.mobile_scrollbar.scrollbar.fadeOut('slow');
+                }
+            }, 700);
         }
-        if (this.fade_out_timeout) {
-            clearTimeout(this.fade_out_timeout);
-        }
-        this.fade_out_timeout = setTimeout(() => {
-            this.mobile_scrollbar.scrollbar.fadeOut('slow');
-        }, 700);
     }
 
     on_is_compact(val) {
