@@ -645,6 +645,17 @@ var cone = (function (exports, $, ts) {
         set pointer_events(value) {
             this.elem.css('pointer-events', value ? 'all' : 'none');
         }
+        fade_timer() {
+            if (!this.scrollbar.is(':visible')) {
+                this.scrollbar.fadeIn('fast');
+            }
+            if (this.fade_out_timeout) {
+                clearTimeout(this.fade_out_timeout);
+            }
+            this.fade_out_timeout = setTimeout(() => {
+                this.scrollbar.fadeOut('slow');
+            }, 700);
+        }
         on_is_mobile(val) {
             if (val && this.contentsize > this.scrollsize) {
                 this.scrollbar.stop(true, true).show();
@@ -760,7 +771,7 @@ var cone = (function (exports, $, ts) {
         }
         touchstart(evt) {
             const touch = evt.originalEvent.touches[0];
-            this._touch_start_y = touch.pageY;
+            this._touch_pos = this.pos_from_evt(touch);
             this._start_position = this.position;
         }
         touchmove(evt) {
@@ -768,11 +779,12 @@ var cone = (function (exports, $, ts) {
                 return;
             }
             const touch = evt.originalEvent.touches[0];
-            const deltaY = touch.pageY - this._touch_start_y;
-            this.position = this._start_position - deltaY;
+            const delta = this.pos_from_evt(touch) - this._touch_pos;
+            this.position = this._start_position - delta;
+            this.fade_timer();
         }
         touchend(evt) {
-            delete this._touch_start_y;
+            delete this._touch_pos;
             delete this._start_position;
         }
         down(evt) {
@@ -1111,7 +1123,6 @@ var cone = (function (exports, $, ts) {
             new ts.Property(this, 'is_compact', null);
             new ts.Property(this, 'is_super_compact', null);
             this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
-            this.fade_mobile_scrollbar = this.fade_mobile_scrollbar.bind(this);
             this.set_mode();
         }
         destroy() {
@@ -1123,28 +1134,12 @@ var cone = (function (exports, $, ts) {
                 this.mobile_scrollbar.render();
             }
         }
-        fade_mobile_scrollbar() {
-            if (this.mobile_scrollbar) {
-                if (!this.mobile_scrollbar.scrollbar.is(':visible')) {
-                    this.mobile_scrollbar.scrollbar.fadeIn('fast');
-                }
-                if (this.fade_out_timeout) {
-                    clearTimeout(this.fade_out_timeout);
-                }
-                this.fade_out_timeout = setTimeout(() => {
-                    if (this.mobile_scrollbar) {
-                        this.mobile_scrollbar.scrollbar.fadeOut('slow');
-                    }
-                }, 700);
-            }
-        }
         on_is_compact(val) {
             if (val) {
                 this.elem.removeClass('full').removeClass('navbar-expand');
                 this.elem.addClass('compact');
                 this.navbar_content.addClass('scrollable-content');
                 this.mobile_scrollbar = new ScrollbarY(this.navbar_content_wrapper);
-                this.mobile_scrollbar.on('on_position', this.fade_mobile_scrollbar);
                 this.navbar_content_wrapper.on('shown.bs.collapse', () => {
                     $('html, body').css('overscroll-behavior', 'none');
                     this.mobile_scrollbar.render();
@@ -1159,7 +1154,6 @@ var cone = (function (exports, $, ts) {
                 this.elem.addClass('full').addClass('navbar-expand');
                 this.navbar_content.removeClass('scrollable-content');
                 if (this.mobile_scrollbar) {
-                    this.mobile_scrollbar.off('on_position', this.fade_mobile_scrollbar);
                     this.mobile_scrollbar.destroy();
                     this.mobile_scrollbar = null;
                 }
@@ -1188,7 +1182,7 @@ var cone = (function (exports, $, ts) {
             } else {
                 this.logo_placeholder.show();
             }
-            this.is_compact = this.elem.outerWidth() < 768;
+            this.is_compact = this.elem.outerWidth() < 992;
             this.is_super_compact = this.elem.outerWidth() < 576;
         }
     }

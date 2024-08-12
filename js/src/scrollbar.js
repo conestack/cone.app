@@ -58,6 +58,18 @@ export class Scrollbar extends ts.Motion {
         this.elem.css('pointer-events', value ? 'all' : 'none');
     }
 
+    fade_timer() {
+        if (!this.scrollbar.is(':visible')) {
+            this.scrollbar.fadeIn('fast');
+        }
+        if (this.fade_out_timeout) {
+            clearTimeout(this.fade_out_timeout);
+        }
+        this.fade_out_timeout = setTimeout(() => {
+            this.scrollbar.fadeOut('slow');
+        }, 700);
+    }
+
     on_is_mobile(val) {
         if (val && this.contentsize > this.scrollsize) {
             this.scrollbar.stop(true, true).show();
@@ -187,7 +199,7 @@ export class Scrollbar extends ts.Motion {
 
     touchstart(evt) {
         const touch = evt.originalEvent.touches[0];
-        this._touch_start_y = touch.pageY;
+        this._touch_pos = this.pos_from_evt(touch);
         this._start_position = this.position;
     }
 
@@ -196,12 +208,13 @@ export class Scrollbar extends ts.Motion {
             return;
         }
         const touch = evt.originalEvent.touches[0];
-        const deltaY = touch.pageY - this._touch_start_y;
-        this.position = this._start_position - deltaY;
+        const delta = this.pos_from_evt(touch) - this._touch_pos;
+        this.position = this._start_position - delta;
+        this.fade_timer();
     }
 
     touchend(evt) {
-        delete this._touch_start_y;
+        delete this._touch_pos;
         delete this._start_position;
     }
 
