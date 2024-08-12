@@ -392,3 +392,10 @@ tr.selectable td {
   flex: 1 0 auto;
   flex-wrap: nowrap;
 }
+
+.table-footer {
+  gap: 1rem 0;
+}
+.table-footer .table_info {
+  white-space: nowrap;
+}

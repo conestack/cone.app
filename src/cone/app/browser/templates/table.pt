@@ -177,10 +177,10 @@
     </table>
     </div>
 
-    <div class="card-body pb-1"
+    <div class="card-body pb-1 d-flex justify-content-between flex-wrap table-footer"
          tal:condition="context.display_table_footer">
 
-      <div class="table_info float-start"
+      <div class="table_info"
            tal:define="slice context.slice.slice">
         <span i18n:translate="showing">Showing</span>
         <span tal:content="slice[0] + 1"
@@ -194,7 +194,7 @@
         <span i18n:translate="entries">entries</span>
       </div>
 
-      <div class="float-end">
+      <div class="pagination">
         <tal:batch replace="structure context.batch" />
       </div>
 

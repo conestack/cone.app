@@ -393,3 +393,10 @@ tr.selectable td {
         flex-wrap: nowrap;
     }
 }
+.table-footer {
+    gap: 1rem 0;
+
+    .table_info {
+        white-space: nowrap;
+    }
+}
