@@ -261,6 +261,10 @@ body {
 #header-main.compact:has(.show) #personaltools, #header-main.compact:has(.collapsing) #personaltools {
   height: 50px;
   justify-content: space-between;
+  margin: auto 20px;
+}
+#header-main.compact:has(.show) #personaltools #colortoggler, #header-main.compact:has(.collapsing) #personaltools #colortoggler {
+  padding-left: 0;
 }
 #header-main.full #mainmenu .dropdown-menu {
   position: fixed;

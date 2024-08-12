@@ -243,6 +243,11 @@ body {
         #personaltools {
             height: 50px;
             justify-content: space-between;
+            margin: auto 20px;
+
+            #colortoggler {
+                padding-left: 0;
+            }
         }
     }
 
