@@ -79,8 +79,8 @@
 
     </div>
 
-    <div class="card-body py-0">
-    <table class="table table-striped mb-1"
+    <div class="card-body py-0 scrollable-x scrollbar-top">
+    <table class="table table-striped mb-1 scrollable-content"
            id="${context.table_id}_table">
 
       <thead>

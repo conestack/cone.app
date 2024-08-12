@@ -379,3 +379,17 @@ tr.selectable td {
         width: 200px;
     }
 }
+
+// contents table
+#contents_table > thead > tr > th > div {
+    display: flex;
+    flex-wrap: nowrap;
+}
+#contents > div.card-body div.row {
+    gap: 0.5rem 0;
+
+    > div {
+        flex: 1 0 auto;
+        flex-wrap: nowrap;
+    }
+}
