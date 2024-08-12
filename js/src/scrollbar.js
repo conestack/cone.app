@@ -250,7 +250,9 @@ export class ScrollbarX extends Scrollbar {
     }
 
     get scrollsize() {
-        return this.elem.outerWidth();
+        const padding_r = parseFloat(this.elem.css('padding-right'));
+        const padding_l = parseFloat(this.elem.css('padding-left'));
+        return this.elem.outerWidth() - padding_l - padding_r;
     }
 
     compile() {
@@ -289,7 +291,9 @@ export class ScrollbarY extends Scrollbar {
     }
 
     get scrollsize() {
-        return this.elem.outerHeight();
+        const padding_t = parseFloat(this.elem.css('padding-top'));
+        const padding_b = parseFloat(this.elem.css('padding-bottom'));
+        return this.elem.outerHeight() - padding_t - padding_b;
     }
 
     compile() {

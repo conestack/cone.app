@@ -813,7 +813,9 @@ var cone = (function (exports, $, ts) {
             return this.content.outerWidth();
         }
         get scrollsize() {
-            return this.elem.outerWidth();
+            const padding_r = parseFloat(this.elem.css('padding-right'));
+            const padding_l = parseFloat(this.elem.css('padding-left'));
+            return this.elem.outerWidth() - padding_l - padding_r;
         }
         compile() {
             super.compile();
@@ -843,7 +845,9 @@ var cone = (function (exports, $, ts) {
             return this.content.outerHeight();
         }
         get scrollsize() {
-            return this.elem.outerHeight();
+            const padding_t = parseFloat(this.elem.css('padding-top'));
+            const padding_b = parseFloat(this.elem.css('padding-bottom'));
+            return this.elem.outerHeight() - padding_t - padding_b;
         }
         compile() {
             super.compile();
