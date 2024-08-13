@@ -126,7 +126,7 @@ body {
   position: absolute;
   bottom: 0px;
   border-radius: 100%;
-  z-index: 4;
+  z-index: 20001;
 }
 #sidebar_left.collapsed {
   width: 0px !important;
@@ -380,14 +380,6 @@ tr.selectable td {
   width: 200px;
 }
 
-#contents_table > thead > tr > th > div {
-  display: flex;
-  flex-wrap: nowrap;
-}
-
-#contents > div.card-body div.row {
-  gap: 0.5rem 0;
-}
 #contents > div.card-body div.row > div {
   flex: 1 0 auto;
   flex-wrap: nowrap;
@@ -398,4 +390,8 @@ tr.selectable td {
 }
 .table-footer .table_info {
   white-space: nowrap;
+}
+
+#input-contentform-save:has(+ input.btn) {
+  margin-right: 1rem;
 }

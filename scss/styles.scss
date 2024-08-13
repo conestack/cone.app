@@ -81,7 +81,7 @@ body {
             position: absolute;
             bottom: 0px;
             border-radius: 100%;
-            z-index: 4;
+            z-index: 20001;
         }
     }
 
@@ -381,22 +381,23 @@ tr.selectable td {
 }
 
 // contents table
-#contents_table > thead > tr > th > div {
-    display: flex;
-    flex-wrap: nowrap;
-}
 #contents > div.card-body div.row {
-    gap: 0.5rem 0;
-
     > div {
         flex: 1 0 auto;
         flex-wrap: nowrap;
     }
 }
+
+// table
 .table-footer {
     gap: 1rem 0;
 
     .table_info {
         white-space: nowrap;
     }
+}
+
+// contentform
+#input-contentform-save:has(+ input.btn) {
+    margin-right: 1rem;
 }

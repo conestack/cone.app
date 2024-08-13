@@ -4,7 +4,7 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <ul class="pagination pagination-sm"
+  <ul class="pagination pagination-sm my-0"
       tal:condition="context.display">
 
     <tal:firstpage

@@ -129,8 +129,8 @@ export class Scrollbar extends ts.Motion {
             throw `Scrollbar position must be a Number, position is: "${position}".`;
         }
         if (this.contentsize <= this.scrollsize) {
-            // "safe" position will be a negative value if content smaller than scrollsize
-            return position;
+            // reset position
+            return 0;
         }
         const max_pos = this.contentsize - this.scrollsize;
         if (position >= max_pos) {
@@ -151,7 +151,7 @@ export class Scrollbar extends ts.Motion {
 
     on_resize() {
         this.is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
-        this.position = this.safe_position(this.position)
+        this.position = this.safe_position(this.position);
         this.render();
     }
 

@@ -708,7 +708,7 @@ var cone = (function (exports, $, ts) {
                 throw `Scrollbar position must be a Number, position is: "${position}".`;
             }
             if (this.contentsize <= this.scrollsize) {
-                return position;
+                return 0;
             }
             const max_pos = this.contentsize - this.scrollsize;
             if (position >= max_pos) {
