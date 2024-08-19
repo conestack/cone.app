@@ -2,6 +2,7 @@
     width: unset;
 }
 
+
 // contents table
 #contents > div.card-body div.row {
     > div {
@@ -17,4 +18,11 @@
     .table_info {
         white-space: nowrap;
     }
+}
+
+#main-area:not(:has(#header-main.compact)) .table_length {
+    max-width: max-content;
+}
+#main-area:not(:has(#header-main.compact)) .table_filter {
+    max-width: 300px;
 }

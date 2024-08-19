@@ -457,3 +457,11 @@ tr.selectable td {
 .table-footer .table_info {
   white-space: nowrap;
 }
+
+#main-area:not(:has(#header-main.compact)) .table_length {
+  max-width: max-content;
+}
+
+#main-area:not(:has(#header-main.compact)) .table_filter {
+  max-width: 300px;
+}
