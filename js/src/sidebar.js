@@ -35,6 +35,10 @@ export class Sidebar extends ts.Motion {
         const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
         this.set_scope(resizer_elem, $(document));
 
+        this.responsive_toggle = this.responsive_toggle.bind(this);
+        $(window).on('resize', this.responsive_toggle);
+        this.responsive_toggle();
+
         // enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
     }
@@ -49,6 +53,17 @@ export class Sidebar extends ts.Motion {
 
     get collapsed() {
         return this.elem.css('width') === '0px';
+    }
+
+    responsive_toggle() {
+        const width = this.elem.outerWidth();
+        if (width <= 0) {
+            this.elem.removeClass('responsive-expanded');
+            this.elem.addClass('responsive-collapsed');
+        } else {
+            this.elem.addClass('responsive-expanded');
+            this.elem.removeClass('responsive-collapsed');
+        }
     }
 
     collapse() {

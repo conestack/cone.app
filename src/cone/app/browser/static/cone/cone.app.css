@@ -353,11 +353,11 @@ tr.selectable td {
 }
 
 /* responsive changes */
-@media (min-width: 1400px) {
-  #header-logo {
-    color: #fff;
-  }
+#layout:has(#sidebar_left.expanded) #header-logo,
+#layout:has(#sidebar_left.responsive-expanded:not(.collapsed)) #header-logo {
+  color: #fff;
 }
+
 .table_length, .table_filter {
   width: unset;
 }

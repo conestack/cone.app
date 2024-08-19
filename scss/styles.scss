@@ -349,7 +349,8 @@ tr.selectable td {
 }
 
 /* responsive changes */
-@include media-breakpoint-up(xxl) {
+#layout:has(#sidebar_left.expanded),
+#layout:has(#sidebar_left.responsive-expanded:not(.collapsed)) {
     #header-logo {
         color: #fff;
     }
