@@ -5,7 +5,6 @@
     --sidebar-width: 300px;
     --navbar-height: 50px;
 }
-
 html {
     height: 100%;
     width: 100%;
@@ -20,7 +19,7 @@ body {
     max-height: 100%;
     user-select: none;
 
-    .scrollable-y {
+    > .scrollable-y {
         margin-top: 34px;
     }
 
@@ -265,13 +264,10 @@ body {
     #navbar-content-wrapper {
         min-width: 0;
         z-index: 1;
-    }
-    #navbar-content {
-        min-width: 0;
-    }
-    #colortoggle-switch {
-        width: 2rem;
-        height: 1rem;
+
+        #navbar-content {
+            min-width: 0;
+        }
     }
     #mainmenu {
         > ul {
@@ -280,6 +276,20 @@ body {
         }
         .nav-item.active .nav-link {
             color: $primary;
+        }
+    }
+
+    #personaltools {
+        #language-dropdown > div.dropdown-toggle > a {
+            height: 20px;
+
+            img {
+                vertical-align: baseline;
+            }
+        }
+        #colortoggler #colortoggle-switch {
+            width: 2rem;
+            height: 1rem;
         }
     }
 }
