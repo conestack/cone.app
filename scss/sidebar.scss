@@ -1,0 +1,132 @@
+@import 'colors';
+@import "bootstrap/mixins/_breakpoints";
+
+/* sidebar */
+#sidebar_left {
+    height: 100%;
+    max-height: 100%;
+    user-select: none;
+
+    > .scrollable-y {
+        margin-top: 34px;
+    }
+
+    ul.list-group, ul.list-group li {
+        background-color: inherit;
+    }
+
+    #navtree {
+        max-width: 100%;
+
+        .nav-link {
+            z-index: 2000;
+            white-space: nowrap;
+
+            &.active {
+                background-color: transparent;
+                font-weight: bold;
+            }
+
+            i.bi-chevron-right {
+                vertical-align: text-bottom;
+            }
+
+            span {
+                display: inline-block;
+                width: calc(100% - 40px);
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+                vertical-align: text-bottom;
+            }
+        }
+    }
+
+    #sidebar_resize {
+        position: relative;
+        left: 100%;
+        width: 0;
+        height: 0;
+
+        #sidebar_resizer {
+            position: absolute;
+            z-index: 3;
+            height: 100vh;
+            width: 20px;
+            transform: translateX(-50%);
+            cursor: col-resize;
+        }
+    }
+
+    #sidebar_collapse {
+        position: relative;
+        left: 100%;
+        top: 100%;
+        width: 0;
+        height: 0;
+
+        .collapse_btn {
+            position: absolute;
+            bottom: 0px;
+            border-radius: 100%;
+            z-index: 20001;
+        }
+    }
+
+    &.collapsed {
+        width: 0px!important;
+        min-width: 0!important;
+
+        #sidebar_resize {
+            display: none;
+        }
+        #sidebar_collapse .collapse_btn .bi-chevron-left {
+            display: none;
+        }
+    }
+    &.expanded {
+        #sidebar_collapse .collapse_btn .bi-chevron-right {
+            display: none;
+        }
+    }
+
+    @include media-breakpoint-up(xxl) {
+        &:not(.collapsed) #sidebar_collapse .collapse_btn {
+            transform: translateX(-20px);
+
+            .bi-chevron-right {
+                display: none;
+            }
+        }
+    }
+    @include media-breakpoint-down(xxl) {
+        &:not(.expanded) {
+            width: 0!important;
+            min-width: 0!important;
+
+            #sidebar_resize {
+                display: none;
+            }
+            #sidebar_collapse .collapse_btn .bi-chevron-left {
+                display: none;
+            }
+        }
+    }
+    @include media-breakpoint-between(md, xxl) {
+        &.expanded #sidebar_collapse .collapse_btn {
+            transform: translateX(-20px);
+        }
+    }
+    @include media-breakpoint-down(md) {
+        #sidebar_resize {
+            display: none;
+        }
+        &.expanded {
+            width: 100%!important;
+            z-index: 3;
+
+            #sidebar_collapse {
+                left: calc(100% - 50px);
+            }
+        }
+    }
+}

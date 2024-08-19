@@ -1,0 +1,7 @@
+/* responsive changes */
+#layout:has(#sidebar_left.expanded),
+#layout:has(#sidebar_left.responsive-expanded:not(.collapsed)) {
+    #header-logo {
+        color: #fff;
+    }
+}

@@ -1,0 +1,15 @@
+/* content */
+#content {
+    height: calc(100% - 40px);
+}
+#main-area {
+    width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+/* copysupport */
+tr.selectable td {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
