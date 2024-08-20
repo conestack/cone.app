@@ -458,10 +458,9 @@ tr.selectable td {
   white-space: nowrap;
 }
 
-#main-area:not(:has(#header-main.compact)) .table_length {
+#main-area.full .table_length {
   max-width: max-content;
 }
-
-#main-area:not(:has(#header-main.compact)) .table_filter {
+#main-area.full .table_filter {
   max-width: 300px;
 }

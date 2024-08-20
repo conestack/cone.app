@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import {global_events} from './globals.js';
+import {LayoutAware} from './layout.js';
 
-export class MainMenu extends ts.Events {
+export class MainMenu extends LayoutAware {
 
     static initialize(context) {
         const elem = ts.query_elem('#mainmenu', context);
@@ -13,41 +13,31 @@ export class MainMenu extends ts.Events {
     }
 
     constructor(elem) {
-        super();
+        super(elem);
         this.elem = elem;
         this.height = this.elem.outerHeight();
         this.scrollbar = elem.data('scrollbar');
         this.elems = $('.nav-link.dropdown-toggle', elem);
-        this.navbar_toggler = ts.query_elem('.navbar-toggler[data-bs-target="#navbar-content-wrapper"]', $('body'));
-        this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', $('body'));
-
         this.open_dropdown = null;
-
-        ts.ajax.attach(this, elem);
 
         this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
         this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
         this.hide_dropdowns = this.hide_dropdowns.bind(this);
         this.scrollbar.on('on_position', this.hide_dropdowns);
-
-        this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
-        global_events.on('on_sidebar_resize', this.on_sidebar_resize);
-
-        this.on_main_area_mode = this.on_main_area_mode.bind(this);
-        global_events.on('on_main_area_mode', this.on_main_area_mode);
     }
 
     on_sidebar_resize(inst, sidebar) {
+        super.on_sidebar_resize(inst, sidebar);
         // defer to next frame to ensure elements have correct dimensions
         requestAnimationFrame(() => {
             this.scrollbar.render();
         });
     }
 
-    on_main_area_mode(inst, mainarea) {
+    on_is_compact(val) {
         this.hide_dropdowns();
 
-        if (mainarea.is_compact) {
+        if (val) {
             this.scrollbar.off('on_position', this.hide_dropdowns);
             this.bind_dropdowns_mobile();
         } else {

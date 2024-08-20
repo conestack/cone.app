@@ -59,3 +59,59 @@ export class MainArea extends ts.Events {
         global_events.trigger('on_main_area_mode', this);
     }
 }
+
+export class LayoutAware extends ts.Events {
+
+    constructor(elem) {
+        super();
+        this.elem = elem;
+
+        new ts.Property(this, 'is_compact', null);
+        new ts.Property(this, 'is_super_compact', null);
+        new ts.Property(this, 'is_sidebar_collapsed', null);
+
+        this.set_mode = this.set_mode.bind(this);
+        global_events.on('on_main_area_mode', this.set_mode);
+
+        this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
+        global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+
+        ts.ajax.attach(this, elem);
+    }
+
+    destroy() {
+        global_events.off('on_main_area_mode', this.set_mode);
+        global_events.off('on_sidebar_resize', this.on_sidebar_resize);
+    }
+
+    set_mode(inst, mainarea) {
+        this.is_compact = mainarea.is_compact;
+        this.is_super_compact = mainarea.is_super_compact;
+    }
+
+    on_is_compact(val) {
+        if (val) {
+            this.elem.removeClass('full');
+            this.elem.addClass('compact');
+        } else {
+            this.elem.removeClass('compact');
+            this.elem.addClass('full');
+        }
+    }
+
+    on_is_super_compact(val) {
+        if (val) {
+            this.elem.addClass('super-compact');
+        } else {
+            this.elem.removeClass('super-compact');
+        }
+    }
+
+    on_sidebar_resize(inst, sidebar) {
+        this.is_sidebar_collapsed = sidebar.collapsed;
+    }
+
+    on_is_sidebar_collapsed(val) {
+        // ...
+    }
+}

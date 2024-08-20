@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import {global_events} from './globals.js';
-import { ScrollbarY } from './scrollbar.js';
+import {ScrollbarY} from './scrollbar.js';
+import {LayoutAware} from './layout.js';
 
-export class Header extends ts.Events {
+export class Header extends LayoutAware {
 
     static initialize(context) {
         const elem = ts.query_elem('#header-main', context);
@@ -14,7 +14,7 @@ export class Header extends ts.Events {
     }
 
     constructor(elem) {
-        super();
+        super(elem);
         this.elem = elem;
         this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
         this.header_content = ts.query_elem('#header-content', elem);
@@ -23,25 +23,24 @@ export class Header extends ts.Events {
         this.personal_tools = ts.query_elem('#personaltools', elem);
         this.mainmenu = ts.query_elem('#mainmenu', elem);
         this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
+
+        // this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
         this.mainmenu_elems.each((i, el) => {
             $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
             $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
         });
 
-        this.set_mode = this.set_mode.bind(this);
-        global_events.on('on_main_area_mode', this.set_mode);
-
         ts.ajax.attach(this, elem);
-
-        new ts.Property(this, 'is_compact', null);
-        new ts.Property(this, 'is_super_compact', null);
 
         this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
     }
 
     destroy() {
-        $(window).off('resize', this.set_mode);
-        global_events.off('on_sidebar_resize', this.set_mode);
+        super.destroy();
+        this.mainmenu_elems.each((i, el) => {
+            $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+            $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+        });
     }
 
     render_mobile_scrollbar() {
@@ -100,14 +99,11 @@ export class Header extends ts.Events {
         }
     }
 
-    set_mode(inst, mainarea) {
-        if ($(window).width() > this.elem.outerWidth(true)) {
-            this.logo_placeholder.hide();
-        } else {
+    on_is_sidebar_collapsed(val) {
+        if (val) {
             this.logo_placeholder.show();
+        } else {
+            this.logo_placeholder.hide();
         }
-
-        this.is_compact = mainarea.is_compact;
-        this.is_super_compact = mainarea.is_super_compact;
     }
 }

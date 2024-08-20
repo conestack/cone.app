@@ -950,16 +950,19 @@ var cone = (function (exports, $, ts) {
             localStorage.setItem('cone-app-sidebar-width', width);
         }
         get collapsed() {
-            return this.elem.css('width') === '0px';
+            return (this.elem.outerWidth() <= 0);
         }
         responsive_toggle() {
-            const width = this.elem.outerWidth();
-            if (width <= 0) {
+            if (this.collapsed) {
                 this.elem.removeClass('responsive-expanded');
                 this.elem.addClass('responsive-collapsed');
             } else {
                 this.elem.addClass('responsive-expanded');
                 this.elem.removeClass('responsive-collapsed');
+            }
+            if (this.collapsed !== this.responsive_collapsed) {
+                this.responsive_collapsed = this.collapsed;
+                global_events.trigger('on_sidebar_resize', this);
             }
         }
         collapse() {
@@ -1034,7 +1037,97 @@ var cone = (function (exports, $, ts) {
         }
     }
 
-    class MainMenu extends ts.Events {
+    class MainArea extends ts.Events {
+        static initialize(context) {
+            const elem = ts.query_elem('#main-area', context);
+            if (!elem) {
+                return;
+            }
+            new MainArea(elem);
+        }
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            new ts.Property(this, 'is_compact', null);
+            new ts.Property(this, 'is_super_compact', null);
+            this.set_mode = this.set_mode.bind(this);
+            global_events.on('on_sidebar_resize', this.set_mode);
+            $(window).on('resize', this.set_mode);
+            this.set_mode();
+            ts.ajax.attach(this, elem);
+        }
+        destroy() {
+            $(window).off('resize', this.set_mode);
+            global_events.off('on_sidebar_resize', this.set_mode);
+        }
+        set_mode() {
+            this.is_compact = this.elem.outerWidth() < 992;
+            this.is_super_compact = this.elem.outerWidth() < 576;
+        }
+        on_is_compact(val) {
+            if (val) {
+                this.elem.removeClass('full');
+                this.elem.addClass('compact');
+            } else {
+                this.elem.removeClass('compact');
+                this.elem.addClass('full');
+            }
+            global_events.trigger('on_main_area_mode', this);
+        }
+        on_is_super_compact(val) {
+            if (val) {
+                this.elem.addClass('super-compact');
+            } else {
+                this.elem.removeClass('super-compact');
+            }
+            global_events.trigger('on_main_area_mode', this);
+        }
+    }
+    class LayoutAware extends ts.Events {
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            new ts.Property(this, 'is_compact', null);
+            new ts.Property(this, 'is_super_compact', null);
+            new ts.Property(this, 'is_sidebar_collapsed', null);
+            this.set_mode = this.set_mode.bind(this);
+            global_events.on('on_main_area_mode', this.set_mode);
+            this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
+            global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+            ts.ajax.attach(this, elem);
+        }
+        destroy() {
+            global_events.off('on_main_area_mode', this.set_mode);
+            global_events.off('on_sidebar_resize', this.on_sidebar_resize);
+        }
+        set_mode(inst, mainarea) {
+            this.is_compact = mainarea.is_compact;
+            this.is_super_compact = mainarea.is_super_compact;
+        }
+        on_is_compact(val) {
+            if (val) {
+                this.elem.removeClass('full');
+                this.elem.addClass('compact');
+            } else {
+                this.elem.removeClass('compact');
+                this.elem.addClass('full');
+            }
+        }
+        on_is_super_compact(val) {
+            if (val) {
+                this.elem.addClass('super-compact');
+            } else {
+                this.elem.removeClass('super-compact');
+            }
+        }
+        on_sidebar_resize(inst, sidebar) {
+            this.is_sidebar_collapsed = sidebar.collapsed;
+        }
+        on_is_sidebar_collapsed(val) {
+        }
+    }
+
+    class MainMenu extends LayoutAware {
         static initialize(context) {
             const elem = ts.query_elem('#mainmenu', context);
             if (!elem) {
@@ -1043,32 +1136,26 @@ var cone = (function (exports, $, ts) {
             new MainMenu(elem);
         }
         constructor(elem) {
-            super();
+            super(elem);
             this.elem = elem;
             this.height = this.elem.outerHeight();
             this.scrollbar = elem.data('scrollbar');
             this.elems = $('.nav-link.dropdown-toggle', elem);
-            this.navbar_toggler = ts.query_elem('.navbar-toggler[data-bs-target="#navbar-content-wrapper"]', $('body'));
-            this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', $('body'));
             this.open_dropdown = null;
-            ts.ajax.attach(this, elem);
             this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
             this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
             this.hide_dropdowns = this.hide_dropdowns.bind(this);
             this.scrollbar.on('on_position', this.hide_dropdowns);
-            this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
-            global_events.on('on_sidebar_resize', this.on_sidebar_resize);
-            this.on_main_area_mode = this.on_main_area_mode.bind(this);
-            global_events.on('on_main_area_mode', this.on_main_area_mode);
         }
         on_sidebar_resize(inst, sidebar) {
+            super.on_sidebar_resize(inst, sidebar);
             requestAnimationFrame(() => {
                 this.scrollbar.render();
             });
         }
-        on_main_area_mode(inst, mainarea) {
+        on_is_compact(val) {
             this.hide_dropdowns();
-            if (mainarea.is_compact) {
+            if (val) {
                 this.scrollbar.off('on_position', this.hide_dropdowns);
                 this.bind_dropdowns_mobile();
             } else {
@@ -1113,7 +1200,7 @@ var cone = (function (exports, $, ts) {
         }
     }
 
-    class Header extends ts.Events {
+    class Header extends LayoutAware {
         static initialize(context) {
             const elem = ts.query_elem('#header-main', context);
             if (!elem) {
@@ -1122,7 +1209,7 @@ var cone = (function (exports, $, ts) {
             new Header(elem);
         }
         constructor(elem) {
-            super();
+            super(elem);
             this.elem = elem;
             this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
             this.header_content = ts.query_elem('#header-content', elem);
@@ -1135,16 +1222,15 @@ var cone = (function (exports, $, ts) {
                 $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
                 $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
             });
-            this.set_mode = this.set_mode.bind(this);
-            global_events.on('on_main_area_mode', this.set_mode);
             ts.ajax.attach(this, elem);
-            new ts.Property(this, 'is_compact', null);
-            new ts.Property(this, 'is_super_compact', null);
             this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
         }
         destroy() {
-            $(window).off('resize', this.set_mode);
-            global_events.off('on_sidebar_resize', this.set_mode);
+            super.destroy();
+            this.mainmenu_elems.each((i, el) => {
+                $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+                $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+            });
         }
         render_mobile_scrollbar() {
             if (this.is_compact && this.mobile_scrollbar) {
@@ -1191,61 +1277,13 @@ var cone = (function (exports, $, ts) {
                 $(".dropdown-menu.show").removeClass('show');
             }
         }
-        set_mode(inst, mainarea) {
-            if ($(window).width() > this.elem.outerWidth(true)) {
-                this.logo_placeholder.hide();
-            } else {
+        on_is_sidebar_collapsed(val) {
+            console.log('sidebar collapsed ' + val);
+            if (val) {
                 this.logo_placeholder.show();
-            }
-            this.is_compact = mainarea.is_compact;
-            this.is_super_compact = mainarea.is_super_compact;
-        }
-    }
-
-    class MainArea extends ts.Events {
-        static initialize(context) {
-            const elem = ts.query_elem('#main-area', context);
-            if (!elem) {
-                return;
-            }
-            new MainArea(elem);
-        }
-        constructor(elem) {
-            super();
-            this.elem = elem;
-            new ts.Property(this, 'is_compact', null);
-            new ts.Property(this, 'is_super_compact', null);
-            this.set_mode = this.set_mode.bind(this);
-            global_events.on('on_sidebar_resize', this.set_mode);
-            $(window).on('resize', this.set_mode);
-            this.set_mode();
-            ts.ajax.attach(this, elem);
-        }
-        destroy() {
-            $(window).off('resize', this.set_mode);
-            global_events.off('on_sidebar_resize', this.set_mode);
-        }
-        set_mode() {
-            this.is_compact = this.elem.outerWidth() < 992;
-            this.is_super_compact = this.elem.outerWidth() < 576;
-        }
-        on_is_compact(val) {
-            if (val) {
-                this.elem.removeClass('full');
-                this.elem.addClass('compact');
             } else {
-                this.elem.removeClass('compact');
-                this.elem.addClass('full');
+                this.logo_placeholder.hide();
             }
-            global_events.trigger('on_main_area_mode', this);
-        }
-        on_is_super_compact(val) {
-            if (val) {
-                this.elem.addClass('super-compact');
-            } else {
-                this.elem.removeClass('super-compact');
-            }
-            global_events.trigger('on_main_area_mode', this);
         }
     }
 
@@ -1393,11 +1431,11 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(Translation.initialize, true);
         ts.ajax.register(ColorToggler.initialize, true);
         ts.ajax.register(Scrollbar.initialize, true);
-        ts.ajax.register(Sidebar.initialize, true);
         ts.ajax.register(LiveSearch.initialize, true);
         ts.ajax.register(MainMenu.initialize, true);
         ts.ajax.register(Header.initialize, true);
         ts.ajax.register(MainArea.initialize, true);
+        ts.ajax.register(Sidebar.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1410,6 +1448,7 @@ var cone = (function (exports, $, ts) {
     exports.GlobalEvents = GlobalEvents;
     exports.Header = Header;
     exports.KeyBinder = KeyBinder;
+    exports.LayoutAware = LayoutAware;
     exports.LiveSearch = LiveSearch;
     exports.MainArea = MainArea;
     exports.MainMenu = MainMenu;

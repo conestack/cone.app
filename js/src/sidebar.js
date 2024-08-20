@@ -52,17 +52,21 @@ export class Sidebar extends ts.Motion {
     }
 
     get collapsed() {
-        return this.elem.css('width') === '0px';
+        return (this.elem.outerWidth() <= 0);
     }
 
     responsive_toggle() {
-        const width = this.elem.outerWidth();
-        if (width <= 0) {
+        if (this.collapsed) {
             this.elem.removeClass('responsive-expanded');
             this.elem.addClass('responsive-collapsed');
         } else {
             this.elem.addClass('responsive-expanded');
             this.elem.removeClass('responsive-collapsed');
+        }
+
+        if (this.collapsed !== this.responsive_collapsed) {
+            this.responsive_collapsed = this.collapsed;
+            global_events.trigger('on_sidebar_resize', this);
         }
     }
 

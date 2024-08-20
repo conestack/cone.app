@@ -51,6 +51,7 @@
     }
 
     &.compact:has(.show) {
+        // XXX: has is not supported in Firefox!!!!
         height: 100%;
     }
     &.compact:has(.show), &.compact:has(.collapsing) {
