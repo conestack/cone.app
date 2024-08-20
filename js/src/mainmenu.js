@@ -30,11 +30,11 @@ export class MainMenu extends ts.Events {
         this.hide_dropdowns = this.hide_dropdowns.bind(this);
         this.scrollbar.on('on_position', this.hide_dropdowns);
 
-        this.on_header_mode_toggle = this.on_header_mode_toggle.bind(this);
-        global_events.on('on_header_mode_toggle', this.on_header_mode_toggle);
-
         this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
         global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+
+        this.on_main_area_mode = this.on_main_area_mode.bind(this);
+        global_events.on('on_main_area_mode', this.on_main_area_mode);
     }
 
     on_sidebar_resize(inst, sidebar) {
@@ -44,14 +44,14 @@ export class MainMenu extends ts.Events {
         });
     }
 
-    on_header_mode_toggle(inst, header) {
+    on_main_area_mode(inst, mainarea) {
         this.hide_dropdowns();
 
-        if (header.is_compact) {
+        if (mainarea.is_compact) {
             this.scrollbar.off('on_position', this.hide_dropdowns);
-            this.bind_dropdowns_mobile(header);
+            this.bind_dropdowns_mobile();
         } else {
-            this.bind_dropdowns_desktop(header);
+            this.bind_dropdowns_desktop();
             this.scrollbar.on('on_position', this.hide_dropdowns);
         }
     }
@@ -79,21 +79,17 @@ export class MainMenu extends ts.Events {
         this.open_dropdown = null;
     }
 
-    bind_dropdowns_desktop(header) {
+    bind_dropdowns_desktop() {
         this.elems.each((i, el) => {
             $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
             $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-            $(el).off('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
-            $(el).off('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
         });
     }
 
-    bind_dropdowns_mobile(header) {
+    bind_dropdowns_mobile() {
         this.elems.each((i, el) => {
             $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
             $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-            $(el).on('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
-            $(el).on('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
         });
     }
 

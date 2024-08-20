@@ -907,7 +907,7 @@ var cone = (function (exports, $, ts) {
     class GlobalEvents extends ts.Events {
         on_sidebar_resize(inst) {
         }
-        on_header_mode_toggle(inst) {
+        on_main_area_mode(inst) {
         }
     }
     const global_events = new GlobalEvents();
@@ -1056,23 +1056,23 @@ var cone = (function (exports, $, ts) {
             this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
             this.hide_dropdowns = this.hide_dropdowns.bind(this);
             this.scrollbar.on('on_position', this.hide_dropdowns);
-            this.on_header_mode_toggle = this.on_header_mode_toggle.bind(this);
-            global_events.on('on_header_mode_toggle', this.on_header_mode_toggle);
             this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
             global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+            this.on_main_area_mode = this.on_main_area_mode.bind(this);
+            global_events.on('on_main_area_mode', this.on_main_area_mode);
         }
         on_sidebar_resize(inst, sidebar) {
             requestAnimationFrame(() => {
                 this.scrollbar.render();
             });
         }
-        on_header_mode_toggle(inst, header) {
+        on_main_area_mode(inst, mainarea) {
             this.hide_dropdowns();
-            if (header.is_compact) {
+            if (mainarea.is_compact) {
                 this.scrollbar.off('on_position', this.hide_dropdowns);
-                this.bind_dropdowns_mobile(header);
+                this.bind_dropdowns_mobile();
             } else {
-                this.bind_dropdowns_desktop(header);
+                this.bind_dropdowns_desktop();
                 this.scrollbar.on('on_position', this.hide_dropdowns);
             }
         }
@@ -1094,20 +1094,16 @@ var cone = (function (exports, $, ts) {
             this.elem.css('height', '100%');
             this.open_dropdown = null;
         }
-        bind_dropdowns_desktop(header) {
+        bind_dropdowns_desktop() {
             this.elems.each((i, el) => {
                 $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
                 $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-                $(el).off('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
-                $(el).off('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
             });
         }
-        bind_dropdowns_mobile(header) {
+        bind_dropdowns_mobile() {
             this.elems.each((i, el) => {
                 $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
                 $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-                $(el).on('shown.bs.dropdown', header.render_mobile_scrollbar.bind(header));
-                $(el).on('hidden.bs.dropdown', header.render_mobile_scrollbar.bind(header));
             });
         }
         hide_dropdowns() {
@@ -1133,14 +1129,18 @@ var cone = (function (exports, $, ts) {
             this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
             this.navbar_content = ts.query_elem('#navbar-content', elem);
             this.personal_tools = ts.query_elem('#personaltools', elem);
+            this.mainmenu = ts.query_elem('#mainmenu', elem);
+            this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
+            this.mainmenu_elems.each((i, el) => {
+                $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+                $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+            });
             this.set_mode = this.set_mode.bind(this);
-            global_events.on('on_sidebar_resize', this.set_mode);
-            $(window).on('resize', this.set_mode);
+            global_events.on('on_main_area_mode', this.set_mode);
             ts.ajax.attach(this, elem);
             new ts.Property(this, 'is_compact', null);
             new ts.Property(this, 'is_super_compact', null);
             this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
-            this.set_mode();
         }
         destroy() {
             $(window).off('resize', this.set_mode);
@@ -1165,7 +1165,6 @@ var cone = (function (exports, $, ts) {
                     $('html, body').css('overscroll-behavior', 'auto');
                     this.mobile_scrollbar.scrollbar.hide();
                 });
-                this.mainmenu = $('#mainmenu', this.elem).data();
             } else {
                 this.elem.removeClass('compact');
                 this.elem.addClass('full').addClass('navbar-expand');
@@ -1175,7 +1174,6 @@ var cone = (function (exports, $, ts) {
                     this.mobile_scrollbar = null;
                 }
             }
-            global_events.trigger('on_header_mode_toggle', this);
         }
         on_is_super_compact(val) {
             const in_navbar_content = ts.query_elem(
@@ -1193,14 +1191,61 @@ var cone = (function (exports, $, ts) {
                 $(".dropdown-menu.show").removeClass('show');
             }
         }
-        set_mode(inst, sidebar) {
+        set_mode(inst, mainarea) {
             if ($(window).width() > this.elem.outerWidth(true)) {
                 this.logo_placeholder.hide();
             } else {
                 this.logo_placeholder.show();
             }
+            this.is_compact = mainarea.is_compact;
+            this.is_super_compact = mainarea.is_super_compact;
+        }
+    }
+
+    class MainArea extends ts.Events {
+        static initialize(context) {
+            const elem = ts.query_elem('#main-area', context);
+            if (!elem) {
+                return;
+            }
+            new MainArea(elem);
+        }
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            new ts.Property(this, 'is_compact', null);
+            new ts.Property(this, 'is_super_compact', null);
+            this.set_mode = this.set_mode.bind(this);
+            global_events.on('on_sidebar_resize', this.set_mode);
+            $(window).on('resize', this.set_mode);
+            this.set_mode();
+            ts.ajax.attach(this, elem);
+        }
+        destroy() {
+            $(window).off('resize', this.set_mode);
+            global_events.off('on_sidebar_resize', this.set_mode);
+        }
+        set_mode() {
             this.is_compact = this.elem.outerWidth() < 992;
             this.is_super_compact = this.elem.outerWidth() < 576;
+        }
+        on_is_compact(val) {
+            if (val) {
+                this.elem.removeClass('full');
+                this.elem.addClass('compact');
+            } else {
+                this.elem.removeClass('compact');
+                this.elem.addClass('full');
+            }
+            global_events.trigger('on_main_area_mode', this);
+        }
+        on_is_super_compact(val) {
+            if (val) {
+                this.elem.addClass('super-compact');
+            } else {
+                this.elem.removeClass('super-compact');
+            }
+            global_events.trigger('on_main_area_mode', this);
         }
     }
 
@@ -1352,6 +1397,7 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(LiveSearch.initialize, true);
         ts.ajax.register(MainMenu.initialize, true);
         ts.ajax.register(Header.initialize, true);
+        ts.ajax.register(MainArea.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1365,6 +1411,7 @@ var cone = (function (exports, $, ts) {
     exports.Header = Header;
     exports.KeyBinder = KeyBinder;
     exports.LiveSearch = LiveSearch;
+    exports.MainArea = MainArea;
     exports.MainMenu = MainMenu;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;

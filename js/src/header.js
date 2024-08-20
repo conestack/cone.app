@@ -21,10 +21,15 @@ export class Header extends ts.Events {
         this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
         this.navbar_content = ts.query_elem('#navbar-content', elem);
         this.personal_tools = ts.query_elem('#personaltools', elem);
+        this.mainmenu = ts.query_elem('#mainmenu', elem);
+        this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
+        this.mainmenu_elems.each((i, el) => {
+            $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+            $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+        });
 
         this.set_mode = this.set_mode.bind(this);
-        global_events.on('on_sidebar_resize', this.set_mode);
-        $(window).on('resize', this.set_mode);
+        global_events.on('on_main_area_mode', this.set_mode);
 
         ts.ajax.attach(this, elem);
 
@@ -32,8 +37,6 @@ export class Header extends ts.Events {
         new ts.Property(this, 'is_super_compact', null);
 
         this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
-
-        this.set_mode();
     }
 
     destroy() {
@@ -66,9 +69,6 @@ export class Header extends ts.Events {
                 $('html, body').css('overscroll-behavior', 'auto');
                 this.mobile_scrollbar.scrollbar.hide();
             });
-
-            // mainmenu
-            this.mainmenu = $('#mainmenu', this.elem).data()
         } else {
             this.elem.removeClass('compact');
             this.elem.addClass('full').addClass('navbar-expand');
@@ -80,8 +80,6 @@ export class Header extends ts.Events {
                 this.mobile_scrollbar = null;
             }
         }
-
-        global_events.trigger('on_header_mode_toggle', this);
     }
 
     on_is_super_compact(val) {
@@ -102,14 +100,14 @@ export class Header extends ts.Events {
         }
     }
 
-    set_mode(inst, sidebar) {
+    set_mode(inst, mainarea) {
         if ($(window).width() > this.elem.outerWidth(true)) {
             this.logo_placeholder.hide();
         } else {
             this.logo_placeholder.show();
         }
 
-        this.is_compact = this.elem.outerWidth() < 992; // tablet
-        this.is_super_compact = this.elem.outerWidth() < 576; // mobile
+        this.is_compact = mainarea.is_compact;
+        this.is_super_compact = mainarea.is_super_compact;
     }
 }

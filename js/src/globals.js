@@ -11,11 +11,11 @@ export class GlobalEvents extends ts.Events {
     }
 
     /**
-     * Gets triggered when header toggles between compact and full mode.
+     * Gets triggered when main area toggles between compact and full mode.
      *
-     * @param {Header} inst
+     * @param {MainArea} inst
      */
-    on_header_mode_toggle(inst) {
+    on_main_area_mode(inst) {
     }
 }
 

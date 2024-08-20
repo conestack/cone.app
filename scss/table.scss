@@ -20,9 +20,11 @@
     }
 }
 
-#main-area:not(:has(#header-main.compact)) .table_length {
-    max-width: max-content;
-}
-#main-area:not(:has(#header-main.compact)) .table_filter {
-    max-width: 300px;
+#main-area.full {
+    .table_length {
+        max-width: max-content;
+    }
+    .table_filter {
+        max-width: 300px;
+    }
 }
