@@ -68,6 +68,10 @@ body {
   height: 100%;
 }
 
+#footer {
+  z-index: 1;
+}
+
 /* content */
 #content {
   height: calc(100% - 40px);
@@ -85,7 +89,7 @@ tr.selectable td {
   -ms-user-select: none;
 }
 
-#input-contentform-save:has(+ input.btn) {
+#input-contentform-save {
   margin-right: 1rem;
 }
 
@@ -102,107 +106,111 @@ tr.selectable td {
   visibility: hidden;
 }
 
-#header-main {
+#main-area.compact #header-main.mobile-menu-open #header-logo-placeholder {
+  display: none;
+}
+#main-area.compact #header-main.mobile-menu-open #navbar-content-wrapper {
+  max-height: calc(100vh - 50px);
+  position: relative;
+  overflow: hidden;
+  padding: 0 !important;
+  z-index: 3;
+}
+@media screen and (max-width: 768px) {
+  #main-area.compact #header-main.mobile-menu-open #navbar-content-wrapper {
+    z-index: 1200;
+  }
+}
+#main-area.compact #header-main.mobile-menu-open #header-content {
+  align-items: flex-start;
+}
+#main-area.compact #header-main.mobile-menu-open .navbar-toggler {
+  height: 50px !important;
+}
+#main-area.compact #header-main.mobile-menu-open #mainmenu {
+  align-items: baseline;
+}
+#main-area.compact #header-main.mobile-menu-open #mainmenu .scrollbar {
+  display: none !important;
+}
+#main-area.compact #header-main.mobile-menu-open #mainmenu .scrollable-content {
+  right: 0 !important;
+}
+#main-area.compact #header-main.mobile-menu-open #mainmenu .dropdown-menu {
+  border: none;
+}
+#main-area.compact #header-main.mobile-menu-open #mainmenu .dropdown-menu > li .dropdown-item {
+  padding: 8px 20px;
+}
+#main-area.compact #header-main.mobile-menu-open #mainmenu .dropdown-menu > li:first-child .dropdown-item {
+  padding-top: 0;
+}
+#main-area.super-compact #personaltools {
+  height: 50px;
+  justify-content: space-between;
+  margin: auto 20px;
+}
+#main-area.super-compact #personaltools #colortoggler {
+  padding-left: 0;
+}
+#main-area.full #mainmenu .dropdown-menu {
+  position: fixed;
+}
+#main-area.full #personaltools {
+  height: 100%;
+}
+#main-area #header-main {
   height: var(--navbar-height);
 }
-#header-main.navbar-expand #header-content {
+#main-area #header-main.navbar-expand #header-content {
   flex-direction: row-reverse;
 }
-#header-main.navbar-expand #navbar-content-wrapper {
+#main-area #header-main.navbar-expand #navbar-content-wrapper {
   box-shadow: none !important;
   background: none;
 }
-#header-main:not(.navbar-expand) #header-content {
+#main-area #header-main:not(.navbar-expand) #header-content {
   flex-direction: row;
 }
-#header-main:not(.navbar-expand) #navbar-content {
+#main-area #header-main:not(.navbar-expand) #navbar-content {
   flex-direction: column;
 }
-#header-main:not(.navbar-expand) #livesearch {
+#main-area #header-main:not(.navbar-expand) #livesearch {
   order: 0;
   width: 100%;
   padding-left: 55px !important;
   padding-right: 15px !important;
 }
-#header-main:not(.navbar-expand) #mainmenu {
+#main-area #header-main:not(.navbar-expand) #mainmenu {
   order: 1;
   margin-left: 10px !important;
   margin-top: 20px;
   margin-bottom: 20px;
 }
-#header-main:not(.navbar-expand) #mainmenu ul > li {
+#main-area #header-main:not(.navbar-expand) #mainmenu ul > li {
   display: block !important;
 }
-#header-main.compact:has(.show) {
-  height: 100%;
-}
-#header-main.compact:has(.show) #header-logo-placeholder, #header-main.compact:has(.collapsing) #header-logo-placeholder {
-  display: none;
-}
-#header-main.compact:has(.show) #navbar-content-wrapper, #header-main.compact:has(.collapsing) #navbar-content-wrapper {
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  padding: 0 !important;
-}
-@media screen and (max-width: 768px) {
-  #header-main.compact:has(.show) #navbar-content-wrapper, #header-main.compact:has(.collapsing) #navbar-content-wrapper {
-    z-index: 1200;
-  }
-}
-#header-main.compact:has(.show) #header-content, #header-main.compact:has(.collapsing) #header-content {
-  align-items: flex-start;
-}
-#header-main.compact:has(.show) .navbar-toggler, #header-main.compact:has(.collapsing) .navbar-toggler {
-  height: 50px !important;
-}
-#header-main.compact:has(.show) #mainmenu .scrollable-content, #header-main.compact:has(.collapsing) #mainmenu .scrollable-content {
-  right: 0 !important;
-}
-#header-main.compact:has(.show) #mainmenu .dropdown-menu, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu {
-  border: none;
-}
-#header-main.compact:has(.show) #mainmenu .dropdown-menu > li .dropdown-item, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu > li .dropdown-item {
-  padding: 8px 20px;
-}
-#header-main.compact:has(.show) #mainmenu .dropdown-menu > li:first-child .dropdown-item, #header-main.compact:has(.collapsing) #mainmenu .dropdown-menu > li:first-child .dropdown-item {
-  padding-top: 0;
-}
-#header-main.compact:has(.show) #personaltools, #header-main.compact:has(.collapsing) #personaltools {
-  height: 50px;
-  justify-content: space-between;
-  margin: auto 20px;
-}
-#header-main.compact:has(.show) #personaltools #colortoggler, #header-main.compact:has(.collapsing) #personaltools #colortoggler {
-  padding-left: 0;
-}
-#header-main.full #mainmenu .dropdown-menu {
-  position: fixed;
-}
-#header-main.full #personaltools {
-  height: 100%;
-}
-#header-main #navbar-content-wrapper {
+#main-area #header-main #navbar-content-wrapper {
   min-width: 0;
   z-index: 1;
 }
-#header-main #navbar-content-wrapper #navbar-content {
+#main-area #header-main #navbar-content-wrapper #navbar-content {
   min-width: 0;
 }
-#header-main #mainmenu > ul {
+#main-area #header-main #mainmenu > ul {
   padding-left: 8px;
   white-space: nowrap;
 }
-#header-main #mainmenu .nav-item.active .nav-link {
+#main-area #header-main #mainmenu .nav-item.active .nav-link {
   color: #4e7bba;
 }
-#header-main #personaltools #language-dropdown > div.dropdown-toggle > a {
+#main-area #header-main #personaltools #language-dropdown > div.dropdown-toggle > a {
   height: 20px;
 }
-#header-main #personaltools #language-dropdown > div.dropdown-toggle > a img {
+#main-area #header-main #personaltools #language-dropdown > div.dropdown-toggle > a img {
   vertical-align: baseline;
 }
-#header-main #personaltools #colortoggler #colortoggle-switch {
+#main-area #header-main #personaltools #colortoggler #colortoggle-switch {
   width: 2rem;
   height: 1rem;
 }
