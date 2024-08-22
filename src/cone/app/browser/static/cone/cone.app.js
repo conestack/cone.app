@@ -1166,7 +1166,6 @@ var cone = (function (exports, $, ts) {
         on_show_dropdown_desktop(evt) {
             const el = evt.target;
             this.open_dropdown = el;
-            this.elem.css('height', '200vh');
             const dropdown = $(el).siblings('ul.dropdown-menu');
             dropdown.css({
                 top: `${this.height}px`,
@@ -1312,11 +1311,7 @@ var cone = (function (exports, $, ts) {
             }
             new Logo(elem);
         }
-        constructor(elem) {
-            super(elem);
-        }
         on_sidebar_resize(inst, sidebar) {
-            console.log(sidebar.collapsed);
             if (sidebar.collapsed) {
                 this.elem.removeClass('text-white');
             } else {

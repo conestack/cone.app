@@ -49,7 +49,6 @@ export class MainMenu extends LayoutAware {
     on_show_dropdown_desktop(evt) {
         const el = evt.target;
         this.open_dropdown = el;
-        this.elem.css('height', '200vh'); // XXX: for some reason 100vh is not enough
 
         // prevent element being cut by scrollbar while open
         const dropdown = $(el).siblings('ul.dropdown-menu');

@@ -11,12 +11,7 @@ export class Logo extends LayoutAware {
         new Logo(elem);
     }
 
-    constructor(elem) {
-        super(elem);
-    }
-
     on_sidebar_resize(inst, sidebar) {
-        console.log(sidebar.collapsed)
         if (sidebar.collapsed) {
             this.elem.removeClass('text-white');
         } else {

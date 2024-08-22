@@ -45,7 +45,7 @@
             <span tal:content="item['title']|string:'&nbsp;'">Title</span>
           </a>
 
-          <ul class="dropdown-menu rounded-0 rounded-bottom mt-2 mt-sm-0">
+          <ul class="dropdown-menu rounded-0 rounded-bottom">
             <tal:li repeat="child item['children']">
               <li tal:define="css child['selected'] and 'active' or '';"
                   tal:attributes="class css">

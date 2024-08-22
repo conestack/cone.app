@@ -155,6 +155,7 @@ tr.selectable td {
 }
 #main-area.full #mainmenu .dropdown-menu {
   position: fixed;
+  margin-top: 10px;
 }
 #main-area.full #personaltools {
   height: 100%;

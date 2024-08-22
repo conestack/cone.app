@@ -13,9 +13,6 @@
 }
 
 #main-area {
-    // display: flex;
-    // flex-direction: column;
-
     &.compact {
         #header-main.mobile-menu-open {
 
@@ -83,6 +80,7 @@
         #mainmenu {
             .dropdown-menu {
                 position: fixed;
+                margin-top: 10px;
             }
         }
         #personaltools {
