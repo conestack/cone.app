@@ -46,7 +46,9 @@
         <!-- end sidebar -->
 
         <!-- content area -->
-        <div id="main-area" class="col h-100 p-0">
+        <div id="main-area"
+             tal:define="userid context.request.authenticated_userid"
+             class="col h-100 p-0 ${'pb-5' if userid else 'pb-0'}">
 
           <!-- header -->
           <nav id="header-main"
