@@ -153,9 +153,11 @@ tr.selectable td {
 #main-area.super-compact #personaltools #colortoggler {
   padding-left: 0;
 }
+#main-area.full #mainmenu {
+  height: var(--navbar-height);
+}
 #main-area.full #mainmenu .dropdown-menu {
   position: fixed;
-  margin-top: 10px;
 }
 #main-area.full #personaltools {
   height: 100%;

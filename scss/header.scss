@@ -78,9 +78,10 @@
     }
     &.full {
         #mainmenu {
+            height: var(--navbar-height);
+
             .dropdown-menu {
                 position: fixed;
-                margin-top: 10px;
             }
         }
         #personaltools {
