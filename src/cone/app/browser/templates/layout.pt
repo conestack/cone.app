@@ -46,7 +46,7 @@
         <!-- end sidebar -->
 
         <!-- content area -->
-        <div id="main-area" class="col h-100 p-0 pb-5">
+        <div id="main-area" class="col h-100 p-0">
 
           <!-- header -->
           <nav id="header-main"
