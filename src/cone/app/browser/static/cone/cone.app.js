@@ -140,7 +140,7 @@ var cone = (function (exports, $, ts) {
         bind() {
             ColorMode.watch(() => {
                 const stored_theme = this.stored_theme;
-                if (stored_theme !== 'light' || stored_theme !== 'dark') {
+                if (stored_theme !== 'light' && stored_theme !== 'dark') {
                     ColorMode.set_theme(ColorMode.preferred_theme);
                 }
             });
@@ -155,7 +155,7 @@ var cone = (function (exports, $, ts) {
             new ColorToggler(elem);
         }
         constructor(elem) {
-            super({elem: elem});
+            super({ elem: elem });
             this.update();
             ColorMode.watch(() => {
                 this.update();
@@ -705,7 +705,7 @@ var cone = (function (exports, $, ts) {
         }
         safe_position(position) {
             if (typeof position !== 'number') {
-                throw `Scrollbar position must be a Number, position is: "${position}".`;
+                throw new Error(`Scrollbar position must be a Number, position is: "${position}".`);
             }
             if (this.contentsize <= this.scrollsize) {
                 return 0;
@@ -837,7 +837,8 @@ var cone = (function (exports, $, ts) {
         pos_from_evt(e) {
             return e.pageX;
         }
-    }class ScrollbarY extends Scrollbar {
+    }
+    class ScrollbarY extends Scrollbar {
         get offset() {
             return this.elem.offset().top;
         }
@@ -950,7 +951,7 @@ var cone = (function (exports, $, ts) {
             localStorage.setItem('cone-app-sidebar-width', width);
         }
         get collapsed() {
-            return (this.elem.outerWidth() <= 0);
+            return this.elem.outerWidth() <= 0;
         }
         responsive_toggle() {
             if (this.collapsed) {
@@ -1138,7 +1139,6 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             super(elem);
             this.elem = elem;
-            this.height = this.elem.outerHeight();
             this.scrollbar = elem.data('scrollbar');
             this.elems = $('.nav-link.dropdown-toggle', elem);
             this.open_dropdown = null;
@@ -1146,6 +1146,9 @@ var cone = (function (exports, $, ts) {
             this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
             this.hide_dropdowns = this.hide_dropdowns.bind(this);
             this.scrollbar.on('on_position', this.hide_dropdowns);
+        }
+        get height() {
+            return this.elem.outerHeight(true);
         }
         on_sidebar_resize(inst, sidebar) {
             super.on_sidebar_resize(inst, sidebar);
@@ -1168,7 +1171,7 @@ var cone = (function (exports, $, ts) {
             this.open_dropdown = el;
             const dropdown = $(el).siblings('ul.dropdown-menu');
             dropdown.css({
-                top: `${this.height}px`,
+                top: `${this.height - 1}px`,
                 left: `${$(el).offset().left}px`
             });
         }
@@ -1177,20 +1180,15 @@ var cone = (function (exports, $, ts) {
             if (this.open_dropdown !== el) {
                 return;
             }
-            this.elem.css('height', '100%');
             this.open_dropdown = null;
         }
         bind_dropdowns_desktop() {
-            this.elems.each((i, el) => {
-                $(el).on('shown.bs.dropdown', this.on_show_dropdown_desktop);
-                $(el).on('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-            });
+            this.elem.on('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
+            this.elem.on('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
         }
         bind_dropdowns_mobile() {
-            this.elems.each((i, el) => {
-                $(el).off('shown.bs.dropdown', this.on_show_dropdown_desktop);
-                $(el).off('hidden.bs.dropdown', this.on_hide_dropdown_desktop);
-            });
+            this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
+            this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
         }
         hide_dropdowns() {
             this.elems.each((i, el) => {
