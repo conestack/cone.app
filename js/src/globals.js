@@ -1,5 +1,8 @@
 import ts from 'treibstoff';
 
+/**
+ * Class to manage global events.
+ */
 export class GlobalEvents extends ts.Events {
 
     /**

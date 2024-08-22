@@ -1,10 +1,18 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import {ScrollbarY} from './scrollbar.js';
-import {LayoutAware} from './layout.js';
+import { ScrollbarY } from './scrollbar.js';
+import { LayoutAware } from './layout.js';
 
+/**
+ * Class to manage the header layout and interactions.
+ * @extends LayoutAware
+ */
 export class Header extends LayoutAware {
 
+    /**
+     * Initializes the Header instance.
+     * @param {Element} context
+     */
     static initialize(context) {
         const elem = ts.query_elem('#header-main', context);
         if (!elem) {
@@ -13,6 +21,9 @@ export class Header extends LayoutAware {
         new Header(elem);
     }
 
+    /**
+     * @param {Element} elem The main header element.
+     */
     constructor(elem) {
         super(elem);
         this.elem = elem;
@@ -25,7 +36,6 @@ export class Header extends LayoutAware {
         this.mainmenu = ts.query_elem('#mainmenu', elem);
         this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
 
-        // this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
         this.mainmenu_elems.each((i, el) => {
             $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
             $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
@@ -40,6 +50,9 @@ export class Header extends LayoutAware {
         this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
     }
 
+    /**
+     * Destroys the Header instance and cleans up event listeners.
+     */
     destroy() {
         super.destroy();
         this.mainmenu_elems.each((i, el) => {
@@ -51,26 +64,43 @@ export class Header extends LayoutAware {
         wrapper.off('hide.bs.collapse hidden.bs.collapse', this.set_mobile_menu_closed);
     }
 
+    /**
+     * Renders the mobile scrollbar if in compact mode.
+     */
     render_mobile_scrollbar() {
         if (this.is_compact && this.mobile_scrollbar) {
             this.mobile_scrollbar.render();
         }
     }
 
+    /**
+     * Binds event listeners for navbar collapse events.
+     */
     bind() {
         const wrapper = this.navbar_content_wrapper;
         wrapper.on('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
         wrapper.on('hidden.bs.collapse', this.set_mobile_menu_closed);
     }
 
+    /**
+     * Sets a header classto indicate the mobile menu is open.
+     */
     set_mobile_menu_open() {
         this.elem.addClass('mobile-menu-open');
     }
 
+    /**
+     * Removes a header class to indicate the mobile menu is closed.
+     */
     set_mobile_menu_closed() {
         this.elem.removeClass('mobile-menu-open');
     }
 
+    /**
+     * Handles changes (scrollbar and bootstrap dropdown)
+     * in the compact state of the header.
+     * @param {boolean} val
+     */
     on_is_compact(val) {
         if (val) {
             this.elem.removeClass('full').removeClass('navbar-expand');
@@ -103,6 +133,10 @@ export class Header extends LayoutAware {
         }
     }
 
+    /**
+     * Handles changes in the super compact state of the header.
+     * @param {boolean} val
+     */
     on_is_super_compact(val) {
         const in_navbar_content = ts.query_elem(
             '#personaltools',
@@ -121,6 +155,10 @@ export class Header extends LayoutAware {
         }
     }
 
+    /**
+     * Handles changes in the sidebar collapsed state.
+     * @param {boolean} val
+     */
     on_is_sidebar_collapsed(val) {
         if (val) {
             this.logo_placeholder.show();
