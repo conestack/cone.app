@@ -1,4 +1,5 @@
 from cone.app import compat
+from cone.app import get_root
 from cone.app import security
 from cone.app import testing
 from cone.app.browser.ajax import AjaxEvent
@@ -120,8 +121,8 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(CameFromNextForm.write_history_on_next is False)
 
         # Create a test model and login
-        root = BaseNode()
-        model = root['child'] = BaseNode()
+        root = get_root()
+        model = root['child'] = BaseNode(parent=get_root())
 
         # Check whether ``came_from`` is rendered on form as proxy field
         with self.layer.authenticated('manager'):
@@ -427,7 +428,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         with self.layer.authenticated('max'):
             res = content_form.rendered_contextmenu
-        self.assertTrue(res.find('<div id="contextmenu"') > -1)
+        self.assertTrue(res.find('<nav id="contextmenu"') > -1)
 
         with self.layer.authenticated('max'):
             res = content_form(model, request)
@@ -519,7 +520,7 @@ class TestBrowserAuthoring(TileTestCase):
                     self.model = child
 
         # Create dummy container
-        root = MyNode()
+        root = MyNode(parent=get_root())
 
         # Render without factory
         with self.layer.authenticated('manager'):
@@ -684,7 +685,7 @@ class TestBrowserAuthoring(TileTestCase):
                     self.model.attrs.title = fetch('editform.title')
 
         # Dummy model
-        root = MyNode()
+        root = MyNode(parent=get_root())
         child = root['somechild'] = MyNode()
         child.attrs.title = 'My Node'
 
@@ -855,7 +856,7 @@ class TestBrowserAuthoring(TileTestCase):
             pass
 
         # Dummy model
-        root = MyNode()
+        root = MyNode(parent=get_root())
         root['somechild'] = MyNode()
         # child.attrs.title = 'My Node'
 

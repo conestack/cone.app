@@ -55,7 +55,7 @@ class TestBrowserLayout(TileTestCase):
                 def render(self):
                     return '<div>Content</div>'
 
-        model = BaseNode()
+        model = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
         # Render main template. The function accepts an optional ``contenttile``
@@ -163,7 +163,7 @@ class TestBrowserLayout(TileTestCase):
         # Render main menu at child. Child is marked selected
         with self.layer.authenticated('max'):
             res = render_tile(root['1'], request, 'mainmenu')
-        self.assertTrue(res.find('<li class="nav-item active node-1">') > -1)
+        self.assertTrue(res.find('class="nav-item active node-1"') > -1)
 
         # Render main menu with default child
         model = BaseNode()
@@ -172,25 +172,25 @@ class TestBrowserLayout(TileTestCase):
         model.properties.default_child = '2'
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertTrue(res.find('<li class="nav-item active node-2">') > -1)
+        self.assertTrue(res.find('class="nav-item active node-2"') > -1)
 
         # Render main menu on child '1' and check if '2' is unselected now
         with self.layer.authenticated('max'):
             res = render_tile(model['1'], request, 'mainmenu')
-        self.assertFalse(res.find('<li class="nav-item active node-2">') > -1)
-        self.assertTrue(res.find('<li class="nav-item active node-1">') > -1)
+        self.assertFalse(res.find('class="nav-item active node-2"') > -1)
+        self.assertTrue(res.find('class="nav-item active node-1"') > -1)
 
         # Check rendering of main menu with empty title. This is needed if main
         # menu items are supposed to be displayed as icons via CSS
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        expected = '<span></span></a>'
+        expected = '></span>'
         self.assertFalse(res.find(expected) > -1)
 
         model.properties.mainmenu_empty_title = True
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        expected = '<span></span></a>'
+        expected = '></span>'
         self.assertTrue(res.find(expected) > -1)
 
         # Child nodes which do not grant permission 'view' are skipped
@@ -203,11 +203,11 @@ class TestBrowserLayout(TileTestCase):
         model['3'] = RestrictedViewNode()
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertFalse(res.find('<li class=" node-3">') > -1)
+        self.assertFalse(res.find('class="nav-item node-3"') > -1)
 
         with self.layer.authenticated('manager'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertTrue(res.find('<li class=" node-3">') > -1)
+        self.assertTrue(res.find('class="nav-item node-3"') > -1)
 
         # Check mainmenu displays children
         model = BaseNode()
@@ -220,7 +220,7 @@ class TestBrowserLayout(TileTestCase):
 
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        expected = '<li class="dropdown node-child">'
+        expected = 'class="nav-item dropdown node-child">'
         self.assertTrue(res.find(expected) > -1)
         expected = 'href="http://example.com/child/1"'
         self.assertTrue(res.find(expected) > -1)
@@ -233,7 +233,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(child['1']['1'], request, 'mainmenu')
         self.checkOutput("""
-        ...<li class="nav-item active">
+        ...<li class="active">
         <a href="http://example.com/child/1"...
         """, res)
 
@@ -251,10 +251,10 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.find('id="navtree"') != -1)
         self.assertTrue(res.find('ajax:bind="contextchanged"') != -1)
         self.assertTrue(res.find('ajax:action="navtree:#navtree:replace"') != -1)
-        self.assertTrue(res.find('class="contextsensitiv list-group"') != -1)
+        self.assertTrue(res.find('class="contextsensitiv nav-item mb-1 text-white"') != -1)
 
         # Node's which are in navtree
-        root = BaseNode()
+        root = get_root()
         root.properties.in_navtree = True
         root['1'] = BaseNode()
         root['1'].properties.in_navtree = True
@@ -275,7 +275,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root['1'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="nav-item active navtreelevel_1">
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1"...
         """, res)
 
@@ -283,7 +283,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root['1']['11'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="nav-item active navtreelevel_2">
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1/11"...
         """, res)
 
@@ -513,14 +513,22 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'byline')
         self.checkOutput("""
-        <p class="byline">
-          <span>Created by</span>:
-          <strong>max</strong>,
-          <span>on</span>
-          <strong>14.03.2011 00:00</strong>.
-          <span>Last modified</span>:
-          <strong>14.03.2011 00:00</strong>
-        </p>
+        <div class="byline mb-3">
+          <div class="d-flex flex-wrap gap-1 mb-1">
+            <div>
+              <span>Created by</span>:
+              <strong>max</strong>,
+            </div>
+            <div>
+              <span>on</span>
+              <strong>14.03.2011 00:00</strong>.
+            </div>
+          </div>
+          <div>
+            <span>Last modified</span>:
+            <strong>14.03.2011 00:00</strong>
+          </div>
+        </div>
         """, res)
 
     def test_default_root_content(self):
@@ -648,39 +656,50 @@ class TestBrowserLayout(TileTestCase):
 
     def test_language(self):
         self.assertEqual(cfg.available_languages, ['en', 'de'])
-        root = BaseNode()
+        root = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
         res = render_tile(root, request, 'language')
         self.checkOutput("""
-        <li class="dropdown">
-          <a href="#"
-             class="dropdown-toggle"
-             data-toggle="dropdown">
-             <span>Language</span>
-             <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="languagemenu">
+        <div id="language-dropdown"
+             class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0">
+          <div class="h-100 dropdown-toggle d-flex justify-content-end
+                      justify-content-end-sm-center align-items-center"
+               data-bs-toggle="dropdown">
+            <a href="#"
+               class="nav-link d-inline-block px-0 px-md-2">
+              <img src="http://example.com/resources/cone/flags/en.svg"
+                   width="20"
+                   height="20"
+                   alt="Language" />
+              <span class="caret"></span>
+            </a>
+          </div>
+          <ul role="languagemenu"
+              class="dropdown-menu rounded-0 rounded-bottom
+                     dropdown-menu-end mt-2 mt-sm-0">
             <li>
               <a href="#"
+                 class="dropdown-item active"
                  ajax:bind="click"
                  ajax:target="http://example.com/?lang=en"
                  ajax:action="change_language:NONE:NONE">
-                 <span class="icon-lang-en"></span>
+                <span class="icon-lang-en"></span>
                 English
               </a>
             </li>
             <li>
               <a href="#"
+                 class="dropdown-item"
                  ajax:bind="click"
                  ajax:target="http://example.com/?lang=de"
                  ajax:action="change_language:NONE:NONE">
-                 <span class="icon-lang-de"></span>
+                <span class="icon-lang-de"></span>
                 German
               </a>
             </li>
           </ul>
-        </li>
+        </div>
         """, res)
 
         cfg.available_languages = []

@@ -12,7 +12,8 @@ class TestBrowserSharing(TileTestCase):
     layer = testing.security
 
     def test_render_sharing_view(self):
-        model = SharingNode(name='root')
+        from cone.app import get_root
+        model = SharingNode(name='root', parent=get_root())
         request = self.layer.new_request()
 
         with self.assertRaises(HTTPForbidden) as arc:
@@ -34,7 +35,7 @@ class TestBrowserSharing(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
         self.checkOutput("""
-        ...<table class="table table-striped table-condensed"
+        ...<table class="table table-striped mb-1 scrollable-content"
         id="localacltable_table">...
         """, res)
 

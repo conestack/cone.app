@@ -118,7 +118,7 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         self.checkOutput("""
-        <div class="field" id="field-field">
+        <div class="field mb-3" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
               <a class="nav-link py-0 active" href="#translation-field-en">EN</a>
@@ -129,11 +129,11 @@ class TestBrowserTranslation(NodeTestCase):
           </ul>
           <div class="translation-fields">
             <div id="translation-field-en">
-              <input class="text" id="input-field-en" name="field.en"
+              <input class="form-control" id="input-field-en" name="field.en"
                      type="text" value=""/>
             </div>
             <div id="translation-field-de">
-              <input class="text" id="input-field-de" name="field.de"
+              <input class="form-control" id="input-field-de" name="field.de"
                      type="text" value=""/>
             </div>
           </div>
@@ -155,11 +155,11 @@ class TestBrowserTranslation(NodeTestCase):
         self.checkOutput("""
         ...
         <div id="translation-field-en">
-          <input class="text" id="input-field-en" name="field.en"
+          <input class="form-control" id="input-field-en" name="field.en"
                  type="text" value="Value EN"/>
         </div>
         <div id="translation-field-de">
-          <input class="text" id="input-field-de" name="field.de"
+          <input class="form-control" id="input-field-de" name="field.de"
                  type="text" value="Value DE"/>
         </div>
         ...
@@ -181,11 +181,11 @@ class TestBrowserTranslation(NodeTestCase):
         self.checkOutput("""
         ...
         <div id="translation-field-en">
-          <input class="text" id="input-field-en" name="field.en"
+          <input class="form-control" id="input-field-en" name="field.en"
                  type="text" value="Value EN"/>
         </div>
         <div id="translation-field-de">
-          <input class="text" id="input-field-de" name="field.de"
+          <input class="form-control" id="input-field-de" name="field.de"
                  type="text" value="Value DE"/>
         </div>
         ...
@@ -206,11 +206,11 @@ class TestBrowserTranslation(NodeTestCase):
         self.checkOutput("""
         ...
         <div id="translation-field-en">
-          <input class="text" id="input-field-en" name="field.en"
+          <input class="form-control is-valid" id="input-field-en" name="field.en"
                  type="text" value="Value EN"/>
         </div>
         <div id="translation-field-de">
-          <input class="text" id="input-field-de" name="field.de"
+          <input class="form-control is-valid" id="input-field-de" name="field.de"
                  type="text" value="Value DE"/>
         </div>
         ...
@@ -235,11 +235,11 @@ class TestBrowserTranslation(NodeTestCase):
         self.checkOutput("""
         ...
         <div id="translation-field-en">
-          <input class="text" id="input-field-en" name="field.en"
+          <input class="form-control is-valid" id="input-field-en" name="field.en"
                  type="text" value="Value EN new"/>
         </div>
         <div id="translation-field-de">
-          <input class="text" id="input-field-de" name="field.de"
+          <input class="form-control is-valid" id="input-field-de" name="field.de"
                  type="text" value="Value DE new"/>
         </div>
         ...
@@ -265,11 +265,11 @@ class TestBrowserTranslation(NodeTestCase):
         self.checkOutput("""
         ...
         <div id="translation-field-en">
-          <input class="text" id="input-field-en" name="field.en"
+          <input class="form-control is-valid" id="input-field-en" name="field.en"
                type="text" value="Value EN new"/>
         </div>
         <div id="translation-field-de">
-          <input class="text" id="input-field-de" name="field.de"
+          <input class="form-control is-valid" id="input-field-de" name="field.de"
                type="text" value="Value DE new"/>
         </div>
         ...
@@ -293,28 +293,24 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = u'Value DE'
         data = widget.extract(request)
         self.checkOutput("""
-        <div class="field" id="field-field">
-          <div class="error">
-            <div class="errormessage">Field is mandatory</div>
-            <ul class="nav nav-pills mb-2 translation-nav">
-              <li class="nav-item error">
-                <a class="nav-link py-0 active" href="#translation-field-en">* EN</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link py-0" href="#translation-field-de">DE</a>
-              </li>
-            </ul>
-            <div class="translation-fields">
-              <div id="translation-field-en">
-                <input class="required text" id="input-field-en" name="field.en"
-                       required="required" type="text" value=""/>
-              </div>
-              <div id="translation-field-de">
-                <input class="required text" id="input-field-de" name="field.de"
-                       required="required" type="text" value="Value DE"/>
-              </div>
+        <div class="field mb-3" id="field-field">
+          <ul class="nav nav-pills mb-2 translation-nav">
+            <li class="nav-item error">
+              <a class="nav-link py-0 active" href="#translation-field-en">* EN</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link py-0" href="#translation-field-de">DE</a>
+            </li>
+          </ul>
+          <div class="translation-fields">
+            <div id="translation-field-en">
+              <input class="form-control is-invalid required" id="input-field-en" name="field.en" required="required" type="text" value=""/>
+            </div>
+            <div id="translation-field-de">
+              <input class="form-control required" id="input-field-de" name="field.de" required="required" type="text" value="Value DE"/>
             </div>
           </div>
+          <div class="invalid-feedback">Field is mandatory</div>
         </div>
         """, fxml(widget(data=data)))
 
@@ -332,7 +328,7 @@ class TestBrowserTranslation(NodeTestCase):
             mode='display')
 
         self.checkOutput("""
-        <div class="field" id="field-field">
+        <div class="field mb-3" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
               <a class="nav-link py-0 active" href="#translation-field-en">EN</a>
@@ -343,10 +339,10 @@ class TestBrowserTranslation(NodeTestCase):
           </ul>
           <div class="translation-fields">
             <div id="translation-field-en">
-              <div class="display-text" id="display-field-en">Value EN</div>
+              <div class="display-form-control" id="display-field-en">Value EN</div>
             </div>
             <div id="translation-field-de">
-              <div class="display-text" id="display-field-de">Value DE</div>
+              <div class="display-form-control" id="display-field-de">Value DE</div>
             </div>
           </div>
         </div>

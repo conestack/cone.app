@@ -37,7 +37,7 @@ class TestBrowserContents(TileTestCase):
         created = datetime(2011, 3, 14)
         delta = timedelta(1)
         modified = created + delta
-        model = BaseNode()
+        model = BaseNode(parent=get_root())
         for i in range(19):
             model[str(i)] = BaseNode()
             model[str(i)].properties.action_view = True

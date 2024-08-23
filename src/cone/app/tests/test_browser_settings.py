@@ -80,7 +80,7 @@ class TestBrowserSettings(TileTestCase):
         action.request = self.layer.new_request()
 
         self.assertEqual(action.text, 'settings')
-        self.assertEqual(action.icon, 'ion-ios7-gear')
+        self.assertEqual(action.icon, 'bi-gear')
         self.assertEqual(action.event, 'contextchanged:#layout')
         self.assertEqual(action.path, 'href')
         self.assertEqual(action.target, 'http://example.com/settings')
@@ -156,7 +156,7 @@ class TestBrowserSettings(TileTestCase):
             'current': False
         }, {
             'title': 'Legacy',
-            'icon': 'glyphicon glyphicon-asterisk',
+            'icon': 'bi-asterisk',
             'target': 'http://example.com/settings/legacy',
             'current': False
         }])

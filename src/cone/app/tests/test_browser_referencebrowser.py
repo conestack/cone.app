@@ -40,7 +40,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                  type="text" value="" />
           <input name="ref.uid" type="hidden" value="" />
           <span class="referencebrowser_trigger" data-reference-name='ref'>
-            <i class="ion-android-share">
+            <i class="bi-link">
             </i>
           browse</span>
         </span>
@@ -55,7 +55,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
                   id="input-ref" multiple="multiple" name="ref">
           </select>
           <span class="referencebrowser_trigger" data-reference-name='ref'>
-            <i class="ion-android-share">
+            <i class="bi-link">
             </i>
             browse</span>
         </span>
@@ -844,7 +844,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Add reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="glyphicon glyphicon-plus-sign">'
+        expected = '<span class="bi-plus-circle">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -878,7 +878,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Remove reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="glyphicon glyphicon-minus-sign">'
+        expected = '<span class="bi-minus-circle">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -930,7 +930,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         with self.layer.authenticated('max'):
             self.assertTrue(action.display)
 
-        expected = 'glyphicon glyphicon-asterisk'
+        expected = 'bi-asterisk'
         self.assertEqual(action.icon, expected)
 
         self.assertEqual(action(model, request), u'')
@@ -950,7 +950,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
         expected = (
-            '<span class="glyphicon glyphicon-asterisk" />'
+            '<span class="bi-asterisk" />'
             '&nbsp;<span>leaf</span>')
         self.assertEqual(rendered, expected)
 
@@ -1065,7 +1065,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
-        ><span class="glyphicon glyphicon-plus-sign"></span></a>...
+        ><span class="bi-plus-circle"></span></a>...
         """, res)
 
         # Non navigable nodes are not rendered
