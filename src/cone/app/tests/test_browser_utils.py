@@ -93,7 +93,7 @@ class TestBrowserUtils(TileTestCase):
         model = MyNode()
         self.assertEqual(
             node_icon(model),
-            'glyphicon glyphicon-asterisk'
+            'bi-asterisk'
         )
 
         @node_info(

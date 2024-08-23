@@ -19,9 +19,10 @@ class TestBrowserWorkflow(TileTestCase):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput("""
         ...<a href="#"
-              class="state-initial dropdown-toggle"
+              role="button"
+              class="nav-link dropdown-toggle py-2 px-3 state-initial"
               title="Change state"
-              data-toggle="dropdown">
+              data-bs-toggle="dropdown">
           <span>State</span>:
           <span>Initial State</span>
         </a>...
@@ -31,8 +32,8 @@ class TestBrowserWorkflow(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput("""
-        ...<li class="dropdown">
-          <span class="no-transitions state-final">
+        ...<li class="nav-item dropdown py-0">
+          <span class="nav-link py-2 no-transitions state-final">
             <span>State</span>:
             <span>Final State</span>
           </span>
@@ -55,9 +56,10 @@ class TestBrowserWorkflow(TileTestCase):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput("""
         ...<a href="#"
-              class="state-initial dropdown-toggle"
+              role="button"
+              class="nav-link dropdown-toggle py-2 px-3 state-initial"
               title="Change state"
-              data-toggle="dropdown">
+              data-bs-toggle="dropdown">
           <span>State</span>:
           <span>initial</span>
         </a>...

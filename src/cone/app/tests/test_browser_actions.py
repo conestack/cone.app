@@ -336,7 +336,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root?contenttile=listing"
             ajax:event="contextchanged:#layout"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-arrow-up"></span
+            ><span class="bi-arrow-up"></span
             >&nbsp;One level up</a>...
             """, rendered)
 
@@ -350,7 +350,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root?contenttile=otherparentcontent"
             ajax:event="contextchanged:#layout"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-arrow-up"></span
+            ><span class="bi-arrow-up"></span
             >&nbsp;One level up</a>...
             """, rendered)
 
@@ -366,7 +366,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root?contenttile=listing"
             ajax:event="contextchanged:#layout"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-arrow-up"></span
+            ><span class="bi-arrow-up"></span
             >&nbsp;One level up</a>...
             """, rendered)
 
@@ -394,7 +394,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="content:#content:inner"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-eye-open"></span
+            ><span class="bi-eye-fill"></span
             >&nbsp;View</a>...
             """, rendered)
 
@@ -408,7 +408,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="view:#content:inner"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-eye-open"></span
+            ><span class="bi-eye-fill"></span
             >&nbsp;View</a>...
             """, rendered)
 
@@ -462,7 +462,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="listing:#content:inner"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-th-list"></span
+            ><span class="bi-list-task"></span
             >&nbsp;Listing</a>...
             """, rendered)
 
@@ -497,7 +497,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/sharingmodel"
             ajax:action="sharing:#content:inner"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-share"></span
+            ><span class="bi-share-fill"></span
             >&nbsp;Sharing</a>...
             """, rendered)
 
@@ -525,8 +525,9 @@ class TestBrowserActions(TileTestCase):
 
             rendered = action(wfmodel, request)
             self.checkOutput("""
-            ...<li class="dropdown">...
+            ...<li class="nav-item dropdown py-0">...
             <a href="#"
+            class="dropdown-item"
             ajax:bind="click"
             ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"
             ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
@@ -561,21 +562,22 @@ class TestBrowserActions(TileTestCase):
 
             rendered = action(addmodel, request)
             self.checkOutput("""
-            ...<li class="dropdown">
+            ...<li class="nav-item dropdown py-0">
             <a href="#"
-            class="dropdown-toggle"
-            data-toggle="dropdown">
+            class="nav-link dropdown-toggle py-2 px-3"
+            data-bs-toggle="dropdown">
             <span>Add</span>
             <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" role="addmenu">
+            <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
             <li>
             <a href="http://example.com/add?factory=addable"
+            class="dropdown-item"
             ajax:bind="click"
             ajax:target="http://example.com/?factory=addable"
             ajax:action="add:#content:inner"
             ajax:path="href">
-            <span class="glyphicon glyphicon-asterisk"></span>
+            <span class="bi-asterisk"></span>
             Addable
             </a>
             </li>
@@ -609,7 +611,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="edit:#content:inner"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-pencil"></span
+            ><span class="bi-pencil"></span
             >&nbsp;Edit</a>...
             """, rendered)
 
@@ -639,7 +641,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="delete:NONE:NONE"
             ajax:confirm="Do you really want to delete this Item?"
-            ><span class="ion-trash-a"></span
+            ><span class="bi-trash3"></span
             >&nbsp;Delete</a>...
             """, rendered)
 
@@ -671,7 +673,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="delete_children:NONE:NONE"
             ajax:confirm="Do you really want to delete selected Items?"
-            ><span class="ion-trash-a"></span
+            ><span class="bi-trash3"></span
             >&nbsp;Delete selected children</a>...
             """, rendered)
 
@@ -685,7 +687,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="delete_children:NONE:NONE"
             ajax:confirm="Do you really want to delete selected Items?"
-            ><span class="ion-trash-a"></span
+            ><span class="bi-trash3"></span
             >&nbsp;Delete selected children</a>...
             """, rendered)
 
@@ -712,7 +714,7 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-cut"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-scissors"></span
+            ><span class="bi-scissors"></span
             >&nbsp;Cut</a>...
             """, rendered)
 
@@ -739,7 +741,7 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-copy"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-ios7-copy-outline"></span
+            ><span class="bi-copy"></span
             >&nbsp;Copy</a>...
             """, rendered)
 
@@ -767,7 +769,7 @@ class TestBrowserActions(TileTestCase):
             href="#"
             class="disabled"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-clipboard"></span
+            ><span class="bi-clipboard"></span
             >&nbsp;Paste</a>...
             """, rendered)
 
@@ -778,7 +780,7 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-paste"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-clipboard"></span
+            ><span class="bi-clipboard"></span
             >&nbsp;Paste</a>...
             """, rendered)
 
@@ -790,7 +792,7 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-paste"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-clipboard"></span
+            ><span class="bi-clipboard"></span
             >&nbsp;Paste</a>...
             """, rendered)
 
@@ -837,7 +839,7 @@ class TestBrowserActions(TileTestCase):
     def test_ActionMoveUp(self):
         action = ActionMoveUp()
         self.assertEqual(action.id, 'toolbaraction-move-up')
-        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-up')
+        self.assertEqual(action.icon, 'bi-chevron-up')
         self.assertEqual(action.action, 'move_up:NONE:NONE')
         self.assertEqual(action.text, 'move_up')
 
@@ -869,7 +871,7 @@ class TestBrowserActions(TileTestCase):
     def test_ActionMoveDown(self):
         action = ActionMoveDown()
         self.assertEqual(action.id, 'toolbaraction-move-down')
-        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-down')
+        self.assertEqual(action.icon, 'bi-chevron-down')
         self.assertEqual(action.action, 'move_down:NONE:NONE')
         self.assertEqual(action.text, 'move_down')
 

@@ -170,8 +170,9 @@ class TestBrowserContents(TileTestCase):
             rendered = contents.batch
 
         expected = (
-            '<li class="active">\n          '
-            '<a href="javascript:void(0)">1</a>'
+            '<li class="active page-item">\n          '
+            '<a href="javascript:void(0)"\n             '
+            'class="page-link">1</a>'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -187,8 +188,9 @@ class TestBrowserContents(TileTestCase):
             rendered = contents.batch
 
         expected = (
-            '<li class="active">\n          '
-            '<a href="javascript:void(0)">2</a>'
+            '<li class="active page-item">\n          '
+            '<a href="javascript:void(0)"\n             '
+            'class="page-link">2</a>'
         )
         self.assertTrue(rendered.find(expected) != -1)
 

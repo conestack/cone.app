@@ -202,7 +202,7 @@ class TestBrowserTable(TileTestCase):
         expected = '<div id="mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
-        expected = 'panel-default mytable"'
+        expected = 'card mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
         # Sort header with query white list param

@@ -365,7 +365,7 @@ class ActionList(LinkAction):
 
 class ActionSharing(LinkAction):
     """Sharing action."""
-    id = 'share'
+    id = 'toolbaraction-share'
     icon = 'bi-share-fill'
     action = 'sharing:#content:inner'
     path = 'href'

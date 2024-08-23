@@ -119,12 +119,12 @@ class TestBrowserTranslation(NodeTestCase):
 
         self.checkOutput("""
         <div class="field" id="field-field">
-          <ul class="nav nav-pills translation-nav">
-            <li class="active">
-              <a href="#translation-field-en">EN</a>
+          <ul class="nav nav-pills mb-2 translation-nav">
+            <li class="nav-item">
+              <a class="nav-link py-0 active" href="#translation-field-en">EN</a>
             </li>
-            <li>
-              <a href="#translation-field-de">DE</a>
+            <li class="nav-item">
+              <a class="nav-link py-0" href="#translation-field-de">DE</a>
             </li>
           </ul>
           <div class="translation-fields">
@@ -296,12 +296,12 @@ class TestBrowserTranslation(NodeTestCase):
         <div class="field" id="field-field">
           <div class="error">
             <div class="errormessage">Field is mandatory</div>
-            <ul class="nav nav-pills translation-nav">
-              <li class="active error">
-                <a href="#translation-field-en">* EN</a>
+            <ul class="nav nav-pills mb-2 translation-nav">
+              <li class="nav-item error">
+                <a class="nav-link py-0 active" href="#translation-field-en">* EN</a>
               </li>
-              <li>
-                <a href="#translation-field-de">DE</a>
+              <li class="nav-item">
+                <a class="nav-link py-0" href="#translation-field-de">DE</a>
               </li>
             </ul>
             <div class="translation-fields">
@@ -333,12 +333,12 @@ class TestBrowserTranslation(NodeTestCase):
 
         self.checkOutput("""
         <div class="field" id="field-field">
-          <ul class="nav nav-pills translation-nav">
-            <li class="active">
-              <a href="#translation-field-en">EN</a>
+          <ul class="nav nav-pills mb-2 translation-nav">
+            <li class="nav-item">
+              <a class="nav-link py-0 active" href="#translation-field-en">EN</a>
             </li>
-            <li>
-              <a href="#translation-field-de">DE</a>
+            <li class="nav-item">
+              <a class="nav-link py-0" href="#translation-field-de">DE</a>
             </li>
           </ul>
           <div class="translation-fields">

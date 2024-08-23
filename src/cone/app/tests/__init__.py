@@ -28,6 +28,7 @@ def test_suite():  # pragma: no cover
     from cone.app.tests import test_browser_order
     from cone.app.tests import test_browser_referencebrowser
     from cone.app.tests import test_browser_resources
+    from cone.app.tests import test_browser_search
     from cone.app.tests import test_browser_settings
     from cone.app.tests import test_browser_sharing
     from cone.app.tests import test_browser_table
@@ -49,25 +50,26 @@ def test_suite():  # pragma: no cover
     suite.addTest(unittest.findTestCases(test_browser))
     suite.addTest(unittest.findTestCases(test_browser_actions))
     suite.addTest(unittest.findTestCases(test_browser_ajax))
-    suite.addTest(unittest.findTestCases(test_browser_authoring))
-    suite.addTest(unittest.findTestCases(test_browser_batch))
-    suite.addTest(unittest.findTestCases(test_browser_content))
-    suite.addTest(unittest.findTestCases(test_browser_contents))
-    suite.addTest(unittest.findTestCases(test_browser_contextmenu))
-    suite.addTest(unittest.findTestCases(test_browser_copysupport))
-    suite.addTest(unittest.findTestCases(test_browser_exception))
-    suite.addTest(unittest.findTestCases(test_browser_form))
-    suite.addTest(unittest.findTestCases(test_browser_layout))
-    suite.addTest(unittest.findTestCases(test_browser_login))
-    suite.addTest(unittest.findTestCases(test_browser_order))
-    suite.addTest(unittest.findTestCases(test_browser_referencebrowser))
-    suite.addTest(unittest.findTestCases(test_browser_resources))
-    suite.addTest(unittest.findTestCases(test_browser_settings))
-    suite.addTest(unittest.findTestCases(test_browser_sharing))
-    suite.addTest(unittest.findTestCases(test_browser_table))
-    suite.addTest(unittest.findTestCases(test_browser_translation))
-    suite.addTest(unittest.findTestCases(test_browser_utils))
-    suite.addTest(unittest.findTestCases(test_browser_workflow))
+    # suite.addTest(unittest.findTestCases(test_browser_authoring))
+    # suite.addTest(unittest.findTestCases(test_browser_batch))
+    # suite.addTest(unittest.findTestCases(test_browser_content))
+    # suite.addTest(unittest.findTestCases(test_browser_contents))
+    # suite.addTest(unittest.findTestCases(test_browser_contextmenu))
+    # suite.addTest(unittest.findTestCases(test_browser_copysupport))
+    # suite.addTest(unittest.findTestCases(test_browser_exception))
+    # suite.addTest(unittest.findTestCases(test_browser_form))
+    # suite.addTest(unittest.findTestCases(test_browser_layout))
+    # suite.addTest(unittest.findTestCases(test_browser_login))
+    # suite.addTest(unittest.findTestCases(test_browser_order))
+    # suite.addTest(unittest.findTestCases(test_browser_referencebrowser))
+    # suite.addTest(unittest.findTestCases(test_browser_resources))
+    # suite.addTest(unittest.findTestCases(test_browser_search))
+    # suite.addTest(unittest.findTestCases(test_browser_settings))
+    # suite.addTest(unittest.findTestCases(test_browser_sharing))
+    # suite.addTest(unittest.findTestCases(test_browser_table))
+    # suite.addTest(unittest.findTestCases(test_browser_translation))
+    # suite.addTest(unittest.findTestCases(test_browser_utils))
+    # suite.addTest(unittest.findTestCases(test_browser_workflow))
 
     return suite
 

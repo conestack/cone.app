@@ -13,7 +13,7 @@
       <tal:item repeat="item context.menuitems">
 
         <li tal:condition="not item['children']"
-            tal:define="css item['selected'] and 'active nav-item' or 'nav-item';
+            tal:define="css item['selected'] and 'nav-item active' or 'nav-item';
                         css ' '.join([css, 'node-%s' % item['id']]);"
             tal:attributes="class css"
             style="display: inline;">

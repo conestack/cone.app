@@ -723,7 +723,7 @@ class TestBrowserBatch(TileTestCase):
 
         # Rendered pagination
         self.checkOutput("""
-        ...<ul class="pagination pagination-sm">...
+        ...<ul class="pagination pagination-sm my-0">...
         """, batched_items.rendered_pagination)
 
         # Batched items footer

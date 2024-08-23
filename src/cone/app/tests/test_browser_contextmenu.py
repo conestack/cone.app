@@ -41,7 +41,7 @@ class TestBrowserContextmenu(TileTestCase):
         cmt['action'] = RenderAction()
         self.assertEqual(
             cmt(model, request),
-            '<ul class="nav navbar-nav"><span>Rendered action</span></ul>'
+            '<li class="nav-item py-0"><span>Rendered action</span></li>'
         )
 
         class MyLinkAction(LinkAction):
@@ -53,13 +53,13 @@ class TestBrowserContextmenu(TileTestCase):
         cmt = ContextMenuToolbar()
         cmt['link'] = MyLinkAction()
         self.assertTrue(cmt(model, request).find('My Action') > -1)
-        self.assertFalse(cmt(model, request).find('<li class="active">') > -1)
+        self.assertFalse(cmt(model, request).find('class="selected"') > -1)
 
         cmt['link'].selected = True
-        self.assertTrue(cmt(model, request).find('<li class="active">') > -1)
+        self.assertTrue(cmt(model, request).find('class="selected"') > -1)
 
         cmt.css = 'mytoolbar'
-        expected = 'class="nav navbar-nav mytoolbar"'
+        expected = 'class="mytoolbar"'
         self.assertTrue(cmt(model, request).find(expected) > -1)
 
     def test_ContextMenuDropdown(self):
@@ -97,7 +97,7 @@ class TestBrowserContextmenu(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
         res = cmd(model, request)
-        self.assertTrue(res.find('<li class="dropdown">') > -1)
+        self.assertTrue(res.find('<li class="nav-item dropdown') > -1)
 
     def test_context_menu_decorators(self):
         @context_menu_group(name='testgroup')

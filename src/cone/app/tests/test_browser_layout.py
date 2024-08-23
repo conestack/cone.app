@@ -163,7 +163,7 @@ class TestBrowserLayout(TileTestCase):
         # Render main menu at child. Child is marked selected
         with self.layer.authenticated('max'):
             res = render_tile(root['1'], request, 'mainmenu')
-        self.assertTrue(res.find('<li class="active node-1">') > -1)
+        self.assertTrue(res.find('<li class="nav-item active node-1">') > -1)
 
         # Render main menu with default child
         model = BaseNode()
@@ -172,13 +172,13 @@ class TestBrowserLayout(TileTestCase):
         model.properties.default_child = '2'
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertTrue(res.find('<li class="active node-2">') > -1)
+        self.assertTrue(res.find('<li class="nav-item active node-2">') > -1)
 
         # Render main menu on child '1' and check if '2' is unselected now
         with self.layer.authenticated('max'):
             res = render_tile(model['1'], request, 'mainmenu')
-        self.assertFalse(res.find('<li class="active node-2">') > -1)
-        self.assertTrue(res.find('<li class="active node-1">') > -1)
+        self.assertFalse(res.find('<li class="nav-item active node-2">') > -1)
+        self.assertTrue(res.find('<li class="nav-item active node-1">') > -1)
 
         # Check rendering of main menu with empty title. This is needed if main
         # menu items are supposed to be displayed as icons via CSS
@@ -233,7 +233,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(child['1']['1'], request, 'mainmenu')
         self.checkOutput("""
-        ...<li class="active">
+        ...<li class="nav-item active">
         <a href="http://example.com/child/1"...
         """, res)
 
@@ -275,7 +275,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root['1'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        ...<li class="nav-item active navtreelevel_1">
         <a href="http://example.com/1"...
         """, res)
 
@@ -283,7 +283,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             res = render_tile(root['1']['11'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="active navtreelevel_2">
+        ...<li class="nav-item active navtreelevel_2">
         <a href="http://example.com/1/11"...
         """, res)
 
@@ -337,14 +337,14 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'navtree')
         self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        ...<li class="nav-item navtreelevel_1">
         <a href="http://example.com/1"...
         """, res)
 
         with self.layer.authenticated('manager'):
             res = render_tile(root['1'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        ...<li class="nav-item active navtreelevel_1">
         <a href="http://example.com/1"...
         """, res)
 
@@ -387,7 +387,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(root['1']['11'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        ...<li class="nav-item active navtreelevel_1">
         <a href="http://example.com/1/11"...
         """, res)
 
