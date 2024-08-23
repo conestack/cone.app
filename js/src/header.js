@@ -74,7 +74,7 @@ export class Header extends LayoutAware {
     }
 
     /**
-     * Binds event listeners for navbar collapse events.
+     * Binds event listeners for bootstrap navbar collapse events.
      */
     bind() {
         const wrapper = this.navbar_content_wrapper;
@@ -83,7 +83,7 @@ export class Header extends LayoutAware {
     }
 
     /**
-     * Sets a header classto indicate the mobile menu is open.
+     * Sets a header class to indicate the mobile menu is open.
      */
     set_mobile_menu_open() {
         this.elem.addClass('mobile-menu-open');

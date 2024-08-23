@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
+import {ResizeAware} from './layout.js';
 
 /**
  * Class representing a generic scrollbar.
@@ -25,7 +26,7 @@ export class Scrollbar extends ts.Motion {
      * @param {jQuery} elem
      */
     constructor(elem) {
-        super();
+        super(elem);
 
         this.elem = elem;
         if (this.elem.data('scrollbar')) {
@@ -38,7 +39,7 @@ export class Scrollbar extends ts.Motion {
         this.on_scroll = this.on_scroll.bind(this);
         this.on_click = this.on_click.bind(this);
         this.on_hover = this.on_hover.bind(this);
-        this.on_resize = this.on_resize.bind(this);
+        this.on_window_resize = this.on_window_resize.bind(this);
 
         this.compile();
         this.position = 0;
@@ -50,6 +51,17 @@ export class Scrollbar extends ts.Motion {
 
         const is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
         new ts.Property(this, 'is_mobile', is_mobile);
+    }
+
+    /**
+     * Handles window resize event to adjust the scrollbar.
+     * Invoked by ResizeAware mixin.
+     * @param {Event} evt
+     */
+    on_window_resize(evt) {
+        this.is_mobile = $(window).innerWidth() <= 768; // bs5 small/medium breakpoint
+        this.position = this.safe_position(this.position);
+        this.render();
     }
 
     /**
@@ -123,7 +135,6 @@ export class Scrollbar extends ts.Motion {
         this.elem.on('mousewheel wheel', this.on_scroll);
         this.scrollbar.on('click', this.on_click);
         this.set_scope(this.thumb, $(document), this.elem);
-        $(window).on('resize', this.on_resize);
     }
 
     /**
@@ -134,7 +145,6 @@ export class Scrollbar extends ts.Motion {
         this.elem.off('mouseenter mouseleave', this.on_hover);
         this.scrollbar.off('click', this.on_click);
         $(this.thumb).off('mousedown', this._down_handle);
-        $(window).off('resize', this.on_resize);
     }
 
     /**
@@ -208,15 +218,6 @@ export class Scrollbar extends ts.Motion {
         } else {
             this.bind();
         }
-    }
-
-    /**
-     * Handles window resize events to adjust the scrollbar.
-     */
-    on_resize() {
-        this.is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
-        this.position = this.safe_position(this.position);
-        this.render();
     }
 
     /**
@@ -343,7 +344,7 @@ export class Scrollbar extends ts.Motion {
  * Class representing a horizontal scrollbar.
  * @extends Scrollbar
  */
-export class ScrollbarX extends Scrollbar {
+export class ScrollbarX extends ResizeAware(Scrollbar) {
 
     /**
      * Gets the horizontal offset of the scrollbar element.
@@ -414,7 +415,7 @@ export class ScrollbarX extends Scrollbar {
  * Class representing a vertical scrollbar.
  * @extends Scrollbar
  */
-export class ScrollbarY extends Scrollbar {
+export class ScrollbarY extends ResizeAware(Scrollbar) {
 
     /**
      * Gets the vertical offset of the scrollbar element.

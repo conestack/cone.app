@@ -172,3 +172,57 @@ export class LayoutAware extends ts.Events {
         // ...
     }
 }
+
+/**
+ * A mixin to add window resize awareness to a class.
+ * 
+ * This mixin expects that the class it extends has an `elem` property.
+ * It attaches a resize event listener to the window that triggers the 
+ * `on_window_resize` method defined in the subclass.
+ * 
+ * @param {class} Base - The base class to extend.
+ * @returns {class}
+ */
+export const ResizeAware = (Base) => class extends Base {
+
+    /**
+     * @param  {...any} args
+     */
+    constructor(...args) {
+        super(...args);
+
+        if (this.elem) {
+            ts.ajax.attach(this, this.elem);
+        }
+
+        this.on_window_resize = this.on_window_resize.bind(this);
+
+        $(window).on('resize', this.on_window_resize);
+    }
+
+    /**
+     * Handler for the window resize event.
+     * 
+     * This method should be overridden in the subclass to define custom resize 
+     * behavior.
+     */
+    on_window_resize(evt) {
+        // Call `on_window_resize` of the base class, if it exists
+        if (super.on_window_resize) {
+            super.on_window_resize(evt);
+        }
+    }
+
+    /**
+     * Removes the resize event handler from the window.
+     */
+    destroy() {
+        try {
+            super.destroy();
+        } catch (error) {
+            console.warn(error);
+        } finally {
+            $(window).off('resize', this.on_window_resize);
+        }
+    }
+};

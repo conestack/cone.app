@@ -600,311 +600,6 @@ var cone = (function (exports, $, ts) {
         yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
     });
 
-    class Scrollbar extends ts.Motion {
-        static initialize(context) {
-            $('.scrollable-x', context).each(function() {
-                new ScrollbarX($(this));
-            });
-            $('.scrollable-y', context).each(function() {
-                new ScrollbarY($(this));
-            });
-        }
-        constructor(elem) {
-            super();
-            this.elem = elem;
-            if (this.elem.data('scrollbar')) {
-                console.warn('cone.app: Only one Scrollbar can be bound to each element.');
-                return;
-            }
-            this.elem.data('scrollbar', this);
-            this.content = ts.query_elem('> .scrollable-content', elem);
-            this.on_scroll = this.on_scroll.bind(this);
-            this.on_click = this.on_click.bind(this);
-            this.on_hover = this.on_hover.bind(this);
-            this.on_resize = this.on_resize.bind(this);
-            this.compile();
-            this.position = 0;
-            this.scroll_step = 50;
-            new ts.Property(this, 'disabled', false);
-            ts.ajax.attach(this, this.elem);
-            ts.clock.schedule_frame(() => this.render());
-            const is_mobile = $(window).width() <= 768;
-            new ts.Property(this, 'is_mobile', is_mobile);
-        }
-        get position() {
-            return this._position || 0;
-        }
-        set position(position) {
-            this._position = this.safe_position(position);
-            this.update();
-            this.trigger('on_position', this._position);
-        }
-        get pointer_events() {
-            return this.elem.css('pointer-events') === 'all';
-        }
-        set pointer_events(value) {
-            this.elem.css('pointer-events', value ? 'all' : 'none');
-        }
-        fade_timer() {
-            if (!this.scrollbar.is(':visible')) {
-                this.scrollbar.fadeIn('fast');
-            }
-            if (this.fade_out_timeout) {
-                clearTimeout(this.fade_out_timeout);
-            }
-            this.fade_out_timeout = setTimeout(() => {
-                this.scrollbar.fadeOut('slow');
-            }, 700);
-        }
-        on_is_mobile(val) {
-            if (val && this.contentsize > this.scrollsize) {
-                this.scrollbar.stop(true, true).show();
-                this.elem.off('mouseenter mouseleave', this.on_hover);
-            } else {
-                this.scrollbar.stop(true, true).hide();
-                this.elem.on('mouseenter mouseleave', this.on_hover);
-            }
-        }
-        bind() {
-            this.pointer_events = true;
-            this.elem.on('mousewheel wheel', this.on_scroll);
-            this.scrollbar.on('click', this.on_click);
-            this.set_scope(this.thumb, $(document), this.elem);
-            $(window).on('resize', this.on_resize);
-        }
-        unbind() {
-            this.elem.off('mousewheel wheel', this.on_scroll);
-            this.elem.off('mouseenter mouseleave', this.on_hover);
-            this.scrollbar.off('click', this.on_click);
-            $(this.thumb).off('mousedown', this._down_handle);
-            $(window).off('resize', this.on_resize);
-        }
-        destroy() {
-            this.unbind();
-            this.scrollbar.remove();
-            this.elem.data('scrollbar', null);
-        }
-        compile() {
-            ts.compile_template(this, `
-        <div class="scrollbar" t-elem="scrollbar">
-          <div class="scroll-handle" t-elem="thumb">
-          </div>
-        </div>
-        `, this.elem);
-        }
-        render(attr) {
-            this.scrollbar.css(attr, this.scrollsize);
-            if (this.contentsize <= this.scrollsize) {
-                this.thumbsize = this.scrollsize;
-            } else {
-                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
-            }
-            this.thumb.css(attr, this.thumbsize);
-            this.update();
-            this.position = this.safe_position(this.position);
-        }
-        safe_position(position) {
-            if (typeof position !== 'number') {
-                throw new Error(`Scrollbar position must be a Number, position is: "${position}".`);
-            }
-            if (this.contentsize <= this.scrollsize) {
-                return 0;
-            }
-            const max_pos = this.contentsize - this.scrollsize;
-            if (position >= max_pos) {
-                position = max_pos;
-            } else if (position <= 0) {
-                position = 0;
-            }
-            return position;
-        }
-        on_disabled(value) {
-            if (value) {
-                this.unbind();
-            } else {
-                this.bind();
-            }
-        }
-        on_resize() {
-            this.is_mobile = $(window).width() <= 768;
-            this.position = this.safe_position(this.position);
-            this.render();
-        }
-        on_hover(evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            const elem = this.elem;
-            if (
-                (elem.has(evt.target).length > 0 || elem.is(evt.target)) &&
-                this.contentsize > this.scrollsize
-            ) {
-                if (evt.type === 'mouseenter') {
-                    this.scrollbar.stop(true, true).fadeIn();
-                } else if (
-                    evt.type === 'mouseleave' &&
-                    evt.relatedTarget !== elem.get(0)
-                ) {
-                    this.scrollbar.stop(true, true).fadeOut();
-                }
-            }
-        }
-        on_scroll(evt) {
-            if (this.contentsize <= this.scrollsize) {
-                return;
-            }
-            let evt_ = evt.originalEvent;
-            if (typeof evt_.deltaY === 'number') {
-                if (evt_.deltaY > 0) {
-                    this.position += this.scroll_step;
-                } else if (evt_.deltaY < 0) {
-                    this.position -= this.scroll_step;
-                }
-            }
-        }
-        on_click(evt) {
-            evt.preventDefault();
-            this.thumb.addClass('active');
-            let position = this.pos_from_evt(evt),
-                thumb_pos = position - this.offset - this.thumbsize / 2;
-            this.position = this.contentsize * thumb_pos / this.scrollsize;
-            this.thumb.removeClass('active');
-        }
-        touchstart(evt) {
-            const touch = evt.originalEvent.touches[0];
-            this._touch_pos = this.pos_from_evt(touch);
-            this._start_position = this.position;
-        }
-        touchmove(evt) {
-            if (this.contentsize <= this.scrollsize) {
-                return;
-            }
-            const touch = evt.originalEvent.touches[0];
-            const delta = this.pos_from_evt(touch) - this._touch_pos;
-            this.position = this._start_position - delta;
-            this.fade_timer();
-        }
-        touchend(evt) {
-            delete this._touch_pos;
-            delete this._start_position;
-        }
-        down(evt) {
-            this._mouse_pos = this.pos_from_evt(evt) - this.offset;
-            this._thumb_pos = this.position / (this.contentsize / this.scrollsize);
-            this.elem.off('mouseenter mouseleave', this.on_hover);
-            this.thumb.addClass('active');
-        }
-        move(evt) {
-            let mouse_pos = this.pos_from_evt(evt) - this.offset,
-                thumb_pos = this._thumb_pos + mouse_pos - this._mouse_pos;
-            this.position = this.contentsize * thumb_pos / this.scrollsize;
-        }
-        up(evt) {
-            delete this._mouse_pos;
-            delete this._thumb_pos;
-            this.elem.on('mouseenter mouseleave', this.on_hover);
-            this.thumb.removeClass('active');
-        }
-    }
-    class ScrollbarX extends Scrollbar {
-        get offset() {
-            return this.elem.offset().left;
-        }
-        get contentsize() {
-            return this.content.outerWidth();
-        }
-        get scrollsize() {
-            const padding_r = parseFloat(this.elem.css('padding-right'));
-            const padding_l = parseFloat(this.elem.css('padding-left'));
-            return this.elem.outerWidth() - padding_l - padding_r;
-        }
-        compile() {
-            super.compile();
-            this.thumb.css('height', '6px');
-            this.scrollbar
-                .css('height', '6px')
-                .css('width', this.scrollsize);
-            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
-            this.thumb.css('width', this.thumbsize);
-        }
-        render() {
-            super.render('width');
-        }
-        update() {
-            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
-            this.content.css('right', this.position + 'px');
-            this.thumb.css('left', thumb_pos + 'px');
-        }
-        pos_from_evt(e) {
-            return e.pageX;
-        }
-    }
-    class ScrollbarY extends Scrollbar {
-        get offset() {
-            return this.elem.offset().top;
-        }
-        get contentsize() {
-            return this.content.outerHeight();
-        }
-        get scrollsize() {
-            const padding_t = parseFloat(this.elem.css('padding-top'));
-            const padding_b = parseFloat(this.elem.css('padding-bottom'));
-            return this.elem.outerHeight() - padding_t - padding_b;
-        }
-        compile() {
-            super.compile();
-            this.thumb.css('width', '6px');
-            this.scrollbar
-                .css('width', '6px')
-                .css('top', '0px')
-                .css('height', this.scrollsize);
-            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
-            this.thumb.css('height', this.thumbsize);
-        }
-        render() {
-            super.render('height');
-        }
-        update() {
-            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
-            this.content.css('bottom', this.position + 'px');
-            this.thumb.css('top', thumb_pos + 'px');
-        }
-        pos_from_evt(e) {
-            return e.pageY;
-        }
-    }
-
-    class Sharing {
-        static initialize(context) {
-            new Sharing(context);
-        }
-        constructor(context) {
-            let checkboxes = $('input.add_remove_role_for_principal', context);
-            checkboxes.off('change').on('change', this.set_principal_role);
-        }
-        set_principal_role(evt) {
-            evt.preventDefault();
-            let checkbox = $(this);
-            let action;
-            if (this.checked) {
-                action = 'add_principal_role';
-            } else {
-                action = 'remove_principal_role';
-            }
-            let url = checkbox.parent().attr('ajax:target');
-            let params = {
-                id: checkbox.attr('name'),
-                role: checkbox.attr('value')
-            };
-            ts.ajax.action({
-                name: action,
-                mode: 'NONE',
-                selector: 'NONE',
-                url: url,
-                params: params
-            });
-        }
-    }
-
     class GlobalEvents extends ts.Events {
         on_sidebar_resize(inst) {
         }
@@ -912,131 +607,6 @@ var cone = (function (exports, $, ts) {
         }
     }
     const global_events = new GlobalEvents();
-
-    class Sidebar extends ts.Motion {
-        static initialize(context) {
-            const elem = ts.query_elem('#sidebar_left', context);
-            if (!elem) {
-                return;
-            }
-            new Sidebar(elem);
-        }
-        constructor(elem) {
-            super();
-            this.elem = elem;
-            elem.css('width', this.sidebar_width + 'px');
-            this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
-            const scrollable_content = ts.query_elem('.scrollable-content', elem);
-            const pad_left = scrollable_content.css('padding-left');
-            const pad_right = scrollable_content.css('padding-right');
-            const logo_width = $('#header-logo').outerWidth(true);
-            elem.css(
-                'min-width',
-                `calc(${logo_width}px + ${pad_left} + ${pad_right})`
-            );
-            this.on_click = this.on_click.bind(this);
-            const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
-            collapse_elem.on('click', this.on_click);
-            const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
-            this.set_scope(resizer_elem, $(document));
-            this.responsive_toggle = this.responsive_toggle.bind(this);
-            $(window).on('resize', this.responsive_toggle);
-            this.responsive_toggle();
-            $('html, body').css('overscroll-behavior', 'auto');
-        }
-        get sidebar_width() {
-            return localStorage.getItem('cone-app-sidebar-width') || 300;
-        }
-        set sidebar_width(width) {
-            localStorage.setItem('cone-app-sidebar-width', width);
-        }
-        get collapsed() {
-            return this.elem.outerWidth() <= 0;
-        }
-        responsive_toggle() {
-            if (this.collapsed) {
-                this.elem.removeClass('responsive-expanded');
-                this.elem.addClass('responsive-collapsed');
-            } else {
-                this.elem.addClass('responsive-expanded');
-                this.elem.removeClass('responsive-collapsed');
-            }
-            if (this.collapsed !== this.responsive_collapsed) {
-                this.responsive_collapsed = this.collapsed;
-                global_events.trigger('on_sidebar_resize', this);
-            }
-        }
-        collapse() {
-            $('html, body').css('overscroll-behavior', 'auto');
-            this.elem
-                .removeClass('expanded')
-                .addClass('collapsed');
-            global_events.trigger('on_sidebar_resize', this);
-        }
-        expand() {
-            $('html, body').css('overscroll-behavior', 'none');
-            this.elem
-                .removeClass('collapsed')
-                .addClass('expanded');
-            global_events.trigger('on_sidebar_resize', this);
-        }
-        on_click(evt) {
-            if (this.collapsed) {
-                this.expand();
-            } else {
-                this.collapse();
-            }
-        }
-        move(evt) {
-            this.scrollbar.pointer_events = false;
-            if (evt.pageX <= 115) {
-                evt.pageX = 115;
-            }
-            this.sidebar_width = parseInt(evt.pageX);
-            this.elem.css('width', this.sidebar_width);
-            global_events.trigger('on_sidebar_resize', this);
-        }
-        up() {
-            this.scrollbar.pointer_events = true;
-            global_events.trigger('on_sidebar_resize', this);
-        }
-    }
-
-    class TableToolbar {
-        static initialize(context) {
-            BatchedItemsSize.initialize(context, '.table_length select');
-            BatchedItemsSearch.initialize(context, '.table_filter input');
-        }
-    }
-
-    class Translation {
-        static initialize(context) {
-            $('.translation-nav', context).each(function() {
-                new Translation($(this));
-            });
-        }
-        constructor(nav_elem) {
-            $('div.invalid-feedback', nav_elem.parent()).show();
-            this.nav_elem = nav_elem;
-            this.fields_elem = nav_elem.next();
-            this.show_lang_handle = this.show_lang_handle.bind(this);
-            $('li > a', nav_elem).on('click', this.show_lang_handle);
-            if ($('li.error', nav_elem).length) {
-                $('li.error:first > a', nav_elem).trigger('click');
-            } else {
-                $('li > a.active', nav_elem).trigger('click');
-            }
-            this.fields_elem.show();
-        }
-        show_lang_handle(evt) {
-            evt.preventDefault();
-            $('li > a', this.nav_elem).removeClass('active');
-            this.fields_elem.children().hide();
-            let elem = $(evt.currentTarget);
-            elem.addClass('active');
-            $(elem.attr('href'), this.fields_elem).show();
-        }
-    }
 
     class MainArea extends ts.Events {
         static initialize(context) {
@@ -1125,6 +695,460 @@ var cone = (function (exports, $, ts) {
             this.is_sidebar_collapsed = sidebar.collapsed;
         }
         on_is_sidebar_collapsed(val) {
+        }
+    }
+    const ResizeAware = (Base) => class extends Base {
+        constructor(...args) {
+            super(...args);
+            if (this.elem) {
+                ts.ajax.attach(this, this.elem);
+            }
+            this.on_window_resize = this.on_window_resize.bind(this);
+            $(window).on('resize', this.on_window_resize);
+        }
+        on_window_resize(evt) {
+            if (super.on_window_resize) {
+                super.on_window_resize(evt);
+            }
+        }
+        destroy() {
+            try {
+                super.destroy();
+            } catch (error) {
+                console.warn(error);
+            } finally {
+                $(window).off('resize', this.on_window_resize);
+            }
+        }
+    };
+
+    class Scrollbar extends ts.Motion {
+        static initialize(context) {
+            $('.scrollable-x', context).each(function() {
+                new ScrollbarX($(this));
+            });
+            $('.scrollable-y', context).each(function() {
+                new ScrollbarY($(this));
+            });
+        }
+        constructor(elem) {
+            super(elem);
+            this.elem = elem;
+            if (this.elem.data('scrollbar')) {
+                console.warn('cone.app: Only one Scrollbar can be bound to each element.');
+                return;
+            }
+            this.elem.data('scrollbar', this);
+            this.content = ts.query_elem('> .scrollable-content', elem);
+            this.on_scroll = this.on_scroll.bind(this);
+            this.on_click = this.on_click.bind(this);
+            this.on_hover = this.on_hover.bind(this);
+            this.on_window_resize = this.on_window_resize.bind(this);
+            this.compile();
+            this.position = 0;
+            this.scroll_step = 50;
+            new ts.Property(this, 'disabled', false);
+            ts.ajax.attach(this, this.elem);
+            ts.clock.schedule_frame(() => this.render());
+            const is_mobile = $(window).width() <= 768;
+            new ts.Property(this, 'is_mobile', is_mobile);
+        }
+        on_window_resize(evt) {
+            this.is_mobile = $(window).innerWidth() <= 768;
+            this.position = this.safe_position(this.position);
+            this.render();
+        }
+        get position() {
+            return this._position || 0;
+        }
+        set position(position) {
+            this._position = this.safe_position(position);
+            this.update();
+            this.trigger('on_position', this._position);
+        }
+        get pointer_events() {
+            return this.elem.css('pointer-events') === 'all';
+        }
+        set pointer_events(value) {
+            this.elem.css('pointer-events', value ? 'all' : 'none');
+        }
+        fade_timer() {
+            if (!this.scrollbar.is(':visible')) {
+                this.scrollbar.fadeIn('fast');
+            }
+            if (this.fade_out_timeout) {
+                clearTimeout(this.fade_out_timeout);
+            }
+            this.fade_out_timeout = setTimeout(() => {
+                this.scrollbar.fadeOut('slow');
+            }, 700);
+        }
+        on_is_mobile(val) {
+            if (val && this.contentsize > this.scrollsize) {
+                this.scrollbar.stop(true, true).show();
+                this.elem.off('mouseenter mouseleave', this.on_hover);
+            } else {
+                this.scrollbar.stop(true, true).hide();
+                this.elem.on('mouseenter mouseleave', this.on_hover);
+            }
+        }
+        bind() {
+            this.pointer_events = true;
+            this.elem.on('mousewheel wheel', this.on_scroll);
+            this.scrollbar.on('click', this.on_click);
+            this.set_scope(this.thumb, $(document), this.elem);
+        }
+        unbind() {
+            this.elem.off('mousewheel wheel', this.on_scroll);
+            this.elem.off('mouseenter mouseleave', this.on_hover);
+            this.scrollbar.off('click', this.on_click);
+            $(this.thumb).off('mousedown', this._down_handle);
+        }
+        destroy() {
+            this.unbind();
+            this.scrollbar.remove();
+            this.elem.data('scrollbar', null);
+        }
+        compile() {
+            ts.compile_template(this, `
+        <div class="scrollbar" t-elem="scrollbar">
+          <div class="scroll-handle" t-elem="thumb">
+          </div>
+        </div>
+        `, this.elem);
+        }
+        render(attr) {
+            this.scrollbar.css(attr, this.scrollsize);
+            if (this.contentsize <= this.scrollsize) {
+                this.thumbsize = this.scrollsize;
+            } else {
+                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+            }
+            this.thumb.css(attr, this.thumbsize);
+            this.update();
+            this.position = this.safe_position(this.position);
+        }
+        safe_position(position) {
+            if (typeof position !== 'number') {
+                throw new Error(`Scrollbar position must be a Number, position is: "${position}".`);
+            }
+            if (this.contentsize <= this.scrollsize) {
+                return 0;
+            }
+            const max_pos = this.contentsize - this.scrollsize;
+            if (position >= max_pos) {
+                position = max_pos;
+            } else if (position <= 0) {
+                position = 0;
+            }
+            return position;
+        }
+        on_disabled(value) {
+            if (value) {
+                this.unbind();
+            } else {
+                this.bind();
+            }
+        }
+        on_hover(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            const elem = this.elem;
+            if (
+                (elem.has(evt.target).length > 0 || elem.is(evt.target)) &&
+                this.contentsize > this.scrollsize
+            ) {
+                if (evt.type === 'mouseenter') {
+                    this.scrollbar.stop(true, true).fadeIn();
+                } else if (
+                    evt.type === 'mouseleave' &&
+                    evt.relatedTarget !== elem.get(0)
+                ) {
+                    this.scrollbar.stop(true, true).fadeOut();
+                }
+            }
+        }
+        on_scroll(evt) {
+            if (this.contentsize <= this.scrollsize) {
+                return;
+            }
+            let evt_ = evt.originalEvent;
+            if (typeof evt_.deltaY === 'number') {
+                if (evt_.deltaY > 0) {
+                    this.position += this.scroll_step;
+                } else if (evt_.deltaY < 0) {
+                    this.position -= this.scroll_step;
+                }
+            }
+        }
+        on_click(evt) {
+            evt.preventDefault();
+            this.thumb.addClass('active');
+            let position = this.pos_from_evt(evt),
+                thumb_pos = position - this.offset - this.thumbsize / 2;
+            this.position = this.contentsize * thumb_pos / this.scrollsize;
+            this.thumb.removeClass('active');
+        }
+        touchstart(evt) {
+            const touch = evt.originalEvent.touches[0];
+            this._touch_pos = this.pos_from_evt(touch);
+            this._start_position = this.position;
+        }
+        touchmove(evt) {
+            if (this.contentsize <= this.scrollsize) {
+                return;
+            }
+            const touch = evt.originalEvent.touches[0];
+            const delta = this.pos_from_evt(touch) - this._touch_pos;
+            this.position = this._start_position - delta;
+            this.fade_timer();
+        }
+        touchend(evt) {
+            delete this._touch_pos;
+            delete this._start_position;
+        }
+        down(evt) {
+            this._mouse_pos = this.pos_from_evt(evt) - this.offset;
+            this._thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.elem.off('mouseenter mouseleave', this.on_hover);
+            this.thumb.addClass('active');
+        }
+        move(evt) {
+            let mouse_pos = this.pos_from_evt(evt) - this.offset,
+                thumb_pos = this._thumb_pos + mouse_pos - this._mouse_pos;
+            this.position = this.contentsize * thumb_pos / this.scrollsize;
+        }
+        up(evt) {
+            delete this._mouse_pos;
+            delete this._thumb_pos;
+            this.elem.on('mouseenter mouseleave', this.on_hover);
+            this.thumb.removeClass('active');
+        }
+    }
+    class ScrollbarX extends ResizeAware(Scrollbar) {
+        get offset() {
+            return this.elem.offset().left;
+        }
+        get contentsize() {
+            return this.content.outerWidth();
+        }
+        get scrollsize() {
+            const padding_r = parseFloat(this.elem.css('padding-right'));
+            const padding_l = parseFloat(this.elem.css('padding-left'));
+            return this.elem.outerWidth() - padding_l - padding_r;
+        }
+        compile() {
+            super.compile();
+            this.thumb.css('height', '6px');
+            this.scrollbar
+                .css('height', '6px')
+                .css('width', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('width', this.thumbsize);
+        }
+        render() {
+            super.render('width');
+        }
+        update() {
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('right', this.position + 'px');
+            this.thumb.css('left', thumb_pos + 'px');
+        }
+        pos_from_evt(e) {
+            return e.pageX;
+        }
+    }
+    class ScrollbarY extends ResizeAware(Scrollbar) {
+        get offset() {
+            return this.elem.offset().top;
+        }
+        get contentsize() {
+            return this.content.outerHeight();
+        }
+        get scrollsize() {
+            const padding_t = parseFloat(this.elem.css('padding-top'));
+            const padding_b = parseFloat(this.elem.css('padding-bottom'));
+            return this.elem.outerHeight() - padding_t - padding_b;
+        }
+        compile() {
+            super.compile();
+            this.thumb.css('width', '6px');
+            this.scrollbar
+                .css('width', '6px')
+                .css('top', '0px')
+                .css('height', this.scrollsize);
+            this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
+            this.thumb.css('height', this.thumbsize);
+        }
+        render() {
+            super.render('height');
+        }
+        update() {
+            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('bottom', this.position + 'px');
+            this.thumb.css('top', thumb_pos + 'px');
+        }
+        pos_from_evt(e) {
+            return e.pageY;
+        }
+    }
+
+    class Sharing {
+        static initialize(context) {
+            new Sharing(context);
+        }
+        constructor(context) {
+            let checkboxes = $('input.add_remove_role_for_principal', context);
+            checkboxes.off('change').on('change', this.set_principal_role);
+        }
+        set_principal_role(evt) {
+            evt.preventDefault();
+            let checkbox = $(this);
+            let action;
+            if (this.checked) {
+                action = 'add_principal_role';
+            } else {
+                action = 'remove_principal_role';
+            }
+            let url = checkbox.parent().attr('ajax:target');
+            let params = {
+                id: checkbox.attr('name'),
+                role: checkbox.attr('value')
+            };
+            ts.ajax.action({
+                name: action,
+                mode: 'NONE',
+                selector: 'NONE',
+                url: url,
+                params: params
+            });
+        }
+    }
+
+    class Sidebar extends ResizeAware(ts.Motion) {
+        static initialize(context) {
+            const elem = ts.query_elem('#sidebar_left', context);
+            if (!elem) {
+                return;
+            }
+            new Sidebar(elem);
+        }
+        constructor(elem) {
+            super();
+            this.elem = elem;
+            elem.css('width', this.sidebar_width + 'px');
+            this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
+            const scrollable_content = ts.query_elem('.scrollable-content', elem);
+            const pad_left = scrollable_content.css('padding-left');
+            const pad_right = scrollable_content.css('padding-right');
+            const logo_width = $('#header-logo').outerWidth(true);
+            elem.css(
+                'min-width',
+                `calc(${logo_width}px + ${pad_left} + ${pad_right})`
+            );
+            this.on_click = this.on_click.bind(this);
+            const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
+            collapse_elem.on('click', this.on_click);
+            const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
+            this.set_scope(resizer_elem, $(document));
+            this.responsive_toggle = this.responsive_toggle.bind(this);
+            this.responsive_toggle();
+            $('html, body').css('overscroll-behavior', 'auto');
+        }
+        get sidebar_width() {
+            return localStorage.getItem('cone-app-sidebar-width') || 300;
+        }
+        set sidebar_width(width) {
+            localStorage.setItem('cone-app-sidebar-width', width);
+        }
+        get collapsed() {
+            return this.elem.outerWidth() <= 0;
+        }
+        on_window_resize(evt) {
+            this.responsive_toggle();
+        }
+        responsive_toggle() {
+            if (this.collapsed) {
+                this.elem.removeClass('responsive-expanded');
+                this.elem.addClass('responsive-collapsed');
+            } else {
+                this.elem.addClass('responsive-expanded');
+                this.elem.removeClass('responsive-collapsed');
+            }
+            if (this.collapsed !== this.responsive_collapsed) {
+                this.responsive_collapsed = this.collapsed;
+                global_events.trigger('on_sidebar_resize', this);
+            }
+        }
+        collapse() {
+            $('html, body').css('overscroll-behavior', 'auto');
+            this.elem
+                .removeClass('expanded')
+                .addClass('collapsed');
+            global_events.trigger('on_sidebar_resize', this);
+        }
+        expand() {
+            $('html, body').css('overscroll-behavior', 'none');
+            this.elem
+                .removeClass('collapsed')
+                .addClass('expanded');
+            global_events.trigger('on_sidebar_resize', this);
+        }
+        on_click(evt) {
+            if (this.collapsed) {
+                this.expand();
+            } else {
+                this.collapse();
+            }
+        }
+        move(evt) {
+            this.scrollbar.pointer_events = false;
+            if (evt.pageX <= 115) {
+                evt.pageX = 115;
+            }
+            this.sidebar_width = parseInt(evt.pageX);
+            this.elem.css('width', this.sidebar_width);
+            global_events.trigger('on_sidebar_resize', this);
+        }
+        up() {
+            this.scrollbar.pointer_events = true;
+            global_events.trigger('on_sidebar_resize', this);
+        }
+    }
+
+    class TableToolbar {
+        static initialize(context) {
+            BatchedItemsSize.initialize(context, '.table_length select');
+            BatchedItemsSearch.initialize(context, '.table_filter input');
+        }
+    }
+
+    class Translation {
+        static initialize(context) {
+            $('.translation-nav', context).each(function() {
+                new Translation($(this));
+            });
+        }
+        constructor(nav_elem) {
+            $('div.invalid-feedback', nav_elem.parent()).show();
+            this.nav_elem = nav_elem;
+            this.fields_elem = nav_elem.next();
+            this.show_lang_handle = this.show_lang_handle.bind(this);
+            $('li > a', nav_elem).on('click', this.show_lang_handle);
+            if ($('li.error', nav_elem).length) {
+                $('li.error:first > a', nav_elem).trigger('click');
+            } else {
+                $('li > a.active', nav_elem).trigger('click');
+            }
+            this.fields_elem.show();
+        }
+        show_lang_handle(evt) {
+            evt.preventDefault();
+            $('li > a', this.nav_elem).removeClass('active');
+            this.fields_elem.children().hide();
+            let elem = $(evt.currentTarget);
+            elem.addClass('active');
+            $(elem.attr('href'), this.fields_elem).show();
         }
     }
 
@@ -1488,6 +1512,7 @@ var cone = (function (exports, $, ts) {
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;
+    exports.ResizeAware = ResizeAware;
     exports.Scrollbar = Scrollbar;
     exports.ScrollbarX = ScrollbarX;
     exports.ScrollbarY = ScrollbarY;

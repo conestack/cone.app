@@ -108,7 +108,7 @@ export class MainMenu extends LayoutAware {
      * Binds the dropdown events for desktop view.
      */
     bind_dropdowns_desktop() {
-        // this.elems.on(...) and this.elems.each(...on(...)) are deprecated in jquery 4.0.0-beta.2
+        // this.elems.on(...) deprecated in jquery 4.0.0-beta.2 (?)
         this.elem.on('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
         this.elem.on('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
     }

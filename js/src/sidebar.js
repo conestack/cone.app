@@ -1,12 +1,13 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 import { global_events } from './globals.js';
+import { ResizeAware } from './layout.js';
 
 /**
  * Class to manage the sidebar of the application.
  * @extends ts.Motion
  */
-export class Sidebar extends ts.Motion {
+export class Sidebar extends ResizeAware(ts.Motion) {
 
     /**
      * Initializes the Sidebar instance.
@@ -48,7 +49,6 @@ export class Sidebar extends ts.Motion {
         this.set_scope(resizer_elem, $(document));
 
         this.responsive_toggle = this.responsive_toggle.bind(this);
-        $(window).on('resize', this.responsive_toggle);
         this.responsive_toggle();
 
         // Enable scroll to refresh page on mobile devices
@@ -77,6 +77,15 @@ export class Sidebar extends ts.Motion {
      */
     get collapsed() {
         return this.elem.outerWidth() <= 0;
+    }
+
+    /**
+     * Handles sidebar responsive collapsed state.
+     * Invoked by ResizeAware mixin.
+     * @param {*} evt 
+     */
+    on_window_resize(evt) {
+        this.responsive_toggle();
     }
 
     /**
