@@ -49,8 +49,8 @@ def test_suite():  # pragma: no cover
 
     suite.addTest(unittest.findTestCases(test_browser))
     suite.addTest(unittest.findTestCases(test_browser_actions))
-    # suite.addTest(unittest.findTestCases(test_browser_ajax)) # XXX: errormessage element
-    # suite.addTest(unittest.findTestCases(test_browser_authoring)) # XXX: markup mostly
+    suite.addTest(unittest.findTestCases(test_browser_ajax))
+    suite.addTest(unittest.findTestCases(test_browser_authoring))
     suite.addTest(unittest.findTestCases(test_browser_batch))
     suite.addTest(unittest.findTestCases(test_browser_content))
     suite.addTest(unittest.findTestCases(test_browser_contents))
@@ -59,7 +59,7 @@ def test_suite():  # pragma: no cover
     suite.addTest(unittest.findTestCases(test_browser_exception))
     suite.addTest(unittest.findTestCases(test_browser_form))
     # suite.addTest(unittest.findTestCases(test_browser_layout)) # XXX: link with id 3 not there
-    # suite.addTest(unittest.findTestCases(test_browser_login)) # XXX: errormessage element
+    suite.addTest(unittest.findTestCases(test_browser_login))
     suite.addTest(unittest.findTestCases(test_browser_order))
     # suite.addTest(unittest.findTestCases(test_browser_referencebrowser)) # XXX: extraction errors
     # suite.addTest(unittest.findTestCases(test_browser_resources)) # XXX: can wait until resources finalized

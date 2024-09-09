@@ -485,7 +485,7 @@ class TestBrowserAjax(TileTestCase):
             response = render_ajax_form(root, request, 'ajaxtestform')
             result = str(response)
 
-        self.assertTrue(result.find('<div class="errormessage">') != -1)
+        self.assertTrue(result.find('<div class="invalid-feedback">') != -1)
         self.assertTrue(result.find('<script language="javascript"') != -1)
         self.assertTrue(result.find('parent.ts.ajax.form({\n') != -1)
 
