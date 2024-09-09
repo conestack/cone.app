@@ -253,8 +253,7 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.find('ajax:action="navtree:#navtree:replace"') != -1)
         self.assertTrue(res.find('class="contextsensitiv nav-item mb-1 text-white"') != -1)
 
-        # Node's which are in navtree
-        root = get_root()
+        # Nodes which are in navtree
         root.properties.in_navtree = True
         root['1'] = BaseNode()
         root['1'].properties.in_navtree = True
@@ -327,7 +326,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'navtree')
         self.checkOutput("""
-        ...<li class="state-initial navtreelevel_1">
+        ...<li class="state-initial  list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/4"...
         """, res)
 
@@ -337,14 +336,14 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'navtree')
         self.checkOutput("""
-        ...<li class="nav-item navtreelevel_1">
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1"...
         """, res)
 
         with self.layer.authenticated('manager'):
             res = render_tile(root['1'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="nav-item active navtreelevel_1">
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1"...
         """, res)
 
@@ -387,7 +386,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(root['1']['11'], request, 'navtree')
         self.checkOutput("""
-        ...<li class="nav-item active navtreelevel_1">
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1/11"...
         """, res)
 

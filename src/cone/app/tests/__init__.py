@@ -58,7 +58,7 @@ def test_suite():  # pragma: no cover
     suite.addTest(unittest.findTestCases(test_browser_copysupport))
     suite.addTest(unittest.findTestCases(test_browser_exception))
     suite.addTest(unittest.findTestCases(test_browser_form))
-    # suite.addTest(unittest.findTestCases(test_browser_layout)) # XXX: link with id 3 not there
+    suite.addTest(unittest.findTestCases(test_browser_layout))
     suite.addTest(unittest.findTestCases(test_browser_login))
     suite.addTest(unittest.findTestCases(test_browser_order))
     # suite.addTest(unittest.findTestCases(test_browser_referencebrowser)) # XXX: extraction errors
