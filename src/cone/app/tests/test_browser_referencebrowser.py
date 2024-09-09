@@ -526,7 +526,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, '', [ExtractionError('Mandatory field was empty')]]
+            [UNSET, '', [ExtractionError('required_message',)]]
         )
 
         request.params['ref'] = 'Item'
@@ -667,7 +667,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, [], [ExtractionError('Mandatory field was empty')]]
+            [UNSET, [], [ExtractionError('required_message',)]]
         )
 
         request.params['ref-exists'] = 'exists'

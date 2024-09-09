@@ -61,7 +61,7 @@ def test_suite():  # pragma: no cover
     suite.addTest(unittest.findTestCases(test_browser_layout))
     suite.addTest(unittest.findTestCases(test_browser_login))
     suite.addTest(unittest.findTestCases(test_browser_order))
-    # suite.addTest(unittest.findTestCases(test_browser_referencebrowser)) # XXX: extraction errors
+    suite.addTest(unittest.findTestCases(test_browser_referencebrowser))
     # suite.addTest(unittest.findTestCases(test_browser_resources)) # XXX: can wait until resources finalized
     suite.addTest(unittest.findTestCases(test_browser_search))
     suite.addTest(unittest.findTestCases(test_browser_settings))
