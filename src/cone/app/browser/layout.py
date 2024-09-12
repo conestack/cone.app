@@ -125,6 +125,7 @@ class personal_tools_action(object):
         self.name = name
 
     def __call__(self, factory):
+        factory.css = f'dropdown-item {factory.css or ""}'
         personal_tools[self.name] = factory()
         return factory
 
@@ -135,7 +136,6 @@ class LogoutAction(LinkAction):
     icon = 'bi-door-open'
     bind = None
     target = None
-    css = 'dropdown-item'
 
     @property
     def href(self):
