@@ -1,3 +1,9 @@
+/* custom classes*/
+:root {
+  --primary-100: #dde9fb;
+  --primary-100-dark: #2c4265;
+}
+
 /* sidebar colors */
 /* dark mode */
 [data-bs-theme=dark] #content {
@@ -25,6 +31,9 @@
 [data-bs-theme=dark] .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
   background-color: #485f76;
 }
+[data-bs-theme=dark] .bg-primary-100 {
+  background-color: #2c4265;
+}
 
 /* light mode */
 [data-bs-theme=light] #content {
@@ -51,6 +60,9 @@
 }
 [data-bs-theme=light] .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
   background-color: #cfdce7;
+}
+[data-bs-theme=light] .bg-primary-100 {
+  background-color: #dde9fb;
 }
 
 /* import everything where we need changed bootstrap variables for here */
@@ -286,6 +298,12 @@ tr.selectable td {
   right: 0;
 }
 
+/* custom classes*/
+:root {
+  --primary-100: #dde9fb;
+  --primary-100-dark: #2c4265;
+}
+
 /* sidebar colors */
 /* dark mode */
 [data-bs-theme=dark] #content {
@@ -313,6 +331,9 @@ tr.selectable td {
 [data-bs-theme=dark] .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
   background-color: #485f76;
 }
+[data-bs-theme=dark] .bg-primary-100 {
+  background-color: #2c4265;
+}
 
 /* light mode */
 [data-bs-theme=light] #content {
@@ -339,6 +360,9 @@ tr.selectable td {
 }
 [data-bs-theme=light] .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
   background-color: #cfdce7;
+}
+[data-bs-theme=light] .bg-primary-100 {
+  background-color: #dde9fb;
 }
 
 /* import everything where we need changed bootstrap variables for here */

@@ -3,7 +3,15 @@
 @import "bootstrap/mixins/color-mode";
 
 $primary: #4e7bba;
+$primary-100: #dde9fb;
+$primary-100-dark: #2c4265;
 $secondary: #4e2889;
+
+/* custom classes*/
+:root {
+    --primary-100: #dde9fb;
+    --primary-100-dark: #2c4265;
+}
 
 /* sidebar colors */
 $sidebar-bg: #414c5b;
@@ -43,6 +51,10 @@ $color-mode-type: data;
     .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
         background-color: #485f76;
     }
+
+    .bg-primary-100 {
+        background-color: $primary-100-dark;
+    }
 }
 
 /* light mode */
@@ -77,6 +89,10 @@ $color-mode-type: data;
 
     .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
         background-color: #cfdce7;
+    }
+
+    .bg-primary-100 {
+        background-color: $primary-100;
     }
 }
 
