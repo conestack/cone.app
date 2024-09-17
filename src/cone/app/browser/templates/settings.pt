@@ -5,28 +5,50 @@
            omit-tag="True">
 
   <div id="settings-grid-container"
+       class="mt-2"
        tal:define="categories context.categorized_children">
 
     <tal:category repeat="category_name categories">
-      <h3 tal:condition="category_name == context.no_category"
-          i18n:translate="settings">
-        Settings
-      </h3>
-      <h3 tal:condition="category_name != context.no_category"
-          tal:content="category_name">
-        Category Name
-      </h3>
-      <div class="settings-grid">
-        <a tal:repeat="item categories[category_name]"
-           href="${item['target']}"
-           class="settings-grid-item"
-           ajax:bind="click"
-           ajax:target="${item['target']}"
-           ajax:event="contextchanged:#layout"
-           ajax:path="href">
-          <i class="${item['icon']}"></i>
-          <span tal:content="item['title']"></span>
-        </a>
+      <div class="card mb-3">
+        <div class="settings-grid card-body row h-100 mb-3 px-4">
+
+          <div class="card-title text-primary">
+            <h4 tal:condition="category_name == context.no_category"
+                i18n:translate="settings"
+                class="mb-2">
+              Settings
+            </h4>
+            <h4 tal:condition="category_name != context.no_category"
+                tal:content="category_name"
+                class="mb-2">
+              Category Name
+            </h4>
+          </div>
+
+          <a tal:repeat="item categories[category_name]"
+             href="${item['target']}"
+             class="settings-grid-item text-decoration-none col-sm-6 col-md-4 col-lg-3"
+             ajax:bind="click"
+             ajax:target="${item['target']}"
+             ajax:event="contextchanged:#layout"
+             ajax:path="href">
+
+            <div class="card border-0">
+              <div class="row h-100 g-0">
+                <div class="col-2 col-sm-3 d-flex justify-content-md-center text-primary ps-3 pt-2">
+                  <i class="${item['icon']}"></i>
+                </div>
+                <div class="col-10 col-sm-9">
+                  <div class="card-body">
+                    <span tal:content="item['title']" class="card-text"></span>
+                    <p class="card-text"><small class="text-muted">User and Group Settings</small></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </a>
+        </div>
       </div>
     </tal:category>
 

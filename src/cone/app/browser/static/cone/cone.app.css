@@ -499,3 +499,12 @@ tr.selectable td {
 #main-area.full .table_filter {
   max-width: 300px;
 }
+
+#settings-grid-container .settings-grid a i {
+  font-size: 44px;
+}
+@media (max-width: 450px) {
+  #settings-grid-container .settings-grid a i {
+    font-size: 30px;
+  }
+}
