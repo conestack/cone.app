@@ -41,7 +41,9 @@
                 <div class="col-10 col-sm-9">
                   <div class="card-body">
                     <span tal:content="item['title']" class="card-text"></span>
-                    <p class="card-text"><small class="text-muted">User and Group Settings</small></p>
+                    <p class="card-text">
+                      <small class="text-muted" tal:content="item['description']"></small>
+                    </p>
                   </div>
                 </div>
               </div>

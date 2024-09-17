@@ -99,6 +99,7 @@ class SettingsTile(Tile):
             category.append({
                 'title': child.metadata.title,
                 'icon': child.nodeinfo.icon,
+                'description': child.metadata.description,
                 'target': make_url(self.request, node=child),
                 'current': child.name == self.model.name
             })
