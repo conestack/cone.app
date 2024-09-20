@@ -3,7 +3,7 @@
            omit-tag="True">
   <div class="settings-form">
 
-    <h1 tal:content="context.form_heading">Title</h1>
+    <h1 tal:content="context.form_heading" class="mt-2">Title</h1>
 
     <tal:form replace="structure context.rendered_form" />
 
