@@ -118,7 +118,7 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         self.checkOutput("""
-        <div class="field mb-3" id="field-field">
+        <div class="field" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
               <a class="nav-link py-0 active" href="#translation-field-en">EN</a>
@@ -129,12 +129,10 @@ class TestBrowserTranslation(NodeTestCase):
           </ul>
           <div class="translation-fields">
             <div id="translation-field-en">
-              <input class="form-control" id="input-field-en" name="field.en"
-                     type="text" value=""/>
+              <input class="form-control" id="input-field-en" name="field.en" type="text" value=""/>
             </div>
             <div id="translation-field-de">
-              <input class="form-control" id="input-field-de" name="field.de"
-                     type="text" value=""/>
+              <input class="form-control" id="input-field-de" name="field.de" type="text" value=""/>
             </div>
           </div>
         </div>
@@ -293,7 +291,7 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = u'Value DE'
         data = widget.extract(request)
         self.checkOutput("""
-        <div class="field mb-3" id="field-field">
+        <div class="field" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item error">
               <a class="nav-link py-0 active" href="#translation-field-en">* EN</a>
@@ -328,7 +326,7 @@ class TestBrowserTranslation(NodeTestCase):
             mode='display')
 
         self.checkOutput("""
-        <div class="field mb-3" id="field-field">
+        <div class="field" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
               <a class="nav-link py-0 active" href="#translation-field-en">EN</a>

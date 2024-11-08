@@ -9,6 +9,8 @@ from pyramid.testing import DummyRequest as BaseDummyRequest
 from pyramid.tests.test_view import DummyVenusianContext
 from pyramid.tests.test_view import DummyVenusianInfo
 from webob.acceptparse import create_accept_header
+from yafowil.base import factory
+from yafowil.bootstrap import configure_factory
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 from zope.configuration.xmlconfig import XMLConfig
@@ -16,6 +18,7 @@ import cone.app
 import cone.tile
 import os
 import venusian
+import yafowil.loader # noqa
 
 
 def reset_node_info_registry(fn):
@@ -223,9 +226,12 @@ class Security(object):
 
     def setUp(self, args=None):
         self.make_app()
+        factory.push_state()
+        configure_factory('bootstrap5')
         XMLConfig('testing/dummy_workflow.zcml', cone.app)()
 
     def tearDown(self):
+        factory.pop_state()
         root = get_root()
         root.factories.clear()
         if root.get('settings'):

@@ -202,13 +202,13 @@ class TestBrowserSettings(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(settings, request, 'settings_sidebar')
         self.assertTrue(res.find('id="settings_sidebar"') > -1)
-        self.assertTrue(res.find('class="list-group-item "') > -1)
+        self.assertTrue(res.find('class="list-group-item') > -1)
         self.assertTrue(res.find('http://example.com/settings/test_settings') > -1)
 
         test_settings = settings['test_settings']
         with self.layer.authenticated('manager'):
             res = render_tile(test_settings, request, 'settings_sidebar')
-        self.assertTrue(res.find('class="list-group-item selected"') > -1)
+        self.assertTrue(res.find('class="active list-group-item') > -1)
 
     @testing.reset_node_info_registry
     def test_SettingsContent(self):

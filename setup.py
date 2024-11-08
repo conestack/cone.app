@@ -1,6 +1,5 @@
 from setuptools import find_packages
 from setuptools import setup
-from setuptools.command.test import test
 import os
 
 
@@ -16,13 +15,6 @@ longdesc = '\n\n'.join([read_file(name) for name in [
     'CHANGES.rst',
     'LICENSE.rst'
 ]])
-
-
-class Test(test):
-
-    def run_tests(self):
-        from cone.app import tests
-        tests.run_tests()
 
 
 setup(
@@ -59,7 +51,7 @@ setup(
         'webresource',
         'yafowil.bootstrap',
         'yafowil.webob',
-        'yafowil>=2.3.4'
+        'yafowil>=3.1.1'
     ],
     extras_require=dict(
         lxml=[
@@ -71,7 +63,8 @@ setup(
         test=[
             'lxml',
             'yafowil.yaml',
-            'zope.testrunner'
+            'pytest',
+            'zope.pytestlayer'
         ],
         docs=[
             'Sphinx',
@@ -79,12 +72,6 @@ setup(
             'repoze.sphinx.autointerface'
         ],
     ),
-    tests_require=[
-        'lxml',
-        'yafowil.yaml',
-        'zope.testrunner'
-    ],
-    cmdclass=dict(test=Test),
     entry_points="""\
     [paste.app_factory]
     main = cone.app:main

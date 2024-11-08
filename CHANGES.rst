@@ -4,6 +4,9 @@ Changes
 1.1a3 (unreleased)
 ------------------
 
+- Run tests on bootstrap5 factory theme.
+  [lenadax]
+
 - ``node_info`` decorator stores name on node info instance.
   [rnix]
 
