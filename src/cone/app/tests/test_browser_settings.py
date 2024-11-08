@@ -152,17 +152,20 @@ class TestBrowserSettings(TileTestCase):
         self.assertEqual(cc[NO_SETTINGS_CATEGORY], [{
             'title': 'No Cat',
             'icon': 'nocat-icon',
+            'description': None,
             'target': 'http://example.com/settings/nocat',
             'current': False
         }, {
             'title': 'Legacy',
             'icon': 'bi-asterisk',
+            'description': None,
             'target': 'http://example.com/settings/legacy',
             'current': False
         }])
         self.assertEqual(cc['cat'], [{
             'title': 'Cat',
             'icon': 'cat-icon',
+            'description': None,
             'target': 'http://example.com/settings/cat',
             'current': False
         }])
@@ -175,6 +178,7 @@ class TestBrowserSettings(TileTestCase):
         self.assertEqual(cc['cat'], [{
             'title': 'Cat',
             'icon': 'cat-icon',
+            'description': None,
             'target': 'http://example.com/settings/cat',
             'current': True
         }])
@@ -305,7 +309,7 @@ class TestBrowserSettings(TileTestCase):
         test_settings = settings['test_settings']
         with self.layer.authenticated('manager'):
             res = render_tile(test_settings, request, 'editform')
-        self.assertTrue(res.find('<h1>Test Settings</h1>') > -1)
+        self.assertTrue(res.find('<h1 class="mt-2">Test Settings</h1>') > -1)
         self.assertTrue(res.find('<form action="http://example.com/settings/test_settings"') > -1)
 
         request.params['action.editform.save'] = '1'

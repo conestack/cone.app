@@ -34,7 +34,7 @@ class TestBrowserResources(TileTestCase):
 
         self.assertTrue(scripts[0].directory.endswith(np('/static/jquery')))
         self.assertEqual(scripts[0].path, 'jquery')
-        self.assertEqual(scripts[0].file_name, 'jquery-3.6.0.min.js')
+        self.assertEqual(scripts[0].file_name, 'jquery-4.0.0-beta.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
         styles = resources_.styles
@@ -51,7 +51,7 @@ class TestBrowserResources(TileTestCase):
 
         self.assertTrue(scripts[0].directory.endswith(np('/static/bootstrap/js')))
         self.assertEqual(scripts[0].path, 'bootstrap/js')
-        self.assertEqual(scripts[0].file_name, 'bootstrap.min.js')
+        self.assertEqual(scripts[0].file_name, 'bootstrap.bundle.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
         styles = resources_.styles
@@ -62,49 +62,11 @@ class TestBrowserResources(TileTestCase):
         self.assertEqual(styles[0].file_name, 'bootstrap.min.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
 
-        self.assertTrue(styles[1].directory.endswith(np('/static/bootstrap/css')))
-        self.assertEqual(styles[1].path, 'bootstrap/css')
-        self.assertEqual(styles[1].file_name, 'bootstrap-theme.min.css')
+        self.assertTrue(styles[1].directory.endswith(np('/static/bootstrap/icons')))
+        self.assertEqual(styles[1].path, 'bootstrap/icons')
+        self.assertEqual(styles[1].file_name, 'bootstrap-icons.min.css')
         self.assertTrue(os.path.exists(styles[1].file_path))
 
-    def test_typeahead_resources(self):
-        resources_ = resources.typeahead_resources
-        self.assertTrue(resources_.directory.endswith(np('/static/typeahead')))
-        self.assertEqual(resources_.name, 'cone.app-typeahead')
-        self.assertEqual(resources_.path, 'typeahead')
-
-        scripts = resources_.scripts
-        self.assertEqual(len(scripts), 1)
-
-        self.assertTrue(scripts[0].directory.endswith(np('/static/typeahead')))
-        self.assertEqual(scripts[0].path, 'typeahead')
-        self.assertEqual(scripts[0].file_name, 'typeahead.bundle.js')
-        self.assertTrue(os.path.exists(scripts[0].file_path))
-
-        styles = resources_.styles
-        self.assertEqual(len(styles), 1)
-
-        self.assertTrue(styles[0].directory.endswith(np('/static/typeahead')))
-        self.assertEqual(styles[0].path, 'typeahead')
-        self.assertEqual(styles[0].file_name, 'typeahead.css')
-        self.assertTrue(os.path.exists(styles[0].file_path))
-
-    def test_ionicons_resources(self):
-        resources_ = resources.ionicons_resources
-        self.assertTrue(resources_.directory.endswith(np('/static/ionicons')))
-        self.assertEqual(resources_.name, 'cone.app-ionicons')
-        self.assertEqual(resources_.path, 'ionicons')
-
-        scripts = resources_.scripts
-        self.assertEqual(len(scripts), 0)
-
-        styles = resources_.styles
-        self.assertEqual(len(styles), 1)
-
-        self.assertTrue(styles[0].directory.endswith(np('/static/ionicons/css')))
-        self.assertEqual(styles[0].path, 'ionicons/css')
-        self.assertEqual(styles[0].file_name, 'ionicons.css')
-        self.assertTrue(os.path.exists(styles[0].file_path))
 
     def test_cone_resources(self):
         resources_ = resources.cone_resources
@@ -113,17 +75,12 @@ class TestBrowserResources(TileTestCase):
         self.assertEqual(resources_.path, 'cone')
 
         scripts = resources_.scripts
-        self.assertEqual(len(scripts), 2)
+        self.assertEqual(len(scripts), 1)
 
         self.assertTrue(scripts[0].directory.endswith(np('/static/cone')))
         self.assertEqual(scripts[0].path, 'cone')
-        self.assertEqual(scripts[0].file_name, 'cone.app.public.min.js')
+        self.assertEqual(scripts[0].file_name, 'cone.app.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
-
-        self.assertTrue(scripts[1].directory.endswith(np('/static/cone')))
-        self.assertEqual(scripts[1].path, 'cone')
-        self.assertEqual(scripts[1].file_name, 'cone.app.protected.min.js')
-        self.assertTrue(os.path.exists(scripts[1].file_path))
 
         styles = resources_.styles
         self.assertEqual(len(styles), 2)
@@ -208,18 +165,6 @@ class TestBrowserResources(TileTestCase):
             includes = resources._registry._includes
             self.assertEqual(includes['addon-css'], 'authenticated')
             self.assertEqual(includes['addon-js'], 'authenticated')
-            self.assertEqual(
-                includes['cone-app-protected-js'],
-                'authenticated'
-            )
-
-            settings = {'yafowil.resources_public': 'true'}
-            config.configure_default_resource_includes()
-            includes = resources._registry._includes
-            self.assertEqual(
-                includes['cone-app-protected-js'],
-                'authenticated'
-            )
         finally:
             factory.pop_state()
 
@@ -311,21 +256,13 @@ class TestBrowserResources(TileTestCase):
 
             self.assertTrue(wr.config.development)
 
-            self.assertEqual(config.views[:8], [{
+            self.assertEqual(config.views[:6], [{
                 'view_path': 'cone.app.browser.resources.jquery_static_view',
                 'name': 'jquery',
                 'context': AppResources
             }, {
                 'view_path': 'cone.app.browser.resources.bootstrap_static_view',
                 'name': 'bootstrap',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.typeahead_static_view',
-                'name': 'typeahead',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.ionicons_static_view',
-                'name': 'ionicons',
                 'context': AppResources
             }, {
                 'view_path': 'cone.app.browser.resources.cone_static_view',
@@ -350,22 +287,22 @@ class TestBrowserResources(TileTestCase):
             self.assertTrue(hasattr(resources, 'test_addon_resources_static_view'))
 
             configured_resources = resources._registry.resources
+            self.assertEqual(len(configured_resources.members[3].members), 1)
             self.assertEqual(
-                configured_resources.members[5].name,
+                configured_resources.members[3].members[0].resource,
+                'base.js'
+            )
+            self.assertEqual(
+                configured_resources.members[3].name,
                 'test-resources'
             )
             self.assertEqual(
-                configured_resources.members[6].name,
+                configured_resources.members[4].name,
                 'treibstoff'
             )
             self.assertEqual(
-                configured_resources.members[7].name,
+                configured_resources.members[5].name,
                 'yafowil-addon-resources'
-            )
-            self.assertEqual(len(configured_resources.members[5].members), 1)
-            self.assertEqual(
-                configured_resources.members[5].members[0].resource,
-                'base.js'
             )
         finally:
             if hasattr(resources, 'test_resources_static_view'):
@@ -391,11 +328,6 @@ class TestBrowserResources(TileTestCase):
         """, res)
 
         self.assertFalse(res.find('cone.app.protected') > -1)
-
-        with self.layer.authenticated('admin'):
-            res = render_tile(model, request, 'resources')
-
-        self.assertTrue(res.find('cone.app.protected') > -1)
 
     def test_resources_view(self):
         model = get_root()
