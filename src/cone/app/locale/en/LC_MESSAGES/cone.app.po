@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-05-25 17:44+0200\n"
+"POT-Creation-Date: 2024-11-11 09:06+0100\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -25,8 +25,8 @@ msgstr "No Title"
 
 #. Default: Settings
 #: src/cone/app/model.py:255 src/cone/app/browser/settings.py:43
-#: src/cone/app/browser/templates/settings_sidebar.pt:13
-#: src/cone/app/browser/templates/settings.pt:12
+#: src/cone/app/browser/templates/settings_sidebar.pt:19
+#: src/cone/app/browser/templates/settings.pt:18
 msgid "settings"
 msgstr "Settings"
 
@@ -214,102 +214,102 @@ msgid "browse"
 msgstr "Browse"
 
 #. Default: One level up
-#: src/cone/app/browser/actions.py:272
+#: src/cone/app/browser/actions.py:273
 msgid "action_one_level_up"
 msgstr "One level up"
 
 #. Default: View
-#: src/cone/app/browser/actions.py:306
+#: src/cone/app/browser/actions.py:307
 msgid "action_view"
 msgstr "View"
 
 #. Default: Listing
-#: src/cone/app/browser/actions.py:350
+#: src/cone/app/browser/actions.py:351
 msgid "action_listing"
 msgstr "Listing"
 
 #. Default: Sharing
-#: src/cone/app/browser/actions.py:371
+#: src/cone/app/browser/actions.py:372
 msgid "action_sharing"
 msgstr "Sharing"
 
 #. Default: Edit
-#: src/cone/app/browser/actions.py:414
+#: src/cone/app/browser/actions.py:415
 msgid "action_edit"
 msgstr "Edit"
 
 #. Default: Do you really want to delete this Item?
-#: src/cone/app/browser/actions.py:434
+#: src/cone/app/browser/actions.py:435
 msgid "delete_item_confirm"
 msgstr "Do you really want to delete this Item?"
 
 #. Default: Delete
-#: src/cone/app/browser/actions.py:436
+#: src/cone/app/browser/actions.py:437
 msgid "action_delete"
 msgstr "Delete"
 
 #. Default: Do you really want to delete selected Items?
-#: src/cone/app/browser/actions.py:454
+#: src/cone/app/browser/actions.py:455
 msgid "delete_items_confirm"
 msgstr "Do you really want to delete selected Items?"
 
 #. Default: Delete selected children
-#: src/cone/app/browser/actions.py:456
+#: src/cone/app/browser/actions.py:457
 msgid "action_delete_selected_children"
 msgstr "Delete selected children"
 
 #. Default: Cut
-#: src/cone/app/browser/actions.py:473
+#: src/cone/app/browser/actions.py:474
 msgid "action_cut"
 msgstr "Cut"
 
 #. Default: Copy
-#: src/cone/app/browser/actions.py:488
+#: src/cone/app/browser/actions.py:489
 msgid "action_copy"
 msgstr "Copy"
 
 #. Default: Paste
-#: src/cone/app/browser/actions.py:503
+#: src/cone/app/browser/actions.py:504
 msgid "action_paste"
 msgstr "Paste"
 
 #. Default: Move up
-#: src/cone/app/browser/actions.py:546
+#: src/cone/app/browser/actions.py:547
 msgid "move_up"
 msgstr "Move up"
 
 #. Default: Move down
-#: src/cone/app/browser/actions.py:560
+#: src/cone/app/browser/actions.py:561
 msgid "move_down"
 msgstr "Move down"
 
 #. Default: Logout
-#: src/cone/app/browser/layout.py:139
+#: src/cone/app/browser/layout.py:135
 msgid "logout"
 msgstr "Logout"
 
 #. Default: Navigation
-#: src/cone/app/browser/layout.py:335
+#: src/cone/app/browser/layout.py:330
 msgid "navigation"
 msgstr "Navigation"
 
 #. Default: English
-#: src/cone/app/browser/layout.py:496
+#: src/cone/app/browser/layout.py:492
 msgid "lang_en"
 msgstr "English"
 
 #. Default: German
-#: src/cone/app/browser/layout.py:497
+#: src/cone/app/browser/layout.py:493
 msgid "lang_de"
 msgstr "German"
 
 #. Default: French
-#: src/cone/app/browser/layout.py:498
+#: src/cone/app/browser/layout.py:494
 msgid "lang_fr"
 msgstr "French"
 
 #. Default: Italian
-#: src/cone/app/browser/layout.py:499
+#: src/cone/app/browser/layout.py:495
 msgid "lang_it"
 msgstr "Italian"
 
@@ -404,35 +404,35 @@ msgid "last"
 msgstr "Last"
 
 #. Default: Created by
-#: src/cone/app/browser/templates/byline.pt:7
+#: src/cone/app/browser/templates/byline.pt:9
 msgid "created_by"
 msgstr "Created by"
 
 #. Default: on
-#: src/cone/app/browser/templates/byline.pt:9
+#: src/cone/app/browser/templates/byline.pt:13
 msgid "created_on"
 msgstr "on"
 
 #. Default: Last modified
-#: src/cone/app/browser/templates/byline.pt:13
+#: src/cone/app/browser/templates/byline.pt:20
 msgid "last_modified"
 msgstr "Last modified"
 
 #. Default: Showing
 #: src/cone/app/browser/templates/batched_items_footer.pt:11
-#: src/cone/app/browser/templates/table.pt:185
+#: src/cone/app/browser/templates/table.pt:187
 msgid "showing"
 msgstr "Showing"
 
 #. Default: to
 #: src/cone/app/browser/templates/batched_items_footer.pt:14
-#: src/cone/app/browser/templates/table.pt:188
+#: src/cone/app/browser/templates/table.pt:190
 msgid "to"
 msgstr "to"
 
 #. Default: of
 #: src/cone/app/browser/templates/batched_items_footer.pt:17
-#: src/cone/app/browser/templates/table.pt:191
+#: src/cone/app/browser/templates/table.pt:193
 msgid "of"
 msgstr "of"
 
@@ -440,7 +440,7 @@ msgstr "of"
 #: src/cone/app/browser/templates/batched_items_footer.pt:20
 #: src/cone/app/browser/templates/batched_items_header.pt:44
 #: src/cone/app/browser/templates/table.pt:50
-#: src/cone/app/browser/templates/table.pt:194
+#: src/cone/app/browser/templates/table.pt:196
 msgid "entries"
 msgstr "entries"
 
@@ -486,7 +486,6 @@ msgstr "Insufficient privileges"
 msgid "insufficient_privileges_help"
 msgstr "You do not have the required permission to access this resource."
 
-#. Default: Language
-#: src/cone/app/browser/templates/language.pt:16
+#: src/cone/app/browser/templates/language.pt:19
 msgid "language"
 msgstr "Language"

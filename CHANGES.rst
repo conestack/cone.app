@@ -1,8 +1,14 @@
 Changes
 =======
 
-1.1a3 (unreleased)
-------------------
+1.1rc2 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+1.1rc1 (2024-05-23)
+-------------------
 
 - Run tests on bootstrap5 factory theme.
   [lenadax]
