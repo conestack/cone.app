@@ -4,7 +4,8 @@ Changes
 1.1rc2 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Remove no longer used ``content_grid_width`` and ``sidebar_left_grid_width``
+  properties from ``ILayoutConfig``.
 
 
 1.1rc1 (2024-05-23)
