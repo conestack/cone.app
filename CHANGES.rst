@@ -1,18 +1,25 @@
 Changes
 =======
 
-1.1rc2 (unreleased)
--------------------
+2.0a1 (unreleased)
+------------------
 
 - Remove no longer used ``content_grid_width`` and ``sidebar_left_grid_width``
   properties from ``ILayoutConfig``.
+  [rnix]
+
+- Run tests on bootstrap5 factory theme.
+  [lenadax]
+
+
+1.1rc2 (unreleased)
+-------------------
+
+- No changes yet.
 
 
 1.1rc1 (2024-05-23)
 -------------------
-
-- Run tests on bootstrap5 factory theme.
-  [lenadax]
 
 - ``node_info`` decorator stores name on node info instance.
   [rnix]
