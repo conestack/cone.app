@@ -33,7 +33,7 @@ RUN_TARGET?=
 
 # Additional files and folders to remove when running clean target
 # No default value.
-CLEAN_FS?=
+CLEAN_FS?=pnpm-lock.yaml
 
 # Optional makefile to include before default targets. This can
 # be used to provide custom targets or hook up to existing targets.
