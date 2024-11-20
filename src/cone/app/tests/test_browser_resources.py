@@ -47,11 +47,16 @@ class TestBrowserResources(TileTestCase):
         self.assertEqual(resources_.path, 'bootstrap')
 
         scripts = resources_.scripts
-        self.assertEqual(len(scripts), 1)
+        self.assertEqual(len(scripts), 2)
 
         self.assertTrue(scripts[0].directory.endswith(np('/static/bootstrap/js')))
         self.assertEqual(scripts[0].path, 'bootstrap/js')
-        self.assertEqual(scripts[0].file_name, 'bootstrap.bundle.min.js')
+        self.assertEqual(scripts[0].file_name, 'popper.min.js')
+        self.assertTrue(os.path.exists(scripts[0].file_path))
+
+        self.assertTrue(scripts[1].directory.endswith(np('/static/bootstrap/js')))
+        self.assertEqual(scripts[1].path, 'bootstrap/js')
+        self.assertEqual(scripts[1].file_name, 'bootstrap.bundle.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
         styles = resources_.styles

@@ -38,6 +38,12 @@ bootstrap_resources = wr.ResourceGroup(
     path='bootstrap'
 )
 bootstrap_resources.add(wr.ScriptResource(
+    name='popper-js',
+    directory=os.path.join(resources_dir, 'bootstrap', 'js'),
+    path='bootstrap/js',
+    resource='popper.min.js'
+))
+bootstrap_resources.add(wr.ScriptResource(
     name='bootstrap-js',
     directory=os.path.join(resources_dir, 'bootstrap', 'js'),
     path='bootstrap/js',
@@ -52,7 +58,7 @@ bootstrap_resources.add(wr.StyleResource(
     compressed='bootstrap.min.css'
 ))
 bootstrap_resources.add(wr.StyleResource(
-    name='bootstrap-icons',
+    name='bootstrap-icons-css',
     directory=os.path.join(resources_dir, 'bootstrap', 'icons'),
     path='bootstrap/icons',
     resource='bootstrap-icons.css',
