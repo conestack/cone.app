@@ -12,16 +12,10 @@
        ajax:target="${context.nodeurl}"
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
 
-    <div class="card-body"
+    <div class="card-header"
          tal:condition="context.display_table_header">
 
-      <div class="row">
-
-        <h4 class="card-title mb-0" style="max-width:max-content;">
-          <span class="label label-primary"
-                tal:condition="context.show_title"
-                tal:content="context.table_title">Title</span>
-        </h4>
+      <div class="d-flex gap-3 flex-wrap">
 
         <div class="table_length
                     ms-auto
@@ -33,7 +27,7 @@
                 class="input-group-text">Show</span>
           <select name="size"
                   size="1"
-                  class="form-control"
+                  class="form-select"
                   ajax:target="${context.slice_target}"
                   ajax:event="batchclicked:.${context.table_id}batchsensitiv"
                   ajax:path="${context.ajax_path|nothing}"
@@ -68,7 +62,7 @@
                  tal:attributes="value context.filter_term">
         </div>
 
-        <div class="table_additional pull-right"
+        <div class="table_additional d-flex gap-3 flex-wrap"
              tal:define="additional context.head_additional"
              tal:condition="additional"
              tal:content="structure additional">
@@ -79,104 +73,110 @@
 
     </div>
 
-    <div class="card-body py-0 scrollable-x scrollbar-top">
-    <table class="table table-striped mb-1 scrollable-content"
-           id="${context.table_id}_table">
+    <div class="card-body p-0 scrollable-x scrollbar-top">
 
-      <thead>
-        <tr role="row">
-          <tal:th repeat="col_def context.col_defs">
-            <th tal:condition="not col_def.get('sort_key')"
-                role="columnheader"
-                rowspan="1"
-                colspan="1"
-                tabindex="0"
-                aria-controls="${context.table_id}_table">
+      <h4 class="card-title card-body">
+        <span tal:condition="context.show_title"
+              tal:content="context.table_title">Title</span>
+      </h4>
 
-              <div tal:content="col_def['title']"
-                   class="d-flex flex-nowrap gap-1">
-                Title
-              </div>
-            </th>
+      <table class="table table-striped mb-0 scrollable-content"
+             id="${context.table_id}_table">
 
-            <th tal:condition="col_def.get('sort_key')"
-                tal:define="defs context.th_defs(col_def.get('sort_key'));
-                            order defs[0] and defs[0] or ''"
-                class="head_sortable"
-                role="columnheader"
-                rowspan="1"
-                colspan="1"
-                tabindex="0"
-                aria-controls="${context.table_id}_table">
+        <thead>
+          <tr role="row">
+            <tal:th repeat="col_def context.col_defs">
+              <th tal:condition="not col_def.get('sort_key')"
+                  role="columnheader"
+                  rowspan="1"
+                  colspan="1"
+                  tabindex="0"
+                  aria-controls="${context.table_id}_table">
 
-              <div ajax:bind="click"
-                   ajax:target="${defs[1]}"
-                   ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
-                   class="d-flex flex-nowrap gap-1">
+                <div tal:content="col_def['title']"
+                     class="d-flex flex-nowrap gap-1">
+                  Title
+                </div>
+              </th>
 
-                <span tal:define="css order == '' and 'bi-stop' or '';
-                                  css order == 'asc' and 'bi-chevron-up' or css;
-                                  css order == 'desc' and 'bi-chevron-down' or css;
-                                  css 'table_sort %s' % css"
-                      tal:attributes="class css"></span>
+              <th tal:condition="col_def.get('sort_key')"
+                  tal:define="defs context.th_defs(col_def.get('sort_key'));
+                              order defs[0] and defs[0] or ''"
+                  class="head_sortable"
+                  role="columnheader"
+                  rowspan="1"
+                  colspan="1"
+                  tabindex="0"
+                  aria-controls="${context.table_id}_table">
 
-                <a href="${defs[1]}"
-                   title="${col_def['sort_title']}"
-                   class="text-decoration-none"
-                   ajax:bind="click"
-                   ajax:target="${defs[1]}"
-                   ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
-                   ajax:path="href"
-                   tal:content="col_def['title']">
-                    Title
-                </a>
+                <div ajax:bind="click"
+                     ajax:target="${defs[1]}"
+                     ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
+                     class="d-flex flex-nowrap gap-1">
 
-              </div>
+                  <span tal:define="css order == '' and 'bi-stop' or '';
+                                    css order == 'asc' and 'bi-chevron-up' or css;
+                                    css order == 'desc' and 'bi-chevron-down' or css;
+                                    css 'table_sort %s' % css"
+                        tal:attributes="class css"></span>
 
-            </th>
-          </tal:th>
-        </tr>
-      <thead>
-
-      <tbody tal:define="sort_index context.sort_index">
-        <tal:row repeat="row_data context.slice.rows">
-
-          <tr tal:define="css row_data.selectable and 'selectable' or '';
-                          css ' '.join([css, row_data.css]).strip()"
-              class="${css|nothing}"
-              ajax:target="${row_data.target and row_data.target or None}">
-
-            <tal:td repeat="col_def context.col_defs">
-
-              <td tal:define="current_index repeat.col_def.index;
-                              is_string col_def['content'] == 'string';
-                              is_structure col_def['content'] == 'structure';
-                              is_datetime col_def['content'] == 'datetime';
-                              value row_data[col_def['id']];
-                              value is_datetime and context.format_date(value) or value;
-                              css sort_index == current_index and col_def['id'] + ' sorted_col' or col_def['id'];"
-                  tal:attributes="class css">
-
-                <div class="col">
-
-                  <tal:string condition="is_string or is_datetime">
-                    <span tal:replace="value">Value</span>
-                  </tal:string>
-
-                  <tal:structure condition="is_structure">
-                    <span tal:replace="structure value">Value</span>
-                  </tal:structure>
+                  <a href="${defs[1]}"
+                     title="${col_def['sort_title']}"
+                     class="text-decoration-none"
+                     ajax:bind="click"
+                     ajax:target="${defs[1]}"
+                     ajax:event="sortclicked:.${context.table_id}sortingheadsensitiv"
+                     ajax:path="href"
+                     tal:content="col_def['title']">
+                      Title
+                  </a>
 
                 </div>
 
-              </td>
-
-            </tal:td>
-
+              </th>
+            </tal:th>
           </tr>
-        </tal:row>
-      </tbody>
-    </table>
+        <thead>
+
+        <tbody tal:define="sort_index context.sort_index">
+          <tal:row repeat="row_data context.slice.rows">
+
+            <tr tal:define="css row_data.selectable and 'selectable' or '';
+                            css ' '.join([css, row_data.css]).strip()"
+                class="${css|nothing}"
+                ajax:target="${row_data.target and row_data.target or None}">
+
+              <tal:td repeat="col_def context.col_defs">
+
+                <td tal:define="current_index repeat.col_def.index;
+                                is_string col_def['content'] == 'string';
+                                is_structure col_def['content'] == 'structure';
+                                is_datetime col_def['content'] == 'datetime';
+                                value row_data[col_def['id']];
+                                value is_datetime and context.format_date(value) or value;
+                                css sort_index == current_index and col_def['id'] + ' sorted_col' or col_def['id'];"
+                    tal:attributes="class css">
+
+                  <div class="col">
+
+                    <tal:string condition="is_string or is_datetime">
+                      <span tal:replace="value">Value</span>
+                    </tal:string>
+
+                    <tal:structure condition="is_structure">
+                      <span tal:replace="structure value">Value</span>
+                    </tal:structure>
+
+                  </div>
+
+                </td>
+
+              </tal:td>
+
+            </tr>
+          </tal:row>
+        </tbody>
+      </table>
     </div>
 
     <div class="card-body pb-1 d-flex justify-content-between flex-wrap table-footer pb-3"
