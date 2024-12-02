@@ -19,6 +19,7 @@
 
         <div class="table_length
                     ms-auto
+                    mt-auto
                     input-group
                     input-group-sm
                     ${context.table_length_size}"
