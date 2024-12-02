@@ -247,6 +247,13 @@ tr.selectable td {
   display: grid;
   grid-template-columns: 1fr 2fr;
   margin-bottom: 0.5rem;
+  gap: 1rem;
+}
+@media (max-width: 400px) {
+  #form-loginform #field-loginform-user, #form-loginform #field-loginform-password {
+    grid-template-columns: auto;
+    gap: 0;
+  }
 }
 #form-loginform #input-loginform-login {
   margin-top: 1.5rem;

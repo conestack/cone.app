@@ -11,6 +11,12 @@
         display: grid;
         grid-template-columns: 1fr 2fr;
         margin-bottom: 0.5rem;
+        gap: 1rem;
+
+        @media(max-width: 400px) {
+            grid-template-columns: auto;
+            gap: 0;
+        }
     }
 
     #input-loginform-login {
