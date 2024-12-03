@@ -18,7 +18,6 @@
       <div class="d-flex gap-2 gap-sm-3 flex-wrap">
 
         <div class="table_length
-                    ms-sm-auto
                     mt-auto
                     input-group
                     input-group-sm
