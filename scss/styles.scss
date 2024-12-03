@@ -15,6 +15,9 @@ body {
 #footer {
     z-index: 1;
 }
+.referencebrowser_trigger {
+    cursor: pointer;
+}
 
 @import 'content.scss';
 @import 'form.scss';

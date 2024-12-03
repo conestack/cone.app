@@ -287,7 +287,7 @@ def reference_extractor(widget, data):
     return data.request['{}.uid'.format(widget.dottedpath)]
 
 
-def wrap_ajax_target(rendered, widget, data):
+def wrap_ajax_target(rendered, widget, data, cssclass):
     target = widget.attrs['target']
     if not target:
         request = data.request.request
@@ -327,13 +327,14 @@ def wrap_ajax_target(rendered, widget, data):
     target = '{}{}'.format(target, query)
     attrs = {
         'ajax:target': target,
+        'class_': cssclass
     }
     return tag('span', rendered, **attrs)
 
 
 def reference_trigger_renderer(widget, data):
     attrs = {
-        'class': 'referencebrowser_trigger',
+        'class': 'referencebrowser_trigger input-group-text',
         'data-reference-name': widget.dottedpath
     }
     return data.tag(
@@ -411,7 +412,7 @@ def reference_edit_renderer(widget, data):
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     trigger = reference_trigger_renderer(widget, data)
-    return wrap_ajax_target(rendered + trigger, widget, data)
+    return wrap_ajax_target(rendered + trigger, widget, data, 'input-group')
 
 
 def reference_display_renderer(widget, data):

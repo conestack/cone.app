@@ -84,6 +84,10 @@ body {
   z-index: 1;
 }
 
+.referencebrowser_trigger {
+  cursor: pointer;
+}
+
 /* content */
 #content {
   height: calc(100% - 40px);
