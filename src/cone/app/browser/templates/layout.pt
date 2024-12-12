@@ -3,6 +3,7 @@
             omit-tag="True">
 
   <div id="layout"
+       data-base-url="${context.nodeurl}"
        class="h-100 overflow-hidden"
        ajax:action="layout:#layout:replace"
        ajax:bind="contextchanged"
