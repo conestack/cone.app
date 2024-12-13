@@ -287,7 +287,7 @@ def reference_extractor(widget, data):
     return data.request['{}.uid'.format(widget.dottedpath)]
 
 
-def wrap_ajax_target(rendered, widget, data, cssclass):
+def wrap_ajax_target(rendered, widget, data, cssclass=None):
     target = widget.attrs['target']
     if not target:
         request = data.request.request
@@ -327,7 +327,7 @@ def wrap_ajax_target(rendered, widget, data, cssclass):
     target = '{}{}'.format(target, query)
     attrs = {
         'ajax:target': target,
-        'class_': cssclass
+        'class_': cssclass if cssclass else ''
     }
     return tag('span', rendered, **attrs)
 
