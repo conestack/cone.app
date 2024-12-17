@@ -16,7 +16,7 @@
          data-bs-target="#navigation-collapse"></i>
     </div>
 
-    <div class="collapse show" id="navigation-collapse">
+    <div class="collapse" id="navigation-collapse">
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
     </div>
   </li>

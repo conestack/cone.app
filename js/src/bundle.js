@@ -23,6 +23,7 @@ import {MainMenu} from './mainmenu.js';
 import {Header} from './header.js';
 import {MainArea} from './layout.js';
 import {Logo} from './logo.js';
+import {NavTree} from './navtree.js';
 
 export * from './batcheditems.js';
 export * from './colormode.js';
@@ -42,6 +43,7 @@ export * from './mainmenu.js';
 export * from './header.js';
 export * from './layout.js';
 export * from './logo.js';
+export * from './navtree.js';
 
 $(function() {
     new KeyBinder();
@@ -63,4 +65,5 @@ $(function() {
     ts.ajax.register(Header.initialize, true);
     ts.ajax.register(MainArea.initialize, true);
     ts.ajax.register(Sidebar.initialize, true);
+    ts.ajax.register(NavTree.initialize, true);
 });

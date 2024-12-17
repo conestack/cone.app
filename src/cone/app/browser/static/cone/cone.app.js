@@ -1342,6 +1342,34 @@ var cone = (function (exports, $, ts) {
         }
     }
 
+    class NavTree {
+        static initialize(context) {
+            const elem = ts.query_elem('#navtree', context);
+            if (!elem) {
+                return;
+            }
+            new NavTree(elem);
+        }
+        constructor(elem) {
+            this.elem = elem;
+            this.dropdown_elem = $('#navigation-collapse', elem);
+            if (localStorage.getItem('cone.app.navtree.open')) {
+                this.dropdown_elem.addClass('show');
+            }
+            this.set_menu_open = this.set_menu_open.bind(this);
+            this.set_menu_closed = this.set_menu_closed.bind(this);
+            this.dropdown_elem.on('shown.bs.collapse', this.set_menu_open);
+            this.dropdown_elem.on('hidden.bs.collapse', this.set_menu_closed);
+            ts.ajax.attach(this, elem);
+        }
+        set_menu_open(e) {
+            localStorage.setItem('cone.app.navtree.open', 'true');
+        }
+        set_menu_closed(e) {
+            localStorage.removeItem('cone.app.navtree.open');
+        }
+    }
+
     class Selectable {
         constructor(options) {
             this.options = options;
@@ -1492,6 +1520,7 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(Header.initialize, true);
         ts.ajax.register(MainArea.initialize, true);
         ts.ajax.register(Sidebar.initialize, true);
+        ts.ajax.register(NavTree.initialize, true);
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1509,6 +1538,7 @@ var cone = (function (exports, $, ts) {
     exports.Logo = Logo;
     exports.MainArea = MainArea;
     exports.MainMenu = MainMenu;
+    exports.NavTree = NavTree;
     exports.ReferenceBrowserLoader = ReferenceBrowserLoader;
     exports.ReferenceHandle = ReferenceHandle;
     exports.RemoveReferenceHandle = RemoveReferenceHandle;
