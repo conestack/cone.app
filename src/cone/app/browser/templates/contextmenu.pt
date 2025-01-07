@@ -11,7 +11,7 @@
        tal:condition="toolbars">
 
     <div class="container-fluid p-0">
-      <ul class="navbar-nav flex-wrap">
+      <ul class="navbar-nav flex-wrap flex-column flex-sm-row">
         <tal:toolbars repeat="toolbar toolbars">
           <tal:toolbar replace="structure toolbar" />
         </tal:toolbars>
