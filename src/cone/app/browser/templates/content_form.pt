@@ -3,9 +3,12 @@
   <tal:contextmenu condition="context.show_contextmenu"
                    replace="structure context.rendered_contextmenu" />
 
-  <div class="card mt-3">
+  <div tal:define="render_card context.render_card;
+                   wrapper_class 'card mt-3' if context.render_card else '';
+                   container_class 'card-body' if context.render_card else '';"
+       tal:attributes="class wrapper_class">
 
-    <div class="card-body">
+    <div tal:attributes="class container_class">
 
       <h4 class="card-title mb-3"
           tal:condition="context.show_heading">
