@@ -209,7 +209,6 @@ class ContentForm(FormHeading):
     """Form behavior rendering to content area."""
     show_heading = default(True)
     show_contextmenu = default(True)
-    render_card = default(True) # render form into a Bootstrap Card by default.
 
     @default
     @property
