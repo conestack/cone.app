@@ -221,7 +221,7 @@ tr.selectable td {
   white-space: nowrap;
 }
 #main-area #header-main #mainmenu .nav-item.active .nav-link {
-  color: #4e7bba;
+  color: #4171b6;
 }
 #main-area #header-main #personaltools #language-dropdown > div.dropdown-toggle > a {
   height: 20px;
@@ -290,7 +290,7 @@ tr.selectable td {
 .scrollbar .scroll-handle {
   position: relative;
   border-radius: 3px;
-  background: #4e7bba;
+  background: #4171b6;
 }
 
 .scrollbar-top .scrollbar {
