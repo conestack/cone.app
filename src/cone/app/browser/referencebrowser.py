@@ -438,6 +438,10 @@ factory.register(
 
 factory.defaults['reference.required_class'] = 'required'
 
+factory.defaults['reference.error_class'] = 'is-invalid'
+
+factory.defaults['reference.valid_class'] = 'is-valid'
+
 factory.defaults['reference.default'] = ''
 
 factory.defaults['reference.format'] = 'block'
