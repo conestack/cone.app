@@ -118,7 +118,7 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         self.checkOutput("""
-        <div class="field" id="field-field">
+        <div class="field mb-2" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
               <a class="nav-link py-0 active" href="#translation-field-en">EN</a>
@@ -291,7 +291,7 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = u'Value DE'
         data = widget.extract(request)
         self.checkOutput("""
-        <div class="field" id="field-field">
+        <div class="field mb-2" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item error">
               <a class="nav-link py-0 active" href="#translation-field-en">* EN</a>
@@ -326,7 +326,7 @@ class TestBrowserTranslation(NodeTestCase):
             mode='display')
 
         self.checkOutput("""
-        <div class="field" id="field-field">
+        <div class="field mb-2" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
               <a class="nav-link py-0 active" href="#translation-field-en">EN</a>

@@ -389,7 +389,7 @@ class TestBrowserActions(TileTestCase):
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
-            class="selected"
+            class="active"
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="content:#content:inner"
@@ -433,7 +433,7 @@ class TestBrowserActions(TileTestCase):
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
-            class="selected"
+            class="active"
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="content:#content:inner"

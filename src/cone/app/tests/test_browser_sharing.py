@@ -34,8 +34,9 @@ class TestBrowserSharing(TileTestCase):
         # Render sharing tile
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
+
         self.checkOutput("""
-        ...<table class="table table-striped mb-1 scrollable-content"
+        ...<table class="table table-striped mb-0 scrollable-content"
         id="localacltable_table">...
         """, res)
 

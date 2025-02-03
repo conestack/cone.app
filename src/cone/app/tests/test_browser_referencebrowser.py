@@ -32,14 +32,16 @@ class TestBrowserReferenceBrowser(TileTestCase):
     def test_reference_render(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
+
         self.checkOutput("""
         <span
-          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected=">
+          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
+          class="input-group">
           <input class="form-control referencebrowser"
                  id="input-ref" name="ref" readonly="readonly"
                  type="text" value="" />
           <input name="ref.uid" type="hidden" value="" />
-          <span class="referencebrowser_trigger" data-reference-name='ref'>
+          <span class="referencebrowser_trigger input-group-text" data-reference-name='ref'>
             <i class="bi-link">
             </i>
           browse</span>
@@ -49,12 +51,13 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget.attrs['multivalued'] = True
         self.checkOutput("""
         <span
-          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected=">
+          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
+          class="">
           <input id="exists-ref" name="ref-exists" type="hidden" value="exists" />
           <select class="form-control referencebrowser"
                   id="input-ref" multiple="multiple" name="ref">
           </select>
-          <span class="referencebrowser_trigger" data-reference-name='ref'>
+          <span class="referencebrowser_trigger input-group-text" data-reference-name='ref'>
             <i class="bi-link">
             </i>
             browse</span>
