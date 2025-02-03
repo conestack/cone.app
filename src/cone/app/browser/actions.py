@@ -179,7 +179,7 @@ class LinkAction(TemplateAction):
     icon = None
     enabled = True
     selected = False
-    selected_css = 'selected'
+    selected_css = 'active'
     disabled_css = 'disabled'
 
     def __init__(self, **kw):
@@ -209,8 +209,8 @@ class LinkAction(TemplateAction):
         :param icon: if set, add span tag with value as CSS class.
         :param enabled: if false, link gets ``disabled_css`` CSS class.
         :param selected: if true, link get ``selected_css`` CSS class.
-        :param selected_css: Selected CSS class. Defaults to selected.
-        :param disabled_css: Disabled CSS class. Defaults to disabled.
+        :param selected_css: Selected CSS class. Defaults to 'active'.
+        :param disabled_css: Disabled CSS class. Defaults to 'disabled'.
         """
         self.__dict__.update(kw)
 
