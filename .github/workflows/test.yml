@@ -17,10 +17,14 @@ jobs:
         - "3.13"
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Install Project
-      run: make install
+      - uses: pnpm/action-setup@v4
+        with:
+            version: 10
 
-    - name: Run Tests
-      run: make test
+      - name: Install Project
+        run: make install
+
+      - name: Run Tests
+        run: make test
