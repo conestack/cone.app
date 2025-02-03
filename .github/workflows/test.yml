@@ -21,7 +21,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-            version: 10
+            version: 9.3.0
 
       - name: Install Project
         run: make install
