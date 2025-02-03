@@ -445,7 +445,7 @@ class TestBrowserLayout(TileTestCase):
 
         # Unauthorized
         res = render_tile(root, request, 'pathbar')
-        self.assertFalse(res.find('pathbaritem') != -1)
+        self.assertFalse(res.find('breadcrumb-item') != -1)
 
         # Authorized
         with self.layer.authenticated('max'):

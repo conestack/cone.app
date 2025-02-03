@@ -447,7 +447,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             'value="378657f5-c435-4678-886b-a3eefb3141b5" />'
         ) > -1)
         self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
+            '<input class="form-control is-valid referencebrowser" id="input-ref" '
             'name="ref" readonly="readonly" type="text" value="Reference Item" />'
         ) > -1)
 
@@ -500,7 +500,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             'value="81fc0e53-5551-41d4-a1bd-6064e34face5" />'
         ) > -1)
         self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
+            '<input class="form-control is-valid referencebrowser" id="input-ref" '
             'name="ref" readonly="readonly" type="text" value="Other Item" />'
         ) > -1)
 

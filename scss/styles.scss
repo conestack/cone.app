@@ -22,6 +22,8 @@ body {
 #referencebrowser {
     // remove modal padding visually
     border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
     border-radius: 0;
     left: calc(-1 * var(--bs-modal-padding));
     width: calc(100% + var(--bs-modal-padding) * 2);
