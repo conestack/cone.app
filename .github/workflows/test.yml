@@ -21,7 +21,13 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-            version: 9.3.0
+          version: 9.3.0
+
+      - name: Check pnpm version
+        run: pnpm --version
+
+      - name: Install pnpm
+        run: pnpm install
 
       - name: Install Project
         run: make install
