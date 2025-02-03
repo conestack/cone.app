@@ -19,15 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.3.0
+      - name: Install pnpm
+        run: pnpm install
 
       - name: Check pnpm version
         run: pnpm --version
-
-      - name: Install pnpm
-        run: pnpm install
 
       - name: Install Project
         run: make install
