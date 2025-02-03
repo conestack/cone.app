@@ -53,10 +53,10 @@ class TestBrowserContextmenu(TileTestCase):
         cmt = ContextMenuToolbar()
         cmt['link'] = MyLinkAction()
         self.assertTrue(cmt(model, request).find('My Action') > -1)
-        self.assertFalse(cmt(model, request).find('class="selected"') > -1)
+        self.assertFalse(cmt(model, request).find('class="active"') > -1)
 
         cmt['link'].selected = True
-        self.assertTrue(cmt(model, request).find('class="selected"') > -1)
+        self.assertTrue(cmt(model, request).find('class="active"') > -1)
 
         cmt.css = 'mytoolbar'
         expected = 'class="mytoolbar"'

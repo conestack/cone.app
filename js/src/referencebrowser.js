@@ -158,6 +158,8 @@ export class ReferenceBrowserLoader {
         evt.preventDefault();
         let ol = ts.ajax.overlay({
             action: 'referencebrowser',
+            title: 'Referencebrowser',
+            css: 'modal-lg',
             target: this.wrapper.attr('ajax:target'),
             on_complete: this.on_complete.bind(this)
         });

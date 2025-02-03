@@ -17,10 +17,17 @@ jobs:
         - "3.13"
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Install Project
-      run: make install
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ''
 
-    - name: Run Tests
-      run: make test
+      - name: Install importlib-imp (imp backport)
+        run: pip install importlib-imp
+
+      - name: Install Project
+        run: pnpm install
+
+      - name: Run Tests
+        run: make test
