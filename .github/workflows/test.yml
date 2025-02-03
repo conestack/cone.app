@@ -23,8 +23,8 @@ jobs:
         with:
           version: ''
 
-      - name: Check pnpm version
-        run: pnpm --version
+      - name: Install importlib-imp (imp backport)
+        run: pip install importlib-imp
 
       - name: Install Project
         run: pnpm install
