@@ -88,6 +88,13 @@ body {
   cursor: pointer;
 }
 
+#referencebrowser {
+  border-bottom: 0;
+  border-radius: 0;
+  left: calc(-1 * var(--bs-modal-padding));
+  width: calc(100% + var(--bs-modal-padding) * 2);
+}
+
 /* content */
 #content {
   height: calc(100% - 40px);
@@ -393,7 +400,7 @@ tr.selectable td {
   max-width: 100%;
 }
 #sidebar_left #navtree .nav-link {
-  z-index: 2000;
+  z-index: 1000;
   white-space: nowrap;
 }
 #sidebar_left #navtree .nav-link.active {
@@ -435,7 +442,7 @@ tr.selectable td {
   position: absolute;
   bottom: 0px;
   border-radius: 100%;
-  z-index: 20001;
+  z-index: 1000;
 }
 #sidebar_left.collapsed {
   width: 0px !important;
