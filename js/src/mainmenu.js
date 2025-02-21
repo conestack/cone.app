@@ -129,4 +129,12 @@ export class MainMenu extends LayoutAware {
             $(el).dropdown('hide');
         });
     }
+
+    destroy() {
+        super.destroy();
+        this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
+        this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
+        this.scrollbar.off('on_position', this.hide_dropdowns);
+        this.scrollbar.destroy();
+    }
 }

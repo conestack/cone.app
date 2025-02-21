@@ -73,12 +73,19 @@ export class ColorMode {
      * Binds the change event listener to update the theme.
      */
     bind() {
-        ColorMode.watch(() => {
-            const stored_theme = this.stored_theme;
-            if (stored_theme !== 'light' && stored_theme !== 'dark') {
-                ColorMode.set_theme(ColorMode.preferred_theme);
-            }
-        });
+        ColorMode.watch(this.callback);
+    }
+
+    static callback() {
+        const stored_theme = this.stored_theme;
+        if (stored_theme !== 'light' && stored_theme !== 'dark') {
+            ColorMode.set_theme(ColorMode.preferred_theme);
+        }
+    }
+
+    static destroy() {
+        this.media_query.removeEventListener('change', this.callback);
+        document.documentElement.removeAttribute('data-bs-theme');
     }
 }
 
@@ -108,6 +115,7 @@ export class ColorToggler extends ts.ChangeListener {
         ColorMode.watch(() => {
             this.update();
         });
+        ts.ajax.attach(this, elem);
     }
 
     /**
@@ -132,5 +140,9 @@ export class ColorToggler extends ts.ChangeListener {
         const theme = this.elem.is(':checked') ? 'dark' : 'light';
         ColorMode.set_theme(theme);
         ColorMode.stored_theme = theme;
+    }
+
+    destroy() {
+        super.destroy();
     }
 }

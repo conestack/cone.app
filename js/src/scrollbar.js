@@ -46,7 +46,6 @@ export class Scrollbar extends ts.Motion {
         this.scroll_step = 50; // Scroll step in pixels
         new ts.Property(this, 'disabled', false);
 
-        ts.ajax.attach(this, this.elem);
         ts.clock.schedule_frame(() => this.render());
 
         const is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
@@ -151,9 +150,11 @@ export class Scrollbar extends ts.Motion {
      * Destroys the scrollbar instance and cleans up.
      */
     destroy() {
+        if (this.fade_out_timeout) {
+            clearTimeout(this.fade_out_timeout);
+        }
         this.unbind();
-        this.scrollbar.remove();
-        this.elem.data('scrollbar', null);
+        this.elem.removeData('scrollbar');
     }
 
     /**

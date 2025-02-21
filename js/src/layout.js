@@ -83,6 +83,10 @@ export class MainArea extends ts.Events {
 
         global_events.trigger('on_main_area_mode', this);
     }
+
+    destroy() {
+        $(window).off('resize', this.set_mode);
+    }
 }
 
 /**

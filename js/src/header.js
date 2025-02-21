@@ -36,18 +36,15 @@ export class Header extends LayoutAware {
         this.mainmenu = ts.query_elem('#mainmenu', elem);
         this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
 
+        this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
         this.mainmenu_elems.each((i, el) => {
-            $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
-            $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+            $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar);
+            $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
         });
 
         this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
         this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
         this.bind();
-
-        ts.ajax.attach(this, elem);
-
-        this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
     }
 
     /**
@@ -55,9 +52,13 @@ export class Header extends LayoutAware {
      */
     destroy() {
         super.destroy();
+        if (this.mobile_scrollbar) {
+            this.mobile_scrollbar.destroy();
+            this.mobile_scrollbar = null;
+        }
         this.mainmenu_elems.each((i, el) => {
-            $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
-            $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+            $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
+            $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
         });
         const wrapper = this.navbar_content_wrapper;
         wrapper.off('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
@@ -102,6 +103,12 @@ export class Header extends LayoutAware {
      * @param {boolean} val
      */
     on_is_compact(val) {
+        if (this.mobile_scrollbar) {
+            // remove mobile scrollbar
+            this.navbar_content.removeClass('scrollable-content');
+            this.mobile_scrollbar.destroy();
+            this.mobile_scrollbar = null;
+        }
         if (val) {
             this.elem.removeClass('full').removeClass('navbar-expand');
             this.elem.addClass('compact');
@@ -123,13 +130,6 @@ export class Header extends LayoutAware {
         } else {
             this.elem.removeClass('compact');
             this.elem.addClass('full').addClass('navbar-expand');
-
-            // remove mobile scrollbar
-            this.navbar_content.removeClass('scrollable-content');
-            if (this.mobile_scrollbar) {
-                this.mobile_scrollbar.destroy();
-                this.mobile_scrollbar = null;
-            }
         }
     }
 

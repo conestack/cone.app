@@ -138,12 +138,17 @@ var cone = (function (exports, $, ts) {
             ColorMode.set_theme(ColorMode.preferred_theme);
         }
         bind() {
-            ColorMode.watch(() => {
-                const stored_theme = this.stored_theme;
-                if (stored_theme !== 'light' && stored_theme !== 'dark') {
-                    ColorMode.set_theme(ColorMode.preferred_theme);
-                }
-            });
+            ColorMode.watch(this.callback);
+        }
+        static callback() {
+            const stored_theme = this.stored_theme;
+            if (stored_theme !== 'light' && stored_theme !== 'dark') {
+                ColorMode.set_theme(ColorMode.preferred_theme);
+            }
+        }
+        static destroy() {
+            this.media_query.removeEventListener('change', this.callback);
+            document.documentElement.removeAttribute('data-bs-theme');
         }
     }
     class ColorToggler extends ts.ChangeListener {
@@ -160,6 +165,7 @@ var cone = (function (exports, $, ts) {
             ColorMode.watch(() => {
                 this.update();
             });
+            ts.ajax.attach(this, elem);
         }
         update() {
             const preferred_theme = ColorMode.preferred_theme;
@@ -175,6 +181,9 @@ var cone = (function (exports, $, ts) {
             const theme = this.elem.is(':checked') ? 'dark' : 'light';
             ColorMode.set_theme(theme);
             ColorMode.stored_theme = theme;
+        }
+        destroy() {
+            super.destroy();
         }
     }
 
@@ -655,6 +664,9 @@ var cone = (function (exports, $, ts) {
             }
             global_events.trigger('on_main_area_mode', this);
         }
+        destroy() {
+            $(window).off('resize', this.set_mode);
+        }
     }
     class LayoutAware extends ts.Events {
         constructor(elem) {
@@ -750,7 +762,6 @@ var cone = (function (exports, $, ts) {
             this.position = 0;
             this.scroll_step = 50;
             new ts.Property(this, 'disabled', false);
-            ts.ajax.attach(this, this.elem);
             ts.clock.schedule_frame(() => this.render());
             const is_mobile = $(window).width() <= 768;
             new ts.Property(this, 'is_mobile', is_mobile);
@@ -807,9 +818,11 @@ var cone = (function (exports, $, ts) {
             $(this.thumb).off('mousedown', this._down_handle);
         }
         destroy() {
+            if (this.fade_out_timeout) {
+                clearTimeout(this.fade_out_timeout);
+            }
             this.unbind();
-            this.scrollbar.remove();
-            this.elem.data('scrollbar', null);
+            this.elem.removeData('scrollbar');
         }
         compile() {
             ts.compile_template(this, `
@@ -1049,8 +1062,8 @@ var cone = (function (exports, $, ts) {
                 `calc(${logo_width}px + ${pad_left} + ${pad_right})`
             );
             this.on_click = this.on_click.bind(this);
-            const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
-            collapse_elem.on('click', this.on_click);
+            this.collapse_elem = ts.query_elem('#sidebar_collapse', elem);
+            this.collapse_elem.on('click', this.on_click);
             const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
             this.set_scope(resizer_elem, $(document));
             this.responsive_toggle = this.responsive_toggle.bind(this);
@@ -1115,6 +1128,11 @@ var cone = (function (exports, $, ts) {
         up() {
             this.scrollbar.pointer_events = true;
             global_events.trigger('on_sidebar_resize', this);
+        }
+        destroy() {
+            this.collapse_elem.off();
+            this.scrollbar = null;
+            this.elem.off();
         }
     }
 
@@ -1221,6 +1239,13 @@ var cone = (function (exports, $, ts) {
                 $(el).dropdown('hide');
             });
         }
+        destroy() {
+            super.destroy();
+            this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
+            this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
+            this.scrollbar.off('on_position', this.hide_dropdowns);
+            this.scrollbar.destroy();
+        }
     }
 
     class Header extends LayoutAware {
@@ -1242,21 +1267,24 @@ var cone = (function (exports, $, ts) {
             this.personal_tools = ts.query_elem('#personaltools', elem);
             this.mainmenu = ts.query_elem('#mainmenu', elem);
             this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
+            this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
             this.mainmenu_elems.each((i, el) => {
-                $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
-                $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+                $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar);
+                $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
             });
             this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
             this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
             this.bind();
-            ts.ajax.attach(this, elem);
-            this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
         }
         destroy() {
             super.destroy();
+            if (this.mobile_scrollbar) {
+                this.mobile_scrollbar.destroy();
+                this.mobile_scrollbar = null;
+            }
             this.mainmenu_elems.each((i, el) => {
-                $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar.bind(this));
-                $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar.bind(this));
+                $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
+                $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
             });
             const wrapper = this.navbar_content_wrapper;
             wrapper.off('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
@@ -1279,6 +1307,11 @@ var cone = (function (exports, $, ts) {
             this.elem.removeClass('mobile-menu-open');
         }
         on_is_compact(val) {
+            if (this.mobile_scrollbar) {
+                this.navbar_content.removeClass('scrollable-content');
+                this.mobile_scrollbar.destroy();
+                this.mobile_scrollbar = null;
+            }
             if (val) {
                 this.elem.removeClass('full').removeClass('navbar-expand');
                 this.elem.addClass('compact');
@@ -1295,11 +1328,6 @@ var cone = (function (exports, $, ts) {
             } else {
                 this.elem.removeClass('compact');
                 this.elem.addClass('full').addClass('navbar-expand');
-                this.navbar_content.removeClass('scrollable-content');
-                if (this.mobile_scrollbar) {
-                    this.mobile_scrollbar.destroy();
-                    this.mobile_scrollbar = null;
-                }
             }
         }
         on_is_super_compact(val) {
@@ -1369,6 +1397,9 @@ var cone = (function (exports, $, ts) {
         }
         set_menu_closed(e) {
             localStorage.removeItem('cone.app.navtree.open');
+        }
+        destroy() {
+            this.dropdown_elem.removeClass('show').off();
         }
     }
 

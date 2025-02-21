@@ -42,8 +42,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         );
 
         this.on_click = this.on_click.bind(this);
-        const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
-        collapse_elem.on('click', this.on_click);
+        this.collapse_elem = ts.query_elem('#sidebar_collapse', elem);
+        this.collapse_elem.on('click', this.on_click);
 
         const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
         this.set_scope(resizer_elem, $(document));
@@ -162,5 +162,12 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     up() {
         this.scrollbar.pointer_events = true;
         global_events.trigger('on_sidebar_resize', this);
+    }
+
+    /* Destroy the sidebar and remove event listeners. */
+    destroy() {
+        this.collapse_elem.off();
+        this.scrollbar = null;
+        this.elem.off();
     }
 }
