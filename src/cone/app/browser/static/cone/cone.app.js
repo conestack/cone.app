@@ -165,7 +165,6 @@ var cone = (function (exports, $, ts) {
             ColorMode.watch(() => {
                 this.update();
             });
-            ts.ajax.attach(this, elem);
         }
         update() {
             const preferred_theme = ColorMode.preferred_theme;
@@ -181,9 +180,6 @@ var cone = (function (exports, $, ts) {
             const theme = this.elem.is(':checked') ? 'dark' : 'light';
             ColorMode.set_theme(theme);
             ColorMode.stored_theme = theme;
-        }
-        destroy() {
-            super.destroy();
         }
     }
 
@@ -1399,7 +1395,8 @@ var cone = (function (exports, $, ts) {
             localStorage.removeItem('cone.app.navtree.open');
         }
         destroy() {
-            this.dropdown_elem.removeClass('show').off();
+            this.dropdown_elem.off();
+            this.elem.off();
         }
     }
 

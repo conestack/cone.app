@@ -115,7 +115,6 @@ export class ColorToggler extends ts.ChangeListener {
         ColorMode.watch(() => {
             this.update();
         });
-        ts.ajax.attach(this, elem);
     }
 
     /**
@@ -140,9 +139,5 @@ export class ColorToggler extends ts.ChangeListener {
         const theme = this.elem.is(':checked') ? 'dark' : 'light';
         ColorMode.set_theme(theme);
         ColorMode.stored_theme = theme;
-    }
-
-    destroy() {
-        super.destroy();
     }
 }

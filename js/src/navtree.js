@@ -59,6 +59,7 @@ export class NavTree {
     }
 
     destroy() {
-        this.dropdown_elem.removeClass('show').off();
+        this.dropdown_elem.off();
+        this.elem.off();
     }
 }
