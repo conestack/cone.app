@@ -15,6 +15,11 @@ jobs:
 
     - run: npm install -g @mermaid-js/mermaid-cli
 
+    - name: Corepack
+      run: |
+        npm install --global corepack@latest
+        corepack enable
+
     - name: Install Project
       run: make install
 

@@ -19,11 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Corepack
-        run: |
-          npm install --global corepack@latest
-          corepack enable
-
       - uses: pnpm/action-setup@v4
         with:
           version: ''
