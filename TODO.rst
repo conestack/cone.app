@@ -1,6 +1,8 @@
 TODO
 ====
 
+- Upgrade pyramid to 2.0 for python 3.12 and higher. This is necessary because pyramid 1.9.4
+  depends on the imp module, which has been removed since python 3.12.
 - Main menu display children.
 - Custom root node in example.
 - Referencebrowser widget.
