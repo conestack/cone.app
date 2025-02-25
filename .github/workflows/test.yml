@@ -29,8 +29,8 @@ jobs:
           corepack enable
           make nodejs
 
-      - name: Install importlib-imp (imp backport)
-        run: pip install importlib-imp
+      # - name: Install importlib-imp (imp backport)
+      #   run: pip install importlib-imp
 
       - name: Install Project
         run: pnpm install
