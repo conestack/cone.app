@@ -17,18 +17,20 @@ jobs:
         # - "3.13"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Check Python Version
+        run: python --version
 
       - name: Corepack
         run: |
           npm install --global corepack@latest
           corepack enable
-      # - uses: pnpm/action-setup@v4
-      #   with:
-      #     version: ''
-
-      # - name: Install importlib-imp (imp backport)
-      #   run: pip install importlib-imp
 
       - name: Install Project
         run: pnpm install
