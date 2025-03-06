@@ -134,11 +134,12 @@ var cone = (function (exports, $, ts) {
             }
         }
         constructor() {
-            this.bind();
+            ColorMode.bind();
             ColorMode.set_theme(ColorMode.preferred_theme);
         }
-        bind() {
-            ColorMode.watch(this.callback);
+        static bind() {
+            this.boundCallback = this.callback.bind(this);
+            this.watch(this.boundCallback);
         }
         static callback() {
             const stored_theme = this.stored_theme;
@@ -146,9 +147,11 @@ var cone = (function (exports, $, ts) {
                 ColorMode.set_theme(ColorMode.preferred_theme);
             }
         }
-        static destroy() {
-            this.media_query.removeEventListener('change', this.callback);
-            document.documentElement.removeAttribute('data-bs-theme');
+        static unbind() {
+            if (this.boundCallback) {
+                this.media_query.removeEventListener('change', this.boundCallback);
+                document.documentElement.removeAttribute('data-bs-theme');
+            }
         }
     }
     class ColorToggler extends ts.ChangeListener {
@@ -161,10 +164,9 @@ var cone = (function (exports, $, ts) {
         }
         constructor(elem) {
             super({ elem: elem });
+            this.update = this.update.bind(this);
             this.update();
-            ColorMode.watch(() => {
-                this.update();
-            });
+            ColorMode.watch(this.update());
         }
         update() {
             const preferred_theme = ColorMode.preferred_theme;
@@ -660,9 +662,6 @@ var cone = (function (exports, $, ts) {
             }
             global_events.trigger('on_main_area_mode', this);
         }
-        destroy() {
-            $(window).off('resize', this.set_mode);
-        }
     }
     class LayoutAware extends ts.Events {
         constructor(elem) {
@@ -1045,7 +1044,7 @@ var cone = (function (exports, $, ts) {
             new Sidebar(elem);
         }
         constructor(elem) {
-            super();
+            super(elem);
             this.elem = elem;
             elem.css('width', this.sidebar_width + 'px');
             this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
@@ -1065,6 +1064,7 @@ var cone = (function (exports, $, ts) {
             this.responsive_toggle = this.responsive_toggle.bind(this);
             this.responsive_toggle();
             $('html, body').css('overscroll-behavior', 'auto');
+            ts.ajax.attach(this, elem);
         }
         get sidebar_width() {
             return localStorage.getItem('cone-app-sidebar-width') || 300;

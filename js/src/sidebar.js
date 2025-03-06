@@ -26,7 +26,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      * @param {Element} elem
      */
     constructor(elem) {
-        super();
+        super(elem);
         this.elem = elem;
         elem.css('width', this.sidebar_width + 'px');
 
@@ -53,6 +53,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
 
         // Enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
+
+        ts.ajax.attach(this, elem);
     }
 
     /**

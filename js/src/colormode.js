@@ -65,17 +65,21 @@ export class ColorMode {
      * Initializes the ColorMode instance and sets the preferred theme.
      */
     constructor() {
-        this.bind();
+        ColorMode.bind();
         ColorMode.set_theme(ColorMode.preferred_theme);
     }
 
     /**
      * Binds the change event listener to update the theme.
      */
-    bind() {
-        ColorMode.watch(this.callback);
+    static bind() {
+        this.boundCallback = this.callback.bind(this);
+        this.watch(this.boundCallback);
     }
 
+    /**
+     * Static callback function to handle the color scheme change.
+     */
     static callback() {
         const stored_theme = this.stored_theme;
         if (stored_theme !== 'light' && stored_theme !== 'dark') {
@@ -83,11 +87,17 @@ export class ColorMode {
         }
     }
 
-    static destroy() {
-        this.media_query.removeEventListener('change', this.callback);
-        document.documentElement.removeAttribute('data-bs-theme');
+    /**
+     * Static method to remove the event listener and clean up.
+     */
+    static unbind() {
+        if (this.boundCallback) {
+            this.media_query.removeEventListener('change', this.boundCallback);
+            document.documentElement.removeAttribute('data-bs-theme');
+        }
     }
 }
+
 
 /**
  * Class to toggle the color theme based on user input (visible as a Switch).
@@ -111,10 +121,9 @@ export class ColorToggler extends ts.ChangeListener {
      */
     constructor(elem) {
         super({ elem: elem });
+        this.update = this.update.bind(this);
         this.update();
-        ColorMode.watch(() => {
-            this.update();
-        });
+        ColorMode.watch(this.update());
     }
 
     /**
