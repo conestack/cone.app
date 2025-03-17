@@ -412,7 +412,9 @@ def reference_edit_renderer(widget, data):
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     trigger = reference_trigger_renderer(widget, data)
-    return wrap_ajax_target(rendered + trigger, widget, data, 'input-group')
+    cssclass = cssclasses(widget, data, classattr=None, additional=['input-group'],
+                          ignores=['required_class', 'class_add'])
+    return wrap_ajax_target(rendered + trigger, widget, data, cssclass)
 
 
 def reference_display_renderer(widget, data):
