@@ -1126,6 +1126,8 @@ var cone = (function (exports, $, ts) {
             global_events.trigger('on_sidebar_resize', this);
         }
         destroy() {
+            this.reset_state();
+            $(window).off('resize', this.on_window_resize);
             this.collapse_elem.off();
             this.scrollbar = null;
             this.elem.off();
