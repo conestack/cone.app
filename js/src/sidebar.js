@@ -168,6 +168,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
 
     /* Destroy the sidebar and remove event listeners. */
     destroy() {
+        this.reset_state();
+        $(window).off('resize', this.on_window_resize);
         this.collapse_elem.off();
         this.scrollbar = null;
         this.elem.off();
