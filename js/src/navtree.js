@@ -57,4 +57,9 @@ export class NavTree {
     set_menu_closed(e) {
         localStorage.removeItem('cone.app.navtree.open');
     }
+
+    destroy() {
+        this.dropdown_elem.off();
+        this.elem.off();
+    }
 }

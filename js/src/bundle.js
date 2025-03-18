@@ -29,8 +29,13 @@ export * from './batcheditems.js';
 export * from './colormode.js';
 export * from './copysupport.js';
 export * from './globals.js';
+export * from './header.js';
 export * from './keybinder.js';
+export * from './layout.js';
 export * from './livesearch.js';
+export * from './logo.js';
+export * from './mainmenu.js';
+export * from './navtree.js';
 export * from './referencebrowser.js';
 export * from './scrollbar.js';
 export * from './selectable.js';
@@ -39,11 +44,6 @@ export * from './sidebar.js';
 export * from './tabletoolbar.js';
 export * from './translation.js';
 export * from './utils.js';
-export * from './mainmenu.js';
-export * from './header.js';
-export * from './layout.js';
-export * from './logo.js';
-export * from './navtree.js';
 
 $(function() {
     new KeyBinder();

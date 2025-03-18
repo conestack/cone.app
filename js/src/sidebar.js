@@ -26,7 +26,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      * @param {Element} elem
      */
     constructor(elem) {
-        super();
+        super(elem);
         this.elem = elem;
         elem.css('width', this.sidebar_width + 'px');
 
@@ -42,8 +42,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         );
 
         this.on_click = this.on_click.bind(this);
-        const collapse_elem = ts.query_elem('#sidebar_collapse', elem);
-        collapse_elem.on('click', this.on_click);
+        this.collapse_elem = ts.query_elem('#sidebar_collapse', elem);
+        this.collapse_elem.on('click', this.on_click);
 
         const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
         this.set_scope(resizer_elem, $(document));
@@ -53,6 +53,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
 
         // Enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
+
+        ts.ajax.attach(this, elem);
     }
 
     /**
@@ -162,5 +164,14 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     up() {
         this.scrollbar.pointer_events = true;
         global_events.trigger('on_sidebar_resize', this);
+    }
+
+    /* Destroy the sidebar and remove event listeners. */
+    destroy() {
+        this.reset_state();
+        $(window).off('resize', this.on_window_resize);
+        this.collapse_elem.off();
+        this.scrollbar = null;
+        this.elem.off();
     }
 }
