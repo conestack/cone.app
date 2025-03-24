@@ -321,7 +321,7 @@ class TestBrowserTranslation(NodeTestCase):
                 'de': u'Value DE'
             },
             props={
-                'label': 'Field'
+                'label': 'Field',
             },
             mode='display')
 
@@ -337,10 +337,10 @@ class TestBrowserTranslation(NodeTestCase):
           </ul>
           <div class="translation-fields">
             <div id="translation-field-en">
-              <div class="display-form-control" id="display-field-en">Value EN</div>
+              <div class="form-control disabled text-muted display-form-control" id="display-field-en">Value EN</div>
             </div>
             <div id="translation-field-de">
-              <div class="display-form-control" id="display-field-de">Value DE</div>
+              <div class="form-control disabled text-muted display-form-control" id="display-field-de">Value DE</div>
             </div>
           </div>
         </div>

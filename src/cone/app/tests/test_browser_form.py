@@ -412,7 +412,7 @@ class TestBrowserForm(TileTestCase):
             rendered = render_tile(model, request, 'protectedattributesform')
 
         self.checkOutput("""
-        <form ...<div class="display-form-control"
+        <form ...<div class="form-control disabled text-muted display-form-control"
         id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>
         """, rendered)
 
@@ -441,7 +441,7 @@ class TestBrowserForm(TileTestCase):
             rendered = render_tile(model, request, 'protectedattributesform')
 
         self.checkOutput("""
-        <form ...<div class="display-form-control"
+        <form ...<div class="form-control disabled text-muted display-form-control"
         id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>
         """, rendered)
 
