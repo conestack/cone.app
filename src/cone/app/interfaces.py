@@ -206,3 +206,7 @@ class IAuthenticator(Interface):
 
         Return principal id if authentication is successful, else None.
         """
+
+class ICategories(Interface):
+    """List of translation strings"""
+    categories = Attribute(u'Categories as (translation) string.')

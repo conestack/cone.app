@@ -5,6 +5,7 @@ from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationEnvironment
 from cone.app.interfaces import IApplicationNode
+from cone.app.interfaces import ICategories
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
 from cone.app.interfaces import ILayoutConfig
@@ -335,6 +336,11 @@ class NamespaceUUID(Behavior):
     def uuid(self, uuid):
         msg = 'Ignore attempt to set {}.uuid'.format(self.__class__.__name__)
         raise NotImplementedError(msg)
+
+
+@implementer(ICategories)
+class Categories(Behavior):
+    categories = default([])
 
 
 class UUIDAttributeAware(UUIDAware):
