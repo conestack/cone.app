@@ -14,7 +14,9 @@
       <span class="caret"></span>
     </a>
 
-    <ul class="dropdown-menu rounded-0 rounded-bottom mt-0 p-0" role="addmenu">
+    <ul tal:define="padding ' p-0' if context.has_categories else nothing"
+      class="dropdown-menu rounded-0 rounded-bottom mt-0${padding}"
+      role="addmenu">
       <tal:categories condition="context.has_categories">
         <tal:category repeat="category context.categories">
           <li tal:define="is_last repeat.category.end;

@@ -569,7 +569,7 @@ class TestBrowserActions(TileTestCase):
             <span>Add</span>
             <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu rounded-0 rounded-bottom mt-0 p-0" role="addmenu">
+            <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
             <li>
             <a href="http://example.com/add?factory=addable"
             class="dropdown-item"
