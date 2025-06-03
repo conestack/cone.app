@@ -97,6 +97,9 @@ body {
   left: calc(-1 * var(--bs-modal-padding));
   width: calc(100% + var(--bs-modal-padding) * 2);
 }
+#referencebrowser td.title {
+  width: 100%;
+}
 
 /* content */
 #content {

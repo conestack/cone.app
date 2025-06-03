@@ -27,6 +27,10 @@ body {
     border-radius: 0;
     left: calc(-1 * var(--bs-modal-padding));
     width: calc(100% + var(--bs-modal-padding) * 2);
+
+    td.title {
+        width: 100%;
+    }
 }
 
 @import 'content.scss';
