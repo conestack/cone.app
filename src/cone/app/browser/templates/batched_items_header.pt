@@ -64,10 +64,11 @@
             tal:attributes="value context.filter_term">
     </div>
 
-    <tal:additional define="additional context.head_additional"
+    <tal:additional define="additional context/head_additional | nothing"
                     condition="additional"
                     replace="structure additional">
       Additional Header Markup.
     </tal:additional>
+
   </div>
 </tal:block>
