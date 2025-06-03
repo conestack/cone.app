@@ -13,3 +13,13 @@ tr.selectable td {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+/* batched items */
+#main-area.full {
+    .batched_items_slice_size {
+        max-width: max-content;
+    }
+    .batched_items_filter {
+        max-width: 300px;
+    }
+}

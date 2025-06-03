@@ -275,7 +275,7 @@ class BatchedItems(Tile):
     """CSS ID of the batched items container DOM element.
     """
 
-    items_css = 'batched_items panel panel-default'
+    items_css = 'batched_items list-group-item'
     """CSS classes of the batched items container DOM element.
     """
 

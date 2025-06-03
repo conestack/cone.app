@@ -118,6 +118,14 @@ tr.selectable td {
   -ms-user-select: none;
 }
 
+/* batched items */
+#main-area.full .batched_items_slice_size {
+  max-width: max-content;
+}
+#main-area.full .batched_items_filter {
+  max-width: 300px;
+}
+
 #input-contentform-save {
   margin-right: 1rem;
 }

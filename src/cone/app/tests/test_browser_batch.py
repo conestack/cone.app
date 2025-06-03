@@ -595,7 +595,7 @@ class TestBrowserBatch(TileTestCase):
 
         # Rendered header
         self.checkOutput("""
-        ...<div class="panel-heading batched_items_header">...
+        ...<div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">...
         """, batched_items.rendered_header)
 
         # Header title. Taken from ``model.metadata`` by default
@@ -737,7 +737,7 @@ class TestBrowserBatch(TileTestCase):
             'cone.app.browser:templates/batched_items_footer.pt'
         )
         self.checkOutput("""
-        ...<div class="panel-footer batched_items_footer">...
+        ...<div class="batched_items_footer">...
         """, batched_items.rendered_footer)
 
         # Slice ID
@@ -854,7 +854,7 @@ class TestBrowserBatch(TileTestCase):
         # Test ``items_css``
         self.assertEqual(
             batched_items.items_css,
-            'batched_items panel panel-default'
+            'batched_items list-group-item'
         )
 
         self.checkOutput("""
@@ -862,14 +862,14 @@ class TestBrowserBatch(TileTestCase):
         """, batched_items(model=model, request=self.layer.new_request()))
 
         batched_items.items_css = (
-            'my_batched_items batched_items panel panel-default'
+            'my_batched_items batched_items'
         )
 
         self.checkOutput("""
-        ...class="...my_batched_items batched_items ...
+        ...class="...my_batched_items batched_items...
         """, batched_items(model=model, request=self.layer.new_request()))
 
-        batched_items.items_css = 'batched_items panel panel-default'
+        batched_items.items_css = 'batched_items'
 
         # Test ``bind_events``
         self.assertEqual(batched_items.bind_events, 'batchclicked')
@@ -891,7 +891,7 @@ class TestBrowserBatch(TileTestCase):
         # Test ``display_header``
         self.assertTrue(batched_items.display_header)
 
-        expected = '<div class="panel-heading batched_items_header">'
+        expected = '<div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">'
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertTrue(rendered.find(expected) > -1)
 
@@ -904,7 +904,7 @@ class TestBrowserBatch(TileTestCase):
         # Test ``display_footer``
         self.assertTrue(batched_items.display_header)
 
-        expected = '<div class="panel-footer batched_items_footer">'
+        expected = '<div class="batched_items_footer">'
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertTrue(rendered.find(expected) > -1)
 

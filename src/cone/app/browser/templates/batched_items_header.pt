@@ -4,8 +4,7 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <div class="panel-heading batched_items_header">
-
+  <div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">
     <h4 class="${context.title_css} pull-left"
         tal:condition="context.show_title">
       <span class="label label-primary"
@@ -17,10 +16,10 @@
                 input-group
                 input-group-sm
                 ${context.slice_size_css}"
-         tal:condition="context.show_slice_size">
+        tal:condition="context.show_slice_size">
 
       <span i18n:translate="show"
-            class="input-group-addon">Show</span>
+            class="input-group-text">Show</span>
 
       <select name="size"
               size="1"
@@ -41,8 +40,7 @@
       </select>
 
       <span i18n:translate="entries"
-            class="input-group-addon">entries</span>
-
+            class="input-group-text">entries</span>
     </div>
 
     <div class="batched_items_filter
@@ -50,21 +48,20 @@
                 input-group
                 input-group-sm
                 ${context.filter_css}"
-         tal:condition="context.show_filter">
+        tal:condition="context.show_filter">
 
       <span i18n:translate="search"
-            class="input-group-addon">Search</span>
+            class="input-group-text">Search</span>
 
       <input name="term"
-             type="text"
-             class="form-control"
-             ajax:target="${context.filter_target}"
-             ajax:event="${context.ajax_event}"
-             ajax:path="${context.ajax_path|nothing}"
-             ajax:path-event="${context.ajax_path_event|nothing}"
-             aria-controls="${context.slice_id}"
-             tal:attributes="value context.filter_term">
-
+            type="text"
+            class="form-control"
+            ajax:target="${context.filter_target}"
+            ajax:event="${context.ajax_event}"
+            ajax:path="${context.ajax_path|nothing}"
+            ajax:path-event="${context.ajax_path_event|nothing}"
+            aria-controls="${context.slice_id}"
+            tal:attributes="value context.filter_term">
     </div>
 
     <tal:additional define="additional context.head_additional"
@@ -72,7 +69,5 @@
                     replace="structure additional">
       Additional Header Markup.
     </tal:additional>
-
   </div>
-
 </tal:block>
