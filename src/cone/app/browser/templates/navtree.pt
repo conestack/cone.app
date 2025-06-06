@@ -18,8 +18,6 @@
          data-bs-target="#navigation-collapse"></i>
     </div>
 
-    <div tal:content="show_navroot"></div>
-
     <div tal:define="css 'collapse' if show_navroot else 'no-collapse';
                      id 'navigation-collapse'"
          tal:attributes="class css"
