@@ -1381,6 +1381,9 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             this.elem = elem;
             this.dropdown_elem = $('#navigation-collapse', elem);
+            if (this.dropdown_elem.hasClass('no-collapse')) {
+                return;
+            }
             if (localStorage.getItem('cone.app.navtree.open')) {
                 this.dropdown_elem.addClass('show');
             }

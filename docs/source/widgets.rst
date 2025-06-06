@@ -422,7 +422,7 @@ Furthermore it's possible to register a view action for the contextmenu's
         interface=ExamplePlugin,
         permission='view',
         text='Details',
-        icon='glyphicons glyphicons-magic')
+        icon='bi bi-magic')
     class DetailsContentTile(Tile):
         """For this class a pyramid view is registered which is reachable
         under 'http://domain.com/path/to/node/details'. This view renders

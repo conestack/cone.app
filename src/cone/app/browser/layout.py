@@ -320,9 +320,13 @@ class PathBar(Tile):
       path='templates/navtree.pt',
       permission='view',
       strict=False)
-class NavTree(Tile):
+class NavTree(LayoutConfigTile):
     """Navigation tree tile.
     """
+
+    @property
+    def show_navroot(self):
+        return self.config.show_navroot
 
     @property
     def title(self):

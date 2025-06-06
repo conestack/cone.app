@@ -431,6 +431,9 @@ tr.selectable td {
   overflow-x: hidden;
   vertical-align: text-bottom;
 }
+#sidebar_left #navtree #navigation-collapse.no-collapse > ul > li {
+  padding-left: 0 !important;
+}
 #sidebar_left #sidebar_resize {
   position: relative;
   left: 100%;

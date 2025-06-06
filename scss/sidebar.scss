@@ -39,6 +39,13 @@
                 vertical-align: text-bottom;
             }
         }
+
+        #navigation-collapse.no-collapse {
+            // remove first level item padding if hiding the navroot.
+            > ul > li {
+                padding-left: 0!important;
+            }
+        }
     }
 
     #sidebar_resize {
