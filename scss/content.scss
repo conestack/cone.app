@@ -1,6 +1,7 @@
 /* content */
 #content {
     height: calc(100% - 40px);
+    position: relative;
 
     &.has-editor {
         position: relative;

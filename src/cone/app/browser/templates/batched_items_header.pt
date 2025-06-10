@@ -64,7 +64,7 @@
             tal:attributes="value context.filter_term">
     </div>
 
-    <tal:additional define="additional context/head_additional | nothing"
+    <tal:additional define="additional context.head_additional | nothing"
                     condition="additional"
                     replace="structure additional">
       Additional Header Markup.
