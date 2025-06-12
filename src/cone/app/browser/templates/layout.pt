@@ -54,7 +54,7 @@
           <!-- header -->
           <nav id="header-main"
                tal:condition="request.has_permission('view', model)"
-               class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm">
+               class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm border-bottom">
 
             <div id="header-content"
                  tal:define="css config.mainmenu_fluid
