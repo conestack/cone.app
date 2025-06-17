@@ -22,7 +22,6 @@ import {Translation} from './translation.js';
 import {MainMenu} from './mainmenu.js';
 import {Header} from './header.js';
 import {MainArea} from './layout.js';
-import {Logo} from './logo.js';
 import {NavTree} from './navtree.js';
 
 export * from './batcheditems.js';
@@ -33,7 +32,6 @@ export * from './header.js';
 export * from './keybinder.js';
 export * from './layout.js';
 export * from './livesearch.js';
-export * from './logo.js';
 export * from './mainmenu.js';
 export * from './navtree.js';
 export * from './referencebrowser.js';
@@ -61,7 +59,6 @@ $(function() {
     ts.ajax.register(Scrollbar.initialize, true);
     ts.ajax.register(LiveSearch.initialize, true);
     ts.ajax.register(MainMenu.initialize, true);
-    ts.ajax.register(Logo.initialize, true);
     ts.ajax.register(Header.initialize, true);
     ts.ajax.register(MainArea.initialize, true);
     ts.ajax.register(Sidebar.initialize, true);

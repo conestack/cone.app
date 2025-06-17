@@ -104,6 +104,7 @@ body {
 /* content */
 #content {
   height: calc(100% - 40px);
+  width: 100%;
   position: relative;
 }
 #content.has-editor {
@@ -143,12 +144,18 @@ tr.selectable td {
   font-size: 1.5rem !important;
 }
 
-#header-logo-placeholder {
-  visibility: hidden;
+#main-area.compact:not(.super-compact) #header-logo {
+  order: 0;
 }
-
-#main-area.compact #header-main.mobile-menu-open #header-logo-placeholder {
-  display: none;
+#main-area.compact:not(.super-compact) #personaltools {
+  order: 1;
+  margin-left: auto;
+}
+#main-area.compact:not(.super-compact) .navbar-toggler {
+  order: 2;
+}
+#main-area.compact:not(.super-compact) #navbar-content-wrapper {
+  order: 3;
 }
 #main-area.compact #header-main.mobile-menu-open #navbar-content-wrapper {
   max-height: calc(100vh - 50px);
@@ -161,12 +168,6 @@ tr.selectable td {
   #main-area.compact #header-main.mobile-menu-open #navbar-content-wrapper {
     z-index: 1200;
   }
-}
-#main-area.compact #header-main.mobile-menu-open #header-content {
-  align-items: flex-start;
-}
-#main-area.compact #header-main.mobile-menu-open .navbar-toggler {
-  height: 50px !important;
 }
 #main-area.compact #header-main.mobile-menu-open #mainmenu {
   align-items: baseline;
@@ -193,6 +194,9 @@ tr.selectable td {
 }
 #main-area.super-compact #personaltools #colortoggler {
   padding-left: 0;
+}
+#main-area.full #header-logo {
+  order: 1;
 }
 #main-area.full #mainmenu {
   height: var(--navbar-height);
@@ -293,10 +297,12 @@ tr.selectable td {
   width: 200px;
 }
 
-/* responsive changes */
-#layout:has(#sidebar_left.expanded) #header-logo,
-#layout:has(#sidebar_left.responsive-expanded:not(.collapsed)) #header-logo {
-  color: #fff;
+[data-bs-theme=light] #header-logo #header-logo-light {
+  display: none;
+}
+
+[data-bs-theme=dark] #header-logo #header-logo-dark {
+  display: none;
 }
 
 /* scrollbar */
@@ -411,9 +417,6 @@ tr.selectable td {
   height: 100%;
   max-height: 100%;
   user-select: none;
-}
-#sidebar_left > .scrollable-y {
-  margin-top: 34px;
 }
 #sidebar_left ul.list-group, #sidebar_left ul.list-group li {
   background-color: inherit;

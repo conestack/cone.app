@@ -1257,7 +1257,6 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             super(elem);
             this.elem = elem;
-            this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
             this.header_content = ts.query_elem('#header-content', elem);
             this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
             this.navbar_content = ts.query_elem('#navbar-content', elem);
@@ -1342,30 +1341,6 @@ var cone = (function (exports, $, ts) {
                     this.personal_tools.detach().prependTo(this.header_content);
                 }
                 $(".dropdown-menu.show").removeClass('show');
-            }
-        }
-        on_is_sidebar_collapsed(val) {
-            if (val) {
-                this.logo_placeholder.show();
-            } else {
-                this.logo_placeholder.hide();
-            }
-        }
-    }
-
-    class Logo extends LayoutAware {
-        static initialize(context) {
-            const elem = ts.query_elem('#header-logo', context);
-            if (!elem) {
-                return;
-            }
-            new Logo(elem);
-        }
-        on_sidebar_resize(inst, sidebar) {
-            if (sidebar.collapsed) {
-                this.elem.removeClass('text-white');
-            } else {
-                this.elem.addClass('text-white');
             }
         }
     }
@@ -1551,7 +1526,6 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(Scrollbar.initialize, true);
         ts.ajax.register(LiveSearch.initialize, true);
         ts.ajax.register(MainMenu.initialize, true);
-        ts.ajax.register(Logo.initialize, true);
         ts.ajax.register(Header.initialize, true);
         ts.ajax.register(MainArea.initialize, true);
         ts.ajax.register(Sidebar.initialize, true);
@@ -1570,7 +1544,6 @@ var cone = (function (exports, $, ts) {
     exports.KeyBinder = KeyBinder;
     exports.LayoutAware = LayoutAware;
     exports.LiveSearch = LiveSearch;
-    exports.Logo = Logo;
     exports.MainArea = MainArea;
     exports.MainMenu = MainMenu;
     exports.NavTree = NavTree;
