@@ -1083,8 +1083,8 @@ More customization options on ``BatchedItems`` class:
 - **show_title**: Flag whether to show title in the listing header. Defaults
   to ``True``.
 
-- **title_css**: CSS classes to set on title container DOM element. Defaults
-  to ``col-xs-4``. Can be used to change the size of the title area.
+- **title_css**: CSS classes to set on title container DOM element.
+Can be used to change the size of the title area.
 
 - **default_slice_size**: Default number of items displayed in slice. Defaults
   to ``15``.
@@ -1095,14 +1095,14 @@ More customization options on ``BatchedItems`` class:
   listing header. Defaults to ``True``.
 
 - **slice_size_css**: CSS classes to set on slice size selection container DOM
-  element. Defaults to ``col-xs-4 col-sm3``. Can be used to change the size
+  element. Can be used to change the size
   of the slice size selection.
 
 - **show_filter**: Flag whether to display the search filter input in listing
   header. Defaults to ``True``.
 
 - **filter_css**: CSS classes to set on search filter input container DOM
-  element. Defaults to ``col-xs-3``. Can be used to change the size
+  Can be used to change the size
   of the search filter input.
 
 - **head_additional**: Additional arbitrary markup rendered in listing header.

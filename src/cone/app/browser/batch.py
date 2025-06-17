@@ -296,9 +296,9 @@ class BatchedItems(Tile):
     """Flag whether to show title in the listing header. Defaults to ``True``.
     """
 
-    title_css = 'col-xs-4'
+    title_css = None
     """CSS classes to set on title container DOM element.
-    Defaults to ``col-xs-4``. Can be used to change the size of the title area.
+    Can be used to change the size of the title area.
     """
 
     default_slice_size = 15
@@ -314,9 +314,9 @@ class BatchedItems(Tile):
      Defaults to ``True``.
     """
 
-    slice_size_css = 'col-xs-4 col-sm3'
+    slice_size_css = None
     """CSS classes to set on slice size selection container DOM element.
-    Defaults to ``col-xs-4 col-sm3``. Can be used to change the size of the
+    Can be used to change the size of the
     slice size selection.
     """
 
@@ -324,9 +324,9 @@ class BatchedItems(Tile):
     """Flag whether to display the search filter input in listing header.
     """
 
-    filter_css = 'col-xs-3'
+    filter_css = None
     """CSS classes to set on search filter input container DOM element.
-    Defaults to ``col-xs-3``. Can be used to change the size of the search
+    Can be used to change the size of the search
     filter input.
     """
 
