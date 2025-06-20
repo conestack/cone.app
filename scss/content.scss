@@ -3,11 +3,8 @@
     height: calc(100% - 40px);
     width: 100%;
     position: relative;
-
-    &.has-editor {
-        position: relative;
-    }
 }
+
 #main-area {
     width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
 }
