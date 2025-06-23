@@ -326,7 +326,7 @@ class NavTree(LayoutConfigTile):
 
     @property
     def show_navroot(self):
-        return self.config.show_navroot
+        return self.model.properties.show_navroot
 
     @property
     def title(self):
