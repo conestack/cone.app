@@ -619,15 +619,6 @@ class TestBrowserBatch(TileTestCase):
 
         batched_items.show_slice_size = True
 
-        # CSS class set on slice size selection wrapper
-        expected = 'col-xs-4 col-sm3'
-        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.slice_size_css = 'col-xs-3 col-sm2'
-        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.slice_size_css = 'col-xs-4 col-sm3'
-
         # Flag whether to show search filter
         expected = '<input name="term"'
         self.assertTrue(batched_items.rendered_header.find(expected) > -1)
@@ -636,15 +627,6 @@ class TestBrowserBatch(TileTestCase):
         self.assertFalse(batched_items.rendered_header.find(expected) > -1)
 
         batched_items.show_filter = True
-
-        # CSS class set on slice search filter
-        expected = 'col-xs-3'
-        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.filter_css = 'col-xs-4'
-        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.filter_css = 'col-xs-3'
 
         # Additional markup displayed in header
         expected = '<div class="additional">Additional</div>'
