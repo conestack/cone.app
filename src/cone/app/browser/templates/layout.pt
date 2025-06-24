@@ -24,9 +24,7 @@
                class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm border-bottom">
 
             <div id="header-content"
-                 tal:define="css config.mainmenu_fluid
-                             and 'h-100 px-0 container-fluid'"
-                 tal:attributes="class css">
+                 class="h-100 px-0 container-fluid">
 
               <!-- logo -->
               <tal:logo replace="structure tile('logo')" />
