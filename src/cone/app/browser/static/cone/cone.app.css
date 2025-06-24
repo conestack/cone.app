@@ -410,45 +410,44 @@ tr.selectable td {
 
 /* import everything where we need changed bootstrap variables for here */
 /* sidebar */
-#sidebar_left {
+#sidebar_left, #sidebar_right {
   height: 100%;
   max-height: 100%;
   user-select: none;
 }
-#sidebar_left ul.list-group, #sidebar_left ul.list-group li {
+#sidebar_left ul.list-group, #sidebar_left ul.list-group li, #sidebar_right ul.list-group, #sidebar_right ul.list-group li {
   background-color: inherit;
 }
-#sidebar_left #navtree {
+#sidebar_left #navtree, #sidebar_right #navtree {
   max-width: 100%;
 }
-#sidebar_left #navtree .nav-link {
+#sidebar_left #navtree .nav-link, #sidebar_right #navtree .nav-link {
   z-index: 1000;
   white-space: nowrap;
 }
-#sidebar_left #navtree .nav-link.active {
+#sidebar_left #navtree .nav-link.active, #sidebar_right #navtree .nav-link.active {
   background-color: transparent;
   font-weight: bold;
 }
-#sidebar_left #navtree .nav-link i.bi-chevron-right {
+#sidebar_left #navtree .nav-link i.btn-closed, #sidebar_right #navtree .nav-link i.btn-closed {
   vertical-align: text-bottom;
 }
-#sidebar_left #navtree .nav-link span {
+#sidebar_left #navtree .nav-link span, #sidebar_right #navtree .nav-link span {
   display: inline-block;
   width: calc(100% - 40px);
   text-overflow: ellipsis;
   overflow-x: hidden;
   vertical-align: text-bottom;
 }
-#sidebar_left #navtree #navigation-collapse.no-collapse > ul > li {
+#sidebar_left #navtree #navigation-collapse.no-collapse > ul > li, #sidebar_right #navtree #navigation-collapse.no-collapse > ul > li {
   padding-left: 0 !important;
 }
-#sidebar_left #sidebar_resize {
+#sidebar_left #sidebar_resize, #sidebar_right #sidebar_resize {
   position: relative;
-  left: 100%;
   width: 0;
   height: 0;
 }
-#sidebar_left #sidebar_resize #sidebar_resizer {
+#sidebar_left #sidebar_resize #sidebar_resizer, #sidebar_right #sidebar_resize #sidebar_resizer {
   position: absolute;
   z-index: 3;
   height: 100vh;
@@ -456,67 +455,100 @@ tr.selectable td {
   transform: translateX(-50%);
   cursor: col-resize;
 }
-#sidebar_left #sidebar_collapse {
+#sidebar_left #sidebar_collapse, #sidebar_right #sidebar_collapse {
   position: relative;
-  left: 100%;
   top: 100%;
   width: 0;
   height: 0;
 }
-#sidebar_left #sidebar_collapse .collapse_btn {
+#sidebar_left #sidebar_collapse .collapse_btn, #sidebar_right #sidebar_collapse .collapse_btn {
   position: absolute;
   bottom: 0px;
   border-radius: 100%;
   z-index: 1000;
 }
-#sidebar_left.collapsed {
+#sidebar_left.collapsed, #sidebar_right.collapsed {
   width: 0px !important;
   min-width: 0 !important;
 }
-#sidebar_left.collapsed #sidebar_resize {
+#sidebar_left.collapsed #sidebar_resize, #sidebar_right.collapsed #sidebar_resize {
   display: none;
 }
-#sidebar_left.collapsed #sidebar_collapse .collapse_btn .bi-chevron-left {
+#sidebar_left.collapsed #sidebar_collapse .collapse_btn .btn-open, #sidebar_right.collapsed #sidebar_collapse .collapse_btn .btn-open {
   display: none;
 }
-#sidebar_left.expanded #sidebar_collapse .collapse_btn .bi-chevron-right {
+#sidebar_left.expanded #sidebar_collapse .collapse_btn .btn-closed, #sidebar_right.expanded #sidebar_collapse .collapse_btn .btn-closed {
   display: none;
 }
 @media (min-width: 1400px) {
-  #sidebar_left:not(.collapsed) #sidebar_collapse .collapse_btn {
+  #sidebar_left:not(.collapsed) #sidebar_collapse .collapse_btn, #sidebar_right:not(.collapsed) #sidebar_collapse .collapse_btn {
     transform: translateX(-20px);
   }
-  #sidebar_left:not(.collapsed) #sidebar_collapse .collapse_btn .bi-chevron-right {
+  #sidebar_left:not(.collapsed) #sidebar_collapse .collapse_btn .btn-closed, #sidebar_right:not(.collapsed) #sidebar_collapse .collapse_btn .btn-closed {
     display: none;
   }
 }
 @media (max-width: 1399.98px) {
-  #sidebar_left:not(.expanded) {
+  #sidebar_left:not(.expanded), #sidebar_right:not(.expanded) {
     width: 0 !important;
     min-width: 0 !important;
+    border: none !important;
   }
-  #sidebar_left:not(.expanded) #sidebar_resize {
+  #sidebar_left:not(.expanded) #sidebar_resize, #sidebar_right:not(.expanded) #sidebar_resize {
     display: none;
   }
-  #sidebar_left:not(.expanded) #sidebar_collapse .collapse_btn .bi-chevron-left {
+  #sidebar_left:not(.expanded) #sidebar_collapse .collapse_btn .btn-open, #sidebar_right:not(.expanded) #sidebar_collapse .collapse_btn .btn-open {
     display: none;
   }
 }
 @media (min-width: 768px) and (max-width: 1399.98px) {
-  #sidebar_left.expanded #sidebar_collapse .collapse_btn {
+  #sidebar_left.expanded #sidebar_collapse .collapse_btn, #sidebar_right.expanded #sidebar_collapse .collapse_btn {
     transform: translateX(-20px);
   }
 }
 @media (max-width: 767.98px) {
-  #sidebar_left #sidebar_resize {
+  #sidebar_left #sidebar_resize, #sidebar_right #sidebar_resize {
     display: none;
   }
-  #sidebar_left.expanded {
+  #sidebar_left.expanded, #sidebar_right.expanded {
     width: 100% !important;
     z-index: 3;
   }
+}
+
+#sidebar_left #sidebar_resize {
+  left: 100%;
+}
+#sidebar_left #sidebar_collapse {
+  left: 100%;
+}
+@media (max-width: 767.98px) {
   #sidebar_left.expanded #sidebar_collapse {
     left: calc(100% - 50px);
+  }
+}
+
+#sidebar_right {
+  background-color: var(--bs-body-bg);
+  border-left: 1px solid var(--bs-border-color);
+}
+#sidebar_right #sidebar_collapse {
+  left: 0;
+}
+#sidebar_right.collapsed {
+  border: 0;
+}
+#sidebar_right.collapsed .collapse_btn {
+  right: 0;
+}
+@media (max-width: 1399.98px) {
+  #sidebar_right:not(.expanded) #sidebar_collapse .collapse_btn {
+    right: 0;
+  }
+}
+@media (max-width: 767.98px) {
+  #sidebar_right.expanded {
+    transform: translateX(-2rem);
   }
 }
 

@@ -10,18 +10,6 @@ import { ResizeAware } from './layout.js';
 export class Sidebar extends ResizeAware(ts.Motion) {
 
     /**
-     * Initializes the Sidebar instance.
-     * @param {Element} context
-     */
-    static initialize(context) {
-        const elem = ts.query_elem('#sidebar_left', context);
-        if (!elem) {
-            return;
-        }
-        new Sidebar(elem);
-    }
-
-    /**
      * Creates an instance of the Sidebar.
      * @param {Element} elem
      */
@@ -30,17 +18,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.elem = elem;
         elem.css('width', this.sidebar_width + 'px');
 
+        this.trigger_event = this.trigger_event.bind(this);
         this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
-
-        const scrollable_content = ts.query_elem('.scrollable-content', elem);
-        const pad_left = scrollable_content.css('padding-left');
-        const pad_right = scrollable_content.css('padding-right');
-        const logo_width = $('#header-logo').outerWidth(true);
-        elem.css(
-            'min-width',
-            `calc(${logo_width}px + ${pad_left} + ${pad_right})`
-        );
-
         this.on_click = this.on_click.bind(this);
         this.collapse_elem = ts.query_elem('#sidebar_collapse', elem);
         this.collapse_elem.on('click', this.on_click);
@@ -55,22 +34,6 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         $('html, body').css('overscroll-behavior', 'auto');
 
         ts.ajax.attach(this, elem);
-    }
-
-    /**
-     * Gets the current width of the sidebar from local storage.
-     * @returns {number}
-     */
-    get sidebar_width() {
-        return localStorage.getItem('cone-app-sidebar-width') || 300;
-    }
-
-    /**
-     * Sets the width of the sidebar in local storage.
-     * @param {number} width
-     */
-    set sidebar_width(width) {
-        localStorage.setItem('cone-app-sidebar-width', width);
     }
 
     /**
@@ -104,12 +67,12 @@ export class Sidebar extends ResizeAware(ts.Motion) {
 
         if (this.collapsed !== this.responsive_collapsed) {
             this.responsive_collapsed = this.collapsed;
-            global_events.trigger('on_sidebar_resize', this);
+            this.trigger_event();
         }
     }
 
     /**
-     * Collapses the sidebar and triggers the resize event.
+     * Collapses the sidebar and.
      */
     collapse() {
         // Enable scroll to refresh page on mobile devices
@@ -117,11 +80,11 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.elem
             .removeClass('expanded')
             .addClass('collapsed');
-        global_events.trigger('on_sidebar_resize', this);
+        this.trigger_event();
     }
 
     /**
-     * Expands the sidebar and triggers the resize event.
+     * Expands the sidebar.
      */
     expand() {
         // Disable scroll to refresh page on mobile devices
@@ -129,7 +92,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.elem
             .removeClass('collapsed')
             .addClass('expanded');
-        global_events.trigger('on_sidebar_resize', this);
+        this.trigger_event();
     }
 
     /**
@@ -150,12 +113,9 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      */
     move(evt) {
         this.scrollbar.pointer_events = false;
-        if (evt.pageX <= 115) {
-            evt.pageX = 115; // Prevent sidebar from collapsing too much
-        }
-        this.sidebar_width = parseInt(evt.pageX);
+        this.sidebar_width = this.get_width_from_event(evt);
         this.elem.css('width', this.sidebar_width);
-        global_events.trigger('on_sidebar_resize', this);
+        this.trigger_event();
     }
 
     /**
@@ -163,7 +123,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      */
     up() {
         this.scrollbar.pointer_events = true;
-        global_events.trigger('on_sidebar_resize', this);
+        this.trigger_event();
     }
 
     /* Destroy the sidebar and remove event listeners. */
@@ -173,5 +133,172 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.collapse_elem.off();
         this.scrollbar = null;
         this.elem.off();
+    }
+}
+
+export class SidebarLeft extends Sidebar {
+    /**
+     * Initializes the Sidebar instance.
+     * @param {Element} context
+     */
+    static initialize(context) {
+        const elem = ts.query_elem('#sidebar_left', context);
+        if (!elem) {
+            return;
+        }
+        new SidebarLeft(elem);
+    }
+
+    constructor(elem) {
+        super(elem);
+        this.on_sidebar_right_resize = this.on_sidebar_right_resize.bind(this);
+        global_events.on('on_sidebar_right_resize', this.on_sidebar_right_resize);
+    }
+
+    /**
+     * Gets the current width of the sidebar from local storage.
+     * @returns {number}
+     */
+    get sidebar_width() {
+        return localStorage.getItem('cone-app-sidebar-left-width') || 300;
+    }
+
+    /**
+     * Sets the width of the sidebar in local storage.
+     * @param {number} width
+     */
+    set sidebar_width(width) {
+        localStorage.setItem('cone-app-sidebar-left-width', width);
+    }
+
+    /**
+     * Triggers the resize event.
+     */
+    trigger_event() {
+        global_events.trigger('on_sidebar_left_resize', this);
+    }
+
+    /**
+     * Calculate sidebar width from move Event.
+     */
+    get_width_from_event(evt) {
+        let width = evt.pageX;
+
+        // Prevent sidebar from collapsing too much and expanding too far
+        let sidebar_w = 0;
+        if ($('#sidebar_right').length > 0) {
+            sidebar_w = $('#sidebar_right').outerWidth();
+        }
+        const min_w = 115;
+        // Allow a minimal content area width of 300px.
+        const max_w = $(window).width() - sidebar_w - 300;
+        width = Math.max(min_w, Math.min(width, max_w));
+
+        return parseInt(width);
+    }
+
+    /**
+     * Handle collapsing if sidebar_right resized.
+     */
+    on_sidebar_right_resize(inst, sb) {
+        const max_w = $(window).width() - this.elem.outerWidth() - 300;
+        if (!sb.collapsed && $(window).width() < 768) {
+            // collapse sidebar if sidebar_right expanded in mobile view
+            this.collapse();
+            this.elem.addClass('d-none');
+        } else if (!sb.collapsed && sb.elem.outerWidth() >= max_w) {
+            // collapse sidebar if sidebar_right width exceeds available width
+            this.collapse();
+        } else if (sb.collapsed) {
+            this.elem.removeClass('d-none');
+        }
+    }
+
+    destroy() {
+        super.destroy();
+        global_events.off('on_sidebar_right_resize', this.on_sidebar_right_resize);
+    }
+}
+
+export class SidebarRight extends Sidebar {
+    /**
+     * Initializes the Sidebar instance.
+     * @param {Element} context
+     */
+    static initialize(context) {
+        const elem = ts.query_elem('#sidebar_right', context);
+        if (!elem) {
+            return;
+        }
+        new SidebarRight(elem);
+    }
+
+    constructor(elem) {
+        super(elem);
+        this.on_sidebar_left_resize = this.on_sidebar_left_resize.bind(this);
+        global_events.on('on_sidebar_left_resize', this.on_sidebar_left_resize);
+    }
+
+    /**
+     * Gets the current width of the sidebar from local storage.
+     * @returns {number}
+     */
+    get sidebar_width() {
+        return localStorage.getItem('cone-app-sidebar-right-width') || 300;
+    }
+
+    /**
+     * Sets the width of the sidebar in local storage.
+     * @param {number} width
+     */
+    set sidebar_width(width) {
+        localStorage.setItem('cone-app-sidebar-right-width', width);
+    }
+
+    /**
+     * Triggers the resize event.
+     */
+    trigger_event() {
+        global_events.trigger('on_sidebar_right_resize', this);
+    }
+
+    /**
+     * Calculate sidebar width from move Event.
+     */
+    get_width_from_event(evt) {
+        let width = $(window).outerWidth() - evt.pageX;
+        // Prevent sidebar from collapsing too much and expanding too far
+        let sidebar_w = 0;
+        if ($('#sidebar_left').length > 0) {
+            sidebar_w = $('#sidebar_left').outerWidth();
+        }
+        const min_w = 115;
+        // Allow a minimal content area width of 300px.
+        const max_w = $(window).width() - sidebar_w - 300;
+        width = Math.max(min_w, Math.min(width, max_w));
+
+        return parseInt(width);
+    }
+
+    /**
+     * Handle collapsing if sidebar_left resized.
+     */
+    on_sidebar_left_resize(inst, sb) {
+        const max_w = $(window).width() - this.elem.outerWidth() - 300;
+        if (!sb.collapsed && $(window).width() < 768) {
+            // collapse sidebar if sidebar_left expanded in mobile view
+            this.collapse();
+            this.elem.addClass('d-none');
+        } else if (!sb.collapsed && sb.elem.outerWidth() >= max_w) {
+            // collapse sidebar if sidebar_left width exceeds available width
+            this.collapse();
+        } else if (sb.collapsed) {
+            this.elem.removeClass('d-none');
+        }
+    }
+
+    destroy() {
+        super.destroy();
+        global_events.off('on_sidebar_left_resize', this.on_sidebar_left_resize);
     }
 }

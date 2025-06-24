@@ -12,7 +12,6 @@ from cone.example.model import Folder
 from cone.example.model import Item
 from cone.example.model import Translation
 from cone.tile import tile
-from cone.tile import tile
 from node.utils import UNSET
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory

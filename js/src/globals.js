@@ -6,11 +6,19 @@ import ts from 'treibstoff';
 export class GlobalEvents extends ts.Events {
 
     /**
-     * Gets triggered when sidebar is resized.
+     * Gets triggered when left sidebar is resized.
      *
      * @param {Sidebar} inst
      */
-    on_sidebar_resize(inst) {
+    on_sidebar_left_resize(inst) {
+    }
+
+    /**
+     * Gets triggered when right sidebar is resized.
+     *
+     * @param {Sidebar} inst
+     */
+    on_sidebar_right_resize(inst) {
     }
 
     /**

@@ -16,7 +16,8 @@ import {
 } from './referencebrowser.js';
 import {Scrollbar} from './scrollbar.js';
 import {Sharing} from './sharing.js';
-import {Sidebar} from './sidebar.js';
+import {SidebarLeft} from './sidebar.js';
+import {SidebarRight} from './sidebar.js';
 import {TableToolbar} from './tabletoolbar.js';
 import {Translation} from './translation.js';
 import {MainMenu} from './mainmenu.js';
@@ -61,6 +62,7 @@ $(function() {
     ts.ajax.register(MainMenu.initialize, true);
     ts.ajax.register(Header.initialize, true);
     ts.ajax.register(MainArea.initialize, true);
-    ts.ajax.register(Sidebar.initialize, true);
+    ts.ajax.register(SidebarLeft.initialize, true);
+    ts.ajax.register(SidebarRight.initialize, true);
     ts.ajax.register(NavTree.initialize, true);
 });

@@ -70,8 +70,8 @@
 
               <div id="sidebar_collapse">
                 <div class="collapse_btn btn btn-primary">
-                  <i class="bi-chevron-right text-light"></i>
-                  <i class="bi-chevron-left text-light"></i>
+                  <i class="bi-chevron-right btn-closed text-light"></i>
+                  <i class="bi-chevron-left btn-open text-light"></i>
                 </div>
               </div>
 
@@ -98,6 +98,29 @@
                 ajax:bind="contextchanged"
                 ajax:action="content:#content:inner">
               <tal:content replace="structure tile(context.contenttile)" />
+            </div>
+
+            <div id="sidebar_right"
+                 class="d-flex flex-column flex-shrink-0 px-0 pb-5">
+
+              <div id="sidebar_collapse">
+                <div class="collapse_btn btn btn-secondary">
+                  <i class="bi-chevron-right btn-open text-light"></i>
+                  <i class="bi-chevron-left btn-closed text-light"></i>
+                </div>
+              </div>
+
+              <div id="sidebar_resize">
+                <div id="sidebar_resizer"></div>
+              </div>
+
+              <div class="scrollable-y scrollbar-right h-100">
+                <div class="scrollable-content px-2">
+                  <tal:tiles repeat="tilename config.sidebar_right">
+                    <tal:tile replace="structure tile(tilename)" />
+                  </tal:tiles>
+                </div>
+              </div>
             </div>
           </div>
           <!-- end content area -->

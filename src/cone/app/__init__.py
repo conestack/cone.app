@@ -73,6 +73,7 @@ class DefaultLayoutConfig(LayoutConfig):
         self.columns_fluid = True
         self.pathbar = True
         self.sidebar_left = ['navtree']
+        self.sidebar_right = []
 
 
 def import_from_string(path):

@@ -2,7 +2,7 @@
 @import "bootstrap/mixins/_breakpoints";
 
 /* sidebar */
-#sidebar_left {
+#sidebar_left, #sidebar_right {
     height: 100%;
     max-height: 100%;
     user-select: none;
@@ -23,7 +23,7 @@
                 font-weight: bold;
             }
 
-            i.bi-chevron-right {
+            i.btn-closed {
                 vertical-align: text-bottom;
             }
 
@@ -46,7 +46,7 @@
 
     #sidebar_resize {
         position: relative;
-        left: 100%;
+        // left: 100%;
         width: 0;
         height: 0;
 
@@ -62,7 +62,7 @@
 
     #sidebar_collapse {
         position: relative;
-        left: 100%;
+        // left: 100%;
         top: 100%;
         width: 0;
         height: 0;
@@ -82,12 +82,12 @@
         #sidebar_resize {
             display: none;
         }
-        #sidebar_collapse .collapse_btn .bi-chevron-left {
+        #sidebar_collapse .collapse_btn .btn-open {
             display: none;
         }
     }
     &.expanded {
-        #sidebar_collapse .collapse_btn .bi-chevron-right {
+        #sidebar_collapse .collapse_btn .btn-closed {
             display: none;
         }
     }
@@ -96,7 +96,7 @@
         &:not(.collapsed) #sidebar_collapse .collapse_btn {
             transform: translateX(-20px);
 
-            .bi-chevron-right {
+            .btn-closed {
                 display: none;
             }
         }
@@ -105,11 +105,12 @@
         &:not(.expanded) {
             width: 0!important;
             min-width: 0!important;
+            border: none !important;
 
             #sidebar_resize {
                 display: none;
             }
-            #sidebar_collapse .collapse_btn .bi-chevron-left {
+            #sidebar_collapse .collapse_btn .btn-open {
                 display: none;
             }
         }
@@ -126,10 +127,50 @@
         &.expanded {
             width: 100%!important;
             z-index: 3;
+        }
+    }
+}
 
+
+#sidebar_left {
+    #sidebar_resize {
+        left: 100%;
+    }
+    #sidebar_collapse {
+        left: 100%;
+    }
+    @include media-breakpoint-down(md) {
+        &.expanded {
             #sidebar_collapse {
                 left: calc(100% - 50px);
             }
+        }
+    }
+}
+#sidebar_right {
+    background-color: var(--bs-body-bg);
+    border-left: 1px solid var(--bs-border-color);
+
+    #sidebar_collapse {
+        left: 0;
+    }
+    &.collapsed {
+        border: 0;
+
+        .collapse_btn {
+            right: 0;
+        }
+    }
+    @include media-breakpoint-down(xxl) {
+        &:not(.expanded) {
+            #sidebar_collapse .collapse_btn {
+                right: 0;
+            }
+        }
+    }
+    @include media-breakpoint-down(md) {
+        &.expanded {
+            transform: translateX(-2rem);
         }
     }
 }
