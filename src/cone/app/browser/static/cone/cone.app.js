@@ -1087,9 +1087,20 @@ var cone = (function (exports, $, ts) {
                 this.set_state();
             } else {
                 this.unset_state();
+                this.elem.removeClass('collapsed');
+                this.elem.removeClass('expanded');
+            }
+            if (this.collapsed) {
+                this.elem.addClass('collapsed');
+            } else {
+                this.elem.addClass('expanded');
             }
         }
         responsive_toggle() {
+            if (!this.locked) {
+                this.elem.removeClass('collapsed');
+                this.elem.removeClass('expanded');
+            }
             if (this.collapsed) {
                 this.elem.removeClass('responsive-expanded');
                 this.elem.addClass('responsive-collapsed');
@@ -1193,6 +1204,7 @@ var cone = (function (exports, $, ts) {
             }
         }
         set_state() {
+            console.log(this.collapsed);
             localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
                 collapsed: this.collapsed
             }));
@@ -1253,6 +1265,7 @@ var cone = (function (exports, $, ts) {
             }
         }
         set_state() {
+            console.log(this.collapsed);
             localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
                 collapsed: this.collapsed
             }));

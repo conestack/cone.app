@@ -76,6 +76,13 @@ export class Sidebar extends ResizeAware(ts.Motion) {
             this.set_state();
         } else {
             this.unset_state();
+            this.elem.removeClass('collapsed');
+            this.elem.removeClass('expanded');
+        }
+        if (this.collapsed) {
+            this.elem.addClass('collapsed');
+        } else {
+            this.elem.addClass('expanded');
         }
     }
 
@@ -83,6 +90,10 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      * Toggles the sidebar's responsive state and css class based on its width.
      */
     responsive_toggle() {
+        if (!this.locked) {
+            this.elem.removeClass('collapsed');
+            this.elem.removeClass('expanded');
+        }
         if (this.collapsed) {
             this.elem.removeClass('responsive-expanded');
             this.elem.addClass('responsive-collapsed');
@@ -256,6 +267,7 @@ export class SidebarLeft extends Sidebar {
      */
     set_state() {
         // remember sidebar state
+        console.log(this.collapsed)
         localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
             collapsed: this.collapsed
         }));
@@ -364,6 +376,7 @@ export class SidebarRight extends Sidebar {
      */
     set_state() {
         // remember sidebar state
+        console.log(this.collapsed)
         localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
             collapsed: this.collapsed
         }));
