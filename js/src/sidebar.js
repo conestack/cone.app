@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $, { event } from 'jquery';
 import ts from 'treibstoff';
 import { global_events } from './globals.js';
 import { ResizeAware } from './layout.js';
@@ -23,12 +23,25 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.on_click = this.on_click.bind(this);
         this.collapse_elem = ts.query_elem('#sidebar_collapse', elem);
         this.collapse_elem.on('click', this.on_click);
+        this.on_lock = this.on_lock.bind(this);
+        this.lock_input = ts.query_elem('.lock-state-input', elem);
+        this.lock_elem = ts.query_elem('.lock-state-btn', elem);
+        this.lock_elem.on('click', this.on_lock);
 
         const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
         this.set_scope(resizer_elem, $(document));
 
         this.responsive_toggle = this.responsive_toggle.bind(this);
         this.responsive_toggle();
+
+        if (this.locked !== undefined && this.locked !== null) {
+            this.lock_input.prop('checked', true).trigger('change');
+            if (this.locked.collapsed) {
+                this.collapse();
+            } else {
+                this.expand();
+            }
+        }
 
         // Enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
@@ -51,6 +64,19 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      */
     on_window_resize(evt) {
         this.responsive_toggle();
+    }
+
+    /**
+     * Handles click on the lock switch and sets localStorage collapsed flag.
+     */
+    on_lock(evt) {
+        // checked property sets after on_lock is done
+        const checked = !(this.lock_input.get(0).checked);
+        if (checked) {
+            this.set_state();
+        } else {
+            this.unset_state();
+        }
     }
 
     /**
@@ -105,6 +131,9 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         } else {
             this.collapse();
         }
+        if (this.locked !== undefined && this.locked !== null) {
+            this.set_state();
+        }
     }
 
     /**
@@ -133,6 +162,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.collapse_elem.off();
         this.scrollbar = null;
         this.elem.off();
+        this.lock_elem.off('click', this.on_lock);
     }
 }
 
@@ -153,6 +183,13 @@ export class SidebarLeft extends Sidebar {
         super(elem);
         this.on_sidebar_right_resize = this.on_sidebar_right_resize.bind(this);
         global_events.on('on_sidebar_right_resize', this.on_sidebar_right_resize);
+    }
+
+    /**
+     * Returns the locked state set in localStorage.
+     */
+    get locked() {
+        return JSON.parse(localStorage.getItem('cone.app.sidebar_left.locked'));
     }
 
     /**
@@ -214,6 +251,24 @@ export class SidebarLeft extends Sidebar {
         }
     }
 
+    /**
+     * Remembers the sidebar state for repaint.
+     */
+    set_state() {
+        // remember sidebar state
+        localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
+            collapsed: this.collapsed
+        }));
+    }
+
+    /**
+     * Unsets the sidebar state in localStorage.
+     */
+    unset_state() {
+        // remember sidebar state
+        localStorage.removeItem('cone.app.sidebar_left.locked');
+    }
+
     destroy() {
         super.destroy();
         global_events.off('on_sidebar_right_resize', this.on_sidebar_right_resize);
@@ -237,6 +292,13 @@ export class SidebarRight extends Sidebar {
         super(elem);
         this.on_sidebar_left_resize = this.on_sidebar_left_resize.bind(this);
         global_events.on('on_sidebar_left_resize', this.on_sidebar_left_resize);
+    }
+
+    /**
+     * Returns the locked state set in localStorage.
+     */
+    get locked() {
+        return JSON.parse(localStorage.getItem('cone.app.sidebar_right.locked'));
     }
 
     /**
@@ -295,6 +357,24 @@ export class SidebarRight extends Sidebar {
         } else if (sb.collapsed) {
             this.elem.removeClass('d-none');
         }
+    }
+
+    /**
+     * Remembers the sidebar state for repaint.
+     */
+    set_state() {
+        // remember sidebar state
+        localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
+            collapsed: this.collapsed
+        }));
+    }
+
+    /**
+     * Unsets the sidebar state in localStorage.
+     */
+    unset_state() {
+        // remember sidebar state
+        localStorage.removeItem('cone.app.sidebar_right.locked');
     }
 
     destroy() {

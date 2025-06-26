@@ -418,6 +418,34 @@ tr.selectable td {
 #sidebar_left ul.list-group, #sidebar_left ul.list-group li, #sidebar_right ul.list-group, #sidebar_right ul.list-group li {
   background-color: inherit;
 }
+#sidebar_left .lock-state, #sidebar_right .lock-state {
+  position: relative;
+  top: calc(100% - 4.5rem);
+  width: min-content;
+  height: 0;
+  z-index: 100;
+}
+@media (max-width: 767.98px) {
+  #sidebar_left .lock-state, #sidebar_right .lock-state {
+    display: none;
+  }
+}
+#sidebar_left .lock-state input[type=checkbox]:not(:checked) + .lock-state-btn, #sidebar_right .lock-state input[type=checkbox]:not(:checked) + .lock-state-btn {
+  background-color: var(--bs-border-color);
+  border-color: transparent;
+  color: var(--bs-body-color);
+}
+#sidebar_left .lock-state input[type=checkbox]:not(:checked) + .lock-state-btn i.bi-lock, #sidebar_right .lock-state input[type=checkbox]:not(:checked) + .lock-state-btn i.bi-lock {
+  display: none;
+}
+#sidebar_left .lock-state input[type=checkbox]:checked + .lock-state-btn, #sidebar_right .lock-state input[type=checkbox]:checked + .lock-state-btn {
+  background-color: var(--bs-dark-border-subtle);
+  border-color: transparent;
+  color: var(--bs-body-color);
+}
+#sidebar_left .lock-state input[type=checkbox]:checked + .lock-state-btn i.bi-unlock, #sidebar_right .lock-state input[type=checkbox]:checked + .lock-state-btn i.bi-unlock {
+  display: none;
+}
 #sidebar_left #navtree, #sidebar_right #navtree {
   max-width: 100%;
 }
@@ -527,6 +555,20 @@ tr.selectable td {
     left: calc(100% - 50px);
   }
 }
+#sidebar_left.responsive-expanded .lock-state {
+  left: 100%;
+  transform: translateX(-10px);
+}
+#sidebar_left.expanded .lock-state {
+  left: 100% !important;
+  transform: translateX(-10px) !important;
+}
+#sidebar_left.responsive-collapsed .lock-state {
+  left: calc(100% + 10px);
+}
+#sidebar_left.collapsed .lock-state {
+  left: calc(100% + 10px) !important;
+}
 
 #sidebar_right {
   background-color: var(--bs-body-bg);
@@ -540,6 +582,18 @@ tr.selectable td {
 }
 #sidebar_right.collapsed .collapse_btn {
   right: 0;
+}
+#sidebar_right.responsive-expanded .lock-state {
+  transform: translateX(-10px);
+}
+#sidebar_right.expanded .lock-state {
+  transform: translateX(-10px) !important;
+}
+#sidebar_right.responsive-collapsed .lock-state {
+  transform: translateX(calc(-100% - 10px));
+}
+#sidebar_right.collapsed .lock-state {
+  transform: translateX(calc(-100% - 10px)) !important;
 }
 @media (max-width: 1399.98px) {
   #sidebar_right:not(.expanded) #sidebar_collapse .collapse_btn {
