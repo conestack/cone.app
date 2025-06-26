@@ -1,5 +1,8 @@
+@import "bootstrap/mixins/_breakpoints";
+
 /* content */
 #content {
+    container: main-content / inline-size;
     height: calc(100% - 40px);
     width: 100%;
     position: relative;

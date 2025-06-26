@@ -25,7 +25,7 @@
      ajax:path-overlay-title="${context.path_overlay_title|nothing}"
     ><span class="${context.icon}"
            tal:condition="context.icon"></span
-    >&nbsp;<span tal:replace="context.text">Text</span></a>
+    >&nbsp;<span tal:content="context.text">Text</span></a>
 
   <a tal:condition="not context.text"
      id="${context.id|nothing}"
