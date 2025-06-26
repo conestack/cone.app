@@ -194,6 +194,7 @@
     }
     &.collapsed .lock-state {
         left: calc(100% + 10px)!important;
+        transform: none!important;
     }
 }
 #sidebar_right {

@@ -568,6 +568,7 @@ tr.selectable td {
 }
 #sidebar_left.collapsed .lock-state {
   left: calc(100% + 10px) !important;
+  transform: none !important;
 }
 
 #sidebar_right {
