@@ -230,7 +230,7 @@ class TestBrowserActions(TileTestCase):
          ajax:path-overlay-css="some-css"
          ajax:path-overlay-uid="1234"
          ajax:path-overlay-title="Overlay Title"
-        >&nbsp;Foo</a>
+        >&nbsp;<span>Foo</span></a>
         """, rendered)
 
         action.enabled = False
@@ -337,7 +337,7 @@ class TestBrowserActions(TileTestCase):
             ajax:event="contextchanged:#layout"
             ajax:path="href"
             ><span class="bi-arrow-up"></span
-            >&nbsp;One level up</a>...
+            >&nbsp;<span>One level up</span></a>...
             """, rendered)
 
             model.properties.action_up_tile = 'otherparentcontent'
@@ -351,7 +351,7 @@ class TestBrowserActions(TileTestCase):
             ajax:event="contextchanged:#layout"
             ajax:path="href"
             ><span class="bi-arrow-up"></span
-            >&nbsp;One level up</a>...
+            >&nbsp;<span>One level up</span></a>...
             """, rendered)
 
             default = model['default'] = BaseNode()
@@ -367,7 +367,7 @@ class TestBrowserActions(TileTestCase):
             ajax:event="contextchanged:#layout"
             ajax:path="href"
             ><span class="bi-arrow-up"></span
-            >&nbsp;One level up</a>...
+            >&nbsp;<span>One level up</span></a>...
             """, rendered)
 
     def test_ActionView(self):
@@ -395,7 +395,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="content:#content:inner"
             ajax:path="href"
             ><span class="bi-eye-fill"></span
-            >&nbsp;View</a>...
+            >&nbsp;<span>View</span></a>...
             """, rendered)
 
             model.properties.default_content_tile = 'otherdefault'
@@ -409,7 +409,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="view:#content:inner"
             ajax:path="href"
             ><span class="bi-eye-fill"></span
-            >&nbsp;View</a>...
+            >&nbsp;<span>View</span></a>...
             """, rendered)
 
             model.properties.default_content_tile = None
@@ -438,7 +438,7 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="content:#content:inner"
             ajax:path="href"
-            >&nbsp;model</a>...
+            >&nbsp;<span>model</span></a>...
             """, rendered)
 
     def test_ActionList(self):
@@ -463,7 +463,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="listing:#content:inner"
             ajax:path="href"
             ><span class="bi-list-task"></span
-            >&nbsp;Listing</a>...
+            >&nbsp;<span>Listing</span></a>...
             """, rendered)
 
     def test_ActionSharing(self):
@@ -498,7 +498,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="sharing:#content:inner"
             ajax:path="href"
             ><span class="bi-share-fill"></span
-            >&nbsp;Sharing</a>...
+            >&nbsp;<span>Sharing</span></a>...
             """, rendered)
 
     def test_ActionState(self):
@@ -612,7 +612,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="edit:#content:inner"
             ajax:path="href"
             ><span class="bi-pencil"></span
-            >&nbsp;Edit</a>...
+            >&nbsp;<span>Edit</span></a>...
             """, rendered)
 
     def test_ActionDelete(self):
@@ -642,7 +642,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="delete:NONE:NONE"
             ajax:confirm="Do you really want to delete this Item?"
             ><span class="bi-trash3"></span
-            >&nbsp;Delete</a>...
+            >&nbsp;<span>Delete</span></a>...
             """, rendered)
 
             model.properties.default_content_tile = 'othertile'
@@ -674,7 +674,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="delete_children:NONE:NONE"
             ajax:confirm="Do you really want to delete selected Items?"
             ><span class="bi-trash3"></span
-            >&nbsp;Delete selected children</a>...
+            >&nbsp;<span>Delete selected children</span></a>...
             """, rendered)
 
             request.cookies['cone.app.selected'] = ['foo']
@@ -688,7 +688,7 @@ class TestBrowserActions(TileTestCase):
             ajax:action="delete_children:NONE:NONE"
             ajax:confirm="Do you really want to delete selected Items?"
             ><span class="bi-trash3"></span
-            >&nbsp;Delete selected children</a>...
+            >&nbsp;<span>Delete selected children</span></a>...
             """, rendered)
 
             del request.cookies['cone.app.selected']
@@ -715,7 +715,7 @@ class TestBrowserActions(TileTestCase):
             href="#"
             ajax:target="http://example.com/copysupport"
             ><span class="bi-scissors"></span
-            >&nbsp;Cut</a>...
+            >&nbsp;<span>Cut</span></a>...
             """, rendered)
 
             model.supports_cut = False
@@ -742,7 +742,7 @@ class TestBrowserActions(TileTestCase):
             href="#"
             ajax:target="http://example.com/copysupport"
             ><span class="bi-copy"></span
-            >&nbsp;Copy</a>...
+            >&nbsp;<span>Copy</span></a>...
             """, rendered)
 
             model.supports_copy = False
@@ -770,7 +770,7 @@ class TestBrowserActions(TileTestCase):
             class="disabled"
             ajax:target="http://example.com/copysupport"
             ><span class="bi-clipboard"></span
-            >&nbsp;Paste</a>...
+            >&nbsp;<span>Paste</span></a>...
             """, rendered)
 
             request.cookies['cone.app.copysupport.cut'] = ['foo']
@@ -781,7 +781,7 @@ class TestBrowserActions(TileTestCase):
             href="#"
             ajax:target="http://example.com/copysupport"
             ><span class="bi-clipboard"></span
-            >&nbsp;Paste</a>...
+            >&nbsp;<span>Paste</span></a>...
             """, rendered)
 
             del request.cookies['cone.app.copysupport.cut']
@@ -793,7 +793,7 @@ class TestBrowserActions(TileTestCase):
             href="#"
             ajax:target="http://example.com/copysupport"
             ><span class="bi-clipboard"></span
-            >&nbsp;Paste</a>...
+            >&nbsp;<span>Paste</span></a>...
             """, rendered)
 
             del request.cookies['cone.app.copysupport.copy']

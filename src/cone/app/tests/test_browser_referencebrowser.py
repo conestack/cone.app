@@ -942,7 +942,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             rendered = action(model, request)
         expected = '<a'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '&nbsp;My Node</a>'
+        expected = '&nbsp;<span>My Node</span></a>'
         self.assertTrue(rendered.find(expected) > -1)
 
         @implementer(INavigationLeaf)

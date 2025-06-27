@@ -222,7 +222,7 @@ class TestBrowserTable(TileTestCase):
         ajax:target="http://example.com/"
         ajax:action="content:#content:inner"
         ajax:path="href"
-        >&nbsp;Foo</a>...
+        >&nbsp;<span>Foo</span></a>...
         """, rendered)
 
         # String
