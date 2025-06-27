@@ -66,6 +66,7 @@ class TestBrowserSettings(TileTestCase):
         self.assertIsInstance(lc, SettingsLayoutConfig)
 
         self.assertEqual(lc.sidebar_left, ['settings_sidebar'])
+        self.assertEqual(lc.sidebar_right, [])
 
     def test_ViewSettingsAction(self):
         self.assertTrue('settings' in personal_tools)
