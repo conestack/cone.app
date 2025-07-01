@@ -1051,6 +1051,7 @@ var cone = (function (exports, $, ts) {
             super(elem);
             this.elem = elem;
             elem.css('width', this.sidebar_width + 'px');
+            this.moving = false;
             this.trigger_event = this.trigger_event.bind(this);
             this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
             this.on_click = this.on_click.bind(this);
@@ -1060,18 +1061,21 @@ var cone = (function (exports, $, ts) {
             this.lock_input = ts.query_elem('.lock-state-input', elem);
             this.lock_elem = ts.query_elem('.lock-state-btn', elem);
             this.lock_elem.on('click', this.on_lock);
-            const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
-            this.set_scope(resizer_elem, $(document));
+            this.resizer_elem = ts.query_elem('#sidebar_resizer', elem);
+            this.set_scope(this.resizer_elem, $(document));
             this.responsive_toggle = this.responsive_toggle.bind(this);
             this.responsive_toggle();
             if (this.locked !== undefined && this.locked !== null) {
                 this.lock_input.prop('checked', true).trigger('change');
+                if (this.disable_lock) return;
                 if (this.locked.collapsed) {
                     this.collapse();
                 } else {
                     this.expand();
                 }
             }
+            this.disable_or_enable_interaction = this.disable_or_enable_interaction.bind(this);
+            this.disable_or_enable_interaction();
             $('html, body').css('overscroll-behavior', 'auto');
             ts.ajax.attach(this, elem);
         }
@@ -1095,6 +1099,17 @@ var cone = (function (exports, $, ts) {
             } else {
                 this.elem.addClass('expanded');
             }
+            this.disable_or_enable_interaction();
+        }
+        disable_or_enable_interaction() {
+            const locked = this.locked;
+            if (locked && !this.disable_lock) {
+                $('.collapse_btn', this.collapse_elem).addClass('disabled');
+                this.resizer_elem.addClass('d-none');
+            } else {
+                $('.collapse_btn', this.collapse_elem).removeClass('disabled');
+                this.resizer_elem.removeClass('d-none');
+            }
         }
         responsive_toggle() {
             if (!this.locked) {
@@ -1111,6 +1126,22 @@ var cone = (function (exports, $, ts) {
             if (this.collapsed !== this.responsive_collapsed) {
                 this.responsive_collapsed = this.collapsed;
                 this.trigger_event();
+            }
+            if ($(window).width() < 768) {
+                this.disable_lock = true;
+                if (this.locked && !this.locked.collapsed) {
+                    this.collapse();
+                }
+            } else {
+                this.disable_lock = false;
+                if (this.locked && !this.locked.collapsed && this.collapsed) {
+                    this.expand();
+                } else if (this.locked && this.locked.collapsed && !this.collapsed) {
+                    this.collapse();
+                }
+            }
+            if (this.locked) {
+                this.disable_or_enable_interaction();
             }
         }
         collapse() {
@@ -1133,11 +1164,13 @@ var cone = (function (exports, $, ts) {
             } else {
                 this.collapse();
             }
-            if (this.locked !== undefined && this.locked !== null) {
+            if (this.locked !== undefined && this.locked !== null && !this.disable_lock) {
                 this.set_state();
             }
         }
         move(evt) {
+            if (this.locked) return;
+            this.moving = true;
             this.scrollbar.pointer_events = false;
             this.sidebar_width = this.get_width_from_event(evt);
             this.elem.css('width', this.sidebar_width);
@@ -1146,6 +1179,24 @@ var cone = (function (exports, $, ts) {
         up() {
             this.scrollbar.pointer_events = true;
             this.trigger_event();
+            this.moving = false;
+        }
+        on_sibling_sidebar_resize(inst, sb) {
+            const max_w = $(window).width() - this.elem.outerWidth() - 300;
+            const is_mobile = $(window).width() < 768;
+            const is_locked_expanded = this.locked && !this.locked.collapsed;
+            const sb_exceeds_width = sb.elem.outerWidth() >= max_w;
+            if (!sb.collapsed && is_mobile) {
+                this.collapse();
+                this.elem.addClass('d-none');
+            } else if (!sb.collapsed && sb_exceeds_width && (!sb.moving || !this.locked)) {
+                this.collapse();
+            } else if (sb.collapsed && is_locked_expanded && this.collapsed && !is_mobile) {
+                this.expand();
+                this.elem.removeClass('d-none');
+            } else if (sb.collapsed) {
+                this.elem.removeClass('d-none');
+            }
         }
         destroy() {
             this.reset_state();
@@ -1193,18 +1244,9 @@ var cone = (function (exports, $, ts) {
             return parseInt(width);
         }
         on_sidebar_right_resize(inst, sb) {
-            const max_w = $(window).width() - this.elem.outerWidth() - 300;
-            if (!sb.collapsed && $(window).width() < 768) {
-                this.collapse();
-                this.elem.addClass('d-none');
-            } else if (!sb.collapsed && sb.elem.outerWidth() >= max_w) {
-                this.collapse();
-            } else if (sb.collapsed) {
-                this.elem.removeClass('d-none');
-            }
+            this.on_sibling_sidebar_resize(inst, sb);
         }
         set_state() {
-            console.log(this.collapsed);
             localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
                 collapsed: this.collapsed
             }));
@@ -1254,18 +1296,9 @@ var cone = (function (exports, $, ts) {
             return parseInt(width);
         }
         on_sidebar_left_resize(inst, sb) {
-            const max_w = $(window).width() - this.elem.outerWidth() - 300;
-            if (!sb.collapsed && $(window).width() < 768) {
-                this.collapse();
-                this.elem.addClass('d-none');
-            } else if (!sb.collapsed && sb.elem.outerWidth() >= max_w) {
-                this.collapse();
-            } else if (sb.collapsed) {
-                this.elem.removeClass('d-none');
-            }
+            this.on_sibling_sidebar_resize(inst, sb);
         }
         set_state() {
-            console.log(this.collapsed);
             localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
                 collapsed: this.collapsed
             }));

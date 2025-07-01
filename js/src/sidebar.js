@@ -18,6 +18,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.elem = elem;
         elem.css('width', this.sidebar_width + 'px');
 
+        this.moving = false;
         this.trigger_event = this.trigger_event.bind(this);
         this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
         this.on_click = this.on_click.bind(this);
@@ -28,20 +29,23 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.lock_elem = ts.query_elem('.lock-state-btn', elem);
         this.lock_elem.on('click', this.on_lock);
 
-        const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
-        this.set_scope(resizer_elem, $(document));
+        this.resizer_elem = ts.query_elem('#sidebar_resizer', elem);
+        this.set_scope(this.resizer_elem, $(document));
 
         this.responsive_toggle = this.responsive_toggle.bind(this);
         this.responsive_toggle();
 
         if (this.locked !== undefined && this.locked !== null) {
             this.lock_input.prop('checked', true).trigger('change');
+            if (this.disable_lock) return;
             if (this.locked.collapsed) {
                 this.collapse();
             } else {
                 this.expand();
             }
         }
+        this.disable_or_enable_interaction = this.disable_or_enable_interaction.bind(this);
+        this.disable_or_enable_interaction();
 
         // Enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
@@ -84,6 +88,21 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         } else {
             this.elem.addClass('expanded');
         }
+        this.disable_or_enable_interaction();
+    }
+
+    /**
+     * Handles disabling and enabling of collapse and resize elements.
+     */
+    disable_or_enable_interaction() {
+        const locked = this.locked;
+        if (locked && !this.disable_lock) {
+            $('.collapse_btn', this.collapse_elem).addClass('disabled');
+            this.resizer_elem.addClass('d-none');
+        } else {
+            $('.collapse_btn', this.collapse_elem).removeClass('disabled');
+            this.resizer_elem.removeClass('d-none');
+        }
     }
 
     /**
@@ -105,6 +124,28 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         if (this.collapsed !== this.responsive_collapsed) {
             this.responsive_collapsed = this.collapsed;
             this.trigger_event();
+        }
+
+        if ($(window).width() < 768) {
+            // disable locking functionality on mobile
+            this.disable_lock = true;
+            if (this.locked && !this.locked.collapsed) {
+                // collapse sidebar even if locked in expanded state
+                this.collapse();
+            }
+        } else {
+            // enable locking functionality on tablet/desktop
+            this.disable_lock = false;
+            if (this.locked && !this.locked.collapsed && this.collapsed) {
+                // expand sidebar if previously collapsed due to viewport width
+                this.expand();
+            } else if (this.locked && this.locked.collapsed && !this.collapsed) {
+                // collapse sidebar if previously expanded in mobile view
+                this.collapse();
+            }
+        }
+        if (this.locked) {
+            this.disable_or_enable_interaction();
         }
     }
 
@@ -142,7 +183,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         } else {
             this.collapse();
         }
-        if (this.locked !== undefined && this.locked !== null) {
+        if (this.locked !== undefined && this.locked !== null && !this.disable_lock) {
             this.set_state();
         }
     }
@@ -152,6 +193,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      * @param {Event} evt
      */
     move(evt) {
+        if (this.locked) return;
+        this.moving = true;
         this.scrollbar.pointer_events = false;
         this.sidebar_width = this.get_width_from_event(evt);
         this.elem.css('width', this.sidebar_width);
@@ -164,6 +207,34 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     up() {
         this.scrollbar.pointer_events = true;
         this.trigger_event();
+        this.moving = false;
+    }
+
+    /**
+     * Handle collapsing if sibling sidebar resized.
+     */
+    on_sibling_sidebar_resize(inst, sb) {
+        const max_w = $(window).width() - this.elem.outerWidth() - 300;
+        const is_mobile = $(window).width() < 768;
+        const is_locked_expanded = this.locked && !this.locked.collapsed;
+        const sb_exceeds_width = sb.elem.outerWidth() >= max_w;
+
+        if (!sb.collapsed && is_mobile) {
+            // collapse sidebar if sibling sidebar expanded in mobile view
+            this.collapse();
+            this.elem.addClass('d-none');
+        } else if (!sb.collapsed && sb_exceeds_width && (!sb.moving || !this.locked)) {
+            // collapse sidebar on sibling sidebar expand if not locked and
+            // sibling sidebar width exceeds available width
+            this.collapse();
+        } else if (sb.collapsed && is_locked_expanded && this.collapsed && !is_mobile) {
+            // expand sidebar if locked in expanded state but previously
+            // collapsed due to viewport width
+            this.expand();
+            this.elem.removeClass('d-none');
+        } else if (sb.collapsed) {
+            this.elem.removeClass('d-none');
+        }
     }
 
     /* Destroy the sidebar and remove event listeners. */
@@ -249,17 +320,7 @@ export class SidebarLeft extends Sidebar {
      * Handle collapsing if sidebar_right resized.
      */
     on_sidebar_right_resize(inst, sb) {
-        const max_w = $(window).width() - this.elem.outerWidth() - 300;
-        if (!sb.collapsed && $(window).width() < 768) {
-            // collapse sidebar if sidebar_right expanded in mobile view
-            this.collapse();
-            this.elem.addClass('d-none');
-        } else if (!sb.collapsed && sb.elem.outerWidth() >= max_w) {
-            // collapse sidebar if sidebar_right width exceeds available width
-            this.collapse();
-        } else if (sb.collapsed) {
-            this.elem.removeClass('d-none');
-        }
+        this.on_sibling_sidebar_resize(inst, sb);
     }
 
     /**
@@ -267,7 +328,6 @@ export class SidebarLeft extends Sidebar {
      */
     set_state() {
         // remember sidebar state
-        console.log(this.collapsed)
         localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
             collapsed: this.collapsed
         }));
@@ -358,17 +418,7 @@ export class SidebarRight extends Sidebar {
      * Handle collapsing if sidebar_left resized.
      */
     on_sidebar_left_resize(inst, sb) {
-        const max_w = $(window).width() - this.elem.outerWidth() - 300;
-        if (!sb.collapsed && $(window).width() < 768) {
-            // collapse sidebar if sidebar_left expanded in mobile view
-            this.collapse();
-            this.elem.addClass('d-none');
-        } else if (!sb.collapsed && sb.elem.outerWidth() >= max_w) {
-            // collapse sidebar if sidebar_left width exceeds available width
-            this.collapse();
-        } else if (sb.collapsed) {
-            this.elem.removeClass('d-none');
-        }
+        this.on_sibling_sidebar_resize(inst, sb);
     }
 
     /**
@@ -376,7 +426,6 @@ export class SidebarRight extends Sidebar {
      */
     set_state() {
         // remember sidebar state
-        console.log(this.collapsed)
         localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
             collapsed: this.collapsed
         }));
