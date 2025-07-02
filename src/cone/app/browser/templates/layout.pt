@@ -87,12 +87,24 @@
                 </label>
               </div>
 
-              <div class="scrollable-y scrollbar-left">
+              <div class="sidebar-controls btn-group btn-group-sm">
+                <tal:controls condition="len(config.sidebar_left) > 1"
+                              repeat="tilename config.sidebar_left">
+                  <button class="sidebar-control btn btn-primary"
+                          data-target="${tilename}">
+                    <span tal:content="context.translate(tilename)"></span>
+                  </button>
+                </tal:controls>
+              </div>
+
+              <div class="sidebar-content scrollable-y scrollbar-left">
                 <div class="scrollable-content px-2">
-                  <ul class="nav nav-pills flex-column mb-auto">
+                  <ul class="sidebar-tiles nav nav-pills flex-column mb-auto">
 
                     <tal:tiles repeat="tilename config.sidebar_left">
-                      <tal:tile replace="structure tile(tilename)" />
+                      <div data-tile="${tilename}">
+                        <tal:tile replace="structure tile(tilename)" />
+                      </div>
                     </tal:tiles>
 
                   </ul>
@@ -131,10 +143,22 @@
                 </label>
               </div>
 
-              <div class="scrollable-y scrollbar-right h-100">
-                <div class="scrollable-content px-2">
+              <div class="sidebar-controls btn-group btn-group-sm">
+                <tal:controls condition="len(config.sidebar_right) > 1"
+                              repeat="tilename config.sidebar_right">
+                  <button class="sidebar-control btn btn-secondary"
+                          data-target="${tilename}">
+                    <span tal:content="context.translate(tilename)"></span>
+                  </button>
+                </tal:controls>
+              </div>
+
+              <div class="sidebar-content scrollable-y scrollbar-right h-100">
+                <div class="sidebar-tiles scrollable-content px-2">
                   <tal:tiles repeat="tilename config.sidebar_right">
-                    <tal:tile replace="structure tile(tilename)" />
+                    <div data-tile="${tilename}">
+                      <tal:tile replace="structure tile(tilename)" />
+                    </div>
                   </tal:tiles>
                 </div>
               </div>

@@ -3,6 +3,79 @@ import ts from 'treibstoff';
 import { global_events } from './globals.js';
 import { ResizeAware } from './layout.js';
 
+
+export class SidebarControl extends ts.Events {
+    constructor(sidebar_content, elem) {
+        super(elem);
+        this.elem = elem;
+        const target = this.target = elem.data('target');
+        this.parent = sidebar_content;
+        this.related_tile = $(`[data-tile="${target}"]`, this.parent.tiles_container);
+        this.on_click = this.on_click.bind(this);
+        this.compile();
+
+        ts.ajax.attach(this, elem);
+    }
+
+    compile() {
+        this.elem.on('click', this.on_click);
+    }
+
+    on_click(e) {
+        e.preventDefault();
+        this.parent.activate_tile(this);
+    }
+
+    activate_tile() {
+        this.elem.addClass('active');
+        this.related_tile.removeClass('d-none');
+        this.parent.sidebar.elem.attr('tile', this.target);
+    }
+
+    deactivate_tile() {
+        this.elem.removeClass('active');
+        this.related_tile.addClass('d-none');
+    }
+
+    destroy() {
+        this.elem.off('click', this.on_click);
+    }
+}
+
+export class SidebarContent extends ts.Events {
+    constructor(sidebar, elem) {
+        super(elem);
+        this.sidebar = sidebar;
+        this.elem = elem;
+        this.navigation = $('.sidebar-controls', this.sidebar.elem);
+        this.tiles_container = $('.sidebar-tiles', this.elem);
+        this.controls = [];
+        this.compile();
+
+        if (this.controls.length > 1) {
+            this.activate_tile(this.controls[0]);
+        }
+    }
+
+    compile() {
+        $('.sidebar-control', this.navigation).each((i, el) => {
+            this.controls.push(new SidebarControl(this, $(el)));
+        });
+    }
+
+    activate_tile(tile) {
+        this.deactivate_all();
+        tile.activate_tile();
+    }
+
+    deactivate_all() {
+        for (const control of this.controls) {
+            control.deactivate_tile();
+        }
+    }
+}
+
+
 /**
  * Class to manage the sidebar of the application.
  * @extends ts.Motion
@@ -49,6 +122,9 @@ export class Sidebar extends ResizeAware(ts.Motion) {
 
         // Enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
+
+        const content_elem = $('.sidebar-content', elem);
+        this.sidebar_content = new SidebarContent(this, content_elem);
 
         ts.ajax.attach(this, elem);
     }

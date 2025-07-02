@@ -112,6 +112,10 @@ class Layout(LayoutConfigTile):
     def contenttile(self):
         return get_action_context(self.request).scope
 
+    def translate(self, string):
+        # XXX: translation from tilename
+        return _(string)
+
 
 # personal tools action registry
 personal_tools = odict()

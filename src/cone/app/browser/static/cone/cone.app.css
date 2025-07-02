@@ -419,6 +419,16 @@ tr.selectable td {
 #sidebar_left ul.list-group, #sidebar_left ul.list-group li, #sidebar_right ul.list-group, #sidebar_right ul.list-group li {
   background-color: inherit;
 }
+#sidebar_left .sidebar-controls, #sidebar_right .sidebar-controls {
+  position: absolute;
+  bottom: 0;
+}
+#sidebar_left .sidebar-controls .sidebar-control, #sidebar_right .sidebar-controls .sidebar-control {
+  position: relative;
+  z-index: 10;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
 #sidebar_left .lock-state, #sidebar_right .lock-state {
   position: relative;
   top: calc(100% - 4.5rem);
@@ -575,6 +585,9 @@ tr.selectable td {
 #sidebar_right {
   background-color: var(--bs-body-bg);
   border-left: 1px solid var(--bs-border-color);
+}
+#sidebar_right .sidebar-controls {
+  right: 0;
 }
 #sidebar_right #sidebar_collapse {
   left: 0;

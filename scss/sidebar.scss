@@ -11,6 +11,18 @@
         background-color: inherit;
     }
 
+    .sidebar-controls {
+        position: absolute;
+        bottom: 0;
+
+        .sidebar-control {
+            position: relative;
+            z-index: 10;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
     .lock-state {
         position: relative;
         top: calc(100% - 4.5rem);
@@ -200,6 +212,10 @@
 #sidebar_right {
     background-color: var(--bs-body-bg);
     border-left: 1px solid var(--bs-border-color);
+
+    .sidebar-controls {
+        right: 0;
+    }
 
     #sidebar_collapse {
         left: 0;
