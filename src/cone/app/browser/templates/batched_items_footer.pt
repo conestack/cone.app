@@ -20,7 +20,7 @@
       <span i18n:translate="entries">entries</span>
     </div>
 
-    <div>
+    <div class="mt-3">
       <tal:pagination replace="structure context.rendered_pagination" />
     </div>
 
