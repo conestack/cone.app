@@ -16,8 +16,15 @@ body {
 #footer {
     z-index: 1;
 }
+
+// referencebrowser
 .referencebrowser_trigger {
     cursor: pointer;
+}
+select.form-control.referencebrowser[multiple="multiple"] + .referencebrowser_trigger {
+    max-width: max-content;
+    margin-top: .5rem;
+    margin-bottom: 1rem;
 }
 #referencebrowser {
     // remove modal padding visually
