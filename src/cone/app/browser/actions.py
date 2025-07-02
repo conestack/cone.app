@@ -164,7 +164,7 @@ class LinkAction(TemplateAction):
     event = None
     confirm = None
     overlay = None
-    overlay_css = None
+    overlay_css = 'modal-xl'
     overlay_uid = None
     overlay_title = None
     path = None
