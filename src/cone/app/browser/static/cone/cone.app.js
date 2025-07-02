@@ -1067,7 +1067,6 @@ var cone = (function (exports, $, ts) {
         activate_tile() {
             this.elem.addClass('active');
             this.related_tile.removeClass('d-none');
-            console.log(this.parent.sidebar.elem);
             this.parent.sidebar.elem.attr('tile', this.target);
         }
         deactivate_tile() {
