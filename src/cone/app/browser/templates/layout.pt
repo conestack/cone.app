@@ -87,9 +87,11 @@
                 </label>
               </div>
 
-              <div class="sidebar-controls btn-group btn-group-sm">
-                <tal:controls condition="len(config.sidebar_left) > 1"
-                              repeat="tilename config.sidebar_left">
+              <div tal:define="css 'sidebar-controls btn-group btn-group-sm';
+                               multiple len(config.sidebar_left) > 1;
+                               css css + ('' if multiple else ' d-none');"
+                   tal:attributes="class css">
+                <tal:controls repeat="tilename config.sidebar_left">
                   <button class="sidebar-control btn btn-primary"
                           data-target="${tilename}">
                     <span tal:content="context.translate(tilename)"></span>
@@ -143,9 +145,11 @@
                 </label>
               </div>
 
-              <div class="sidebar-controls btn-group btn-group-sm">
-                <tal:controls condition="len(config.sidebar_right) > 1"
-                              repeat="tilename config.sidebar_right">
+              <div tal:define="css 'sidebar-controls btn-group btn-group-sm';
+                               multiple len(config.sidebar_right) > 1;
+                               css css + ('' if multiple else ' d-none');"
+                   tal:attributes="class css">
+                <tal:controls repeat="tilename config.sidebar_right">
                   <button class="sidebar-control btn btn-secondary"
                           data-target="${tilename}">
                     <span tal:content="context.translate(tilename)"></span>

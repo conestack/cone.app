@@ -52,7 +52,7 @@ export class SidebarContent extends ts.Events {
         this.controls = [];
         this.compile();
 
-        if (this.controls.length > 1) {
+        if (this.controls.length > 0) {
             this.activate_tile(this.controls[0]);
         }
     }

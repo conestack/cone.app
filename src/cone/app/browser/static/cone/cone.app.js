@@ -1086,7 +1086,7 @@ var cone = (function (exports, $, ts) {
             this.tiles_container = $('.sidebar-tiles', this.elem);
             this.controls = [];
             this.compile();
-            if (this.controls.length > 1) {
+            if (this.controls.length > 0) {
                 this.activate_tile(this.controls[0]);
             }
         }
