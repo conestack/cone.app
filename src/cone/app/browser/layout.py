@@ -28,6 +28,7 @@ from pyramid.i18n import get_localizer
 from pyramid.i18n import negotiate_locale_name
 from pyramid.i18n import TranslationStringFactory
 import warnings
+import json
 
 
 _ = TranslationStringFactory('cone.app')
@@ -112,9 +113,20 @@ class Layout(LayoutConfigTile):
     def contenttile(self):
         return get_action_context(self.request).scope
 
-    def translate(self, string):
-        # XXX: translation from tilename
-        return _(string)
+    def tileinfo(self, val):
+        if isinstance(val, tuple):
+            return {
+                'name': val[0],
+                'title': val[1]
+            }
+        elif isinstance(val, str):
+            return {
+                'name': val,
+                'title': val
+            }
+
+    def dump(self, val):
+        return json.dumps(val)
 
 
 # personal tools action registry

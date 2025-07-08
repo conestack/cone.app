@@ -17,10 +17,10 @@
         <div role="button" class="nav-item nav-link text-light">
             <i class="bi-star me-2"></i>
             <span i18n:translate="settings">Settings</span>
-            <i class="bi-chevron-right" data-bs-toggle="collapse" data-bs-target="#navigation-collapse"></i>
+            <i class="bi-chevron-right" data-bs-toggle="collapse" data-bs-target="#settings-navigation-collapse"></i>
         </div>
 
-        <div class="collapse show" id="navigation-collapse">
+        <div class="collapse show" id="settings-navigation-collapse">
           <ul class="list-group list-unstyled fw-normal pb-1">
             <tal:category repeat="category_name categories">
               <tal:li repeat="item categories[category_name]">

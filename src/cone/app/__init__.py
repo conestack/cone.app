@@ -72,8 +72,10 @@ class DefaultLayoutConfig(LayoutConfig):
         self.personaltools = True
         self.columns_fluid = True
         self.pathbar = True
+        self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'
         self.sidebar_left = ['navtree']
         self.sidebar_right = []
+        self.sidebar_right_mode = 'stacked' # 'toggle' or 'stacked'
 
 
 def import_from_string(path):

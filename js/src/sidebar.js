@@ -47,29 +47,37 @@ export class SidebarContent extends ts.Events {
         super(elem);
         this.sidebar = sidebar;
         this.elem = elem;
+        this.mode = sidebar.elem.data('mode') || 'stacked';
+        this.tiles = sidebar.elem.data('tiles') ?? [];
         this.navigation = $('.sidebar-controls', this.sidebar.elem);
         this.tiles_container = $('.sidebar-tiles', this.elem);
         this.controls = [];
         this.compile();
 
-        if (this.controls.length > 0) {
+        if (this.mode === 'toggle' && this.controls.length > 0) {
             this.activate_tile(this.controls[0]);
         }
     }
 
     compile() {
-        $('.sidebar-control', this.navigation).each((i, el) => {
-            this.controls.push(new SidebarControl(this, $(el)));
-        });
+        if (this.mode === 'toggle' && this.tiles.length > 1) {
+            $('.sidebar-control', this.navigation).each((i, el) => {
+                this.controls.push(new SidebarControl(this, $(el)));
+            });
+        } else {
+            this.navigation.addClass('d-none');
+        }
     }
 
     activate_tile(tile) {
+        if (this.mode === 'stacked') return;
         this.deactivate_all();
         tile.activate_tile();
     }
 
     deactivate_all() {
         for (const control of this.controls) {
+            if (this.mode === 'stacked') return;
             control.deactivate_tile();
         }
     }
