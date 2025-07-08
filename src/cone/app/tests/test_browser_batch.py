@@ -719,7 +719,7 @@ class TestBrowserBatch(TileTestCase):
             'cone.app.browser:templates/batched_items_footer.pt'
         )
         self.checkOutput("""
-        ...<div class="batched_items_footer">...
+        ...<div class="batched_items_footer...
         """, batched_items.rendered_footer)
 
         # Slice ID
@@ -886,7 +886,7 @@ class TestBrowserBatch(TileTestCase):
         # Test ``display_footer``
         self.assertTrue(batched_items.display_header)
 
-        expected = '<div class="batched_items_footer">'
+        expected = '<div class="batched_items_footer'
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertTrue(rendered.find(expected) > -1)
 

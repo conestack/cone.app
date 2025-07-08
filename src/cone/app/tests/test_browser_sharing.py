@@ -208,6 +208,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(invalid_node, request)
         self.assertEqual(res, {
             'continuation': [{
+                'css': None,
                 'flavor': 'error',
                 'type': 'message',
                 'payload': u"Can not add role 'manager' for principal 'viewer'",
@@ -275,6 +276,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
             'continuation': [{
+                'css': None,
                 'flavor': 'error',
                 'type': 'message',
                 'payload': u"Can not remove role 'inexistent' for principal 'viewer'",
@@ -296,6 +298,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
             'continuation': [{
+                'css': None,
                 'flavor': 'error',
                 'type': 'message',
                 'payload': u"Can not remove role 'manager' for principal 'foo'",

@@ -818,6 +818,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
+        ajax:overlay-css="modal-xl"
         ></a>...
         """, action.render())
 
@@ -1068,6 +1069,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
+        ajax:overlay-css="modal-xl"
         ><span class="bi-plus-circle"></span></a>...
         """, res)
 

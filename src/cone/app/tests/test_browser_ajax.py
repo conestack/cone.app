@@ -159,6 +159,7 @@ class TestBrowserAjax(TileTestCase):
         )
 
         self.assertEqual(message.as_json(), {
+            'css': '',
             'type': 'message',
             'payload': payload,
             'flavor': flavor,
@@ -386,7 +387,8 @@ class TestBrowserAjax(TileTestCase):
             'type': 'message',
             'payload': 'Some info message',
             'flavor': 'info',
-            'selector': 'None'
+            'selector': 'None',
+            'css': ''
         }, {
             'type': 'overlay',
             'action': 'someaction',
