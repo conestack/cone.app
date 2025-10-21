@@ -57,5 +57,8 @@ main = "cone.app:main"
 [project.entry-points."paste.filter_app_factory"]
 remote_addr = "cone.app:make_remote_addr_middleware"
 
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cone"]
 [tool.zest-releaser]
 create-wheel = true
