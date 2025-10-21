@@ -210,6 +210,7 @@ class ContentForm(FormHeading):
     """Form behavior rendering to content area."""
     show_heading = default(True)
     show_contextmenu = default(True)
+    is_card = default(True)
 
     @default
     @property
