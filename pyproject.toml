@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cone.app"
+version = "1.1rc2.dev0"
+description = "Web application stub"
+readme = "README.rst"
+license = {text = "Simplified BSD"}
+authors = [{name = "Cone Contributors", email = "dev@conestack.org"}]
+keywords = ["node", "pyramid", "cone", "web"]
+classifiers = [
+    "Environment :: Web Environment",
+    "Programming Language :: Python",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+dependencies = [
+    "Chameleon",
+    "cone.tile>=1.0",
+    "node.ext.ugm>=0.9.13",
+    "node>=0.9.28",
+    "pyramid>=1.5",
+    "pyramid_chameleon",
+    "pyramid_zcml",
+    "repoze.workflow",
+    "treibstoff",
+    "webresource",
+    "yafowil.bootstrap",
+    "yafowil.webob",
+    "yafowil>=2.3.4",
+]
+
+[project.optional-dependencies]
+lxml = [
+    "lxml",
+]
+yaml = [
+    "yafowil.yaml",
+]
+test = [
+    "lxml",
+    "yafowil.yaml",
+    "zope.testrunner",
+]
+docs = [
+    "Sphinx",
+    "sphinx_bootstrap_theme",
+    "repoze.sphinx.autointerface",
+]
+
+[project.urls]
+Homepage = "http://github.com/conestack/cone.app"
+
+[project.entry-points."paste.app_factory"]
+main = "cone.app:main"
+[project.entry-points."paste.filter_app_factory"]
+remote_addr = "cone.app:make_remote_addr_middleware"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.zest-releaser]
+create-wheel = true
