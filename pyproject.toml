@@ -13,6 +13,11 @@ keywords = ["node", "pyramid", "cone", "web"]
 classifiers = [
     "Environment :: Web Environment",
     "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 dependencies = [
@@ -54,6 +59,7 @@ Homepage = "http://github.com/conestack/cone.app"
 
 [project.entry-points."paste.app_factory"]
 main = "cone.app:main"
+
 [project.entry-points."paste.filter_app_factory"]
 remote_addr = "cone.app:make_remote_addr_middleware"
 
