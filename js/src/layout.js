@@ -31,7 +31,8 @@ export class MainArea extends ts.Events {
         new ts.Property(this, 'is_super_compact', null);
 
         this.set_mode = this.set_mode.bind(this);
-        global_events.on('on_sidebar_resize', this.set_mode);
+        global_events.on('on_sidebar_left_resize', this.set_mode);
+        global_events.on('on_sidebar_right_resize', this.set_mode);
         $(window).on('resize', this.set_mode);
         this.set_mode();
 
@@ -43,7 +44,8 @@ export class MainArea extends ts.Events {
      */
     destroy() {
         $(window).off('resize', this.set_mode);
-        global_events.off('on_sidebar_resize', this.set_mode);
+        global_events.off('on_sidebar_left_resize', this.set_mode);
+        global_events.off('on_sidebar_right_resize', this.set_mode);
     }
 
     /**
@@ -105,8 +107,9 @@ export class LayoutAware extends ts.Events {
         this.set_mode = this.set_mode.bind(this);
         global_events.on('on_main_area_mode', this.set_mode);
 
-        this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
-        global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+        this.on_sidebar_left_resize = this.on_sidebar_left_resize.bind(this);
+        global_events.on('on_sidebar_left_resize', this.on_sidebar_left_resize);
+        global_events.on('on_sidebar_right_resize', this.on_sidebar_left_resize);
 
         ts.ajax.attach(this, elem);
     }
@@ -116,7 +119,8 @@ export class LayoutAware extends ts.Events {
      */
     destroy() {
         global_events.off('on_main_area_mode', this.set_mode);
-        global_events.off('on_sidebar_resize', this.on_sidebar_resize);
+        global_events.off('on_sidebar_left_resize', this.on_sidebar_left_resize);
+        global_events.off('on_sidebar_right_resize', this.on_sidebar_left_resize);
     }
 
     /**
@@ -156,19 +160,36 @@ export class LayoutAware extends ts.Events {
     }
 
     /**
+     * Handles changes on the sidebar left resize event.
+     * @param {} inst
+     * @param {Object} sidebar
+     */
+    on_sidebar_left_resize(inst, sidebar) {
+        this.is_sidebar_left_collapsed = sidebar.collapsed;
+    }
+
+    /**
      * Handles changes on the sidebar resize event.
      * @param {} inst
      * @param {Object} sidebar
      */
-    on_sidebar_resize(inst, sidebar) {
-        this.is_sidebar_collapsed = sidebar.collapsed;
+    on_sidebar_right_resize(inst, sidebar) {
+        this.is_sidebar_right_collapsed = sidebar.collapsed;
     }
 
     /**
-     * Handles changes in the sidebar collapsed state.
+     * Handles changes in the sidebar left collapsed state.
      * @param {boolean} val
      */
-    on_is_sidebar_collapsed(val) {
+    on_is_sidebar_left_collapsed(val) {
+        // ...
+    }
+
+    /**
+     * Handles changes in the sidebar right collapsed state.
+     * @param {boolean} val
+     */
+    on_is_sidebar_right_collapsed(val) {
         // ...
     }
 }

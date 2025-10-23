@@ -64,8 +64,7 @@ one or more model classes with ``cone.app.layout_config`` decorator.
             self.columns_fluid = False
             self.pathbar = True
             self.sidebar_left = ['navtree']
-            self.sidebar_left_grid_width = 3
-            self.content_grid_width = 9
+            self.sidebar_right = ['my_tile']
 
 Provided layout settings:
 

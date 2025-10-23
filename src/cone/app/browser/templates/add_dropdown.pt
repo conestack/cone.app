@@ -8,23 +8,60 @@
 
     <a href="#"
        class="nav-link dropdown-toggle py-2 px-3"
+       tal:attributes="data-bs-auto-close 'outside' if context.has_categories else 'true'"
        data-bs-toggle="dropdown">
       <span i18n:translate="add">Add</span>
       <span class="caret"></span>
     </a>
 
-    <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
-      <li tal:repeat="item context.items">
-        <a href="${item.url}"
-           class="dropdown-item"
-           ajax:bind="click"
-           ajax:target="${item.target}"
-           ajax:action="add:#content:inner"
-           ajax:path="href">
-          <span class="${item.icon}"></span>
-          <tal:title replace="item.title" />
-        </a>
-      </li>
+    <ul tal:define="padding ' p-0' if context.has_categories else nothing"
+      class="dropdown-menu rounded-0 rounded-bottom mt-0${padding}"
+      role="addmenu">
+      <tal:categories condition="context.has_categories">
+        <tal:category repeat="category context.categories">
+          <li tal:define="is_last repeat.category.end;
+                          css 'border-bottom' if not is_last else nothing"
+              tal:attributes="class css">
+            <div class="btn-group w-100 dropend">
+              <button type="button"
+                      class="dropdown-item dropdown-toggle py-2"
+                      data-bs-toggle="dropdown">
+                <span class="d-inline-block w-100"
+                      tal:content="category[0]">
+                  Category Title
+                </span>
+              </button>
+              <ul class="dropdown-menu m-0 py-1">
+                <li tal:repeat="item category[1]">
+                  <a href="${item.url}"
+                     class="dropdown-item"
+                     ajax:bind="click"
+                     ajax:target="${item.target}"
+                     ajax:action="add:#content:inner"
+                     ajax:path="href">
+                    <span class="${item.icon}"></span>
+                    <tal:title replace="item.title" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </tal:category>
+      </tal:categories>
+
+      <tal:no_categories condition="not context.has_categories">
+        <li tal:repeat="item context.items">
+          <a href="${item.url}"
+             class="dropdown-item"
+             ajax:bind="click"
+             ajax:target="${item.target}"
+             ajax:action="add:#content:inner"
+             ajax:path="href">
+            <span class="${item.icon}"></span>
+            <tal:title replace="item.title" />
+          </a>
+        </li>
+      </tal:no_categories>
     </ul>
 
   </li>

@@ -818,6 +818,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
+        ajax:overlay-css="modal-xl"
         ></a>...
         """, action.render())
 
@@ -942,7 +943,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             rendered = action(model, request)
         expected = '<a'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '&nbsp;My Node</a>'
+        expected = '&nbsp;<span>My Node</span></a>'
         self.assertTrue(rendered.find(expected) > -1)
 
         @implementer(INavigationLeaf)
@@ -1068,6 +1069,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
+        ajax:overlay-css="modal-xl"
         ><span class="bi-plus-circle"></span></a>...
         """, res)
 

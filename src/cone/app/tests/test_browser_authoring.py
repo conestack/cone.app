@@ -931,7 +931,7 @@ class TestBrowserAuthoring(TileTestCase):
         ...<li class="nav-item dropdown py-0">
         <a href="#"
         class="nav-link dropdown-toggle py-2 px-3"
-        data-bs-toggle="dropdown">
+        data-bs-toggle="dropdown" data-bs-auto-close="true">
         <span>Add</span>
         <span class="caret"></span>
         </a>
@@ -959,7 +959,7 @@ class TestBrowserAuthoring(TileTestCase):
         ...<li class="nav-item dropdown py-0">
         <a href="#"
         class="nav-link dropdown-toggle py-2 px-3"
-        data-bs-toggle="dropdown">
+        data-bs-toggle="dropdown" data-bs-auto-close="true">
         <span>Add</span>
         <span class="caret"></span>
         </a>

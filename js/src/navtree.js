@@ -25,6 +25,10 @@ export class NavTree {
     constructor(elem) {
         this.elem = elem;
         this.dropdown_elem = $('#navigation-collapse', elem);
+        if (this.dropdown_elem.hasClass('no-collapse')) {
+            // navroot is hidden, no need for collapsing logic
+            return;
+        }
 
         // Expand menu if previously opened.
         if (localStorage.getItem('cone.app.navtree.open')) {

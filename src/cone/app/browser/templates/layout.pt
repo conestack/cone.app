@@ -11,40 +11,7 @@
 
     <div class="${'container-fluid' if config.columns_fluid else 'container'} h-100">
 
-      <!-- logo -->
-      <tal:logo replace="structure tile('logo')" />
-
       <div class="row h-100">
-
-        <!-- sidebar -->
-        <div id="sidebar_left"
-             tal:condition="config.sidebar_left and request.has_permission('view', model)"
-             class="d-flex flex-column flex-shrink-0 p-3 px-0 pb-5">
-
-          <div id="sidebar_collapse">
-            <div class="collapse_btn btn btn-primary">
-              <i class="bi-chevron-right text-light"></i>
-              <i class="bi-chevron-left text-light"></i>
-            </div>
-          </div>
-
-          <div id="sidebar_resize">
-            <div id="sidebar_resizer"></div>
-          </div>
-
-          <div class="scrollable-y scrollbar-left">
-            <div class="scrollable-content px-2">
-              <ul class="nav nav-pills flex-column mb-auto">
-
-                <tal:tiles repeat="tilename config.sidebar_left">
-                  <tal:tile replace="structure tile(tilename)" />
-                </tal:tiles>
-
-              </ul>
-            </div>
-          </div>
-        </div>
-        <!-- end sidebar -->
 
         <!-- content area -->
         <div id="main-area"
@@ -54,12 +21,13 @@
           <!-- header -->
           <nav id="header-main"
                tal:condition="request.has_permission('view', model)"
-               class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm">
+               class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm border-bottom">
 
             <div id="header-content"
-                 tal:define="css config.mainmenu_fluid
-                             and 'justify-content-end h-100 px-0 container-fluid'"
-                 tal:attributes="class css">
+                 class="h-100 px-0 container-fluid">
+
+              <!-- logo -->
+              <tal:logo replace="structure tile('logo')" />
 
               <tal:personaltools
                 condition="config.personaltools"
@@ -75,10 +43,6 @@
               <div id="navbar-content-wrapper"
                    class="collapse shadow navbar-collapse p-0">
                 <div id="navbar-content" class="d-flex align-items-center">
-                    <div id="header-logo-placeholder"
-                         class="position-relative mx-4">
-                        <span class="fs-4" tal:content="model.root.metadata.title">Cone</span>
-                    </div>
 
                   <tal:mainmenu
                     condition="config.mainmenu"
@@ -98,22 +62,126 @@
             condition="config.pathbar"
             replace="structure tile('pathbar')" />
 
-          <!-- content -->
-          <div id="content"
-               class="px-3 pb-5 py-2 overflow-auto"
-               ajax:bind="contextchanged"
-               ajax:action="content:#content:inner">
-            <tal:content replace="structure tile(context.contenttile)" />
-          </div>
+          <div id="content_area" class="d-flex h-100">
+            <!-- sidebar -->
+            <div id="sidebar_left"
+                tal:condition="config.sidebar_left and request.has_permission('view', model)"
+                class="d-flex flex-column flex-shrink-0 pt-1 px-0 pb-5"
+                data-mode="${config.sidebar_left_mode}"
+                data-tiles="${context.dump(config.sidebar_left)}">
 
+              <div id="sidebar_collapse">
+                <div class="collapse_btn btn btn-primary">
+                  <i class="bi-chevron-right btn-closed text-light"></i>
+                  <i class="bi-chevron-left btn-open text-light"></i>
+                </div>
+              </div>
+
+              <div id="sidebar_resize">
+                <div id="sidebar_resizer"></div>
+              </div>
+
+              <div class="lock-state">
+                <input type="checkbox" class="lock-state-input btn-check" id="sidebar_left_toggle" autocomplete="off">
+                <label class="btn btn-primary btn-sm  p-0 px-1 lock-state-btn" for="sidebar_left_toggle">
+                  <i class="bi bi-lock"></i>
+                  <i class="bi bi-unlock"></i>
+                </label>
+              </div>
+
+              <div class="sidebar-controls btn-group btn-group-sm">
+                <tal:controls repeat="tilename config.sidebar_left">
+                  <button class="sidebar-control btn btn-primary"
+                          tal:define="tileinfo context.tileinfo(tilename)"
+                          data-target="${tileinfo['name']}">
+                    <span tal:content="tileinfo['title']"></span>
+                  </button>
+                </tal:controls>
+              </div>
+
+              <div class="sidebar-content scrollable-y scrollbar-left">
+                <div class="scrollable-content px-2">
+                  <ul class="sidebar-tiles nav nav-pills flex-column mb-auto">
+
+                    <tal:tiles repeat="tilename config.sidebar_left">
+                      <div class="tile"
+                           tal:define="tileinfo context.tileinfo(tilename);
+                                       name tileinfo.name;"
+                           data-tile="${name}">
+                        <tal:tile replace="structure tile(name)" />
+                      </div>
+                    </tal:tiles>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- end sidebar -->
+            <!-- content -->
+            <div id="content"
+                class="px-3 pb-5 py-2 overflow-auto"
+                ajax:bind="contextchanged"
+                ajax:action="content:#content:inner">
+              <tal:content replace="structure tile(context.contenttile)" />
+            </div>
+
+            <div id="sidebar_right"
+                 tal:condition="config.sidebar_right and request.has_permission('view', model)"
+                 class="d-flex flex-column flex-shrink-0 px-0 pb-5"
+                 data-mode="${config.sidebar_right_mode}"
+                 data-tiles="${context.dump(config.sidebar_right)}">
+
+              <div id="sidebar_collapse">
+                <div class="collapse_btn btn btn-secondary">
+                  <i class="bi-chevron-right btn-open text-light"></i>
+                  <i class="bi-chevron-left btn-closed text-light"></i>
+                </div>
+              </div>
+
+              <div id="sidebar_resize">
+                <div id="sidebar_resizer"></div>
+              </div>
+
+              <div class="lock-state">
+                <input type="checkbox" class="lock-state-input btn-check" id="sidebar_right_toggle" autocomplete="off">
+                <label class="btn btn-sm p-0 px-1 lock-state-btn" for="sidebar_right_toggle">
+                  <i class="bi bi-lock"></i>
+                  <i class="bi bi-unlock"></i>
+                </label>
+              </div>
+
+              <div class="sidebar-controls btn-group btn-group-sm">
+                <tal:controls repeat="tilename config.sidebar_right">
+                  <button class="sidebar-control btn btn-secondary"
+                          tal:define="tileinfo context.tileinfo(tilename)"
+                          data-target="${tileinfo['name']}">
+                    <span tal:content="tileinfo['title']"></span>
+                  </button>
+                </tal:controls>
+              </div>
+
+              <div class="sidebar-content scrollable-y scrollbar-right h-100">
+                <div class="sidebar-tiles scrollable-content px-2">
+                  <tal:tiles repeat="tilename config.sidebar_right">
+                    <div class="tile"
+                         tal:define="tileinfo context.tileinfo(tilename);
+                                     name tileinfo.name;"
+                         data-tile="${name}">
+                      <tal:tile replace="structure tile(name)" />
+                    </div>
+                  </tal:tiles>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end content area -->
         </div>
-        <!-- end content area -->
 
       </div>
     </div>
 
     <!-- footer -->
-    <tal:footer replace="structure tile('footer')" />
+    <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
 
   </div>
 

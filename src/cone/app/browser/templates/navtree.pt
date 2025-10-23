@@ -5,9 +5,11 @@
   <li id="navtree"
       class="contextsensitiv nav-item mb-1 text-white"
       ajax:bind="contextchanged"
-      ajax:action="navtree:#navtree:replace">
+      ajax:action="navtree:#navtree:replace"
+      tal:define="show_navroot context.show_navroot">
 
-    <div role="button"
+    <div tal:condition="show_navroot"
+         role="button"
          class="nav-item nav-link text-light">
       <i class="bi-star me-2"></i>
       <span tal:content="context.title">Navigation</span>
@@ -16,7 +18,10 @@
          data-bs-target="#navigation-collapse"></i>
     </div>
 
-    <div class="collapse" id="navigation-collapse">
+    <div tal:define="css 'collapse' if show_navroot else 'no-collapse';
+                     id 'navigation-collapse'"
+         tal:attributes="class css"
+         id="navigation-collapse">
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
     </div>
   </li>

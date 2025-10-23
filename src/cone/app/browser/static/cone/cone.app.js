@@ -610,7 +610,9 @@ var cone = (function (exports, $, ts) {
     });
 
     class GlobalEvents extends ts.Events {
-        on_sidebar_resize(inst) {
+        on_sidebar_left_resize(inst) {
+        }
+        on_sidebar_right_resize(inst) {
         }
         on_main_area_mode(inst) {
         }
@@ -631,14 +633,16 @@ var cone = (function (exports, $, ts) {
             new ts.Property(this, 'is_compact', null);
             new ts.Property(this, 'is_super_compact', null);
             this.set_mode = this.set_mode.bind(this);
-            global_events.on('on_sidebar_resize', this.set_mode);
+            global_events.on('on_sidebar_left_resize', this.set_mode);
+            global_events.on('on_sidebar_right_resize', this.set_mode);
             $(window).on('resize', this.set_mode);
             this.set_mode();
             ts.ajax.attach(this, elem);
         }
         destroy() {
             $(window).off('resize', this.set_mode);
-            global_events.off('on_sidebar_resize', this.set_mode);
+            global_events.off('on_sidebar_left_resize', this.set_mode);
+            global_events.off('on_sidebar_right_resize', this.set_mode);
         }
         set_mode() {
             this.is_compact = this.elem.outerWidth() < 992;
@@ -672,13 +676,15 @@ var cone = (function (exports, $, ts) {
             new ts.Property(this, 'is_sidebar_collapsed', null);
             this.set_mode = this.set_mode.bind(this);
             global_events.on('on_main_area_mode', this.set_mode);
-            this.on_sidebar_resize = this.on_sidebar_resize.bind(this);
-            global_events.on('on_sidebar_resize', this.on_sidebar_resize);
+            this.on_sidebar_left_resize = this.on_sidebar_left_resize.bind(this);
+            global_events.on('on_sidebar_left_resize', this.on_sidebar_left_resize);
+            global_events.on('on_sidebar_right_resize', this.on_sidebar_left_resize);
             ts.ajax.attach(this, elem);
         }
         destroy() {
             global_events.off('on_main_area_mode', this.set_mode);
-            global_events.off('on_sidebar_resize', this.on_sidebar_resize);
+            global_events.off('on_sidebar_left_resize', this.on_sidebar_left_resize);
+            global_events.off('on_sidebar_right_resize', this.on_sidebar_left_resize);
         }
         set_mode(inst, mainarea) {
             this.is_compact = mainarea.is_compact;
@@ -700,10 +706,15 @@ var cone = (function (exports, $, ts) {
                 this.elem.removeClass('super-compact');
             }
         }
-        on_sidebar_resize(inst, sidebar) {
-            this.is_sidebar_collapsed = sidebar.collapsed;
+        on_sidebar_left_resize(inst, sidebar) {
+            this.is_sidebar_left_collapsed = sidebar.collapsed;
         }
-        on_is_sidebar_collapsed(val) {
+        on_sidebar_right_resize(inst, sidebar) {
+            this.is_sidebar_right_collapsed = sidebar.collapsed;
+        }
+        on_is_sidebar_left_collapsed(val) {
+        }
+        on_is_sidebar_right_collapsed(val) {
         }
     }
     const ResizeAware = (Base) => class extends Base {
@@ -1035,42 +1046,107 @@ var cone = (function (exports, $, ts) {
         }
     }
 
-    class Sidebar extends ResizeAware(ts.Motion) {
-        static initialize(context) {
-            const elem = ts.query_elem('#sidebar_left', context);
-            if (!elem) {
-                return;
-            }
-            new Sidebar(elem);
+    class SidebarControl extends ts.Events {
+        constructor(sidebar_content, elem) {
+            super(elem);
+            this.elem = elem;
+            const target = this.target = elem.data('target');
+            this.parent = sidebar_content;
+            this.related_tile = $(`[data-tile="${target}"]`, this.parent.tiles_container);
+            this.on_click = this.on_click.bind(this);
+            this.compile();
+            ts.ajax.attach(this, elem);
         }
+        compile() {
+            this.elem.on('click', this.on_click);
+        }
+        on_click(e) {
+            e.preventDefault();
+            this.parent.activate_tile(this);
+        }
+        activate_tile() {
+            this.elem.addClass('active');
+            this.related_tile.removeClass('d-none');
+            this.parent.sidebar.elem.attr('tile', this.target);
+        }
+        deactivate_tile() {
+            this.elem.removeClass('active');
+            this.related_tile.addClass('d-none');
+        }
+        destroy() {
+            this.elem.off('click', this.on_click);
+        }
+    }
+    class SidebarContent extends ts.Events {
+        constructor(sidebar, elem) {
+            super(elem);
+            this.sidebar = sidebar;
+            this.elem = elem;
+            this.mode = sidebar.elem.data('mode') || 'stacked';
+            this.tiles = sidebar.elem.data('tiles') ?? [];
+            this.navigation = $('.sidebar-controls', this.sidebar.elem);
+            this.tiles_container = $('.sidebar-tiles', this.elem);
+            this.controls = [];
+            this.compile();
+            if (this.mode === 'toggle' && this.controls.length > 0) {
+                this.activate_tile(this.controls[0]);
+            }
+        }
+        compile() {
+            if (this.mode === 'toggle' && this.tiles.length > 1) {
+                $('.sidebar-control', this.navigation).each((i, el) => {
+                    this.controls.push(new SidebarControl(this, $(el)));
+                });
+            } else {
+                this.navigation.addClass('d-none');
+            }
+        }
+        activate_tile(tile) {
+            if (this.mode === 'stacked') return;
+            this.deactivate_all();
+            tile.activate_tile();
+        }
+        deactivate_all() {
+            for (const control of this.controls) {
+                if (this.mode === 'stacked') return;
+                control.deactivate_tile();
+            }
+        }
+    }
+    class Sidebar extends ResizeAware(ts.Motion) {
         constructor(elem) {
             super(elem);
             this.elem = elem;
             elem.css('width', this.sidebar_width + 'px');
+            this.moving = false;
+            this.trigger_event = this.trigger_event.bind(this);
             this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
-            const scrollable_content = ts.query_elem('.scrollable-content', elem);
-            const pad_left = scrollable_content.css('padding-left');
-            const pad_right = scrollable_content.css('padding-right');
-            const logo_width = $('#header-logo').outerWidth(true);
-            elem.css(
-                'min-width',
-                `calc(${logo_width}px + ${pad_left} + ${pad_right})`
-            );
             this.on_click = this.on_click.bind(this);
             this.collapse_elem = ts.query_elem('#sidebar_collapse', elem);
             this.collapse_elem.on('click', this.on_click);
-            const resizer_elem = ts.query_elem('#sidebar_resizer', elem);
-            this.set_scope(resizer_elem, $(document));
+            this.on_lock = this.on_lock.bind(this);
+            this.lock_input = ts.query_elem('.lock-state-input', elem);
+            this.lock_elem = ts.query_elem('.lock-state-btn', elem);
+            this.lock_elem.on('click', this.on_lock);
+            this.resizer_elem = ts.query_elem('#sidebar_resizer', elem);
+            this.set_scope(this.resizer_elem, $(document));
             this.responsive_toggle = this.responsive_toggle.bind(this);
             this.responsive_toggle();
+            if (this.locked !== undefined && this.locked !== null) {
+                this.lock_input.prop('checked', true).trigger('change');
+                if (this.disable_lock) return;
+                if (this.locked.collapsed) {
+                    this.collapse();
+                } else {
+                    this.expand();
+                }
+            }
+            this.disable_or_enable_interaction = this.disable_or_enable_interaction.bind(this);
+            this.disable_or_enable_interaction();
             $('html, body').css('overscroll-behavior', 'auto');
+            const content_elem = $('.sidebar-content', elem);
+            this.sidebar_content = new SidebarContent(this, content_elem);
             ts.ajax.attach(this, elem);
-        }
-        get sidebar_width() {
-            return localStorage.getItem('cone-app-sidebar-width') || 300;
-        }
-        set sidebar_width(width) {
-            localStorage.setItem('cone-app-sidebar-width', width);
         }
         get collapsed() {
             return this.elem.outerWidth() <= 0;
@@ -1078,7 +1154,37 @@ var cone = (function (exports, $, ts) {
         on_window_resize(evt) {
             this.responsive_toggle();
         }
+        on_lock(evt) {
+            const checked = !(this.lock_input.get(0).checked);
+            if (checked) {
+                this.set_state();
+            } else {
+                this.unset_state();
+                this.elem.removeClass('collapsed');
+                this.elem.removeClass('expanded');
+            }
+            if (this.collapsed) {
+                this.elem.addClass('collapsed');
+            } else {
+                this.elem.addClass('expanded');
+            }
+            this.disable_or_enable_interaction();
+        }
+        disable_or_enable_interaction() {
+            const locked = this.locked;
+            if (locked && !this.disable_lock) {
+                $('.collapse_btn', this.collapse_elem).addClass('disabled');
+                this.resizer_elem.addClass('d-none');
+            } else {
+                $('.collapse_btn', this.collapse_elem).removeClass('disabled');
+                this.resizer_elem.removeClass('d-none');
+            }
+        }
         responsive_toggle() {
+            if (!this.locked) {
+                this.elem.removeClass('collapsed');
+                this.elem.removeClass('expanded');
+            }
             if (this.collapsed) {
                 this.elem.removeClass('responsive-expanded');
                 this.elem.addClass('responsive-collapsed');
@@ -1088,7 +1194,23 @@ var cone = (function (exports, $, ts) {
             }
             if (this.collapsed !== this.responsive_collapsed) {
                 this.responsive_collapsed = this.collapsed;
-                global_events.trigger('on_sidebar_resize', this);
+                this.trigger_event();
+            }
+            if ($(window).width() < 768) {
+                this.disable_lock = true;
+                if (this.locked && !this.locked.collapsed) {
+                    this.collapse();
+                }
+            } else {
+                this.disable_lock = false;
+                if (this.locked && !this.locked.collapsed && this.collapsed) {
+                    this.expand();
+                } else if (this.locked && this.locked.collapsed && !this.collapsed) {
+                    this.collapse();
+                }
+            }
+            if (this.locked) {
+                this.disable_or_enable_interaction();
             }
         }
         collapse() {
@@ -1096,14 +1218,14 @@ var cone = (function (exports, $, ts) {
             this.elem
                 .removeClass('expanded')
                 .addClass('collapsed');
-            global_events.trigger('on_sidebar_resize', this);
+            this.trigger_event();
         }
         expand() {
             $('html, body').css('overscroll-behavior', 'none');
             this.elem
                 .removeClass('collapsed')
                 .addClass('expanded');
-            global_events.trigger('on_sidebar_resize', this);
+            this.trigger_event();
         }
         on_click(evt) {
             if (this.collapsed) {
@@ -1111,19 +1233,39 @@ var cone = (function (exports, $, ts) {
             } else {
                 this.collapse();
             }
+            if (this.locked !== undefined && this.locked !== null && !this.disable_lock) {
+                this.set_state();
+            }
         }
         move(evt) {
+            if (this.locked) return;
+            this.moving = true;
             this.scrollbar.pointer_events = false;
-            if (evt.pageX <= 115) {
-                evt.pageX = 115;
-            }
-            this.sidebar_width = parseInt(evt.pageX);
+            this.sidebar_width = this.get_width_from_event(evt);
             this.elem.css('width', this.sidebar_width);
-            global_events.trigger('on_sidebar_resize', this);
+            this.trigger_event();
         }
         up() {
             this.scrollbar.pointer_events = true;
-            global_events.trigger('on_sidebar_resize', this);
+            this.trigger_event();
+            this.moving = false;
+        }
+        on_sibling_sidebar_resize(inst, sb) {
+            const max_w = $(window).width() - this.elem.outerWidth() - 300;
+            const is_mobile = $(window).width() < 768;
+            const is_locked_expanded = this.locked && !this.locked.collapsed;
+            const sb_exceeds_width = sb.elem.outerWidth() >= max_w;
+            if (!sb.collapsed && is_mobile) {
+                this.collapse();
+                this.elem.addClass('d-none');
+            } else if (!sb.collapsed && sb_exceeds_width && (!sb.moving || !this.locked)) {
+                this.collapse();
+            } else if (sb.collapsed && is_locked_expanded && this.collapsed && !is_mobile) {
+                this.expand();
+                this.elem.removeClass('d-none');
+            } else if (sb.collapsed) {
+                this.elem.removeClass('d-none');
+            }
         }
         destroy() {
             this.reset_state();
@@ -1131,6 +1273,111 @@ var cone = (function (exports, $, ts) {
             this.collapse_elem.off();
             this.scrollbar = null;
             this.elem.off();
+            this.lock_elem.off('click', this.on_lock);
+        }
+    }
+    class SidebarLeft extends Sidebar {
+        static initialize(context) {
+            const elem = ts.query_elem('#sidebar_left', context);
+            if (!elem) {
+                return;
+            }
+            new SidebarLeft(elem);
+        }
+        constructor(elem) {
+            super(elem);
+            this.on_sidebar_right_resize = this.on_sidebar_right_resize.bind(this);
+            global_events.on('on_sidebar_right_resize', this.on_sidebar_right_resize);
+        }
+        get locked() {
+            return JSON.parse(localStorage.getItem('cone.app.sidebar_left.locked'));
+        }
+        get sidebar_width() {
+            return localStorage.getItem('cone-app-sidebar-left-width') || 300;
+        }
+        set sidebar_width(width) {
+            localStorage.setItem('cone-app-sidebar-left-width', width);
+        }
+        trigger_event() {
+            global_events.trigger('on_sidebar_left_resize', this);
+        }
+        get_width_from_event(evt) {
+            let width = evt.pageX;
+            let sidebar_w = 0;
+            if ($('#sidebar_right').length > 0) {
+                sidebar_w = $('#sidebar_right').outerWidth();
+            }
+            const min_w = 115;
+            const max_w = $(window).width() - sidebar_w - 300;
+            width = Math.max(min_w, Math.min(width, max_w));
+            return parseInt(width);
+        }
+        on_sidebar_right_resize(inst, sb) {
+            this.on_sibling_sidebar_resize(inst, sb);
+        }
+        set_state() {
+            localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
+                collapsed: this.collapsed
+            }));
+        }
+        unset_state() {
+            localStorage.removeItem('cone.app.sidebar_left.locked');
+        }
+        destroy() {
+            super.destroy();
+            global_events.off('on_sidebar_right_resize', this.on_sidebar_right_resize);
+        }
+    }
+    class SidebarRight extends Sidebar {
+        static initialize(context) {
+            const elem = ts.query_elem('#sidebar_right', context);
+            if (!elem) {
+                return;
+            }
+            new SidebarRight(elem);
+        }
+        constructor(elem) {
+            super(elem);
+            this.on_sidebar_left_resize = this.on_sidebar_left_resize.bind(this);
+            global_events.on('on_sidebar_left_resize', this.on_sidebar_left_resize);
+        }
+        get locked() {
+            return JSON.parse(localStorage.getItem('cone.app.sidebar_right.locked'));
+        }
+        get sidebar_width() {
+            return localStorage.getItem('cone-app-sidebar-right-width') || 300;
+        }
+        set sidebar_width(width) {
+            localStorage.setItem('cone-app-sidebar-right-width', width);
+        }
+        trigger_event() {
+            global_events.trigger('on_sidebar_right_resize', this);
+        }
+        get_width_from_event(evt) {
+            let width = $(window).outerWidth() - evt.pageX;
+            let sidebar_w = 0;
+            if ($('#sidebar_left').length > 0) {
+                sidebar_w = $('#sidebar_left').outerWidth();
+            }
+            const min_w = 115;
+            const max_w = $(window).width() - sidebar_w - 300;
+            width = Math.max(min_w, Math.min(width, max_w));
+            return parseInt(width);
+        }
+        on_sidebar_left_resize(inst, sb) {
+            this.on_sibling_sidebar_resize(inst, sb);
+        }
+        set_state() {
+            localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
+                collapsed: this.collapsed
+            }));
+        }
+        unset_state() {
+            localStorage.removeItem('cone.app.sidebar_right.locked');
+        }
+        destroy() {
+            super.destroy();
+            global_events.off('on_sidebar_left_resize', this.on_sidebar_left_resize);
         }
     }
 
@@ -1192,8 +1439,8 @@ var cone = (function (exports, $, ts) {
         get height() {
             return this.elem.outerHeight(true);
         }
-        on_sidebar_resize(inst, sidebar) {
-            super.on_sidebar_resize(inst, sidebar);
+        on_sidebar_left_resize(inst, sidebar) {
+            super.on_sidebar_left_resize(inst, sidebar);
             requestAnimationFrame(() => {
                 this.scrollbar.render();
             });
@@ -1257,7 +1504,6 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             super(elem);
             this.elem = elem;
-            this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
             this.header_content = ts.query_elem('#header-content', elem);
             this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
             this.navbar_content = ts.query_elem('#navbar-content', elem);
@@ -1344,30 +1590,6 @@ var cone = (function (exports, $, ts) {
                 $(".dropdown-menu.show").removeClass('show');
             }
         }
-        on_is_sidebar_collapsed(val) {
-            if (val) {
-                this.logo_placeholder.show();
-            } else {
-                this.logo_placeholder.hide();
-            }
-        }
-    }
-
-    class Logo extends LayoutAware {
-        static initialize(context) {
-            const elem = ts.query_elem('#header-logo', context);
-            if (!elem) {
-                return;
-            }
-            new Logo(elem);
-        }
-        on_sidebar_resize(inst, sidebar) {
-            if (sidebar.collapsed) {
-                this.elem.removeClass('text-white');
-            } else {
-                this.elem.addClass('text-white');
-            }
-        }
     }
 
     class NavTree {
@@ -1381,6 +1603,9 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             this.elem = elem;
             this.dropdown_elem = $('#navigation-collapse', elem);
+            if (this.dropdown_elem.hasClass('no-collapse')) {
+                return;
+            }
             if (localStorage.getItem('cone.app.navtree.open')) {
                 this.dropdown_elem.addClass('show');
             }
@@ -1548,10 +1773,10 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(Scrollbar.initialize, true);
         ts.ajax.register(LiveSearch.initialize, true);
         ts.ajax.register(MainMenu.initialize, true);
-        ts.ajax.register(Logo.initialize, true);
         ts.ajax.register(Header.initialize, true);
         ts.ajax.register(MainArea.initialize, true);
-        ts.ajax.register(Sidebar.initialize, true);
+        ts.ajax.register(SidebarLeft.initialize, true);
+        ts.ajax.register(SidebarRight.initialize, true);
         ts.ajax.register(NavTree.initialize, true);
     });
 
@@ -1567,7 +1792,6 @@ var cone = (function (exports, $, ts) {
     exports.KeyBinder = KeyBinder;
     exports.LayoutAware = LayoutAware;
     exports.LiveSearch = LiveSearch;
-    exports.Logo = Logo;
     exports.MainArea = MainArea;
     exports.MainMenu = MainMenu;
     exports.NavTree = NavTree;
@@ -1581,6 +1805,10 @@ var cone = (function (exports, $, ts) {
     exports.Selectable = Selectable;
     exports.Sharing = Sharing;
     exports.Sidebar = Sidebar;
+    exports.SidebarContent = SidebarContent;
+    exports.SidebarControl = SidebarControl;
+    exports.SidebarLeft = SidebarLeft;
+    exports.SidebarRight = SidebarRight;
     exports.TableToolbar = TableToolbar;
     exports.Translation = Translation;
     exports.batcheditems_filter_binder = batcheditems_filter_binder;

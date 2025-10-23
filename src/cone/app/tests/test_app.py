@@ -171,6 +171,7 @@ class TestApp(NodeTestCase):
         self.assertTrue(config.columns_fluid)
         self.assertTrue(config.pathbar)
         self.assertEqual(config.sidebar_left, ['navtree'])
+        self.assertEqual(config.sidebar_right, [])
 
         @layout_config(BaseNode)
         class BaseNodeLayout(LayoutConfig):

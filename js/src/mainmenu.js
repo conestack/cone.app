@@ -48,8 +48,8 @@ export class MainMenu extends LayoutAware {
      * @param {} inst
      * @param {Object} sidebar
      */
-    on_sidebar_resize(inst, sidebar) {
-        super.on_sidebar_resize(inst, sidebar);
+    on_sidebar_left_resize(inst, sidebar) {
+        super.on_sidebar_left_resize(inst, sidebar);
         // defer to next frame to ensure elements have correct dimensions
         requestAnimationFrame(() => {
             this.scrollbar.render();

@@ -11,13 +11,20 @@ html {
 }
 body {
     height: 100%;
-    overflow-y: hidden;
+    overflow-y: hidden!important;
 }
 #footer {
     z-index: 1;
 }
+
+// referencebrowser
 .referencebrowser_trigger {
     cursor: pointer;
+}
+select.form-control.referencebrowser[multiple="multiple"] + .referencebrowser_trigger {
+    max-width: max-content;
+    margin-top: .5rem;
+    margin-bottom: 1rem;
 }
 #referencebrowser {
     // remove modal padding visually
@@ -27,6 +34,10 @@ body {
     border-radius: 0;
     left: calc(-1 * var(--bs-modal-padding));
     width: calc(100% + var(--bs-modal-padding) * 2);
+
+    td.title {
+        width: 100%;
+    }
 }
 
 @import 'content.scss';

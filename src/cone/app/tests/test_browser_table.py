@@ -221,8 +221,9 @@ class TestBrowserTable(TileTestCase):
         ajax:bind="click"
         ajax:target="http://example.com/"
         ajax:action="content:#content:inner"
+        ajax:overlay-css="modal-xl"
         ajax:path="href"
-        >&nbsp;Foo</a>...
+        >&nbsp;<span>Foo</span></a>...
         """, rendered)
 
         # String

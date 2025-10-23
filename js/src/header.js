@@ -27,7 +27,6 @@ export class Header extends LayoutAware {
     constructor(elem) {
         super(elem);
         this.elem = elem;
-        this.logo_placeholder = ts.query_elem('#header-logo-placeholder', elem);
         this.header_content = ts.query_elem('#header-content', elem);
         this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
         this.navbar_content = ts.query_elem('#navbar-content', elem);
@@ -152,18 +151,6 @@ export class Header extends LayoutAware {
             }
             // close any header dropdowns
             $(".dropdown-menu.show").removeClass('show');
-        }
-    }
-
-    /**
-     * Handles changes in the sidebar collapsed state.
-     * @param {boolean} val
-     */
-    on_is_sidebar_collapsed(val) {
-        if (val) {
-            this.logo_placeholder.show();
-        } else {
-            this.logo_placeholder.hide();
         }
     }
 }
