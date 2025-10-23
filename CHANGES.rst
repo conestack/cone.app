@@ -4,7 +4,8 @@ Changes
 1.1rc2 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Refactor package layout to use ``pyproject.toml`` and implecit namespace packages.
+  [rnix]
 
 
 1.1rc1 (2024-05-23)
