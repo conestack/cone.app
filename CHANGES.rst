@@ -4,7 +4,8 @@ Changes
 1.0.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Pin upper versions of dependencies.
+  [rnix]
 
 
 1.0.7 (2023-05-15)
