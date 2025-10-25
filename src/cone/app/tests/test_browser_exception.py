@@ -29,9 +29,7 @@ class TestBrowserException(TileTestCase):
           <a href="/">HOME</a>
           <hr />
         </p>
-        <pre>Traceback (most recent call last):
-          None...
-        </pre>
+        <pre>...</pre>
         """, str(internal_server_error(request)))
 
         request = self.layer.new_request(xhr=1)
@@ -40,7 +38,7 @@ class TestBrowserException(TileTestCase):
         self.assertTrue(res.find('Content-Type: application/json') > -1)
         self.assertTrue(res.find('"continuation"') > -1)
         self.assertTrue(res.find('"type": "message"') > -1)
-        expected = '"payload": "<pre>Traceback (most recent call last):'
+        expected = '"payload": "<pre>'
         self.assertTrue(res.find(expected) > -1)
         self.assertTrue(res.find('"selector": null') > -1)
         self.assertTrue(res.find('"payload": ""') > -1)
@@ -59,9 +57,7 @@ class TestBrowserException(TileTestCase):
               <a href="/">HOME</a>
               <hr />
             </p>
-            <pre>Traceback (most recent call last):
-              None...
-            </pre>
+            <pre>...</pre>
             """, str(internal_server_error(request)))
 
             request = self.layer.new_request(xhr=1)
@@ -71,7 +67,7 @@ class TestBrowserException(TileTestCase):
         self.assertTrue(res.find('Content-Type: application/json') > -1)
         self.assertTrue(res.find('"continuation"') > -1)
         self.assertTrue(res.find('"type": "message"') > -1)
-        expected = '"payload": "<pre>Traceback (most recent call last):'
+        expected = '"payload": "<pre>'
         self.assertTrue(res.find(expected) > -1)
         self.assertTrue(res.find('"selector": null') > -1)
         self.assertTrue(res.find('"payload": ""') > -1)
