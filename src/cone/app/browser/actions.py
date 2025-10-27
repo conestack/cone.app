@@ -565,3 +565,14 @@ class ActionMoveDown(_ActionMove):
         if not super(ActionMoveDown, self).display:
             return False
         return self.model.parent.last_key != self.model.name
+
+
+class ActionDownload(TemplateAction):
+    """Download action."""
+    template = u'cone.app.browser:templates/action_download.pt'
+    id = 'toolbaraction-download'
+    icon = 'bi-download'
+    action = None
+    bind = None
+    target = None
+    text = _('download', default='Download')
