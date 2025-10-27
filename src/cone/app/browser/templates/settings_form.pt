@@ -5,9 +5,7 @@
   <tal:contextmenu condition="context.show_contextmenu"
                    replace="structure tile('contextmenu')" />
 
-  <div class="settings-form">
-
-    <h1 tal:content="context.form_heading" class="mt-2">Title</h1>
+  <div class="settings-form mt-3">
 
     <tal:form replace="structure context.rendered_form" />
 
