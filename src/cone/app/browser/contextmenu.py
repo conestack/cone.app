@@ -34,17 +34,21 @@ class ContextMenuToolbar(Toolbar):
             rendered = action(model, request)
             if not rendered:
                 continue
+            order = getattr(action, 'order', 0)
             # expect correct markup if no link action
             if not isinstance(action, LinkAction):
-                rendered_actions.append(rendered)
+                rendered_actions.append((order, rendered))
                 continue
             # wrap link action in list item
-            rendered_actions.append(
+            rendered_actions.append((
+                order,
                 f'<li class="nav-item py-0">{rendered}</li>'
-            )
+            ))
         if not rendered_actions:
             return ''
-        rendered_actions = '\n'.join(rendered_actions)
+        # order items by 'order' property (defaults to 0)
+        rendered_actions.sort(key=lambda x: x[0])
+        rendered_actions = '\n'.join([ra for _, ra in rendered_actions])
         if not self.css:
             return f'<li>{rendered_actions}</li>'
         return f'<li class="{self.css}">{rendered_actions}</li>'
@@ -199,6 +203,7 @@ class ContextMenuActionAdd(ActionAdd):
 @context_menu_item(group='contextactions', name='delete')
 class ContextMenuActionDelete(ActionDelete):
     css = 'nav-link'
+    order = 100
 
 
 @tile(name='contextmenu', path='templates/contextmenu.pt', permission='view')
