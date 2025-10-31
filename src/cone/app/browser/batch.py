@@ -343,6 +343,10 @@ class BatchedItems(Tile):
     """Ajax path event to set if items contents changes.
     """
 
+    batched_items_title = None
+    """Optional title to render in batched items header instead of model title.
+    """
+
     @property
     def title(self):
         """Batched items title.

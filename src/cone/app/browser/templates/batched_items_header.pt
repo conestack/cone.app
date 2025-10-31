@@ -5,10 +5,10 @@
            omit-tag="True">
 
   <div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">
-    <h4 class="${context.title_css} pull-left"
+    <h4 class="${context.title_css}"
         tal:condition="context.show_title">
       <span class="label label-primary"
-            tal:content="context.title">Title</span>
+            tal:content="context.batched_items_title or context.title">Title</span>
     </h4>
 
     <div class="batched_items_slice_size
