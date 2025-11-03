@@ -168,7 +168,7 @@ VENV_FOLDER?=venv
 
 # mxdev to install in virtual environment.
 # Default: mxdev
-MXDEV?=mxdev==4.1.1
+MXDEV?=mxdev
 
 # mxmake to install in virtual environment.
 # Default: mxmake
