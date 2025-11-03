@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
 from webob.acceptparse import create_accept_header
+from yafowil.base import factory
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 from zope.configuration.xmlconfig import XMLConfig
@@ -247,6 +248,7 @@ class Security:
             'testing.hook_global_registry': True,
         }
         settings.update(**kw)
+        factory.theme = 'default'
         self.app = cone.app.main({}, **settings)
         self.current_request = None
 
