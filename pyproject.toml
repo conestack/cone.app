@@ -41,12 +41,12 @@ lxml = [
     "lxml",
 ]
 yaml = [
-    "yafowil.yaml",
+    "yafowil.yaml>2.99",
 ]
 test = [
     "lxml",
     "pytest",
-    "yafowil.yaml",
+    "yafowil.yaml>2.99",
     "zope.pytestlayer",
 ]
 docs = [
