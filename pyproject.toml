@@ -22,18 +22,18 @@ classifiers = [
 ]
 dependencies = [
     "Chameleon",
-    "cone.tile>=1.0",
-    "node.ext.ugm>=0.9.13",
-    "node>=0.9.28",
+    "cone.tile>1.99",
+    "node.ext.ugm>1.99",
+    "node>1.99",
     "pyramid>=1.5",
     "pyramid_chameleon",
     "pyramid_zcml",
     "repoze.workflow",
-    "treibstoff",
-    "webresource",
-    "yafowil.bootstrap",
-    "yafowil.webob",
-    "yafowil>=2.3.4",
+    "treibstoff>0.99",
+    "webresource>1.2.99",
+    "yafowil.bootstrap>1.99",
+    "yafowil.webob>1.99",
+    "yafowil>3.99",
 ]
 
 [project.optional-dependencies]
