@@ -5,8 +5,10 @@
 /.project
 /.pydevproject
 /.pydevproject.bak
+/.python-version
 /.settings/
 /.vscode/
+/build/
 /constraints-mxdev.txt
 /coverage/
 /dist/
@@ -26,4 +28,3 @@
 /sources/
 /twistd.pid
 /venv/
-/build
