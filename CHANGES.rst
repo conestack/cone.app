@@ -15,10 +15,11 @@ Changes
   [lenadax]
 
 
-1.1rc2 (unreleased)
--------------------
+1.1.0 (unreleased)
+------------------
 
-- No changes yet.
+- Refactor package layout to use ``pyproject.toml`` and implecit namespace packages.
+  [rnix]
 
 
 1.1rc1 (2024-05-23)

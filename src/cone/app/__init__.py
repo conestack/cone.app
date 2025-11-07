@@ -15,6 +15,7 @@ from node.interfaces import INode
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
+from pyramid.interfaces import ISecurityPolicy
 from pyramid.traversal import ResourceTreeTraverser
 from yafowil.bootstrap import configure_factory
 from zope.component import adapter
@@ -268,8 +269,9 @@ def main(global_config, **settings):
     ResourceRegistry.initialize(config, settings)
 
     # set authentication and authorization policies
-    config.set_authentication_policy(auth_policy)
-    config.set_authorization_policy(acl_factory())
+    if config.registry.queryUtility(ISecurityPolicy) is None:
+        config.set_authentication_policy(auth_policy)
+        config.set_authorization_policy(acl_factory())
     config.commit()
 
     # begin configuration

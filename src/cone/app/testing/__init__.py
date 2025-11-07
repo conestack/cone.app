@@ -6,8 +6,6 @@ from cone.app.security import authenticate
 from contextlib import contextmanager
 from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
-from pyramid.tests.test_view import DummyVenusianContext
-from pyramid.tests.test_view import DummyVenusianInfo
 from webob.acceptparse import create_accept_header
 from yafowil.base import factory
 from yafowil.bootstrap import configure_factory
@@ -18,7 +16,73 @@ import cone.app
 import cone.tile
 import os
 import venusian
-import yafowil.loader # noqa
+import sys
+
+
+class DummyVenusianInfo:
+    scope = 'notaclass'
+    module = sys.modules['cone.app.testing']
+    codeinfo = 'codeinfo'
+
+
+class DummyRegistry:
+    pass
+
+
+class DummyConfig:
+    def __init__(self):
+        self.settings = []
+        self.registry = DummyRegistry()
+
+    def add_view(self, **kw):
+        self.settings.append(kw)
+
+    add_notfound_view = add_forbidden_view = add_exception_view = add_view
+
+    def with_package(self, pkg):
+        self.pkg = pkg
+        return self
+
+
+class DummyVenusianContext:
+    def __init__(self):
+        self.config = DummyConfig()
+
+
+class DummyVenusian:
+
+    def __init__(self):
+        self.attachments = []
+
+    def attach(self, wrapped, callback, category=None, depth=1):
+        self.attachments.append((wrapped, callback))
+        return DummyVenusianInfo()
+
+    def call_attachemnts(self):
+        for wrapped, callback in self.attachments:
+            callback(DummyVenusianContext(), None, wrapped)
+
+
+class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
+    _accept = None
+
+    @property
+    def is_xhr(self):
+        return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    @property
+    def accept(self):
+        if self._accept is None:
+            self._accept = create_accept_header(None)
+        return self._accept
+
+    @accept.setter
+    def accept(self, value):
+        self._accept = create_accept_header(value)
+
+    @accept.deleter
+    def accept(self):
+        self._accept = None
 
 
 def reset_node_info_registry(fn):
@@ -58,46 +122,10 @@ def reset_node_available(fn):
     return wrapper
 
 
-class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
-    _accept = None
-
-    @property
-    def is_xhr(self):
-        return self.headers.get('X-Requested-With') == 'XMLHttpRequest'
-
-    @property
-    def accept(self):
-        if self._accept is None:
-            self._accept = create_accept_header(None)
-        return self._accept
-
-    @accept.setter
-    def accept(self, value):
-        self._accept = create_accept_header(value)
-
-    @accept.deleter
-    def accept(self):
-        self._accept = None
-
-
-class DummyVenusian(object):
-
-    def __init__(self):
-        self.attachments = []
-
-    def attach(self, wrapped, callback, category=None, depth=1):
-        self.attachments.append((wrapped, callback))
-        return DummyVenusianInfo()
-
-    def call_attachemnts(self):
-        for wrapped, callback in self.attachments:
-            callback(DummyVenusianContext(), None, wrapped)
-
-
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
-class Security(object):
+class Security:
     """Test layer with dummy authentication for security testing.
     """
     current_request = None
@@ -221,6 +249,7 @@ class Security(object):
             'testing.hook_global_registry': True,
         }
         settings.update(**kw)
+        factory.theme = 'default'
         self.app = cone.app.main({}, **settings)
         self.current_request = None
 

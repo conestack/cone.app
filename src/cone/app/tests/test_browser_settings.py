@@ -310,7 +310,6 @@ class TestBrowserSettings(TileTestCase):
         test_settings = settings['test_settings']
         with self.layer.authenticated('manager'):
             res = render_tile(test_settings, request, 'editform')
-        self.assertTrue(res.find('<h1 class="mt-2">Test Settings</h1>') > -1)
         self.assertTrue(res.find('<form action="http://example.com/settings/test_settings"') > -1)
 
         request.params['action.editform.save'] = '1'

@@ -5,6 +5,7 @@
 /.project
 /.pydevproject
 /.pydevproject.bak
+/.python-version
 /.settings/
 /.vscode/
 /build/

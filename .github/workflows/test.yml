@@ -1,39 +1,30 @@
-name: Tests
+name: Test cone.app
 
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
       matrix:
-        python:
-        - "3.9"
-        - "3.10"
-        - "3.11"
-        # - "3.12"
-        # - "3.13"
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Set Up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python }}
+          python-version: ${{ matrix.python-version }}
 
-      - name: Check Python Version
-        run: python --version
+      - name: Show Python version
+        run: python -c "import sys; print(sys.version)"
 
-      - name: Corepack
-        run: |
-          npm install --global corepack@latest
-          corepack enable
-
-      - name: Install Project
-        run: pnpm install
-
-      - name: Run Tests
-        run: make test
+      - name: Run tests an collect code coverage
+        run: make coverage
