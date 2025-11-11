@@ -1,11 +1,12 @@
 [build-system]
-requires = ["hatchling", "hatch-vcs", "hatch-fancy-pypi-readme"]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [project]
 name = "cone.app"
+version = "1.1.0.dev0"
 description = "Web application stub"
-dynamic = ["version", "readme"]
+dynamic = ["readme"]
 requires-python = ">=3.10"
 keywords = ["node", "pyramid", "cone", "web"]
 authors = [{name = "Cone Contributors", email = "dev@conestack.org"}]
@@ -66,9 +67,6 @@ remote_addr = "cone.app:make_remote_addr_middleware"
 
 [tool.hatch.version]
 source = "vcs"
-
-[tool.hatch.build.hooks.vcs]
-version-file = "cone.app/_version.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true
