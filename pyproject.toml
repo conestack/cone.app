@@ -65,12 +65,6 @@ main = "cone.app:main"
 [project.entry-points."paste.filter_app_factory"]
 remote_addr = "cone.app:make_remote_addr_middleware"
 
-[tool.hatch.version]
-source = "vcs"
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
 content-type = "text/x-rst"
 
