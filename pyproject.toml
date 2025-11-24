@@ -79,9 +79,23 @@ path = "LICENSE.rst"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
-    "/docs",
+    "/.github/",
+    "/.gitignore",
     "/artwork",
+    "/cone.ini",
+    "/cone.tac",
+    "/docs_requirements.txt",
+    "/docs",
     "/examples",
+    "/js/",
+    "/Makefile",
+    "/mx.ini",
+    "/mxmake.yaml",
+    "/package.json",
+    "/pnpm-lock.yaml",
+    "/scss/",
+    "/src/cone/app/testing",
+    "/src/cone/app/tests"
 ]
 
 [tool.hatch.build.targets.wheel]

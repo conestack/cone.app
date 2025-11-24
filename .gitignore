@@ -28,3 +28,4 @@
 /sources/
 /twistd.pid
 /venv/
+/pnpm-lock.yaml
