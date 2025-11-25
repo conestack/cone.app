@@ -94,8 +94,6 @@ exclude = [
     "/package.json",
     "/pnpm-lock.yaml",
     "/scss/",
-    "/src/cone/app/testing",
-    "/src/cone/app/tests"
 ]
 
 [tool.hatch.build.targets.wheel]
