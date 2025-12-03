@@ -1,4 +1,4 @@
-name: Test cone.app
+name: Python Tests
 
 on: [push]
 
