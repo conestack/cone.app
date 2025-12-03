@@ -26,7 +26,7 @@ dependencies = [
     "cone.tile>1.99",
     "node.ext.ugm>1.99",
     "node>1.99",
-    "pyramid>=1.5",
+    "pyramid>=2.0",
     "pyramid_chameleon",
     "pyramid_zcml",
     "repoze.workflow",
