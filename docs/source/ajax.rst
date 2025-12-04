@@ -2,11 +2,25 @@
 Ajax
 ====
 
-``cone.app`` uses ``treibstoff`` for SSR Ajax operations in it's user interface
-components.
+``cone.app`` uses `treibstoff <https://treibstoff.readthedocs.io>`_ for SSR
+(Server-Side Rendering) Ajax integration.
+
+.. note::
+
+    As of version 1.1, ``treibstoff`` replaces the previously used ``bdajax``
+    library. The API is largely compatible but some JavaScript patterns have
+    changed. See the :ref:`Migration <migration_deprecated_patterns>` appendix
+    for migration guidance.
+
+Key features of treibstoff integration:
+
+- Ajax actions and events
+- Overlay support
+- Browser history management
+- Form submission handling
 
 Detailed documentation about the features provided by treibstoff can be found
-at it's `documentation <http://treibstoff.readthedocs.io>`_.
+at its `documentation <https://treibstoff.readthedocs.io>`_.
 
 Related client and server side implementation details are described in the
 following sections.

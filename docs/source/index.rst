@@ -77,3 +77,5 @@ Contents
    Workflows <workflows>
    Ajax <ajax>
    Development <development>
+   Addons <addons>
+   Migration <migration>

@@ -440,6 +440,12 @@ Contents
 
 Model children nodes in batched, sortable table.
 
+.. note::
+
+    As of version 1.1, a dedicated ``contents`` tile for ``AppRoot`` is provided
+    that displays plugin entry nodes while filtering out internal nodes like
+    settings and resources.
+
 Expected ``metadata`` on children:
 
 - **title**: Node title.

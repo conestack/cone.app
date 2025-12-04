@@ -28,87 +28,75 @@ First thing to do is to create a
 Create a directory named ``cone.example`` with the following structure::
 
     cone.example
-    ├── bootstrap.sh
+    ├── pyproject.toml
     ├── example.ini
-    ├── setup.py
     └── src
         └── cone
-            ├── example
-            │   ├── browser
-            │   │   ├── __init__.py
-            │   │   ├── static
-            │   │   │   ├── example.css
-            │   │   │   └── example.js
-            │   │   └── templates
-            │   │       └── example.pt
-            │   ├── configure.zcml
-            │   ├── __init__.py
-            │   └── model.py
-            └── __init__.py
+            └── example
+                ├── browser
+                │   ├── __init__.py
+                │   ├── static
+                │   │   ├── example.css
+                │   │   └── example.js
+                │   └── templates
+                │       └── example.pt
+                ├── configure.zcml
+                ├── __init__.py
+                └── model.py
+
+.. note::
+
+    With implicit namespace packages, ``src/cone/__init__.py`` should be empty
+    or not exist at all. The ``cone`` namespace is shared across multiple
+    packages automatically.
 
 The package must depend on ``cone.app`` and ``waitress`` as installation
-dependency. Add the following to ``setup.py``.
+dependency. Add the following to ``pyproject.toml``.
 
-.. code-block:: python
+.. code-block:: toml
 
-    from setuptools import find_packages
-    from setuptools import setup
+    [build-system]
+    requires = ["setuptools>=61.0"]
+    build-backend = "setuptools.build_meta"
 
-    version = '0.1'
-    shortdesc = 'Example cone plugin'
+    [project]
+    name = "cone.example"
+    version = "0.1"
+    description = "Example cone plugin"
+    dependencies = [
+        "waitress",
+        "cone.app"
+    ]
 
-    setup(
-        name='cone.example',
-        version=version,
-        description=shortdesc,
-        packages=find_packages('src'),
-        package_dir={'': 'src'},
-        namespace_packages=['cone'],
-        include_package_data=True,
-        zip_safe=False,
-        install_requires=[
-            'waitress',
-            'cone.app'
-        ]
-    )
-
-The package hooks up to the `namespace package <http://setuptools.readthedocs.io/en/latest/setuptools.html#namespace-packages>`_
-``cone``, so ``src/cone/__init__.py`` must contain:
-
-.. code-block:: python
-
-    __import__('pkg_resources').declare_namespace(__name__)
+    [tool.setuptools.packages.find]
+    where = ["src"]
 
 
-Bootstrap Script
-----------------
+Virtual Environment
+-------------------
 
-`Virtualenv <https://virtualenv.pypa.io/en/stable>`_ is used to setup the
-application. Add a ``bootstrap.sh`` script, which creates the isolated python
-environment, and installs the dependencies.
+Create a virtual environment and install the package:
 
 .. code-block:: sh
 
     #!/bin/sh
     set -e
 
-    for dir in lib include local bin share; do
-        if [ -d "$dir" ]; then
-            rm -r "$dir"
-        fi
-    done
+    # Remove existing environment
+    rm -rf venv
 
-    python3 -m venv .
-    ./bin/pip install pyramid==1.9.4
-    ./bin/pip install repoze.zcml==1.1
-    ./bin/pip install repoze.workflow==1.1
-    ./bin/pip install -e .
+    # Create virtual environment
+    python3 -m venv venv
 
-Make this script executable.
+    # Install package in development mode
+    ./venv/bin/pip install -e .
+
+Alternatively, using ``uv`` (faster):
 
 .. code-block:: sh
 
-    chmod +x bootstrap.sh
+    uv venv venv
+    uv pip install -e .
 
 
 Application Configuration
@@ -174,7 +162,7 @@ Create ``example.ini`` and add:
     #cone.root.node_factory = package.root_node_factory
     cone.root.title = cone.example
     cone.root.default_child = example
-    #cone.root.default_content_tile = 
+    #cone.root.default_content_tile =
     #cone.root.mainmenu_empty_title = false
 
     [pipeline:main]
@@ -363,11 +351,12 @@ into Ajax SSR can be found :ref:`here <ajax_custom_javascript>`.
 Installation
 ------------
 
-To install the application, run bootstrap.sh.
+To install the application, create and activate the virtual environment:
 
 .. code-block:: sh
 
-    ./bootstrap.sh
+    python3 -m venv venv
+    ./venv/bin/pip install -e .
 
 
 Run Application
@@ -375,6 +364,6 @@ Run Application
 
 .. code-block:: sh
 
-    ./bin/pserve example.ini
+    ./venv/bin/pserve example.ini
 
 The application is now available at ``localhost:8081``.
