@@ -30,7 +30,7 @@ dependencies = [
     "pyramid_chameleon",
     "pyramid_zcml",
     "repoze.workflow",
-    "treibstoff>0.99",
+    "treibstoff>0.99,<2.0.0",
     "webresource>1.2.99",
     "yafowil.bootstrap>1.99",
     "yafowil.webob>1.99",
