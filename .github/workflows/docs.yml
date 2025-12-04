@@ -13,7 +13,7 @@ jobs:
       with:
         node-version: 16
 
-    - run: npm install -g pnpm @mermaid-js/mermaid-cli
+    - run: npm install -g pnpm@7 @mermaid-js/mermaid-cli
 
     - name: Install Project
       run: make install
