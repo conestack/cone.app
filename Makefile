@@ -10,10 +10,10 @@
 #: docs.sphinx
 #: i18n.gettext
 #: i18n.lingua
-#: js.karma
 #: js.nodejs
 #: js.rollup
 #: js.scss
+#: js.wtr
 #: qa.coverage
 #: qa.test
 #
@@ -57,7 +57,7 @@ PROJECT_PATH_PYTHON?=
 # The package manager to use. Defaults to `npm`. Possible values
 # are `npm` and `pnpm`
 # Default: npm
-NODEJS_PACKAGE_MANAGER?=npm
+NODEJS_PACKAGE_MANAGER?=pnpm
 
 # Value for `--prefix` option when installing packages.
 # Default: .
@@ -84,6 +84,16 @@ NODEJS_OPT_PACKAGES?=
 # No default value.
 NODEJS_INSTALL_OPTS?=
 
+## js.wtr
+
+# Web test runner config file.
+# Default: wtr.config.mjs
+WTR_CONFIG?=js/wtr.config.mjs
+
+# Web test runner additional command line options.
+# Default: --coverage
+WTR_OPTIONS?=--coverage
+
 ## js.scss
 
 # The SCSS root source file.
@@ -107,16 +117,6 @@ SCSS_OPTIONS?=--no-source-map=none
 # Rollup config file.
 # Default: rollup.conf.js
 ROLLUP_CONFIG?=js/rollup.conf.js
-
-## js.karma
-
-# Karma config file.
-# Default: karma.conf.js
-KARMA_CONFIG?=js/karma.conf.js
-
-# Karma additional command line options.
-# Default: --single-run
-KARMA_OPTIONS?=--single-run
 
 ## core.mxenv
 
@@ -344,6 +344,18 @@ DIRTY_TARGETS+=nodejs-dirty
 CLEAN_TARGETS+=nodejs-clean
 
 ##############################################################################
+# web test runner
+##############################################################################
+
+NODEJS_DEV_PACKAGES+=\
+	@web/test-runner \
+	@web/dev-server-import-maps
+
+.PHONY: wtr
+wtr: $(NODEJS_TARGET)
+	@web-test-runner $(WTR_OPTIONS) --config $(WTR_CONFIG)
+
+##############################################################################
 # scss
 ##############################################################################
 
@@ -366,20 +378,6 @@ NODEJS_DEV_PACKAGES+=\
 .PHONY: rollup
 rollup: $(NODEJS_TARGET)
 	@rollup --config $(ROLLUP_CONFIG)
-
-##############################################################################
-# karma
-##############################################################################
-
-NODEJS_DEV_PACKAGES+=\
-	karma \
-	karma-coverage \
-	karma-chrome-launcher \
-	karma-module-resolver-preprocessor
-
-.PHONY: karma
-karma: $(NODEJS_TARGET)
-	@karma start $(KARMA_CONFIG) $(KARMA_OPTIONS)
 
 ##############################################################################
 # mxenv
