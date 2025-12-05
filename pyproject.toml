@@ -52,8 +52,8 @@ test = [
 ]
 docs = [
     "Sphinx",
-    "sphinx_bootstrap_theme",
     "repoze.sphinx.autointerface",
+    "sphinx_bootstrap_theme",
 ]
 
 [project.urls]
