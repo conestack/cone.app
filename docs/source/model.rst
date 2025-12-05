@@ -462,6 +462,29 @@ The following authoring related properties are available:
     class CustomNode(BaseNode):
         pass
 
+The ``node_info`` decorator accepts additional keyword arguments to add custom
+properties to the node info instance:
+
+.. code-block:: python
+
+    @node_info(
+        name='custom_node',
+        title='Custom Node',
+        icon='glyphicon glyphicon-star',
+        # Custom properties
+        custom_property='value',
+        another_property=True
+    )
+    class CustomNode(BaseNode):
+        pass
+
+The node info name is also stored on the instance:
+
+.. code-block:: python
+
+    info = get_node_info('custom_node')
+    assert info.name == 'custom_node'
+
 The ``NodeInfo`` instance can be accessed either on the application model
 nodes or with ``cone.app.model.get_node_info``.
 
@@ -481,3 +504,28 @@ there has been registered a dedicated one or not.
     info = model.nodeinfo
 
 See :doc:`Forms <forms>` documentation for more details.
+
+
+Node Availability
+~~~~~~~~~~~~~~~~~
+
+The ``node_available`` callback can be used to control whether a registered
+node type is available in the application context:
+
+.. code-block:: python
+
+    from cone.app.model import node_available
+
+    @node_available
+    def check_node_available(node_info, container):
+        """Return True if node type should be available for the container.
+
+        :param node_info: The NodeInfo instance
+        :param container: The parent container where node would be added
+        :return: Boolean indicating availability
+        """
+        # Custom logic to determine availability
+        return True
+
+This is useful for conditionally enabling node types based on permissions,
+configuration, or container type.

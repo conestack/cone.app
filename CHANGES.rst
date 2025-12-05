@@ -18,7 +18,7 @@ Changes
 1.1.0 (unreleased)
 ------------------
 
-- Refactor package layout to use ``pyproject.toml`` and implecit namespace packages.
+- Refactor package layout to use ``pyproject.toml`` and implicit namespace packages.
   [rnix]
 
 
@@ -100,6 +100,13 @@ Changes
   [rnix]
 
 - Default layout ``mainmenu_fluid`` setting is now ``True`` by default.
+  [rnix]
+
+
+1.0.8 (2025-10-25)
+------------------
+
+- Pin upper versions of dependencies.
   [rnix]
 
 

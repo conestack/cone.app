@@ -92,8 +92,19 @@ In general, there are two usecases at which target node forms are submitted to.
 When adding nodes, forms are usually submitted to the container of the node to
 add, while forms for editing nodes are submitted to the node to edit directly.
 
-Two plumbing behaviors exists providing the target URL for add end edit forms,
-``AddFormTarget`` and ``EditFormTarget``.
+The ``FormTarget`` base behavior provides the basic form target infrastructure.
+It is extended by ``AddFormTarget`` and ``EditFormTarget`` for specific use cases.
+
+``FormTarget`` provides:
+
+- ``form_action``: Property returning the form submission URL
+- ``action_resource``: Class attribute defining the resource name for URL generation
+
+``AddFormTarget`` computes the action URL pointing to the parent container,
+suitable for forms that create new children.
+
+``EditFormTarget`` computes the action URL pointing to the model itself,
+suitable for forms that modify existing nodes.
 
 The basic form tile implementation example described in
 :ref:`basic forms <forms_form_basics>` using a form target behavior looks like:
@@ -178,6 +189,18 @@ The YAML file containing the form contains:
             handler: context.save
             next: None
             label: Save
+
+.. deprecated:: 1.1
+
+    The following are deprecated and moved to the :ref:`Migration <migration_deprecated_patterns>` appendix:
+
+    - ``cone.app.browser.authoring.EditTile``
+    - ``cone.app.browser.authoring.OverlayEditTile``
+    - ``cone.app.browser.authoring._FormRenderingTile``
+    - ``form_flavor`` and ``form_action`` in ``YAMLForm`` (use ``YAMLEditFormTarget``
+      or ``YAMLAddFormTarget`` instead)
+
+    Forms are now rendered directly by views rather than through intermediate tiles.
 
 
 Protected Model Attributes

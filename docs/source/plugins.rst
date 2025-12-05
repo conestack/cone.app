@@ -165,9 +165,9 @@ This makes the plugin model available to the browser via traversal.
 Application Settings
 --------------------
 
-Plugin Settings are implemented as application nodes. They are located
-at ``app_root['settings']`` and can be registered to the application via
-``cone.app.register_config``.
+Plugin settings are implemented as application nodes extending
+``cone.app.model.SettingsNode``. They are located at ``app_root['settings']``
+and registered via ``cone.app.register_config``.
 
 .. code-block:: python
 
@@ -177,23 +177,55 @@ at ``app_root['settings']`` and can be registered to the application via
     from cone.app.model import node_info
 
     @node_info(
-        name='cone_example_settings',
-        title='Example Plugin Settings',
-        description='Settings related to example plugin',
-        icon='glyphicon glyphicon-asterisk')
+        name='example_settings',
+        title='Example Settings',
+        description='Settings for the example plugin',
+        icon='glyphicon glyphicon-cog')
     class ExampleSettings(SettingsNode):
-        """Plugin settings are provided by this node."""
-        category = 'Settings Category'
+        """Plugin settings node."""
+        # Category for grouping in settings UI
+        category = 'Example'
 
         @property
         def display(self):
-            # Logic like permission checks whether settings node is available
-            # to the user via UI.
+            # Control visibility in settings UI
             return True
 
     @main_hook
     def example_main_hook(config, global_config, settings):
         register_config('example', ExampleSettings)
+
+Settings forms use the ``SettingsForm`` behavior and ``settings_form`` decorator:
+
+.. code-block:: python
+
+    from cone.app.browser.form import Form
+    from cone.app.browser.settings import SettingsForm
+    from cone.app.browser.settings import settings_form
+    from plumber import plumbing
+    from yafowil.base import factory
+
+    @settings_form(interface=ExampleSettings)
+    @plumbing(SettingsForm)
+    class ExampleSettingsForm(Form):
+
+        def prepare(self):
+            # Form preparation
+            self.form = factory(
+                'form',
+                name='examplesettings',
+                props={'action': self.form_action}
+            )
+            # Add form fields...
+
+The ``settings_form`` decorator accepts a ``permission`` keyword argument if the
+settings should be editable by users without ``manage`` permission.
+
+.. note::
+
+    As of version 1.1, settings are accessible to authenticated users, not just
+    managers. The ``display`` property on ``SettingsNode`` controls visibility
+    per settings node.
 
 
 Custom Threads

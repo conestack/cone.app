@@ -90,7 +90,13 @@ Provided layout settings:
 
 .. note::
 
-    Prior to ``cone.app 1.0rc1``, layout configuration was done either via
-    ``layout`` property on application model node or with an ``ILayout``
-    implementing adapter. These methods still work but are deprecated and will
-    be removed as of cone.app 1.1
+    As of version 1.1, ``mainmenu_fluid`` defaults to ``True``.
+
+.. deprecated:: 1.1
+
+    Prior to ``cone.app 1.1``, layout configuration could be done via the
+    ``layout`` property on application model nodes or with an ``ILayout``
+    implementing adapter. These patterns are deprecated. See the
+    :ref:`Migration <migration_deprecated_patterns>` appendix for details.
+
+    Use ``LayoutConfig`` and the ``layout_config`` decorator instead.

@@ -59,6 +59,13 @@ NODEJS_PACKAGE_MANAGER?=pnpm
 # No default value.
 PROJECT_PATH_PYTHON?=
 
+## js.nodejs
+
+# The package manager to use. Defaults to `npm`. Possible values
+# are `npm` and `pnpm`
+# Default: npm
+NODEJS_PACKAGE_MANAGER?=pnpm
+
 # Value for `--prefix` option when installing packages.
 # Default: .
 NODEJS_PREFIX?=.
