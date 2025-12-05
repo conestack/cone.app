@@ -24,32 +24,34 @@ _ = TranslationStringFactory('cone.app')
 
 
 class ContextMenuToolbar(Toolbar):
+    css = u'nav-item py-0'
 
     def __call__(self, model, request):
         if not self.display:
-            return u''
+            return ''
         rendered_actions = list()
         for action in self.values():
             rendered = action(model, request)
             if not rendered:
                 continue
+            order = getattr(action, 'order', 0)
             # expect correct markup if no link action
             if not isinstance(action, LinkAction):
-                rendered_actions.append(rendered)
+                rendered_actions.append((order, rendered))
                 continue
             # wrap link action in list item
-            if action.selected:
-                rendered = u'<li class="active">%s</li>' % rendered
-            else:
-                rendered = u'<li>%s</li>' % rendered
-            rendered_actions.append(rendered)
+            rendered_actions.append((
+                order,
+                f'<li class="nav-item py-0">{rendered}</li>'
+            ))
         if not rendered_actions:
-            return u''
-        rendered_actions = u'\n'.join(rendered_actions)
-        css = u'nav navbar-nav'
-        if self.css:
-            css += ' ' + self.css
-        return u'<ul class="%s">%s</ul>' % (css, rendered_actions)
+            return ''
+        # order items by 'order' property (defaults to 0)
+        rendered_actions.sort(key=lambda x: x[0])
+        rendered_actions = '\n'.join([ra for _, ra in rendered_actions])
+        if not self.css:
+            return f'<li>{rendered_actions}</li>'
+        return f'<li class="{self.css}">{rendered_actions}</li>'
 
 
 class ContextMenuDropdown(Toolbar):
@@ -69,6 +71,8 @@ class ContextMenuDropdown(Toolbar):
     def __call__(self, model, request):
         self.model = model
         self.request = request
+        if not self.display:
+            return u''
         return render_template(
             self.template,
             request=request,
@@ -78,9 +82,11 @@ class ContextMenuDropdown(Toolbar):
 
     def __setitem__(self, name, value):
         if not isinstance(value, TemplateAction):
-            raise ValueError(u'Only ``TemplateAction`` deriving objects can be '
-                             u'added to ``ContextMenuDropdown`` instances.')
-        super(ContextMenuDropdown, self).__setitem__(name, value)
+            raise ValueError(
+                'Only ``TemplateAction`` deriving objects can be '
+                'added to ``ContextMenuDropdown`` instances.'
+            )
+        super().__setitem__(name, value)
 
 
 # context menu group registry
@@ -88,8 +94,7 @@ context_menu = odict()
 
 
 class context_menu_group(object):
-    """Decorator defining a context menu group.
-    """
+    """Decorator defining a context menu group."""
 
     def __init__(self, name):
         self.name = name
@@ -100,8 +105,7 @@ class context_menu_group(object):
 
 
 class context_menu_item(object):
-    """Decorator defining a context menu item inside a group.
-    """
+    """Decorator defining a context menu item inside a group."""
 
     def __init__(self, group, name):
         self.group = group
@@ -114,53 +118,102 @@ class context_menu_item(object):
 
 @context_menu_group(name='navigation')
 class NavigationToolbar(ContextMenuToolbar):
-    """Context menu navigation toolbar.
-    """
+    """Context menu navigation toolbar."""
 
 
-context_menu_item(group='navigation', name='up')(ActionUp)
+@context_menu_item(group='navigation', name='up')
+class ContextMenuActionUp(ActionUp):
+    css = 'nav-link'
 
 
 @context_menu_group(name='contentviews')
 class ContentViewsDropdown(ContextMenuDropdown):
-    """Context menu content views dropdown.
-    """
+    """Context menu content views dropdown."""
     title = _('display', default=u'Display')
 
 
-context_menu_item(group='contentviews', name='list')(ActionList)
-context_menu_item(group='contentviews', name='view')(ActionView)
-context_menu_item(group='contentviews', name='edit')(ActionEdit)
-context_menu_item(group='contentviews', name='sharing')(ActionSharing)
+@context_menu_item(group='contentviews', name='list')
+class ContextMenuActionList(ActionList):
+    css = 'dropdown-item'
+    selected_css = 'active'
+
+
+@context_menu_item(group='contentviews', name='view')
+class ContextMenuActionView(ActionView):
+    css = 'dropdown-item'
+    selected_css = 'active'
+
+
+@context_menu_item(group='contentviews', name='edit')
+class ContextMenuActionEdit(ActionEdit):
+    css = 'dropdown-item'
+    selected_css = 'active'
+
+
+@context_menu_item(group='contentviews', name='sharing')
+class ContextMenuActionSharing(ActionSharing):
+    css = 'dropdown-item'
+    selected_css = 'active'
 
 
 @context_menu_group(name='childactions')
 class ChildActionsDropdown(ContextMenuDropdown):
-    """Context menu content views dropdown.
-    """
+    """Context menu content views dropdown."""
     title = _('actions', default=u'Actions')
 
 
-context_menu_item(group='childactions', name='cut')(ActionCut)
-context_menu_item(group='childactions', name='copy')(ActionCopy)
-context_menu_item(group='childactions', name='paste')(ActionPaste)
-# context_menu_item(group='childactions', name='delete')(ActionDeleteChildren)
+@context_menu_item(group='childactions', name='cut')
+class ContextMenuActionCut(ActionCut):
+    css = 'dropdown-item'
+    selected_css = 'active'
+
+
+@context_menu_item(group='childactions', name='copy')
+class ContextMenuActionCopy(ActionCopy):
+    css = 'dropdown-item'
+    selected_css = 'active'
+
+
+@context_menu_item(group='childactions', name='paste')
+class ContextMenuActionPaste(ActionPaste):
+    css = 'dropdown-item'
+    selected_css = 'active'
+
+
+#@context_menu_item(group='childactions', name='delete')
+#class ContextMenuActionDeleteChildren(ActionDeleteChildren):
+#    css = 'dropdown-item'
 
 
 @context_menu_group(name='contextactions')
 class ContextActionsToolbar(ContextMenuToolbar):
-    """Context menu navigation toolbar.
-    """
+    """Context menu navigation toolbar."""
 
 
-context_menu_item(group='contextactions', name='change_state')(ActionState)
-context_menu_item(group='contextactions', name='add')(ActionAdd)
-context_menu_item(group='contextactions', name='delete')(ActionDelete)
+@context_menu_item(group='contextactions', name='change_state')
+class ContextMenuActionState(ActionState):
+    ...
+
+
+@context_menu_item(group='contextactions', name='add')
+class ContextMenuActionAdd(ActionAdd):
+    ...
+
+
+@context_menu_item(group='contextactions', name='delete')
+class ContextMenuActionDelete(ActionDelete):
+    css = 'nav-link'
+    order = 100
 
 
 @tile(name='contextmenu', path='templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
 
     @property
-    def toolbars(self):
-        return context_menu.values()
+    def rendered_toolbars(self):
+        rendered_toolbars = []
+        for toolbar in context_menu.values():
+            rendered_toolbar = toolbar(self.model, self.request)
+            if rendered_toolbar:
+                rendered_toolbars.append(rendered_toolbar)
+        return rendered_toolbars

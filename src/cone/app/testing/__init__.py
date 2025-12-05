@@ -8,6 +8,7 @@ from pyramid.security import AuthenticationAPIMixin
 from pyramid.testing import DummyRequest as BaseDummyRequest
 from webob.acceptparse import create_accept_header
 from yafowil.base import factory
+from yafowil.bootstrap import configure_factory
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import resetHooks
 from zope.configuration.xmlconfig import XMLConfig
@@ -254,9 +255,12 @@ class Security:
 
     def setUp(self, args=None):
         self.make_app()
+        factory.push_state()
+        configure_factory('bootstrap5')
         XMLConfig('testing/dummy_workflow.zcml', cone.app)()
 
     def tearDown(self):
+        factory.pop_state()
         root = get_root()
         root.factories.clear()
         if root.get('settings'):

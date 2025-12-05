@@ -37,7 +37,7 @@ class TestBrowserContents(TileTestCase):
         created = datetime(2011, 3, 14)
         delta = timedelta(1)
         modified = created + delta
-        model = BaseNode()
+        model = BaseNode(parent=get_root())
         for i in range(19):
             model[str(i)] = BaseNode()
             model[str(i)].properties.action_view = True
@@ -170,8 +170,9 @@ class TestBrowserContents(TileTestCase):
             rendered = contents.batch
 
         expected = (
-            '<li class="active">\n          '
-            '<a href="javascript:void(0)">1</a>'
+            '<li class="active page-item">\n          '
+            '<a href="javascript:void(0)"\n             '
+            'class="page-link">1</a>'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -187,8 +188,9 @@ class TestBrowserContents(TileTestCase):
             rendered = contents.batch
 
         expected = (
-            '<li class="active">\n          '
-            '<a href="javascript:void(0)">2</a>'
+            '<li class="active page-item">\n          '
+            '<a href="javascript:void(0)"\n             '
+            'class="page-link">2</a>'
         )
         self.assertTrue(rendered.find(expected) != -1)
 

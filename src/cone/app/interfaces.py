@@ -95,8 +95,6 @@ class ILayoutConfig(IProperties):
     columns_fluid = Attribute(u'Flag whether columns are fluid')
     pathbar = Attribute(u'Flag whether to display pathbar')
     sidebar_left = Attribute(u'Tiles which should be rendered in sidebar')
-    sidebar_left_grid_width = Attribute(u'Sidebar grid width')
-    content_grid_width = Attribute(u'Content grid width')
 
 
 # B/C, removed as of cone.app 1.1
@@ -208,3 +206,7 @@ class IAuthenticator(Interface):
 
         Return principal id if authentication is successful, else None.
         """
+
+class ICategories(Interface):
+    """List of translation strings"""
+    categories = Attribute(u'Categories as (translation) string.')

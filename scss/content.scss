@@ -1,0 +1,31 @@
+@import "bootstrap/mixins/_breakpoints";
+
+/* content */
+#content {
+    container: main-content / inline-size;
+    height: calc(100% - 40px);
+    width: 100%;
+    position: relative;
+}
+
+#main-area {
+    width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+/* copysupport */
+tr.selectable td {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+/* batched items */
+#main-area.full {
+    .batched_items_slice_size {
+        max-width: max-content;
+    }
+    .batched_items_filter {
+        max-width: 300px;
+    }
+}

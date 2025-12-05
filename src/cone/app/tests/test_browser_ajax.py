@@ -11,17 +11,12 @@ from cone.app.browser.ajax import AjaxFormContinue
 from cone.app.browser.ajax import AjaxMessage
 from cone.app.browser.ajax import AjaxOverlay
 from cone.app.browser.ajax import AjaxPath
-from cone.app.browser.ajax import livesearch
 from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.form import Form
-from cone.app.interfaces import ILiveSearch
 from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from yafowil.base import factory
-from zope.component import adapter
-from zope.interface import implementer
-from zope.interface import Interface
 import json
 
 
@@ -164,6 +159,7 @@ class TestBrowserAjax(TileTestCase):
         )
 
         self.assertEqual(message.as_json(), {
+            'css': '',
             'type': 'message',
             'payload': payload,
             'flavor': flavor,
@@ -391,7 +387,8 @@ class TestBrowserAjax(TileTestCase):
             'type': 'message',
             'payload': 'Some info message',
             'flavor': 'info',
-            'selector': 'None'
+            'selector': 'None',
+            'css': ''
         }, {
             'type': 'overlay',
             'action': 'someaction',
@@ -490,7 +487,7 @@ class TestBrowserAjax(TileTestCase):
             response = render_ajax_form(root, request, 'ajaxtestform')
             result = str(response)
 
-        self.assertTrue(result.find('<div class="errormessage">') != -1)
+        self.assertTrue(result.find('<div class="invalid-feedback">') != -1)
         self.assertTrue(result.find('<script language="javascript"') != -1)
         self.assertTrue(result.find('parent.ts.ajax.form({\n') != -1)
 
@@ -508,26 +505,3 @@ class TestBrowserAjax(TileTestCase):
             '        next: [{'
         )
         self.assertTrue(result.find(expected) != -1)
-
-    def test_livesearch(self):
-        # Cone provides a livesearch view, but no referring ``ILiveSearch``
-        # implementing adapter for it
-        root = get_root()
-        request = self.layer.new_request()
-        request.params['term'] = 'foo'
-        self.assertEqual(livesearch(root, request), [])
-
-        # Provide dummy adapter
-        @implementer(ILiveSearch)
-        @adapter(Interface)
-        class LiveSearch(object):
-            def __init__(self, model):
-                self.model = model
-
-            def search(self, request, query):
-                return [{'value': 'Value'}]
-
-        registry = request.registry
-        registry.registerAdapter(LiveSearch)
-
-        self.assertEqual(livesearch(root, request), [{'value': 'Value'}])

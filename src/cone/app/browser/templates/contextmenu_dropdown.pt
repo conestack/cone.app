@@ -1,28 +1,22 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            omit-tag="True">
 
-  <ul class="nav navbar-nav"
-      tal:condition="context.display">
+  <li class="nav-item dropdown py-0">
+    <a href="#"
+       role="button"
+       class="nav-link dropdown-toggle py-2 px-3"
+       data-bs-toggle="dropdown">
+      <span tal:condition="context.icon"
+            class="${context.icon}"></span>
+      <span tal:content="context.title">Title</span>
+      <span class="caret"></span>
+    </a>
 
-    <li class="dropdown">
-
-      <a href="#"
-         class="dropdown-toggle"
-         data-toggle="dropdown">
-        <span tal:condition="context.icon"
-              class="${context.icon}"></span>
-        <span tal:content="context.title">Title</span>
-        <span class="caret"></span>
-      </a>
-
-      <ul class="dropdown-menu" role="menu">
-        <li tal:repeat="action context.values()">
-          <tal:action replace="structure action(model, request)" />
-        </li>
-      </ul>
-
-    </li>
-
-  </ul>
+    <ul class="dropdown-menu rounded-0 rounded-bottom mt-0">
+      <li tal:repeat="action context.values()">
+        <tal:action replace="structure action(model, request)" />
+      </li>
+    </ul>
+  </li>
 
 </tal:block>

@@ -1,29 +1,32 @@
-<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-           xmlns:ajax="http://namespaces.conestack.org/ajax"
-           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-           i18n:domain="cone.app"
-           omit-tag="True">
+<tal:dropdown
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:ajax="http://namespaces.conestack.org/ajax"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="cone.app"
+  omit-tag="True">
 
-  <li class="dropdown"
+  <li class="nav-item dropdown py-0"
       tal:define="transitions context.transitions;
                   state context.model.state"
       tal:condition="state">
 
     <tal:transitions condition="transitions">
-
       <a href="#"
-         class="state-${state} dropdown-toggle"
+         role="button"
+         class="nav-link dropdown-toggle py-2 px-3 state-${state}"
          title="Change state"
-         data-toggle="dropdown"
+         data-bs-toggle="dropdown"
          tal:condition="transitions"
          i18n:attributes="title change_state">
         <span i18n:translate="state">State</span>:
         <span tal:content="context.state_name">State</span>
       </a>
 
-      <ul class="dropdown-menu" role="workflowmenu">
+      <ul class="dropdown-menu rounded-0 rounded-bottom mt-0"
+          role="workflowmenu">
         <li tal:repeat="transition transitions">
           <a href="#"
+             class="dropdown-item"
              ajax:bind="click"
              ajax:target="${transition.target}"
              ajax:action="wf_dropdown:NONE:NONE"
@@ -32,11 +35,10 @@
           </a>
         </li>
       </ul>
-
     </tal:transitions>
 
     <tal:notransitions condition="not transitions">
-      <span class="no-transitions state-${state}">
+      <span class="nav-link py-2 no-transitions state-${state}">
         <span i18n:translate="state">State</span>:
         <span tal:content="context.state_name">State</span>
       </span>
@@ -44,4 +46,4 @@
 
   </li>
 
-</tal:block>
+</tal:dropdown>

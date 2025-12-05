@@ -43,17 +43,13 @@ class LoginForm(Form):
             'field:label:div:help:error:text',
             props={
                 'required': _('no_username_given', default='No username given'),
-                'label': _('username', default='Username'),
-                'label.class_add': 'col-sm-2',
-                'div.class_add': 'col-sm-5',
+                'label': _('username', default='Username')
             })
         form['password'] = factory(
             'field:label:div:help:*credentials:error:password',
             props={
                 'required': _('no_password_given', default='No password given'),
                 'label': _('password', default='Password'),
-                'label.class_add': 'col-sm-2',
-                'div.class_add': 'col-sm-5',
             },
             custom={
                 'credentials': ([self.login], [], [], []),
@@ -61,7 +57,6 @@ class LoginForm(Form):
         actions = form['form_actions'] = factory(
             'field:div',
             props={
-                'div.class_add': 'col-sm-offset-2 col-sm-5',
                 'structural': True,
             })
         actions['login'] = factory(
@@ -72,7 +67,7 @@ class LoginForm(Form):
                 'handler': self.noop,
                 'next': self.next,
                 'label': _('login', default='Login'),
-                'div.class_add': 'col-sm-offset-2 col-sm-5',
+                'class_add': 'bg-primary text-light'
             })
         self.form = form
 

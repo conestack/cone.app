@@ -32,15 +32,17 @@ class TestBrowserReferenceBrowser(TileTestCase):
     def test_reference_render(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
+
         self.checkOutput("""
         <span
-          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected=">
+          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
+          class="input-group">
           <input class="form-control referencebrowser"
                  id="input-ref" name="ref" readonly="readonly"
                  type="text" value="" />
           <input name="ref.uid" type="hidden" value="" />
-          <span class="referencebrowser_trigger" data-reference-name='ref'>
-            <i class="ion-android-share">
+          <span class="referencebrowser_trigger input-group-text" data-reference-name='ref'>
+            <i class="bi-link">
             </i>
           browse</span>
         </span>
@@ -49,13 +51,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget.attrs['multivalued'] = True
         self.checkOutput("""
         <span
-          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected=">
+          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
+          class="">
           <input id="exists-ref" name="ref-exists" type="hidden" value="exists" />
           <select class="form-control referencebrowser"
                   id="input-ref" multiple="multiple" name="ref">
           </select>
-          <span class="referencebrowser_trigger" data-reference-name='ref'>
-            <i class="ion-android-share">
+          <span class="referencebrowser_trigger input-group-text" data-reference-name='ref'>
+            <i class="bi-link">
             </i>
             browse</span>
         </span>
@@ -444,7 +447,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             'value="378657f5-c435-4678-886b-a3eefb3141b5" />'
         ) > -1)
         self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
+            '<input class="form-control is-valid referencebrowser" id="input-ref" '
             'name="ref" readonly="readonly" type="text" value="Reference Item" />'
         ) > -1)
 
@@ -497,7 +500,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             'value="81fc0e53-5551-41d4-a1bd-6064e34face5" />'
         ) > -1)
         self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
+            '<input class="form-control is-valid referencebrowser" id="input-ref" '
             'name="ref" readonly="readonly" type="text" value="Other Item" />'
         ) > -1)
 
@@ -526,7 +529,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, '', [ExtractionError('Mandatory field was empty')]]
+            [UNSET, '', [ExtractionError('Mandatory field was empty',)]]
         )
 
         request.params['ref'] = 'Item'
@@ -667,7 +670,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, [], [ExtractionError('Mandatory field was empty')]]
+            [UNSET, [], [ExtractionError('Mandatory field was empty',)]]
         )
 
         request.params['ref-exists'] = 'exists'
@@ -815,6 +818,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
+        ajax:overlay-css="modal-xl"
         ></a>...
         """, action.render())
 
@@ -844,7 +848,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Add reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="glyphicon glyphicon-plus-sign">'
+        expected = '<span class="bi-plus-circle">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -878,7 +882,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Remove reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="glyphicon glyphicon-minus-sign">'
+        expected = '<span class="bi-minus-circle">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)
@@ -930,7 +934,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         with self.layer.authenticated('max'):
             self.assertTrue(action.display)
 
-        expected = 'glyphicon glyphicon-asterisk'
+        expected = 'bi-asterisk'
         self.assertEqual(action.icon, expected)
 
         self.assertEqual(action(model, request), u'')
@@ -939,7 +943,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
             rendered = action(model, request)
         expected = '<a'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '&nbsp;My Node</a>'
+        expected = '&nbsp;<span>My Node</span></a>'
         self.assertTrue(rendered.find(expected) > -1)
 
         @implementer(INavigationLeaf)
@@ -950,7 +954,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
         expected = (
-            '<span class="glyphicon glyphicon-asterisk" />'
+            '<span class="bi-asterisk" />'
             '&nbsp;<span>leaf</span>')
         self.assertEqual(rendered, expected)
 
@@ -1065,7 +1069,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data-toggle="tooltip"
         data-placement="top"
         ajax:bind="click"
-        ><span class="glyphicon glyphicon-plus-sign"></span></a>...
+        ajax:overlay-css="modal-xl"
+        ><span class="bi-plus-circle"></span></a>...
         """, res)
 
         # Non navigable nodes are not rendered

@@ -41,7 +41,7 @@ class TestBrowserLogin(TileTestCase):
         request.params['loginform.password'] = 'bar'
         request.params['action.loginform.login'] = '1'
         res = render_tile(root, request, 'loginform')
-        self.assertTrue(res.find('class="errormessage">Invalid Credentials') > -1)
+        self.assertTrue(res.find('class="invalid-feedback">Invalid Credentials') > -1)
 
         # Authenticate with correct credentials
         request.params['loginform.user'] = security.ADMIN_USER

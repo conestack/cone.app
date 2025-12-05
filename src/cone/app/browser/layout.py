@@ -1,13 +1,14 @@
 from cone.app import cfg
 from cone.app import layout_config
-from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import get_action_context
-from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
+from cone.app.browser.utils import request_property
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ILayout
 from cone.app.interfaces import INavigationLeaf
@@ -16,16 +17,18 @@ from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
 from cone.app.utils import node_path
-from cone.tile import Tile
 from cone.tile import render_template
 from cone.tile import render_tile
+from cone.tile import Tile
 from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
-from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
+from pyramid.i18n import negotiate_locale_name
+from pyramid.i18n import TranslationStringFactory
 import warnings
+import json
 
 
 _ = TranslationStringFactory('cone.app')
@@ -37,9 +40,9 @@ class LogoTile(Tile):
     """
 
 
-@tile(name='livesearch', path='templates/livesearch.pt', permission='login')
-class LivesearchTile(Tile):
-    """Tile rendering the live search.
+@tile(name='colortoggler', path='templates/colortoggler.pt', permission='login')
+class ColorTogglerTile(Tile):
+    """Tile rendering the color mode toggler.
     """
 
 
@@ -110,6 +113,21 @@ class Layout(LayoutConfigTile):
     def contenttile(self):
         return get_action_context(self.request).scope
 
+    def tileinfo(self, val):
+        if isinstance(val, tuple):
+            return {
+                'name': val[0],
+                'title': val[1]
+            }
+        elif isinstance(val, str):
+            return {
+                'name': val,
+                'title': val
+            }
+
+    def dump(self, val):
+        return json.dumps(val)
+
 
 # personal tools action registry
 personal_tools = odict()
@@ -123,6 +141,7 @@ class personal_tools_action(object):
         self.name = name
 
     def __call__(self, factory):
+        factory.css = f'dropdown-item {factory.css or ""}'
         personal_tools[self.name] = factory()
         return factory
 
@@ -130,7 +149,7 @@ class personal_tools_action(object):
 @personal_tools_action(name='logout')
 class LogoutAction(LinkAction):
     text = _('logout', default='Logout')
-    icon = 'ion-log-out'
+    icon = 'bi-door-open'
     bind = None
     target = None
 
@@ -156,7 +175,13 @@ class PersonalTools(Tile):
 
     @property
     def items(self):
-        return [_(self.model, self.request) for _ in personal_tools.values()]
+        items = []
+        for item in personal_tools.values():
+            rendered = item(self.model, self.request)
+            if not rendered:
+                continue
+            items.append(rendered)
+        return items
 
 
 @tile(name='mainmenu',
@@ -311,9 +336,13 @@ class PathBar(Tile):
       path='templates/navtree.pt',
       permission='view',
       strict=False)
-class NavTree(Tile):
+class NavTree(LayoutConfigTile):
     """Navigation tree tile.
     """
+
+    @property
+    def show_navroot(self):
+        return self.model.properties.show_navroot
 
     @property
     def title(self):
@@ -342,6 +371,7 @@ class NavTree(Tile):
         item['path'] = path
         item['icon'] = icon
         item['css'] = css
+        item['leaf'] = False
         item['showchildren'] = False
         item['children'] = list()
         return item
@@ -379,6 +409,7 @@ class NavTree(Tile):
                 title = safe_decode(title)
             url = make_url(self.request, node=node)
             query = make_query(contenttile=node.properties.default_content_tile)
+            # XXX: if open children inside, use parent as target
             target = make_url(self.request, node=node, query=query)
             curnode = curpath == safe_decode(key)
             icon = node_icon(node)
@@ -388,6 +419,7 @@ class NavTree(Tile):
             child = self.navtreeitem(
                 title, url, target, node_path(node), icon, css)
             child['showchildren'] = curnode
+            child['leaf'] = INavigationLeaf.providedBy(node)
             if curnode:
                 child['selected'] = True
                 if default_child:
@@ -475,6 +507,7 @@ class LanguageTile(Tile):
         return make_query(**params)
 
 
+# XXX: complete list
 language_names = {
     'en': _('lang_en', default='English'),
     'de': _('lang_de', default='German'),
@@ -493,10 +526,23 @@ class Language(LanguageTile):
     def show(self):
         return bool(cfg.available_languages)
 
+    @request_property
+    def current_lang(self):
+        return negotiate_locale_name(self.request)
+
+    @property
+    def flag(self):
+        return make_url(
+            self.request,
+            node=self.model.root['resources'],
+            resource='/'.join(['cone', 'flags', f'{self.current_lang}.svg'])
+        )
+
     @property
     def languages(self):
         languages = list()
         localizer = get_localizer(self.request)
+        current = self.current_lang
         for lang in cfg.available_languages:
             target = make_url(
                 self.request,
@@ -507,7 +553,8 @@ class Language(LanguageTile):
             languages.append({
                 'target': target,
                 'icon': 'icon-lang-{}'.format(lang),
-                'title': title
+                'title': title,
+                'css': f'dropdown-item{" active" if lang == current else ""}'
             })
         return languages
 

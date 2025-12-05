@@ -40,7 +40,7 @@ cfg.available_languages = []
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
-cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
+cfg.default_node_icon = 'bi-asterisk'
 
 
 class layout_config(object):
@@ -73,9 +73,10 @@ class DefaultLayoutConfig(LayoutConfig):
         self.personaltools = True
         self.columns_fluid = True
         self.pathbar = True
+        self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'
         self.sidebar_left = ['navtree']
-        self.sidebar_left_grid_width = 3
-        self.content_grid_width = 9
+        self.sidebar_right = []
+        self.sidebar_right_mode = 'stacked' # 'toggle' or 'stacked'
 
 
 def import_from_string(path):
@@ -312,7 +313,7 @@ def main(global_config, **settings):
     # blueprint rendering. in future versions, tests should be adopted to
     # run against adopted blueprint rendering
     if not os.environ.get('TESTRUN_MARKER'):  # pragma: no cover
-        configure_factory('bootstrap3')
+        configure_factory('bootstrap5')
     config.configure_default_resource_includes()
 
     # scan browser package

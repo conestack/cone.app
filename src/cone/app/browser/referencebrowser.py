@@ -146,7 +146,7 @@ class ReferenceAction(LinkAction):
 class ActionAddReference(ReferenceAction):
     css = 'addreference'
     title = _('add_reference', default='Add reference')
-    icon = 'glyphicon glyphicon-plus-sign'
+    icon = 'bi-plus-circle'
 
     @property
     def enabled(self):
@@ -158,7 +158,7 @@ class ActionAddReference(ReferenceAction):
 class ActionRemoveReference(ReferenceAction):
     css = 'removereference'
     title = _('remove_reference', default='Remove reference')
-    icon = 'glyphicon glyphicon-minus-sign'
+    icon = 'bi-minus-circle'
 
     @property
     def enabled(self):
@@ -287,7 +287,7 @@ def reference_extractor(widget, data):
     return data.request['{}.uid'.format(widget.dottedpath)]
 
 
-def wrap_ajax_target(rendered, widget, data):
+def wrap_ajax_target(rendered, widget, data, cssclass=None):
     target = widget.attrs['target']
     if not target:
         request = data.request.request
@@ -327,18 +327,19 @@ def wrap_ajax_target(rendered, widget, data):
     target = '{}{}'.format(target, query)
     attrs = {
         'ajax:target': target,
+        'class_': cssclass if cssclass else ''
     }
     return tag('span', rendered, **attrs)
 
 
 def reference_trigger_renderer(widget, data):
     attrs = {
-        'class': 'referencebrowser_trigger',
+        'class': 'referencebrowser_trigger input-group-text',
         'data-reference-name': widget.dottedpath
     }
     return data.tag(
         'span',
-        tag('i', '', class_='ion-android-share'),
+        tag('i', '', class_='bi-link'),
         _('browse', default='Browse'),
         **attrs
     )
@@ -411,7 +412,9 @@ def reference_edit_renderer(widget, data):
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     trigger = reference_trigger_renderer(widget, data)
-    return wrap_ajax_target(rendered + trigger, widget, data)
+    cssclass = cssclasses(widget, data, classattr=None, additional=['input-group'],
+                          ignores=['required_class', 'class_add'])
+    return wrap_ajax_target(rendered + trigger, widget, data, cssclass)
 
 
 def reference_display_renderer(widget, data):
@@ -436,6 +439,10 @@ factory.register(
     display_renderers=[reference_display_renderer])
 
 factory.defaults['reference.required_class'] = 'required'
+
+factory.defaults['reference.error_class'] = 'is-invalid'
+
+factory.defaults['reference.valid_class'] = 'is-valid'
 
 factory.defaults['reference.default'] = ''
 

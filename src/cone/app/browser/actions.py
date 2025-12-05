@@ -55,8 +55,7 @@ class ActionContext(object):
 
 
 class Toolbar(odict):
-    """A toolbar rendering actions.
-    """
+    """A toolbar rendering actions."""
     display = True
     css = None
 
@@ -65,7 +64,7 @@ class Toolbar(odict):
 
     def __call__(self, model, request):
         if not self.display:
-            return u''
+            return ''
         rendered_actions = list()
         for action in self.values():
             rendered = action(model, request)
@@ -73,16 +72,23 @@ class Toolbar(odict):
                 continue
             rendered_actions.append(rendered)
         if not rendered_actions:
-            return u''
-        rendered_actions = u'\n'.join(rendered_actions)
+            return ''
+        rendered_actions = '\n'.join(rendered_actions)
         if not self.css:
-            return u'<div>%s</div>' % rendered_actions
-        return u'<div class="%s">%s</div>' % (self.css, rendered_actions)
+            return f'<div>{rendered_actions}</div>'
+        return f'<div class="{self.css}">{rendered_actions}</div>'
+
+    def __repr__(self):
+        return (
+            f'<{self.__class__.__module__}.{self.__class__.__name__} '
+            f'({self.keys()}) at {id(self)}>'
+        )
+
+    __str__ = __repr__
 
 
 class Action(object):
-    """Abstract Action.
-    """
+    """Abstract Action."""
     display = True
 
     def __call__(self, model, request):
@@ -108,8 +114,7 @@ class Action(object):
 
 
 class TileAction(Action):
-    """Action rendered by a tile.
-    """
+    """Action rendered by a tile."""
     tile = u''
 
     def render(self):
@@ -117,8 +122,7 @@ class TileAction(Action):
 
 
 class TemplateAction(Action):
-    """Action rendered by a template.
-    """
+    """Action rendered by a template."""
     template = u''
 
     def render(self):
@@ -131,8 +135,7 @@ class TemplateAction(Action):
 
 
 class DropdownAction(TemplateAction):
-    """Action rendering a dropdown.
-    """
+    """Action rendering a dropdown."""
     template = u'cone.app.browser:templates/action_dropdown.pt'
     href = None
     css = None
@@ -143,8 +146,9 @@ class DropdownAction(TemplateAction):
         """Return list of ``cone.app.model.Properties`` instances providing
         attributes ``icon``, ``url``, ``target``, ``action`` and ``title``.
         """
-        raise NotImplementedError(u"Abstract ``DropdownAction`` does not "
-                                  u"implement  ``items``")
+        raise NotImplementedError(
+            'Abstract ``DropdownAction`` does not implement  ``items``'
+        )
 
 
 class LinkAction(TemplateAction):
@@ -160,7 +164,7 @@ class LinkAction(TemplateAction):
     event = None
     confirm = None
     overlay = None
-    overlay_css = None
+    overlay_css = 'modal-xl'
     overlay_uid = None
     overlay_title = None
     path = None
@@ -172,9 +176,11 @@ class LinkAction(TemplateAction):
     path_overlay_uid = None
     path_overlay_title = None
     text = None
+    icon = None
     enabled = True
     selected = False
-    icon = None
+    selected_css = 'active'
+    disabled_css = 'disabled'
 
     def __init__(self, **kw):
         """Create link action.
@@ -200,20 +206,21 @@ class LinkAction(TemplateAction):
         :param path_overlay_uid: ajax:path-overlay-uid.
         :param path_overlay_title: ajax:path-overlay-title.
         :param text: link text.
-        :param enabled: if false, link gets 'disabled' css class.
-        :param selected: if true, link get 'selected' css class.
         :param icon: if set, add span tag with value as CSS class.
+        :param enabled: if false, link gets ``disabled_css`` CSS class.
+        :param selected: if true, link get ``selected_css`` CSS class.
+        :param selected_css: Selected CSS class. Defaults to 'active'.
+        :param disabled_css: Disabled CSS class. Defaults to 'disabled'.
         """
         self.__dict__.update(kw)
 
     @property
     def css_class(self):
-        css = not self.enabled and 'disabled' or ''
-        css = self.selected and '%s selected' % css or css
-        if self.css:
-            css = '%s %s' % (self.css, css)
+        css = '' if self.enabled else self.disabled_css
+        css = f'{css} {self.selected_css}' if self.selected else css
+        css = f'{self.css} {css}' if self.css else css
         css = css.strip()
-        return css and css or None
+        return css if css else None
 
     @property
     def target(self):
@@ -221,8 +228,7 @@ class LinkAction(TemplateAction):
 
 
 class ButtonAction(TemplateAction):
-    """Action rendering a HTML button, optional with bdajax attributes.
-    """
+    """Action rendering a HTML button, optional with bdajax attributes."""
     template = 'cone.app.browser:templates/button_action.pt'
     bind = 'click'         # ajax:bind attribute
     id = None              # id attribute
@@ -260,10 +266,9 @@ class ButtonAction(TemplateAction):
 
 
 class ActionUp(LinkAction):
-    """One level up action.
-    """
+    """One level up action."""
     id = 'toolbaraction-up'
-    icon = 'glyphicon glyphicon-arrow-up'
+    icon = 'bi-arrow-up'
     event = 'contextchanged:#layout'
     text = _('action_one_level_up', default='One level up')
     path = 'href'
@@ -296,10 +301,9 @@ class ActionUp(LinkAction):
 
 
 class ActionView(LinkAction):
-    """View action.
-    """
+    """View action."""
     id = 'toolbaraction-view'
-    icon = 'glyphicon glyphicon-eye-open'
+    icon = 'bi-eye-fill'
     text = _('action_view', default='View')
     href = LinkAction.target
     path = 'href'
@@ -325,8 +329,7 @@ class ActionView(LinkAction):
 
 
 class ViewLink(ActionView):
-    """View link
-    """
+    """View link."""
     css = None
     icon = None
 
@@ -340,10 +343,9 @@ class ViewLink(ActionView):
 
 
 class ActionList(LinkAction):
-    """Contents listing action.
-    """
+    """Contents listing action."""
     id = 'toolbaraction-list'
-    icon = 'glyphicon glyphicon-th-list'
+    icon = 'bi-list-task'
     action = 'listing:#content:inner'
     path = 'href'
     text = _('action_listing', default='Listing')
@@ -362,10 +364,9 @@ class ActionList(LinkAction):
 
 
 class ActionSharing(LinkAction):
-    """Sharing action.
-    """
+    """Sharing action."""
     id = 'toolbaraction-share'
-    icon = 'glyphicon glyphicon-share'
+    icon = 'bi-share-fill'
     action = 'sharing:#content:inner'
     path = 'href'
     text = _('action_sharing', default='Sharing')
@@ -385,19 +386,19 @@ class ActionSharing(LinkAction):
 
 
 class ActionState(TileAction):
-    """Change state action.
-    """
+    """Change state action."""
     tile = 'wf_dropdown'
 
     @property
     def display(self):
-        return IWorkflowState.providedBy(self.model) \
+        return (
+            IWorkflowState.providedBy(self.model)
             and self.permitted('change_state')
+        )
 
 
 class ActionAdd(TileAction):
-    """Add dropdown action.
-    """
+    """Add dropdown action."""
     tile = 'add_dropdown'
 
     @property
@@ -406,10 +407,9 @@ class ActionAdd(TileAction):
 
 
 class ActionEdit(LinkAction):
-    """Edit action.
-    """
+    """Edit action."""
     id = 'toolbaraction-edit'
-    icon = 'glyphicon glyphicon-pencil'
+    icon = 'bi-pencil'
     action = 'edit:#content:inner'
     path = 'href'
     text = _('action_edit', default='Edit')
@@ -428,10 +428,9 @@ class ActionEdit(LinkAction):
 
 
 class ActionDelete(LinkAction):
-    """Delete action.
-    """
+    """Delete action."""
     id = 'toolbaraction-delete'
-    icon = 'ion-trash-a'
+    icon = 'bi-trash3'
     action = 'delete:NONE:NONE'
     confirm = _('delete_item_confirm',
                 default='Do you really want to delete this Item?')
@@ -449,10 +448,9 @@ class ActionDelete(LinkAction):
 
 
 class ActionDeleteChildren(LinkAction):
-    """Delete children action.
-    """
+    """Delete children action."""
     id = 'toolbaraction-delete-children'
-    icon = 'ion-trash-a'
+    icon = 'bi-trash3'
     action = 'delete_children:NONE:NONE'
     confirm = _('delete_items_confirm',
                 default='Do you really want to delete selected Items?')
@@ -470,10 +468,9 @@ class ActionDeleteChildren(LinkAction):
 
 
 class ActionCut(LinkAction):
-    """Cut children action.
-    """
+    """Cut children action."""
     id = 'toolbaraction-cut'
-    icon = 'ion-scissors'
+    icon = 'bi-scissors'
     text = _('action_cut', default='Cut')
     bind = None
 
@@ -486,10 +483,9 @@ class ActionCut(LinkAction):
 
 
 class ActionCopy(LinkAction):
-    """Copy children action.
-    """
+    """Copy children action."""
     id = 'toolbaraction-copy'
-    icon = 'ion-ios7-copy-outline'
+    icon = 'bi-copy'
     text = _('action_copy', default='Copy')
     bind = None
 
@@ -502,10 +498,9 @@ class ActionCopy(LinkAction):
 
 
 class ActionPaste(LinkAction):
-    """Paste children action.
-    """
+    """Paste children action."""
     id = 'toolbaraction-paste'
-    icon = 'ion-clipboard'
+    icon = 'bi-clipboard'
     text = _('action_paste', default='Paste')
     bind = None
 
@@ -523,8 +518,7 @@ class ActionPaste(LinkAction):
 
 
 class _ActionMove(LinkAction):
-    """Basic move action.
-    """
+    """Basic move action."""
 
     @property
     def display(self):
@@ -546,10 +540,9 @@ class _ActionMove(LinkAction):
 
 
 class ActionMoveUp(_ActionMove):
-    """Move up action.
-    """
+    """Move up action."""
     id = 'toolbaraction-move-up'
-    icon = 'glyphicon glyphicon-chevron-up'
+    icon = 'bi-chevron-up'
     action = 'move_up:NONE:NONE'
     text = _('move_up', default='Move up')
 
@@ -561,10 +554,9 @@ class ActionMoveUp(_ActionMove):
 
 
 class ActionMoveDown(_ActionMove):
-    """Move down action.
-    """
+    """Move down action."""
     id = 'toolbaraction-move-down'
-    icon = 'glyphicon glyphicon-chevron-down'
+    icon = 'bi-chevron-down'
     action = 'move_down:NONE:NONE'
     text = _('move_down', default='Move down')
 
@@ -573,3 +565,14 @@ class ActionMoveDown(_ActionMove):
         if not super(ActionMoveDown, self).display:
             return False
         return self.model.parent.last_key != self.model.name
+
+
+class ActionDownload(TemplateAction):
+    """Download action."""
+    template = u'cone.app.browser:templates/action_download.pt'
+    id = 'toolbaraction-download'
+    icon = 'bi-download'
+    action = None
+    bind = None
+    target = None
+    text = _('download', default='Download')

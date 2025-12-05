@@ -44,8 +44,8 @@ class Table(Tile):
     ajax_path = None
     ajax_path_event = None
 
-    table_length_size = 'col-xs-4 col-sm3'
-    table_filter_size = 'col-xs-3'
+    table_length_size = None
+    table_filter_size = None
 
     @property
     def slice(self):

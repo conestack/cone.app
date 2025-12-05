@@ -27,8 +27,8 @@ jquery_resources = wr.ResourceGroup(
 )
 jquery_resources.add(wr.ScriptResource(
     name='jquery-js',
-    resource='jquery-3.6.0.js',
-    compressed='jquery-3.6.0.min.js'
+    resource='jquery-4.0.0-beta.js',
+    compressed='jquery-4.0.0-beta.min.js'
 ))
 
 # bootstrap
@@ -38,12 +38,17 @@ bootstrap_resources = wr.ResourceGroup(
     path='bootstrap'
 )
 bootstrap_resources.add(wr.ScriptResource(
-    name='bootstrap-js',
-    depends='jquery-js',
+    name='popper-js',
     directory=os.path.join(resources_dir, 'bootstrap', 'js'),
     path='bootstrap/js',
-    resource='bootstrap.js',
-    compressed='bootstrap.min.js'
+    resource='popper.min.js'
+))
+bootstrap_resources.add(wr.ScriptResource(
+    name='bootstrap-js',
+    directory=os.path.join(resources_dir, 'bootstrap', 'js'),
+    path='bootstrap/js',
+    resource='bootstrap.bundle.js',
+    compressed='bootstrap.bundle.min.js'
 ))
 bootstrap_resources.add(wr.StyleResource(
     name='bootstrap-css',
@@ -53,41 +58,11 @@ bootstrap_resources.add(wr.StyleResource(
     compressed='bootstrap.min.css'
 ))
 bootstrap_resources.add(wr.StyleResource(
-    name='bootstrap-theme-css',
-    depends='bootstrap-css',
-    directory=os.path.join(resources_dir, 'bootstrap', 'css'),
-    path='bootstrap/css',
-    resource='bootstrap-theme.css',
-    compressed='bootstrap-theme.min.css'
-))
-
-# typeahead
-typeahead_resources = wr.ResourceGroup(
-    name='cone.app-typeahead',
-    directory=os.path.join(resources_dir, 'typeahead'),
-    path='typeahead'
-)
-typeahead_resources.add(wr.ScriptResource(
-    name='typeahead-js',
-    depends='jquery-js',
-    resource='typeahead.bundle.js'
-))
-typeahead_resources.add(wr.StyleResource(
-    name='typeahead-css',
-    resource='typeahead.css'
-))
-
-# ionicons
-ionicons_resources = wr.ResourceGroup(
-    name='cone.app-ionicons',
-    directory=os.path.join(resources_dir, 'ionicons'),
-    path='ionicons'
-)
-ionicons_resources.add(wr.StyleResource(
-    name='ionicons-css',
-    directory=os.path.join(resources_dir, 'ionicons', 'css'),
-    path='ionicons/css',
-    resource='ionicons.css'
+    name='bootstrap-icons-css',
+    directory=os.path.join(resources_dir, 'bootstrap', 'icons'),
+    path='bootstrap/icons',
+    resource='bootstrap-icons.css',
+    compressed='bootstrap-icons.min.css'
 ))
 
 # cone
@@ -97,16 +72,10 @@ cone_resources = wr.ResourceGroup(
     path='cone'
 )
 cone_resources.add(wr.ScriptResource(
-    name='cone-app-public-js',
-    depends='typeahead-js',
-    resource='cone.app.public.js',
-    compressed='cone.app.public.min.js'
-))
-cone_resources.add(wr.ScriptResource(
-    name='cone-app-protected-js',
-    depends='jquery-js',
-    resource='cone.app.protected.js',
-    compressed='cone.app.protected.min.js'
+    name='cone-app-js',
+    # depends='typeahead-js',
+    resource='cone.app.js',
+    compressed='cone.app.min.js'
 ))
 cone_resources.add(wr.StyleResource(
     name='cone-app-css',
@@ -172,8 +141,6 @@ class ResourceRegistry(object):
         # register default resources
         config.register_resource(jquery_resources)
         config.register_resource(bootstrap_resources)
-        config.register_resource(typeahead_resources)
-        config.register_resource(ionicons_resources)
         config.register_resource(cone_resources)
 
     def register_resource(self, config, resource):
@@ -222,13 +189,6 @@ class ResourceRegistry(object):
         This function is a pyramid configurator directive and gets called from
         ``cone.app.main``.
         """
-        # configure default inclusion of cone protectes JS
-        self.set_resource_include(
-            config,
-            'cone-app-protected-js',
-            'authenticated'
-        )
-
         # configure default inclusion of yafowil resources
         yafowil_public = self._settings.get('yafowil.resources_public')
         if yafowil_public not in ['1', 'True', 'true']:

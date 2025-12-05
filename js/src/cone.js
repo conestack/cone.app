@@ -1,25 +1,43 @@
 import * as batcheditems from './batcheditems.js';
+import * as colormode from './colormode.js';
 import * as copysupport from './copysupport.js';
+import * as globals from './globals.js';
+import * as header from './header.js';
 import * as keybinder from './keybinder.js';
+import * as layout from './layout.js';
 import * as livesearch from './livesearch.js';
+import * as logo from './logo.js';
+import * as mainmenu from './mainmenu.js';
+import * as navtree from './navtree.js';
 import * as referencebrowser from './referencebrowser.js';
+import * as scrollbar from './scrollbar.js';
 import * as selectable from './selectable.js';
-import * as settingstabs from './settingstabs.js';
 import * as sharing from './sharing.js';
+import * as sidebar from './sidebar.js';
 import * as tabletoolbar from './tabletoolbar.js';
+import * as translation from './translation.js';
 import * as utils from './utils.js';
 
 let api = {};
 
 Object.assign(api, batcheditems);
+Object.assign(api, colormode);
 Object.assign(api, copysupport);
+Object.assign(api, globals);
+Object.assign(api, header);
 Object.assign(api, keybinder);
+Object.assign(api, layout);
 Object.assign(api, livesearch);
+Object.assign(api, logo);
+Object.assign(api, mainmenu);
+Object.assign(api, navtree);
 Object.assign(api, referencebrowser);
+Object.assign(api, scrollbar);
 Object.assign(api, selectable);
-Object.assign(api, settingstabs);
 Object.assign(api, sharing);
+Object.assign(api, sidebar);
 Object.assign(api, tabletoolbar);
+Object.assign(api, translation);
 Object.assign(api, utils);
 
 let cone = api;

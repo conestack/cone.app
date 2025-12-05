@@ -1,6 +1,13 @@
-.navbar-top,
+#header-main,
 #pathbar,
 #sidebar_left,
+#contextmenu,
+#header-logo,
+#sidebar_collapse,
 footer {
     display:none;
+}
+
+#layout {
+    height: auto!important;
 }

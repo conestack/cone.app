@@ -118,8 +118,6 @@ def default_layout(context):
     config.columns_fluid = False
     config.pathbar = True
     config.sidebar_left = ['navtree']
-    config.sidebar_left_grid_width = 3
-    config.content_grid_width = 9
     return config
 
 

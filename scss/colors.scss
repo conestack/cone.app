@@ -1,0 +1,100 @@
+@import "bootstrap/_functions";
+@import "bootstrap/_variables";
+@import "bootstrap/mixins/color-mode";
+
+$primary: #4171b6;
+$primary-100: #dde9fb;
+$primary-100-dark: #2c4265;
+$secondary: #8661bd;
+
+/* custom classes*/
+:root {
+    --primary-100: #dde9fb;
+    --primary-100-dark: #2c4265;
+}
+
+/* sidebar colors */
+$sidebar-bg: #414c5b;
+
+$color-mode-type: data;
+
+/* dark mode */
+@include color-mode(dark) {
+    #content {
+        color: $light;
+        background-color: $dark;
+    }
+
+    #navbar-content-wrapper {
+        color: $light;
+        background-color: $dark;
+    }
+
+    #sidebar_left {
+        background-color: #343b45;
+    }
+
+    #footer {
+        color: $light;
+        background-color: $black;
+    }
+
+    #contextmenu {
+        color: $light;
+        background-color: $dropdown-dark-bg;
+    }
+
+    tr.selectable.selected td {
+        background-color: #344555;
+    }
+
+    .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+        background-color: #485f76;
+    }
+
+    .bg-primary-100 {
+        background-color: $primary-100-dark;
+    }
+}
+
+/* light mode */
+@include color-mode(light) {
+    #content {
+        color: $dark;
+        background-color: $gray-100;
+    }
+
+    #navbar-content-wrapper {
+        color: $dark;
+        background-color: $white;
+    }
+
+    #sidebar_left {
+        background-color: $sidebar-bg;
+    }
+
+    #footer {
+        color: $dark;
+        background-color: $light;
+    }
+
+    #contextmenu {
+        color: $dark;
+        background-color: $white;
+    }
+
+    tr.selectable.selected td {
+        background-color: #dfeefb;
+    }
+
+    .table-striped > tbody > tr.selectable.selected:nth-child(2n+1) > td {
+        background-color: #cfdce7;
+    }
+
+    .bg-primary-100 {
+        background-color: $primary-100;
+    }
+}
+
+/* import everything where we need changed bootstrap variables for here */
+// @import "bootstrap/bootstrap";
