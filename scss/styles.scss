@@ -40,6 +40,30 @@ select.form-control.referencebrowser[multiple="multiple"] + .referencebrowser_tr
     }
 }
 
+// SCROLLBARS
+
+// WebKit (Chrome, Edge, Safari, Opera)
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--bs-primary);
+    border-radius: 3px;
+}
+
+// Firefox ONLY (prevent scrollbar-width from affecting chromium)
+@supports (-moz-appearance: none) {
+    * {
+        scrollbar-width: auto;
+        scrollbar-color: var(--bs-primary) transparent;
+    }
+}
+
+
 @import 'content.scss';
 @import 'form.scss';
 @import 'header.scss';

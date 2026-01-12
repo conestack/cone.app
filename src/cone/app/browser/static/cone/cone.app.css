@@ -107,6 +107,26 @@ select.form-control.referencebrowser[multiple=multiple] + .referencebrowser_trig
   width: 100%;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bs-primary);
+  border-radius: 3px;
+}
+
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: var(--bs-primary) transparent;
+  }
+}
 /* content */
 #content {
   container: main-content/inline-size;
