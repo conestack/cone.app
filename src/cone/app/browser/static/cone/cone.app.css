@@ -110,9 +110,17 @@ select.form-control.referencebrowser[multiple=multiple] + .referencebrowser_trig
 /* content */
 #content {
   container: main-content/inline-size;
-  height: calc(100% - 40px);
+  height: 100%;
   width: 100%;
   position: relative;
+}
+
+#content_area {
+  height: 100%;
+}
+
+#content_area.has-pathbar {
+  height: calc(100% - 40px);
 }
 
 #main-area {
@@ -437,7 +445,7 @@ tr.selectable td {
 }
 #sidebar_left .lock-state, #sidebar_right .lock-state {
   position: relative;
-  top: calc(100% - 4.5rem);
+  top: calc(100% - 2rem);
   width: min-content;
   height: 0;
   z-index: 100;
@@ -508,7 +516,7 @@ tr.selectable td {
 }
 #sidebar_left #sidebar_collapse .collapse_btn, #sidebar_right #sidebar_collapse .collapse_btn {
   position: absolute;
-  bottom: 0px;
+  top: 100%;
   border-radius: 100%;
   z-index: 1000;
 }

@@ -62,7 +62,10 @@
             condition="config.pathbar"
             replace="structure tile('pathbar')" />
 
-          <div id="content_area" class="d-flex h-100">
+          <div id="content_area"
+               tal:define="base 'd-flex';
+                           css base + ' has-pathbar' if config.pathbar else base"
+               tal:attributes="class css">
             <!-- sidebar -->
             <div id="sidebar_left"
                 tal:condition="config.sidebar_left and request.has_permission('view', model)"

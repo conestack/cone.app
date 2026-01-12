@@ -25,7 +25,7 @@
 
     .lock-state {
         position: relative;
-        top: calc(100% - 4.5rem);
+        top: calc(100% - 2rem);
         width: min-content;
         height: 0; // required, as else it will take up space in flexbox
         z-index: 100;
@@ -111,7 +111,7 @@
 
         .collapse_btn {
             position: absolute;
-            bottom: 0px;
+            top: 100%;
             border-radius: 100%;
             z-index: 1000;
         }
