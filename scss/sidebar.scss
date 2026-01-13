@@ -127,6 +127,14 @@
         #sidebar_collapse .collapse_btn .btn-open {
             display: none;
         }
+        .sidebar-controls {
+            display: none;
+        }
+    }
+    &.responsive-collapsed:not(.expanded) {
+        .sidebar-controls {
+            display: none;
+        }
     }
     &.expanded {
         #sidebar_collapse .collapse_btn .btn-closed {

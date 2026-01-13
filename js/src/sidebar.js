@@ -234,7 +234,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     }
 
     /**
-     * Collapses the sidebar and.
+     * Collapses the sidebar.
      */
     collapse() {
         // Enable scroll to refresh page on mobile devices

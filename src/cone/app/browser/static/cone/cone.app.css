@@ -550,6 +550,12 @@ tr.selectable td {
 #sidebar_left.collapsed #sidebar_collapse .collapse_btn .btn-open, #sidebar_right.collapsed #sidebar_collapse .collapse_btn .btn-open {
   display: none;
 }
+#sidebar_left.collapsed .sidebar-controls, #sidebar_right.collapsed .sidebar-controls {
+  display: none;
+}
+#sidebar_left.responsive-collapsed:not(.expanded) .sidebar-controls, #sidebar_right.responsive-collapsed:not(.expanded) .sidebar-controls {
+  display: none;
+}
 #sidebar_left.expanded #sidebar_collapse .collapse_btn .btn-closed, #sidebar_right.expanded #sidebar_collapse .collapse_btn .btn-closed {
   display: none;
 }
