@@ -105,7 +105,7 @@
 
               <div class="sidebar-content scrollable-y scrollbar-left">
                 <div class="scrollable-content px-2">
-                  <ul class="sidebar-tiles nav nav-pills flex-column mb-auto">
+                  <ul class="sidebar-tiles nav nav-pills flex-nowrap flex-column mb-auto">
 
                     <tal:tiles repeat="tilename config.sidebar_left">
                       <div class="tile"
