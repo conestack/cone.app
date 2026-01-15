@@ -70,6 +70,7 @@
             <div id="sidebar_left"
                 tal:condition="config.sidebar_left and request.has_permission('view', model)"
                 class="d-flex flex-column flex-shrink-0 pt-1 px-0 pb-5"
+                data-min-width="${config.sidebar_left_min_width}"
                 data-mode="${config.sidebar_left_mode}"
                 data-tiles="${context.dump(config.sidebar_left)}">
 
@@ -131,6 +132,7 @@
             <div id="sidebar_right"
                  tal:condition="config.sidebar_right and request.has_permission('view', model)"
                  class="d-flex flex-column flex-shrink-0 px-0 pb-5"
+                 data-min-width="${config.sidebar_right_min_width}"
                  data-mode="${config.sidebar_right_mode}"
                  data-tiles="${context.dump(config.sidebar_right)}">
 
