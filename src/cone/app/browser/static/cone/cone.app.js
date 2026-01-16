@@ -1117,6 +1117,7 @@ var cone = (function (exports, $, ts) {
         constructor(elem) {
             super(elem);
             this.elem = elem;
+            this.min_width = elem.data('min-width') || 115;
             elem.css('width', this.sidebar_width + 'px');
             this.moving = false;
             this.trigger_event = this.trigger_event.bind(this);
@@ -1307,9 +1308,8 @@ var cone = (function (exports, $, ts) {
             if ($('#sidebar_right').length > 0) {
                 sidebar_w = $('#sidebar_right').outerWidth();
             }
-            const min_w = 115;
             const max_w = $(window).width() - sidebar_w - 300;
-            width = Math.max(min_w, Math.min(width, max_w));
+            width = Math.max(this.min_width, Math.min(width, max_w));
             return parseInt(width);
         }
         on_sidebar_right_resize(inst, sb) {
@@ -1359,9 +1359,8 @@ var cone = (function (exports, $, ts) {
             if ($('#sidebar_left').length > 0) {
                 sidebar_w = $('#sidebar_left').outerWidth();
             }
-            const min_w = 115;
             const max_w = $(window).width() - sidebar_w - 300;
-            width = Math.max(min_w, Math.min(width, max_w));
+            width = Math.max(this.min_width, Math.min(width, max_w));
             return parseInt(width);
         }
         on_sidebar_left_resize(inst, sb) {
