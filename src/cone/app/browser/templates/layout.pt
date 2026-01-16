@@ -123,7 +123,7 @@
             <!-- end sidebar -->
             <!-- content -->
             <div id="content"
-                class="d-flex flex-column px-3 pb-5 py-2 overflow-auto"
+                class="d-flex flex-column px-3 pb-4 py-2 overflow-auto"
                 ajax:bind="contextchanged"
                 ajax:action="content:#content:inner">
               <tal:content replace="structure tile(context.contenttile)" />
