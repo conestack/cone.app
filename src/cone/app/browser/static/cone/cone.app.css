@@ -127,6 +127,10 @@ select.form-control.referencebrowser[multiple=multiple] + .referencebrowser_trig
     scrollbar-color: var(--bs-primary) transparent;
   }
 }
+#footer-spacer {
+  flex: 1;
+}
+
 /* content */
 #content {
   container: main-content/inline-size;

@@ -63,6 +63,11 @@ select.form-control.referencebrowser[multiple="multiple"] + .referencebrowser_tr
     }
 }
 
+// FOOTER
+#footer-spacer {
+    flex: 1; // fill available space
+}
+
 
 @import 'content.scss';
 @import 'form.scss';
