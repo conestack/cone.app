@@ -9,7 +9,7 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <div class="${'container-fluid' if config.columns_fluid else 'container'} h-100">
+    <div class="container-fluid h-100">
 
       <div class="row h-100">
 
@@ -123,9 +123,11 @@
             <!-- end sidebar -->
             <!-- content -->
             <div id="content"
-                class="d-flex flex-column px-3 pb-4 py-2 overflow-auto"
-                ajax:bind="contextchanged"
-                ajax:action="content:#content:inner">
+                 tal:define="css 'd-flex flex-column px-3 pb-4 py-2 overflow-auto';
+                             css css + ' container-xxl ms-0' if config.limit_content_width else css;"
+                 tal:attributes="class css"
+                 ajax:bind="contextchanged"
+                 ajax:action="content:#content:inner">
               <tal:content replace="structure tile(context.contenttile)" />
               <!-- footer -->
               <div tal:condition="request.has_permission('view', model)"

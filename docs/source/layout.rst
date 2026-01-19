@@ -58,39 +58,44 @@ one or more model classes with ``cone.app.layout_config`` decorator.
         def __init__(self, model, request):
             super(ExampleNodeLayoutConfig, self).__init__(model, request)
             self.mainmenu = True
-            self.mainmenu_fluid = False
             self.livesearch = True
             self.personaltools = True
-            self.columns_fluid = False
+            self.limit_content_width = False
             self.pathbar = True
             self.sidebar_left = ['navtree']
             self.sidebar_right = ['my_tile']
+            self.sidebar_left_min_width = 250
+            self.sidebar_right_min_width = 250
 
 Provided layout settings:
 
 - **mainmenu**: Flag whether to display mainmenu.
 
-- **mainmenu_fluid**: Flag whether mainmenu is fluid.
-
 - **livesearch**: Flag whether to display livesearch.
 
 - **personaltools**: Flag whether to display personaltools.
 
-- **columns_fluid**: Flag whether columns are fluid.
+- **limit_content_width**: Flag whether content width should be limited on large screens.
 
 - **pathbar**: Flag whether to display pathbar.
 
-- **sidebar_left**: List of tiles by name which should be rendered in sidebar.
+- **sidebar_left**: List of tiles by name which should be rendered in left sidebar.
 
-- **sidebar_left_grid_width**: Sidebar grid width as integer, total grid width
-  is 12.
+- **sidebar_left_min_width**: Minimum left sidebar width as integer (in px).
 
-- **content_grid_width**: Content grid width as integer, total grid width
-  is 12.
+- **sidebar_right**: List of tiles by name which should be rendered in right sidebar.
+
+- **sidebar_right_min_width**: Minimum right sidebar width as integer (in px).
 
 .. note::
 
-    As of version 1.1, ``mainmenu_fluid`` defaults to ``True``.
+    As of version 2.0, ``limit_content_width`` defaults to ``False``.
+
+.. deprecated:: 2.0
+
+    ``mainmenu_fluid`` and ``columns_fluid`` have been removed in ``cone.app 2.0``.
+    The ``columns_fluid`` setting has been replaced with
+    ``limit_content_width``.
 
 .. deprecated:: 1.1
 

@@ -20,7 +20,7 @@ $color-mode-type: data;
 
 /* dark mode */
 @include color-mode(dark) {
-    #content {
+    #content_area {
         color: $light;
         background-color: $dark;
     }
@@ -36,7 +36,6 @@ $color-mode-type: data;
 
     #footer {
         color: $light;
-        background-color: $black;
     }
 
     #contextmenu {
@@ -59,7 +58,7 @@ $color-mode-type: data;
 
 /* light mode */
 @include color-mode(light) {
-    #content {
+    #content_area {
         color: $dark;
         background-color: $gray-100;
     }
@@ -75,7 +74,6 @@ $color-mode-type: data;
 
     #footer {
         color: $dark;
-        background-color: $light;
     }
 
     #contextmenu {
