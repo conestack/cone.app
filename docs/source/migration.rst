@@ -1,15 +1,23 @@
 .. _migration_deprecated_patterns:
 
-===========================
-Migration from 1.0.x to 1.1
-===========================
+=============================
+Migration from older versions
+=============================
+
+1.1 to 2.0
+----------
+
+TODO
+
+1.0.x to 1.1
+------------
 
 This section covers deprecated patterns and their replacements when upgrading
 from ``cone.app`` 1.0.x to 1.1.
 
 
 Package Layout
---------------
+~~~~~~~~~~~~~~
 
 **Old (setup.py with explicit namespaces):**
 
@@ -50,7 +58,7 @@ Package Layout
 
 
 Resource Registration
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 **Old (entries on global cfg object):**
 
@@ -88,7 +96,7 @@ https://github.com/conestack/cone.ugm/blob/1.0.x/src/cone/ugm/__init__.py#L92
 
 
 JavaScript/Ajax
----------------
+~~~~~~~~~~~~~~~
 
 **Old (bdajax):** No longer supported.
 
@@ -114,7 +122,7 @@ The JavaScript patterns are largely compatible. Main changes:
 
 
 Layout Configuration
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 **Old (layout property or ILayout adapter):**
 
@@ -152,7 +160,7 @@ Layout Configuration
 
 
 Form Rendering
---------------
+~~~~~~~~~~~~~~
 
 **Old (EditTile, OverlayEditTile):**
 
@@ -187,7 +195,7 @@ Form Rendering
 
 
 YAML Forms
-----------
+~~~~~~~~~~
 
 **Old (form_flavor and form_action):**
 
@@ -218,7 +226,7 @@ YAML Forms
 
 
 Settings UI
------------
+~~~~~~~~~~~
 
 **Old (custom settings implementation):**
 
@@ -253,7 +261,7 @@ controls visibility per settings node.
 
 
 Bootstrap/jQuery Updates
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 As of version 1.1:
 

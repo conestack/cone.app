@@ -19,8 +19,8 @@ contains both the integration and plugin code.
     <https://github.com/conestack/cone.app/tree/master/examples>`_.
 
 
-Create Python Package
----------------------
+1. Create Python Package
+------------------------
 
 First thing to do is to create a
 `Python Package <https://python-packaging.readthedocs.io/en/latest/>`_.
@@ -72,8 +72,8 @@ dependency. Add the following to ``pyproject.toml``.
     where = ["src"]
 
 
-Virtual Environment
--------------------
+2. Virtual Environment
+----------------------
 
 Create a virtual environment and install the package:
 
@@ -99,8 +99,8 @@ Alternatively, using ``uv`` (faster):
     uv pip install -e .
 
 
-Application Configuration
--------------------------
+3. Application Configuration
+----------------------------
 
 ``cone.app`` uses `PasteDeploy <http://pastedeploy.readthedocs.io/en/latest/>`_
 for application configuration. PasteDeploy defines a way to declare WSGI
@@ -173,8 +173,8 @@ Details about the available ``cone.app`` dedicated configuration options can be
 found in the :doc:`Application Configuration <configuration>` documentation.
 
 
-ZCML Configuration
-------------------
+4. ZCML Configuration
+---------------------
 
 Plugins may contain a :ref:`ZCML <plugin_zcml>` configuration which
 contains ZCML configuration directives. If desired, add
@@ -188,8 +188,8 @@ contains ZCML configuration directives. If desired, add
     </configure>
 
 
-Static Resources
-----------------
+5. Static Resources
+-------------------
 
 Delivering :ref:`static resources <plugin_static_resources>` is done by
 creating a directory for serving the assets and telling the application
@@ -245,8 +245,8 @@ function to tell the application to deliver the CSS and JS file to the browser.
         configure_resources(config, settings)
 
 
-Application Model
------------------
+6. Application Model
+--------------------
 
 ``cone.app`` uses the traversal mechanism of Pyramid and utilize
 `node <http://pypi.python.org/pypi/node>`_ package for publishing.
@@ -287,8 +287,8 @@ the model.
         register_entry('example', ExamplePlugin)
 
 
-UI Widgets
-----------
+7. UI Widgets
+-------------
 
 ``cone.app`` follows the concept of tiles in it's UI. Each part of the
 application is represented by a tile, i.e. main menu, navigation tree, site
@@ -340,16 +340,16 @@ gets executed.
         config.scan('cone.example.browser')
 
 
-Working with JavaScript
------------------------
+8. Working with JavaScript
+---------------------------
 
 ``cone.app`` utilizes `treibstoff <http://treibstoff.readthedocs.io>`_ for it's
 user interface. The documentation how to properly integrate custom JavaScript
 into Ajax SSR can be found :ref:`here <ajax_custom_javascript>`.
 
 
-Installation
-------------
+9. Installation
+---------------
 
 To install the application, create and activate the virtual environment:
 
@@ -359,8 +359,8 @@ To install the application, create and activate the virtual environment:
     ./venv/bin/pip install -e .
 
 
-Run Application
----------------
+10. Run Application
+-------------------
 
 .. code-block:: sh
 
