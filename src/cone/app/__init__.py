@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
+from cone.app.browser.actions import get_action_context
 from cone.app.browser.resources import ResourceRegistry
 from cone.app.interfaces import IApplicationNode
 from cone.app.model import AppResources
@@ -70,12 +71,22 @@ class DefaultLayoutConfig(LayoutConfig):
         self.mainmenu = True
         self.livesearch = True
         self.personaltools = True
-        self.limit_content_width = False
+        self.limit_content_width = True
         self.pathbar = True
         self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'
         self.sidebar_left = ['navtree']
         self.sidebar_right = []
         self.sidebar_right_mode = 'stacked' # 'toggle' or 'stacked'
+
+
+@layout_config(AppRoot)
+class LoginLayoutConfig(DefaultLayoutConfig):
+
+    def __init__(self, model=None, request=None):
+        super(LoginLayoutConfig, self).__init__(model=model, request=request)
+        action_context = get_action_context(self.request)
+        if action_context.tilename == 'loginform':
+            self.limit_content_width = False
 
 
 def import_from_string(path):

@@ -165,10 +165,9 @@ class TestApp(NodeTestCase):
         self.assertTrue(ILayoutConfig.providedBy(config))
 
         self.assertTrue(config.mainmenu)
-        self.assertTrue(config.mainmenu_fluid)
         self.assertTrue(config.livesearch)
         self.assertTrue(config.personaltools)
-        self.assertTrue(config.columns_fluid)
+        self.assertTrue(config.limit_content_width)
         self.assertTrue(config.pathbar)
         self.assertEqual(config.sidebar_left, ['navtree'])
         self.assertEqual(config.sidebar_right, [])
