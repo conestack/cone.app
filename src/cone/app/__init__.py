@@ -79,16 +79,6 @@ class DefaultLayoutConfig(LayoutConfig):
         self.sidebar_right_mode = 'stacked' # 'toggle' or 'stacked'
 
 
-@layout_config(AppRoot)
-class LoginLayoutConfig(DefaultLayoutConfig):
-
-    def __init__(self, model=None, request=None):
-        super(LoginLayoutConfig, self).__init__(model=model, request=request)
-        action_context = get_action_context(self.request)
-        if action_context.tilename == 'loginform':
-            self.limit_content_width = False
-
-
 def import_from_string(path):
     mod, ob = path.rsplit('.', 1)
     return getattr(importlib.import_module(mod), ob)

@@ -124,7 +124,7 @@
             <!-- content -->
             <div id="content"
                  tal:define="css 'd-flex flex-column px-3 pb-4 py-2 overflow-auto';
-                             css css + ' container-xxl ms-0' if config.limit_content_width else css;"
+                             css css + ' container-xxl ms-0' if userid and config.limit_content_width else css;"
                  tal:attributes="class css"
                  ajax:bind="contextchanged"
                  ajax:action="content:#content:inner">
