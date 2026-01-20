@@ -68,10 +68,9 @@ class DefaultLayoutConfig(LayoutConfig):
     def __init__(self, model=None, request=None):
         super(DefaultLayoutConfig, self).__init__(model=model, request=request)
         self.mainmenu = True
-        self.mainmenu_fluid = True
         self.livesearch = True
         self.personaltools = True
-        self.columns_fluid = True
+        self.limit_content_width = True
         self.pathbar = True
         self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'
         self.sidebar_left = ['navtree']

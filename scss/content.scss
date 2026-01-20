@@ -3,9 +3,17 @@
 /* content */
 #content {
     container: main-content / inline-size;
-    height: calc(100% - 40px);
+    height: 100%;
     width: 100%;
     position: relative;
+}
+
+#content_area {
+    height: 100%;
+}
+// pathbar adds 40px height to layout
+#content_area.has-pathbar {
+    height: calc(100% - 40px);
 }
 
 #main-area {

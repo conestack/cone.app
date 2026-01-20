@@ -9,7 +9,7 @@
        ajax:bind="contextchanged"
        tal:define="config context.config">
 
-    <div class="${'container-fluid' if config.columns_fluid else 'container'} h-100">
+    <div class="container-fluid h-100">
 
       <div class="row h-100">
 
@@ -62,11 +62,15 @@
             condition="config.pathbar"
             replace="structure tile('pathbar')" />
 
-          <div id="content_area" class="d-flex h-100">
+          <div id="content_area"
+               tal:define="base 'd-flex';
+                           css base + ' has-pathbar' if config.pathbar else base"
+               tal:attributes="class css">
             <!-- sidebar -->
             <div id="sidebar_left"
                 tal:condition="config.sidebar_left and request.has_permission('view', model)"
                 class="d-flex flex-column flex-shrink-0 pt-1 px-0 pb-5"
+                data-min-width="${config.sidebar_left_min_width}"
                 data-mode="${config.sidebar_left_mode}"
                 data-tiles="${context.dump(config.sidebar_left)}">
 
@@ -101,7 +105,7 @@
 
               <div class="sidebar-content scrollable-y scrollbar-left">
                 <div class="scrollable-content px-2">
-                  <ul class="sidebar-tiles nav nav-pills flex-column mb-auto">
+                  <ul class="sidebar-tiles nav nav-pills flex-nowrap flex-column mb-auto">
 
                     <tal:tiles repeat="tilename config.sidebar_left">
                       <div class="tile"
@@ -119,15 +123,22 @@
             <!-- end sidebar -->
             <!-- content -->
             <div id="content"
-                class="px-3 pb-5 py-2 overflow-auto"
-                ajax:bind="contextchanged"
-                ajax:action="content:#content:inner">
+                 tal:define="css 'd-flex flex-column px-3 pb-4 py-2 overflow-auto';
+                             css css + ' container-xxl ms-0' if userid and config.limit_content_width else css;"
+                 tal:attributes="class css"
+                 ajax:bind="contextchanged"
+                 ajax:action="content:#content:inner">
               <tal:content replace="structure tile(context.contenttile)" />
+              <!-- footer -->
+              <div tal:condition="request.has_permission('view', model)"
+                   id="footer-spacer"></div>
+              <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
             </div>
 
             <div id="sidebar_right"
                  tal:condition="config.sidebar_right and request.has_permission('view', model)"
                  class="d-flex flex-column flex-shrink-0 px-0 pb-5"
+                 data-min-width="${config.sidebar_right_min_width}"
                  data-mode="${config.sidebar_right_mode}"
                  data-tiles="${context.dump(config.sidebar_right)}">
 
@@ -179,9 +190,6 @@
 
       </div>
     </div>
-
-    <!-- footer -->
-    <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
 
   </div>
 

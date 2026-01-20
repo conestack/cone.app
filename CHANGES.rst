@@ -4,6 +4,10 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Remove no longer used ``mainmenu_fluid`` and ``columns_fluid`` properties
+  from ``ILayoutConfig``. Replace with ``limit_content_width`` property.
+  [lenadax]
+
 - Cleanup js widgets to prevent DOM memory leaks.
   [lenadax]
 

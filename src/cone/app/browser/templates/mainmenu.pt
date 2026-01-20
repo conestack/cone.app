@@ -6,8 +6,7 @@
   <nav id="mainmenu"
        class="scrollable-x scrollbar-top navbar ms-0 me-auto p-0 contextsensitiv"
        ajax:bind="contextchanged"
-       ajax:action="mainmenu:#mainmenu:replace"
-       tal:define="config context.config">
+       ajax:action="mainmenu:#mainmenu:replace">
 
     <ul class="d-block navbar-nav scrollable-content">
       <tal:item repeat="item context.menuitems">
