@@ -40,3 +40,15 @@ table td ul {
     padding-left:1em;
     margin-bottom:0;
 }
+
+/* conestack variables */
+[data-bs-theme="light"] {
+    --cs-color: var(--bs-gray-900);
+    --cs-bg-color: var(--bs-gray-200);
+    --sidebar-left-width: 250px;
+}
+[data-bs-theme="dark"] {
+    --cs-color: var(--bs-gray-100);
+    --cs-bg-color: var(--bs-gray-800);
+    --sidebar-left-width: 250px;
+}

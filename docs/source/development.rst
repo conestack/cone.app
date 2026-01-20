@@ -35,7 +35,7 @@ Generate sphinx docs::
 
 
 Browser Resources
-=================
+-----------------
 
 Included resources:
 
