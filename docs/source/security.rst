@@ -451,3 +451,72 @@ The utility name must be defined in application ini file.
 
 If a UGM implementation is configured, it gets used as fallback for
 authentication.
+
+
+Security Utility Functions
+--------------------------
+
+``cone.app.security`` provides several utility functions for working with
+authentication and authorization programmatically.
+
+
+authenticate
+~~~~~~~~~~~~
+
+Authenticates a user with login and password. Tries authentication in order:
+admin user credentials, custom authenticator utility, UGM backend.
+
+.. code-block:: python
+
+    from cone.app.security import authenticate
+
+    # Returns user ID if authentication successful, None otherwise
+    user_id = authenticate(request, login='username', password='secret')
+    if user_id:
+        # Authentication successful
+        pass
+
+
+authenticated_user
+~~~~~~~~~~~~~~~~~~
+
+Returns the user principal object for the currently authenticated request.
+
+.. code-block:: python
+
+    from cone.app.security import authenticated_user
+
+    user = authenticated_user(request)
+    if user:
+        # user is a node.ext.ugm User object
+        print(user.attrs.get('fullname'))
+
+
+principal_by_id
+~~~~~~~~~~~~~~~
+
+Looks up a user or group by principal ID.
+
+.. code-block:: python
+
+    from cone.app.security import principal_by_id
+
+    # Returns user or group object, or None if not found
+    principal = principal_by_id('user123')
+    if principal:
+        print(principal.attrs)
+
+
+search_for_principals
+~~~~~~~~~~~~~~~~~~~~~
+
+Searches for users and groups matching a search term.
+
+.. code-block:: python
+
+    from cone.app.security import search_for_principals
+
+    # Returns list of matching principal objects
+    results = search_for_principals('john')
+    for principal in results:
+        print(principal.name)

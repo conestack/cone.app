@@ -105,6 +105,24 @@ used to serve the entry nodes of the application.
             return BaseNode()
 
 
+LeafNode
+--------
+
+The ``cone.app.model.LeafNode`` behavior is used for application model nodes
+that cannot have children. It disables child-related operations.
+
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+    from cone.app.model import LeafNode
+    from plumber import plumbing
+
+    @plumbing(LeafNode)
+    class DocumentNode(BaseNode):
+        """A node that cannot contain children."""
+        pass
+
+
 AdapterNode
 -----------
 

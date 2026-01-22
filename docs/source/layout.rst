@@ -33,6 +33,30 @@ file::
     cone.main_template = cone.example.browser:templates/main.pt
 
 
+Rendering the Main Template
+---------------------------
+
+To render a view using the main template, use ``render_main_template`` from
+``cone.app.browser``.
+
+.. code-block:: python
+
+    from cone.app.browser import render_main_template
+    from pyramid.view import view_config
+
+    @view_config(name='myview', permission='view')
+    def myview(model, request):
+        # Renders main template with 'mycontent' tile in content area
+        return render_main_template(model, request, 'mycontent')
+
+Parameters:
+
+- **model**: The application model node.
+- **request**: The current request object.
+- **contenttile**: Name of the tile to render in the content area. Defaults
+  to ``'content'``.
+
+
 Application Layout
 ------------------
 

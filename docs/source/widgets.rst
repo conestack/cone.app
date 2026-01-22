@@ -1091,7 +1091,7 @@ More customization options on ``BatchedItems`` class:
   to ``True``.
 
 - **title_css**: CSS classes to set on title container DOM element.
-Can be used to change the size of the title area.
+  Can be used to change the size of the title area.
 
 - **default_slice_size**: Default number of items displayed in slice. Defaults
   to ``15``.
@@ -1631,3 +1631,125 @@ ActionState
 Renders workflow state dropdown menu.
 
 Action related node must implement ``cone.app.interfaces.IWorkflowState``.
+
+
+Browser Utilities
+=================
+
+``cone.app.browser.utils`` provides several utility functions used throughout
+the application.
+
+
+make_url
+--------
+
+Builds URLs for application nodes.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import make_url
+
+    # URL to a node
+    url = make_url(request, node=model)
+
+    # URL to a node with a specific resource/view
+    url = make_url(request, node=model, resource='edit')
+
+    # URL with query parameters
+    url = make_url(request, node=model, query='param=value')
+
+    # URL using a path list instead of node
+    url = make_url(request, path=['path', 'to', 'node'])
+
+Parameters:
+
+- **request**: The current request object.
+- **path**: Optional path as list of path segments.
+- **node**: Optional application node to build URL for.
+- **resource**: Optional resource/view name to append.
+- **query**: Optional query string to append.
+
+
+make_query
+----------
+
+Builds query strings from keyword arguments.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import make_query
+
+    # Build a simple query string
+    query = make_query(page='1', sort='name')
+    # Returns: 'page=1&sort=name'
+
+    # Values are URL-encoded automatically
+    query = make_query(search='hello world')
+    # Returns: 'search=hello%20world'
+
+Parameters:
+
+- **quote_params**: Optional list of parameter names that should be URL-quoted.
+- **\*\*kw**: Keyword arguments to include in query string. None values are skipped.
+
+
+choose_name
+-----------
+
+Generates a unique name for a node within a container.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import choose_name
+
+    # Get unique name based on desired name
+    name = choose_name(container, 'document')
+    # Returns 'document' if not taken, or 'document-1', 'document-2', etc.
+
+
+format_date
+-----------
+
+Formats a datetime object for display.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import format_date
+    from datetime import datetime
+
+    dt = datetime.now()
+
+    # Long format (default)
+    formatted = format_date(dt, long=True)
+    # Returns: '22.01.2026 14:30'
+
+    # Short format
+    formatted = format_date(dt, long=False)
+    # Returns: '22.01.2026'
+
+
+node_icon
+---------
+
+Returns the icon CSS class for a node.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import node_icon
+
+    icon_class = node_icon(model)
+    # Returns icon from node's properties or default icon
+
+
+authenticated
+-------------
+
+Checks if the current request is from an authenticated user.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import authenticated
+
+    if authenticated(request):
+        # User is logged in
+        pass
