@@ -510,18 +510,23 @@ Node Availability
 ~~~~~~~~~~~~~~~~~
 
 The ``node_available`` callback can be used to control whether a registered
-node type is available in the application context:
+node type is available in the application context.
+
+The callback is configured via the application ini file:
+
+.. code-block:: ini
+
+    cone.root.node_available = my.package.check_node_available
+
+The callback function must have the following signature:
 
 .. code-block:: python
 
-    from cone.app.model import node_available
+    def check_node_available(model, node_info_name):
+        """Return True if node type should be available.
 
-    @node_available
-    def check_node_available(node_info, container):
-        """Return True if node type should be available for the container.
-
-        :param node_info: The NodeInfo instance
-        :param container: The parent container where node would be added
+        :param model: The application node to gain access to the application model.
+        :param node_info_name: The node info name of the node to check availability.
         :return: Boolean indicating availability
         """
         # Custom logic to determine availability

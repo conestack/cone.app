@@ -936,19 +936,20 @@ for all children of model node.
         @property
         def vocab(self):
             count = len(self.model)
-            pages = count / self.slicesize
+            pages = count // self.slicesize
             if count % self.slicesize != 0:
                 pages += 1
             current = self.request.params.get('b_page', '0')
+            ret = []
             for i in range(pages):
                 query = make_query(b_page=str(i))
                 href = make_url(
                     self.request,
-                    path=path,
+                    node=self.model,
                     resource='viewname',
                     query=query
                 )
-                target = make_url(self.request, path=path, query=query)
+                target = make_url(self.request, node=self.model, query=query)
                 ret.append({
                     'page': '{}'.format(i + 1),
                     'current': current == str(i),
@@ -1184,7 +1185,7 @@ Futher the implementation must provide ``col_defs``, ``item_count`` and
             # ``sort`` and ``order`` must be considered when creating the
             # sorted results.
             rows = list()
-            for child in self.model.values()[start:end]:
+            for child in list(self.model.values())[start:end]:
                 row_data = RowData()
                 row_data['column_a'] = child.attrs['attr_a']
                 row_data['column_b'] = child.attrs['attr_b']

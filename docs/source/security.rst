@@ -79,13 +79,14 @@ The roles which come out of the box with ``cone.app`` are:
 
 - **editor**: This role is supposed to grant users permissions needed to
   add and edit application model nodes. By default, permissions assigned to
-  this role are ``viewer`` role permissions and ``add`` and ``edit``.
+  this role are ``viewer`` role permissions and ``add``, ``edit`` and
+  ``change_order``.
 
 - **admin**: This role is supposed to grant users permissions to duplicate
   model nodes, change the workflow state or grant access to parts of the
-  application model to other uses. By default, permissions assigned to
+  application model to other users. By default, permissions assigned to
   this role are ``editor`` role permissions and ``delete``, ``cut``, ``copy``,
-  ``paste``, ``manage_permissions`` and ``change_state``.
+  ``paste``, ``manage_permissions``, ``change_state`` and ``change_order``.
 
 - **manager**: This role is supposed to grant users permissions to access and
   modify the application settings. By default, permissions assigned to this
@@ -161,9 +162,9 @@ application root model node for unauthenticated uses looks like so:
     # permission sets
     authenticated_permissions = ['view']
     viewer_permissions = authenticated_permissions + ['list']
-    editor_permissions = viewer_permissions + ['add', 'edit']
+    editor_permissions = viewer_permissions + ['add', 'edit', 'change_order']
     admin_permissions = editor_permissions + [
-        'delete', 'cut', 'copy', 'paste', 'change_state',
+        'delete', 'cut', 'copy', 'paste', 'manage_permissions', 'change_state',
     ]
     manager_permissions = admin_permissions + ['manage']
     everyone_permissions = ['login', 'view']

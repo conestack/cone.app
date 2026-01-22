@@ -736,7 +736,7 @@ form's ``save`` function.
         @plumb
         def save(_next, self, widget, data):
             # fetch extension field value from form data
-            value = data.fetch('%s.generic' % self.form_name).extracted
+            value = data.fetch('%s.generic' % self.form.name).extracted
             # set extracted value to model attributes
             self.model.attrs['generic'] = value
             # call downstream ``save`` function

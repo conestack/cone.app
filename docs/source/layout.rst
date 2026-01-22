@@ -67,7 +67,7 @@ one or more model classes with ``cone.app.layout_config`` decorator.
         pass
 
     @layout_config(CustomNodeOne, CustomNodeTwo)
-    class CustomLayoutConfig(LayoutConfig)
+    class CustomLayoutConfig(LayoutConfig):
 
         def __init__(self, model, request):
             super(CustomLayoutConfig, self).__init__(model, request)
