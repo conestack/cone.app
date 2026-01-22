@@ -4,8 +4,17 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
-- Remove no longer used ``mainmenu_fluid`` and ``columns_fluid`` properties
-  from ``ILayoutConfig``. Replace with ``limit_content_width`` property.
+- Add ``sidebar_left_min_width`` and ``sidebar_right_min_width`` properties
+  to ``ILayoutConfig`` (Integer / px value).
+  [lenadax]
+
+- Remove no longer used ``mainmenu_fluid``, ``columns_fluid``, ``content_grid_width``
+  and ``sidebar_left_grid_width`` properties from ``ILayoutConfig``.
+  Replace with ``limit_content_width`` property (Boolean).
+  [lenadax]
+
+- Add ``sidebar_left_mode`` and ``sidebar_right_mode`` properties
+  to ``ILayoutConfig`` ('toggle'/'stacked').
   [lenadax]
 
 - Cleanup js widgets to prevent DOM memory leaks.

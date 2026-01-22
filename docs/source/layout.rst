@@ -2,6 +2,14 @@
 Layout
 ======
 
+.. version-added:: 2.0
+
+    Version 2.0 introduces a new, more flexible layout system and the ``sidebar_right``
+    and ``personaltools`` elements.
+
+    There are new layout configuration settings available. See
+    :ref:`layout_configuration` for details.
+
 .. _layout_main_template:
 
 Main Template
@@ -36,6 +44,12 @@ is structured as follows.
 .. figure:: ../../artwork/layout.svg
     :width: 100%
 
+
+.. _layout_configuration:
+
+Layout Configuration
+--------------------
+
 The layout can be configured for each application node. Layout configuration
 is described in ``cone.app.interfaces.ILayoutConfig`` and is registered for
 one or more model classes with ``cone.app.layout_config`` decorator.
@@ -67,35 +81,65 @@ one or more model classes with ``cone.app.layout_config`` decorator.
             self.sidebar_left_min_width = 250
             self.sidebar_right_min_width = 250
 
-Provided layout settings:
 
-- **mainmenu**: Flag whether to display mainmenu.
+.. list-table:: Layout Configuration Settings
+  :widths: 20 60 20
+  :header-rows: 1
 
-- **livesearch**: Flag whether to display livesearch.
+  * - Setting
+    - Description
+    - Default
+  * - ``mainmenu``
+    - Flag whether to display mainmenu.
+    - True
+  * - ``livesearch``
+    - Flag whether to display livesearch.
+    - True
+  * - ``personaltools``
+    - Flag whether to display personaltools.
+    - True
+  * - ``limit_content_width``
+    - Flag whether content width should be limited on large screens.
+    - True
+  * - ``pathbar``
+    - Flag whether to display pathbar.
+    - True
+  * - ``sidebar_left``
+    - List of tiles by name which should be rendered in left sidebar.
+    - ['navtree']
+  * - ``sidebar_left_mode``
+    - The mode of the left sidebar (``'stacked'`` or ``'toggle'``).
+    - 'stacked'
+  * - ``sidebar_left_min_width``
+    - Minimum left sidebar width as integer (in px).
+    - 150
+  * - ``sidebar_right``
+    - List of tiles by name which should be rendered in right sidebar.
+    - []
+  * - ``sidebar_right_mode``
+    - The mode of the right sidebar (``'stacked'`` or ``'toggle'``).
+    - 'stacked'
+  * - ``sidebar_right_min_width``
+    - Minimum right sidebar width as integer (in px).
+    - 150
 
-- **personaltools**: Flag whether to display personaltools.
+.. version-added:: 2.0
 
-- **limit_content_width**: Flag whether content width should be limited on large screens.
+    - The ``sidebar_left_min_width`` and ``sidebar_right_min_width`` settings have been
+      added to specify minimum sidebar widths in px.
+    - The ``sidebar_left_mode`` and ``sidebar_right_mode`` settings have been
+      added to specify sidebar modes (either ``'stacked'`` or ``'toggle'``).
+    - The ``limit_content_width`` setting has been added to replace the former
+      ``columns_fluid`` setting.
+    - As of version 2.0, ``limit_content_width`` defaults to ``False``.
 
-- **pathbar**: Flag whether to display pathbar.
+.. version-removed:: 2.0
 
-- **sidebar_left**: List of tiles by name which should be rendered in left sidebar.
-
-- **sidebar_left_min_width**: Minimum left sidebar width as integer (in px).
-
-- **sidebar_right**: List of tiles by name which should be rendered in right sidebar.
-
-- **sidebar_right_min_width**: Minimum right sidebar width as integer (in px).
-
-.. note::
-
-    As of version 2.0, ``limit_content_width`` defaults to ``False``.
-
-.. deprecated:: 2.0
-
-    ``mainmenu_fluid`` and ``columns_fluid`` have been removed in ``cone.app 2.0``.
-    The ``columns_fluid`` setting has been replaced with
-    ``limit_content_width``.
+    ``mainmenu_fluid``, ``columns_fluid``, ``sidebar_left_grid_width`` and 
+    ``content_grid_width`` have been removed in ``cone.app 2.0`` in favor of a
+    more flexible layout.
+    Use the ``columns_fluid`` setting instead to limit content width on
+    large screens.
 
 .. deprecated:: 1.1
 
