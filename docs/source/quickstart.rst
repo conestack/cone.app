@@ -213,7 +213,7 @@ Register the resources in ``src/cone/example/browser/__init__.py``:
     )
     cone_example_resources.add(wr.ScriptResource(
         name='cone-example-js',
-        depends='cone-app-protected-js',
+        depends='cone-app-js',
         resource='example.js'
     ))
     cone_example_resources.add(wr.StyleResource(

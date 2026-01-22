@@ -90,7 +90,7 @@ node in order to get a reasonable result.
             return [{
                 'value': 'Example',
                 'target': 'https://example.com/example',
-                'icon': 'ion-ios7-gear'
+                'icon': 'bi bi-gear'
             }]
 
 Another option to implement the serverside search logic is to overwrite the
@@ -110,7 +110,7 @@ Another option to implement the serverside search logic is to overwrite the
         return [{
             'value': 'Example',
             'target': 'https://example.com/example',
-            'icon': 'ion-ios7-gear'
+            'icon': 'bi bi-gear'
         }]
 
 ``cone.app`` uses `typeahead.js <https://github.com/twitter/typeahead.js>`_
@@ -173,7 +173,7 @@ To add more items to the dropdown, register an action with the
     @personal_tools_action(name='example')
     class ExampleAction(LinkAction):
         text = 'Example'
-        icon = 'ion-ios7-gear'
+        icon = 'bi bi-gear'
         event = 'contextchanged:#layout'
 
         @property
@@ -230,7 +230,7 @@ Considered ``properties``:
             props.mainmenu_empty_title = False
             props.mainmenu_display_children = False
             props.default_content_tile = 'examplecontent'
-            props.icon = 'ion-ios7-gear'
+            props.icon = 'bi bi-gear'
             return props
 
         @instance_property
@@ -325,7 +325,7 @@ Considered ``properties``:
             props.default_child = 'child'
             props.hide_if_default = False
             props.default_content_tile = 'examplecontent'
-            props.icon = 'ion-ios7-gear'
+            props.icon = 'bi bi-gear'
             return props
 
         @instance_property
@@ -563,7 +563,7 @@ Navigation related actions are registered in the ``navigation`` group:
     @context_menu_item(group='navigation', name='link_to_somewhere')
     class LinkToSomewhereAction(LinkAction):
         id = 'toolbaraction-link-to-somewhere'
-        icon = 'glyphicon glyphicon-arrow-down'
+        icon = 'bi bi-arrow-down'
         event = 'contextchanged:#layout'
         text = 'Link to somewhere'
 
@@ -1396,7 +1396,7 @@ are used as dropdown menu items.
         @property
         def items(self):
             item = model.Properties()
-            item.icon = 'ion-ios7-gear'
+            item.icon = 'bi bi-gear'
             item.url = item.target = make_url(self.request, node=self.model)
             item.action = 'example_action:NONE:NONE'
             item.title = 'Example Action'

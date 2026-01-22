@@ -70,7 +70,7 @@ one or more model classes with ``cone.app.layout_config`` decorator.
     class CustomLayoutConfig(LayoutConfig)
 
         def __init__(self, model, request):
-            super(ExampleNodeLayoutConfig, self).__init__(model, request)
+            super(CustomLayoutConfig, self).__init__(model, request)
             self.mainmenu = True
             self.livesearch = True
             self.personaltools = True
@@ -131,14 +131,14 @@ one or more model classes with ``cone.app.layout_config`` decorator.
       added to specify sidebar modes (either ``'stacked'`` or ``'toggle'``).
     - The ``limit_content_width`` setting has been added to replace the former
       ``columns_fluid`` setting.
-    - As of version 2.0, ``limit_content_width`` defaults to ``False``.
+    - As of version 2.0, ``limit_content_width`` defaults to ``True``.
 
 .. version-removed:: 2.0
 
     ``mainmenu_fluid``, ``columns_fluid``, ``sidebar_left_grid_width`` and 
     ``content_grid_width`` have been removed in ``cone.app 2.0`` in favor of a
     more flexible layout.
-    Use the ``columns_fluid`` setting instead to limit content width on
+    Use the ``limit_content_width`` setting instead to limit content width on
     large screens.
 
 .. deprecated:: 1.1

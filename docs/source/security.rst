@@ -54,6 +54,9 @@ The permissions used by default in ``cone.app`` are:
 - **change_state**: Grants access to change workflow state of an application
   model node.
 
+- **change_order**: Grants access to change order of an application
+  model node.
+
 - **manage**: Grants access to manage application settings.
 
 - **login**: Grants access to login to the application.
@@ -135,12 +138,12 @@ application node.
 
 .. _security_acl_registry:
 
-ALC Registry
+ACL Registry
 ------------
 
 A less immersive way for providing ACLs for model nodes is to use the
 ACL registry. The plumbing behavior ``cone.app.model.AppNode`` only returns
-the ``cone.app.security.DEFAULT_ACL`` if no dedicated ALC for this node has
+the ``cone.app.security.DEFAULT_ACL`` if no dedicated ACL for this node has
 been registered in the registry.
 
 Registering a custom ACL for application root which grants view access to the
@@ -178,7 +181,7 @@ application root model node for unauthenticated uses looks like so:
 
     acl_registry.register(custom_acl, AppRoot)
 
-``cone.app.model.AppNode.__acl__`` tries to find a registered ALC by
+``cone.app.model.AppNode.__acl__`` tries to find a registered ACL by
 ``self.__class__`` and ``self.node_info_name``, thus application nodes must be
 registered by both.
 
@@ -276,7 +279,7 @@ Adapter ACL
 
 The ``cone.app.security.AdapterACL`` looks up the ACL via
 ``cone.app.interfaces.IACLAdapter`` interface. This can be useful to support
-ALC customization on generic application model nodes.
+ACL customization on generic application model nodes.
 
 Therefor the model node needs to plumb ``AdapterACL`` behavior.
 

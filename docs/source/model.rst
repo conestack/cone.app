@@ -296,7 +296,7 @@ Available properties are provided by ``keys`` function.
 
     >>> from cone.app.model import Properties
 
-    >>> props = Properties
+    >>> props = Properties()
     >>> props.a = '1'
     >>> props.b = '2'
     >>> props.keys()
@@ -362,7 +362,7 @@ property, ``ProtectedProperties`` behaves as if this property is inexistent.
 Metadata
 --------
 
-``cone.app.model.Metadada`` class inherits from ``cone.app.model.Properties``
+``cone.app.model.Metadata`` class inherits from ``cone.app.model.Properties``
 and adds the marker interface ``cone.app.interfaces.IMetadata``. This object
 is for ``cone.app.interfaces.IApplicationNode.metadata``.
 
