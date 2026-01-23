@@ -105,6 +105,24 @@ used to serve the entry nodes of the application.
             return BaseNode()
 
 
+LeafNode
+--------
+
+The ``cone.app.model.LeafNode`` behavior is used for application model nodes
+that cannot have children. It disables child-related operations.
+
+.. code-block:: python
+
+    from cone.app.model import BaseNode
+    from cone.app.model import LeafNode
+    from plumber import plumbing
+
+    @plumbing(LeafNode)
+    class DocumentNode(BaseNode):
+        """A node that cannot contain children."""
+        pass
+
+
 AdapterNode
 -----------
 
@@ -296,7 +314,7 @@ Available properties are provided by ``keys`` function.
 
     >>> from cone.app.model import Properties
 
-    >>> props = Properties
+    >>> props = Properties()
     >>> props.a = '1'
     >>> props.b = '2'
     >>> props.keys()
@@ -362,7 +380,7 @@ property, ``ProtectedProperties`` behaves as if this property is inexistent.
 Metadata
 --------
 
-``cone.app.model.Metadada`` class inherits from ``cone.app.model.Properties``
+``cone.app.model.Metadata`` class inherits from ``cone.app.model.Properties``
 and adds the marker interface ``cone.app.interfaces.IMetadata``. This object
 is for ``cone.app.interfaces.IApplicationNode.metadata``.
 
@@ -510,18 +528,23 @@ Node Availability
 ~~~~~~~~~~~~~~~~~
 
 The ``node_available`` callback can be used to control whether a registered
-node type is available in the application context:
+node type is available in the application context.
+
+The callback is configured via the application ini file:
+
+.. code-block:: ini
+
+    cone.root.node_available = my.package.check_node_available
+
+The callback function must have the following signature:
 
 .. code-block:: python
 
-    from cone.app.model import node_available
+    def check_node_available(model, node_info_name):
+        """Return True if node type should be available.
 
-    @node_available
-    def check_node_available(node_info, container):
-        """Return True if node type should be available for the container.
-
-        :param node_info: The NodeInfo instance
-        :param container: The parent container where node would be added
+        :param model: The application node to gain access to the application model.
+        :param node_info_name: The node info name of the node to check availability.
         :return: Boolean indicating availability
         """
         # Custom logic to determine availability

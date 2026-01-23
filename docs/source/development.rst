@@ -39,6 +39,7 @@ Browser Resources
 
 Included resources:
 
-- https://github.com/twbs/bootstrap/releases/tag/v5.0.2
-- https://github.com/twbs/icons/archive/v1.5.0.zip
+- https://github.com/jquery/jquery/releases/tag/4.0.0-beta
+- https://github.com/twbs/bootstrap/releases/tag/v5.3.3
+- https://github.com/twbs/icons/releases/tag/v1.11.3
 - https://github.com/corejavascript/typeahead.js/releases/tag/v1.3.1

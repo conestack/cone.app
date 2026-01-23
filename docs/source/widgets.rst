@@ -90,7 +90,7 @@ node in order to get a reasonable result.
             return [{
                 'value': 'Example',
                 'target': 'https://example.com/example',
-                'icon': 'ion-ios7-gear'
+                'icon': 'bi bi-gear'
             }]
 
 Another option to implement the serverside search logic is to overwrite the
@@ -110,7 +110,7 @@ Another option to implement the serverside search logic is to overwrite the
         return [{
             'value': 'Example',
             'target': 'https://example.com/example',
-            'icon': 'ion-ios7-gear'
+            'icon': 'bi bi-gear'
         }]
 
 ``cone.app`` uses `typeahead.js <https://github.com/twitter/typeahead.js>`_
@@ -173,7 +173,7 @@ To add more items to the dropdown, register an action with the
     @personal_tools_action(name='example')
     class ExampleAction(LinkAction):
         text = 'Example'
-        icon = 'ion-ios7-gear'
+        icon = 'bi bi-gear'
         event = 'contextchanged:#layout'
 
         @property
@@ -230,7 +230,7 @@ Considered ``properties``:
             props.mainmenu_empty_title = False
             props.mainmenu_display_children = False
             props.default_content_tile = 'examplecontent'
-            props.icon = 'ion-ios7-gear'
+            props.icon = 'bi bi-gear'
             return props
 
         @instance_property
@@ -325,7 +325,7 @@ Considered ``properties``:
             props.default_child = 'child'
             props.hide_if_default = False
             props.default_content_tile = 'examplecontent'
-            props.icon = 'ion-ios7-gear'
+            props.icon = 'bi bi-gear'
             return props
 
         @instance_property
@@ -563,7 +563,7 @@ Navigation related actions are registered in the ``navigation`` group:
     @context_menu_item(group='navigation', name='link_to_somewhere')
     class LinkToSomewhereAction(LinkAction):
         id = 'toolbaraction-link-to-somewhere'
-        icon = 'glyphicon glyphicon-arrow-down'
+        icon = 'bi bi-arrow-down'
         event = 'contextchanged:#layout'
         text = 'Link to somewhere'
 
@@ -936,19 +936,20 @@ for all children of model node.
         @property
         def vocab(self):
             count = len(self.model)
-            pages = count / self.slicesize
+            pages = count // self.slicesize
             if count % self.slicesize != 0:
                 pages += 1
             current = self.request.params.get('b_page', '0')
+            ret = []
             for i in range(pages):
                 query = make_query(b_page=str(i))
                 href = make_url(
                     self.request,
-                    path=path,
+                    node=self.model,
                     resource='viewname',
                     query=query
                 )
-                target = make_url(self.request, path=path, query=query)
+                target = make_url(self.request, node=self.model, query=query)
                 ret.append({
                     'page': '{}'.format(i + 1),
                     'current': current == str(i),
@@ -1090,7 +1091,7 @@ More customization options on ``BatchedItems`` class:
   to ``True``.
 
 - **title_css**: CSS classes to set on title container DOM element.
-Can be used to change the size of the title area.
+  Can be used to change the size of the title area.
 
 - **default_slice_size**: Default number of items displayed in slice. Defaults
   to ``15``.
@@ -1184,7 +1185,7 @@ Futher the implementation must provide ``col_defs``, ``item_count`` and
             # ``sort`` and ``order`` must be considered when creating the
             # sorted results.
             rows = list()
-            for child in self.model.values()[start:end]:
+            for child in list(self.model.values())[start:end]:
                 row_data = RowData()
                 row_data['column_a'] = child.attrs['attr_a']
                 row_data['column_b'] = child.attrs['attr_b']
@@ -1396,7 +1397,7 @@ are used as dropdown menu items.
         @property
         def items(self):
             item = model.Properties()
-            item.icon = 'ion-ios7-gear'
+            item.icon = 'bi bi-gear'
             item.url = item.target = make_url(self.request, node=self.model)
             item.action = 'example_action:NONE:NONE'
             item.title = 'Example Action'
@@ -1630,3 +1631,125 @@ ActionState
 Renders workflow state dropdown menu.
 
 Action related node must implement ``cone.app.interfaces.IWorkflowState``.
+
+
+Browser Utilities
+=================
+
+``cone.app.browser.utils`` provides several utility functions used throughout
+the application.
+
+
+make_url
+--------
+
+Builds URLs for application nodes.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import make_url
+
+    # URL to a node
+    url = make_url(request, node=model)
+
+    # URL to a node with a specific resource/view
+    url = make_url(request, node=model, resource='edit')
+
+    # URL with query parameters
+    url = make_url(request, node=model, query='param=value')
+
+    # URL using a path list instead of node
+    url = make_url(request, path=['path', 'to', 'node'])
+
+Parameters:
+
+- **request**: The current request object.
+- **path**: Optional path as list of path segments.
+- **node**: Optional application node to build URL for.
+- **resource**: Optional resource/view name to append.
+- **query**: Optional query string to append.
+
+
+make_query
+----------
+
+Builds query strings from keyword arguments.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import make_query
+
+    # Build a simple query string
+    query = make_query(page='1', sort='name')
+    # Returns: 'page=1&sort=name'
+
+    # Values are URL-encoded automatically
+    query = make_query(search='hello world')
+    # Returns: 'search=hello%20world'
+
+Parameters:
+
+- **quote_params**: Optional list of parameter names that should be URL-quoted.
+- **\*\*kw**: Keyword arguments to include in query string. None values are skipped.
+
+
+choose_name
+-----------
+
+Generates a unique name for a node within a container.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import choose_name
+
+    # Get unique name based on desired name
+    name = choose_name(container, 'document')
+    # Returns 'document' if not taken, or 'document-1', 'document-2', etc.
+
+
+format_date
+-----------
+
+Formats a datetime object for display.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import format_date
+    from datetime import datetime
+
+    dt = datetime.now()
+
+    # Long format (default)
+    formatted = format_date(dt, long=True)
+    # Returns: '22.01.2026 14:30'
+
+    # Short format
+    formatted = format_date(dt, long=False)
+    # Returns: '22.01.2026'
+
+
+node_icon
+---------
+
+Returns the icon CSS class for a node.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import node_icon
+
+    icon_class = node_icon(model)
+    # Returns icon from node's properties or default icon
+
+
+authenticated
+-------------
+
+Checks if the current request is from an authenticated user.
+
+.. code-block:: python
+
+    from cone.app.browser.utils import authenticated
+
+    if authenticated(request):
+        # User is logged in
+        pass

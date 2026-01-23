@@ -54,6 +54,9 @@ The permissions used by default in ``cone.app`` are:
 - **change_state**: Grants access to change workflow state of an application
   model node.
 
+- **change_order**: Grants access to change order of an application
+  model node.
+
 - **manage**: Grants access to manage application settings.
 
 - **login**: Grants access to login to the application.
@@ -76,13 +79,14 @@ The roles which come out of the box with ``cone.app`` are:
 
 - **editor**: This role is supposed to grant users permissions needed to
   add and edit application model nodes. By default, permissions assigned to
-  this role are ``viewer`` role permissions and ``add`` and ``edit``.
+  this role are ``viewer`` role permissions and ``add``, ``edit`` and
+  ``change_order``.
 
 - **admin**: This role is supposed to grant users permissions to duplicate
   model nodes, change the workflow state or grant access to parts of the
-  application model to other uses. By default, permissions assigned to
+  application model to other users. By default, permissions assigned to
   this role are ``editor`` role permissions and ``delete``, ``cut``, ``copy``,
-  ``paste``, ``manage_permissions`` and ``change_state``.
+  ``paste``, ``manage_permissions``, ``change_state`` and ``change_order``.
 
 - **manager**: This role is supposed to grant users permissions to access and
   modify the application settings. By default, permissions assigned to this
@@ -135,12 +139,12 @@ application node.
 
 .. _security_acl_registry:
 
-ALC Registry
+ACL Registry
 ------------
 
 A less immersive way for providing ACLs for model nodes is to use the
 ACL registry. The plumbing behavior ``cone.app.model.AppNode`` only returns
-the ``cone.app.security.DEFAULT_ACL`` if no dedicated ALC for this node has
+the ``cone.app.security.DEFAULT_ACL`` if no dedicated ACL for this node has
 been registered in the registry.
 
 Registering a custom ACL for application root which grants view access to the
@@ -158,9 +162,9 @@ application root model node for unauthenticated uses looks like so:
     # permission sets
     authenticated_permissions = ['view']
     viewer_permissions = authenticated_permissions + ['list']
-    editor_permissions = viewer_permissions + ['add', 'edit']
+    editor_permissions = viewer_permissions + ['add', 'edit', 'change_order']
     admin_permissions = editor_permissions + [
-        'delete', 'cut', 'copy', 'paste', 'change_state',
+        'delete', 'cut', 'copy', 'paste', 'manage_permissions', 'change_state',
     ]
     manager_permissions = admin_permissions + ['manage']
     everyone_permissions = ['login', 'view']
@@ -178,7 +182,7 @@ application root model node for unauthenticated uses looks like so:
 
     acl_registry.register(custom_acl, AppRoot)
 
-``cone.app.model.AppNode.__acl__`` tries to find a registered ALC by
+``cone.app.model.AppNode.__acl__`` tries to find a registered ACL by
 ``self.__class__`` and ``self.node_info_name``, thus application nodes must be
 registered by both.
 
@@ -276,7 +280,7 @@ Adapter ACL
 
 The ``cone.app.security.AdapterACL`` looks up the ACL via
 ``cone.app.interfaces.IACLAdapter`` interface. This can be useful to support
-ALC customization on generic application model nodes.
+ACL customization on generic application model nodes.
 
 Therefor the model node needs to plumb ``AdapterACL`` behavior.
 
@@ -447,3 +451,72 @@ The utility name must be defined in application ini file.
 
 If a UGM implementation is configured, it gets used as fallback for
 authentication.
+
+
+Security Utility Functions
+--------------------------
+
+``cone.app.security`` provides several utility functions for working with
+authentication and authorization programmatically.
+
+
+authenticate
+~~~~~~~~~~~~
+
+Authenticates a user with login and password. Tries authentication in order:
+admin user credentials, custom authenticator utility, UGM backend.
+
+.. code-block:: python
+
+    from cone.app.security import authenticate
+
+    # Returns user ID if authentication successful, None otherwise
+    user_id = authenticate(request, login='username', password='secret')
+    if user_id:
+        # Authentication successful
+        pass
+
+
+authenticated_user
+~~~~~~~~~~~~~~~~~~
+
+Returns the user principal object for the currently authenticated request.
+
+.. code-block:: python
+
+    from cone.app.security import authenticated_user
+
+    user = authenticated_user(request)
+    if user:
+        # user is a node.ext.ugm User object
+        print(user.attrs.get('fullname'))
+
+
+principal_by_id
+~~~~~~~~~~~~~~~
+
+Looks up a user or group by principal ID.
+
+.. code-block:: python
+
+    from cone.app.security import principal_by_id
+
+    # Returns user or group object, or None if not found
+    principal = principal_by_id('user123')
+    if principal:
+        print(principal.attrs)
+
+
+search_for_principals
+~~~~~~~~~~~~~~~~~~~~~
+
+Searches for users and groups matching a search term.
+
+.. code-block:: python
+
+    from cone.app.security import search_for_principals
+
+    # Returns list of matching principal objects
+    results = search_for_principals('john')
+    for principal in results:
+        print(principal.name)

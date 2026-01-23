@@ -213,7 +213,7 @@ Register the resources in ``src/cone/example/browser/__init__.py``:
     )
     cone_example_resources.add(wr.ScriptResource(
         name='cone-example-js',
-        depends='cone-app-protected-js',
+        depends='cone-app-js',
         resource='example.js'
     ))
     cone_example_resources.add(wr.StyleResource(
@@ -348,22 +348,40 @@ user interface. The documentation how to properly integrate custom JavaScript
 into Ajax SSR can be found :ref:`here <ajax_custom_javascript>`.
 
 
-9. Installation
----------------
+9. Run Application
+------------------
 
-To install the application, create and activate the virtual environment:
-
-.. code-block:: sh
-
-    python3 -m venv venv
-    ./venv/bin/pip install -e .
-
-
-10. Run Application
--------------------
+After creating the virtual environment as described in section 2, run the
+application:
 
 .. code-block:: sh
 
     ./venv/bin/pserve example.ini
 
 The application is now available at ``localhost:8081``.
+
+
+Advanced: Using mxmake
+----------------------
+
+For larger projects, consider using `mxmake <https://mxmake.readthedocs.io>`_
+to manage your build process. mxmake generates a Makefile with common
+development tasks.
+
+With mxmake, you get convenient make targets:
+
+- ``make install`` - Create virtual environment and install dependencies
+- ``make test`` - Run tests
+- ``make coverage`` - Run tests with coverage
+- ``make docs`` - Build Sphinx documentation
+- ``make lingua`` - Extract and compile translations
+- ``make clean`` - Clean build artifacts
+
+To set up mxmake for your plugin:
+
+.. code-block:: sh
+
+    pip install mxmake
+    mxmake init
+
+See the ``cone.app`` repository for an example mxmake configuration.

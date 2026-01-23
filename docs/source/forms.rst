@@ -709,6 +709,7 @@ form's ``save`` function.
 
     from plumber import Behavior
     from plumber import plumb
+    from yafowil.base import factory
 
     class FormExtension(Behavior):
         """Plumbing behavior used as form extension.
@@ -730,12 +731,12 @@ form's ``save`` function.
                 })
             # add new widget before save widget
             save_widget = self.form['save']
-            self.form.insertbefore(roles_widget, save_widget)
+            self.form.insertbefore(widget, save_widget)
 
         @plumb
         def save(_next, self, widget, data):
             # fetch extension field value from form data
-            value = data.fetch('%s.generic' % self.form_name).extracted
+            value = data.fetch('%s.generic' % self.form.name).extracted
             # set extracted value to model attributes
             self.model.attrs['generic'] = value
             # call downstream ``save`` function

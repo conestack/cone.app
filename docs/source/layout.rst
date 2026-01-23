@@ -33,6 +33,30 @@ file::
     cone.main_template = cone.example.browser:templates/main.pt
 
 
+Rendering the Main Template
+---------------------------
+
+To render a view using the main template, use ``render_main_template`` from
+``cone.app.browser``.
+
+.. code-block:: python
+
+    from cone.app.browser import render_main_template
+    from pyramid.view import view_config
+
+    @view_config(name='myview', permission='view')
+    def myview(model, request):
+        # Renders main template with 'mycontent' tile in content area
+        return render_main_template(model, request, 'mycontent')
+
+Parameters:
+
+- **model**: The application model node.
+- **request**: The current request object.
+- **contenttile**: Name of the tile to render in the content area. Defaults
+  to ``'content'``.
+
+
 Application Layout
 ------------------
 
@@ -67,10 +91,10 @@ one or more model classes with ``cone.app.layout_config`` decorator.
         pass
 
     @layout_config(CustomNodeOne, CustomNodeTwo)
-    class CustomLayoutConfig(LayoutConfig)
+    class CustomLayoutConfig(LayoutConfig):
 
         def __init__(self, model, request):
-            super(ExampleNodeLayoutConfig, self).__init__(model, request)
+            super(CustomLayoutConfig, self).__init__(model, request)
             self.mainmenu = True
             self.livesearch = True
             self.personaltools = True
@@ -131,14 +155,14 @@ one or more model classes with ``cone.app.layout_config`` decorator.
       added to specify sidebar modes (either ``'stacked'`` or ``'toggle'``).
     - The ``limit_content_width`` setting has been added to replace the former
       ``columns_fluid`` setting.
-    - As of version 2.0, ``limit_content_width`` defaults to ``False``.
+    - As of version 2.0, ``limit_content_width`` defaults to ``True``.
 
 .. version-removed:: 2.0
 
     ``mainmenu_fluid``, ``columns_fluid``, ``sidebar_left_grid_width`` and 
     ``content_grid_width`` have been removed in ``cone.app 2.0`` in favor of a
     more flexible layout.
-    Use the ``columns_fluid`` setting instead to limit content width on
+    Use the ``limit_content_width`` setting instead to limit content width on
     large screens.
 
 .. deprecated:: 1.1
