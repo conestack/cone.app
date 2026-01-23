@@ -4,6 +4,9 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Upgrade jquery to version 4.0.0.
+  [lenadax]
+
 - Add ``sidebar_left_min_width`` and ``sidebar_right_min_width`` properties
   to ``ILayoutConfig`` (Integer / px value).
   [lenadax]

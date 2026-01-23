@@ -7,7 +7,7 @@
     "@web/test-runner": "^0.18.3",
     "@web/test-runner-core": "^0.13.4",
     "install": "^0.13.0",
-    "jquery": "^4.0.0-rc.1",
+    "jquery": "^4.0.0",
     "qunit": "^2.20.1",
     "rollup": "^2.79.2",
     "rollup-plugin-cleanup": "^3.2.1",

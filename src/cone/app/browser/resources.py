@@ -27,8 +27,8 @@ jquery_resources = wr.ResourceGroup(
 )
 jquery_resources.add(wr.ScriptResource(
     name='jquery-js',
-    resource='jquery-4.0.0-beta.js',
-    compressed='jquery-4.0.0-beta.min.js'
+    resource='jquery-4.0.0.js',
+    compressed='jquery-4.0.0.min.js'
 ))
 
 # bootstrap

@@ -34,7 +34,7 @@ class TestBrowserResources(TileTestCase):
 
         self.assertTrue(scripts[0].directory.endswith(np('/static/jquery')))
         self.assertEqual(scripts[0].path, 'jquery')
-        self.assertEqual(scripts[0].file_name, 'jquery-4.0.0-beta.min.js')
+        self.assertEqual(scripts[0].file_name, 'jquery-4.0.0.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
         styles = resources_.styles
