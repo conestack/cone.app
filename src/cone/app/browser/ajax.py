@@ -51,7 +51,7 @@ def ajax_tile(model, request):
     except Exception:
         logging.exception('Error within ajax tile')
         tb = format_traceback()
-        continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
+        continuation = AjaxContinue([AjaxMessage(tb, 'error', None, 'modal-xl')])
         return dict(
             mode='NONE',
             selector='NONE',
