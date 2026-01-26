@@ -44,3 +44,8 @@ tr.state-private td.title a {
 tr.state-public td.title a {
     color: green;
 }
+
+
+:root {
+    /* --navbar-height: 100px; */ /* Example of custom navbar height */
+}
