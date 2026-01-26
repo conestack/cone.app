@@ -1,18 +1,16 @@
 from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import ajax_message
-from cone.app.browser.ajax import ajax_status_message
 from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxMessage
-from cone.app.browser.ajax import AjaxOverlay
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import make_url
-from cone.app.model import AppNode
 from cone.app.model import BaseNode
 from cone.app.model import Metadata
-from cone.app.model import Properties
 from cone.app.model import node_info
+from cone.app.model import Properties
+from cone.app.utils import node_path
 from cone.example.model import _
 from cone.tile import tile
 from node.utils import instance_property
@@ -87,12 +85,13 @@ class AjaxDemoContent(ProtectedContentTile):
       interface=AjaxPlayground,
       permission='view')
 class AjaxPathDemo(ProtectedContentTile):
+    # XXX: make this demo more obvious, e.g. by changing some content
 
     def render(self):
         url = make_url(self.request, node=self.model)
         ajax_continue(self.request, [
             AjaxPath(
-                path='/'.join(self.model.path),
+                path='/'.join(node_path(self.model)),
                 target=url,
                 event='contextchanged:#layout'
             )
@@ -105,6 +104,7 @@ class AjaxPathDemo(ProtectedContentTile):
       interface=AjaxPlayground,
       permission='view')
 class AjaxEventDemo(ProtectedContentTile):
+    # XXX: make this demo more obvious, e.g. by changing some content
 
     def render(self):
         url = make_url(self.request, node=self.model)
@@ -148,12 +148,14 @@ class AjaxActionDemo(ProtectedContentTile):
       interface=AjaxPlayground,
       permission='view')
 class AjaxCombinedDemo(ProtectedContentTile):
+    # XXX: this makes little sense, as the AjaxAction will be overridden
+    #      by the AjaxEvent. Find a better combination demo.
 
     def render(self):
         url = make_url(self.request, node=self.model)
         ajax_continue(self.request, [
             AjaxAction(url, 'ajax_demo_content', 'inner', '#ajax-demo-target'),
-            AjaxMessage('Combined: action + message + event!', 'success'),
+            AjaxMessage('Combined: action + message + event!', 'success', None),
             AjaxEvent(url, 'contextchanged', '#layout'),
         ])
         return ''

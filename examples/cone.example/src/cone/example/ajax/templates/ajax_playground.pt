@@ -1,5 +1,6 @@
 <tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
-           omit-tag="True">
+          xmlns:ajax="http://namespaces.conestack.org/ajax"
+          omit-tag="True">
 
   <tal:contextmenu replace="structure tile('contextmenu')" />
 
@@ -31,8 +32,9 @@
               </p>
               <a href="#"
                  class="btn btn-outline-primary btn-sm ajax"
-                 tal:attributes="ajax:target view.ajax_path_url;
-                                 ajax:action 'ajax_path_demo:NONE:NONE'">
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_path_url}"
+                 ajax:action="ajax_path_demo:NONE:NONE">
                 Trigger AjaxPath
               </a>
             </div>
@@ -51,8 +53,9 @@
               </p>
               <a href="#"
                  class="btn btn-outline-primary btn-sm ajax"
-                 tal:attributes="ajax:target view.ajax_action_url;
-                                 ajax:action 'ajax_action_demo:NONE:NONE'">
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_action_url}"
+                 ajax:action="ajax_action_demo:NONE:NONE">
                 Trigger AjaxAction
               </a>
             </div>
@@ -72,8 +75,9 @@
               </p>
               <a href="#"
                  class="btn btn-outline-primary btn-sm ajax"
-                 tal:attributes="ajax:target view.ajax_action_url;
-                                 ajax:action 'ajax_event_demo:NONE:NONE'">
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_action_url}"
+                 ajax:action="ajax_event_demo:NONE:NONE">
                 Trigger AjaxEvent
               </a>
             </div>
@@ -93,8 +97,9 @@
               </p>
               <a href="#"
                  class="btn btn-outline-primary btn-sm ajax"
-                 tal:attributes="ajax:target view.ajax_action_url;
-                                 ajax:action 'ajax_message_demo:NONE:NONE'">
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_action_url}"
+                 ajax:action="ajax_message_demo:NONE:NONE">
                 Trigger AjaxMessage
               </a>
             </div>
@@ -114,8 +119,9 @@
               </p>
               <a href="#"
                  class="btn btn-outline-success btn-sm ajax"
-                 tal:attributes="ajax:target view.ajax_action_url;
-                                 ajax:action 'ajax_combined_demo:NONE:NONE'">
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_action_url}"
+                 ajax:action="ajax_combined_demo:NONE:NONE">
                 Trigger Combined
               </a>
             </div>

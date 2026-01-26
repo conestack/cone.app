@@ -203,7 +203,7 @@ class ProjectAddForm(ProjectForm):
     def save(self, widget, data):
         from cone.app.browser.utils import choose_name
         add_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(ProjectAddForm, self).save(widget, data)
         parent = self.model.parent
         parent[choose_name(parent, self.model.metadata.title)] = self.model
 
@@ -213,7 +213,7 @@ class ProjectEditForm(ProjectForm):
 
     def save(self, widget, data):
         update_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(ProjectEditForm, self).save(widget, data)
 
 
 # For Task add form, we need to create a TaskData and wrap in Task
