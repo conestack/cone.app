@@ -1,28 +1,24 @@
-from cone.app.browser.authoring import ContentAddForm
-from cone.app.browser.authoring import ContentEditForm
-from cone.app.browser.form import AddFormTarget
-from cone.app.browser.form import EditFormTarget
-from cone.app.browser.form import Form
+from cone.app import DefaultLayoutConfig
+from cone.app import layout_config
+from cone.app.browser.actions import LinkAction
+from cone.app.browser.actions import TemplateAction
+from cone.app.browser.contextmenu import context_menu_group
+from cone.app.browser.contextmenu import context_menu_item
+from cone.app.browser.contextmenu import ContextMenuToolbar
+from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.layout import ProtectedContentTile
-from cone.app.browser.utils import choose_name
-from cone.app.utils import add_creation_metadata
-from cone.app.utils import update_creation_metadata
-from cone.example.model import EntryFolder
-from cone.example.model import Folder
-from cone.example.model import Item
-from cone.example.model import Translation
+from cone.app.browser.utils import make_url
+from cone.app.browser.utils import request_property
+from cone.app.model import Properties
+from cone.example.model import _
 from cone.tile import tile
-from node.utils import UNSET
-from plumber import plumbing
-from pyramid.i18n import TranslationStringFactory
-from yafowil.base import factory
-from yafowil.persistence import write_mapping_writer
 import os
 import webresource as wr
 
 
-_ = TranslationStringFactory('cone.example')
-
+###############################################################################
+# Static Resources
+###############################################################################
 
 resources_dir = os.path.join(os.path.dirname(__file__), 'static')
 cone_example_resources = wr.ResourceGroup(
@@ -41,104 +37,137 @@ def configure_resources(config, settings):
     config.set_resource_include('cone-example-css', 'authenticated')
 
 
-@tile(name='view',
-      path='templates/view.pt',
-      interface=EntryFolder,
-      permission='login')
-@tile(name='view',
-      path='templates/view.pt',
-      interface=Folder,
-      permission='login')
-@tile(name='content',
-      path='templates/view.pt',
-      interface=Item,
-      permission='login')
-class ViewContent(ProtectedContentTile):
-    pass
+###############################################################################
+# Layout Configs
+#
+# Layout configs control the appearance of the page for different node types.
+# They determine which sidebar tiles are rendered, whether the main menu,
+# search bar, and path bar are shown, etc.
+###############################################################################
+
+# Import model classes here to avoid circular imports at module level.
+# layout_config decorators register factories looked up by model class.
+
+def _configure_layout_configs():
+    """Register layout configs after model classes are available."""
+    from cone.example.document.model import Document
+    from cone.example.document.model import DocumentFolder
+    from cone.example.document.model import DocumentLibrary
+    from cone.example.project.model import ProjectBoard
+    from cone.example.project.model import Task
+    from cone.example.wiki.model import Wiki
+    from cone.example.wiki.model import WikiPage
+    from cone.example.ajax.browser import AjaxPlayground
+
+    @layout_config(DocumentLibrary, DocumentFolder)
+    class DocumentContainerLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super().__init__(model=model, request=request)
+            self.sidebar_left = ['navtree']
+
+    @layout_config(Document)
+    class DocumentLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super().__init__(model=model, request=request)
+            self.sidebar_left = ['navtree']
+
+    @layout_config(ProjectBoard)
+    class ProjectBoardLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super().__init__(model=model, request=request)
+            self.sidebar_left = ['navtree']
+
+    @layout_config(Task)
+    class TaskLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super().__init__(model=model, request=request)
+            self.sidebar_left = ['navtree']
+
+    @layout_config(Wiki, WikiPage)
+    class WikiLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super().__init__(model=model, request=request)
+            self.sidebar_left = ['navtree']
+
+    @layout_config(AjaxPlayground)
+    class AjaxPlaygroundLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super().__init__(model=model, request=request)
+            self.sidebar_left = []
 
 
-class ExampleForm(Form):
+###############################################################################
+# Custom Personal Tools Action
+#
+# Adds a custom item to the personal tools dropdown menu (top right).
+###############################################################################
 
-    def prepare(self):
-        self.form = form = factory(
-            'form',
-            name='contentform',
-            props={
-                'action': self.form_action,
-                'persist_writer': write_mapping_writer
-            })
-        form['title'] = factory(
-            'field:label:help:error:translation:text',
-            value=self.model.attrs.get('title', UNSET),
-            props={
-                'factory': Translation,
-                'label': _('title', default='Title'),
-                'help': _('title_description', default='Enter a title'),
-                'required': _('title_required', default='Title is mandatory')
-            })
-        form['description'] = factory(
-            'field:label:help:error:translation:textarea',
-            value=self.model.attrs.get('description', UNSET),
-            props={
-                'factory': Translation,
-                'label': _('description', default='Description'),
-                'help': _(
-                    'description_description',
-                    default='Enter a description'
-                ),
-                'rows': 4
-            })
-        form['save'] = factory(
-            'submit',
-            props={
-                'action': 'save',
-                'expression': True,
-                'handler': self.save,
-                'next': self.next,
-                'label': _('save', default='Save')
-            })
-        form['cancel'] = factory(
-            'submit',
-            props={
-                'action': 'cancel',
-                'expression': True,
-                'skip': True,
-                'next': self.next,
-                'label': _('cancel', default='Cancel')
-            })
+@personal_tools_action(name='example_info')
+class ExampleInfoAction(LinkAction):
+    """Custom personal tools action - shows a link in the user dropdown."""
+    text = _('example_info', default='Example Info')
+    icon = 'bi-info-circle'
+    event = 'contextchanged:#layout'
+    path = 'href'
 
-    def save(self, widget, data):
-        data.write(self.model.attrs)
+    @property
+    def target(self):
+        return make_url(self.request, node=self.model.root)
+
+    href = target
+
+    @property
+    def display(self):
+        return bool(self.request.authenticated_userid)
 
 
-@plumbing(AddFormTarget)
-class ExampleAddForm(ExampleForm):
+###############################################################################
+# Custom Context Menu Group
+#
+# Adds a custom group to the context menu with custom actions.
+###############################################################################
 
-    def save(self, widget, data):
-        add_creation_metadata(self.request, self.model.attrs)
-        super(ExampleAddForm, self).save(widget, data)
-        parent = self.model.parent
-        parent[choose_name(parent, self.model.metadata.title)] = self.model
-
-
-@plumbing(EditFormTarget)
-class ExampleEditForm(ExampleForm):
-
-    def save(self, widget, data):
-        update_creation_metadata(self.request, self.model.attrs)
-        super(ExampleEditForm, self).save(widget, data)
+@context_menu_group(name='example_tools')
+class ExampleToolsToolbar(ContextMenuToolbar):
+    """Custom context menu toolbar group for example-specific actions."""
 
 
-@tile(name='addform', interface=Folder, permission='add')
-@tile(name='addform', interface=Item, permission='add')
-@plumbing(ContentAddForm)
-class ExampleContentAddForm(ExampleAddForm):
-    ...
+@context_menu_item(group='example_tools', name='example_action')
+class ExampleContextAction(LinkAction):
+    """Custom context menu action demonstrating LinkAction in context menu."""
+    css = 'nav-link'
+    text = _('refresh', default='Refresh')
+    icon = 'bi-arrow-clockwise'
+    event = 'contextchanged:#layout'
+
+    @property
+    def target(self):
+        return make_url(self.request, node=self.model)
+
+    @property
+    def href(self):
+        return make_url(self.request, node=self.model)
+
+    @property
+    def display(self):
+        return self.permitted('view')
 
 
-@tile(name='editform', interface=EntryFolder, permission='edit')
-@tile(name='editform', interface=Folder, permission='edit')
-@tile(name='editform', interface=Item, permission='edit')
-@plumbing(ContentEditForm)
-class ExampleContentEditForm(ExampleEditForm):
-    ...
+###############################################################################
+# request_property Demo
+#
+# request_property caches a computed value for the duration of a single
+# request, avoiding redundant computation.
+###############################################################################
+
+class RequestPropertyDemo:
+    """Demonstrates request_property decorator.
+
+    The decorated method is called once per request and the result is cached.
+    Subsequent access returns the cached value.
+    """
+
+    @request_property
+    def expensive_computation(self):
+        """This would only be computed once per request."""
+        return {'computed': True, 'data': [1, 2, 3]}

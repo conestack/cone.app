@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configure xmlns="http://pylonshq.com/pyramid">
 
-  <include file="publication.zcml" />
+  <include file="document_workflow.zcml" />
+  <include file="task_workflow.zcml" />
 
 </configure>

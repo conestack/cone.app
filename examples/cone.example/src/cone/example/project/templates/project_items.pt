@@ -1,0 +1,29 @@
+<tal:items xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <div class="list-group"
+       tal:repeat="item context.slice_items">
+    <a class="list-group-item list-group-item-action"
+       tal:attributes="href item['target'];
+                       ajax:target item['target'];
+                       ajax:event 'contextchanged:#layout';
+                       ajax:path 'href'">
+      <div class="d-flex w-100 justify-content-between">
+        <h6 class="mb-1">
+          <i tal:attributes="class item['icon']"></i>
+          <span tal:content="item['title']">Title</span>
+        </h6>
+      </div>
+      <p class="mb-1 text-muted small"
+         tal:content="item['description']">
+        Description
+      </p>
+    </a>
+  </div>
+
+  <div class="text-muted text-center py-3"
+       tal:condition="not:context.slice_items">
+    No projects found.
+  </div>
+
+</tal:items>

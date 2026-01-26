@@ -1,0 +1,137 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <div class="card mt-3">
+    <div class="card-header">
+      <h4 class="card-title mb-0">
+        <i class="bi-lightning me-2"></i>
+        AJAX Playground
+      </h4>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">
+        This page demonstrates all six AJAX continuation operation types
+        available in cone.app. Click each button to see the operation in action.
+      </p>
+
+      <div class="row g-3">
+
+        <!-- AjaxPath -->
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="bi-signpost me-1"></i> AjaxPath
+              </h5>
+              <p class="card-text small">
+                Sets the browser URL path without page reload.
+                Updates browser history.
+              </p>
+              <a href="#"
+                 class="btn btn-outline-primary btn-sm ajax"
+                 tal:attributes="ajax:target view.ajax_path_url;
+                                 ajax:action 'ajax_path_demo:NONE:NONE'">
+                Trigger AjaxPath
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- AjaxAction -->
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="bi-box-arrow-in-down me-1"></i> AjaxAction
+              </h5>
+              <p class="card-text small">
+                Renders a tile and inserts the result into a DOM element.
+              </p>
+              <a href="#"
+                 class="btn btn-outline-primary btn-sm ajax"
+                 tal:attributes="ajax:target view.ajax_action_url;
+                                 ajax:action 'ajax_action_demo:NONE:NONE'">
+                Trigger AjaxAction
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- AjaxEvent -->
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="bi-broadcast me-1"></i> AjaxEvent
+              </h5>
+              <p class="card-text small">
+                Triggers a JavaScript event on a DOM element.
+                Used for inter-component communication.
+              </p>
+              <a href="#"
+                 class="btn btn-outline-primary btn-sm ajax"
+                 tal:attributes="ajax:target view.ajax_action_url;
+                                 ajax:action 'ajax_event_demo:NONE:NONE'">
+                Trigger AjaxEvent
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- AjaxMessage -->
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="bi-chat-dots me-1"></i> AjaxMessage
+              </h5>
+              <p class="card-text small">
+                Displays a notification message to the user.
+                Supports info, warning, and error flavors.
+              </p>
+              <a href="#"
+                 class="btn btn-outline-primary btn-sm ajax"
+                 tal:attributes="ajax:target view.ajax_action_url;
+                                 ajax:action 'ajax_message_demo:NONE:NONE'">
+                Trigger AjaxMessage
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Combined Operations -->
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="bi-layers me-1"></i> Combined Operations
+              </h5>
+              <p class="card-text small">
+                Demonstrates ajax_continue with multiple operations
+                chained together (AjaxAction + AjaxMessage + AjaxEvent).
+              </p>
+              <a href="#"
+                 class="btn btn-outline-success btn-sm ajax"
+                 tal:attributes="ajax:target view.ajax_action_url;
+                                 ajax:action 'ajax_combined_demo:NONE:NONE'">
+                Trigger Combined
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Target area for AjaxAction demo -->
+      <div id="ajax-demo-target" class="mt-3">
+        <div class="alert alert-light">
+          <em>AjaxAction target area - content will be inserted here.</em>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</tal:view>

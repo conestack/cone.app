@@ -1,0 +1,55 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <div class="card mt-3">
+    <div class="card-header">
+      <h4 class="card-title mb-0">
+        <i class="bi-code me-2"></i>
+        Source:
+        <span tal:content="model.metadata.title">Title</span>
+      </h4>
+    </div>
+    <div class="card-body">
+      <h6>Attributes</h6>
+      <table class="table table-sm table-bordered">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tal:repeat="key model.attrs.keys()">
+            <td tal:content="key">key</td>
+            <td tal:content="repr(model.attrs[key])">value</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h6>Properties</h6>
+      <table class="table table-sm table-bordered">
+        <tbody>
+          <tr>
+            <td>UUID</td>
+            <td tal:content="str(getattr(model, 'uuid', 'N/A'))">uuid</td>
+          </tr>
+          <tr>
+            <td>Owner</td>
+            <td tal:content="str(getattr(model, 'owner', 'N/A'))">owner</td>
+          </tr>
+          <tr>
+            <td>Workflow State</td>
+            <td tal:content="str(getattr(model, 'state', 'N/A'))">state</td>
+          </tr>
+          <tr>
+            <td>Path</td>
+            <td tal:content="'/'.join(model.path)">path</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</tal:view>

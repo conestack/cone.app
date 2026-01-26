@@ -1,0 +1,55 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <div class="card mt-3">
+    <div class="card-header">
+      <h4 class="card-title mb-0">
+        <i class="bi-journal-text me-2"></i>
+        <span tal:content="model.metadata.title">Title</span>
+      </h4>
+    </div>
+    <div class="card-body">
+      <tal:byline replace="structure tile('byline')" />
+
+      <p class="card-text text-muted"
+         tal:content="model.metadata.description">
+        Description
+      </p>
+
+      <hr />
+
+      <div class="wiki-body"
+           tal:define="body model.attrs.get('body', '')"
+           tal:condition="body">
+        <pre tal:content="body">Body content</pre>
+      </div>
+
+      <div class="text-muted"
+           tal:condition="not:model.attrs.get('body', '')">
+        <em>No content yet.</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-3"
+       tal:define="references view.references"
+       tal:condition="references">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Related Pages</h5>
+    </div>
+    <div class="list-group list-group-flush">
+      <a class="list-group-item list-group-item-action"
+         tal:repeat="ref references"
+         tal:attributes="href ref['target'];
+                         ajax:target ref['target'];
+                         ajax:event 'contextchanged:#layout';
+                         ajax:path 'href'">
+        <i tal:attributes="class ref['icon']"></i>
+        <span tal:content="ref['title']">Reference Title</span>
+      </a>
+    </div>
+  </div>
+
+</tal:view>

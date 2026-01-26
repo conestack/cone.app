@@ -1,3 +1,41 @@
+/* Document workflow states */
+#contextmenu a.state-draft,
+tr.state-draft td.title a {
+    color: #6c757d;
+}
+#contextmenu a.state-review,
+tr.state-review td.title a {
+    color: #fd7e14;
+}
+#contextmenu a.state-published,
+tr.state-published td.title a {
+    color: #198754;
+}
+#contextmenu a.state-archived,
+tr.state-archived td.title a {
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
+/* Task workflow states */
+#contextmenu a.state-todo,
+tr.state-todo td.title a {
+    color: #0d6efd;
+}
+#contextmenu a.state-in_progress,
+tr.state-in_progress td.title a {
+    color: #fd7e14;
+}
+#contextmenu a.state-done,
+tr.state-done td.title a {
+    color: #198754;
+}
+#contextmenu a.state-closed,
+tr.state-closed td.title a {
+    color: #6c757d;
+}
+
+/* Publication workflow states (backward compat) */
 #contextmenu a.state-private,
 tr.state-private td.title a {
     color: red;

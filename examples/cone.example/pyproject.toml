@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0,<81"] # XXX: depends on PIL
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cone.example"
+version = "0.1"
+description = "Example cone plugin"
+dependencies = [
+    "waitress",
+    "cone.app"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
