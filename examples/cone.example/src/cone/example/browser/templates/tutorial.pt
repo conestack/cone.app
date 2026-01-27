@@ -1,0 +1,29 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <div class="position-absolute w-100 text-center py-1"
+       style="left: 0;">
+    Tutorial
+  </div>
+
+  <div tal:condition="context.root_view"
+       class="text-center pt-5 pb-3">
+    <h2 class="text-primary bg-light bg-opacity-50 mx-5 p-3 rounded shadow">
+      <span class="fs-4">Welcome to the</span>
+      <br />
+      <span class="fs-2">cone.app demo page!</span>
+    </h2>
+  </div>
+
+  <div tal:condition="not context.root_view"
+       class="text-center pt-5 pb-1">
+    <h2 class="fs-4 m-0 text-primary">
+      Tutorial Title
+    </h2>
+  </div>
+
+  <div class="px-4">
+    <tal:content replace="structure tile('tutorial_content')" />
+  </div>
+
+</tal:view>

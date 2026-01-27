@@ -63,30 +63,35 @@ def _configure_layout_configs():
         def __init__(self, model=None, request=None):
             super(DocumentContainerLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
+            self.sidebar_right = ['tutorial']
 
     @layout_config(Document)
     class DocumentLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
             super(DocumentLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
+            self.sidebar_right = ['tutorial']
 
     @layout_config(ProjectBoard)
     class ProjectBoardLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
             super(ProjectBoardLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
+            self.sidebar_right = ['tutorial']
 
     @layout_config(Task)
     class TaskLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
             super(TaskLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
+            self.sidebar_right = ['tutorial']
 
     @layout_config(Wiki, WikiPage)
     class WikiLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
             super(WikiLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
+            self.sidebar_right = ['tutorial']
 
     @layout_config(AppRoot)
     class RootLayoutConfig(DefaultLayoutConfig):
@@ -94,12 +99,14 @@ def _configure_layout_configs():
             super(RootLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = []
             self.limit_content_width = False
+            self.sidebar_right = ['tutorial']
 
     @layout_config(AjaxPlayground)
     class AjaxPlaygroundLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
             super(AjaxPlaygroundLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = []
+            self.sidebar_right = ['tutorial']
 
 
 ###############################################################################

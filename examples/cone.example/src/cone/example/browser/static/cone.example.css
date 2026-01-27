@@ -1,3 +1,8 @@
+/* Sidebar right - Tutorial Bar */
+#sidebar_right {
+    background: linear-gradient(256deg, #c2d1ff, #bdbbff);
+}
+
 /* Document workflow states */
 #contextmenu a.state-draft,
 tr.state-draft td.title a {

@@ -15,6 +15,7 @@ from cone.example.document.model import DocumentLibrary
 from cone.example.model import Translation
 from cone.example.model import _
 from cone.tile import tile
+from cone.tile import Tile
 from node.utils import UNSET
 from plumber import plumbing
 from yafowil.base import factory
@@ -247,4 +248,31 @@ class DocumentContentEditForm(DocumentEditForm):
 @tile(name='editform', interface=DocumentFolder, permission='edit')
 @plumbing(ContentEditForm)
 class FolderContentEditForm(FolderEditForm):
+    ...
+
+
+# tutorial
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_content.pt',
+    interface=Document,
+    permission='view',
+    strict=False,
+)
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_content.pt',
+    interface=DocumentFolder,
+    permission='view',
+    strict=False,
+)
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_content.pt',
+    interface=DocumentLibrary,
+    permission='view',
+    strict=False,
+)
+class DocumentTutorial(Tile):
     ...

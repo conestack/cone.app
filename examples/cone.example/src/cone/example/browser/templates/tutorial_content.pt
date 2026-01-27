@@ -1,0 +1,24 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">
+      Some Introduction
+    </div>
+    <div class="card-body">
+      Example Tutorial content
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      A list of things
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">An item</li>
+      <li class="list-group-item">A second item</li>
+      <li class="list-group-item">A third item</li>
+    </ul>
+  </div>
+
+</tal:view>
