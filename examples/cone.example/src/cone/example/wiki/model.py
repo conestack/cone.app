@@ -34,7 +34,7 @@ class Wiki(BaseContainer):
 
     @property
     def properties(self):
-        props = super().properties
+        props = super(Wiki, self).properties
         props.mainmenu_display_children = False
         return props
 

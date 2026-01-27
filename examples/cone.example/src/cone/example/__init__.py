@@ -24,10 +24,26 @@ def example_main_hook(config, global_config, settings):
     from cone.example.project.model import ProjectBoard
     from cone.example.wiki.model import Wiki
     from cone.example.ajax.browser import AjaxPlayground
+    from cone.example.populate import populate_documents
+    from cone.example.populate import populate_projects
+    from cone.example.populate import populate_wiki
 
-    register_entry('documents', DocumentLibrary)
+    def make_document_library():
+        lib = DocumentLibrary()
+        populate_documents(lib)
+        return lib
+
+    def make_wiki():
+        wiki = Wiki()
+        populate_wiki(wiki)
+        return wiki
+
+    # ProjectBoard uses FactoryNode — populate registers class-level factories
+    populate_projects()
+
+    register_entry('documents', make_document_library)
     register_entry('projects', ProjectBoard)
-    register_entry('wiki', Wiki)
+    register_entry('wiki', make_wiki)
     register_entry('ajax_playground', AjaxPlayground)
 
     # Register settings node
@@ -46,6 +62,12 @@ def example_main_hook(config, global_config, settings):
 
     # Register layout configs (deferred to avoid circular imports)
     _configure_layout_configs()
+
+    # add static view for example images
+    config.add_static_view(
+        name='example-images',
+        path='cone.example.browser:static/images'
+    )
 
     # Scan browser packages for tile and view registrations
     config.scan('cone.example.browser')

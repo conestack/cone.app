@@ -169,6 +169,9 @@ class Task(AdapterNode):
         props.action_sharing = True
         return props
 
+    def __call__(self):
+        ...
+
     @property
     def metadata(self):
         md = Metadata()

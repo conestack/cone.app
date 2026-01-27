@@ -23,7 +23,7 @@ from yafowil.persistence import write_mapping_writer
 
 # View tiles
 @tile(name='view',
-      path='cone.example.browser:templates/view.pt',
+      path='cone.example.project:templates/board_view.pt',
       interface=ProjectBoard,
       permission='login')
 class ProjectBoardView(ProtectedContentTile):
@@ -230,7 +230,7 @@ class TaskAddForm(TaskForm):
 
     def save(self, widget, data):
         add_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(TaskAddForm, self).save(widget, data)
         parent = self.model.parent
         # UUIDAsName: name is determined by UUID
         parent[self.model.__name__] = self.model
@@ -241,7 +241,7 @@ class TaskEditForm(TaskForm):
 
     def save(self, widget, data):
         update_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(TaskEditForm, self).save(widget, data)
 
 
 @tile(name='addform', interface=Project, permission='add')

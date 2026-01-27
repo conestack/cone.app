@@ -28,7 +28,7 @@
             tal:content="str(getattr(model, 'uuid', 'N/A'))">uuid</dd>
         <dt class="col-sm-3">Path</dt>
         <dd class="col-sm-9"
-            tal:content="'/'.join(model.path)">path</dd>
+            tal:content="'/'.join([_ for _ in model.path if _ is not None])">path</dd>
       </dl>
     </div>
   </div>

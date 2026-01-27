@@ -27,7 +27,7 @@ import os
 
 # View tile for Wiki container
 @tile(name='view',
-      path='cone.example.browser:templates/view.pt',
+      path='cone.example.wiki:templates/wiki_container_view.pt',
       interface=Wiki,
       permission='login')
 class WikiContainerView(ProtectedContentTile):
@@ -170,7 +170,7 @@ class WikiPageAddForm(WikiPageForm):
 
     def save(self, widget, data):
         add_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(WikiPageAddForm, self).save(widget, data)
         parent = self.model.parent
         parent[choose_name(parent, self.model.metadata.title)] = self.model
 
@@ -180,7 +180,7 @@ class WikiPageEditForm(WikiPageForm):
 
     def save(self, widget, data):
         update_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(WikiPageEditForm, self).save(widget, data)
 
 
 @tile(name='addform', interface=WikiPage, permission='add')

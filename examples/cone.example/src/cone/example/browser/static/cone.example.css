@@ -46,6 +46,72 @@ tr.state-public td.title a {
 }
 
 
+/* Example module header accents */
+.example-header {
+    border-left: 4px solid #dee2e6;
+}
+.example-header-documents {
+    border-left-color: #0d6efd;
+}
+.example-header-projects {
+    border-left-color: #fd7e14;
+}
+.example-header-wiki {
+    border-left-color: #198754;
+}
+
+/* Feature badges per module */
+.badge.example-badge-documents {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+.badge.example-badge-projects {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+.badge.example-badge-wiki {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* Node type icons in listings */
+tr.node-type-document_folder td.title a::before {
+    content: "\f3d7";
+    font-family: "bootstrap-icons";
+    margin-right: 0.4em;
+    color: #fd7e14;
+}
+tr.node-type-document td.title a::before {
+    content: "\f38b";
+    font-family: "bootstrap-icons";
+    margin-right: 0.4em;
+    color: #0d6efd;
+}
+tr.node-type-project td.title a::before {
+    content: "\f290";
+    font-family: "bootstrap-icons";
+    margin-right: 0.4em;
+    color: #fd7e14;
+}
+tr.node-type-task td.title a::before {
+    content: "\f271";
+    font-family: "bootstrap-icons";
+    margin-right: 0.4em;
+    color: #6f42c1;
+}
+tr.node-type-wiki_page td.title a::before {
+    content: "\f444";
+    font-family: "bootstrap-icons";
+    margin-right: 0.4em;
+    color: #198754;
+}
+
+/* Landing page */
+.landing-hero {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1rem;
+}
+
 :root {
     /* --navbar-height: 100px; */ /* Example of custom navbar height */
 }

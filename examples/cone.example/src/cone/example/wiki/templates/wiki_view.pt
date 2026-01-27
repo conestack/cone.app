@@ -34,7 +34,7 @@
   </div>
 
   <div class="card mt-3"
-       tal:define="references view.references"
+       tal:define="references context.references"
        tal:condition="references">
     <div class="card-header">
       <h5 class="card-title mb-0">Related Pages</h5>

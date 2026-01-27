@@ -24,7 +24,7 @@ class DocumentLibrary(BaseContainer):
 
     @property
     def properties(self):
-        props = super().properties
+        props = super(DocumentLibrary, self).properties
         props.mainmenu_display_children = False
         return props
 
@@ -38,7 +38,7 @@ class DocumentFolder(BaseContainer):
 
     @property
     def properties(self):
-        props = super().properties
+        props = super(DocumentFolder, self).properties
         props.action_delete = True
         return props
 

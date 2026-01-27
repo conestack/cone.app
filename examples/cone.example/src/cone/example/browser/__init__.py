@@ -1,7 +1,6 @@
 from cone.app import DefaultLayoutConfig
 from cone.app import layout_config
 from cone.app.browser.actions import LinkAction
-from cone.app.browser.actions import TemplateAction
 from cone.app.browser.contextmenu import context_menu_group
 from cone.app.browser.contextmenu import context_menu_item
 from cone.app.browser.contextmenu import ContextMenuToolbar
@@ -9,7 +8,7 @@ from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import request_property
-from cone.app.model import Properties
+from cone.app.model import AppRoot
 from cone.example.model import _
 from cone.tile import tile
 import os
@@ -62,38 +61,72 @@ def _configure_layout_configs():
     @layout_config(DocumentLibrary, DocumentFolder)
     class DocumentContainerLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
-            super().__init__(model=model, request=request)
+            super(DocumentContainerLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
 
     @layout_config(Document)
     class DocumentLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
-            super().__init__(model=model, request=request)
+            super(DocumentLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
 
     @layout_config(ProjectBoard)
     class ProjectBoardLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
-            super().__init__(model=model, request=request)
+            super(ProjectBoardLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
 
     @layout_config(Task)
     class TaskLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
-            super().__init__(model=model, request=request)
+            super(TaskLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
 
     @layout_config(Wiki, WikiPage)
     class WikiLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
-            super().__init__(model=model, request=request)
+            super(WikiLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = ['navtree']
+
+    @layout_config(AppRoot)
+    class RootLayoutConfig(DefaultLayoutConfig):
+        def __init__(self, model=None, request=None):
+            super(RootLayoutConfig, self).__init__(model=model, request=request)
+            self.sidebar_left = []
+            self.limit_content_width = False
 
     @layout_config(AjaxPlayground)
     class AjaxPlaygroundLayoutConfig(DefaultLayoutConfig):
         def __init__(self, model=None, request=None):
-            super().__init__(model=model, request=request)
+            super(AjaxPlaygroundLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = []
+
+
+###############################################################################
+# Landing Page (Root Content Tile)
+###############################################################################
+
+@tile(name='content',
+      path='cone.example.browser:templates/landing.pt',
+      interface=AppRoot,
+      permission='login')
+class LandingPage(ProtectedContentTile):
+
+    @property
+    def documents_url(self):
+        return make_url(self.request, node=self.model['documents'])
+
+    @property
+    def projects_url(self):
+        return make_url(self.request, node=self.model['projects'])
+
+    @property
+    def wiki_url(self):
+        return make_url(self.request, node=self.model['wiki'])
+
+    @property
+    def ajax_url(self):
+        return make_url(self.request, node=self.model['ajax_playground'])
 
 
 ###############################################################################

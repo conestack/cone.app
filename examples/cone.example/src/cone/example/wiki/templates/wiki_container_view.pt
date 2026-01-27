@@ -1,0 +1,35 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <div class="card mt-3 example-header example-header-wiki">
+
+    <div class="card-body">
+
+      <h4 class="card-title">
+        <i class="bi-book me-2"></i>
+        <span class="label label-primary"
+              tal:content="model.metadata.title">
+          Title
+        </span>
+      </h4>
+
+      <tal:byline replace="structure tile('byline')" />
+
+      <p class="card-text text-muted">
+        Wiki pages with cross-references, categories,
+        and UUID-aware nodes.
+      </p>
+
+      <div class="mt-2">
+        <span class="badge example-badge-wiki">Reference Browser</span>
+        <span class="badge example-badge-wiki">Categories</span>
+        <span class="badge example-badge-wiki">UUIDAware</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</tal:view>

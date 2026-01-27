@@ -21,16 +21,21 @@ from yafowil.base import factory
 from yafowil.persistence import write_mapping_writer
 
 
-# View tiles for DocumentLibrary and DocumentFolder (container view)
+# View tile for DocumentLibrary
 @tile(name='view',
-      path='cone.example.browser:templates/view.pt',
+      path='cone.example.document:templates/library_view.pt',
       interface=DocumentLibrary,
       permission='login')
+class DocumentLibraryView(ProtectedContentTile):
+    pass
+
+
+# View tile for DocumentFolder
 @tile(name='view',
       path='cone.example.browser:templates/view.pt',
       interface=DocumentFolder,
       permission='login')
-class DocumentContainerView(ProtectedContentTile):
+class DocumentFolderView(ProtectedContentTile):
     pass
 
 
@@ -46,7 +51,8 @@ class DocumentContainerView(ProtectedContentTile):
     interface=Document,
     permission='view',
     text=_('view', default='View'),
-    icon='bi-eye')
+    icon='bi-eye',
+    css='dropdown-item')
 class DocumentView(ProtectedContentTile):
     pass
 
@@ -63,7 +69,8 @@ class DocumentView(ProtectedContentTile):
     interface=Document,
     permission='edit',
     text=_('source', default='Source'),
-    icon='bi-code')
+    icon='bi-code',
+    css='dropdown-item')
 class DocumentSourceView(ProtectedContentTile):
     pass
 
@@ -185,7 +192,7 @@ class DocumentAddForm(DocumentForm):
 
     def save(self, widget, data):
         add_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(DocumentAddForm, self).save(widget, data)
         parent = self.model.parent
         parent[choose_name(parent, self.model.metadata.title)] = self.model
 
@@ -195,7 +202,7 @@ class DocumentEditForm(DocumentForm):
 
     def save(self, widget, data):
         update_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(DocumentEditForm, self).save(widget, data)
 
 
 @plumbing(AddFormTarget)
@@ -203,7 +210,7 @@ class FolderAddForm(FolderForm):
 
     def save(self, widget, data):
         add_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(FolderAddForm, self).save(widget, data)
         parent = self.model.parent
         parent[choose_name(parent, self.model.metadata.title)] = self.model
 
@@ -213,7 +220,7 @@ class FolderEditForm(FolderForm):
 
     def save(self, widget, data):
         update_creation_metadata(self.request, self.model.attrs)
-        super().save(widget, data)
+        super(FolderEditForm, self).save(widget, data)
 
 
 # Add forms

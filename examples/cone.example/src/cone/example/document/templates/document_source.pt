@@ -45,7 +45,7 @@
           </tr>
           <tr>
             <td>Path</td>
-            <td tal:content="'/'.join(model.path)">path</td>
+            <td tal:content="'/'.join([_ for _ in model.path if _ is not None])">path</td>
           </tr>
         </tbody>
       </table>
