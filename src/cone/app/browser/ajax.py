@@ -76,18 +76,18 @@ def ajax_continue(request, operations):
         request.environ['cone.app.continuation'].append(operations)
 
 
-def ajax_message(request, payload, flavor='message', css=None):
+def ajax_message(request, payload, flavor='message', css=None, title=None):
     """Convenience to add ajax message operation to ajax continuation
     operations.
     """
-    ajax_continue(request, AjaxMessage(payload, flavor, None, css))
+    ajax_continue(request, AjaxMessage(payload, flavor, None, css, title))
 
 
-def ajax_status_message(request, payload, css=None):
+def ajax_status_message(request, payload, css=None, title=None):
     """Convenience to add ajax status message operation to ajax continuation
     operations.
     """
-    ajax_continue(request, AjaxMessage(payload, None, '#status_message', css))
+    ajax_continue(request, AjaxMessage(payload, None, '#status_message', css, title))
 
 
 class AjaxPath(object):
@@ -189,7 +189,7 @@ class AjaxMessage(object):
     """Ajax message continuation operation.
     """
 
-    def __init__(self, payload, flavor, selector, css=''):
+    def __init__(self, payload, flavor, selector, css='', title=None):
         """Create ajax message continuation operation.
 
         :param payload: Message payload as text or markup.
@@ -202,6 +202,7 @@ class AjaxMessage(object):
         self.flavor = flavor
         self.selector = selector
         self.css = css
+        self.title = title
 
     def as_json(self):
         return {
@@ -209,7 +210,8 @@ class AjaxMessage(object):
             'payload': self.payload,
             'flavor': self.flavor,
             'selector': self.selector,
-            'css': self.css
+            'css': self.css,
+            'title': self.title
         }
 
 
