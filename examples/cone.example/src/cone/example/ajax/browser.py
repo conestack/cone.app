@@ -124,7 +124,9 @@ class AjaxMessageDemo(ProtectedContentTile):
         ajax_message(
             self.request,
             'This is a demo message from AjaxMessage!',
-            'info'
+            'info',
+            'modal-lg',
+            'Demo Message'
         )
         return ''
 
