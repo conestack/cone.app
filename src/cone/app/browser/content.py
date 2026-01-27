@@ -71,12 +71,13 @@ class ContentViewAction(LinkAction):
     """
 
     def __init__(self, name, interface=None,
-                 permission=None, text=None, icon=None):
+                 permission=None, text=None, icon=None, css=None):
         self.name = name
         self.interface = interface
         self.permission = permission
         self.text = text
         self.icon = icon
+        self.css = css
 
     @property
     def display(self):
@@ -104,13 +105,14 @@ class content_view_action(object):
     """
 
     def __init__(self, name, tilename=None, interface=None,
-                 permission=None, text=None, icon=None):
+                 permission=None, text=None, icon=None, css=None):
         self.name = name
         self.tilename = tilename if tilename is not None else name
         self.interface = interface
         self.permission = permission
         self.text = text
         self.icon = icon
+        self.css = css
 
     def __call__(self, ob):
         context_menu['contentviews'][self.name] = ContentViewAction(
@@ -118,6 +120,7 @@ class content_view_action(object):
             interface=self.interface,
             permission=self.permission,
             text=self.text,
-            icon=self.icon
+            icon=self.icon,
+            css=self.css
         )
         return ob
