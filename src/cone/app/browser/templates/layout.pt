@@ -69,7 +69,7 @@
             <!-- sidebar -->
             <div id="sidebar_left"
                 tal:condition="config.sidebar_left and request.has_permission('view', model)"
-                class="d-flex flex-column flex-shrink-0 pt-1 px-0 pb-5"
+                tal:attributes="class 'd-flex flex-column flex-shrink-0 pt-1 px-0 pb-5' + (' static' if config.sidebar_left_static else '')"
                 data-min-width="${config.sidebar_left_min_width}"
                 data-mode="${config.sidebar_left_mode}"
                 data-tiles="${context.dump(config.sidebar_left)}">
@@ -124,7 +124,8 @@
             <!-- content -->
             <div id="content"
                  tal:define="css 'd-flex flex-column px-3 pb-4 py-2 overflow-auto';
-                             css css + ' container-xxl ms-0' if userid and config.limit_content_width else css;"
+                             css css + ' container-xxl' if userid and config.limit_content_width else css;
+                             css css + ' ms-0' if userid and not config.center_content else css;"
                  tal:attributes="class css"
                  ajax:bind="contextchanged"
                  ajax:action="content:#content:inner">
@@ -137,7 +138,7 @@
 
             <div id="sidebar_right"
                  tal:condition="config.sidebar_right and request.has_permission('view', model)"
-                 class="d-flex flex-column flex-shrink-0 px-0 pb-5"
+                 tal:attributes="class 'd-flex flex-column flex-shrink-0 px-0 pb-5' + (' static' if config.sidebar_right_static else '')"
                  data-min-width="${config.sidebar_right_min_width}"
                  data-mode="${config.sidebar_right_mode}"
                  data-tiles="${context.dump(config.sidebar_right)}">

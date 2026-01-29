@@ -92,11 +92,14 @@ class ILayoutConfig(IProperties):
     livesearch = Attribute(u'Flag whether to display livesearch')
     personaltools = Attribute(u'Flag whether to display personaltools')
     limit_content_width = Attribute(u'Flag whether content width should be limited on large screens')
+    center_content = Attribute(u'Flag whether to center the content area (used with limit_content_width)')
     pathbar = Attribute(u'Flag whether to display pathbar')
     sidebar_left = Attribute(u'Tiles which should be rendered in sidebar')
     sidebar_left_min_width = Attribute(u'Min width of sidebar left in px')
+    sidebar_left_static = Attribute(u'Flag whether sidebar left overlays content instead of pushing it')
     sidebar_right = Attribute(u'Tiles which should be rendered in sidebar')
     sidebar_right_min_width = Attribute(u'Min width of sidebar right in px')
+    sidebar_right_static = Attribute(u'Flag whether sidebar right overlays content instead of pushing it')
 
 
 # B/C, removed as of cone.app 1.1
