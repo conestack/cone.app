@@ -127,7 +127,12 @@ class BaseContainer(ContainerNode):
         md = Metadata()
         md.icon = self.nodeinfo.icon
         title = self.attrs.get('title')
-        md.title = title.value if title else self.name
+        if title:
+            md.title = title.value
+        elif self.nodeinfo.title:
+            md.title = self.nodeinfo.title
+        else:
+            md.title = self.name
         description = self.attrs.get('description')
         md.description = description.value if description else ''
         md.creator = self.attrs.get('creator', '')

@@ -15,6 +15,7 @@ from cone.example.project.model import ProjectBoard
 from cone.example.project.model import Task
 from cone.example.project.model import TaskData
 from cone.tile import tile
+from cone.tile import Tile
 from node.utils import UNSET
 from plumber import plumbing
 from yafowil.base import factory
@@ -265,4 +266,39 @@ class TaskContentAddForm(TaskAddForm):
 @tile(name='editform', interface=Task, permission='edit')
 @plumbing(ContentEditForm)
 class TaskContentEditForm(TaskEditForm):
+    ...
+
+
+# tutorial
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_board.pt',
+    interface=ProjectBoard,
+    permission='view',
+    strict=False,
+)
+class ProjectBoardTutorial(Tile):
+    ...
+
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_project.pt',
+    interface=Project,
+    permission='view',
+    strict=False,
+)
+class ProjectTutorial(Tile):
+    ...
+
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_task.pt',
+    interface=Task,
+    permission='view',
+    strict=False,
+)
+class TaskTutorial(Tile):
     ...

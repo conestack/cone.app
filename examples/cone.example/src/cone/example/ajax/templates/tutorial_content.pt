@@ -1,0 +1,45 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">AjaxPath</div>
+    <div class="card-body">
+      <p class="small">Updates browser URL without reload. Fires event for content update.</p>
+      <pre class="bg-light p-2 small"><code>AjaxPath(
+    path='/node/path',
+    target=url,
+    event='contextchanged:#layout'
+)</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">AjaxAction</div>
+    <div class="card-body">
+      <p class="small">Renders a tile and inserts into DOM. Modes: inner, replace, before, after.</p>
+      <pre class="bg-light p-2 small"><code>AjaxAction(
+    url, 'tile_name', 'inner', '#target'
+)</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">AjaxMessage</div>
+    <div class="card-body">
+      <p class="small">Shows notification. Flavors: info, warning, error, success.</p>
+      <pre class="bg-light p-2 small"><code>ajax_message(request, 'Hello!', 'info')</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">ajax_continue</div>
+    <div class="card-body">
+      <p class="small">Chain multiple operations in one response.</p>
+      <pre class="bg-light p-2 small"><code>ajax_continue(request, [
+    AjaxAction(...),
+    AjaxMessage(...),
+])</code></pre>
+    </div>
+  </div>
+
+</tal:view>

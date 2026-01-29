@@ -1,9 +1,19 @@
 <tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
-           omit-tag="True">
+          xmlns:ajax="http://namespaces.conestack.org/ajax"
+          omit-tag="True">
 
-  <div class="position-absolute w-100 text-center py-1"
+  <div class="position-absolute w-100 py-1 px-2 d-flex justify-content-between align-items-center"
        style="left: 0;">
-    Tutorial
+    <span></span>
+    <span>Tutorial</span>
+    <a href="#"
+       class="btn btn-sm btn-link p-0 text-muted ajax"
+       title="Hide tutorial"
+       ajax:bind="click"
+       ajax:target="${context.toggle_url}"
+       ajax:action="toggle_tutorial:NONE:NONE">
+      <i class="bi-x-lg"></i>
+    </a>
   </div>
 
   <div tal:condition="context.root_view"
@@ -17,7 +27,8 @@
 
   <div tal:condition="not context.root_view"
        class="text-center pt-5 pb-1">
-    <h2 class="fs-4 m-0 text-primary">
+    <h2 class="fs-4 m-0 text-primary"
+        tal:content="context.title">
       Tutorial Title
     </h2>
   </div>

@@ -1,0 +1,38 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">Reference Browser</div>
+    <div class="card-body">
+      <p class="small">Widget for selecting related nodes by UUID.</p>
+      <pre class="bg-light p-2 small"><code>form['references'] = factory(
+    'field:...:reference',
+    props={
+        'multivalued': True,
+        'referencable': 'wiki_page',
+        'root': '/wiki',
+    })</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">UUIDAttributeAware</div>
+    <div class="card-body">
+      <p class="small">UUID stored in node attrs. Auto-generated on first access.</p>
+      <pre class="bg-light p-2 small"><code>@plumbing(UUIDAttributeAware, ...)
+class WikiPage:
+    # self.uuid reads/writes attrs</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">INavigationLeaf</div>
+    <div class="card-body">
+      <p class="small">Marks node as leaf - no children shown in navtree.</p>
+      <pre class="bg-light p-2 small"><code>@implementer(INavigationLeaf)
+class WikiPage:
+    ...</code></pre>
+    </div>
+  </div>
+
+</tal:view>

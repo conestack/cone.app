@@ -255,22 +255,30 @@ class FolderContentEditForm(FolderEditForm):
 
 @tile(
     name='tutorial_content',
-    path='templates/tutorial_content.pt',
-    interface=Document,
+    path='templates/tutorial_library.pt',
+    interface=DocumentLibrary,
     permission='view',
     strict=False,
 )
+class DocumentLibraryTutorial(Tile):
+    ...
+
+
 @tile(
     name='tutorial_content',
-    path='templates/tutorial_content.pt',
+    path='templates/tutorial_folder.pt',
     interface=DocumentFolder,
     permission='view',
     strict=False,
 )
+class DocumentFolderTutorial(Tile):
+    ...
+
+
 @tile(
     name='tutorial_content',
-    path='templates/tutorial_content.pt',
-    interface=DocumentLibrary,
+    path='templates/tutorial_document.pt',
+    interface=Document,
     permission='view',
     strict=False,
 )

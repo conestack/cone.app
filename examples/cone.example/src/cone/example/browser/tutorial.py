@@ -1,7 +1,22 @@
+from cone.app import get_root
+from cone.app.browser.utils import make_url
+from cone.app.model import AppRoot
 from cone.tile import tile
 from cone.tile import Tile
-from cone.app import get_root
-from cone.app.model import AppRoot
+
+TUTORIAL_TITLES = {
+    'document_library': 'Document Library',
+    'document_folder': 'Document Folder',
+    'document': 'Document',
+    'project_board': 'Project Board',
+    'project': 'Project',
+    'task': 'Task',
+    'wiki': 'Wiki',
+    'wiki_page': 'Wiki Page',
+    'layout_demo': 'Layout',
+    'ajax_playground': 'AJAX',
+}
+
 
 @tile(
     name='tutorial',
@@ -15,6 +30,16 @@ class SidebarTutorial(Tile):
     def root_view(self):
         root = get_root(self.model)
         return self.model is root
+
+    @property
+    def title(self):
+        name = getattr(self.model, 'node_info_name', '')
+        return TUTORIAL_TITLES.get(name, 'Tutorial')
+
+    @property
+    def toggle_url(self):
+        return make_url(self.request, node=self.model)
+
 
 # tutorial
 

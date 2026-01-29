@@ -4,6 +4,7 @@ from cone.app import register_entry
 from cone.example.browser import _configure_layout_configs
 from cone.example.browser import configure_resources
 from cone.example.model import LiveSearch
+from pyramid.session import SignedCookieSessionFactory
 
 
 @main_hook
@@ -13,6 +14,10 @@ def example_main_hook(config, global_config, settings):
     Registers all entry nodes, settings, search adapters, static resources,
     and scans browser packages for tiles and views.
     """
+    # Configure session factory for storing user preferences
+    session_factory = SignedCookieSessionFactory('cone.example.secret')
+    config.set_session_factory(session_factory)
+
     # Register live search adapter
     config.registry.registerAdapter(LiveSearch)
 
@@ -21,6 +26,7 @@ def example_main_hook(config, global_config, settings):
 
     # Register entry nodes in the main menu
     from cone.example.document.model import DocumentLibrary
+    from cone.example.layout.model import LayoutDemo
     from cone.example.project.model import ProjectBoard
     from cone.example.wiki.model import Wiki
     from cone.example.ajax.browser import AjaxPlayground
@@ -44,6 +50,7 @@ def example_main_hook(config, global_config, settings):
     register_entry('documents', make_document_library)
     register_entry('projects', ProjectBoard)
     register_entry('wiki', make_wiki)
+    register_entry('layout', LayoutDemo)
     register_entry('ajax_playground', AjaxPlayground)
 
     # Register settings node
@@ -74,5 +81,6 @@ def example_main_hook(config, global_config, settings):
     config.scan('cone.example.document.browser')
     config.scan('cone.example.project.browser')
     config.scan('cone.example.wiki.browser')
+    config.scan('cone.example.layout.browser')
     config.scan('cone.example.settings.browser')
     config.scan('cone.example.ajax.browser')

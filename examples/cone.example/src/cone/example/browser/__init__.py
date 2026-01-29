@@ -1,6 +1,8 @@
 from cone.app import DefaultLayoutConfig
 from cone.app import layout_config
 from cone.app.browser.actions import LinkAction
+from cone.app.browser.ajax import ajax_continue
+from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.contextmenu import context_menu_group
 from cone.app.browser.contextmenu import context_menu_item
 from cone.app.browser.contextmenu import ContextMenuToolbar
@@ -11,6 +13,7 @@ from cone.app.browser.utils import request_property
 from cone.app.model import AppRoot
 from cone.example.model import _
 from cone.tile import tile
+from cone.tile import Tile
 import os
 import webresource as wr
 
@@ -47,11 +50,128 @@ def configure_resources(config, settings):
 # Import model classes here to avoid circular imports at module level.
 # layout_config decorators register factories looked up by model class.
 
+
+# Default layout settings for LayoutDemo page (stored in session)
+LAYOUT_DEMO_DEFAULTS = {
+    'mainmenu': True,
+    'livesearch': True,
+    'personaltools': True,
+    'pathbar': True,
+    'sidebar_left': ['navtree'],
+    'sidebar_right': ['tutorial'],
+}
+
+
+class ExampleLayoutConfig(DefaultLayoutConfig):
+    """Base layout config with standard sidebar configuration."""
+
+    def __init__(self, model=None, request=None):
+        super(ExampleLayoutConfig, self).__init__(model=model, request=request)
+        self.sidebar_left = ['navtree']
+        self.sidebar_right = ['tutorial']
+
+
+class DynamicLayoutConfig(DefaultLayoutConfig):
+    """Layout config that reads all settings from session.
+
+    Used only for the LayoutDemo page to demonstrate dynamic layout changes.
+    """
+
+    def __init__(self, model=None, request=None):
+        super(DynamicLayoutConfig, self).__init__(model=model, request=request)
+        if request:
+            session = request.session
+            self.mainmenu = session.get('layout.mainmenu', LAYOUT_DEMO_DEFAULTS['mainmenu'])
+            self.livesearch = session.get('layout.livesearch', LAYOUT_DEMO_DEFAULTS['livesearch'])
+            self.personaltools = session.get('layout.personaltools', LAYOUT_DEMO_DEFAULTS['personaltools'])
+            self.pathbar = session.get('layout.pathbar', LAYOUT_DEMO_DEFAULTS['pathbar'])
+            self.sidebar_left = session.get('layout.sidebar_left', LAYOUT_DEMO_DEFAULTS['sidebar_left'])
+            self.sidebar_right = session.get('layout.sidebar_right', LAYOUT_DEMO_DEFAULTS['sidebar_right'])
+
+
+@tile(name='toggle_tutorial', permission='view')
+class ToggleTutorialTile(Tile):
+    """Toggle tutorial sidebar visibility via session (for LayoutDemo page only)."""
+
+    def render(self):
+        session = self.request.session
+        current = session.get('layout.sidebar_right', LAYOUT_DEMO_DEFAULTS['sidebar_right'])
+        if 'tutorial' in current:
+            session['layout.sidebar_right'] = []
+        else:
+            session['layout.sidebar_right'] = ['tutorial']
+        url = make_url(self.request, node=self.model)
+        ajax_continue(self.request, [
+            AjaxEvent(url, 'contextchanged', '#layout')
+        ])
+        return ''
+
+
+@tile(name='toggle_layout_bool', permission='view')
+class ToggleLayoutBoolTile(Tile):
+    """Toggle a boolean layout setting via session (for LayoutDemo page only)."""
+
+    def render(self):
+        setting = self.request.params.get('setting')
+        if setting in ('mainmenu', 'livesearch', 'personaltools', 'pathbar'):
+            session = self.request.session
+            key = f'layout.{setting}'
+            current = session.get(key, LAYOUT_DEMO_DEFAULTS.get(setting, True))
+            session[key] = not current
+        url = make_url(self.request, node=self.model)
+        ajax_continue(self.request, [
+            AjaxEvent(url, 'contextchanged', '#layout')
+        ])
+        return ''
+
+
+@tile(name='toggle_sidebar_tile', permission='view')
+class ToggleSidebarTileTile(Tile):
+    """Toggle a tile in sidebar_left or sidebar_right (for LayoutDemo page only)."""
+
+    def render(self):
+        sidebar = self.request.params.get('sidebar')  # 'left' or 'right'
+        tile_name = self.request.params.get('tile')
+        if sidebar in ('left', 'right') and tile_name:
+            session = self.request.session
+            key = f'layout.sidebar_{sidebar}'
+            default = LAYOUT_DEMO_DEFAULTS.get(f'sidebar_{sidebar}', [])
+            current = list(session.get(key, default))
+            if tile_name in current:
+                current.remove(tile_name)
+            else:
+                current.append(tile_name)
+            session[key] = current
+        url = make_url(self.request, node=self.model)
+        ajax_continue(self.request, [
+            AjaxEvent(url, 'contextchanged', '#layout')
+        ])
+        return ''
+
+
+@tile(name='reset_layout', permission='view')
+class ResetLayoutTile(Tile):
+    """Reset all layout settings to defaults (for LayoutDemo page only)."""
+
+    def render(self):
+        session = self.request.session
+        for key in list(session.keys()):
+            if key.startswith('layout.'):
+                del session[key]
+        url = make_url(self.request, node=self.model)
+        ajax_continue(self.request, [
+            AjaxEvent(url, 'contextchanged', '#layout')
+        ])
+        return ''
+
+
 def _configure_layout_configs():
     """Register layout configs after model classes are available."""
     from cone.example.document.model import Document
     from cone.example.document.model import DocumentFolder
     from cone.example.document.model import DocumentLibrary
+    from cone.example.layout.model import LayoutDemo
+    from cone.example.project.model import Project
     from cone.example.project.model import ProjectBoard
     from cone.example.project.model import Task
     from cone.example.wiki.model import Wiki
@@ -59,54 +179,38 @@ def _configure_layout_configs():
     from cone.example.ajax.browser import AjaxPlayground
 
     @layout_config(DocumentLibrary, DocumentFolder)
-    class DocumentContainerLayoutConfig(DefaultLayoutConfig):
-        def __init__(self, model=None, request=None):
-            super(DocumentContainerLayoutConfig, self).__init__(model=model, request=request)
-            self.sidebar_left = ['navtree']
-            self.sidebar_right = ['tutorial']
+    class DocumentContainerLayoutConfig(ExampleLayoutConfig):
+        pass
 
     @layout_config(Document)
-    class DocumentLayoutConfig(DefaultLayoutConfig):
-        def __init__(self, model=None, request=None):
-            super(DocumentLayoutConfig, self).__init__(model=model, request=request)
-            self.sidebar_left = ['navtree']
-            self.sidebar_right = ['tutorial']
+    class DocumentLayoutConfig(ExampleLayoutConfig):
+        pass
 
-    @layout_config(ProjectBoard)
-    class ProjectBoardLayoutConfig(DefaultLayoutConfig):
-        def __init__(self, model=None, request=None):
-            super(ProjectBoardLayoutConfig, self).__init__(model=model, request=request)
-            self.sidebar_left = ['navtree']
-            self.sidebar_right = ['tutorial']
-
-    @layout_config(Task)
-    class TaskLayoutConfig(DefaultLayoutConfig):
-        def __init__(self, model=None, request=None):
-            super(TaskLayoutConfig, self).__init__(model=model, request=request)
-            self.sidebar_left = ['navtree']
-            self.sidebar_right = ['tutorial']
+    @layout_config(ProjectBoard, Project, Task)
+    class ProjectLayoutConfig(ExampleLayoutConfig):
+        pass
 
     @layout_config(Wiki, WikiPage)
-    class WikiLayoutConfig(DefaultLayoutConfig):
-        def __init__(self, model=None, request=None):
-            super(WikiLayoutConfig, self).__init__(model=model, request=request)
-            self.sidebar_left = ['navtree']
-            self.sidebar_right = ['tutorial']
+    class WikiLayoutConfig(ExampleLayoutConfig):
+        pass
+
+    @layout_config(LayoutDemo)
+    class LayoutDemoLayoutConfig(DynamicLayoutConfig):
+        """Layout config for LayoutDemo that reads settings from session."""
+        pass
 
     @layout_config(AppRoot)
-    class RootLayoutConfig(DefaultLayoutConfig):
+    class RootLayoutConfig(ExampleLayoutConfig):
         def __init__(self, model=None, request=None):
             super(RootLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = []
             self.limit_content_width = False
-            self.sidebar_right = ['tutorial']
 
     @layout_config(AjaxPlayground)
-    class AjaxPlaygroundLayoutConfig(DefaultLayoutConfig):
+    class AjaxPlaygroundLayoutConfig(ExampleLayoutConfig):
         def __init__(self, model=None, request=None):
             super(AjaxPlaygroundLayoutConfig, self).__init__(model=model, request=request)
             self.sidebar_left = []
-            self.sidebar_right = ['tutorial']
 
 
 ###############################################################################

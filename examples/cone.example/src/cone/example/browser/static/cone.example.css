@@ -79,42 +79,109 @@ tr.state-public td.title a {
     color: #0f5132;
 }
 
-/* Node type icons in listings */
-tr.node-type-document_folder td.title a::before {
-    content: "\f3d7";
-    font-family: "bootstrap-icons";
-    margin-right: 0.4em;
-    color: #fd7e14;
-}
-tr.node-type-document td.title a::before {
-    content: "\f38b";
-    font-family: "bootstrap-icons";
-    margin-right: 0.4em;
-    color: #0d6efd;
-}
-tr.node-type-project td.title a::before {
-    content: "\f290";
-    font-family: "bootstrap-icons";
-    margin-right: 0.4em;
-    color: #fd7e14;
-}
-tr.node-type-task td.title a::before {
-    content: "\f271";
-    font-family: "bootstrap-icons";
-    margin-right: 0.4em;
-    color: #6f42c1;
-}
-tr.node-type-wiki_page td.title a::before {
-    content: "\f444";
-    font-family: "bootstrap-icons";
-    margin-right: 0.4em;
-    color: #198754;
-}
-
 /* Landing page */
 .landing-hero {
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 1rem;
+}
+
+/* Tutorial toggler */
+#tutorial_toggle {
+    right: 0;
+    background-color: #bdbbff;
+    border-top-left-radius: var(--bs-border-radius);
+    border-bottom-left-radius: var(--bs-border-radius);
+    transition: background-color 150ms;
+}
+#tutorial_toggle:hover {
+    background-color: #7c79d5;
+}
+#sidebar_right {
+    z-index: 2;
+}
+
+/* Layout Config demo */
+#layout_config_demo {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(7, 1fr);
+}
+#layout_config_demo .mainmenu {
+    grid-column: span 4;
+}
+#layout_config_demo .breadcrumbs {
+    grid-column: span 7;
+}
+#layout_config_demo .content_area {
+    grid-column: span 5;
+    height: 30vh;
+}
+#layout_config_demo .footer {
+    grid-column: span 5;
+}
+#layout_config_demo .sidebar_left, #layout_config_demo .sidebar_right {
+    grid-row: span 2;
+}
+#layout_config_demo > .btn {
+    margin: .25rem;
+    background-color: var(--bs-info-bg-subtle);
+    border: 1px solid var(--bs-info-border-subtle);
+    position: relative;
+    text-decoration: none;
+    color: var(--bs-body-color);
+}
+/* Non-editable elements (div.btn) - no hover, default cursor */
+#layout_config_demo > div.btn {
+    cursor: default;
+    opacity: 0.7;
+}
+/* Editable elements (a.btn) - hover effect, pointer cursor */
+#layout_config_demo > a.btn {
+    cursor: pointer;
+}
+#layout_config_demo > a.btn:hover {
+    background-color: var(--bs-info-border-subtle);
+}
+#layout_config_demo > a.btn:not(.active) {
+    background-color: var(--bs-secondary-bg);
+    border-color: var(--bs-border-color);
+    opacity: 0.6;
+}
+#layout_config_demo > a.btn:not(.active):hover {
+    background-color: var(--bs-border-color);
+    opacity: 0.8;
+}
+/* Immediate tooltips for layout demo */
+#layout_config_demo > .btn[title] {
+    cursor: help;
+}
+#layout_config_demo > a.btn[title] {
+    cursor: pointer;
+}
+#layout_config_demo > .btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 4px;
+}
+#layout_config_demo > .btn[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+    z-index: 100;
 }
 
 :root {

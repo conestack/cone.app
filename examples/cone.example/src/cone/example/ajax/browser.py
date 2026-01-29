@@ -13,6 +13,7 @@ from cone.app.model import Properties
 from cone.app.utils import node_path
 from cone.example.model import _
 from cone.tile import tile
+from cone.tile import Tile
 from node.utils import instance_property
 
 
@@ -161,3 +162,16 @@ class AjaxCombinedDemo(ProtectedContentTile):
             AjaxEvent(url, 'contextchanged', '#layout'),
         ])
         return ''
+
+
+# tutorial
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_content.pt',
+    interface=AjaxPlayground,
+    permission='view',
+    strict=False,
+)
+class AjaxTutorial(Tile):
+    ...

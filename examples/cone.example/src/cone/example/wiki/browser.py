@@ -17,6 +17,7 @@ from cone.example.model import _
 from cone.example.wiki.model import Wiki
 from cone.example.wiki.model import WikiPage
 from cone.tile import tile
+from cone.tile import Tile
 from node.utils import UNSET
 from plumber import plumbing
 from pyramid.i18n import TranslationStringFactory
@@ -246,3 +247,27 @@ class WikiEditForm(Form):
     def save(self, widget, data):
         update_creation_metadata(self.request, self.model.attrs)
         data.write(self.model.attrs)
+
+
+# tutorial
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_wiki.pt',
+    interface=Wiki,
+    permission='view',
+    strict=False,
+)
+class WikiContainerTutorial(Tile):
+    ...
+
+
+@tile(
+    name='tutorial_content',
+    path='templates/tutorial_page.pt',
+    interface=WikiPage,
+    permission='view',
+    strict=False,
+)
+class WikiPageTutorial(Tile):
+    ...

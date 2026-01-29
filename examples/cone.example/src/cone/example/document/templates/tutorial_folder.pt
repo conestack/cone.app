@@ -1,0 +1,26 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">Nested Containers</div>
+    <div class="card-body">
+      <p class="small">Folders can contain folders and documents recursively.</p>
+      <pre class="bg-light p-2 small"><code>@node_info(
+    name='document_folder',
+    addables=['document_folder', 'document'])</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">Properties</div>
+    <div class="card-body">
+      <p class="small">Control node behavior via properties.</p>
+      <pre class="bg-light p-2 small"><code>@property
+def properties(self):
+    props = super().properties
+    props.action_delete = True
+    return props</code></pre>
+    </div>
+  </div>
+
+</tal:view>

@@ -1,0 +1,34 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">Workflow</div>
+    <div class="card-body">
+      <p class="small">State machine with transitions and ACL per state.</p>
+      <pre class="bg-light p-2 small"><code>class Document(WorkflowNode):
+    workflow_name = 'document_workflow'
+    # states: draft, published, ...</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">ProtectedProperties</div>
+    <div class="card-body">
+      <p class="small">Property access controlled by permissions.</p>
+      <pre class="bg-light p-2 small"><code>props = ProtectedProperties(self,
+    permissions={'body': ['edit']})
+# body only visible with edit perm</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">OwnerSupport</div>
+    <div class="card-body">
+      <p class="small">Tracks creator. Grants owner role automatically.</p>
+      <pre class="bg-light p-2 small"><code>@plumbing(OwnerSupport, ...)
+class Document(WorkflowNode):
+    # self.owner from attrs</code></pre>
+    </div>
+  </div>
+
+</tal:view>
