@@ -32,6 +32,10 @@ cone_example_resources.add(wr.StyleResource(
     name='cone-example-css',
     resource='cone.example.css'
 ))
+cone_example_resources.add(wr.StyleResource(
+    name='pygments-css',
+    resource='pygments.css'
+))
 
 
 def configure_resources(config, settings):
@@ -75,6 +79,7 @@ class ExampleLayoutConfig(DefaultLayoutConfig):
         super(ExampleLayoutConfig, self).__init__(model=model, request=request)
         self.sidebar_left = ['navtree']
         self.sidebar_right = ['tutorial']
+        self.sidebar_right_min_width = 400
 
 
 class DynamicLayoutConfig(DefaultLayoutConfig):
@@ -259,6 +264,10 @@ def _configure_layout_configs():
       interface=AppRoot,
       permission='login')
 class LandingPage(ProtectedContentTile):
+
+    @property
+    def layout_url(self):
+        return make_url(self.request, node=self.model['layout'])
 
     @property
     def documents_url(self):

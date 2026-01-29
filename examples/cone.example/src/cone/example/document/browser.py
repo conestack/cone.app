@@ -20,6 +20,7 @@ from node.utils import UNSET
 from plumber import plumbing
 from yafowil.base import factory
 from yafowil.persistence import write_mapping_writer
+from cone.example.browser.utils import code_block
 
 
 # View tile for DocumentLibrary
@@ -283,4 +284,11 @@ class DocumentFolderTutorial(Tile):
     strict=False,
 )
 class DocumentTutorial(Tile):
-    ...
+    workflow_code = """\
+class Document(WorkflowNode):
+    workflow_name = 'document_workflow'
+    # states: draft, published, ...
+"""
+
+    def example_workflow(self):
+        return code_block(self.workflow_code, "python")

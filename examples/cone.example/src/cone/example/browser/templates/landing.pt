@@ -18,6 +18,30 @@
   <div class="row g-4 mb-4">
 
     <div class="col-md-6 col-lg-3">
+      <div class="card h-100 example-header example-header-layout">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi-kanban me-2"></i>Layout
+          </h5>
+          <p class="card-text text-muted small">
+            Layout Configuration using LayoutConfig.
+          </p>
+          <div class="mb-3">
+            <span class="badge example-badge-layout">LayoutConfig</span>
+          </div>
+          <a class="stretched-link"
+             tal:attributes="href context.layout_url;
+                             ajax:target context.layout_url;
+                             ajax:event 'contextchanged:#layout';
+                             ajax:path 'href'">
+            Explore
+            <i class="bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
       <div class="card h-100 example-header example-header-documents">
         <div class="card-body">
           <h5 class="card-title">
@@ -96,8 +120,7 @@
     </div>
 
     <div class="col-md-6 col-lg-3">
-      <div class="card h-100 example-header"
-           style="border-left-color: #6f42c1;">
+      <div class="card h-100 example-header example-header-ajax">
         <div class="card-body">
           <h5 class="card-title">
             <i class="bi-lightning me-2"></i>AJAX Playground
@@ -107,12 +130,10 @@
             path, action, event, message, and overlay.
           </p>
           <div class="mb-3">
-            <span class="badge"
-                  style="background-color: #e2d9f3; color: #432874;">
+            <span class="badge example-badge-ajax">
               AjaxPath
             </span>
-            <span class="badge"
-                  style="background-color: #e2d9f3; color: #432874;">
+            <span class="badge example-badge-ajax">
               AjaxAction
             </span>
           </div>

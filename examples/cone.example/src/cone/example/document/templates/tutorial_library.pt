@@ -5,7 +5,7 @@
     <div class="card-header">BaseContainer</div>
     <div class="card-body">
       <p class="small">File-based storage container. Children persisted to disk.</p>
-      <pre class="bg-light p-2 small"><code>class DocumentLibrary(BaseContainer):
+      <pre class="p-2 small"><code>class DocumentLibrary(BaseContainer):
     # uses cone.filenode
     # children as directories</code></pre>
     </div>
@@ -15,7 +15,7 @@
     <div class="card-header">addables</div>
     <div class="card-body">
       <p class="small">Defines which child types can be added.</p>
-      <pre class="bg-light p-2 small"><code>@node_info(
+      <pre class="p-2 small"><code>@node_info(
     name='document_library',
     addables=['document_folder', 'document'])</code></pre>
     </div>

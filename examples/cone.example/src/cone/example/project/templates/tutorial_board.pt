@@ -5,7 +5,7 @@
     <div class="card-header">FactoryNode</div>
     <div class="card-body">
       <p class="small">Lazily creates children from a factories dict. Children are volatile.</p>
-      <pre class="bg-light p-2 small"><code>class ProjectBoard(FactoryNode):
+      <pre class="p-2 small"><code>class ProjectBoard(FactoryNode):
     factories = odict()</code></pre>
     </div>
   </div>
@@ -14,7 +14,7 @@
     <div class="card-header">BatchedItems</div>
     <div class="card-body">
       <p class="small">Paginated listings with search. Override <code>slice_items</code> and <code>item_count</code>.</p>
-      <pre class="bg-light p-2 small"><code>class ProjectBatchedItems(BatchedItems):
+      <pre class="p-2 small"><code>class ProjectBatchedItems(BatchedItems):
     slice_template = '...items.pt'
     show_filter = True
 

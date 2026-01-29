@@ -5,7 +5,7 @@
     <div class="card-header">AdapterNode</div>
     <div class="card-body">
       <p class="small">Wraps a data node, proxying attributes. Separates storage from UI.</p>
-      <pre class="bg-light p-2 small"><code>class Task(AdapterNode):
+      <pre class="p-2 small"><code>class Task(AdapterNode):
     # wraps TaskData instance
     # self.attrs proxies to model.attrs</code></pre>
     </div>
@@ -15,7 +15,7 @@
     <div class="card-header">UUIDAsName</div>
     <div class="card-body">
       <p class="small">Node's <code>__name__</code> is its UUID string.</p>
-      <pre class="bg-light p-2 small"><code>@plumbing(UUIDAsName, ...)
+      <pre class="p-2 small"><code>@plumbing(UUIDAsName, ...)
 class Task(AdapterNode):
     # self.__name__ == str(self.uuid)</code></pre>
     </div>
@@ -25,7 +25,7 @@ class Task(AdapterNode):
     <div class="card-header">WorkflowState</div>
     <div class="card-body">
       <p class="small">State machine. State stored in <code>attrs['state']</code>.</p>
-      <pre class="bg-light p-2 small"><code>@plumbing(WorkflowState, WorkflowACL)
+      <pre class="p-2 small"><code>@plumbing(WorkflowState, WorkflowACL)
 class Task(AdapterNode):
     workflow_name = 'task_workflow'</code></pre>
     </div>

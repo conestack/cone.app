@@ -2,12 +2,11 @@
           xmlns:ajax="http://namespaces.conestack.org/ajax"
           omit-tag="True">
 
-  <div class="position-absolute w-100 py-1 px-2 d-flex justify-content-between align-items-center"
+  <div class="position-absolute w-100 py-1 px-2 d-flex justify-content-between text-primary"
        style="left: 0;">
-    <span></span>
-    <span>Tutorial</span>
+    <span><i class="bi bi-patch-question me-2"></i>On this page</span>
     <a href="#"
-       class="btn btn-sm btn-link p-0 text-muted ajax"
+       class="btn btn-sm btn-link p-0 text-primary ajax"
        title="Hide tutorial"
        ajax:bind="click"
        ajax:target="${context.toggle_url}"

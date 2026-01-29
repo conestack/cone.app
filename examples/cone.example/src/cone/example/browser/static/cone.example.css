@@ -55,6 +55,9 @@ tr.state-public td.title a {
 .example-header {
     border-left: 4px solid #dee2e6;
 }
+.example-header-layout {
+    border-left-color: #ffe000;
+}
 .example-header-documents {
     border-left-color: #0d6efd;
 }
@@ -62,26 +65,37 @@ tr.state-public td.title a {
     border-left-color: #fd7e14;
 }
 .example-header-wiki {
-    border-left-color: #198754;
+    border-left-color: #18be71;
+}
+.example-header-ajax {
+    border-left-color: #7b33ff;
 }
 
 /* Feature badges per module */
+.badge.example-badge-layout {
+    background-color: #fff3cd;
+    color: #664d03;
+}
 .badge.example-badge-documents {
     background-color: #cfe2ff;
     color: #084298;
 }
 .badge.example-badge-projects {
-    background-color: #fff3cd;
-    color: #664d03;
+    background-color: #ffdbcd;
+    color: #661f03;
 }
 .badge.example-badge-wiki {
     background-color: #d1e7dd;
     color: #0f5132;
 }
+.badge.example-badge-ajax {
+    background-color: #e2d9f3;
+    color: #432874;
+}
 
 /* Landing page */
 .landing-hero {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--bs-border-color);
     margin-bottom: 1rem;
 }
 

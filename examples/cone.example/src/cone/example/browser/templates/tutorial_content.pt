@@ -4,8 +4,8 @@
   <div class="card mt-3">
     <div class="card-header">cone.app Basics</div>
     <div class="card-body">
-      <p class="small">A Pyramid-based CMS framework using node trees and tiles.</p>
-      <pre class="bg-light p-2 small"><code>@node_info(name='mynode', ...)
+      <p class="small">A Pyramid-based web application stub using node trees and tiles.</p>
+      <pre class="p-2 small"><code>@node_info(name='mynode', ...)
 class MyNode(BaseNode):
     ...</code></pre>
     </div>
@@ -14,6 +14,7 @@ class MyNode(BaseNode):
   <div class="card mt-3">
     <div class="card-header">Explore Sections</div>
     <ul class="list-group list-group-flush small">
+      <li class="list-group-item"><b>Layout</b> - Layout Configuration</li>
       <li class="list-group-item"><b>Documents</b> - FileStorage, Workflows</li>
       <li class="list-group-item"><b>Projects</b> - FactoryNode, AdapterNode</li>
       <li class="list-group-item"><b>Wiki</b> - References, Categories</li>
@@ -25,7 +26,7 @@ class MyNode(BaseNode):
     <div class="card-header">Tiles</div>
     <div class="card-body">
       <p class="small">UI components registered by name and interface.</p>
-      <pre class="bg-light p-2 small"><code>@tile(name='view', interface=MyNode)
+      <pre class="p-2 small"><code>@tile(name='view', interface=MyNode)
 class MyView(Tile):
     ...</code></pre>
     </div>

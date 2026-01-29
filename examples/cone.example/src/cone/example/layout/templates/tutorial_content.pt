@@ -5,7 +5,7 @@
     <div class="card-header">LayoutConfig</div>
     <div class="card-body">
       <p class="small">Controls sidebar tiles, width limits, and more per node type.</p>
-      <pre class="bg-light p-2 small"><code>@layout_config(MyNode)
+      <pre class="p-2 small"><code>@layout_config(MyNode)
 class MyLayoutConfig(DefaultLayoutConfig):
     def __init__(self, model, request):
         super().__init__(model, request)
@@ -17,7 +17,7 @@ class MyLayoutConfig(DefaultLayoutConfig):
     <div class="card-header">Session State</div>
     <div class="card-body">
       <p class="small">Store user preferences in session for dynamic layout.</p>
-      <pre class="bg-light p-2 small"><code>if request.session.get('show_tutorial', True):
+      <pre class="p-2 small"><code>if request.session.get('show_tutorial', True):
     self.sidebar_right = ['tutorial']
 else:
     self.sidebar_right = []</code></pre>
@@ -28,7 +28,7 @@ else:
     <div class="card-header">AjaxEvent</div>
     <div class="card-body">
       <p class="small">Trigger layout refresh after changing session state.</p>
-      <pre class="bg-light p-2 small"><code>ajax_continue(request, [
+      <pre class="p-2 small"><code>ajax_continue(request, [
     AjaxEvent(url, 'contextchanged', '#layout')
 ])</code></pre>
     </div>
