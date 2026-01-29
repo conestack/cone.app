@@ -98,7 +98,8 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         super(elem);
         this.elem = elem;
         this.min_width = elem.data('min-width') || 115;
-        elem.css('width', this.sidebar_width + 'px');
+        const width = Math.max(this.min_width, this.sidebar_width);
+        elem.css('width', width + 'px');
 
         this.moving = false;
         this.trigger_event = this.trigger_event.bind(this);
