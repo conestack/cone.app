@@ -157,11 +157,14 @@ class AppNode(Behavior):
     @default
     @instance_property
     def metadata(self):
-        name = self.name
-        if not name:
-            name = _('no_title', default='No Title')
         metadata = Metadata()
-        metadata.title = name
+        nodeinfo = self.nodeinfo
+        if nodeinfo.title:
+            metadata.title = nodeinfo.title
+        elif self.name:
+            metadata.title = self.name
+        else:
+            metadata.title = _('no_title', default='No Title')
         return metadata
 
     @default
