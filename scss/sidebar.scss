@@ -263,3 +263,17 @@
         }
     }
 }
+
+/* Static sidebar - overlays content instead of pushing it */
+#sidebar_left.static, #sidebar_right.static {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+}
+#sidebar_left.static {
+  left: 0;
+}
+#sidebar_right.static {
+  right: 0;
+}
