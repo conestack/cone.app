@@ -173,6 +173,15 @@ tr.state-public td.title a {
     z-index: 100;
     margin-bottom: 4px;
 }
+#layout_config_demo > .btn.tooltip-left:hover::after {
+    left: 0;
+    transform: none;
+}
+#layout_config_demo > .btn.tooltip-right:hover::after {
+    right: 0;
+    left: auto;
+    transform: none;
+}
 #layout_config_demo > .btn[title]:hover::before {
     content: '';
     position: absolute;

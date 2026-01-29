@@ -14,14 +14,9 @@
       </h4>
 
       <p class="card-text text-muted">
-        Dynamic layout configuration with session-based element toggling.
+        The Layout Attributes on this page are mapped to this Page's LayoutConfig.
+        Try changing the elements below!
       </p>
-
-      <div class="mt-2">
-        <span class="badge example-badge-layout">LayoutConfig</span>
-        <span class="badge example-badge-layout">Session State</span>
-        <span class="badge example-badge-layout">AjaxEvent</span>
-      </div>
 
     </div>
 
@@ -32,7 +27,7 @@
       <h5 class="mb-0">Default Layout Elements</h5>
     </div>
     <div id="layout_config_demo" class="card-body">
-      <div class="logo btn"
+      <div class="tooltip-left logo btn"
            title="show_logo: Display application logo (not configurable in this demo)">
         Logo
       </div>
@@ -45,7 +40,7 @@
         Mainmenu
       </a>
       <a href="#"
-         tal:attributes="class 'livesearch btn ajax' + (' active' if context.livesearch else '')"
+         tal:attributes="class 'tooltip-right livesearch btn ajax' + (' active' if context.livesearch else '')"
          title="livesearch: Enable live search input (default: True)"
          ajax:bind="click"
          ajax:target="${context.ajax_url}?setting=livesearch"
@@ -53,7 +48,7 @@
         Livesearch
       </a>
       <a href="#"
-         tal:attributes="class 'personaltools btn ajax' + (' active' if context.personaltools else '')"
+         tal:attributes="class 'tooltip-right personaltools btn ajax' + (' active' if context.personaltools else '')"
          title="personaltools: User dropdown menu (default: True)"
          ajax:bind="click"
          ajax:target="${context.ajax_url}?setting=personaltools"
@@ -69,7 +64,7 @@
         Breadcrumbs
       </a>
       <a href="#"
-         tal:attributes="class 'sidebar_left btn ajax' + (' active' if context.has_navtree else '')"
+         tal:attributes="class 'tooltip-left sidebar_left btn ajax' + (' active' if context.has_navtree else '')"
          title="sidebar_left: List of tile names for left sidebar (e.g. ['navtree'])"
          ajax:bind="click"
          ajax:target="${context.ajax_url}?sidebar=left&amp;tile=navtree"
@@ -77,11 +72,13 @@
         sidebar_left
       </a>
       <div class="content_area btn"
-           title="contenttile: Main content tile name (default: 'content')">
+           tal:define="mode 'limited' if context.limit_content_width else 'full'"
+           title="contenttile: Main content tile name (default: 'content'). Width mode: limit_content_width">
         Content Area
+        <small class="d-block text-muted" tal:content="mode"></small>
       </div>
       <a href="#"
-         tal:attributes="class 'sidebar_right btn ajax' + (' active' if context.has_tutorial else '')"
+         tal:attributes="class 'tooltip-right sidebar_right btn ajax' + (' active' if context.has_tutorial else '')"
          title="sidebar_right: List of tile names for right sidebar (e.g. ['tutorial'])"
          ajax:bind="click"
          ajax:target="${context.ajax_url}?sidebar=right&amp;tile=tutorial"
@@ -150,10 +147,30 @@
               pathbar
             </a>
           </div>
+          <div class="form-check">
+            <a href="#"
+               class="form-check-label ajax"
+               ajax:bind="click"
+               ajax:target="${context.ajax_url}?setting=limit_content_width"
+               ajax:action="toggle_layout_bool:NONE:NONE">
+              <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.limit_content_width else 'bi-square')"></i>
+              limit_content_width
+            </a>
+          </div>
+          <div class="form-check">
+            <a href="#"
+               class="form-check-label ajax"
+               ajax:bind="click"
+               ajax:target="${context.ajax_url}?setting=center_content"
+               ajax:action="toggle_layout_bool:NONE:NONE">
+              <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.center_content else 'bi-square')"></i>
+              center_content
+            </a>
+          </div>
         </div>
         <div class="col-md-6">
           <h6>Sidebar Tiles</h6>
-          <div class="mb-2">
+          <div class="mb-3">
             <small class="text-muted">sidebar_left:</small>
             <div class="form-check">
               <a href="#"
@@ -164,6 +181,32 @@
                 <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.has_navtree else 'bi-square')"></i>
                 navtree
               </a>
+            </div>
+            <div class="form-check">
+              <a href="#"
+                 class="form-check-label ajax"
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_url}?setting=sidebar_left_static"
+                 ajax:action="toggle_layout_bool:NONE:NONE">
+                <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.sidebar_left_static else 'bi-square')"></i>
+                static (overlay)
+              </a>
+            </div>
+            <div class="d-flex align-items-center mt-1">
+              <small class="text-muted me-2">min_width:</small>
+              <div class="btn-group btn-group-sm">
+                <a href="#"
+                   class="btn btn-outline-secondary ajax"
+                   ajax:bind="click"
+                   ajax:target="${context.ajax_url}?setting=sidebar_left_min_width&amp;value=${context.sidebar_left_min_width - 50}"
+                   ajax:action="set_layout_number:NONE:NONE">-</a>
+                <span class="btn btn-outline-secondary disabled" tal:content="context.sidebar_left_min_width">150</span>
+                <a href="#"
+                   class="btn btn-outline-secondary ajax"
+                   ajax:bind="click"
+                   ajax:target="${context.ajax_url}?setting=sidebar_left_min_width&amp;value=${context.sidebar_left_min_width + 50}"
+                   ajax:action="set_layout_number:NONE:NONE">+</a>
+              </div>
             </div>
           </div>
           <div>
@@ -177,6 +220,32 @@
                 <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.has_tutorial else 'bi-square')"></i>
                 tutorial
               </a>
+            </div>
+            <div class="form-check">
+              <a href="#"
+                 class="form-check-label ajax"
+                 ajax:bind="click"
+                 ajax:target="${context.ajax_url}?setting=sidebar_right_static"
+                 ajax:action="toggle_layout_bool:NONE:NONE">
+                <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.sidebar_right_static else 'bi-square')"></i>
+                static (overlay)
+              </a>
+            </div>
+            <div class="d-flex align-items-center mt-1">
+              <small class="text-muted me-2">min_width:</small>
+              <div class="btn-group btn-group-sm">
+                <a href="#"
+                   class="btn btn-outline-secondary ajax"
+                   ajax:bind="click"
+                   ajax:target="${context.ajax_url}?setting=sidebar_right_min_width&amp;value=${context.sidebar_right_min_width - 50}"
+                   ajax:action="set_layout_number:NONE:NONE">-</a>
+                <span class="btn btn-outline-secondary disabled" tal:content="context.sidebar_right_min_width">150</span>
+                <a href="#"
+                   class="btn btn-outline-secondary ajax"
+                   ajax:bind="click"
+                   ajax:target="${context.ajax_url}?setting=sidebar_right_min_width&amp;value=${context.sidebar_right_min_width + 50}"
+                   ajax:action="set_layout_number:NONE:NONE">+</a>
+              </div>
             </div>
           </div>
         </div>

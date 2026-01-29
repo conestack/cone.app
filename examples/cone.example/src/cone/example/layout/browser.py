@@ -56,6 +56,29 @@ class LayoutDemoView(ProtectedContentTile):
     def has_tutorial(self):
         return 'tutorial' in self.sidebar_right
 
+    @property
+    def limit_content_width(self):
+        return self.get_setting('limit_content_width')
+
+    @property
+    def sidebar_left_static(self):
+        return self.get_setting('sidebar_left_static')
+
+    @property
+    def sidebar_left_min_width(self):
+        return self.get_setting('sidebar_left_min_width')
+
+    @property
+    def sidebar_right_static(self):
+        return self.get_setting('sidebar_right_static')
+
+    @property
+    def sidebar_right_min_width(self):
+        return self.get_setting('sidebar_right_min_width')
+
+    @property
+    def center_content(self):
+        return self.get_setting('center_content')
 
 # tutorial
 

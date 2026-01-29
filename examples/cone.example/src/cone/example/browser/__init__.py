@@ -58,7 +58,13 @@ LAYOUT_DEMO_DEFAULTS = {
     'personaltools': True,
     'pathbar': True,
     'sidebar_left': ['navtree'],
+    'sidebar_left_static': False,
+    'sidebar_left_min_width': 150,
     'sidebar_right': ['tutorial'],
+    'sidebar_right_static': False,
+    'sidebar_right_min_width': 150,
+    'limit_content_width': True,
+    'center_content': False
 }
 
 
@@ -86,7 +92,13 @@ class DynamicLayoutConfig(DefaultLayoutConfig):
             self.personaltools = session.get('layout.personaltools', LAYOUT_DEMO_DEFAULTS['personaltools'])
             self.pathbar = session.get('layout.pathbar', LAYOUT_DEMO_DEFAULTS['pathbar'])
             self.sidebar_left = session.get('layout.sidebar_left', LAYOUT_DEMO_DEFAULTS['sidebar_left'])
+            self.sidebar_left_static = session.get('layout.sidebar_left_static', LAYOUT_DEMO_DEFAULTS['sidebar_left_static'])
+            self.sidebar_left_min_width = session.get('layout.sidebar_left_min_width', LAYOUT_DEMO_DEFAULTS['sidebar_left_min_width'])
             self.sidebar_right = session.get('layout.sidebar_right', LAYOUT_DEMO_DEFAULTS['sidebar_right'])
+            self.sidebar_right_static = session.get('layout.sidebar_right_static', LAYOUT_DEMO_DEFAULTS['sidebar_right_static'])
+            self.sidebar_right_min_width = session.get('layout.sidebar_right_min_width', LAYOUT_DEMO_DEFAULTS['sidebar_right_min_width'])
+            self.limit_content_width = session.get('layout.limit_content_width', LAYOUT_DEMO_DEFAULTS['limit_content_width'])
+            self.center_content = session.get('layout.center_content', LAYOUT_DEMO_DEFAULTS['center_content'])
 
 
 @tile(name='toggle_tutorial', permission='view')
@@ -113,7 +125,10 @@ class ToggleLayoutBoolTile(Tile):
 
     def render(self):
         setting = self.request.params.get('setting')
-        if setting in ('mainmenu', 'livesearch', 'personaltools', 'pathbar'):
+        if setting in (
+            'mainmenu', 'livesearch', 'personaltools', 'pathbar',
+            'limit_content_width', 'sidebar_left_static',
+            'sidebar_right_static', 'center_content'):
             session = self.request.session
             key = f'layout.{setting}'
             current = session.get(key, LAYOUT_DEMO_DEFAULTS.get(setting, True))
@@ -142,6 +157,28 @@ class ToggleSidebarTileTile(Tile):
             else:
                 current.append(tile_name)
             session[key] = current
+        url = make_url(self.request, node=self.model)
+        ajax_continue(self.request, [
+            AjaxEvent(url, 'contextchanged', '#layout')
+        ])
+        return ''
+
+
+@tile(name='set_layout_number', permission='view')
+class SetLayoutNumberTile(Tile):
+    """Set a numeric layout setting via session (for LayoutDemo page only)."""
+
+    def render(self):
+        setting = self.request.params.get('setting')
+        value = self.request.params.get('value')
+        if setting in ('sidebar_left_min_width', 'sidebar_right_min_width') and value:
+            try:
+                value = int(value)
+                session = self.request.session
+                key = f'layout.{setting}'
+                session[key] = value
+            except ValueError:
+                pass
         url = make_url(self.request, node=self.model)
         ajax_continue(self.request, [
             AjaxEvent(url, 'contextchanged', '#layout')
