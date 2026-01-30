@@ -163,7 +163,8 @@ class TestBrowserAjax(TileTestCase):
             'type': 'message',
             'payload': payload,
             'flavor': flavor,
-            'selector': selector
+            'selector': selector,
+            'title': None
         })
 
     def test_AjaxOverlay(self):
@@ -388,7 +389,8 @@ class TestBrowserAjax(TileTestCase):
             'payload': 'Some info message',
             'flavor': 'info',
             'selector': 'None',
-            'css': ''
+            'css': '',
+            'title': None
         }, {
             'type': 'overlay',
             'action': 'someaction',

@@ -158,9 +158,9 @@ class AppNode(Behavior):
     @instance_property
     def metadata(self):
         metadata = Metadata()
-        nodeinfo = self.nodeinfo
-        if nodeinfo.title:
-            metadata.title = nodeinfo.title
+        info = get_node_info(self.node_info_name)
+        if info and info.title:
+            metadata.title = info.title
         elif self.name:
             metadata.title = self.name
         else:
