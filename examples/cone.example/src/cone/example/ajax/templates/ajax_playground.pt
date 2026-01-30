@@ -80,6 +80,11 @@
                  ajax:action="ajax_event_demo:NONE:NONE">
                 Trigger AjaxEvent
               </a>
+              <!-- Event target element -->
+              <div id="ajax-event-target" class="mt-2 p-2 border rounded small text-muted">
+                <i class="bi-bullseye me-1"></i>
+                Event target - will highlight when event received
+              </div>
             </div>
           </div>
         </div>
@@ -139,5 +144,30 @@
 
     </div>
   </div>
+
+  <!-- JavaScript for custom event handling (uses jQuery since treibstoff uses jQuery events) -->
+  <script>
+    (function() {
+      var $target = $('#ajax-event-target');
+      if (!$target.length) return;
+
+      $target.on('demo:highlight', function(e) {
+        var $el = $(this);
+        // Visual feedback: highlight the element
+        $el.removeClass('text-muted border')
+           .addClass('bg-warning text-dark border-warning')
+           .html('<i class="bi-check-circle me-1"></i>' +
+                 '<strong>Event received!</strong> Custom "demo:highlight" event was triggered.');
+
+        // Reset after 3 seconds
+        setTimeout(function() {
+          $el.removeClass('bg-warning text-dark border-warning')
+             .addClass('text-muted border')
+             .html('<i class="bi-bullseye me-1"></i>' +
+                   'Event target - will highlight when event received');
+        }, 3000);
+      });
+    })();
+  </script>
 
 </tal:view>

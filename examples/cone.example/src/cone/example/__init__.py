@@ -47,10 +47,10 @@ def example_main_hook(config, global_config, settings):
     # ProjectBoard uses FactoryNode — populate registers class-level factories
     populate_projects()
 
+    register_entry('layout', LayoutDemo)
     register_entry('documents', make_document_library)
     register_entry('projects', ProjectBoard)
     register_entry('wiki', make_wiki)
-    register_entry('layout', LayoutDemo)
     register_entry('ajax_playground', AjaxPlayground)
 
     # Register settings node

@@ -4,11 +4,11 @@
   <div class="card mt-3">
     <div class="card-header">AjaxPath</div>
     <div class="card-body">
-      <p class="small">Updates browser URL without reload. Fires event for content update.</p>
+      <p class="small">Updates browser URL without reload. Optionally fires event.</p>
       <pre class="p-2 small"><code>AjaxPath(
     path='/node/path',
     target=url,
-    event='contextchanged:#layout'
+    event=None  # or 'eventname:#selector'
 )</code></pre>
     </div>
   </div>
@@ -19,6 +19,16 @@
       <p class="small">Renders a tile and inserts into DOM. Modes: inner, replace, before, after.</p>
       <pre class="p-2 small"><code>AjaxAction(
     url, 'tile_name', 'inner', '#target'
+)</code></pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">AjaxEvent</div>
+    <div class="card-body">
+      <p class="small">Triggers a custom JS event on a DOM element for inter-component communication.</p>
+      <pre class="p-2 small"><code>AjaxEvent(
+    url, 'custom:event', '#target'
 )</code></pre>
     </div>
   </div>
@@ -38,6 +48,7 @@
       <pre class="p-2 small"><code>ajax_continue(request, [
     AjaxAction(...),
     AjaxMessage(...),
+    AjaxPath(...),
 ])</code></pre>
     </div>
   </div>

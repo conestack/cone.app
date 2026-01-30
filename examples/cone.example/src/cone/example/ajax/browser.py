@@ -86,18 +86,30 @@ class AjaxDemoContent(ProtectedContentTile):
       interface=AjaxPlayground,
       permission='view')
 class AjaxPathDemo(ProtectedContentTile):
-    # XXX: make this demo more obvious, e.g. by changing some content
 
     def render(self):
+        # Simulate navigating to a "subsection" by appending to path
+        path = '/'.join(node_path(self.model)) + '/demo-section'
         url = make_url(self.request, node=self.model)
         ajax_continue(self.request, [
-            AjaxPath(
-                path='/'.join(node_path(self.model)),
-                target=url,
-                event='contextchanged:#layout'
-            )
+            AjaxPath(path=path, target=url, event=None),
+            AjaxAction(url, 'ajax_path_result', 'inner', '#ajax-demo-target'),
+            AjaxMessage('Browser URL updated! Check your address bar.', 'info', None),
         ])
         return ''
+
+
+# Result tile shown after AjaxPath demo
+@tile(name='ajax_path_result',
+      interface=AjaxPlayground,
+      permission='view')
+class AjaxPathResult(ProtectedContentTile):
+
+    def render(self):
+        return '<div class="alert alert-info">' \
+               '<strong>AjaxPath worked!</strong> ' \
+               'The browser URL was updated without a page reload. ' \
+               'Check the address bar - it now shows "/demo-section" appended.</div>'
 
 
 # Tile for AjaxEvent demo
@@ -105,12 +117,18 @@ class AjaxPathDemo(ProtectedContentTile):
       interface=AjaxPlayground,
       permission='view')
 class AjaxEventDemo(ProtectedContentTile):
-    # XXX: make this demo more obvious, e.g. by changing some content
 
     def render(self):
         url = make_url(self.request, node=self.model)
+        # Trigger a custom event on the demo target element.
+        # The template includes JS that listens for this event.
         ajax_continue(self.request, [
-            AjaxEvent(url, 'contextchanged', '#layout')
+            AjaxEvent(url, 'demo:highlight', '#ajax-event-target'),
+            AjaxMessage(
+                'AjaxEvent triggered! The target element received a custom event.',
+                'info',
+                None
+            ),
         ])
         return ''
 
@@ -151,17 +169,35 @@ class AjaxActionDemo(ProtectedContentTile):
       interface=AjaxPlayground,
       permission='view')
 class AjaxCombinedDemo(ProtectedContentTile):
-    # XXX: this makes little sense, as the AjaxAction will be overridden
-    #      by the AjaxEvent. Find a better combination demo.
 
     def render(self):
         url = make_url(self.request, node=self.model)
+        path = '/'.join(node_path(self.model)) + '/combined'
+        # Demonstrate multiple operations working together:
+        # 1. Update content in the demo target area
+        # 2. Show a success message
+        # 3. Update the browser URL
+        # 4. Trigger a custom event on another element
         ajax_continue(self.request, [
-            AjaxAction(url, 'ajax_demo_content', 'inner', '#ajax-demo-target'),
-            AjaxMessage('Combined: action + message + event!', 'success', None),
-            AjaxEvent(url, 'contextchanged', '#layout'),
+            AjaxAction(url, 'ajax_combined_result', 'inner', '#ajax-demo-target'),
+            AjaxMessage('Combined operations executed successfully!', 'success', None),
+            AjaxPath(path=path, target=url, event=None),
+            AjaxEvent(url, 'demo:highlight', '#ajax-event-target'),
         ])
         return ''
+
+
+# Result tile shown after combined demo
+@tile(name='ajax_combined_result',
+      interface=AjaxPlayground,
+      permission='view')
+class AjaxCombinedResult(ProtectedContentTile):
+
+    def render(self):
+        return '<div class="alert alert-success">' \
+               '<strong>Combined operations worked!</strong> ' \
+               'This response triggered: content update (here), ' \
+               'a message notification, URL path change, and a custom event.</div>'
 
 
 # tutorial
