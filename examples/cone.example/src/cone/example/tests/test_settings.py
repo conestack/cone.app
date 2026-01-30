@@ -72,3 +72,16 @@ class TestSettingsBrowser(TileTestCase):
         with self.layer.authenticated('manager'):
             # With manager auth, display should be True
             self.assertTrue(settings.display)
+
+    def test_settings_form_tile(self):
+        root = get_root()
+        settings = root['settings']['example_settings']
+        request = self.layer.new_request()
+        # Settings form requires manager permission
+        with self.layer.authenticated('manager'):
+            result = render_tile(settings, request, 'editform')
+        self.assertIsNotNone(result)
+        # Form should contain expected fields
+        self.assertIn('items_per_page', result)
+        self.assertIn('enable_notifications', result)
+        self.assertIn('default_language', result)

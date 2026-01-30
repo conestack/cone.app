@@ -1,3 +1,4 @@
+from cone.app.browser.form import EditFormTarget
 from cone.app.browser.form import Form
 from cone.app.browser.settings import SettingsForm
 from cone.app.browser.settings import settings_form
@@ -8,7 +9,7 @@ from yafowil.base import factory
 
 
 @settings_form(interface=ExampleSettings)
-@plumbing(SettingsForm)
+@plumbing(SettingsForm, EditFormTarget)
 class ExampleSettingsForm(Form):
     """Settings form demonstrating the settings_form decorator.
 
