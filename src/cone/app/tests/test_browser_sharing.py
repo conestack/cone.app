@@ -212,7 +212,8 @@ class TestBrowserSharing(TileTestCase):
                 'flavor': 'error',
                 'type': 'message',
                 'payload': u"Can not add role 'manager' for principal 'viewer'",
-                'selector': None
+                'selector': None,
+                'title': None
             }],
             'payload': u'',
             'mode': 'NONE',
@@ -280,7 +281,8 @@ class TestBrowserSharing(TileTestCase):
                 'flavor': 'error',
                 'type': 'message',
                 'payload': u"Can not remove role 'inexistent' for principal 'viewer'",
-                'selector': None
+                'selector': None,
+                'title': None
             }],
             'payload': u'',
             'mode': 'NONE',
@@ -302,7 +304,8 @@ class TestBrowserSharing(TileTestCase):
                 'flavor': 'error',
                 'type': 'message',
                 'payload': u"Can not remove role 'manager' for principal 'foo'",
-                'selector': None
+                'selector': None,
+                'title': None
             }],
             'payload': u'',
             'mode': 'NONE',
