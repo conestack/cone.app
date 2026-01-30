@@ -208,7 +208,9 @@ tr.state-public td.title a {
 /* Pygments code highlighting */
 .highlight {
     padding: 0.75rem 1rem;
+    border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
+    box-shadow: inset 1px 1px 0px 0px #00000012;
     font-size: 0.85rem;
     overflow-x: auto;
 }

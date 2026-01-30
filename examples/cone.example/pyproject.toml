@@ -12,5 +12,16 @@ dependencies = [
     "pygments"
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "zope.pytestlayer",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+consider_namespace_packages = true
+addopts = ["--import-mode=importlib"]
+pythonpath = "src"

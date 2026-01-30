@@ -234,9 +234,7 @@ def _configure_layout_configs():
 
     @layout_config(AjaxPlayground)
     class AjaxPlaygroundLayoutConfig(ExampleLayoutConfig):
-        def __init__(self, model=None, request=None):
-            super(AjaxPlaygroundLayoutConfig, self).__init__(model=model, request=request)
-            self.sidebar_left = []
+        pass
 
 
 ###############################################################################
