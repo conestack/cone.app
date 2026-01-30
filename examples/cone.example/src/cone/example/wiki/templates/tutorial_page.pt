@@ -5,13 +5,7 @@
     <div class="card-header">Reference Browser</div>
     <div class="card-body">
       <p class="small">Widget for selecting related nodes by UUID.</p>
-      <pre class="p-2 small"><code>form['references'] = factory(
-    'field:...:reference',
-    props={
-        'multivalued': True,
-        'referencable': 'wiki_page',
-        'root': '/wiki',
-    })</code></pre>
+      <tal:code replace="structure context.example_reference_browser()" />
     </div>
   </div>
 
@@ -19,9 +13,7 @@
     <div class="card-header">UUIDAttributeAware</div>
     <div class="card-body">
       <p class="small">UUID stored in node attrs. Auto-generated on first access.</p>
-      <pre class="p-2 small"><code>@plumbing(UUIDAttributeAware, ...)
-class WikiPage:
-    # self.uuid reads/writes attrs</code></pre>
+      <tal:code replace="structure context.example_uuid_attribute_aware()" />
     </div>
   </div>
 
@@ -29,9 +21,7 @@ class WikiPage:
     <div class="card-header">INavigationLeaf</div>
     <div class="card-body">
       <p class="small">Marks node as leaf - no children shown in navtree.</p>
-      <pre class="p-2 small"><code>@implementer(INavigationLeaf)
-class WikiPage:
-    ...</code></pre>
+      <tal:code replace="structure context.example_navigation_leaf()" />
     </div>
   </div>
 

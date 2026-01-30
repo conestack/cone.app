@@ -8,6 +8,7 @@ from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import make_url
 from cone.app.utils import add_creation_metadata
 from cone.app.utils import update_creation_metadata
+from cone.example.browser.utils import code_block
 from cone.example.model import Translation
 from cone.example.model import _
 from cone.example.project.model import Project
@@ -279,7 +280,26 @@ class TaskContentEditForm(TaskEditForm):
     strict=False,
 )
 class ProjectBoardTutorial(Tile):
-    ...
+
+    code_factory_node = """\
+class ProjectBoard(FactoryNode):
+    factories = odict()"""
+
+    code_batched_items = """\
+class ProjectBatchedItems(BatchedItems):
+    slice_template = '...items.pt'
+    show_filter = True
+
+    @property
+    def slice_items(self):
+        start, end = self.current_slice
+        return items[start:end]"""
+
+    def example_factory_node(self):
+        return code_block(self.code_factory_node, 'python')
+
+    def example_batched_items(self):
+        return code_block(self.code_batched_items, 'python')
 
 
 @tile(
@@ -290,7 +310,32 @@ class ProjectBoardTutorial(Tile):
     strict=False,
 )
 class ProjectTutorial(Tile):
-    ...
+
+    code_namespace_uuid = """\
+@plumbing(NamespaceUUID, ...)
+class Project:
+    # uuid = uuid5(namespace, path)"""
+
+    code_categories = """\
+categories = [
+    _('cat_development', default='Development'),
+    _('cat_design', default='Design')
+]"""
+
+    code_principal_acl = """\
+@plumbing(PrincipalACL, ...)
+class Project:
+    role_inheritance = True
+    default_acl = [...]"""
+
+    def example_namespace_uuid(self):
+        return code_block(self.code_namespace_uuid, 'python')
+
+    def example_categories(self):
+        return code_block(self.code_categories, 'python')
+
+    def example_principal_acl(self):
+        return code_block(self.code_principal_acl, 'python')
 
 
 @tile(
@@ -301,4 +346,27 @@ class ProjectTutorial(Tile):
     strict=False,
 )
 class TaskTutorial(Tile):
-    ...
+
+    code_adapter_node = """\
+class Task(AdapterNode):
+    # wraps TaskData instance
+    # self.attrs proxies to model.attrs"""
+
+    code_uuid_as_name = """\
+@plumbing(UUIDAsName, ...)
+class Task(AdapterNode):
+    # self.__name__ == str(self.uuid)"""
+
+    code_workflow_state = """\
+@plumbing(WorkflowState, WorkflowACL)
+class Task(AdapterNode):
+    workflow_name = 'task_workflow'"""
+
+    def example_adapter_node(self):
+        return code_block(self.code_adapter_node, 'python')
+
+    def example_uuid_as_name(self):
+        return code_block(self.code_uuid_as_name, 'python')
+
+    def example_workflow_state(self):
+        return code_block(self.code_workflow_state, 'python')

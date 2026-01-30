@@ -2,22 +2,13 @@
           xmlns:ajax="http://namespaces.conestack.org/ajax"
           omit-tag="True">
 
-  <div class="position-absolute w-100 py-1 px-2 d-flex justify-content-between text-primary"
-       style="left: 0;">
+  <div class="w-100 py-1 px-2">
     <span><i class="bi bi-patch-question me-2"></i>On this page</span>
-    <a href="#"
-       class="btn btn-sm btn-link p-0 text-primary ajax"
-       title="Hide tutorial"
-       ajax:bind="click"
-       ajax:target="${context.toggle_url}"
-       ajax:action="toggle_tutorial:NONE:NONE">
-      <i class="bi-x-lg"></i>
-    </a>
   </div>
 
   <div tal:condition="context.root_view"
        class="text-center pt-5 pb-3">
-    <h2 class="text-primary bg-light bg-opacity-50 mx-5 p-3 rounded shadow">
+    <h2 class="bg-light bg-opacity-50 mx-5 p-3 rounded shadow">
       <span class="fs-4">Welcome to the</span>
       <br />
       <span class="fs-2">cone.app demo page!</span>
@@ -26,7 +17,7 @@
 
   <div tal:condition="not context.root_view"
        class="text-center pt-5 pb-1">
-    <h2 class="fs-4 m-0 text-primary"
+    <h2 class="fs-4 m-0"
         tal:content="context.title">
       Tutorial Title
     </h2>

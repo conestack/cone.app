@@ -262,7 +262,22 @@ class FolderContentEditForm(FolderEditForm):
     strict=False,
 )
 class DocumentLibraryTutorial(Tile):
-    ...
+
+    code_base_container = """\
+class DocumentLibrary(BaseContainer):
+    # uses cone.filenode
+    # children as directories"""
+
+    code_addables = """\
+@node_info(
+    name='document_library',
+    addables=['document_folder', 'document'])"""
+
+    def example_base_container(self):
+        return code_block(self.code_base_container, 'python')
+
+    def example_addables(self):
+        return code_block(self.code_addables, 'python')
 
 
 @tile(
@@ -273,7 +288,24 @@ class DocumentLibraryTutorial(Tile):
     strict=False,
 )
 class DocumentFolderTutorial(Tile):
-    ...
+
+    code_nested_containers = """\
+@node_info(
+    name='document_folder',
+    addables=['document_folder', 'document'])"""
+
+    code_properties = """\
+@property
+def properties(self):
+    props = super().properties
+    props.action_delete = True
+    return props"""
+
+    def example_nested_containers(self):
+        return code_block(self.code_nested_containers, 'python')
+
+    def example_properties(self):
+        return code_block(self.code_properties, 'python')
 
 
 @tile(
@@ -284,11 +316,27 @@ class DocumentFolderTutorial(Tile):
     strict=False,
 )
 class DocumentTutorial(Tile):
-    workflow_code = """\
+
+    code_workflow = """\
 class Document(WorkflowNode):
     workflow_name = 'document_workflow'
-    # states: draft, published, ...
-"""
+    # states: draft, published, ..."""
+
+    code_protected_properties = """\
+props = ProtectedProperties(self,
+    permissions={'body': ['edit']})
+# body only visible with edit perm"""
+
+    code_owner_support = """\
+@plumbing(OwnerSupport, ...)
+class Document(WorkflowNode):
+    # self.owner from attrs"""
 
     def example_workflow(self):
-        return code_block(self.workflow_code, "python")
+        return code_block(self.code_workflow, 'python')
+
+    def example_protected_properties(self):
+        return code_block(self.code_protected_properties, 'python')
+
+    def example_owner_support(self):
+        return code_block(self.code_owner_support, 'python')

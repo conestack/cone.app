@@ -6,7 +6,6 @@ from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.contextmenu import context_menu_group
 from cone.app.browser.contextmenu import context_menu_item
 from cone.app.browser.contextmenu import ContextMenuToolbar
-from cone.app.browser.layout import personal_tools_action
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import request_property
@@ -32,15 +31,18 @@ cone_example_resources.add(wr.StyleResource(
     name='cone-example-css',
     resource='cone.example.css'
 ))
-cone_example_resources.add(wr.StyleResource(
-    name='pygments-css',
-    resource='pygments.css'
+# Pygments theme switcher script
+# Dynamically loads pygments-light.css or pygments-dark.css based on data-bs-theme
+cone_example_resources.add(wr.ScriptResource(
+    name='pygments-theme-js',
+    resource='pygments-theme.js'
 ))
 
 
 def configure_resources(config, settings):
     config.register_resource(cone_example_resources)
     config.set_resource_include('cone-example-css', 'authenticated')
+    config.set_resource_include('pygments-theme-js', 'authenticated')
 
 
 ###############################################################################
@@ -104,24 +106,6 @@ class DynamicLayoutConfig(DefaultLayoutConfig):
             self.sidebar_right_min_width = session.get('layout.sidebar_right_min_width', LAYOUT_DEMO_DEFAULTS['sidebar_right_min_width'])
             self.limit_content_width = session.get('layout.limit_content_width', LAYOUT_DEMO_DEFAULTS['limit_content_width'])
             self.center_content = session.get('layout.center_content', LAYOUT_DEMO_DEFAULTS['center_content'])
-
-
-@tile(name='toggle_tutorial', permission='view')
-class ToggleTutorialTile(Tile):
-    """Toggle tutorial sidebar visibility via session (for LayoutDemo page only)."""
-
-    def render(self):
-        session = self.request.session
-        current = session.get('layout.sidebar_right', LAYOUT_DEMO_DEFAULTS['sidebar_right'])
-        if 'tutorial' in current:
-            session['layout.sidebar_right'] = []
-        else:
-            session['layout.sidebar_right'] = ['tutorial']
-        url = make_url(self.request, node=self.model)
-        ajax_continue(self.request, [
-            AjaxEvent(url, 'contextchanged', '#layout')
-        ])
-        return ''
 
 
 @tile(name='toggle_layout_bool', permission='view')
@@ -284,31 +268,6 @@ class LandingPage(ProtectedContentTile):
     @property
     def ajax_url(self):
         return make_url(self.request, node=self.model['ajax_playground'])
-
-
-###############################################################################
-# Custom Personal Tools Action
-#
-# Adds a custom item to the personal tools dropdown menu (top right).
-###############################################################################
-
-@personal_tools_action(name='example_info')
-class ExampleInfoAction(LinkAction):
-    """Custom personal tools action - shows a link in the user dropdown."""
-    text = _('example_info', default='Example Info')
-    icon = 'bi-info-circle'
-    event = 'contextchanged:#layout'
-    path = 'href'
-
-    @property
-    def target(self):
-        return make_url(self.request, node=self.model.root)
-
-    href = target
-
-    @property
-    def display(self):
-        return bool(self.request.authenticated_userid)
 
 
 ###############################################################################

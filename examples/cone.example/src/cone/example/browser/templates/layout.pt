@@ -136,16 +136,6 @@
               <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
             </div>
 
-            <a id="tutorial_toggle"
-               href="#"
-               class="position-absolute d-flex justify-content-center align-items-center shadow-sm px-2 py-4 ajax mt-3"
-               title="Show tutorial"
-               ajax:bind="click"
-               ajax:target="${context.nodeurl}"
-               ajax:action="toggle_tutorial:NONE:NONE">
-              <i class="bi bi-journal-text text-white"></i>
-            </a>
-
             <div id="sidebar_right"
                  tal:condition="config.sidebar_right and request.has_permission('view', model)"
                  tal:attributes="class 'd-flex flex-column flex-shrink-0 px-0 pb-5' + (' static' if config.sidebar_right_static else '')"

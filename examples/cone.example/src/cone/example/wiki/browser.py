@@ -12,6 +12,7 @@ from cone.app.browser.utils import choose_name
 from cone.app.browser.utils import make_url
 from cone.app.utils import add_creation_metadata
 from cone.app.utils import update_creation_metadata
+from cone.example.browser.utils import code_block
 from cone.example.model import Translation
 from cone.example.model import _
 from cone.example.wiki.model import Wiki
@@ -259,7 +260,26 @@ class WikiEditForm(Form):
     strict=False,
 )
 class WikiContainerTutorial(Tile):
-    ...
+
+    code_wiki_container = """\
+@node_info(
+    name='wiki',
+    addables=['wiki_page'])
+class Wiki(BaseContainer):
+    ..."""
+
+    code_node_info = """\
+@node_info(
+    name='wiki',
+    title=_('wiki', default='Wiki'),
+    icon='bi-book',
+    addables=['wiki_page'])"""
+
+    def example_wiki_container(self):
+        return code_block(self.code_wiki_container, 'python')
+
+    def example_node_info(self):
+        return code_block(self.code_node_info, 'python')
 
 
 @tile(
@@ -270,4 +290,31 @@ class WikiContainerTutorial(Tile):
     strict=False,
 )
 class WikiPageTutorial(Tile):
-    ...
+
+    code_reference_browser = """\
+form['references'] = factory(
+    'field:...:reference',
+    props={
+        'multivalued': True,
+        'referencable': 'wiki_page',
+        'root': '/wiki',
+    })"""
+
+    code_uuid_attribute_aware = """\
+@plumbing(UUIDAttributeAware, ...)
+class WikiPage:
+    # self.uuid reads/writes attrs"""
+
+    code_navigation_leaf = """\
+@implementer(INavigationLeaf)
+class WikiPage:
+    ..."""
+
+    def example_reference_browser(self):
+        return code_block(self.code_reference_browser, 'python')
+
+    def example_uuid_attribute_aware(self):
+        return code_block(self.code_uuid_attribute_aware, 'python')
+
+    def example_navigation_leaf(self):
+        return code_block(self.code_navigation_leaf, 'python')

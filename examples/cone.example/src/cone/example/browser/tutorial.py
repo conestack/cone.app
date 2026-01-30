@@ -1,6 +1,7 @@
 from cone.app import get_root
 from cone.app.browser.utils import make_url
 from cone.app.model import AppRoot
+from cone.example.browser.utils import code_block
 from cone.tile import tile
 from cone.tile import Tile
 
@@ -50,5 +51,20 @@ class SidebarTutorial(Tile):
     permission='view',
     strict=False,
 )
-class DocumentTutorial(Tile):
-    ...
+class AppRootTutorial(Tile):
+
+    code_node_info = """\
+@node_info(name='mynode', ...)
+class MyNode(BaseNode):
+    ..."""
+
+    code_tiles = """\
+@tile(name='view', interface=MyNode)
+class MyView(Tile):
+    ..."""
+
+    def example_node_info(self):
+        return code_block(self.code_node_info, 'python')
+
+    def example_tiles(self):
+        return code_block(self.code_tiles, 'python')

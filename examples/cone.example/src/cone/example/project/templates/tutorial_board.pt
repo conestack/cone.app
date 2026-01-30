@@ -5,23 +5,15 @@
     <div class="card-header">FactoryNode</div>
     <div class="card-body">
       <p class="small">Lazily creates children from a factories dict. Children are volatile.</p>
-      <pre class="p-2 small"><code>class ProjectBoard(FactoryNode):
-    factories = odict()</code></pre>
+      <tal:code replace="structure context.example_factory_node()" />
     </div>
   </div>
 
   <div class="card mt-3">
     <div class="card-header">BatchedItems</div>
     <div class="card-body">
-      <p class="small">Paginated listings with search. Override <code>slice_items</code> and <code>item_count</code>.</p>
-      <pre class="p-2 small"><code>class ProjectBatchedItems(BatchedItems):
-    slice_template = '...items.pt'
-    show_filter = True
-
-    @property
-    def slice_items(self):
-        start, end = self.current_slice
-        return items[start:end]</code></pre>
+      <p class="small">Paginated listings with search. Override slice_items and item_count.</p>
+      <tal:code replace="structure context.example_batched_items()" />
     </div>
   </div>
 

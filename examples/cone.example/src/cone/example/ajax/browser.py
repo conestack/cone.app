@@ -11,6 +11,7 @@ from cone.app.model import Metadata
 from cone.app.model import node_info
 from cone.app.model import Properties
 from cone.app.utils import node_path
+from cone.example.browser.utils import code_block
 from cone.example.model import _
 from cone.tile import tile
 from cone.tile import Tile
@@ -210,4 +211,45 @@ class AjaxCombinedResult(ProtectedContentTile):
     strict=False,
 )
 class AjaxTutorial(Tile):
-    ...
+
+    code_ajax_path = """\
+AjaxPath(
+    path='/node/path',
+    target=url,
+    event=None  # or 'eventname:#selector'
+)"""
+
+    code_ajax_action = """\
+AjaxAction(
+    url, 'tile_name', 'inner', '#target'
+)"""
+
+    code_ajax_event = """\
+AjaxEvent(
+    url, 'custom:event', '#target'
+)"""
+
+    code_ajax_message = """\
+ajax_message(request, 'Hello!', 'info')"""
+
+    code_ajax_continue = """\
+ajax_continue(request, [
+    AjaxAction(...),
+    AjaxMessage(...),
+    AjaxPath(...),
+])"""
+
+    def example_ajax_path(self):
+        return code_block(self.code_ajax_path, 'python')
+
+    def example_ajax_action(self):
+        return code_block(self.code_ajax_action, 'python')
+
+    def example_ajax_event(self):
+        return code_block(self.code_ajax_event, 'python')
+
+    def example_ajax_message(self):
+        return code_block(self.code_ajax_message, 'python')
+
+    def example_ajax_continue(self):
+        return code_block(self.code_ajax_continue, 'python')

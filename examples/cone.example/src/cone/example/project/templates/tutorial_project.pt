@@ -5,9 +5,7 @@
     <div class="card-header">NamespaceUUID</div>
     <div class="card-body">
       <p class="small">UUID calculated from node path + namespace. Deterministic.</p>
-      <pre class="p-2 small"><code>@plumbing(NamespaceUUID, ...)
-class Project:
-    # uuid = uuid5(namespace, path)</code></pre>
+      <tal:code replace="structure context.example_namespace_uuid()" />
     </div>
   </div>
 
@@ -15,10 +13,7 @@ class Project:
     <div class="card-header">Categories</div>
     <div class="card-body">
       <p class="small">Categorization with i18n translation strings.</p>
-      <pre class="p-2 small"><code>categories = [
-    _('cat_development', default='Development'),
-    _('cat_design', default='Design')
-]</code></pre>
+      <tal:code replace="structure context.example_categories()" />
     </div>
   </div>
 
@@ -26,10 +21,7 @@ class Project:
     <div class="card-header">PrincipalACL</div>
     <div class="card-body">
       <p class="small">Per-node role assignments. Enables sharing UI.</p>
-      <pre class="p-2 small"><code>@plumbing(PrincipalACL, ...)
-class Project:
-    role_inheritance = True
-    default_acl = [...]</code></pre>
+      <tal:code replace="structure context.example_principal_acl()" />
     </div>
   </div>
 

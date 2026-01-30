@@ -5,11 +5,7 @@
     <div class="card-header">AjaxPath</div>
     <div class="card-body">
       <p class="small">Updates browser URL without reload. Optionally fires event.</p>
-      <pre class="p-2 small"><code>AjaxPath(
-    path='/node/path',
-    target=url,
-    event=None  # or 'eventname:#selector'
-)</code></pre>
+      <tal:code replace="structure context.example_ajax_path()" />
     </div>
   </div>
 
@@ -17,9 +13,7 @@
     <div class="card-header">AjaxAction</div>
     <div class="card-body">
       <p class="small">Renders a tile and inserts into DOM. Modes: inner, replace, before, after.</p>
-      <pre class="p-2 small"><code>AjaxAction(
-    url, 'tile_name', 'inner', '#target'
-)</code></pre>
+      <tal:code replace="structure context.example_ajax_action()" />
     </div>
   </div>
 
@@ -27,9 +21,7 @@
     <div class="card-header">AjaxEvent</div>
     <div class="card-body">
       <p class="small">Triggers a custom JS event on a DOM element for inter-component communication.</p>
-      <pre class="p-2 small"><code>AjaxEvent(
-    url, 'custom:event', '#target'
-)</code></pre>
+      <tal:code replace="structure context.example_ajax_event()" />
     </div>
   </div>
 
@@ -37,7 +29,7 @@
     <div class="card-header">AjaxMessage</div>
     <div class="card-body">
       <p class="small">Shows notification. Flavors: info, warning, error, success.</p>
-      <pre class="p-2 small"><code>ajax_message(request, 'Hello!', 'info')</code></pre>
+      <tal:code replace="structure context.example_ajax_message()" />
     </div>
   </div>
 
@@ -45,11 +37,7 @@
     <div class="card-header">ajax_continue</div>
     <div class="card-body">
       <p class="small">Chain multiple operations in one response.</p>
-      <pre class="p-2 small"><code>ajax_continue(request, [
-    AjaxAction(...),
-    AjaxMessage(...),
-    AjaxPath(...),
-])</code></pre>
+      <tal:code replace="structure context.example_ajax_continue()" />
     </div>
   </div>
 

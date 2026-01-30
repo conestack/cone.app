@@ -1,6 +1,7 @@
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import make_url
 from cone.example.browser import LAYOUT_DEMO_DEFAULTS
+from cone.example.browser.utils import code_block
 from cone.example.layout.model import LayoutDemo
 from cone.tile import tile
 from cone.tile import Tile
@@ -90,4 +91,30 @@ class LayoutDemoView(ProtectedContentTile):
     strict=False,
 )
 class LayoutDemoTutorial(Tile):
-    ...
+
+    code_layout_config = """\
+@layout_config(MyNode)
+class MyLayoutConfig(DefaultLayoutConfig):
+    def __init__(self, model, request):
+        super().__init__(model, request)
+        self.sidebar_right = ['tutorial']"""
+
+    code_session_state = """\
+if request.session.get('show_tutorial', True):
+    self.sidebar_right = ['tutorial']
+else:
+    self.sidebar_right = []"""
+
+    code_ajax_event = """\
+ajax_continue(request, [
+    AjaxEvent(url, 'contextchanged', '#layout')
+])"""
+
+    def example_layout_config(self):
+        return code_block(self.code_layout_config, 'python')
+
+    def example_session_state(self):
+        return code_block(self.code_session_state, 'python')
+
+    def example_ajax_event(self):
+        return code_block(self.code_ajax_event, 'python')

@@ -5,9 +5,7 @@
     <div class="card-header">Nested Containers</div>
     <div class="card-body">
       <p class="small">Folders can contain folders and documents recursively.</p>
-      <pre class="p-2 small"><code>@node_info(
-    name='document_folder',
-    addables=['document_folder', 'document'])</code></pre>
+      <tal:code replace="structure context.example_nested_containers()" />
     </div>
   </div>
 
@@ -15,11 +13,7 @@
     <div class="card-header">Properties</div>
     <div class="card-body">
       <p class="small">Control node behavior via properties.</p>
-      <pre class="p-2 small"><code>@property
-def properties(self):
-    props = super().properties
-    props.action_delete = True
-    return props</code></pre>
+      <tal:code replace="structure context.example_properties()" />
     </div>
   </div>
 

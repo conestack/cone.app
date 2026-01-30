@@ -5,7 +5,7 @@
     <div class="card-header">Workflow</div>
     <div class="card-body">
       <p class="small">State machine with transitions and ACL per state.</p>
-        <pre><code tal:content="structure context.example_workflow()" /></pre>
+      <tal:code replace="structure context.example_workflow()" />
     </div>
   </div>
 
@@ -13,9 +13,7 @@
     <div class="card-header">ProtectedProperties</div>
     <div class="card-body">
       <p class="small">Property access controlled by permissions.</p>
-      <pre class="p-2 small"><code>props = ProtectedProperties(self,
-    permissions={'body': ['edit']})
-# body only visible with edit perm</code></pre>
+      <tal:code replace="structure context.example_protected_properties()" />
     </div>
   </div>
 
@@ -23,9 +21,7 @@
     <div class="card-header">OwnerSupport</div>
     <div class="card-body">
       <p class="small">Tracks creator. Grants owner role automatically.</p>
-      <pre class="p-2 small"><code>@plumbing(OwnerSupport, ...)
-class Document(WorkflowNode):
-    # self.owner from attrs</code></pre>
+      <tal:code replace="structure context.example_owner_support()" />
     </div>
   </div>
 

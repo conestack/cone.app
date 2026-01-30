@@ -5,9 +5,7 @@
     <div class="card-header">cone.app Basics</div>
     <div class="card-body">
       <p class="small">A Pyramid-based web application stub using node trees and tiles.</p>
-      <pre class="p-2 small"><code>@node_info(name='mynode', ...)
-class MyNode(BaseNode):
-    ...</code></pre>
+      <tal:code replace="structure context.example_node_info()" />
     </div>
   </div>
 
@@ -26,9 +24,7 @@ class MyNode(BaseNode):
     <div class="card-header">Tiles</div>
     <div class="card-body">
       <p class="small">UI components registered by name and interface.</p>
-      <pre class="p-2 small"><code>@tile(name='view', interface=MyNode)
-class MyView(Tile):
-    ...</code></pre>
+      <tal:code replace="structure context.example_tiles()" />
     </div>
   </div>
 

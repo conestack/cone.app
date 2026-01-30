@@ -5,11 +5,7 @@
     <div class="card-header">Wiki Container</div>
     <div class="card-body">
       <p class="small">Entry container for wiki pages. Acts as reference browser root.</p>
-      <pre class="p-2 small"><code>@node_info(
-    name='wiki',
-    addables=['wiki_page'])
-class Wiki(BaseContainer):
-    ...</code></pre>
+      <tal:code replace="structure context.example_wiki_container()" />
     </div>
   </div>
 
@@ -17,11 +13,7 @@ class Wiki(BaseContainer):
     <div class="card-header">node_info</div>
     <div class="card-body">
       <p class="small">Registers node type with metadata and allowed children.</p>
-      <pre class="p-2 small"><code>@node_info(
-    name='wiki',
-    title=_('wiki', default='Wiki'),
-    icon='bi-book',
-    addables=['wiki_page'])</code></pre>
+      <tal:code replace="structure context.example_node_info()" />
     </div>
   </div>
 
