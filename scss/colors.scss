@@ -54,6 +54,10 @@ $color-mode-type: data;
     .bg-primary-100 {
         background-color: $primary-100-dark;
     }
+
+    #mainmenu li.nav-item.active .nav-link {
+        color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    }
 }
 
 /* light mode */
@@ -91,6 +95,10 @@ $color-mode-type: data;
 
     .bg-primary-100 {
         background-color: $primary-100;
+    }
+
+    #mainmenu li.nav-item.active .nav-link {
+        color: $primary;
     }
 }
 

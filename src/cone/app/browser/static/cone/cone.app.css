@@ -33,6 +33,9 @@
 [data-bs-theme=dark] .bg-primary-100 {
   background-color: #2c4265;
 }
+[data-bs-theme=dark] #mainmenu li.nav-item.active .nav-link {
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+}
 
 /* light mode */
 [data-bs-theme=light] #content_area {
@@ -61,6 +64,9 @@
 }
 [data-bs-theme=light] .bg-primary-100 {
   background-color: #dde9fb;
+}
+[data-bs-theme=light] #mainmenu li.nav-item.active .nav-link {
+  color: #4171b6;
 }
 
 /* import everything where we need changed bootstrap variables for here */
@@ -283,9 +289,6 @@ tr.selectable td {
   padding-left: 8px;
   white-space: nowrap;
 }
-#main-area #header-main #mainmenu .nav-item.active .nav-link {
-  color: #4171b6;
-}
 #main-area #header-main #personaltools #language-dropdown > div.dropdown-toggle > a {
   height: 20px;
 }
@@ -413,6 +416,9 @@ tr.selectable td {
 [data-bs-theme=dark] .bg-primary-100 {
   background-color: #2c4265;
 }
+[data-bs-theme=dark] #mainmenu li.nav-item.active .nav-link {
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+}
 
 /* light mode */
 [data-bs-theme=light] #content_area {
@@ -441,6 +447,9 @@ tr.selectable td {
 }
 [data-bs-theme=light] .bg-primary-100 {
   background-color: #dde9fb;
+}
+[data-bs-theme=light] #mainmenu li.nav-item.active .nav-link {
+  color: #4171b6;
 }
 
 /* import everything where we need changed bootstrap variables for here */
