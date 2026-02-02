@@ -17,18 +17,32 @@
 tr.state-draft td.title a {
     color: #6c757d;
 }
+#navtree li.state-draft > a {
+    color: #aad8ff!important;
+}
 #contextmenu a.state-review,
+#navtree li.state-review > a,
 tr.state-review td.title a {
     color: #fd7e14;
 }
+#navtree li.state-review > a {
+    color: #ffc595!important;
+}
 #contextmenu a.state-published,
+#navtree li.state-published > a,
 tr.state-published td.title a {
     color: #198754;
+}
+#navtree li.state-published > a {
+    color: #5cffb2!important;
 }
 #contextmenu a.state-archived,
 tr.state-archived td.title a {
     color: #6c757d;
     text-decoration: line-through;
+}
+#navtree li.state-archived > a {
+    color: #95a2ae!important;
 }
 
 /* Task workflow states */

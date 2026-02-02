@@ -25,44 +25,23 @@ def example_main_hook(config, global_config, settings):
     config.add_translation_dirs('cone.example:locale/')
 
     # Register entry nodes in the main menu
-    from cone.example.document.model import DocumentLibrary
     from cone.example.layout.model import LayoutDemo
-    from cone.example.project.model import ProjectBoard
     from cone.example.wiki.model import Wiki
     from cone.example.ajax.browser import AjaxPlayground
-    from cone.example.populate import populate_documents
-    from cone.example.populate import populate_projects
     from cone.example.populate import populate_wiki
-
-    def make_document_library():
-        lib = DocumentLibrary()
-        populate_documents(lib)
-        return lib
 
     def make_wiki():
         wiki = Wiki()
         populate_wiki(wiki)
         return wiki
 
-    # ProjectBoard uses FactoryNode — populate registers class-level factories
-    populate_projects()
-
     register_entry('layout', LayoutDemo)
-    register_entry('documents', make_document_library)
-    register_entry('projects', ProjectBoard)
     register_entry('wiki', make_wiki)
     register_entry('ajax_playground', AjaxPlayground)
 
     # Register settings node
     from cone.example.settings.model import ExampleSettings
     register_config('example_settings', ExampleSettings)
-
-    # Register custom add model factory for Task
-    from cone.app.model import get_node_info
-    from cone.example.project.browser import task_addmodel_factory
-    task_info = get_node_info('task')
-    if task_info:
-        task_info.factory = task_addmodel_factory
 
     # Static resources
     configure_resources(config, settings)
@@ -78,8 +57,6 @@ def example_main_hook(config, global_config, settings):
 
     # Scan browser packages for tile and view registrations
     config.scan('cone.example.browser')
-    config.scan('cone.example.document.browser')
-    config.scan('cone.example.project.browser')
     config.scan('cone.example.wiki.browser')
     config.scan('cone.example.layout.browser')
     config.scan('cone.example.settings.browser')

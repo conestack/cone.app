@@ -6,13 +6,8 @@ from cone.tile import tile
 from cone.tile import Tile
 
 TUTORIAL_TITLES = {
-    'document_library': 'Document Library',
-    'document_folder': 'Document Folder',
-    'document': 'Document',
-    'project_board': 'Project Board',
-    'project': 'Project',
-    'task': 'Task',
-    'wiki': 'Wiki',
+    'wiki': 'Example Wiki',
+    'wiki_folder': 'Wiki Folder',
     'wiki_page': 'Wiki Page',
     'layout_demo': 'Layout',
     'ajax_playground': 'AJAX',

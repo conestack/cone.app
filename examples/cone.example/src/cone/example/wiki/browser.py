@@ -1,12 +1,8 @@
-from cone.app.browser import RelatedViewProvider
 from cone.app.browser.authoring import ContentAddForm
 from cone.app.browser.authoring import ContentEditForm
 from cone.app.browser.form import AddFormTarget
 from cone.app.browser.form import EditFormTarget
 from cone.app.browser.form import Form
-from cone.app.browser.form import YAMLAddFormTarget
-from cone.app.browser.form import YAMLEditFormTarget
-from cone.app.browser.form import YAMLForm
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.utils import choose_name
 from cone.app.browser.utils import make_url
@@ -16,23 +12,31 @@ from cone.example.browser.utils import code_block
 from cone.example.model import Translation
 from cone.example.model import _
 from cone.example.wiki.model import Wiki
+from cone.example.wiki.model import WikiFolder
 from cone.example.wiki.model import WikiPage
 from cone.tile import tile
 from cone.tile import Tile
 from node.utils import UNSET
 from plumber import plumbing
-from pyramid.i18n import TranslationStringFactory
 from yafowil.base import factory
 from yafowil.persistence import write_mapping_writer
-import os
 
 
 # View tile for Wiki container
-@tile(name='view',
+@tile(name='content',
       path='cone.example.wiki:templates/wiki_container_view.pt',
       interface=Wiki,
       permission='login')
 class WikiContainerView(ProtectedContentTile):
+    pass
+
+
+# View tile for WikiFolder
+@tile(name='content',
+      path='cone.example.wiki:templates/wiki_folder_view.pt',
+      interface=WikiFolder,
+      permission='login')
+class WikiFolderView(ProtectedContentTile):
     pass
 
 
@@ -51,15 +55,113 @@ class WikiPageView(ProtectedContentTile):
             return []
         result = []
         # Walk up to find wiki container to search for referenced pages
-        wiki = self.model.parent
-        for page in wiki.values():
-            if hasattr(page, 'uuid') and str(page.uuid) in refs:
-                result.append({
-                    'title': page.metadata.title,
-                    'target': make_url(self.request, node=page),
-                    'icon': page.metadata.icon or 'bi-journal-text',
-                })
+        wiki = self._find_wiki_root()
+        if wiki:
+            self._collect_references(wiki, refs, result)
         return result
+
+    def _find_wiki_root(self):
+        """Find the wiki root container."""
+        node = self.model.parent
+        while node is not None:
+            if isinstance(node, Wiki):
+                return node
+            node = getattr(node, 'parent', None)
+        return None
+
+    def _collect_references(self, container, refs, result):
+        """Recursively collect referenced pages from container and subfolders."""
+        for child in container.values():
+            if isinstance(child, WikiFolder):
+                self._collect_references(child, refs, result)
+            elif hasattr(child, 'uuid') and str(child.uuid) in refs:
+                result.append({
+                    'title': child.metadata.title,
+                    'target': make_url(self.request, node=child),
+                    'icon': child.metadata.icon or 'bi-journal-text',
+                })
+
+
+# WikiFolder form
+class WikiFolderForm(Form):
+
+    def prepare(self):
+        self.form = form = factory(
+            'form',
+            name='wikifolderform',
+            props={
+                'action': self.form_action,
+                'persist_writer': write_mapping_writer
+            })
+        form['title'] = factory(
+            'field:label:help:error:translation:text',
+            value=self.model.attrs.get('title', UNSET),
+            props={
+                'factory': Translation,
+                'label': _('title', default='Title'),
+                'help': _('folder_title_help', default='Enter a folder title'),
+                'required': _('title_required', default='Title is required')
+            })
+        form['description'] = factory(
+            'field:label:help:error:translation:textarea',
+            value=self.model.attrs.get('description', UNSET),
+            props={
+                'factory': Translation,
+                'label': _('description', default='Description'),
+                'help': _('folder_desc_help', default='Short description'),
+                'rows': 3
+            })
+        form['save'] = factory(
+            'submit',
+            props={
+                'action': 'save',
+                'expression': True,
+                'handler': self.save,
+                'next': self.next,
+                'label': _('save', default='Save')
+            })
+        form['cancel'] = factory(
+            'submit',
+            props={
+                'action': 'cancel',
+                'expression': True,
+                'skip': True,
+                'next': self.next,
+                'label': _('cancel', default='Cancel')
+            })
+
+    def save(self, widget, data):
+        data.write(self.model.attrs)
+
+
+@plumbing(AddFormTarget)
+class WikiFolderAddForm(WikiFolderForm):
+
+    def save(self, widget, data):
+        add_creation_metadata(self.request, self.model.attrs)
+        super(WikiFolderAddForm, self).save(widget, data)
+        parent = self.model.parent
+        parent[choose_name(parent, self.model.metadata.title)] = self.model
+
+
+@plumbing(EditFormTarget)
+class WikiFolderEditForm(WikiFolderForm):
+
+    def save(self, widget, data):
+        update_creation_metadata(self.request, self.model.attrs)
+        super(WikiFolderEditForm, self).save(widget, data)
+
+
+@tile(name='addform', interface=WikiFolder, permission='add')
+@plumbing(ContentAddForm)
+class WikiFolderContentAddForm(WikiFolderAddForm):
+    ...
+
+
+@tile(name='editform', interface=WikiFolder, permission='edit')
+@plumbing(ContentEditForm)
+class WikiFolderContentEditForm(WikiFolderEditForm):
+    ...
 
 
 # WikiPage form using standard yafowil factory
@@ -146,15 +248,32 @@ class WikiPageForm(Form):
     @property
     def reference_root(self):
         # Find the wiki container
-        wiki = self.model.parent
+        wiki = self._find_wiki_root()
         return '/' + '/'.join(wiki.path[1:]) if wiki else '/'
+
+    def _find_wiki_root(self):
+        """Find the wiki root container."""
+        node = self.model.parent
+        while node is not None:
+            if isinstance(node, Wiki):
+                return node
+            node = getattr(node, 'parent', None)
+        return self.model.parent
 
     def reference_lookup(self, uuid):
         """Lookup label for a reference UUID."""
-        wiki = self.model.parent
-        for page in wiki.values():
-            if hasattr(page, 'uuid') and str(page.uuid) == uuid:
-                return page.metadata.title
+        wiki = self._find_wiki_root()
+        return self._lookup_in_container(wiki, uuid)
+
+    def _lookup_in_container(self, container, uuid):
+        """Recursively lookup page by UUID in container and subfolders."""
+        for child in container.values():
+            if isinstance(child, WikiFolder):
+                result = self._lookup_in_container(child, uuid)
+                if result != uuid:
+                    return result
+            elif hasattr(child, 'uuid') and str(child.uuid) == uuid:
+                return child.metadata.title
         return uuid
 
     def save(self, widget, data):
@@ -264,16 +383,16 @@ class WikiContainerTutorial(Tile):
     code_wiki_container = """\
 @node_info(
     name='wiki',
-    addables=['wiki_page'])
+    addables=['wiki_folder', 'wiki_page'])
 class Wiki(BaseContainer):
     ..."""
 
     code_node_info = """\
 @node_info(
     name='wiki',
-    title=_('wiki', default='Wiki'),
+    title=_('wiki', default='Example Wiki'),
     icon='bi-book',
-    addables=['wiki_page'])"""
+    addables=['wiki_folder', 'wiki_page'])"""
 
     def example_wiki_container(self):
         return code_block(self.code_wiki_container, 'python')
@@ -284,12 +403,48 @@ class Wiki(BaseContainer):
 
 @tile(
     name='tutorial_content',
+    path='templates/tutorial_folder.pt',
+    interface=WikiFolder,
+    permission='view',
+    strict=False,
+)
+class WikiFolderTutorial(Tile):
+
+    code_wiki_folder = """\
+@node_info(
+    name='wiki_folder',
+    title=_('wiki_folder', default='Wiki Folder'),
+    icon='bi-folder',
+    addables=['wiki_folder', 'wiki_page'])
+class WikiFolder(BaseContainer):
+    # Nested containers for organization"""
+
+    def example_wiki_folder(self):
+        return code_block(self.code_wiki_folder, 'python')
+
+
+@tile(
+    name='tutorial_content',
     path='templates/tutorial_page.pt',
     interface=WikiPage,
     permission='view',
     strict=False,
 )
 class WikiPageTutorial(Tile):
+
+    code_workflow = """\
+class WikiPage(WorkflowNode):
+    workflow_name = 'wiki_workflow'
+    # States: draft, review, published, archived"""
+
+    code_protected_properties = """\
+@property
+def protected_properties(self):
+    props = ProtectedProperties(
+        self,
+        permissions={'body': ['edit']})
+    props.body = self.attrs.get('body', '')
+    return props"""
 
     code_reference_browser = """\
 form['references'] = factory(
@@ -309,6 +464,12 @@ class WikiPage:
 @implementer(INavigationLeaf)
 class WikiPage:
     ..."""
+
+    def example_workflow(self):
+        return code_block(self.code_workflow, 'python')
+
+    def example_protected_properties(self):
+        return code_block(self.code_protected_properties, 'python')
 
     def example_reference_browser(self):
         return code_block(self.code_reference_browser, 'python')

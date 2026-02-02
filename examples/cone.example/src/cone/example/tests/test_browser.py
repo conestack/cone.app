@@ -50,7 +50,7 @@ class TestLandingPage(TileTestCase):
             result = render_tile(root, request, 'content')
         self.assertIsNotNone(result)
         # Landing page should contain links to modules
-        self.assertIn('documents', result.lower())
+        self.assertIn('wiki', result.lower())
 
     def test_landing_page_urls(self):
         root = get_root()
@@ -61,8 +61,6 @@ class TestLandingPage(TileTestCase):
             tile.request = request
             # Check URL properties
             self.assertIn('layout', tile.layout_url)
-            self.assertIn('documents', tile.documents_url)
-            self.assertIn('projects', tile.projects_url)
             self.assertIn('wiki', tile.wiki_url)
             self.assertIn('ajax_playground', tile.ajax_url)
 
@@ -120,10 +118,6 @@ class TestEntryNodes(TileTestCase):
         root = get_root()
         # Layout demo
         self.assertIn('layout', root)
-        # Documents
-        self.assertIn('documents', root)
-        # Projects
-        self.assertIn('projects', root)
         # Wiki
         self.assertIn('wiki', root)
         # AJAX playground
@@ -132,14 +126,10 @@ class TestEntryNodes(TileTestCase):
         self.assertIn('settings', root)
 
     def test_entry_nodes_types(self):
-        from cone.example.document.model import DocumentLibrary
         from cone.example.layout.model import LayoutDemo
-        from cone.example.project.model import ProjectBoard
         from cone.example.wiki.model import Wiki
         from cone.example.ajax.browser import AjaxPlayground
         root = get_root()
         self.assertIsInstance(root['layout'], LayoutDemo)
-        self.assertIsInstance(root['documents'], DocumentLibrary)
-        self.assertIsInstance(root['projects'], ProjectBoard)
         self.assertIsInstance(root['wiki'], Wiki)
         self.assertIsInstance(root['ajax_playground'], AjaxPlayground)

@@ -8,7 +8,7 @@
     <div class="card-body">
 
       <h4 class="card-title">
-        <i class="bi-book me-2"></i>
+        <i class="bi-folder me-2"></i>
         <span class="label label-primary"
               tal:content="model.metadata.title">
           Title
@@ -17,17 +17,15 @@
 
       <tal:byline replace="structure tile('byline')" />
 
-      <p class="card-text text-muted">
-        Wiki pages with workflow states, cross-references, categories,
-        folders for organization, and protected properties.
+      <p class="card-text text-muted"
+         tal:condition="model.metadata.description"
+         tal:content="model.metadata.description">
+        Description
       </p>
 
       <div class="mt-2">
-        <span class="badge example-badge-wiki">Workflow</span>
-        <span class="badge example-badge-wiki">Folders</span>
-        <span class="badge example-badge-wiki">Reference Browser</span>
-        <span class="badge example-badge-wiki">Categories</span>
-        <span class="badge example-badge-wiki">Protected Properties</span>
+        <span class="badge example-badge-wiki">Wiki Folder</span>
+        <span class="badge example-badge-wiki">Nested Hierarchy</span>
       </div>
 
     </div>

@@ -4,18 +4,18 @@
 
   <include package="repoze.workflow" file="meta.zcml"/>
 
-  <workflow type="document_workflow"
-            name="Document Workflow"
+  <workflow type="wiki_workflow"
+            name="Wiki Workflow"
             state_attr="state"
             initial_state="draft"
-            content_types=".document.model.Document"
+            content_types=".wiki.model.WikiPage"
             permission_checker="cone.app.workflow.permission_checker">
 
     <state name="draft"
            title="Draft"
            i18n:attributes="name">
       <key name="description"
-           value="Document is in draft state"
+           value="Page is in draft state"
            i18n:attributes="value" />
     </state>
 
@@ -23,7 +23,7 @@
            title="In Review"
            i18n:attributes="name">
       <key name="description"
-           value="Document is under review"
+           value="Page is under review"
            i18n:attributes="value" />
     </state>
 
@@ -31,7 +31,7 @@
            title="Published"
            i18n:attributes="name">
       <key name="description"
-           value="Document is published and visible"
+           value="Page is published and visible"
            i18n:attributes="value" />
     </state>
 
@@ -39,7 +39,7 @@
            title="Archived"
            i18n:attributes="name">
       <key name="description"
-           value="Document is archived"
+           value="Page is archived"
            i18n:attributes="value" />
     </state>
 
@@ -88,6 +88,16 @@
        title="Retract"
        callback="cone.app.workflow.persist_state"
        from_state="published"
+       to_state="draft"
+       permission="change_state"
+       i18n:attributes="name"
+    />
+
+    <transition
+       name="reactivate"
+       title="Reactivate"
+       callback="cone.app.workflow.persist_state"
+       from_state="archived"
        to_state="draft"
        permission="change_state"
        i18n:attributes="name"

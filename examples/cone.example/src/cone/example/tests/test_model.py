@@ -69,15 +69,15 @@ class TestModel(NodeTestCase):
         # Test the class attributes instead
         self.assertIsNone(WorkflowNode.workflow_name)
         self.assertEqual(WorkflowNode.default_acl, DEFAULT_EXAMPLE_ACL)
-        # Test with a concrete subclass that has a workflow (Document)
-        from cone.example.document.model import Document
-        doc = Document()
-        doc.__name__ = 'testdoc'
-        self.assertEqual(doc.workflow_name, 'document_workflow')
-        self.assertEqual(doc.default_acl, DEFAULT_EXAMPLE_ACL)
+        # Test with a concrete subclass that has a workflow (WikiPage)
+        from cone.example.wiki.model import WikiPage
+        page = WikiPage()
+        page.__name__ = 'testpage'
+        self.assertEqual(page.workflow_name, 'wiki_workflow')
+        self.assertEqual(page.default_acl, DEFAULT_EXAMPLE_ACL)
         # Has attributes storage
-        doc.attrs['test'] = 'value'
-        self.assertEqual(doc.attrs['test'], 'value')
+        page.attrs['test'] = 'value'
+        self.assertEqual(page.attrs['test'], 'value')
 
     def test_ContainerNode(self):
         # ContainerNode is base class without workflow

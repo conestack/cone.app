@@ -17,7 +17,7 @@
 
   <div class="row g-4 mb-4">
 
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-4">
       <div class="card h-100 example-header example-header-layout">
         <div class="card-body">
           <h5 class="card-title">
@@ -41,71 +41,20 @@
       </div>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-      <div class="card h-100 example-header example-header-documents">
-        <div class="card-body">
-          <h5 class="card-title">
-            <i class="bi-collection me-2"></i>Document Library
-          </h5>
-          <p class="card-text text-muted small">
-            Hierarchical folders and documents with workflow states,
-            protected properties, and translation support.
-          </p>
-          <div class="mb-3">
-            <span class="badge example-badge-documents">Workflow</span>
-            <span class="badge example-badge-documents">Folders</span>
-          </div>
-          <a class="stretched-link"
-             tal:attributes="href context.documents_url;
-                             ajax:target context.documents_url;
-                             ajax:event 'contextchanged:#layout';
-                             ajax:path 'href'">
-            Explore
-            <i class="bi-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6 col-lg-3">
-      <div class="card h-100 example-header example-header-projects">
-        <div class="card-body">
-          <h5 class="card-title">
-            <i class="bi-kanban me-2"></i>Project Board
-          </h5>
-          <p class="card-text text-muted small">
-            Project and task management using FactoryNode,
-            AdapterNode, UUIDAsName, and batched listings.
-          </p>
-          <div class="mb-3">
-            <span class="badge example-badge-projects">FactoryNode</span>
-            <span class="badge example-badge-projects">AdapterNode</span>
-          </div>
-          <a class="stretched-link"
-             tal:attributes="href context.projects_url;
-                             ajax:target context.projects_url;
-                             ajax:event 'contextchanged:#layout';
-                             ajax:path 'href'">
-            Explore
-            <i class="bi-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-4">
       <div class="card h-100 example-header example-header-wiki">
         <div class="card-body">
           <h5 class="card-title">
             <i class="bi-book me-2"></i>Wiki
           </h5>
           <p class="card-text text-muted small">
-            Wiki pages with cross-references via the reference browser
-            widget, categories, and UUID-aware nodes.
+            Wiki pages with workflow states, folders for organization,
+            cross-references, categories, and protected properties.
           </p>
           <div class="mb-3">
+            <span class="badge example-badge-wiki">Workflow</span>
+            <span class="badge example-badge-wiki">Folders</span>
             <span class="badge example-badge-wiki">References</span>
-            <span class="badge example-badge-wiki">Categories</span>
           </div>
           <a class="stretched-link"
              tal:attributes="href context.wiki_url;
@@ -119,7 +68,7 @@
       </div>
     </div>
 
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-4">
       <div class="card h-100 example-header example-header-ajax">
         <div class="card-body">
           <h5 class="card-title">

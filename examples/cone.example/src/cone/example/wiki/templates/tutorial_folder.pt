@@ -1,0 +1,12 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">WikiFolder</div>
+    <div class="card-body">
+      <p class="small">Nested containers for organizing wiki pages hierarchically.</p>
+      <tal:code replace="structure context.example_wiki_folder()" />
+    </div>
+  </div>
+
+</tal:view>

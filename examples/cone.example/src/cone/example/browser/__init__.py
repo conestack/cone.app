@@ -195,30 +195,13 @@ class ResetLayoutTile(Tile):
 
 def _configure_layout_configs():
     """Register layout configs after model classes are available."""
-    from cone.example.document.model import Document
-    from cone.example.document.model import DocumentFolder
-    from cone.example.document.model import DocumentLibrary
     from cone.example.layout.model import LayoutDemo
-    from cone.example.project.model import Project
-    from cone.example.project.model import ProjectBoard
-    from cone.example.project.model import Task
     from cone.example.wiki.model import Wiki
+    from cone.example.wiki.model import WikiFolder
     from cone.example.wiki.model import WikiPage
     from cone.example.ajax.browser import AjaxPlayground
 
-    @layout_config(DocumentLibrary, DocumentFolder)
-    class DocumentContainerLayoutConfig(ExampleLayoutConfig):
-        pass
-
-    @layout_config(Document)
-    class DocumentLayoutConfig(ExampleLayoutConfig):
-        pass
-
-    @layout_config(ProjectBoard, Project, Task)
-    class ProjectLayoutConfig(ExampleLayoutConfig):
-        pass
-
-    @layout_config(Wiki, WikiPage)
+    @layout_config(Wiki, WikiFolder, WikiPage)
     class WikiLayoutConfig(ExampleLayoutConfig):
         pass
 
@@ -252,14 +235,6 @@ class LandingPage(ProtectedContentTile):
     @property
     def layout_url(self):
         return make_url(self.request, node=self.model['layout'])
-
-    @property
-    def documents_url(self):
-        return make_url(self.request, node=self.model['documents'])
-
-    @property
-    def projects_url(self):
-        return make_url(self.request, node=self.model['projects'])
 
     @property
     def wiki_url(self):
