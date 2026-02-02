@@ -71,6 +71,7 @@ class DefaultLayoutConfig(LayoutConfig):
         self.livesearch = True
         self.personaltools = True
         self.limit_content_width = True
+        self.limit_page_width = False
         self.center_content = False
         self.pathbar = True
         self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'

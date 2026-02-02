@@ -1120,6 +1120,8 @@ var cone = (function (exports, $, ts) {
             this.min_width = elem.data('min-width') || 115;
             const width = Math.max(this.min_width, this.sidebar_width);
             elem.css('width', width + 'px');
+            const static_data = this.elem.data('static');
+            this.static = static_data === true || static_data === 'True';
             this.moving = false;
             this.trigger_event = this.trigger_event.bind(this);
             this.scrollbar = ts.query_elem('.scrollable-y', elem).data('scrollbar');
@@ -1187,12 +1189,20 @@ var cone = (function (exports, $, ts) {
                 this.elem.removeClass('collapsed');
                 this.elem.removeClass('expanded');
             }
-            if (this.collapsed) {
+            if (this.static) {
+                if (!this.collapsed) {
+                    this.collapse();
+                }
                 this.elem.removeClass('responsive-expanded');
-                this.elem.addClass('responsive-collapsed');
-            } else {
-                this.elem.addClass('responsive-expanded');
                 this.elem.removeClass('responsive-collapsed');
+            } else {
+                if (this.collapsed) {
+                    this.elem.removeClass('responsive-expanded');
+                    this.elem.addClass('responsive-collapsed');
+                } else {
+                    this.elem.addClass('responsive-expanded');
+                    this.elem.removeClass('responsive-collapsed');
+                }
             }
             if (this.collapsed !== this.responsive_collapsed) {
                 this.responsive_collapsed = this.collapsed;

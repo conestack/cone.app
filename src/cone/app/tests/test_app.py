@@ -168,6 +168,7 @@ class TestApp(NodeTestCase):
         self.assertTrue(config.livesearch)
         self.assertTrue(config.personaltools)
         self.assertTrue(config.limit_content_width)
+        self.assertFalse(config.limit_page_width)
         self.assertTrue(config.pathbar)
         self.assertEqual(config.sidebar_left, ['navtree'])
         self.assertEqual(config.sidebar_right, [])
