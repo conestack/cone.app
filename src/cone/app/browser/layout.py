@@ -19,16 +19,16 @@ from cone.app.ugm import ugm_backend
 from cone.app.utils import node_path
 from cone.tile import render_template
 from cone.tile import render_tile
-from cone.tile import Tile
 from cone.tile import tile
+from cone.tile import Tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
 from pyramid.i18n import get_localizer
 from pyramid.i18n import negotiate_locale_name
 from pyramid.i18n import TranslationStringFactory
-import warnings
 import json
+import warnings
 
 
 _ = TranslationStringFactory('cone.app')

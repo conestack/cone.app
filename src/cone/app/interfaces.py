@@ -92,6 +92,7 @@ class ILayoutConfig(IProperties):
     livesearch = Attribute(u'Flag whether to display livesearch')
     personaltools = Attribute(u'Flag whether to display personaltools')
     limit_content_width = Attribute(u'Flag whether content width should be limited on large screens')
+    limit_page_width = Attribute(u'Flag whether page width should be limited on large screens')
     center_content = Attribute(u'Flag whether to center the content area (used with limit_content_width)')
     pathbar = Attribute(u'Flag whether to display pathbar')
     sidebar_left = Attribute(u'Tiles which should be rendered in sidebar')
