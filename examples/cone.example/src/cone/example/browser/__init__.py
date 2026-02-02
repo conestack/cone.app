@@ -70,6 +70,7 @@ LAYOUT_DEMO_DEFAULTS = {
     'sidebar_right_static': False,
     'sidebar_right_min_width': 150,
     'limit_content_width': True,
+    'limit_page_width': False,
     'center_content': False
 }
 
@@ -105,6 +106,7 @@ class DynamicLayoutConfig(DefaultLayoutConfig):
             self.sidebar_right_static = session.get('layout.sidebar_right_static', LAYOUT_DEMO_DEFAULTS['sidebar_right_static'])
             self.sidebar_right_min_width = session.get('layout.sidebar_right_min_width', LAYOUT_DEMO_DEFAULTS['sidebar_right_min_width'])
             self.limit_content_width = session.get('layout.limit_content_width', LAYOUT_DEMO_DEFAULTS['limit_content_width'])
+            self.limit_page_width = session.get('layout.limit_page_width', LAYOUT_DEMO_DEFAULTS['limit_page_width'])
             self.center_content = session.get('layout.center_content', LAYOUT_DEMO_DEFAULTS['center_content'])
 
 
@@ -116,7 +118,7 @@ class ToggleLayoutBoolTile(Tile):
         setting = self.request.params.get('setting')
         if setting in (
             'mainmenu', 'livesearch', 'personaltools', 'pathbar',
-            'limit_content_width', 'sidebar_left_static',
+            'limit_content_width', 'limit_page_width', 'sidebar_left_static',
             'sidebar_right_static', 'center_content'):
             session = self.request.session
             key = f'layout.{setting}'

@@ -84,6 +84,7 @@ class TestLayoutConfig(TileTestCase):
         self.assertFalse(LAYOUT_DEMO_DEFAULTS['sidebar_right_static'])
         self.assertEqual(LAYOUT_DEMO_DEFAULTS['sidebar_right_min_width'], 150)
         self.assertTrue(LAYOUT_DEMO_DEFAULTS['limit_content_width'])
+        self.assertFalse(LAYOUT_DEMO_DEFAULTS['limit_page_width'])
         self.assertFalse(LAYOUT_DEMO_DEFAULTS['center_content'])
 
 

@@ -62,6 +62,10 @@ class LayoutDemoView(ProtectedContentTile):
         return self.get_setting('limit_content_width')
 
     @property
+    def limit_page_width(self):
+        return self.get_setting('limit_page_width')
+
+    @property
     def sidebar_left_static(self):
         return self.get_setting('sidebar_left_static')
 

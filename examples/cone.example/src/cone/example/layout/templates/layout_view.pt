@@ -161,6 +161,16 @@
             <a href="#"
                class="form-check-label ajax"
                ajax:bind="click"
+               ajax:target="${context.ajax_url}?setting=limit_page_width"
+               ajax:action="toggle_layout_bool:NONE:NONE">
+              <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.limit_page_width else 'bi-square')"></i>
+              limit_page_width
+            </a>
+          </div>
+          <div class="form-check">
+            <a href="#"
+               class="form-check-label ajax"
+               ajax:bind="click"
                ajax:target="${context.ajax_url}?setting=center_content"
                ajax:action="toggle_layout_bool:NONE:NONE">
               <i tal:attributes="class 'bi me-1 ' + ('bi-check-square' if context.center_content else 'bi-square')"></i>
