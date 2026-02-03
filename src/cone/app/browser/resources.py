@@ -73,7 +73,7 @@ cone_resources = wr.ResourceGroup(
 )
 cone_resources.add(wr.ScriptResource(
     name='cone-app-js',
-    # depends='typeahead-js',
+    depends=['jquery-js', 'bootstrap-js', 'popper-js'],
     resource='cone.app.js',
     compressed='cone.app.min.js'
 ))

@@ -1,4 +1,4 @@
-import $, { event } from 'jquery';
+import $ from 'jquery';
 import ts from 'treibstoff';
 import { global_events } from './globals.js';
 import { ResizeAware } from './layout.js';
