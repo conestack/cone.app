@@ -280,7 +280,10 @@ tr.selectable td {
 }
 #main-area #header-main #navbar-content-wrapper {
   min-width: 0;
-  z-index: 1;
+  z-index: 10;
+}
+#main-area #header-main #navbar-content-wrapper .dropdown-menu {
+  --bs-dropdown-spacer: 0;
 }
 #main-area #header-main #navbar-content-wrapper #navbar-content {
   min-width: 0;
