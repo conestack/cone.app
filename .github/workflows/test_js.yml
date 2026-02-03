@@ -1,0 +1,25 @@
+name: JS Tests
+
+on: [push]
+
+jobs:
+  test:
+    name: Test
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Corepack
+      run: |
+        npm install --global corepack@latest
+        corepack enable
+
+    - name: Install
+      run: |
+        corepack enable
+        make nodejs
+
+    - name: Run tests
+      run: make wtr
