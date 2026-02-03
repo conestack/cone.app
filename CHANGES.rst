@@ -4,6 +4,10 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Add ``center_content``, ``limit_page_width``, ``sidebar_left_static`` and
+  ``sidebar_right_static`` properties to ``ILayoutConfig``.
+  [lenadax]
+
 - Upgrade jquery to version 4.0.0.
   [lenadax]
 
