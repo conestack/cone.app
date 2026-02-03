@@ -19,7 +19,7 @@ jobs:
     - name: Install
       run: |
         corepack enable
-        make nodejs
+        make install
 
     - name: Run tests
       run: make wtr
