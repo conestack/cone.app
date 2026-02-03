@@ -285,7 +285,7 @@ class MainMenu(LayoutConfigTile):
       path='templates/pathbar.pt',
       permission='view',
       strict=False)
-class PathBar(Tile):
+class PathBar(LayoutConfigTile):
 
     @property
     def items(self):

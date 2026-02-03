@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
+import 'bootstrap';
 import { LayoutAware } from './layout.js';
 
 /**
@@ -125,8 +126,9 @@ export class MainMenu extends LayoutAware {
      * Hides all dropdowns in the main menu.
      */
     hide_dropdowns() {
+        const Dropdown = bootstrap.Dropdown;
         this.elems.each((i, el) => {
-            $(el).dropdown('hide');
+            Dropdown.getOrCreateInstance(el).hide();
         });
     }
 

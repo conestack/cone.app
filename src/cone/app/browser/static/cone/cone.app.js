@@ -1479,8 +1479,9 @@ var cone = (function (exports, $, ts) {
             this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
         }
         hide_dropdowns() {
+            const Dropdown = bootstrap.Dropdown;
             this.elems.each((i, el) => {
-                $(el).dropdown('hide');
+                Dropdown.getOrCreateInstance(el).hide();
             });
         }
         destroy() {

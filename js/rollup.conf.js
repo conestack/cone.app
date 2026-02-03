@@ -10,7 +10,8 @@ window.readCookie = readCookie;
 
 const globals = {
     jquery: 'jQuery',
-    treibstoff: 'treibstoff'
+    treibstoff: 'treibstoff',
+    bootstrap: 'bootstrap'
 };
 
 export default args => {
@@ -27,7 +28,8 @@ export default args => {
         }],
         external: [
             'jquery',
-            'treibstoff'
+            'treibstoff',
+            'bootstrap'
         ]
     };
     if (args.configDebug !== true) {
