@@ -50,6 +50,49 @@ export class Scrollbar extends ts.Motion {
 
         const is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
         new ts.Property(this, 'is_mobile', is_mobile);
+
+        // Persist scroll position
+        this.persist_scroll = elem.data('persist-scroll') === true;
+        this._persist_key = elem.data('persist-scroll-key') || elem.attr('id') || null;
+        if (this.persist_scroll && this.storage_key) {
+            this._save_position = this._save_position.bind(this);
+            this.on('on_position', this._save_position);
+            this._restore_position();
+        }
+    }
+
+    /**
+     * Returns the sessionStorage key for persisting scroll position.
+     * @returns {string|null}
+     */
+    get storage_key() {
+        if (!this._persist_key) {
+            return null;
+        }
+        return `cone.app.scroll.${this._persist_key}`;
+    }
+
+    /**
+     * Saves the current scroll position to sessionStorage.
+     * @param {Scrollbar} inst - The scrollbar instance (from event)
+     * @param {number} pos - The scroll position
+     */
+    _save_position(inst, pos) {
+        if (this.storage_key) {
+            sessionStorage.setItem(this.storage_key, pos);
+        }
+    }
+
+    /**
+     * Restores the scroll position from sessionStorage.
+     */
+    _restore_position() {
+        const saved = sessionStorage.getItem(this.storage_key);
+        if (saved !== null) {
+            ts.clock.schedule_frame(() => {
+                this.position = parseFloat(saved);
+            });
+        }
     }
 
     /**
@@ -152,6 +195,9 @@ export class Scrollbar extends ts.Motion {
     destroy() {
         if (this.fade_out_timeout) {
             clearTimeout(this.fade_out_timeout);
+        }
+        if (this.persist_scroll && this._save_position) {
+            this.off('on_position', this._save_position);
         }
         this.unbind();
         this.elem.removeData('scrollbar');
