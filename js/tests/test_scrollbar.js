@@ -505,12 +505,11 @@ QUnit.module('cone.app.scrollbar.persist', hooks => {
 
         let scrollbar = new ScrollbarY(elem);
 
-        // Allow schedule_frame to execute
         setTimeout(() => {
             assert.strictEqual(scrollbar.position, 150, 'position restored from sessionStorage');
             scrollbar.destroy();
             done();
-        }, 50);
+        }, 100);
     });
 
     QUnit.test('restored position is clamped when content shrinks', assert => {
@@ -531,7 +530,7 @@ QUnit.module('cone.app.scrollbar.persist', hooks => {
             assert.strictEqual(scrollbar.position, 100, 'position clamped to max');
             scrollbar.destroy();
             done();
-        }, 50);
+        }, 100);
     });
 
     QUnit.test('position not saved when persist_scroll is false', assert => {

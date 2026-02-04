@@ -438,6 +438,9 @@ var cone = (function (exports, $, ts) {
             }
             let ol = ol_elem.data('overlay'),
                 target = ol.ref_target;
+            if (!target) {
+                return;
+            }
             $('a.addreference', context).each(function() {
                 new AddReferenceHandle($(this), target, ol);
             });
@@ -768,7 +771,6 @@ var cone = (function (exports, $, ts) {
             this.position = 0;
             this.scroll_step = 50;
             new ts.Property(this, 'disabled', false);
-            ts.clock.schedule_frame(() => this.render());
             const is_mobile = $(window).width() <= 768;
             new ts.Property(this, 'is_mobile', is_mobile);
             this.persist_scroll = elem.data('persist-scroll') === true;
@@ -776,8 +778,12 @@ var cone = (function (exports, $, ts) {
             if (this.persist_scroll && this.storage_key) {
                 this._save_position = this._save_position.bind(this);
                 this.on('on_position', this._save_position);
-                this._restore_position();
             }
+            ts.clock.schedule_frame(() => {
+                const saved_position = this._get_saved_position();
+                this.render();
+                this._restore_position(saved_position);
+            });
         }
         get storage_key() {
             if (!this._persist_key) {
@@ -790,12 +796,16 @@ var cone = (function (exports, $, ts) {
                 sessionStorage.setItem(this.storage_key, pos);
             }
         }
-        _restore_position() {
+        _get_saved_position() {
+            if (!this.persist_scroll || !this.storage_key) {
+                return null;
+            }
             const saved = sessionStorage.getItem(this.storage_key);
-            if (saved !== null) {
-                ts.clock.schedule_frame(() => {
-                    this.position = parseFloat(saved);
-                });
+            return saved !== null ? parseFloat(saved) : null;
+        }
+        _restore_position(saved_position) {
+            if (saved_position !== null) {
+                this.position = saved_position;
             }
         }
         on_window_resize(evt) {

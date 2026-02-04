@@ -35,6 +35,24 @@ QUnit.module('cone.app.referencebrowser.ReferenceHandle', hooks => {
         assert.ok(true, 'no error without modal parent');
     });
 
+    QUnit.test('ReferenceHandle.initialize returns early without ref_target',
+        assert => {
+        // This allows other components (e.g. catalog item picker) to reuse
+        // the referencebrowser overlay with custom selection handling.
+        let modal = $('<div class="modal" />').appendTo(container);
+        let context = $('<div class="modal-body" />').appendTo(modal);
+        let link = $('<a class="addreference" id="ref-123" />').appendTo(context);
+
+        let overlay = {elem: modal};  // no ref_target
+        modal.data('overlay', overlay);
+
+        ReferenceHandle.initialize(context);
+
+        let events = $._data(link.get(0), 'events');
+        assert.notOk(events && events.click,
+            'no click handler bound when ref_target missing');
+    });
+
     QUnit.test('ReferenceHandle constructor stores properties', assert => {
         let elem = $('<a />');
         let target = $('<input />');

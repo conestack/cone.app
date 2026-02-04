@@ -46,8 +46,6 @@ export class Scrollbar extends ts.Motion {
         this.scroll_step = 50; // Scroll step in pixels
         new ts.Property(this, 'disabled', false);
 
-        ts.clock.schedule_frame(() => this.render());
-
         const is_mobile = $(window).width() <= 768; // bs5 small/medium breakpoint
         new ts.Property(this, 'is_mobile', is_mobile);
 
@@ -57,8 +55,18 @@ export class Scrollbar extends ts.Motion {
         if (this.persist_scroll && this.storage_key) {
             this._save_position = this._save_position.bind(this);
             this.on('on_position', this._save_position);
-            this._restore_position();
         }
+
+        ts.clock.schedule_frame(() => {
+            // Read saved position BEFORE render() triggers save handler
+            const saved = this.persist_scroll && this.storage_key
+                ? sessionStorage.getItem(this.storage_key)
+                : null;
+            this.render();
+            if (saved !== null) {
+                this.position = parseFloat(saved);
+            }
+        });
     }
 
     /**
@@ -80,18 +88,6 @@ export class Scrollbar extends ts.Motion {
     _save_position(inst, pos) {
         if (this.storage_key) {
             sessionStorage.setItem(this.storage_key, pos);
-        }
-    }
-
-    /**
-     * Restores the scroll position from sessionStorage.
-     */
-    _restore_position() {
-        const saved = sessionStorage.getItem(this.storage_key);
-        if (saved !== null) {
-            ts.clock.schedule_frame(() => {
-                this.position = parseFloat(saved);
-            });
         }
     }
 
