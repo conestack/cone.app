@@ -438,6 +438,9 @@ var cone = (function (exports, $, ts) {
             }
             let ol = ol_elem.data('overlay'),
                 target = ol.ref_target;
+            if (!target) {
+                return;
+            }
             $('a.addreference', context).each(function() {
                 new AddReferenceHandle($(this), target, ol);
             });
@@ -768,9 +771,42 @@ var cone = (function (exports, $, ts) {
             this.position = 0;
             this.scroll_step = 50;
             new ts.Property(this, 'disabled', false);
-            ts.clock.schedule_frame(() => this.render());
             const is_mobile = $(window).width() <= 768;
             new ts.Property(this, 'is_mobile', is_mobile);
+            this.persist_scroll = elem.data('persist-scroll') === true;
+            this._persist_key = elem.data('persist-scroll-key') || elem.attr('id') || null;
+            if (this.persist_scroll && this.storage_key) {
+                this._save_position = this._save_position.bind(this);
+                this.on('on_position', this._save_position);
+            }
+            ts.clock.schedule_frame(() => {
+                const saved_position = this._get_saved_position();
+                this.render();
+                this._restore_position(saved_position);
+            });
+        }
+        get storage_key() {
+            if (!this._persist_key) {
+                return null;
+            }
+            return `cone.app.scroll.${this._persist_key}`;
+        }
+        _save_position(inst, pos) {
+            if (this.storage_key) {
+                sessionStorage.setItem(this.storage_key, pos);
+            }
+        }
+        _get_saved_position() {
+            if (!this.persist_scroll || !this.storage_key) {
+                return null;
+            }
+            const saved = sessionStorage.getItem(this.storage_key);
+            return saved !== null ? parseFloat(saved) : null;
+        }
+        _restore_position(saved_position) {
+            if (saved_position !== null) {
+                this.position = saved_position;
+            }
         }
         on_window_resize(evt) {
             this.is_mobile = $(window).innerWidth() <= 768;
@@ -826,6 +862,9 @@ var cone = (function (exports, $, ts) {
         destroy() {
             if (this.fade_out_timeout) {
                 clearTimeout(this.fade_out_timeout);
+            }
+            if (this.persist_scroll && this._save_position) {
+                this.off('on_position', this._save_position);
             }
             this.unbind();
             this.elem.removeData('scrollbar');

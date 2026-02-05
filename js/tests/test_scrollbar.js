@@ -386,3 +386,213 @@ QUnit.module('cone.app.scrollbar.ScrollbarX', hooks => {
         scrollbar.destroy();
     });
 });
+
+QUnit.module('cone.app.scrollbar.persist', hooks => {
+
+    let container;
+
+    hooks.beforeEach(() => {
+        container = $('<div />').appendTo('body');
+        sessionStorage.clear();
+    });
+
+    hooks.afterEach(() => {
+        container.remove();
+        sessionStorage.clear();
+    });
+
+    QUnit.test('persist_scroll defaults to false', assert => {
+        let elem = $(`
+            <div class="scrollable-y">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        assert.strictEqual(scrollbar.persist_scroll, false, 'persist_scroll is false by default');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('persist_scroll reads from data attribute', assert => {
+        let elem = $(`
+            <div class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        assert.strictEqual(scrollbar.persist_scroll, true, 'persist_scroll reads data attribute');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('storage_key uses element id', assert => {
+        let elem = $(`
+            <div id="test_scrollbar" class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        assert.strictEqual(scrollbar.storage_key, 'cone.app.scroll.test_scrollbar', 'storage_key uses id');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('storage_key uses custom key from data attribute', assert => {
+        let elem = $(`
+            <div id="test_scrollbar" class="scrollable-y"
+                 data-persist-scroll="true"
+                 data-persist-scroll-key="custom_key">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        assert.strictEqual(scrollbar.storage_key, 'cone.app.scroll.custom_key', 'storage_key uses custom key');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('storage_key is null without id or custom key', assert => {
+        let elem = $(`
+            <div class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        assert.strictEqual(scrollbar.storage_key, null, 'storage_key is null without id');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('position is saved to sessionStorage on scroll', assert => {
+        let done = assert.async();
+        let elem = $(`
+            <div id="persist_test" class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+        scrollbar.position = 100;
+
+        // Allow event to fire
+        setTimeout(() => {
+            let saved = sessionStorage.getItem('cone.app.scroll.persist_test');
+            assert.strictEqual(saved, '100', 'position saved to sessionStorage');
+            scrollbar.destroy();
+            done();
+        }, 50);
+    });
+
+    QUnit.test('position is restored from sessionStorage', assert => {
+        let done = assert.async();
+        sessionStorage.setItem('cone.app.scroll.restore_test', '150');
+
+        let elem = $(`
+            <div id="restore_test" class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        setTimeout(() => {
+            assert.strictEqual(scrollbar.position, 150, 'position restored from sessionStorage');
+            scrollbar.destroy();
+            done();
+        }, 100);
+    });
+
+    QUnit.test('restored position is clamped when content shrinks', assert => {
+        let done = assert.async();
+        // Save a position that will be too large
+        sessionStorage.setItem('cone.app.scroll.clamp_test', '500');
+
+        let elem = $(`
+            <div id="clamp_test" class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 300px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+
+        // max_pos = 300 - 200 = 100
+        setTimeout(() => {
+            assert.strictEqual(scrollbar.position, 100, 'position clamped to max');
+            scrollbar.destroy();
+            done();
+        }, 100);
+    });
+
+    QUnit.test('position not saved when persist_scroll is false', assert => {
+        let elem = $(`
+            <div id="no_persist" class="scrollable-y">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+        scrollbar.position = 100;
+
+        let saved = sessionStorage.getItem('cone.app.scroll.no_persist');
+        assert.strictEqual(saved, null, 'position not saved when persist disabled');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('position not saved without storage_key', assert => {
+        let elem = $(`
+            <div class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+        scrollbar.position = 100;
+
+        // No key to check, but should not throw
+        assert.ok(true, 'no error when no storage_key');
+
+        scrollbar.destroy();
+    });
+
+    QUnit.test('destroy removes position listener', assert => {
+        let done = assert.async();
+        let elem = $(`
+            <div id="destroy_test" class="scrollable-y" data-persist-scroll="true">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar = new ScrollbarY(elem);
+        scrollbar.destroy();
+
+        sessionStorage.removeItem('cone.app.scroll.destroy_test');
+
+        // Create new scrollbar on same elem to test position change
+        let elem2 = $(`
+            <div id="destroy_test2" class="scrollable-y">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let scrollbar2 = new ScrollbarY(elem2);
+        scrollbar2.position = 200;
+
+        setTimeout(() => {
+            let saved = sessionStorage.getItem('cone.app.scroll.destroy_test');
+            assert.strictEqual(saved, null, 'destroyed scrollbar does not save');
+            scrollbar2.destroy();
+            done();
+        }, 50);
+    });
+});

@@ -107,7 +107,9 @@
                 </tal:controls>
               </div>
 
-              <div class="sidebar-content scrollable-y scrollbar-left">
+              <div class="sidebar-content scrollable-y scrollbar-left"
+                   data-persist-scroll="true"
+                   data-persist-scroll-key="sidebar-left">
                 <div class="scrollable-content px-2">
                   <ul class="sidebar-tiles nav nav-pills flex-nowrap flex-column mb-auto">
 
@@ -178,7 +180,9 @@
                 </tal:controls>
               </div>
 
-              <div class="sidebar-content scrollable-y scrollbar-right h-100">
+              <div class="sidebar-content scrollable-y scrollbar-right h-100"
+                   data-persist-scroll="true"
+                   data-persist-scroll-key="sidebar-right">
                 <div class="sidebar-tiles scrollable-content px-2">
                   <tal:tiles repeat="tilename config.sidebar_right">
                     <div class="tile"
