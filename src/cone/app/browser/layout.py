@@ -152,6 +152,7 @@ class LogoutAction(LinkAction):
     icon = 'bi-door-open'
     bind = None
     target = None
+    order = 100
 
     @property
     def href(self):
@@ -180,8 +181,10 @@ class PersonalTools(Tile):
             rendered = item(self.model, self.request)
             if not rendered:
                 continue
-            items.append(rendered)
-        return items
+            order = getattr(item, 'order', 0)
+            items.append((order, rendered))
+        items.sort(key=lambda x: x[0])
+        return [rendered for _, rendered in items]
 
 
 @tile(name='mainmenu',
