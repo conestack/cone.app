@@ -363,6 +363,11 @@ class NavTree(LayoutConfigTile):
             if model.properties.is_navroot:
                 return model
             model = model.parent
+        default_child = root.properties.default_child
+        if default_child:
+            child = root.get(default_child)
+            if child is not None and child.properties.is_navroot:
+                return child
         return root
 
     def navtreeitem(self, title, url, target, path, icon, css=''):
