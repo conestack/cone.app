@@ -80,6 +80,9 @@ class ContextMenuDropdown(Toolbar):
             context=self
         )
 
+    def sorted_actions(self):
+        return sorted(self.values(), key=lambda a: getattr(a, 'order', 0))
+
     def __setitem__(self, name, value):
         if not isinstance(value, TemplateAction):
             raise ValueError(

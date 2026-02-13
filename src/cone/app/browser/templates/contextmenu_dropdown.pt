@@ -13,7 +13,7 @@
     </a>
 
     <ul class="dropdown-menu rounded-0 rounded-bottom mt-0">
-      <li tal:repeat="action context.values()">
+      <li tal:repeat="action context.sorted_actions()">
         <tal:action replace="structure action(model, request)" />
       </li>
     </ul>
