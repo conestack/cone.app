@@ -4,6 +4,10 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Implement ``order`` property for Actions inside ContextMenuDropdown
+  (defaults to 0).
+  [lenadax]
+
 - Add ``center_content``, ``limit_page_width``, ``sidebar_left_static`` and
   ``sidebar_right_static`` properties to ``ILayoutConfig``.
   [lenadax]
