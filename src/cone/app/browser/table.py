@@ -16,6 +16,7 @@ class RowData(dict):
         self.selectable = selectable
         self.target = target
         self.css = css
+        self.cell_css = dict()
 
 
 @plumbing(RelatedViewConsumer)
