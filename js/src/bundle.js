@@ -22,6 +22,7 @@ import {TableToolbar} from './tabletoolbar.js';
 import {Translation} from './translation.js';
 import {MainMenu} from './mainmenu.js';
 import {Header} from './header.js';
+import {ContextMenuDropdown} from './contextmenu.js';
 import {MainArea} from './layout.js';
 import {NavTree} from './navtree.js';
 
@@ -42,6 +43,7 @@ export * from './sharing.js';
 export * from './sidebar.js';
 export * from './tabletoolbar.js';
 export * from './translation.js';
+export * from './contextmenu.js';
 export * from './utils.js';
 
 $(function() {
@@ -65,4 +67,5 @@ $(function() {
     ts.ajax.register(SidebarLeft.initialize, true);
     ts.ajax.register(SidebarRight.initialize, true);
     ts.ajax.register(NavTree.initialize, true);
+    ContextMenuDropdown.initialize();
 });

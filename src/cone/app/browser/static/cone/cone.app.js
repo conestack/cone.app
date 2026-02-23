@@ -780,9 +780,13 @@ var cone = (function (exports, $, ts) {
                 this.on('on_position', this._save_position);
             }
             ts.clock.schedule_frame(() => {
-                const saved_position = this._get_saved_position();
+                const saved = this.persist_scroll && this.storage_key
+                    ? sessionStorage.getItem(this.storage_key)
+                    : null;
                 this.render();
-                this._restore_position(saved_position);
+                if (saved !== null) {
+                    this.position = parseFloat(saved);
+                }
             });
         }
         get storage_key() {
@@ -794,18 +798,6 @@ var cone = (function (exports, $, ts) {
         _save_position(inst, pos) {
             if (this.storage_key) {
                 sessionStorage.setItem(this.storage_key, pos);
-            }
-        }
-        _get_saved_position() {
-            if (!this.persist_scroll || !this.storage_key) {
-                return null;
-            }
-            const saved = sessionStorage.getItem(this.storage_key);
-            return saved !== null ? parseFloat(saved) : null;
-        }
-        _restore_position(saved_position) {
-            if (saved_position !== null) {
-                this.position = saved_position;
             }
         }
         on_window_resize(evt) {
@@ -1642,6 +1634,27 @@ var cone = (function (exports, $, ts) {
         }
     }
 
+    class ContextMenuDropdown {
+        static initialize() {
+            $(document).on('show.bs.dropdown', '#contextmenu .dropdown', function () {
+                $(this).find('.dropdown-menu').removeClass('dropdown-menu-end');
+            });
+            $(document).on('shown.bs.dropdown', '#contextmenu .dropdown', function () {
+                const menu = $(this).find('.dropdown-menu')[0];
+                const rect = menu.getBoundingClientRect();
+                const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                if (rect.right > viewportWidth) {
+                    menu.classList.add('dropdown-menu-end');
+                    const toggle = $(this).find('[data-bs-toggle="dropdown"]')[0];
+                    const instance = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                    if (instance._popper) {
+                        instance._popper.update();
+                    }
+                }
+            });
+        }
+    }
+
     class NavTree {
         static initialize(context) {
             const elem = ts.query_elem('#navtree', context);
@@ -1828,6 +1841,7 @@ var cone = (function (exports, $, ts) {
         ts.ajax.register(SidebarLeft.initialize, true);
         ts.ajax.register(SidebarRight.initialize, true);
         ts.ajax.register(NavTree.initialize, true);
+        ContextMenuDropdown.initialize();
     });
 
     exports.AddReferenceHandle = AddReferenceHandle;
@@ -1836,6 +1850,7 @@ var cone = (function (exports, $, ts) {
     exports.BatchedItemsSize = BatchedItemsSize;
     exports.ColorMode = ColorMode;
     exports.ColorToggler = ColorToggler;
+    exports.ContextMenuDropdown = ContextMenuDropdown;
     exports.CopySupport = CopySupport;
     exports.GlobalEvents = GlobalEvents;
     exports.Header = Header;
