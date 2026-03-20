@@ -893,3 +893,55 @@ class TestBrowserBatch(TileTestCase):
         batched_items.display_footer = False
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertFalse(rendered.find(expected) > -1)
+
+    def test_footer_pagination(self):
+        # The batched_items footer displays "Showing X to Y of Z entries".
+        class MyBatchedItems(BatchedItems):
+            slice_template = 'cone.app.testing:dummy_batched_items.pt'
+            _items = []
+
+            @property
+            def item_count(self):
+                return len(self._items)
+
+            @property
+            def slice_items(self):
+                start, end = self.current_slice
+                return self._items[start:end]
+
+        def footer_html(batched_items):
+            footer = batched_items.rendered_footer
+            start = footer.find('batched_items_info')
+            end = footer.find('</div>', start)
+            return footer[start:end]
+
+        # Empty list: from=0, to=0, total=0.
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = self.layer.new_request()
+        batched_items._items = []
+        footer = footer_html(batched_items)
+        self.assertIn('>0<', footer)
+
+        # Full first page: from=1, to=15, total=20.
+        items = [BaseNode() for _ in range(20)]
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = self.layer.new_request()
+        batched_items._items = items
+        footer = footer_html(batched_items)
+        self.assertIn('>1<', footer)
+        self.assertIn('>15<', footer)
+        self.assertIn('>20<', footer)
+
+        # Partial last page: from=16, to=17, total=17.
+        items = [BaseNode() for _ in range(17)]
+        request = self.layer.new_request()
+        request.params['b_page'] = '1'
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = request
+        batched_items._items = items
+        footer = footer_html(batched_items)
+        self.assertIn('>16<', footer)
+        self.assertIn('>17<', footer)
