@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cone.app 0.9.3dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-03-20 12:42+0100\n"
+"POT-Creation-Date: 2026-03-20 13:43+0100\n"
 "PO-Revision-Date: 2012-04-25 13:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -143,12 +143,22 @@ msgstr "Sort by principal"
 msgid "sharing_table_title"
 msgstr "Sharing: ${title}"
 
+#: src/cone/app/browser/sharing.py:82
+msgid "sharing_empty_state"
+msgstr ""
+"No users have been granted access. Use the search field above to find and "
+"add users."
+
+#: src/cone/app/browser/sharing.py:89
+msgid "sharing_global_roles_hint"
+msgstr "Note: Users with global Manager or Admin roles may still have access."
+
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: src/cone/app/browser/sharing.py:166
+#: src/cone/app/browser/sharing.py:187
 msgid "cannot_add_role_for_principal"
 msgstr "Can not add role '${role}' for principal '${pid}'"
 
-#: src/cone/app/browser/sharing.py:198
+#: src/cone/app/browser/sharing.py:219
 msgid "cannot_remove_role_for_principal"
 msgstr "Can not remove role '${role}' for principal '${pid}'"
 
@@ -371,7 +381,7 @@ msgstr "Show"
 
 #. Default: entries
 #: src/cone/app/browser/templates/table.pt:44
-#: src/cone/app/browser/templates/table.pt:198
+#: src/cone/app/browser/templates/table.pt:206
 #: src/cone/app/browser/templates/batched_items_footer.pt:20
 #: src/cone/app/browser/templates/batched_items_header.pt:43
 msgid "entries"
@@ -384,19 +394,19 @@ msgid "search"
 msgstr "Search"
 
 #. Default: Showing
-#: src/cone/app/browser/templates/table.pt:189
+#: src/cone/app/browser/templates/table.pt:197
 #: src/cone/app/browser/templates/batched_items_footer.pt:11
 msgid "showing"
 msgstr "Showing"
 
 #. Default: to
-#: src/cone/app/browser/templates/table.pt:192
+#: src/cone/app/browser/templates/table.pt:200
 #: src/cone/app/browser/templates/batched_items_footer.pt:14
 msgid "to"
 msgstr "to"
 
 #. Default: of
-#: src/cone/app/browser/templates/table.pt:195
+#: src/cone/app/browser/templates/table.pt:203
 #: src/cone/app/browser/templates/batched_items_footer.pt:17
 msgid "of"
 msgstr "of"

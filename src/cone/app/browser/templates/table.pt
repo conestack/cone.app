@@ -177,6 +177,14 @@
 
             </tr>
           </tal:row>
+
+          <tr tal:define="msg context.empty_state_message"
+              tal:condition="msg and not context.item_count">
+            <td tal:attributes="colspan len(context.col_defs)"
+                class="text-muted py-3 ps-4">
+              <span tal:replace="structure msg">Empty state message</span>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

@@ -27,6 +27,46 @@ class TestBrowserSharing(TileTestCase):
             res = sharing(model, request)
         self.assertTrue(res.text.find('<!DOCTYPE html>') > -1)
 
+    def test_empty_state_message(self):
+        root = SharingNode(name='root')
+        request = self.layer.new_request()
+
+        # Without a filter term, empty_state_message returns HTML with
+        # both the main hint and the global-roles note.
+        with self.layer.authenticated('manager'):
+            from cone.app.browser.sharing import SharingTable
+            table = SharingTable(
+                'cone.app:browser/templates/table.pt', None, 'local_acl'
+            )
+            table.model = root
+            table.request = request
+
+        msg = table.empty_state_message
+        self.assertIn('mb-1', msg)
+        self.assertIn('No users have been granted access', msg)
+        self.assertIn('global Manager or Admin roles', msg)
+
+        # With a filter term, empty_state_message returns None so the
+        # generic empty search result is not obscured by the hint.
+        request.params['term'] = 'someuser'
+        self.assertIsNone(table.empty_state_message)
+
+    def test_empty_state_rendered(self):
+        root = SharingNode(name='root')
+        request = self.layer.new_request()
+
+        # Empty table (no principal roles) renders the empty-state hint.
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'sharing')
+        self.assertIn('No users have been granted access', res)
+        self.assertIn('global Manager or Admin roles', res)
+
+        # Once a principal role exists the hint must not appear.
+        root.principal_roles['viewer'] = ['editor']
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'sharing')
+        self.assertNotIn('No users have been granted access', res)
+
     def test_render_sharing_tile(self):
         root = SharingNode(name='root')
         request = self.layer.new_request()

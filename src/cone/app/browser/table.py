@@ -163,6 +163,15 @@ class Table(Tile):
         return css, url
 
     @property
+    def empty_state_message(self):
+        """Optional message shown when the table has no rows.
+
+        Return a translated string or None to suppress the message.
+        Subclasses can override to provide context-specific guidance.
+        """
+        return None
+
+    @property
     def item_count(self):
         raise NotImplementedError("Abstract table does not implement "
                                   "``item_count``.")

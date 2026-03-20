@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2026-03-20 12:42+0100\n"
+"POT-Creation-Date: 2026-03-20 13:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -142,12 +142,20 @@ msgstr ""
 msgid "sharing_table_title"
 msgstr ""
 
+#: ./src/cone/app/browser/sharing.py:82
+msgid "sharing_empty_state"
+msgstr ""
+
+#: ./src/cone/app/browser/sharing.py:89
+msgid "sharing_global_roles_hint"
+msgstr ""
+
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: ./src/cone/app/browser/sharing.py:166
+#: ./src/cone/app/browser/sharing.py:187
 msgid "cannot_add_role_for_principal"
 msgstr ""
 
-#: ./src/cone/app/browser/sharing.py:198
+#: ./src/cone/app/browser/sharing.py:219
 msgid "cannot_remove_role_for_principal"
 msgstr ""
 
@@ -370,7 +378,7 @@ msgstr ""
 
 #. Default: entries
 #: ./src/cone/app/browser/templates/table.pt:44
-#: ./src/cone/app/browser/templates/table.pt:198
+#: ./src/cone/app/browser/templates/table.pt:206
 #: ./src/cone/app/browser/templates/batched_items_footer.pt:20
 #: ./src/cone/app/browser/templates/batched_items_header.pt:43
 msgid "entries"
@@ -383,19 +391,19 @@ msgid "search"
 msgstr ""
 
 #. Default: Showing
-#: ./src/cone/app/browser/templates/table.pt:189
+#: ./src/cone/app/browser/templates/table.pt:197
 #: ./src/cone/app/browser/templates/batched_items_footer.pt:11
 msgid "showing"
 msgstr ""
 
 #. Default: to
-#: ./src/cone/app/browser/templates/table.pt:192
+#: ./src/cone/app/browser/templates/table.pt:200
 #: ./src/cone/app/browser/templates/batched_items_footer.pt:14
 msgid "to"
 msgstr ""
 
 #. Default: of
-#: ./src/cone/app/browser/templates/table.pt:195
+#: ./src/cone/app/browser/templates/table.pt:203
 #: ./src/cone/app/browser/templates/batched_items_footer.pt:17
 msgid "of"
 msgstr ""
