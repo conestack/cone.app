@@ -9,10 +9,10 @@
     <div class="batched_items_info float-start"
          tal:define="slice context.current_slice">
       <span i18n:translate="showing">Showing</span>
-      <span tal:content="slice[0] + 1"
+      <span tal:content="python: min(slice[0] + 1, context.item_count)"
             class="badge bg-primary">1</span>
       <span i18n:translate="to">to</span>
-      <span tal:content="slice[1] > context.item_count and context.item_count or slice[1]"
+      <span tal:content="python: min(slice[1], context.item_count)"
             class="badge bg-primary">10</span>
       <span i18n:translate="of">of</span>
       <span tal:content="context.item_count"
