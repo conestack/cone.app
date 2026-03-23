@@ -43,8 +43,7 @@ class TestBrowserSharing(TileTestCase):
 
         msg = table.empty_state_message
         self.assertIn('mb-1', msg)
-        self.assertIn('No users have been granted access', msg)
-        self.assertIn('global Manager or Admin roles', msg)
+        self.assertIn('No local access permissions assigned.', msg)
 
         # With a filter term, empty_state_message returns None so the
         # generic empty search result is not obscured by the hint.
@@ -58,14 +57,13 @@ class TestBrowserSharing(TileTestCase):
         # Empty table (no principal roles) renders the empty-state hint.
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
-        self.assertIn('No users have been granted access', res)
-        self.assertIn('global Manager or Admin roles', res)
+        self.assertIn('No local access permissions assigned.', res)
 
         # Once a principal role exists the hint must not appear.
         root.principal_roles['viewer'] = ['editor']
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
-        self.assertNotIn('No users have been granted access', res)
+        self.assertNotIn('No local access permissions assigned.', res)
 
     def test_render_sharing_tile(self):
         root = SharingNode(name='root')
