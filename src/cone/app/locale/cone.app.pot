@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2026-03-20 13:43+0100\n"
+"POT-Creation-Date: 2026-03-23 11:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,16 +146,16 @@ msgstr ""
 msgid "sharing_empty_state"
 msgstr ""
 
-#: ./src/cone/app/browser/sharing.py:89
-msgid "sharing_global_roles_hint"
+#: ./src/cone/app/browser/sharing.py:88
+msgid "sharing_empty_state_hint"
 msgstr ""
 
 #. Default: Can not add role '${role}' for principal '${pid}'
-#: ./src/cone/app/browser/sharing.py:187
+#: ./src/cone/app/browser/sharing.py:185
 msgid "cannot_add_role_for_principal"
 msgstr ""
 
-#: ./src/cone/app/browser/sharing.py:219
+#: ./src/cone/app/browser/sharing.py:217
 msgid "cannot_remove_role_for_principal"
 msgstr ""
 

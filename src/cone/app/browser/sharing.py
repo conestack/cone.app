@@ -82,15 +82,13 @@ class SharingTable(Table):
         main = localizer.translate(_(
             'sharing_empty_state',
             default=(
-                'No users have been granted access. '
-                'Use the search field above to find and add users.'
+                'No local access permissions assigned.'
             )
         ))
         note = localizer.translate(_(
-            'sharing_global_roles_hint',
+            'sharing_empty_state_hint',
             default=(
-                'Note: Users with global Manager or Admin roles '
-                'may still have access.'
+                'Use the search field above to find and add users.'
             )
         ))
         return f'<p class="mb-1">{main}</p><p class="small mb-0">{note}</p>'
