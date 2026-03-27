@@ -135,7 +135,11 @@
 
         #navbar-content-wrapper {
             min-width: 0;
-            z-index: 1;
+            z-index: 10;
+
+            .dropdown-menu {
+                --bs-dropdown-spacer: 0;
+            }
 
             #navbar-content {
                 min-width: 0;

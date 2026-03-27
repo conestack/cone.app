@@ -1,0 +1,44 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">WorkflowNode</div>
+    <div class="card-body">
+      <p class="small">Workflow states: draft, review, published, archived.</p>
+      <tal:code replace="structure context.example_workflow()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">ProtectedProperties</div>
+    <div class="card-body">
+      <p class="small">Body field requires edit permission to view.</p>
+      <tal:code replace="structure context.example_protected_properties()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">Reference Browser</div>
+    <div class="card-body">
+      <p class="small">Widget for selecting related nodes by UUID.</p>
+      <tal:code replace="structure context.example_reference_browser()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">UUIDAttributeAware</div>
+    <div class="card-body">
+      <p class="small">UUID stored in node attrs. Auto-generated on first access.</p>
+      <tal:code replace="structure context.example_uuid_attribute_aware()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">INavigationLeaf</div>
+    <div class="card-body">
+      <p class="small">Marks node as leaf - no children shown in navtree.</p>
+      <tal:code replace="structure context.example_navigation_leaf()" />
+    </div>
+  </div>
+
+</tal:view>

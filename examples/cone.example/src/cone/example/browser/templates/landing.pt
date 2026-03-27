@@ -1,0 +1,103 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <div class="landing-hero text-center py-5">
+    <h1 class="display-5 mb-3">
+      <img src="example-images/icon.svg"
+           alt="cone.example Logo"
+           style="height: 3rem; width: auto;"
+           class="me-2 align-middle" />
+      cone.example
+    </h1>
+    <p class="lead text-muted mb-4">
+      A collection of example modules demonstrating cone.app features
+      and patterns.
+    </p>
+  </div>
+
+  <div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 example-header example-header-layout">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi-kanban me-2"></i>Layout
+          </h5>
+          <p class="card-text text-muted small">
+            Layout Configuration using LayoutConfig.
+          </p>
+          <div class="mb-3">
+            <span class="badge example-badge-layout">LayoutConfig</span>
+          </div>
+          <a class="stretched-link"
+             tal:attributes="href context.layout_url;
+                             ajax:target context.layout_url;
+                             ajax:event 'contextchanged:#layout';
+                             ajax:path 'href'">
+            Explore
+            <i class="bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 example-header example-header-wiki">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi-book me-2"></i>Wiki
+          </h5>
+          <p class="card-text text-muted small">
+            Wiki pages with workflow states, folders for organization,
+            cross-references, categories, and protected properties.
+          </p>
+          <div class="mb-3">
+            <span class="badge example-badge-wiki">Workflow</span>
+            <span class="badge example-badge-wiki">Folders</span>
+            <span class="badge example-badge-wiki">References</span>
+          </div>
+          <a class="stretched-link"
+             tal:attributes="href context.wiki_url;
+                             ajax:target context.wiki_url;
+                             ajax:event 'contextchanged:#layout';
+                             ajax:path 'href'">
+            Explore
+            <i class="bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 example-header example-header-ajax">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi-lightning me-2"></i>AJAX Playground
+          </h5>
+          <p class="card-text text-muted small">
+            Interactive demo of all AJAX continuation operations:
+            path, action, event, message, and overlay.
+          </p>
+          <div class="mb-3">
+            <span class="badge example-badge-ajax">
+              AjaxPath
+            </span>
+            <span class="badge example-badge-ajax">
+              AjaxAction
+            </span>
+          </div>
+          <a class="stretched-link"
+             tal:attributes="href context.ajax_url;
+                             ajax:target context.ajax_url;
+                             ajax:event 'contextchanged:#layout';
+                             ajax:path 'href'">
+            Explore
+            <i class="bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</tal:view>

@@ -1,3 +1,69 @@
+/* Sidebar right - Tutorial Bar */
+#sidebar_right {
+    background: linear-gradient(256deg, #c2d1ff, #bdbbff);
+    color: var(--bs-primary);
+}
+[data-bs-theme="dark"] #sidebar_right {
+    background: none;
+    background-color: #252b3c;
+    color: var(--bs-gray-100);
+}
+[data-bs-theme="dark"] [data-tile="tutorial"] h2.bg-light {
+    --bs-bg-opacity: .12;
+}
+
+/* Document workflow states */
+#contextmenu a.state-draft,
+tr.state-draft td.title a {
+    color: #6c757d;
+}
+#navtree li.state-draft > a {
+    color: #aad8ff!important;
+}
+#contextmenu a.state-review,
+#navtree li.state-review > a,
+tr.state-review td.title a {
+    color: #fd7e14;
+}
+#navtree li.state-review > a {
+    color: #ffc595!important;
+}
+#contextmenu a.state-published,
+#navtree li.state-published > a,
+tr.state-published td.title a {
+    color: #198754;
+}
+#navtree li.state-published > a {
+    color: #5cffb2!important;
+}
+#contextmenu a.state-archived,
+tr.state-archived td.title a {
+    color: #6c757d;
+    text-decoration: line-through;
+}
+#navtree li.state-archived > a {
+    color: #95a2ae!important;
+}
+
+/* Task workflow states */
+#contextmenu a.state-todo,
+tr.state-todo td.title a {
+    color: #0d6efd;
+}
+#contextmenu a.state-in_progress,
+tr.state-in_progress td.title a {
+    color: #fd7e14;
+}
+#contextmenu a.state-done,
+tr.state-done td.title a {
+    color: #198754;
+}
+#contextmenu a.state-closed,
+tr.state-closed td.title a {
+    color: #6c757d;
+}
+
+/* Publication workflow states (backward compat) */
 #contextmenu a.state-private,
 tr.state-private td.title a {
     color: red;
@@ -5,4 +71,163 @@ tr.state-private td.title a {
 #contextmenu a.state-public,
 tr.state-public td.title a {
     color: green;
+}
+
+
+/* Example module header accents */
+.example-header {
+    border-left: 4px solid #dee2e6;
+}
+.example-header-layout {
+    border-left-color: #ffe000;
+}
+.example-header-documents {
+    border-left-color: #0d6efd;
+}
+.example-header-projects {
+    border-left-color: #fd7e14;
+}
+.example-header-wiki {
+    border-left-color: #18be71;
+}
+.example-header-ajax {
+    border-left-color: #7b33ff;
+}
+
+/* Feature badges per module */
+.badge.example-badge-layout {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+.badge.example-badge-documents {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+.badge.example-badge-projects {
+    background-color: #ffdbcd;
+    color: #661f03;
+}
+.badge.example-badge-wiki {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+.badge.example-badge-ajax {
+    background-color: #e2d9f3;
+    color: #432874;
+}
+
+/* Landing page */
+.landing-hero {
+    border-bottom: 1px solid var(--bs-border-color);
+    margin-bottom: 1rem;
+}
+
+/* Layout Config demo */
+#layout_config_demo {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(7, 1fr);
+}
+#layout_config_demo .mainmenu {
+    grid-column: span 4;
+}
+#layout_config_demo .breadcrumbs {
+    grid-column: span 7;
+}
+#layout_config_demo .content_area {
+    grid-column: span 5;
+    height: 30vh;
+}
+#layout_config_demo .footer {
+    grid-column: span 5;
+}
+#layout_config_demo .sidebar_left, #layout_config_demo .sidebar_right {
+    grid-row: span 2;
+}
+#layout_config_demo > .btn {
+    margin: .25rem;
+    background-color: var(--bs-info-bg-subtle);
+    border: 1px solid var(--bs-info-border-subtle);
+    position: relative;
+    text-decoration: none;
+    color: var(--bs-body-color);
+}
+/* Non-editable elements (div.btn) - no hover, default cursor */
+#layout_config_demo > div.btn {
+    cursor: default;
+    opacity: 0.7;
+}
+/* Editable elements (a.btn) - hover effect, pointer cursor */
+#layout_config_demo > a.btn {
+    cursor: pointer;
+}
+#layout_config_demo > a.btn:hover {
+    background-color: var(--bs-info-border-subtle);
+}
+#layout_config_demo > a.btn:not(.active) {
+    background-color: var(--bs-secondary-bg);
+    border-color: var(--bs-border-color);
+    opacity: 0.6;
+}
+#layout_config_demo > a.btn:not(.active):hover {
+    background-color: var(--bs-border-color);
+    opacity: 0.8;
+}
+/* Immediate tooltips for layout demo */
+#layout_config_demo > .btn[title] {
+    cursor: help;
+}
+#layout_config_demo > a.btn[title] {
+    cursor: pointer;
+}
+#layout_config_demo > .btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 4px;
+}
+#layout_config_demo > .btn.tooltip-left:hover::after {
+    left: 0;
+    transform: none;
+}
+#layout_config_demo > .btn.tooltip-right:hover::after {
+    right: 0;
+    left: auto;
+    transform: none;
+}
+#layout_config_demo > .btn[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+}
+
+:root {
+    /* --navbar-height: 100px; */ /* Example of custom navbar height */
+}
+
+/* Pygments code highlighting */
+.highlight {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    box-shadow: inset 1px 1px 0px 0px #00000012;
+    font-size: 0.85rem;
+    overflow-x: auto;
+}
+.highlight pre {
+    margin: 0;
 }

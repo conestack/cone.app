@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0,<81"] # XXX: depends on PIL
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cone.example"
+version = "0.1"
+description = "Example cone plugin"
+dependencies = [
+    "waitress",
+    "cone.app",
+    "pygments"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "zope.pytestlayer"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+consider_namespace_packages = true
+addopts = ["--import-mode=importlib"]
+pythonpath = "src"

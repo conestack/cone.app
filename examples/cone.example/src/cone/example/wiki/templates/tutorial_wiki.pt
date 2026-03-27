@@ -1,0 +1,20 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">Wiki Container</div>
+    <div class="card-body">
+      <p class="small">Entry container for wiki pages. Acts as reference browser root.</p>
+      <tal:code replace="structure context.example_wiki_container()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">node_info</div>
+    <div class="card-body">
+      <p class="small">Registers node type with metadata and allowed children.</p>
+      <tal:code replace="structure context.example_node_info()" />
+    </div>
+  </div>
+
+</tal:view>

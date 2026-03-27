@@ -1,0 +1,28 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+          omit-tag="True">
+
+  <div class="card mt-3">
+    <div class="card-header">LayoutConfig</div>
+    <div class="card-body">
+      <p class="small">Controls sidebar tiles, width limits, and more per node type.</p>
+      <tal:code replace="structure context.example_layout_config()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">Session State</div>
+    <div class="card-body">
+      <p class="small">Store user preferences in session for dynamic layout.</p>
+      <tal:code replace="structure context.example_session_state()" />
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">AjaxEvent</div>
+    <div class="card-body">
+      <p class="small">Trigger layout refresh after changing session state.</p>
+      <tal:code replace="structure context.example_ajax_event()" />
+    </div>
+  </div>
+
+</tal:view>

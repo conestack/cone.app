@@ -56,7 +56,7 @@ dependency. Add the following to ``pyproject.toml``.
 .. code-block:: toml
 
     [build-system]
-    requires = ["setuptools>=61.0"]
+    requires = ["setuptools>=61.0,<81"]
     build-backend = "setuptools.build_meta"
 
     [project]
@@ -75,7 +75,8 @@ dependency. Add the following to ``pyproject.toml``.
 2. Virtual Environment
 ----------------------
 
-Create a virtual environment and install the package:
+Create a virtual environment and install the package.
+From the cone.app root directory, run:
 
 .. code-block:: sh
 
@@ -97,6 +98,13 @@ Alternatively, using ``uv`` (faster):
 
     uv venv venv
     uv pip install -e .
+
+
+.. Error::
+
+    If your package depends on unreleased versions of other ``cone.*`` packages,
+    ensure to install those packages first in editable mode before installing
+    your package. See :ref:`Developing on unreleased versions <developing_unreleased>`.
 
 
 3. Application Configuration
@@ -352,11 +360,16 @@ into Ajax SSR can be found :ref:`here <ajax_custom_javascript>`.
 ------------------
 
 After creating the virtual environment as described in section 2, run the
-application:
+application from the ``cone.app`` root directory:
 
 .. code-block:: sh
 
-    ./venv/bin/pserve example.ini
+    ./venv/bin/pserve examples/cone.example/example.ini
+
+.. .. XXX: document running from cone.example directory
+.. .. code-block:: sh
+
+..     ./venv/bin/pserve example.ini
 
 The application is now available at ``localhost:8081``.
 
@@ -385,3 +398,54 @@ To set up mxmake for your plugin:
     mxmake init
 
 See the ``cone.app`` repository for an example mxmake configuration.
+
+
+.. _developing_unreleased:
+
+Advanced: Developing with unreleased package versions
+-----------------------------------------------------
+
+When developing your plugin with unreleased versions of ``cone.*`` packages,
+you need to ensure that those packages are installed in your virtual environment.
+
+To do so, first checkout and install the unreleased packages in sources/:
+
+.. code-block:: sh
+
+    # cone.app root directory
+    make install
+
+Follow up by creating your virtual environment as described in section 2:
+
+.. code-block:: sh
+
+    # cone.app root directory
+    set -e
+    rm -rf ./venv/
+    python3 -m venv venv
+    source ./venv/bin/activate
+
+Then, install the unreleased application packages in editable mode:
+
+.. code-block:: sh
+
+    # cone.app root directory
+    # venv
+    pip install -e sources/cone.tile
+    # add other unreleased cone.* packages as needed
+
+    # Then install cone.app
+    pip install -e .
+
+Finally, install your application package in editable mode:
+
+.. code-block:: sh
+
+    # cone.app root directory
+    # venv
+    pip install -e examples/cone.example
+    
+    # exit the venv
+    deactivate
+
+You are now ready to run your application as described in section 9.
