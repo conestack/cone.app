@@ -38,6 +38,10 @@ select.form-control.referencebrowser[multiple="multiple"] + .referencebrowser_tr
     td.title {
         width: 100%;
     }
+
+    .addreference.disabled, .removereference.disabled {
+        display: none;
+    }
 }
 
 // SCROLLBARS

@@ -882,7 +882,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
         expected = 'title="Remove reference"'
         self.assertTrue(rendered.find(expected) > -1)
-        expected = '<span class="bi-minus-circle">'
+        expected = '<span class="bi-dash-circle">'
         self.assertTrue(rendered.find(expected) > -1)
         expected = '<span class="reftitle" style="display:none;">model</span>'
         self.assertTrue(rendered.find(expected) > -1)

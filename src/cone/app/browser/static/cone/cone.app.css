@@ -110,6 +110,9 @@ select.form-control.referencebrowser[multiple=multiple] + .referencebrowser_trig
 #referencebrowser td.title {
   width: 100%;
 }
+#referencebrowser .addreference.disabled, #referencebrowser .removereference.disabled {
+  display: none;
+}
 
 ::-webkit-scrollbar {
   width: 6px;

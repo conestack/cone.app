@@ -158,7 +158,7 @@ class ActionAddReference(ReferenceAction):
 class ActionRemoveReference(ReferenceAction):
     css = 'removereference'
     title = _('remove_reference', default='Remove reference')
-    icon = 'bi-minus-circle'
+    icon = 'bi-dash-circle'
 
     @property
     def enabled(self):
