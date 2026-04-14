@@ -1,10 +1,42 @@
 Changes
 =======
 
-1.1.1 (unreleased)
+2.0a1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Implement ``order`` property for Actions inside ContextMenuDropdown
+  (defaults to 0).
+  [lenadax]
+
+- Add ``center_content``, ``limit_page_width``, ``sidebar_left_static`` and
+  ``sidebar_right_static`` properties to ``ILayoutConfig``.
+  [lenadax]
+
+- Upgrade jquery to version 4.0.0.
+  [lenadax]
+
+- Add ``sidebar_left_min_width`` and ``sidebar_right_min_width`` properties
+  to ``ILayoutConfig`` (Integer / px value).
+  [lenadax]
+
+- Remove no longer used ``mainmenu_fluid``, ``columns_fluid``, ``content_grid_width``
+  and ``sidebar_left_grid_width`` properties from ``ILayoutConfig``.
+  Replace with ``limit_content_width`` property (Boolean).
+  [lenadax]
+
+- Add ``sidebar_left_mode`` and ``sidebar_right_mode`` properties
+  to ``ILayoutConfig`` ('toggle'/'stacked').
+  [lenadax]
+
+- Cleanup js widgets to prevent DOM memory leaks.
+  [lenadax]
+
+- Remove no longer used ``content_grid_width`` and ``sidebar_left_grid_width``
+  properties from ``ILayoutConfig``.
+  [rnix]
+
+- Run tests on bootstrap5 factory theme.
+  [lenadax]
 
 
 1.1.0 (2026-02-03)

@@ -595,7 +595,7 @@ class TestBrowserBatch(TileTestCase):
 
         # Rendered header
         self.checkOutput("""
-        ...<div class="panel-heading batched_items_header">...
+        ...<div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">...
         """, batched_items.rendered_header)
 
         # Header title. Taken from ``model.metadata`` by default
@@ -619,15 +619,6 @@ class TestBrowserBatch(TileTestCase):
 
         batched_items.show_slice_size = True
 
-        # CSS class set on slice size selection wrapper
-        expected = 'col-xs-4 col-sm3'
-        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.slice_size_css = 'col-xs-3 col-sm2'
-        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.slice_size_css = 'col-xs-4 col-sm3'
-
         # Flag whether to show search filter
         expected = '<input name="term"'
         self.assertTrue(batched_items.rendered_header.find(expected) > -1)
@@ -636,15 +627,6 @@ class TestBrowserBatch(TileTestCase):
         self.assertFalse(batched_items.rendered_header.find(expected) > -1)
 
         batched_items.show_filter = True
-
-        # CSS class set on slice search filter
-        expected = 'col-xs-3'
-        self.assertTrue(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.filter_css = 'col-xs-4'
-        self.assertFalse(batched_items.rendered_header.find(expected) > -1)
-
-        batched_items.filter_css = 'col-xs-3'
 
         # Additional markup displayed in header
         expected = '<div class="additional">Additional</div>'
@@ -723,7 +705,7 @@ class TestBrowserBatch(TileTestCase):
 
         # Rendered pagination
         self.checkOutput("""
-        ...<ul class="pagination pagination-sm">...
+        ...<ul class="pagination pagination-sm my-0">...
         """, batched_items.rendered_pagination)
 
         # Batched items footer
@@ -737,7 +719,7 @@ class TestBrowserBatch(TileTestCase):
             'cone.app.browser:templates/batched_items_footer.pt'
         )
         self.checkOutput("""
-        ...<div class="panel-footer batched_items_footer">...
+        ...<div class="batched_items_footer...
         """, batched_items.rendered_footer)
 
         # Slice ID
@@ -854,7 +836,7 @@ class TestBrowserBatch(TileTestCase):
         # Test ``items_css``
         self.assertEqual(
             batched_items.items_css,
-            'batched_items panel panel-default'
+            'batched_items list-group-item'
         )
 
         self.checkOutput("""
@@ -862,14 +844,14 @@ class TestBrowserBatch(TileTestCase):
         """, batched_items(model=model, request=self.layer.new_request()))
 
         batched_items.items_css = (
-            'my_batched_items batched_items panel panel-default'
+            'my_batched_items batched_items'
         )
 
         self.checkOutput("""
-        ...class="...my_batched_items batched_items ...
+        ...class="...my_batched_items batched_items...
         """, batched_items(model=model, request=self.layer.new_request()))
 
-        batched_items.items_css = 'batched_items panel panel-default'
+        batched_items.items_css = 'batched_items'
 
         # Test ``bind_events``
         self.assertEqual(batched_items.bind_events, 'batchclicked')
@@ -891,7 +873,7 @@ class TestBrowserBatch(TileTestCase):
         # Test ``display_header``
         self.assertTrue(batched_items.display_header)
 
-        expected = '<div class="panel-heading batched_items_header">'
+        expected = '<div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">'
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertTrue(rendered.find(expected) > -1)
 
@@ -904,10 +886,62 @@ class TestBrowserBatch(TileTestCase):
         # Test ``display_footer``
         self.assertTrue(batched_items.display_header)
 
-        expected = '<div class="panel-footer batched_items_footer">'
+        expected = '<div class="batched_items_footer'
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertTrue(rendered.find(expected) > -1)
 
         batched_items.display_footer = False
         rendered = batched_items(model=model, request=self.layer.new_request())
         self.assertFalse(rendered.find(expected) > -1)
+
+    def test_footer_pagination(self):
+        # The batched_items footer displays "Showing X to Y of Z entries".
+        class MyBatchedItems(BatchedItems):
+            slice_template = 'cone.app.testing:dummy_batched_items.pt'
+            _items = []
+
+            @property
+            def item_count(self):
+                return len(self._items)
+
+            @property
+            def slice_items(self):
+                start, end = self.current_slice
+                return self._items[start:end]
+
+        def footer_html(batched_items):
+            footer = batched_items.rendered_footer
+            start = footer.find('batched_items_info')
+            end = footer.find('</div>', start)
+            return footer[start:end]
+
+        # Empty list: from=0, to=0, total=0.
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = self.layer.new_request()
+        batched_items._items = []
+        footer = footer_html(batched_items)
+        self.assertIn('>0<', footer)
+
+        # Full first page: from=1, to=15, total=20.
+        items = [BaseNode() for _ in range(20)]
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = self.layer.new_request()
+        batched_items._items = items
+        footer = footer_html(batched_items)
+        self.assertIn('>1<', footer)
+        self.assertIn('>15<', footer)
+        self.assertIn('>20<', footer)
+
+        # Partial last page: from=16, to=17, total=17.
+        items = [BaseNode() for _ in range(17)]
+        request = self.layer.new_request()
+        request.params['b_page'] = '1'
+        batched_items = MyBatchedItems()
+        batched_items.model = BaseNode()
+        batched_items.request = request
+        batched_items._items = items
+        footer = footer_html(batched_items)
+        self.assertIn('>16<', footer)
+        self.assertIn('>17<', footer)

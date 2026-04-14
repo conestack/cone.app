@@ -16,6 +16,7 @@ class RowData(dict):
         self.selectable = selectable
         self.target = target
         self.css = css
+        self.cell_css = dict()
 
 
 @plumbing(RelatedViewConsumer)
@@ -44,8 +45,8 @@ class Table(Tile):
     ajax_path = None
     ajax_path_event = None
 
-    table_length_size = 'col-xs-4 col-sm3'
-    table_filter_size = 'col-xs-3'
+    table_length_size = None
+    table_filter_size = None
 
     @property
     def slice(self):
@@ -160,6 +161,15 @@ class Table(Tile):
         url = self.make_url(params)
         css = selected and order or ''
         return css, url
+
+    @property
+    def empty_state_message(self):
+        """Optional message shown when the table has no rows.
+
+        Return a translated string or None to suppress the message.
+        Subclasses can override to provide context-specific guidance.
+        """
+        return None
 
     @property
     def item_count(self):

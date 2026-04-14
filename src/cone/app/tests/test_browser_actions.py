@@ -182,6 +182,7 @@ class TestBrowserActions(TileTestCase):
          data-placement="top"
          ajax:bind="click"
          ajax:target="http://example.com/"
+         ajax:overlay-css="modal-xl"
         ></a>
         """, rendered)
 
@@ -230,7 +231,7 @@ class TestBrowserActions(TileTestCase):
          ajax:path-overlay-css="some-css"
          ajax:path-overlay-uid="1234"
          ajax:path-overlay-title="Overlay Title"
-        >&nbsp;Foo</a>
+        >&nbsp;<span>Foo</span></a>
         """, rendered)
 
         action.enabled = False
@@ -335,9 +336,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root?contenttile=listing"
             ajax:event="contextchanged:#layout"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-arrow-up"></span
-            >&nbsp;One level up</a>...
+            ><span class="bi-arrow-up"></span
+            >&nbsp;<span>One level up</span></a>...
             """, rendered)
 
             model.properties.action_up_tile = 'otherparentcontent'
@@ -349,9 +351,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root?contenttile=otherparentcontent"
             ajax:event="contextchanged:#layout"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-arrow-up"></span
-            >&nbsp;One level up</a>...
+            ><span class="bi-arrow-up"></span
+            >&nbsp;<span>One level up</span></a>...
             """, rendered)
 
             default = model['default'] = BaseNode()
@@ -365,9 +368,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root?contenttile=listing"
             ajax:event="contextchanged:#layout"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-arrow-up"></span
-            >&nbsp;One level up</a>...
+            ><span class="bi-arrow-up"></span
+            >&nbsp;<span>One level up</span></a>...
             """, rendered)
 
     def test_ActionView(self):
@@ -389,13 +393,14 @@ class TestBrowserActions(TileTestCase):
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
-            class="selected"
+            class="active"
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="content:#content:inner"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-eye-open"></span
-            >&nbsp;View</a>...
+            ><span class="bi-eye-fill"></span
+            >&nbsp;<span>View</span></a>...
             """, rendered)
 
             model.properties.default_content_tile = 'otherdefault'
@@ -407,9 +412,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="view:#content:inner"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-eye-open"></span
-            >&nbsp;View</a>...
+            ><span class="bi-eye-fill"></span
+            >&nbsp;<span>View</span></a>...
             """, rendered)
 
             model.properties.default_content_tile = None
@@ -433,12 +439,13 @@ class TestBrowserActions(TileTestCase):
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
-            class="selected"
+            class="active"
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="content:#content:inner"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            >&nbsp;model</a>...
+            >&nbsp;<span>model</span></a>...
             """, rendered)
 
     def test_ActionList(self):
@@ -461,9 +468,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="listing:#content:inner"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-th-list"></span
-            >&nbsp;Listing</a>...
+            ><span class="bi-list-task"></span
+            >&nbsp;<span>Listing</span></a>...
             """, rendered)
 
     def test_ActionSharing(self):
@@ -496,9 +504,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root/sharingmodel"
             ajax:action="sharing:#content:inner"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-share"></span
-            >&nbsp;Sharing</a>...
+            ><span class="bi-share-fill"></span
+            >&nbsp;<span>Sharing</span></a>...
             """, rendered)
 
     def test_ActionState(self):
@@ -525,8 +534,9 @@ class TestBrowserActions(TileTestCase):
 
             rendered = action(wfmodel, request)
             self.checkOutput("""
-            ...<li class="dropdown">...
+            ...<li class="nav-item dropdown py-0">...
             <a href="#"
+            class="dropdown-item"
             ajax:bind="click"
             ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"
             ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
@@ -561,21 +571,22 @@ class TestBrowserActions(TileTestCase):
 
             rendered = action(addmodel, request)
             self.checkOutput("""
-            ...<li class="dropdown">
+            ...<li class="nav-item dropdown py-0">
             <a href="#"
-            class="dropdown-toggle"
-            data-toggle="dropdown">
+            class="nav-link dropdown-toggle py-2 px-3"
+            data-bs-toggle="dropdown" data-bs-auto-close="true">
             <span>Add</span>
             <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" role="addmenu">
+            <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
             <li>
             <a href="http://example.com/add?factory=addable"
+            class="dropdown-item"
             ajax:bind="click"
             ajax:target="http://example.com/?factory=addable"
             ajax:action="add:#content:inner"
             ajax:path="href">
-            <span class="glyphicon glyphicon-asterisk"></span>
+            <span class="bi-asterisk"></span>
             Addable
             </a>
             </li>
@@ -608,9 +619,10 @@ class TestBrowserActions(TileTestCase):
             ajax:bind="click"
             ajax:target="http://example.com/root/model"
             ajax:action="edit:#content:inner"
+            ajax:overlay-css="modal-xl"
             ajax:path="href"
-            ><span class="glyphicon glyphicon-pencil"></span
-            >&nbsp;Edit</a>...
+            ><span class="bi-pencil"></span
+            >&nbsp;<span>Edit</span></a>...
             """, rendered)
 
     def test_ActionDelete(self):
@@ -639,8 +651,9 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="delete:NONE:NONE"
             ajax:confirm="Do you really want to delete this Item?"
-            ><span class="ion-trash-a"></span
-            >&nbsp;Delete</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-trash3"></span
+            >&nbsp;<span>Delete</span></a>...
             """, rendered)
 
             model.properties.default_content_tile = 'othertile'
@@ -671,8 +684,9 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="delete_children:NONE:NONE"
             ajax:confirm="Do you really want to delete selected Items?"
-            ><span class="ion-trash-a"></span
-            >&nbsp;Delete selected children</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-trash3"></span
+            >&nbsp;<span>Delete selected children</span></a>...
             """, rendered)
 
             request.cookies['cone.app.selected'] = ['foo']
@@ -685,8 +699,9 @@ class TestBrowserActions(TileTestCase):
             ajax:target="http://example.com/root/model"
             ajax:action="delete_children:NONE:NONE"
             ajax:confirm="Do you really want to delete selected Items?"
-            ><span class="ion-trash-a"></span
-            >&nbsp;Delete selected children</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-trash3"></span
+            >&nbsp;<span>Delete selected children</span></a>...
             """, rendered)
 
             del request.cookies['cone.app.selected']
@@ -712,8 +727,9 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-cut"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-scissors"></span
-            >&nbsp;Cut</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-scissors"></span
+            >&nbsp;<span>Cut</span></a>...
             """, rendered)
 
             model.supports_cut = False
@@ -739,8 +755,9 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-copy"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-ios7-copy-outline"></span
-            >&nbsp;Copy</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-copy"></span
+            >&nbsp;<span>Copy</span></a>...
             """, rendered)
 
             model.supports_copy = False
@@ -767,8 +784,9 @@ class TestBrowserActions(TileTestCase):
             href="#"
             class="disabled"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-clipboard"></span
-            >&nbsp;Paste</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-clipboard"></span
+            >&nbsp;<span>Paste</span></a>...
             """, rendered)
 
             request.cookies['cone.app.copysupport.cut'] = ['foo']
@@ -778,8 +796,9 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-paste"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-clipboard"></span
-            >&nbsp;Paste</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-clipboard"></span
+            >&nbsp;<span>Paste</span></a>...
             """, rendered)
 
             del request.cookies['cone.app.copysupport.cut']
@@ -790,8 +809,9 @@ class TestBrowserActions(TileTestCase):
             id="toolbaraction-paste"
             href="#"
             ajax:target="http://example.com/copysupport"
-            ><span class="ion-clipboard"></span
-            >&nbsp;Paste</a>...
+            ajax:overlay-css="modal-xl"
+            ><span class="bi-clipboard"></span
+            >&nbsp;<span>Paste</span></a>...
             """, rendered)
 
             del request.cookies['cone.app.copysupport.copy']
@@ -837,7 +857,7 @@ class TestBrowserActions(TileTestCase):
     def test_ActionMoveUp(self):
         action = ActionMoveUp()
         self.assertEqual(action.id, 'toolbaraction-move-up')
-        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-up')
+        self.assertEqual(action.icon, 'bi-chevron-up')
         self.assertEqual(action.action, 'move_up:NONE:NONE')
         self.assertEqual(action.text, 'move_up')
 
@@ -869,7 +889,7 @@ class TestBrowserActions(TileTestCase):
     def test_ActionMoveDown(self):
         action = ActionMoveDown()
         self.assertEqual(action.id, 'toolbaraction-move-down')
-        self.assertEqual(action.icon, 'glyphicon glyphicon-chevron-down')
+        self.assertEqual(action.icon, 'bi-chevron-down')
         self.assertEqual(action.action, 'move_down:NONE:NONE')
         self.assertEqual(action.text, 'move_down')
 

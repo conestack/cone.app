@@ -89,14 +89,18 @@ class IProperties(IReadMapping):
 class ILayoutConfig(IProperties):
     """Layout configuration."""
     mainmenu = Attribute(u'Flag whether to display mainmenu')
-    mainmenu_fluid = Attribute(u'Flag whether mainmenu is fluid')
     livesearch = Attribute(u'Flag whether to display livesearch')
     personaltools = Attribute(u'Flag whether to display personaltools')
-    columns_fluid = Attribute(u'Flag whether columns are fluid')
+    limit_content_width = Attribute(u'Flag whether content width should be limited on large screens')
+    limit_page_width = Attribute(u'Flag whether page width should be limited on large screens')
+    center_content = Attribute(u'Flag whether to center the content area (used with limit_content_width)')
     pathbar = Attribute(u'Flag whether to display pathbar')
     sidebar_left = Attribute(u'Tiles which should be rendered in sidebar')
-    sidebar_left_grid_width = Attribute(u'Sidebar grid width')
-    content_grid_width = Attribute(u'Content grid width')
+    sidebar_left_min_width = Attribute(u'Min width of sidebar left in px')
+    sidebar_left_static = Attribute(u'Flag whether sidebar left overlays content instead of pushing it')
+    sidebar_right = Attribute(u'Tiles which should be rendered in sidebar')
+    sidebar_right_min_width = Attribute(u'Min width of sidebar right in px')
+    sidebar_right_static = Attribute(u'Flag whether sidebar right overlays content instead of pushing it')
 
 
 # B/C, removed as of cone.app 1.1
@@ -208,3 +212,7 @@ class IAuthenticator(Interface):
 
         Return principal id if authentication is successful, else None.
         """
+
+class ICategories(Interface):
+    """List of translation strings"""
+    categories = Attribute(u'Categories as (translation) string.')

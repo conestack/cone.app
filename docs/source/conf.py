@@ -2,7 +2,6 @@
 
 # import sys
 # import os
-import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -75,8 +74,6 @@ exclude_trees = ['_build']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
-
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
 
@@ -85,20 +82,21 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-html_theme = 'bootstrap'
+html_theme = 'conestack'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'bootstrap_version': '3',
-    'navbar_fixed_top': 'false',
-    'navbar_class': 'navbar navbar-inverse',
-    'navbar_pagenav': False,
-    'source_link_position': 'false',
+    'cs_color': '#FFFFFF',
+    'cs_bg_color': 'var(--bs-gray-900)',
+    'logo_url': '_static/icon.svg',
+    'logo_title': 'Cone.app',
+    'logo_height': '50px',
+    'logo_width': '50px',
+    'github_url': 'https://github.com/conestack/cone.app',
+    'pypi_url': 'https://pypi.org/project/cone.app/'
 }
-
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".

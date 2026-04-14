@@ -1,0 +1,30 @@
+.table_length, .table_filter {
+    width: unset;
+}
+
+
+// contents table
+#contents > div.card-body div.row {
+    > div {
+        flex: 1 0 auto;
+        flex-wrap: nowrap;
+    }
+}
+
+// table
+.table-footer {
+    gap: 1rem 0;
+
+    .table_info {
+        white-space: nowrap;
+    }
+}
+
+#main-area.full {
+    .table_length {
+        max-width: max-content;
+    }
+    .table_filter {
+        max-width: 300px;
+    }
+}

@@ -202,7 +202,7 @@ class TestBrowserTable(TileTestCase):
         expected = '<div id="mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
-        expected = 'panel-default mytable"'
+        expected = 'card mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
         # Sort header with query white list param
@@ -221,8 +221,9 @@ class TestBrowserTable(TileTestCase):
         ajax:bind="click"
         ajax:target="http://example.com/"
         ajax:action="content:#content:inner"
+        ajax:overlay-css="modal-xl"
         ajax:path="href"
-        >&nbsp;Foo</a>...
+        >&nbsp;<span>Foo</span></a>...
         """, rendered)
 
         # String
@@ -232,3 +233,58 @@ class TestBrowserTable(TileTestCase):
         # Datetime
         expected = '01.04.2011 00:00'
         self.assertTrue(rendered.find(expected) > -1)
+
+    def test_footer_pagination(self):
+        # The table footer displays "Showing X to Y of Z entries".
+        class MyTable(Table):
+            col_defs = [{
+                'id': 'col',
+                'title': 'Col',
+                'sort_key': None,
+                'sort_title': None,
+                'content': 'string',
+            }]
+            _count = 0
+
+            @property
+            def item_count(self):
+                return self._count
+
+            def sorted_rows(self, start, end, sort, order):
+                rows = []
+                for i in range(self._count):
+                    row_data = RowData()
+                    row_data['col'] = str(i)
+                    rows.append(row_data)
+                return rows[start:end]
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        model = BaseNode()
+        request = self.layer.new_request()
+
+        def footer_html(rendered):
+            start = rendered.find('table_info')
+            end = rendered.find('</div>', start)
+            return rendered[start:end]
+
+        # Empty table: from=0, to=0, total=0.
+        table = MyTable(tmpl, None, 'table')
+        table._count = 0
+        footer = footer_html(table(model, request))
+        self.assertIn('>0<', footer)
+
+        # Full first page: from=1, to=15, total=20.
+        table = MyTable(tmpl, None, 'table')
+        table._count = 20
+        footer = footer_html(table(model, request))
+        self.assertIn('>1<', footer)
+        self.assertIn('>15<', footer)
+        self.assertIn('>20<', footer)
+
+        # Partial last page: from=16, to=17, total=17.
+        table = MyTable(tmpl, None, 'table')
+        table._count = 17
+        request.params['b_page'] = '1'
+        footer = footer_html(table(model, request))
+        self.assertIn('>16<', footer)
+        self.assertIn('>17<', footer)

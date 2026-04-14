@@ -235,3 +235,73 @@ An implementation integrating the publication workflow as described in
 
         # Workflow state specific ACL's
         state_acls = publication_state_acls
+
+
+Workflow Utility Functions
+--------------------------
+
+``cone.app.workflow`` provides several utility functions for working with
+workflows programmatically.
+
+
+lookup_workflow
+~~~~~~~~~~~~~~~
+
+Looks up the workflow for a given node.
+
+.. code-block:: python
+
+    from cone.app.workflow import lookup_workflow
+
+    workflow = lookup_workflow(node)
+    if workflow is not None:
+        # workflow is a repoze.workflow.Workflow instance
+        print(workflow.name)
+
+
+lookup_state_data
+~~~~~~~~~~~~~~~~~
+
+Returns the state data dictionary for the current workflow state of a node.
+
+.. code-block:: python
+
+    from cone.app.workflow import lookup_state_data
+
+    state_data = lookup_state_data(node)
+    if state_data is not None:
+        # state_data contains keys like 'title', 'description'
+        print(state_data.get('title'))
+        print(state_data.get('description'))
+
+
+initialize_workflow
+~~~~~~~~~~~~~~~~~~~
+
+Initializes the workflow state for a node. This is typically called
+automatically when using the ``WorkflowState`` behavior, but can be
+called manually if needed.
+
+.. code-block:: python
+
+    from cone.app.workflow import initialize_workflow
+
+    # Initialize workflow, only sets state if not already set
+    initialize_workflow(node)
+
+    # Force re-initialization even if state already exists
+    initialize_workflow(node, force=True)
+
+
+WfDropdown Tile
+~~~~~~~~~~~~~~~
+
+The ``wf_dropdown`` tile renders a dropdown menu for changing workflow states.
+It displays available transitions for the current user based on permissions.
+
+.. code-block:: python
+
+    from cone.tile import render_tile
+
+    # Render the workflow dropdown
+    html = render_tile(model, request, 'wf_dropdown')

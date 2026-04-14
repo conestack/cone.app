@@ -5,16 +5,17 @@
   <div class="dropdown">
 
     <a href="#"
-       class="dropdown-toggle ${context.css}"
-       data-toggle="dropdown">
+       class="dropdown-toggle ${context.css_class if hasattr(context, 'cssclass') else ''}"
+       data-bs-toggle="dropdown">
       <span class="${context.icon|nothing}"></span>
       <span tal:content="context.title">Title</span>
       <span class="caret"></span>
     </a>
 
-    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <ul class="dropdown-menu" role="menu">
       <li role="presentation" tal:repeat="item context.items">
         <a href="${item.url|nothing}"
+           class="dropdown-item text-decoration-none"
            role="menuitem"
            tabindex="-1"
            ajax:bind="click"

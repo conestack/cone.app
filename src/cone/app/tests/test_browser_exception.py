@@ -1,3 +1,4 @@
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser.exception import internal_server_error
 from cone.app.model import BaseNode
@@ -92,8 +93,8 @@ class TestBrowserException(TileTestCase):
 
     def test_forbidden(self):
         # Forbidden tile
-        root = BaseNode()
-        model = root['model'] = BaseNode()
+        root = get_root()
+        model = root['model'] = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
         self.checkOutput("""
@@ -104,7 +105,7 @@ class TestBrowserException(TileTestCase):
         # Forbidden view. Unauthenticated renders login form.
         context = HTTPForbidden()
         request = self.layer.new_request()
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request).text
         self.assertTrue(res.find('id="input-loginform-login"') > -1)
 
@@ -116,15 +117,15 @@ class TestBrowserException(TileTestCase):
     def test_json_forbidden(self):
         context = HTTPForbidden()
         request = self.layer.new_request(type='json')
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request)
         self.assertEqual(res.text, '{}')
         self.assertEqual(res.status, '403 Forbidden')
 
     def test_not_found(self):
         # Not Found tile
-        root = BaseNode()
-        model = root['model'] = BaseNode()
+        root = get_root()
+        model = root['model'] = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
         self.checkOutput("""
@@ -135,7 +136,7 @@ class TestBrowserException(TileTestCase):
         # Not Found view. Always renders not found as content tile.
         context = HTTPNotFound()
         request = self.layer.new_request()
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request).text
         self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
 
@@ -146,7 +147,7 @@ class TestBrowserException(TileTestCase):
     def test_json_not_found(self):
         context = HTTPNotFound()
         request = self.layer.new_request(type='json')
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request)
         self.assertEqual(res.text, '{}')
         self.assertEqual(res.status, '404 Not Found')

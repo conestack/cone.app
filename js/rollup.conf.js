@@ -3,34 +3,24 @@ import terser from '@rollup/plugin-terser';
 
 const out_dir = 'src/cone/app/browser/static/cone';
 
-const default_outro = `
-window.cone = window.cone || {};
-Object.assign(window.cone, exports);
-`
-
-const protected_outro = default_outro + `
+const outro = `
 window.createCookie = createCookie;
 window.readCookie = readCookie;
 `;
 
-const protected_globals = {
-    jquery: 'jQuery',
-    treibstoff: 'treibstoff'
-};
-
-const public_globals = {
+const globals = {
     jquery: 'jQuery',
     treibstoff: 'treibstoff',
-    Bloodhound: 'Bloodhound'
+    bootstrap: 'bootstrap'
 };
 
-const create_bundle = function(name, globals, outro, debug) {
+export default args => {
     let conf = {
-        input: `js/src/bundles/${name}.js`,
+        input: `js/src/bundle.js`,
         plugins: [cleanup()],
         output: [{
-            file: `${out_dir}/cone.app.${name}.js`,
-            name: `cone_app_${name}`,
+            file: `${out_dir}/cone.app.js`,
+            name: 'cone',
             format: 'iife',
             outro: outro,
             globals: globals,
@@ -38,13 +28,14 @@ const create_bundle = function(name, globals, outro, debug) {
         }],
         external: [
             'jquery',
-            'treibstoff'
+            'treibstoff',
+            'bootstrap'
         ]
     };
-    if (debug !== true) {
+    if (args.configDebug !== true) {
         conf.output.push({
-            file: `${out_dir}/cone.app.${name}.min.js`,
-            name: `cone_app_${name}`,
+            file: `${out_dir}/cone.app.min.js`,
+            name: 'cone',
             format: 'iife',
             plugins: [terser()],
             outro: outro,
@@ -53,12 +44,4 @@ const create_bundle = function(name, globals, outro, debug) {
         });
     }
     return conf;
-}
-
-export default args => {
-    let debug = args.configDebug;
-    return [
-        create_bundle('public', public_globals, default_outro, debug),
-        create_bundle('protected', protected_globals, protected_outro, debug)
-    ];
 };

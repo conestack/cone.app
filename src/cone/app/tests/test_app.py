@@ -165,14 +165,13 @@ class TestApp(NodeTestCase):
         self.assertTrue(ILayoutConfig.providedBy(config))
 
         self.assertTrue(config.mainmenu)
-        self.assertTrue(config.mainmenu_fluid)
         self.assertTrue(config.livesearch)
         self.assertTrue(config.personaltools)
-        self.assertTrue(config.columns_fluid)
+        self.assertTrue(config.limit_content_width)
+        self.assertFalse(config.limit_page_width)
         self.assertTrue(config.pathbar)
         self.assertEqual(config.sidebar_left, ['navtree'])
-        self.assertEqual(config.sidebar_left_grid_width, 3)
-        self.assertEqual(config.content_grid_width, 9)
+        self.assertEqual(config.sidebar_right, [])
 
         @layout_config(BaseNode)
         class BaseNodeLayout(LayoutConfig):

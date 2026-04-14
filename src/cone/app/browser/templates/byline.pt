@@ -2,17 +2,25 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
-  <p class="byline"
+  <div class="byline mb-3"
      tal:define="metadata model.metadata">
-    <span i18n:translate="created_by">Created by</span>:
-    <strong tal:content="metadata.creator">creator</strong>,
-    <span i18n:translate="created_on">on</span>
-    <strong tal:content="context.format_date(metadata.created)">
-      1.1.2012 - 10:00
-    </strong>.
-    <span i18n:translate="last_modified">Last modified</span>:
-    <strong tal:content="context.format_date(metadata.modified)">
-      1.1.2012 - 10:00
-    </strong>
-  </p>
+    <div class="d-flex flex-wrap gap-1 mb-1">
+      <div>
+        <span i18n:translate="created_by">Created by</span>:
+        <strong tal:content="metadata.creator">creator</strong>,
+      </div>
+      <div>
+        <span i18n:translate="created_on">on</span>
+        <strong tal:content="context.format_date(metadata.created)">
+          1.1.2012 - 10:00
+        </strong>.
+      </div>
+    </div>
+    <div>
+      <span i18n:translate="last_modified">Last modified</span>:
+      <strong tal:content="context.format_date(metadata.modified)">
+        1.1.2012 - 10:00
+      </strong>
+    </div>
+  </div>
 </tal:block>

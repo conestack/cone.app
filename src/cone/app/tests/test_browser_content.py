@@ -1,3 +1,4 @@
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.content import content_view_action
@@ -28,7 +29,7 @@ class TestBrowserLayout(TileTestCase):
                 def render(self):
                     return '<div>Model Content</div>'
 
-        model = Model()
+        model = Model(parent=get_root())
         request = self.layer.new_request()
         with self.layer.authenticated('manager'):
             res = render_tile(model, request, 'model_tile')
@@ -55,7 +56,7 @@ class TestBrowserLayout(TileTestCase):
             interface=Model,
             permission='view',
             text='Model Action',
-            icon='glyphicon glyphicon-star')
+            icon='bi bi-star')
         class ModelContentTile(Tile):
             pass
 
@@ -67,7 +68,7 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(action.interface, Model)
         self.assertEqual(action.permission, 'view')
         self.assertEqual(action.text, 'Model Action')
-        self.assertEqual(action.icon, 'glyphicon glyphicon-star')
+        self.assertEqual(action.icon, 'bi bi-star')
 
         del context_menu['contentviews']['model_action']
 

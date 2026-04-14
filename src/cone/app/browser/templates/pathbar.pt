@@ -4,31 +4,34 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <ol id="pathbar"
-      class="contextsensitiv breadcrumb"
-      ajax:bind="contextchanged"
-      ajax:action="pathbar:#pathbar:replace">
+  <nav id="pathbar"
+       tal:define="config context.config"
+       class="contextsensitiv position-relative shadow-sm border-bottom"
+       ajax:bind="contextchanged"
+       ajax:action="pathbar:#pathbar:replace">
 
-    <li>
-      <span i18n:translate="you_are_here">You are here</span>:
-    </li>
-
-    <tal:li repeat="item context.items">
-      <li tal:attributes="class item['selected'] and 'active' or ''">
-        <a href="${item['url']}"
-           ajax:bind="click"
-           ajax:target="${item['target']}"
-           ajax:event="contextchanged:#layout"
-           ajax:path="href"
-           tal:content="item['title']"
-           tal:condition="not item['selected']">
-          Title
-        </a>
-        <strong tal:content="item['title']"
-                tal:condition="item['selected']">Title</strong>
-      </li>
-    </tal:li>
-
-  </ol>
+    <div tal:define="css 'pathbar-wrapper px-3 py-2 ';
+                     css css + ('container-xxl' if config.limit_page_width else 'container-fluid');
+                     css css + ('' if config.center_content else ' ms-0');"
+         tal:attributes="class css">
+      <ol class="breadcrumb m-0">
+        <tal:li repeat="item context.items">
+          <li tal:attributes="class item['selected'] and 'breadcrumb-item active' or 'breadcrumb-item'">
+            <a href="${item['url']}"
+              ajax:bind="click"
+              ajax:target="${item['target']}"
+              ajax:event="contextchanged:#layout"
+              ajax:path="href"
+              tal:content="item['title']"
+              tal:condition="not item['selected']">
+              Title
+            </a>
+            <strong tal:content="item['title']"
+                    tal:condition="item['selected']">Title</strong>
+          </li>
+        </tal:li>
+      </ol>
+    </div>
+  </nav>
 
 </tal:block>

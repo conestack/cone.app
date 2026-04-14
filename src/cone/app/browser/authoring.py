@@ -12,6 +12,7 @@ from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.form import FormTarget
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
+from cone.app.interfaces import ICategories
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
@@ -209,6 +210,7 @@ class ContentForm(FormHeading):
     """Form behavior rendering to content area."""
     show_heading = default(True)
     show_contextmenu = default(True)
+    is_card = default(True)
 
     @default
     @property
@@ -310,6 +312,47 @@ def default_addmodel_factory(parent, nodeinfo):
       path='templates/add_dropdown.pt',
       permission='add', strict=False)
 class AddDropdown(Tile):
+
+    def category_id(self, category):
+        return 'add-category-cat-{0}'.format(category)
+
+    @property
+    def addables(self):
+        addables = list()
+        for addable in self.model.nodeinfo.addables:
+            if not security.node_available(self.model, addable):
+                continue
+            addables.append(addable)
+        return addables
+
+    @property
+    def categories(self):
+        # expects ``categories`` property on model class
+        ret = list()
+        addables = self.addables
+        if not addables:
+            return ret
+        node_infos = [get_node_info(addable) for addable in addables]
+        # lookup categories
+        categories = set()
+        for info in node_infos:
+            cls = info.node
+            for cat in cls.categories:
+                categories.add(cat)
+        # create items
+        for category in categories:
+            category_items = list()
+            for info in node_infos:
+                cls = info.node
+                if category in cls.categories:
+                    item = self.make_item(cls.node_info_name, info)
+                    category_items.append(item)
+            ret.append((category, category_items))
+        return sorted(ret, key=lambda x: x[0])
+
+    @property
+    def has_categories(self):
+        return ICategories.providedBy(self.model)
 
     def make_item(self, info_name, info):
         model = self.model

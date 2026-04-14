@@ -1,0 +1,27 @@
+<tal:view xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <tal:contextmenu replace="structure tile('contextmenu')" />
+
+  <div class="card mt-3">
+
+    <div class="card-body">
+
+      <h4 class="card-title">
+        <span class="label label-primary"
+              tal:content="model.metadata.title">
+          Title
+        </span>
+      </h4>
+
+      <tal:byline replace="structure tile('byline')" />
+
+      <p class="card-text" tal:content="model.metadata.description">
+        Description
+      </p>
+
+    </div>
+
+  </div>
+
+</tal:view>

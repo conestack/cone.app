@@ -5,6 +5,7 @@ from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationEnvironment
 from cone.app.interfaces import IApplicationNode
+from cone.app.interfaces import ICategories
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
 from cone.app.interfaces import ILayoutConfig
@@ -156,11 +157,14 @@ class AppNode(Behavior):
     @default
     @instance_property
     def metadata(self):
-        name = self.name
-        if not name:
-            name = _('no_title', default='No Title')
         metadata = Metadata()
-        metadata.title = name
+        info = get_node_info(self.node_info_name)
+        if info and info.title:
+            metadata.title = info.title
+        elif self.name:
+            metadata.title = self.name
+        else:
+            metadata.title = _('no_title', default='No Title')
         return metadata
 
     @default
@@ -246,7 +250,7 @@ class AppSettings(FactoryNode):
         props = Properties()
         props.in_navtree = False
         props.skip_mainmenu = True
-        props.icon = 'ion-ios7-gear'
+        props.icon = 'bi-gear'
         return props
 
     @instance_property
@@ -335,6 +339,11 @@ class NamespaceUUID(Behavior):
     def uuid(self, uuid):
         msg = 'Ignore attempt to set {}.uuid'.format(self.__class__.__name__)
         raise NotImplementedError(msg)
+
+
+@implementer(ICategories)
+class Categories(Behavior):
+    categories = default([])
 
 
 class UUIDAttributeAware(UUIDAware):

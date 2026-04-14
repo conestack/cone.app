@@ -112,14 +112,11 @@ class CopySupportNode(BaseNode):
 def default_layout(context):
     config = Layout()
     config.mainmenu = True
-    config.mainmenu_fluid = False
     config.livesearch = True
     config.personaltools = True
-    config.columns_fluid = False
+    config.limit_content_width = False
     config.pathbar = True
     config.sidebar_left = ['navtree']
-    config.sidebar_left_grid_width = 3
-    config.content_grid_width = 9
     return config
 
 

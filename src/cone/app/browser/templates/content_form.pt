@@ -3,22 +3,22 @@
   <tal:contextmenu condition="context.show_contextmenu"
                    replace="structure context.rendered_contextmenu" />
 
-  <div class="panel panel-default">
+  <div tal:define="css 'card mt-3' if context.is_card else 'mt-3'"
+       tal:attributes="class css">
 
-    <div class="panel-heading content-heading"
-         tal:condition="context.show_heading">
+    <div tal:define="css 'card-body' if context.is_card else ''"
+         tal:attributes="class css">
 
-      <h4 class="pull-left">
+      <h4 class="card-title mb-3"
+          tal:condition="context.show_heading">
         <span class="label label-primary"
               tal:content="context.form_heading">Title</span>
       </h4>
 
-      <div class="clearfix"></div>
+      <div>
+        <tal:form replace="structure context.rendered_form" />
+      </div>
 
-    </div>
-
-    <div class="panel-body">
-      <tal:form replace="structure context.rendered_form" />
     </div>
 
   </div>

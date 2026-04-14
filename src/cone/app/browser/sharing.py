@@ -75,6 +75,25 @@ class SharingTable(Table):
                  mapping={'title': title})
 
     @property
+    def empty_state_message(self):
+        if self.filter_term:
+            return None
+        localizer = get_localizer(self.request)
+        main = localizer.translate(_(
+            'sharing_empty_state',
+            default=(
+                'No local access permissions assigned.'
+            )
+        ))
+        note = localizer.translate(_(
+            'sharing_empty_state_hint',
+            default=(
+                'Use the search field above to find and add users.'
+            )
+        ))
+        return f'<p class="mb-1">{main}</p><p class="small mb-0">{note}</p>'
+
+    @property
     def item_count(self):
         term = self.filter_term
         if term:

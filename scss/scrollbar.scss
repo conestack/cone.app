@@ -1,0 +1,41 @@
+/* scrollbar */
+.scrollable-x, .scrollable-y {
+    position: relative;
+    overflow: hidden;
+}
+.scrollable-content {
+    position: relative;
+}
+.scrollbar {
+    display: none;
+    position: absolute;
+    background: $gray-300;
+    border-radius: 3px;
+    z-index: 1000;
+
+    .scroll-handle {
+        position: relative;
+        border-radius: 3px;
+        background: $primary;
+    }
+}
+.scrollbar-top {
+    .scrollbar {
+        top: 0;
+    }
+}
+.scrollbar-bottom {
+    .scrollbar {
+        bottom: 0;
+    }
+}
+.scrollbar-left {
+    .scrollbar {
+        left: 0;
+    }
+}
+.scrollbar-right {
+    .scrollbar {
+        right: 0;
+    }
+}

@@ -41,7 +41,7 @@ class SettingsLayoutConfig(DefaultLayoutConfig):
 @personal_tools_action(name='settings')
 class ViewSettingsAction(LinkAction):
     text = _('settings', default='Settings')
-    icon = 'ion-ios7-gear'
+    icon = 'bi-gear'
     event = 'contextchanged:#layout'
     path = 'href'
 
@@ -99,6 +99,7 @@ class SettingsTile(Tile):
             category.append({
                 'title': child.metadata.title,
                 'icon': child.nodeinfo.icon,
+                'description': child.metadata.description,
                 'target': make_url(self.request, node=child),
                 'current': child.name == self.model.name
             })

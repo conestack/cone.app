@@ -1,21 +1,33 @@
-<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-           xmlns:ajax="http://namespaces.conestack.org/ajax"
-           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-           i18n:domain="cone.app"
-           omit-tag="True">
+<tal:language
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:ajax="http://namespaces.conestack.org/ajax"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="cone.app"
+  omit-tag="True">
 
-  <li class="dropdown">
+  <div id="language-dropdown"
+       class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0">
 
-    <a href="#"
-       class="dropdown-toggle"
-       data-toggle="dropdown">
-      <span i18n:translate="language">Language</span>
-      <span class="caret"></span>
-    </a>
+    <div class="h-100 dropdown-toggle d-flex justify-content-end
+                justify-content-end-sm-center align-items-center"
+         data-bs-toggle="dropdown">
+      <a href="#"
+         class="nav-link d-inline-block px-0 px-md-2">
+        <img src="${context.flag}"
+             width="20"
+             height="20"
+             alt="language"
+             i18n:attributes="alt" />
+        <span class="caret"></span>
+      </a>
+    </div>
 
-    <ul class="dropdown-menu" role="languagemenu">
+    <ul role="languagemenu"
+        class="dropdown-menu rounded-0 rounded-bottom
+               dropdown-menu-end mt-2 mt-sm-0">
       <li tal:repeat="lang context.languages">
         <a href="#"
+           class="${lang.css}"
            ajax:bind="click"
            ajax:target="${lang.target}"
            ajax:action="change_language:NONE:NONE">
@@ -25,6 +37,6 @@
       </li>
     </ul>
 
-  </li>
+  </div>
 
-</tal:block>
+</tal:language>

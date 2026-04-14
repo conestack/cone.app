@@ -11,9 +11,14 @@ jobs:
     - uses: actions/setup-python@v4
     - uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18 # minimum required for dependencies
 
     - run: npm install -g pnpm@7 @mermaid-js/mermaid-cli
+
+    - name: Corepack
+      run: |
+        npm install --global corepack@latest
+        corepack enable
 
     - name: Install Project
       run: make install

@@ -1,0 +1,39 @@
+@import "bootstrap/mixins/_breakpoints";
+
+/* content */
+#content {
+    container: main-content / inline-size;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#content_area {
+    height: 100%;
+}
+// pathbar adds 40px height to layout
+#content_area.has-pathbar {
+    height: calc(100% - 40px);
+}
+
+#main-area {
+    width: 0!important; /* prevent 'jumping' between 1400 and 1440px */
+}
+
+/* copysupport */
+tr.selectable td {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+/* batched items */
+#main-area.full {
+    .batched_items_slice_size {
+        max-width: max-content;
+    }
+    .batched_items_filter {
+        max-width: 300px;
+    }
+}

@@ -1,0 +1,12 @@
+#settings-grid-container {
+    .settings-grid  {
+
+        a i {
+            font-size: 44px;
+
+            @media (max-width:450px) {
+                font-size: 30px;
+            }
+        }
+    }
+}

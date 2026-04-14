@@ -1,4 +1,5 @@
 import {importMapsPlugin} from '@web/dev-server-import-maps';
+import {defaultReporter, summaryReporter} from '@web/test-runner'
 
 export default {
     nodeResolve: true,
@@ -9,14 +10,21 @@ export default {
         }
     },
     files: [
-        'js/tests/**/test_*.js',
+        'js/tests/**/test_*.js'
     ],
+    reporters: [defaultReporter(), summaryReporter({flatten: true})],
+    coverageConfig: {
+        include: ['**/js/src/**/*.js'],
+        exclude: ['**/node_modules/**', '**/sources/treibstoff/**']
+    },
     plugins: [
         importMapsPlugin({
             inject: {
                 importMap: {
                     imports: {
-                        'jquery': './node_modules/jquery/dist-module/jquery.module.js'
+                        'treibstoff': './sources/treibstoff/src/treibstoff.js',
+                        'jquery': './node_modules/jquery/dist-module/jquery.module.js',
+                        'bootstrap': './node_modules/bootstrap/dist/js/bootstrap.bundle.js',
                     },
                 },
             },

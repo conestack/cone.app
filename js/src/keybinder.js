@@ -7,7 +7,6 @@ export let keys = {
 
 /**
  * XXX: Use ``ts.KeyState`` instead.
- *      Need a mechanism to attach and unload instances with ``ts.ajax`` first.
  */
 export class KeyBinder {
 
@@ -31,7 +30,7 @@ export class KeyBinder {
         switch (e.keyCode || e.which) {
             case 16:
                 keys.shift_down = false;
-                   break;
+                break;
             case 17:
                 keys.ctrl_down = false;
                 break;

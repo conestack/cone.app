@@ -1,7 +1,6 @@
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import format_traceback
-from cone.app.interfaces import ILiveSearch
 from cone.tile import render_tile
 from node.utils import safe_encode
 from pyramid.exceptions import Forbidden
@@ -52,7 +51,7 @@ def ajax_tile(model, request):
     except Exception:
         logging.exception('Error within ajax tile')
         tb = format_traceback()
-        continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
+        continuation = AjaxContinue([AjaxMessage(tb, 'error', None, 'modal-xl')])
         return dict(
             mode='NONE',
             selector='NONE',
@@ -77,18 +76,18 @@ def ajax_continue(request, operations):
         request.environ['cone.app.continuation'].append(operations)
 
 
-def ajax_message(request, payload, flavor='message'):
+def ajax_message(request, payload, flavor='message', css=None, title=None):
     """Convenience to add ajax message operation to ajax continuation
     operations.
     """
-    ajax_continue(request, AjaxMessage(payload, flavor, None))
+    ajax_continue(request, AjaxMessage(payload, flavor, None, css, title))
 
 
-def ajax_status_message(request, payload):
+def ajax_status_message(request, payload, css=None, title=None):
     """Convenience to add ajax status message operation to ajax continuation
     operations.
     """
-    ajax_continue(request, AjaxMessage(payload, None, '#status_message'))
+    ajax_continue(request, AjaxMessage(payload, None, '#status_message', css, title))
 
 
 class AjaxPath(object):
@@ -190,7 +189,7 @@ class AjaxMessage(object):
     """Ajax message continuation operation.
     """
 
-    def __init__(self, payload, flavor, selector):
+    def __init__(self, payload, flavor, selector, css='', title=None):
         """Create ajax message continuation operation.
 
         :param payload: Message payload as text or markup.
@@ -202,13 +201,17 @@ class AjaxMessage(object):
         self.payload = payload
         self.flavor = flavor
         self.selector = selector
+        self.css = css
+        self.title = title
 
     def as_json(self):
         return {
             'type': 'message',
             'payload': self.payload,
             'flavor': self.flavor,
-            'selector': self.selector
+            'selector': self.selector,
+            'css': self.css,
+            'title': self.title
         }
 
 
@@ -363,11 +366,3 @@ def render_ajax_form(model, request, name):
             error='true'
         )
         return Response(rendered)
-
-
-@view_config(name='livesearch', accept='application/json', renderer='json')
-def livesearch(model, request):
-    adapter = request.registry.queryAdapter(model, ILiveSearch)
-    if not adapter:
-        return list()
-    return adapter.search(request, request.params['term'])

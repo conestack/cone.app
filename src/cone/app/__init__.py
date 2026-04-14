@@ -40,7 +40,7 @@ cfg.available_languages = []
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
-cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
+cfg.default_node_icon = 'bi-asterisk'
 
 
 class layout_config(object):
@@ -68,14 +68,20 @@ class DefaultLayoutConfig(LayoutConfig):
     def __init__(self, model=None, request=None):
         super(DefaultLayoutConfig, self).__init__(model=model, request=request)
         self.mainmenu = True
-        self.mainmenu_fluid = True
         self.livesearch = True
         self.personaltools = True
-        self.columns_fluid = True
+        self.limit_content_width = True
+        self.limit_page_width = False
+        self.center_content = False
         self.pathbar = True
+        self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'
+        self.sidebar_left_min_width = 150
+        self.sidebar_left_static = False
         self.sidebar_left = ['navtree']
-        self.sidebar_left_grid_width = 3
-        self.content_grid_width = 9
+        self.sidebar_right = []
+        self.sidebar_right_mode = 'stacked' # 'toggle' or 'stacked'
+        self.sidebar_right_min_width = 150
+        self.sidebar_right_static = False
 
 
 def import_from_string(path):
@@ -312,7 +318,7 @@ def main(global_config, **settings):
     # blueprint rendering. in future versions, tests should be adopted to
     # run against adopted blueprint rendering
     if not os.environ.get('TESTRUN_MARKER'):  # pragma: no cover
-        configure_factory('bootstrap3')
+        configure_factory('bootstrap5')
     config.configure_default_resource_includes()
 
     # scan browser package
