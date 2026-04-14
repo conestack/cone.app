@@ -141,7 +141,8 @@ class personal_tools_action(object):
         self.name = name
 
     def __call__(self, factory):
-        factory.css = f'dropdown-item {factory.css or ""}'
+        css = factory.css if (hasattr(factory, 'css') and factory.css) else ""
+        factory.css = f'dropdown-item {css}'
         personal_tools[self.name] = factory()
         return factory
 
