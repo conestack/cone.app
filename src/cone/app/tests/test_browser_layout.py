@@ -36,6 +36,7 @@ from pyramid.security import Everyone
 from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
+import re
 
 
 class TestBrowserLayout(TileTestCase):
@@ -96,6 +97,39 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.text.find('id="mainmenu"') > -1)
         self.assertTrue(res.text.find('id="navtree"') > -1)
         self.assertTrue(res.text.find('id="personaltools"') > -1)
+
+    def test_content_area_css(self):
+        # The css classes of the content area are assembled conditionally. Each
+        # condition must contribute its class or nothing at all - never the
+        # accumulated string, which duplicates all previous classes and glues
+        # the copies together without a separator.
+        def content_classes(res):
+            match = re.search(r'id="content"[^>]*class="([^"]*)"', res.text)
+            self.assertIsNotNone(match)
+            return match.group(1).split()
+
+        model = BaseNode(parent=get_root())
+        request = self.layer.new_request()
+
+        # Anonymous. All conditions are bound to a user id, none contributes.
+        classes = content_classes(render_main_template(model, request))
+        self.assertEqual(
+            classes,
+            ['d-flex', 'flex-column', 'px-3', 'pb-4', 'py-2', 'overflow-auto']
+        )
+
+        # Authenticated. Defaults are limit_content_width=True,
+        # limit_page_width=False and center_content=False.
+        with self.layer.authenticated('max'):
+            classes = content_classes(render_main_template(model, request))
+        self.assertEqual(
+            classes,
+            [
+                'd-flex', 'flex-column', 'px-3', 'pb-4', 'py-2', 'overflow-auto',
+                'container-xxl', 'ms-0'
+            ]
+        )
+        self.assertEqual(len(classes), len(set(classes)))
 
     def test_ProtectedContentTile(self):
         # A login form should be rendered instead of the content for anonymous
