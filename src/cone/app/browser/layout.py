@@ -16,6 +16,7 @@ from cone.app.interfaces import IWorkflowState
 from cone.app.model import AppRoot
 from cone.app.ugm import principal_data
 from cone.app.ugm import ugm_backend
+from cone.app.utils import navigation_root
 from cone.app.utils import node_path
 from cone.tile import render_template
 from cone.tile import render_tile
@@ -293,7 +294,11 @@ class PathBar(LayoutConfigTile):
 
     @property
     def items(self):
-        return self.items_for(self.model)
+        # The pathbar must start where the navtree starts, otherwise the
+        # breadcrumb still shows the levels the navroot removed.
+        navroot = navigation_root(self.model)
+        breakpoint = navroot if navroot is not self.model.root else None
+        return self.items_for(self.model, breakpoint=breakpoint)
 
     def item_url(self, node):
         return make_url(self.request, node=node)
@@ -358,18 +363,7 @@ class NavTree(LayoutConfigTile):
 
     @property
     def navroot(self):
-        model = self.model
-        root = model.root
-        while model is not root:
-            if model.properties.is_navroot:
-                return model
-            model = model.parent
-        default_child = root.properties.default_child
-        if default_child:
-            child = root.get(default_child)
-            if child is not None and child.properties.is_navroot:
-                return child
-        return root
+        return navigation_root(self.model)
 
     def navtreeitem(self, title, url, target, path, icon, css=''):
         item = dict()
@@ -485,7 +479,9 @@ class RootContent(ProtectedContentTile):
             model = self.model[default_child]
             return render_tile(model, self.request, 'content')
         default_content_tile = self.model.properties.default_content_tile
-        if default_content_tile:
+        # The content tile of the root is this tile. Rendering it here would
+        # recurse until the stack blows, and 'content' is the default value.
+        if default_content_tile and default_content_tile != 'content':
             return render_tile(self.model, self.request, default_content_tile)
         return render_template(
             'cone.app.browser:templates/default_root.pt',

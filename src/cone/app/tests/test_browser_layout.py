@@ -8,6 +8,7 @@ from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.layout import LanguageTile
 from cone.app.browser.layout import LayoutConfigTile
+from cone.app.browser.layout import PathBar
 from cone.app.browser.layout import NavTree
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.layout import personal_tools
@@ -130,6 +131,47 @@ class TestBrowserLayout(TileTestCase):
             ]
         )
         self.assertEqual(len(classes), len(set(classes)))
+
+    def test_pathbar_starts_at_navroot(self):
+        # The navigation root is the top of the navtree, so it must be the top
+        # of the pathbar as well - otherwise the breadcrumb still shows the
+        # levels the navroot removed.
+        root = get_root()
+        request = self.layer.new_request()
+
+        navroot = BaseNode(name='navroot', parent=root)
+        navroot.properties.is_navroot = True
+        child = BaseNode(name='child', parent=navroot)
+        leaf = BaseNode(name='leaf', parent=child)
+
+        tile = PathBar()
+        tile.model = leaf
+        tile.request = request
+        self.assertEqual(
+            [_['id'] for _ in tile.items], ['navroot', 'child', 'leaf']
+        )
+        # 'Home' is the placeholder for the application root. With a navroot
+        # the first entry is a real node and keeps its own title.
+        self.assertNotEqual(tile.items[0]['title'], 'Home')
+
+        # Without a navroot nothing changes
+        plain = BaseNode(name='plain', parent=root)
+        tile = PathBar()
+        tile.model = plain
+        tile.request = request
+        self.assertEqual(tile.items[0]['title'], 'Home')
+
+    def test_root_content_no_self_recursion(self):
+        # ``default_content_tile`` defaults to 'content', and the content tile
+        # of the root *is* RootContent. Rendering it would recurse forever, so
+        # it must fall through to the default root template instead.
+        root = get_root()
+        request = self.layer.new_request()
+        self.assertIsNone(root.properties.default_child)
+        self.assertEqual(root.properties.default_content_tile, 'content')
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'content')
+        self.assertIsInstance(res, str)
 
     def test_ProtectedContentTile(self):
         # A login form should be rendered instead of the content for anonymous
