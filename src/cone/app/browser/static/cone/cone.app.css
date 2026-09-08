@@ -178,6 +178,10 @@ tr.selectable td {
   margin-right: 1rem;
 }
 
+.input-group + .invalid-feedback {
+  display: block;
+}
+
 /* header */
 #header-logo {
   z-index: 4;

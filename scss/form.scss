@@ -2,3 +2,18 @@
 #input-contentform-save {
     margin-right: 1rem;
 }
+
+// Validation message of a widget that renders its control inside an input
+// group - the datepicker and the time picker above all.
+//
+// Bootstrap keeps ``.invalid-feedback`` at ``display: none`` and shows it
+// through ``.is-invalid ~ .invalid-feedback``, a **sibling** selector. Where
+// the control sits inside an ``.input-group``, it is a child of that wrapper
+// and the message is the wrapper's sibling, so the rule never matches: the
+// field turns red and states no reason.
+//
+// Safe unconditionally, because the element is rendered only when the widget
+// carries an error.
+.input-group + .invalid-feedback {
+    display: block;
+}
