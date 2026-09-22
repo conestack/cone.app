@@ -4,6 +4,13 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Give a ``div.form-control`` the height of an input. Bootstrap sets no height
+  on ``.form-control``; an input gets it from its own content box, so a widget
+  rendered in display mode as an empty ``div`` collapsed to padding plus border
+  and stood lower than the fields around it. Same ``min-height`` Bootstrap
+  itself puts on ``textarea.form-control``, for the same reason.
+  [rnix]
+
 - Implement ``order`` property for Actions inside ContextMenuDropdown
   (defaults to 0).
   [lenadax]

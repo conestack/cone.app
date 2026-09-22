@@ -17,3 +17,35 @@
 .input-group + .invalid-feedback {
     display: block;
 }
+
+// An empty field in display mode is as tall as a filled one.
+//
+// Bootstrap gives ``.form-control`` **no** height. An ``<input>`` takes its
+// height from its own content box - 1.5em of line, the vertical padding, and
+// the border on each side. A ``<div>`` has no content while the value is
+// empty, so it collapses to padding plus border and stands visibly lower than
+// the fields around it. It shows up wherever a whole form renders read only,
+// which is where the misalignment is most obvious.
+//
+// ``yafowil.bootstrap`` is what renders it that way - ``bs5.py`` sets
+// ``display_class = 'form-control disabled text-muted'`` - and ships no
+// stylesheet of its own, only an unmodified Bootstrap. So the correction
+// belongs here, beside the other one above it.
+//
+// **Bootstrap has the same problem and solves it exactly this way.** A
+// ``<textarea>`` has no intrinsic single line height either, so its
+// ``_forms.scss`` writes
+// ``textarea.form-control { min-height: calc(1.5em + .75rem + …) }``. The
+// formula below is that one, spelled with the same custom properties, so a
+// theme that changes the border width carries through.
+//
+// ``min-height`` and not ``height``: a read only textarea stays as tall as its
+// content needs.
+//
+// The selector is ``div.form-control`` rather than the ``display-*`` classes:
+// the div **is** the case, an input, select or textarea is untouched by it,
+// and a list of classes would be one more thing to keep in step with
+// ``yafowil.bootstrap``.
+div.form-control {
+    min-height: calc(1.5em + 0.75rem + calc(var(--bs-border-width) * 2));
+}

@@ -182,6 +182,10 @@ tr.selectable td {
   display: block;
 }
 
+div.form-control {
+  min-height: calc(1.5em + 0.75rem + var(--bs-border-width) * 2);
+}
+
 /* header */
 #header-logo {
   z-index: 4;
