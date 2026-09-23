@@ -837,10 +837,10 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['root'] = '/'
 
         action = ActionAddReference()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         model = RefNode(name='model')
         rendered = action(model, request)
@@ -871,10 +871,10 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['root'] = '/'
 
         action = ActionRemoveReference()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         model = RefNode(name='model')
         rendered = action(model, request)
@@ -937,7 +937,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         expected = 'bi-asterisk'
         self.assertEqual(action.icon, expected)
 
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)

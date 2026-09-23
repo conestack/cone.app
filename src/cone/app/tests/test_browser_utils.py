@@ -77,7 +77,7 @@ class TestBrowserUtils(TileTestCase):
         dt = datetime(2011, 3, 15)
         self.assertEqual(format_date(dt), '15.03.2011 00:00')
         self.assertEqual(format_date(dt, long=False), '15.03.2011')
-        self.assertEqual(format_date(object()), u'unknown')
+        self.assertEqual(format_date(object()), 'unknown')
 
     @testing.reset_node_info_registry
     def test_node_icon(self):
@@ -108,7 +108,7 @@ class TestBrowserUtils(TileTestCase):
     def test_request_property(self):
         counter = dict(computed=0)
 
-        class RequestPropertyUsingClass(object):
+        class RequestPropertyUsingClass:
             def __init__(self, request):
                 self.request = request
 

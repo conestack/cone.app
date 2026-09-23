@@ -206,7 +206,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
             'continuation': [],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })
@@ -226,7 +226,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
             'continuation': [],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })
@@ -249,11 +249,11 @@ class TestBrowserSharing(TileTestCase):
                 'css': None,
                 'flavor': 'error',
                 'type': 'message',
-                'payload': u"Can not add role 'manager' for principal 'viewer'",
+                'payload': "Can not add role 'manager' for principal 'viewer'",
                 'selector': None,
                 'title': None
             }],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })
@@ -278,7 +278,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
             'continuation': [],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })
@@ -297,7 +297,7 @@ class TestBrowserSharing(TileTestCase):
             res = ajax_tile(child, request)
         self.assertEqual(res, {
             'continuation': [],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })
@@ -318,11 +318,11 @@ class TestBrowserSharing(TileTestCase):
                 'css': None,
                 'flavor': 'error',
                 'type': 'message',
-                'payload': u"Can not remove role 'inexistent' for principal 'viewer'",
+                'payload': "Can not remove role 'inexistent' for principal 'viewer'",
                 'selector': None,
                 'title': None
             }],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })
@@ -341,11 +341,11 @@ class TestBrowserSharing(TileTestCase):
                 'css': None,
                 'flavor': 'error',
                 'type': 'message',
-                'payload': u"Can not remove role 'manager' for principal 'foo'",
+                'payload': "Can not remove role 'manager' for principal 'foo'",
                 'selector': None,
                 'title': None
             }],
-            'payload': u'',
+            'payload': '',
             'mode': 'NONE',
             'selector': 'NONE'
         })

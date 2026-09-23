@@ -89,7 +89,7 @@ cone_resources.add(wr.StyleResource(
 ))
 
 
-class ResourceInclude(object):
+class ResourceInclude:
 
     def __init__(self, settings, name):
         self.settings = settings
@@ -106,7 +106,7 @@ class ResourceInclude(object):
 _registry = None
 
 
-class ResourceRegistry(object):
+class ResourceRegistry:
     """Resource registry."""
 
     default_excludes = [
@@ -229,17 +229,17 @@ class ResourceRegistry(object):
             # ignore subsequent group in case path was defined multiple times.
             # otherwise we get an error when trying to register static view.
             if group.path in handled_groups:
-                logger.warning((
-                    'Resource group for path "{}" already included.'
-                    'Skipping "{}"'
-                ).format(group.path, group.name))
+                logger.warning(
+                    f'Resource group for path "{group.path}" already included.'
+                    f'Skipping "{group.name}"'
+                )
                 group.remove()
                 continue
             if not group.path or not group.directory:  # pragma: no cover
-                logger.warning((
-                    'Resource group "{}" path or directory '
+                logger.warning(
+                    f'Resource group "{group.name}" path or directory '
                     'missing. Skip configuration'
-                ).format(group.name))
+                )
                 group.remove()
                 continue
             self._register_resources_view(
@@ -255,12 +255,12 @@ class ResourceRegistry(object):
         for resource in resources.scripts + resources.styles:
             # ignore subsequent resource in case path was defined multiple times.
             if resource.name in handled_resources:
-                logger.debug((
-                    'Resource with name "{}" already included. Skipping.'
-                ).format(resource.name))
+                logger.debug(
+                    f'Resource with name "{resource.name}" already included. Skipping.'
+                )
                 resource.remove()
                 continue
-            resource.path = 'resources/{}'.format(resource.path)
+            resource.path = f'resources/{resource.path}'
             resource.include = ResourceInclude(self._includes, resource.name)
             handled_resources.append(resource.name)
 
@@ -273,7 +273,7 @@ class ResourceRegistry(object):
             name.replace('-', '_').replace('.', '_')
         )
         setattr(module, view_name, resources_view)
-        view_path = 'cone.app.browser.resources.{}'.format(view_name)
+        view_path = f'cone.app.browser.resources.{view_name}'
         config.add_view(view_path, name=name, context=AppResources)
 
 
@@ -311,4 +311,4 @@ class ResourcesContent(Tile):
         path = AjaxPath(path='/', target=url, event='contextchanged:#layout')
         event = AjaxEvent(target=url, name='contextchanged', selector='#layout')
         ajax_continue(self.request, [path, event])
-        return u''
+        return ''

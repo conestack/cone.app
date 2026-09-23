@@ -48,7 +48,7 @@ def persist_state(node, info):
 
     Persist state to ``node.state`` and call node.
     """
-    node.state = info.transition[u'to_state']
+    node.state = info.transition['to_state']
     node()
 
 
@@ -126,8 +126,8 @@ class WorkflowACL(Behavior):
     def __acl__(self):
         acl = self.state_acls.get(self.state, self.default_acl)
         if not acl:
-            raise ValueError(u"No ACL found for state '%s'" % self.state)
+            raise ValueError("No ACL found for state '%s'" % self.state)
         if acl is self.default_acl:
-            logger.warning(u"No ACL found for state "
-                           u"'%s'. Using default" % self.state)
+            logger.warning("No ACL found for state "
+                           "'%s'. Using default" % self.state)
         return acl

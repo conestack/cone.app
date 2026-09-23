@@ -55,15 +55,15 @@ def translation_tabs_renderer(widget, data):
         has_errors = lang_data and lang_data.has_errors
         lang_text = lang.upper()
         if has_errors:
-            lang_text = u'* {}'.format(lang_text)
+            lang_text = f'* {lang_text}'
         a_css = ['nav-link', 'py-0']
         if idx == 0:
             a_css.append('active')
         a = data.tag(
             'a',
             lang_text,
-            href=u'#translation-{}-{}'.format(
-                widget.dottedpath.replace(u'.', u'-'),
+            href='#translation-{}-{}'.format(
+                widget.dottedpath.replace('.', '-'),
                 lang
             ),
             class_=' '.join(a_css)
@@ -101,11 +101,11 @@ def translation_edit_renderer(widget, data):
             'structural': True
         })
     for lang in cfg.available_languages:
-        translation = translations['translation_{}'.format(lang)] = factory(
+        translation = translations[f'translation_{lang}'] = factory(
             'div',
             props={
                 'id': 'translation-{}-{}'.format(
-                    widget.dottedpath.replace(u'.', u'-'),
+                    widget.dottedpath.replace('.', '-'),
                     lang
                 ),
                 'structural': True
@@ -120,7 +120,7 @@ def translation_display_renderer(widget, data):
     translation_edit_renderer(widget, data)
     translations = widget['translations']
     for lang in cfg.available_languages:
-        translation = translations['translation_{}'.format(lang)]
+        translation = translations[f'translation_{lang}']
         translation[lang].mode = 'display'
 
 

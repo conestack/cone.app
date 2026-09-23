@@ -30,7 +30,7 @@ def testing_node_available(model, node_info_name):
 
 @plumbing(WorkflowState, WorkflowACL)
 class WorkflowNode(BaseNode):
-    workflow_name = u'dummy'
+    workflow_name = 'dummy'
     workflow_tsf = None
 
     @property
@@ -44,7 +44,7 @@ class WorkflowNode(BaseNode):
 
 
 class InexistentWorkflowNode(WorkflowNode):
-    workflow_name = u'inexistent'
+    workflow_name = 'inexistent'
     workflow_tsf = None
 
 
@@ -69,7 +69,7 @@ class IWorkflowNode(Interface):
 @plumbing(WorkflowState)
 @implementer(IWorkflowNode)
 class InterfaceWorkflowNode(BaseNode):
-    workflow_name = u'dummy'
+    workflow_name = 'dummy'
     workflow_tsf = None
 
 
@@ -81,7 +81,7 @@ class InterfaceWorkflowNode(BaseNode):
     DefaultInit,
     MappingNode,
     OdictStorage)
-class SharingNode(object):
+class SharingNode:
 
     @property
     def __acl__(self):
@@ -100,7 +100,7 @@ class CopySupportNode(BaseNode):
         self.messages = []
 
     def __call__(self):
-        self.messages.append('Called: {}'.format(self.name))
+        self.messages.append(f'Called: {self.name}')
 
 
 ###############################################################################

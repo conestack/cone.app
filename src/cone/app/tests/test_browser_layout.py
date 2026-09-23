@@ -646,7 +646,7 @@ class TestBrowserLayout(TileTestCase):
 
         # Unauthenticated
         res = render_tile(root, request, 'byline')
-        self.assertEqual(res, u'')
+        self.assertEqual(res, '')
 
         # Authenticated
         with self.layer.authenticated('max'):

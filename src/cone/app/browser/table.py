@@ -88,9 +88,7 @@ class Table(Tile):
     def filter_term(self):
         term = self.request.params.get('term')
         if term:
-            term = term.encode('utf-8') if compat.IS_PY2 else term
             term = compat.unquote(term)
-            term = term.decode('utf-8') if compat.IS_PY2 else term
         return term
 
     @property
@@ -181,7 +179,7 @@ class Table(Tile):
                                   "``sorted_rows``.")
 
 
-class TableSlice(object):
+class TableSlice:
 
     def __init__(self, table_tile, model, request):
         self.table_tile = table_tile

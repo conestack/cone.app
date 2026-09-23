@@ -27,7 +27,7 @@ class TestBrowserOrder(TileTestCase):
             DefaultInit,
             MappingNode,
             DictStorage)
-        class UnorderedNode(object):
+        class UnorderedNode:
             pass
 
         node = UnorderedNode()
@@ -36,10 +36,10 @@ class TestBrowserOrder(TileTestCase):
         self.assertFalse(IMappingOrder.providedBy(node))
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(render_tile(node['child'], request, 'move_up'), u'')
+            self.assertEqual(render_tile(node['child'], request, 'move_up'), '')
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            u'Object "child" not movable'
+            'Object "child" not movable'
         )
 
         @plumbing(MappingOrder)
@@ -54,19 +54,19 @@ class TestBrowserOrder(TileTestCase):
         self.assertEqual(node.properties.action_move, None)
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(render_tile(node['b'], request, 'move_up'), u'')
+            self.assertEqual(render_tile(node['b'], request, 'move_up'), '')
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            u'You are not permitted to move this object'
+            'You are not permitted to move this object'
         )
 
         node.properties.action_move = True
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(render_tile(node['a'], request, 'move_down'), u'')
+            self.assertEqual(render_tile(node['a'], request, 'move_down'), '')
         self.assertEqual(node.keys(), ['b', 'a'])
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(render_tile(node['a'], request, 'move_up'), u'')
+            self.assertEqual(render_tile(node['a'], request, 'move_up'), '')
         self.assertEqual(node.keys(), ['a', 'b'])

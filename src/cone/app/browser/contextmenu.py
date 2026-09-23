@@ -25,7 +25,7 @@ _ = TranslationStringFactory('cone.app')
 
 
 class ContextMenuToolbar(Toolbar):
-    css = u'nav-item py-0'
+    css = 'nav-item py-0'
 
     def __call__(self, model, request):
         if not self.display:
@@ -94,7 +94,7 @@ class ContextMenuDropdown(Toolbar):
     def __call__(self, model, request):
         dropdown = self.bound_to(model, request)
         if not dropdown.display:
-            return u''
+            return ''
         return render_template(
             self.template,
             request=request,
@@ -118,7 +118,7 @@ class ContextMenuDropdown(Toolbar):
 context_menu = odict()
 
 
-class context_menu_group(object):
+class context_menu_group:
     """Decorator defining a context menu group."""
 
     def __init__(self, name):
@@ -129,7 +129,7 @@ class context_menu_group(object):
         return factory
 
 
-class context_menu_item(object):
+class context_menu_item:
     """Decorator defining a context menu item inside a group."""
 
     def __init__(self, group, name):
@@ -154,7 +154,7 @@ class ContextMenuActionUp(ActionUp):
 @context_menu_group(name='contentviews')
 class ContentViewsDropdown(ContextMenuDropdown):
     """Context menu content views dropdown."""
-    title = _('display', default=u'Display')
+    title = _('display', default='Display')
 
 
 @context_menu_item(group='contentviews', name='list')
@@ -184,7 +184,7 @@ class ContextMenuActionSharing(ActionSharing):
 @context_menu_group(name='childactions')
 class ChildActionsDropdown(ContextMenuDropdown):
     """Context menu content views dropdown."""
-    title = _('actions', default=u'Actions')
+    title = _('actions', default='Actions')
 
 
 @context_menu_item(group='childactions', name='cut')

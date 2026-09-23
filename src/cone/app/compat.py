@@ -1,21 +1,11 @@
-try:  # pragma: no cover
-    from StringIO import StringIO
-    from urllib2 import quote
-    from urllib2 import unquote
-    import ConfigParser as configparser
-    import urlparse
-except ImportError:  # pragma: no cover
-    from io import StringIO  # noqa
-    from urllib.parse import quote  # noqa
-    from urllib.parse import unquote  # noqa
-    import configparser  # noqa
-    import urllib.parse as urlparse  # noqa
-import sys
-import types
+"""Aliases for stdlib names this package imports from one place.
 
-
-IS_PY2 = sys.version_info[0] < 3
-STR_TYPE = basestring if IS_PY2 else str
-UNICODE_TYPE = unicode if IS_PY2 else str
-ITER_TYPES = (types.ListType, types.TupleType) if IS_PY2 else (list, tuple)
-NUMBER_TYPES = (types.IntType, types.FloatType) if IS_PY2 else (int, float)
+Was the Python 2 compatibility layer. Python 2 is gone - ``requires-python``
+is ``>=3.10`` - so the version switches went with it; what remains are plain
+re-exports kept because the import sites reference them by this module.
+"""
+from io import StringIO  # noqa
+from urllib.parse import quote  # noqa
+from urllib.parse import unquote  # noqa
+import configparser  # noqa
+import urllib.parse as urlparse  # noqa

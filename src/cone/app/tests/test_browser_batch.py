@@ -39,7 +39,7 @@ class TestBrowserBatch(TileTestCase):
             ('visible', False)
         ])
         # Ellipsis to display if ``batchrange`` exceeds
-        self.assertEqual(batch.ellipsis, u'...')
+        self.assertEqual(batch.ellipsis, '...')
         # By default empty ``vocab``, subclass must override
         self.assertEqual(batch.vocab, [])
         # Batches are displayed by default
@@ -58,8 +58,8 @@ class TestBrowserBatch(TileTestCase):
         # Test ``nextpage`` returns None if empty vocab
         self.assertTrue(batch.nextpage is None)
         # No left or right ellipsis sind no batchrange exceeding
-        self.assertEqual(batch.leftellipsis, u'')
-        self.assertEqual(batch.rightellipsis, u'')
+        self.assertEqual(batch.leftellipsis, '')
+        self.assertEqual(batch.rightellipsis, '')
         # No ``pages`` returned for empty vocab
         self.assertEqual(batch.pages, [])
 
@@ -308,8 +308,8 @@ class TestBrowserBatch(TileTestCase):
             ('visible', False)
         ])
 
-        self.assertEqual(batch.leftellipsis, u'...')
-        self.assertEqual(batch.rightellipsis, u'')
+        self.assertEqual(batch.leftellipsis, '...')
+        self.assertEqual(batch.rightellipsis, '')
 
         # Batchrange starts
         batch._vocab[1]['current'] = True
@@ -331,8 +331,8 @@ class TestBrowserBatch(TileTestCase):
             ('visible', False)
         ])
 
-        self.assertEqual(batch.leftellipsis, u'')
-        self.assertEqual(batch.rightellipsis, u'...')
+        self.assertEqual(batch.leftellipsis, '')
+        self.assertEqual(batch.rightellipsis, '...')
 
         # Batchrange between start and end
         batch._vocab[0]['visible'] = True
@@ -357,8 +357,8 @@ class TestBrowserBatch(TileTestCase):
             ('visible', True)
         ])
 
-        self.assertEqual(batch.leftellipsis, u'...')
-        self.assertEqual(batch.rightellipsis, u'...')
+        self.assertEqual(batch.leftellipsis, '...')
+        self.assertEqual(batch.rightellipsis, '...')
 
     def test_batch_tile(self):
         # Register batch tile
@@ -488,7 +488,7 @@ class TestBrowserBatch(TileTestCase):
         # Create model
         model = BaseNode(name='container')
         for i in range(35):
-            model['child_{}'.format(i)] = BaseNode()
+            model[f'child_{i}'] = BaseNode()
 
         # Create batched items with model
         batched_items = MyBatchedItems()
@@ -512,7 +512,7 @@ class TestBrowserBatch(TileTestCase):
         # batched items implementation.
         self.assertEqual(
             batched_items.make_url(dict(c='c')),
-            u'http://example.com/container?a=a&b=&c=c'
+            'http://example.com/container?a=a&b=&c=c'
         )
 
         # It's also possible to pass a model path to ``make_url`` to avoid
@@ -520,7 +520,7 @@ class TestBrowserBatch(TileTestCase):
         path = node_path(model)
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path),
-            u'http://example.com/container?a=a&b=&c=c'
+            'http://example.com/container?a=a&b=&c=c'
         )
 
         # ``BatchedItems`` plumbs ``RelatedViewConsumer`` and considers
@@ -530,19 +530,19 @@ class TestBrowserBatch(TileTestCase):
 
         self.assertEqual(
             batched_items.make_url(dict(c='c')),
-            u'http://example.com/container?a=&b=&c=c'
+            'http://example.com/container?a=&b=&c=c'
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), include_view=True),
-            u'http://example.com/container/someview?a=&b=&c=c'
+            'http://example.com/container/someview?a=&b=&c=c'
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path),
-            u'http://example.com/container?a=&b=&c=c'
+            'http://example.com/container?a=&b=&c=c'
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path, include_view=True),
-            u'http://example.com/container/someview?a=&b=&c=c'
+            'http://example.com/container/someview?a=&b=&c=c'
         )
 
         # Default slice size
@@ -569,22 +569,22 @@ class TestBrowserBatch(TileTestCase):
         request.params['b'] = 'b'
         request.params['term'] = 'Hello'
 
-        self.assertEqual(batched_items.filter_term, u'Hello')
+        self.assertEqual(batched_items.filter_term, 'Hello')
         self.assertEqual(
             batched_items.slice_target,
-            u'http://example.com/container?a=a&b=b&term=Hello'
+            'http://example.com/container?a=a&b=b&term=Hello'
         )
 
         # Test ``filter_target``
         self.assertEqual(
             batched_items.filter_target,
-            u'http://example.com/container?a=a&b=b&size=15'
+            'http://example.com/container?a=a&b=b&size=15'
         )
 
         request.params['size'] = '30'
         self.assertEqual(
             batched_items.filter_target,
-            u'http://example.com/container?a=a&b=b&size=30'
+            'http://example.com/container?a=a&b=b&size=30'
         )
 
         # Header template path
@@ -658,7 +658,7 @@ class TestBrowserBatch(TileTestCase):
         page = '1'
         self.assertEqual(
             batched_items.page_target(path, page),
-            u'http://example.com/container?b_page=1&size=15'
+            'http://example.com/container?b_page=1&size=15'
         )
 
         # Pagination batch name is created from batched items ``items_id``
@@ -683,23 +683,23 @@ class TestBrowserBatch(TileTestCase):
 
         self.assertEqual(sorted(vocab[0].items()), [
             ('current', False),
-            ('href', u'http://example.com/container/someview?b_page=0&size=15'),
+            ('href', 'http://example.com/container/someview?b_page=0&size=15'),
             ('page', '1'),
-            ('target', u'http://example.com/container?b_page=0&size=15'),
+            ('target', 'http://example.com/container?b_page=0&size=15'),
             ('visible', True)
         ])
         self.assertEqual(sorted(vocab[1].items()), [
             ('current', True),
-            ('href', u'http://example.com/container/someview?b_page=1&size=15'),
+            ('href', 'http://example.com/container/someview?b_page=1&size=15'),
             ('page', '2'),
-            ('target', u'http://example.com/container?b_page=1&size=15'),
+            ('target', 'http://example.com/container?b_page=1&size=15'),
             ('visible', True)
         ])
         self.assertEqual(sorted(vocab[2].items()), [
             ('current', False),
-            ('href', u'http://example.com/container/someview?b_page=2&size=15'),
+            ('href', 'http://example.com/container/someview?b_page=2&size=15'),
             ('page', '3'),
-            ('target', u'http://example.com/container?b_page=2&size=15'),
+            ('target', 'http://example.com/container?b_page=2&size=15'),
             ('visible', True)
         ])
 
@@ -763,7 +763,7 @@ class TestBrowserBatch(TileTestCase):
         request = batched_items.request = self.layer.new_request()
         request.params['term'] = '1'
         request.params['size'] = '5'
-        self.assertEqual(batched_items.filter_term, u'1')
+        self.assertEqual(batched_items.filter_term, '1')
 
         self.checkOutput("""
         [<BaseNode object 'child_1' at ...>,

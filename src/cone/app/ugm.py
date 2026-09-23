@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger('cone.app')
 
 
-class ugm_backend(object):
+class ugm_backend:
     """UGM backend configuration.
     """
     registry = dict()
@@ -25,7 +25,7 @@ class ugm_backend(object):
     @classmethod
     def load(cls, name, settings):
         if name not in cls.registry:
-            raise ValueError('Unknown UGM backend "{}"'.format(name))
+            raise ValueError(f'Unknown UGM backend "{name}"')
         cls.name = name
         cls.factory = cls.registry[name](settings)
 
@@ -36,7 +36,7 @@ class ugm_backend(object):
         cls.ugm = cls.factory()
 
 
-class UGMFactory(object):
+class UGMFactory:
     """UGM backend factory.
     """
 

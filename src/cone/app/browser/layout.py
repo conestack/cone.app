@@ -134,7 +134,7 @@ class Layout(LayoutConfigTile):
 personal_tools = odict()
 
 
-class personal_tools_action(object):
+class personal_tools_action:
     """Decorator defining a personaltools dropdown item.
     """
 
@@ -557,7 +557,7 @@ class Language(LanguageTile):
             title = localizer.translate(language_names.get(lang, lang.upper()))
             languages.append({
                 'target': target,
-                'icon': 'icon-lang-{}'.format(lang),
+                'icon': f'icon-lang-{lang}',
                 'title': title,
                 'css': f'dropdown-item{" active" if lang == current else ""}'
             })
@@ -577,4 +577,4 @@ class ChangeLanguage(LanguageTile):
         response = self.request.response
         response.set_cookie('_LOCALE_', value=lang, max_age=31536000)
         ajax_continue(self.request, self.continuation)
-        return u''
+        return ''

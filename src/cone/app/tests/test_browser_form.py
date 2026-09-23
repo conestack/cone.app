@@ -24,18 +24,18 @@ class TestBrowserForm(TileTestCase):
 
     def test_FormTarget(self):
         @plumbing(FormTarget)
-        class TestForm(object):
+        class TestForm:
             pass
 
         form = TestForm()
-        self.assertEqual(form.action_resource, u'')
+        self.assertEqual(form.action_resource, '')
 
     def test_AddFormTarget(self):
         parent = BaseNode(name='parent')
         model = parent['model'] = BaseNode()
 
         @plumbing(AddFormTarget)
-        class TestAddForm(object):
+        class TestAddForm:
             action_resource = 'add'
 
             def __init__(self, model, request):
@@ -43,13 +43,13 @@ class TestBrowserForm(TileTestCase):
                 self.request = request
 
         form = TestAddForm(model, self.layer.new_request())
-        self.assertEqual(form.form_action, u'http://example.com/parent/add')
+        self.assertEqual(form.form_action, 'http://example.com/parent/add')
 
     def test_EditFormTarget(self):
         model = BaseNode(name='model')
 
         @plumbing(EditFormTarget)
-        class TestEditForm(object):
+        class TestEditForm:
             action_resource = 'edit'
 
             def __init__(self, model, request):
@@ -57,14 +57,14 @@ class TestBrowserForm(TileTestCase):
                 self.request = request
 
         form = TestEditForm(model, self.layer.new_request())
-        self.assertEqual(form.form_action, u'http://example.com/model/edit')
+        self.assertEqual(form.form_action, 'http://example.com/model/edit')
 
     def test_YAMLAddFormTarget(self):
         parent = BaseNode(name='parent')
         model = parent['model'] = BaseNode()
 
         @plumbing(YAMLAddFormTarget)
-        class TestYAMLAddForm(object):
+        class TestYAMLAddForm:
             action_resource = 'add'
 
             def __init__(self, model, request):
@@ -76,14 +76,14 @@ class TestBrowserForm(TileTestCase):
         form = TestYAMLAddForm(model, self.layer.new_request())
         self.assertEqual(
             form.form_action(widget, data),
-            u'http://example.com/parent/add'
+            'http://example.com/parent/add'
         )
 
     def test_YAMLEditFormTarget(self):
         model = BaseNode(name='model')
 
         @plumbing(YAMLEditFormTarget)
-        class TestYAMLEditForm(object):
+        class TestYAMLEditForm:
             action_resource = 'edit'
 
             def __init__(self, model, request):
@@ -95,7 +95,7 @@ class TestBrowserForm(TileTestCase):
         form = TestYAMLEditForm(model, self.layer.new_request())
         self.assertEqual(
             form.form_action(widget, data),
-            u'http://example.com/model/edit'
+            'http://example.com/model/edit'
         )
 
     def test_Form(self):
@@ -120,7 +120,7 @@ class TestBrowserForm(TileTestCase):
 
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='subscriptionform',
                         props={
                             'action': self.nodeurl,
@@ -169,7 +169,7 @@ class TestBrowserForm(TileTestCase):
         # Render form. ``form.show`` returns false, render empty string
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
-            self.assertEqual(rendered, u'')
+            self.assertEqual(rendered, '')
 
         # Set show to True
         SubscriptionForm.show = True
@@ -375,14 +375,14 @@ class TestBrowserForm(TileTestCase):
 
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='protectedattributesform',
                         props={
                             'action': self.nodeurl,
                         })
                     form['protectedfield'] = factory(
-                        u'field:label:text',
-                        value=u'Protectedfield',
+                        'field:label:text',
+                        value='Protectedfield',
                         mode=self.mode_for('protectedfield')
                     )
                     self.form = form

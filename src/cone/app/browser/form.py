@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
 
 class FormTarget(Behavior):
     """Behavior defining the form submission resource."""
-    action_resource = default(u'')
+    action_resource = default('')
 
 
 class AddFormTarget(FormTarget):
@@ -160,8 +160,8 @@ class Form(Tile):
     def prepare(self):
         """Responsible to prepare ``self.form``."""
         raise NotImplementedError(
-            u"``prepare`` function must be provided "
-            u"by deriving object."
+            "``prepare`` function must be provided "
+            "by deriving object."
         )
 
     def prepare_ajax(self):
@@ -188,20 +188,20 @@ class Form(Tile):
         self.prepare()
         self.prepare_ajax()
         if not self.show:
-            return u''
+            return ''
         controller = Controller(self.form, self.request)
         if not controller.next:
             return controller.rendered
         if isinstance(controller.next, HTTPFound):
             self.redirect(controller.next)
-            return u''
+            return ''
         if isinstance(controller.next, AjaxAction) \
                 or isinstance(controller.next, AjaxEvent):
             self.request.environ['cone.app.continuation'] = [controller.next]
-            return u''
+            return ''
         if isinstance(controller.next, list):
             # assume a list of ajax continuation operations
             self.request.environ['cone.app.continuation'] = controller.next
-            return u''
+            return ''
         # assume some rendered markup
         return controller.next

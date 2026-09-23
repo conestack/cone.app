@@ -67,8 +67,8 @@ class ViewSettingsAction(LinkAction):
         for child in settings.values():
             if not ISettingsNode.providedBy(child):
                 warnings.warn(
-                    'Node "{}" not implements ``ISettingsNode`` and gets ignored '
-                    'as of cone.app 1.2.'.format(child.__class__),
+                    f'Node "{child.__class__}" not implements ``ISettingsNode`` and gets ignored '
+                    'as of cone.app 1.2.',
                     DeprecationWarning
                 )
                 if self.request.has_permission('manage', child):
@@ -87,8 +87,8 @@ class SettingsTile(Tile):
         for child in self.model.root['settings'].values():
             if not ISettingsNode.providedBy(child):
                 warnings.warn(
-                    'Node "{}" not implements ``ISettingsNode`` and gets ignored '
-                    'as of cone.app 1.2.'.format(child.__class__),
+                    f'Node "{child.__class__}" not implements ``ISettingsNode`` and gets ignored '
+                    'as of cone.app 1.2.',
                     DeprecationWarning
                 )
                 category = categories.setdefault(self.no_category, [])
@@ -196,5 +196,5 @@ class SettingsBehavior(Behavior):
     @default
     def next(self, request):
         url = make_url(request.request, node=self.model)
-        selector = '.{}'.format(self.model.name)
+        selector = f'.{self.model.name}'
         return [AjaxAction(url, 'content', 'inner', selector)]

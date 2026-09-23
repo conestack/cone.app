@@ -263,7 +263,7 @@ class TestBrowserAjax(TileTestCase):
                         self.request,
                         AjaxAction('target', 'name', 'mode', 'selector')
                     )
-                    return u''
+                    return ''
 
         root = get_root()
         request = self.layer.new_request()
@@ -280,7 +280,7 @@ class TestBrowserAjax(TileTestCase):
                     'target': 'target',
                     'name': 'name'
                 }],
-                'payload': u'',
+                'payload': '',
                 'mode': 'replace',
                 'selector': '.foo'
             })

@@ -21,7 +21,7 @@ class TestBrowserException(TileTestCase):
         request = self.layer.new_request()
         try:
             raise Exception()
-        except:
+        except Exception:
             res = str(internal_server_error(request))
         self.checkOutput("""
         200 OK
@@ -40,7 +40,7 @@ class TestBrowserException(TileTestCase):
         request = self.layer.new_request(xhr=1)
         try:
             raise Exception()
-        except:
+        except Exception:
             res = str(internal_server_error(request))
         self.assertTrue(res.find('200 OK') > -1)
         self.assertTrue(res.find('Content-Type: application/json') > -1)
@@ -57,7 +57,7 @@ class TestBrowserException(TileTestCase):
             request = self.layer.new_request()
             try:
                 raise Exception()
-            except:
+            except Exception:
                 res = str(internal_server_error(request))
 
             self.checkOutput("""
@@ -77,7 +77,7 @@ class TestBrowserException(TileTestCase):
             request = self.layer.new_request(xhr=1)
             try:
                 raise Exception()
-            except:
+            except Exception:
                 res = str(internal_server_error(request))
 
         self.assertTrue(res.find('200 OK') > -1)

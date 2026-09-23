@@ -291,7 +291,7 @@ class TestBrowserSettings(TileTestCase):
             class TestSettingsEditForm(Form):
                 def prepare(self):
                     self.form = factory(
-                        u'form',
+                        'form',
                         name='editform',
                         props={
                             'action': self.nodeurl
@@ -341,7 +341,7 @@ class TestBrowserSettings(TileTestCase):
             class SomeSettingsForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='editform',
                         props={
                             'action': self.nodeurl
@@ -363,7 +363,7 @@ class TestBrowserSettings(TileTestCase):
 
         with self.layer.authenticated('manager'):
             res = render_tile(settings['foo'], request, 'editform')
-        self.assertEqual(res, u'')
+        self.assertEqual(res, '')
 
         action = request.environ['cone.app.continuation'][0]
         self.assertTrue(isinstance(action, AjaxAction))

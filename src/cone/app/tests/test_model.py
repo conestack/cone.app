@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from cone.app import cfg
 from cone.app import testing
 from cone.app.compat import StringIO
@@ -111,7 +110,7 @@ class TestModel(NodeTestCase):
 
     def test_LeafNode(self):
         @plumbing(NodeInit, Node, LeafNode)
-        class TestLeafNode(object):
+        class TestLeafNode:
             pass
 
         node = TestLeafNode()
@@ -475,7 +474,7 @@ class TestModel(NodeTestCase):
             MappingNode,
             DictStorage,
             UUIDAsName)
-        class UnorderedUUIDAsNameNode(object):
+        class UnorderedUUIDAsNameNode:
             pass
 
         node = UUIDAsNameNode()
@@ -504,8 +503,8 @@ class TestModel(NodeTestCase):
         self.assertEqual(translation.value, 'translation')
         self.assertEqual(translation.canonical_value, 'translation')
 
-        translation['en'] = u'English Translation'
-        translation['de'] = u'German Translation'
+        translation['en'] = 'English Translation'
+        translation['de'] = 'German Translation'
         self.assertEqual(translation['en'], 'English Translation')
         self.assertEqual(translation['de'], 'German Translation')
 
@@ -650,13 +649,13 @@ class TestModel(NodeTestCase):
         # Create XML properties with path and optional data
         props = XMLProperties(
             os.path.join(tempdir, 'props.xml'),
-            data={'foo': u'äöüß'}
+            data={'foo': 'äöüß'}
         )
         self.assertTrue(IProperties.providedBy(props))
 
         # Testing helper functions
         self.assertEqual(props._keys(), ['foo'])
-        self.assertEqual(props._values(), [u'äöüß'])
+        self.assertEqual(props._values(), ['äöüß'])
 
         # XML properties can be datetime objects
         props.effective = datetime(2010, 1, 1, 10, 15)
@@ -708,8 +707,8 @@ class TestModel(NodeTestCase):
 
         # Overwrite ``foo`` and add ``bar`` properties; Note that even markup
         # can be used safely
-        props.foo = u'foo'
-        props.bar = u'<bar>äöü</bar>'
+        props.foo = 'foo'
+        props.bar = '<bar>äöü</bar>'
 
         # Call props and check result
         props()
@@ -754,12 +753,12 @@ class TestModel(NodeTestCase):
         self.assertEqual(
             props._values(),
             [
-                u'foo',
+                'foo',
                 datetime(2010, 1, 1, 10, 15),
-                u'',
-                [u'a', datetime(2010, 1, 1, 10, 15), u''],
+                '',
+                ['a', datetime(2010, 1, 1, 10, 15), ''],
                 odict([('a', 'foo'), ('b', 'bar'), ('c', None)]),
-                u'<bar>äöü</bar>'
+                '<bar>äöü</bar>'
             ]
         )
 
@@ -842,17 +841,17 @@ class TestModel(NodeTestCase):
         self.assertTrue(o_getattr(props, '_path').endswith('props.xml'))
         self.assertEqual(o_getattr(props, '_data'), odict([
             ('effective', datetime(2010, 1, 1, 10, 15)),
-            ('empty', u''),
+            ('empty', ''),
             ('keywords', [
-                u'a',
+                'a',
                 datetime(2010, 1, 1, 10, 15),
-                u''
+                ''
             ]),
             ('dictlike', odict([
                 ('b', 'bar'),
                 ('a', 'foo')
             ])),
-            ('bar', u'<bar>\xe4\xf6\xfc</bar>')
+            ('bar', '<bar>\xe4\xf6\xfc</bar>')
         ]))
 
         # ``__copy__``
@@ -910,9 +909,9 @@ class TestModel(NodeTestCase):
         self.assertEqual(data, '[properties]\nfoo = 1\n\n')
 
         # Overwrite ``foo`` and add ``bar`` properties
-        props.foo = u'foo'
-        props.bar = u'bar'
-        props.baz = u'äöü'
+        props.foo = 'foo'
+        props.bar = 'bar'
+        props.baz = 'äöü'
 
         # Call props and check result
         props()
@@ -929,18 +928,18 @@ class TestModel(NodeTestCase):
 
         # Create config properties from existing file
         props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
-        self.assertEqual(props.foo, u'foo')
-        self.assertEqual(props.bar, u'bar')
-        self.assertEqual(props.baz, u'äöü')
+        self.assertEqual(props.foo, 'foo')
+        self.assertEqual(props.bar, 'bar')
+        self.assertEqual(props.baz, 'äöü')
 
         # Test ``__getitem__``
-        self.assertEqual(props['foo'], u'foo')
+        self.assertEqual(props['foo'], 'foo')
         with self.assertRaises(KeyError):
             props['inexistent']
 
         # Test ``get``
-        self.assertEqual(props.get('foo'), u'foo')
-        self.assertEqual(props.get('inexistent', u'default'), u'default')
+        self.assertEqual(props.get('foo'), 'foo')
+        self.assertEqual(props.get('inexistent', 'default'), 'default')
 
         # Test ``__contains__``
         self.assertTrue('foo' in props)

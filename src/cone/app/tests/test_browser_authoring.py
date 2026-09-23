@@ -11,7 +11,6 @@ from cone.app.browser.authoring import AddFormHeading
 from cone.app.browser.authoring import CameFromNext
 from cone.app.browser.authoring import ContentAddForm
 from cone.app.browser.authoring import ContentEditForm
-from cone.app.browser.authoring import ContentForm
 from cone.app.browser.authoring import edit
 from cone.app.browser.authoring import EditFormHeading
 from cone.app.browser.authoring import FormHeading
@@ -103,7 +102,7 @@ class TestBrowserAuthoring(TileTestCase):
             class CameFromNextForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='camefromnextform',
                         props={'action': self.nodeurl})
                     form['next'] = factory(
@@ -308,7 +307,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(path, AjaxPath))
         self.assertEqual(
             (path.path, path.target, path.event),
-            (u'child', 'http://example.com/child', 'contextchanged:#layout')
+            ('child', 'http://example.com/child', 'contextchanged:#layout')
         )
 
         event = request.environ['cone.app.continuation'][1]
@@ -376,7 +375,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(path, AjaxPath))
         self.assertEqual(
             (path.path, path.target, path.event),
-            (u'child', 'http://example.com/child', 'contextchanged:#layout')
+            ('child', 'http://example.com/child', 'contextchanged:#layout')
         )
 
         event = request.environ['cone.app.continuation'][1]
@@ -392,7 +391,7 @@ class TestBrowserAuthoring(TileTestCase):
     def test_FormHeading(self):
         # Abstract form heading
         @plumbing(FormHeading)
-        class FormWithHeading(object):
+        class FormWithHeading:
             pass
 
         form_with_heading = FormWithHeading()
@@ -486,7 +485,7 @@ class TestBrowserAuthoring(TileTestCase):
             class MyAddForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='addform',
                         props={
                             'action': self.nodeurl
@@ -527,7 +526,7 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             self.assertEqual(
                 render_tile(root, request, 'add'),
-                u'unknown_factory'
+                'unknown_factory'
             )
 
         # Render with valid factory
@@ -535,7 +534,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['factory'] = 'mynode'
             result = render_tile(root, request, 'add')
 
-        self.assertTrue(result.find(u'<form action="http://example.com"') != -1)
+        self.assertTrue(result.find('<form action="http://example.com"') != -1)
 
         # Render with valid factory on adapter node
         with self.layer.authenticated('manager'):
@@ -543,7 +542,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['factory'] = 'myadapternode'
             result = render_tile(adapterroot, request, 'add')
 
-        self.assertTrue(result.find(u'<form action="http://example.com"') != -1)
+        self.assertTrue(result.find('<form action="http://example.com"') != -1)
 
         # Render with submitted data
         with self.layer.authenticated('manager'):
@@ -658,7 +657,7 @@ class TestBrowserAuthoring(TileTestCase):
             class MyEditForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='editform',
                         props={
                             'action': self.nodeurl
@@ -821,18 +820,18 @@ class TestBrowserAuthoring(TileTestCase):
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(render_tile(node['child'], request, 'delete'), u'')
+            self.assertEqual(render_tile(node['child'], request, 'delete'), '')
 
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            u'Object "child" not deletable'
+            'Object "child" not deletable'
         )
 
         node['child'].properties.action_delete = True
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(render_tile(node['child'], request, 'delete'), u'')
+            self.assertEqual(render_tile(node['child'], request, 'delete'), '')
 
         self.assertTrue(isinstance(
             request.environ['cone.app.continuation'][0],
@@ -975,7 +974,7 @@ class TestBrowserAuthoring(TileTestCase):
             class MyOverlayForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='overlayform',
                         props={
                             'action': self.nodeurl + '/' + self.action_resource
@@ -1003,7 +1002,7 @@ class TestBrowserAuthoring(TileTestCase):
                     self.model.attrs.title = fetch('editform.title')
 
         model = BaseNode(name='root')
-        model.attrs.title = u'Title'
+        model.attrs.title = 'Title'
 
         # Render overlayform tile
         request = self.layer.new_request()
@@ -1092,7 +1091,7 @@ class TestBrowserAuthoring(TileTestCase):
             class MyOverlayAddForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='overlayaddform',
                         props={
                             'action': self.nodeurl + '/' + self.action_resource
@@ -1216,7 +1215,7 @@ class TestBrowserAuthoring(TileTestCase):
             class MyOverlayEditForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='overlayeditform',
                         props={
                             'action': self.nodeurl + '/' + self.action_resource

@@ -112,11 +112,11 @@ class TestBrowserActions(TileTestCase):
         )
 
         class DummyTemplateAction(TemplateAction):
-            template = u'cone.app.testing:dummy_action.pt'
+            template = 'cone.app.testing:dummy_action.pt'
 
         self.assertEqual(
             DummyTemplateAction()(model, request),
-            u'<a href="">dummy template action</a>'
+            '<a href="">dummy template action</a>'
         )
 
         with self.layer.hook_tile_reg():
@@ -126,12 +126,12 @@ class TestBrowserActions(TileTestCase):
                 pass
 
         class DummyTileAction(TileAction):
-            tile = u'dummy_action_tile'
+            tile = 'dummy_action_tile'
 
         with self.layer.authenticated('viewer'):
             self.assertEqual(
                 DummyTileAction()(model, request),
-                u'<a href="">dummy template action</a>'
+                '<a href="">dummy template action</a>'
             )
 
     def test_Toolbar(self):
@@ -148,17 +148,17 @@ class TestBrowserActions(TileTestCase):
         with self.layer.authenticated('viewer'):
             self.assertEqual(
                 tb(model, request),
-                u'<div><a href="">dummy action</a></div>'
+                '<div><a href="">dummy action</a></div>'
             )
 
             tb.css = 'someclass'
             self.assertEqual(
                 tb(model, request),
-                u'<div class="someclass"><a href="">dummy action</a></div>'
+                '<div class="someclass"><a href="">dummy action</a></div>'
             )
 
             tb.display = False
-            self.assertEqual(tb(model, request), u'')
+            self.assertEqual(tb(model, request), '')
 
     def test_abstract_dropdown(self):
         model = BaseNode()
@@ -240,7 +240,7 @@ class TestBrowserActions(TileTestCase):
         )
 
         action.display = False
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
     def test_ButtonAction(self):
         model = BaseNode()
@@ -314,7 +314,7 @@ class TestBrowserActions(TileTestCase):
         """, rendered)
 
         action.display = False
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
     def test_ActionUp(self):
         parent = BaseNode(name='root')
@@ -322,10 +322,10 @@ class TestBrowserActions(TileTestCase):
         request = self.layer.new_request()
 
         action = ActionUp()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_up = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
@@ -382,10 +382,10 @@ class TestBrowserActions(TileTestCase):
         ActionContext(model, request, 'content')
 
         action = ActionView()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_view = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
@@ -428,10 +428,10 @@ class TestBrowserActions(TileTestCase):
         ActionContext(model, request, 'content')
 
         action = ViewLink()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_view = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
@@ -454,10 +454,10 @@ class TestBrowserActions(TileTestCase):
         request = self.layer.new_request()
 
         action = ActionList()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_list = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
@@ -481,16 +481,16 @@ class TestBrowserActions(TileTestCase):
 
         action = ActionSharing()
         self.assertFalse(IPrincipalACL.providedBy(model))
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         sharingmodel = parent['sharingmodel'] = SharingNode()
         self.assertTrue(IPrincipalACL.providedBy(sharingmodel))
-        self.assertEqual(action(sharingmodel, request), u'')
+        self.assertEqual(action(sharingmodel, request), '')
 
         with self.layer.authenticated('editor'):
             rule = request.has_permission('manage_permissions', sharingmodel)
             self.assertTrue(isinstance(rule, ACLDenied))
-            self.assertEqual(action(sharingmodel, request), u'')
+            self.assertEqual(action(sharingmodel, request), '')
 
         with self.layer.authenticated('manager'):
             rule = request.has_permission('manage_permissions', sharingmodel)
@@ -517,16 +517,16 @@ class TestBrowserActions(TileTestCase):
 
         action = ActionState()
         self.assertFalse(IWorkflowState.providedBy(model))
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         wfmodel = parent['wfmodel'] = WorkflowNode()
         self.assertTrue(IWorkflowState.providedBy(wfmodel))
-        self.assertEqual(action(wfmodel, request), u'')
+        self.assertEqual(action(wfmodel, request), '')
 
         with self.layer.authenticated('editor'):
             rule = request.has_permission('change_state', wfmodel)
             self.assertTrue(isinstance(rule, ACLDenied))
-            self.assertEqual(action(wfmodel, request), u'')
+            self.assertEqual(action(wfmodel, request), '')
 
         with self.layer.authenticated('manager'):
             rule = request.has_permission('change_state', wfmodel)
@@ -554,17 +554,17 @@ class TestBrowserActions(TileTestCase):
         request = self.layer.new_request()
         ActionContext(addmodel, request, 'listing')
 
-        self.assertEqual(action(addmodel, request), u'')
+        self.assertEqual(action(addmodel, request), '')
 
         with self.layer.authenticated('viewer'):
             rule = request.has_permission('add', addmodel)
             self.assertTrue(isinstance(rule, ACLDenied))
-            self.assertEqual(action(addmodel, request), u'')
+            self.assertEqual(action(addmodel, request), '')
 
         with self.layer.authenticated('editor'):
             rule = request.has_permission('add', addmodel)
             self.assertTrue(isinstance(rule, ACLAllowed))
-            self.assertEqual(action(addmodel, request), u'')
+            self.assertEqual(action(addmodel, request), '')
 
             addmodel.node_info_name = 'addable'
             self.assertTrue(addmodel.nodeinfo is info)
@@ -602,13 +602,13 @@ class TestBrowserActions(TileTestCase):
         ActionContext(model, request, 'listing')
 
         action = ActionEdit()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_edit = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('viewer'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('editor'):
             rendered = action(model, request)
@@ -633,13 +633,13 @@ class TestBrowserActions(TileTestCase):
         ActionContext(model, request, 'content')
 
         action = ActionDelete()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_delete = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('editor'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
@@ -657,7 +657,7 @@ class TestBrowserActions(TileTestCase):
             """, rendered)
 
             model.properties.default_content_tile = 'othertile'
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
     def test_ActionDeleteChildren(self):
         parent = BaseNode(name='root')
@@ -665,13 +665,13 @@ class TestBrowserActions(TileTestCase):
         request = self.layer.new_request()
 
         action = ActionDeleteChildren()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         model.properties.action_delete_children = True
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('editor'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
@@ -715,10 +715,10 @@ class TestBrowserActions(TileTestCase):
         self.assertTrue(model.supports_cut)
 
         action = ActionCut()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('editor'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
@@ -733,7 +733,7 @@ class TestBrowserActions(TileTestCase):
             """, rendered)
 
             model.supports_cut = False
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
     def test_ActionCopy(self):
         model = CopySupportNode('copysupport')
@@ -743,10 +743,10 @@ class TestBrowserActions(TileTestCase):
         self.assertTrue(model.supports_copy)
 
         action = ActionCopy()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('editor'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
@@ -761,7 +761,7 @@ class TestBrowserActions(TileTestCase):
             """, rendered)
 
             model.supports_copy = False
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
     def test_ActionPaste(self):
         model = CopySupportNode('copysupport')
@@ -771,10 +771,10 @@ class TestBrowserActions(TileTestCase):
         self.assertTrue(model.supports_paste)
 
         action = ActionPaste()
-        self.assertEqual(action(model, request), u'')
+        self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('editor'):
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
@@ -817,7 +817,7 @@ class TestBrowserActions(TileTestCase):
             del request.cookies['cone.app.copysupport.copy']
 
             model.supports_paste = False
-            self.assertEqual(action(model, request), u'')
+            self.assertEqual(action(model, request), '')
 
     def test__ActionMove(self):
         node = BaseNode()

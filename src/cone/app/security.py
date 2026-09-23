@@ -101,10 +101,10 @@ def authenticate(request, login, password):
             pid = ugm.users.id_for_login(login)
             return remember(request, pid)
     except Exception as e:
-        logger.warning((
-            u'Authentication plugin {} raised an Exception while '
-            u'trying to authenticate: {}'
-        ).format(str(ugm.__class__), e))
+        logger.warning(
+            f'Authentication plugin {ugm.__class__!s} raised an Exception while '
+            f'trying to authenticate: {e}'
+        )
 
 
 def authenticated_user(request):
@@ -135,7 +135,7 @@ def search_for_principals(term):
     for user in ugm.users.search(criteria=criteria, or_search=True):
         ret.append(user)
     for group in ugm.groups.search(criteria=criteria, or_search=True):
-        ret.append(u'group:%s' % group)
+        ret.append('group:%s' % group)
     return ret
 
 
@@ -152,7 +152,7 @@ def groups_callback(name, request):
     if roles:
         return roles
     if name == ADMIN_USER:
-        roles = environ[ROLES_CACHE_KEY] = [u'role:manager']
+        roles = environ[ROLES_CACHE_KEY] = ['role:manager']
         return roles
     ugm = ugm_backend.ugm
     user = None
@@ -250,8 +250,8 @@ class PrincipalACL(Behavior):
     @default
     @property
     def principal_roles(self):
-        raise NotImplementedError(u"Abstract ``PrincipalACL`` does not "
-                                  u"implement ``principal_roles``.")
+        raise NotImplementedError("Abstract ``PrincipalACL`` does not "
+                                  "implement ``principal_roles``.")
 
     @default
     @property

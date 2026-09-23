@@ -11,20 +11,20 @@ from zope.interface.common.mapping import IReadMapping
 
 class ISecured(Interface):
     """Secured object."""
-    __acl__ = Attribute(u'ACL')
+    __acl__ = Attribute('ACL')
 
 
 class IApplicationEnvironment(Interface):
     """Application environment."""
-    request = Attribute(u'The current request if any.')
-    registry = Attribute(u'The current registry.')
+    request = Attribute('The current request if any.')
+    registry = Attribute('The current registry.')
 
 
 class IApplicationNode(ISecured, INode, IAttributes):
     """Application Node interface."""
-    properties = Attribute(u'cone.app.interfaces.IProperties providing object')
-    metadata = Attribute(u'cone.app.interfaces.IMetadata implementation')
-    nodeinfo = Attribute(u'cone.app.interfaces.INodeInfo providing object')
+    properties = Attribute('cone.app.interfaces.IProperties providing object')
+    metadata = Attribute('cone.app.interfaces.IMetadata implementation')
+    nodeinfo = Attribute('cone.app.interfaces.INodeInfo providing object')
 
 
 class ILeafNode(IApplicationNode, ILeaf):
@@ -45,8 +45,8 @@ class ILeafNode(IApplicationNode, ILeaf):
 
 class ISettingsNode(ILeafNode):
     """Application node for managing plugin specific settings."""
-    category = Attribute(u'Settings category as (translation) string.')
-    display = Attribute(u'Flag whether to display the settings node in UI')
+    category = Attribute('Settings category as (translation) string.')
+    display = Attribute('Flag whether to display the settings node in UI')
 
 
 class IFactoryNode(IApplicationNode, IChildFactory):
@@ -60,7 +60,7 @@ class IAdapterNode(IApplicationNode):
          - no attrs on this interface
          - self.context instead of self.model
     """
-    attrs = Attribute(u'Return self.model.attrs')
+    attrs = Attribute('Return self.model.attrs')
 
     def __init__(model, name, parent):
         """Name and parent are used to hook the correct application hierarchy.
@@ -88,19 +88,19 @@ class IProperties(IReadMapping):
 
 class ILayoutConfig(IProperties):
     """Layout configuration."""
-    mainmenu = Attribute(u'Flag whether to display mainmenu')
-    livesearch = Attribute(u'Flag whether to display livesearch')
-    personaltools = Attribute(u'Flag whether to display personaltools')
-    limit_content_width = Attribute(u'Flag whether content width should be limited on large screens')
-    limit_page_width = Attribute(u'Flag whether page width should be limited on large screens')
-    center_content = Attribute(u'Flag whether to center the content area (used with limit_content_width)')
-    pathbar = Attribute(u'Flag whether to display pathbar')
-    sidebar_left = Attribute(u'Tiles which should be rendered in sidebar')
-    sidebar_left_min_width = Attribute(u'Min width of sidebar left in px')
-    sidebar_left_static = Attribute(u'Flag whether sidebar left overlays content instead of pushing it')
-    sidebar_right = Attribute(u'Tiles which should be rendered in sidebar')
-    sidebar_right_min_width = Attribute(u'Min width of sidebar right in px')
-    sidebar_right_static = Attribute(u'Flag whether sidebar right overlays content instead of pushing it')
+    mainmenu = Attribute('Flag whether to display mainmenu')
+    livesearch = Attribute('Flag whether to display livesearch')
+    personaltools = Attribute('Flag whether to display personaltools')
+    limit_content_width = Attribute('Flag whether content width should be limited on large screens')
+    limit_page_width = Attribute('Flag whether page width should be limited on large screens')
+    center_content = Attribute('Flag whether to center the content area (used with limit_content_width)')
+    pathbar = Attribute('Flag whether to display pathbar')
+    sidebar_left = Attribute('Tiles which should be rendered in sidebar')
+    sidebar_left_min_width = Attribute('Min width of sidebar left in px')
+    sidebar_left_static = Attribute('Flag whether sidebar left overlays content instead of pushing it')
+    sidebar_right = Attribute('Tiles which should be rendered in sidebar')
+    sidebar_right_min_width = Attribute('Min width of sidebar right in px')
+    sidebar_right_static = Attribute('Flag whether sidebar right overlays content instead of pushing it')
 
 
 # B/C, removed as of cone.app 1.1
@@ -113,12 +113,12 @@ class IMetadata(IProperties):
 
 class INodeInfo(IProperties):
     """Interface for providing node information."""
-    title = Attribute(u'Node meta title.')
-    description = Attribute(u'Node meta description.')
-    node = Attribute(u'Node implementing class.')
-    factory = Attribute(u'Add model factory.')
-    addables = Attribute(u'List of valid children node info names.')
-    icon = Attribute(u'Node icon.')
+    title = Attribute('Node meta title.')
+    description = Attribute('Node meta description.')
+    node = Attribute('Node implementing class.')
+    factory = Attribute('Add model factory.')
+    addables = Attribute('List of valid children node info names.')
+    icon = Attribute('Node icon.')
 
 
 class INavigationLeaf(ILeaf):
@@ -127,10 +127,10 @@ class INavigationLeaf(ILeaf):
 
 class IWorkflowState(INode):
     """Workflow support on nodes."""
-    workflow_name = Attribute(u'Name of registered workflow.')
-    workflow_tsf = Attribute(u'Translation string factory used to translate '
-                             u'states and transitions')
-    state = Attribute(u'Current workflow state.')
+    workflow_name = Attribute('Name of registered workflow.')
+    workflow_tsf = Attribute('Translation string factory used to translate '
+                             'states and transitions')
+    state = Attribute('Current workflow state.')
 
 
 class IOwnerSupport(ISecured):
@@ -138,8 +138,8 @@ class IOwnerSupport(ISecured):
 
     Plumbs __acl__ property.
     """
-    owner_attribute_name = Attribute(u'Attribute name of the owner field.')
-    owner = Attribute(u'User id of node owner')
+    owner_attribute_name = Attribute('Attribute name of the owner field.')
+    owner = Attribute('User id of node owner')
 
 
 class IPrincipalACL(ISecured):
@@ -147,11 +147,11 @@ class IPrincipalACL(ISecured):
 
     Plumbs __acl__ property.
     """
-    role_inheritance = Attribute(u'Flag whether principal roles are '
-                                 u'additionally aggregated from parent.')
-    principal_roles = Attribute(u'Attribute containing principal roles for '
-                                u'secured object.')
-    aggregated_roles = Attribute(u'Aggregated roles.')
+    role_inheritance = Attribute('Flag whether principal roles are '
+                                 'additionally aggregated from parent.')
+    principal_roles = Attribute('Attribute containing principal roles for '
+                                'secured object.')
+    aggregated_roles = Attribute('Aggregated roles.')
 
     def aggregated_roles_for(principal_id):
         """Return aggregated roles for principal by principal_id.
@@ -160,20 +160,20 @@ class IPrincipalACL(ISecured):
 
 class IACLAdapter(Interface):
     """Interface for providing ACL as adapter."""
-    acl = Attribute(u'ACL')
+    acl = Attribute('ACL')
 
 
 class IAdapterACL(ISecured):
     """ACL from ``IACLAdapter`` on nodes."""
-    default_acl = Attribute(u'Default ACL if no ``IAclAdapter`` found for node')
+    default_acl = Attribute('Default ACL if no ``IAclAdapter`` found for node')
 
 
 class ICopySupport(INode):
     """Copysupport for nodes."""
 
-    supports_cut = Attribute(u'Supports cut')
-    supports_copy = Attribute(u'Supports copy')
-    supports_paste = Attribute(u'Supports paste')
+    supports_cut = Attribute('Supports cut')
+    supports_copy = Attribute('Supports copy')
+    supports_paste = Attribute('Supports paste')
 
 
 class IUUIDAsName(IUUIDAware):
@@ -184,7 +184,7 @@ class IUUIDAsName(IUUIDAware):
 
 class ITranslation(ISchema):
     """A translation."""
-    value = Attribute(u'The translated value according to the curren language')
+    value = Attribute('The translated value according to the curren language')
 
 
 class ILiveSearch(Interface):
@@ -215,4 +215,4 @@ class IAuthenticator(Interface):
 
 class ICategories(Interface):
     """List of translation strings"""
-    categories = Attribute(u'Categories as (translation) string.')
+    categories = Attribute('Categories as (translation) string.')

@@ -40,7 +40,7 @@ class TestApp(NodeTestCase):
 
         # Settings contains metadata.title by default
         self.assertEqual(list(root['settings'].metadata.keys()), ['title'])
-        self.assertEqual(root['settings'].metadata.title, u'settings')
+        self.assertEqual(root['settings'].metadata.title, 'settings')
 
         # Settings is displayed in navtree by default
         self.assertEqual(
@@ -144,7 +144,7 @@ class TestApp(NodeTestCase):
 
     def test_remote_addr_middleware(self):
         # Remote address middleware
-        class DummyApp(object):
+        class DummyApp:
             remote_addr = None
 
             def __call__(self, environ, start_response):

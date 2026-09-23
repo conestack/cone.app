@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
 from cone.app.browser.resources import ResourceRegistry
@@ -43,7 +42,7 @@ cfg.main_template = 'cone.app.browser:templates/main.pt'
 cfg.default_node_icon = 'bi-asterisk'
 
 
-class layout_config(object):
+class layout_config:
     _registry = dict()
 
     def __init__(self, *for_):
@@ -120,7 +119,7 @@ def register_config(key, factory):
     root = get_root()
     factories = root['settings'].factories
     if key in factories:
-        raise ValueError(u"Config with name '%s' already registered." % key)
+        raise ValueError("Config with name '%s' already registered." % key)
     factories[key] = factory
 
 
@@ -132,7 +131,7 @@ def register_entry(key, factory):
     root = get_root()
     factories = root.factories
     if key in factories:
-        raise ValueError(u"Entry with name '%s' already registered." % key)
+        raise ValueError("Entry with name '%s' already registered." % key)
     root.factories[key] = factory
 
 
@@ -335,16 +334,13 @@ def main(global_config, **settings):
         try:
             importlib.import_module(plugin)
         except ImportError:
-            msg = 'Cannot import plugin {}\n{}'.format(
-                plugin,
-                format_traceback()
-            )
+            msg = f'Cannot import plugin {plugin}\n{format_traceback()}'
             logger.error(msg)
             continue
         try:
-            config.load_zcml('{}:configure.zcml'.format(plugin))
-        except IOError:  # pragma: no cover
-            msg = 'No configure.zcml in {}'.format(plugin)
+            config.load_zcml(f'{plugin}:configure.zcml')
+        except OSError:  # pragma: no cover
+            msg = f'No configure.zcml in {plugin}'
             logger.info(msg)
 
     # execute main hooks
@@ -366,7 +362,7 @@ def main(global_config, **settings):
             ugm_backend.load(backend_name, settings)
             ugm_backend.initialize()
         except Exception:  # pragma: no cover
-            msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
+            msg = f'Failed to create UGM backend:\n{format_traceback()}'
             logger.error(msg)
 
     user_display_attr = settings.get('ugm.user_display_attr')
@@ -396,7 +392,7 @@ def make_remote_addr_middleware(app, global_conf):
     return RemoteAddrFilter(app)
 
 
-class RemoteAddrFilter(object):
+class RemoteAddrFilter:
     """Use this middleware if nginx is used as proxy and IP address should be
     included in auth cookie. make sure nginx passes the right header:
 

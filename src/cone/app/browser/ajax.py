@@ -90,7 +90,7 @@ def ajax_status_message(request, payload, css=None, title=None):
     ajax_continue(request, AjaxMessage(payload, None, '#status_message', css, title))
 
 
-class AjaxPath(object):
+class AjaxPath:
     """Ajax path continuation operation.
     """
 
@@ -131,7 +131,7 @@ class AjaxPath(object):
         }
 
 
-class AjaxAction(object):
+class AjaxAction:
     """Ajax action continuation operation.
     """
 
@@ -158,7 +158,7 @@ class AjaxAction(object):
         }
 
 
-class AjaxEvent(object):
+class AjaxEvent:
     """Ajax event continuation operation.
     """
 
@@ -185,7 +185,7 @@ class AjaxEvent(object):
         }
 
 
-class AjaxMessage(object):
+class AjaxMessage:
     """Ajax message continuation operation.
     """
 
@@ -215,7 +215,7 @@ class AjaxMessage(object):
         }
 
 
-class AjaxOverlay(object):
+class AjaxOverlay:
     """Ajax overlay continuation operation.
     """
 
@@ -258,7 +258,7 @@ class AjaxOverlay(object):
         }
 
 
-class AjaxContinue(object):
+class AjaxContinue:
     """Ajax continuation operations provider.
     """
 
@@ -359,7 +359,7 @@ def render_ajax_form(model, request, name):
         operations = AjaxMessage(tb, 'error', None)
         form_continue = AjaxFormContinue(result, [operations])
         rendered = ajax_form_template % dict(
-            form=form_continue.form.replace(u'\n', u' '),
+            form=form_continue.form.replace('\n', ' '),
             selector=selector,
             mode=mode,
             next=form_continue.next,

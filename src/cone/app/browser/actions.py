@@ -19,7 +19,7 @@ def get_action_context(request):
     return request.environ['action_context']
 
 
-class ActionContext(object):
+class ActionContext:
     """The action context is used to determine action scopes. The action scope
     is used by browser actions to check it's own state, e.g. if action button
     is selected, disabled or displayed at all.
@@ -88,7 +88,7 @@ class Toolbar(odict):
     __str__ = __repr__
 
 
-class Action(object):
+class Action:
     """Abstract Action."""
     display = True
 
@@ -130,7 +130,7 @@ class Action(object):
     def __call__(self, model, request):
         action = self.bound_to(model, request)
         if not action.display:
-            return u''
+            return ''
         return action.render()
 
     @property
@@ -144,13 +144,13 @@ class Action(object):
         return self.request.has_permission(permission, self.model)
 
     def render(self):
-        raise NotImplementedError(u"Abstract ``Action`` does not implement "
-                                  u"render.")
+        raise NotImplementedError("Abstract ``Action`` does not implement "
+                                  "render.")
 
 
 class TileAction(Action):
     """Action rendered by a tile."""
-    tile = u''
+    tile = ''
 
     def render(self):
         return render_tile(self.model, self.request, self.tile)
@@ -158,7 +158,7 @@ class TileAction(Action):
 
 class TemplateAction(Action):
     """Action rendered by a template."""
-    template = u''
+    template = ''
 
     def render(self):
         return render_template(
@@ -171,7 +171,7 @@ class TemplateAction(Action):
 
 class DropdownAction(TemplateAction):
     """Action rendering a dropdown."""
-    template = u'cone.app.browser:templates/action_dropdown.pt'
+    template = 'cone.app.browser:templates/action_dropdown.pt'
     href = None
     css = None
     title = None
@@ -387,7 +387,7 @@ class ActionList(LinkAction):
 
     @property
     def href(self):
-        return '{}/listing'.format(make_url(self.request, node=self.model))
+        return f'{make_url(self.request, node=self.model)}/listing'
 
     @property
     def display(self):
@@ -408,7 +408,7 @@ class ActionSharing(LinkAction):
 
     @property
     def href(self):
-        return '{}/sharing'.format(make_url(self.request, node=self.model))
+        return f'{make_url(self.request, node=self.model)}/sharing'
 
     @property
     def display(self):
@@ -451,7 +451,7 @@ class ActionEdit(LinkAction):
 
     @property
     def href(self):
-        return '{}/edit'.format(make_url(self.request, node=self.model))
+        return f'{make_url(self.request, node=self.model)}/edit'
 
     @property
     def display(self):
@@ -604,7 +604,7 @@ class ActionMoveDown(_ActionMove):
 
 class ActionDownload(TemplateAction):
     """Download action."""
-    template = u'cone.app.browser:templates/action_download.pt'
+    template = 'cone.app.browser:templates/action_download.pt'
     id = 'toolbaraction-download'
     icon = 'bi-download'
     action = None

@@ -157,19 +157,19 @@ class CameFromNext(Behavior):
             # behave as if no came_from given if application location not
             # matches came_from location
             if app_loc != parsed.netloc:
-                logger.error((
-                    'CameFromNext.next(): Application location "{}" does not '
-                    'match came_from location "{}". Use model for URL '
+                logger.error(
+                    f'CameFromNext.next(): Application location "{app_loc}" does not '
+                    f'match came_from location "{parsed.netloc}". Use model for URL '
                     'computing instead'
-                ).format(app_loc, parsed.netloc))
+                )
                 url = make_url(request.request, node=self.model)
                 path = '/'.join(node_path(self.model))
             # include query to path
             elif parsed.query:
-                path = '{}?{}'.format(parsed.path, parsed.query)
+                path = f'{parsed.path}?{parsed.query}'
             # query without path
             else:
-                path = '{}'.format(parsed.path)
+                path = f'{parsed.path}'
         # ajax continuation operations if ajax request
         if self.ajax_request:
             event = AjaxEvent(url, 'contextchanged', '#layout')
@@ -198,7 +198,7 @@ class FormHeading(Behavior):
     @property
     def form_heading(self):
         raise NotImplementedError(
-            u'Abstract ``FormHeading`` does not implement ``form_heading``'
+            'Abstract ``FormHeading`` does not implement ``form_heading``'
         )
 
 
@@ -230,7 +230,7 @@ class ContentForm(FormHeading):
         ajax_form_fiddle(request, '#content', 'inner')
         form = _next(self, model, request)
         if not form:
-            form = u''
+            form = ''
         self.rendered_form = form
         path = self.path
         if not path:
@@ -271,7 +271,7 @@ class OverlayForm(FormTarget):
     @plumb
     def __call__(_next, self, model, request):
         form = _next(self, model, request)
-        selector = '#{} {}'.format(self.overlay_uid, self.content_selector)
+        selector = f'#{self.overlay_uid} {self.content_selector}'
         ajax_form_fiddle(request, selector, 'inner')
         return form
 
@@ -314,7 +314,7 @@ def default_addmodel_factory(parent, nodeinfo):
 class AddDropdown(Tile):
 
     def category_id(self, category):
-        return 'add-category-cat-{0}'.format(category)
+        return f'add-category-cat-{category}'
 
     @property
     def addables(self):
@@ -592,7 +592,7 @@ class DeleteAction(Tile):
             localizer = get_localizer(self.request)
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'error')
-            return u''
+            return ''
         content_tile = model.properties.action_delete_tile
         if not content_tile:
             content_tile = 'content'
@@ -610,4 +610,4 @@ class DeleteAction(Tile):
             localizer = get_localizer(self.request)
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'info')
-        return u''
+        return ''

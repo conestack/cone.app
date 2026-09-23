@@ -174,7 +174,7 @@ class AddPrincipalRole(Tile):
             roles = model.principal_roles
             if principal_id not in roles:
                 model.principal_roles[principal_id] = [role]
-                return u''
+                return ''
             existing = set(model.principal_roles[principal_id])
             existing.add(role)
             model.principal_roles[principal_id] = list(existing)
@@ -189,7 +189,7 @@ class AddPrincipalRole(Tile):
                 mapping={'role': role, 'pid': principal_id}
             )
             ajax_message(self.request, message, 'error')
-        return u''
+        return ''
 
 
 @tile(name='remove_principal_role', permission='manage_permissions')
@@ -224,4 +224,4 @@ class RemovePrincipalRole(Tile):
                 mapping={'role': role, 'pid': principal_id}
             )
             ajax_message(self.request, message, 'error')
-        return u''
+        return ''

@@ -4,6 +4,22 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Drop the Python 2 compatibility layer. ``requires-python`` is ``>=3.10``, so
+  ``IS_PY2`` was constantly false and every branch behind it dead, while
+  ``STR_TYPE``, ``UNICODE_TYPE``, ``ITER_TYPES`` and ``NUMBER_TYPES`` were
+  aliases for builtins. ``cone.app.compat`` keeps only the stdlib re-exports
+  its import sites reference. No package outside ``cone.app`` used any of the
+  removed names.
+  [rnix]
+
+- Modernise the code ruff flags as outdated: ``u''`` prefixes, ``class
+  X(object)``, ``# -*- coding: utf-8 -*-``, ``.format()`` over f-strings.
+  Behaviour unchanged. ``super(Class, self)`` is deliberately **kept**: a
+  zero-argument ``super()`` binds the class the method was written in, which
+  for a ``@plumbing`` decorated class is not the class that ends up in the
+  mro - it raises ``TypeError`` at call time.
+  [rnix]
+
 - Scroll the content from anywhere in the content area. ``#content`` was the
   scrolling box **and** carried the width limit of ``limit_content_width`` /
   ``limit_page_width``, so the strip beside a limited content belonged to no

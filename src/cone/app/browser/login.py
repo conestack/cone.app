@@ -33,7 +33,7 @@ class LoginForm(Form):
     def prepare(self):
         action = make_url(self.request, node=self.model, resource='login')
         form = factory(
-            u'form',
+            'form',
             name='loginform',
             props={
                 'action': action,

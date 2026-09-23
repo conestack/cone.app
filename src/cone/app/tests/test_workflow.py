@@ -38,8 +38,8 @@ class TestWorkflow(NodeTestCase):
         state_data = lookup_state_data(WorkflowNode())
         self.assertEqual(state_data, {
             'callback': None,
-            'description': u'Foo',
-            'title': u'Initial State'
+            'description': 'Foo',
+            'title': 'Initial State'
         })
 
     def test_workflow(self):
@@ -47,29 +47,29 @@ class TestWorkflow(NodeTestCase):
         self.assertTrue(IWorkflowState.providedBy(node))
 
         # Workflow name is set on node properties for lookup
-        self.assertEqual(node.workflow_name, u'dummy')
+        self.assertEqual(node.workflow_name, 'dummy')
 
         # Initial workflow state gets set at node creation time if not set yet
-        self.assertEqual(node.state, u'initial')
+        self.assertEqual(node.state, 'initial')
 
-        node.state = u'final'
-        self.assertEqual(node.attrs['state'], u'final')
+        node.state = 'final'
+        self.assertEqual(node.attrs['state'], 'final')
         self.assertTrue(node.attrs['state'] is node.state)
 
         initialize_workflow(node)
-        self.assertEqual(node.state, u'final')
+        self.assertEqual(node.state, 'final')
 
     def test_copy(self):
         root = WorkflowNode()
         child = root['child'] = WorkflowNode()
-        self.assertTrue(root.state == child.state == u'initial')
+        self.assertTrue(root.state == child.state == 'initial')
 
-        root.state = child.state = u'final'
-        self.assertTrue(root.state == child.state == u'final')
+        root.state = child.state = 'final'
+        self.assertTrue(root.state == child.state == 'final')
 
         # Workflow state gets set to initial state on copied nodes
         copied = root.copy()
-        self.assertTrue(copied.state == copied['child'].state == u'initial')
+        self.assertTrue(copied.state == copied['child'].state == 'initial')
 
     def test_acl(self):
         # Default workflow state ACL
@@ -105,7 +105,7 @@ class TestWorkflow(NodeTestCase):
 
     def test_state_acl(self):
         node = StateACLWorkflowNode()
-        self.assertEqual(node.workflow_name, u'dummy')
+        self.assertEqual(node.workflow_name, 'dummy')
         self.assertTrue(IWorkflowState.providedBy(node))
 
         self.assertEqual(node.__acl__, [
@@ -117,8 +117,8 @@ class TestWorkflow(NodeTestCase):
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
             wf = lookup_workflow(node)
-            wf.transition(node, request, u'initial_2_final')
-            self.assertEqual(node.state, u'final')
+            wf.transition(node, request, 'initial_2_final')
+            self.assertEqual(node.state, 'final')
 
         self.assertEqual(node.__acl__, [
             ('Allow', 'role:manager', ['view', 'edit', 'change_state']),

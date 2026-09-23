@@ -31,17 +31,16 @@ def make_query(quote_params=QUOTE_PARAMS, **kw):
     for name, param in sorted(kw.items()):
         if param is None:
             continue
-        if isinstance(param, compat.STR_TYPE):
+        if isinstance(param, str):
             param = [param]
-        if type(param) in compat.NUMBER_TYPES:
+        if type(param) in (int, float):
             param = [str(param)]
         quote = name in quote_params
         for p in param:
-            p = safe_encode(p) if compat.IS_PY2 else p
-            query.append('{}={}'.format(name, compat.quote(p) if quote else p))
+            query.append(f'{name}={compat.quote(p) if quote else p}')
     query = '&'.join(query)
     if query:
-        return '?{}'.format(query)
+        return f'?{query}'
 
 
 def make_url(request, path=None, node=None, resource=None, query=None):
@@ -61,7 +60,7 @@ def make_url(request, path=None, node=None, resource=None, query=None):
     url = '{}/{}'.format(request.application_url, '/'.join(path))
     if not query:
         return url
-    return '{}{}'.format(url, query)
+    return f'{url}{query}'
 
 
 def choose_name(container, name):
@@ -73,7 +72,7 @@ def choose_name(container, name):
     i = 0
     while n in container:
         i += 1
-        n = u'{}-{}'.format(name, i)
+        n = f'{name}-{i}'
     return n.replace('/', '-').lstrip('+@')
 
 
@@ -102,11 +101,7 @@ def request_property(func):
     Works only on instances providing a request attribute.
     """
     def wrapper(self):
-        cache_key = '{}.{}.{}'.format(
-            str(id(self)),
-            self.__class__.__name__,
-            func.__name__
-        )
+        cache_key = f'{id(self)!s}.{self.__class__.__name__}.{func.__name__}'
         try:
             return self.request.environ[cache_key]
         except KeyError:
@@ -117,11 +112,11 @@ def request_property(func):
 
 
 def format_traceback():
-    return '<pre>{}</pre>'.format(_format_traceback())
+    return f'<pre>{_format_traceback()}</pre>'
 
 
 def bdajax_warning(attr):
-    warnings.warn((
-        '``bdajax.{}`` parameter received. Bdajax is no longer '
+    warnings.warn(
+        f'``bdajax.{attr}`` parameter received. Bdajax is no longer '
         'supported. Please migrate your code to ``treibstoff``.'
-    ).format(attr))
+    )

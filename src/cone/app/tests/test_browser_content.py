@@ -100,7 +100,7 @@ class TestBrowserLayout(TileTestCase):
         action.request = request
         self.assertTrue(action.display)
 
-        class InvalidClassContext(object):
+        class InvalidClassContext:
             pass
 
         action = ContentViewAction(

@@ -16,7 +16,7 @@ _ = TranslationStringFactory('cone.app')
 
 
 def cookie_name(name):
-    return u'cone.app.copysupport.%s' % name
+    return 'cone.app.copysupport.%s' % name
 
 
 def extract_copysupport_cookie(request, name):
@@ -45,7 +45,7 @@ class PasteAction(Tile):
             message = localizer.translate(
                 _('nothing_to_paste', default='Nothing to paste'))
             ajax_message(self.request, message)
-            return u''
+            return ''
         urls = copy and copy or cut
         paths = paths_from_urls(urls)
         call_sources = set()
@@ -150,4 +150,4 @@ class PasteAction(Tile):
         ajax_continue(self.request, event)
         res = self.request.response
         res.delete_cookie(cookie_name(copy and 'copy' or 'cut'))
-        return u''
+        return ''

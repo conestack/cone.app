@@ -38,7 +38,7 @@ class MoveAction(Tile):
                 mapping={'title': title}
             )
             self.show_error(message)
-            return u''
+            return ''
         if (
             not parent.properties.action_move
             or not self.request.has_permission('change_order', parent)
@@ -48,7 +48,7 @@ class MoveAction(Tile):
                 default='You are not permitted to move this object'
             )
             self.show_error(message)
-            return u''
+            return ''
         self.move()
         parent()
         query = make_query(
@@ -58,7 +58,7 @@ class MoveAction(Tile):
         )
         url = make_url(self.request, node=parent, query=query)
         ajax_continue(self.request, self.continuation(url))
-        return u''
+        return ''
 
 
 @tile(name='move_up', permission='view')

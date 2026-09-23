@@ -33,7 +33,7 @@ class Batch(Tile):
     """Path to batch template.
     """
 
-    ellipsis = u'...'
+    ellipsis = '...'
     """Ellipsis string if number of pages exceeds batch range.
     """
 
@@ -53,11 +53,11 @@ class Batch(Tile):
     def trigger_selector(self):
         """CSS selector to trigger JS event to.
         """
-        return '.{}sensitiv'.format(self.name)
+        return f'.{self.name}sensitiv'
 
     @property
     def ajax_event(self):
-        return '{}:{}'.format(self.trigger_event, self.trigger_selector)
+        return f'{self.trigger_event}:{self.trigger_selector}'
 
     @property
     def vocab(self):
@@ -153,13 +153,13 @@ class Batch(Tile):
     def leftellipsis(self):
         """Left ellipsis string.
         """
-        return self._left_over_diff < 0 and self.ellipsis or u''
+        return self._left_over_diff < 0 and self.ellipsis or ''
 
     @property
     def rightellipsis(self):
         """Right ellipsis string.
         """
-        return self._right_over_diff < 0 and self.ellipsis or u''
+        return self._right_over_diff < 0 and self.ellipsis or ''
 
     @property
     def pages(self):
@@ -357,7 +357,7 @@ class BatchedItems(Tile):
     def bind_selectors(self):
         """CSS selector to bind the batched items container DOM element to.
         """
-        return '{}sensitiv'.format(self.pagination.name)
+        return f'{self.pagination.name}sensitiv'
 
     @property
     def bind_events(self):
@@ -381,14 +381,14 @@ class BatchedItems(Tile):
 
     @property
     def ajax_event(self):
-        return '{}:{}'.format(self.trigger_event, self.trigger_selector)
+        return f'{self.trigger_event}:{self.trigger_selector}'
 
     @property
     def rendered_header(self):
         """Rendered header by ``header_template``.
         """
         if not self.display_header:
-            return u''
+            return ''
         return render_template(
             self.header_template,
             request=self.request,
@@ -401,7 +401,7 @@ class BatchedItems(Tile):
         """Rendered footer by ``footer_template``.
         """
         if not self.display_footer:
-            return u''
+            return ''
         return render_template(
             self.footer_template,
             request=self.request,
@@ -458,7 +458,7 @@ class BatchedItems(Tile):
     def slice_id(self):
         """CSS ID of the slice container DOM element.
         """
-        return '{}_slice'.format(self.items_id)
+        return f'{self.items_id}_slice'
 
     @property
     def slice_size(self):
@@ -497,9 +497,7 @@ class BatchedItems(Tile):
         """
         term = self.request.params.get('term')
         if term:
-            term = term.encode('utf-8') if compat.IS_PY2 else term
             term = compat.unquote(term)
-            term = term.decode('utf-8') if compat.IS_PY2 else term
         return term
 
     @property

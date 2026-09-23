@@ -1,4 +1,3 @@
-from cone.app import compat
 from cone.app import get_root
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import Toolbar
@@ -49,7 +48,7 @@ def make_refbrowser_query(request, **kw):
     return make_query(**params)
 
 
-class ReferenceBrowserModelMixin(object):
+class ReferenceBrowserModelMixin:
 
     @request_property
     def referencable_root(self):
@@ -121,7 +120,7 @@ class ReferenceAction(LinkAction):
 
     @property
     def id(self):
-        return 'ref-{}'.format(self.model.uuid)
+        return f'ref-{self.model.uuid}'
 
     @property
     def display(self):
@@ -151,7 +150,7 @@ class ActionAddReference(ReferenceAction):
     @property
     def enabled(self):
         if IUUID.providedBy(self.model):
-            return not str(self.model.uuid) in self.selected_uids
+            return str(self.model.uuid) not in self.selected_uids
         return False
 
 
@@ -176,9 +175,7 @@ class ReferencableChildrenLink(LinkAction):
 
     @property
     def target(self):
-        return '{}{}'.format(
-            super(ReferencableChildrenLink, self).target,
-            make_refbrowser_query(self.request))
+        return f'{super(ReferencableChildrenLink, self).target}{make_refbrowser_query(self.request)}'
 
     @property
     def text(self):
@@ -186,7 +183,7 @@ class ReferencableChildrenLink(LinkAction):
 
     @property
     def action(self):
-        return '{}:#{}:replace'.format(self.table_tile_name, self.table_id)
+        return f'{self.table_tile_name}:#{self.table_id}:replace'
 
     @property
     def display(self):
@@ -198,7 +195,7 @@ class ReferencableChildrenLink(LinkAction):
 
     def render(self):
         if INavigationLeaf.providedBy(self.model):
-            return u'{}&nbsp;{}'.format(
+            return '{}&nbsp;{}'.format(
                 tag('span', class_=self.icon),
                 tag('span', self.text)
             )
@@ -284,7 +281,7 @@ def reference_extractor(widget, data):
         return select_extractor(widget, data)
     if widget.dottedpath not in data.request:
         return UNSET
-    return data.request['{}.uid'.format(widget.dottedpath)]
+    return data.request[f'{widget.dottedpath}.uid']
 
 
 def wrap_ajax_target(rendered, widget, data, cssclass=None):
@@ -298,14 +295,14 @@ def wrap_ajax_target(rendered, widget, data, cssclass=None):
     referencable = widget.attrs['referencable']
     if callable(referencable):
         referencable = referencable(widget, data)
-    if type(referencable) in compat.ITER_TYPES:
+    if type(referencable) in (list, tuple):
         referencable = ','.join(referencable)
     if not referencable:
         referencable = ''
     navigable = widget.attrs['navigable']
     if callable(navigable):
         navigable = navigable(widget, data)
-    if type(navigable) in compat.ITER_TYPES:
+    if type(navigable) in (list, tuple):
         navigable = ','.join(navigable)
     if not navigable:
         navigable = ''
@@ -318,13 +315,8 @@ def wrap_ajax_target(rendered, widget, data, cssclass=None):
         selected = ','.join(value)
     elif value:
         selected = value
-    query = make_query(**{
-        'root': root,
-        'referencable': referencable,
-        'selected': selected,
-        'navigable': navigable,
-    })
-    target = '{}{}'.format(target, query)
+    query = make_query(root=root, referencable=referencable, selected=selected, navigable=navigable)
+    target = f'{target}{query}'
     attrs = {
         'ajax:target': target,
         'class_': cssclass if cssclass else ''
@@ -354,7 +346,7 @@ def multivalued_reference_vocab(widget, data):
         return vocab
     if widget.dottedpath in data.request:
         value = data.request[widget.dottedpath]
-        if isinstance(value, compat.STR_TYPE):
+        if isinstance(value, str):
             value = [value]
     else:
         if callable(widget.getter):
@@ -408,7 +400,7 @@ def reference_edit_renderer(widget, data):
     hidden_attrs = {
         'type': 'hidden',
         'value': value if value else '',
-        'name_': '{}.uid'.format(widget.dottedpath),
+        'name_': f'{widget.dottedpath}.uid',
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     trigger = reference_trigger_renderer(widget, data)

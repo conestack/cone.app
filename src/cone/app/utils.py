@@ -1,4 +1,3 @@
-from cone.app import compat
 from datetime import datetime
 from node.utils import safe_decode as _safe_decode
 from node.utils import safe_encode as _safe_encode
@@ -65,7 +64,7 @@ def navigation_root(node):
     return root
 
 
-class DatetimeHelper(object):
+class DatetimeHelper:
 
     def w_value(self, val):
         if val is None:
@@ -74,7 +73,7 @@ class DatetimeHelper(object):
             return self.dt_to_iso(val)
         if isinstance(val, bytes):
             return val.decode('utf-8')
-        return compat.UNICODE_TYPE(val)
+        return str(val)
 
     def r_value(self, val):
         try:
@@ -82,7 +81,7 @@ class DatetimeHelper(object):
         except (ValueError, TypeError):
             if isinstance(val, bytes):
                 return val.decode('utf-8')
-            return compat.UNICODE_TYPE(val)
+            return str(val)
 
     def dt_from_iso(self, str):
         return datetime.strptime(str, '%Y-%m-%dT%H:%M:%S')

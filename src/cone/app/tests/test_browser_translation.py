@@ -28,13 +28,13 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.assertEqual(data.extracted, UNSET)
 
-        request.params['field.en'] = u'Value EN'
-        request.params['field.de'] = u'Value DE'
+        request.params['field.en'] = 'Value EN'
+        request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, dict)
         self.assertEqual(data.extracted, {
-            'en': u'Value EN',
-            'de': u'Value DE'
+            'en': 'Value EN',
+            'de': 'Value DE'
         })
 
     def test_translation_extractor_factory(self):
@@ -50,13 +50,13 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.assertEqual(data.extracted, UNSET)
 
-        request.params['field.en'] = u'Value EN'
-        request.params['field.de'] = u'Value DE'
+        request.params['field.en'] = 'Value EN'
+        request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, TranslationNode)
         self.assertEqual(data.extracted.items(), [
-            ('en', u'Value EN'),
-            ('de', u'Value DE')
+            ('en', 'Value EN'),
+            ('de', 'Value DE')
         ])
 
     def test_extraction_preset_value(self):
@@ -64,8 +64,8 @@ class TestBrowserTranslation(NodeTestCase):
             'translation:text',
             name='field',
             value={
-                'en': u'Value EN',
-                'de': u'Value DE'
+                'en': 'Value EN',
+                'de': 'Value DE'
             },
             props={
                 'label': 'Field'
@@ -75,18 +75,18 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.assertEqual(data.extracted, UNSET)
 
-        request.params['field.en'] = u'Value EN new'
-        request.params['field.de'] = u'Value DE new'
+        request.params['field.en'] = 'Value EN new'
+        request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
         self.assertEqual(data.extracted, {
-            'en': u'Value EN new',
-            'de': u'Value DE new'
+            'en': 'Value EN new',
+            'de': 'Value DE new'
         })
 
     def test_extraction_preset_value_factory(self):
         value = TranslationNode()
-        value['en'] = u'Value EN'
-        value['de'] = u'Value DE'
+        value['en'] = 'Value EN'
+        value['de'] = 'Value DE'
         widget = factory(
             'translation:text',
             name='field',
@@ -100,13 +100,13 @@ class TestBrowserTranslation(NodeTestCase):
         data = widget.extract(request)
         self.assertEqual(data.extracted, UNSET)
 
-        request.params['field.en'] = u'Value EN new'
-        request.params['field.de'] = u'Value DE new'
+        request.params['field.en'] = 'Value EN new'
+        request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, TranslationNode)
         self.assertEqual(data.extracted.items(), [
-            ('en', u'Value EN new'),
-            ('de', u'Value DE new')
+            ('en', 'Value EN new'),
+            ('de', 'Value DE new')
         ])
 
     def test_translation_edit_renderer_no_value(self):
@@ -143,8 +143,8 @@ class TestBrowserTranslation(NodeTestCase):
             'field:translation:text',
             'field',
             value={
-                'en': u'Value EN',
-                'de': u'Value DE'
+                'en': 'Value EN',
+                'de': 'Value DE'
             },
             props={
                 'label': 'Field'
@@ -165,8 +165,8 @@ class TestBrowserTranslation(NodeTestCase):
 
     def test_translation_edit_renderer_preset_translation_value(self):
         value = TranslationNode()
-        value['en'] = u'Value EN'
-        value['de'] = u'Value DE'
+        value['en'] = 'Value EN'
+        value['de'] = 'Value DE'
         widget = factory(
             'field:translation:text',
             'field',
@@ -198,8 +198,8 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         request = self.layer.new_request()
-        request.params['field.en'] = u'Value EN'
-        request.params['field.de'] = u'Value DE'
+        request.params['field.en'] = 'Value EN'
+        request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.checkOutput("""
         ...
@@ -219,16 +219,16 @@ class TestBrowserTranslation(NodeTestCase):
             'field:translation:text',
             'field',
             value={
-                'en': u'Value EN',
-                'de': u'Value DE'
+                'en': 'Value EN',
+                'de': 'Value DE'
             },
             props={
                 'label': 'Field'
             })
 
         request = self.layer.new_request()
-        request.params['field.en'] = u'Value EN new'
-        request.params['field.de'] = u'Value DE new'
+        request.params['field.en'] = 'Value EN new'
+        request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
         self.checkOutput("""
         ...
@@ -245,8 +245,8 @@ class TestBrowserTranslation(NodeTestCase):
 
     def test_render_after_extraction_preset_translation_value(self):
         value = TranslationNode()
-        value['en'] = u'Value EN'
-        value['de'] = u'Value DE'
+        value['en'] = 'Value EN'
+        value['de'] = 'Value DE'
         widget = factory(
             'field:translation:text',
             'field',
@@ -257,8 +257,8 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         request = self.layer.new_request()
-        request.params['field.en'] = u'Value EN new'
-        request.params['field.de'] = u'Value DE new'
+        request.params['field.en'] = 'Value EN new'
+        request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
         self.checkOutput("""
         ...
@@ -278,8 +278,8 @@ class TestBrowserTranslation(NodeTestCase):
             'field:error:translation:text',
             'field',
             value={
-                'en': u'Value EN',
-                'de': u'Value DE'
+                'en': 'Value EN',
+                'de': 'Value DE'
             },
             props={
                 'label': 'Field',
@@ -287,8 +287,8 @@ class TestBrowserTranslation(NodeTestCase):
             })
 
         request = self.layer.new_request()
-        request.params['field.en'] = u''
-        request.params['field.de'] = u'Value DE'
+        request.params['field.en'] = ''
+        request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.checkOutput("""
         <div class="field mb-2" id="field-field">
@@ -317,8 +317,8 @@ class TestBrowserTranslation(NodeTestCase):
             'field:translation:text',
             'field',
             value={
-                'en': u'Value EN',
-                'de': u'Value DE'
+                'en': 'Value EN',
+                'de': 'Value DE'
             },
             props={
                 'label': 'Field',

@@ -13,7 +13,7 @@ class TestBrowserWorkflow(TileTestCase):
         request = self.layer.new_request()
         node = WorkflowNode()
 
-        self.assertEqual(node.state, u'initial')
+        self.assertEqual(node.state, 'initial')
 
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
@@ -40,13 +40,13 @@ class TestBrowserWorkflow(TileTestCase):
         </li>...
         """, res)
 
-        self.assertEqual(node.state, u'final')
+        self.assertEqual(node.state, 'final')
 
         node = InexistentWorkflowNode()
         request = self.layer.new_request()
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.assertEqual(res, u'\n\n  \n\n\n')
+        self.assertEqual(res, '\n\n  \n\n\n')
 
         tsf = TranslationStringFactory('cone.app.tests')
         node = WorkflowNode()

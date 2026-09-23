@@ -212,5 +212,5 @@ class TestBrowserCopysupport(TileTestCase):
         paste_tile(root['unknown_target'], request)
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            u'Nothing to paste'
+            'Nothing to paste'
         )

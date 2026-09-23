@@ -42,7 +42,7 @@ import logging
 
 
 @implementer(IAuthenticator)
-class TestAuthenticator(object):
+class TestAuthenticator:
 
     def authenticate(self, login, password):
         return login
@@ -80,8 +80,8 @@ class SecurityTest(NodeTestCase):
         self.assertTrue(principal_by_id('inexistent') is None)
 
     def test_search_for_principals(self):
-        self.assertEqual(search_for_principals('viewer'), [u'viewer'])
-        self.assertEqual(search_for_principals('group*'), [u'group:group1'])
+        self.assertEqual(search_for_principals('viewer'), ['viewer'])
+        self.assertEqual(search_for_principals('group*'), ['group:group1'])
 
     def test_acls(self):
         # The default ACL
@@ -122,7 +122,7 @@ class SecurityTest(NodeTestCase):
             self.assertTrue(userid is None)
 
         # Create some security context for testing
-        class ACLTest(object):
+        class ACLTest:
             __acl__ = DEFAULT_ACL
         context = ACLTest()
 
@@ -148,7 +148,7 @@ class SecurityTest(NodeTestCase):
         self.assertTrue(isinstance(rule, ACLDenied))
 
     def test_ACLRegistry(self):
-        class SomeModel(object):
+        class SomeModel:
             pass
 
         acl = [('Allow', 'role:viewer', ['view'])]
@@ -460,7 +460,7 @@ class SecurityTest(NodeTestCase):
 
         @implementer(IACLAdapter)
         @adapter(IApplicationNode)
-        class ACLAdapter(object):
+        class ACLAdapter:
             def __init__(self, model):
                 self.model = model
 
@@ -516,7 +516,7 @@ class SecurityTest(NodeTestCase):
         with self.layer.authenticated('superuser', 'superuser'):
             self.assertEqual(
                 groups_callback('superuser', self.layer.new_request()),
-                [u'role:manager']
+                ['role:manager']
             )
 
         groups_callback('foo', self.layer.new_request())

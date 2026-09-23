@@ -45,7 +45,7 @@ class TestUgm(NodeTestCase):
         ugm_backend.factory = None
         ugm_backend.ugm = None
 
-        class DummyUGM(object):
+        class DummyUGM:
             pass
 
         @ugm_backend('dummy')
@@ -133,8 +133,8 @@ class TestUgm(NodeTestCase):
     def test_principal_data(self):
         # Fetch principal data
         self.assertEqual(principal_data('manager').items(), [
-            (u'fullname', u'Manager User'),
-            (u'email', u'manager@bar.com')
+            ('fullname', 'Manager User'),
+            ('email', 'manager@bar.com')
         ])
         self.assertEqual(principal_data('inexistent'), {})
 

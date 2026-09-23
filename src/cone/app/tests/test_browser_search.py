@@ -1,28 +1,11 @@
 from cone.app import get_root
 from cone.app import testing
-from cone.app.browser.ajax import ajax_continue
-from cone.app.browser.ajax import ajax_form_template
-from cone.app.browser.ajax import ajax_message
-from cone.app.browser.ajax import ajax_status_message
-from cone.app.browser.ajax import ajax_tile
-from cone.app.browser.ajax import AjaxAction
-from cone.app.browser.ajax import AjaxEvent
-from cone.app.browser.ajax import AjaxFormContinue
-from cone.app.browser.ajax import AjaxMessage
-from cone.app.browser.ajax import AjaxOverlay
-from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.search import livesearch
-from cone.app.browser.ajax import render_ajax_form
-from cone.app.browser.form import Form
 from cone.app.interfaces import ILiveSearch
-from cone.tile import Tile
-from cone.tile import tile
 from cone.tile.tests import TileTestCase
-from yafowil.base import factory
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
-import json
 
 
 class TestBrowserSearch(TileTestCase):
@@ -39,7 +22,7 @@ class TestBrowserSearch(TileTestCase):
         # Provide dummy adapter
         @implementer(ILiveSearch)
         @adapter(Interface)
-        class LiveSearch(object):
+        class LiveSearch:
             def __init__(self, model):
                 self.model = model
 

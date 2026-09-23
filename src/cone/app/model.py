@@ -1,7 +1,5 @@
 from cone.app import security
 from cone.app.compat import configparser
-from cone.app.compat import IS_PY2
-from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationEnvironment
 from cone.app.interfaces import IApplicationNode
@@ -38,7 +36,6 @@ from node.interfaces import IUUID
 from node.interfaces import IUUIDAware
 from node.utils import instance_property
 from node.utils import safe_decode
-from node.utils import safe_encode
 from odict import odict
 from plumber import Behavior
 from plumber import default
@@ -93,7 +90,7 @@ def get_node_info(name):
 getNodeInfo = get_node_info
 
 
-class node_info(object):
+class node_info:
     """Node info decorator."""
 
     def __init__(self, name, title=None, description=None,
@@ -209,7 +206,7 @@ class LeafNode(AppNode):
     MappingNode,
     Lifecycle,
     OdictStorage)
-class BaseNode(object):
+class BaseNode:
     pass
 
 
@@ -265,7 +262,7 @@ NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
 
 @implementer(ISettingsNode)
 @plumbing(LeafNode, NodeInit, Node, AppEnvironment)
-class SettingsNode(object):
+class SettingsNode:
     """Application node for managing plugin specific settings."""
     __acl__ = [
         (Allow, 'role:manager', ['view', 'manage']),
@@ -290,7 +287,7 @@ class SettingsNode(object):
 
 
 @plumbing(AppNode, NodeInit, Node)
-class AppResources(object):
+class AppResources:
     """Traversal context for static resources."""
 
     @instance_property
@@ -337,7 +334,7 @@ class NamespaceUUID(Behavior):
     @finalize
     @uuid.setter
     def uuid(self, uuid):
-        msg = 'Ignore attempt to set {}.uuid'.format(self.__class__.__name__)
+        msg = f'Ignore attempt to set {self.__class__.__name__}.uuid'
         raise NotImplementedError(msg)
 
 
@@ -456,7 +453,7 @@ o_setattr = object.__setattr__
 
 
 @implementer(IProperties)
-class Properties(object):
+class Properties:
     # XXX: extend by schema
 
     def __init__(self, data=None):
@@ -527,7 +524,7 @@ class ProtectedProperties(Properties):
 
     def __getitem__(self, key):
         if not self._permits(key):
-            raise KeyError(u"No permission to access '%s'" % key)
+            raise KeyError("No permission to access '%s'" % key)
         return super(ProtectedProperties, self).__getitem__(key)
 
     def get(self, key, default=None):
@@ -609,7 +606,7 @@ class XMLProperties(Properties):
         if name in data:
             del data[name]
         else:
-            raise KeyError(u"property %s does not exist" % name)
+            raise KeyError("property %s does not exist" % name)
 
     def _init(self):
         dth = DatetimeHelper()
@@ -653,7 +650,7 @@ class XMLProperties(Properties):
         data = o_getattr(self, '_data')
         for key, value in data.items():
             sub = etree.SubElement(root, key)
-            if type(value) in ITER_TYPES:
+            if type(value) in (list, tuple):
                 for item in value:
                     item_elem = etree.SubElement(sub, 'item')
                     item_elem.text = dth.w_value(item)
@@ -702,8 +699,7 @@ class ConfigProperties(Properties):
     def __call__(self):
         path = o_getattr(self, '_path')
         config = self.config()
-        mode = 'wb' if IS_PY2 else 'w'
-        with open(path, mode) as configfile:
+        with open(path, 'w') as configfile:
             config.write(configfile)
 
     def __getitem__(self, key):
@@ -737,7 +733,7 @@ class ConfigProperties(Properties):
             return None
 
     def __setattr__(self, name, value):
-        value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
+        value = str(value)
         self.config().set(self.properties_section, name, value)
 
     def __delitem__(self, name):
@@ -745,7 +741,7 @@ class ConfigProperties(Properties):
         try:
             config.get(self.properties_section, name)
         except configparser.NoOptionError:
-            raise KeyError(u"property %s does not exist" % name)
+            raise KeyError("property %s does not exist" % name)
         config.remove_option(self.properties_section, name)
 
     def config(self):
@@ -766,7 +762,7 @@ class ConfigProperties(Properties):
         data = o_getattr(self, '_data')
         config = self.config()
         for key, value in data.items():
-            value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
+            value = str(value)
             config.set(self.properties_section, key, value)
 
     def __copy__(self):
