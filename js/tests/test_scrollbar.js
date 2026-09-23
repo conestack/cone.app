@@ -2,6 +2,31 @@ import $ from 'jquery';
 import ts from 'treibstoff';
 import {Scrollbar, ScrollbarX, ScrollbarY} from '../src/scrollbar.js';
 
+/**
+ * Runs ``fn`` with ``ts.clock.schedule_frame`` executing its callback inline.
+ *
+ * ⚠ The scrollbar restores a persisted position from a scheduled frame. The
+ * test runner drives several pages in one browser, and a page that is not the
+ * visible one gets its animation frames throttled hard - so waiting a fixed
+ * number of milliseconds for that frame is a race that loses about half the
+ * time, and waiting for the frame itself can wait until the runner gives up.
+ * Running the callback inline takes the clock out of the question: what is
+ * under test here is what the callback does, not when the browser gets around
+ * to it.
+ */
+function with_frames_run_inline(fn) {
+    const origin = ts.clock.schedule_frame;
+    ts.clock.schedule_frame = callback => {
+        callback(0);
+        return {cancel: () => {}};
+    };
+    try {
+        return fn();
+    } finally {
+        ts.clock.schedule_frame = origin;
+    }
+}
+
 QUnit.module('cone.app.scrollbar.Scrollbar', hooks => {
 
     let container;
@@ -494,7 +519,6 @@ QUnit.module('cone.app.scrollbar.persist', hooks => {
     });
 
     QUnit.test('position is restored from sessionStorage', assert => {
-        let done = assert.async();
         sessionStorage.setItem('cone.app.scroll.restore_test', '150');
 
         let elem = $(`
@@ -503,17 +527,13 @@ QUnit.module('cone.app.scrollbar.persist', hooks => {
             </div>
         `).css({height: '200px', position: 'relative'}).appendTo(container);
 
-        let scrollbar = new ScrollbarY(elem);
+        let scrollbar = with_frames_run_inline(() => new ScrollbarY(elem));
 
-        setTimeout(() => {
-            assert.strictEqual(scrollbar.position, 150, 'position restored from sessionStorage');
-            scrollbar.destroy();
-            done();
-        }, 100);
+        assert.strictEqual(scrollbar.position, 150, 'position restored from sessionStorage');
+        scrollbar.destroy();
     });
 
     QUnit.test('restored position is clamped when content shrinks', assert => {
-        let done = assert.async();
         // Save a position that will be too large
         sessionStorage.setItem('cone.app.scroll.clamp_test', '500');
 
@@ -523,14 +543,11 @@ QUnit.module('cone.app.scrollbar.persist', hooks => {
             </div>
         `).css({height: '200px', position: 'relative'}).appendTo(container);
 
-        let scrollbar = new ScrollbarY(elem);
+        let scrollbar = with_frames_run_inline(() => new ScrollbarY(elem));
 
         // max_pos = 300 - 200 = 100
-        setTimeout(() => {
-            assert.strictEqual(scrollbar.position, 100, 'position clamped to max');
-            scrollbar.destroy();
-            done();
-        }, 100);
+        assert.strictEqual(scrollbar.position, 100, 'position clamped to max');
+        scrollbar.destroy();
     });
 
     QUnit.test('position not saved when persist_scroll is false', assert => {

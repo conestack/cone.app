@@ -128,19 +128,30 @@
             </div>
             <!-- end sidebar -->
             <!-- content -->
-            <div id="content"
-                 tal:define="css 'd-flex flex-column px-3 pb-4 py-2 overflow-auto';
-                             css css + (' container-xxl' if userid and config.limit_content_width else '');
-                             css css + (' container-xxl' if userid and config.limit_page_width else '');
-                             css css + (' ms-0' if userid and not config.center_content else '');"
-                 tal:attributes="class css"
-                 ajax:bind="contextchanged"
-                 ajax:action="content:#content:inner">
-              <tal:content replace="structure tile(context.contenttile)" />
-              <!-- footer -->
-              <div tal:condition="request.has_permission('view', model)"
-                   id="footer-spacer"></div>
-              <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
+            <tal:comment replace="None">
+              The scroller spans the whole row, the width limit sits on the
+              content inside it. Both on one element left the space beside a
+              limited content outside any scrollable box: a wheel event there
+              reached ``#content_area`` and ``body``, neither of which
+              overflows, and nothing moved - while the strip reads as part of
+              the content. Without a limit this is where the scrollbar sat
+              anyway; the limit is what pulled it inwards.
+            </tal:comment>
+            <div id="content_scroll" class="overflow-auto">
+              <div id="content"
+                   tal:define="css 'd-flex flex-column px-3 pb-4 py-2';
+                               css css + (' container-xxl' if userid and config.limit_content_width else '');
+                               css css + (' container-xxl' if userid and config.limit_page_width else '');
+                               css css + (' ms-0' if userid and not config.center_content else '');"
+                   tal:attributes="class css"
+                   ajax:bind="contextchanged"
+                   ajax:action="content:#content:inner">
+                <tal:content replace="structure tile(context.contenttile)" />
+                <!-- footer -->
+                <div tal:condition="request.has_permission('view', model)"
+                     id="footer-spacer"></div>
+                <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
+              </div>
             </div>
 
             <div id="sidebar_right"

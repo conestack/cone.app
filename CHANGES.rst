@@ -4,6 +4,17 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Scroll the content from anywhere in the content area. ``#content`` was the
+  scrolling box **and** carried the width limit of ``limit_content_width`` /
+  ``limit_page_width``, so the strip beside a limited content belonged to no
+  scrollable element at all - a wheel event there reached ``#content_area``
+  and ``body``, neither of which overflows, and nothing moved, although the
+  strip reads as part of the page. The scroller is now a ``#content_scroll``
+  wrapper spanning the whole row; ``#content`` keeps the limit, its id and its
+  ajax contract. Without a width limit the scrollbar sat there anyway - the
+  limit is what pulled it inwards.
+  [rnix]
+
 - Bind context menu actions and dropdowns on a **copy** instead of writing
   ``model`` and ``request`` onto the registered instance. ``context_menu_item``
   and ``personal_tools_action`` call ``factory()`` at import time and keep the

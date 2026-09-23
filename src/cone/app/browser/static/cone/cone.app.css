@@ -139,9 +139,20 @@ select.form-control.referencebrowser[multiple=multiple] + .referencebrowser_trig
 }
 
 /* content */
+#content_scroll {
+  /* The scrolling box, and it fills the row - see layout.pt. The width
+     limit sits on ``#content`` inside it, so the strip beside a limited
+     content scrolls with it instead of lying outside every scrollable
+     element. */
+  height: 100%;
+  width: 100%;
+}
+
 #content {
   container: main-content/inline-size;
-  height: 100%;
+  /* ``min-height`` and not ``height``: inside the scroller a fixed 100%
+     would never exceed it, so nothing would ever scroll. */
+  min-height: 100%;
   width: 100%;
   position: relative;
 }

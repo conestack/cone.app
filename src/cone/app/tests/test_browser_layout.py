@@ -16,10 +16,8 @@ from cone.app.browser.layout import personal_tools_action
 from cone.app.interfaces import ILayoutConfig
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
-from cone.app.model import AppSettings
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
-from cone.app.model import SettingsNode
 from cone.app.security import DEFAULT_SETTINGS_ACL
 from cone.app.testing.mock import LayoutConfigNode
 from cone.app.testing.mock import WorkflowNode
@@ -104,6 +102,10 @@ class TestBrowserLayout(TileTestCase):
         # condition must contribute its class or nothing at all - never the
         # accumulated string, which duplicates all previous classes and glues
         # the copies together without a separator.
+        #
+        # ``overflow-auto`` is deliberately absent: the scrolling box is
+        # ``#content_scroll`` around it - see
+        # ``test_the_scroller_spans_the_whole_content_area``.
         def content_classes(res):
             match = re.search(r'id="content"[^>]*class="([^"]*)"', res.text)
             self.assertIsNotNone(match)
@@ -116,7 +118,7 @@ class TestBrowserLayout(TileTestCase):
         classes = content_classes(render_main_template(model, request))
         self.assertEqual(
             classes,
-            ['d-flex', 'flex-column', 'px-3', 'pb-4', 'py-2', 'overflow-auto']
+            ['d-flex', 'flex-column', 'px-3', 'pb-4', 'py-2']
         )
 
         # Authenticated. Defaults are limit_content_width=True,
@@ -126,11 +128,48 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(
             classes,
             [
-                'd-flex', 'flex-column', 'px-3', 'pb-4', 'py-2', 'overflow-auto',
+                'd-flex', 'flex-column', 'px-3', 'pb-4', 'py-2',
                 'container-xxl', 'ms-0'
             ]
         )
         self.assertEqual(len(classes), len(set(classes)))
+
+    def test_the_scroller_spans_the_whole_content_area(self):
+        """⛔ **The empty strip beside a width limited content scrolled
+        nothing.**
+
+        ``#content`` was the scrolling box **and** carried the width limit, so
+        the space left of the sidebars was outside any scrollable element: a
+        wheel event there bubbled to ``#content_area`` and ``body``, both
+        ``height: 100%`` without overflow, and nothing moved. It looks like
+        part of the content and behaves like the page margin.
+
+        The scroller is now a wrapper that fills the row; ``#content`` keeps
+        the limit, its id and its ajax contract. Without a width limit this is
+        exactly where the scrollbar sat anyway - the limit is what pulled it
+        inwards and left the dead strip behind.
+        """
+        model = BaseNode(parent=get_root())
+        request = self.layer.new_request()
+        with self.layer.authenticated('max'):
+            res = render_main_template(model, request).text
+
+        self.assertIn('id="content_scroll"', res)
+        # The wrapper scrolls, the content carries the limit - not both.
+        wrapper = re.search(
+            r'id="content_scroll"[^>]*class="([^"]*)"', res
+        )
+        self.assertIsNotNone(wrapper)
+        self.assertIn('overflow-auto', wrapper.group(1).split())
+
+        content = re.search(r'id="content"[^>]*class="([^"]*)"', res)
+        self.assertIsNotNone(content)
+        content_classes = content.group(1).split()
+        self.assertIn('container-xxl', content_classes)
+        self.assertNotIn('overflow-auto', content_classes)
+
+        # And the one is inside the other, in that order.
+        self.assertLess(res.index('id="content_scroll"'), res.index('id="content"'))
 
     def test_pathbar_starts_at_navroot(self):
         # The navigation root is the top of the navtree, so it must be the top
