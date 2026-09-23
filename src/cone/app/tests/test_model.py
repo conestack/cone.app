@@ -370,6 +370,33 @@ class TestModel(NodeTestCase):
         self.assertEqual(info.custom_prop, 'custom_value')
         self.assertEqual(MyNode.node_info_name, 'mynode')
 
+    @testing.reset_node_info_registry
+    def test_node_info_addables_are_not_shared(self):
+        """⛔ ``addables=[]`` as a default argument is **one** list.
+
+        It is built once when the module is imported and then handed to every
+        node type that does not declare addables of its own, so appending to
+        one node's addables added the entry to all the others. The same defect
+        class as a shared registry instance, and it would surface as a node
+        offering a child it was never configured for.
+        """
+        @node_info(name='first')
+        class First(BaseNode):
+            pass
+
+        @node_info(name='second')
+        class Second(BaseNode):
+            pass
+
+        first = get_node_info('first')
+        second = get_node_info('second')
+        self.assertEqual(first.addables, [])
+        self.assertEqual(second.addables, [])
+        self.assertIsNot(first.addables, second.addables)
+
+        first.addables.append('intruder')
+        self.assertEqual(second.addables, [])
+
     def test_AppEnvironment(self):
         @plumbing(AppEnvironment)
         class AppEnvironmentNode(BaseNode):

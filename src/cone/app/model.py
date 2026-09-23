@@ -94,13 +94,18 @@ class node_info:
     """Node info decorator."""
 
     def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=[], **kw):
+                 factory=None, icon=None, addables=None, **kw):
         self.name = name
         self.title = title
         self.description = description
         self.factory = factory
         self.icon = icon
-        self.addables = addables
+        # A fresh list per node type, never the default argument itself: that
+        # one object is created at import time and would be handed to every
+        # node type declaring no addables, so appending to one node's addables
+        # would add the entry to all the others. Copying a passed list guards
+        # the same way against two decorators sharing one module level list.
+        self.addables = list(addables) if addables is not None else list()
         self.kw = kw
 
     def __call__(self, cls):

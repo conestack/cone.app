@@ -203,7 +203,11 @@ class RemovePrincipalRole(Tile):
             role = request.params['role']
             roles = model.principal_roles
             if principal_id not in roles:
-                raise
+                # Not a bare ``raise``: no exception is active at this point,
+                # so python raised ``RuntimeError: No active exception to
+                # re-raise`` and that is what ended up in the log - while the
+                # reason, an unknown principal, was never written down.
+                raise ValueError(f'No roles for principal "{principal_id}"')
             existing = model.principal_roles[principal_id]
             existing.remove(role)
             if not existing:

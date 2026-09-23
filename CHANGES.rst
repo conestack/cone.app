@@ -4,6 +4,19 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Give every node type its own ``addables`` list. ``node_info`` took
+  ``addables=[]`` as a default argument, which is a single list built at import
+  time and then handed to every node type declaring no addables of its own -
+  appending to one node's addables added the entry to all the others.
+  [rnix]
+
+- Name the reason when a role cannot be removed from a principal.
+  ``RemovePrincipalRole`` signalled an unknown principal with a bare ``raise``,
+  but no exception is active at that point, so python raised ``RuntimeError:
+  No active exception to re-raise`` and that is what the log recorded. The
+  message shown to the user was right all along.
+  [rnix]
+
 - Drop the Python 2 compatibility layer. ``requires-python`` is ``>=3.10``, so
   ``IS_PY2`` was constantly false and every branch behind it dead, while
   ``STR_TYPE``, ``UNICODE_TYPE``, ``ITER_TYPES`` and ``NUMBER_TYPES`` were

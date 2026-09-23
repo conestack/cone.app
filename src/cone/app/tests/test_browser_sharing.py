@@ -349,3 +349,21 @@ class TestBrowserSharing(TileTestCase):
             'mode': 'NONE',
             'selector': 'NONE'
         })
+
+        # ⛔ And the log has to name the reason. The principal is unknown,
+        # which the code signalled with a bare ``raise`` - but there was no
+        # active exception to re-raise, so python raised ``RuntimeError: No
+        # active exception to re-raise`` instead. The user got the right
+        # message while whoever read the log got a red herring.
+        request = self.layer.new_request()
+        request.params['id'] = 'foo'
+        request.params['role'] = 'manager'
+        request.params['ajax.action'] = 'remove_principal_role'
+        request.params['ajax.mode'] = 'NONE'
+        request.params['ajax.selector'] = 'NONE'
+        with self.layer.authenticated('manager'):
+            with self.assertLogs('cone.app', level='ERROR') as caught:
+                ajax_tile(child, request)
+        logged = caught.output[0]
+        self.assertNotIn('No active exception', logged)
+        self.assertIn('foo', logged)
