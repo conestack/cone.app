@@ -4,6 +4,10 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Pin the ruff rule selection in ``pyproject.toml``. Ruff 0.16 widened its
+  default rules, so ``make check`` depended on the installed ruff version.
+  [rnix]
+
 - Give every node type its own ``addables`` list. ``node_info`` took
   ``addables=[]`` as a default argument, which is a single list built at import
   time and then handed to every node type declaring no addables of its own -
@@ -21,12 +25,13 @@ Changes
   ``IS_PY2`` was constantly false and every branch behind it dead, while
   ``STR_TYPE``, ``UNICODE_TYPE``, ``ITER_TYPES`` and ``NUMBER_TYPES`` were
   aliases for builtins. ``cone.app.compat`` keeps only the stdlib re-exports
-  its import sites reference. No package outside ``cone.app`` used any of the
-  removed names.
+  its import sites reference. ``cone.ugm`` used ``IS_PY2`` and
+  ``ITER_TYPES`` and needs its 2.0 version.
   [rnix]
 
 - Modernise the code ruff flags as outdated: ``u''`` prefixes, ``class
-  X(object)``, ``# -*- coding: utf-8 -*-``, ``.format()`` over f-strings.
+  X(object)``, ``# -*- coding: utf-8 -*-``, ``.format()`` over f-strings,
+  redundant ``open()`` mode, ``yield`` loops over ``yield from``.
   Behaviour unchanged. ``super(Class, self)`` is deliberately **kept**: a
   zero-argument ``super()`` binds the class the method was written in, which
   for a ``@plumbing`` decorated class is not the class that ends up in the

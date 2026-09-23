@@ -311,8 +311,7 @@ class AdapterNode(BaseNode):
         self.model = model
 
     def __iter__(self):
-        for key in self.model:
-            yield key
+        yield from self.model
 
     iterkeys = __iter__
 
@@ -618,7 +617,7 @@ class XMLProperties(Properties):
         path = o_getattr(self, '_path')
         if not path or not os.path.exists(path):
             return
-        file = open(path, 'r')
+        file = open(path)
         tree = etree.parse(file)
         file.close()
         root = tree.getroot()
