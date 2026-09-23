@@ -500,6 +500,31 @@ class TestBrowserLayout(TileTestCase):
 
         del personal_tools['testaction']
 
+    def test_a_personal_tool_is_not_written_on_while_rendering(self):
+        """``personal_tools`` is the second registry of singletons: the
+        decorator calls ``factory()`` at import and keeps the instance, so one
+        object serves every request and every thread.
+
+        It renders through ``Action.__call__`` and is therefore covered by the
+        copy there - which is exactly why this asserts it. A second registry
+        that quietly grows its own binding would reopen the hole (see
+        ``Action.bound_to``).
+        """
+        @personal_tools_action(name='isolationtest')
+        class Recording(LinkAction):
+            def render(self):
+                return str(self.model.name)
+
+        try:
+            tool = personal_tools['isolationtest']
+            request = self.layer.new_request()
+            self.assertEqual(tool(BaseNode(name='one'), request), 'one')
+            self.assertEqual(tool(BaseNode(name='two'), request), 'two')
+            self.assertNotIn('model', tool.__dict__)
+            self.assertNotIn('request', tool.__dict__)
+        finally:
+            del personal_tools['isolationtest']
+
     def test_personaltools(self):
         root = get_root()
         request = self.layer.new_request()

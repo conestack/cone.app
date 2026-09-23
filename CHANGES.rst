@@ -4,6 +4,18 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Bind context menu actions and dropdowns on a **copy** instead of writing
+  ``model`` and ``request`` onto the registered instance. ``context_menu_item``
+  and ``personal_tools_action`` call ``factory()`` at import time and keep the
+  result, so one object served every request and every thread: a second request
+  overwrote what a first was still working with, and an action that read its
+  model, queried it and then used the result got a value from one node and
+  applied it to another. ``ContextMenuDropdown.display`` no longer assigns into
+  its children either - it was the widest part of that window, publishing one
+  request's node to a whole group. New ``Action.bound_to()``; not called
+  ``bind``, which is the ajax event.
+  [rnix]
+
 - Give a ``div.form-control`` the height of an input. Bootstrap sets no height
   on ``.form-control``; an input gets it from its own content box, so a widget
   rendered in display mode as an empty ``div`` collapsed to padding plus border

@@ -1,3 +1,4 @@
+import copy
 from cone.app.browser.actions import ActionAdd
 from cone.app.browser.actions import ActionCopy
 from cone.app.browser.actions import ActionCut
@@ -61,23 +62,44 @@ class ContextMenuDropdown(Toolbar):
 
     @property
     def display(self):
+        """Whether any of the children wants to be seen.
+
+        Reads the children, **writes nothing**. Until 2026-09-23 it assigned
+        ``model`` and ``request`` into every one of them - and since the
+        registry holds a single instance per action, that published one
+        request's node to the whole group. See :meth:`Action.bound_to`.
+
+        Asked of a bound copy, where the children are bound already.
+        """
         for val in self.values():
-            val.model = self.model
-            val.request = self.request
             if val.display:
                 return True
         return False
 
+    def bound_to(self, model, request):
+        """A copy of this dropdown whose children are bound copies too.
+
+        ⚠ **The children have to be copied as well.** This class is an
+        ``odict`` and *contains* the registered actions; a copy of it holds the
+        **same** action objects, so copying the dropdown alone isolates
+        nothing.
+        """
+        dropdown = copy.copy(self)
+        dropdown.model = model
+        dropdown.request = request
+        for name, action in self.items():
+            dropdown[name] = action.bound_to(model, request)
+        return dropdown
+
     def __call__(self, model, request):
-        self.model = model
-        self.request = request
-        if not self.display:
+        dropdown = self.bound_to(model, request)
+        if not dropdown.display:
             return u''
         return render_template(
             self.template,
             request=request,
             model=model,
-            context=self
+            context=dropdown
         )
 
     def sorted_actions(self):

@@ -1,3 +1,4 @@
+import copy
 from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -91,12 +92,46 @@ class Action(object):
     """Abstract Action."""
     display = True
 
+    def bound_to(self, model, request):
+        """A copy of this action bound to one model and request.
+
+        **The registered action is a singleton.** ``context_menu_item`` and
+        ``personal_tools_action`` call ``factory()`` at import time and keep
+        the instance, so one object serves every request and every thread.
+        Writing ``model`` and ``request`` onto it therefore published them to
+        everybody: a second request overwrote what a first was still working
+        with, and the first went on with a foreign node.
+
+        Measured in an application on 2026-09-23: an action read its container,
+        queried it, and indexed it with the result - by then ``self.model`` was
+        a different container, and a healthy record raised ``KeyError``. The
+        silent half is worse, because ``display`` and ``permitted`` also read
+        ``self.model``: an action then decides against a foreign node and
+        offers itself where it does not belong.
+
+        A shallow copy, because an action carries no instance state - the
+        registered ones have an empty ``__dict__``, everything else lives on
+        the class. It costs about a microsecond.
+
+        ⚠ **Not called ``bind``**: ``LinkAction.bind`` is the ajax event and
+        several actions set it to ``None``, so a method of that name would be
+        a string on half of them.
+
+        ⚠ Do not add a ``request_property`` to an action. Its cache key is
+        built from ``id(self)``, and two bound copies of one render can land on
+        the same address once the first is collected - the second would then
+        read the first's answer.
+        """
+        action = copy.copy(self)
+        action.model = model
+        action.request = request
+        return action
+
     def __call__(self, model, request):
-        self.model = model
-        self.request = request
-        if not self.display:
+        action = self.bound_to(model, request)
+        if not action.display:
             return u''
-        return self.render()
+        return action.render()
 
     @property
     def action_scope(self):
