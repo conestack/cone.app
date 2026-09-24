@@ -1558,6 +1558,13 @@ var cone = (function (exports, $, ts) {
                 $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar);
                 $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
             });
+            this.update_personal_tools_room = this.update_personal_tools_room.bind(this);
+            if (this.personal_tools) {
+                this.personal_tools.on(
+                    'shown.bs.dropdown hidden.bs.dropdown',
+                    this.update_personal_tools_room
+                );
+            }
             this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
             this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
             this.bind();
@@ -1572,6 +1579,12 @@ var cone = (function (exports, $, ts) {
                 $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
                 $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
             });
+            if (this.personal_tools) {
+                this.personal_tools.off(
+                    'shown.bs.dropdown hidden.bs.dropdown',
+                    this.update_personal_tools_room
+                );
+            }
             const wrapper = this.navbar_content_wrapper;
             wrapper.off('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
             wrapper.off('hide.bs.collapse hidden.bs.collapse', this.set_mobile_menu_closed);
@@ -1580,6 +1593,21 @@ var cone = (function (exports, $, ts) {
             if (this.is_compact && this.mobile_scrollbar) {
                 this.mobile_scrollbar.render();
             }
+        }
+        update_personal_tools_room() {
+            this.personal_tools.css('margin-bottom', '');
+            if (!this.is_super_compact) {
+                return;
+            }
+            const bottom = this.personal_tools[0].getBoundingClientRect().bottom;
+            let room = 0;
+            $('.dropdown-menu.show', this.personal_tools).each((i, menu) => {
+                room = Math.max(room, menu.getBoundingClientRect().bottom - bottom);
+            });
+            if (room > 0) {
+                this.personal_tools.css('margin-bottom', `${room}px`);
+            }
+            this.render_mobile_scrollbar();
         }
         bind() {
             const wrapper = this.navbar_content_wrapper;
@@ -1630,6 +1658,9 @@ var cone = (function (exports, $, ts) {
                     this.personal_tools.detach().prependTo(this.header_content);
                 }
                 $(".dropdown-menu.show").removeClass('show');
+                if (this.personal_tools) {
+                    this.update_personal_tools_room();
+                }
             }
         }
     }

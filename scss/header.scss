@@ -73,9 +73,29 @@
             height: 50px;
             justify-content: space-between;
             margin: auto 20px;
+            // anchor the dropdown menus to the personal tools row instead of
+            // their toggles, so they can span the full mobile menu width
+            position: relative;
 
             #colortoggler {
                 padding-left: 0;
+            }
+            .dropdown {
+                position: static;
+            }
+            .dropdown-menu {
+                // cancel the horizontal margin of the personal tools
+                left: -20px;
+                right: -20px;
+                border-left: none;
+                border-right: none;
+                border-radius: 0 !important;
+
+                .dropdown-item {
+                    // align with the personal tools row above
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
             }
         }
     }

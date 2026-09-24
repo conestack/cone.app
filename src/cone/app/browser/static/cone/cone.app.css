@@ -253,9 +253,24 @@ div.form-control {
   height: 50px;
   justify-content: space-between;
   margin: auto 20px;
+  position: relative;
 }
 #main-area.super-compact #personaltools #colortoggler {
   padding-left: 0;
+}
+#main-area.super-compact #personaltools .dropdown {
+  position: static;
+}
+#main-area.super-compact #personaltools .dropdown-menu {
+  left: -20px;
+  right: -20px;
+  border-left: none;
+  border-right: none;
+  border-radius: 0 !important;
+}
+#main-area.super-compact #personaltools .dropdown-menu .dropdown-item {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 #main-area.full #header-logo {
   order: 1;

@@ -4,6 +4,14 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Make the language and user dropdowns usable in the mobile menu. On narrow
+  screens the personal tools move into the collapsed navbar, whose wrapper
+  clips its overflow for the custom scrollbar, so their absolutely positioned
+  menus were cut off right below the toggles. The header now reserves the
+  height of an open menu below the personal tools. In the mobile menu the
+  dropdowns span its full width with only top and bottom borders.
+  [rnix]
+
 - Pin the ruff rule selection in ``pyproject.toml``. Ruff 0.16 widened its
   default rules, so ``make check`` depended on the installed ruff version.
   [rnix]

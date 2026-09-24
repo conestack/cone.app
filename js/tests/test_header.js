@@ -200,4 +200,137 @@ QUnit.module('cone.app.header', hooks => {
 
         instance.destroy();
     });
+
+    QUnit.module('personal tools dropdown room', hooks => {
+        let elem;
+
+        hooks.beforeEach(() => {
+            // Mirrors the bootstrap navbar dropdown: the menu is positioned
+            // absolutely below its toggle and overflows the personal tools.
+            elem = $(`
+                <div id="header-main">
+                    <div id="header-content">
+                        <div id="personaltools"
+                             style="display: flex; height: 50px;">
+                            <div id="language-dropdown" class="dropdown"
+                                 style="position: relative; height: 100%;">
+                                <div class="dropdown-toggle"></div>
+                                <ul class="dropdown-menu"
+                                    style="position: absolute; top: 100%;
+                                           height: 80px; margin: 0;">
+                                </ul>
+                            </div>
+                            <div id="personaltools-dropdown" class="dropdown"
+                                 style="position: relative; height: 100%;">
+                                <div class="dropdown-toggle"></div>
+                                <ul class="dropdown-menu"
+                                    style="position: absolute; top: 100%;
+                                           height: 40px; margin: 0;">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="navbar-content-wrapper">
+                        <div id="navbar-content"></div>
+                    </div>
+                    <button id="navbar-toggler"></button>
+                    <nav id="mainmenu"></nav>
+                </div>
+            `).appendTo(container);
+        });
+
+        // with jQuery present, bootstrap triggers its events on the toggle
+        // as jQuery events, which bubble
+        let dispatch = (dropdown, name) => {
+            $('.dropdown-toggle', dropdown).trigger(name);
+        };
+        let show = dropdown => {
+            $('.dropdown-menu', dropdown).addClass('show');
+            dispatch(dropdown, 'shown.bs.dropdown');
+        };
+        let hide = dropdown => {
+            $('.dropdown-menu', dropdown).removeClass('show');
+            dispatch(dropdown, 'hidden.bs.dropdown');
+        };
+        let margin = instance => instance.personal_tools[0].style.marginBottom;
+
+        QUnit.test('reserves room for the open menu when super compact', assert => {
+            let instance = new Header(elem);
+            instance.is_super_compact = true;
+            let language = $('#language-dropdown', elem);
+
+            show(language);
+            assert.strictEqual(margin(instance), '80px', 'room for open menu');
+
+            hide(language);
+            assert.strictEqual(margin(instance), '', 'room released on hide');
+
+            instance.destroy();
+        });
+
+        QUnit.test('reserves room for the new menu when switching menus', assert => {
+            let instance = new Header(elem);
+            instance.is_super_compact = true;
+            let language = $('#language-dropdown', elem);
+            let user = $('#personaltools-dropdown', elem);
+
+            show(language);
+            // bootstrap may show the next menu before hiding the previous one
+            show(user);
+            hide(language);
+            assert.strictEqual(margin(instance), '40px',
+                'room for the menu still open');
+
+            instance.destroy();
+        });
+
+        QUnit.test('reserves no room when not super compact', assert => {
+            let instance = new Header(elem);
+            instance.is_super_compact = false;
+
+            show($('#language-dropdown', elem));
+            assert.strictEqual(margin(instance), '', 'no room reserved');
+
+            instance.destroy();
+        });
+
+        QUnit.test('releases room when leaving super compact', assert => {
+            let instance = new Header(elem);
+            instance.is_super_compact = true;
+            show($('#language-dropdown', elem));
+
+            instance.is_super_compact = false;
+            assert.strictEqual(margin(instance), '', 'room released');
+            assert.strictEqual($('.dropdown-menu.show', elem).length, 0,
+                'menus closed');
+
+            instance.destroy();
+        });
+
+        QUnit.test('re-renders the mobile scrollbar', assert => {
+            let instance = new Header(elem);
+            instance.is_compact = true;
+            instance.is_super_compact = true;
+            let rendered = 0;
+            instance.mobile_scrollbar.destroy();
+            instance.mobile_scrollbar = {
+                render: () => rendered++,
+                destroy: () => {}
+            };
+
+            show($('#language-dropdown', elem));
+            assert.strictEqual(rendered, 1, 'scrollbar rendered');
+
+            instance.destroy();
+        });
+
+        QUnit.test('destroy unbinds the dropdown handlers', assert => {
+            let instance = new Header(elem);
+            instance.is_super_compact = true;
+            instance.destroy();
+
+            show($('#language-dropdown', elem));
+            assert.strictEqual(margin(instance), '', 'handler unbound');
+        });
+    });
 });

@@ -41,6 +41,14 @@ export class Header extends LayoutAware {
             $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
         });
 
+        this.update_personal_tools_room = this.update_personal_tools_room.bind(this);
+        if (this.personal_tools) {
+            this.personal_tools.on(
+                'shown.bs.dropdown hidden.bs.dropdown',
+                this.update_personal_tools_room
+            );
+        }
+
         this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
         this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
         this.bind();
@@ -59,6 +67,12 @@ export class Header extends LayoutAware {
             $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
             $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
         });
+        if (this.personal_tools) {
+            this.personal_tools.off(
+                'shown.bs.dropdown hidden.bs.dropdown',
+                this.update_personal_tools_room
+            );
+        }
         const wrapper = this.navbar_content_wrapper;
         wrapper.off('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
         wrapper.off('hide.bs.collapse hidden.bs.collapse', this.set_mobile_menu_closed);
@@ -71,6 +85,31 @@ export class Header extends LayoutAware {
         if (this.is_compact && this.mobile_scrollbar) {
             this.mobile_scrollbar.render();
         }
+    }
+
+    /**
+     * Reserves space below the personal tools for their open dropdown menu
+     * while they live in the mobile menu. The menu is positioned absolutely
+     * below its toggle, but the mobile menu wrapper clips its overflow for
+     * the custom scrollbar, so without the reserved space the menu is cut
+     * off and cannot be used. Positioning the menu statically instead would
+     * widen its column and shift the other personal tools around.
+     */
+    update_personal_tools_room() {
+        // measure without the previously reserved space
+        this.personal_tools.css('margin-bottom', '');
+        if (!this.is_super_compact) {
+            return;
+        }
+        const bottom = this.personal_tools[0].getBoundingClientRect().bottom;
+        let room = 0;
+        $('.dropdown-menu.show', this.personal_tools).each((i, menu) => {
+            room = Math.max(room, menu.getBoundingClientRect().bottom - bottom);
+        });
+        if (room > 0) {
+            this.personal_tools.css('margin-bottom', `${room}px`);
+        }
+        this.render_mobile_scrollbar();
     }
 
     /**
@@ -151,6 +190,9 @@ export class Header extends LayoutAware {
             }
             // close any header dropdowns
             $(".dropdown-menu.show").removeClass('show');
+            if (this.personal_tools) {
+                this.update_personal_tools_room();
+            }
         }
     }
 }
