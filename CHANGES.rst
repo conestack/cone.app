@@ -4,6 +4,12 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Center the login form vertically again. Since ``#content`` sits in
+  ``#content_scroll`` it only has a ``min-height``, so the form's
+  ``height: 100%`` resolved to ``auto``; the form now grows with
+  ``flex-grow`` inside the ``#content`` flex column instead.
+  [rnix]
+
 - Make the language and user dropdowns usable in the mobile menu. On narrow
   screens the personal tools move into the collapsed navbar, whose wrapper
   clips its overflow for the custom scrollbar, so their absolutely positioned
