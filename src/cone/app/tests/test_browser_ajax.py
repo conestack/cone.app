@@ -12,6 +12,7 @@ from cone.app.browser.ajax import AjaxMessage
 from cone.app.browser.ajax import AjaxOverlay
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.ajax import render_ajax_form
+from cone.app.browser.ajax import RENDER_ERROR
 from cone.app.browser.form import Form
 from cone.tile import Tile
 from cone.tile import tile
@@ -51,6 +52,7 @@ class TestBrowserAjax(TileTestCase):
             'mode': 'replace',
             'selector': '.foo'
         })
+        self.assertNotIn(RENDER_ERROR, request.environ)
 
         # Test bdajax warning
         request = self.layer.new_request()
@@ -89,6 +91,10 @@ class TestBrowserAjax(TileTestCase):
         self.assertEqual(res['continuation'][0]['selector'], None)
         expected = 'Exception: Error while rendering'
         self.assertTrue(res['continuation'][0]['payload'].find(expected) > -1)
+        # The answer is 200 and shows the error. Whatever the tile wrote
+        # before it failed must not be committed - the request says so, for
+        # a transaction manager to veto on.
+        self.assertTrue(request.environ[RENDER_ERROR])
 
     def test_AjaxAction(self):
         target = 'http://example.com'
@@ -480,6 +486,7 @@ class TestBrowserAjax(TileTestCase):
         ...HTTPForbidden: Unauthorized: tile <...AjaxTestForm object at ...>
         failed permission check...
         """, res.text)
+        self.assertTrue(request.environ[RENDER_ERROR])
 
         # Test authorized with form extraction failure
         with self.layer.authenticated('max'):
@@ -494,10 +501,14 @@ class TestBrowserAjax(TileTestCase):
         self.assertTrue(result.find('parent.ts.ajax.form({\n') != -1)
 
         # Test with form processing passing
+        request = self.layer.new_request()
+        request.params['ajax'] = '1'
+        request.params['action.ajaxtestform.save'] = 1
         with self.layer.authenticated('max'):
             request.params['ajaxtestform.foo'] = 'foo'
             response = render_ajax_form(root, request, 'ajaxtestform')
             result = str(response)
+        self.assertNotIn(RENDER_ERROR, request.environ)
 
         expected = (
             '    parent.ts.ajax.form({\n'

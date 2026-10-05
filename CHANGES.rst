@@ -4,6 +4,13 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Mark a failed ajax tile or form in ``request.environ`` under
+  ``cone.app.browser.ajax.RENDER_ERROR``. Both show the error and answer 200,
+  so a transaction manager that commits on success committed whatever the
+  tile wrote before it failed. An application vetoes the commit on the key,
+  e.g. with a ``tm.commit_veto`` for ``pyramid_tm``.
+  [rnix]
+
 - Center the login form vertically again. Since ``#content`` sits in
   ``#content_scroll`` it only has a ``min-height``, so the form's
   ``height: 100%`` resolved to ``auto``; the form now grows with

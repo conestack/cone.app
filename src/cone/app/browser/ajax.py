@@ -10,6 +10,17 @@ import json
 import logging
 
 
+RENDER_ERROR = 'cone.app.render_error'
+"""Key in ``request.environ``, set when an ajax tile or form failed to render.
+
+The error is shown to the user and the response is a 200 - the client
+expects the continuation, not an error status. A transaction manager that
+commits on success would therefore commit whatever the tile wrote before it
+failed. An application vetoes the commit on this key, e.g. with a
+``tm.commit_veto`` for ``pyramid_tm`` that checks it first.
+"""
+
+
 @view_config(name='ajaxaction', accept='application/json', renderer='json')
 def ajax_tile(model, request):
     """Treibstoff ajax ``ajaxaction`` implementation for cone.
@@ -50,6 +61,7 @@ def ajax_tile(model, request):
         return {}
     except Exception:
         logging.exception('Error within ajax tile')
+        request.environ[RENDER_ERROR] = True
         tb = format_traceback()
         continuation = AjaxContinue([AjaxMessage(tb, 'error', None, 'modal-xl')])
         return dict(
@@ -352,6 +364,7 @@ def render_ajax_form(model, request, name):
         request.response.body = safe_encode(rendered)
         return request.response
     except Exception:
+        request.environ[RENDER_ERROR] = True
         result = '<div>Form rendering error</div>'
         selector = request.environ.get('cone.app.form.selector', '#content')
         mode = request.environ.get('cone.app.form.mode', 'inner')
