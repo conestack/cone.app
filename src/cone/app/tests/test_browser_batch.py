@@ -1029,11 +1029,6 @@ class TestBrowserBatch(TileTestCase):
             def item_count(self):
                 return len(self._items)
 
-            @property
-            def slice_items(self):
-                start, end = self.current_slice
-                return self._items[start:end]
-
         def footer_html(batched_items):
             footer = batched_items.rendered_footer
             start = footer.find('batched_items_info')

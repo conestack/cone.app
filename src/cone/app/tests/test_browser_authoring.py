@@ -8,7 +8,9 @@ from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.authoring import _FormRenderingTile
 from cone.app.browser.authoring import add
 from cone.app.browser.authoring import AddFormHeading
+from cone.app.browser.authoring import AddDropdown
 from cone.app.browser.authoring import CameFromNext
+from cone.app.browser.authoring import ContentForm
 from cone.app.browser.authoring import ContentAddForm
 from cone.app.browser.authoring import ContentEditForm
 from cone.app.browser.authoring import edit
@@ -23,6 +25,7 @@ from cone.app.browser.authoring import OverlayForm
 from cone.app.browser.authoring import overlayform
 from cone.app.browser.authoring import render_form
 from cone.app.browser.form import Form
+from cone.app.interfaces import ICategories
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
@@ -1340,3 +1343,63 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.text.find(expected) > -1)
         expected = '"uid": "1234"'
         self.assertEqual(model.attrs.title, 'New Title')
+
+    def test_ContentForm_default_heading(self):
+        @plumbing(ContentForm)
+        class MyForm(Form):
+            pass
+
+        form = MyForm()
+        self.assertEqual(form.form_heading, 'content_form_heading')
+
+    @testing.reset_node_info_registry
+    @testing.reset_node_available
+    def test_add_dropdown_categories(self):
+        # A container providing ``ICategories`` groups its addables by the
+        # ``categories`` of their node classes, sorted by category.
+        @node_info(name='invoice', title='Invoice', icon='invoice-icon')
+        class Invoice(BaseNode):
+            categories = ['sales']
+
+        @node_info(name='quote', title='Quote')
+        class Quote(BaseNode):
+            categories = ['sales', 'drafts']
+
+        @node_info(name='folder', addables=['invoice', 'quote'])
+        @implementer(ICategories)
+        class Folder(BaseNode):
+            categories = []
+
+        folder = Folder(name='folder', parent=get_root())
+        dropdown = AddDropdown()
+        dropdown.model = folder
+        dropdown.request = self.layer.new_request()
+        self.assertTrue(dropdown.has_categories)
+        self.assertEqual(dropdown.category_id('sales'), 'add-category-cat-sales')
+        with self.layer.authenticated('manager'):
+            categories = dropdown.categories
+        self.assertEqual(
+            [(name, [item.title for item in items]) for name, items in categories],
+            [('drafts', ['Quote']), ('sales', ['Invoice', 'Quote'])],
+        )
+        invoice = categories[1][1][0]
+        self.assertEqual(invoice.icon, 'invoice-icon')
+        self.assertEqual(invoice.url, 'http://example.com/folder/add?factory=invoice')
+        with self.layer.authenticated('manager'):
+            rendered = render_tile(folder, self.layer.new_request(), 'add_dropdown')
+        self.assertIn('data-bs-auto-close="outside"', rendered)
+        self.assertIn('href="http://example.com/folder/add?factory=quote"', rendered)
+
+        # An addable the application does not offer here is left out.
+        security.node_available = lambda model, name: name != 'quote'
+        with self.layer.authenticated('manager'):
+            categories = dropdown.categories
+        self.assertEqual(
+            [(name, [item.title for item in items]) for name, items in categories],
+            [('sales', ['Invoice'])],
+        )
+
+        # Nothing addable: no categories.
+        get_node_info('folder').addables = []
+        with self.layer.authenticated('manager'):
+            self.assertEqual(dropdown.categories, [])

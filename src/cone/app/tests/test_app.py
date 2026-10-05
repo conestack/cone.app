@@ -232,3 +232,9 @@ class TestTraversal(NodeTestCase):
         self.assertTrue(result['context'] is get_root())
         self.assertEqual(result['view_name'], '')
         self.assertEqual(result['traversed'], ())
+
+
+class TestTestingMock(NodeTestCase):
+    def test_testing_node_available(self):
+        # The ``cone.root.node_available`` hook the main test configures.
+        self.assertTrue(testing.mock.testing_node_available(BaseNode(), 'any'))

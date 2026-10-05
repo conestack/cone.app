@@ -148,6 +148,18 @@ class TestBrowserContextmenu(TileTestCase):
             self.assertTrue(rendered.find('toolbaraction-copy') > -1)
             self.assertTrue(rendered.find('toolbaraction-paste') > -1)
 
+    def test_ContextMenuToolbar_without_css(self):
+        # Without ``css`` the actions are wrapped in a plain list item.
+        class Rendering(Action):
+            def render(self):
+                return '<span>action</span>'
+
+        toolbar = ContextMenuToolbar()
+        toolbar.css = None
+        toolbar['a'] = Rendering()
+        rendered = toolbar(BaseNode(), self.layer.new_request())
+        self.assertEqual(rendered, '<li><span>action</span></li>')
+
 
 class TestContextMenuIsolation(TileTestCase):
     """Two requests must not see each other's model.

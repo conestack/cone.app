@@ -7,6 +7,7 @@ from cone.app.browser import render_main_template
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.layout import LanguageTile
+from cone.app.browser.layout import Layout
 from cone.app.browser.layout import LayoutConfigTile
 from cone.app.browser.layout import PathBar
 from cone.app.browser.layout import NavTree
@@ -905,3 +906,35 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(event.target, 'http://example.com/')
         self.assertEqual(event.name, 'contextchanged')
         self.assertEqual(event.selector, '#layout')
+
+    def test_layout_tileinfo(self):
+        layout = Layout()
+        self.assertEqual(
+            layout.tileinfo(('name', 'Title')), {'name': 'name', 'title': 'Title'}
+        )
+        self.assertEqual(layout.tileinfo('name'), {'name': 'name', 'title': 'name'})
+        self.assertIsNone(layout.tileinfo(None))
+
+    def test_mainmenu_ignores_non_application_nodes(self):
+        root = BaseNode()
+        root['app'] = BaseNode()
+        root['plain'] = NodeBaseNode()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, self.layer.new_request(), 'mainmenu')
+        self.assertIn('href="http://example.com/app"', res)
+        self.assertNotIn('href="http://example.com/plain"', res)
+
+    def test_navtree_title_of_navroot(self):
+        # Rooted at a navroot below the application root, the navtree is
+        # titled with the navroot's title.
+        root = get_root()
+        navroot = BaseNode(name='navroot', parent=root)
+        navroot.properties.is_navroot = True
+        navroot.metadata.title = 'Organization'
+        leaf = BaseNode(name='leaf', parent=navroot)
+        tile = NavTree()
+        tile.model = leaf
+        tile.request = self.layer.new_request()
+        self.assertEqual(tile.title, 'Organization')
+        tile.model = BaseNode(name='plain', parent=root)
+        self.assertEqual(tile.title, 'navigation')

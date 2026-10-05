@@ -4,6 +4,7 @@ from cone.app.model import Properties
 from cone.app.utils import add_creation_metadata
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
+from cone.app.utils import navigation_root
 from cone.app.utils import node_path
 from cone.app.utils import safe_decode
 from cone.app.utils import safe_encode
@@ -105,3 +106,20 @@ class TestUtils(NodeTestCase):
             self.assertTrue(isinstance(node.attrs['modified'], datetime))
             self.assertTrue(created == node.attrs['created'])
             self.assertFalse(created == node.attrs['modified'])
+
+    def test_navigation_root(self):
+        root = BaseNode()
+        child = root['child'] = BaseNode()
+        leaf = child['leaf'] = BaseNode()
+        # No navroot: the application root.
+        self.assertIs(navigation_root(leaf), root)
+        # The application root's default child, when flagged.
+        root.properties.default_child = 'child'
+        self.assertIs(navigation_root(root), root)
+        child.properties.is_navroot = True
+        self.assertIs(navigation_root(root), child)
+        # The nearest flagged ancestor.
+        self.assertIs(navigation_root(leaf), child)
+        # A default child that does not exist falls back to the root.
+        root.properties.default_child = 'missing'
+        self.assertIs(navigation_root(root), root)

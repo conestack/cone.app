@@ -984,3 +984,12 @@ class TestBrowserActions(TileTestCase):
         action.model = node['b']
         with self.layer.authenticated('manager'):
             self.assertFalse(action.display)
+
+    def test_Toolbar_repr(self):
+        toolbar = Toolbar()
+        toolbar['a'] = Action()
+        rendered = repr(toolbar)
+        self.assertTrue(rendered.startswith('<cone.app.browser.actions.Toolbar (['))
+        self.assertIn("'a'", rendered)
+        self.assertIn(f'at {id(toolbar)}>', rendered)
+        self.assertEqual(str(toolbar), rendered)

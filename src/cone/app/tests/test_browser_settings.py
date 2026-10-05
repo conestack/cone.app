@@ -372,3 +372,27 @@ class TestBrowserSettings(TileTestCase):
         action = request.environ['cone.app.continuation'][0]
         self.assertTrue(isinstance(action, AjaxAction))
         self.assertEqual(action.selector, '.foo')
+
+    def test_ViewSettingsAction_without_settings(self):
+        # A model whose root has no settings offers no settings action.
+        action = ViewSettingsAction()
+        action.model = BaseNode()
+        action.request = self.layer.new_request()
+        with self.layer.authenticated('manager'):
+            self.assertIsNone(action.settings)
+            self.assertFalse(action.display)
+
+    @testing.reset_node_info_registry
+    def test_SettingsForm_heading(self):
+        @node_info(name='heading_settings', title='Heading Settings')
+        class HeadingSettings(SettingsNode):
+            pass
+
+        @plumbing(SettingsForm)
+        class HeadingSettingsForm(Form):
+            pass
+
+        form = HeadingSettingsForm()
+        form.model = HeadingSettings()
+        form.request = self.layer.new_request()
+        self.assertEqual(form.form_heading, 'Heading Settings')
