@@ -4,6 +4,15 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Fix ``TypeError: can't access property "off", this.scrollbar is undefined``
+  after an ajax ``replace``. treibstoff binds the parent of a replaced element
+  again, so ``Scrollbar.initialize`` ran on scrollbars that were bound
+  already. The constructor refused the duplicate, but ``ResizeAware`` had
+  attached the half built instance, and destroying it on the next reload - or
+  a window resize - reached for what it never built. ``initialize`` now skips
+  an element that has its scrollbar, and a duplicate built directly is inert.
+  [rnix]
+
 - Render titles as card headers. A view now reads contextmenu, card header,
   content:
 

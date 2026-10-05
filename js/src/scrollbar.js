@@ -13,11 +13,19 @@ export class Scrollbar extends ts.Motion {
      * @param {Element} context
      */
     static initialize(context) {
+        // An element that has its scrollbar keeps it. An ajax ``replace``
+        // binds the parent of the replaced element again, and with it every
+        // scrollbar beside it - a second instance would be the duplicate the
+        // constructor refuses, and stay attached half built.
         $('.scrollable-x', context).each(function() {
-            new ScrollbarX($(this));
+            if (!$(this).data('scrollbar')) {
+                new ScrollbarX($(this));
+            }
         });
         $('.scrollable-y', context).each(function() {
-            new ScrollbarY($(this));
+            if (!$(this).data('scrollbar')) {
+                new ScrollbarY($(this));
+            }
         });
     }
 
@@ -31,6 +39,9 @@ export class Scrollbar extends ts.Motion {
         this.elem = elem;
         if (this.elem.data('scrollbar')) {
             console.warn('cone.app: Only one Scrollbar can be bound to each element.');
+            // Never built - ``ResizeAware`` still attaches it for destroy and
+            // window resize, which have to leave it alone.
+            this.duplicate = true;
             return;
         }
         this.elem.data('scrollbar', this);
@@ -97,6 +108,9 @@ export class Scrollbar extends ts.Motion {
      * @param {Event} evt
      */
     on_window_resize(evt) {
+        if (this.duplicate) {
+            return;
+        }
         this.is_mobile = $(window).innerWidth() <= 768; // bs5 small/medium breakpoint
         this.position = this.safe_position(this.position);
         this.render();
@@ -189,6 +203,9 @@ export class Scrollbar extends ts.Motion {
      * Destroys the scrollbar instance and cleans up.
      */
     destroy() {
+        if (this.duplicate) {
+            return;
+        }
         if (this.fade_out_timeout) {
             clearTimeout(this.fade_out_timeout);
         }

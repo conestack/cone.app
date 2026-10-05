@@ -85,6 +85,62 @@ QUnit.module('cone.app.scrollbar.Scrollbar', hooks => {
         assert.true(warn_called, 'warning issued for duplicate binding');
     });
 
+    QUnit.test('Scrollbar.initialize skips an element already bound', assert => {
+        // An ajax ``replace`` binds the parent of the replaced element again
+        // (treibstoff TODO), and with it every scrollbar beside it. Those
+        // keep their instance; no second one is made.
+        let elem = $(`
+            <div class="scrollable-y">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let warned = false;
+        let orig_warn = console.warn;
+        console.warn = () => { warned = true; };
+        try {
+            Scrollbar.initialize(container);
+            let first = elem.data('scrollbar');
+            Scrollbar.initialize(container);
+            assert.strictEqual(elem.data('scrollbar'), first, 'same instance');
+        } finally {
+            console.warn = orig_warn;
+        }
+        assert.false(warned, 'no duplicate warning');
+        elem.data('scrollbar').destroy();
+    });
+
+    QUnit.test('A duplicate Scrollbar is inert', assert => {
+        // Built directly on a bound element it warns and stays unbuilt -
+        // destroying it or resizing the window must not touch what it never
+        // built (``this.scrollbar is undefined``).
+        let elem = $(`
+            <div class="scrollable-y">
+                <div class="scrollable-content" style="height: 500px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+
+        let orig_warn = console.warn;
+        let warnings = [];
+        console.warn = msg => warnings.push(String(msg));
+        try {
+            let first = new ScrollbarY(elem);
+            let duplicate = new ScrollbarY(elem);
+            assert.strictEqual(elem.data('scrollbar'), first, 'the first stays bound');
+            $(window).trigger('resize');
+            duplicate.destroy();
+            assert.deepEqual(
+                warnings,
+                ['cone.app: Only one Scrollbar can be bound to each element.'],
+                'nothing but the duplicate warning'
+            );
+            assert.strictEqual(elem.data('scrollbar'), first, 'destroying it leaves the first');
+            first.destroy();
+        } finally {
+            console.warn = orig_warn;
+        }
+    });
+
     QUnit.test('Scrollbar safe_position returns 0 for small content', assert => {
         let elem = $(`
             <div class="scrollable-y">
