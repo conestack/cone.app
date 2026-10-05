@@ -17,6 +17,45 @@ body {
     z-index: 1;
 }
 
+// Section card headers: one height and one title size everywhere.
+//
+// A header with controls - the slice size and search of a table, a filter, a
+// button - is as high as a small input group; a header with a title only was
+// lower, so forms, tables, calendars and dashboard tiles each stood at their
+// own height. The minimum height is the one with controls, the content is
+// centered in it, and the title is an ``h5`` without margin - whether the
+// header itself is the ``h5`` or contains one.
+//
+// A single wrapper inside the header - the controls row of ``table.pt`` -
+// takes the full width, as it did while the header was a block.
+//
+// Cards that are entries of a list rather than sections of a page - the
+// positions of a document, a todo note - keep their compact header; they
+// opt out where they are styled.
+.card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: .5rem;
+    min-height: calc(
+        1.8125rem + 2 * var(--bs-border-width)
+        + 2 * var(--bs-card-cap-padding-y)
+        + var(--bs-card-border-width)
+    );
+
+    // Elements named: an icon alone beside the text of an ``h5.card-header``
+    // must not grow.
+    > div:only-child,
+    > h5:only-child {
+        flex: 1 1 auto;
+    }
+}
+h5.card-header,
+.card-header > h5 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
 // Menu entries that trigger an ajax action have no url of their own, so
 // action_dropdown.pt renders them without ``href`` - and a link without one
 // gets no pointer from the browser.

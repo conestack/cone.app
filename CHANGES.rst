@@ -4,6 +4,12 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Section card headers share one height and one title size: ``.card-header``
+  is as high as a header with small controls (table slice size and search)
+  and centers its content, its title is an ``h5`` without margin. Forms,
+  tables, settings and error pages stood at different heights before.
+  [rnix]
+
 - Fix the sharing table counting local roles only while listing inherited
   ones too. With inherited roles only, the empty state "No local access
   permissions assigned" stood next to their rows, the footer read "0 to 0 of

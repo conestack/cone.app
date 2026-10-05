@@ -89,6 +89,24 @@ body {
   z-index: 1;
 }
 
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.5rem;
+  min-height: calc(1.8125rem + 2 * var(--bs-border-width) + 2 * var(--bs-card-cap-padding-y) + var(--bs-card-border-width));
+}
+.card-header > div:only-child,
+.card-header > h5:only-child {
+  flex: 1 1 auto;
+}
+
+h5.card-header,
+.card-header > h5 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
 .dropdown-item[ajax\:bind]:not([href]) {
   cursor: pointer;
 }
