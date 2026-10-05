@@ -669,3 +669,195 @@ QUnit.module('cone.app.scrollbar.persist', hooks => {
         }, 50);
     });
 });
+
+QUnit.module('cone.app.scrollbar.Scrollbar interaction', hooks => {
+
+    let container;
+    let fx_off;
+
+    hooks.beforeEach(() => {
+        container = $('<div />').appendTo('body');
+        // Animations finish at once - nothing here waits for a frame or a
+        // timer to see where the scrollbar ended up.
+        fx_off = $.fx.off;
+        $.fx.off = true;
+    });
+
+    hooks.afterEach(() => {
+        $.fx.off = fx_off;
+        container.remove();
+    });
+
+    function make(content_height) {
+        let elem = $(`
+            <div class="scrollable-y">
+                <div class="scrollable-content" style="height: ${content_height}px;"></div>
+            </div>
+        `).css({height: '200px', position: 'relative'}).appendTo(container);
+        return new ScrollbarY(elem);
+    }
+
+    QUnit.test('pointer_events reads the element style', assert => {
+        let scrollbar = make(500);
+        scrollbar.pointer_events = true;
+        assert.true(scrollbar.pointer_events);
+        scrollbar.pointer_events = false;
+        assert.false(scrollbar.pointer_events);
+        scrollbar.destroy();
+    });
+
+    QUnit.test('fade_timer shows the scrollbar and restarts its fade out', assert => {
+        let scrollbar = make(500);
+        scrollbar.scrollbar.hide();
+        scrollbar.fade_timer();
+        assert.true(scrollbar.scrollbar.is(':visible'), 'faded in');
+        let first = scrollbar.fade_out_timeout;
+        assert.ok(first, 'fade out scheduled');
+        scrollbar.fade_timer();
+        assert.notStrictEqual(scrollbar.fade_out_timeout, first, 'rescheduled');
+
+        // When the timer runs out the scrollbar fades out. Only the fade out
+        // delay is caught and run afterwards - jQuery schedules its own
+        // animation steps through ``setTimeout`` on a page in the background,
+        // and running those inline recurses without end.
+        let orig_set = window.setTimeout;
+        let fade_out = null;
+        window.setTimeout = (callback, delay) => {
+            if (delay === 700) {
+                fade_out = callback;
+                return 1;
+            }
+            return orig_set(callback, delay);
+        };
+        try {
+            scrollbar.fade_timer();
+        } finally {
+            window.setTimeout = orig_set;
+        }
+        fade_out();
+        assert.false(scrollbar.scrollbar.is(':visible'), 'faded out');
+
+        // A pending fade out is cleared on destroy
+        let cleared = [];
+        let orig = window.clearTimeout;
+        window.clearTimeout = id => { cleared.push(id); orig(id); };
+        try {
+            let pending = scrollbar.fade_out_timeout;
+            scrollbar.destroy();
+            assert.deepEqual(cleared, [pending]);
+        } finally {
+            window.clearTimeout = orig;
+        }
+    });
+
+    QUnit.test('on_is_mobile shows an overflowing scrollbar for good', assert => {
+        let scrollbar = make(500);
+        scrollbar.on_is_mobile(true);
+        assert.true(scrollbar.scrollbar.is(':visible'), 'shown on mobile');
+        // Hover no longer hides it
+        scrollbar.elem.trigger($.Event('mouseleave', {target: scrollbar.elem.get(0)}));
+        assert.true(scrollbar.scrollbar.is(':visible'), 'hover unbound');
+        scrollbar.on_is_mobile(false);
+        assert.false(scrollbar.scrollbar.is(':visible'), 'hidden on desktop');
+        scrollbar.destroy();
+    });
+
+    QUnit.test('on_hover fades the scrollbar of overflowing content', assert => {
+        let scrollbar = make(500);
+        let elem = scrollbar.elem;
+        scrollbar.scrollbar.hide();
+        scrollbar.on_hover($.Event('mouseenter', {target: elem.get(0)}));
+        assert.true(scrollbar.scrollbar.is(':visible'), 'shown on enter');
+        // Leaving towards the element itself is no leaving
+        scrollbar.on_hover($.Event('mouseleave', {
+            target: elem.get(0), relatedTarget: elem.get(0)
+        }));
+        assert.true(scrollbar.scrollbar.is(':visible'), 'kept');
+        scrollbar.on_hover($.Event('mouseleave', {
+            target: elem.get(0), relatedTarget: document.body
+        }));
+        assert.false(scrollbar.scrollbar.is(':visible'), 'hidden on leave');
+        // A target outside the element is ignored
+        scrollbar.on_hover($.Event('mouseenter', {target: document.body}));
+        assert.false(scrollbar.scrollbar.is(':visible'), 'outside ignored');
+        scrollbar.destroy();
+
+        // Content that fits shows no scrollbar on hover
+        let fitting = make(100);
+        fitting.scrollbar.hide();
+        fitting.on_hover($.Event('mouseenter', {target: fitting.elem.get(0)}));
+        assert.false(fitting.scrollbar.is(':visible'), 'nothing to scroll');
+        fitting.destroy();
+    });
+
+    QUnit.test('render without overflow fills the track with the thumb', assert => {
+        let scrollbar = make(100);
+        scrollbar.render('height');
+        assert.strictEqual(scrollbar.thumbsize, scrollbar.scrollsize);
+        scrollbar.destroy();
+    });
+
+    QUnit.test('on_scroll moves both ways and not without overflow', assert => {
+        let scrollbar = make(500);
+        let wheel = deltaY => {
+            let evt = $.Event('wheel');
+            evt.originalEvent = {deltaY: deltaY};
+            scrollbar.on_scroll(evt);
+        };
+        wheel(100);
+        wheel(100);
+        assert.strictEqual(scrollbar.position, 2 * scrollbar.scroll_step);
+        wheel(-100);
+        assert.strictEqual(scrollbar.position, scrollbar.scroll_step);
+        wheel(0);
+        assert.strictEqual(scrollbar.position, scrollbar.scroll_step, 'no delta');
+        scrollbar.destroy();
+
+        let fitting = make(100);
+        let evt = $.Event('wheel');
+        evt.originalEvent = {deltaY: 100};
+        fitting.on_scroll(evt);
+        assert.strictEqual(fitting.position, 0, 'nothing to scroll');
+        fitting.destroy();
+    });
+
+    QUnit.test('touch drags the content against the finger', assert => {
+        let scrollbar = make(500);
+        let touch = pageY => {
+            let evt = $.Event('touch');
+            evt.originalEvent = {touches: [{pageY: pageY}]};
+            return evt;
+        };
+        scrollbar.position = 100;
+        scrollbar.touchstart(touch(150));
+        scrollbar.touchmove(touch(110));
+        assert.strictEqual(scrollbar.position, 140, 'finger up scrolls down');
+        assert.ok(scrollbar.fade_out_timeout, 'scrollbar shown while touching');
+        scrollbar.touchend(touch(110));
+        assert.strictEqual(scrollbar._touch_pos, undefined);
+        assert.strictEqual(scrollbar._start_position, undefined);
+        scrollbar.destroy();
+
+        let fitting = make(100);
+        fitting.touchstart(touch(150));
+        fitting.touchmove(touch(50));
+        assert.strictEqual(fitting.position, 0, 'nothing to scroll');
+        fitting.destroy();
+    });
+
+    QUnit.test('dragging the thumb scrolls proportionally', assert => {
+        let scrollbar = make(500);
+        let offset = scrollbar.offset;
+        let at = pageY => ({pageY: offset + pageY});
+        scrollbar.down(at(10));
+        assert.true(scrollbar.thumb.hasClass('active'), 'thumb active');
+        scrollbar.move(at(50));
+        // 40px of thumb travel over a 200px track of 500px content
+        assert.strictEqual(scrollbar.position, 100);
+        scrollbar.up(at(50));
+        assert.false(scrollbar.thumb.hasClass('active'), 'thumb released');
+        assert.strictEqual(scrollbar._mouse_pos, undefined);
+        assert.strictEqual(scrollbar._thumb_pos, undefined);
+        scrollbar.destroy();
+    });
+});
