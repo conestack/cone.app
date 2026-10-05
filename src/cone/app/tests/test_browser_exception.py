@@ -23,7 +23,8 @@ class TestBrowserException(TileTestCase):
             raise Exception()
         except Exception:
             res = str(internal_server_error(request))
-        self.checkOutput("""
+        self.checkOutput(
+            """
         200 OK
         Content-Type: text/html; charset=UTF-8
         Content-Length: ...
@@ -35,7 +36,9 @@ class TestBrowserException(TileTestCase):
         <pre>Traceback (most recent call last):
           ...
         </pre>
-        """, res)
+        """,
+            res,
+        )
 
         request = self.layer.new_request(xhr=1)
         try:
@@ -60,7 +63,8 @@ class TestBrowserException(TileTestCase):
             except Exception:
                 res = str(internal_server_error(request))
 
-            self.checkOutput("""
+            self.checkOutput(
+                """
             200 OK
             Content-Type: text/html; charset=UTF-8
             Content-Length: ...
@@ -72,7 +76,9 @@ class TestBrowserException(TileTestCase):
             <pre>Traceback (most recent call last):
               ...
             </pre>
-            """, res)
+            """,
+                res,
+            )
 
             request = self.layer.new_request(xhr=1)
             try:
@@ -97,10 +103,13 @@ class TestBrowserException(TileTestCase):
         model = root['model'] = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<div class="card mt-3">...<h5 class="card-header">Unauthorized</h5>...
         ...<p class="card-text">You are not allowed to access this resource.</p>...
-        """, render_tile(model, request, 'unauthorized'))
+        """,
+            render_tile(model, request, 'unauthorized'),
+        )
 
         # Forbidden view. Unauthenticated renders login form.
         context = HTTPForbidden()
@@ -128,10 +137,13 @@ class TestBrowserException(TileTestCase):
         model = root['model'] = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<div class="card mt-3">...<h5 class="card-header">Not Found</h5>...
         ...<p class="card-text">The requested resource cannot be found.</p>...
-        """, render_tile(model, request, 'not_found'))
+        """,
+            render_tile(model, request, 'not_found'),
+        )
 
         # Not Found view. Always renders not found as content tile.
         context = HTTPNotFound()

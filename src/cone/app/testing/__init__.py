@@ -50,7 +50,6 @@ class DummyVenusianContext:
 
 
 class DummyVenusian:
-
     def __init__(self):
         self.attachments = []
 
@@ -86,8 +85,8 @@ class DummyRequest(BaseDummyRequest, AuthenticationAPIMixin):
 
 
 def reset_node_info_registry(fn):
-    """Decorator for tests using node info registry
-    """
+    """Decorator for tests using node info registry"""
+
     def wrapper(*a, **kw):
         node_info_registry_orgin = model._node_info_registry
         try:
@@ -95,30 +94,33 @@ def reset_node_info_registry(fn):
             fn(*a, **kw)
         finally:
             model._node_info_registry = node_info_registry_orgin
+
     return wrapper
 
 
 def reset_resource_registry(fn):
-    """Decorator for tests using resource registry
-    """
+    """Decorator for tests using resource registry"""
+
     def wrapper(*a, **kw):
         resource_registry_orgin = resources._registry
         try:
             fn(*a, **kw)
         finally:
             resources._registry = resource_registry_orgin
+
     return wrapper
 
 
 def reset_node_available(fn):
-    """Decorator for tests modifying node_available callback
-    """
+    """Decorator for tests modifying node_available callback"""
+
     def wrapper(*a, **kw):
         node_available_orgin = security_module.node_available
         try:
             fn(*a, **kw)
         finally:
             security_module.node_available = node_available_orgin
+
     return wrapper
 
 
@@ -126,8 +128,8 @@ DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 
 class Security:
-    """Test layer with dummy authentication for security testing.
-    """
+    """Test layer with dummy authentication for security testing."""
+
     current_request = None
     auth_env_keys = [
         'REMOTE_USER_TOKENS',
@@ -145,10 +147,7 @@ class Security:
         return getGlobalSiteManager()
 
     def defaults(self):
-        return {
-            'request': self.current_request,
-            'registry': self.registry
-        }
+        return {'request': self.current_request, 'registry': self.registry}
 
     def new_request(self, type=None, xhr=False):
         request = self.current_request
@@ -226,6 +225,7 @@ class Security:
 
     def make_app(self, **kw):
         import pyramid.threadlocal
+
         pyramid.threadlocal.manager.default = self.defaults
         settings = {
             'default_locale_name': 'en',
@@ -268,6 +268,7 @@ class Security:
         security_module.AUTHENTICATOR = None
         security_module.node_available = security_module.default_node_available
         import pyramid.threadlocal
+
         pyramid.threadlocal.manager.default = pyramid.threadlocal.defaults
         resetHooks()
 

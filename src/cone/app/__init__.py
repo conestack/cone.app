@@ -63,7 +63,6 @@ class layout_config:
 
 @layout_config(object)
 class DefaultLayoutConfig(LayoutConfig):
-
     def __init__(self, model=None, request=None):
         super(DefaultLayoutConfig, self).__init__(model=model, request=request)
         self.mainmenu = True
@@ -73,12 +72,12 @@ class DefaultLayoutConfig(LayoutConfig):
         self.limit_page_width = False
         self.center_content = False
         self.pathbar = True
-        self.sidebar_left_mode = 'stacked' # 'toggle' or 'stacked'
+        self.sidebar_left_mode = 'stacked'  # 'toggle' or 'stacked'
         self.sidebar_left_min_width = 150
         self.sidebar_left_static = False
         self.sidebar_left = ['navtree']
         self.sidebar_right = []
-        self.sidebar_right_mode = 'stacked' # 'toggle' or 'stacked'
+        self.sidebar_right_mode = 'stacked'  # 'toggle' or 'stacked'
         self.sidebar_right_min_width = 150
         self.sidebar_right_static = False
 
@@ -153,8 +152,7 @@ def main_hook(func):
 
 # B/C
 def register_main_hook(callback):
-    """Register function to get called on application startup.
-    """
+    """Register function to get called on application startup."""
     main_hooks.append(callback)
 
 
@@ -182,7 +180,6 @@ def acl_factory(**kwargs):
 
 @adapter(IApplicationNode)
 class ApplicationNodeTraverser(ResourceTreeTraverser):
-
     def __call__(self, request):
         result = super(ApplicationNodeTraverser, self).__call__(request)
         context = result['context']
@@ -214,8 +211,7 @@ def start_thread_monitor():  # pragma: no cover
 
 
 def main(global_config, **settings):
-    """Returns WSGI application.
-    """
+    """Returns WSGI application."""
     # set authentication related application properties
     security.ADMIN_USER = settings.get('cone.admin_user')
     security.ADMIN_PASSWORD = settings.get('cone.admin_password')
@@ -238,7 +234,7 @@ def main(global_config, **settings):
     if auth_max_age is not None:
         auth_max_age = int(auth_max_age)
     auth_http_only = settings.pop('cone.auth_http_only', False)
-    auth_path = settings.pop('cone.auth_path', "/")
+    auth_path = settings.pop('cone.auth_path', '/')
     auth_wild_domain = settings.pop('cone.auth_wild_domain', True)
 
     auth_policy = auth_tkt_factory(
@@ -307,7 +303,7 @@ def main(global_config, **settings):
     #      all yafowil packages providing translations
 
     # static routes
-    config.add_route("favicon", "/favicon.ico")
+    config.add_route('favicon', '/favicon.ico')
     # XXX: robots.txt
     # XXX: humans.txt
 

@@ -21,10 +21,8 @@ class TestBrowserLayout(TileTestCase):
             pass
 
         with self.layer.hook_tile_reg():
-            @content_view_tile(
-                name='model_tile',
-                interface=Model,
-                permission='view')
+
+            @content_view_tile(name='model_tile', interface=Model, permission='view')
             class ModelContentTile(Tile):
                 def render(self):
                     return '<div>Model Content</div>'
@@ -36,10 +34,11 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(res, '<div>Model Content</div>')
 
         from cone.app.tests.test_browser_content import model_tile_content_view
-        self.assertEqual(model_tile_content_view.__doc__, (
-            'Dynamically created by '
-            'cone.app.browser.content.content_view_tile'
-        ))
+
+        self.assertEqual(
+            model_tile_content_view.__doc__,
+            ('Dynamically created by cone.app.browser.content.content_view_tile'),
+        )
 
         with self.layer.authenticated('manager'):
             res = model_tile_content_view(model, request)
@@ -56,7 +55,8 @@ class TestBrowserLayout(TileTestCase):
             interface=Model,
             permission='view',
             text='Model Action',
-            icon='bi bi-star')
+            icon='bi bi-star',
+        )
         class ModelContentTile(Tile):
             pass
 
@@ -103,10 +103,7 @@ class TestBrowserLayout(TileTestCase):
         class InvalidClassContext:
             pass
 
-        action = ContentViewAction(
-            name='content_action',
-            interface=InvalidClassContext
-        )
+        action = ContentViewAction(name='content_action', interface=InvalidClassContext)
         action.model = model
         action.request = request
         self.assertFalse(action.display)
@@ -114,10 +111,7 @@ class TestBrowserLayout(TileTestCase):
         class IContextInterface(Interface):
             pass
 
-        action = ContentViewAction(
-            name='content_action',
-            interface=IContextInterface
-        )
+        action = ContentViewAction(name='content_action', interface=IContextInterface)
         action.model = model
         action.request = request
         self.assertFalse(action.display)

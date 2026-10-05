@@ -34,16 +34,16 @@ def paths_from_urls(urls):
     return ret
 
 
-@tile(name='paste', permission="paste")
+@tile(name='paste', permission='paste')
 class PasteAction(Tile):
-
     def render(self):
         cut = extract_copysupport_cookie(self.request, 'cut')
         copy = extract_copysupport_cookie(self.request, 'copy')
         localizer = get_localizer(self.request)
         if not cut and not copy:
             message = localizer.translate(
-                _('nothing_to_paste', default='Nothing to paste'))
+                _('nothing_to_paste', default='Nothing to paste')
+            )
             ajax_message(self.request, message)
             return ''
         urls = copy and copy or cut
@@ -59,9 +59,9 @@ class PasteAction(Tile):
                 message = localizer.translate(
                     _(
                         'cannot_paste_unknown_source',
-                        default="Cannot paste '${name}'. Unknown source"
+                        default="Cannot paste '${name}'. Unknown source",
                     ),
-                    mapping={'name': node.name}
+                    mapping={'name': node.name},
                 )
                 errors.append(message)
                 continue
@@ -69,9 +69,9 @@ class PasteAction(Tile):
                 message = localizer.translate(
                     _(
                         'cannot_paste_unknown_target',
-                        default="Cannot paste to '${name}'. Unknown target"
+                        default="Cannot paste to '${name}'. Unknown target",
                     ),
-                    mapping={'name': self.model.name}
+                    mapping={'name': self.model.name},
                 )
                 errors.append(message)
                 continue
@@ -82,12 +82,12 @@ class PasteAction(Tile):
                         default=(
                             "Violation. '${target}' is not allowed to "
                             "contain '${source}'"
-                        )
+                        ),
                     ),
                     mapping={
                         'target': self.model.nodeinfo.title,
-                        'source': node.nodeinfo.title
-                    }
+                        'source': node.nodeinfo.title,
+                    },
                 )
                 errors.append(message)
                 continue
@@ -102,11 +102,10 @@ class PasteAction(Tile):
                             _(
                                 'cannot_paste_self_containment',
                                 default=(
-                                    "Cannot paste cut object to child "
-                                    "of it: ${name}"
-                                )
+                                    'Cannot paste cut object to child of it: ${name}'
+                                ),
                             ),
-                            mapping={'name': parent.name}
+                            mapping={'name': parent.name},
                         )
                         errors.append(message)
                         in_model = True
@@ -124,22 +123,16 @@ class PasteAction(Tile):
         for source in call_sources:
             source()
         message = localizer.translate(
-            _(
-                'pasted_items',
-                default="Pasted ${count} items"
-            ),
-            mapping={'count': success}
+            _('pasted_items', default='Pasted ${count} items'),
+            mapping={'count': success},
         )
         if errors:
             failed = localizer.translate(
-                _(
-                    'pasting_items_failed',
-                    default="Pasting of ${count} items failed"
-                ),
-                mapping={'count': len(errors)}
+                _('pasting_items_failed', default='Pasting of ${count} items failed'),
+                mapping={'count': len(errors)},
             )
-            failed = "<br /><strong>%s</strong>" % failed
-            message += "<br />".join([failed] + errors)
+            failed = '<br /><strong>%s</strong>' % failed
+            message += '<br />'.join([failed] + errors)
         ajax_message(self.request, message)
         content_tile = self.model.properties.action_paste_tile
         if not content_tile:

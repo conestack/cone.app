@@ -23,74 +23,81 @@ resources_dir = os.path.join(os.path.dirname(__file__), 'static')
 jquery_resources = wr.ResourceGroup(
     name='cone.app-jquery',
     directory=os.path.join(resources_dir, 'jquery'),
-    path='jquery'
+    path='jquery',
 )
-jquery_resources.add(wr.ScriptResource(
-    name='jquery-js',
-    resource='jquery-4.0.0.js',
-    compressed='jquery-4.0.0.min.js'
-))
+jquery_resources.add(
+    wr.ScriptResource(
+        name='jquery-js', resource='jquery-4.0.0.js', compressed='jquery-4.0.0.min.js'
+    )
+)
 
 # bootstrap
 bootstrap_resources = wr.ResourceGroup(
     name='cone.app-bootstrap',
     directory=os.path.join(resources_dir, 'bootstrap'),
-    path='bootstrap'
+    path='bootstrap',
 )
-bootstrap_resources.add(wr.ScriptResource(
-    name='popper-js',
-    directory=os.path.join(resources_dir, 'bootstrap', 'js'),
-    path='bootstrap/js',
-    resource='popper.min.js'
-))
-bootstrap_resources.add(wr.ScriptResource(
-    name='bootstrap-js',
-    directory=os.path.join(resources_dir, 'bootstrap', 'js'),
-    path='bootstrap/js',
-    resource='bootstrap.bundle.js',
-    compressed='bootstrap.bundle.min.js'
-))
-bootstrap_resources.add(wr.StyleResource(
-    name='bootstrap-css',
-    directory=os.path.join(resources_dir, 'bootstrap', 'css'),
-    path='bootstrap/css',
-    resource='bootstrap.css',
-    compressed='bootstrap.min.css'
-))
-bootstrap_resources.add(wr.StyleResource(
-    name='bootstrap-icons-css',
-    directory=os.path.join(resources_dir, 'bootstrap', 'icons'),
-    path='bootstrap/icons',
-    resource='bootstrap-icons.css',
-    compressed='bootstrap-icons.min.css'
-))
+bootstrap_resources.add(
+    wr.ScriptResource(
+        name='popper-js',
+        directory=os.path.join(resources_dir, 'bootstrap', 'js'),
+        path='bootstrap/js',
+        resource='popper.min.js',
+    )
+)
+bootstrap_resources.add(
+    wr.ScriptResource(
+        name='bootstrap-js',
+        directory=os.path.join(resources_dir, 'bootstrap', 'js'),
+        path='bootstrap/js',
+        resource='bootstrap.bundle.js',
+        compressed='bootstrap.bundle.min.js',
+    )
+)
+bootstrap_resources.add(
+    wr.StyleResource(
+        name='bootstrap-css',
+        directory=os.path.join(resources_dir, 'bootstrap', 'css'),
+        path='bootstrap/css',
+        resource='bootstrap.css',
+        compressed='bootstrap.min.css',
+    )
+)
+bootstrap_resources.add(
+    wr.StyleResource(
+        name='bootstrap-icons-css',
+        directory=os.path.join(resources_dir, 'bootstrap', 'icons'),
+        path='bootstrap/icons',
+        resource='bootstrap-icons.css',
+        compressed='bootstrap-icons.min.css',
+    )
+)
 
 # cone
 cone_resources = wr.ResourceGroup(
-    name='cone.app-cone',
-    directory=os.path.join(resources_dir, 'cone'),
-    path='cone'
+    name='cone.app-cone', directory=os.path.join(resources_dir, 'cone'), path='cone'
 )
-cone_resources.add(wr.ScriptResource(
-    name='cone-app-js',
-    depends=['jquery-js', 'bootstrap-js', 'popper-js'],
-    resource='cone.app.js',
-    compressed='cone.app.min.js'
-))
-cone_resources.add(wr.StyleResource(
-    name='cone-app-css',
-    resource='cone.app.css',
-    compressed='cone.app.min.css'
-))
-cone_resources.add(wr.StyleResource(
-    name='cone-app-print-css',
-    resource='cone.app.print.css',
-    media='print'
-))
+cone_resources.add(
+    wr.ScriptResource(
+        name='cone-app-js',
+        depends=['jquery-js', 'bootstrap-js', 'popper-js'],
+        resource='cone.app.js',
+        compressed='cone.app.min.js',
+    )
+)
+cone_resources.add(
+    wr.StyleResource(
+        name='cone-app-css', resource='cone.app.css', compressed='cone.app.min.css'
+    )
+)
+cone_resources.add(
+    wr.StyleResource(
+        name='cone-app-print-css', resource='cone.app.print.css', media='print'
+    )
+)
 
 
 class ResourceInclude:
-
     def __init__(self, settings, name):
         self.settings = settings
         self.name = name
@@ -109,9 +116,7 @@ _registry = None
 class ResourceRegistry:
     """Resource registry."""
 
-    default_excludes = [
-        'yafowil.bootstrap'
-    ]
+    default_excludes = ['yafowil.bootstrap']
     """List of resource names which gets excluded by default."""
 
     resources = None
@@ -134,7 +139,7 @@ class ResourceRegistry:
         config.add_directive('set_resource_include', reg.set_resource_include)
         config.add_directive(
             'configure_default_resource_includes',
-            reg.configure_default_resource_includes
+            reg.configure_default_resource_includes,
         )
         config.add_directive('configure_resources', reg.configure_resources)
 
@@ -193,15 +198,10 @@ class ResourceRegistry:
         yafowil_public = self._settings.get('yafowil.resources_public')
         if yafowil_public not in ['1', 'True', 'true']:
             yafowil_resources = factory.get_resources(
-                copy_resources=False,
-                exclude=self.default_excludes
+                copy_resources=False, exclude=self.default_excludes
             )
             for resource in yafowil_resources.scripts + yafowil_resources.styles:
-                self.set_resource_include(
-                    config,
-                    resource.name,
-                    'authenticated'
-                )
+                self.set_resource_include(config, resource.name, 'authenticated')
 
     def configure_resources(self, config, development):
         """Configure resources.
@@ -242,12 +242,7 @@ class ResourceRegistry:
                 )
                 group.remove()
                 continue
-            self._register_resources_view(
-                config,
-                module,
-                group.path,
-                group.directory
-            )
+            self._register_resources_view(config, module, group.path, group.directory)
             handled_groups.append(group.path)
 
         # configure scripts and styles contained in resources
@@ -269,9 +264,7 @@ class ResourceRegistry:
 
     def _register_resources_view(self, config, module, name, directory):
         resources_view = static_view(directory, use_subpath=True)
-        view_name = '{}_static_view'.format(
-            name.replace('-', '_').replace('.', '_')
-        )
+        view_name = '{}_static_view'.format(name.replace('-', '_').replace('.', '_'))
         setattr(module, view_name, resources_view)
         view_path = f'cone.app.browser.resources.{view_name}'
         config.add_view(view_path, name=name, context=AppResources)
@@ -286,7 +279,7 @@ class Resources(Tile):
         global _registry
         return wr.ResourceRenderer(
             wr.ResourceResolver(_registry.resources.scripts),
-            base_url=self.request.application_url
+            base_url=self.request.application_url,
         ).render()
 
     @property
@@ -294,7 +287,7 @@ class Resources(Tile):
         global _registry
         return wr.ResourceRenderer(
             wr.ResourceResolver(_registry.resources.styles),
-            base_url=self.request.application_url
+            base_url=self.request.application_url,
         ).render()
 
 
@@ -305,7 +298,6 @@ def resources_view(model, request):
 
 @tile(name='content', interface=AppResources, permission='login')
 class ResourcesContent(Tile):
-
     def render(self):
         url = self.request.application_url
         path = AjaxPath(path='/', target=url, event='contextchanged:#layout')

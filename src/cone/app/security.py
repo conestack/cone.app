@@ -35,22 +35,49 @@ authenticated_permissions = [
     'view',
 ]
 viewer_permissions = [
-    'view', 'list',
+    'view',
+    'list',
 ]
-editor_permissions = [
-    'view', 'list', 'add', 'edit', 'change_order'
-]
+editor_permissions = ['view', 'list', 'add', 'edit', 'change_order']
 owner_permissions = [
-    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-    'copy', 'paste', 'manage_permissions', 'change_state',
+    'view',
+    'list',
+    'add',
+    'edit',
+    'change_order',
+    'delete',
+    'cut',
+    'copy',
+    'paste',
+    'manage_permissions',
+    'change_state',
 ]
 admin_permissions = [
-    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-    'copy', 'paste', 'manage_permissions', 'change_state',
+    'view',
+    'list',
+    'add',
+    'edit',
+    'change_order',
+    'delete',
+    'cut',
+    'copy',
+    'paste',
+    'manage_permissions',
+    'change_state',
 ]
 manager_permissions = [
-    'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-    'copy', 'paste', 'manage_permissions', 'change_state', 'manage',
+    'view',
+    'list',
+    'add',
+    'edit',
+    'change_order',
+    'delete',
+    'cut',
+    'copy',
+    'paste',
+    'manage_permissions',
+    'change_state',
+    'manage',
 ]
 everyone_permissions = [
     'login',
@@ -68,7 +95,9 @@ DEFAULT_ACL = [
 
 
 settings_manager_permissions = [
-    'view', 'edit', 'manage',
+    'view',
+    'edit',
+    'manage',
 ]
 DEFAULT_SETTINGS_ACL = [
     (Allow, 'role:manager', settings_manager_permissions),
@@ -88,8 +117,7 @@ def authenticate(request, login, password):
             return remember(request, login)
     if AUTHENTICATOR:
         authenticator = request.registry.queryUtility(
-            IAuthenticator,
-            name=AUTHENTICATOR
+            IAuthenticator, name=AUTHENTICATOR
         )
         if authenticator:
             pid = authenticator.authenticate(login, password)
@@ -178,8 +206,7 @@ def groups_callback(name, request):
 
 
 class ACLRegistry(dict):
-    """ACL registry.
-    """
+    """ACL registry."""
 
     def register(self, acl, obj=None, node_info_name=''):
         self[(obj, node_info_name)] = acl
@@ -206,8 +233,8 @@ node_available = default_node_available
 
 @implementer(IOwnerSupport)
 class OwnerSupport(Behavior):
-    """Plumbing behavior providing ownership information.
-    """
+    """Plumbing behavior providing ownership information."""
+
     owner_attribute_name = default('owner')
 
     @plumb
@@ -245,13 +272,15 @@ class PrincipalACL(Behavior):
     attribute as property function. Plumber does not support class property
     plumbing (yet).
     """
+
     role_inheritance = default(False)
 
     @default
     @property
     def principal_roles(self):
-        raise NotImplementedError("Abstract ``PrincipalACL`` does not "
-                                  "implement ``principal_roles``.")
+        raise NotImplementedError(
+            'Abstract ``PrincipalACL`` does not implement ``principal_roles``.'
+        )
 
     @default
     @property
@@ -302,8 +331,8 @@ class PrincipalACL(Behavior):
 
 @implementer(IAdapterACL)
 class AdapterACL(Behavior):
-    """Plumbing behavior providing ACL from ``IACLAdapter``
-    """
+    """Plumbing behavior providing ACL from ``IACLAdapter``"""
+
     default_acl = default(DEFAULT_ACL)
 
     @override
@@ -312,11 +341,7 @@ class AdapterACL(Behavior):
         if not node_available(self, self.node_info_name):
             return [(Deny, Everyone, ALL_PERMISSIONS)]
         request = get_current_request()
-        acl_adapter = request.registry.queryAdapter(
-            self,
-            IACLAdapter,
-            default=None
-        )
+        acl_adapter = request.registry.queryAdapter(self, IACLAdapter, default=None)
         if acl_adapter:
             return acl_adapter.acl
         return self.default_acl

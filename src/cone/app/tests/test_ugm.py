@@ -21,6 +21,7 @@ def restore_ugm_backend(fn):
             ugm_backend.factory = factory
             ugm_backend.ugm = ugm
             ugm_backend.registry = registry
+
     return wrapper
 
 
@@ -60,10 +61,7 @@ class TestUgm(NodeTestCase):
 
         with self.assertRaises(ValueError) as arc:
             ugm_backend.load('inexistent', {})
-        self.assertEqual(
-            str(arc.exception),
-            'Unknown UGM backend "inexistent"'
-        )
+        self.assertEqual(str(arc.exception), 'Unknown UGM backend "inexistent"')
 
         with self.assertRaises(ValueError) as arc:
             ugm_backend.initialize()
@@ -91,13 +89,16 @@ class TestUgm(NodeTestCase):
         self.assertTrue('file' in ugm_backend.registry)
         self.assertTrue(ugm_backend.registry['file'] is FileUGMFactory)
 
-        ugm_backend.load('file', {
-            'ugm.users_file': 'users',
-            'ugm.groups_file': 'groups',
-            'ugm.roles_file': 'roles',
-            'ugm.datadir': 'userdata',
-            'ugm.user_expires_attr': 'expires'
-        })
+        ugm_backend.load(
+            'file',
+            {
+                'ugm.users_file': 'users',
+                'ugm.groups_file': 'groups',
+                'ugm.roles_file': 'roles',
+                'ugm.datadir': 'userdata',
+                'ugm.user_expires_attr': 'expires',
+            },
+        )
         ugm_backend.initialize()
         ugm = ugm_backend.ugm
 
@@ -113,13 +114,16 @@ class TestUgm(NodeTestCase):
         self.assertTrue('node.ext.ugm' in ugm_backend.registry)
         self.assertTrue(ugm_backend.registry['node.ext.ugm'] is BCFileUGMFactory)
 
-        ugm_backend.load('node.ext.ugm', {
-            'node.ext.ugm.users_file': 'users',
-            'node.ext.ugm.groups_file': 'groups',
-            'node.ext.ugm.roles_file': 'roles',
-            'node.ext.ugm.datadir': 'userdata',
-            'node.ext.ugm.user_expires_attr': 'expires'
-        })
+        ugm_backend.load(
+            'node.ext.ugm',
+            {
+                'node.ext.ugm.users_file': 'users',
+                'node.ext.ugm.groups_file': 'groups',
+                'node.ext.ugm.roles_file': 'roles',
+                'node.ext.ugm.datadir': 'userdata',
+                'node.ext.ugm.user_expires_attr': 'expires',
+            },
+        )
         ugm_backend.initialize()
         ugm = ugm_backend.ugm
 
@@ -132,10 +136,10 @@ class TestUgm(NodeTestCase):
 
     def test_principal_data(self):
         # Fetch principal data
-        self.assertEqual(principal_data('manager').items(), [
-            ('fullname', 'Manager User'),
-            ('email', 'manager@bar.com')
-        ])
+        self.assertEqual(
+            principal_data('manager').items(),
+            [('fullname', 'Manager User'), ('email', 'manager@bar.com')],
+        )
         self.assertEqual(principal_data('inexistent'), {})
 
         # If UGM implementation raises an exception when trying to fetch the

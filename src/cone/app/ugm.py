@@ -6,8 +6,8 @@ logger = logging.getLogger('cone.app')
 
 
 class ugm_backend:
-    """UGM backend configuration.
-    """
+    """UGM backend configuration."""
+
     registry = dict()
     name = None
     factory = None
@@ -37,28 +37,28 @@ class ugm_backend:
 
 
 class UGMFactory:
-    """UGM backend factory.
-    """
+    """UGM backend factory."""
 
     def __init__(self, settings):
         """Gets called by ``ugm_backend.load`` and is responsible to read
         UGM related configuration from passed ``settings`` dict.
         """
         raise NotImplementedError(
-            'Abstract ``UGMFactory`` does not implement ``__init__``')
+            'Abstract ``UGMFactory`` does not implement ``__init__``'
+        )
 
     def __call__(self):
         """Gets calles by ``ugm_backend.initialize`` and is responsible to
         instanciate and return a concrete ``node.ext.ugm.Ugm`` implementation.
         """
         raise NotImplementedError(
-            'Abstract ``UGMFactory`` does not implement ``__call__``')
+            'Abstract ``UGMFactory`` does not implement ``__call__``'
+        )
 
 
 @ugm_backend('file')
 class FileUGMFactory(UGMFactory):
-    """UGM backend factory for file based UGM implementation.
-    """
+    """UGM backend factory for file based UGM implementation."""
 
     def __init__(self, settings):
         self.users_file = settings.get('ugm.users_file')

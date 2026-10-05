@@ -17,7 +17,8 @@ class TestBrowserWorkflow(TileTestCase):
 
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a href="#"
               role="button"
               class="nav-link dropdown-toggle py-2 px-3 state-initial"
@@ -26,19 +27,24 @@ class TestBrowserWorkflow(TileTestCase):
           <span>State</span>:
           <span>Initial State</span>
         </a>...
-        """, res)
+        """,
+            res,
+        )
 
         request.params['do_transition'] = 'initial_2_final'
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<li class="nav-item dropdown py-0">
           <span class="nav-link py-2 no-transitions state-final">
             <span>State</span>:
             <span>Final State</span>
           </span>
         </li>...
-        """, res)
+        """,
+            res,
+        )
 
         self.assertEqual(node.state, 'final')
 
@@ -54,7 +60,8 @@ class TestBrowserWorkflow(TileTestCase):
 
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a href="#"
               role="button"
               class="nav-link dropdown-toggle py-2 px-3 state-initial"
@@ -63,4 +70,6 @@ class TestBrowserWorkflow(TileTestCase):
           <span>State</span>:
           <span>initial</span>
         </a>...
-        """, res)
+        """,
+            res,
+        )

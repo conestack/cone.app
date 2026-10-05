@@ -3,6 +3,7 @@ from cone.app.browser.actions import ActionAdd
 from cone.app.browser.actions import ActionCopy
 from cone.app.browser.actions import ActionCut
 from cone.app.browser.actions import ActionDelete
+
 # from cone.app.browser.actions import ActionDeleteChildren
 from cone.app.browser.actions import ActionEdit
 from cone.app.browser.actions import ActionList
@@ -41,10 +42,9 @@ class ContextMenuToolbar(Toolbar):
                 rendered_actions.append((order, rendered))
                 continue
             # wrap link action in list item
-            rendered_actions.append((
-                order,
-                f'<li class="nav-item py-0">{rendered}</li>'
-            ))
+            rendered_actions.append(
+                (order, f'<li class="nav-item py-0">{rendered}</li>')
+            )
         if not rendered_actions:
             return ''
         # order items by 'order' property (defaults to 0)
@@ -96,10 +96,7 @@ class ContextMenuDropdown(Toolbar):
         if not dropdown.display:
             return ''
         return render_template(
-            self.template,
-            request=request,
-            model=model,
-            context=dropdown
+            self.template, request=request, model=model, context=dropdown
         )
 
     def sorted_actions(self):
@@ -154,6 +151,7 @@ class ContextMenuActionUp(ActionUp):
 @context_menu_group(name='contentviews')
 class ContentViewsDropdown(ContextMenuDropdown):
     """Context menu content views dropdown."""
+
     title = _('display', default='Display')
 
 
@@ -184,6 +182,7 @@ class ContextMenuActionSharing(ActionSharing):
 @context_menu_group(name='childactions')
 class ChildActionsDropdown(ContextMenuDropdown):
     """Context menu content views dropdown."""
+
     title = _('actions', default='Actions')
 
 
@@ -205,8 +204,8 @@ class ContextMenuActionPaste(ActionPaste):
     selected_css = 'active'
 
 
-#@context_menu_item(group='childactions', name='delete')
-#class ContextMenuActionDeleteChildren(ActionDeleteChildren):
+# @context_menu_item(group='childactions', name='delete')
+# class ContextMenuActionDeleteChildren(ActionDeleteChildren):
 #    css = 'dropdown-item'
 
 
@@ -216,13 +215,11 @@ class ContextActionsToolbar(ContextMenuToolbar):
 
 
 @context_menu_item(group='contextactions', name='change_state')
-class ContextMenuActionState(ActionState):
-    ...
+class ContextMenuActionState(ActionState): ...
 
 
 @context_menu_item(group='contextactions', name='add')
-class ContextMenuActionAdd(ActionAdd):
-    ...
+class ContextMenuActionAdd(ActionAdd): ...
 
 
 @context_menu_item(group='contextactions', name='delete')
@@ -233,7 +230,6 @@ class ContextMenuActionDelete(ActionDelete):
 
 @tile(name='contextmenu', path='templates/contextmenu.pt', permission='view')
 class ContextMenu(Tile):
-
     @property
     def rendered_toolbars(self):
         rendered_toolbars = []

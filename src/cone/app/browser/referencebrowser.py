@@ -49,55 +49,44 @@ def make_refbrowser_query(request, **kw):
 
 
 class ReferenceBrowserModelMixin:
-
     @request_property
     def referencable_root(self):
-        return node_by_path(
-            self.model.root,
-            self.request.params['root'].strip('/')
-        )
+        return node_by_path(self.model.root, self.request.params['root'].strip('/'))
 
     @request_property
     def referencebrowser_model(self):
         root = self.referencable_root
         root_path = root.path
-        if self.model.path[:len(root_path)] == root_path:
+        if self.model.path[: len(root_path)] == root_path:
             return self.model
         return root
 
 
-@tile(name='referencebrowser',
-      path='templates/referencebrowser.pt',
-      permission='view')
+@tile(name='referencebrowser', path='templates/referencebrowser.pt', permission='view')
 class ReferenceBrowser(Tile, ReferenceBrowserModelMixin):
-
     @property
     def referencebrowser_pathbar(self):
         return render_tile(
-            self.referencebrowser_model,
-            self.request,
-            'referencebrowser_pathbar'
+            self.referencebrowser_model, self.request, 'referencebrowser_pathbar'
         )
 
     @property
     def referencelisting(self):
         return render_tile(
-            self.referencebrowser_model,
-            self.request,
-            'referencelisting'
+            self.referencebrowser_model, self.request, 'referencelisting'
         )
 
 
-@tile(name='referencebrowser_pathbar',
-      path='templates/referencebrowser_pathbar.pt',
-      permission='view')
+@tile(
+    name='referencebrowser_pathbar',
+    path='templates/referencebrowser_pathbar.pt',
+    permission='view',
+)
 class ReferenceBrowserPathBar(PathBar, ReferenceBrowserModelMixin):
-
     @property
     def items(self):
         return self.items_for(
-            self.referencebrowser_model,
-            breakpoint=self.referencable_root
+            self.referencebrowser_model, breakpoint=self.referencable_root
         )
 
     def item_url(self, node):
@@ -106,7 +95,8 @@ class ReferenceBrowserPathBar(PathBar, ReferenceBrowserModelMixin):
 
     def item_target(self, node):
         query = make_refbrowser_query(
-            self.request, contenttile=node.properties.default_content_tile)
+            self.request, contenttile=node.properties.default_content_tile
+        )
         return make_url(self.request, node=node, query=query)
 
 
@@ -196,8 +186,7 @@ class ReferencableChildrenLink(LinkAction):
     def render(self):
         if INavigationLeaf.providedBy(self.model):
             return '{}&nbsp;{}'.format(
-                tag('span', class_=self.icon),
-                tag('span', self.text)
+                tag('span', class_=self.icon), tag('span', self.text)
             )
         return LinkAction.render(self)
 
@@ -248,8 +237,7 @@ class ReferenceListing(ContentsTile):
         for child in children[start:end]:
             row_data = RowData()
             row_data['actions'] = self.row_actions(child, self.request)
-            row_data['title'] = \
-                self.referencable_children_link(child, self.request)
+            row_data['title'] = self.referencable_children_link(child, self.request)
             rows.append(row_data)
         return rows
 
@@ -258,10 +246,7 @@ class ReferenceListing(ContentsTile):
         navigable_types = self.navigable_types
         if not navigable_types:
             return children
-        return [
-            child for child in children
-            if child.node_info_name in navigable_types
-        ]
+        return [child for child in children if child.node_info_name in navigable_types]
 
 
 def fetch_reference_value(widget, data):
@@ -315,25 +300,21 @@ def wrap_ajax_target(rendered, widget, data, cssclass=None):
         selected = ','.join(value)
     elif value:
         selected = value
-    query = make_query(root=root, referencable=referencable, selected=selected, navigable=navigable)
+    query = make_query(
+        root=root, referencable=referencable, selected=selected, navigable=navigable
+    )
     target = f'{target}{query}'
-    attrs = {
-        'ajax:target': target,
-        'class_': cssclass if cssclass else ''
-    }
+    attrs = {'ajax:target': target, 'class_': cssclass if cssclass else ''}
     return tag('span', rendered, **attrs)
 
 
 def reference_trigger_renderer(widget, data):
     attrs = {
         'class': 'referencebrowser_trigger input-group-text',
-        'data-reference-name': widget.dottedpath
+        'data-reference-name': widget.dottedpath,
     }
     return data.tag(
-        'span',
-        tag('i', '', class_='bi-link'),
-        _('browse', default='Browse'),
-        **attrs
+        'span', tag('i', '', class_='bi-link'), _('browse', default='Browse'), **attrs
     )
 
 
@@ -379,8 +360,8 @@ def fetch_reference_label(widget, data):
 
 
 @managedprops(
-    'multivalued', 'vocabulary', 'target',
-    'root', 'referencable', 'lookup', 'navigable')
+    'multivalued', 'vocabulary', 'target', 'root', 'referencable', 'lookup', 'navigable'
+)
 def reference_edit_renderer(widget, data):
     if widget.attrs.get('multivalued'):
         prepare_vocab_property(widget, data)
@@ -404,8 +385,13 @@ def reference_edit_renderer(widget, data):
     }
     rendered = tag('input', **text_attrs) + tag('input', **hidden_attrs)
     trigger = reference_trigger_renderer(widget, data)
-    cssclass = cssclasses(widget, data, classattr=None, additional=['input-group'],
-                          ignores=['required_class', 'class_add'])
+    cssclass = cssclasses(
+        widget,
+        data,
+        classattr=None,
+        additional=['input-group'],
+        ignores=['required_class', 'class_add'],
+    )
     return wrap_ajax_target(rendered + trigger, widget, data, cssclass)
 
 
@@ -416,19 +402,17 @@ def reference_display_renderer(widget, data):
     label = fetch_reference_label(widget, data)
     attrs = {
         'id': cssid(widget, 'display'),
-        'class_': 'display-{}'.format(widget.attrs['class'] or 'generic')
+        'class_': 'display-{}'.format(widget.attrs['class'] or 'generic'),
     }
     return data.tag('div', label, **attrs)
 
 
 factory.register(
     'reference',
-    extractors=[
-        reference_extractor,
-        generic_required_extractor
-    ],
+    extractors=[reference_extractor, generic_required_extractor],
     edit_renderers=[reference_edit_renderer],
-    display_renderers=[reference_display_renderer])
+    display_renderers=[reference_display_renderer],
+)
 
 factory.defaults['reference.required_class'] = 'required'
 

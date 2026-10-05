@@ -34,19 +34,13 @@ class BrowserTest(TileTestCase):
         request = self.layer.new_request()
         response = favicon_view(request)
         self.assertTrue(isinstance(response, Response))
-        self.assertEqual(
-            response.headers['Content-Type'],
-            'image/vnd.microsoft.icon'
-        )
+        self.assertEqual(response.headers['Content-Type'], 'image/vnd.microsoft.icon')
 
     def test_related_view_support(self):
         # Test ``set_related_view``
         request = self.layer.new_request()
         set_related_view(request, 'someview')
-        self.assertEqual(
-            request.environ['cone.app.related_view'],
-            'someview'
-        )
+        self.assertEqual(request.environ['cone.app.related_view'], 'someview')
 
         # Test ``get_related_view``
         self.assertEqual(get_related_view(request), 'someview')
@@ -56,23 +50,16 @@ class BrowserTest(TileTestCase):
         class RelatedViewConsumingTile(Tile):
             def render(self):
                 return make_url(
-                    self.request,
-                    node=self.model,
-                    resource=self.related_view)
+                    self.request, node=self.model, resource=self.related_view
+                )
 
         model = BaseNode(name='root')
         request = self.layer.new_request()
         tile = RelatedViewConsumingTile()
-        self.assertEqual(
-            tile(model, request),
-            'http://example.com/root'
-        )
+        self.assertEqual(tile(model, request), 'http://example.com/root')
 
         set_related_view(request, 'someview')
-        self.assertEqual(
-            tile(model, request),
-            'http://example.com/root/someview'
-        )
+        self.assertEqual(tile(model, request), 'http://example.com/root/someview')
 
         # Test ``RelatedViewProvider``
         @plumbing(RelatedViewProvider)
@@ -85,7 +72,4 @@ class BrowserTest(TileTestCase):
         model = BaseNode(name='root')
         request = self.layer.new_request()
         tile = RelatedViewProvidingTile()
-        self.assertEqual(
-            tile(model, request),
-            'http://example.com/root/related_view'
-        )
+        self.assertEqual(tile(model, request), 'http://example.com/root/related_view')

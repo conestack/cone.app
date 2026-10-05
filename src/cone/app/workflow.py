@@ -27,8 +27,7 @@ def lookup_workflow(node):
 
 
 def lookup_state_data(node):
-    """Lookup state data of current workflow state for node.
-    """
+    """Lookup state data of current workflow state for node."""
     workflow = lookup_workflow(node)
     if not workflow:
         return {}
@@ -67,6 +66,7 @@ class WorkflowState(Behavior):
 
     This implementation persists to self.attrs['state']
     """
+
     workflow_tsf = default(None)
     workflow_name = default(None)
 
@@ -87,6 +87,7 @@ class WorkflowState(Behavior):
                 initialize_workflow(node, force=True)
                 for child in node.values():
                     recursiv_initial_state(child)
+
         recursiv_initial_state(ret)
         return ret
 
@@ -105,21 +106,40 @@ class WorkflowACL(Behavior):
 
     Requires ``WorkflowState`` behavior.
     """
+
     state_acls = default(dict())
-    default_acl = default([
-        (Allow, 'system.Authenticated', ['view']),
-        (Allow, 'role:viewer', ['view']),
-        (Allow, 'role:editor', ['view', 'add', 'edit']),
-        (Allow, 'role:owner', ['view', 'add', 'edit', 'delete',
-                               'change_state', 'manage_permissions']),
-        (Allow, 'role:admin', ['view', 'add', 'edit', 'delete',
-                               'change_state', 'manage_permissions']),
-        (Allow, 'role:manager', ['view', 'add', 'edit', 'delete',
-                                 'change_state', 'manage_permissions',
-                                 'manage']),
-        (Allow, Everyone, ['login']),
-        (Deny, Everyone, ALL_PERMISSIONS),
-    ])
+    default_acl = default(
+        [
+            (Allow, 'system.Authenticated', ['view']),
+            (Allow, 'role:viewer', ['view']),
+            (Allow, 'role:editor', ['view', 'add', 'edit']),
+            (
+                Allow,
+                'role:owner',
+                ['view', 'add', 'edit', 'delete', 'change_state', 'manage_permissions'],
+            ),
+            (
+                Allow,
+                'role:admin',
+                ['view', 'add', 'edit', 'delete', 'change_state', 'manage_permissions'],
+            ),
+            (
+                Allow,
+                'role:manager',
+                [
+                    'view',
+                    'add',
+                    'edit',
+                    'delete',
+                    'change_state',
+                    'manage_permissions',
+                    'manage',
+                ],
+            ),
+            (Allow, Everyone, ['login']),
+            (Deny, Everyone, ALL_PERMISSIONS),
+        ]
+    )
 
     @override
     @property
@@ -128,6 +148,5 @@ class WorkflowACL(Behavior):
         if not acl:
             raise ValueError("No ACL found for state '%s'" % self.state)
         if acl is self.default_acl:
-            logger.warning("No ACL found for state "
-                           "'%s'. Using default" % self.state)
+            logger.warning("No ACL found for state '%s'. Using default" % self.state)
         return acl

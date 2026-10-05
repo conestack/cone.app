@@ -33,7 +33,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.layer.new_request()
         widget = factory('reference', name='ref')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <span
           ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
           class="input-group">
@@ -46,10 +47,13 @@ class TestBrowserReferenceBrowser(TileTestCase):
             </i>
           browse</span>
         </span>
-        """, '>\n'.join(widget().split('>')))
+        """,
+            '>\n'.join(widget().split('>')),
+        )
 
         widget.attrs['multivalued'] = True
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <span
           ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
           class="">
@@ -62,21 +66,19 @@ class TestBrowserReferenceBrowser(TileTestCase):
             </i>
             browse</span>
         </span>
-        """, '>\n'.join(widget().split('>')))
+        """,
+            '>\n'.join(widget().split('>')),
+        )
 
     def test_reference_root(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = (
-            'http://example.com/'
-            '?navigable=&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['root'] = '/container'
         expected = (
-            'http://example.com/'
-            '?navigable=&referencable=&root=/container&selected='
+            'http://example.com/?navigable=&referencable=&root=/container&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -85,38 +87,29 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget.attrs['root'] = root_callable
         expected = (
-            'http://example.com/'
-            '?navigable=&referencable=&root=/computed_root&selected='
+            'http://example.com/?navigable=&referencable=&root=/computed_root&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_referencable(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = (
-            'http://example.com/'
-            '?navigable=&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = 'foo'
-        expected = (
-            'http://example.com/'
-            '?navigable=&referencable=foo&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=foo&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = ['foo', 'bar']
         expected = (
-            'http://example.com/'
-            '?navigable=&referencable=foo,bar&root=/&selected='
+            'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = 'foo,bar'
         expected = (
-            'http://example.com/'
-            '?navigable=&referencable=foo,bar&root=/&selected='
+            'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -125,38 +118,29 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget.attrs['referencable'] = referencable_callable
         expected = (
-            'http://example.com/'
-            '?navigable=&referencable=computed&root=/&selected='
+            'http://example.com/?navigable=&referencable=computed&root=/&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_navigable(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = (
-            'http://example.com/'
-            '?navigable=&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = 'foo'
-        expected = (
-            'http://example.com/'
-            '?navigable=foo&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=foo&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = ['foo', 'bar']
         expected = (
-            'http://example.com/'
-            '?navigable=foo,bar&referencable=&root=/&selected='
+            'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = 'foo,bar'
         expected = (
-            'http://example.com/'
-            '?navigable=foo,bar&referencable=&root=/&selected='
+            'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -165,8 +149,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget.attrs['navigable'] = navigable_callable
         expected = (
-            'http://example.com/'
-            '?navigable=computed&referencable=&root=/&selected='
+            'http://example.com/?navigable=computed&referencable=&root=/&selected='
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -181,8 +164,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget.attrs['target'] = 'http://domain.com/'
         expected = (
-            'ajax:target="http://domain.com/'
-            '?navigable=&referencable=&root=/&selected="'
+            'ajax:target="http://domain.com/?navigable=&referencable=&root=/&selected="'
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -259,12 +241,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
     def test_multivalued_reference_vocab(self):
         self.layer.new_request()
-        widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'multivalued': True
-            })
+        widget = factory('reference', name='ref', props={'multivalued': True})
 
         # when widget gets called on multivalued reference, vocabulaty gets
         # set on widget props for proper functioning of selection
@@ -280,10 +257,15 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request = self.layer.new_request()
         request.params['ref'] = 'f5c4f643-1bbd-481e-a8b0-8a47ca070184'
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [(
-            'f5c4f643-1bbd-481e-a8b0-8a47ca070184',
-            'f5c4f643-1bbd-481e-a8b0-8a47ca070184'
-        )])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                (
+                    'f5c4f643-1bbd-481e-a8b0-8a47ca070184',
+                    'f5c4f643-1bbd-481e-a8b0-8a47ca070184',
+                )
+            ],
+        )
         del widget.attrs['vocabulary']
 
         # case preset value and no value passed on request.
@@ -291,10 +273,15 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request = self.layer.new_request()
         widget.getter = ['94790e41-1441-44b3-b196-7c4d73bb9cca']
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [(
-            '94790e41-1441-44b3-b196-7c4d73bb9cca',
-            '94790e41-1441-44b3-b196-7c4d73bb9cca'
-        )])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                (
+                    '94790e41-1441-44b3-b196-7c4d73bb9cca',
+                    '94790e41-1441-44b3-b196-7c4d73bb9cca',
+                )
+            ],
+        )
         del widget.attrs['vocabulary']
 
         # case preset value and value passed on request.
@@ -304,10 +291,15 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request.params['ref'] = ['2faba3ab-5af0-4240-b457-8c65ac87b8fa']
         widget.getter = ['180eb583-239f-48dc-b304-6302296939a5']
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [(
-            '2faba3ab-5af0-4240-b457-8c65ac87b8fa',
-            '2faba3ab-5af0-4240-b457-8c65ac87b8fa'
-        )])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                (
+                    '2faba3ab-5af0-4240-b457-8c65ac87b8fa',
+                    '2faba3ab-5af0-4240-b457-8c65ac87b8fa',
+                )
+            ],
+        )
         del widget.attrs['vocabulary']
 
         # case preset value and empty value passed on request.
@@ -327,17 +319,22 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request = self.layer.new_request()
         widget.getter = value_getter
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [(
-            'd9908598-e592-45df-9e6a-f88512dddf29',
-            'd9908598-e592-45df-9e6a-f88512dddf29'
-        )])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                (
+                    'd9908598-e592-45df-9e6a-f88512dddf29',
+                    'd9908598-e592-45df-9e6a-f88512dddf29',
+                )
+            ],
+        )
         del widget.attrs['vocabulary']
 
         # dummy lookup function
         def label_lookup(uuid_):
             return {
                 '8208af4f-522f-436e-93b3-37e4e736984d': 'Item 1',
-                'bb6a21f9-fb35-4d76-9063-1b0007a9df52': 'Item 2'
+                'bb6a21f9-fb35-4d76-9063-1b0007a9df52': 'Item 2',
             }.get(uuid_, uuid_)
 
         # case lookup function, preset value and no value passed on request
@@ -345,13 +342,16 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget.attrs['lookup'] = label_lookup
         widget.getter = [
             '8208af4f-522f-436e-93b3-37e4e736984d',
-            'bb6a21f9-fb35-4d76-9063-1b0007a9df52'
+            'bb6a21f9-fb35-4d76-9063-1b0007a9df52',
         ]
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [
-            ('8208af4f-522f-436e-93b3-37e4e736984d', 'Item 1'),
-            ('bb6a21f9-fb35-4d76-9063-1b0007a9df52', 'Item 2')
-        ])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                ('8208af4f-522f-436e-93b3-37e4e736984d', 'Item 1'),
+                ('bb6a21f9-fb35-4d76-9063-1b0007a9df52', 'Item 2'),
+            ],
+        )
         del widget.attrs['vocabulary']
 
         # case lookup function, preset value and empty value passed on request
@@ -365,19 +365,25 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request = self.layer.new_request()
         request.params['ref'] = ['8208af4f-522f-436e-93b3-37e4e736984d']
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [
-            ('8208af4f-522f-436e-93b3-37e4e736984d', 'Item 1')
-        ])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [('8208af4f-522f-436e-93b3-37e4e736984d', 'Item 1')],
+        )
         del widget.attrs['vocabulary']
 
         # case lookup function, preset value and unknown value passed on request
         request = self.layer.new_request()
         request.params['ref'] = ['c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4']
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [(
-            'c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4',
-            'c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4'
-        )])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                (
+                    'c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4',
+                    'c1cfaa74-48e8-46e8-a16c-fba52ed8c3d4',
+                )
+            ],
+        )
         del widget.attrs['vocabulary']
 
         # case B/C vocabulary
@@ -385,17 +391,23 @@ class TestBrowserReferenceBrowser(TileTestCase):
         request = self.layer.new_request()
         widget.attrs['vocabulary'] = [
             ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
-            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2')
+            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2'),
         ]
         widget(request=request)
-        self.assertEqual(widget.attrs['vocabulary'], [
-            ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
-            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2')
-        ])
-        self.assertEqual(widget.attrs['bc_vocabulary'], [
-            ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
-            ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2')
-        ])
+        self.assertEqual(
+            widget.attrs['vocabulary'],
+            [
+                ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
+                ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2'),
+            ],
+        )
+        self.assertEqual(
+            widget.attrs['bc_vocabulary'],
+            [
+                ('81fc7ba9-5c68-4590-a1e7-18d4309bfb1e', 'B/C Item 1'),
+                ('8b190a62-f530-4ce8-9736-ec45c5de9a59', 'B/C Item 2'),
+            ],
+        )
         del widget.attrs['vocabulary']
         del widget.attrs['bc_vocabulary']
 
@@ -405,51 +417,57 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         request = self.layer.new_request()
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [UNSET, UNSET, []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [UNSET, UNSET, []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" value="" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
-            'name="ref" readonly="readonly" type="text" value="" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find('<input name="ref.uid" type="hidden" value="" />') > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control referencebrowser" id="input-ref" '
+                'name="ref" readonly="readonly" type="text" value="" />'
+            )
+            > -1
+        )
 
         request.params['ref'] = ''
         request.params['ref.uid'] = ''
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [UNSET, '', []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [UNSET, '', []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" value="" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
-            'name="ref" readonly="readonly" type="text" value="" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find('<input name="ref.uid" type="hidden" value="" />') > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control referencebrowser" id="input-ref" '
+                'name="ref" readonly="readonly" type="text" value="" />'
+            )
+            > -1
+        )
 
         request.params['ref'] = 'Reference Item'
         request.params['ref.uid'] = '378657f5-c435-4678-886b-a3eefb3141b5'
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, '378657f5-c435-4678-886b-a3eefb3141b5', []]
+            [UNSET, '378657f5-c435-4678-886b-a3eefb3141b5', []],
         )
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" '
-            'value="378657f5-c435-4678-886b-a3eefb3141b5" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control is-valid referencebrowser" id="input-ref" '
-            'name="ref" readonly="readonly" type="text" value="Reference Item" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<input name="ref.uid" type="hidden" '
+                'value="378657f5-c435-4678-886b-a3eefb3141b5" />'
+            )
+            > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control is-valid referencebrowser" id="input-ref" '
+                'name="ref" readonly="readonly" type="text" value="Reference Item" />'
+            )
+            > -1
+        )
 
         # preset value
         value = ['482ba322-169b-40ef-b632-6e92f29fe0ba', 'Reference Item']
@@ -457,71 +475,80 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         request = self.layer.new_request()
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [value, UNSET, []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [value, UNSET, []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" '
-            'value="482ba322-169b-40ef-b632-6e92f29fe0ba" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
-            'name="ref" readonly="readonly" type="text" value="Reference Item" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<input name="ref.uid" type="hidden" '
+                'value="482ba322-169b-40ef-b632-6e92f29fe0ba" />'
+            )
+            > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control referencebrowser" id="input-ref" '
+                'name="ref" readonly="readonly" type="text" value="Reference Item" />'
+            )
+            > -1
+        )
 
         request.params['ref'] = ''
         request.params['ref.uid'] = ''
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [value, '', []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [value, '', []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" value="" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser" id="input-ref" '
-            'name="ref" readonly="readonly" type="text" value="" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find('<input name="ref.uid" type="hidden" value="" />') > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control referencebrowser" id="input-ref" '
+                'name="ref" readonly="readonly" type="text" value="" />'
+            )
+            > -1
+        )
 
         request.params['ref'] = 'Other Item'
         request.params['ref.uid'] = '81fc0e53-5551-41d4-a1bd-6064e34face5'
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [value, '81fc0e53-5551-41d4-a1bd-6064e34face5', []]
+            [value, '81fc0e53-5551-41d4-a1bd-6064e34face5', []],
         )
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" '
-            'value="81fc0e53-5551-41d4-a1bd-6064e34face5" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control is-valid referencebrowser" id="input-ref" '
-            'name="ref" readonly="readonly" type="text" value="Other Item" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<input name="ref.uid" type="hidden" '
+                'value="81fc0e53-5551-41d4-a1bd-6064e34face5" />'
+            )
+            > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control is-valid referencebrowser" id="input-ref" '
+                'name="ref" readonly="readonly" type="text" value="Other Item" />'
+            )
+            > -1
+        )
 
         # required value
         widget = factory('reference', name='ref', props={'required': True})
 
         request = self.layer.new_request()
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [UNSET, UNSET, []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [UNSET, UNSET, []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input name="ref.uid" type="hidden" value="" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<input class="form-control referencebrowser required" '
-            'id="input-ref" name="ref" readonly="readonly" type="text" '
-            'value="" />'
-        ) > -1)
+        self.assertTrue(
+            rendered.find('<input name="ref.uid" type="hidden" value="" />') > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<input class="form-control referencebrowser required" '
+                'id="input-ref" name="ref" readonly="readonly" type="text" '
+                'value="" />'
+            )
+            > -1
+        )
 
         request = self.layer.new_request()
         request.params['ref'] = ''
@@ -529,7 +556,15 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, '', [ExtractionError('Mandatory field was empty',)]]
+            [
+                UNSET,
+                '',
+                [
+                    ExtractionError(
+                        'Mandatory field was empty',
+                    )
+                ],
+            ],
         )
 
         request.params['ref'] = 'Item'
@@ -537,7 +572,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, '5a65bc60-3420-43ce-bf99-9190e2ea4c02', []]
+            [UNSET, '5a65bc60-3420-43ce-bf99-9190e2ea4c02', []],
         )
 
     def test_multi_reference(self):
@@ -546,33 +581,36 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         request = self.layer.new_request()
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [UNSET, UNSET, []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [UNSET, UNSET, []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<input id="exists-ref" name="ref-exists" '
-            'type="hidden" value="exists" />'
-        ) > -1)
-        self.assertTrue(rendered.find(
-            '<select class="form-control referencebrowser" id="input-ref" '
-            'multiple="multiple" name="ref"> </select>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<input id="exists-ref" name="ref-exists" '
+                'type="hidden" value="exists" />'
+            )
+            > -1
+        )
+        self.assertTrue(
+            rendered.find(
+                '<select class="form-control referencebrowser" id="input-ref" '
+                'multiple="multiple" name="ref"> </select>'
+            )
+            > -1
+        )
         del widget.attrs['vocabulary']
 
         request.params['ref-exists'] = 'exists'
         request.params['ref'] = []
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [UNSET, [], []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [UNSET, [], []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<select class="form-control referencebrowser" id="input-ref" '
-            'multiple="multiple" name="ref"> </select>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<select class="form-control referencebrowser" id="input-ref" '
+                'multiple="multiple" name="ref"> </select>'
+            )
+            > -1
+        )
         del widget.attrs['vocabulary']
 
         request.params['ref-exists'] = 'exists'
@@ -580,51 +618,50 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, ['292cd228-4095-4381-9ac3-2a8680ac4669'], []]
+            [UNSET, ['292cd228-4095-4381-9ac3-2a8680ac4669'], []],
         )
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<option id="input-ref-292cd228-4095-4381-9ac3-2a8680ac4669" '
-            'selected="selected" value="292cd228-4095-4381-9ac3-2a8680ac4669">'
-            '292cd228-4095-4381-9ac3-2a8680ac4669</option>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<option id="input-ref-292cd228-4095-4381-9ac3-2a8680ac4669" '
+                'selected="selected" value="292cd228-4095-4381-9ac3-2a8680ac4669">'
+                '292cd228-4095-4381-9ac3-2a8680ac4669</option>'
+            )
+            > -1
+        )
 
         # preset value
         value = ['0bed1aa2-103d-405c-84bc-039152e4738e']
         widget = factory(
-            'reference',
-            name='ref',
-            value=value,
-            props={
-                'multivalued': True
-            })
+            'reference', name='ref', value=value, props={'multivalued': True}
+        )
 
         request = self.layer.new_request()
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [value, UNSET, []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [value, UNSET, []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<option id="input-ref-0bed1aa2-103d-405c-84bc-039152e4738e" '
-            'selected="selected" value="0bed1aa2-103d-405c-84bc-039152e4738e">'
-            '0bed1aa2-103d-405c-84bc-039152e4738e</option>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<option id="input-ref-0bed1aa2-103d-405c-84bc-039152e4738e" '
+                'selected="selected" value="0bed1aa2-103d-405c-84bc-039152e4738e">'
+                '0bed1aa2-103d-405c-84bc-039152e4738e</option>'
+            )
+            > -1
+        )
         del widget.attrs['vocabulary']
 
         request.params['ref-exists'] = 'exists'
         request.params['ref'] = []
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [value, [], []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [value, [], []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<select class="form-control referencebrowser" id="input-ref" '
-            'multiple="multiple" name="ref"> </select>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<select class="form-control referencebrowser" id="input-ref" '
+                'multiple="multiple" name="ref"> </select>'
+            )
+            > -1
+        )
         del widget.attrs['vocabulary']
 
         request.params['ref-exists'] = 'exists'
@@ -632,36 +669,35 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [value, ['cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849'], []]
+            [value, ['cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849'], []],
         )
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<option id="input-ref-cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849" '
-            'selected="selected" value="cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849">'
-            'cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849</option>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<option id="input-ref-cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849" '
+                'selected="selected" value="cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849">'
+                'cfaed2ab-f39b-4c70-bd56-b6d9f4f0d849</option>'
+            )
+            > -1
+        )
 
         # required value
         widget = factory(
-            'reference',
-            name='ref',
-            props={
-                'required': True,
-                'multivalued': True
-            })
+            'reference', name='ref', props={'required': True, 'multivalued': True}
+        )
 
         request = self.layer.new_request()
         data = widget.extract(request)
-        self.assertEqual(
-            [data.value, data.extracted, data.errors],
-            [UNSET, UNSET, []]
-        )
+        self.assertEqual([data.value, data.extracted, data.errors], [UNSET, UNSET, []])
         rendered = widget(data=data)
-        self.assertTrue(rendered.find(
-            '<select class="form-control referencebrowser required" '
-            'id="input-ref" multiple="multiple" name="ref" '
-            'required="required"> </select>'
-        ) > -1)
+        self.assertTrue(
+            rendered.find(
+                '<select class="form-control referencebrowser required" '
+                'id="input-ref" multiple="multiple" name="ref" '
+                'required="required"> </select>'
+            )
+            > -1
+        )
         del widget.attrs['vocabulary']
 
         request = self.layer.new_request()
@@ -670,7 +706,15 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, [], [ExtractionError('Mandatory field was empty',)]]
+            [
+                UNSET,
+                [],
+                [
+                    ExtractionError(
+                        'Mandatory field was empty',
+                    )
+                ],
+            ],
         )
 
         request.params['ref-exists'] = 'exists'
@@ -678,37 +722,41 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         self.assertEqual(
             [data.value, data.extracted, data.errors],
-            [UNSET, ['8944998c-b80c-4232-a70d-7d8b426961f8'], []]
+            [UNSET, ['8944998c-b80c-4232-a70d-7d8b426961f8'], []],
         )
 
     def test_display_renderer(self):
         self.layer.new_request()
 
         # Single value display renderer
-        widget = factory(
-            'reference',
-            name='ref',
-            mode='display')
-        self.assertEqual(widget(), (
-            '<div class="display-referencebrowser form-control" '
-            'id="display-ref"></div>'
-        ))
+        widget = factory('reference', name='ref', mode='display')
+        self.assertEqual(
+            widget(),
+            (
+                '<div class="display-referencebrowser form-control" '
+                'id="display-ref"></div>'
+            ),
+        )
 
         widget = factory(
             'reference',
             name='ref',
             value=('00c753e6-2284-4118-a286-b43d743f1259', 'Label'),
-            mode='display')
-        self.assertEqual(widget(), (
-            '<div class="display-referencebrowser form-control" '
-            'id="display-ref">Label</div>'
-        ))
+            mode='display',
+        )
+        self.assertEqual(
+            widget(),
+            (
+                '<div class="display-referencebrowser form-control" '
+                'id="display-ref">Label</div>'
+            ),
+        )
 
         # Multi value display renderer
         def lookup_label(uuid):
             return {
                 '1900f873-8442-4046-9f08-c94a0a0cdf51': 'Item 1',
-                '2a1aea50-f48f-479a-abe9-4b0a962f8243': 'Item 2'
+                '2a1aea50-f48f-479a-abe9-4b0a962f8243': 'Item 2',
             }[uuid]
 
         widget = factory(
@@ -716,17 +764,18 @@ class TestBrowserReferenceBrowser(TileTestCase):
             name='ref',
             value=[
                 '1900f873-8442-4046-9f08-c94a0a0cdf51',
-                '2a1aea50-f48f-479a-abe9-4b0a962f8243'
+                '2a1aea50-f48f-479a-abe9-4b0a962f8243',
             ],
-            props={
-                'multivalued': True,
-                'lookup': lookup_label
-            },
-            mode='display')
-        self.assertEqual(widget(), (
-            '<ul class="display-referencebrowser form-control" '
-            'id="display-ref"><li>Item 1</li><li>Item 2</li></ul>'
-        ))
+            props={'multivalued': True, 'lookup': lookup_label},
+            mode='display',
+        )
+        self.assertEqual(
+            widget(),
+            (
+                '<ul class="display-referencebrowser form-control" '
+                'id="display-ref"><li>Item 1</li><li>Item 2</li></ul>'
+            ),
+        )
 
     def test_ReferenceBrowserModelMixin(self):
         model = BaseNode()
@@ -811,7 +860,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertFalse(action.display)
 
         self.checkOutput('ref-...', action.id)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a
         id="ref-..."
         href="http://example.com/"
@@ -820,7 +870,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         ajax:bind="click"
         ajax:overlay-css="modal-xl"
         ></a>...
-        """, action.render())
+        """,
+            action.render(),
+        )
 
         model = BaseNode()
         model.node_info_name = 'nouuid'
@@ -916,8 +968,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(isinstance(action, LinkAction))
 
         expected = (
-            'http://example.com/model'
-            '?navigable=&referencable=ref_node&root=/&selected='
+            'http://example.com/model?navigable=&referencable=ref_node&root=/&selected='
         )
         self.assertEqual(action.target, expected)
 
@@ -953,9 +1004,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         model = LeafNode(name='leaf')
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-        expected = (
-            '<span class="bi-asterisk" />'
-            '&nbsp;<span>leaf</span>')
+        expected = '<span class="bi-asterisk" />&nbsp;<span>leaf</span>'
         self.assertEqual(rendered, expected)
 
     def test_reference_pathbar(self):
@@ -974,11 +1023,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Case Unauthorized
         with self.assertRaises(HTTPForbidden) as arc:
             render_tile(node, request, 'referencebrowser_pathbar')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Unauthorized: tile
         <cone.app.browser.referencebrowser.ReferenceBrowserPathBar object at ...>
         failed permission check
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         # Case reference root is application root
         request = self.layer.new_request()
@@ -1046,11 +1098,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         with self.assertRaises(HTTPForbidden) as arc:
             render_tile(model, request, 'referencelisting')
-        self.checkOutput("""
+        self.checkOutput(
+            """
             Unauthorized: tile
             <cone.app.browser.referencebrowser.ReferenceListing object at ...>
             failed permission check
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         # Authorized
         with self.layer.authenticated('max'):
@@ -1059,7 +1114,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput('...<div id="referencebrowser"...', res)
 
         # Referencable nodes renders add reference action related markup
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...
         <a
         id="ref-..."
@@ -1071,7 +1127,9 @@ class TestBrowserReferenceBrowser(TileTestCase):
         ajax:bind="click"
         ajax:overlay-css="modal-xl"
         ><span class="bi-plus-circle"></span></a>...
-        """, res)
+        """,
+            res,
+        )
 
         # Non navigable nodes are not rendered
         request = self.layer.new_request()
@@ -1083,15 +1141,11 @@ class TestBrowserReferenceBrowser(TileTestCase):
         reference_listing.model = model
         reference_listing.request = request
         with self.layer.authenticated('max'):
-            self.assertEqual(
-                reference_listing.sorted_children('created', 'desc'),
-                []
-            )
+            self.assertEqual(reference_listing.sorted_children('created', 'desc'), [])
         with self.layer.authenticated('max'):
             request.params['navigable'] = ''
             self.assertEqual(
-                reference_listing.sorted_children('created', 'desc'),
-                model.values()
+                reference_listing.sorted_children('created', 'desc'), model.values()
             )
 
     def test_referencebrowser(self):
@@ -1107,11 +1161,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         # Case unauthorized
         with self.assertRaises(HTTPForbidden) as arc:
             render_tile(model, request, 'referencebrowser')
-        self.checkOutput("""
+        self.checkOutput(
+            """
             Unauthorized: tile
             <cone.app.browser.referencebrowser.ReferenceBrowser object at ...>
             failed permission check
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         # Case authorized
         with self.layer.authenticated('max'):

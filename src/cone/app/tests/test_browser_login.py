@@ -23,12 +23,15 @@ class TestBrowserLogin(TileTestCase):
         request = self.layer.new_request()
         response = logout_view(root, request)
         self.assertTrue(isinstance(response, HTTPFound))
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ResponseHeaders([('Content-Type', 'text/html; charset=UTF-8'),
         ('Content-Length', '0'),
         ('Set-Cookie', 'auth_tkt=; Domain=example.com; Max-Age=0; Path=/; expires=...; SameSite=Lax'),
         ('Location', 'http://example.com')])
-        """, str(response.headers))
+        """,
+            str(response.headers),
+        )
 
     def test_login_form(self):
         root = get_root()

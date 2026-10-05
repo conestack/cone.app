@@ -25,11 +25,11 @@ def tmp_root_node(fn):
             fn(*a)
         finally:
             cone.app.root = None
+
     return wrapper
 
 
 class TestApp(NodeTestCase):
-
     @tmp_root_node
     def test_get_root(self):
         root = cone.app.get_root()
@@ -45,7 +45,7 @@ class TestApp(NodeTestCase):
         # Settings is displayed in navtree by default
         self.assertEqual(
             sorted(root['settings'].properties.keys()),
-            ['icon', 'in_navtree', 'skip_mainmenu']
+            ['icon', 'in_navtree', 'skip_mainmenu'],
         )
         self.assertFalse(root['settings'].properties.in_navtree)
         self.assertTrue(root['settings'].properties.skip_mainmenu)
@@ -60,8 +60,7 @@ class TestApp(NodeTestCase):
         with self.assertRaises(ValueError) as arc:
             cone.app.register_entry('dummy', BaseNode)
         self.assertEqual(
-            str(arc.exception),
-            "Entry with name 'dummy' already registered."
+            str(arc.exception), "Entry with name 'dummy' already registered."
         )
 
     @tmp_root_node
@@ -74,8 +73,7 @@ class TestApp(NodeTestCase):
         with self.assertRaises(ValueError) as arc:
             cone.app.register_config('dummy', BaseNode)
         self.assertEqual(
-            str(arc.exception),
-            "Config with name 'dummy' already registered."
+            str(arc.exception), "Config with name 'dummy' already registered."
         )
 
     @testing.reset_node_available
@@ -116,7 +114,7 @@ class TestApp(NodeTestCase):
             # ensure custom node_available factory gets invoked
             'cone.root.node_available': 'cone.app.testing.mock.testing_node_available',
             # ensure dummy main hooks called
-            'cone.plugins': 'cone.app.tests'
+            'cone.plugins': 'cone.app.tests',
         }
 
         # main
@@ -125,9 +123,7 @@ class TestApp(NodeTestCase):
         self.assertEqual(hooks['called'], 2)
 
         # Check custom node_available
-        self.assertTrue(
-            security.node_available is testing.mock.testing_node_available
-        )
+        self.assertTrue(security.node_available is testing.mock.testing_node_available)
 
         # Remove custom main hook after testing
         cone.app.main_hooks.remove(custom_main_hook)
@@ -135,8 +131,7 @@ class TestApp(NodeTestCase):
 
         # Check main template was set properly
         self.assertEqual(
-            cone.app.cfg.main_template,
-            'package.browser:templates/main.pt'
+            cone.app.cfg.main_template, 'package.browser:templates/main.pt'
         )
 
         # reset main template

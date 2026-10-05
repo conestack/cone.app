@@ -21,12 +21,7 @@ class TestBrowserOrder(TileTestCase):
         with self.assertRaises(NotImplementedError):
             move_action.move()
 
-        @plumbing(
-            AppNode,
-            MappingAdopt,
-            DefaultInit,
-            MappingNode,
-            DictStorage)
+        @plumbing(AppNode, MappingAdopt, DefaultInit, MappingNode, DictStorage)
         class UnorderedNode:
             pass
 
@@ -39,7 +34,7 @@ class TestBrowserOrder(TileTestCase):
             self.assertEqual(render_tile(node['child'], request, 'move_up'), '')
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            'Object "child" not movable'
+            'Object "child" not movable',
         )
 
         @plumbing(MappingOrder)
@@ -57,7 +52,7 @@ class TestBrowserOrder(TileTestCase):
             self.assertEqual(render_tile(node['b'], request, 'move_up'), '')
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            'You are not permitted to move this object'
+            'You are not permitted to move this object',
         )
 
         node.properties.action_move = True

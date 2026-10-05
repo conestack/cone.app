@@ -32,7 +32,6 @@ _ = TranslationStringFactory('cone.app')
 @layout_config(AppSettings)
 @layout_config(SettingsNode)
 class SettingsLayoutConfig(DefaultLayoutConfig):
-
     def __init__(self, model=None, request=None):
         super(SettingsLayoutConfig, self).__init__(model=model, request=request)
         self.sidebar_left = ['settings_sidebar']
@@ -69,7 +68,7 @@ class ViewSettingsAction(LinkAction):
                 warnings.warn(
                     f'Node "{child.__class__}" not implements ``ISettingsNode`` and gets ignored '
                     'as of cone.app 1.2.',
-                    DeprecationWarning
+                    DeprecationWarning,
                 )
                 if self.request.has_permission('manage', child):
                     visible.append(child)
@@ -89,42 +88,50 @@ class SettingsTile(Tile):
                 warnings.warn(
                     f'Node "{child.__class__}" not implements ``ISettingsNode`` and gets ignored '
                     'as of cone.app 1.2.',
-                    DeprecationWarning
+                    DeprecationWarning,
                 )
                 category = categories.setdefault(self.no_category, [])
             else:
                 if not child.display:
                     continue
                 category = categories.setdefault(child.category, [])
-            category.append({
-                'title': child.metadata.title,
-                'icon': child.nodeinfo.icon,
-                'description': child.metadata.description,
-                'target': make_url(self.request, node=child),
-                'current': child.name == self.model.name
-            })
+            category.append(
+                {
+                    'title': child.metadata.title,
+                    'icon': child.nodeinfo.icon,
+                    'description': child.metadata.description,
+                    'target': make_url(self.request, node=child),
+                    'current': child.name == self.model.name,
+                }
+            )
         ret = odict()
         for name in sorted(categories):
             ret[name] = categories[name]
         return ret
 
 
-@tile(name='settings_sidebar',
-      path='templates/settings_sidebar.pt',
-      interface=AppSettings,
-      permission='view')
-@tile(name='settings_sidebar',
-      path='templates/settings_sidebar.pt',
-      interface=SettingsNode,
-      permission='view')
+@tile(
+    name='settings_sidebar',
+    path='templates/settings_sidebar.pt',
+    interface=AppSettings,
+    permission='view',
+)
+@tile(
+    name='settings_sidebar',
+    path='templates/settings_sidebar.pt',
+    interface=SettingsNode,
+    permission='view',
+)
 class SettingsSidebar(SettingsTile):
     """Settings sidebar tile."""
 
 
-@tile(name='content',
-      path='templates/settings.pt',
-      interface=AppSettings,
-      permission='view')
+@tile(
+    name='content',
+    path='templates/settings.pt',
+    interface=AppSettings,
+    permission='view',
+)
 class SettingsContent(SettingsTile):
     """Settings content tile."""
 
@@ -146,6 +153,7 @@ class SettingsEditTile(Tile):
 
 class SettingsForm(ContentEditForm):
     """Form behavior rendering settings form to content area."""
+
     show_contextmenu = override(False)
 
     @override
@@ -167,7 +175,7 @@ class settings_form(tile):
         self,
         interface=None,
         permission='manage',
-        path='cone.app.browser:templates/settings_form.pt'
+        path='cone.app.browser:templates/settings_form.pt',
     ):
         super(settings_form, self).__init__(
             name='editform',
@@ -175,7 +183,7 @@ class settings_form(tile):
             attribute=None,
             interface=interface,
             permission=permission,
-            strict=True
+            strict=True,
         )
 
 
@@ -187,7 +195,7 @@ class SettingsBehavior(Behavior):
         warnings.warn(
             '``SettingsBehavior`` is deprecated and will be removed as '
             'of cone.app 1.2. Use ``SettingsEditForm`` instead.',
-            DeprecationWarning
+            DeprecationWarning,
         )
         next_(self)
         selector = '#form-{}'.format('-'.join(self.form.path))

@@ -17,16 +17,12 @@ class TestTesting(unittest.TestCase):
             self.assertTrue(isinstance(req, DummyRequest))
             self.assertTrue(req.authenticated_userid is None)
             self.assertTrue(self.layer.current_request is req)
-            self.assertEqual(
-                sorted(req.environ.keys()),
-                ['AUTH_TYPE', 'SERVER_NAME']
-            )
+            self.assertEqual(sorted(req.environ.keys()), ['AUTH_TYPE', 'SERVER_NAME'])
 
         # Login with existing user
         with self.layer.authenticated('max'):
             self.assertEqual(
-                sorted(req.environ.keys()),
-                ['AUTH_TYPE', 'HTTP_COOKIE', 'SERVER_NAME']
+                sorted(req.environ.keys()), ['AUTH_TYPE', 'HTTP_COOKIE', 'SERVER_NAME']
             )
             self.assertEqual(req.environ['AUTH_TYPE'], 'cookie')
             self.assertTrue(req.environ['HTTP_COOKIE'].startswith('auth_tkt='))
@@ -34,17 +30,21 @@ class TestTesting(unittest.TestCase):
 
             self.assertTrue(self.layer.current_request is req)
             self.assertEqual(req.authenticated_userid, 'max')
-            self.assertEqual(sorted(req.environ.keys()), [
-                'AUTH_TYPE', 'HTTP_COOKIE', 'REMOTE_USER_DATA',
-                'REMOTE_USER_TOKENS', 'SERVER_NAME', 'cone.app.user.roles'
-            ])
+            self.assertEqual(
+                sorted(req.environ.keys()),
+                [
+                    'AUTH_TYPE',
+                    'HTTP_COOKIE',
+                    'REMOTE_USER_DATA',
+                    'REMOTE_USER_TOKENS',
+                    'SERVER_NAME',
+                    'cone.app.user.roles',
+                ],
+            )
 
         # Logged out
         self.assertTrue(self.layer.current_request is req)
-        self.assertEqual(
-            sorted(req.environ.keys()),
-            ['AUTH_TYPE', 'SERVER_NAME']
-        )
+        self.assertEqual(sorted(req.environ.keys()), ['AUTH_TYPE', 'SERVER_NAME'])
         self.assertTrue(req.authenticated_userid is None)
 
         # Create new request and check if instance changed
@@ -60,10 +60,7 @@ class TestTesting(unittest.TestCase):
 
         # Request accept property
         req = self.layer.new_request()
-        self.assertEqual(
-            req.accept.parsed,
-            [('text/html', 1.0, [], [])]
-        )
+        self.assertEqual(req.accept.parsed, [('text/html', 1.0, [], [])])
 
         del req.accept
         self.assertEqual(req.accept.parsed, None)
@@ -71,7 +68,4 @@ class TestTesting(unittest.TestCase):
         # Create JSON request
         req = self.layer.new_request(type='json')
         self.assertEqual(req.headers, {'X-Request': 'JSON'})
-        self.assertEqual(
-            req.accept.parsed,
-            [('application/json', 1.0, [], [])]
-        )
+        self.assertEqual(req.accept.parsed, [('application/json', 1.0, [], [])])

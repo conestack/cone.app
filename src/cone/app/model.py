@@ -63,8 +63,8 @@ try:
     from lxml import etree
 except ImportError:  # pragma: no cover
     logger.warning(
-        '``lxml`` not present. '
-        '``cone.app.model.XMLProperties`` will not work')
+        '``lxml`` not present. ``cone.app.model.XMLProperties`` will not work'
+    )
 
 
 _ = TranslationStringFactory('cone.app')
@@ -93,8 +93,16 @@ getNodeInfo = get_node_info
 class node_info:
     """Node info decorator."""
 
-    def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=None, **kw):
+    def __init__(
+        self,
+        name,
+        title=None,
+        description=None,
+        factory=None,
+        icon=None,
+        addables=None,
+        **kw,
+    ):
         self.name = name
         self.title = title
         self.description = description
@@ -126,7 +134,6 @@ class node_info:
 
 @implementer(IApplicationEnvironment)
 class AppEnvironment(Behavior):
-
     @default
     @property
     def request(self):
@@ -183,7 +190,6 @@ class AppNode(Behavior):
 
 @implementer(ILeafNode)
 class LeafNode(AppNode):
-
     @default
     def __getitem__(self, name):
         raise KeyError(name)
@@ -210,21 +216,21 @@ class LeafNode(AppNode):
     DefaultInit,
     MappingNode,
     Lifecycle,
-    OdictStorage)
+    OdictStorage,
+)
 class BaseNode:
     pass
 
 
 @implementer(IFactoryNode)
-@plumbing(
-    VolatileStorageInvalidate,
-    ChildFactory)
+@plumbing(VolatileStorageInvalidate, ChildFactory)
 class FactoryNode(BaseNode):
     pass
 
 
 class AppRoot(FactoryNode):
     """Application root."""
+
     # XXX: we always want AppSettings and AppResources in factories
     #      by default
     factories = odict()
@@ -240,6 +246,7 @@ class AppRoot(FactoryNode):
 
 class AppSettings(FactoryNode):
     """Applications Settings container."""
+
     __acl__ = [
         (Allow, 'system.Authenticated', ['view']),
         (Allow, Everyone, 'login'),
@@ -269,6 +276,7 @@ NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
 @plumbing(LeafNode, NodeInit, Node, AppEnvironment)
 class SettingsNode:
     """Application node for managing plugin specific settings."""
+
     __acl__ = [
         (Allow, 'role:manager', ['view', 'manage']),
         (Allow, Everyone, 'login'),
@@ -305,7 +313,6 @@ class AppResources:
 
 @implementer(IAdapterNode)
 class AdapterNode(BaseNode):
-
     def __init__(self, model, name=None, parent=None):
         BaseNode.__init__(self, name=name, parent=parent)
         self.model = model
@@ -322,8 +329,8 @@ class AdapterNode(BaseNode):
 
 @implementer(IUUID)
 class NamespaceUUID(Behavior):
-    """Behavior calculating ``uuid`` by node path and namespace.
-    """
+    """Behavior calculating ``uuid`` by node path and namespace."""
+
     uuid_namespace = default(uuid.UUID('83438507-fdff-45a2-af47-1e001884eab9'))
 
     @property
@@ -331,8 +338,7 @@ class NamespaceUUID(Behavior):
         if self.__name__ is None and self.__parent__ is None:
             return None
         return uuid.uuid5(
-            self.uuid_namespace,
-            '/'.join([_ for _ in self.path if _ is not None])
+            self.uuid_namespace, '/'.join([_ for _ in self.path if _ is not None])
         )
 
     @finalize
@@ -348,8 +354,8 @@ class Categories(Behavior):
 
 
 class UUIDAttributeAware(UUIDAware):
-    """UUIDAware deriving behavior storing the uid on node attributes.
-    """
+    """UUIDAware deriving behavior storing the uid on node attributes."""
+
     uuid_attribute_name = default('uuid')
 
     @property
@@ -364,7 +370,6 @@ class UUIDAttributeAware(UUIDAware):
 
 @implementer(IUUIDAsName)
 class UUIDAsName(UUIDAware):
-
     @property
     def __name__(self):
         return str(self.uuid)
@@ -393,17 +398,17 @@ class UUIDAsName(UUIDAware):
 
 @implementer(ICopySupport)
 class CopySupport(Behavior):
-    """Plumbing behavior for copy support.
-    """
+    """Plumbing behavior for copy support."""
+
     supports_cut = default(True)
     supports_copy = default(True)
     supports_paste = default(True)
 
 
 class LanguageSchema:
-
     def __iter__(self):
         from cone.app import cfg
+
         return iter(cfg.available_languages)
 
     def __contains__(self, key):
@@ -489,18 +494,13 @@ class Properties:
         return o_getattr(self, '_data').keys()
 
     def __copy__(self):
-        return self.__class__(
-            data=copy.copy(o_getattr(self, '_data'))
-        )
+        return self.__class__(data=copy.copy(o_getattr(self, '_data')))
 
     def __deepcopy__(self, memo):
-        return self.__class__(
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
-        )
+        return self.__class__(data=copy.deepcopy(o_getattr(self, '_data'), memo))
 
 
 class ProtectedProperties(Properties):
-
     def __init__(self, context, permissions, data=None):
         """
         >>> properties = ProtectedProperties(
@@ -557,20 +557,19 @@ class ProtectedProperties(Properties):
         return self.__class__(
             context=copy.copy(o_getattr(self, '_context')),
             permissions=copy.copy(o_getattr(self, '_permissions')),
-            data=copy.copy(o_getattr(self, '_data'))
+            data=copy.copy(o_getattr(self, '_data')),
         )
 
     def __deepcopy__(self, memo):
         return self.__class__(
             context=copy.copy(o_getattr(self, '_context')),
             permissions=copy.deepcopy(o_getattr(self, '_permissions'), memo),
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+            data=copy.deepcopy(o_getattr(self, '_data'), memo),
         )
 
 
 @implementer(ILayoutConfig)
 class LayoutConfig(Properties):
-
     def __init__(self, model=None, request=None):
         super(LayoutConfig, self).__init__(data=None)
         self.model = model
@@ -592,7 +591,6 @@ class NodeInfo(Properties):
 
 
 class XMLProperties(Properties):
-
     def __init__(self, path, data=None):
         o_setattr(self, '_path', path)
         o_setattr(self, '_data', odict())
@@ -610,7 +608,7 @@ class XMLProperties(Properties):
         if name in data:
             del data[name]
         else:
-            raise KeyError("property %s does not exist" % name)
+            raise KeyError('property %s does not exist' % name)
 
     def _init(self):
         dth = DatetimeHelper()
@@ -679,13 +677,13 @@ class XMLProperties(Properties):
     def __copy__(self):
         return self.__class__(
             path=copy.copy(o_getattr(self, '_path')),
-            data=copy.copy(o_getattr(self, '_data'))
+            data=copy.copy(o_getattr(self, '_data')),
         )
 
     def __deepcopy__(self, memo):
         return self.__class__(
             path=copy.deepcopy(o_getattr(self, '_path'), memo),
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+            data=copy.deepcopy(o_getattr(self, '_data'), memo),
         )
 
 
@@ -745,7 +743,7 @@ class ConfigProperties(Properties):
         try:
             config.get(self.properties_section, name)
         except configparser.NoOptionError:
-            raise KeyError("property %s does not exist" % name)
+            raise KeyError('property %s does not exist' % name)
         config.remove_option(self.properties_section, name)
 
     def config(self):
@@ -772,7 +770,7 @@ class ConfigProperties(Properties):
     def __copy__(self):
         cpy = self.__class__(
             path=copy.copy(o_getattr(self, '_path')),
-            data=copy.copy(o_getattr(self, '_data'))
+            data=copy.copy(o_getattr(self, '_data')),
         )
         cfg = copy.copy(o_getattr(self, '_config'))
         o_setattr(cpy, '_config', cfg)
@@ -781,7 +779,7 @@ class ConfigProperties(Properties):
     def __deepcopy__(self, memo):
         cpy = self.__class__(
             path=copy.deepcopy(o_getattr(self, '_path'), memo),
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+            data=copy.deepcopy(o_getattr(self, '_data'), memo),
         )
         cfg = copy.copy(o_getattr(self, '_config'))
         o_setattr(cpy, '_config', cfg)

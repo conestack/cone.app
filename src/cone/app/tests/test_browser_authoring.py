@@ -54,15 +54,12 @@ class TestBrowserAuthoring(TileTestCase):
     def test_render_form(self):
         # Form rendering helper
         with self.layer.hook_tile_reg():
+
             @tile(name='someform', permission='login')
             class SomeForm(Form):
                 def prepare(self):
                     self.form = form = factory('form', name='someform')
-                    form['somefield'] = factory(
-                        'text',
-                        props={
-                            'label': 'Field'
-                        })
+                    form['somefield'] = factory('text', props={'label': 'Field'})
 
         # Regular page view, render 'someform' tile as content area in main
         # template
@@ -85,27 +82,31 @@ class TestBrowserAuthoring(TileTestCase):
 
         # B/C Form rendering tile.
         with self.layer.hook_tile_reg():
+
             @tile(name='someformrenderingtile', permission='login')
             class SomeFormTileRenderingTile(_FormRenderingTile):
                 form_tile_name = 'someform'
 
         request = self.layer.new_request()
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <form class="ajax" ... id="form-someform" ...</form>
-        """, render_tile(model, request, 'someformrenderingtile'))
+        """,
+            render_tile(model, request, 'someformrenderingtile'),
+        )
 
     def test_CameFromNext(self):
         # Plumbing behavior to hook up redirection after successful form
         # processing
         with self.layer.hook_tile_reg():
+
             @tile(name='camefromnextform')
             @plumbing(CameFromNext)
             class CameFromNextForm(Form):
                 def prepare(self):
                     form = factory(
-                        'form',
-                        name='camefromnextform',
-                        props={'action': self.nodeurl})
+                        'form', name='camefromnextform', props={'action': self.nodeurl}
+                    )
                     form['next'] = factory(
                         'submit',
                         props={
@@ -113,7 +114,8 @@ class TestBrowserAuthoring(TileTestCase):
                             'expression': True,
                             'next': self.next,
                             'label': 'Next',
-                        })
+                        },
+                    )
                     self.form = form
 
         # Check behavior config defaults
@@ -131,11 +133,14 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['came_from'] = came_from
             res = render_tile(model, request, 'camefromnextform')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<input id="input-camefromnextform-came_from"
         name="came_from" type="hidden"
         value="http%3A//example.com/some/path%3Ffoo%3Dbar" />...
-        """, res)
+        """,
+            res,
+        )
 
         # No ``came_from`` on request, no ``default_came_from``, no ajax request
         with self.layer.authenticated('manager'):
@@ -145,8 +150,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/child'
+            request.environ['redirect'].location, 'http://example.com/child'
         )
 
         # No ``came_from`` on request, ``default_came_from`` set to ``parent``,
@@ -156,10 +160,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(model, request, 'camefromnextform')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/')
 
         # No ``came_from`` on request, ``default_came_from`` set to URL, no
         # ajax request
@@ -170,8 +171,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/foo/bar?baz=1'
+            request.environ['redirect'].location, 'http://example.com/foo/bar?baz=1'
         )
 
         # No ``came_from`` on request, ``default_came_from`` set to wrong
@@ -182,8 +182,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/child'
+            request.environ['redirect'].location, 'http://example.com/child'
         )
 
         # ``came_from`` set to empty value on request, overrules
@@ -195,8 +194,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/child'
+            request.environ['redirect'].location, 'http://example.com/child'
         )
 
         # ``came_from`` set to ``parent`` on request, overrules
@@ -207,10 +205,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(model, request, 'camefromnextform')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/')
 
         # ``came_from`` set to URL on request, overrules ``default_came_from``,
         # no ajax request
@@ -224,8 +219,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/other'
+            request.environ['redirect'].location, 'http://example.com/other'
         )
 
         # Reset ``default_came_from``
@@ -245,7 +239,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(continuation, AjaxEvent))
         self.assertEqual(
             (continuation.target, continuation.name, continuation.selector),
-            ('http://example.com/child', 'contextchanged', '#layout')
+            ('http://example.com/child', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to ``parent`` on request, ajax request, no ajax
@@ -259,7 +253,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(continuation, AjaxEvent))
         self.assertEqual(
             (continuation.target, continuation.name, continuation.selector),
-            ('http://example.com/', 'contextchanged', '#layout')
+            ('http://example.com/', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to URL on request, ajax request, no ajax path
@@ -274,7 +268,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(continuation, AjaxEvent))
         self.assertEqual(
             (continuation.target, continuation.name, continuation.selector),
-            ('http://example.com/some/path?foo=bar', 'contextchanged', '#layout')
+            ('http://example.com/some/path?foo=bar', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to wrong domain on request, ajax request, no ajax
@@ -289,7 +283,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(continuation, AjaxEvent))
         self.assertEqual(
             (continuation.target, continuation.name, continuation.selector),
-            ('http://example.com/child', 'contextchanged', '#layout')
+            ('http://example.com/child', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to empty value on request, ajax request, setting
@@ -308,14 +302,14 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(path, AjaxPath))
         self.assertEqual(
             (path.path, path.target, path.event),
-            ('child', 'http://example.com/child', 'contextchanged:#layout')
+            ('child', 'http://example.com/child', 'contextchanged:#layout'),
         )
 
         event = request.environ['cone.app.continuation'][1]
         self.assertTrue(isinstance(event, AjaxEvent))
         self.assertEqual(
             (event.target, continuation.name, continuation.selector),
-            ('http://example.com/child', 'contextchanged', '#layout')
+            ('http://example.com/child', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to ``parent`` on request, ajax request, setting
@@ -330,14 +324,14 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(path, AjaxPath))
         self.assertEqual(
             (path.path, path.target, path.event),
-            ('', 'http://example.com/', 'contextchanged:#layout')
+            ('', 'http://example.com/', 'contextchanged:#layout'),
         )
 
         event = request.environ['cone.app.continuation'][1]
         self.assertTrue(isinstance(event, AjaxEvent))
         self.assertEqual(
             (event.target, continuation.name, continuation.selector),
-            ('http://example.com/', 'contextchanged', '#layout')
+            ('http://example.com/', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to URL on request, ajax request, setting browser
@@ -353,14 +347,14 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(path, AjaxPath))
         self.assertEqual(
             (path.path, path.target, path.event),
-            ('/some/path', 'http://example.com/some/path', 'contextchanged:#layout')
+            ('/some/path', 'http://example.com/some/path', 'contextchanged:#layout'),
         )
 
         event = request.environ['cone.app.continuation'][1]
         self.assertTrue(isinstance(event, AjaxEvent))
         self.assertEqual(
             (event.target, continuation.name, continuation.selector),
-            ('http://example.com/some/path', 'contextchanged', '#layout')
+            ('http://example.com/some/path', 'contextchanged', '#layout'),
         )
 
         # ``came_from`` set to to wrong on request, ajax request, setting
@@ -376,14 +370,14 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(path, AjaxPath))
         self.assertEqual(
             (path.path, path.target, path.event),
-            ('child', 'http://example.com/child', 'contextchanged:#layout')
+            ('child', 'http://example.com/child', 'contextchanged:#layout'),
         )
 
         event = request.environ['cone.app.continuation'][1]
         self.assertTrue(isinstance(event, AjaxEvent))
         self.assertEqual(
             (event.target, continuation.name, continuation.selector),
-            ('http://example.com/child', 'contextchanged', '#layout')
+            ('http://example.com/child', 'contextchanged', '#layout'),
         )
 
         # Reset ``write_history_on_next``
@@ -400,7 +394,7 @@ class TestBrowserAuthoring(TileTestCase):
             form_with_heading.form_heading
         self.assertEqual(
             str(arc.exception),
-            'Abstract ``FormHeading`` does not implement ``form_heading``'
+            'Abstract ``FormHeading`` does not implement ``form_heading``',
         )
 
     # XXX: def test_ContentForm(self):
@@ -472,9 +466,7 @@ class TestBrowserAuthoring(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_AddFormHeading(self):
-        @node_info(
-            name='addnode',
-            title='Add Node')
+        @node_info(name='addnode', title='Add Node')
         class AddNode(BaseNode):
             pass
 
@@ -499,7 +491,8 @@ class TestBrowserAuthoring(TileTestCase):
             name='mynode',
             title='My Node',
             description='This is My node.',
-            addables=['mynode'])  # self containment
+            addables=['mynode'],
+        )  # self containment
         @implementer(ITestAddingNode)
         class MyNode(BaseNode):
             pass
@@ -509,33 +502,34 @@ class TestBrowserAuthoring(TileTestCase):
             name='myadapternode',
             title='My Adapter Node',
             description='This is My adapter node.',
-            addables=['myadapternode'])  # self containment
+            addables=['myadapternode'],
+        )  # self containment
         @implementer(ITestAddingNode)
         class MyAdapterNode(AdapterNode):
             pass
 
         # Create and register an ``addform`` named form tile
         with self.layer.hook_tile_reg():
+
             @tile(name='addform', interface=ITestAddingNode)
             @plumbing(ContentAddForm)
             class MyAddForm(Form):
                 def prepare(self):
                     form = factory(
-                        'form',
-                        name='addform',
-                        props={
-                            'action': self.nodeurl
-                        })
+                        'form', name='addform', props={'action': self.nodeurl}
+                    )
                     form['id'] = factory(
                         'field:label:text',
                         props={
                             'label': 'Id',
-                        })
+                        },
+                    )
                     form['title'] = factory(
                         'field:label:text',
                         props={
                             'label': 'Title',
-                        })
+                        },
+                    )
                     form['add'] = factory(
                         'submit',
                         props={
@@ -544,7 +538,8 @@ class TestBrowserAuthoring(TileTestCase):
                             'handler': self.add,
                             'next': self.next,
                             'label': 'Add',
-                        })
+                        },
+                    )
                     self.form = form
 
                 def add(self, widget, data):
@@ -560,10 +555,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Render without factory
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            self.assertEqual(
-                render_tile(root, request, 'add'),
-                'unknown_factory'
-            )
+            self.assertEqual(render_tile(root, request, 'add'), 'unknown_factory')
 
         # Render with valid factory
         with self.layer.authenticated('manager'):
@@ -590,14 +582,16 @@ class TestBrowserAuthoring(TileTestCase):
             render_tile(root, request, 'add')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...MyNode'>: None
           <class '...MyNode'>: somechild
-        """, root.treerepr())
+        """,
+            root.treerepr(),
+        )
 
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/somechild'
+            request.environ['redirect'].location, 'http://example.com/somechild'
         )
         del request.environ['redirect']
 
@@ -606,10 +600,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['came_from'] = 'parent'
             render_tile(root, request, 'add')
 
-        self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/')
         del request.environ['redirect']
 
         with self.layer.authenticated('manager'):
@@ -618,8 +609,7 @@ class TestBrowserAuthoring(TileTestCase):
             render_tile(root, request, 'add')
 
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/foo/bar?baz=1'
+            request.environ['redirect'].location, 'http://example.com/foo/bar?baz=1'
         )
 
         # Render with ajax flag
@@ -627,10 +617,9 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['ajax'] = '1'
             render_tile(root, request, 'add')
 
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxEvent
-        ))
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][0], AjaxEvent)
+        )
 
         # Check the modified model
         self.assertEqual(root.keys(), ['somechild'])
@@ -667,9 +656,7 @@ class TestBrowserAuthoring(TileTestCase):
         edit_form.request = self.layer.new_request()
         self.assertEqual(edit_form.form_heading, 'edit')
 
-        @node_info(
-            name='editnode',
-            title='Edit Node')
+        @node_info(name='editnode', title='Edit Node')
         class EditNode(BaseNode):
             pass
 
@@ -680,30 +667,27 @@ class TestBrowserAuthoring(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_editing(self):
-        @node_info(
-            name='mynode',
-            title='My Node')
+        @node_info(name='mynode', title='My Node')
         class MyNode(BaseNode):
             pass
 
         # Create and register an ``editform`` named form tile
         with self.layer.hook_tile_reg():
+
             @tile(name='editform', interface=MyNode)
             @plumbing(ContentEditForm)
             class MyEditForm(Form):
                 def prepare(self):
                     form = factory(
-                        'form',
-                        name='editform',
-                        props={
-                            'action': self.nodeurl
-                        })
+                        'form', name='editform', props={'action': self.nodeurl}
+                    )
                     form['title'] = factory(
                         'field:label:text',
                         value=self.model.attrs.title,
                         props={
                             'label': 'Title',
-                        })
+                        },
+                    )
                     form['update'] = factory(
                         'submit',
                         props={
@@ -712,7 +696,8 @@ class TestBrowserAuthoring(TileTestCase):
                             'handler': self.update,
                             'next': self.next,
                             'label': 'Update',
-                        })
+                        },
+                    )
                     self.form = form
 
                 def update(self, widget, data):
@@ -729,10 +714,13 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             res = render_tile(root['somechild'], request, 'editform')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<h5 class="card-header">Edit: My Node</h5>...
         <form action="http://example.com/somechild"...
-        """, res)
+        """,
+            res,
+        )
 
         # Render B/C edit tile
         with self.layer.authenticated('editor'):
@@ -749,8 +737,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(root['somechild'], request, 'editform')
 
         self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/somechild'
+            request.environ['redirect'].location, 'http://example.com/somechild'
         )
 
         # Check next URL with ``parent`` as ``came_from`` value
@@ -761,10 +748,7 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['came_from'] = 'parent'
             res = render_tile(root['somechild'], request, 'editform')
 
-        self.assertEqual(
-            request.environ['redirect'].location,
-            'http://example.com/'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/')
 
         # Check next URL with URL as ``came_from`` value
         with self.layer.authenticated('editor'):
@@ -777,7 +761,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertEqual(
             request.environ['redirect'].location,
-            'http://example.com/other/node/in/tree'
+            'http://example.com/other/node/in/tree',
         )
 
         # Render with ajax flag
@@ -788,16 +772,15 @@ class TestBrowserAuthoring(TileTestCase):
             request.params['ajax'] = '1'
             res = render_tile(root['somechild'], request, 'editform')
 
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxEvent
-        ))
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][0], AjaxEvent)
+        )
 
         # URL computing is the same as if ``HTTPFound`` instance is returned.
         # In Ajax case, the URL is used as ajax target
         self.assertEqual(
             request.environ['cone.app.continuation'][0].target,
-            'http://example.com/somechild'
+            'http://example.com/somechild',
         )
 
         with self.layer.authenticated('editor'):
@@ -811,7 +794,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertEqual(
             request.environ['cone.app.continuation'][0].target,
-            'http://example.com/other/node/in/tree'
+            'http://example.com/other/node/in/tree',
         )
         # Check the updated node
         self.assertEqual(root['somechild'].attrs.title, 'Changed title')
@@ -842,15 +825,21 @@ class TestBrowserAuthoring(TileTestCase):
 
         node = CallableNode()
         node['child'] = CallableNode()
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...CallableNode'>: None
           <class '...CallableNode'>: child
-        """, node.treerepr())
+        """,
+            node.treerepr(),
+        )
 
         del node['child']
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...CallableNode'>: None
-        """, node.treerepr())
+        """,
+            node.treerepr(),
+        )
 
         node['child'] = CallableNode()
 
@@ -860,7 +849,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         self.assertEqual(
             request.environ['cone.app.continuation'][0].payload,
-            'Object "child" not deletable'
+            'Object "child" not deletable',
         )
 
         node['child'].properties.action_delete = True
@@ -869,24 +858,23 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             self.assertEqual(render_tile(node['child'], request, 'delete'), '')
 
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxEvent
-        ))
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][1],
-            AjaxMessage
-        ))
-        self.checkOutput("""
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][0], AjaxEvent)
+        )
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][1], AjaxMessage)
+        )
+        self.checkOutput(
+            """
         <class '...CallableNode'>: None
-        """, node.treerepr())
+        """,
+            node.treerepr(),
+        )
 
     @testing.reset_node_info_registry
     @testing.reset_node_available
     def test_add_items_dropdown(self):
-        @node_info(
-            name='mynode',
-            addables=['mynode'])
+        @node_info(name='mynode', addables=['mynode'])
         class MyNode(BaseNode):
             pass
 
@@ -940,6 +928,7 @@ class TestBrowserAuthoring(TileTestCase):
             if node_info_name == 'anothernode':
                 return False
             return True
+
         security.node_available = node_available
 
         with self.layer.authenticated('manager'):
@@ -962,7 +951,8 @@ class TestBrowserAuthoring(TileTestCase):
             request = self.layer.new_request()
             rendered = render_tile(NoChildAddingNode(), request, 'add_dropdown')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<li class="nav-item dropdown py-0">
         <a href="#"
         class="nav-link dropdown-toggle py-2 px-3"
@@ -973,24 +963,21 @@ class TestBrowserAuthoring(TileTestCase):
         <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
         </ul>
         </li>...
-        """, rendered)
+        """,
+            rendered,
+        )
 
         # Test node with invalid addable, results in empty listing
         # XXX: hide entire widget if no items
-        @node_info(
-            name='invalidchildnodeinfo',
-            addables=['invalid'])
+        @node_info(name='invalidchildnodeinfo', addables=['invalid'])
         class InvalidChildNodeInfoNode(BaseNode):
             pass
 
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
-            rendered = render_tile(
-                InvalidChildNodeInfoNode(),
-                request,
-                'add_dropdown'
-            )
-        self.checkOutput("""
+            rendered = render_tile(InvalidChildNodeInfoNode(), request, 'add_dropdown')
+        self.checkOutput(
+            """
         ...<li class="nav-item dropdown py-0">
         <a href="#"
         class="nav-link dropdown-toggle py-2 px-3"
@@ -1001,10 +988,13 @@ class TestBrowserAuthoring(TileTestCase):
         <ul class="dropdown-menu rounded-0 rounded-bottom mt-0" role="addmenu">
         </ul>
         </li>...
-        """, rendered)
+        """,
+            rendered,
+        )
 
     def test_overlay_form(self):
         with self.layer.hook_tile_reg():
+
             @tile(name='overlayform', interface=BaseNode)
             @plumbing(OverlayForm)
             class MyOverlayForm(Form):
@@ -1012,16 +1002,13 @@ class TestBrowserAuthoring(TileTestCase):
                     form = factory(
                         'form',
                         name='overlayform',
-                        props={
-                            'action': self.nodeurl + '/' + self.action_resource
-                        })
+                        props={'action': self.nodeurl + '/' + self.action_resource},
+                    )
                     form['title'] = factory(
                         'field:label:error:text',
                         value=self.model.attrs.title,
-                        props={
-                            'label': 'Title',
-                            'required': 'Title is required'
-                        })
+                        props={'label': 'Title', 'required': 'Title is required'},
+                    )
                     form['update'] = factory(
                         'submit',
                         props={
@@ -1030,7 +1017,8 @@ class TestBrowserAuthoring(TileTestCase):
                             'handler': self.update,
                             'next': self.next,
                             'label': 'Update',
-                        })
+                        },
+                    )
                     self.form = form
 
                 def update(self, widget, data):
@@ -1051,10 +1039,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.startswith(expected))
         expected = 'class="ajax"'
         self.assertTrue(res.find(expected) > -1)
-        self.assertEqual(
-            request.environ['cone.app.form.selector'],
-            '#1234 .modal-body'
-        )
+        self.assertEqual(request.environ['cone.app.form.selector'], '#1234 .modal-body')
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
         # Overlay form sumbmission happens via related pyramid view
@@ -1078,8 +1063,8 @@ class TestBrowserAuthoring(TileTestCase):
         expected = (
             '    parent.ts.ajax.form({\n'
             '        payload: child,\n'
-            '        selector: \'#1234 .modal-body\',\n'
-            '        mode: \'inner\',\n'
+            "        selector: '#1234 .modal-body',\n"
+            "        mode: 'inner',\n"
             '        next: [],\n'
             '        error: false\n'
             '    });\n'
@@ -1103,8 +1088,8 @@ class TestBrowserAuthoring(TileTestCase):
         expected = (
             '    parent.ts.ajax.form({\n'
             '        payload: child,\n'
-            '        selector: \'#1234 .modal-body\',\n'
-            '        mode: \'inner\',\n'
+            "        selector: '#1234 .modal-body',\n"
+            "        mode: 'inner',\n"
             '        next: [{'
         )
         self.assertTrue(res.text.find(expected) > -1)
@@ -1115,13 +1100,12 @@ class TestBrowserAuthoring(TileTestCase):
 
     @testing.reset_node_info_registry
     def test_overlay_add(self):
-        @node_info(
-            name='mynode',
-            addables=['mynode'])
+        @node_info(name='mynode', addables=['mynode'])
         class MyNode(BaseNode):
             pass
 
         with self.layer.hook_tile_reg():
+
             @tile(name='overlayaddform', interface=MyNode)
             @plumbing(OverlayAddForm)
             class MyOverlayAddForm(Form):
@@ -1129,15 +1113,12 @@ class TestBrowserAuthoring(TileTestCase):
                     form = factory(
                         'form',
                         name='overlayaddform',
-                        props={
-                            'action': self.nodeurl + '/' + self.action_resource
-                        })
+                        props={'action': self.nodeurl + '/' + self.action_resource},
+                    )
                     form['title'] = factory(
                         'field:label:error:text',
-                        props={
-                            'label': 'Title',
-                            'required': 'Title is required'
-                        })
+                        props={'label': 'Title', 'required': 'Title is required'},
+                    )
                     form['add'] = factory(
                         'submit',
                         props={
@@ -1146,7 +1127,8 @@ class TestBrowserAuthoring(TileTestCase):
                             'handler': self.add,
                             'next': self.next,
                             'label': 'Add',
-                        })
+                        },
+                    )
                     self.form = form
 
                 def add(self, widget, data):
@@ -1171,10 +1153,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.startswith(expected))
         expected = 'class="ajax"'
         self.assertTrue(res.find(expected) > -1)
-        self.assertEqual(
-            request.environ['cone.app.form.selector'],
-            '#1234 .modal-body'
-        )
+        self.assertEqual(request.environ['cone.app.form.selector'], '#1234 .modal-body')
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
         # Overlay addform sumbmission happens via related pyramid view
@@ -1200,8 +1179,8 @@ class TestBrowserAuthoring(TileTestCase):
         expected = (
             '    parent.ts.ajax.form({\n'
             '        payload: child,\n'
-            '        selector: \'#1234 .modal-body\',\n'
-            '        mode: \'inner\',\n'
+            "        selector: '#1234 .modal-body',\n"
+            "        mode: 'inner',\n"
             '        next: [],\n'
             '        error: false\n'
             '    });\n'
@@ -1228,8 +1207,8 @@ class TestBrowserAuthoring(TileTestCase):
         expected = (
             '    parent.ts.ajax.form({\n'
             '        payload: child,\n'
-            '        selector: \'#1234 .modal-body\',\n'
-            '        mode: \'inner\',\n'
+            "        selector: '#1234 .modal-body',\n"
+            "        mode: 'inner',\n"
             '        next: [{'
         )
         self.assertTrue(res.text.find(expected) > -1)
@@ -1246,6 +1225,7 @@ class TestBrowserAuthoring(TileTestCase):
             pass
 
         with self.layer.hook_tile_reg():
+
             @tile(name='overlayeditform', interface=MyNode)
             @plumbing(OverlayEditForm)
             class MyOverlayEditForm(Form):
@@ -1253,16 +1233,13 @@ class TestBrowserAuthoring(TileTestCase):
                     form = factory(
                         'form',
                         name='overlayeditform',
-                        props={
-                            'action': self.nodeurl + '/' + self.action_resource
-                        })
+                        props={'action': self.nodeurl + '/' + self.action_resource},
+                    )
                     form['title'] = factory(
                         'field:label:error:text',
                         value=self.model.attrs.title,
-                        props={
-                            'label': 'Title',
-                            'required': 'Title is required'
-                        })
+                        props={'label': 'Title', 'required': 'Title is required'},
+                    )
                     form['update'] = factory(
                         'submit',
                         props={
@@ -1271,7 +1248,8 @@ class TestBrowserAuthoring(TileTestCase):
                             'handler': self.update,
                             'next': self.next,
                             'label': 'Update',
-                        })
+                        },
+                    )
                     self.form = form
 
                 def update(self, widget, data):
@@ -1295,10 +1273,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(res.find(expected) > -1)
         expected = 'value="My Title"'
         self.assertTrue(res.find(expected) > -1)
-        self.assertEqual(
-            request.environ['cone.app.form.selector'],
-            '#1234 .modal-body'
-        )
+        self.assertEqual(request.environ['cone.app.form.selector'], '#1234 .modal-body')
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
         # Render B/C overlayedit tile
@@ -1328,8 +1303,8 @@ class TestBrowserAuthoring(TileTestCase):
         expected = (
             '    parent.ts.ajax.form({\n'
             '        payload: child,\n'
-            '        selector: \'#1234 .modal-body\',\n'
-            '        mode: \'inner\',\n'
+            "        selector: '#1234 .modal-body',\n"
+            "        mode: 'inner',\n"
             '        next: [],\n'
             '        error: false\n'
             '    });\n'
@@ -1355,8 +1330,8 @@ class TestBrowserAuthoring(TileTestCase):
         expected = (
             '    parent.ts.ajax.form({\n'
             '        payload: child,\n'
-            '        selector: \'#1234 .modal-body\',\n'
-            '        mode: \'inner\',\n'
+            "        selector: '#1234 .modal-body',\n"
+            "        mode: 'inner',\n"
             '        next: [{'
         )
         self.assertTrue(res.text.find(expected) > -1)

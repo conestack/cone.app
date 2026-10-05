@@ -64,10 +64,15 @@ def make_url(request, path=None, node=None, resource=None, query=None):
 
 
 def choose_name(container, name):
-    name = re.sub(
-        r'-{2,}', '-',
-        re.sub(r'^\w-|-\w-|-\w$', '-',
-               re.sub(r'\W', '-', name.strip()))).strip('-').lower()
+    name = (
+        re.sub(
+            r'-{2,}',
+            '-',
+            re.sub(r'^\w-|-\w-|-\w$', '-', re.sub(r'\W', '-', name.strip())),
+        )
+        .strip('-')
+        .lower()
+    )
     n = name
     i = 0
     while n in container:
@@ -100,6 +105,7 @@ def request_property(func):
 
     Works only on instances providing a request attribute.
     """
+
     def wrapper(self):
         cache_key = f'{id(self)!s}.{self.__class__.__name__}.{func.__name__}'
         try:
@@ -107,6 +113,7 @@ def request_property(func):
         except KeyError:
             val = self.request.environ[cache_key] = func(self)
             return val
+
     wrapper.__doc__ = func.__doc__
     return property(wrapper)
 

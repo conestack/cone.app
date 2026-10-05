@@ -17,12 +17,7 @@ class TestBrowserTranslation(NodeTestCase):
     layer = testing.security
 
     def test_translation_extractor(self):
-        widget = factory(
-            'translation:text',
-            name='field',
-            props={
-                'label': 'Field'
-            })
+        widget = factory('translation:text', name='field', props={'label': 'Field'})
 
         request = self.layer.new_request()
         data = widget.extract(request)
@@ -32,19 +27,14 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, dict)
-        self.assertEqual(data.extracted, {
-            'en': 'Value EN',
-            'de': 'Value DE'
-        })
+        self.assertEqual(data.extracted, {'en': 'Value EN', 'de': 'Value DE'})
 
     def test_translation_extractor_factory(self):
         widget = factory(
             'translation:text',
             name='field',
-            props={
-                'label': 'Field',
-                'factory': TranslationNode
-            })
+            props={'label': 'Field', 'factory': TranslationNode},
+        )
 
         request = self.layer.new_request()
         data = widget.extract(request)
@@ -54,22 +44,17 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, TranslationNode)
-        self.assertEqual(data.extracted.items(), [
-            ('en', 'Value EN'),
-            ('de', 'Value DE')
-        ])
+        self.assertEqual(
+            data.extracted.items(), [('en', 'Value EN'), ('de', 'Value DE')]
+        )
 
     def test_extraction_preset_value(self):
         widget = factory(
             'translation:text',
             name='field',
-            value={
-                'en': 'Value EN',
-                'de': 'Value DE'
-            },
-            props={
-                'label': 'Field'
-            })
+            value={'en': 'Value EN', 'de': 'Value DE'},
+            props={'label': 'Field'},
+        )
 
         request = self.layer.new_request()
         data = widget.extract(request)
@@ -78,10 +63,7 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.en'] = 'Value EN new'
         request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
-        self.assertEqual(data.extracted, {
-            'en': 'Value EN new',
-            'de': 'Value DE new'
-        })
+        self.assertEqual(data.extracted, {'en': 'Value EN new', 'de': 'Value DE new'})
 
     def test_extraction_preset_value_factory(self):
         value = TranslationNode()
@@ -91,10 +73,8 @@ class TestBrowserTranslation(NodeTestCase):
             'translation:text',
             name='field',
             value=value,
-            props={
-                'label': 'Field',
-                'factory': TranslationNode
-            })
+            props={'label': 'Field', 'factory': TranslationNode},
+        )
 
         request = self.layer.new_request()
         data = widget.extract(request)
@@ -104,20 +84,15 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, TranslationNode)
-        self.assertEqual(data.extracted.items(), [
-            ('en', 'Value EN new'),
-            ('de', 'Value DE new')
-        ])
+        self.assertEqual(
+            data.extracted.items(), [('en', 'Value EN new'), ('de', 'Value DE new')]
+        )
 
     def test_translation_edit_renderer_no_value(self):
-        widget = factory(
-            'field:translation:text',
-            'field',
-            props={
-                'label': 'Field'
-            })
+        widget = factory('field:translation:text', 'field', props={'label': 'Field'})
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <div class="field mb-2" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
@@ -136,21 +111,20 @@ class TestBrowserTranslation(NodeTestCase):
             </div>
           </div>
         </div>
-        """, fxml(widget()))
+        """,
+            fxml(widget()),
+        )
 
     def test_translation_edit_renderer_preset_value(self):
         widget = factory(
             'field:translation:text',
             'field',
-            value={
-                'en': 'Value EN',
-                'de': 'Value DE'
-            },
-            props={
-                'label': 'Field'
-            })
+            value={'en': 'Value EN', 'de': 'Value DE'},
+            props={'label': 'Field'},
+        )
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...
         <div id="translation-field-en">
           <input class="form-control" id="input-field-en" name="field.en"
@@ -161,7 +135,9 @@ class TestBrowserTranslation(NodeTestCase):
                  type="text" value="Value DE"/>
         </div>
         ...
-        """, fxml(widget()))
+        """,
+            fxml(widget()),
+        )
 
     def test_translation_edit_renderer_preset_translation_value(self):
         value = TranslationNode()
@@ -171,12 +147,11 @@ class TestBrowserTranslation(NodeTestCase):
             'field:translation:text',
             'field',
             value=value,
-            props={
-                'label': 'Field',
-                'factory': TranslationNode
-            })
+            props={'label': 'Field', 'factory': TranslationNode},
+        )
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...
         <div id="translation-field-en">
           <input class="form-control" id="input-field-en" name="field.en"
@@ -187,21 +162,19 @@ class TestBrowserTranslation(NodeTestCase):
                  type="text" value="Value DE"/>
         </div>
         ...
-        """, fxml(widget()))
+        """,
+            fxml(widget()),
+        )
 
     def test_render_after_extraction_no_preset_value(self):
-        widget = factory(
-            'field:translation:text',
-            'field',
-            props={
-                'label': 'Field'
-            })
+        widget = factory('field:translation:text', 'field', props={'label': 'Field'})
 
         request = self.layer.new_request()
         request.params['field.en'] = 'Value EN'
         request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...
         <div id="translation-field-en">
           <input class="form-control is-valid" id="input-field-en" name="field.en"
@@ -212,25 +185,24 @@ class TestBrowserTranslation(NodeTestCase):
                  type="text" value="Value DE"/>
         </div>
         ...
-        """, fxml(widget(data=data)))
+        """,
+            fxml(widget(data=data)),
+        )
 
     def test_render_after_extraction_preset_value(self):
         widget = factory(
             'field:translation:text',
             'field',
-            value={
-                'en': 'Value EN',
-                'de': 'Value DE'
-            },
-            props={
-                'label': 'Field'
-            })
+            value={'en': 'Value EN', 'de': 'Value DE'},
+            props={'label': 'Field'},
+        )
 
         request = self.layer.new_request()
         request.params['field.en'] = 'Value EN new'
         request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...
         <div id="translation-field-en">
           <input class="form-control is-valid" id="input-field-en" name="field.en"
@@ -241,7 +213,9 @@ class TestBrowserTranslation(NodeTestCase):
                  type="text" value="Value DE new"/>
         </div>
         ...
-        """, fxml(widget(data=data)))
+        """,
+            fxml(widget(data=data)),
+        )
 
     def test_render_after_extraction_preset_translation_value(self):
         value = TranslationNode()
@@ -251,16 +225,15 @@ class TestBrowserTranslation(NodeTestCase):
             'field:translation:text',
             'field',
             value=value,
-            props={
-                'label': 'Field',
-                'factory': TranslationNode
-            })
+            props={'label': 'Field', 'factory': TranslationNode},
+        )
 
         request = self.layer.new_request()
         request.params['field.en'] = 'Value EN new'
         request.params['field.de'] = 'Value DE new'
         data = widget.extract(request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...
         <div id="translation-field-en">
           <input class="form-control is-valid" id="input-field-en" name="field.en"
@@ -271,26 +244,24 @@ class TestBrowserTranslation(NodeTestCase):
                type="text" value="Value DE new"/>
         </div>
         ...
-        """, fxml(widget(data=data)))
+        """,
+            fxml(widget(data=data)),
+        )
 
     def test_required(self):
         widget = factory(
             'field:error:translation:text',
             'field',
-            value={
-                'en': 'Value EN',
-                'de': 'Value DE'
-            },
-            props={
-                'label': 'Field',
-                'required': 'Field is mandatory'
-            })
+            value={'en': 'Value EN', 'de': 'Value DE'},
+            props={'label': 'Field', 'required': 'Field is mandatory'},
+        )
 
         request = self.layer.new_request()
         request.params['field.en'] = ''
         request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <div class="field mb-2" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item error">
@@ -310,22 +281,23 @@ class TestBrowserTranslation(NodeTestCase):
           </div>
           <div class="invalid-feedback">Field is mandatory</div>
         </div>
-        """, fxml(widget(data=data)))
+        """,
+            fxml(widget(data=data)),
+        )
 
     def test_translation_display_renderer(self):
         widget = factory(
             'field:translation:text',
             'field',
-            value={
-                'en': 'Value EN',
-                'de': 'Value DE'
-            },
+            value={'en': 'Value EN', 'de': 'Value DE'},
             props={
                 'label': 'Field',
             },
-            mode='display')
+            mode='display',
+        )
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <div class="field mb-2" id="field-field">
           <ul class="nav nav-pills mb-2 translation-nav">
             <li class="nav-item">
@@ -344,4 +316,6 @@ class TestBrowserTranslation(NodeTestCase):
             </div>
           </div>
         </div>
-        """, fxml(widget()))
+        """,
+            fxml(widget()),
+        )

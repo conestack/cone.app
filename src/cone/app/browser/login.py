@@ -38,13 +38,15 @@ class LoginForm(Form):
             props={
                 'action': action,
                 'class': 'form-horizontal',
-            })
+            },
+        )
         form['user'] = factory(
             'field:label:div:help:error:text',
             props={
                 'required': _('no_username_given', default='No username given'),
-                'label': _('username', default='Username')
-            })
+                'label': _('username', default='Username'),
+            },
+        )
         form['password'] = factory(
             'field:label:div:help:*credentials:error:password',
             props={
@@ -53,12 +55,14 @@ class LoginForm(Form):
             },
             custom={
                 'credentials': ([self.login], [], [], []),
-            })
+            },
+        )
         actions = form['form_actions'] = factory(
             'field:div',
             props={
                 'structural': True,
-            })
+            },
+        )
         actions['login'] = factory(
             'submit',
             props={
@@ -67,8 +71,9 @@ class LoginForm(Form):
                 'handler': self.noop,
                 'next': self.next,
                 'label': _('login', default='Login'),
-                'class_add': 'bg-primary text-light'
-            })
+                'class_add': 'bg-primary text-light',
+            },
+        )
         self.form = form
 
     def noop(self, widget, data):
@@ -80,13 +85,9 @@ class LoginForm(Form):
         webob_req = data.request.request
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
-            raise ExtractionError(_(
-                'invalid_credentials',
-                default='Invalid Credentials'
-            ))
+            raise ExtractionError(
+                _('invalid_credentials', default='Invalid Credentials')
+            )
 
     def next(self, request):
-        return HTTPFound(
-            location=request.request.application_url,
-            headers=self.headers
-        )
+        return HTTPFound(location=request.request.application_url, headers=self.headers)

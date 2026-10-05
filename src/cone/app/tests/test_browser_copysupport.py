@@ -18,14 +18,16 @@ class TestBrowserCopysupport(TileTestCase):
         @node_info(
             name='copy_support_node_a',
             title='CopySupportNodeA',
-            addables=['copy_support_node_a', 'copy_support_node_b'])
+            addables=['copy_support_node_a', 'copy_support_node_b'],
+        )
         class CopySupportNodeA(CopySupportNode):
             pass
 
         @node_info(
             name='copy_support_node_b',
             title='CopySupportNodeB',
-            addables=['copy_support_node_b'])
+            addables=['copy_support_node_b'],
+        )
         class CopySupportNodeB(CopySupportNode):
             pass
 
@@ -42,11 +44,14 @@ class TestBrowserCopysupport(TileTestCase):
         paste_tile = PasteAction(None, 'render', '')
         paste_tile(target, request)
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Pasted 0 items<br /><strong>Pasting of 1 items
         failed</strong><br />Violation. 'CopySupportNodeB' is not allowed
         to contain 'CopySupportNodeA'
-        """, request.environ['cone.app.continuation'][0].payload)
+        """,
+            request.environ['cone.app.continuation'][0].payload,
+        )
 
         copy_url = compat.quote(make_url(request, node=source['b_child']))
         request.cookies['cone.app.copysupport.copy'] = copy_url
@@ -56,31 +61,35 @@ class TestBrowserCopysupport(TileTestCase):
         self.assertEqual(target.messages, ['Called: target'])
         target.messages = []
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         cone.app.copysupport.copy=; Max-Age=0; Path=/; expires=...
-        """, request.response.headers['Set-Cookie'])
-
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxMessage
-        ))
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][1],
-            AjaxEvent
-        ))
-        self.assertEqual(
-            request.environ['cone.app.continuation'][1].target,
-            'http://example.com/target?contenttile=listing'
+        """,
+            request.response.headers['Set-Cookie'],
         )
 
-        self.checkOutput("""
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][0], AjaxMessage)
+        )
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][1], AjaxEvent)
+        )
+        self.assertEqual(
+            request.environ['cone.app.continuation'][1].target,
+            'http://example.com/target?contenttile=listing',
+        )
+
+        self.checkOutput(
+            """
         <class '...CopySupportNodeA'>: None
           <class '...CopySupportNodeA'>: source
             <class '...CopySupportNodeA'>: a_child
             <class '...CopySupportNodeB'>: b_child
           <class '...CopySupportNodeB'>: target
             <class '...CopySupportNodeB'>: b_child
-        """, root.treerepr())
+        """,
+            root.treerepr(),
+        )
 
         target.properties.action_paste_tile = 'custom'
         del request.environ['cone.app.continuation']
@@ -91,10 +100,11 @@ class TestBrowserCopysupport(TileTestCase):
 
         self.assertEqual(
             request.environ['cone.app.continuation'][1].target,
-            'http://example.com/target?contenttile=custom'
+            'http://example.com/target?contenttile=custom',
         )
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...CopySupportNodeA'>: None
           <class '...CopySupportNodeA'>: source
             <class '...CopySupportNodeA'>: a_child
@@ -102,7 +112,9 @@ class TestBrowserCopysupport(TileTestCase):
           <class '...CopySupportNodeB'>: target
             <class '...CopySupportNodeB'>: b_child
             <class '...CopySupportNodeB'>: b_child-1
-        """, root.treerepr())
+        """,
+            root.treerepr(),
+        )
 
         cut_url = compat.quote(make_url(request, node=source['b_child']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
@@ -115,11 +127,15 @@ class TestBrowserCopysupport(TileTestCase):
         target.messages = []
         source.messages = []
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         cone.app.copysupport.cut=; Max-Age=0; Path=/; expires=...
-        """, request.response.headers['Set-Cookie'])
+        """,
+            request.response.headers['Set-Cookie'],
+        )
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...CopySupportNodeA'>: None
           <class '...CopySupportNodeA'>: source
             <class '...CopySupportNodeA'>: a_child
@@ -127,14 +143,17 @@ class TestBrowserCopysupport(TileTestCase):
             <class '...CopySupportNodeB'>: b_child
             <class '...CopySupportNodeB'>: b_child-1
             <class '...CopySupportNodeB'>: b_child-2
-        """, root.treerepr())
+        """,
+            root.treerepr(),
+        )
 
         cut_url = compat.quote(make_url(request, node=source['a_child']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
 
         paste_tile(target, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...CopySupportNodeA'>: None
           <class '...CopySupportNodeA'>: source
             <class '...CopySupportNodeA'>: a_child
@@ -142,28 +161,38 @@ class TestBrowserCopysupport(TileTestCase):
             <class '...CopySupportNodeB'>: b_child
             <class '...CopySupportNodeB'>: b_child-1
             <class '...CopySupportNodeB'>: b_child-2
-        """, root.treerepr())
+        """,
+            root.treerepr(),
+        )
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Pasted 0 items<br /><strong>Pasting of 1 items
         failed</strong><br />Violation. 'CopySupportNodeB' is not
         allowed to contain 'CopySupportNodeA'
-        """, request.environ['cone.app.continuation'][0].payload)
+        """,
+            request.environ['cone.app.continuation'][0].payload,
+        )
 
         cut_url = compat.quote(make_url(request, node=source))
         del request.environ['cone.app.continuation']
         request.cookies['cone.app.copysupport.cut'] = cut_url
 
         paste_tile(root['source']['a_child'], request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Pasted 0 items<br /><strong>Pasting of 1 items
         failed</strong><br />Cannot paste cut object to child of it: source
-        """, request.environ['cone.app.continuation'][0].payload)
+        """,
+            request.environ['cone.app.continuation'][0].payload,
+        )
 
-        cut_url = '::'.join([
-            compat.quote(make_url(request, node=target['b_child'])),
-            compat.quote(make_url(request, node=target['b_child-1'])),
-        ])
+        cut_url = '::'.join(
+            [
+                compat.quote(make_url(request, node=target['b_child'])),
+                compat.quote(make_url(request, node=target['b_child-1'])),
+            ]
+        )
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
 
@@ -173,7 +202,8 @@ class TestBrowserCopysupport(TileTestCase):
         source.messages = []
         target.messages = []
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <class '...CopySupportNodeA'>: None
           <class '...CopySupportNodeA'>: source
             <class '...CopySupportNodeA'>: a_child
@@ -181,7 +211,9 @@ class TestBrowserCopysupport(TileTestCase):
             <class '...CopySupportNodeB'>: b_child-1
           <class '...CopySupportNodeB'>: target
             <class '...CopySupportNodeB'>: b_child-2
-        """, root.treerepr())
+        """,
+            root.treerepr(),
+        )
 
         root['unknown_source'] = BaseNode()
         root['unknown_target'] = BaseNode()
@@ -191,26 +223,31 @@ class TestBrowserCopysupport(TileTestCase):
         del request.environ['cone.app.continuation']
 
         paste_tile(target, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Pasted 0 items<br /><strong>Pasting of 1 items
         failed</strong><br />Cannot paste 'unknown_source'. Unknown source
-        """, request.environ['cone.app.continuation'][0].payload)
+        """,
+            request.environ['cone.app.continuation'][0].payload,
+        )
 
         cut_url = compat.quote(make_url(request, node=source['b_child']))
         request.cookies['cone.app.copysupport.cut'] = cut_url
         del request.environ['cone.app.continuation']
 
         paste_tile(root['unknown_target'], request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Pasted 0 items<br /><strong>Pasting of 1 items
         failed</strong><br />Cannot paste to 'unknown_target'. Unknown target
-        """, request.environ['cone.app.continuation'][0].payload)
+        """,
+            request.environ['cone.app.continuation'][0].payload,
+        )
 
         del request.cookies['cone.app.copysupport.cut']
         del request.environ['cone.app.continuation']
 
         paste_tile(root['unknown_target'], request)
         self.assertEqual(
-            request.environ['cone.app.continuation'][0].payload,
-            'Nothing to paste'
+            request.environ['cone.app.continuation'][0].payload, 'Nothing to paste'
         )

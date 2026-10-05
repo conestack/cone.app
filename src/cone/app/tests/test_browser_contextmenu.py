@@ -42,7 +42,7 @@ class TestBrowserContextmenu(TileTestCase):
         cmt['action'] = RenderAction()
         self.assertEqual(
             cmt(model, request),
-            '<li class="nav-item py-0"><span>Rendered action</span></li>'
+            '<li class="nav-item py-0"><span>Rendered action</span></li>',
         )
 
         class MyLinkAction(LinkAction):
@@ -68,6 +68,7 @@ class TestBrowserContextmenu(TileTestCase):
 
         def add_action():
             cmd['invalid'] = Action()
+
         with self.assertRaises(ValueError) as arc:
             add_action()
         expected = (
@@ -231,6 +232,7 @@ class TestContextMenuIsolation(TileTestCase):
         assigned ``model`` and ``request`` into **every** child before anything
         rendered - so one request published its node to the whole group, not
         just to the action being drawn."""
+
         class Shown(TemplateAction):
             def render(self):
                 return '<span>x</span>'

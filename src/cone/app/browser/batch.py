@@ -51,8 +51,7 @@ class Batch(Tile):
 
     @property
     def trigger_selector(self):
-        """CSS selector to trigger JS event to.
-        """
+        """CSS selector to trigger JS event to."""
         return f'.{self.name}sensitiv'
 
     @property
@@ -61,26 +60,22 @@ class Batch(Tile):
 
     @property
     def vocab(self):
-        """Batch vocabulary.
-        """
+        """Batch vocabulary."""
         return []
 
     @property
     def display(self):
-        """Flag whether to display the batch.
-        """
+        """Flag whether to display the batch."""
         return True
 
     @property
     def batchrange(self):
-        """Defines how many pages are displayed.
-        """
+        """Defines how many pages are displayed."""
         return BATCH_RANGE
 
     @property
     def currentpage(self):
-        """Current page in batch.
-        """
+        """Current page in batch."""
         for page in self.vocab:
             if page['current']:
                 return page
@@ -88,8 +83,7 @@ class Batch(Tile):
 
     @property
     def firstpage(self):
-        """First page in batch.
-        """
+        """First page in batch."""
         firstpage = None
         for page in self.vocab:
             if page['visible']:
@@ -101,8 +95,7 @@ class Batch(Tile):
 
     @property
     def lastpage(self):
-        """Last page in batch.
-        """
+        """Last page in batch."""
         lastpage = None
         count = len(self.vocab)
         while count > 0:
@@ -117,8 +110,7 @@ class Batch(Tile):
 
     @property
     def prevpage(self):
-        """Previous page in batch.
-        """
+        """Previous page in batch."""
         prevpage = None
         position = self._position_of_current_in_vocab - 1
         while position >= 0:
@@ -133,8 +125,7 @@ class Batch(Tile):
 
     @property
     def nextpage(self):
-        """Next page in batch.
-        """
+        """Next page in batch."""
         nextpage = self.dummypage
         position = self._position_of_current_in_vocab + 1
         if position == 0 and self.vocab:
@@ -151,25 +142,21 @@ class Batch(Tile):
 
     @property
     def leftellipsis(self):
-        """Left ellipsis string.
-        """
+        """Left ellipsis string."""
         return self._left_over_diff < 0 and self.ellipsis or ''
 
     @property
     def rightellipsis(self):
-        """Right ellipsis string.
-        """
+        """Right ellipsis string."""
         return self._right_over_diff < 0 and self.ellipsis or ''
 
     @property
     def pages(self):
-        """Pages to display.
-        """
+        """Pages to display."""
         pos = self._position_of_current_in_vocab
         count = len(self.vocab)
         start = max(pos - self._siderange - max(self._right_over_diff, 0), 0)
-        end = min(pos + self._siderange + max(self._left_over_diff, 0) + 1,
-                  count)
+        end = min(pos + self._siderange + max(self._left_over_diff, 0) + 1, count)
         return self.vocab[start:end]
 
     @property
@@ -203,12 +190,10 @@ class Batch(Tile):
 
 
 class BatchedItemsBatch(Batch):
-    """Displays batched items pagination.
-    """
+    """Displays batched items pagination."""
 
     def __init__(self, parent):
-        """Create batched items batch.
-        """
+        """Create batched items batch."""
         self.parent = parent
         self.name = parent.items_id + 'batch'
         self.ajax_path = parent.ajax_path
@@ -216,14 +201,12 @@ class BatchedItemsBatch(Batch):
 
     @property
     def display(self):
-        """Flag whether to display the batch.
-        """
+        """Flag whether to display the batch."""
         return len(self.vocab) > 1
 
     @property
     def vocab(self):
-        """Batch vocabulary.
-        """
+        """Batch vocabulary."""
         ret = list()
         path = node_path(self.model)
         count = self.parent.item_count
@@ -235,20 +218,21 @@ class BatchedItemsBatch(Batch):
         for i in range(pages):
             href = self.parent.make_page_url(path, str(i), include_view=True)
             target = self.parent.make_page_url(path, str(i))
-            ret.append({
-                'page': '%i' % (i + 1),
-                'current': current == i,
-                'visible': True,
-                'href': href,
-                'target': target
-            })
+            ret.append(
+                {
+                    'page': '%i' % (i + 1),
+                    'current': current == i,
+                    'visible': True,
+                    'href': href,
+                    'target': target,
+                }
+            )
         return ret
 
 
 @plumbing(RelatedViewConsumer)
 class BatchedItems(Tile):
-    """Base tile for displaying searchable, batched items.
-    """
+    """Base tile for displaying searchable, batched items."""
 
     path = 'cone.app.browser:templates/batched_items.pt'
     """Path to template used for rendering the tile. Defaults to
@@ -349,20 +333,17 @@ class BatchedItems(Tile):
 
     @property
     def title(self):
-        """Batched items title.
-        """
+        """Batched items title."""
         return self.model.metadata.title
 
     @property
     def bind_selectors(self):
-        """CSS selector to bind the batched items container DOM element to.
-        """
+        """CSS selector to bind the batched items container DOM element to."""
         return f'{self.pagination.name}sensitiv'
 
     @property
     def bind_events(self):
-        """JS events to bind the batched items container DOM element to.
-        """
+        """JS events to bind the batched items container DOM element to."""
         return self.pagination.trigger_event
 
     @property
@@ -385,65 +366,46 @@ class BatchedItems(Tile):
 
     @property
     def rendered_header(self):
-        """Rendered header by ``header_template``.
-        """
+        """Rendered header by ``header_template``."""
         if not self.display_header:
             return ''
         return render_template(
-            self.header_template,
-            request=self.request,
-            model=self.model,
-            context=self
+            self.header_template, request=self.request, model=self.model, context=self
         )
 
     @property
     def rendered_footer(self):
-        """Rendered footer by ``footer_template``.
-        """
+        """Rendered footer by ``footer_template``."""
         if not self.display_footer:
             return ''
         return render_template(
-            self.footer_template,
-            request=self.request,
-            model=self.model,
-            context=self
+            self.footer_template, request=self.request, model=self.model, context=self
         )
 
     @property
     def rendered_slice(self):
-        """Rendered slice by ``slice_template``.
-        """
+        """Rendered slice by ``slice_template``."""
         return render_template(
-            self.slice_template,
-            request=self.request,
-            model=self.model,
-            context=self
+            self.slice_template, request=self.request, model=self.model, context=self
         )
 
     @property
     def rendered_pagination(self):
-        """Rendered pagination batch.
-        """
-        return self.pagination(
-            model=self.model,
-            request=self.request
-        )
+        """Rendered pagination batch."""
+        return self.pagination(model=self.model, request=self.request)
 
     @request_property
     def pagination(self):
-        """``BatchedItemsBatch`` instance.
-        """
+        """``BatchedItemsBatch`` instance."""
         return BatchedItemsBatch(parent=self)
 
     @property
     def current_page(self):
-        """Current batch page.
-        """
+        """Current batch page."""
         return int(self.request.params.get('b_page', '0'))
 
     def make_page_url(self, path, page, include_view=False):
-        """Pagination batch page target.
-        """
+        """Pagination batch page target."""
         params = {
             'b_page': page,
             'size': self.slice_size,
@@ -456,45 +418,38 @@ class BatchedItems(Tile):
 
     @property
     def slice_id(self):
-        """CSS ID of the slice container DOM element.
-        """
+        """CSS ID of the slice container DOM element."""
         return f'{self.items_id}_slice'
 
     @property
     def slice_size(self):
-        """Current slice size.
-        """
+        """Current slice size."""
         return int(self.request.params.get('size', self.default_slice_size))
 
     @property
     def slice_sizes(self):
-        """Available slice sices as list.
-        """
-        return [
-            i * self.default_slice_size
-            for i in range(1, self.num_slice_sizes + 1)
-        ]
+        """Available slice sices as list."""
+        return [i * self.default_slice_size for i in range(1, self.num_slice_sizes + 1)]
 
     @property
     def current_slice(self):
-        """Current slice as (start, end) tuple.
-        """
+        """Current slice as (start, end) tuple."""
         start = self.current_page * self.slice_size
         end = start + self.slice_size
         return start, end
 
     @property
     def slice_target(self):
-        """Slice size selection target URL.
-        """
-        return self.make_url({
-            'term': self.filter_term,
-        })
+        """Slice size selection target URL."""
+        return self.make_url(
+            {
+                'term': self.filter_term,
+            }
+        )
 
     @request_property
     def filter_term(self):
-        """Current search filter term.
-        """
+        """Current search filter term."""
         term = self.request.params.get('term')
         if term:
             term = compat.unquote(term)
@@ -502,11 +457,12 @@ class BatchedItems(Tile):
 
     @property
     def filter_target(self):
-        """Search filter input target URL.
-        """
-        return self.make_url({
-            'size': self.slice_size,
-        })
+        """Search filter input target URL."""
+        return self.make_url(
+            {
+                'size': self.slice_size,
+            }
+        )
 
     def make_query(self, params):
         """Create query considering ``query_whitelist``.
@@ -530,23 +486,26 @@ class BatchedItems(Tile):
             ``self.related_view`` to URL.
         :return: URL as string.
         """
-        return safe_decode(make_url(
-            self.request,
-            path=path,
-            node=None if path else self.model,
-            resource=self.related_view if include_view else None,
-            query=self.make_query(params)))
+        return safe_decode(
+            make_url(
+                self.request,
+                path=path,
+                node=None if path else self.model,
+                resource=self.related_view if include_view else None,
+                query=self.make_query(params),
+            )
+        )
 
     @property
     def item_count(self):
-        """Overall slice items count.
-        """
+        """Overall slice items count."""
         raise NotImplementedError(
-            "Abstract ``BatchedItems`` does not implement ``item_count``")
+            'Abstract ``BatchedItems`` does not implement ``item_count``'
+        )
 
     @property
     def slice_items(self):
-        """Current slice items.
-        """
+        """Current slice items."""
         raise NotImplementedError(
-            "Abstract ``BatchedItems`` does not implement ``items``")
+            'Abstract ``BatchedItems`` does not implement ``items``'
+        )

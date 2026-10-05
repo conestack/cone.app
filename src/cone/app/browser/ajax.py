@@ -68,7 +68,7 @@ def ajax_tile(model, request):
             mode='NONE',
             selector='NONE',
             payload='',
-            continuation=continuation.operations
+            continuation=continuation.operations,
         )
 
 
@@ -103,12 +103,19 @@ def ajax_status_message(request, payload, css=None, title=None):
 
 
 class AjaxPath:
-    """Ajax path continuation operation.
-    """
+    """Ajax path continuation operation."""
 
-    def __init__(self, path, target=None, action=None, event=None,
-                 overlay=None, overlay_css=None, overlay_uid=None,
-                 overlay_title=None):
+    def __init__(
+        self,
+        path,
+        target=None,
+        action=None,
+        event=None,
+        overlay=None,
+        overlay_css=None,
+        overlay_uid=None,
+        overlay_title=None,
+    ):
         """Create ajax path continuation operation.
 
         :param path: Browser path to be set.
@@ -139,13 +146,12 @@ class AjaxPath:
             'overlay': self.overlay,
             'overlay_css': self.overlay_css,
             'overlay_uid': self.overlay_uid,
-            'overlay_title': self.overlay_title
+            'overlay_title': self.overlay_title,
         }
 
 
 class AjaxAction:
-    """Ajax action continuation operation.
-    """
+    """Ajax action continuation operation."""
 
     def __init__(self, target, name, mode, selector):
         """Create ajax action continuation operation.
@@ -166,13 +172,12 @@ class AjaxAction:
             'target': self.target,
             'name': self.name,
             'mode': self.mode,
-            'selector': self.selector
+            'selector': self.selector,
         }
 
 
 class AjaxEvent:
-    """Ajax event continuation operation.
-    """
+    """Ajax event continuation operation."""
 
     def __init__(self, target, name, selector, data=None):
         """Create ajax event continuation operation.
@@ -193,13 +198,12 @@ class AjaxEvent:
             'target': self.target,
             'name': self.name,
             'selector': self.selector,
-            'data': self.data
+            'data': self.data,
         }
 
 
 class AjaxMessage:
-    """Ajax message continuation operation.
-    """
+    """Ajax message continuation operation."""
 
     def __init__(self, payload, flavor, selector, css='', title=None):
         """Create ajax message continuation operation.
@@ -223,17 +227,24 @@ class AjaxMessage:
             'flavor': self.flavor,
             'selector': self.selector,
             'css': self.css,
-            'title': self.title
+            'title': self.title,
         }
 
 
 class AjaxOverlay:
-    """Ajax overlay continuation operation.
-    """
+    """Ajax overlay continuation operation."""
 
-    def __init__(self, selector=None, action=None, target=None,
-                 close=False, content_selector=None, css=None, uid=None,
-                 title=None):
+    def __init__(
+        self,
+        selector=None,
+        action=None,
+        target=None,
+        close=False,
+        content_selector=None,
+        css=None,
+        uid=None,
+        title=None,
+    ):
         """Create ajax overlay continuation operation.
 
         :param action: Name of action which should be displayed in overlay.
@@ -266,35 +277,31 @@ class AjaxOverlay:
             'close': self.close,
             'css': self.css,
             'uid': self.uid,
-            'title': self.title
+            'title': self.title,
         }
 
 
 class AjaxContinue:
-    """Ajax continuation operations provider.
-    """
+    """Ajax continuation operations provider."""
 
     def __init__(self, operations):
         self._operations = operations
 
     @property
     def operations(self):
-        """Continuation operations as list of dicts for JSON serialization.
-        """
+        """Continuation operations as list of dicts for JSON serialization."""
         if self._operations is None:
             return []
         return [op.as_json() for op in self._operations]
 
     def dump(self):
-        """JSON dump of continuation operations.
-        """
+        """JSON dump of continuation operations."""
         ret = self.operations
         return json.dumps(ret)
 
 
 class AjaxFormContinue(AjaxContinue):
-    """Ajax form continuation operation computing. Used by ``render_ajax_form``.
-    """
+    """Ajax form continuation operation computing. Used by ``render_ajax_form``."""
 
     def __init__(self, result, operations):
         self.result = result
@@ -302,16 +309,14 @@ class AjaxFormContinue(AjaxContinue):
 
     @property
     def form(self):
-        """Return rendered form tile result if no continuation operations.
-        """
+        """Return rendered form tile result if no continuation operations."""
         if not self._operations:
             return self.result
         return ''
 
     @property
     def next(self):
-        """JSON dump of ajax continuation operations.
-        """
+        """JSON dump of ajax continuation operations."""
         return self.dump()
 
 
@@ -345,8 +350,7 @@ ajax_form_template = """\
 
 
 def render_ajax_form(model, request, name):
-    """Render ajax form.
-    """
+    """Render ajax form."""
     try:
         result = render_tile(model, request, name)
         selector = request.environ.get('cone.app.form.selector', '#content')
@@ -359,7 +363,7 @@ def render_ajax_form(model, request, name):
             selector=selector,
             mode=mode,
             next=form_continue.next,
-            error='false'
+            error='false',
         )
         request.response.body = safe_encode(rendered)
         return request.response
@@ -376,6 +380,6 @@ def render_ajax_form(model, request, name):
             selector=selector,
             mode=mode,
             next=form_continue.next,
-            error='true'
+            error='true',
         )
         return Response(rendered)

@@ -80,9 +80,9 @@ class InterfaceWorkflowNode(BaseNode):
     Attributes,
     DefaultInit,
     MappingNode,
-    OdictStorage)
+    OdictStorage,
+)
 class SharingNode:
-
     @property
     def __acl__(self):
         return DEFAULT_ACL
@@ -94,7 +94,6 @@ class SharingNode:
 
 @plumbing(CopySupport)
 class CopySupportNode(BaseNode):
-
     def __init__(self, name=None, parent=None):
         super(CopySupportNode, self).__init__(name=name, parent=parent)
         self.messages = []
@@ -106,6 +105,7 @@ class CopySupportNode(BaseNode):
 ###############################################################################
 # B/C
 ###############################################################################
+
 
 @implementer(ILayout)
 @adapter(Interface)
@@ -121,7 +121,6 @@ def default_layout(context):
 
 
 class LayoutConfigNode(BaseNode):
-
     @property
     def layout(self):
         return default_layout(self)

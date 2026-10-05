@@ -60,27 +60,72 @@ class TestModel(NodeTestCase):
     def test_BaseNode(self):
         # Default permissions.
         root = BaseNode()
-        self.assertEqual(root.__acl__, [
-            ('Allow', 'system.Authenticated', ['view']),
-            ('Allow', 'role:viewer', ['view', 'list']),
-            ('Allow', 'role:editor', [
-                'view', 'list', 'add', 'edit', 'change_order'
-            ]),
-            ('Allow', 'role:admin', [
-                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-                'copy', 'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'role:manager', [
-                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-                'copy', 'paste', 'manage_permissions', 'change_state', 'manage'
-            ]),
-            ('Allow', 'role:owner', [
-                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-                'copy', 'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'system.Everyone', ['login']),
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        ])
+        self.assertEqual(
+            root.__acl__,
+            [
+                ('Allow', 'system.Authenticated', ['view']),
+                ('Allow', 'role:viewer', ['view', 'list']),
+                (
+                    'Allow',
+                    'role:editor',
+                    ['view', 'list', 'add', 'edit', 'change_order'],
+                ),
+                (
+                    'Allow',
+                    'role:admin',
+                    [
+                        'view',
+                        'list',
+                        'add',
+                        'edit',
+                        'change_order',
+                        'delete',
+                        'cut',
+                        'copy',
+                        'paste',
+                        'manage_permissions',
+                        'change_state',
+                    ],
+                ),
+                (
+                    'Allow',
+                    'role:manager',
+                    [
+                        'view',
+                        'list',
+                        'add',
+                        'edit',
+                        'change_order',
+                        'delete',
+                        'cut',
+                        'copy',
+                        'paste',
+                        'manage_permissions',
+                        'change_state',
+                        'manage',
+                    ],
+                ),
+                (
+                    'Allow',
+                    'role:owner',
+                    [
+                        'view',
+                        'list',
+                        'add',
+                        'edit',
+                        'change_order',
+                        'delete',
+                        'cut',
+                        'copy',
+                        'paste',
+                        'manage_permissions',
+                        'change_state',
+                    ],
+                ),
+                ('Allow', 'system.Everyone', ['login']),
+                ('Deny', 'system.Everyone', ALL_PERMISSIONS),
+            ],
+        )
 
         # Properties
         props = root.properties
@@ -129,7 +174,8 @@ class TestModel(NodeTestCase):
         @node_info(
             name='test_settings_node',
             title='Test Settings',
-            description='Test Settings Description')
+            description='Test Settings Description',
+        )
         class TestSettingsNode(SettingsNode):
             pass
 
@@ -157,6 +203,7 @@ class TestModel(NodeTestCase):
             factories = odict()
             factories['foo'] = BaseNode
             factories['bar'] = BaseNode
+
         node = TestFactoryNode()
 
         # static factories
@@ -252,19 +299,21 @@ class TestModel(NodeTestCase):
         self.assertEqual(metadata.get('creator'), 'john doe')
 
         # internal data
-        self.assertEqual(o_getattr(metadata, '_data'), {
-            'creator': 'john doe',
-            'description': 'some description',
-            'title': 'some title'
-        })
+        self.assertEqual(
+            o_getattr(metadata, '_data'),
+            {
+                'creator': 'john doe',
+                'description': 'some description',
+                'title': 'some title',
+            },
+        )
 
         # ``__copy__``
         metadata_copy = copy.copy(metadata)
         self.assertFalse(metadata_copy is metadata)
         self.assertEqual(metadata_copy.__class__, Metadata)
         self.assertEqual(
-            o_getattr(metadata_copy, '_data'),
-            o_getattr(metadata, '_data')
+            o_getattr(metadata_copy, '_data'), o_getattr(metadata, '_data')
         )
 
         # ``__deepcopy__``
@@ -272,8 +321,7 @@ class TestModel(NodeTestCase):
         self.assertFalse(metadata_deepcopy is metadata)
         self.assertEqual(metadata_deepcopy.__class__, Metadata)
         self.assertEqual(
-            o_getattr(metadata_deepcopy, '_data'),
-            o_getattr(metadata, '_data')
+            o_getattr(metadata_deepcopy, '_data'), o_getattr(metadata, '_data')
         )
 
     @testing.reset_node_info_registry
@@ -319,22 +367,24 @@ class TestModel(NodeTestCase):
         self.assertTrue(nodeinfo.get('node') is BaseNode)
 
         # internal data
-        self.assertEqual(o_getattr(nodeinfo, '_data'), {
-            'addables': ['basenode'],
-            'description': 'Base Node Description',
-            'factory': None,
-            'icon': 'base-node-icon',
-            'node': BaseNode,
-            'title': 'Base Node'
-        })
+        self.assertEqual(
+            o_getattr(nodeinfo, '_data'),
+            {
+                'addables': ['basenode'],
+                'description': 'Base Node Description',
+                'factory': None,
+                'icon': 'base-node-icon',
+                'node': BaseNode,
+                'title': 'Base Node',
+            },
+        )
 
         # ``__copy__``
         nodeinfo_copy = copy.copy(nodeinfo)
         self.assertFalse(nodeinfo_copy is nodeinfo)
         self.assertEqual(nodeinfo_copy.__class__, NodeInfo)
         self.assertEqual(
-            o_getattr(nodeinfo_copy, '_data'),
-            o_getattr(nodeinfo, '_data')
+            o_getattr(nodeinfo_copy, '_data'), o_getattr(nodeinfo, '_data')
         )
 
         # ``__deepcopy__``
@@ -342,8 +392,7 @@ class TestModel(NodeTestCase):
         self.assertFalse(nodeinfo_deepcopy is nodeinfo)
         self.assertEqual(nodeinfo_deepcopy.__class__, NodeInfo)
         self.assertEqual(
-            o_getattr(nodeinfo_deepcopy, '_data'),
-            o_getattr(nodeinfo, '_data')
+            o_getattr(nodeinfo_deepcopy, '_data'), o_getattr(nodeinfo, '_data')
         )
 
     @testing.reset_node_info_registry
@@ -355,7 +404,8 @@ class TestModel(NodeTestCase):
             factory=None,
             icon='icon',
             addables=['othernode'],
-            custom_prop='custom_value')
+            custom_prop='custom_value',
+        )
         class MyNode(BaseNode):
             pass
 
@@ -380,6 +430,7 @@ class TestModel(NodeTestCase):
         class as a shared registry instance, and it would surface as a node
         offering a child it was never configured for.
         """
+
         @node_info(name='first')
         class First(BaseNode):
             pass
@@ -426,16 +477,10 @@ class TestModel(NodeTestCase):
 
         root = BaseNode()
         root['ns_node'] = node
-        self.assertEqual(
-            node.uuid,
-            uuid.UUID('44b1c59f-9de5-55d9-8e6f-4d6390be6ecd')
-        )
+        self.assertEqual(node.uuid, uuid.UUID('44b1c59f-9de5-55d9-8e6f-4d6390be6ecd'))
 
         node.uuid_namespace = uuid.UUID('d737ada9-d400-486a-8795-57fedf05bb9f')
-        self.assertEqual(
-            node.uuid,
-            uuid.UUID('c3861feb-bb1d-542d-a18f-e864146fea4d')
-        )
+        self.assertEqual(node.uuid, uuid.UUID('c3861feb-bb1d-542d-a18f-e864146fea4d'))
 
     def test_UUIDAttributeAware(self):
         @plumbing(UUIDAttributeAware)
@@ -466,26 +511,32 @@ class TestModel(NodeTestCase):
         node[child.name][sub.name] = sub
         sub = UUIDAsNameNode()
         node[child.name][sub.name] = sub
-        self.checkOutput("""\
+        self.checkOutput(
+            """\
         <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
             <class '...UUIDAsNameNode'>: ...
             <class '...UUIDAsNameNode'>: ...
-        """, node.treerepr())
+        """,
+            node.treerepr(),
+        )
 
         with self.assertRaises(RuntimeError) as arc:
             node[child.name].copy()
         self.assertEqual(
             str(arc.exception),
-            'Shallow copy useless on UUID aware node trees, use deepcopy.'
+            'Shallow copy useless on UUID aware node trees, use deepcopy.',
         )
 
         copy = child.deepcopy()
-        self.checkOutput("""\
+        self.checkOutput(
+            """\
         <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
           <class '...UUIDAsNameNode'>: ...
-        """, copy.treerepr())
+        """,
+            copy.treerepr(),
+        )
 
         self.assertFalse(copy.uuid == child.uuid)
         self.assertFalse(sorted(copy.keys()) == sorted(child.keys()))
@@ -500,7 +551,8 @@ class TestModel(NodeTestCase):
             DefaultInit,
             MappingNode,
             DictStorage,
-            UUIDAsName)
+            UUIDAsName,
+        )
         class UnorderedUUIDAsNameNode:
             pass
 
@@ -569,18 +621,12 @@ class TestModel(NodeTestCase):
         props_copy = copy.copy(props)
         self.assertFalse(props_copy is props)
         self.assertEqual(props_copy.__class__, Properties)
-        self.assertEqual(
-            o_getattr(props_copy, '_data'),
-            o_getattr(props, '_data')
-        )
+        self.assertEqual(o_getattr(props_copy, '_data'), o_getattr(props, '_data'))
 
         props_deepcopy = copy.deepcopy(props)
         self.assertFalse(props_deepcopy is props)
         self.assertEqual(props_deepcopy.__class__, Properties)
-        self.assertEqual(
-            o_getattr(props_deepcopy, '_data'),
-            o_getattr(props, '_data')
-        )
+        self.assertEqual(o_getattr(props_deepcopy, '_data'), o_getattr(props, '_data'))
 
     def test_ProtectedProperties(self):
         # Protected properties checks against permission for properties
@@ -613,8 +659,7 @@ class TestModel(NodeTestCase):
         with self.assertRaises(KeyError) as arc:
             props['viewprotected']
         self.assertEqual(
-            str(arc.exception).strip('u'),
-            '"No permission to access \'viewprotected\'"'
+            str(arc.exception).strip('u'), '"No permission to access \'viewprotected\'"'
         )
 
         self.assertTrue(props['unprotected'])
@@ -627,10 +672,7 @@ class TestModel(NodeTestCase):
             self.assertTrue(props.viewprotected)
             self.assertTrue(props.unprotected)
 
-            self.assertEqual(
-                sorted(props.keys()),
-                ['unprotected', 'viewprotected']
-            )
+            self.assertEqual(sorted(props.keys()), ['unprotected', 'viewprotected'])
             self.assertTrue(props.get('viewprotected'))
             self.assertTrue(props.get('unprotected'))
 
@@ -639,8 +681,7 @@ class TestModel(NodeTestCase):
 
         # internal data
         self.assertEqual(
-            o_getattr(props, '_data'),
-            {'unprotected': True, 'viewprotected': False}
+            o_getattr(props, '_data'), {'unprotected': True, 'viewprotected': False}
         )
         self.assertTrue(o_getattr(props, '_context') is context)
         self.assertEqual(o_getattr(props, '_permissions'), permissions)
@@ -649,10 +690,7 @@ class TestModel(NodeTestCase):
         props_copy = copy.copy(props)
         self.assertFalse(props_copy is props)
         self.assertEqual(props_copy.__class__, ProtectedProperties)
-        self.assertEqual(
-            o_getattr(props_copy, '_data'),
-            o_getattr(props, '_data')
-        )
+        self.assertEqual(o_getattr(props_copy, '_data'), o_getattr(props, '_data'))
         self.assertTrue(o_getattr(props, '_context') is context)
         self.assertEqual(o_getattr(props, '_permissions'), permissions)
 
@@ -660,10 +698,7 @@ class TestModel(NodeTestCase):
         props_deepcopy = copy.deepcopy(props)
         self.assertFalse(props_deepcopy is props)
         self.assertEqual(props_deepcopy.__class__, ProtectedProperties)
-        self.assertEqual(
-            o_getattr(props_deepcopy, '_data'),
-            o_getattr(props, '_data')
-        )
+        self.assertEqual(o_getattr(props_deepcopy, '_data'), o_getattr(props, '_data'))
         self.assertTrue(o_getattr(props, '_context') is context)
         self.assertEqual(o_getattr(props, '_permissions'), permissions)
 
@@ -674,10 +709,7 @@ class TestModel(NodeTestCase):
         tempdir = tempfile.mkdtemp()
 
         # Create XML properties with path and optional data
-        props = XMLProperties(
-            os.path.join(tempdir, 'props.xml'),
-            data={'foo': 'äöüß'}
-        )
+        props = XMLProperties(os.path.join(tempdir, 'props.xml'), data={'foo': 'äöüß'})
         self.assertTrue(IProperties.providedBy(props))
 
         # Testing helper functions
@@ -704,33 +736,36 @@ class TestModel(NodeTestCase):
         # Check file contents
         with open(os.path.join(tempdir, 'props.xml')) as file:
             lines = file.read().split('\n')
-        self.assertEqual(lines, [
-            '<properties>',
-            '  <foo>&#228;&#246;&#252;&#223;</foo>',
-            '  <effective>2010-01-01T10:15:00</effective>',
-            '  <empty></empty>',
-            '  <keywords>',
-            '    <item>a</item>',
-            '    <item>2010-01-01T10:15:00</item>',
-            '    <item></item>',
-            '  </keywords>',
-            '  <dictlike>',
-            '    <elem>',
-            '      <key>a</key>',
-            '      <value>foo</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>b</key>',
-            '      <value>bar</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>c</key>',
-            '      <value></value>',
-            '    </elem>',
-            '  </dictlike>',
-            '</properties>',
-            ''
-        ])
+        self.assertEqual(
+            lines,
+            [
+                '<properties>',
+                '  <foo>&#228;&#246;&#252;&#223;</foo>',
+                '  <effective>2010-01-01T10:15:00</effective>',
+                '  <empty></empty>',
+                '  <keywords>',
+                '    <item>a</item>',
+                '    <item>2010-01-01T10:15:00</item>',
+                '    <item></item>',
+                '  </keywords>',
+                '  <dictlike>',
+                '    <elem>',
+                '      <key>a</key>',
+                '      <value>foo</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>b</key>',
+                '      <value>bar</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>c</key>',
+                '      <value></value>',
+                '    </elem>',
+                '  </dictlike>',
+                '</properties>',
+                '',
+            ],
+        )
 
         # Overwrite ``foo`` and add ``bar`` properties; Note that even markup
         # can be used safely
@@ -741,40 +776,42 @@ class TestModel(NodeTestCase):
         props()
         with open(os.path.join(tempdir, 'props.xml')) as file:
             lines = file.read().split('\n')
-        self.assertEqual(lines, [
-            '<properties>',
-            '  <foo>foo</foo>',
-            '  <effective>2010-01-01T10:15:00</effective>',
-            '  <empty></empty>',
-            '  <keywords>',
-            '    <item>a</item>',
-            '    <item>2010-01-01T10:15:00</item>',
-            '    <item></item>',
-            '  </keywords>',
-            '  <dictlike>',
-            '    <elem>',
-            '      <key>a</key>',
-            '      <value>foo</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>b</key>',
-            '      <value>bar</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>c</key>',
-            '      <value></value>',
-            '    </elem>',
-            '  </dictlike>',
-            '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
-            '</properties>',
-            ''
-        ])
+        self.assertEqual(
+            lines,
+            [
+                '<properties>',
+                '  <foo>foo</foo>',
+                '  <effective>2010-01-01T10:15:00</effective>',
+                '  <empty></empty>',
+                '  <keywords>',
+                '    <item>a</item>',
+                '    <item>2010-01-01T10:15:00</item>',
+                '    <item></item>',
+                '  </keywords>',
+                '  <dictlike>',
+                '    <elem>',
+                '      <key>a</key>',
+                '      <value>foo</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>b</key>',
+                '      <value>bar</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>c</key>',
+                '      <value></value>',
+                '    </elem>',
+                '  </dictlike>',
+                '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
+                '</properties>',
+                '',
+            ],
+        )
 
         # Create XML properties from existing file
         props = XMLProperties(os.path.join(tempdir, 'props.xml'))
         self.assertEqual(
-            props._keys(),
-            ['foo', 'effective', 'empty', 'keywords', 'dictlike', 'bar']
+            props._keys(), ['foo', 'effective', 'empty', 'keywords', 'dictlike', 'bar']
         )
 
         self.assertEqual(
@@ -785,127 +822,117 @@ class TestModel(NodeTestCase):
                 '',
                 ['a', datetime(2010, 1, 1, 10, 15), ''],
                 odict([('a', 'foo'), ('b', 'bar'), ('c', None)]),
-                '<bar>äöü</bar>'
-            ]
+                '<bar>äöü</bar>',
+            ],
         )
 
         # Delete property
         del props['foo']
         self.assertEqual(
-            props._keys(),
-            ['effective', 'empty', 'keywords', 'dictlike', 'bar']
+            props._keys(), ['effective', 'empty', 'keywords', 'dictlike', 'bar']
         )
 
         with self.assertRaises(KeyError) as arc:
             props.__delitem__('inexistent')
         self.assertEqual(
-            str(arc.exception).strip('u'),
-            "'property inexistent does not exist'"
+            str(arc.exception).strip('u'), "'property inexistent does not exist'"
         )
 
         # Call and check results
         props()
         with open(os.path.join(tempdir, 'props.xml')) as file:
             lines = file.read().split('\n')
-        self.assertEqual(lines, [
-            '<properties>',
-            '  <effective>2010-01-01T10:15:00</effective>',
-            '  <empty></empty>',
-            '  <keywords>',
-            '    <item>a</item>',
-            '    <item>2010-01-01T10:15:00</item>',
-            '    <item></item>',
-            '  </keywords>',
-            '  <dictlike>',
-            '    <elem>',
-            '      <key>a</key>',
-            '      <value>foo</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>b</key>',
-            '      <value>bar</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>c</key>',
-            '      <value>None</value>',
-            '    </elem>',
-            '  </dictlike>',
-            '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
-            '</properties>',
-            ''
-        ])
+        self.assertEqual(
+            lines,
+            [
+                '<properties>',
+                '  <effective>2010-01-01T10:15:00</effective>',
+                '  <empty></empty>',
+                '  <keywords>',
+                '    <item>a</item>',
+                '    <item>2010-01-01T10:15:00</item>',
+                '    <item></item>',
+                '  </keywords>',
+                '  <dictlike>',
+                '    <elem>',
+                '      <key>a</key>',
+                '      <value>foo</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>b</key>',
+                '      <value>bar</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>c</key>',
+                '      <value>None</value>',
+                '    </elem>',
+                '  </dictlike>',
+                '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
+                '</properties>',
+                '',
+            ],
+        )
 
         # Change order of odict and check results
         props.dictlike = odict([('b', 'bar'), ('a', 'foo')])
         props()
         with open(os.path.join(tempdir, 'props.xml')) as file:
             lines = file.read().split('\n')
-        self.assertEqual(lines, [
-            '<properties>',
-            '  <effective>2010-01-01T10:15:00</effective>',
-            '  <empty></empty>',
-            '  <keywords>',
-            '    <item>a</item>',
-            '    <item>2010-01-01T10:15:00</item>',
-            '    <item></item>',
-            '  </keywords>',
-            '  <dictlike>',
-            '    <elem>',
-            '      <key>b</key>',
-            '      <value>bar</value>',
-            '    </elem>',
-            '    <elem>',
-            '      <key>a</key>',
-            '      <value>foo</value>',
-            '    </elem>',
-            '  </dictlike>',
-            '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
-            '</properties>',
-            ''
-        ])
+        self.assertEqual(
+            lines,
+            [
+                '<properties>',
+                '  <effective>2010-01-01T10:15:00</effective>',
+                '  <empty></empty>',
+                '  <keywords>',
+                '    <item>a</item>',
+                '    <item>2010-01-01T10:15:00</item>',
+                '    <item></item>',
+                '  </keywords>',
+                '  <dictlike>',
+                '    <elem>',
+                '      <key>b</key>',
+                '      <value>bar</value>',
+                '    </elem>',
+                '    <elem>',
+                '      <key>a</key>',
+                '      <value>foo</value>',
+                '    </elem>',
+                '  </dictlike>',
+                '  <bar>&lt;bar&gt;&#228;&#246;&#252;&lt;/bar&gt;</bar>',
+                '</properties>',
+                '',
+            ],
+        )
 
         # internal data
         self.assertTrue(o_getattr(props, '_path').endswith('props.xml'))
-        self.assertEqual(o_getattr(props, '_data'), odict([
-            ('effective', datetime(2010, 1, 1, 10, 15)),
-            ('empty', ''),
-            ('keywords', [
-                'a',
-                datetime(2010, 1, 1, 10, 15),
-                ''
-            ]),
-            ('dictlike', odict([
-                ('b', 'bar'),
-                ('a', 'foo')
-            ])),
-            ('bar', '<bar>\xe4\xf6\xfc</bar>')
-        ]))
+        self.assertEqual(
+            o_getattr(props, '_data'),
+            odict(
+                [
+                    ('effective', datetime(2010, 1, 1, 10, 15)),
+                    ('empty', ''),
+                    ('keywords', ['a', datetime(2010, 1, 1, 10, 15), '']),
+                    ('dictlike', odict([('b', 'bar'), ('a', 'foo')])),
+                    ('bar', '<bar>\xe4\xf6\xfc</bar>'),
+                ]
+            ),
+        )
 
         # ``__copy__``
         props_copy = copy.copy(props)
         self.assertFalse(props_copy is props)
         self.assertEqual(props_copy.__class__, XMLProperties)
-        self.assertEqual(
-            o_getattr(props_copy, '_data'),
-            o_getattr(props, '_data')
-        )
-        self.assertEqual(
-            o_getattr(props_copy, '_path'),
-            o_getattr(props, '_path')
-        )
+        self.assertEqual(o_getattr(props_copy, '_data'), o_getattr(props, '_data'))
+        self.assertEqual(o_getattr(props_copy, '_path'), o_getattr(props, '_path'))
 
         # ``__deepcopy__``
         props_deepcopy = copy.deepcopy(props)
         self.assertFalse(props_deepcopy is props)
         self.assertEqual(props_deepcopy.__class__, XMLProperties)
-        self.assertEqual(
-            o_getattr(props_deepcopy, '_data'),
-            o_getattr(props, '_data')
-        )
-        self.assertEqual(
-            o_getattr(props_copy, '_path'),
-            o_getattr(props, '_path')
-        )
+        self.assertEqual(o_getattr(props_deepcopy, '_data'), o_getattr(props, '_data'))
+        self.assertEqual(o_getattr(props_copy, '_path'), o_getattr(props, '_path'))
 
         # Cleanup
         shutil.rmtree(tempdir)
@@ -917,10 +944,7 @@ class TestModel(NodeTestCase):
         # Create temp directory
         tempdir = tempfile.mkdtemp()
 
-        props = ConfigProperties(
-            os.path.join(tempdir, 'props.cfg'),
-            data={'foo': 1}
-        )
+        props = ConfigProperties(os.path.join(tempdir, 'props.cfg'), data={'foo': 1})
         self.assertTrue(IProperties.providedBy(props))
 
         # Nothing added yet
@@ -944,14 +968,17 @@ class TestModel(NodeTestCase):
         props()
         with open(os.path.join(tempdir, 'props.cfg'), 'rb') as file:
             lines = file.read().split(b'\n')
-        self.assertEqual(lines, [
-            b'[properties]',
-            b'foo = foo',
-            b'bar = bar',
-            b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
-            b'',
-            b''
-        ])
+        self.assertEqual(
+            lines,
+            [
+                b'[properties]',
+                b'foo = foo',
+                b'bar = bar',
+                b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
+                b'',
+                b'',
+            ],
+        )
 
         # Create config properties from existing file
         props = ConfigProperties(os.path.join(tempdir, 'props.cfg'))
@@ -976,8 +1003,7 @@ class TestModel(NodeTestCase):
         with self.assertRaises(KeyError) as arc:
             del props['inexistent']
         self.assertEqual(
-            str(arc.exception).strip('u'),
-            "'property inexistent does not exist'"
+            str(arc.exception).strip('u'), "'property inexistent does not exist'"
         )
 
         del props['foo']
@@ -987,13 +1013,16 @@ class TestModel(NodeTestCase):
         props()
         with open(os.path.join(tempdir, 'props.cfg'), 'rb') as file:
             lines = file.read().split(b'\n')
-        self.assertEqual(lines, [
-            b'[properties]',
-            b'bar = bar',
-            b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
-            b'',
-            b''
-        ])
+        self.assertEqual(
+            lines,
+            [
+                b'[properties]',
+                b'bar = bar',
+                b'baz = \xc3\xa4\xc3\xb6\xc3\xbc',
+                b'',
+                b'',
+            ],
+        )
         del props['baz']
 
         props = ConfigProperties(os.path.join(tempdir, 'config.cfg'))
@@ -1008,26 +1037,15 @@ class TestModel(NodeTestCase):
         props_copy = copy.copy(props)
         self.assertFalse(props_copy is props)
         self.assertEqual(props_copy.__class__, ConfigProperties)
-        self.assertEqual(
-            o_getattr(props_copy, '_data'),
-            o_getattr(props, '_data')
+        self.assertEqual(o_getattr(props_copy, '_data'), o_getattr(props, '_data'))
+        self.assertEqual(o_getattr(props_copy, '_path'), o_getattr(props, '_path'))
+        self.assertTrue(
+            isinstance(o_getattr(props_copy, '_config'), configparser.ConfigParser)
         )
-        self.assertEqual(
-            o_getattr(props_copy, '_path'),
-            o_getattr(props, '_path')
-        )
-        self.assertTrue(isinstance(
-            o_getattr(props_copy, '_config'),
-            configparser.ConfigParser
-        ))
         strio = StringIO()
         props_copy.config().write(strio)
         strio.seek(0)
-        self.assertEqual(strio.readlines(), [
-            '[properties]\n',
-            'foo = foo\n',
-            '\n'
-        ])
+        self.assertEqual(strio.readlines(), ['[properties]\n', 'foo = foo\n', '\n'])
 
         # ``__deepcopy__``
         props_deepcopy = copy.deepcopy(props)
@@ -1037,22 +1055,14 @@ class TestModel(NodeTestCase):
             o_getattr(props_deepcopy, '_data'),
             o_getattr(props, '_data'),
         )
-        self.assertEqual(
-            o_getattr(props_deepcopy, '_path'),
-            o_getattr(props, '_path')
+        self.assertEqual(o_getattr(props_deepcopy, '_path'), o_getattr(props, '_path'))
+        self.assertTrue(
+            isinstance(o_getattr(props_copy, '_config'), configparser.ConfigParser)
         )
-        self.assertTrue(isinstance(
-            o_getattr(props_copy, '_config'),
-            configparser.ConfigParser
-        ))
         strio = StringIO()
         props_deepcopy.config().write(strio)
         strio.seek(0)
-        self.assertEqual(strio.readlines(), [
-            '[properties]\n',
-            'foo = foo\n',
-            '\n'
-        ])
+        self.assertEqual(strio.readlines(), ['[properties]\n', 'foo = foo\n', '\n'])
 
         # Cleanup
         shutil.rmtree(tempdir)

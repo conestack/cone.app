@@ -89,14 +89,16 @@ class TestBrowserActions(TileTestCase):
         with self.assertRaises(NotImplementedError) as arc:
             Action()(model, request)
         self.assertEqual(
-            str(arc.exception),
-            'Abstract ``Action`` does not implement render.'
+            str(arc.exception), 'Abstract ``Action`` does not implement render.'
         )
 
         result = TileAction()(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Tile with name '' not found:...
-        """, result)
+        """,
+            result,
+        )
 
         with self.assertRaises(ValueError) as arc:
             TemplateAction()(model, request)
@@ -106,22 +108,19 @@ class TestBrowserActions(TileTestCase):
             def render(self):
                 return '<a href="">dummy action</a>'
 
-        self.assertEqual(
-            DummyAction()(model, request),
-            '<a href="">dummy action</a>'
-        )
+        self.assertEqual(DummyAction()(model, request), '<a href="">dummy action</a>')
 
         class DummyTemplateAction(TemplateAction):
             template = 'cone.app.testing:dummy_action.pt'
 
         self.assertEqual(
             DummyTemplateAction()(model, request),
-            '<a href="">dummy template action</a>'
+            '<a href="">dummy template action</a>',
         )
 
         with self.layer.hook_tile_reg():
-            @tile(name='dummy_action_tile',
-                  path='cone.app.testing:dummy_action.pt')
+
+            @tile(name='dummy_action_tile', path='cone.app.testing:dummy_action.pt')
             class DummyActionTile(Tile):
                 pass
 
@@ -131,7 +130,7 @@ class TestBrowserActions(TileTestCase):
         with self.layer.authenticated('viewer'):
             self.assertEqual(
                 DummyTileAction()(model, request),
-                '<a href="">dummy template action</a>'
+                '<a href="">dummy template action</a>',
             )
 
     def test_Toolbar(self):
@@ -147,14 +146,13 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('viewer'):
             self.assertEqual(
-                tb(model, request),
-                '<div><a href="">dummy action</a></div>'
+                tb(model, request), '<div><a href="">dummy action</a></div>'
             )
 
             tb.css = 'someclass'
             self.assertEqual(
                 tb(model, request),
-                '<div class="someclass"><a href="">dummy action</a></div>'
+                '<div class="someclass"><a href="">dummy action</a></div>',
             )
 
             tb.display = False
@@ -166,16 +164,20 @@ class TestBrowserActions(TileTestCase):
 
         with self.assertRaises(NotImplementedError) as arc:
             DropdownAction()(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...Abstract ``DropdownAction`` does not implement  ``items``...
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
     def test_LinkAction(self):
         model = BaseNode()
         request = self.layer.new_request()
 
         rendered = LinkAction()(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <a
          href="#"
          data-toggle="tooltip"
@@ -184,7 +186,9 @@ class TestBrowserActions(TileTestCase):
          ajax:target="http://example.com/"
          ajax:overlay-css="modal-xl"
         ></a>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         action = LinkAction()
         action.id = 'link_id'
@@ -208,7 +212,8 @@ class TestBrowserActions(TileTestCase):
         action.path_overlay_title = 'Overlay Title'
         action.text = 'Foo'
         rendered = action(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <a
          id="link_id"
          href="http://example.com/foo"
@@ -232,7 +237,9 @@ class TestBrowserActions(TileTestCase):
          ajax:path-overlay-uid="1234"
          ajax:path-overlay-title="Overlay Title"
         >&nbsp;<span>Foo</span></a>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         action.enabled = False
         self.assertTrue(
@@ -247,12 +254,15 @@ class TestBrowserActions(TileTestCase):
         request = self.layer.new_request()
 
         rendered = ButtonAction()(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <button
           ajax:bind="click"
           ajax:target="http://example.com/">
         </button>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         action = ButtonAction()
         action.id = 'button_id'
@@ -282,7 +292,8 @@ class TestBrowserActions(TileTestCase):
         action.icon = 'button-icon'
 
         rendered = action(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <button id="button_id"
           title="Button Title"
           class="button_class"
@@ -311,7 +322,9 @@ class TestBrowserActions(TileTestCase):
           <i class="button-icon"></i>
           <span>Button Text</span>
         </button>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         action.display = False
         self.assertEqual(action(model, request), '')
@@ -329,7 +342,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-up"
             href="http://example.com/root"
@@ -340,11 +354,14 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-arrow-up"></span
             >&nbsp;<span>One level up</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             model.properties.action_up_tile = 'otherparentcontent'
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-up"
             href="http://example.com/root"
@@ -355,13 +372,16 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-arrow-up"></span
             >&nbsp;<span>One level up</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             default = model['default'] = BaseNode()
             default.properties.action_up = True
             model.properties.default_child = 'default'
             rendered = action(default, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-up"
             href="http://example.com/root"
@@ -372,7 +392,9 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-arrow-up"></span
             >&nbsp;<span>One level up</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     def test_ActionView(self):
         parent = BaseNode(name='root')
@@ -389,7 +411,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
@@ -401,11 +424,14 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-eye-fill"></span
             >&nbsp;<span>View</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             model.properties.default_content_tile = 'otherdefault'
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
@@ -416,7 +442,9 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-eye-fill"></span
             >&nbsp;<span>View</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             model.properties.default_content_tile = None
 
@@ -435,7 +463,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-view"
             href="http://example.com/root/model"
@@ -446,7 +475,9 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ajax:path="href"
             >&nbsp;<span>model</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     def test_ActionList(self):
         parent = BaseNode(name='root')
@@ -461,7 +492,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('viewer'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-list"
             href="http://example.com/root/model/listing"
@@ -472,7 +504,9 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-list-task"></span
             >&nbsp;<span>Listing</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     def test_ActionSharing(self):
         parent = BaseNode(name='root')
@@ -497,7 +531,8 @@ class TestBrowserActions(TileTestCase):
             self.assertTrue(isinstance(rule, ACLAllowed))
 
             rendered = action(sharingmodel, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-share"
             href="http://example.com/root/sharingmodel/sharing"
@@ -508,7 +543,9 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-share-fill"></span
             >&nbsp;<span>Sharing</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     def test_ActionState(self):
         parent = BaseNode(name='root')
@@ -533,14 +570,17 @@ class TestBrowserActions(TileTestCase):
             self.assertTrue(isinstance(rule, ACLAllowed))
 
             rendered = action(wfmodel, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<li class="nav-item dropdown py-0">...
             <a href="#"
             class="dropdown-item"
             ajax:bind="click"
             ajax:target="http://example.com/root/wfmodel?do_transition=initial_2_final"
             ajax:action="wf_dropdown:NONE:NONE">initial_2_final</a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     @testing.reset_node_info_registry
     def test_ActionAdd(self):
@@ -570,7 +610,8 @@ class TestBrowserActions(TileTestCase):
             self.assertTrue(addmodel.nodeinfo is info)
 
             rendered = action(addmodel, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<li class="nav-item dropdown py-0">
             <a href="#"
             class="nav-link dropdown-toggle py-2 px-3"
@@ -592,7 +633,9 @@ class TestBrowserActions(TileTestCase):
             </li>
             </ul>
             </li>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     def test_ActionEdit(self):
         parent = BaseNode(name='root')
@@ -612,7 +655,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('editor'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-edit"
             href="http://example.com/root/model/edit"
@@ -623,7 +667,9 @@ class TestBrowserActions(TileTestCase):
             ajax:path="href"
             ><span class="bi-pencil"></span
             >&nbsp;<span>Edit</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
     def test_ActionDelete(self):
         parent = BaseNode(name='root')
@@ -643,7 +689,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-delete"
             href="#"
@@ -654,7 +701,9 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-trash3"></span
             >&nbsp;<span>Delete</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             model.properties.default_content_tile = 'othertile'
             self.assertEqual(action(model, request), '')
@@ -675,7 +724,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-delete-children"
             href="#"
@@ -687,11 +737,14 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-trash3"></span
             >&nbsp;<span>Delete selected children</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             request.cookies['cone.app.selected'] = ['foo']
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-delete-children"
             href="#"
@@ -702,7 +755,9 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-trash3"></span
             >&nbsp;<span>Delete selected children</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             del request.cookies['cone.app.selected']
 
@@ -722,7 +777,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-cut"
             href="#"
@@ -730,7 +786,9 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-scissors"></span
             >&nbsp;<span>Cut</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             model.supports_cut = False
             self.assertEqual(action(model, request), '')
@@ -750,7 +808,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-copy"
             href="#"
@@ -758,7 +817,9 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-copy"></span
             >&nbsp;<span>Copy</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             model.supports_copy = False
             self.assertEqual(action(model, request), '')
@@ -778,7 +839,8 @@ class TestBrowserActions(TileTestCase):
 
         with self.layer.authenticated('manager'):
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-paste"
             href="#"
@@ -787,11 +849,14 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-clipboard"></span
             >&nbsp;<span>Paste</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             request.cookies['cone.app.copysupport.cut'] = ['foo']
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-paste"
             href="#"
@@ -799,12 +864,15 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-clipboard"></span
             >&nbsp;<span>Paste</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             del request.cookies['cone.app.copysupport.cut']
             request.cookies['cone.app.copysupport.copy'] = ['foo']
             rendered = action(model, request)
-            self.checkOutput("""
+            self.checkOutput(
+                """
             ...<a
             id="toolbaraction-paste"
             href="#"
@@ -812,7 +880,9 @@ class TestBrowserActions(TileTestCase):
             ajax:overlay-css="modal-xl"
             ><span class="bi-clipboard"></span
             >&nbsp;<span>Paste</span></a>...
-            """, rendered)
+            """,
+                rendered,
+            )
 
             del request.cookies['cone.app.copysupport.copy']
 
@@ -849,10 +919,7 @@ class TestBrowserActions(TileTestCase):
         self.assertEqual(action.target, 'http://example.com/child')
         request.params['size'] = '10'
         request.params['b_page'] = '1'
-        self.assertEqual(
-            action.target,
-            'http://example.com/child?b_page=1&size=10'
-        )
+        self.assertEqual(action.target, 'http://example.com/child?b_page=1&size=10')
 
     def test_ActionMoveUp(self):
         action = ActionMoveUp()

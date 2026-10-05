@@ -30,14 +30,17 @@ class TestBrowserBatch(TileTestCase):
         # Instanciate directly, base tests
         batch = Batch(None, 'render', 'batch')
         # The dummy page
-        self.assertEqual(sorted(batch.dummypage.items()), [
-            ('current', False),
-            ('href', ''),
-            ('page', ''),
-            ('target', ''),
-            ('url', ''),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.dummypage.items()),
+            [
+                ('current', False),
+                ('href', ''),
+                ('page', ''),
+                ('target', ''),
+                ('url', ''),
+                ('visible', False),
+            ],
+        )
         # Ellipsis to display if ``batchrange`` exceeds
         self.assertEqual(batch.ellipsis, '...')
         # By default empty ``vocab``, subclass must override
@@ -68,6 +71,7 @@ class TestBrowserBatch(TileTestCase):
             @property
             def currentpage(self):
                 return self.dummypage
+
         self.assertEqual(BuggyBatch()._position_of_current_in_vocab, -1)
 
     def test_batch(self):
@@ -87,31 +91,39 @@ class TestBrowserBatch(TileTestCase):
         # Test with all pages invisible
         batch = DummyBatch(None, 'render', 'batch')
         for i in range(3):
-            batch._vocab.append({
-                'current': False,
-                'visible': False,
-                'page': str(i),
-                'href': 'http://example.com/someview',
-                'target': 'http://example.com/'
-            })
+            batch._vocab.append(
+                {
+                    'current': False,
+                    'visible': False,
+                    'page': str(i),
+                    'href': 'http://example.com/someview',
+                    'target': 'http://example.com/',
+                }
+            )
 
         # If no visible page, ``firstpage`` returns first page from vocab
-        self.assertEqual(sorted(batch.firstpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '0'),
-            ('target', 'http://example.com/'),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.firstpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '0'),
+                ('target', 'http://example.com/'),
+                ('visible', False),
+            ],
+        )
 
         # If no visible page, ``lastpage`` returns last page from vocab
-        self.assertEqual(sorted(batch.lastpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '2'),
-            ('target', 'http://example.com/'),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.lastpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '2'),
+                ('target', 'http://example.com/'),
+                ('visible', False),
+            ],
+        )
 
         # No visible pages in vocab return ``dummypage`` on prevpage and
         # nextpage
@@ -121,13 +133,15 @@ class TestBrowserBatch(TileTestCase):
         # Test with visible pages
         batch._vocab = list()
         for i in range(5):
-            batch._vocab.append({
-                'current': False,
-                'visible': True,
-                'href': 'http://example.com/someview',
-                'target': 'http://example.com/',
-                'page': str(i),
-            })
+            batch._vocab.append(
+                {
+                    'current': False,
+                    'visible': True,
+                    'href': 'http://example.com/someview',
+                    'target': 'http://example.com/',
+                    'page': str(i),
+                }
+            )
         batch._vocab[1]['visible'] = False
         batch._vocab[3]['visible'] = False
 
@@ -135,86 +149,110 @@ class TestBrowserBatch(TileTestCase):
         batch._vocab[0]['current'] = True
 
         # First vocab item is visible, ``firstpage`` returns it
-        self.assertEqual(sorted(batch.firstpage.items()), [
-            ('current', True),
-            ('href', 'http://example.com/someview'),
-            ('page', '0'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.firstpage.items()),
+            [
+                ('current', True),
+                ('href', 'http://example.com/someview'),
+                ('page', '0'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Last vocab item is visible, ``lastpage`` returns it
-        self.assertEqual(sorted(batch.lastpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '4'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.lastpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '4'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # First item is selected, ``prevpage`` returns dummy page
-        self.assertEqual(sorted(batch.prevpage.items()), [
-            ('current', False),
-            ('href', ''),
-            ('page', ''),
-            ('target', ''),
-            ('url', ''),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.prevpage.items()),
+            [
+                ('current', False),
+                ('href', ''),
+                ('page', ''),
+                ('target', ''),
+                ('url', ''),
+                ('visible', False),
+            ],
+        )
 
         # ``nextpage`` returns next visible page, vocab[1] is skipped
-        self.assertEqual(sorted(batch.nextpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '2'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.nextpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '2'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Set last page current
         batch._vocab[0]['current'] = False
         batch._vocab[-1]['current'] = True
 
         # ``prevpage`` returns next visible page, vocab[3] is skipped
-        self.assertEqual(sorted(batch.prevpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '2'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.prevpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '2'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Last item is selected, ``nextpage`` returns dummy page
-        self.assertEqual(sorted(batch.nextpage.items()), [
-            ('current', False),
-            ('href', ''),
-            ('page', ''),
-            ('target', ''),
-            ('url', ''),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.nextpage.items()),
+            [
+                ('current', False),
+                ('href', ''),
+                ('page', ''),
+                ('target', ''),
+                ('url', ''),
+                ('visible', False),
+            ],
+        )
 
         # Set third page current
         batch._vocab[-1]['current'] = False
         batch._vocab[2]['current'] = True
 
         # ``prevpage`` returns next visible page, vocab[1] is skipped
-        self.assertEqual(sorted(batch.prevpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '0'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.prevpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '0'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # ``nextpage`` returns next visible page, vocab[3] is skipped
-        self.assertEqual(sorted(batch.nextpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '4'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.nextpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '4'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Inverse visible flags
         batch._vocab[0]['visible'] = False
@@ -228,85 +266,109 @@ class TestBrowserBatch(TileTestCase):
         batch._vocab[1]['current'] = True
 
         # ``firstpage`` returns first visible page
-        self.assertEqual(sorted(batch.firstpage.items()), [
-            ('current', True),
-            ('href', 'http://example.com/someview'),
-            ('page', '1'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.firstpage.items()),
+            [
+                ('current', True),
+                ('href', 'http://example.com/someview'),
+                ('page', '1'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # ``lastpage`` returns last visible page
-        self.assertEqual(sorted(batch.lastpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '3'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.lastpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '3'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Selected page is first visible page, ``prevpage`` returns dummypage
-        self.assertEqual(sorted(batch.prevpage.items()), [
-            ('current', False),
-            ('href', ''),
-            ('page', ''),
-            ('target', ''),
-            ('url', ''),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.prevpage.items()),
+            [
+                ('current', False),
+                ('href', ''),
+                ('page', ''),
+                ('target', ''),
+                ('url', ''),
+                ('visible', False),
+            ],
+        )
 
         # Next visible page
-        self.assertEqual(sorted(batch.nextpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '3'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.nextpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '3'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Set fourth item selected
         batch._vocab[1]['current'] = False
         batch._vocab[3]['current'] = True
 
         # Previous visible page
-        self.assertEqual(sorted(batch.prevpage.items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '1'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.prevpage.items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '1'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         # Selected page is last visible page, ``nextpage`` returns dummypage
-        self.assertEqual(sorted(batch.nextpage.items()), [
-            ('current', False),
-            ('href', ''),
-            ('page', ''),
-            ('target', ''),
-            ('url', ''),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.nextpage.items()),
+            [
+                ('current', False),
+                ('href', ''),
+                ('page', ''),
+                ('target', ''),
+                ('url', ''),
+                ('visible', False),
+            ],
+        )
 
         # set ``batchrange`` smaller than vocab size
         batch._batchrange = 3
         self.assertEqual(len(batch.pages), 3)
 
         # Batchrange ends
-        self.assertEqual(sorted(batch.pages[0].items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '2'),
-            ('target', 'http://example.com/'),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.pages[0].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '2'),
+                ('target', 'http://example.com/'),
+                ('visible', False),
+            ],
+        )
 
-        self.assertEqual(sorted(batch.pages[-1].items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '4'),
-            ('target', 'http://example.com/'),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.pages[-1].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '4'),
+                ('target', 'http://example.com/'),
+                ('visible', False),
+            ],
+        )
 
         self.assertEqual(batch.leftellipsis, '...')
         self.assertEqual(batch.rightellipsis, '')
@@ -315,21 +377,27 @@ class TestBrowserBatch(TileTestCase):
         batch._vocab[1]['current'] = True
         batch._vocab[3]['current'] = False
 
-        self.assertEqual(sorted(batch.pages[0].items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '0'),
-            ('target', 'http://example.com/'),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.pages[0].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '0'),
+                ('target', 'http://example.com/'),
+                ('visible', False),
+            ],
+        )
 
-        self.assertEqual(sorted(batch.pages[-1].items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '2'),
-            ('target', 'http://example.com/'),
-            ('visible', False)
-        ])
+        self.assertEqual(
+            sorted(batch.pages[-1].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '2'),
+                ('target', 'http://example.com/'),
+                ('visible', False),
+            ],
+        )
 
         self.assertEqual(batch.leftellipsis, '')
         self.assertEqual(batch.rightellipsis, '...')
@@ -342,20 +410,26 @@ class TestBrowserBatch(TileTestCase):
         batch._vocab[1]['current'] = False
         batch._vocab[2]['current'] = True
 
-        self.assertEqual(sorted(batch.pages[0].items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '1'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
-        self.assertEqual(sorted(batch.pages[-1].items()), [
-            ('current', False),
-            ('href', 'http://example.com/someview'),
-            ('page', '3'),
-            ('target', 'http://example.com/'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(batch.pages[0].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '1'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
+        self.assertEqual(
+            sorted(batch.pages[-1].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/someview'),
+                ('page', '3'),
+                ('target', 'http://example.com/'),
+                ('visible', True),
+            ],
+        )
 
         self.assertEqual(batch.leftellipsis, '...')
         self.assertEqual(batch.rightellipsis, '...')
@@ -363,6 +437,7 @@ class TestBrowserBatch(TileTestCase):
     def test_batch_tile(self):
         # Register batch tile
         with self.layer.hook_tile_reg():
+
             @tile(name='testbatch')
             class TestBatch(Batch):
                 @property
@@ -373,19 +448,18 @@ class TestBrowserBatch(TileTestCase):
                     for i in range(10):
                         query = make_query(b_page=str(i))
                         href = make_url(
-                            self.request,
-                            path=path,
-                            resource='someview',
-                            query=query
+                            self.request, path=path, resource='someview', query=query
                         )
                         target = make_url(self.request, path=path, query=query)
-                        ret.append({
-                            'page': '%i' % i,
-                            'current': current == str(i),
-                            'visible': True,
-                            'href': href,
-                            'target': target,
-                        })
+                        ret.append(
+                            {
+                                'page': '%i' % i,
+                                'current': current == str(i),
+                                'visible': True,
+                                'href': href,
+                                'target': target,
+                            }
+                        )
                     return ret
 
         with self.layer.authenticated('max'):
@@ -406,6 +480,7 @@ class TestBrowserBatch(TileTestCase):
         # Test B/C batch vocab rendering::
 
         with self.layer.hook_tile_reg():
+
             @tile('bc_testbatch')
             class BCTestBatch(Batch):
                 @property
@@ -416,12 +491,14 @@ class TestBrowserBatch(TileTestCase):
                     for i in range(10):
                         query = make_query(b_page=str(i))
                         url = make_url(self.request, path=path, query=query)
-                        ret.append({
-                            'page': '%i' % i,
-                            'current': current == str(i),
-                            'visible': True,
-                            'url': url
-                        })
+                        ret.append(
+                            {
+                                'page': '%i' % i,
+                                'current': current == str(i),
+                                'visible': True,
+                                'url': url,
+                            }
+                        )
                     return ret
 
         with self.layer.authenticated('max'):
@@ -448,14 +525,13 @@ class TestBrowserBatch(TileTestCase):
             batched_items.item_count
         self.assertEqual(
             str(arc.exception),
-            'Abstract ``BatchedItems`` does not implement ``item_count``'
+            'Abstract ``BatchedItems`` does not implement ``item_count``',
         )
 
         with self.assertRaises(NotImplementedError) as arc:
             batched_items.slice_items
         self.assertEqual(
-            str(arc.exception),
-            'Abstract ``BatchedItems`` does not implement ``items``'
+            str(arc.exception), 'Abstract ``BatchedItems`` does not implement ``items``'
         )
 
         self.assertTrue(batched_items.slice_template is None)
@@ -512,7 +588,7 @@ class TestBrowserBatch(TileTestCase):
         # batched items implementation.
         self.assertEqual(
             batched_items.make_url(dict(c='c')),
-            'http://example.com/container?a=a&b=&c=c'
+            'http://example.com/container?a=a&b=&c=c',
         )
 
         # It's also possible to pass a model path to ``make_url`` to avoid
@@ -520,7 +596,7 @@ class TestBrowserBatch(TileTestCase):
         path = node_path(model)
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path),
-            'http://example.com/container?a=a&b=&c=c'
+            'http://example.com/container?a=a&b=&c=c',
         )
 
         # ``BatchedItems`` plumbs ``RelatedViewConsumer`` and considers
@@ -530,19 +606,19 @@ class TestBrowserBatch(TileTestCase):
 
         self.assertEqual(
             batched_items.make_url(dict(c='c')),
-            'http://example.com/container?a=&b=&c=c'
+            'http://example.com/container?a=&b=&c=c',
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), include_view=True),
-            'http://example.com/container/someview?a=&b=&c=c'
+            'http://example.com/container/someview?a=&b=&c=c',
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path),
-            'http://example.com/container?a=&b=&c=c'
+            'http://example.com/container?a=&b=&c=c',
         )
         self.assertEqual(
             batched_items.make_url(dict(c='c'), path=path, include_view=True),
-            'http://example.com/container/someview?a=&b=&c=c'
+            'http://example.com/container/someview?a=&b=&c=c',
         )
 
         # Default slice size
@@ -572,31 +648,32 @@ class TestBrowserBatch(TileTestCase):
         self.assertEqual(batched_items.filter_term, 'Hello')
         self.assertEqual(
             batched_items.slice_target,
-            'http://example.com/container?a=a&b=b&term=Hello'
+            'http://example.com/container?a=a&b=b&term=Hello',
         )
 
         # Test ``filter_target``
         self.assertEqual(
-            batched_items.filter_target,
-            'http://example.com/container?a=a&b=b&size=15'
+            batched_items.filter_target, 'http://example.com/container?a=a&b=b&size=15'
         )
 
         request.params['size'] = '30'
         self.assertEqual(
-            batched_items.filter_target,
-            'http://example.com/container?a=a&b=b&size=30'
+            batched_items.filter_target, 'http://example.com/container?a=a&b=b&size=30'
         )
 
         # Header template path
         self.assertEqual(
             batched_items.header_template,
-            'cone.app.browser:templates/batched_items_header.pt'
+            'cone.app.browser:templates/batched_items_header.pt',
         )
 
         # Rendered header
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<div class="batched_items_header d-flex gap-2 gap-sm-3 flex-wrap">...
-        """, batched_items.rendered_header)
+        """,
+            batched_items.rendered_header,
+        )
 
         # Header title. Taken from ``model.metadata`` by default
         self.assertEqual(batched_items.title, 'container')
@@ -661,7 +738,7 @@ class TestBrowserBatch(TileTestCase):
         page = '1'
         self.assertEqual(
             batched_items.page_target(path, page),
-            'http://example.com/container?b_page=1&size=15'
+            'http://example.com/container?b_page=1&size=15',
         )
 
         # Pagination batch name is created from batched items ``items_id``
@@ -684,32 +761,44 @@ class TestBrowserBatch(TileTestCase):
         vocab = pagination.vocab
         self.assertEqual(len(vocab), 3)
 
-        self.assertEqual(sorted(vocab[0].items()), [
-            ('current', False),
-            ('href', 'http://example.com/container/someview?b_page=0&size=15'),
-            ('page', '1'),
-            ('target', 'http://example.com/container?b_page=0&size=15'),
-            ('visible', True)
-        ])
-        self.assertEqual(sorted(vocab[1].items()), [
-            ('current', True),
-            ('href', 'http://example.com/container/someview?b_page=1&size=15'),
-            ('page', '2'),
-            ('target', 'http://example.com/container?b_page=1&size=15'),
-            ('visible', True)
-        ])
-        self.assertEqual(sorted(vocab[2].items()), [
-            ('current', False),
-            ('href', 'http://example.com/container/someview?b_page=2&size=15'),
-            ('page', '3'),
-            ('target', 'http://example.com/container?b_page=2&size=15'),
-            ('visible', True)
-        ])
+        self.assertEqual(
+            sorted(vocab[0].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/container/someview?b_page=0&size=15'),
+                ('page', '1'),
+                ('target', 'http://example.com/container?b_page=0&size=15'),
+                ('visible', True),
+            ],
+        )
+        self.assertEqual(
+            sorted(vocab[1].items()),
+            [
+                ('current', True),
+                ('href', 'http://example.com/container/someview?b_page=1&size=15'),
+                ('page', '2'),
+                ('target', 'http://example.com/container?b_page=1&size=15'),
+                ('visible', True),
+            ],
+        )
+        self.assertEqual(
+            sorted(vocab[2].items()),
+            [
+                ('current', False),
+                ('href', 'http://example.com/container/someview?b_page=2&size=15'),
+                ('page', '3'),
+                ('target', 'http://example.com/container?b_page=2&size=15'),
+                ('visible', True),
+            ],
+        )
 
         # Rendered pagination
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<ul class="pagination pagination-sm my-0">...
-        """, batched_items.rendered_pagination)
+        """,
+            batched_items.rendered_pagination,
+        )
 
         # Batched items footer
         batched_items = MyBatchedItems()
@@ -719,11 +808,14 @@ class TestBrowserBatch(TileTestCase):
         # Default template path
         self.assertEqual(
             batched_items.footer_template,
-            'cone.app.browser:templates/batched_items_footer.pt'
+            'cone.app.browser:templates/batched_items_footer.pt',
         )
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<div class="batched_items_footer...
-        """, batched_items.rendered_footer)
+        """,
+            batched_items.rendered_footer,
+        )
 
         # Slice ID
         self.assertEqual(batched_items.slice_id, 'batched_items_slice')
@@ -735,32 +827,41 @@ class TestBrowserBatch(TileTestCase):
         self.assertEqual(batched_items.item_count, 35)
 
         # Current slice items
-        self.checkOutput("""
+        self.checkOutput(
+            """
         [<BaseNode object 'child_0' at ...>,
         ...
         <BaseNode object 'child_14' at ...>]
-        """, str(batched_items.slice_items))
+        """,
+            str(batched_items.slice_items),
+        )
 
         # Chage current page and check again
         request = batched_items.request = self.layer.new_request()
         request.params['b_page'] = '1'
         self.assertEqual(batched_items.current_slice, (15, 30))
-        self.checkOutput("""
+        self.checkOutput(
+            """
         [<BaseNode object 'child_15' at ...>,
         ...
         <BaseNode object 'child_29' at ...>]
-        """, str(batched_items.slice_items))
+        """,
+            str(batched_items.slice_items),
+        )
 
         # Change the slice size
         request = batched_items.request = self.layer.new_request()
         request.params['size'] = '10'
         self.assertEqual(batched_items.slice_size, 10)
         self.assertEqual(batched_items.current_slice, (0, 10))
-        self.checkOutput("""
+        self.checkOutput(
+            """
         [<BaseNode object 'child_0' at ...>,
         ...
         <BaseNode object 'child_9' at ...>]
-        """, str(batched_items.slice_items))
+        """,
+            str(batched_items.slice_items),
+        )
 
         # Change the filter term
         request = batched_items.request = self.layer.new_request()
@@ -768,7 +869,8 @@ class TestBrowserBatch(TileTestCase):
         request.params['size'] = '5'
         self.assertEqual(batched_items.filter_term, '1')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         [<BaseNode object 'child_1' at ...>,
         <BaseNode object 'child_10' at ...>,
         <BaseNode object 'child_11' at ...>,
@@ -782,96 +884,116 @@ class TestBrowserBatch(TileTestCase):
         <BaseNode object 'child_19' at ...>,
         <BaseNode object 'child_21' at ...>,
         <BaseNode object 'child_31' at ...>]
-        """, str(batched_items.filtered_items))
+        """,
+            str(batched_items.filtered_items),
+        )
 
         self.assertEqual(batched_items.current_slice, (0, 5))
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         [<BaseNode object 'child_1' at ...>,
         <BaseNode object 'child_10' at ...>,
         <BaseNode object 'child_11' at ...>,
         <BaseNode object 'child_12' at ...>,
         <BaseNode object 'child_13' at ...>]
-        """, str(batched_items.slice_items))
+        """,
+            str(batched_items.slice_items),
+        )
 
         request.params['b_page'] = '1'
         self.assertEqual(batched_items.current_slice, (5, 10))
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         [<BaseNode object 'child_14' at ...>,
         <BaseNode object 'child_15' at ...>,
         <BaseNode object 'child_16' at ...>,
         <BaseNode object 'child_17' at ...>,
         <BaseNode object 'child_18' at ...>]
-        """, str(batched_items.slice_items))
+        """,
+            str(batched_items.slice_items),
+        )
 
         # Test ``rendered_slice``
         request = batched_items.request = self.layer.new_request()
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <div id="batched_items_slice">
           <div>child_0</div>
           ...
           <div>child_14</div>
         </div>
-        """, batched_items.rendered_slice)
+        """,
+            batched_items.rendered_slice,
+        )
 
         # ``BatchItems`` rendering default template
         self.assertEqual(
-            batched_items.path,
-            'cone.app.browser:templates/batched_items.pt'
+            batched_items.path, 'cone.app.browser:templates/batched_items.pt'
         )
 
         # Batched items DOM element ID. Used for treibstoff ajax binding.
         self.assertEqual(batched_items.items_id, 'batched_items')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<div id="batched_items"...
-        """, batched_items(model=model, request=self.layer.new_request()))
+        """,
+            batched_items(model=model, request=self.layer.new_request()),
+        )
 
         batched_items.items_id = 'my_batched_items'
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<div id="my_batched_items"...
-        """, batched_items(model=model, request=self.layer.new_request()))
+        """,
+            batched_items(model=model, request=self.layer.new_request()),
+        )
 
         batched_items.items_id = 'batched_items'
 
         # Test ``items_css``
-        self.assertEqual(
-            batched_items.items_css,
-            'batched_items list-group-item'
-        )
+        self.assertEqual(batched_items.items_css, 'batched_items list-group-item')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...class="...batched_items ...
-        """, batched_items(model=model, request=self.layer.new_request()))
-
-        batched_items.items_css = (
-            'my_batched_items batched_items'
+        """,
+            batched_items(model=model, request=self.layer.new_request()),
         )
 
-        self.checkOutput("""
+        batched_items.items_css = 'my_batched_items batched_items'
+
+        self.checkOutput(
+            """
         ...class="...my_batched_items batched_items...
-        """, batched_items(model=model, request=self.layer.new_request()))
+        """,
+            batched_items(model=model, request=self.layer.new_request()),
+        )
 
         batched_items.items_css = 'batched_items'
 
         # Test ``bind_events``
         self.assertEqual(batched_items.bind_events, 'batchclicked')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...ajax:bind="batchclicked"...
-        """, batched_items(model=model, request=self.layer.new_request()))
-
-        # Test ``bind_selectors``
-        self.assertEqual(
-            batched_items.bind_selectors,
-            'batched_itemsbatchsensitiv'
+        """,
+            batched_items(model=model, request=self.layer.new_request()),
         )
 
-        self.checkOutput("""
+        # Test ``bind_selectors``
+        self.assertEqual(batched_items.bind_selectors, 'batched_itemsbatchsensitiv')
+
+        self.checkOutput(
+            """
         ...class="batched_itemsbatchsensitiv...
-        """, batched_items(model=model, request=self.layer.new_request()))
+        """,
+            batched_items(model=model, request=self.layer.new_request()),
+        )
 
         # Test ``display_header``
         self.assertTrue(batched_items.display_header)

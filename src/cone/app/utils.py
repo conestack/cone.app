@@ -11,6 +11,7 @@ logger = logging.getLogger('cone.app')
 
 def app_config():
     import cone.app
+
     return cone.app.cfg
 
 
@@ -65,7 +66,6 @@ def navigation_root(node):
 
 
 class DatetimeHelper:
-
     def w_value(self, val):
         if val is None:
             return 'None'
@@ -89,7 +89,7 @@ class DatetimeHelper:
     def dt_to_iso(self, dt):
         iso = dt.isoformat()
         if iso.find('.') != -1:
-            iso = iso[:iso.rfind('.')]
+            iso = iso[: iso.rfind('.')]
         return iso
 
 

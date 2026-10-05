@@ -52,42 +52,41 @@ class TestBrowserTable(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        table = DummyTable(
-            'cone.app:browser/templates/table.pt',
-            None,
-            'table'
-        )
+        table = DummyTable('cone.app:browser/templates/table.pt', None, 'table')
         table.request = request
         batch = TableBatch(table)
         batch.model = model
         batch.request = request
 
-        self.assertEqual(batch.vocab, [{
-            'current': True,
-            'visible': True,
-            'url': 'http://example.com/?b_page=0&size=10',
-            'page': '1'
-        }, {
-            'current': False,
-            'visible': True,
-            'url': 'http://example.com/?b_page=1&size=10',
-            'page': '2'
-        }, {
-            'current': False,
-            'visible': True,
-            'url': 'http://example.com/?b_page=2&size=10',
-            'page': '3'
-        }])
+        self.assertEqual(
+            batch.vocab,
+            [
+                {
+                    'current': True,
+                    'visible': True,
+                    'url': 'http://example.com/?b_page=0&size=10',
+                    'page': '1',
+                },
+                {
+                    'current': False,
+                    'visible': True,
+                    'url': 'http://example.com/?b_page=1&size=10',
+                    'page': '2',
+                },
+                {
+                    'current': False,
+                    'visible': True,
+                    'url': 'http://example.com/?b_page=2&size=10',
+                    'page': '3',
+                },
+            ],
+        )
 
     def test_TableSlice(self):
         model = BaseNode()
         request = self.layer.new_request()
 
-        table = DummyTable(
-            'cone.app:browser/templates/table.pt',
-            None,
-            'table'
-        )
+        table = DummyTable('cone.app:browser/templates/table.pt', None, 'table')
         table.request = request
         slice = TableSlice(table, model, request)
 
@@ -99,11 +98,7 @@ class TestBrowserTable(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        table = DummyTable(
-            'cone.app:browser/templates/table.pt',
-            None,
-            'table'
-        )
+        table = DummyTable('cone.app:browser/templates/table.pt', None, 'table')
 
         # In order to get row_data rendered inside table, column definitions
         # must be defined
@@ -113,19 +108,22 @@ class TestBrowserTable(TileTestCase):
         self.assertFalse(res.find('Col 1 Value') > -1)
         self.assertFalse(res.find('Col 2 Value') > -1)
 
-        table.col_defs = [{
-            'id': 'col_1',
-            'title': 'Col 1',
-            'sort_key': 'col_1',
-            'sort_title': 'Sort by col 1',
-            'content': 'string'
-        }, {
-            'id': 'col_2',
-            'title': 'Col 2',
-            'sort_key': 'col_2',
-            'sort_title': 'Sort by col 2',
-            'content': 'string'
-        }]
+        table.col_defs = [
+            {
+                'id': 'col_1',
+                'title': 'Col 1',
+                'sort_key': 'col_1',
+                'sort_title': 'Sort by col 1',
+                'content': 'string',
+            },
+            {
+                'id': 'col_2',
+                'title': 'Col 2',
+                'sort_key': 'col_2',
+                'sort_title': 'Sort by col 2',
+                'content': 'string',
+            },
+        ]
 
         res = table(model, request)
         self.assertTrue(res.find('Col 1 Value') > -1)
@@ -133,32 +131,39 @@ class TestBrowserTable(TileTestCase):
 
     def test_table_tile(self):
         with self.layer.hook_tile_reg():
-            @tile(name='mytabletile',
-                  path='cone.app:browser/templates/table.pt',
-                  permission='view')
+
+            @tile(
+                name='mytabletile',
+                path='cone.app:browser/templates/table.pt',
+                permission='view',
+            )
             class MyTable(Table):
                 table_id = 'mytable'
                 table_css = 'mytable'
                 table_tile_name = 'mytabletile'
-                col_defs = [{
-                    'id': 'col_1',
-                    'title': 'Col 1',
-                    'sort_key': None,
-                    'sort_title': None,
-                    'content': 'structure'
-                }, {
-                    'id': 'col_2',
-                    'title': 'Col 2',
-                    'sort_key': 'col_2',
-                    'sort_title': 'Sort by col 2',
-                    'content': 'string'
-                }, {
-                    'id': 'col_3',
-                    'title': 'Col 3',
-                    'sort_key': 'col_3',
-                    'sort_title': 'Sort by col 3',
-                    'content': 'datetime'
-                }]
+                col_defs = [
+                    {
+                        'id': 'col_1',
+                        'title': 'Col 1',
+                        'sort_key': None,
+                        'sort_title': None,
+                        'content': 'structure',
+                    },
+                    {
+                        'id': 'col_2',
+                        'title': 'Col 2',
+                        'sort_key': 'col_2',
+                        'sort_title': 'Sort by col 2',
+                        'content': 'string',
+                    },
+                    {
+                        'id': 'col_3',
+                        'title': 'Col 3',
+                        'sort_key': 'col_3',
+                        'sort_title': 'Sort by col 3',
+                        'content': 'datetime',
+                    },
+                ]
                 default_sort = 'col_2'
                 default_order = 'desc'
                 default_slicesize = 10
@@ -191,9 +196,12 @@ class TestBrowserTable(TileTestCase):
         # Rendering fails unauthorized, 'view' permission is required
         with self.assertRaises(HTTPForbidden) as arc:
             render_tile(model, request, 'mytabletile')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Unauthorized: tile <...MyTable object at ...> failed permission check
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         # Render authenticated
         request.params['foo'] = 'bar'
@@ -214,7 +222,8 @@ class TestBrowserTable(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
 
         # Structure content
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a
         id="toolbaraction-view"
         href="http://example.com/"
@@ -224,7 +233,9 @@ class TestBrowserTable(TileTestCase):
         ajax:overlay-css="modal-xl"
         ajax:path="href"
         >&nbsp;<span>Foo</span></a>...
-        """, rendered)
+        """,
+            rendered,
+        )
 
         # String
         expected = 'Col 2 -&gt; 1'
@@ -237,13 +248,15 @@ class TestBrowserTable(TileTestCase):
     def test_footer_pagination(self):
         # The table footer displays "Showing X to Y of Z entries".
         class MyTable(Table):
-            col_defs = [{
-                'id': 'col',
-                'title': 'Col',
-                'sort_key': None,
-                'sort_title': None,
-                'content': 'string',
-            }]
+            col_defs = [
+                {
+                    'id': 'col',
+                    'title': 'Col',
+                    'sort_key': None,
+                    'sort_title': None,
+                    'content': 'string',
+                }
+            ]
             _count = 0
 
             @property
@@ -295,13 +308,15 @@ class TestBrowserTable(TileTestCase):
         # the body, between the header and the rows. The table stays one card:
         # header, rows and footer, replaced together on every reload.
         class MyTable(DummyTable):
-            col_defs = [{
-                'id': 'col_1',
-                'title': 'Col 1',
-                'sort_key': None,
-                'sort_title': None,
-                'content': 'string',
-            }]
+            col_defs = [
+                {
+                    'id': 'col_1',
+                    'title': 'Col 1',
+                    'sort_key': None,
+                    'sort_title': None,
+                    'content': 'string',
+                }
+            ]
             show_filter = True
             head_additional = '<span class="extra">Extra</span>'
 
@@ -312,11 +327,13 @@ class TestBrowserTable(TileTestCase):
 
         def header(rendered):
             start = rendered.find('class="card-header"')
-            return rendered[start:rendered.find('class="card-body', start)]
+            return rendered[start : rendered.find('class="card-body', start)]
 
         rendered = MyTable(tmpl, None, 'table')(model, request)
         head = header(rendered)
-        self.assertIn('class="table_title m-0 me-auto align-self-center">Foo</h5>', head)
+        self.assertIn(
+            'class="table_title m-0 me-auto align-self-center">Foo</h5>', head
+        )
         # Title first, then the controls.
         self.assertLess(head.find('table_title'), head.find('table_length'))
         self.assertLess(head.find('table_length'), head.find('table_filter'))

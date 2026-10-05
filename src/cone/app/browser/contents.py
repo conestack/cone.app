@@ -38,6 +38,7 @@ class ContentsActionView(ActionView):
 
     Gets displayed in actions column.
     """
+
     title = ActionView.text
     text = None
     action = None
@@ -49,6 +50,7 @@ class ContentsActionEdit(ActionEdit):
 
     Gets displayed in actions column.
     """
+
     title = ActionEdit.text
     text = None
     action = None
@@ -65,14 +67,17 @@ class ContentsActionDelete(ActionDelete):
 
     Gets displayed in actions column.
     """
+
     title = ActionDelete.text
     text = None
 
     @property
     def display(self):
-        return self.model.properties.action_delete \
-            and self.request.has_permission('delete', self.model.parent) \
+        return (
+            self.model.properties.action_delete
+            and self.request.has_permission('delete', self.model.parent)
             and self.permitted('delete')
+        )
 
 
 class ContentsActionMoveUp(ActionMoveUp):
@@ -80,6 +85,7 @@ class ContentsActionMoveUp(ActionMoveUp):
 
     Gets displayed in actions column.
     """
+
     title = ActionMoveUp.text
     text = None
 
@@ -89,6 +95,7 @@ class ContentsActionMoveDown(ActionMoveDown):
 
     Gets displayed in actions column.
     """
+
     title = ActionMoveDown.text
     text = None
 
@@ -98,6 +105,7 @@ class ContentsViewLink(ViewLink):
 
     Title column uses this to turn title into view link.
     """
+
     css = 'title'
     event = 'contextchanged:#layout'
     action = None
@@ -115,48 +123,50 @@ class ContentsViewLink(ViewLink):
 class ContentsTile(Table):
     table_id = 'contents'
     table_tile_name = 'contents'
-    col_defs = [{
-        'id': 'actions',
-        'title': _('actions', default='Actions'),
-        'sort_key': None,
-        'sort_title': None,
-        'content': 'structure'
-    }, {
-        'id': 'title',
-        'title': _('title', default='Title'),
-        'sort_key': 'title',
-        'sort_title': _('sort_on_title', default='Sort on title'),
-        'content': 'structure'
-    }, {
-        'id': 'creator',
-        'title': _('creator', default='Creator'),
-        'sort_key': 'creator',
-        'sort_title': _('sort_on_creator', default='Sort on creator'),
-        'content': 'string'
-    }, {
-        'id': 'created',
-        'title': _('created', default='Created'),
-        'sort_key': 'created',
-        'sort_title': _('sort_on_created', default='Sort on created'),
-        'content': 'datetime'
-    }, {
-        'id': 'modified',
-        'title': _('modified', default='Modified'),
-        'sort_key': 'modified',
-        'sort_title': _('sort_on_modified', default='Sort on modified'),
-        'content': 'datetime'
-    }]
+    col_defs = [
+        {
+            'id': 'actions',
+            'title': _('actions', default='Actions'),
+            'sort_key': None,
+            'sort_title': None,
+            'content': 'structure',
+        },
+        {
+            'id': 'title',
+            'title': _('title', default='Title'),
+            'sort_key': 'title',
+            'sort_title': _('sort_on_title', default='Sort on title'),
+            'content': 'structure',
+        },
+        {
+            'id': 'creator',
+            'title': _('creator', default='Creator'),
+            'sort_key': 'creator',
+            'sort_title': _('sort_on_creator', default='Sort on creator'),
+            'content': 'string',
+        },
+        {
+            'id': 'created',
+            'title': _('created', default='Created'),
+            'sort_key': 'created',
+            'sort_title': _('sort_on_created', default='Sort on created'),
+            'content': 'datetime',
+        },
+        {
+            'id': 'modified',
+            'title': _('modified', default='Modified'),
+            'sort_key': 'modified',
+            'sort_title': _('sort_on_modified', default='Sort on modified'),
+            'content': 'datetime',
+        },
+    ]
     default_sort = 'created'
     default_order = 'desc'
     sort_keys = {
         'title': lambda x: x.metadata.title.lower(),
         'creator': lambda x: x.metadata.creator.lower(),
-        'created': lambda x: (
-            x.metadata.created and x.metadata.created or FAR_PAST
-        ),
-        'modified': lambda x: (
-            x.metadata.modified and x.metadata.modified or FAR_PAST
-        )
+        'created': lambda x: x.metadata.created and x.metadata.created or FAR_PAST,
+        'modified': lambda x: x.metadata.modified and x.metadata.modified or FAR_PAST,
     }
     show_filter = True
 
@@ -210,8 +220,7 @@ class ContentsTile(Table):
     @property
     def listable_children(self):
         return [
-            child for child in self.model.values()
-            if IApplicationNode.providedBy(child)
+            child for child in self.model.values() if IApplicationNode.providedBy(child)
         ]
 
     @property
@@ -249,29 +258,24 @@ class ContentsTile(Table):
 @tile(name='listing', path='templates/listing.pt', permission='list')
 @plumbing(RelatedViewProvider)
 class ListingTile(Tile):
-    """Tile rendering the listing.
-    """
+    """Tile rendering the listing."""
+
     related_view = 'listing'
 
 
 @view_config(name='listing', permission='list')
 def listing(model, request):
-    """Listing view.
-    """
+    """Listing view."""
     return render_main_template(model, request, 'listing')
 
 
-@tile(
-    name='contents',
-    path='templates/table.pt',
-    interface=AppRoot,
-    permission='list')
+@tile(name='contents', path='templates/table.pt', interface=AppRoot, permission='list')
 class RootContentsTile(ContentsTile):
-
     @property
     def listable_children(self):
         return [
-            child for child in self.model.values()
+            child
+            for child in self.model.values()
             if IApplicationNode.providedBy(child)
             and child.name not in ['settings', 'resources']
         ]

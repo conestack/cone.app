@@ -43,7 +43,6 @@ import logging
 
 @implementer(IAuthenticator)
 class TestAuthenticator:
-
     def authenticate(self, login, password):
         return login
 
@@ -85,37 +84,81 @@ class SecurityTest(NodeTestCase):
 
     def test_acls(self):
         # The default ACL
-        self.assertEqual(security.DEFAULT_ACL, [
-            ('Allow', 'system.Authenticated', ['view']),
-            ('Allow', 'role:viewer', ['view', 'list']),
-            ('Allow', 'role:editor', [
-                'view', 'list', 'add', 'edit', 'change_order'
-            ]),
-            ('Allow', 'role:admin', [
-                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-                'copy', 'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'role:manager', [
-                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-                'copy', 'paste', 'manage_permissions', 'change_state', 'manage'
-            ]),
-            ('Allow', 'role:owner', [
-                'view', 'list', 'add', 'edit', 'change_order', 'delete', 'cut',
-                'copy', 'paste', 'manage_permissions', 'change_state'
-            ]),
-            ('Allow', 'system.Everyone', ['login']),
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        ])
+        self.assertEqual(
+            security.DEFAULT_ACL,
+            [
+                ('Allow', 'system.Authenticated', ['view']),
+                ('Allow', 'role:viewer', ['view', 'list']),
+                (
+                    'Allow',
+                    'role:editor',
+                    ['view', 'list', 'add', 'edit', 'change_order'],
+                ),
+                (
+                    'Allow',
+                    'role:admin',
+                    [
+                        'view',
+                        'list',
+                        'add',
+                        'edit',
+                        'change_order',
+                        'delete',
+                        'cut',
+                        'copy',
+                        'paste',
+                        'manage_permissions',
+                        'change_state',
+                    ],
+                ),
+                (
+                    'Allow',
+                    'role:manager',
+                    [
+                        'view',
+                        'list',
+                        'add',
+                        'edit',
+                        'change_order',
+                        'delete',
+                        'cut',
+                        'copy',
+                        'paste',
+                        'manage_permissions',
+                        'change_state',
+                        'manage',
+                    ],
+                ),
+                (
+                    'Allow',
+                    'role:owner',
+                    [
+                        'view',
+                        'list',
+                        'add',
+                        'edit',
+                        'change_order',
+                        'delete',
+                        'cut',
+                        'copy',
+                        'paste',
+                        'manage_permissions',
+                        'change_state',
+                    ],
+                ),
+                ('Allow', 'system.Everyone', ['login']),
+                ('Deny', 'system.Everyone', ALL_PERMISSIONS),
+            ],
+        )
 
         # Base security tests
         policy = get_current_registry().queryUtility(IAuthenticationPolicy)
         self.assertTrue(isinstance(policy, AuthTktAuthenticationPolicy))
 
         self.layer.new_request()
-        self.assertTrue(isinstance(
-            self.layer.current_request.registry,
-            BaseGlobalComponents
-        ))
+        self.assertTrue(
+            isinstance(self.layer.current_request.registry, BaseGlobalComponents)
+        )
 
         with self.layer.authenticated('inexistent'):
             userid = self.layer.current_request.authenticated_userid
@@ -124,6 +167,7 @@ class SecurityTest(NodeTestCase):
         # Create some security context for testing
         class ACLTest:
             __acl__ = DEFAULT_ACL
+
         context = ACLTest()
 
         # Authenticate several users and check permission
@@ -162,19 +206,18 @@ class SecurityTest(NodeTestCase):
 
         self.assertEqual(
             acl_registry.lookup(None, None, [('Allow', 'role:viewer', ['add'])]),
-            [('Allow', 'role:viewer', ['add'])]
+            [('Allow', 'role:viewer', ['add'])],
         )
         self.assertEqual(
-            acl_registry.lookup(SomeModel),
-            [('Allow', 'role:viewer', ['view'])]
+            acl_registry.lookup(SomeModel), [('Allow', 'role:viewer', ['view'])]
         )
         self.assertEqual(
             acl_registry.lookup(node_info_name='some_model'),
-            [('Allow', 'role:viewer', ['edit'])]
+            [('Allow', 'role:viewer', ['edit'])],
         )
         self.assertEqual(
             acl_registry.lookup(SomeModel, 'some_model'),
-            [('Allow', 'role:viewer', ['delete'])]
+            [('Allow', 'role:viewer', ['delete'])],
         )
 
     def test_OwnerSupport(self):
@@ -186,8 +229,7 @@ class SecurityTest(NodeTestCase):
         self.assertTrue(IOwnerSupport.providedBy(ownersupportnode))
         self.assertTrue(ownersupportnode.owner is None)
         self.assertEqual(
-            ownersupportnode.__acl__[0],
-            ('Allow', 'system.Authenticated', ['view'])
+            ownersupportnode.__acl__[0], ('Allow', 'system.Authenticated', ['view'])
         )
 
         with self.layer.authenticated('sepp'):
@@ -197,47 +239,96 @@ class SecurityTest(NodeTestCase):
             ownersupportnode = OwnerSupportNode()
             self.assertEqual(ownersupportnode.owner, 'sepp')
             self.assertEqual(ownersupportnode.attrs['owner'], 'sepp')
-            self.assertEqual(ownersupportnode.__acl__, [
-                ('Allow', 'sepp', [
-                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
-                    'cut', 'copy', 'paste', 'manage_permissions', 'change_state'
-                ]),
-                ('Allow', 'system.Authenticated', ['view']),
-                ('Allow', 'role:viewer', ['view', 'list']),
-                ('Allow', 'role:editor', [
-                    'view', 'list', 'add', 'edit', 'change_order'
-                ]),
-                ('Allow', 'role:admin', [
-                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
-                    'cut', 'copy', 'paste', 'manage_permissions',
-                    'change_state'
-                ]),
-                ('Allow', 'role:manager', [
-                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
-                    'cut', 'copy', 'paste', 'manage_permissions',
-                    'change_state', 'manage'
-                ]),
-                ('Allow', 'role:owner', [
-                    'view', 'list', 'add', 'edit', 'change_order', 'delete',
-                    'cut', 'copy', 'paste', 'manage_permissions',
-                    'change_state'
-                ]),
-                ('Allow', 'system.Everyone', ['login']),
-                ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-            ])
+            self.assertEqual(
+                ownersupportnode.__acl__,
+                [
+                    (
+                        'Allow',
+                        'sepp',
+                        [
+                            'view',
+                            'list',
+                            'add',
+                            'edit',
+                            'change_order',
+                            'delete',
+                            'cut',
+                            'copy',
+                            'paste',
+                            'manage_permissions',
+                            'change_state',
+                        ],
+                    ),
+                    ('Allow', 'system.Authenticated', ['view']),
+                    ('Allow', 'role:viewer', ['view', 'list']),
+                    (
+                        'Allow',
+                        'role:editor',
+                        ['view', 'list', 'add', 'edit', 'change_order'],
+                    ),
+                    (
+                        'Allow',
+                        'role:admin',
+                        [
+                            'view',
+                            'list',
+                            'add',
+                            'edit',
+                            'change_order',
+                            'delete',
+                            'cut',
+                            'copy',
+                            'paste',
+                            'manage_permissions',
+                            'change_state',
+                        ],
+                    ),
+                    (
+                        'Allow',
+                        'role:manager',
+                        [
+                            'view',
+                            'list',
+                            'add',
+                            'edit',
+                            'change_order',
+                            'delete',
+                            'cut',
+                            'copy',
+                            'paste',
+                            'manage_permissions',
+                            'change_state',
+                            'manage',
+                        ],
+                    ),
+                    (
+                        'Allow',
+                        'role:owner',
+                        [
+                            'view',
+                            'list',
+                            'add',
+                            'edit',
+                            'change_order',
+                            'delete',
+                            'cut',
+                            'copy',
+                            'paste',
+                            'manage_permissions',
+                            'change_state',
+                        ],
+                    ),
+                    ('Allow', 'system.Everyone', ['login']),
+                    ('Deny', 'system.Everyone', ALL_PERMISSIONS),
+                ],
+            )
 
         with self.layer.authenticated('viewer'):
-            rule = self.layer.current_request.has_permission(
-                'delete',
-                ownersupportnode
-            )
+            rule = self.layer.current_request.has_permission('delete', ownersupportnode)
             self.assertTrue(isinstance(rule, ACLDenied))
 
         with self.layer.authenticated('sepp'):
-            rule = self.layer.current_request.has_permission(
-                'delete',
-                ownersupportnode
-            )
+            rule = self.layer.current_request.has_permission('delete', ownersupportnode)
             self.assertTrue(isinstance(rule, ACLAllowed))
 
         @plumbing(OwnerSupport)
@@ -250,8 +341,7 @@ class SecurityTest(NodeTestCase):
             ownersupportnode = NoOwnerACLOnBaseNode()
             self.assertEqual(ownersupportnode.owner, 'sepp')
             self.assertEqual(
-                ownersupportnode.__acl__,
-                [('Allow', 'role:viewer', ['view'])]
+                ownersupportnode.__acl__, [('Allow', 'role:viewer', ['view'])]
             )
 
         OwnerSupportNode.owner_attribute_name = 'userid'
@@ -270,7 +360,7 @@ class SecurityTest(NodeTestCase):
             node.__acl__
         self.assertEqual(
             str(arc.exception),
-            'Abstract ``PrincipalACL`` does not implement ``principal_roles``.'
+            'Abstract ``PrincipalACL`` does not implement ``principal_roles``.',
         )
 
         # Concrete PrincipalACL implementation. Implements principal_roles
@@ -300,25 +390,55 @@ class SecurityTest(NodeTestCase):
         rule = find_rule(node.__acl__, 'someuser')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'someuser')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'cut', 'change_order', 'edit', 'copy', 'manage', 'list', 'add',
-            'change_state', 'view', 'paste', 'manage_permissions', 'delete'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]),
+            sorted(
+                [
+                    'cut',
+                    'change_order',
+                    'edit',
+                    'copy',
+                    'manage',
+                    'list',
+                    'add',
+                    'change_state',
+                    'view',
+                    'paste',
+                    'manage_permissions',
+                    'delete',
+                ]
+            ),
+        )
 
         rule = find_rule(node.__acl__, 'otheruser')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'otheruser')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'edit', 'add', 'list', 'view', 'change_order'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]), sorted(['edit', 'add', 'list', 'view', 'change_order'])
+        )
 
         rule = find_rule(node.__acl__, 'group:some_group')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'group:some_group')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete', 'change_order'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]),
+            sorted(
+                [
+                    'cut',
+                    'edit',
+                    'copy',
+                    'manage',
+                    'list',
+                    'add',
+                    'change_state',
+                    'view',
+                    'paste',
+                    'manage_permissions',
+                    'delete',
+                    'change_order',
+                ]
+            ),
+        )
 
         rule = find_rule(node.__acl__, 'system.Authenticated')
         self.assertEqual(rule[0], 'Allow')
@@ -342,9 +462,9 @@ class SecurityTest(NodeTestCase):
         rule = find_rule(child.__acl__, 'someuser')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'someuser')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'edit', 'add', 'list', 'view', 'change_order'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]), sorted(['edit', 'add', 'list', 'view', 'change_order'])
+        )
 
         rule = find_rule(child.__acl__, 'system.Authenticated')
         self.assertEqual(rule[0], 'Allow')
@@ -367,36 +487,80 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(subchild.aggregated_roles_for('inexistent'), [])
         self.assertEqual(
             sorted(subchild.aggregated_roles_for('someuser')),
-            sorted(['manager', 'editor'])
+            sorted(['manager', 'editor']),
         )
         self.assertEqual(
             sorted(subchild.aggregated_roles_for('otheruser')),
-            sorted(['admin', 'editor'])
+            sorted(['admin', 'editor']),
         )
 
         rule = find_rule(subchild.__acl__, 'someuser')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'someuser')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete', 'change_order'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]),
+            sorted(
+                [
+                    'cut',
+                    'edit',
+                    'copy',
+                    'manage',
+                    'list',
+                    'add',
+                    'change_state',
+                    'view',
+                    'paste',
+                    'manage_permissions',
+                    'delete',
+                    'change_order',
+                ]
+            ),
+        )
 
         rule = find_rule(subchild.__acl__, 'otheruser')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'otheruser')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'cut', 'edit', 'copy', 'list', 'add', 'change_state', 'view',
-            'paste', 'manage_permissions', 'delete', 'change_order'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]),
+            sorted(
+                [
+                    'cut',
+                    'edit',
+                    'copy',
+                    'list',
+                    'add',
+                    'change_state',
+                    'view',
+                    'paste',
+                    'manage_permissions',
+                    'delete',
+                    'change_order',
+                ]
+            ),
+        )
 
         rule = find_rule(subchild.__acl__, 'group:some_group')
         self.assertEqual(rule[0], 'Allow')
         self.assertEqual(rule[1], 'group:some_group')
-        self.assertEqual(sorted(rule[2]), sorted([
-            'cut', 'edit', 'copy', 'manage', 'list', 'add', 'change_state',
-            'view', 'paste', 'manage_permissions', 'delete', 'change_order'
-        ]))
+        self.assertEqual(
+            sorted(rule[2]),
+            sorted(
+                [
+                    'cut',
+                    'edit',
+                    'copy',
+                    'manage',
+                    'list',
+                    'add',
+                    'change_state',
+                    'view',
+                    'paste',
+                    'manage_permissions',
+                    'delete',
+                    'change_order',
+                ]
+            ),
+        )
 
         rule = find_rule(subchild.__acl__, 'system.Authenticated')
         self.assertEqual(rule[0], 'Allow')
@@ -414,7 +578,7 @@ class SecurityTest(NodeTestCase):
         subchild = child['no_principal_roles'] = MyPrincipalACLNode()
         self.assertEqual(
             sorted(subchild.aggregated_roles_for('group:some_group')),
-            sorted(['manager', 'editor'])
+            sorted(['manager', 'editor']),
         )
 
         # If principal role found which is not provided by plumbing endpoint
@@ -441,10 +605,7 @@ class SecurityTest(NodeTestCase):
         self.assertEqual(rule[0], 'Deny')
         self.assertEqual(rule[1], 'system.Everyone')
         self.assertEqual(rule[2], ALL_PERMISSIONS)
-        self.assertEqual(
-            node.__acl__[-1],
-            ('Deny', 'system.Everyone', ALL_PERMISSIONS)
-        )
+        self.assertEqual(node.__acl__[-1], ('Deny', 'system.Everyone', ALL_PERMISSIONS))
 
     @testing.reset_node_available
     def test_AdapterACL(self):
@@ -471,17 +632,14 @@ class SecurityTest(NodeTestCase):
         request = self.layer.new_request()
         request.registry.registerAdapter(ACLAdapter)
 
-        acl_adapter = request.registry.queryAdapter(
-            node,
-            IACLAdapter,
-            default=None
-        )
+        acl_adapter = request.registry.queryAdapter(node, IACLAdapter, default=None)
         self.assertIsInstance(acl_adapter, ACLAdapter)
         self.assertEqual(acl_adapter.acl, acl)
         self.assertEqual(node.__acl__, acl)
 
         def node_available(model, node_info_name):
             return False
+
         security.node_available = node_available
         self.assertEqual(node.__acl__, [(Deny, Everyone, ALL_PERMISSIONS)])
 
@@ -506,24 +664,29 @@ class SecurityTest(NodeTestCase):
 
         authenticate(self.layer.new_request(), 'foo', 'foo')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <LogRecord: cone.app, ..., ...security.py, ...,
         "Authentication plugin <... 'object'> raised an Exception while trying
         to authenticate: 'object' object has no attribute 'users'">
-        """, str(handler.record))
+        """,
+            str(handler.record),
+        )
 
         # Test Group callback, also logs if an error occurs
         with self.layer.authenticated('superuser', 'superuser'):
             self.assertEqual(
-                groups_callback('superuser', self.layer.new_request()),
-                ['role:manager']
+                groups_callback('superuser', self.layer.new_request()), ['role:manager']
             )
 
         groups_callback('foo', self.layer.new_request())
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <LogRecord: cone.app, 40,
         ...security.py, ..., "'object' object has no attribute 'users'">
-        """, str(handler.record))
+        """,
+            str(handler.record),
+        )
 
         # Cleanup
         logger.setLevel(logging.INFO)
@@ -535,9 +698,7 @@ class SecurityTest(NodeTestCase):
         registry = request.registry
         authenticator = TestAuthenticator()
         registry.registerUtility(
-            authenticator,
-            IAuthenticator,
-            name='test_authenticator'
+            authenticator, IAuthenticator, name='test_authenticator'
         )
         authenticator_origin = security.AUTHENTICATOR
         security.AUTHENTICATOR = 'test_authenticator'
@@ -556,20 +717,16 @@ class SecurityTest(NodeTestCase):
             if node_info_name == 'denied':
                 return False
             return True
+
         security.node_available = node_available
 
         @node_info(name='allowed')
         @plumbing(AppNode)
-        class AllowedNode:
-            ...
+        class AllowedNode: ...
 
         @node_info(name='denied')
         @plumbing(AppNode)
-        class DeniedNode:
-            ...
+        class DeniedNode: ...
 
         self.assertEqual(AllowedNode().__acl__, DEFAULT_ACL)
-        self.assertEqual(
-            DeniedNode().__acl__,
-            [(Deny, Everyone, ALL_PERMISSIONS)]
-        )
+        self.assertEqual(DeniedNode().__acl__, [(Deny, Everyone, ALL_PERMISSIONS)])

@@ -47,19 +47,16 @@ class TestUtils(NodeTestCase):
         self.assertEqual(helper.dt_to_iso(dt), '2010-01-01T10:15:10')
 
         self.assertEqual(
-            helper.dt_from_iso('2010-01-01T10:15:00'),
-            datetime(2010, 1, 1, 10, 15)
+            helper.dt_from_iso('2010-01-01T10:15:00'), datetime(2010, 1, 1, 10, 15)
         )
         self.assertEqual(
-            helper.dt_from_iso('2010-01-01T10:15:00'),
-            datetime(2010, 1, 1, 10, 15)
+            helper.dt_from_iso('2010-01-01T10:15:00'), datetime(2010, 1, 1, 10, 15)
         )
 
         self.assertEqual(helper.r_value('äöü'), 'äöü')
         self.assertEqual(helper.r_value(b'\xc3\xa4\xc3\xb6\xc3\xbc'), 'äöü')
         self.assertEqual(
-            helper.r_value('2010-01-01T10:15:00'),
-            datetime(2010, 1, 1, 10, 15)
+            helper.r_value('2010-01-01T10:15:00'), datetime(2010, 1, 1, 10, 15)
         )
 
         self.assertEqual(helper.w_value(b'abc'), 'abc')
@@ -73,9 +70,12 @@ class TestUtils(NodeTestCase):
         self.assertEqual(helper.w_value(False), 'False')
 
     def test_timestamp(self):
-        self.checkOutput("""
+        self.checkOutput(
+            """
         datetime.datetime(..., ..., ..., ..., ..., ..., ...)
-        """, repr(timestamp()))
+        """,
+            repr(timestamp()),
+        )
 
     def test_creation_metadata(self):
         # Creation metadata

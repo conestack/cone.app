@@ -18,13 +18,13 @@ try:
     from yafowil.yaml import parse_from_YAML
 except ImportError:  # pragma: no cover
     logger.warning(
-        '``yafowil.yaml`` not present. '
-        '``cone.app.browser.form.YAMLForm`` will not work'
+        '``yafowil.yaml`` not present. ``cone.app.browser.form.YAMLForm`` will not work'
     )
 
 
 class FormTarget(Behavior):
     """Behavior defining the form submission resource."""
+
     action_resource = default('')
 
 
@@ -35,9 +35,7 @@ class AddFormTarget(FormTarget):
     @property
     def form_action(self):
         return make_url(
-            self.request,
-            node=self.model.parent,
-            resource=self.action_resource
+            self.request, node=self.model.parent, resource=self.action_resource
         )
 
 
@@ -47,11 +45,7 @@ class EditFormTarget(FormTarget):
     @override
     @property
     def form_action(self):
-        return make_url(
-            self.request,
-            node=self.model,
-            resource=self.action_resource
-        )
+        return make_url(self.request, node=self.model, resource=self.action_resource)
 
 
 class YAMLAddFormTarget(FormTarget):
@@ -60,9 +54,7 @@ class YAMLAddFormTarget(FormTarget):
     @override
     def form_action(self, widget, data):
         return make_url(
-            self.request,
-            node=self.model.parent,
-            resource=self.action_resource
+            self.request, node=self.model.parent, resource=self.action_resource
         )
 
 
@@ -71,11 +63,7 @@ class YAMLEditFormTarget(FormTarget):
 
     @override
     def form_action(self, widget, data):
-        return make_url(
-            self.request,
-            node=self.model,
-            resource=self.action_resource
-        )
+        return make_url(self.request, node=self.model, resource=self.action_resource)
 
 
 class YAMLForm(FormTarget):
@@ -102,23 +90,17 @@ class YAMLForm(FormTarget):
             '``YAMLForm.form_action`` is deprecated and will be removed as of '
             'cone.app 1.2. Please use ``YAMLAddFormTarget`` and '
             '``YAMLEditFormTarget`` instead.',
-            DeprecationWarning
+            DeprecationWarning,
         )
         resource = self.action_resource
         if self.form_flavor == 'add':
-            return make_url(
-                self.request,
-                node=self.model.parent,
-                resource=resource
-            )
+            return make_url(self.request, node=self.model.parent, resource=resource)
         return make_url(self.request, node=self.model, resource=resource)
 
     @override
     def prepare(self):
         template = (
-            self.form_template if
-            self.form_template else
-            self.form_template_path  # B/C
+            self.form_template if self.form_template else self.form_template_path  # B/C
         )
         self.form = parse_from_YAML(template, self, self.message_factory)
 
@@ -131,6 +113,7 @@ class ProtectedAttributesForm(Behavior):
     ``self.attribute_permissions`` containing the attribute names as key, and
     a 2-tuple containing required edit and view permission for this attribute.
     """
+
     attribute_permissions = default(dict())
     attribute_default_permissions = default(('edit', 'view'))
 
@@ -154,22 +137,24 @@ class ProtectedAttributesForm(Behavior):
 
 class Form(Tile):
     """A form tile."""
+
     form = None  # yafowil compound expected.
     ajax = True  # render ajax form related by default.
 
     def prepare(self):
         """Responsible to prepare ``self.form``."""
         raise NotImplementedError(
-            "``prepare`` function must be provided "
-            "by deriving object."
+            '``prepare`` function must be provided by deriving object.'
         )
 
     def prepare_ajax(self):
         """Set ajax class attribute on self.form."""
         if not self.ajax:
             return
-        if self.form.attrs.get('class_add') \
-                and self.form.attrs['class_add'].find('ajax') == -1:
+        if (
+            self.form.attrs.get('class_add')
+            and self.form.attrs['class_add'].find('ajax') == -1
+        ):
             self.form.attrs['class_add'] += ' ajax'
         else:
             self.form.attrs['class_add'] = 'ajax'
@@ -195,8 +180,9 @@ class Form(Tile):
         if isinstance(controller.next, HTTPFound):
             self.redirect(controller.next)
             return ''
-        if isinstance(controller.next, AjaxAction) \
-                or isinstance(controller.next, AjaxEvent):
+        if isinstance(controller.next, AjaxAction) or isinstance(
+            controller.next, AjaxEvent
+        ):
             self.request.environ['cone.app.continuation'] = [controller.next]
             return ''
         if isinstance(controller.next, list):

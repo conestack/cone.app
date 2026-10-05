@@ -120,41 +120,53 @@ class TestBrowserContents(TileTestCase):
 
             # Sort by creator
             request.params['sort'] = 'creator'
-            self.assertEqual([row['creator'] for row in contents.slice.rows], [
-                'admin 1', 'admin 10', 'admin 11', 'admin 12', 'admin 13',
-                'admin 14', 'admin 15', 'admin 16', 'admin 17', 'admin 18',
-                'admin 19', 'admin 2', 'admin 3', 'admin 4', 'admin 5'
-            ])
+            self.assertEqual(
+                [row['creator'] for row in contents.slice.rows],
+                [
+                    'admin 1',
+                    'admin 10',
+                    'admin 11',
+                    'admin 12',
+                    'admin 13',
+                    'admin 14',
+                    'admin 15',
+                    'admin 16',
+                    'admin 17',
+                    'admin 18',
+                    'admin 19',
+                    'admin 2',
+                    'admin 3',
+                    'admin 4',
+                    'admin 5',
+                ],
+            )
 
             request.params['b_page'] = '1'
-            self.assertEqual([row['creator'] for row in contents.slice.rows], [
-                'admin 6', 'admin 7', 'admin 8', 'admin 9'
-            ])
+            self.assertEqual(
+                [row['creator'] for row in contents.slice.rows],
+                ['admin 6', 'admin 7', 'admin 8', 'admin 9'],
+            )
 
             # Sort by created
             request.params['b_page'] = '0'
             request.params['sort'] = 'created'
 
             self.assertEqual(
-                contents.slice.rows[0]['created'],
-                datetime(2011, 3, 14, 0, 0)
+                contents.slice.rows[0]['created'], datetime(2011, 3, 14, 0, 0)
             )
             self.assertEqual(
-                contents.slice.rows[-1]['created'],
-                datetime(2011, 3, 28, 0, 0)
+                contents.slice.rows[-1]['created'], datetime(2011, 3, 28, 0, 0)
             )
 
             request.params['b_page'] = '1'
             request.params['sort'] = 'modified'
 
             self.assertEqual(
-                contents.slice.rows[0]['modified'],
-                datetime(2011, 3, 30, 0, 0)
+                contents.slice.rows[0]['modified'], datetime(2011, 3, 30, 0, 0)
             )
 
             self.assertEqual(
-                contents.slice.rows[-1]['modified'],
-                datetime(2011, 4, 2, 0, 0)
+                contents.slice.rows[-1]['modified'], datetime(2011, 4, 2, 0, 0)
             )
 
             del request.params['b_page']
@@ -177,8 +189,7 @@ class TestBrowserContents(TileTestCase):
         self.assertTrue(rendered.find(expected) != -1)
 
         expected = (
-            'http://example.com/?b_page=1&amp;'
-            'order=desc&amp;size=15&amp;sort=created'
+            'http://example.com/?b_page=1&amp;order=desc&amp;size=15&amp;sort=created'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -195,8 +206,7 @@ class TestBrowserContents(TileTestCase):
         self.assertTrue(rendered.find(expected) != -1)
 
         expected = (
-            'http://example.com/?b_page=0&amp;'
-            'order=desc&amp;size=15&amp;sort=created'
+            'http://example.com/?b_page=0&amp;order=desc&amp;size=15&amp;sort=created'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -206,8 +216,7 @@ class TestBrowserContents(TileTestCase):
             rendered = contents.batch
 
         expected = (
-            'http://example.com/?b_page=0&amp;'
-            'order=desc&amp;size=15&amp;sort=modified'
+            'http://example.com/?b_page=0&amp;order=desc&amp;size=15&amp;sort=modified'
         )
         self.assertTrue(rendered.find(expected) != -1)
 
@@ -221,11 +230,14 @@ class TestBrowserContents(TileTestCase):
 
         with self.assertRaises(HTTPForbidden) as arc:
             render_tile(model, request, 'contents')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Unauthorized: tile
         <cone.app.browser.contents.ContentsTile object at ...> failed
         permission check
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         # Render authenticated
         with self.layer.authenticated('manager'):
@@ -292,17 +304,13 @@ class TestBrowserContents(TileTestCase):
 
         with self.layer.authenticated('max'):
             res = contents.sorted_rows(
-                0,
-                1,
-                contents.default_sort,
-                contents.default_order
+                0, 1, contents.default_sort, contents.default_order
             )
         self.assertEqual(res[0].css, ' state-initial')
 
     @testing.reset_node_info_registry
     def test_node_type(self):
-        @node_info(
-            name='mynode')
+        @node_info(name='mynode')
         class MyNode(BaseNode):
             pass
 
@@ -317,10 +325,7 @@ class TestBrowserContents(TileTestCase):
 
         with self.layer.authenticated('max'):
             res = contents.sorted_rows(
-                0,
-                1,
-                contents.default_sort,
-                contents.default_order
+                0, 1, contents.default_sort, contents.default_order
             )
         self.assertEqual(res[0].css, ' node-type-mynode')
 

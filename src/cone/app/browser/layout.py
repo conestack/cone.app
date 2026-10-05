@@ -37,28 +37,26 @@ _ = TranslationStringFactory('cone.app')
 
 @tile(name='logo', path='templates/logo.pt', permission='login')
 class LogoTile(Tile):
-    """Tile rendering the logo.
-    """
+    """Tile rendering the logo."""
 
 
 @tile(name='colortoggler', path='templates/colortoggler.pt', permission='login')
 class ColorTogglerTile(Tile):
-    """Tile rendering the color mode toggler.
-    """
+    """Tile rendering the color mode toggler."""
 
 
 @tile(name='footer', path='templates/footer.pt', permission='login')
 class FooterTile(Tile):
-    """Tile rendering the page footer.
-    """
+    """Tile rendering the page footer."""
 
 
-@tile(name='insufficient_privileges',
-      path='templates/insufficient_privileges.pt',
-      permission='login')
+@tile(
+    name='insufficient_privileges',
+    path='templates/insufficient_privileges.pt',
+    permission='login',
+)
 class InsufficientPrivilegesTile(Tile):
-    """Tile rendering insufficient privileges message.
-    """
+    """Tile rendering insufficient privileges message."""
 
 
 class ProtectedContentTile(Tile):
@@ -71,6 +69,7 @@ class ProtectedContentTile(Tile):
 
     The permission of the tile itself can be defined via ``content_permission``
     """
+
     content_permission = 'view'
 
     def __call__(self, model, request):
@@ -82,7 +81,6 @@ class ProtectedContentTile(Tile):
 
 
 class LayoutConfigTile(Tile):
-
     @property
     def config(self):
         model = self.model
@@ -92,14 +90,14 @@ class LayoutConfigTile(Tile):
         if hasattr(model, 'layout'):
             warnings.warn(
                 '``AppNode.layout`` is deprecated, use ``layout_config``',
-                DeprecationWarning
+                DeprecationWarning,
             )
             return model.layout
         layout = self.request.registry.queryAdapter(model, ILayout, default=None)
         if layout:
             warnings.warn(
                 '``ILayout`` adapter is deprecated, use ``layout_config``',
-                DeprecationWarning
+                DeprecationWarning,
             )
             return layout
         return layout_config.lookup(model=model, request=self.request)
@@ -107,8 +105,7 @@ class LayoutConfigTile(Tile):
 
 @tile(name='layout', path='templates/layout.pt', permission='login')
 class Layout(LayoutConfigTile):
-    """Main layout tile.
-    """
+    """Main layout tile."""
 
     @property
     def contenttile(self):
@@ -116,15 +113,9 @@ class Layout(LayoutConfigTile):
 
     def tileinfo(self, val):
         if isinstance(val, tuple):
-            return {
-                'name': val[0],
-                'title': val[1]
-            }
+            return {'name': val[0], 'title': val[1]}
         elif isinstance(val, str):
-            return {
-                'name': val,
-                'title': val
-            }
+            return {'name': val, 'title': val}
 
     def dump(self, val):
         return json.dumps(val)
@@ -135,14 +126,13 @@ personal_tools = odict()
 
 
 class personal_tools_action:
-    """Decorator defining a personaltools dropdown item.
-    """
+    """Decorator defining a personaltools dropdown item."""
 
     def __init__(self, name):
         self.name = name
 
     def __call__(self, factory):
-        css = factory.css if (hasattr(factory, 'css') and factory.css) else ""
+        css = factory.css if (hasattr(factory, 'css') and factory.css) else ''
         factory.css = f'dropdown-item {css}'
         personal_tools[self.name] = factory()
         return factory
@@ -161,13 +151,14 @@ class LogoutAction(LinkAction):
         return make_url(self.request, resource='logout')
 
 
-@tile(name='personaltools',
-      path='templates/personaltools.pt',
-      permission='view',
-      strict=False)
+@tile(
+    name='personaltools',
+    path='templates/personaltools.pt',
+    permission='view',
+    strict=False,
+)
 class PersonalTools(Tile):
-    """Personal tool tile.
-    """
+    """Personal tool tile."""
 
     @property
     def user(self):
@@ -189,10 +180,7 @@ class PersonalTools(Tile):
         return [rendered for _, rendered in items]
 
 
-@tile(name='mainmenu',
-      path='templates/mainmenu.pt',
-      permission='view',
-      strict=False)
+@tile(name='mainmenu', path='templates/mainmenu.pt', permission='view', strict=False)
 class MainMenu(LayoutConfigTile):
     """Main Menu tile.
 
@@ -286,12 +274,8 @@ class MainMenu(LayoutConfigTile):
         return item
 
 
-@tile(name='pathbar',
-      path='templates/pathbar.pt',
-      permission='view',
-      strict=False)
+@tile(name='pathbar', path='templates/pathbar.pt', permission='view', strict=False)
 class PathBar(LayoutConfigTile):
-
     @property
     def items(self):
         # The pathbar must start where the navtree starts, otherwise the
@@ -312,14 +296,16 @@ class PathBar(LayoutConfigTile):
         for node in LocationIterator(model):
             title = node.metadata.title
             title = safe_decode(title) if title else title
-            items.append({
-                'title': title,
-                'url': self.item_url(node),
-                'target': self.item_target(node),
-                'selected': False,
-                'id': node.name,
-                'default_child': node.properties.default_child,
-            })
+            items.append(
+                {
+                    'title': title,
+                    'url': self.item_url(node),
+                    'target': self.item_target(node),
+                    'selected': False,
+                    'id': node.name,
+                    'default_child': node.properties.default_child,
+                }
+            )
             if breakpoint is not None and node.path == breakpoint.path:
                 break
         items.reverse()
@@ -327,9 +313,7 @@ class PathBar(LayoutConfigTile):
         count = len(items)
         for i in range(count):
             default_child = items[i]['default_child']
-            if default_child \
-                    and i < count - 1 \
-                    and default_child == items[i + 1]['id']:
+            if default_child and i < count - 1 and default_child == items[i + 1]['id']:
                 continue
             ret.append(items[i])
 
@@ -341,13 +325,9 @@ class PathBar(LayoutConfigTile):
         return ret
 
 
-@tile(name='navtree',
-      path='templates/navtree.pt',
-      permission='view',
-      strict=False)
+@tile(name='navtree', path='templates/navtree.pt', permission='view', strict=False)
 class NavTree(LayoutConfigTile):
-    """Navigation tree tile.
-    """
+    """Navigation tree tile."""
 
     @property
     def show_navroot(self):
@@ -419,8 +399,7 @@ class NavTree(LayoutConfigTile):
             css = ''
             if IWorkflowState.providedBy(node):
                 css = 'state-%s' % node.state
-            child = self.navtreeitem(
-                title, url, target, node_path(node), icon, css)
+            child = self.navtreeitem(title, url, target, node_path(node), icon, css)
             child['showchildren'] = curnode
             child['leaf'] = INavigationLeaf.providedBy(node)
             if curnode:
@@ -444,7 +423,7 @@ class NavTree(LayoutConfigTile):
         root = self.navtreeitem(None, None, None, '', None)
         model = self.navroot
         # XXX: default child
-        path = node_path(self.model)[len(node_path(model)):]
+        path = node_path(self.model)[len(node_path(model)) :]
         self.fillchildren(model, path, root)
         return root
 
@@ -455,16 +434,13 @@ class NavTree(LayoutConfigTile):
             request=self.request,
             context=self,
             children=children,
-            level=level)
+            level=level,
+        )
 
 
-@tile(name='byline',
-      path='templates/byline.pt',
-      permission='view',
-      strict=False)
+@tile(name='byline', path='templates/byline.pt', permission='view', strict=False)
 class Byline(Tile):
-    """Byline tile.
-    """
+    """Byline tile."""
 
     def format_date(self, dt):
         return format_date(dt)
@@ -472,7 +448,6 @@ class Byline(Tile):
 
 @tile(name='content', interface=AppRoot, permission='login')
 class RootContent(ProtectedContentTile):
-
     def render(self):
         default_child = self.model.properties.default_child
         if default_child:
@@ -487,7 +462,8 @@ class RootContent(ProtectedContentTile):
             'cone.app.browser:templates/default_root.pt',
             model=self.model,
             request=self.request,
-            context=self)
+            context=self,
+        )
 
 
 class LanguageTile(Tile):
@@ -499,7 +475,7 @@ class LanguageTile(Tile):
         'ajax.selector',
         'bdajax.action',  # B/C
         'bdajax.mode',  # B/C
-        'bdajax.selector'  # B/C
+        'bdajax.selector',  # B/C
     ]
 
     def make_query(self, lang=None):
@@ -517,16 +493,12 @@ language_names = {
     'en': _('lang_en', default='English'),
     'de': _('lang_de', default='German'),
     'fr': _('lang_fr', default='French'),
-    'it': _('lang_it', default='Italian')
+    'it': _('lang_it', default='Italian'),
 }
 
 
-@tile(name='language',
-      path='templates/language.pt',
-      permission='login',
-      strict=False)
+@tile(name='language', path='templates/language.pt', permission='login', strict=False)
 class Language(LanguageTile):
-
     @property
     def show(self):
         return bool(cfg.available_languages)
@@ -540,7 +512,7 @@ class Language(LanguageTile):
         return make_url(
             self.request,
             node=self.model.root['resources'],
-            resource='/'.join(['cone', 'flags', f'{self.current_lang}.svg'])
+            resource='/'.join(['cone', 'flags', f'{self.current_lang}.svg']),
         )
 
     @property
@@ -550,23 +522,22 @@ class Language(LanguageTile):
         current = self.current_lang
         for lang in cfg.available_languages:
             target = make_url(
-                self.request,
-                node=self.model,
-                query=self.make_query(lang=lang)
+                self.request, node=self.model, query=self.make_query(lang=lang)
             )
             title = localizer.translate(language_names.get(lang, lang.upper()))
-            languages.append({
-                'target': target,
-                'icon': f'icon-lang-{lang}',
-                'title': title,
-                'css': f'dropdown-item{" active" if lang == current else ""}'
-            })
+            languages.append(
+                {
+                    'target': target,
+                    'icon': f'icon-lang-{lang}',
+                    'title': title,
+                    'css': f'dropdown-item{" active" if lang == current else ""}',
+                }
+            )
         return languages
 
 
 @tile(name='change_language', permission='login')
 class ChangeLanguage(LanguageTile):
-
     @property
     def continuation(self):
         url = make_url(self.request, node=self.model, query=self.make_query())

@@ -72,7 +72,6 @@ class TestBrowserResources(TileTestCase):
         self.assertEqual(styles[1].file_name, 'bootstrap-icons.min.css')
         self.assertTrue(os.path.exists(styles[1].file_path))
 
-
     def test_cone_resources(self):
         resources_ = resources.cone_resources
         self.assertTrue(resources_.directory.endswith(np('/static/cone')))
@@ -119,17 +118,13 @@ class TestBrowserResources(TileTestCase):
 
         directory = os.path.join('path', 'to', 'resources')
         registry._register_resources_view(
-            config,
-            resources,
-            'test-resources',
-            directory
+            config, resources, 'test-resources', directory
         )
 
         self.assertTrue(hasattr(resources, 'test_resources_static_view'))
         self.assertIsInstance(resources.test_resources_static_view, static_view)
         self.assertEqual(
-            config.view_path,
-            'cone.app.browser.resources.test_resources_static_view'
+            config.view_path, 'cone.app.browser.resources.test_resources_static_view'
         )
         self.assertEqual(config.name, 'test-resources')
         self.assertTrue(config.context is AppResources)
@@ -143,22 +138,15 @@ class TestBrowserResources(TileTestCase):
 
         config.set_resource_include('name-1', True)
         config.set_resource_include('name-2', False)
-        self.assertEqual(resources._registry._includes, {
-            'name-1': True,
-            'name-2': False
-        })
+        self.assertEqual(
+            resources._registry._includes, {'name-1': True, 'name-2': False}
+        )
 
     @reset_resource_registry
     def test_configure_default_resource_includes(self):
         addon_resources = wr.ResourceGroup(name='addon', path='test-addon')
-        addon_resources.add(wr.ScriptResource(
-            name='addon-js',
-            resource='addon.js'
-        ))
-        addon_resources.add(wr.StyleResource(
-            name='addon-css',
-            resource='addon.css'
-        ))
+        addon_resources.add(wr.ScriptResource(name='addon-js', resource='addon.js'))
+        addon_resources.add(wr.StyleResource(name='addon-css', resource='addon.css'))
         try:
             factory.push_state()
             factory.register_resources('default', 'addon', addon_resources)
@@ -178,7 +166,7 @@ class TestBrowserResources(TileTestCase):
         includes = {
             'authenticated-resource': 'authenticated',
             'excluded-resource': False,
-            'included-resource': True
+            'included-resource': True,
         }
 
         include = resources.ResourceInclude(includes, 'authenticated-resource')
@@ -201,11 +189,7 @@ class TestBrowserResources(TileTestCase):
             views = []
 
             def add_view(self, view_path, name, context):
-                self.views.append(dict(
-                    view_path=view_path,
-                    name=name,
-                    context=context
-                ))
+                self.views.append(dict(view_path=view_path, name=name, context=context))
 
             def add_directive(self, name, callback):
                 setattr(self, name, functools.partial(callback, self))
@@ -219,37 +203,29 @@ class TestBrowserResources(TileTestCase):
             directory=directory,
             path='test-resources',
         )
-        test_resources.add(wr.ScriptResource(
-            name='base-js',
-            resource='base.js'
-        ))
+        test_resources.add(wr.ScriptResource(name='base-js', resource='base.js'))
         # add duplicate resource, gets removed
-        test_resources.add(wr.ScriptResource(
-            name='base-js',
-            resource='duplcate-base.js'
-        ))
+        test_resources.add(
+            wr.ScriptResource(name='base-js', resource='duplcate-base.js')
+        )
         config.register_resource(test_resources)
 
         # add duplicate group, gets removed
-        config.register_resource(wr.ResourceGroup(
-            name='duplcate-test-resources',
-            path='test-resources',
-        ))
+        config.register_resource(
+            wr.ResourceGroup(
+                name='duplcate-test-resources',
+                path='test-resources',
+            )
+        )
 
         # yafowil addon resources
         addon_resources = wr.ResourceGroup(
             name='yafowil-addon-resources',
             directory=directory,
-            path='test-addon-resources'
+            path='test-addon-resources',
         )
-        addon_resources.add(wr.ScriptResource(
-            name='addon-js',
-            resource='addon.js'
-        ))
-        addon_resources.add(wr.StyleResource(
-            name='addon-css',
-            resource='addon.css'
-        ))
+        addon_resources.add(wr.ScriptResource(name='addon-js', resource='addon.js'))
+        addon_resources.add(wr.StyleResource(name='addon-css', resource='addon.css'))
 
         try:
             factory.push_state()
@@ -261,31 +237,41 @@ class TestBrowserResources(TileTestCase):
 
             self.assertTrue(wr.config.development)
 
-            self.assertEqual(config.views[:6], [{
-                'view_path': 'cone.app.browser.resources.jquery_static_view',
-                'name': 'jquery',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.bootstrap_static_view',
-                'name': 'bootstrap',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.cone_static_view',
-                'name': 'cone',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.test_resources_static_view',
-                'name': 'test-resources',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.treibstoff_static_view',
-                'name': 'treibstoff',
-                'context': AppResources
-            }, {
-                'view_path': 'cone.app.browser.resources.test_addon_resources_static_view',
-                'name': 'test-addon-resources',
-                'context': AppResources
-            }])
+            self.assertEqual(
+                config.views[:6],
+                [
+                    {
+                        'view_path': 'cone.app.browser.resources.jquery_static_view',
+                        'name': 'jquery',
+                        'context': AppResources,
+                    },
+                    {
+                        'view_path': 'cone.app.browser.resources.bootstrap_static_view',
+                        'name': 'bootstrap',
+                        'context': AppResources,
+                    },
+                    {
+                        'view_path': 'cone.app.browser.resources.cone_static_view',
+                        'name': 'cone',
+                        'context': AppResources,
+                    },
+                    {
+                        'view_path': 'cone.app.browser.resources.test_resources_static_view',
+                        'name': 'test-resources',
+                        'context': AppResources,
+                    },
+                    {
+                        'view_path': 'cone.app.browser.resources.treibstoff_static_view',
+                        'name': 'treibstoff',
+                        'context': AppResources,
+                    },
+                    {
+                        'view_path': 'cone.app.browser.resources.test_addon_resources_static_view',
+                        'name': 'test-addon-resources',
+                        'context': AppResources,
+                    },
+                ],
+            )
 
             self.assertTrue(hasattr(resources, 'test_resources_static_view'))
             self.assertTrue(hasattr(resources, 'treibstoff_static_view'))
@@ -294,20 +280,12 @@ class TestBrowserResources(TileTestCase):
             configured_resources = resources._registry.resources
             self.assertEqual(len(configured_resources.members[3].members), 1)
             self.assertEqual(
-                configured_resources.members[3].members[0].resource,
-                'base.js'
+                configured_resources.members[3].members[0].resource, 'base.js'
             )
+            self.assertEqual(configured_resources.members[3].name, 'test-resources')
+            self.assertEqual(configured_resources.members[4].name, 'treibstoff')
             self.assertEqual(
-                configured_resources.members[3].name,
-                'test-resources'
-            )
-            self.assertEqual(
-                configured_resources.members[4].name,
-                'treibstoff'
-            )
-            self.assertEqual(
-                configured_resources.members[5].name,
-                'yafowil-addon-resources'
+                configured_resources.members[5].name, 'yafowil-addon-resources'
             )
         finally:
             if hasattr(resources, 'test_resources_static_view'):
@@ -324,13 +302,16 @@ class TestBrowserResources(TileTestCase):
         request = self.layer.new_request()
         res = render_tile(model, request, 'resources')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <!-- stylesheets -->
         <link ...
 
         <!-- javascripts -->
         <script ...
-        """, res)
+        """,
+            res,
+        )
 
         self.assertFalse(res.find('cone.app.protected') > -1)
 
