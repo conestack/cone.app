@@ -70,6 +70,35 @@ class TestBrowserSharing(TileTestCase):
             res = render_tile(root, request, 'sharing')
         self.assertNotIn('No local access permissions assigned.', res)
 
+    def test_empty_state_only_for_an_empty_table(self):
+        # Inherited roles are rows of the table too. The hint stood next to
+        # them, as the count of the table knew the local roles only - and
+        # sliced the pages by them.
+        root = SharingNode(name='root')
+        root.principal_roles['viewer'] = ['editor']
+        child = root['child'] = SharingNode()
+        child.role_inheritance = True
+        request = self.layer.new_request()
+        with self.layer.authenticated('manager'):
+            res = render_tile(child, request, 'sharing')
+        self.assertIn('name="viewer"', res)
+        self.assertNotIn('No local access permissions assigned.', res)
+
+        from cone.app.browser.sharing import SharingTable
+
+        table = SharingTable('cone.app:browser/templates/table.pt', None, 'local_acl')
+        table.model = child
+        table.request = request
+        with self.layer.authenticated('manager'):
+            self.assertEqual(table.item_count, 1)
+
+        # Without inheritance the parent's roles are none of its business
+        child.role_inheritance = False
+        with self.layer.authenticated('manager'):
+            res = render_tile(child, request, 'sharing')
+            self.assertEqual(table.item_count, 0)
+        self.assertIn('No local access permissions assigned.', res)
+
     def test_render_sharing_tile(self):
         root = SharingNode(name='root')
         request = self.layer.new_request()

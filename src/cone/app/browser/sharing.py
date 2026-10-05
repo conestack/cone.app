@@ -89,26 +89,33 @@ class SharingTable(Table):
         return f'<p class="mb-1">{main}</p><p class="small mb-0">{note}</p>'
 
     @property
-    def item_count(self):
+    def principal_ids(self):
+        """The principals the table lists: the search result, else those with
+        a role here - inherited ones included where the node inherits.
+
+        ``item_count`` and ``sorted_rows`` both read it. The count used to
+        know the local roles only: with inherited rows only, the empty state
+        "no local access permissions" stood next to them, the footer read
+        "0 to 0 of 0" and the pages were sliced by the wrong number.
+        """
         term = self.filter_term
         if term:
-            principals = security.search_for_principals('*%s*' % term)
-            return len(principals)
-        return len(self.model.principal_roles.keys())
+            return security.search_for_principals('*%s*' % term)
+        model = self.model
+        if model.role_inheritance:
+            return list(model.aggregated_roles.keys())
+        return list(model.principal_roles.keys())
+
+    @property
+    def item_count(self):
+        return len(self.principal_ids)
 
     def sorted_rows(self, start, end, sort, order):
         rows = list()
-        term = self.filter_term
         model = self.model
         principal_roles = model.principal_roles
         inheritance = model.role_inheritance
-        if term:
-            principal_ids = security.search_for_principals('*%s*' % term)
-        else:
-            if inheritance:
-                principal_ids = model.aggregated_roles.keys()
-            else:
-                principal_ids = principal_roles.keys()
+        principal_ids = self.principal_ids
         # XXX: currently always sorted by principal id. Fix to sort by
         #      principal title, needs some refactoring though
         ids = sorted(principal_ids)
@@ -169,10 +176,10 @@ class AddPrincipalRole(Tile):
             roles = model.principal_roles
             if principal_id not in roles:
                 model.principal_roles[principal_id] = [role]
-                return ''
-            existing = set(model.principal_roles[principal_id])
-            existing.add(role)
-            model.principal_roles[principal_id] = list(existing)
+            else:
+                existing = set(model.principal_roles[principal_id])
+                existing.add(role)
+                model.principal_roles[principal_id] = list(existing)
         except Exception as e:
             logger.error(e)
             localizer = get_localizer(self.request)

@@ -4,6 +4,13 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Fix the sharing table counting local roles only while listing inherited
+  ones too. With inherited roles only, the empty state "No local access
+  permissions assigned" stood next to their rows, the footer read "0 to 0 of
+  0" and the pages were sliced by the wrong number. ``SharingTable`` counts
+  and lists the same ``principal_ids`` now.
+  [rnix]
+
 - Show a pointer on dropdown entries that trigger an ajax action without an
   url of their own. ``action_dropdown.pt`` renders them without ``href``, and
   the browser gives such a link the default cursor.
