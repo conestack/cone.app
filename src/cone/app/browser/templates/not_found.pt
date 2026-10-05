@@ -3,11 +3,13 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <div>
-    <h1 i18n:translate="not_found_label">Not Found</h1>
-    <p i18n:translate="not_found_text">
+  <div class="card mt-3">
+    <h5 class="card-header" i18n:translate="not_found_label">Not Found</h5>
+    <div class="card-body">
+      <p class="card-text" i18n:translate="not_found_text">
       The requested resource cannot be found.
-    </p>
+      </p>
+    </div>
   </div>
 
 </tal:block>

@@ -602,7 +602,10 @@ class TestBrowserBatch(TileTestCase):
         self.assertEqual(batched_items.title, 'container')
 
         # Title can be skipped by setting ``show_title`` to False
-        expected = '<span class="label label-primary">container</span>'
+        expected = (
+            '<h5 class="batched_items_title m-0 me-auto align-self-center ">'
+            'container</h5>'
+        )
         self.assertTrue(batched_items.rendered_header.find(expected) > -1)
 
         batched_items.show_title = False

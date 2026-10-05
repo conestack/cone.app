@@ -10,20 +10,17 @@
 
     <tal:category repeat="category_name categories">
       <div class="card mb-3">
+        <h5 tal:condition="category_name == context.no_category"
+            i18n:translate="settings"
+            class="card-header">
+          Settings
+        </h5>
+        <h5 tal:condition="category_name != context.no_category"
+            tal:content="category_name"
+            class="card-header">
+          Category Name
+        </h5>
         <div class="settings-grid card-body row h-100 mb-3 px-4">
-
-          <div class="card-title text-primary">
-            <h4 tal:condition="category_name == context.no_category"
-                i18n:translate="settings"
-                class="mb-2">
-              Settings
-            </h4>
-            <h4 tal:condition="category_name != context.no_category"
-                tal:content="category_name"
-                class="mb-2">
-              Category Name
-            </h4>
-          </div>
 
           <a tal:repeat="item categories[category_name]"
              href="${item['target']}"

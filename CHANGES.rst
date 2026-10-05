@@ -4,6 +4,26 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Render titles as card headers. A view now reads contextmenu, card header,
+  content:
+
+  - ``table.pt``: the table title is the first element of the table's own
+    header, beside slice size, search and ``head_additional``, instead of a
+    ``h4`` in the body between the header and the rows. The table stays one
+    card replaced as a whole on reload. The header renders as soon as
+    ``display_table_header`` or ``show_title`` is set; the controls only with
+    ``display_table_header``.
+  - ``content_form.pt``: ``form_heading`` is a ``h5.card-header`` above the
+    form's ``card-body`` (a ``h5.mb-3`` when ``is_card`` is false).
+  - ``settings.pt``: each category is a ``h5.card-header`` of its card.
+  - ``batched_items_header.pt``: the title is a ``h5.batched_items_title``.
+  - ``not_found.pt``, ``unauthorized.pt``, ``insufficient_privileges.pt``: a
+    card with a ``h5.card-header`` and the message in its body.
+
+  The ``label label-primary`` spans around titles are gone. Attributes and
+  translation ids are unchanged.
+  [rnix]
+
 - Mark a failed ajax tile or form in ``request.environ`` under
   ``cone.app.browser.ajax.RENDER_ERROR``. Both show the error and answer 200,
   so a transaction manager that commits on success committed whatever the

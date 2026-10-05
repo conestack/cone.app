@@ -29,6 +29,7 @@ from cone.app.model import get_node_info
 from cone.app.model import node_info
 from cone.app.model import NodeInfo
 from cone.app.model import register_node_info
+from cone.tile import render_template
 from cone.tile import render_tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
@@ -434,6 +435,41 @@ class TestBrowserAuthoring(TileTestCase):
     #     expected = '<div class="panel-heading content-heading">'
     #     self.assertTrue(res.find(expected) > -1)
 
+    def test_content_form_template(self):
+        # The heading is the card's header, the form its body; without a
+        # card, a plain heading above the form; without a heading, neither.
+        class Context:
+            show_contextmenu = False
+            show_heading = True
+            is_card = True
+            form_heading = 'Edit: Foo'
+            rendered_form = '<form></form>'
+
+        def render(**attrs):
+            context = Context()
+            for name, value in attrs.items():
+                setattr(context, name, value)
+            return render_template(
+                'cone.app.browser:templates/content_form.pt',
+                model=BaseNode(),
+                request=self.layer.new_request(),
+                context=context,
+            )
+
+        rendered = render()
+        self.assertIn('<div class="card mt-3">', rendered)
+        self.assertIn('<h5 class="card-header">Edit: Foo</h5>', rendered)
+        self.assertLess(rendered.find('card-header'), rendered.find('card-body'))
+        self.assertLess(rendered.find('card-body'), rendered.find('<form>'))
+
+        rendered = render(is_card=False)
+        self.assertIn('<h5 class="mb-3">Edit: Foo</h5>', rendered)
+        self.assertNotIn('card', rendered)
+
+        rendered = render(show_heading=False)
+        self.assertNotIn('<h5', rendered)
+        self.assertIn('<form>', rendered)
+
     @testing.reset_node_info_registry
     def test_AddFormHeading(self):
         @node_info(
@@ -694,7 +730,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(root['somechild'], request, 'editform')
 
         self.checkOutput("""
-        ...<span class="label label-primary">Edit: My Node</span>...
+        ...<h5 class="card-header">Edit: My Node</h5>...
         <form action="http://example.com/somechild"...
         """, res)
 

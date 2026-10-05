@@ -98,8 +98,8 @@ class TestBrowserException(TileTestCase):
         request = self.layer.new_request()
 
         self.checkOutput("""
-        \n\n  <div>\n    <h1>Unauthorized</h1>\n
-        <p>You are not allowed to access this resource.</p>\n  </div>\n\n\n
+        ...<div class="card mt-3">...<h5 class="card-header">Unauthorized</h5>...
+        ...<p class="card-text">You are not allowed to access this resource.</p>...
         """, render_tile(model, request, 'unauthorized'))
 
         # Forbidden view. Unauthenticated renders login form.
@@ -112,7 +112,7 @@ class TestBrowserException(TileTestCase):
         # Authenticated renders unauthorized as content tile.
         with self.layer.authenticated('admin'):
             res = render_view_to_response(context, request=request).text
-            self.assertTrue(res.find('<h1>Unauthorized</h1>') > -1)
+            self.assertTrue(res.find('<h5 class="card-header">Unauthorized</h5>') > -1)
 
     def test_json_forbidden(self):
         context = HTTPForbidden()
@@ -129,8 +129,8 @@ class TestBrowserException(TileTestCase):
         request = self.layer.new_request()
 
         self.checkOutput("""
-        \n\n  <div>\n    <h1>Not Found</h1>\n
-        <p>The requested resource cannot be found.</p>\n  </div>\n\n\n
+        ...<div class="card mt-3">...<h5 class="card-header">Not Found</h5>...
+        ...<p class="card-text">The requested resource cannot be found.</p>...
         """, render_tile(model, request, 'not_found'))
 
         # Not Found view. Always renders not found as content tile.
@@ -138,11 +138,11 @@ class TestBrowserException(TileTestCase):
         request = self.layer.new_request()
         request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request).text
-        self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
+        self.assertTrue(res.find('<h5 class="card-header">Not Found</h5>') > -1)
 
         with self.layer.authenticated('admin'):
             res = render_view_to_response(context, request=request).text
-            self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
+            self.assertTrue(res.find('<h5 class="card-header">Not Found</h5>') > -1)
 
     def test_json_not_found(self):
         context = HTTPNotFound()

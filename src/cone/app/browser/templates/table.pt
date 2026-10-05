@@ -13,9 +13,15 @@
        ajax:action="${context.table_tile_name}:#${context.table_id}:replace">
 
     <div class="card-header"
-         tal:condition="context.display_table_header">
+         tal:condition="context.display_table_header or context.show_title">
 
       <div class="d-flex gap-2 gap-sm-3 flex-wrap">
+
+        <h5 tal:condition="context.show_title"
+            class="table_title m-0 me-auto align-self-center"
+            tal:content="context.table_title">Title</h5>
+
+        <tal:controls condition="context.display_table_header">
 
         <div class="table_length
                     mt-auto
@@ -69,16 +75,13 @@
           Additional Header Markup.
         </div>
 
+        </tal:controls>
+
       </div>
 
     </div>
 
     <div class="card-body p-0 scrollable-x scrollbar-top">
-
-      <h4 tal:condition="context.show_title"
-          class="card-title card-body">
-        <span tal:content="context.table_title">Title</span>
-      </h4>
 
       <table class="table table-striped mb-0 scrollable-content"
              id="${context.table_id}_table">

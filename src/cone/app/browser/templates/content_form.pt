@@ -6,19 +6,15 @@
   <div tal:define="css 'card mt-3' if context.is_card else 'mt-3'"
        tal:attributes="class css">
 
+    <h5 tal:condition="context.show_heading"
+        tal:attributes="class 'card-header' if context.is_card else 'mb-3'"
+        tal:content="context.form_heading">Title</h5>
+
     <div tal:define="css 'card-body' if context.is_card else ''"
          tal:attributes="class css">
-
-      <h4 class="card-title mb-3"
-          tal:condition="context.show_heading">
-        <span class="label label-primary"
-              tal:content="context.form_heading">Title</span>
-      </h4>
-
       <div>
         <tal:form replace="structure context.rendered_form" />
       </div>
-
     </div>
 
   </div>

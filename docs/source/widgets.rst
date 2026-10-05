@@ -1220,6 +1220,10 @@ More customization options on ``Table`` class:
   Links. Defaults to ``[]``.
 
 - **show_title**: Flag whether to display table title. Defaults to ``True``.
+  The title is the first element of the table header, beside slice size,
+  search and ``head_additional``. The header renders if ``show_title`` or
+  ``display_table_header`` is set; the controls only with
+  ``display_table_header``.
 
 - **table_title**: Title of the table. Defaults to
   ``self.model.metadata.title``.

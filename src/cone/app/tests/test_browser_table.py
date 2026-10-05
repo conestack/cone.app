@@ -288,3 +288,62 @@ class TestBrowserTable(TileTestCase):
         footer = footer_html(table(model, request))
         self.assertIn('>16<', footer)
         self.assertIn('>17<', footer)
+
+    def test_title_in_header(self):
+        # The title is the first element of the table's own header, beside
+        # slice size, search and ``head_additional`` - not a heading inside
+        # the body, between the header and the rows. The table stays one card:
+        # header, rows and footer, replaced together on every reload.
+        class MyTable(DummyTable):
+            col_defs = [{
+                'id': 'col_1',
+                'title': 'Col 1',
+                'sort_key': None,
+                'sort_title': None,
+                'content': 'string',
+            }]
+            show_filter = True
+            head_additional = '<span class="extra">Extra</span>'
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        model = BaseNode()
+        model.metadata.title = 'Foo'
+        request = self.layer.new_request()
+
+        def header(rendered):
+            start = rendered.find('class="card-header"')
+            return rendered[start:rendered.find('class="card-body', start)]
+
+        rendered = MyTable(tmpl, None, 'table')(model, request)
+        head = header(rendered)
+        self.assertIn('class="table_title m-0 me-auto align-self-center">Foo</h5>', head)
+        # Title first, then the controls.
+        self.assertLess(head.find('table_title'), head.find('table_length'))
+        self.assertLess(head.find('table_length'), head.find('table_filter'))
+        self.assertLess(head.find('table_filter'), head.find('class="extra"'))
+        self.assertNotIn('<h4', rendered)
+        # Rows and footer in the same card.
+        self.assertLess(rendered.find('card-header'), rendered.find('<table'))
+        self.assertLess(rendered.find('<table'), rendered.find('table_info'))
+
+        # Without a title the header holds the controls alone.
+        table = MyTable(tmpl, None, 'table')
+        table.show_title = False
+        head = header(table(model, request))
+        self.assertNotIn('table_title', head)
+        self.assertIn('table_filter', head)
+
+        # Without the controls the header keeps the title alone.
+        table = MyTable(tmpl, None, 'table')
+        table.display_table_header = False
+        head = header(table(model, request))
+        self.assertIn('table_title', head)
+        self.assertNotIn('table_length', head)
+        self.assertNotIn('table_filter', head)
+        self.assertNotIn('class="extra"', head)
+
+        # Neither: no header at all.
+        table = MyTable(tmpl, None, 'table')
+        table.display_table_header = False
+        table.show_title = False
+        self.assertNotIn('class="card-header"', table(model, request))

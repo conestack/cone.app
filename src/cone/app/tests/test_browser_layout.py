@@ -248,7 +248,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             result = render_tile(model, request, 'content')
 
-        self.assertTrue(result.find('<h3>Insufficient privileges</h3>') > -1)
+        self.assertTrue(result.find('<h5 class="card-header">Insufficient privileges</h5>') > -1)
 
         with self.layer.authenticated('manager'):
             result = render_tile(model, request, 'content')

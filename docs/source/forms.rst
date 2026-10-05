@@ -389,7 +389,9 @@ Following customization attributes are considered:
   defaults to ``True``
 
 - **show_heading**: Flag whether to render a form heading.
-  defaults to ``True``.
+  defaults to ``True``. The heading is the header of the form card
+  (``h5.card-header``), or a plain ``h5`` above the form if ``is_card`` is
+  ``False``.
 
 - **form_heading**: Form heading text.
 
