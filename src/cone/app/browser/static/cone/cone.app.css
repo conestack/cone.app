@@ -89,6 +89,10 @@ body {
   z-index: 1;
 }
 
+.dropdown-item[ajax\:bind]:not([href]) {
+  cursor: pointer;
+}
+
 .referencebrowser_trigger {
   cursor: pointer;
 }

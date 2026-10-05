@@ -4,6 +4,11 @@ Changes
 2.0a1 (unreleased)
 ------------------
 
+- Show a pointer on dropdown entries that trigger an ajax action without an
+  url of their own. ``action_dropdown.pt`` renders them without ``href``, and
+  the browser gives such a link the default cursor.
+  [rnix]
+
 - Fix ``TypeError: can't access property "off", this.scrollbar is undefined``
   after an ajax ``replace``. treibstoff binds the parent of a replaced element
   again, so ``Scrollbar.initialize`` ran on scrollbars that were bound

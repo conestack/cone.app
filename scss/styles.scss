@@ -17,6 +17,13 @@ body {
     z-index: 1;
 }
 
+// Menu entries that trigger an ajax action have no url of their own, so
+// action_dropdown.pt renders them without ``href`` - and a link without one
+// gets no pointer from the browser.
+.dropdown-item[ajax\:bind]:not([href]) {
+    cursor: pointer;
+}
+
 // referencebrowser
 .referencebrowser_trigger {
     cursor: pointer;
