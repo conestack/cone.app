@@ -23,10 +23,8 @@
 /node_modules/
 /package-lock.json
 /pip-selfcheck.json
-/pnpm-lock.yaml
 /pyvenv.cfg
 /requirements-mxdev.txt
 /sources/
 /twistd.pid
 /venv/
-/pnpm-lock.yaml

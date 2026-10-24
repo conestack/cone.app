@@ -7,7 +7,6 @@ import { global_events } from './globals.js';
  * @extends ts.Events
  */
 export class MainArea extends ts.Events {
-
     /**
      * Initializes the MainArea instance.
      * @param {Element} context
@@ -92,7 +91,6 @@ export class MainArea extends ts.Events {
  * @extends ts.Events
  */
 export class LayoutAware extends ts.Events {
-
     /**
      * @param {Element} elem
      */
@@ -128,7 +126,7 @@ export class LayoutAware extends ts.Events {
      * @param {} inst
      * @param {MainArea} mainarea
      */
-    set_mode(inst, mainarea) {
+    set_mode(_inst, mainarea) {
         this.is_compact = mainarea.is_compact;
         this.is_super_compact = mainarea.is_super_compact;
     }
@@ -164,7 +162,7 @@ export class LayoutAware extends ts.Events {
      * @param {} inst
      * @param {Object} sidebar
      */
-    on_sidebar_left_resize(inst, sidebar) {
+    on_sidebar_left_resize(_inst, sidebar) {
         this.is_sidebar_left_collapsed = sidebar.collapsed;
     }
 
@@ -173,7 +171,7 @@ export class LayoutAware extends ts.Events {
      * @param {} inst
      * @param {Object} sidebar
      */
-    on_sidebar_right_resize(inst, sidebar) {
+    on_sidebar_right_resize(_inst, sidebar) {
         this.is_sidebar_right_collapsed = sidebar.collapsed;
     }
 
@@ -181,7 +179,7 @@ export class LayoutAware extends ts.Events {
      * Handles changes in the sidebar left collapsed state.
      * @param {boolean} val
      */
-    on_is_sidebar_left_collapsed(val) {
+    on_is_sidebar_left_collapsed(_val) {
         // ...
     }
 
@@ -189,61 +187,61 @@ export class LayoutAware extends ts.Events {
      * Handles changes in the sidebar right collapsed state.
      * @param {boolean} val
      */
-    on_is_sidebar_right_collapsed(val) {
+    on_is_sidebar_right_collapsed(_val) {
         // ...
     }
 }
 
 /**
  * A mixin to add window resize awareness to a class.
- * 
+ *
  * This mixin expects that the class it extends has an `elem` property.
- * It attaches a resize event listener to the window that triggers the 
+ * It attaches a resize event listener to the window that triggers the
  * `on_window_resize` method defined in the subclass.
- * 
+ *
  * @param {class} Base - The base class to extend.
  * @returns {class}
  */
-export const ResizeAware = (Base) => class extends Base {
+export const ResizeAware = (Base) =>
+    class extends Base {
+        /**
+         * @param  {...any} args
+         */
+        constructor(...args) {
+            super(...args);
 
-    /**
-     * @param  {...any} args
-     */
-    constructor(...args) {
-        super(...args);
+            if (this.elem) {
+                ts.ajax.attach(this, this.elem);
+            }
 
-        if (this.elem) {
-            ts.ajax.attach(this, this.elem);
+            this.on_window_resize = this.on_window_resize.bind(this);
+
+            $(window).on('resize', this.on_window_resize);
         }
 
-        this.on_window_resize = this.on_window_resize.bind(this);
-
-        $(window).on('resize', this.on_window_resize);
-    }
-
-    /**
-     * Handler for the window resize event.
-     * 
-     * This method should be overridden in the subclass to define custom resize 
-     * behavior.
-     */
-    on_window_resize(evt) {
-        // Call `on_window_resize` of the base class, if it exists
-        if (super.on_window_resize) {
-            super.on_window_resize(evt);
+        /**
+         * Handler for the window resize event.
+         *
+         * This method should be overridden in the subclass to define custom resize
+         * behavior.
+         */
+        on_window_resize(evt) {
+            // Call `on_window_resize` of the base class, if it exists
+            if (super.on_window_resize) {
+                super.on_window_resize(evt);
+            }
         }
-    }
 
-    /**
-     * Removes the resize event handler from the window.
-     */
-    destroy() {
-        try {
-            super.destroy();
-        } catch (error) {
-            console.warn(error);
-        } finally {
-            $(window).off('resize', this.on_window_resize);
+        /**
+         * Removes the resize event handler from the window.
+         */
+        destroy() {
+            try {
+                super.destroy();
+            } catch (error) {
+                console.warn(error);
+            } finally {
+                $(window).off('resize', this.on_window_resize);
+            }
         }
-    }
-};
+    };

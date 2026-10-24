@@ -3,9 +3,8 @@
 // This file is kept as a placeholder and can be removed if confirmed
 // that the module is no longer needed.
 
-QUnit.module('cone.app.settingstabs', hooks => {
-
-    QUnit.test('Module placeholder - no source file exists', assert => {
+QUnit.module('cone.app.settingstabs', (_hooks) => {
+    QUnit.test('Module placeholder - no source file exists', (assert) => {
         assert.ok(true, 'placeholder test - settingstabs.js not found');
     });
 });

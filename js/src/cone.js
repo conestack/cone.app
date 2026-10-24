@@ -17,7 +17,7 @@ import * as tabletoolbar from './tabletoolbar.js';
 import * as translation from './translation.js';
 import * as utils from './utils.js';
 
-let api = {};
+const api = {};
 
 Object.assign(api, batcheditems);
 Object.assign(api, colormode);
@@ -38,5 +38,5 @@ Object.assign(api, tabletoolbar);
 Object.assign(api, translation);
 Object.assign(api, utils);
 
-let cone = api;
+const cone = api;
 export default cone;

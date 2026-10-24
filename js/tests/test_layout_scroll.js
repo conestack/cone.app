@@ -25,7 +25,7 @@ import $ from 'jquery';
 // a bootstrap the application does not ship.
 const STYLESHEETS = [
     '/src/cone/app/browser/static/bootstrap/css/bootstrap.css',
-    '/src/cone/app/browser/static/cone/cone.app.css'
+    '/src/cone/app/browser/static/cone/cone.app.css',
 ];
 
 function load_stylesheet(href) {
@@ -56,20 +56,22 @@ function build_layout(container, options = {}) {
         .appendTo(area);
     const scroll = $('<div id="content_scroll" class="overflow-auto" />').appendTo(area);
     const content = $(
-        '<div id="content" class="d-flex flex-column px-3 pb-4 py-2 container-xxl ms-0" />'
-    ).css('max-width', '200px').appendTo(scroll);
+        '<div id="content" class="d-flex flex-column px-3 pb-4 py-2 container-xxl ms-0" />',
+    )
+        .css('max-width', '200px')
+        .appendTo(scroll);
     // Taller than the row, or nothing overflows and nothing scrolls.
     $('<div />').css('height', '900px').appendTo(content);
     const sidebar_right = options.sidebar_right
         ? $('<div id="sidebar_right" class="d-flex flex-column flex-shrink-0 px-0 pb-5" />')
-            .css('width', '120px')
-            .appendTo(area)
+              .css('width', '120px')
+              .appendTo(area)
         : null;
     return {
         area: area[0],
         scroll: scroll[0],
         content: content[0],
-        sidebar_right: sidebar_right ? sidebar_right[0] : null
+        sidebar_right: sidebar_right ? sidebar_right[0] : null,
     };
 }
 
@@ -103,12 +105,11 @@ function strip_center(scroll, content) {
     return {
         x: (content_box.right + strip_end) / 2,
         y: scroll_box.top + scroll_box.height / 2,
-        width: strip_end - content_box.right
+        width: strip_end - content_box.right,
     };
 }
 
-QUnit.module('cone.app.layout scrolling', hooks => {
-
+QUnit.module('cone.app.layout scrolling', (hooks) => {
     let stylesheets, container;
 
     hooks.before(async () => {
@@ -121,96 +122,97 @@ QUnit.module('cone.app.layout scrolling', hooks => {
     });
 
     hooks.after(() => {
-        stylesheets.forEach(link => link.remove());
+        stylesheets.forEach((link) => {
+            link.remove();
+        });
     });
 
     hooks.beforeEach(() => {
         // Fixed and on top: ``elementFromPoint`` only answers for what is
         // inside the viewport, and the runner puts its own markup on the page.
-        container = $('<div />').css({
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '600px',
-            height: '300px',
-            background: '#fff',
-            'z-index': 9999
-        }).appendTo('body');
+        container = $('<div />')
+            .css({
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '600px',
+                height: '300px',
+                background: '#fff',
+                'z-index': 9999,
+            })
+            .appendTo('body');
     });
 
     hooks.afterEach(() => {
         container.remove();
     });
 
-    QUnit.test('the wrapper is the scrolling box, not the content', assert => {
-        const {scroll, content} = build_layout(container);
+    QUnit.test('the wrapper is the scrolling box, not the content', (assert) => {
+        const { scroll, content } = build_layout(container);
 
         assert.true(
             scroll.scrollHeight > scroll.clientHeight,
-            '#content_scroll overflows and scrolls'
+            '#content_scroll overflows and scrolls',
         );
         assert.strictEqual(
             getComputedStyle(scroll).overflowY,
             'auto',
-            '#content_scroll carries the overflow'
+            '#content_scroll carries the overflow',
         );
         assert.strictEqual(
             getComputedStyle(content).overflowY,
             'visible',
-            '#content does not scroll itself'
+            '#content does not scroll itself',
         );
     });
 
-    QUnit.test('the content keeps its width limit inside the wrapper', assert => {
-        const {scroll, content} = build_layout(container);
+    QUnit.test('the content keeps its width limit inside the wrapper', (assert) => {
+        const { scroll, content } = build_layout(container);
 
         assert.true(
             content.getBoundingClientRect().width < scroll.clientWidth,
-            'the limit still narrows the content'
+            'the limit still narrows the content',
         );
     });
 
-    QUnit.test('the strip beside the content scrolls the content', assert => {
-        const {scroll, content} = build_layout(container);
+    QUnit.test('the strip beside the content scrolls the content', (assert) => {
+        const { scroll, content } = build_layout(container);
         const strip = strip_center(scroll, content);
 
         assert.true(strip.width > 10, `strip is ${strip.width}px wide`);
         assert.strictEqual(
             scroll_target_at(strip.x, strip.y),
             scroll,
-            'a wheel event in the strip scrolls #content_scroll'
+            'a wheel event in the strip scrolls #content_scroll',
         );
     });
 
-    QUnit.test('the strip scrolls the content beside sidebar_right', assert => {
-        const {scroll, content, sidebar_right} = build_layout(
-            container, {sidebar_right: true}
-        );
+    QUnit.test('the strip scrolls the content beside sidebar_right', (assert) => {
+        const { scroll, content, sidebar_right } = build_layout(container, { sidebar_right: true });
         const strip = strip_center(scroll, content);
 
         assert.true(strip.width > 10, `strip is ${strip.width}px wide`);
         assert.strictEqual(
             scroll_target_at(strip.x, strip.y),
             scroll,
-            'a wheel event in the strip scrolls #content_scroll'
+            'a wheel event in the strip scrolls #content_scroll',
         );
         // The two scrollbars must not sit on top of each other: the content's
         // ends where the sidebar begins, the sidebar brings its own.
         assert.true(
-            scroll.getBoundingClientRect().right
-                <= sidebar_right.getBoundingClientRect().left + 1,
-            'the wrapper stops at sidebar_right'
+            scroll.getBoundingClientRect().right <= sidebar_right.getBoundingClientRect().left + 1,
+            'the wrapper stops at sidebar_right',
         );
     });
 
-    QUnit.test('a point over sidebar_right does not scroll the content', assert => {
-        const {scroll, sidebar_right} = build_layout(container, {sidebar_right: true});
+    QUnit.test('a point over sidebar_right does not scroll the content', (assert) => {
+        const { scroll, sidebar_right } = build_layout(container, { sidebar_right: true });
         const box = sidebar_right.getBoundingClientRect();
 
         assert.notStrictEqual(
             scroll_target_at(box.left + box.width / 2, box.top + box.height / 2),
             scroll,
-            'the sidebar is not part of the content scroller'
+            'the sidebar is not part of the content scroller',
         );
     });
 });

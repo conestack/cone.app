@@ -1,33 +1,26 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
 
-import {
-    BatchedItemsSize,
-    BatchedItemsSearch
-} from './batcheditems.js';
-import {ColorMode} from './colormode.js';
-import {ColorToggler} from './colormode.js';
-import {CopySupport} from './copysupport.js';
-import {KeyBinder} from './keybinder.js';
-import {LiveSearch} from './livesearch.js';
-import {
-    ReferenceBrowserLoader,
-    ReferenceHandle
-} from './referencebrowser.js';
-import {Scrollbar} from './scrollbar.js';
-import {Sharing} from './sharing.js';
-import {SidebarLeft} from './sidebar.js';
-import {SidebarRight} from './sidebar.js';
-import {TableToolbar} from './tabletoolbar.js';
-import {Translation} from './translation.js';
-import {MainMenu} from './mainmenu.js';
-import {Header} from './header.js';
-import {ContextMenuDropdown} from './contextmenu.js';
-import {MainArea} from './layout.js';
-import {NavTree} from './navtree.js';
+import { BatchedItemsSearch, BatchedItemsSize } from './batcheditems.js';
+import { ColorMode, ColorToggler } from './colormode.js';
+import { ContextMenuDropdown } from './contextmenu.js';
+import { CopySupport } from './copysupport.js';
+import { Header } from './header.js';
+import { KeyBinder } from './keybinder.js';
+import { MainArea } from './layout.js';
+import { LiveSearch } from './livesearch.js';
+import { MainMenu } from './mainmenu.js';
+import { NavTree } from './navtree.js';
+import { ReferenceBrowserLoader, ReferenceHandle } from './referencebrowser.js';
+import { Scrollbar } from './scrollbar.js';
+import { Sharing } from './sharing.js';
+import { SidebarLeft, SidebarRight } from './sidebar.js';
+import { TableToolbar } from './tabletoolbar.js';
+import { Translation } from './translation.js';
 
 export * from './batcheditems.js';
 export * from './colormode.js';
+export * from './contextmenu.js';
 export * from './copysupport.js';
 export * from './globals.js';
 export * from './header.js';
@@ -43,10 +36,9 @@ export * from './sharing.js';
 export * from './sidebar.js';
 export * from './tabletoolbar.js';
 export * from './translation.js';
-export * from './contextmenu.js';
 export * from './utils.js';
 
-$(function() {
+$(() => {
     new KeyBinder();
     new ColorMode();
 

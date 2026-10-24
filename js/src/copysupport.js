@@ -2,7 +2,6 @@ import $ from 'jquery';
 import ts from 'treibstoff';
 
 export class CopySupport {
-
     static initialize(context) {
         new CopySupport(context);
     }
@@ -27,28 +26,28 @@ export class CopySupport {
         this.copy_action = $('a#toolbaraction-copy', context);
         this.copy_action.off('click').on('click', this.handle_copy.bind(this));
 
-        this.selectable = this.copyable.selectable({
-            on_firstclick: this.on_firstclick.bind(this),
-            on_select: this.on_select.bind(this)
-        }).data('selectable');
+        this.selectable = this.copyable
+            .selectable({
+                on_firstclick: this.on_firstclick.bind(this),
+                on_select: this.on_select.bind(this),
+            })
+            .data('selectable');
 
         this.read_selected_from_cookie(this.cut_cookie, 'copysupport_cut');
         this.read_selected_from_cookie(this.copy_cookie, '');
     }
 
-    on_firstclick(selectable, elem) {
-    }
+    on_firstclick(_selectable, _elem) {}
 
-    on_select(selectable) {
-    }
+    on_select(_selectable) {}
 
     write_selected_to_cookie(name) {
-        let selected = $(this.selectable.selected);
-        let ids = new Array();
-        selected.each(function() {
+        const selected = $(this.selectable.selected);
+        const ids = [];
+        selected.each(function () {
             ids.push($(this).attr('ajax:target'));
         });
-        let cookie = ids.join('::');
+        const cookie = ids.join('::');
         ts.create_cookie(name, cookie);
         if (cookie.length) {
             $(this.paste_action).removeClass('disabled');
@@ -58,18 +57,18 @@ export class CopySupport {
     }
 
     read_selected_from_cookie(name, css) {
-        let cookie = ts.read_cookie(name);
+        const cookie = ts.read_cookie(name);
         if (!cookie) {
             return;
         }
-        let ids = cookie.split('::');
-        let that = this;
+        const ids = cookie.split('::');
+        const that = this;
         let elem, target;
-        $('table tr.selectable', this.context).each(function() {
+        $('table tr.selectable', this.context).each(function () {
             elem = $(this);
             target = elem.attr('ajax:target');
-            for (let idx in ids) {
-                if (ids[idx] == target) {
+            for (const idx in ids) {
+                if (ids[idx] === target) {
                     elem.addClass('selected');
                     if (css) {
                         elem.addClass(css);
@@ -98,17 +97,17 @@ export class CopySupport {
 
     handle_paste(evt) {
         evt.preventDefault();
-        let elem = $(evt.currentTarget);
+        const elem = $(evt.currentTarget);
         if (elem.hasClass('disabled')) {
             return;
         }
-        let target = ts.ajax.parse_target(elem.attr('ajax:target'));
+        const target = ts.ajax.parse_target(elem.attr('ajax:target'));
         ts.ajax.action({
             name: 'paste',
             mode: 'NONE',
             selector: 'NONE',
             url: target.url,
-            params: target.params
+            params: target.params,
         });
     }
 }

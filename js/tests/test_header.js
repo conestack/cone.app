@@ -1,31 +1,29 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import {Header} from '../src/header.js';
-import {global_events} from '../src/globals.js';
+import { Header } from '../src/header.js';
 
-QUnit.module('cone.app.header', hooks => {
-
-    let container,
-        ajax_attach_origin;
+QUnit.module('cone.app.header', (hooks) => {
+    let container, ajax_attach_origin;
 
     hooks.beforeEach(() => {
         container = $('<div />').appendTo('body');
         ajax_attach_origin = ts.ajax.attach;
-        ts.ajax.attach = function() {};
+        ts.ajax.attach = () => {};
     });
 
     hooks.afterEach(() => {
         container.remove();
         ts.ajax.attach = ajax_attach_origin;
+        $('html, body').css('overscroll-behavior', '');
     });
 
-    QUnit.test('Header.initialize returns early without #header-main', assert => {
+    QUnit.test('Header.initialize returns early without #header-main', (assert) => {
         Header.initialize(container);
         assert.ok(true, 'no error without header-main');
     });
 
-    QUnit.test('Header.initialize creates instance', assert => {
-        let elem = $(`
+    QUnit.test('Header.initialize creates instance', (assert) => {
+        $(`
             <div id="header-main">
                 <div id="header-content">
                     <div id="personaltools"></div>
@@ -42,8 +40,8 @@ QUnit.module('cone.app.header', hooks => {
         assert.ok(true, 'instance created');
     });
 
-    QUnit.test('Header constructor stores elements', assert => {
-        let elem = $(`
+    QUnit.test('Header constructor stores elements', (assert) => {
+        const elem = $(`
             <div id="header-main">
                 <div id="header-content">
                     <div id="personaltools"></div>
@@ -56,7 +54,7 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
 
         assert.ok(instance.elem, 'elem stored');
         assert.ok(instance.header_content, 'header_content stored');
@@ -69,8 +67,8 @@ QUnit.module('cone.app.header', hooks => {
         instance.destroy();
     });
 
-    QUnit.test('Header set_mobile_menu_open adds class', assert => {
-        let elem = $(`
+    QUnit.test('Header set_mobile_menu_open adds class', (assert) => {
+        const elem = $(`
             <div id="header-main">
                 <div id="header-content"></div>
                 <div id="navbar-content-wrapper">
@@ -81,7 +79,7 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
         instance.set_mobile_menu_open();
 
         assert.true(elem.hasClass('mobile-menu-open'), 'class added');
@@ -89,8 +87,8 @@ QUnit.module('cone.app.header', hooks => {
         instance.destroy();
     });
 
-    QUnit.test('Header set_mobile_menu_closed removes class', assert => {
-        let elem = $(`
+    QUnit.test('Header set_mobile_menu_closed removes class', (assert) => {
+        const elem = $(`
             <div id="header-main" class="mobile-menu-open">
                 <div id="header-content"></div>
                 <div id="navbar-content-wrapper">
@@ -101,7 +99,7 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
         instance.set_mobile_menu_closed();
 
         assert.false(elem.hasClass('mobile-menu-open'), 'class removed');
@@ -109,8 +107,8 @@ QUnit.module('cone.app.header', hooks => {
         instance.destroy();
     });
 
-    QUnit.test('Header on_is_compact handles compact mode', assert => {
-        let elem = $(`
+    QUnit.test('Header on_is_compact handles compact mode', (assert) => {
+        const elem = $(`
             <div id="header-main" class="full navbar-expand">
                 <div id="header-content"></div>
                 <div id="navbar-content-wrapper">
@@ -121,7 +119,7 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
 
         instance.on_is_compact(true);
         assert.true(elem.hasClass('compact'), 'compact class added');
@@ -134,8 +132,8 @@ QUnit.module('cone.app.header', hooks => {
         instance.destroy();
     });
 
-    QUnit.test('Header on_is_super_compact moves personal tools', assert => {
-        let elem = $(`
+    QUnit.test('Header on_is_super_compact moves personal tools', (assert) => {
+        const elem = $(`
             <div id="header-main">
                 <div id="header-content">
                     <div id="personaltools"></div>
@@ -148,21 +146,25 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
 
         instance.on_is_super_compact(true);
-        assert.ok($('#personaltools', instance.navbar_content).length,
-            'personal_tools moved to navbar_content');
+        assert.ok(
+            $('#personaltools', instance.navbar_content).length,
+            'personal_tools moved to navbar_content',
+        );
 
         instance.on_is_super_compact(false);
-        assert.ok($('#personaltools', instance.header_content).length,
-            'personal_tools moved back to header_content');
+        assert.ok(
+            $('#personaltools', instance.header_content).length,
+            'personal_tools moved back to header_content',
+        );
 
         instance.destroy();
     });
 
-    QUnit.test('Header destroy cleans up', assert => {
-        let elem = $(`
+    QUnit.test('Header destroy cleans up', (assert) => {
+        const elem = $(`
             <div id="header-main">
                 <div id="header-content"></div>
                 <div id="navbar-content-wrapper">
@@ -173,14 +175,14 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
         instance.destroy();
 
         assert.ok(true, 'destroy completed');
     });
 
-    QUnit.test('Header render_mobile_scrollbar called when compact', assert => {
-        let elem = $(`
+    QUnit.test('Header render_mobile_scrollbar called when compact', (assert) => {
+        const elem = $(`
             <div id="header-main">
                 <div id="header-content"></div>
                 <div id="navbar-content-wrapper">
@@ -191,9 +193,9 @@ QUnit.module('cone.app.header', hooks => {
             </div>
         `).appendTo(container);
 
-        let instance = new Header(elem);
+        const instance = new Header(elem);
         instance.is_compact = true;
-        instance.mobile_scrollbar = {render: function() {}, destroy: function() {}};
+        instance.mobile_scrollbar = { render: () => {}, destroy: () => {} };
 
         instance.render_mobile_scrollbar();
         assert.ok(true, 'render_mobile_scrollbar handled');
@@ -201,7 +203,81 @@ QUnit.module('cone.app.header', hooks => {
         instance.destroy();
     });
 
-    QUnit.module('personal tools dropdown room', hooks => {
+    QUnit.test('Header renders mobile scrollbar on main menu dropdown', (assert) => {
+        const elem = $(`
+            <div id="header-main">
+                <div id="header-content"></div>
+                <div id="navbar-content-wrapper">
+                    <div id="navbar-content"></div>
+                </div>
+                <button id="navbar-toggler"></button>
+                <nav id="mainmenu">
+                    <a class="nav-link dropdown-toggle"></a>
+                </nav>
+            </div>
+        `).appendTo(container);
+
+        const instance = new Header(elem);
+        instance.is_compact = true;
+        instance.mobile_scrollbar.destroy();
+        let rendered = 0;
+        instance.mobile_scrollbar = {
+            render: () => rendered++,
+            destroy: () => {},
+        };
+        const toggle = $('.nav-link.dropdown-toggle', elem);
+
+        toggle.trigger('shown.bs.dropdown');
+        toggle.trigger('hidden.bs.dropdown');
+        assert.strictEqual(rendered, 2, 'rendered on dropdown shown and hidden');
+
+        instance.destroy();
+        toggle.trigger('shown.bs.dropdown');
+        assert.strictEqual(rendered, 2, 'dropdown handlers unbound on destroy');
+    });
+
+    QUnit.test('Header compact mobile menu collapse handling', (assert) => {
+        const elem = $(`
+            <div id="header-main">
+                <div id="header-content"></div>
+                <div id="navbar-content-wrapper">
+                    <div id="navbar-content"></div>
+                </div>
+                <button id="navbar-toggler"></button>
+                <nav id="mainmenu"></nav>
+            </div>
+        `).appendTo(container);
+
+        const instance = new Header(elem);
+        instance.on_is_compact(true);
+        instance.mobile_scrollbar.destroy();
+        let rendered = false;
+        let hidden = false;
+        instance.mobile_scrollbar = {
+            render: () => {
+                rendered = true;
+            },
+            scrollbar: {
+                hide: () => {
+                    hidden = true;
+                },
+            },
+            destroy: () => {},
+        };
+        const wrapper = instance.navbar_content_wrapper;
+
+        wrapper.trigger('shown.bs.collapse');
+        assert.true(rendered, 'mobile scrollbar rendered');
+        assert.strictEqual($('body').css('overscroll-behavior'), 'none');
+
+        wrapper.trigger('hide.bs.collapse');
+        assert.true(hidden, 'mobile scrollbar hidden');
+        assert.strictEqual($('body').css('overscroll-behavior'), 'auto');
+
+        instance.destroy();
+    });
+
+    QUnit.module('personal tools dropdown room', (hooks) => {
         let elem;
 
         hooks.beforeEach(() => {
@@ -241,23 +317,23 @@ QUnit.module('cone.app.header', hooks => {
 
         // with jQuery present, bootstrap triggers its events on the toggle
         // as jQuery events, which bubble
-        let dispatch = (dropdown, name) => {
+        const dispatch = (dropdown, name) => {
             $('.dropdown-toggle', dropdown).trigger(name);
         };
-        let show = dropdown => {
+        const show = (dropdown) => {
             $('.dropdown-menu', dropdown).addClass('show');
             dispatch(dropdown, 'shown.bs.dropdown');
         };
-        let hide = dropdown => {
+        const hide = (dropdown) => {
             $('.dropdown-menu', dropdown).removeClass('show');
             dispatch(dropdown, 'hidden.bs.dropdown');
         };
-        let margin = instance => instance.personal_tools[0].style.marginBottom;
+        const margin = (instance) => instance.personal_tools[0].style.marginBottom;
 
-        QUnit.test('reserves room for the open menu when super compact', assert => {
-            let instance = new Header(elem);
+        QUnit.test('reserves room for the open menu when super compact', (assert) => {
+            const instance = new Header(elem);
             instance.is_super_compact = true;
-            let language = $('#language-dropdown', elem);
+            const language = $('#language-dropdown', elem);
 
             show(language);
             assert.strictEqual(margin(instance), '80px', 'room for open menu');
@@ -268,24 +344,23 @@ QUnit.module('cone.app.header', hooks => {
             instance.destroy();
         });
 
-        QUnit.test('reserves room for the new menu when switching menus', assert => {
-            let instance = new Header(elem);
+        QUnit.test('reserves room for the new menu when switching menus', (assert) => {
+            const instance = new Header(elem);
             instance.is_super_compact = true;
-            let language = $('#language-dropdown', elem);
-            let user = $('#personaltools-dropdown', elem);
+            const language = $('#language-dropdown', elem);
+            const user = $('#personaltools-dropdown', elem);
 
             show(language);
             // bootstrap may show the next menu before hiding the previous one
             show(user);
             hide(language);
-            assert.strictEqual(margin(instance), '40px',
-                'room for the menu still open');
+            assert.strictEqual(margin(instance), '40px', 'room for the menu still open');
 
             instance.destroy();
         });
 
-        QUnit.test('reserves no room when not super compact', assert => {
-            let instance = new Header(elem);
+        QUnit.test('reserves no room when not super compact', (assert) => {
+            const instance = new Header(elem);
             instance.is_super_compact = false;
 
             show($('#language-dropdown', elem));
@@ -294,28 +369,27 @@ QUnit.module('cone.app.header', hooks => {
             instance.destroy();
         });
 
-        QUnit.test('releases room when leaving super compact', assert => {
-            let instance = new Header(elem);
+        QUnit.test('releases room when leaving super compact', (assert) => {
+            const instance = new Header(elem);
             instance.is_super_compact = true;
             show($('#language-dropdown', elem));
 
             instance.is_super_compact = false;
             assert.strictEqual(margin(instance), '', 'room released');
-            assert.strictEqual($('.dropdown-menu.show', elem).length, 0,
-                'menus closed');
+            assert.strictEqual($('.dropdown-menu.show', elem).length, 0, 'menus closed');
 
             instance.destroy();
         });
 
-        QUnit.test('re-renders the mobile scrollbar', assert => {
-            let instance = new Header(elem);
+        QUnit.test('re-renders the mobile scrollbar', (assert) => {
+            const instance = new Header(elem);
             instance.is_compact = true;
             instance.is_super_compact = true;
             let rendered = 0;
             instance.mobile_scrollbar.destroy();
             instance.mobile_scrollbar = {
                 render: () => rendered++,
-                destroy: () => {}
+                destroy: () => {},
             };
 
             show($('#language-dropdown', elem));
@@ -324,8 +398,8 @@ QUnit.module('cone.app.header', hooks => {
             instance.destroy();
         });
 
-        QUnit.test('destroy unbinds the dropdown handlers', assert => {
-            let instance = new Header(elem);
+        QUnit.test('destroy unbinds the dropdown handlers', (assert) => {
+            const instance = new Header(elem);
             instance.is_super_compact = true;
             instance.destroy();
 

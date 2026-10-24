@@ -1,13 +1,12 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import {ResizeAware} from './layout.js';
+import { ResizeAware } from './layout.js';
 
 /**
  * Class representing a generic scrollbar.
  * @extends ts.Motion
  */
 export class Scrollbar extends ts.Motion {
-
     /**
      * Initializes all scrollable elements in the given context.
      * @param {Element} context
@@ -17,12 +16,12 @@ export class Scrollbar extends ts.Motion {
         // binds the parent of the replaced element again, and with it every
         // scrollbar beside it - a second instance would be the duplicate the
         // constructor refuses, and stay attached half built.
-        $('.scrollable-x', context).each(function() {
+        $('.scrollable-x', context).each(function () {
             if (!$(this).data('scrollbar')) {
                 new ScrollbarX($(this));
             }
         });
-        $('.scrollable-y', context).each(function() {
+        $('.scrollable-y', context).each(function () {
             if (!$(this).data('scrollbar')) {
                 new ScrollbarY($(this));
             }
@@ -70,9 +69,10 @@ export class Scrollbar extends ts.Motion {
 
         ts.clock.schedule_frame(() => {
             // Read saved position BEFORE render() triggers save handler
-            const saved = this.persist_scroll && this.storage_key
-                ? sessionStorage.getItem(this.storage_key)
-                : null;
+            const saved =
+                this.persist_scroll && this.storage_key
+                    ? sessionStorage.getItem(this.storage_key)
+                    : null;
             this.render();
             if (saved !== null) {
                 this.position = parseFloat(saved);
@@ -96,7 +96,7 @@ export class Scrollbar extends ts.Motion {
      * @param {Scrollbar} inst - The scrollbar instance (from event)
      * @param {number} pos - The scroll position
      */
-    _save_position(inst, pos) {
+    _save_position(_inst, pos) {
         if (this.storage_key) {
             sessionStorage.setItem(this.storage_key, pos);
         }
@@ -107,7 +107,7 @@ export class Scrollbar extends ts.Motion {
      * Invoked by ResizeAware mixin.
      * @param {Event} evt
      */
-    on_window_resize(evt) {
+    on_window_resize(_evt) {
         if (this.duplicate) {
             return;
         }
@@ -220,12 +220,16 @@ export class Scrollbar extends ts.Motion {
      * Compiles the scrollbar template.
      */
     compile() {
-        ts.compile_template(this, `
+        ts.compile_template(
+            this,
+            `
         <div class="scrollbar" t-elem="scrollbar">
           <div class="scroll-handle" t-elem="thumb">
           </div>
         </div>
-        `, this.elem);
+        `,
+            this.elem,
+        );
     }
 
     /**
@@ -237,7 +241,7 @@ export class Scrollbar extends ts.Motion {
         if (this.contentsize <= this.scrollsize) {
             this.thumbsize = this.scrollsize;
         } else {
-            this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+            this.thumbsize = this.scrollsize ** 2 / this.contentsize;
         }
         this.thumb.css(attr, this.thumbsize);
         this.update();
@@ -294,10 +298,7 @@ export class Scrollbar extends ts.Motion {
         ) {
             if (evt.type === 'mouseenter') {
                 this.scrollbar.stop(true, true).fadeIn();
-            } else if (
-                evt.type === 'mouseleave' &&
-                evt.relatedTarget !== elem.get(0)
-            ) {
+            } else if (evt.type === 'mouseleave' && evt.relatedTarget !== elem.get(0)) {
                 this.scrollbar.stop(true, true).fadeOut();
             }
         }
@@ -311,11 +312,13 @@ export class Scrollbar extends ts.Motion {
         if (this.contentsize <= this.scrollsize) {
             return;
         }
-        let evt_ = evt.originalEvent;
+        const evt_ = evt.originalEvent;
         if (typeof evt_.deltaY === 'number') {
-            if (evt_.deltaY > 0) { // down
+            if (evt_.deltaY > 0) {
+                // down
                 this.position += this.scroll_step;
-            } else if (evt_.deltaY < 0) { // up
+            } else if (evt_.deltaY < 0) {
+                // up
                 this.position -= this.scroll_step;
             }
         }
@@ -328,9 +331,9 @@ export class Scrollbar extends ts.Motion {
     on_click(evt) {
         evt.preventDefault(); // prevent text selection
         this.thumb.addClass('active');
-        let position = this.pos_from_evt(evt),
+        const position = this.pos_from_evt(evt),
             thumb_pos = position - this.offset - this.thumbsize / 2;
-        this.position = this.contentsize * thumb_pos / this.scrollsize;
+        this.position = (this.contentsize * thumb_pos) / this.scrollsize;
         this.thumb.removeClass('active');
     }
 
@@ -362,7 +365,7 @@ export class Scrollbar extends ts.Motion {
      * Handles touch end events.
      * @param {Event}
      */
-    touchend(evt) {
+    touchend(_evt) {
         delete this._touch_pos;
         delete this._start_position;
     }
@@ -383,16 +386,16 @@ export class Scrollbar extends ts.Motion {
      * @param {Event} evt
      */
     move(evt) {
-        let mouse_pos = this.pos_from_evt(evt) - this.offset,
+        const mouse_pos = this.pos_from_evt(evt) - this.offset,
             thumb_pos = this._thumb_pos + mouse_pos - this._mouse_pos;
-        this.position = this.contentsize * thumb_pos / this.scrollsize;
+        this.position = (this.contentsize * thumb_pos) / this.scrollsize;
     }
 
     /**
      * Handles mouse up events to finalize scrollbar movement.
      * @param {Event} evt
      */
-    up(evt) {
+    up(_evt) {
         delete this._mouse_pos;
         delete this._thumb_pos;
         this.elem.on('mouseenter mouseleave', this.on_hover);
@@ -405,7 +408,6 @@ export class Scrollbar extends ts.Motion {
  * @extends Scrollbar
  */
 export class ScrollbarX extends ResizeAware(Scrollbar) {
-
     /**
      * Gets the horizontal offset of the scrollbar element.
      * @returns {number}
@@ -438,9 +440,7 @@ export class ScrollbarX extends ResizeAware(Scrollbar) {
     compile() {
         super.compile();
         this.thumb.css('height', '6px');
-        this.scrollbar
-            .css('height', '6px')
-            .css('width', this.scrollsize);
+        this.scrollbar.css('height', '6px').css('width', this.scrollsize);
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('width', this.thumbsize);
     }
@@ -456,9 +456,9 @@ export class ScrollbarX extends ResizeAware(Scrollbar) {
      * Updates the content position based on the current scrollbar position.
      */
     update() {
-        let thumb_pos = this.position / (this.contentsize / this.scrollsize);
-        this.content.css('right', this.position + 'px');
-        this.thumb.css('left', thumb_pos + 'px');
+        const thumb_pos = this.position / (this.contentsize / this.scrollsize);
+        this.content.css('right', `${this.position}px`);
+        this.thumb.css('left', `${thumb_pos}px`);
     }
 
     /**
@@ -476,7 +476,6 @@ export class ScrollbarX extends ResizeAware(Scrollbar) {
  * @extends Scrollbar
  */
 export class ScrollbarY extends ResizeAware(Scrollbar) {
-
     /**
      * Gets the vertical offset of the scrollbar element.
      * @returns {number}
@@ -509,10 +508,7 @@ export class ScrollbarY extends ResizeAware(Scrollbar) {
     compile() {
         super.compile();
         this.thumb.css('width', '6px');
-        this.scrollbar
-            .css('width', '6px')
-            .css('top', '0px')
-            .css('height', this.scrollsize);
+        this.scrollbar.css('width', '6px').css('top', '0px').css('height', this.scrollsize);
         this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
         this.thumb.css('height', this.thumbsize);
     }
@@ -528,9 +524,9 @@ export class ScrollbarY extends ResizeAware(Scrollbar) {
      * Updates the content position based on the current scrollbar position.
      */
     update() {
-        let thumb_pos = this.position / (this.contentsize / this.scrollsize);
-        this.content.css('bottom', this.position + 'px');
-        this.thumb.css('top', thumb_pos + 'px');
+        const thumb_pos = this.position / (this.contentsize / this.scrollsize);
+        this.content.css('bottom', `${this.position}px`);
+        this.thumb.css('top', `${thumb_pos}px`);
     }
 
     /**

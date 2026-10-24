@@ -2,19 +2,15 @@ import $ from 'jquery';
 import ts from 'treibstoff';
 import {
     BatchedItemsFilter,
-    BatchedItemsSize,
     BatchedItemsSearch,
+    BatchedItemsSize,
+    batcheditems_filter_binder,
     batcheditems_handle_filter,
     batcheditems_size_binder,
-    batcheditems_filter_binder
 } from '../src/batcheditems.js';
 
-QUnit.module('cone.app.batcheditems.BatchedItemsFilter', hooks => {
-
-    let container,
-        ajax_trigger_origin,
-        ajax_path_origin,
-        ajax_parse_target_origin;
+QUnit.module('cone.app.batcheditems.BatchedItemsFilter', (hooks) => {
+    let container, ajax_trigger_origin, ajax_path_origin, ajax_parse_target_origin;
 
     hooks.beforeEach(() => {
         container = $('<div />').appendTo('body');
@@ -30,77 +26,78 @@ QUnit.module('cone.app.batcheditems.BatchedItemsFilter', hooks => {
         ts.ajax.parse_target = ajax_parse_target_origin;
     });
 
-    QUnit.test('BatchedItemsFilter constructor stores elem and name', assert => {
-        let elem = $('<div />');
-        let filter = new BatchedItemsFilter(elem, 'test_name');
+    QUnit.test('BatchedItemsFilter constructor stores elem and name', (assert) => {
+        const elem = $('<div />');
+        const filter = new BatchedItemsFilter(elem, 'test_name');
 
         assert.strictEqual(filter.elem, elem, 'elem stored');
         assert.strictEqual(filter.name, 'test_name', 'name stored');
     });
 
-    QUnit.test('set_filter triggers ajax with parsed target', assert => {
-        let elem = $(`
+    QUnit.test('set_filter triggers ajax with parsed target', (assert) => {
+        const elem = $(`
             <div ajax:target="/api/items?page=1"
                  ajax:event="reload:#table">
             </div>
         `).appendTo(container);
 
-        ts.ajax.parse_target = function(target) {
-            return {
-                path: '/api/items',
-                query: '?page=1',
-                params: {}
-            };
-        };
+        ts.ajax.parse_target = (_target) => ({
+            path: '/api/items',
+            query: '?page=1',
+            params: {},
+        });
 
         let triggered = null;
-        ts.ajax.trigger = function(opts) {
+        ts.ajax.trigger = (opts) => {
             triggered = opts;
         };
 
-        let filter = new BatchedItemsFilter(elem, 'size');
+        const filter = new BatchedItemsFilter(elem, 'size');
         filter.set_filter('10');
 
         assert.strictEqual(triggered.name, 'reload', 'correct event name');
         assert.strictEqual(triggered.selector, '#table', 'correct selector');
-        assert.strictEqual(triggered.target.params.size, '10',
-            'filter param added to target');
+        assert.strictEqual(triggered.target.params.size, '10', 'filter param added to target');
     });
 
-    QUnit.test('set_filter updates path when ajax:path present', assert => {
-        let elem = $(`
+    QUnit.test('set_filter updates path when ajax:path present', (assert) => {
+        const elem = $(`
             <div ajax:target="/api/items?page=1"
                  ajax:event="reload:#table"
                  ajax:path="true">
             </div>
         `).appendTo(container);
 
-        ts.ajax.parse_target = function() {
-            return {
-                path: '/api/items',
-                query: '?page=1',
-                params: {}
-            };
-        };
+        ts.ajax.parse_target = () => ({
+            path: '/api/items',
+            query: '?page=1',
+            params: {},
+        });
 
         let path_opts = null;
-        ts.ajax.path = function(opts) {
+        ts.ajax.path = (opts) => {
             path_opts = opts;
         };
-        ts.ajax.trigger = function() {};
+        ts.ajax.trigger = () => {};
 
-        let filter = new BatchedItemsFilter(elem, 'term');
+        const filter = new BatchedItemsFilter(elem, 'term');
         filter.set_filter('search');
 
         assert.ok(path_opts, 'ajax.path called');
-        assert.strictEqual(path_opts.path, '/api/items?page=1&term=search',
-            'path includes filter param');
-        assert.strictEqual(path_opts.event, 'reload:#table',
-            'event from ajax:event (full event string)');
+        assert.strictEqual(
+            path_opts.path,
+            '/api/items?page=1&term=search',
+            'path includes filter param',
+        );
+        assert.strictEqual(
+            path_opts.event,
+            'reload:#table',
+            'event from ajax:event (full event string)',
+        );
     });
 
-    QUnit.test('set_filter uses ajax:path-event when specified', assert => {
-        let elem = $(`
+    QUnit.test('set_filter uses ajax:path-event when specified', (assert) => {
+        const elem = $(`
             <div ajax:target="/api/items"
                  ajax:event="reload:#table"
                  ajax:path="true"
@@ -108,39 +105,35 @@ QUnit.module('cone.app.batcheditems.BatchedItemsFilter', hooks => {
             </div>
         `).appendTo(container);
 
-        ts.ajax.parse_target = function() {
-            return {path: '/api/items', query: '', params: {}};
-        };
+        ts.ajax.parse_target = () => ({ path: '/api/items', query: '', params: {} });
 
         let path_opts = null;
-        ts.ajax.path = function(opts) {
+        ts.ajax.path = (opts) => {
             path_opts = opts;
         };
-        ts.ajax.trigger = function() {};
+        ts.ajax.trigger = () => {};
 
-        let filter = new BatchedItemsFilter(elem, 'page');
+        const filter = new BatchedItemsFilter(elem, 'page');
         filter.set_filter('2');
 
-        assert.strictEqual(path_opts.event, 'navigate',
-            'uses ajax:path-event instead of ajax:event');
+        assert.strictEqual(
+            path_opts.event,
+            'navigate',
+            'uses ajax:path-event instead of ajax:event',
+        );
     });
 });
 
-QUnit.module('cone.app.batcheditems.BatchedItemsSize', hooks => {
-
-    let container,
-        ajax_trigger_origin,
-        ajax_parse_target_origin;
+QUnit.module('cone.app.batcheditems.BatchedItemsSize', (hooks) => {
+    let container, ajax_trigger_origin, ajax_parse_target_origin;
 
     hooks.beforeEach(() => {
         container = $('<div />').appendTo('body');
         ajax_trigger_origin = ts.ajax.trigger;
         ajax_parse_target_origin = ts.ajax.parse_target;
 
-        ts.ajax.parse_target = function() {
-            return {path: '/api', query: '', params: {}};
-        };
-        ts.ajax.trigger = function() {};
+        ts.ajax.parse_target = () => ({ path: '/api', query: '', params: {} });
+        ts.ajax.trigger = () => {};
     });
 
     hooks.afterEach(() => {
@@ -149,8 +142,8 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSize', hooks => {
         ts.ajax.parse_target = ajax_parse_target_origin;
     });
 
-    QUnit.test('BatchedItemsSize.initialize creates instances', assert => {
-        let html = $(`
+    QUnit.test('BatchedItemsSize.initialize creates instances', (assert) => {
+        $(`
             <div class="batched_items_slice_size">
                 <select ajax:target="/api" ajax:event="reload:#list">
                     <option value="10">10</option>
@@ -161,13 +154,13 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSize', hooks => {
 
         BatchedItemsSize.initialize(container);
 
-        let select = container.find('select');
-        let events = $._data(select.get(0), 'events');
-        assert.ok(events && events.change, 'change event bound');
+        const select = container.find('select');
+        const events = $._data(select.get(0), 'events');
+        assert.ok(events?.change, 'change event bound');
     });
 
-    QUnit.test('BatchedItemsSize.initialize with custom selector', assert => {
-        let html = $(`
+    QUnit.test('BatchedItemsSize.initialize with custom selector', (assert) => {
+        $(`
             <select class="custom-size"
                     ajax:target="/api"
                     ajax:event="reload:#list">
@@ -177,25 +170,25 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSize', hooks => {
 
         BatchedItemsSize.initialize(container, '.custom-size');
 
-        let select = container.find('select');
-        let events = $._data(select.get(0), 'events');
-        assert.ok(events && events.change, 'change event bound with custom selector');
+        const select = container.find('select');
+        const events = $._data(select.get(0), 'events');
+        assert.ok(events?.change, 'change event bound with custom selector');
     });
 
-    QUnit.test('BatchedItemsSize constructor sets name to size', assert => {
-        let select = $(`
+    QUnit.test('BatchedItemsSize constructor sets name to size', (assert) => {
+        const select = $(`
             <select ajax:target="/api" ajax:event="reload:#list">
                 <option value="10">10</option>
             </select>
         `).appendTo(container);
 
-        let instance = new BatchedItemsSize(select);
+        const instance = new BatchedItemsSize(select);
 
         assert.strictEqual(instance.name, 'size', 'name is size');
     });
 
-    QUnit.test('BatchedItemsSize change_handle triggers filter', assert => {
-        let select = $(`
+    QUnit.test('BatchedItemsSize change_handle triggers filter', (assert) => {
+        const select = $(`
             <select ajax:target="/api" ajax:event="reload:#list">
                 <option value="10">10</option>
                 <option value="25" selected>25</option>
@@ -203,26 +196,25 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSize', hooks => {
         `).appendTo(container);
 
         let triggered_target = null;
-        ts.ajax.trigger = function(opts) {
+        ts.ajax.trigger = (opts) => {
             triggered_target = opts.target;
         };
 
-        let instance = new BatchedItemsSize(select);
+        new BatchedItemsSize(select);
         select.trigger('change');
 
-        assert.strictEqual(triggered_target.params.size, '25',
-            'selected value passed to filter');
+        assert.strictEqual(triggered_target.params.size, '25', 'selected value passed to filter');
     });
 
-    QUnit.test('BatchedItemsSize rebinds on subsequent initialization', assert => {
-        let select = $(`
+    QUnit.test('BatchedItemsSize rebinds on subsequent initialization', (assert) => {
+        const select = $(`
             <select ajax:target="/api" ajax:event="reload:#list">
                 <option value="10">10</option>
             </select>
         `).appendTo(container);
 
         let trigger_count = 0;
-        ts.ajax.trigger = function() {
+        ts.ajax.trigger = () => {
             trigger_count++;
         };
 
@@ -234,21 +226,16 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSize', hooks => {
     });
 });
 
-QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
-
-    let container,
-        ajax_trigger_origin,
-        ajax_parse_target_origin;
+QUnit.module('cone.app.batcheditems.BatchedItemsSearch', (hooks) => {
+    let container, ajax_trigger_origin, ajax_parse_target_origin;
 
     hooks.beforeEach(() => {
         container = $('<div />').appendTo('body');
         ajax_trigger_origin = ts.ajax.trigger;
         ajax_parse_target_origin = ts.ajax.parse_target;
 
-        ts.ajax.parse_target = function() {
-            return {path: '/api', query: '', params: {}};
-        };
-        ts.ajax.trigger = function() {};
+        ts.ajax.parse_target = () => ({ path: '/api', query: '', params: {} });
+        ts.ajax.trigger = () => {};
     });
 
     hooks.afterEach(() => {
@@ -257,8 +244,8 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
         ts.ajax.parse_target = ajax_parse_target_origin;
     });
 
-    QUnit.test('BatchedItemsSearch.initialize creates instances', assert => {
-        let html = $(`
+    QUnit.test('BatchedItemsSearch.initialize creates instances', (assert) => {
+        $(`
             <div class="batched_items_filter">
                 <input type="text"
                        ajax:target="/api"
@@ -268,16 +255,16 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
 
         BatchedItemsSearch.initialize(container);
 
-        let input = container.find('input');
-        let events = $._data(input.get(0), 'events');
-        assert.ok(events && events.keyup, 'keyup event bound');
-        assert.ok(events && events.keypress, 'keypress event bound');
-        assert.ok(events && events.focus, 'focus event bound');
-        assert.ok(events && events.change, 'change event bound');
+        const input = container.find('input');
+        const events = $._data(input.get(0), 'events');
+        assert.ok(events?.keyup, 'keyup event bound');
+        assert.ok(events?.keypress, 'keypress event bound');
+        assert.ok(events?.focus, 'focus event bound');
+        assert.ok(events?.change, 'change event bound');
     });
 
-    QUnit.test('BatchedItemsSearch.initialize with custom selector and name', assert => {
-        let html = $(`
+    QUnit.test('BatchedItemsSearch.initialize with custom selector and name', (assert) => {
+        $(`
             <input class="custom-search"
                    ajax:target="/api"
                    ajax:event="reload:#list" />
@@ -285,13 +272,13 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
 
         BatchedItemsSearch.initialize(container, '.custom-search', 'query');
 
-        let input = container.find('input');
-        let events = $._data(input.get(0), 'events');
-        assert.ok(events && events.keyup, 'events bound with custom selector');
+        const input = container.find('input');
+        const events = $._data(input.get(0), 'events');
+        assert.ok(events?.keyup, 'events bound with custom selector');
     });
 
-    QUnit.test('BatchedItemsSearch focus_handle clears empty_filter', assert => {
-        let input = $(`
+    QUnit.test('BatchedItemsSearch focus_handle clears empty_filter', (assert) => {
+        const input = $(`
             <input type="text"
                    class="empty_filter"
                    value="Search..."
@@ -299,59 +286,59 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
                    ajax:event="reload:#list" />
         `).appendTo(container);
 
-        let instance = new BatchedItemsSearch(input, 'term');
+        new BatchedItemsSearch(input, 'term');
         input.trigger('focus');
 
         assert.false(input.hasClass('empty_filter'), 'empty_filter class removed');
         assert.strictEqual(input.val(), '', 'value cleared');
     });
 
-    QUnit.test('BatchedItemsSearch focus_handle ignores non-empty filter', assert => {
-        let input = $(`
+    QUnit.test('BatchedItemsSearch focus_handle ignores non-empty filter', (assert) => {
+        const input = $(`
             <input type="text"
                    value="actual search"
                    ajax:target="/api"
                    ajax:event="reload:#list" />
         `).appendTo(container);
 
-        let instance = new BatchedItemsSearch(input, 'term');
+        new BatchedItemsSearch(input, 'term');
         input.trigger('focus');
 
         assert.strictEqual(input.val(), 'actual search', 'value unchanged');
     });
 
-    QUnit.test('BatchedItemsSearch keypress_handle prevents Enter default', assert => {
-        let input = $(`
+    QUnit.test('BatchedItemsSearch keypress_handle prevents Enter default', (assert) => {
+        const input = $(`
             <input type="text"
                    ajax:target="/api"
                    ajax:event="reload:#list" />
         `).appendTo(container);
 
-        let instance = new BatchedItemsSearch(input, 'term');
+        new BatchedItemsSearch(input, 'term');
 
-        let evt = new $.Event('keypress', {keyCode: 13});
+        const evt = new $.Event('keypress', { keyCode: 13 });
         input.trigger(evt);
 
         assert.true(evt.isDefaultPrevented(), 'default prevented for Enter');
     });
 
-    QUnit.test('BatchedItemsSearch keypress_handle allows other keys', assert => {
-        let input = $(`
+    QUnit.test('BatchedItemsSearch keypress_handle allows other keys', (assert) => {
+        const input = $(`
             <input type="text"
                    ajax:target="/api"
                    ajax:event="reload:#list" />
         `).appendTo(container);
 
-        let instance = new BatchedItemsSearch(input, 'term');
+        new BatchedItemsSearch(input, 'term');
 
-        let evt = new $.Event('keypress', {keyCode: 65});
+        const evt = new $.Event('keypress', { keyCode: 65 });
         input.trigger(evt);
 
         assert.false(evt.isDefaultPrevented(), 'default not prevented for other keys');
     });
 
-    QUnit.test('BatchedItemsSearch keyup_handle triggers on Enter', assert => {
-        let input = $(`
+    QUnit.test('BatchedItemsSearch keyup_handle triggers on Enter', (assert) => {
+        const input = $(`
             <input type="text"
                    value="test search"
                    ajax:target="/api"
@@ -359,20 +346,23 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
         `).appendTo(container);
 
         let triggered_target = null;
-        ts.ajax.trigger = function(opts) {
+        ts.ajax.trigger = (opts) => {
             triggered_target = opts.target;
         };
 
-        let instance = new BatchedItemsSearch(input, 'term');
-        let evt = new $.Event('keyup', {keyCode: 13});
+        new BatchedItemsSearch(input, 'term');
+        const evt = new $.Event('keyup', { keyCode: 13 });
         input.trigger(evt);
 
-        assert.strictEqual(triggered_target.params.term, 'test search',
-            'search triggered on Enter');
+        assert.strictEqual(
+            triggered_target.params.term,
+            'test search',
+            'search triggered on Enter',
+        );
     });
 
-    QUnit.test('BatchedItemsSearch change_handle triggers filter', assert => {
-        let input = $(`
+    QUnit.test('BatchedItemsSearch change_handle triggers filter', (assert) => {
+        const input = $(`
             <input type="text"
                    value="changed value"
                    ajax:target="/api"
@@ -380,24 +370,23 @@ QUnit.module('cone.app.batcheditems.BatchedItemsSearch', hooks => {
         `).appendTo(container);
 
         let triggered_target = null;
-        ts.ajax.trigger = function(opts) {
+        ts.ajax.trigger = (opts) => {
             triggered_target = opts.target;
         };
 
-        let instance = new BatchedItemsSearch(input, 'term');
+        new BatchedItemsSearch(input, 'term');
         input.trigger('change');
 
-        assert.strictEqual(triggered_target.params.term, 'changed value',
-            'filter triggered on change');
+        assert.strictEqual(
+            triggered_target.params.term,
+            'changed value',
+            'filter triggered on change',
+        );
     });
 });
 
-QUnit.module('cone.app.batcheditems.deprecated', hooks => {
-
-    let container,
-        deprecate_origin,
-        ajax_trigger_origin,
-        ajax_parse_target_origin;
+QUnit.module('cone.app.batcheditems.deprecated', (hooks) => {
+    let container, deprecate_origin, ajax_trigger_origin, ajax_parse_target_origin;
 
     hooks.beforeEach(() => {
         container = $('<div />').appendTo('body');
@@ -405,10 +394,8 @@ QUnit.module('cone.app.batcheditems.deprecated', hooks => {
         ajax_trigger_origin = ts.ajax.trigger;
         ajax_parse_target_origin = ts.ajax.parse_target;
 
-        ts.ajax.parse_target = function() {
-            return {path: '/api', query: '', params: {}};
-        };
-        ts.ajax.trigger = function() {};
+        ts.ajax.parse_target = () => ({ path: '/api', query: '', params: {} });
+        ts.ajax.trigger = () => {};
     });
 
     hooks.afterEach(() => {
@@ -418,15 +405,15 @@ QUnit.module('cone.app.batcheditems.deprecated', hooks => {
         ts.ajax.parse_target = ajax_parse_target_origin;
     });
 
-    QUnit.test('batcheditems_handle_filter calls deprecate', assert => {
+    QUnit.test('batcheditems_handle_filter calls deprecate', (assert) => {
         let deprecate_called = false;
-        ts.deprecate = function(old_name) {
+        ts.deprecate = (old_name) => {
             if (old_name === 'batcheditems_handle_filter') {
                 deprecate_called = true;
             }
         };
 
-        let elem = $(`
+        const elem = $(`
             <div ajax:target="/api" ajax:event="reload:#list"></div>
         `).appendTo(container);
 
@@ -435,9 +422,9 @@ QUnit.module('cone.app.batcheditems.deprecated', hooks => {
         assert.true(deprecate_called, 'deprecate warning issued');
     });
 
-    QUnit.test('batcheditems_size_binder calls deprecate', assert => {
+    QUnit.test('batcheditems_size_binder calls deprecate', (assert) => {
         let deprecate_called = false;
-        ts.deprecate = function(old_name) {
+        ts.deprecate = (old_name) => {
             if (old_name === 'batcheditems_size_binder') {
                 deprecate_called = true;
             }
@@ -448,9 +435,9 @@ QUnit.module('cone.app.batcheditems.deprecated', hooks => {
         assert.true(deprecate_called, 'deprecate warning issued');
     });
 
-    QUnit.test('batcheditems_filter_binder calls deprecate', assert => {
+    QUnit.test('batcheditems_filter_binder calls deprecate', (assert) => {
         let deprecate_called = false;
-        ts.deprecate = function(old_name) {
+        ts.deprecate = (old_name) => {
             if (old_name === 'batcheditems_filter_binder') {
                 deprecate_called = true;
             }
@@ -461,8 +448,8 @@ QUnit.module('cone.app.batcheditems.deprecated', hooks => {
         assert.true(deprecate_called, 'deprecate warning issued');
     });
 
-    QUnit.test('batcheditems_size_binder uses default selector', assert => {
-        let html = $(`
+    QUnit.test('batcheditems_size_binder uses default selector', (assert) => {
+        $(`
             <div class="batched_items_slice_size">
                 <select ajax:target="/api" ajax:event="reload:#list">
                     <option value="10">10</option>
@@ -470,26 +457,26 @@ QUnit.module('cone.app.batcheditems.deprecated', hooks => {
             </div>
         `).appendTo(container);
 
-        ts.deprecate = function() {};
+        ts.deprecate = () => {};
         batcheditems_size_binder(container);
 
-        let select = container.find('select');
-        let events = $._data(select.get(0), 'events');
-        assert.ok(events && events.change, 'default selector works');
+        const select = container.find('select');
+        const events = $._data(select.get(0), 'events');
+        assert.ok(events?.change, 'default selector works');
     });
 
-    QUnit.test('batcheditems_filter_binder uses default selector and name', assert => {
-        let html = $(`
+    QUnit.test('batcheditems_filter_binder uses default selector and name', (assert) => {
+        $(`
             <div class="batched_items_filter">
                 <input ajax:target="/api" ajax:event="reload:#list" />
             </div>
         `).appendTo(container);
 
-        ts.deprecate = function() {};
+        ts.deprecate = () => {};
         batcheditems_filter_binder(container);
 
-        let input = container.find('input');
-        let events = $._data(input.get(0), 'events');
-        assert.ok(events && events.keyup, 'default selector works');
+        const input = container.find('input');
+        const events = $._data(input.get(0), 'events');
+        assert.ok(events?.keyup, 'default selector works');
     });
 });

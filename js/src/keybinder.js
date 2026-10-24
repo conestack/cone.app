@@ -1,15 +1,14 @@
 import $ from 'jquery';
 
-export let keys = {
+export const keys = {
     shift_down: false,
-    ctrl_down: false
+    ctrl_down: false,
 };
 
 /**
  * XXX: Use ``ts.KeyState`` instead.
  */
 export class KeyBinder {
-
     constructor() {
         $(window).on('keydown', this.key_down.bind(this));
         $(window).on('keyup', this.key_up.bind(this));

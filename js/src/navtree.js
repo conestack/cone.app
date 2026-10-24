@@ -5,7 +5,6 @@ import ts from 'treibstoff';
  * Class to manage a collapsible navigation tree component.
  */
 export class NavTree {
-
     /**
      * Initializes the NavTree instance for a given context.
      * @param {Element} context - DOM context.
@@ -49,7 +48,7 @@ export class NavTree {
      * Stores the menu state in localStorage.
      * @param {Event} e - Event object.
      */
-    set_menu_open(e) {
+    set_menu_open(_e) {
         localStorage.setItem('cone.app.navtree.open', 'true');
     }
 
@@ -58,7 +57,7 @@ export class NavTree {
      * Removes the menu state from localStorage.
      * @param {Event} e - Event object.
      */
-    set_menu_closed(e) {
+    set_menu_closed(_e) {
         localStorage.removeItem('cone.app.navtree.open');
     }
 

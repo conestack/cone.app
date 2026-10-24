@@ -2,8 +2,7 @@ import $ from 'jquery';
 import ts from 'treibstoff';
 
 export class LiveSearch {
-
-    static initialize(context, factory=null) {
+    static initialize(context, factory = null) {
         const elem = ts.query_elem('input#search-text', context);
         if (!elem) {
             return;
@@ -38,21 +37,27 @@ export class LiveSearch {
         this._in_progress = true;
         ts.http_request({
             url: this.target,
-            params: {term: this._term},
+            params: { term: this._term },
             type: 'json',
-            success: this.on_result
+            success: this.on_result,
         });
         this._in_progress = false;
     }
 
     render_no_results() {
-        ts.compile_template(this, `
+        ts.compile_template(
+            this,
+            `
         <h5 class="card-title">No search results</h5>
-        `, this.result);
+        `,
+            this.result,
+        );
     }
 
     render_suggestion(item) {
-        ts.compile_template(this, `
+        ts.compile_template(
+            this,
+            `
         <div class="mb-4">
           <h5 class="card-title">
             <a href="${item.target}"
@@ -67,26 +72,36 @@ export class LiveSearch {
             ${item.description === undefined ? '' : item.description}
           </p>
         </div>
-        `, this.result);
+        `,
+            this.result,
+        );
     }
 
-    on_result(data, status, request) {
+    on_result(data, _status, _request) {
         this.content.empty();
-        ts.compile_template(this, `
+        ts.compile_template(
+            this,
+            `
         <div class="card mt-2">
           <div class="card-body" t-elem="result">
             <h3 class="card-title mb-3">Search results for "${this._term}"</h3>
           </div>
         </div>
-        `, this.content);
+        `,
+            this.content,
+        );
         if (!data.length) {
             this.render_no_results();
         } else {
-            ts.compile_template(this, `
+            ts.compile_template(
+                this,
+                `
             <p class="card-text mb-3">
               <span>${data.length} Results</span>
             </p>
-            `, this.result);
+            `,
+                this.result,
+            );
             for (const item of data) {
                 this.render_suggestion(item);
             }
@@ -105,7 +120,7 @@ export class LiveSearch {
         });
     }
 
-    on_change(evt) {
+    on_change(_evt) {
         if (this._in_progress) {
             return;
         }

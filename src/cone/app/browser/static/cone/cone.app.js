@@ -7,7 +7,7 @@ var cone = (function (exports, $, ts) {
             this.name = name;
         }
         set_filter(val) {
-            let elem = this.elem,
+            const elem = this.elem,
                 target = ts.ajax.parse_target(elem.attr('ajax:target')),
                 event = elem.attr('ajax:event');
             target.params[this.name] = val;
@@ -17,23 +17,22 @@ var cone = (function (exports, $, ts) {
                     path_event = event;
                 }
                 ts.ajax.path({
-                    path: target.path + target.query + '&' + this.name + '=' + val,
+                    path: `${target.path}${target.query}&${this.name}=${val}`,
                     event: path_event,
-                    target: target
+                    target: target,
                 });
             }
-            let defs = event.split(':');
+            const defs = event.split(':');
             ts.ajax.trigger({
                 name: defs[0],
                 selector: defs[1],
-                target: target
+                target: target,
             });
         }
     }
     class BatchedItemsSize extends BatchedItemsFilter {
-        static initialize(context,
-                          selector='.batched_items_slice_size select') {
-            $(selector, context).each(function() {
+        static initialize(context, selector = '.batched_items_slice_size select') {
+            $(selector, context).each(function () {
                 new BatchedItemsSize($(this));
             });
         }
@@ -41,16 +40,14 @@ var cone = (function (exports, $, ts) {
             super(elem, 'size');
             elem.off('change').on('change', this.change_handle.bind(this));
         }
-        change_handle(evt) {
-            let option = $('option:selected', this.elem).first();
+        change_handle(_evt) {
+            const option = $('option:selected', this.elem).first();
             this.set_filter(option.val());
         }
     }
     class BatchedItemsSearch extends BatchedItemsFilter {
-        static initialize(context,
-                          selector='.batched_items_filter input',
-                          name='term') {
-            $(selector, context).each(function() {
+        static initialize(context, selector = '.batched_items_filter input', name = 'term') {
+            $(selector, context).each(function () {
                 new BatchedItemsSearch($(this), name);
             });
         }
@@ -61,20 +58,20 @@ var cone = (function (exports, $, ts) {
             elem.off('keyup').on('keyup', this.keyup_handle.bind(this));
             elem.off('change').on('change', this.change_handle.bind(this));
         }
-        focus_handle(evt) {
-            let elem = this.elem;
+        focus_handle(_evt) {
+            const elem = this.elem;
             if (elem.hasClass('empty_filter')) {
                 elem.val('');
                 elem.removeClass('empty_filter');
             }
         }
         keypress_handle(evt) {
-            if (evt.keyCode == 13) {
+            if (evt.keyCode === 13) {
                 evt.preventDefault();
             }
         }
         keyup_handle(evt) {
-            if (evt.keyCode == 13) {
+            if (evt.keyCode === 13) {
                 evt.preventDefault();
                 this.set_filter(this.elem.val());
             }
@@ -185,6 +182,27 @@ var cone = (function (exports, $, ts) {
         }
     }
 
+    class ContextMenuDropdown {
+        static initialize() {
+            $(document).on('show.bs.dropdown', '#contextmenu .dropdown', function () {
+                $(this).find('.dropdown-menu').removeClass('dropdown-menu-end');
+            });
+            $(document).on('shown.bs.dropdown', '#contextmenu .dropdown', function () {
+                const menu = $(this).find('.dropdown-menu')[0];
+                const rect = menu.getBoundingClientRect();
+                const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                if (rect.right > viewportWidth) {
+                    menu.classList.add('dropdown-menu-end');
+                    const toggle = $(this).find('[data-bs-toggle="dropdown"]')[0];
+                    const instance = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                    if (instance._popper) {
+                        instance._popper.update();
+                    }
+                }
+            });
+        }
+    }
+
     class CopySupport {
         static initialize(context) {
             new CopySupport(context);
@@ -203,24 +221,24 @@ var cone = (function (exports, $, ts) {
             this.cut_action.off('click').on('click', this.handle_cut.bind(this));
             this.copy_action = $('a#toolbaraction-copy', context);
             this.copy_action.off('click').on('click', this.handle_copy.bind(this));
-            this.selectable = this.copyable.selectable({
-                on_firstclick: this.on_firstclick.bind(this),
-                on_select: this.on_select.bind(this)
-            }).data('selectable');
+            this.selectable = this.copyable
+                .selectable({
+                    on_firstclick: this.on_firstclick.bind(this),
+                    on_select: this.on_select.bind(this),
+                })
+                .data('selectable');
             this.read_selected_from_cookie(this.cut_cookie, 'copysupport_cut');
             this.read_selected_from_cookie(this.copy_cookie, '');
         }
-        on_firstclick(selectable, elem) {
-        }
-        on_select(selectable) {
-        }
+        on_firstclick(_selectable, _elem) {}
+        on_select(_selectable) {}
         write_selected_to_cookie(name) {
-            let selected = $(this.selectable.selected);
-            let ids = new Array();
-            selected.each(function() {
+            const selected = $(this.selectable.selected);
+            const ids = [];
+            selected.each(function () {
                 ids.push($(this).attr('ajax:target'));
             });
-            let cookie = ids.join('::');
+            const cookie = ids.join('::');
             ts.create_cookie(name, cookie);
             if (cookie.length) {
                 $(this.paste_action).removeClass('disabled');
@@ -229,18 +247,18 @@ var cone = (function (exports, $, ts) {
             }
         }
         read_selected_from_cookie(name, css) {
-            let cookie = ts.read_cookie(name);
+            const cookie = ts.read_cookie(name);
             if (!cookie) {
                 return;
             }
-            let ids = cookie.split('::');
-            let that = this;
+            const ids = cookie.split('::');
+            const that = this;
             let elem, target;
-            $('table tr.selectable', this.context).each(function() {
+            $('table tr.selectable', this.context).each(function () {
                 elem = $(this);
                 target = elem.attr('ajax:target');
-                for (let idx in ids) {
-                    if (ids[idx] == target) {
+                for (const idx in ids) {
+                    if (ids[idx] === target) {
                         elem.addClass('selected');
                         if (css) {
                             elem.addClass(css);
@@ -266,359 +284,25 @@ var cone = (function (exports, $, ts) {
         }
         handle_paste(evt) {
             evt.preventDefault();
-            let elem = $(evt.currentTarget);
+            const elem = $(evt.currentTarget);
             if (elem.hasClass('disabled')) {
                 return;
             }
-            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
+            const target = ts.ajax.parse_target(elem.attr('ajax:target'));
             ts.ajax.action({
                 name: 'paste',
                 mode: 'NONE',
                 selector: 'NONE',
                 url: target.url,
-                params: target.params
+                params: target.params,
             });
         }
     }
-
-    let keys = {
-        shift_down: false,
-        ctrl_down: false
-    };
-    class KeyBinder {
-        constructor() {
-            $(window).on('keydown', this.key_down.bind(this));
-            $(window).on('keyup', this.key_up.bind(this));
-        }
-        key_down(e) {
-            switch (e.keyCode || e.which) {
-                case 16:
-                    keys.shift_down = true;
-                    break;
-                case 17:
-                    keys.ctrl_down = true;
-                    break;
-            }
-        }
-        key_up(e) {
-            switch (e.keyCode || e.which) {
-                case 16:
-                    keys.shift_down = false;
-                    break;
-                case 17:
-                    keys.ctrl_down = false;
-                    break;
-            }
-        }
-    }
-
-    class LiveSearch {
-        static initialize(context, factory=null) {
-            const elem = ts.query_elem('input#search-text', context);
-            if (!elem) {
-                return;
-            }
-            if (factory === null) {
-                factory = cone.LiveSearch;
-            }
-            new factory(elem);
-        }
-        constructor(elem) {
-            this.elem = elem;
-            this.target = `${elem.data('search-target')}/livesearch`;
-            this.content = $('#content');
-            this.result = null;
-            this._term = '';
-            this._minlen = 3;
-            this._delay = 250;
-            this._timeout_event = null;
-            this._in_progress = false;
-            this.on_keydown = this.on_keydown.bind(this);
-            this.on_change = this.on_change.bind(this);
-            this.on_result = this.on_result.bind(this);
-            elem.on('keydown', this.on_keydown);
-            elem.on('change', this.on_change);
-        }
-        search() {
-            this._in_progress = true;
-            ts.http_request({
-                url: this.target,
-                params: {term: this._term},
-                type: 'json',
-                success: this.on_result
-            });
-            this._in_progress = false;
-        }
-        render_no_results() {
-            ts.compile_template(this, `
-        <h5 class="card-title">No search results</h5>
-        `, this.result);
-        }
-        render_suggestion(item) {
-            ts.compile_template(this, `
-        <div class="mb-4">
-          <h5 class="card-title">
-            <a href="${item.target}"
-               ajax:bind="click"
-               ajax:event="contextchanged:#layout"
-               ajax:target="${item.target}">
-              <i class="${item.icon}"></i>
-              ${item.value}
-            </a>
-          </h5>
-          <p class="card-text">
-            ${item.description === undefined ? '' : item.description}
-          </p>
-        </div>
-        `, this.result);
-        }
-        on_result(data, status, request) {
-            this.content.empty();
-            ts.compile_template(this, `
-        <div class="card mt-2">
-          <div class="card-body" t-elem="result">
-            <h3 class="card-title mb-3">Search results for "${this._term}"</h3>
-          </div>
-        </div>
-        `, this.content);
-            if (!data.length) {
-                this.render_no_results();
-            } else {
-                ts.compile_template(this, `
-            <p class="card-text mb-3">
-              <span>${data.length} Results</span>
-            </p>
-            `, this.result);
-                for (const item of data) {
-                    this.render_suggestion(item);
-                }
-            }
-            this.result.tsajax();
-        }
-        on_keydown(evt) {
-            if (evt.keyCode === 13) {
-                return;
-            }
-            ts.clock.schedule_frame(() => {
-                if (this._term !== this.elem.val()) {
-                    this.elem.trigger('change');
-                }
-            });
-        }
-        on_change(evt) {
-            if (this._in_progress) {
-                return;
-            }
-            const term = this.elem.val();
-            if (this._term === term) {
-                return;
-            }
-            this._term = term;
-            if (this._term.length < this._minlen) {
-                return;
-            }
-            if (this._timeout_event !== null) {
-                this._timeout_event.cancel();
-            }
-            this._timeout_event = ts.clock.schedule_timeout(() => {
-                this._timeout_event = null;
-                this.search();
-            }, this._delay);
-        }
-    }
-
-    class ReferenceHandle {
-        static initialize(context) {
-            if (!context) {
-                return;
-            }
-            let ol_elem = context.parents('div.modal');
-            if (!ol_elem.length) {
-                return;
-            }
-            let ol = ol_elem.data('overlay'),
-                target = ol.ref_target;
-            if (!target) {
-                return;
-            }
-            $('a.addreference', context).each(function() {
-                new AddReferenceHandle($(this), target, ol);
-            });
-            $('a.removereference', context).each(function() {
-                new RemoveReferenceHandle($(this), target, ol);
-            });
-        }
-        constructor(elem, target, overlay) {
-            this.elem = elem;
-            this.target = target;
-            this.target_tag = target.get(0).tagName;
-            this.overlay = overlay;
-        }
-        single_value() {
-            return this.target_tag == 'INPUT';
-        }
-        multi_value() {
-            return this.target_tag == 'SELECT';
-        }
-        toggle_enabled(elem) {
-            $('a', elem.parent()).toggleClass('disabled');
-        }
-        reset_selected(elem) {
-            let selected = new Array();
-            if (this.single_value()) {
-                selected.push(elem.attr('value'));
-            }
-            if (this.multi_value()) {
-                $('[selected=selected]', elem).each(function() {
-                    selected.push($(this).attr('value'));
-                });
-            }
-            this.set_selected_on_ajax_target(elem.parent(), selected);
-            let overlay = this.overlay;
-            let that = this;
-            $('div.referencebrowser a', overlay.elem).each(function() {
-                let link = $(this);
-                if (link.attr('ajax:target')) {
-                    that.set_selected_on_ajax_target(link, selected);
-                }
-            });
-        }
-        set_selected_on_ajax_target(elem, selected) {
-            let target = ts.ajax.parse_target(elem.attr('ajax:target'));
-            target.params.selected = selected.join(',');
-            let query = new Array();
-            for (let name in target.params) {
-                query.push(name + '=' + target.params[name]);
-            }
-            elem.attr('ajax:target', target.url + '?' + query.join('&'));
-        }
-    }
-    class AddReferenceHandle extends ReferenceHandle {
-        constructor(elem, target, overlay) {
-            super(elem, target, overlay);
-            elem.off('click').on('click', this.add_reference.bind(this));
-        }
-        add_reference(evt) {
-            evt.preventDefault();
-            let elem = this.elem;
-            let target = this.target;
-            let uid = elem.attr('id');
-            uid = uid.substring(4, uid.length);
-            let label = $('.reftitle', elem.parent()).html();
-            if (this.single_value()) {
-                target.attr('value', label);
-                let sel = '[name="' + target.attr('name') + '.uid"]';
-                $(sel).attr('value', uid);
-                this.set_selected_on_ajax_target(target.parent(), [uid]);
-                this.overlay.close();
-                return;
-            }
-            if (this.multi_value()) {
-                if ($('[value="' + uid + '"]', target.parent()).length) {
-                    return;
-                }
-                let option = $('<option></option>');
-                option.val(uid).html(label).attr('selected', 'selected');
-                target.append(option);
-                target.trigger('change');
-            }
-            this.reset_selected(target);
-            this.toggle_enabled(elem);
-        }
-    }
-    class RemoveReferenceHandle extends ReferenceHandle {
-        constructor(elem, target, overlay) {
-            super(elem, target, overlay);
-            elem.off('click').on('click', this.remove_reference.bind(this));
-        }
-        remove_reference(evt) {
-            evt.preventDefault();
-            let elem = this.elem;
-            let target = this.target;
-            let uid = elem.attr('id');
-            uid = uid.substring(4, uid.length);
-            if (this.single_value()) {
-                target.attr('value', '');
-                let sel = '[name="' + target.attr('name') + '.uid"]';
-                $(sel).attr('value', '');
-            }
-            if (this.multi_value()) {
-                let sel = '[value="' + uid + '"]';
-                if (!$(sel, target.parent()).length) {
-                    return;
-                }
-                $(sel, target).remove();
-                target.trigger('change');
-            }
-            this.reset_selected(target);
-            this.toggle_enabled(elem);
-        }
-    }
-    class ReferenceBrowserLoader {
-        static initialize(context) {
-            $('.referencebrowser_trigger', context).each(function() {
-                new ReferenceBrowserLoader($(this));
-            });
-        }
-        constructor(elem) {
-            this.wrapper = elem.parent();
-            let sel = `[name="${elem.data('reference-name')}"]`;
-            this.target = $(sel, this.wrapper);
-            elem.off('click').on('click', this.load_ref_browser.bind(this));
-        }
-        load_ref_browser(evt) {
-            evt.preventDefault();
-            let ol = ts.ajax.overlay({
-                action: 'referencebrowser',
-                title: 'Referencebrowser',
-                css: 'modal-lg',
-                target: this.wrapper.attr('ajax:target'),
-                on_complete: this.on_complete.bind(this)
-            });
-            ol.ref_target = this.target;
-        }
-        on_complete(inst) {
-            let target = this.target;
-            $('a.addreference', inst.elem).each(function() {
-                new AddReferenceHandle($(this), target, inst);
-            });
-            $('a.removereference', inst.elem).each(function() {
-                new RemoveReferenceHandle($(this), target, inst);
-            });
-        }
-    }
-    function referencebrowser_on_array_add(inst, context) {
-        ReferenceBrowserLoader.initialize(context);
-    }
-    function referencebrowser_on_array_index(inst, row, index) {
-        $('.referencebrowser_trigger', row).each(function() {
-            let trigger = $(this),
-                ref_name = trigger.data('reference-name'),
-                base_id = inst.base_id,
-                base_name = base_id.replace(/\-/g, '.');
-            trigger.data('reference-name', inst.set_value_index(
-                ref_name,
-                base_name,
-                index,
-                '.'
-            ));
-        });
-    }
-    $(function() {
-        if (window.yafowil_array === undefined) {
-            return;
-        }
-        yafowil_array.on_array_event('on_add', referencebrowser_on_array_add);
-        yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
-    });
 
     class GlobalEvents extends ts.Events {
-        on_sidebar_left_resize(inst) {
-        }
-        on_sidebar_right_resize(inst) {
-        }
-        on_main_area_mode(inst) {
-        }
+        on_sidebar_left_resize(_inst) {}
+        on_sidebar_right_resize(_inst) {}
+        on_main_area_mode(_inst) {}
     }
     const global_events = new GlobalEvents();
 
@@ -689,7 +373,7 @@ var cone = (function (exports, $, ts) {
             global_events.off('on_sidebar_left_resize', this.on_sidebar_left_resize);
             global_events.off('on_sidebar_right_resize', this.on_sidebar_left_resize);
         }
-        set_mode(inst, mainarea) {
+        set_mode(_inst, mainarea) {
             this.is_compact = mainarea.is_compact;
             this.is_super_compact = mainarea.is_super_compact;
         }
@@ -709,50 +393,51 @@ var cone = (function (exports, $, ts) {
                 this.elem.removeClass('super-compact');
             }
         }
-        on_sidebar_left_resize(inst, sidebar) {
+        on_sidebar_left_resize(_inst, sidebar) {
             this.is_sidebar_left_collapsed = sidebar.collapsed;
         }
-        on_sidebar_right_resize(inst, sidebar) {
+        on_sidebar_right_resize(_inst, sidebar) {
             this.is_sidebar_right_collapsed = sidebar.collapsed;
         }
-        on_is_sidebar_left_collapsed(val) {
+        on_is_sidebar_left_collapsed(_val) {
         }
-        on_is_sidebar_right_collapsed(val) {
+        on_is_sidebar_right_collapsed(_val) {
         }
     }
-    const ResizeAware = (Base) => class extends Base {
-        constructor(...args) {
-            super(...args);
-            if (this.elem) {
-                ts.ajax.attach(this, this.elem);
+    const ResizeAware = (Base) =>
+        class extends Base {
+            constructor(...args) {
+                super(...args);
+                if (this.elem) {
+                    ts.ajax.attach(this, this.elem);
+                }
+                this.on_window_resize = this.on_window_resize.bind(this);
+                $(window).on('resize', this.on_window_resize);
             }
-            this.on_window_resize = this.on_window_resize.bind(this);
-            $(window).on('resize', this.on_window_resize);
-        }
-        on_window_resize(evt) {
-            if (super.on_window_resize) {
-                super.on_window_resize(evt);
+            on_window_resize(evt) {
+                if (super.on_window_resize) {
+                    super.on_window_resize(evt);
+                }
             }
-        }
-        destroy() {
-            try {
-                super.destroy();
-            } catch (error) {
-                console.warn(error);
-            } finally {
-                $(window).off('resize', this.on_window_resize);
+            destroy() {
+                try {
+                    super.destroy();
+                } catch (error) {
+                    console.warn(error);
+                } finally {
+                    $(window).off('resize', this.on_window_resize);
+                }
             }
-        }
-    };
+        };
 
     class Scrollbar extends ts.Motion {
         static initialize(context) {
-            $('.scrollable-x', context).each(function() {
+            $('.scrollable-x', context).each(function () {
                 if (!$(this).data('scrollbar')) {
                     new ScrollbarX($(this));
                 }
             });
-            $('.scrollable-y', context).each(function() {
+            $('.scrollable-y', context).each(function () {
                 if (!$(this).data('scrollbar')) {
                     new ScrollbarY($(this));
                 }
@@ -785,9 +470,10 @@ var cone = (function (exports, $, ts) {
                 this.on('on_position', this._save_position);
             }
             ts.clock.schedule_frame(() => {
-                const saved = this.persist_scroll && this.storage_key
-                    ? sessionStorage.getItem(this.storage_key)
-                    : null;
+                const saved =
+                    this.persist_scroll && this.storage_key
+                        ? sessionStorage.getItem(this.storage_key)
+                        : null;
                 this.render();
                 if (saved !== null) {
                     this.position = parseFloat(saved);
@@ -800,12 +486,12 @@ var cone = (function (exports, $, ts) {
             }
             return `cone.app.scroll.${this._persist_key}`;
         }
-        _save_position(inst, pos) {
+        _save_position(_inst, pos) {
             if (this.storage_key) {
                 sessionStorage.setItem(this.storage_key, pos);
             }
         }
-        on_window_resize(evt) {
+        on_window_resize(_evt) {
             if (this.duplicate) {
                 return;
             }
@@ -873,19 +559,23 @@ var cone = (function (exports, $, ts) {
             this.elem.removeData('scrollbar');
         }
         compile() {
-            ts.compile_template(this, `
+            ts.compile_template(
+                this,
+                `
         <div class="scrollbar" t-elem="scrollbar">
           <div class="scroll-handle" t-elem="thumb">
           </div>
         </div>
-        `, this.elem);
+        `,
+                this.elem,
+            );
         }
         render(attr) {
             this.scrollbar.css(attr, this.scrollsize);
             if (this.contentsize <= this.scrollsize) {
                 this.thumbsize = this.scrollsize;
             } else {
-                this.thumbsize = Math.pow(this.scrollsize, 2) / this.contentsize;
+                this.thumbsize = this.scrollsize ** 2 / this.contentsize;
             }
             this.thumb.css(attr, this.thumbsize);
             this.update();
@@ -923,10 +613,7 @@ var cone = (function (exports, $, ts) {
             ) {
                 if (evt.type === 'mouseenter') {
                     this.scrollbar.stop(true, true).fadeIn();
-                } else if (
-                    evt.type === 'mouseleave' &&
-                    evt.relatedTarget !== elem.get(0)
-                ) {
+                } else if (evt.type === 'mouseleave' && evt.relatedTarget !== elem.get(0)) {
                     this.scrollbar.stop(true, true).fadeOut();
                 }
             }
@@ -935,7 +622,7 @@ var cone = (function (exports, $, ts) {
             if (this.contentsize <= this.scrollsize) {
                 return;
             }
-            let evt_ = evt.originalEvent;
+            const evt_ = evt.originalEvent;
             if (typeof evt_.deltaY === 'number') {
                 if (evt_.deltaY > 0) {
                     this.position += this.scroll_step;
@@ -947,9 +634,9 @@ var cone = (function (exports, $, ts) {
         on_click(evt) {
             evt.preventDefault();
             this.thumb.addClass('active');
-            let position = this.pos_from_evt(evt),
+            const position = this.pos_from_evt(evt),
                 thumb_pos = position - this.offset - this.thumbsize / 2;
-            this.position = this.contentsize * thumb_pos / this.scrollsize;
+            this.position = (this.contentsize * thumb_pos) / this.scrollsize;
             this.thumb.removeClass('active');
         }
         touchstart(evt) {
@@ -966,7 +653,7 @@ var cone = (function (exports, $, ts) {
             this.position = this._start_position - delta;
             this.fade_timer();
         }
-        touchend(evt) {
+        touchend(_evt) {
             delete this._touch_pos;
             delete this._start_position;
         }
@@ -977,11 +664,11 @@ var cone = (function (exports, $, ts) {
             this.thumb.addClass('active');
         }
         move(evt) {
-            let mouse_pos = this.pos_from_evt(evt) - this.offset,
+            const mouse_pos = this.pos_from_evt(evt) - this.offset,
                 thumb_pos = this._thumb_pos + mouse_pos - this._mouse_pos;
-            this.position = this.contentsize * thumb_pos / this.scrollsize;
+            this.position = (this.contentsize * thumb_pos) / this.scrollsize;
         }
-        up(evt) {
+        up(_evt) {
             delete this._mouse_pos;
             delete this._thumb_pos;
             this.elem.on('mouseenter mouseleave', this.on_hover);
@@ -1003,9 +690,7 @@ var cone = (function (exports, $, ts) {
         compile() {
             super.compile();
             this.thumb.css('height', '6px');
-            this.scrollbar
-                .css('height', '6px')
-                .css('width', this.scrollsize);
+            this.scrollbar.css('height', '6px').css('width', this.scrollsize);
             this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
             this.thumb.css('width', this.thumbsize);
         }
@@ -1013,9 +698,9 @@ var cone = (function (exports, $, ts) {
             super.render('width');
         }
         update() {
-            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
-            this.content.css('right', this.position + 'px');
-            this.thumb.css('left', thumb_pos + 'px');
+            const thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('right', `${this.position}px`);
+            this.thumb.css('left', `${thumb_pos}px`);
         }
         pos_from_evt(e) {
             return e.pageX;
@@ -1036,10 +721,7 @@ var cone = (function (exports, $, ts) {
         compile() {
             super.compile();
             this.thumb.css('width', '6px');
-            this.scrollbar
-                .css('width', '6px')
-                .css('top', '0px')
-                .css('height', this.scrollsize);
+            this.scrollbar.css('width', '6px').css('top', '0px').css('height', this.scrollsize);
             this.thumbsize = this.scrollsize / (this.contentsize / this.scrollsize);
             this.thumb.css('height', this.thumbsize);
         }
@@ -1047,43 +729,648 @@ var cone = (function (exports, $, ts) {
             super.render('height');
         }
         update() {
-            let thumb_pos = this.position / (this.contentsize / this.scrollsize);
-            this.content.css('bottom', this.position + 'px');
-            this.thumb.css('top', thumb_pos + 'px');
+            const thumb_pos = this.position / (this.contentsize / this.scrollsize);
+            this.content.css('bottom', `${this.position}px`);
+            this.thumb.css('top', `${thumb_pos}px`);
         }
         pos_from_evt(e) {
             return e.pageY;
         }
     }
 
+    class Header extends LayoutAware {
+        static initialize(context) {
+            const elem = ts.query_elem('#header-main', context);
+            if (!elem) {
+                return;
+            }
+            new Header(elem);
+        }
+        constructor(elem) {
+            super(elem);
+            this.elem = elem;
+            this.header_content = ts.query_elem('#header-content', elem);
+            this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
+            this.navbar_content = ts.query_elem('#navbar-content', elem);
+            this.navbar_toggler = ts.query_elem('#navbar-toggler', this.elem);
+            this.personal_tools = ts.query_elem('#personaltools', elem);
+            this.mainmenu = ts.query_elem('#mainmenu', elem);
+            this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
+            this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
+            this.mainmenu_elems.each((_i, el) => {
+                $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar);
+                $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
+            });
+            this.update_personal_tools_room = this.update_personal_tools_room.bind(this);
+            if (this.personal_tools) {
+                this.personal_tools.on(
+                    'shown.bs.dropdown hidden.bs.dropdown',
+                    this.update_personal_tools_room,
+                );
+            }
+            this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
+            this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
+            this.bind();
+        }
+        destroy() {
+            super.destroy();
+            if (this.mobile_scrollbar) {
+                this.mobile_scrollbar.destroy();
+                this.mobile_scrollbar = null;
+            }
+            this.mainmenu_elems.each((_i, el) => {
+                $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
+                $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
+            });
+            if (this.personal_tools) {
+                this.personal_tools.off(
+                    'shown.bs.dropdown hidden.bs.dropdown',
+                    this.update_personal_tools_room,
+                );
+            }
+            const wrapper = this.navbar_content_wrapper;
+            wrapper.off('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
+            wrapper.off('hide.bs.collapse hidden.bs.collapse', this.set_mobile_menu_closed);
+        }
+        render_mobile_scrollbar() {
+            if (this.is_compact && this.mobile_scrollbar) {
+                this.mobile_scrollbar.render();
+            }
+        }
+        update_personal_tools_room() {
+            this.personal_tools.css('margin-bottom', '');
+            if (!this.is_super_compact) {
+                return;
+            }
+            const bottom = this.personal_tools[0].getBoundingClientRect().bottom;
+            let room = 0;
+            $('.dropdown-menu.show', this.personal_tools).each((_i, menu) => {
+                room = Math.max(room, menu.getBoundingClientRect().bottom - bottom);
+            });
+            if (room > 0) {
+                this.personal_tools.css('margin-bottom', `${room}px`);
+            }
+            this.render_mobile_scrollbar();
+        }
+        bind() {
+            const wrapper = this.navbar_content_wrapper;
+            wrapper.on('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
+            wrapper.on('hidden.bs.collapse', this.set_mobile_menu_closed);
+        }
+        set_mobile_menu_open() {
+            this.elem.addClass('mobile-menu-open');
+        }
+        set_mobile_menu_closed() {
+            this.elem.removeClass('mobile-menu-open');
+        }
+        on_is_compact(val) {
+            if (this.mobile_scrollbar) {
+                this.navbar_content.removeClass('scrollable-content');
+                this.mobile_scrollbar.destroy();
+                this.mobile_scrollbar = null;
+            }
+            if (val) {
+                this.elem.removeClass('full').removeClass('navbar-expand');
+                this.elem.addClass('compact');
+                this.navbar_content.addClass('scrollable-content');
+                this.mobile_scrollbar = new ScrollbarY(this.navbar_content_wrapper);
+                this.navbar_content_wrapper.on('shown.bs.collapse', () => {
+                    $('html, body').css('overscroll-behavior', 'none');
+                    this.mobile_scrollbar.render();
+                });
+                this.navbar_content_wrapper.on('hide.bs.collapse', () => {
+                    $('html, body').css('overscroll-behavior', 'auto');
+                    this.mobile_scrollbar.scrollbar.hide();
+                });
+            } else {
+                this.elem.removeClass('compact');
+                this.elem.addClass('full').addClass('navbar-expand');
+            }
+        }
+        on_is_super_compact(val) {
+            const in_navbar_content = ts.query_elem('#personaltools', this.navbar_content) !== null;
+            if (val) {
+                if (!in_navbar_content) {
+                    this.personal_tools.detach().appendTo(this.navbar_content);
+                }
+            } else {
+                if (in_navbar_content) {
+                    this.personal_tools.detach().prependTo(this.header_content);
+                }
+                $('.dropdown-menu.show').removeClass('show');
+                if (this.personal_tools) {
+                    this.update_personal_tools_room();
+                }
+            }
+        }
+    }
+
+    const keys = {
+        shift_down: false,
+        ctrl_down: false,
+    };
+    class KeyBinder {
+        constructor() {
+            $(window).on('keydown', this.key_down.bind(this));
+            $(window).on('keyup', this.key_up.bind(this));
+        }
+        key_down(e) {
+            switch (e.keyCode || e.which) {
+                case 16:
+                    keys.shift_down = true;
+                    break;
+                case 17:
+                    keys.ctrl_down = true;
+                    break;
+            }
+        }
+        key_up(e) {
+            switch (e.keyCode || e.which) {
+                case 16:
+                    keys.shift_down = false;
+                    break;
+                case 17:
+                    keys.ctrl_down = false;
+                    break;
+            }
+        }
+    }
+
+    class LiveSearch {
+        static initialize(context, factory = null) {
+            const elem = ts.query_elem('input#search-text', context);
+            if (!elem) {
+                return;
+            }
+            if (factory === null) {
+                factory = cone.LiveSearch;
+            }
+            new factory(elem);
+        }
+        constructor(elem) {
+            this.elem = elem;
+            this.target = `${elem.data('search-target')}/livesearch`;
+            this.content = $('#content');
+            this.result = null;
+            this._term = '';
+            this._minlen = 3;
+            this._delay = 250;
+            this._timeout_event = null;
+            this._in_progress = false;
+            this.on_keydown = this.on_keydown.bind(this);
+            this.on_change = this.on_change.bind(this);
+            this.on_result = this.on_result.bind(this);
+            elem.on('keydown', this.on_keydown);
+            elem.on('change', this.on_change);
+        }
+        search() {
+            this._in_progress = true;
+            ts.http_request({
+                url: this.target,
+                params: { term: this._term },
+                type: 'json',
+                success: this.on_result,
+            });
+            this._in_progress = false;
+        }
+        render_no_results() {
+            ts.compile_template(
+                this,
+                `
+        <h5 class="card-title">No search results</h5>
+        `,
+                this.result,
+            );
+        }
+        render_suggestion(item) {
+            ts.compile_template(
+                this,
+                `
+        <div class="mb-4">
+          <h5 class="card-title">
+            <a href="${item.target}"
+               ajax:bind="click"
+               ajax:event="contextchanged:#layout"
+               ajax:target="${item.target}">
+              <i class="${item.icon}"></i>
+              ${item.value}
+            </a>
+          </h5>
+          <p class="card-text">
+            ${item.description === undefined ? '' : item.description}
+          </p>
+        </div>
+        `,
+                this.result,
+            );
+        }
+        on_result(data, _status, _request) {
+            this.content.empty();
+            ts.compile_template(
+                this,
+                `
+        <div class="card mt-2">
+          <div class="card-body" t-elem="result">
+            <h3 class="card-title mb-3">Search results for "${this._term}"</h3>
+          </div>
+        </div>
+        `,
+                this.content,
+            );
+            if (!data.length) {
+                this.render_no_results();
+            } else {
+                ts.compile_template(
+                    this,
+                    `
+            <p class="card-text mb-3">
+              <span>${data.length} Results</span>
+            </p>
+            `,
+                    this.result,
+                );
+                for (const item of data) {
+                    this.render_suggestion(item);
+                }
+            }
+            this.result.tsajax();
+        }
+        on_keydown(evt) {
+            if (evt.keyCode === 13) {
+                return;
+            }
+            ts.clock.schedule_frame(() => {
+                if (this._term !== this.elem.val()) {
+                    this.elem.trigger('change');
+                }
+            });
+        }
+        on_change(_evt) {
+            if (this._in_progress) {
+                return;
+            }
+            const term = this.elem.val();
+            if (this._term === term) {
+                return;
+            }
+            this._term = term;
+            if (this._term.length < this._minlen) {
+                return;
+            }
+            if (this._timeout_event !== null) {
+                this._timeout_event.cancel();
+            }
+            this._timeout_event = ts.clock.schedule_timeout(() => {
+                this._timeout_event = null;
+                this.search();
+            }, this._delay);
+        }
+    }
+
+    class MainMenu extends LayoutAware {
+        static initialize(context) {
+            const elem = ts.query_elem('#mainmenu', context);
+            if (!elem) {
+                return;
+            }
+            new MainMenu(elem);
+        }
+        constructor(elem) {
+            super(elem);
+            this.elem = elem;
+            this.scrollbar = elem.data('scrollbar');
+            this.elems = $('.nav-link.dropdown-toggle', elem);
+            this.open_dropdown = null;
+            this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
+            this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
+            this.hide_dropdowns = this.hide_dropdowns.bind(this);
+            this.scrollbar.on('on_position', this.hide_dropdowns);
+        }
+        get height() {
+            return this.elem.outerHeight(true);
+        }
+        on_sidebar_left_resize(inst, sidebar) {
+            super.on_sidebar_left_resize(inst, sidebar);
+            requestAnimationFrame(() => {
+                this.scrollbar.render();
+            });
+        }
+        on_is_compact(val) {
+            this.hide_dropdowns();
+            if (val) {
+                this.scrollbar.off('on_position', this.hide_dropdowns);
+                this.bind_dropdowns_mobile();
+            } else {
+                this.bind_dropdowns_desktop();
+                this.scrollbar.on('on_position', this.hide_dropdowns);
+            }
+        }
+        on_show_dropdown_desktop(evt) {
+            const el = evt.target;
+            this.open_dropdown = el;
+            const dropdown = $(el).siblings('ul.dropdown-menu');
+            dropdown.css({
+                top: `${this.height - 1}px`,
+                left: `${$(el).offset().left}px`,
+            });
+        }
+        on_hide_dropdown_desktop(evt) {
+            const el = evt.target;
+            if (this.open_dropdown !== el) {
+                return;
+            }
+            this.open_dropdown = null;
+        }
+        bind_dropdowns_desktop() {
+            this.elem.on(
+                'shown.bs.dropdown',
+                '.nav-link.dropdown-toggle',
+                this.on_show_dropdown_desktop,
+            );
+            this.elem.on(
+                'hidden.bs.dropdown',
+                '.nav-link.dropdown-toggle',
+                this.on_hide_dropdown_desktop,
+            );
+        }
+        bind_dropdowns_mobile() {
+            this.elem.off(
+                'shown.bs.dropdown',
+                '.nav-link.dropdown-toggle',
+                this.on_show_dropdown_desktop,
+            );
+            this.elem.off(
+                'hidden.bs.dropdown',
+                '.nav-link.dropdown-toggle',
+                this.on_hide_dropdown_desktop,
+            );
+        }
+        hide_dropdowns() {
+            const Dropdown = bootstrap.Dropdown;
+            this.elems.each((_i, el) => {
+                Dropdown.getOrCreateInstance(el).hide();
+            });
+        }
+        destroy() {
+            super.destroy();
+            this.elem.off(
+                'shown.bs.dropdown',
+                '.nav-link.dropdown-toggle',
+                this.on_show_dropdown_desktop,
+            );
+            this.elem.off(
+                'hidden.bs.dropdown',
+                '.nav-link.dropdown-toggle',
+                this.on_hide_dropdown_desktop,
+            );
+            this.scrollbar.off('on_position', this.hide_dropdowns);
+            this.scrollbar.destroy();
+        }
+    }
+
+    class NavTree {
+        static initialize(context) {
+            const elem = ts.query_elem('#navtree', context);
+            if (!elem) {
+                return;
+            }
+            new NavTree(elem);
+        }
+        constructor(elem) {
+            this.elem = elem;
+            this.dropdown_elem = $('#navigation-collapse', elem);
+            if (this.dropdown_elem.hasClass('no-collapse')) {
+                return;
+            }
+            if (localStorage.getItem('cone.app.navtree.open')) {
+                this.dropdown_elem.addClass('show');
+            }
+            this.set_menu_open = this.set_menu_open.bind(this);
+            this.set_menu_closed = this.set_menu_closed.bind(this);
+            this.dropdown_elem.on('shown.bs.collapse', this.set_menu_open);
+            this.dropdown_elem.on('hidden.bs.collapse', this.set_menu_closed);
+            ts.ajax.attach(this, elem);
+        }
+        set_menu_open(_e) {
+            localStorage.setItem('cone.app.navtree.open', 'true');
+        }
+        set_menu_closed(_e) {
+            localStorage.removeItem('cone.app.navtree.open');
+        }
+        destroy() {
+            this.dropdown_elem.off();
+            this.elem.off();
+        }
+    }
+
+    class ReferenceHandle {
+        static initialize(context) {
+            if (!context) {
+                return;
+            }
+            const ol_elem = context.parents('div.modal');
+            if (!ol_elem.length) {
+                return;
+            }
+            const ol = ol_elem.data('overlay'),
+                target = ol.ref_target;
+            if (!target) {
+                return;
+            }
+            $('a.addreference', context).each(function () {
+                new AddReferenceHandle($(this), target, ol);
+            });
+            $('a.removereference', context).each(function () {
+                new RemoveReferenceHandle($(this), target, ol);
+            });
+        }
+        constructor(elem, target, overlay) {
+            this.elem = elem;
+            this.target = target;
+            this.target_tag = target.get(0).tagName;
+            this.overlay = overlay;
+        }
+        single_value() {
+            return this.target_tag === 'INPUT';
+        }
+        multi_value() {
+            return this.target_tag === 'SELECT';
+        }
+        toggle_enabled(elem) {
+            $('a', elem.parent()).toggleClass('disabled');
+        }
+        reset_selected(elem) {
+            const selected = [];
+            if (this.single_value()) {
+                selected.push(elem.attr('value'));
+            }
+            if (this.multi_value()) {
+                $('[selected=selected]', elem).each(function () {
+                    selected.push($(this).attr('value'));
+                });
+            }
+            this.set_selected_on_ajax_target(elem.parent(), selected);
+            const overlay = this.overlay;
+            const that = this;
+            $('div.referencebrowser a', overlay.elem).each(function () {
+                const link = $(this);
+                if (link.attr('ajax:target')) {
+                    that.set_selected_on_ajax_target(link, selected);
+                }
+            });
+        }
+        set_selected_on_ajax_target(elem, selected) {
+            const target = ts.ajax.parse_target(elem.attr('ajax:target'));
+            target.params.selected = selected.join(',');
+            const query = [];
+            for (const name in target.params) {
+                query.push(`${name}=${target.params[name]}`);
+            }
+            elem.attr('ajax:target', `${target.url}?${query.join('&')}`);
+        }
+    }
+    class AddReferenceHandle extends ReferenceHandle {
+        constructor(elem, target, overlay) {
+            super(elem, target, overlay);
+            elem.off('click').on('click', this.add_reference.bind(this));
+        }
+        add_reference(evt) {
+            evt.preventDefault();
+            const elem = this.elem;
+            const target = this.target;
+            let uid = elem.attr('id');
+            uid = uid.substring(4, uid.length);
+            const label = $('.reftitle', elem.parent()).html();
+            if (this.single_value()) {
+                target.attr('value', label);
+                const sel = `[name="${target.attr('name')}.uid"]`;
+                $(sel).attr('value', uid);
+                this.set_selected_on_ajax_target(target.parent(), [uid]);
+                this.overlay.close();
+                return;
+            }
+            if (this.multi_value()) {
+                if ($(`[value="${uid}"]`, target.parent()).length) {
+                    return;
+                }
+                const option = $('<option></option>');
+                option.val(uid).html(label).attr('selected', 'selected');
+                target.append(option);
+                target.trigger('change');
+            }
+            this.reset_selected(target);
+            this.toggle_enabled(elem);
+        }
+    }
+    class RemoveReferenceHandle extends ReferenceHandle {
+        constructor(elem, target, overlay) {
+            super(elem, target, overlay);
+            elem.off('click').on('click', this.remove_reference.bind(this));
+        }
+        remove_reference(evt) {
+            evt.preventDefault();
+            const elem = this.elem;
+            const target = this.target;
+            let uid = elem.attr('id');
+            uid = uid.substring(4, uid.length);
+            if (this.single_value()) {
+                target.attr('value', '');
+                const sel = `[name="${target.attr('name')}.uid"]`;
+                $(sel).attr('value', '');
+            }
+            if (this.multi_value()) {
+                const sel = `[value="${uid}"]`;
+                if (!$(sel, target.parent()).length) {
+                    return;
+                }
+                $(sel, target).remove();
+                target.trigger('change');
+            }
+            this.reset_selected(target);
+            this.toggle_enabled(elem);
+        }
+    }
+    class ReferenceBrowserLoader {
+        static initialize(context) {
+            $('.referencebrowser_trigger', context).each(function () {
+                new ReferenceBrowserLoader($(this));
+            });
+        }
+        constructor(elem) {
+            this.wrapper = elem.parent();
+            const sel = `[name="${elem.data('reference-name')}"]`;
+            this.target = $(sel, this.wrapper);
+            elem.off('click').on('click', this.load_ref_browser.bind(this));
+        }
+        load_ref_browser(evt) {
+            evt.preventDefault();
+            const ol = ts.ajax.overlay({
+                action: 'referencebrowser',
+                title: 'Referencebrowser',
+                css: 'modal-lg',
+                target: this.wrapper.attr('ajax:target'),
+                on_complete: this.on_complete.bind(this),
+            });
+            ol.ref_target = this.target;
+        }
+        on_complete(inst) {
+            const target = this.target;
+            $('a.addreference', inst.elem).each(function () {
+                new AddReferenceHandle($(this), target, inst);
+            });
+            $('a.removereference', inst.elem).each(function () {
+                new RemoveReferenceHandle($(this), target, inst);
+            });
+        }
+    }
+    function referencebrowser_on_array_add(_inst, context) {
+        ReferenceBrowserLoader.initialize(context);
+    }
+    function referencebrowser_on_array_index(inst, row, index) {
+        $('.referencebrowser_trigger', row).each(function () {
+            const trigger = $(this),
+                ref_name = trigger.data('reference-name'),
+                base_id = inst.base_id,
+                base_name = base_id.replace(/-/g, '.');
+            trigger.data('reference-name', inst.set_value_index(ref_name, base_name, index, '.'));
+        });
+    }
+    $(() => {
+        if (window.yafowil_array === undefined) {
+            return;
+        }
+        yafowil_array.on_array_event('on_add', referencebrowser_on_array_add);
+        yafowil_array.on_array_event('on_index', referencebrowser_on_array_index);
+    });
+
     class Sharing {
         static initialize(context) {
             new Sharing(context);
         }
         constructor(context) {
-            let checkboxes = $('input.add_remove_role_for_principal', context);
+            const checkboxes = $('input.add_remove_role_for_principal', context);
             checkboxes.off('change').on('change', this.set_principal_role);
         }
         set_principal_role(evt) {
             evt.preventDefault();
-            let checkbox = $(this);
+            const checkbox = $(this);
             let action;
             if (this.checked) {
                 action = 'add_principal_role';
             } else {
                 action = 'remove_principal_role';
             }
-            let url = checkbox.parent().attr('ajax:target');
-            let params = {
+            const url = checkbox.parent().attr('ajax:target');
+            const params = {
                 id: checkbox.attr('name'),
-                role: checkbox.attr('value')
+                role: checkbox.attr('value'),
             };
             ts.ajax.action({
                 name: action,
                 mode: 'NONE',
                 selector: 'NONE',
                 url: url,
-                params: params
+                params: params,
             });
         }
     }
@@ -1092,7 +1379,8 @@ var cone = (function (exports, $, ts) {
         constructor(sidebar_content, elem) {
             super(elem);
             this.elem = elem;
-            const target = this.target = elem.data('target');
+            this.target = elem.data('target');
+            const target = this.target;
             this.parent = sidebar_content;
             this.related_tile = $(`[data-tile="${target}"]`, this.parent.tiles_container);
             this.on_click = this.on_click.bind(this);
@@ -1136,7 +1424,7 @@ var cone = (function (exports, $, ts) {
         }
         compile() {
             if (this.mode === 'toggle' && this.tiles.length > 1) {
-                $('.sidebar-control', this.navigation).each((i, el) => {
+                $('.sidebar-control', this.navigation).each((_i, el) => {
                     this.controls.push(new SidebarControl(this, $(el)));
                 });
             } else {
@@ -1161,7 +1449,7 @@ var cone = (function (exports, $, ts) {
             this.elem = elem;
             this.min_width = elem.data('min-width') || 115;
             const width = Math.max(this.min_width, this.sidebar_width);
-            elem.css('width', width + 'px');
+            elem.css('width', `${width}px`);
             const static_data = this.elem.data('static');
             this.static = static_data === true || static_data === 'True';
             this.moving = false;
@@ -1197,11 +1485,11 @@ var cone = (function (exports, $, ts) {
         get collapsed() {
             return this.elem.outerWidth() <= 0;
         }
-        on_window_resize(evt) {
+        on_window_resize(_evt) {
             this.responsive_toggle();
         }
-        on_lock(evt) {
-            const checked = !(this.lock_input.get(0).checked);
+        on_lock(_evt) {
+            const checked = !this.lock_input.get(0).checked;
             if (checked) {
                 this.set_state();
             } else {
@@ -1259,7 +1547,7 @@ var cone = (function (exports, $, ts) {
                 this.disable_lock = false;
                 if (this.locked && !this.locked.collapsed && this.collapsed) {
                     this.expand();
-                } else if (this.locked && this.locked.collapsed && !this.collapsed) {
+                } else if (this.locked?.collapsed && !this.collapsed) {
                     this.collapse();
                 }
             }
@@ -1269,19 +1557,15 @@ var cone = (function (exports, $, ts) {
         }
         collapse() {
             $('html, body').css('overscroll-behavior', 'auto');
-            this.elem
-                .removeClass('expanded')
-                .addClass('collapsed');
+            this.elem.removeClass('expanded').addClass('collapsed');
             this.trigger_event();
         }
         expand() {
             $('html, body').css('overscroll-behavior', 'none');
-            this.elem
-                .removeClass('collapsed')
-                .addClass('expanded');
+            this.elem.removeClass('collapsed').addClass('expanded');
             this.trigger_event();
         }
-        on_click(evt) {
+        on_click(_evt) {
             if (this.collapsed) {
                 this.expand();
             } else {
@@ -1304,7 +1588,7 @@ var cone = (function (exports, $, ts) {
             this.trigger_event();
             this.moving = false;
         }
-        on_sibling_sidebar_resize(inst, sb) {
+        on_sibling_sidebar_resize(_inst, sb) {
             const max_w = $(window).width() - this.elem.outerWidth() - 300;
             const is_mobile = $(window).width() < 768;
             const is_locked_expanded = this.locked && !this.locked.collapsed;
@@ -1363,15 +1647,18 @@ var cone = (function (exports, $, ts) {
             }
             const max_w = $(window).width() - sidebar_w - 300;
             width = Math.max(this.min_width, Math.min(width, max_w));
-            return parseInt(width);
+            return parseInt(width, 10);
         }
         on_sidebar_right_resize(inst, sb) {
             this.on_sibling_sidebar_resize(inst, sb);
         }
         set_state() {
-            localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
-                collapsed: this.collapsed
-            }));
+            localStorage.setItem(
+                'cone.app.sidebar_left.locked',
+                JSON.stringify({
+                    collapsed: this.collapsed,
+                }),
+            );
         }
         unset_state() {
             localStorage.removeItem('cone.app.sidebar_left.locked');
@@ -1414,15 +1701,18 @@ var cone = (function (exports, $, ts) {
             }
             const max_w = $(window).width() - sidebar_w - 300;
             width = Math.max(this.min_width, Math.min(width, max_w));
-            return parseInt(width);
+            return parseInt(width, 10);
         }
         on_sidebar_left_resize(inst, sb) {
             this.on_sibling_sidebar_resize(inst, sb);
         }
         set_state() {
-            localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
-                collapsed: this.collapsed
-            }));
+            localStorage.setItem(
+                'cone.app.sidebar_right.locked',
+                JSON.stringify({
+                    collapsed: this.collapsed,
+                }),
+            );
         }
         unset_state() {
             localStorage.removeItem('cone.app.sidebar_right.locked');
@@ -1442,7 +1732,7 @@ var cone = (function (exports, $, ts) {
 
     class Translation {
         static initialize(context) {
-            $('.translation-nav', context).each(function() {
+            $('.translation-nav', context).each(function () {
                 new Translation($(this));
             });
         }
@@ -1463,272 +1753,9 @@ var cone = (function (exports, $, ts) {
             evt.preventDefault();
             $('li > a', this.nav_elem).removeClass('active');
             this.fields_elem.children().hide();
-            let elem = $(evt.currentTarget);
+            const elem = $(evt.currentTarget);
             elem.addClass('active');
             $(elem.attr('href'), this.fields_elem).show();
-        }
-    }
-
-    class MainMenu extends LayoutAware {
-        static initialize(context) {
-            const elem = ts.query_elem('#mainmenu', context);
-            if (!elem) {
-                return;
-            }
-            new MainMenu(elem);
-        }
-        constructor(elem) {
-            super(elem);
-            this.elem = elem;
-            this.scrollbar = elem.data('scrollbar');
-            this.elems = $('.nav-link.dropdown-toggle', elem);
-            this.open_dropdown = null;
-            this.on_show_dropdown_desktop = this.on_show_dropdown_desktop.bind(this);
-            this.on_hide_dropdown_desktop = this.on_hide_dropdown_desktop.bind(this);
-            this.hide_dropdowns = this.hide_dropdowns.bind(this);
-            this.scrollbar.on('on_position', this.hide_dropdowns);
-        }
-        get height() {
-            return this.elem.outerHeight(true);
-        }
-        on_sidebar_left_resize(inst, sidebar) {
-            super.on_sidebar_left_resize(inst, sidebar);
-            requestAnimationFrame(() => {
-                this.scrollbar.render();
-            });
-        }
-        on_is_compact(val) {
-            this.hide_dropdowns();
-            if (val) {
-                this.scrollbar.off('on_position', this.hide_dropdowns);
-                this.bind_dropdowns_mobile();
-            } else {
-                this.bind_dropdowns_desktop();
-                this.scrollbar.on('on_position', this.hide_dropdowns);
-            }
-        }
-        on_show_dropdown_desktop(evt) {
-            const el = evt.target;
-            this.open_dropdown = el;
-            const dropdown = $(el).siblings('ul.dropdown-menu');
-            dropdown.css({
-                top: `${this.height - 1}px`,
-                left: `${$(el).offset().left}px`
-            });
-        }
-        on_hide_dropdown_desktop(evt) {
-            const el = evt.target;
-            if (this.open_dropdown !== el) {
-                return;
-            }
-            this.open_dropdown = null;
-        }
-        bind_dropdowns_desktop() {
-            this.elem.on('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
-            this.elem.on('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
-        }
-        bind_dropdowns_mobile() {
-            this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
-            this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
-        }
-        hide_dropdowns() {
-            const Dropdown = bootstrap.Dropdown;
-            this.elems.each((i, el) => {
-                Dropdown.getOrCreateInstance(el).hide();
-            });
-        }
-        destroy() {
-            super.destroy();
-            this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
-            this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
-            this.scrollbar.off('on_position', this.hide_dropdowns);
-            this.scrollbar.destroy();
-        }
-    }
-
-    class Header extends LayoutAware {
-        static initialize(context) {
-            const elem = ts.query_elem('#header-main', context);
-            if (!elem) {
-                return;
-            }
-            new Header(elem);
-        }
-        constructor(elem) {
-            super(elem);
-            this.elem = elem;
-            this.header_content = ts.query_elem('#header-content', elem);
-            this.navbar_content_wrapper = ts.query_elem('#navbar-content-wrapper', elem);
-            this.navbar_content = ts.query_elem('#navbar-content', elem);
-            this.navbar_toggler = ts.query_elem('#navbar-toggler', this.elem);
-            this.personal_tools = ts.query_elem('#personaltools', elem);
-            this.mainmenu = ts.query_elem('#mainmenu', elem);
-            this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
-            this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
-            this.mainmenu_elems.each((i, el) => {
-                $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar);
-                $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
-            });
-            this.update_personal_tools_room = this.update_personal_tools_room.bind(this);
-            if (this.personal_tools) {
-                this.personal_tools.on(
-                    'shown.bs.dropdown hidden.bs.dropdown',
-                    this.update_personal_tools_room
-                );
-            }
-            this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
-            this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
-            this.bind();
-        }
-        destroy() {
-            super.destroy();
-            if (this.mobile_scrollbar) {
-                this.mobile_scrollbar.destroy();
-                this.mobile_scrollbar = null;
-            }
-            this.mainmenu_elems.each((i, el) => {
-                $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
-                $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
-            });
-            if (this.personal_tools) {
-                this.personal_tools.off(
-                    'shown.bs.dropdown hidden.bs.dropdown',
-                    this.update_personal_tools_room
-                );
-            }
-            const wrapper = this.navbar_content_wrapper;
-            wrapper.off('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
-            wrapper.off('hide.bs.collapse hidden.bs.collapse', this.set_mobile_menu_closed);
-        }
-        render_mobile_scrollbar() {
-            if (this.is_compact && this.mobile_scrollbar) {
-                this.mobile_scrollbar.render();
-            }
-        }
-        update_personal_tools_room() {
-            this.personal_tools.css('margin-bottom', '');
-            if (!this.is_super_compact) {
-                return;
-            }
-            const bottom = this.personal_tools[0].getBoundingClientRect().bottom;
-            let room = 0;
-            $('.dropdown-menu.show', this.personal_tools).each((i, menu) => {
-                room = Math.max(room, menu.getBoundingClientRect().bottom - bottom);
-            });
-            if (room > 0) {
-                this.personal_tools.css('margin-bottom', `${room}px`);
-            }
-            this.render_mobile_scrollbar();
-        }
-        bind() {
-            const wrapper = this.navbar_content_wrapper;
-            wrapper.on('show.bs.collapse shown.bs.collapse', this.set_mobile_menu_open);
-            wrapper.on('hidden.bs.collapse', this.set_mobile_menu_closed);
-        }
-        set_mobile_menu_open() {
-            this.elem.addClass('mobile-menu-open');
-        }
-        set_mobile_menu_closed() {
-            this.elem.removeClass('mobile-menu-open');
-        }
-        on_is_compact(val) {
-            if (this.mobile_scrollbar) {
-                this.navbar_content.removeClass('scrollable-content');
-                this.mobile_scrollbar.destroy();
-                this.mobile_scrollbar = null;
-            }
-            if (val) {
-                this.elem.removeClass('full').removeClass('navbar-expand');
-                this.elem.addClass('compact');
-                this.navbar_content.addClass('scrollable-content');
-                this.mobile_scrollbar = new ScrollbarY(this.navbar_content_wrapper);
-                this.navbar_content_wrapper.on('shown.bs.collapse', () => {
-                    $('html, body').css('overscroll-behavior', 'none');
-                    this.mobile_scrollbar.render();
-                });
-                this.navbar_content_wrapper.on('hide.bs.collapse', () => {
-                    $('html, body').css('overscroll-behavior', 'auto');
-                    this.mobile_scrollbar.scrollbar.hide();
-                });
-            } else {
-                this.elem.removeClass('compact');
-                this.elem.addClass('full').addClass('navbar-expand');
-            }
-        }
-        on_is_super_compact(val) {
-            const in_navbar_content = ts.query_elem(
-                '#personaltools',
-                this.navbar_content
-            ) !== null;
-            if (val) {
-                if (!in_navbar_content) {
-                    this.personal_tools.detach().appendTo(this.navbar_content);
-                }
-            } else {
-                if (in_navbar_content) {
-                    this.personal_tools.detach().prependTo(this.header_content);
-                }
-                $(".dropdown-menu.show").removeClass('show');
-                if (this.personal_tools) {
-                    this.update_personal_tools_room();
-                }
-            }
-        }
-    }
-
-    class ContextMenuDropdown {
-        static initialize() {
-            $(document).on('show.bs.dropdown', '#contextmenu .dropdown', function () {
-                $(this).find('.dropdown-menu').removeClass('dropdown-menu-end');
-            });
-            $(document).on('shown.bs.dropdown', '#contextmenu .dropdown', function () {
-                const menu = $(this).find('.dropdown-menu')[0];
-                const rect = menu.getBoundingClientRect();
-                const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-                if (rect.right > viewportWidth) {
-                    menu.classList.add('dropdown-menu-end');
-                    const toggle = $(this).find('[data-bs-toggle="dropdown"]')[0];
-                    const instance = bootstrap.Dropdown.getOrCreateInstance(toggle);
-                    if (instance._popper) {
-                        instance._popper.update();
-                    }
-                }
-            });
-        }
-    }
-
-    class NavTree {
-        static initialize(context) {
-            const elem = ts.query_elem('#navtree', context);
-            if (!elem) {
-                return;
-            }
-            new NavTree(elem);
-        }
-        constructor(elem) {
-            this.elem = elem;
-            this.dropdown_elem = $('#navigation-collapse', elem);
-            if (this.dropdown_elem.hasClass('no-collapse')) {
-                return;
-            }
-            if (localStorage.getItem('cone.app.navtree.open')) {
-                this.dropdown_elem.addClass('show');
-            }
-            this.set_menu_open = this.set_menu_open.bind(this);
-            this.set_menu_closed = this.set_menu_closed.bind(this);
-            this.dropdown_elem.on('shown.bs.collapse', this.set_menu_open);
-            this.dropdown_elem.on('hidden.bs.collapse', this.set_menu_closed);
-            ts.ajax.attach(this, elem);
-        }
-        set_menu_open(e) {
-            localStorage.setItem('cone.app.navtree.open', 'true');
-        }
-        set_menu_closed(e) {
-            localStorage.removeItem('cone.app.navtree.open');
-        }
-        destroy() {
-            this.dropdown_elem.off();
-            this.elem.off();
         }
     }
 
@@ -1747,9 +1774,7 @@ var cone = (function (exports, $, ts) {
             this.selected.push(elem);
         }
         remove(elem) {
-            let reduced = $.grep(this.selected, function(item, index) {
-                return item !== elem;
-            });
+            const reduced = $.grep(this.selected, (item) => item !== elem);
             this.selected = reduced;
         }
         select_no_key(container, elem) {
@@ -1767,13 +1792,13 @@ var cone = (function (exports, $, ts) {
             }
         }
         get_nearest(container, current_index) {
-            let selected = container.children('.selected');
+            const selected = container.children('.selected');
             let nearest = -1;
             let selected_index, selected_elem;
-            $(selected).each(function() {
+            $(selected).each(function () {
                 selected_elem = $(this);
                 selected_index = selected_elem.index();
-                if (nearest == -1) {
+                if (nearest === -1) {
                     nearest = selected_index;
                 } else if (current_index > selected_index) {
                     if (this.select_direction > 0) {
@@ -1794,9 +1819,9 @@ var cone = (function (exports, $, ts) {
             return nearest;
         }
         select_shift_down(container, elem) {
-            let current_index = elem.index();
-            let nearest = this.get_nearest(container, current_index);
-            if (nearest == -1) {
+            const current_index = elem.index();
+            const nearest = this.get_nearest(container, current_index);
+            if (nearest === -1) {
                 elem.addClass('selected');
                 this.add(elem.get(0));
             } else {
@@ -1812,19 +1837,20 @@ var cone = (function (exports, $, ts) {
                     end = current_index;
                 }
                 this.reset();
-                let that = this;
-                container.children()
-                         .slice(start, end + 1)
-                         .addClass('selected')
-                         .each(function() {
-                             that.add(this);
-                         });
+                const that = this;
+                container
+                    .children()
+                    .slice(start, end + 1)
+                    .addClass('selected')
+                    .each(function () {
+                        that.add(this);
+                    });
             }
         }
         handle_click(evt) {
             evt.preventDefault();
-            let elem = $(evt.currentTarget);
-            let container = elem.parent();
+            const elem = $(evt.currentTarget);
+            const container = elem.parent();
             if (!keys.ctrl_down && !keys.shift_down) {
                 this.select_no_key(container, elem);
             } else if (keys.ctrl_down) {
@@ -1839,7 +1865,7 @@ var cone = (function (exports, $, ts) {
             this.notify('on_select', this);
         }
         notify(e, ...args) {
-            if (this.options && this.options[e]) {
+            if (this.options?.[e]) {
                 this.options[e](...args);
             }
         }
@@ -1847,7 +1873,7 @@ var cone = (function (exports, $, ts) {
             elem.off('click').on('click', this.handle_click.bind(this));
         }
     }
-    $.fn.selectable = function(options) {
+    $.fn.selectable = function (options) {
         var api = new Selectable(options);
         api.bind(this);
         this.data('selectable', api);
@@ -1863,7 +1889,7 @@ var cone = (function (exports, $, ts) {
         return ts.read_cookie(name);
     }
 
-    $(function() {
+    $(() => {
         new KeyBinder();
         new ColorMode();
         ts.ajax.register(BatchedItemsSize.initialize, true);

@@ -1,9 +1,8 @@
 import $ from 'jquery';
 
 export class Translation {
-
     static initialize(context) {
-        $('.translation-nav', context).each(function() {
+        $('.translation-nav', context).each(function () {
             new Translation($(this));
         });
     }
@@ -26,7 +25,7 @@ export class Translation {
         evt.preventDefault();
         $('li > a', this.nav_elem).removeClass('active');
         this.fields_elem.children().hide();
-        let elem = $(evt.currentTarget);
+        const elem = $(evt.currentTarget);
         elem.addClass('active');
         $(elem.attr('href'), this.fields_elem).show();
     }

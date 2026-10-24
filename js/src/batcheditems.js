@@ -2,14 +2,13 @@ import $ from 'jquery';
 import ts from 'treibstoff';
 
 export class BatchedItemsFilter {
-
     constructor(elem, name) {
         this.elem = elem;
         this.name = name;
     }
 
     set_filter(val) {
-        let elem = this.elem,
+        const elem = this.elem,
             target = ts.ajax.parse_target(elem.attr('ajax:target')),
             event = elem.attr('ajax:event');
         target.params[this.name] = val;
@@ -20,25 +19,23 @@ export class BatchedItemsFilter {
             }
             // path always gets calculated from target
             ts.ajax.path({
-                path: target.path + target.query + '&' + this.name + '=' + val,
+                path: `${target.path}${target.query}&${this.name}=${val}`,
                 event: path_event,
-                target: target
+                target: target,
             });
         }
-        let defs = event.split(':');
+        const defs = event.split(':');
         ts.ajax.trigger({
             name: defs[0],
             selector: defs[1],
-            target: target
+            target: target,
         });
     }
 }
 
 export class BatchedItemsSize extends BatchedItemsFilter {
-
-    static initialize(context,
-                      selector='.batched_items_slice_size select') {
-        $(selector, context).each(function() {
+    static initialize(context, selector = '.batched_items_slice_size select') {
+        $(selector, context).each(function () {
             new BatchedItemsSize($(this));
         });
     }
@@ -48,18 +45,15 @@ export class BatchedItemsSize extends BatchedItemsFilter {
         elem.off('change').on('change', this.change_handle.bind(this));
     }
 
-    change_handle(evt) {
-        let option = $('option:selected', this.elem).first();
+    change_handle(_evt) {
+        const option = $('option:selected', this.elem).first();
         this.set_filter(option.val());
     }
 }
 
 export class BatchedItemsSearch extends BatchedItemsFilter {
-
-    static initialize(context,
-                      selector='.batched_items_filter input',
-                      name='term') {
-        $(selector, context).each(function() {
+    static initialize(context, selector = '.batched_items_filter input', name = 'term') {
+        $(selector, context).each(function () {
             new BatchedItemsSearch($(this), name);
         });
     }
@@ -72,9 +66,9 @@ export class BatchedItemsSearch extends BatchedItemsFilter {
         elem.off('change').on('change', this.change_handle.bind(this));
     }
 
-    focus_handle(evt) {
+    focus_handle(_evt) {
         // reset filter input field if marked as empty filter
-        let elem = this.elem;
+        const elem = this.elem;
         if (elem.hasClass('empty_filter')) {
             elem.val('');
             elem.removeClass('empty_filter');
@@ -83,14 +77,14 @@ export class BatchedItemsSearch extends BatchedItemsFilter {
 
     keypress_handle(evt) {
         // prevent default action when pressing enter
-        if (evt.keyCode == 13) {
+        if (evt.keyCode === 13) {
             evt.preventDefault();
         }
     }
 
     keyup_handle(evt) {
         // trigger search when releasing enter
-        if (evt.keyCode == 13) {
+        if (evt.keyCode === 13) {
             evt.preventDefault();
             this.set_filter(this.elem.val());
         }

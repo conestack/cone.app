@@ -46,3 +46,20 @@ example-lingua: $(LINGUA_TARGET)
 		LINGUA_SEARCH_PATH=$(EXAMPLE_LINGUA_SEARCH_PATH) \
 		LINGUA_OPTIONS=$(EXAMPLE_LINGUA_OPTIONS) \
 		lingua
+
+##############################################################################
+# biome (JS linting and formatting)
+##############################################################################
+
+.PHONY: biome-check
+biome-check: $(NODEJS_TARGET)
+	@echo "Run biome check"
+	@biome check
+
+.PHONY: biome-format
+biome-format: $(NODEJS_TARGET)
+	@echo "Run biome format"
+	@biome check --write
+
+CHECK_TARGETS+=biome-check
+FORMAT_TARGETS+=biome-format

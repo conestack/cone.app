@@ -1,8 +1,12 @@
 import {importMapsPlugin} from '@web/dev-server-import-maps';
+import {playwrightLauncher} from '@web/test-runner-playwright';
 import {defaultReporter, summaryReporter} from '@web/test-runner'
 
 export default {
     nodeResolve: true,
+    browsers: [
+        playwrightLauncher({product: 'chromium'}),
+    ],
     testFramework: {
         path: './node_modules/web-test-runner-qunit/dist/autorun.js',
         config: {

@@ -4,7 +4,6 @@ import ts from 'treibstoff';
  * Class to manage color modes (light and dark themes).
  */
 export class ColorMode {
-    
     /**
      * The media query for the user's preferred color scheme.
      * @returns {MediaQueryList}
@@ -98,12 +97,10 @@ export class ColorMode {
     }
 }
 
-
 /**
  * Class to toggle the color theme based on user input (visible as a Switch).
  */
 export class ColorToggler extends ts.ChangeListener {
-
     /**
      * Initializes the ColorToggler and binds the toggle switch.
      * @param {Element} context

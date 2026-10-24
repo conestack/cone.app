@@ -1,14 +1,13 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
-import { ScrollbarY } from './scrollbar.js';
 import { LayoutAware } from './layout.js';
+import { ScrollbarY } from './scrollbar.js';
 
 /**
  * Class to manage the header layout and interactions.
  * @extends LayoutAware
  */
 export class Header extends LayoutAware {
-
     /**
      * Initializes the Header instance.
      * @param {Element} context
@@ -36,7 +35,7 @@ export class Header extends LayoutAware {
         this.mainmenu_elems = $('.nav-link.dropdown-toggle', this.mainmenu);
 
         this.render_mobile_scrollbar = this.render_mobile_scrollbar.bind(this);
-        this.mainmenu_elems.each((i, el) => {
+        this.mainmenu_elems.each((_i, el) => {
             $(el).on('shown.bs.dropdown', this.render_mobile_scrollbar);
             $(el).on('hidden.bs.dropdown', this.render_mobile_scrollbar);
         });
@@ -45,7 +44,7 @@ export class Header extends LayoutAware {
         if (this.personal_tools) {
             this.personal_tools.on(
                 'shown.bs.dropdown hidden.bs.dropdown',
-                this.update_personal_tools_room
+                this.update_personal_tools_room,
             );
         }
 
@@ -63,14 +62,14 @@ export class Header extends LayoutAware {
             this.mobile_scrollbar.destroy();
             this.mobile_scrollbar = null;
         }
-        this.mainmenu_elems.each((i, el) => {
+        this.mainmenu_elems.each((_i, el) => {
             $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
             $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
         });
         if (this.personal_tools) {
             this.personal_tools.off(
                 'shown.bs.dropdown hidden.bs.dropdown',
-                this.update_personal_tools_room
+                this.update_personal_tools_room,
             );
         }
         const wrapper = this.navbar_content_wrapper;
@@ -103,7 +102,7 @@ export class Header extends LayoutAware {
         }
         const bottom = this.personal_tools[0].getBoundingClientRect().bottom;
         let room = 0;
-        $('.dropdown-menu.show', this.personal_tools).each((i, menu) => {
+        $('.dropdown-menu.show', this.personal_tools).each((_i, menu) => {
             room = Math.max(room, menu.getBoundingClientRect().bottom - bottom);
         });
         if (room > 0) {
@@ -176,10 +175,7 @@ export class Header extends LayoutAware {
      * @param {boolean} val
      */
     on_is_super_compact(val) {
-        const in_navbar_content = ts.query_elem(
-            '#personaltools',
-            this.navbar_content
-        ) !== null;
+        const in_navbar_content = ts.query_elem('#personaltools', this.navbar_content) !== null;
         if (val) {
             if (!in_navbar_content) {
                 this.personal_tools.detach().appendTo(this.navbar_content);
@@ -189,7 +185,7 @@ export class Header extends LayoutAware {
                 this.personal_tools.detach().prependTo(this.header_content);
             }
             // close any header dropdowns
-            $(".dropdown-menu.show").removeClass('show');
+            $('.dropdown-menu.show').removeClass('show');
             if (this.personal_tools) {
                 this.update_personal_tools_room();
             }

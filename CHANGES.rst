@@ -4,6 +4,21 @@ Changes
 2.1.0 (unreleased)
 ------------------
 
+- Extend the JS tests, all modules are loaded by the tests now. Code paths
+  behind known bugs stay uncovered.
+  [rnix]
+
+- Lint and format the JS code with biome. ``make check`` runs ``biome check``,
+  ``make format`` runs ``biome check --write`` (see ``include.mk``). Behavior
+  unchanged.
+  [rnix]
+
+- JS tooling: Commit ``pnpm-lock.yaml``. Upgrade ``@web/test-runner`` to 1.0
+  and run the JS tests headless in Chromium via Playwright, installed in the JS
+  CI workflow. Drop the accidental ``install`` dev dependency. Pin patched
+  versions of vulnerable transitive dependencies via ``pnpm.overrides``.
+  [rnix]
+
 - Use a Pyramid security policy instead of the authentication and
   authorization policies deprecated in Pyramid 2.0. ``cone.app.main``
   configures ``cone.app.security.SecurityPolicy`` (auth ticket cookie and

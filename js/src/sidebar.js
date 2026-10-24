@@ -3,12 +3,12 @@ import ts from 'treibstoff';
 import { global_events } from './globals.js';
 import { ResizeAware } from './layout.js';
 
-
 export class SidebarControl extends ts.Events {
     constructor(sidebar_content, elem) {
         super(elem);
         this.elem = elem;
-        const target = this.target = elem.data('target');
+        this.target = elem.data('target');
+        const target = this.target;
         this.parent = sidebar_content;
         this.related_tile = $(`[data-tile="${target}"]`, this.parent.tiles_container);
         this.on_click = this.on_click.bind(this);
@@ -61,7 +61,7 @@ export class SidebarContent extends ts.Events {
 
     compile() {
         if (this.mode === 'toggle' && this.tiles.length > 1) {
-            $('.sidebar-control', this.navigation).each((i, el) => {
+            $('.sidebar-control', this.navigation).each((_i, el) => {
                 this.controls.push(new SidebarControl(this, $(el)));
             });
         } else {
@@ -83,13 +83,11 @@ export class SidebarContent extends ts.Events {
     }
 }
 
-
 /**
  * Class to manage the sidebar of the application.
  * @extends ts.Motion
  */
 export class Sidebar extends ResizeAware(ts.Motion) {
-
     /**
      * Creates an instance of the Sidebar.
      * @param {Element} elem
@@ -99,7 +97,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
         this.elem = elem;
         this.min_width = elem.data('min-width') || 115;
         const width = Math.max(this.min_width, this.sidebar_width);
-        elem.css('width', width + 'px');
+        elem.css('width', `${width}px`);
 
         const static_data = this.elem.data('static');
         this.static = static_data === true || static_data === 'True';
@@ -152,18 +150,18 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     /**
      * Handles sidebar responsive collapsed state.
      * Invoked by ResizeAware mixin.
-     * @param {*} evt 
+     * @param {*} evt
      */
-    on_window_resize(evt) {
+    on_window_resize(_evt) {
         this.responsive_toggle();
     }
 
     /**
      * Handles click on the lock switch and sets localStorage collapsed flag.
      */
-    on_lock(evt) {
+    on_lock(_evt) {
         // checked property sets after on_lock is done
-        const checked = !(this.lock_input.get(0).checked);
+        const checked = !this.lock_input.get(0).checked;
         if (checked) {
             this.set_state();
         } else {
@@ -235,7 +233,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
             if (this.locked && !this.locked.collapsed && this.collapsed) {
                 // expand sidebar if previously collapsed due to viewport width
                 this.expand();
-            } else if (this.locked && this.locked.collapsed && !this.collapsed) {
+            } else if (this.locked?.collapsed && !this.collapsed) {
                 // collapse sidebar if previously expanded in mobile view
                 this.collapse();
             }
@@ -251,9 +249,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     collapse() {
         // Enable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'auto');
-        this.elem
-            .removeClass('expanded')
-            .addClass('collapsed');
+        this.elem.removeClass('expanded').addClass('collapsed');
         this.trigger_event();
     }
 
@@ -263,9 +259,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     expand() {
         // Disable scroll to refresh page on mobile devices
         $('html, body').css('overscroll-behavior', 'none');
-        this.elem
-            .removeClass('collapsed')
-            .addClass('expanded');
+        this.elem.removeClass('collapsed').addClass('expanded');
         this.trigger_event();
     }
 
@@ -273,7 +267,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
      * Handles click events to toggle the sidebar's collapsed state.
      * @param {Event} evt
      */
-    on_click(evt) {
+    on_click(_evt) {
         if (this.collapsed) {
             this.expand();
         } else {
@@ -309,7 +303,7 @@ export class Sidebar extends ResizeAware(ts.Motion) {
     /**
      * Handle collapsing if sibling sidebar resized.
      */
-    on_sibling_sidebar_resize(inst, sb) {
+    on_sibling_sidebar_resize(_inst, sb) {
         const max_w = $(window).width() - this.elem.outerWidth() - 300;
         const is_mobile = $(window).width() < 768;
         const is_locked_expanded = this.locked && !this.locked.collapsed;
@@ -408,7 +402,7 @@ export class SidebarLeft extends Sidebar {
         const max_w = $(window).width() - sidebar_w - 300;
         width = Math.max(this.min_width, Math.min(width, max_w));
 
-        return parseInt(width);
+        return parseInt(width, 10);
     }
 
     /**
@@ -423,9 +417,12 @@ export class SidebarLeft extends Sidebar {
      */
     set_state() {
         // remember sidebar state
-        localStorage.setItem('cone.app.sidebar_left.locked', JSON.stringify({
-            collapsed: this.collapsed
-        }));
+        localStorage.setItem(
+            'cone.app.sidebar_left.locked',
+            JSON.stringify({
+                collapsed: this.collapsed,
+            }),
+        );
     }
 
     /**
@@ -505,7 +502,7 @@ export class SidebarRight extends Sidebar {
         const max_w = $(window).width() - sidebar_w - 300;
         width = Math.max(this.min_width, Math.min(width, max_w));
 
-        return parseInt(width);
+        return parseInt(width, 10);
     }
 
     /**
@@ -520,9 +517,12 @@ export class SidebarRight extends Sidebar {
      */
     set_state() {
         // remember sidebar state
-        localStorage.setItem('cone.app.sidebar_right.locked', JSON.stringify({
-            collapsed: this.collapsed
-        }));
+        localStorage.setItem(
+            'cone.app.sidebar_right.locked',
+            JSON.stringify({
+                collapsed: this.collapsed,
+            }),
+        );
     }
 
     /**

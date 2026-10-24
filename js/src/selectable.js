@@ -1,8 +1,7 @@
 import $ from 'jquery';
-import {keys} from './keybinder.js';
+import { keys } from './keybinder.js';
 
 export class Selectable {
-
     constructor(options) {
         // on_firstclick, on_select callbacks in options
         this.options = options;
@@ -21,9 +20,7 @@ export class Selectable {
     }
 
     remove(elem) {
-        let reduced = $.grep(this.selected, function(item, index) {
-            return item !== elem;
-        });
+        const reduced = $.grep(this.selected, (item) => item !== elem);
         this.selected = reduced;
     }
 
@@ -45,14 +42,14 @@ export class Selectable {
 
     get_nearest(container, current_index) {
         // get nearest next selected item from current index
-        let selected = container.children('.selected');
+        const selected = container.children('.selected');
         // -1 means no other selected item
         let nearest = -1;
         let selected_index, selected_elem;
-        $(selected).each(function() {
+        $(selected).each(function () {
             selected_elem = $(this);
             selected_index = selected_elem.index();
-            if (nearest == -1) {
+            if (nearest === -1) {
                 nearest = selected_index;
             } else if (current_index > selected_index) {
                 if (this.select_direction > 0) {
@@ -65,6 +62,7 @@ export class Selectable {
                     }
                 }
             } else if (current_index < selected_index) {
+                /* c8 ignore next 3 -- unreachable, items are visited in ascending index order */
                 if (selected_index < nearest) {
                     nearest = selected_index;
                 }
@@ -74,9 +72,9 @@ export class Selectable {
     }
 
     select_shift_down(container, elem) {
-        let current_index = elem.index();
-        let nearest = this.get_nearest(container, current_index);
-        if (nearest == -1) {
+        const current_index = elem.index();
+        const nearest = this.get_nearest(container, current_index);
+        if (nearest === -1) {
             elem.addClass('selected');
             this.add(elem.get(0));
         } else {
@@ -92,20 +90,21 @@ export class Selectable {
                 end = current_index;
             }
             this.reset();
-            let that = this;
-            container.children()
-                     .slice(start, end + 1)
-                     .addClass('selected')
-                     .each(function() {
-                         that.add(this);
-                     });
+            const that = this;
+            container
+                .children()
+                .slice(start, end + 1)
+                .addClass('selected')
+                .each(function () {
+                    that.add(this);
+                });
         }
     }
 
     handle_click(evt) {
         evt.preventDefault();
-        let elem = $(evt.currentTarget);
-        let container = elem.parent();
+        const elem = $(evt.currentTarget);
+        const container = elem.parent();
         if (!keys.ctrl_down && !keys.shift_down) {
             this.select_no_key(container, elem);
         } else if (keys.ctrl_down) {
@@ -121,7 +120,7 @@ export class Selectable {
     }
 
     notify(e, ...args) {
-        if (this.options && this.options[e]) {
+        if (this.options?.[e]) {
             this.options[e](...args);
         }
     }
@@ -132,7 +131,7 @@ export class Selectable {
 }
 
 // Selectable items
-$.fn.selectable = function(options) {
+$.fn.selectable = function (options) {
     var api = new Selectable(options);
     api.bind(this);
     this.data('selectable', api);

@@ -8,7 +8,6 @@ import { LayoutAware } from './layout.js';
  * @extends LayoutAware
  */
 export class MainMenu extends LayoutAware {
-
     /**
      * Initializes the MainMenu instance.
      * @param {Element} context
@@ -88,7 +87,7 @@ export class MainMenu extends LayoutAware {
         const dropdown = $(el).siblings('ul.dropdown-menu');
         dropdown.css({
             top: `${this.height - 1}px`, // remove border from position
-            left: `${$(el).offset().left}px`
+            left: `${$(el).offset().left}px`,
         });
     }
 
@@ -110,16 +109,32 @@ export class MainMenu extends LayoutAware {
      */
     bind_dropdowns_desktop() {
         // this.elems.on(...) deprecated in jquery 4.0.0-beta.2 (?)
-        this.elem.on('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
-        this.elem.on('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
+        this.elem.on(
+            'shown.bs.dropdown',
+            '.nav-link.dropdown-toggle',
+            this.on_show_dropdown_desktop,
+        );
+        this.elem.on(
+            'hidden.bs.dropdown',
+            '.nav-link.dropdown-toggle',
+            this.on_hide_dropdown_desktop,
+        );
     }
 
     /**
      * Unbinds the dropdown events for mobile view.
      */
     bind_dropdowns_mobile() {
-        this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
-        this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
+        this.elem.off(
+            'shown.bs.dropdown',
+            '.nav-link.dropdown-toggle',
+            this.on_show_dropdown_desktop,
+        );
+        this.elem.off(
+            'hidden.bs.dropdown',
+            '.nav-link.dropdown-toggle',
+            this.on_hide_dropdown_desktop,
+        );
     }
 
     /**
@@ -127,15 +142,23 @@ export class MainMenu extends LayoutAware {
      */
     hide_dropdowns() {
         const Dropdown = bootstrap.Dropdown;
-        this.elems.each((i, el) => {
+        this.elems.each((_i, el) => {
             Dropdown.getOrCreateInstance(el).hide();
         });
     }
 
     destroy() {
         super.destroy();
-        this.elem.off('shown.bs.dropdown', '.nav-link.dropdown-toggle', this.on_show_dropdown_desktop);
-        this.elem.off('hidden.bs.dropdown', '.nav-link.dropdown-toggle', this.on_hide_dropdown_desktop);
+        this.elem.off(
+            'shown.bs.dropdown',
+            '.nav-link.dropdown-toggle',
+            this.on_show_dropdown_desktop,
+        );
+        this.elem.off(
+            'hidden.bs.dropdown',
+            '.nav-link.dropdown-toggle',
+            this.on_hide_dropdown_desktop,
+        );
         this.scrollbar.off('on_position', this.hide_dropdowns);
         this.scrollbar.destroy();
     }

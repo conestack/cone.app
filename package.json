@@ -1,20 +1,32 @@
 {
-  "name": "cone.app",
-  "version": "2.0.0-dev",
-  "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
-    "@web/dev-server-import-maps": "^0.2.1",
-    "@web/test-runner": "^0.18.3",
-    "@web/test-runner-core": "^0.13.4",
-    "bootstrap": "^5.3.8",
-    "install": "^0.13.0",
-    "jquery": "^4.0.0",
-    "qunit": "^2.20.1",
-    "rollup": "^2.80.0",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-postcss": "^4.0.2",
-    "sass": "^1.105.0",
-    "web-test-runner-qunit": "^2.0.0"
-  },
-  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631"
+    "name": "cone.app",
+    "version": "2.0.0-dev",
+    "devDependencies": {
+        "@biomejs/biome": "^2.6.3",
+        "@rollup/plugin-terser": "^1.0.2",
+        "@web/dev-server-import-maps": "^0.3.0",
+        "@web/test-runner": "^1.0.0",
+        "@web/test-runner-core": "^1.0.0",
+        "@web/test-runner-playwright": "^1.0.0",
+        "bootstrap": "^5.3.8",
+        "jquery": "^4.0.0",
+        "playwright": "^1.64.1",
+        "qunit": "^2.26.0",
+        "rollup": "^2.80.0",
+        "rollup-plugin-cleanup": "^3.2.1",
+        "rollup-plugin-postcss": "^4.0.2",
+        "sass": "^1.106.1",
+        "web-test-runner-qunit": "^2.0.0"
+    },
+    "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631",
+    "pnpm": {
+        "overrides": {
+            "postcss-selector-parser@<7.1.6": "^7.1.6"
+        },
+        "peerDependencyRules": {
+            "allowedVersions": {
+                "web-test-runner-qunit>@web/test-runner": "1"
+            }
+        }
+    }
 }
