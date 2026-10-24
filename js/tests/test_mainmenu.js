@@ -238,39 +238,6 @@ QUnit.module('cone.app.mainmenu', (hooks) => {
         instance.destroy();
     });
 
-    QUnit.test('MainMenu on_sidebar_left_resize renders scrollbar', (assert) => {
-        let render_called = false;
-        const mock_scrollbar = {
-            on: () => {},
-            off: () => {},
-            render: () => {
-                render_called = true;
-            },
-            destroy: () => {},
-        };
-
-        const elem = $(`
-            <nav id="mainmenu">
-                <a class="nav-link dropdown-toggle"></a>
-            </nav>
-        `)
-            .data('scrollbar', mock_scrollbar)
-            .appendTo(container);
-
-        const instance = new MainMenu(elem);
-
-        // Use requestAnimationFrame callback
-        instance.on_sidebar_left_resize(null, { collapsed: false });
-
-        // Wait for requestAnimationFrame
-        setTimeout(() => {
-            assert.true(render_called, 'scrollbar.render called');
-            instance.destroy();
-        }, 50);
-
-        assert.ok(true, 'on_sidebar_left_resize called');
-    });
-
     QUnit.test('MainMenu destroy cleans up', (assert) => {
         const mock_scrollbar = {
             on: () => {},

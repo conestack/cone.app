@@ -1070,12 +1070,6 @@ var cone = (function (exports, $, ts) {
         get height() {
             return this.elem.outerHeight(true);
         }
-        on_sidebar_left_resize(inst, sidebar) {
-            super.on_sidebar_left_resize(inst, sidebar);
-            requestAnimationFrame(() => {
-                this.scrollbar.render();
-            });
-        }
         on_is_compact(val) {
             this.hide_dropdowns();
             if (val) {

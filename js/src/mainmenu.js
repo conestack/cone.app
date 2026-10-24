@@ -44,19 +44,6 @@ export class MainMenu extends LayoutAware {
     }
 
     /**
-     * Handles changes in the sidebar resize event.
-     * @param {} inst
-     * @param {Object} sidebar
-     */
-    on_sidebar_left_resize(inst, sidebar) {
-        super.on_sidebar_left_resize(inst, sidebar);
-        // defer to next frame to ensure elements have correct dimensions
-        requestAnimationFrame(() => {
-            this.scrollbar.render();
-        });
-    }
-
-    /**
      * Handles changes in the compact state of the main menu.
      * Binds modified dropdown behavior to bootstrap dropdowns.
      * @param {boolean} val

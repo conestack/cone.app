@@ -4,6 +4,12 @@ Changes
 2.1.0 (unreleased)
 ------------------
 
+- Remove ``MainMenu.on_sidebar_left_resize``, which rendered the main menu
+  scrollbar again on each left sidebar resize. Both sidebars live inside the
+  content area below the header, so resizing them does not change the width of
+  the main menu. ``MainMenu`` keeps the inherited ``LayoutAware`` behavior.
+  [rnix]
+
 - Fix shift click selection of ``Selectable`` items. Shift click selects the
   range from the last plain or ctrl clicked item (the anchor) to the clicked
   item, as in file managers. Before, a further shift click started the range at
