@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import ts from 'treibstoff';
+import { global_events } from '../src/globals.js';
 import { LayoutAware, MainArea, ResizeAware } from '../src/layout.js';
 
 QUnit.module('cone.app.layout.MainArea', (hooks) => {
@@ -189,12 +190,60 @@ QUnit.module('cone.app.layout.LayoutAware', (hooks) => {
         instance.destroy();
     });
 
+    QUnit.test('LayoutAware tracks each sidebar separately', (assert) => {
+        const elem = $('<div />').appendTo(container);
+        const instance = new LayoutAware(elem);
+
+        global_events.trigger('on_sidebar_right_resize', { collapsed: true });
+        assert.true(instance.is_sidebar_right_collapsed, 'right sidebar state stored');
+        assert.strictEqual(
+            instance.is_sidebar_left_collapsed,
+            null,
+            'left sidebar state untouched',
+        );
+
+        global_events.trigger('on_sidebar_left_resize', { collapsed: false });
+        assert.false(instance.is_sidebar_left_collapsed, 'left sidebar state stored');
+        assert.true(instance.is_sidebar_right_collapsed, 'right sidebar state untouched');
+
+        instance.destroy();
+    });
+
+    QUnit.test('LayoutAware notifies sidebar collapsed state changes', (assert) => {
+        const changes = [];
+        class Subclass extends LayoutAware {
+            on_is_sidebar_left_collapsed(val) {
+                changes.push(['left', val]);
+            }
+            on_is_sidebar_right_collapsed(val) {
+                changes.push(['right', val]);
+            }
+        }
+        const elem = $('<div />').appendTo(container);
+        const instance = new Subclass(elem);
+
+        global_events.trigger('on_sidebar_left_resize', { collapsed: true });
+        global_events.trigger('on_sidebar_left_resize', { collapsed: true });
+        global_events.trigger('on_sidebar_right_resize', { collapsed: false });
+        assert.deepEqual(changes, [
+            ['left', true],
+            ['right', false],
+        ]);
+
+        instance.destroy();
+    });
+
     QUnit.test('LayoutAware destroy removes listeners', (assert) => {
         const elem = $('<div />').appendTo(container);
         const instance = new LayoutAware(elem);
 
         instance.destroy();
-        assert.ok(true, 'destroy completed');
+        global_events.trigger('on_main_area_mode', { is_compact: true });
+        global_events.trigger('on_sidebar_left_resize', { collapsed: true });
+        global_events.trigger('on_sidebar_right_resize', { collapsed: true });
+        assert.strictEqual(instance.is_compact, null, 'main area mode not tracked');
+        assert.strictEqual(instance.is_sidebar_left_collapsed, null, 'left sidebar not tracked');
+        assert.strictEqual(instance.is_sidebar_right_collapsed, null, 'right sidebar not tracked');
     });
 });
 

@@ -4,8 +4,40 @@ Changes
 2.1.0 (unreleased)
 ------------------
 
-- Extend the JS tests, all modules are loaded by the tests now. Code paths
-  behind known bugs stay uncovered.
+- Fix shift click selection of ``Selectable`` items. Shift click selects the
+  range from the last plain or ctrl clicked item (the anchor) to the clicked
+  item, as in file managers. Before, a further shift click started the range at
+  the wrong item. Shift click without an anchor acts like a plain click.
+  ``Selectable.select_direction`` and ``Selectable.get_nearest`` are removed.
+  [rnix]
+
+- Fix ``SidebarLeft`` and ``SidebarRight`` skipping their initialization on
+  small viewports with a stored lock state. The sidebar content and the ajax
+  destroy hook were missing.
+  [rnix]
+
+- Fix ``LayoutAware`` handling a right sidebar resize as a left sidebar resize.
+  ``is_sidebar_left_collapsed`` and ``is_sidebar_right_collapsed`` are
+  properties now, so ``on_is_sidebar_left_collapsed`` and
+  ``on_is_sidebar_right_collapsed`` get called on changes. The unused
+  ``is_sidebar_collapsed`` property is removed.
+  [rnix]
+
+- Fix the color mode toggle not following changes of the OS color scheme.
+  A destroyed ``ColorToggler`` stops following them and no longer keeps the
+  removed toggle in memory. Fix ``ColorMode.unbind`` not removing its
+  listener. ``ColorMode.media_query`` returns the same ``MediaQueryList`` on
+  each call now, the new ``ColorMode.unwatch`` removes a listener added with
+  ``ColorMode.watch``.
+  [rnix]
+
+- Fix ``Header`` binding the mobile menu collapse handlers again on each switch
+  to compact mode, and keeping them after leaving compact mode or destroying
+  the header, which caused a ``TypeError`` on later collapse events.
+  [rnix]
+
+- Extend the JS tests to 100 % coverage, all modules including bundles are
+  loaded by the tests now.
   [rnix]
 
 - Lint and format the JS code with biome. ``make check`` runs ``biome check``,

@@ -397,6 +397,32 @@ QUnit.module('cone.app.sidebar.SidebarLeft', (hooks) => {
         sidebar.destroy();
     });
 
+    QUnit.test('SidebarLeft constructor initializes with locked state on mobile', (assert) => {
+        const attached = [];
+        ts.ajax.attach = (inst) => attached.push(inst);
+        stub_window_width(500);
+
+        for (const collapsed of [true, false]) {
+            lock_left(collapsed);
+            $('html, body').css('overscroll-behavior', '');
+            const sidebar = createSidebarLeft();
+
+            assert.true(sidebar.disable_lock, 'lock disabled');
+            assert.true(sidebar.lock_input.prop('checked'), 'lock input checked');
+            assert.false(sidebar.elem.hasClass('expanded'), 'stored lock state not applied');
+            assert.false(
+                $('.collapse_btn', sidebar.elem).hasClass('disabled'),
+                'interaction enabled',
+            );
+            assert.strictEqual(document.body.style.overscrollBehavior, 'auto', 'overscroll reset');
+            assert.ok(sidebar.sidebar_content instanceof SidebarContent, 'sidebar content created');
+            assert.true(attached.includes(sidebar), 'attached to ajax for destroy');
+
+            sidebar.destroy();
+            sidebar.elem.remove();
+        }
+    });
+
     QUnit.test('SidebarLeft static sidebar collapses', (assert) => {
         for (const value of ['true', 'True']) {
             const elem = createSidebarLeftElem().attr('data-static', value);

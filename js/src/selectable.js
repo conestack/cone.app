@@ -6,7 +6,8 @@ export class Selectable {
         // on_firstclick, on_select callbacks in options
         this.options = options;
         this.selected = [];
-        this.select_direction = 0;
+        // range start for shift click selection
+        this.anchor = null;
         this.firstclick = true;
     }
 
@@ -29,6 +30,7 @@ export class Selectable {
         elem.addClass('selected');
         this.reset();
         this.add(elem.get(0));
+        this.anchor = elem.get(0);
     }
 
     select_ctrl_down(elem) {
@@ -38,67 +40,24 @@ export class Selectable {
         } else {
             this.remove(elem.get(0));
         }
-    }
-
-    get_nearest(container, current_index) {
-        // get nearest next selected item from current index
-        const selected = container.children('.selected');
-        // -1 means no other selected item
-        let nearest = -1;
-        let selected_index, selected_elem;
-        $(selected).each(function () {
-            selected_elem = $(this);
-            selected_index = selected_elem.index();
-            if (nearest === -1) {
-                nearest = selected_index;
-            } else if (current_index > selected_index) {
-                if (this.select_direction > 0) {
-                    if (selected_index < nearest) {
-                        nearest = selected_index;
-                    }
-                } else {
-                    if (selected_index > nearest) {
-                        nearest = selected_index;
-                    }
-                }
-            } else if (current_index < selected_index) {
-                /* c8 ignore next 3 -- unreachable, items are visited in ascending index order */
-                if (selected_index < nearest) {
-                    nearest = selected_index;
-                }
-            }
-        });
-        return nearest;
+        this.anchor = elem.get(0);
     }
 
     select_shift_down(container, elem) {
-        const current_index = elem.index();
-        const nearest = this.get_nearest(container, current_index);
-        if (nearest === -1) {
-            elem.addClass('selected');
-            this.add(elem.get(0));
-        } else {
-            container.children().removeClass('selected');
-            let start, end;
-            if (current_index < nearest) {
-                this.select_direction = -1;
-                start = current_index;
-                end = nearest;
-            } else {
-                this.select_direction = 1;
-                start = nearest;
-                end = current_index;
-            }
-            this.reset();
-            const that = this;
-            container
-                .children()
-                .slice(start, end + 1)
-                .addClass('selected')
-                .each(function () {
-                    that.add(this);
-                });
+        const items = container.children();
+        const anchor_index = items.toArray().indexOf(this.anchor);
+        if (anchor_index === -1) {
+            this.select_no_key(container, elem);
+            return;
         }
+        const current_index = items.index(elem);
+        const start = Math.min(anchor_index, current_index);
+        const end = Math.max(anchor_index, current_index);
+        items.removeClass('selected');
+        this.selected = items
+            .slice(start, end + 1)
+            .addClass('selected')
+            .get();
     }
 
     handle_click(evt) {

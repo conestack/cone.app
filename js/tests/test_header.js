@@ -277,6 +277,75 @@ QUnit.module('cone.app.header', (hooks) => {
         instance.destroy();
     });
 
+    QUnit.module('mobile menu collapse handlers', (hooks) => {
+        let elem, instance, wrapper, rendered, hidden;
+
+        hooks.beforeEach(() => {
+            elem = $(`
+                <div id="header-main">
+                    <div id="header-content"></div>
+                    <div id="navbar-content-wrapper">
+                        <div id="navbar-content"></div>
+                    </div>
+                    <button id="navbar-toggler"></button>
+                    <nav id="mainmenu"></nav>
+                </div>
+            `).appendTo(container);
+            instance = new Header(elem);
+            wrapper = instance.navbar_content_wrapper;
+            rendered = 0;
+            hidden = 0;
+        });
+
+        function mock_mobile_scrollbar() {
+            instance.mobile_scrollbar.destroy();
+            instance.mobile_scrollbar = {
+                render: () => rendered++,
+                scrollbar: { hide: () => hidden++ },
+                destroy: () => {},
+            };
+        }
+
+        QUnit.test('are bound once per compact mode', (assert) => {
+            instance.on_is_compact(true);
+            instance.on_is_compact(true);
+            mock_mobile_scrollbar();
+
+            wrapper.trigger('shown.bs.collapse');
+            wrapper.trigger('hide.bs.collapse');
+            assert.strictEqual(rendered, 1, 'rendered once');
+            assert.strictEqual(hidden, 1, 'hidden once');
+
+            instance.destroy();
+        });
+
+        QUnit.test('are unbound when leaving compact mode', (assert) => {
+            instance.on_is_compact(true);
+            mock_mobile_scrollbar();
+            instance.on_is_compact(false);
+
+            wrapper.trigger('shown.bs.collapse');
+            wrapper.trigger('hide.bs.collapse');
+            assert.strictEqual(rendered, 0, 'not rendered');
+            assert.strictEqual(hidden, 0, 'not hidden');
+            assert.strictEqual(document.body.style.overscrollBehavior, '', 'overscroll untouched');
+
+            instance.destroy();
+        });
+
+        QUnit.test('are unbound on destroy', (assert) => {
+            instance.on_is_compact(true);
+            mock_mobile_scrollbar();
+            instance.destroy();
+
+            wrapper.trigger('shown.bs.collapse');
+            wrapper.trigger('hide.bs.collapse');
+            assert.strictEqual(rendered, 0, 'not rendered');
+            assert.strictEqual(hidden, 0, 'not hidden');
+            assert.strictEqual(instance.mobile_scrollbar, null, 'mobile scrollbar removed');
+        });
+    });
+
     QUnit.module('personal tools dropdown room', (hooks) => {
         let elem;
 

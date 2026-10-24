@@ -100,14 +100,16 @@ export class LayoutAware extends ts.Events {
 
         new ts.Property(this, 'is_compact', null);
         new ts.Property(this, 'is_super_compact', null);
-        new ts.Property(this, 'is_sidebar_collapsed', null);
+        new ts.Property(this, 'is_sidebar_left_collapsed', null);
+        new ts.Property(this, 'is_sidebar_right_collapsed', null);
 
         this.set_mode = this.set_mode.bind(this);
         global_events.on('on_main_area_mode', this.set_mode);
 
         this.on_sidebar_left_resize = this.on_sidebar_left_resize.bind(this);
         global_events.on('on_sidebar_left_resize', this.on_sidebar_left_resize);
-        global_events.on('on_sidebar_right_resize', this.on_sidebar_left_resize);
+        this.on_sidebar_right_resize = this.on_sidebar_right_resize.bind(this);
+        global_events.on('on_sidebar_right_resize', this.on_sidebar_right_resize);
 
         ts.ajax.attach(this, elem);
     }
@@ -118,7 +120,7 @@ export class LayoutAware extends ts.Events {
     destroy() {
         global_events.off('on_main_area_mode', this.set_mode);
         global_events.off('on_sidebar_left_resize', this.on_sidebar_left_resize);
-        global_events.off('on_sidebar_right_resize', this.on_sidebar_left_resize);
+        global_events.off('on_sidebar_right_resize', this.on_sidebar_right_resize);
     }
 
     /**

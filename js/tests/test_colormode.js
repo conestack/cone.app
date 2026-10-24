@@ -1,5 +1,26 @@
 import $ from 'jquery';
+import ts from 'treibstoff';
 import { ColorMode, ColorToggler } from '../src/colormode.js';
+
+// Like the real matchMedia: a new list on each call, all reflecting the
+// current color scheme and all notified when it changes.
+function stub_match_media() {
+    const scheme = { dark: false, lists: [] };
+    window.matchMedia = () => {
+        const list = new EventTarget();
+        Object.defineProperty(list, 'matches', { get: () => scheme.dark });
+        scheme.lists.push(list);
+        return list;
+    };
+    return scheme;
+}
+
+function change_scheme(scheme, dark) {
+    scheme.dark = dark;
+    for (const list of scheme.lists) {
+        list.dispatchEvent(new Event('change'));
+    }
+}
 
 QUnit.module('cone.app.colormode.ColorMode', (hooks) => {
     let stored_theme_origin, theme_attr_origin;
@@ -10,6 +31,7 @@ QUnit.module('cone.app.colormode.ColorMode', (hooks) => {
         theme_attr_origin = document.documentElement.getAttribute('data-bs-theme');
         localStorage.removeItem('cone-app-color-theme');
         document.documentElement.removeAttribute('data-bs-theme');
+        ColorMode._media_query = null;
     });
 
     hooks.afterEach(() => {
@@ -25,6 +47,7 @@ QUnit.module('cone.app.colormode.ColorMode', (hooks) => {
         }
         window.matchMedia = match_media_origin;
         ColorMode.unbind();
+        ColorMode._media_query = null;
     });
 
     QUnit.test('media_query returns MediaQueryList', (assert) => {
@@ -153,6 +176,20 @@ QUnit.module('cone.app.colormode.ColorMode', (hooks) => {
         );
     });
 
+    QUnit.test('unbind stops following color scheme changes', (assert) => {
+        const scheme = stub_match_media();
+
+        ColorMode.bind();
+        ColorMode.unbind();
+        change_scheme(scheme, true);
+
+        assert.strictEqual(
+            document.documentElement.getAttribute('data-bs-theme'),
+            null,
+            'theme not set after unbind',
+        );
+    });
+
     QUnit.test('unbind handles missing boundCallback', (assert) => {
         ColorMode.boundCallback = null;
         ColorMode.unbind();
@@ -171,12 +208,14 @@ QUnit.module('cone.app.colormode.ColorMode', (hooks) => {
 
 QUnit.module('cone.app.colormode.ColorToggler', (hooks) => {
     let container, stored_theme_origin, theme_attr_origin;
+    const match_media_origin = window.matchMedia;
 
     hooks.beforeEach(() => {
         container = $('<div />').appendTo('body');
         stored_theme_origin = localStorage.getItem('cone-app-color-theme');
         theme_attr_origin = document.documentElement.getAttribute('data-bs-theme');
         localStorage.removeItem('cone-app-color-theme');
+        ColorMode._media_query = null;
     });
 
     hooks.afterEach(() => {
@@ -191,7 +230,9 @@ QUnit.module('cone.app.colormode.ColorToggler', (hooks) => {
         } else {
             document.documentElement.removeAttribute('data-bs-theme');
         }
+        window.matchMedia = match_media_origin;
         ColorMode.unbind();
+        ColorMode._media_query = null;
     });
 
     QUnit.test('initialize returns early without toggle switch', (assert) => {
@@ -282,6 +323,31 @@ QUnit.module('cone.app.colormode.ColorToggler', (hooks) => {
             'light',
             'light theme set on document',
         );
+    });
+
+    QUnit.test('toggle follows color scheme changes', (assert) => {
+        const scheme = stub_match_media();
+        const toggle = $('<input type="checkbox" id="colortoggle-switch" />').appendTo(container);
+
+        new ColorToggler(toggle);
+        assert.false(toggle.is(':checked'), 'toggle unchecked for light scheme');
+
+        change_scheme(scheme, true);
+        assert.true(toggle.is(':checked'), 'toggle checked after switch to dark scheme');
+
+        change_scheme(scheme, false);
+        assert.false(toggle.is(':checked'), 'toggle unchecked after switch to light scheme');
+    });
+
+    QUnit.test('toggle stops following color scheme changes on ajax destroy', (assert) => {
+        const scheme = stub_match_media();
+        const toggle = $('<input type="checkbox" id="colortoggle-switch" />').appendTo(container);
+
+        new ColorToggler(toggle);
+        ts.ajax_destroy(container);
+        change_scheme(scheme, true);
+
+        assert.false(toggle.is(':checked'), 'toggle not updated after destroy');
     });
 
     QUnit.test('toggler responds to change event', (assert) => {

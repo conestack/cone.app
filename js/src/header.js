@@ -51,6 +51,9 @@ export class Header extends LayoutAware {
         this.set_mobile_menu_open = this.set_mobile_menu_open.bind(this);
         this.set_mobile_menu_closed = this.set_mobile_menu_closed.bind(this);
         this.bind();
+
+        this.on_mobile_menu_shown = this.on_mobile_menu_shown.bind(this);
+        this.on_mobile_menu_hide = this.on_mobile_menu_hide.bind(this);
     }
 
     /**
@@ -58,10 +61,7 @@ export class Header extends LayoutAware {
      */
     destroy() {
         super.destroy();
-        if (this.mobile_scrollbar) {
-            this.mobile_scrollbar.destroy();
-            this.mobile_scrollbar = null;
-        }
+        this.remove_mobile_scrollbar();
         this.mainmenu_elems.each((_i, el) => {
             $(el).off('shown.bs.dropdown', this.render_mobile_scrollbar);
             $(el).off('hidden.bs.dropdown', this.render_mobile_scrollbar);
@@ -140,34 +140,54 @@ export class Header extends LayoutAware {
      * @param {boolean} val
      */
     on_is_compact(val) {
-        if (this.mobile_scrollbar) {
-            // remove mobile scrollbar
-            this.navbar_content.removeClass('scrollable-content');
-            this.mobile_scrollbar.destroy();
-            this.mobile_scrollbar = null;
-        }
+        this.remove_mobile_scrollbar();
         if (val) {
             this.elem.removeClass('full').removeClass('navbar-expand');
             this.elem.addClass('compact');
 
             // create mobile scrollbar
+            const wrapper = this.navbar_content_wrapper;
             this.navbar_content.addClass('scrollable-content');
-            this.mobile_scrollbar = new ScrollbarY(this.navbar_content_wrapper);
-
-            this.navbar_content_wrapper.on('shown.bs.collapse', () => {
-                // disable scroll to refresh page on mobile devices
-                $('html, body').css('overscroll-behavior', 'none');
-                this.mobile_scrollbar.render();
-            });
-            this.navbar_content_wrapper.on('hide.bs.collapse', () => {
-                // enable scroll to refresh page on mobile devices
-                $('html, body').css('overscroll-behavior', 'auto');
-                this.mobile_scrollbar.scrollbar.hide();
-            });
+            this.mobile_scrollbar = new ScrollbarY(wrapper);
+            wrapper.on('shown.bs.collapse', this.on_mobile_menu_shown);
+            wrapper.on('hide.bs.collapse', this.on_mobile_menu_hide);
         } else {
             this.elem.removeClass('compact');
             this.elem.addClass('full').addClass('navbar-expand');
         }
+    }
+
+    /**
+     * Removes the mobile scrollbar and its mobile menu collapse handlers.
+     */
+    remove_mobile_scrollbar() {
+        if (!this.mobile_scrollbar) {
+            return;
+        }
+        const wrapper = this.navbar_content_wrapper;
+        wrapper.off('shown.bs.collapse', this.on_mobile_menu_shown);
+        wrapper.off('hide.bs.collapse', this.on_mobile_menu_hide);
+        this.navbar_content.removeClass('scrollable-content');
+        this.mobile_scrollbar.destroy();
+        this.mobile_scrollbar = null;
+    }
+
+    /**
+     * Renders the mobile scrollbar when the mobile menu has been shown.
+     */
+    on_mobile_menu_shown() {
+        // disable scroll to refresh page on mobile devices
+        $('html, body').css('overscroll-behavior', 'none');
+        this.mobile_scrollbar.render();
+    }
+
+    /**
+     * Hides the mobile scrollbar when the mobile menu starts hiding.
+     */
+    on_mobile_menu_hide() {
+        // enable scroll to refresh page on mobile devices
+        $('html, body').css('overscroll-behavior', 'auto');
+        this.mobile_scrollbar.scrollbar.hide();
     }
 
     /**

@@ -120,11 +120,12 @@ export class Sidebar extends ResizeAware(ts.Motion) {
 
         if (this.locked !== undefined && this.locked !== null) {
             this.lock_input.prop('checked', true).trigger('change');
-            if (this.disable_lock) return;
-            if (this.locked.collapsed) {
-                this.collapse();
-            } else {
-                this.expand();
+            if (!this.disable_lock) {
+                if (this.locked.collapsed) {
+                    this.collapse();
+                } else {
+                    this.expand();
+                }
             }
         }
         this.disable_or_enable_interaction = this.disable_or_enable_interaction.bind(this);

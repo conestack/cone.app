@@ -9,7 +9,12 @@ export class ColorMode {
      * @returns {MediaQueryList}
      */
     static get media_query() {
-        return window.matchMedia('(prefers-color-scheme: dark)');
+        // matchMedia returns a new list on each call, but listeners can only
+        // be removed from the list they were added to
+        if (!this._media_query) {
+            this._media_query = window.matchMedia('(prefers-color-scheme: dark)');
+        }
+        return this._media_query;
     }
 
     /**
@@ -44,6 +49,14 @@ export class ColorMode {
      */
     static watch(handle) {
         this.media_query.addEventListener('change', handle);
+    }
+
+    /**
+     * Removes an event listener added with ``watch``.
+     * @param {function} handle The callback function to remove.
+     */
+    static unwatch(handle) {
+        this.media_query.removeEventListener('change', handle);
     }
 
     /**
@@ -91,7 +104,7 @@ export class ColorMode {
      */
     static unbind() {
         if (this.boundCallback) {
-            this.media_query.removeEventListener('change', this.boundCallback);
+            this.unwatch(this.boundCallback);
             document.documentElement.removeAttribute('data-bs-theme');
         }
     }
@@ -120,7 +133,7 @@ export class ColorToggler extends ts.ChangeListener {
         super({ elem: elem });
         this.update = this.update.bind(this);
         this.update();
-        ColorMode.watch(this.update());
+        ColorMode.watch(this.update);
     }
 
     /**
@@ -136,6 +149,14 @@ export class ColorToggler extends ts.ChangeListener {
         } else if (preferred_theme === 'light' && checked) {
             elem.prop('checked', false);
         }
+    }
+
+    /**
+     * Stops following color scheme changes. Called on ajax destroy.
+     */
+    destroy() {
+        super.destroy();
+        ColorMode.unwatch(this.update);
     }
 
     /**
