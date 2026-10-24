@@ -20,8 +20,8 @@ from cone.app.utils import navigation_root
 from cone.app.utils import node_path
 from cone.tile import render_template
 from cone.tile import render_tile
-from cone.tile import tile
 from cone.tile import Tile
+from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict

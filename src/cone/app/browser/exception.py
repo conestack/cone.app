@@ -34,10 +34,8 @@ def internal_server_error(request):
         return Response(ERROR_PAGE % {'error': tb})
     # XXX: Check request relates to ajax action
     #      Check if json request and modify response as needed
-    from cone.app.browser.ajax import (
-        AjaxContinue,
-        AjaxMessage,
-    )
+    from cone.app.browser.ajax import AjaxContinue
+    from cone.app.browser.ajax import AjaxMessage
 
     continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
     ret = {

@@ -697,9 +697,7 @@ class SecurityTest(NodeTestCase):
         request = self.layer.new_request()
         registry = request.registry
         authenticator = TestAuthenticator()
-        registry.registerUtility(
-            authenticator, IAuthenticator, name='test_authenticator'
-        )
+        registry.registerUtility(authenticator, IAuthenticator, name='test_authenticator')
         authenticator_origin = security.AUTHENTICATOR
         security.AUTHENTICATOR = 'test_authenticator'
 

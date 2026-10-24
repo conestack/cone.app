@@ -1,4 +1,3 @@
-import copy
 from cone.app.browser.actions import ActionAdd
 from cone.app.browser.actions import ActionCopy
 from cone.app.browser.actions import ActionCut
@@ -15,11 +14,12 @@ from cone.app.browser.actions import ActionView
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.actions import TemplateAction
 from cone.app.browser.actions import Toolbar
-from cone.tile import Tile
 from cone.tile import render_template
+from cone.tile import Tile
 from cone.tile import tile
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
+import copy
 
 
 _ = TranslationStringFactory('cone.app')
@@ -42,9 +42,7 @@ class ContextMenuToolbar(Toolbar):
                 rendered_actions.append((order, rendered))
                 continue
             # wrap link action in list item
-            rendered_actions.append(
-                (order, f'<li class="nav-item py-0">{rendered}</li>')
-            )
+            rendered_actions.append((order, f'<li class="nav-item py-0">{rendered}</li>'))
         if not rendered_actions:
             return ''
         # order items by 'order' property (defaults to 0)

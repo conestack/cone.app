@@ -102,24 +102,18 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = ['foo', 'bar']
-        expected = (
-            'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = 'foo,bar'
-        expected = (
-            'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         def referencable_callable(widget, data):
             return 'computed'
 
         widget.attrs['referencable'] = referencable_callable
-        expected = (
-            'http://example.com/?navigable=&referencable=computed&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=&referencable=computed&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_navigable(self):
@@ -133,32 +127,25 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = ['foo', 'bar']
-        expected = (
-            'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = 'foo,bar'
-        expected = (
-            'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
         def navigable_callable(widget, data):
             return 'computed'
 
         widget.attrs['navigable'] = navigable_callable
-        expected = (
-            'http://example.com/?navigable=computed&referencable=&root=/&selected='
-        )
+        expected = 'http://example.com/?navigable=computed&referencable=&root=/&selected='
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_target(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
         expected = (
-            'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/&selected="'
+            'ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="'
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -173,8 +160,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget.attrs['target'] = target_callable
         expected = (
-            'ajax:target="http://computed.com/'
-            '?navigable=&referencable=&root=/&selected="'
+            'ajax:target="http://computed.com/?navigable=&referencable=&root=/&selected="'
         )
         self.assertTrue(widget().find(expected) > -1)
 
@@ -184,8 +170,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget = factory('reference', name='ref')
         data = widget.extract(request)
         expected = (
-            'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/&selected="'
+            'ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="'
         )
         self.assertTrue(widget(data=data).find(expected) > -1)
 
@@ -213,8 +198,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         widget = factory('reference', name='ref', props={'multivalued': True})
         data = widget.extract(request)
         expected = (
-            'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/&selected="'
+            'ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="'
         )
         self.assertTrue(widget(data=data).find(expected) > -1)
         del widget.attrs['vocabulary']
@@ -585,8 +569,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         rendered = widget(data=data)
         self.assertTrue(
             rendered.find(
-                '<input id="exists-ref" name="ref-exists" '
-                'type="hidden" value="exists" />'
+                '<input id="exists-ref" name="ref-exists" type="hidden" value="exists" />'
             )
             > -1
         )

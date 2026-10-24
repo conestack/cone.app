@@ -1,5 +1,5 @@
-from cone.app.browser import RelatedViewProvider
 from cone.app.browser import get_related_view
+from cone.app.browser import RelatedViewProvider
 from cone.app.browser import render_main_template
 from cone.app.browser.actions import ActionDelete
 from cone.app.browser.actions import ActionEdit

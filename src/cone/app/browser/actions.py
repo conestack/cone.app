@@ -1,4 +1,3 @@
-import copy
 from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -10,6 +9,7 @@ from cone.tile import render_tile
 from node.interfaces import IMappingOrder
 from odict import odict
 from pyramid.i18n import TranslationStringFactory
+import copy
 
 
 _ = TranslationStringFactory('cone.app')
@@ -478,9 +478,7 @@ class ActionDelete(LinkAction):
     id = 'toolbaraction-delete'
     icon = 'bi-trash3'
     action = 'delete:NONE:NONE'
-    confirm = _(
-        'delete_item_confirm', default='Do you really want to delete this Item?'
-    )
+    confirm = _('delete_item_confirm', default='Do you really want to delete this Item?')
     text = _('action_delete', default='Delete')
 
     @property
@@ -489,9 +487,7 @@ class ActionDelete(LinkAction):
         scope = self.action_scope == 'content'
         if self.model.properties.default_content_tile:
             scope = self.action_scope == 'view'
-        return (
-            self.model.properties.action_delete and self.permitted('delete') and scope
-        )
+        return self.model.properties.action_delete and self.permitted('delete') and scope
 
 
 class ActionDeleteChildren(LinkAction):

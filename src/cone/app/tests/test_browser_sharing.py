@@ -40,9 +40,7 @@ class TestBrowserSharing(TileTestCase):
         with self.layer.authenticated('manager'):
             from cone.app.browser.sharing import SharingTable
 
-            table = SharingTable(
-                'cone.app:browser/templates/table.pt', None, 'local_acl'
-            )
+            table = SharingTable('cone.app:browser/templates/table.pt', None, 'local_acl')
             table.model = root
             table.request = request
 

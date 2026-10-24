@@ -110,9 +110,7 @@ class TestBrowserAjax(TileTestCase):
         mode = 'replace'
         selector = '.someselector'
 
-        action = AjaxAction(
-            target=target, name=actionname, mode=mode, selector=selector
-        )
+        action = AjaxAction(target=target, name=actionname, mode=mode, selector=selector)
 
         self.assertEqual(
             (action.name, action.selector, action.mode, action.target),
@@ -388,9 +386,7 @@ class TestBrowserAjax(TileTestCase):
             selector='.contextsensitiv',
             data=dict(key='value'),
         )
-        message = AjaxMessage(
-            payload='Some info message', flavor='info', selector='None'
-        )
+        message = AjaxMessage(payload='Some info message', flavor='info', selector='None')
         overlay = AjaxOverlay(
             action='someaction',
             target='http://example.com',

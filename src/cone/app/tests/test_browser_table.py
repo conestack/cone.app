@@ -331,9 +331,7 @@ class TestBrowserTable(TileTestCase):
 
         rendered = MyTable(tmpl, None, 'table')(model, request)
         head = header(rendered)
-        self.assertIn(
-            'class="table_title m-0 me-auto align-self-center">Foo</h5>', head
-        )
+        self.assertIn('class="table_title m-0 me-auto align-self-center">Foo</h5>', head)
         # Title first, then the controls.
         self.assertLess(head.find('table_title'), head.find('table_length'))
         self.assertLess(head.find('table_length'), head.find('table_filter'))

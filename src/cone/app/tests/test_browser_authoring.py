@@ -7,12 +7,12 @@ from cone.app.browser.ajax import AjaxMessage
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.authoring import _FormRenderingTile
 from cone.app.browser.authoring import add
-from cone.app.browser.authoring import AddFormHeading
 from cone.app.browser.authoring import AddDropdown
+from cone.app.browser.authoring import AddFormHeading
 from cone.app.browser.authoring import CameFromNext
-from cone.app.browser.authoring import ContentForm
 from cone.app.browser.authoring import ContentAddForm
 from cone.app.browser.authoring import ContentEditForm
+from cone.app.browser.authoring import ContentForm
 from cone.app.browser.authoring import edit
 from cone.app.browser.authoring import EditFormHeading
 from cone.app.browser.authoring import FormHeading
@@ -152,9 +152,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(model, request, 'camefromnextform')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.assertEqual(
-            request.environ['redirect'].location, 'http://example.com/child'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/child')
 
         # No ``came_from`` on request, ``default_came_from`` set to ``parent``,
         # no ajax request
@@ -184,9 +182,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(model, request, 'camefromnextform')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.assertEqual(
-            request.environ['redirect'].location, 'http://example.com/child'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/child')
 
         # ``came_from`` set to empty value on request, overrules
         # ``default_came_from``, no ajax request
@@ -196,9 +192,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(model, request, 'camefromnextform')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.assertEqual(
-            request.environ['redirect'].location, 'http://example.com/child'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/child')
 
         # ``came_from`` set to ``parent`` on request, overrules
         # ``default_came_from``, no ajax request
@@ -221,9 +215,7 @@ class TestBrowserAuthoring(TileTestCase):
             res = render_tile(model, request, 'camefromnextform')
 
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
-        self.assertEqual(
-            request.environ['redirect'].location, 'http://example.com/other'
-        )
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/other')
 
         # Reset ``default_came_from``
         CameFromNextForm.default_came_from = None
@@ -518,9 +510,7 @@ class TestBrowserAuthoring(TileTestCase):
             @plumbing(ContentAddForm)
             class MyAddForm(Form):
                 def prepare(self):
-                    form = factory(
-                        'form', name='addform', props={'action': self.nodeurl}
-                    )
+                    form = factory('form', name='addform', props={'action': self.nodeurl})
                     form['id'] = factory(
                         'field:label:text',
                         props={

@@ -116,9 +116,7 @@ def authenticate(request, login, password):
         if login == ADMIN_USER and password == ADMIN_PASSWORD:
             return remember(request, login)
     if AUTHENTICATOR:
-        authenticator = request.registry.queryUtility(
-            IAuthenticator, name=AUTHENTICATOR
-        )
+        authenticator = request.registry.queryUtility(IAuthenticator, name=AUTHENTICATOR)
         if authenticator:
             pid = authenticator.authenticate(login, password)
             if pid:

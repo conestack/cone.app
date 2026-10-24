@@ -44,9 +44,7 @@ class TestBrowserTranslation(NodeTestCase):
         request.params['field.de'] = 'Value DE'
         data = widget.extract(request)
         self.assertIsInstance(data.extracted, TranslationNode)
-        self.assertEqual(
-            data.extracted.items(), [('en', 'Value EN'), ('de', 'Value DE')]
-        )
+        self.assertEqual(data.extracted.items(), [('en', 'Value EN'), ('de', 'Value DE')])
 
     def test_extraction_preset_value(self):
         widget = factory(

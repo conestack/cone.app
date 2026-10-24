@@ -117,9 +117,7 @@ class TestBrowserResources(TileTestCase):
         self.assertFalse(hasattr(resources, 'test_resources_static_view'))
 
         directory = os.path.join('path', 'to', 'resources')
-        registry._register_resources_view(
-            config, resources, 'test-resources', directory
-        )
+        registry._register_resources_view(config, resources, 'test-resources', directory)
 
         self.assertTrue(hasattr(resources, 'test_resources_static_view'))
         self.assertIsInstance(resources.test_resources_static_view, static_view)
@@ -138,9 +136,7 @@ class TestBrowserResources(TileTestCase):
 
         config.set_resource_include('name-1', True)
         config.set_resource_include('name-2', False)
-        self.assertEqual(
-            resources._registry._includes, {'name-1': True, 'name-2': False}
-        )
+        self.assertEqual(resources._registry._includes, {'name-1': True, 'name-2': False})
 
     @reset_resource_registry
     def test_configure_default_resource_includes(self):
@@ -205,9 +201,7 @@ class TestBrowserResources(TileTestCase):
         )
         test_resources.add(wr.ScriptResource(name='base-js', resource='base.js'))
         # add duplicate resource, gets removed
-        test_resources.add(
-            wr.ScriptResource(name='base-js', resource='duplcate-base.js')
-        )
+        test_resources.add(wr.ScriptResource(name='base-js', resource='duplcate-base.js'))
         config.register_resource(test_resources)
 
         # add duplicate group, gets removed

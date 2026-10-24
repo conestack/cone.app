@@ -72,9 +72,7 @@ class ReferenceBrowser(Tile, ReferenceBrowserModelMixin):
 
     @property
     def referencelisting(self):
-        return render_tile(
-            self.referencebrowser_model, self.request, 'referencelisting'
-        )
+        return render_tile(self.referencebrowser_model, self.request, 'referencelisting')
 
 
 @tile(

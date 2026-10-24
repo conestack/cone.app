@@ -80,8 +80,7 @@ class PasteAction(Tile):
                     _(
                         'cannot_paste_cardinality_violation',
                         default=(
-                            "Violation. '${target}' is not allowed to "
-                            "contain '${source}'"
+                            "Violation. '${target}' is not allowed to contain '${source}'"
                         ),
                     ),
                     mapping={

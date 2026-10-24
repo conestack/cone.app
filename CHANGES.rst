@@ -4,7 +4,14 @@ Changes
 2.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Sort the imports with ruff (one per line, ``from`` imports first, no
+  sections) and format the code with ``ruff format`` (90 characters per line,
+  single quotes).
+  [rnix]
+
+- Add import sorting (``I`` rules) and the formatter settings to the ruff
+  configuration in ``pyproject.toml``.
+  [rnix]
 
 
 2.0.0 (2026-10-24)

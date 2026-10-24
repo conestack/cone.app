@@ -1,6 +1,6 @@
+from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.ajax import AjaxPath
-from cone.app.browser.ajax import ajax_continue
 from cone.app.model import AppResources
 from cone.tile import Tile
 from cone.tile import tile

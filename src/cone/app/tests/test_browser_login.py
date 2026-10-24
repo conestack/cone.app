@@ -5,8 +5,8 @@ from cone.app.browser.login import login_view
 from cone.app.browser.login import logout_view
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
-from webob.response import Response
 from webob.exc import HTTPFound
+from webob.response import Response
 
 
 class TestBrowserLogin(TileTestCase):

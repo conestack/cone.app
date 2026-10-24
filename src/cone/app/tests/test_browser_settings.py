@@ -6,18 +6,18 @@ from cone.app.browser.ajax import AjaxAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.form import Form
 from cone.app.browser.layout import personal_tools
+from cone.app.browser.settings import settings_form
 from cone.app.browser.settings import SettingsBehavior
 from cone.app.browser.settings import SettingsForm
 from cone.app.browser.settings import SettingsLayoutConfig
 from cone.app.browser.settings import SettingsTile
-from cone.app.browser.settings import settings_form
 from cone.app.browser.settings import ViewSettingsAction
 from cone.app.model import BaseNode
 from cone.app.model import NO_SETTINGS_CATEGORY
-from cone.app.model import SettingsNode
 from cone.app.model import node_info
-from cone.tile import Tile
+from cone.app.model import SettingsNode
 from cone.tile import render_tile
+from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from plumber import plumbing
@@ -50,9 +50,7 @@ class TestBrowserSettings(TileTestCase):
 
         with self.assertRaises(ValueError) as arc:
             register_config('baz', OtherSettings)
-        self.assertEqual(
-            str(arc.exception), "Config with name 'baz' already registered."
-        )
+        self.assertEqual(str(arc.exception), "Config with name 'baz' already registered.")
 
     def test_SettingsLayoutConfig(self):
         root = get_root()
@@ -200,9 +198,7 @@ class TestBrowserSettings(TileTestCase):
         settings.invalidate()
         settings.factories.clear()
 
-        @node_info(
-            name='test_settings', title='Test Settings', icon='test-settings-icon'
-        )
+        @node_info(name='test_settings', title='Test Settings', icon='test-settings-icon')
         class TestSettings(SettingsNode):
             pass
 
@@ -226,9 +222,7 @@ class TestBrowserSettings(TileTestCase):
         settings.invalidate()
         settings.factories.clear()
 
-        @node_info(
-            name='test_settings', title='Test Settings', icon='test-settings-icon'
-        )
+        @node_info(name='test_settings', title='Test Settings', icon='test-settings-icon')
         class TestSettings(SettingsNode):
             pass
 
@@ -245,9 +239,7 @@ class TestBrowserSettings(TileTestCase):
         settings.invalidate()
         settings.factories.clear()
 
-        @node_info(
-            name='test_settings', title='Test Settings', icon='test-settings-icon'
-        )
+        @node_info(name='test_settings', title='Test Settings', icon='test-settings-icon')
         class TestSettings(SettingsNode):
             display = True
 
@@ -282,9 +274,7 @@ class TestBrowserSettings(TileTestCase):
         settings.invalidate()
         settings.factories.clear()
 
-        @node_info(
-            name='test_settings', title='Test Settings', icon='test-settings-icon'
-        )
+        @node_info(name='test_settings', title='Test Settings', icon='test-settings-icon')
         class TestSettings(SettingsNode):
             display = True
 

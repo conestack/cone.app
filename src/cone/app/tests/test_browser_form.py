@@ -1,13 +1,13 @@
 from cone.app import testing
 from cone.app.browser.ajax import AjaxAction
-from cone.app.browser.form import Form
-from cone.app.browser.form import ProtectedAttributesForm
-from cone.app.browser.form import YAMLForm
-from cone.app.browser.form import FormTarget
 from cone.app.browser.form import AddFormTarget
 from cone.app.browser.form import EditFormTarget
+from cone.app.browser.form import Form
+from cone.app.browser.form import FormTarget
+from cone.app.browser.form import ProtectedAttributesForm
 from cone.app.browser.form import YAMLAddFormTarget
 from cone.app.browser.form import YAMLEditFormTarget
+from cone.app.browser.form import YAMLForm
 from cone.app.model import BaseNode
 from cone.tile import render_tile
 from cone.tile import tile
@@ -74,9 +74,7 @@ class TestBrowserForm(TileTestCase):
         widget = object()
         data = object()
         form = TestYAMLAddForm(model, self.layer.new_request())
-        self.assertEqual(
-            form.form_action(widget, data), 'http://example.com/parent/add'
-        )
+        self.assertEqual(form.form_action(widget, data), 'http://example.com/parent/add')
 
     def test_YAMLEditFormTarget(self):
         model = BaseNode(name='model')
@@ -92,9 +90,7 @@ class TestBrowserForm(TileTestCase):
         widget = object()
         data = object()
         form = TestYAMLEditForm(model, self.layer.new_request())
-        self.assertEqual(
-            form.form_action(widget, data), 'http://example.com/model/edit'
-        )
+        self.assertEqual(form.form_action(widget, data), 'http://example.com/model/edit')
 
     def test_Form(self):
         formtile = Form(None, None, 'plainform')

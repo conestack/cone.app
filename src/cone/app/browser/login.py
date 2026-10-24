@@ -85,9 +85,7 @@ class LoginForm(Form):
         webob_req = data.request.request
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
-            raise ExtractionError(
-                _('invalid_credentials', default='Invalid Credentials')
-            )
+            raise ExtractionError(_('invalid_credentials', default='Invalid Credentials'))
 
     def next(self, request):
         return HTTPFound(location=request.request.application_url, headers=self.headers)

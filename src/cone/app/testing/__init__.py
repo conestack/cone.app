@@ -15,8 +15,8 @@ from zope.configuration.xmlconfig import XMLConfig
 import cone.app
 import cone.tile
 import os
-import venusian
 import sys
+import venusian
 
 
 class DummyVenusianInfo:

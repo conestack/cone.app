@@ -1,6 +1,6 @@
 from cone.app.interfaces import ILiveSearch
-from cone.tile import tile
 from cone.tile import Tile
+from cone.tile import tile
 from pyramid.view import view_config
 
 

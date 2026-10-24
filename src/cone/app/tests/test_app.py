@@ -130,9 +130,7 @@ class TestApp(NodeTestCase):
         cone.app.main_hooks.remove(decorated_main_hook)
 
         # Check main template was set properly
-        self.assertEqual(
-            cone.app.cfg.main_template, 'package.browser:templates/main.pt'
-        )
+        self.assertEqual(cone.app.cfg.main_template, 'package.browser:templates/main.pt')
 
         # reset main template
         cone.app.cfg.main_template = main_template_orgin

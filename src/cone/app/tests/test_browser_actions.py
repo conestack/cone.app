@@ -34,8 +34,8 @@ from cone.app.model import register_node_info
 from cone.app.testing.mock import CopySupportNode
 from cone.app.testing.mock import SharingNode
 from cone.app.testing.mock import WorkflowNode
-from cone.tile import tile
 from cone.tile import Tile
+from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from node.behaviors import MappingOrder
 from plumber import plumbing
@@ -145,9 +145,7 @@ class TestBrowserActions(TileTestCase):
         tb['a'] = DummyAction()
 
         with self.layer.authenticated('viewer'):
-            self.assertEqual(
-                tb(model, request), '<div><a href="">dummy action</a></div>'
-            )
+            self.assertEqual(tb(model, request), '<div><a href="">dummy action</a></div>')
 
             tb.css = 'someclass'
             self.assertEqual(
@@ -242,9 +240,7 @@ class TestBrowserActions(TileTestCase):
         )
 
         action.enabled = False
-        self.assertTrue(
-            action(model, request).find('class="link_action disabled"') > -1
-        )
+        self.assertTrue(action(model, request).find('class="link_action disabled"') > -1)
 
         action.display = False
         self.assertEqual(action(model, request), '')

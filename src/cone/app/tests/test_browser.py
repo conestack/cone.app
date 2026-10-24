@@ -49,9 +49,7 @@ class BrowserTest(TileTestCase):
         @plumbing(RelatedViewConsumer)
         class RelatedViewConsumingTile(Tile):
             def render(self):
-                return make_url(
-                    self.request, node=self.model, resource=self.related_view
-                )
+                return make_url(self.request, node=self.model, resource=self.related_view)
 
         model = BaseNode(name='root')
         request = self.layer.new_request()

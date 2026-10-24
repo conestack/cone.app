@@ -1,7 +1,7 @@
 from cone.app import cfg
 from cone.app import testing
-from cone.app.compat import StringIO
 from cone.app.compat import configparser
+from cone.app.compat import StringIO
 from cone.app.interfaces import ILeafNode
 from cone.app.interfaces import IMetadata
 from cone.app.interfaces import INodeInfo
@@ -14,23 +14,23 @@ from cone.app.model import AppResources
 from cone.app.model import BaseNode
 from cone.app.model import ConfigProperties
 from cone.app.model import FactoryNode
+from cone.app.model import get_node_info
 from cone.app.model import LanguageSchema
 from cone.app.model import LeafNode
 from cone.app.model import Metadata
-from cone.app.model import NO_SETTINGS_CATEGORY
 from cone.app.model import NamespaceUUID
+from cone.app.model import NO_SETTINGS_CATEGORY
+from cone.app.model import node_info
 from cone.app.model import NodeInfo
+from cone.app.model import o_getattr
 from cone.app.model import Properties
 from cone.app.model import ProtectedProperties
+from cone.app.model import register_node_info
 from cone.app.model import SettingsNode
 from cone.app.model import Translation
 from cone.app.model import UUIDAsName
 from cone.app.model import UUIDAttributeAware
 from cone.app.model import XMLProperties
-from cone.app.model import get_node_info
-from cone.app.model import node_info
-from cone.app.model import o_getattr
-from cone.app.model import register_node_info
 from datetime import datetime
 from node import schema
 from node.behaviors import DefaultInit
@@ -312,9 +312,7 @@ class TestModel(NodeTestCase):
         metadata_copy = copy.copy(metadata)
         self.assertFalse(metadata_copy is metadata)
         self.assertEqual(metadata_copy.__class__, Metadata)
-        self.assertEqual(
-            o_getattr(metadata_copy, '_data'), o_getattr(metadata, '_data')
-        )
+        self.assertEqual(o_getattr(metadata_copy, '_data'), o_getattr(metadata, '_data'))
 
         # ``__deepcopy__``
         metadata_deepcopy = copy.deepcopy(metadata)
@@ -383,9 +381,7 @@ class TestModel(NodeTestCase):
         nodeinfo_copy = copy.copy(nodeinfo)
         self.assertFalse(nodeinfo_copy is nodeinfo)
         self.assertEqual(nodeinfo_copy.__class__, NodeInfo)
-        self.assertEqual(
-            o_getattr(nodeinfo_copy, '_data'), o_getattr(nodeinfo, '_data')
-        )
+        self.assertEqual(o_getattr(nodeinfo_copy, '_data'), o_getattr(nodeinfo, '_data'))
 
         # ``__deepcopy__``
         nodeinfo_deepcopy = copy.deepcopy(nodeinfo)

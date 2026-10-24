@@ -4,8 +4,8 @@ from cone.app import testing
 from cone.app.browser import set_related_view
 from cone.app.browser.contents import ContentsTile
 from cone.app.browser.contents import ContentsViewLink
-from cone.app.browser.contents import RootContentsTile
 from cone.app.browser.contents import listing
+from cone.app.browser.contents import RootContentsTile
 from cone.app.browser.table import TableSlice
 from cone.app.browser.utils import make_url
 from cone.app.model import BaseNode

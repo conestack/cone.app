@@ -62,9 +62,7 @@ logger = logging.getLogger('cone.app')
 try:
     from lxml import etree
 except ImportError:  # pragma: no cover
-    logger.warning(
-        '``lxml`` not present. ``cone.app.model.XMLProperties`` will not work'
-    )
+    logger.warning('``lxml`` not present. ``cone.app.model.XMLProperties`` will not work')
 
 
 _ = TranslationStringFactory('cone.app')
