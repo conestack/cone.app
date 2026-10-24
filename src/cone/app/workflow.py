@@ -3,10 +3,10 @@ from plumber import Behavior
 from plumber import default
 from plumber import override
 from plumber import plumb
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Allow
-from pyramid.security import Deny
-from pyramid.security import Everyone
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Allow
+from pyramid.authorization import Deny
+from pyramid.authorization import Everyone
 from repoze.workflow import get_workflow
 from zope.interface import implementer
 import logging

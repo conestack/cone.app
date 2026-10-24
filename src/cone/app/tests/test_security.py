@@ -27,13 +27,14 @@ from node.tests import NodeTestCase
 from node.utils import instance_property
 from plumber import default
 from plumber import plumbing
-from pyramid.authentication import AuthTktAuthenticationPolicy
-from pyramid.interfaces import IAuthenticationPolicy
-from pyramid.security import ACLAllowed
-from pyramid.security import ACLDenied
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Deny
-from pyramid.security import Everyone
+from pyramid.authorization import ACLAllowed
+from pyramid.authorization import ACLDenied
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Allow
+from pyramid.authorization import Deny
+from pyramid.authorization import Everyone
+from pyramid.interfaces import ISecurityPolicy
+from pyramid.testing import DummyRequest
 from pyramid.threadlocal import get_current_registry
 from zope.component import adapter
 from zope.component.globalregistry import BaseGlobalComponents
@@ -152,8 +153,8 @@ class SecurityTest(NodeTestCase):
         )
 
         # Base security tests
-        policy = get_current_registry().queryUtility(IAuthenticationPolicy)
-        self.assertTrue(isinstance(policy, AuthTktAuthenticationPolicy))
+        policy = get_current_registry().queryUtility(ISecurityPolicy)
+        self.assertTrue(isinstance(policy, security.SecurityPolicy))
 
         self.layer.new_request()
         self.assertTrue(
@@ -728,3 +729,69 @@ class SecurityTest(NodeTestCase):
 
         self.assertEqual(AllowedNode().__acl__, DEFAULT_ACL)
         self.assertEqual(DeniedNode().__acl__, [(Deny, Everyone, ALL_PERMISSIONS)])
+
+
+class TestSecurityPolicy(NodeTestCase):
+    acl = [
+        (Allow, 'system.Authenticated', ['view']),
+        (Allow, 'role:editor', ['edit']),
+        (Allow, Everyone, ['login']),
+        (Deny, Everyone, ALL_PERMISSIONS),
+    ]
+
+    def policy(self, callback=lambda userid, request: ['role:editor']):
+        return security.SecurityPolicy('secret', callback=callback)
+
+    def authenticated_request(self, policy, userid):
+        request = DummyRequest()
+        headers = policy.remember(request, userid)
+        name, value = headers[0][1].split(';')[0].split('=', 1)
+        request.cookies[name] = value
+        return request
+
+    def context(self):
+        return type('Context', (), {'__acl__': self.acl})()
+
+    def test_default_callback(self):
+        policy = security.SecurityPolicy('secret')
+        self.assertIs(policy.callback, groups_callback)
+
+    def test_anonymous(self):
+        policy = self.policy()
+        request = DummyRequest()
+        self.assertIsNone(policy.identity(request))
+        self.assertIsNone(policy.authenticated_userid(request))
+        context = self.context()
+        self.assertTrue(policy.permits(request, context, 'login'))
+        self.assertIsInstance(policy.permits(request, context, 'view'), ACLDenied)
+
+    def test_authenticated(self):
+        policy = self.policy()
+        request = self.authenticated_request(policy, 'max')
+        self.assertEqual(
+            policy.identity(request), {'userid': 'max', 'principals': ['role:editor']}
+        )
+        self.assertEqual(policy.authenticated_userid(request), 'max')
+        context = self.context()
+        self.assertIsInstance(policy.permits(request, context, 'view'), ACLAllowed)
+        self.assertIsInstance(policy.permits(request, context, 'edit'), ACLAllowed)
+        self.assertIsInstance(policy.permits(request, context, 'delete'), ACLDenied)
+
+    def test_callback_rejects_user(self):
+        policy = self.policy(callback=lambda userid, request: None)
+        request = self.authenticated_request(policy, 'max')
+        self.assertIsNone(policy.identity(request))
+        self.assertIsNone(policy.authenticated_userid(request))
+        self.assertIsInstance(policy.permits(request, self.context(), 'view'), ACLDenied)
+
+    def test_reserved_principal_is_no_user(self):
+        policy = self.policy()
+        request = self.authenticated_request(policy, Everyone)
+        self.assertIsNone(policy.identity(request))
+
+    def test_forget(self):
+        policy = self.policy()
+        request = self.authenticated_request(policy, 'max')
+        headers = policy.forget(request)
+        self.assertTrue(headers)
+        self.assertTrue(all('Max-Age=0' in value for _, value in headers))

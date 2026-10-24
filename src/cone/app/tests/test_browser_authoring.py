@@ -91,11 +91,13 @@ class TestBrowserAuthoring(TileTestCase):
                 form_tile_name = 'someform'
 
         request = self.layer.new_request()
+        with self.assertWarns(DeprecationWarning):
+            rendered = render_tile(model, request, 'someformrenderingtile')
         self.checkOutput(
             """
         <form class="ajax" ... id="form-someform" ...</form>
         """,
-            render_tile(model, request, 'someformrenderingtile'),
+            rendered,
         )
 
     def test_CameFromNext(self):
@@ -716,7 +718,7 @@ class TestBrowserAuthoring(TileTestCase):
         )
 
         # Render B/C edit tile
-        with self.layer.authenticated('editor'):
+        with self.layer.authenticated('editor'), self.assertWarns(DeprecationWarning):
             request = self.layer.new_request()
             bc_res = render_tile(root['somechild'], request, 'edit')
         self.assertEqual(bc_res, res)
@@ -1270,7 +1272,7 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertEqual(request.environ['cone.app.form.mode'], 'inner')
 
         # Render B/C overlayedit tile
-        with self.layer.authenticated('editor'):
+        with self.layer.authenticated('editor'), self.assertWarns(DeprecationWarning):
             bc_res = render_tile(model, request, 'overlayedit')
         self.assertEqual(bc_res, res)
 

@@ -99,9 +99,9 @@ class TestBrowserSettings(TileTestCase):
         register_config('legacy', LegacySettings)
 
         self.assertFalse(action.display)
-        with self.layer.authenticated('max'):
+        with self.layer.authenticated('max'), self.assertWarns(DeprecationWarning):
             self.assertFalse(action.display)
-        with self.layer.authenticated('manager'):
+        with self.layer.authenticated('manager'), self.assertWarns(DeprecationWarning):
             self.assertTrue(action.display)
 
     @testing.reset_node_info_registry
@@ -138,7 +138,7 @@ class TestBrowserSettings(TileTestCase):
         tile.model = settings
         tile.request = self.layer.new_request()
 
-        with self.layer.authenticated('manager'):
+        with self.layer.authenticated('manager'), self.assertWarns(DeprecationWarning):
             cc = tile.categorized_children
         self.assertEqual(cc.keys(), [NO_SETTINGS_CATEGORY, 'cat'])
         self.assertEqual(
@@ -176,7 +176,7 @@ class TestBrowserSettings(TileTestCase):
         tile = SettingsTile()
         tile.model = settings['cat']
         tile.request = self.layer.new_request()
-        with self.layer.authenticated('manager'):
+        with self.layer.authenticated('manager'), self.assertWarns(DeprecationWarning):
             cc = tile.categorized_children
         self.assertEqual(
             cc['cat'],
@@ -355,7 +355,7 @@ class TestBrowserSettings(TileTestCase):
         request.params['action.editform.save'] = '1'
         request.params['ajax'] = '1'
 
-        with self.layer.authenticated('manager'):
+        with self.layer.authenticated('manager'), self.assertWarns(DeprecationWarning):
             res = render_tile(settings['foo'], request, 'editform')
         self.assertEqual(res, '')
 

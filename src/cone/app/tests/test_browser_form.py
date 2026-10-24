@@ -13,8 +13,8 @@ from cone.tile import render_tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from plumber import plumbing
-from pyramid.security import ACLAllowed
-from pyramid.security import ACLDenied
+from pyramid.authorization import ACLAllowed
+from pyramid.authorization import ACLDenied
 from webob.exc import HTTPFound
 from yafowil.base import factory
 
@@ -323,7 +323,7 @@ class TestBrowserForm(TileTestCase):
         model.__name__ = 'dummymodel'
         request = self.layer.new_request()
 
-        with self.layer.authenticated('max'):
+        with self.layer.authenticated('max'), self.assertWarns(DeprecationWarning):
             rendered = render_tile(model, request, 'yamlsubscriptionform')
 
         expected = 'action="http://example.com/dummymodel/yamlsubscriptionform"'
@@ -339,7 +339,7 @@ class TestBrowserForm(TileTestCase):
                 form_template = None
                 form_template_path = 'cone.app.testing:dummy_form.yaml'
 
-        with self.layer.authenticated('max'):
+        with self.layer.authenticated('max'), self.assertWarns(DeprecationWarning):
             rendered = render_tile(model, request, 'yamlsubscriptionform2')
 
         expected = 'action="http://example.com/dummymodel/yamlsubscriptionform2"'
@@ -350,7 +350,7 @@ class TestBrowserForm(TileTestCase):
         model = root['child'] = BaseNode()
 
         YAMLSubscriptionForm.form_flavor = 'add'
-        with self.layer.authenticated('max'):
+        with self.layer.authenticated('max'), self.assertWarns(DeprecationWarning):
             rendered = render_tile(model, request, 'yamlsubscriptionform')
         expected = 'action="http://example.com/root/yamlsubscriptionform"'
         self.assertTrue(rendered.find(expected) > -1)

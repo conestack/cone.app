@@ -25,6 +25,7 @@ import os
 import pyramid_chameleon
 import pyramid_zcml
 import threading
+import warnings
 
 
 logger = logging.getLogger('cone.app')
@@ -169,12 +170,24 @@ def thread_shutdown_hook(func):  # pragma: no cover
     return func
 
 
+# B/C
 def auth_tkt_factory(**kwargs):
+    warnings.warn(
+        '``cone.app.auth_tkt_factory`` is deprecated, ``cone.app.main`` '
+        'configures ``cone.app.security.SecurityPolicy``',
+        DeprecationWarning,
+    )
     kwargs.setdefault('callback', security.groups_callback)
     return AuthTktAuthenticationPolicy(**kwargs)
 
 
+# B/C
 def acl_factory(**kwargs):
+    warnings.warn(
+        '``cone.app.acl_factory`` is deprecated, ``cone.app.main`` '
+        'configures ``cone.app.security.SecurityPolicy``',
+        DeprecationWarning,
+    )
     return ACLAuthorizationPolicy()
 
 
@@ -237,7 +250,7 @@ def main(global_config, **settings):
     auth_path = settings.pop('cone.auth_path', '/')
     auth_wild_domain = settings.pop('cone.auth_wild_domain', True)
 
-    auth_policy = auth_tkt_factory(
+    security_policy = security.SecurityPolicy(
         secret=auth_secret,
         cookie_name=auth_cookie_name,
         secure=auth_secure,
@@ -268,10 +281,9 @@ def main(global_config, **settings):
     # Initialize resource registry
     ResourceRegistry.initialize(config, settings)
 
-    # set authentication and authorization policies
+    # set security policy
     if config.registry.queryUtility(ISecurityPolicy) is None:
-        config.set_authentication_policy(auth_policy)
-        config.set_authorization_policy(acl_factory())
+        config.set_security_policy(security_policy)
     config.commit()
 
     # begin configuration

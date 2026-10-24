@@ -1,8 +1,20 @@
 Changes
 =======
 
-2.0.1 (unreleased)
+2.1.0 (unreleased)
 ------------------
+
+- Use a Pyramid security policy instead of the authentication and
+  authorization policies deprecated in Pyramid 2.0. ``cone.app.main``
+  configures ``cone.app.security.SecurityPolicy`` (auth ticket cookie and
+  ACLs, principals from ``groups_callback``) unless a security policy is
+  registered already. The ``cone.auth_*`` settings keep working.
+  ``cone.app.auth_tkt_factory`` and ``cone.app.acl_factory`` are deprecated.
+  [rnix]
+
+- Import ``Allow``, ``Deny``, ``Everyone`` and ``ALL_PERMISSIONS`` from
+  ``pyramid.authorization``, they are deprecated in ``pyramid.security``.
+  [rnix]
 
 - Sort the imports with ruff (one per line, ``from`` imports first, no
   sections) and format the code with ``ruff format`` (90 characters per line,

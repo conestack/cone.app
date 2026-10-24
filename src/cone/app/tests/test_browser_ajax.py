@@ -64,7 +64,7 @@ class TestBrowserAjax(TileTestCase):
         request.params['bdajax.mode'] = 'replace'
         request.params['bdajax.selector'] = '.foo'
 
-        with self.layer.authenticated('max'):
+        with self.layer.authenticated('max'), self.assertWarns(UserWarning):
             res = ajax_tile(root, request)
         self.assertEqual(
             res,

@@ -39,8 +39,8 @@ from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from node.behaviors import MappingOrder
 from plumber import plumbing
-from pyramid.security import ACLAllowed
-from pyramid.security import ACLDenied
+from pyramid.authorization import ACLAllowed
+from pyramid.authorization import ACLDenied
 
 
 class TestBrowserActions(TileTestCase):
@@ -60,7 +60,9 @@ class TestBrowserActions(TileTestCase):
         self.assertEqual(ac.scope, 'ajaxaction')
 
         request.params['bdajax.action'] = 'ajaxaction'
-        self.assertEqual(ac.scope, 'ajaxaction')
+        with self.assertWarns(UserWarning):
+            self.assertEqual(ac.scope, 'ajaxaction')
+        del request.params['bdajax.action']
 
         request.params['ajax.action'] = 'layout'
         self.assertEqual(ac.scope, 'content')

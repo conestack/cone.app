@@ -45,7 +45,7 @@ from node.interfaces import ILeaf
 from node.tests import NodeTestCase
 from odict import odict
 from plumber import plumbing
-from pyramid.security import ALL_PERMISSIONS
+from pyramid.authorization import ALL_PERMISSIONS
 from zope.component.globalregistry import BaseGlobalComponents
 import copy
 import os

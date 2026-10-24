@@ -53,28 +53,44 @@ class TestApp(NodeTestCase):
     @tmp_root_node
     def test_register_entry(self):
         cone.app.register_entry('dummy', BaseNode)
-
         root = cone.app.get_root()
-        self.assertTrue('dummy' in root.factories.keys())
+        try:
+            self.assertTrue('dummy' in root.factories.keys())
 
-        with self.assertRaises(ValueError) as arc:
-            cone.app.register_entry('dummy', BaseNode)
-        self.assertEqual(
-            str(arc.exception), "Entry with name 'dummy' already registered."
-        )
+            with self.assertRaises(ValueError) as arc:
+                cone.app.register_entry('dummy', BaseNode)
+            self.assertEqual(
+                str(arc.exception), "Entry with name 'dummy' already registered."
+            )
+        finally:
+            # factories are class level, shared with the root of other tests
+            del root.factories['dummy']
 
     @tmp_root_node
     def test_register_config(self):
         cone.app.register_config('dummy', BaseNode)
-
         root = cone.app.get_root()
-        self.assertTrue('dummy' in root['settings'].factories.keys())
+        try:
+            self.assertTrue('dummy' in root['settings'].factories.keys())
 
-        with self.assertRaises(ValueError) as arc:
-            cone.app.register_config('dummy', BaseNode)
-        self.assertEqual(
-            str(arc.exception), "Config with name 'dummy' already registered."
-        )
+            with self.assertRaises(ValueError) as arc:
+                cone.app.register_config('dummy', BaseNode)
+            self.assertEqual(
+                str(arc.exception), "Config with name 'dummy' already registered."
+            )
+        finally:
+            # factories are class level, shared with the root of other tests
+            del root['settings'].factories['dummy']
+
+    def test_auth_tkt_factory_is_deprecated(self):
+        with self.assertWarns(DeprecationWarning):
+            policy = cone.app.auth_tkt_factory(secret='12345')
+        self.assertIsInstance(policy, AuthTktAuthenticationPolicy)
+
+    def test_acl_factory_is_deprecated(self):
+        with self.assertWarns(DeprecationWarning):
+            policy = cone.app.acl_factory()
+        self.assertIsInstance(policy, ACLAuthorizationPolicy)
 
     @testing.reset_node_available
     def test_main(self):
@@ -89,14 +105,6 @@ class TestApp(NodeTestCase):
         @main_hook
         def decorated_main_hook(configurator, global_config, settings):
             hooks['called'] += 1
-
-        # set auth tkt factory``
-        factory = cone.app.auth_tkt_factory(secret='12345')
-        self.assertTrue(isinstance(factory, AuthTktAuthenticationPolicy))
-
-        # ACL factory
-        factory = cone.app.acl_factory()
-        self.assertTrue(isinstance(factory, ACLAuthorizationPolicy))
 
         # remember original main template
         main_template_orgin = cone.app.cfg.main_template

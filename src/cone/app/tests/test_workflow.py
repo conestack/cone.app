@@ -8,7 +8,7 @@ from cone.app.workflow import initialize_workflow
 from cone.app.workflow import lookup_state_data
 from cone.app.workflow import lookup_workflow
 from node.tests import NodeTestCase
-from pyramid.security import ALL_PERMISSIONS
+from pyramid.authorization import ALL_PERMISSIONS
 from repoze.workflow.workflow import Workflow
 
 

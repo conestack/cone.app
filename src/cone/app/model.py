@@ -42,12 +42,12 @@ from plumber import default
 from plumber import finalize
 from plumber import override
 from plumber import plumbing
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Allow
+from pyramid.authorization import Deny
+from pyramid.authorization import Everyone
 from pyramid.i18n import negotiate_locale_name
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Allow
-from pyramid.security import Deny
-from pyramid.security import Everyone
 from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer

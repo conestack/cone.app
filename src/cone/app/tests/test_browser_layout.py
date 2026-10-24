@@ -29,10 +29,10 @@ from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from datetime import datetime
 from node.base import BaseNode as NodeBaseNode
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Allow
-from pyramid.security import Deny
-from pyramid.security import Everyone
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Allow
+from pyramid.authorization import Deny
+from pyramid.authorization import Everyone
 from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
@@ -763,24 +763,26 @@ class TestBrowserLayout(TileTestCase):
         tile = LayoutConfigTile()
         tile.model = LayoutConfigNode()
         tile.request = self.layer.new_request()
-        config = tile.config
+        with self.assertWarns(DeprecationWarning):
+            config = tile.config
         self.assertIsInstance(config, LayoutConfig)
 
         # B/C from layout adapter
         request = self.layer.new_request()
         request.registry.registerAdapter(default_layout)
+        try:
+            model = BaseNode()
+            config = request.registry.queryAdapter(model, ILayoutConfig, default=None)
+            self.assertIsInstance(config, LayoutConfig)
 
-        model = BaseNode()
-        config = request.registry.queryAdapter(model, ILayoutConfig, default=None)
-        self.assertIsInstance(config, LayoutConfig)
-
-        tile = LayoutConfigTile()
-        tile.model = model
-        tile.request = request
-        config = tile.config
-        self.assertIsInstance(config, LayoutConfig)
-
-        request.registry.unregisterAdapter(default_layout)
+            tile = LayoutConfigTile()
+            tile.model = model
+            tile.request = request
+            with self.assertWarns(DeprecationWarning):
+                config = tile.config
+            self.assertIsInstance(config, LayoutConfig)
+        finally:
+            request.registry.unregisterAdapter(default_layout)
         config = request.registry.queryAdapter(model, ILayoutConfig, default=None)
         self.assertEqual(config, None)
 

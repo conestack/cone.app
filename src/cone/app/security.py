@@ -8,11 +8,15 @@ from plumber import Behavior
 from plumber import default
 from plumber import override
 from plumber import plumb
+from pyramid.authentication import AuthTktCookieHelper
+from pyramid.authorization import ACLHelper
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Allow
+from pyramid.authorization import Authenticated
+from pyramid.authorization import Deny
+from pyramid.authorization import Everyone
 from pyramid.i18n import TranslationStringFactory
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Allow
-from pyramid.security import Deny
-from pyramid.security import Everyone
+from pyramid.interfaces import ISecurityPolicy
 from pyramid.security import remember
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
@@ -163,6 +167,51 @@ def search_for_principals(term):
     for group in ugm.groups.search(criteria=criteria, or_search=True):
         ret.append('group:%s' % group)
     return ret
+
+
+@implementer(ISecurityPolicy)
+class SecurityPolicy:
+    """Auth ticket cookie authentication and ACL based authorization.
+
+    The principals of an authenticated user are computed by ``callback``,
+    which defaults to ``groups_callback``. If it returns ``None``, the user
+    is treated as not authenticated. Keyword arguments are passed to
+    ``pyramid.authentication.AuthTktCookieHelper``.
+    """
+
+    def __init__(self, secret, callback=None, **kw):
+        self.cookie = AuthTktCookieHelper(secret, **kw)
+        self.callback = callback if callback is not None else groups_callback
+        self.acl = ACLHelper()
+
+    def identity(self, request):
+        identity = self.cookie.identify(request)
+        if identity is None:
+            return None
+        userid = identity['userid']
+        if userid in (Authenticated, Everyone):
+            return None
+        principals = self.callback(userid, request)
+        if principals is None:
+            return None
+        return {'userid': userid, 'principals': principals}
+
+    def authenticated_userid(self, request):
+        identity = self.identity(request)
+        return identity['userid'] if identity else None
+
+    def permits(self, request, context, permission):
+        principals = [Everyone]
+        identity = self.identity(request)
+        if identity:
+            principals += [Authenticated, identity['userid'], *identity['principals']]
+        return self.acl.permits(context, principals, permission)
+
+    def remember(self, request, userid, **kw):
+        return self.cookie.remember(request, userid, **kw)
+
+    def forget(self, request, **kw):
+        return self.cookie.forget(request)
 
 
 ROLES_CACHE_KEY = 'cone.app.user.roles'

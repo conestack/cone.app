@@ -15,10 +15,10 @@ from node.behaviors import MappingNode
 from node.behaviors import OdictStorage
 from node.utils import instance_property
 from plumber import plumbing
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Allow
-from pyramid.security import Deny
-from pyramid.security import Everyone
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Allow
+from pyramid.authorization import Deny
+from pyramid.authorization import Everyone
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
