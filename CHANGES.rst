@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.0a1 (unreleased)
+2.0.0 (unreleased)
 ------------------
 
 - Section card headers share one height and one title size: ``.card-header``
