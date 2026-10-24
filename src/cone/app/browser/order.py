@@ -14,11 +14,8 @@ _ = TranslationStringFactory('cone.app')
 
 
 class MoveAction(Tile):
-
     def move(self):
-        raise NotImplementedError(
-            'Abstract ``MoveAction`` does not implement ``move``'
-        )
+        raise NotImplementedError('Abstract ``MoveAction`` does not implement ``move``')
 
     def continuation(self, url):
         return [AjaxEvent(url, 'contextchanged', '#layout')]
@@ -35,35 +32,33 @@ class MoveAction(Tile):
             message = _(
                 'object_not_movable',
                 default='Object "${title}" not movable',
-                mapping={'title': title}
+                mapping={'title': title},
             )
             self.show_error(message)
-            return u''
-        if (
-            not parent.properties.action_move
-            or not self.request.has_permission('change_order', parent)
+            return ''
+        if not parent.properties.action_move or not self.request.has_permission(
+            'change_order', parent
         ):
             message = _(
                 'object_moving_not_permitted',
-                default='You are not permitted to move this object'
+                default='You are not permitted to move this object',
             )
             self.show_error(message)
-            return u''
+            return ''
         self.move()
         parent()
         query = make_query(
             contenttile='listing',
             b_page=self.request.params.get('b_page'),
-            size=self.request.params.get('size')
+            size=self.request.params.get('size'),
         )
         url = make_url(self.request, node=parent, query=query)
         ajax_continue(self.request, self.continuation(url))
-        return u''
+        return ''
 
 
 @tile(name='move_up', permission='view')
 class MoveUpAction(MoveAction):
-
     def move(self):
         model = self.model
         parent = model.parent
@@ -72,7 +67,6 @@ class MoveUpAction(MoveAction):
 
 @tile(name='move_down', permission='view')
 class MoveDownAction(MoveAction):
-
     def move(self):
         model = self.model
         parent = model.parent

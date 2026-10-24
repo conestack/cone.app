@@ -19,8 +19,8 @@ contains both the integration and plugin code.
     <https://github.com/conestack/cone.app/tree/master/examples>`_.
 
 
-Create Python Package
----------------------
+1. Create Python Package
+------------------------
 
 First thing to do is to create a
 `Python Package <https://python-packaging.readthedocs.io/en/latest/>`_.
@@ -72,8 +72,8 @@ dependency. Add the following to ``pyproject.toml``.
     where = ["src"]
 
 
-Virtual Environment
--------------------
+2. Virtual Environment
+----------------------
 
 Create a virtual environment and install the package:
 
@@ -99,8 +99,8 @@ Alternatively, using ``uv`` (faster):
     uv pip install -e .
 
 
-Application Configuration
--------------------------
+3. Application Configuration
+----------------------------
 
 ``cone.app`` uses `PasteDeploy <http://pastedeploy.readthedocs.io/en/latest/>`_
 for application configuration. PasteDeploy defines a way to declare WSGI
@@ -173,8 +173,8 @@ Details about the available ``cone.app`` dedicated configuration options can be
 found in the :doc:`Application Configuration <configuration>` documentation.
 
 
-ZCML Configuration
-------------------
+4. ZCML Configuration
+---------------------
 
 Plugins may contain a :ref:`ZCML <plugin_zcml>` configuration which
 contains ZCML configuration directives. If desired, add
@@ -188,8 +188,8 @@ contains ZCML configuration directives. If desired, add
     </configure>
 
 
-Static Resources
-----------------
+5. Static Resources
+-------------------
 
 Delivering :ref:`static resources <plugin_static_resources>` is done by
 creating a directory for serving the assets and telling the application
@@ -213,7 +213,7 @@ Register the resources in ``src/cone/example/browser/__init__.py``:
     )
     cone_example_resources.add(wr.ScriptResource(
         name='cone-example-js',
-        depends='cone-app-protected-js',
+        depends='cone-app-js',
         resource='example.js'
     ))
     cone_example_resources.add(wr.StyleResource(
@@ -245,8 +245,8 @@ function to tell the application to deliver the CSS and JS file to the browser.
         configure_resources(config, settings)
 
 
-Application Model
------------------
+6. Application Model
+--------------------
 
 ``cone.app`` uses the traversal mechanism of Pyramid and utilize
 `node <http://pypi.python.org/pypi/node>`_ package for publishing.
@@ -287,8 +287,8 @@ the model.
         register_entry('example', ExamplePlugin)
 
 
-UI Widgets
-----------
+7. UI Widgets
+-------------
 
 ``cone.app`` follows the concept of tiles in it's UI. Each part of the
 application is represented by a tile, i.e. main menu, navigation tree, site
@@ -340,30 +340,48 @@ gets executed.
         config.scan('cone.example.browser')
 
 
-Working with JavaScript
------------------------
+8. Working with JavaScript
+---------------------------
 
 ``cone.app`` utilizes `treibstoff <http://treibstoff.readthedocs.io>`_ for it's
 user interface. The documentation how to properly integrate custom JavaScript
 into Ajax SSR can be found :ref:`here <ajax_custom_javascript>`.
 
 
-Installation
-------------
+9. Run Application
+------------------
 
-To install the application, create and activate the virtual environment:
-
-.. code-block:: sh
-
-    python3 -m venv venv
-    ./venv/bin/pip install -e .
-
-
-Run Application
----------------
+After creating the virtual environment as described in section 2, run the
+application:
 
 .. code-block:: sh
 
     ./venv/bin/pserve example.ini
 
 The application is now available at ``localhost:8081``.
+
+
+Advanced: Using mxmake
+----------------------
+
+For larger projects, consider using `mxmake <https://mxmake.readthedocs.io>`_
+to manage your build process. mxmake generates a Makefile with common
+development tasks.
+
+With mxmake, you get convenient make targets:
+
+- ``make install`` - Create virtual environment and install dependencies
+- ``make test`` - Run tests
+- ``make coverage`` - Run tests with coverage
+- ``make docs`` - Build Sphinx documentation
+- ``make lingua`` - Extract and compile translations
+- ``make clean`` - Clean build artifacts
+
+To set up mxmake for your plugin:
+
+.. code-block:: sh
+
+    pip install mxmake
+    mxmake init
+
+See the ``cone.app`` repository for an example mxmake configuration.

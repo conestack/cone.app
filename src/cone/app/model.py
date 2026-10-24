@@ -1,10 +1,9 @@
 from cone.app import security
 from cone.app.compat import configparser
-from cone.app.compat import IS_PY2
-from cone.app.compat import ITER_TYPES
 from cone.app.interfaces import IAdapterNode
 from cone.app.interfaces import IApplicationEnvironment
 from cone.app.interfaces import IApplicationNode
+from cone.app.interfaces import ICategories
 from cone.app.interfaces import ICopySupport
 from cone.app.interfaces import IFactoryNode
 from cone.app.interfaces import ILayoutConfig
@@ -37,7 +36,6 @@ from node.interfaces import IUUID
 from node.interfaces import IUUIDAware
 from node.utils import instance_property
 from node.utils import safe_decode
-from node.utils import safe_encode
 from odict import odict
 from plumber import Behavior
 from plumber import default
@@ -65,8 +63,8 @@ try:
     from lxml import etree
 except ImportError:  # pragma: no cover
     logger.warning(
-        '``lxml`` not present. '
-        '``cone.app.model.XMLProperties`` will not work')
+        '``lxml`` not present. ``cone.app.model.XMLProperties`` will not work'
+    )
 
 
 _ = TranslationStringFactory('cone.app')
@@ -92,17 +90,30 @@ def get_node_info(name):
 getNodeInfo = get_node_info
 
 
-class node_info(object):
+class node_info:
     """Node info decorator."""
 
-    def __init__(self, name, title=None, description=None,
-                 factory=None, icon=None, addables=[], **kw):
+    def __init__(
+        self,
+        name,
+        title=None,
+        description=None,
+        factory=None,
+        icon=None,
+        addables=None,
+        **kw,
+    ):
         self.name = name
         self.title = title
         self.description = description
         self.factory = factory
         self.icon = icon
-        self.addables = addables
+        # A fresh list per node type, never the default argument itself: that
+        # one object is created at import time and would be handed to every
+        # node type declaring no addables, so appending to one node's addables
+        # would add the entry to all the others. Copying a passed list guards
+        # the same way against two decorators sharing one module level list.
+        self.addables = list(addables) if addables is not None else list()
         self.kw = kw
 
     def __call__(self, cls):
@@ -123,7 +134,6 @@ class node_info(object):
 
 @implementer(IApplicationEnvironment)
 class AppEnvironment(Behavior):
-
     @default
     @property
     def request(self):
@@ -156,11 +166,14 @@ class AppNode(Behavior):
     @default
     @instance_property
     def metadata(self):
-        name = self.name
-        if not name:
-            name = _('no_title', default='No Title')
         metadata = Metadata()
-        metadata.title = name
+        info = get_node_info(self.node_info_name)
+        if info and info.title:
+            metadata.title = info.title
+        elif self.name:
+            metadata.title = self.name
+        else:
+            metadata.title = _('no_title', default='No Title')
         return metadata
 
     @default
@@ -177,7 +190,6 @@ class AppNode(Behavior):
 
 @implementer(ILeafNode)
 class LeafNode(AppNode):
-
     @default
     def __getitem__(self, name):
         raise KeyError(name)
@@ -204,21 +216,21 @@ class LeafNode(AppNode):
     DefaultInit,
     MappingNode,
     Lifecycle,
-    OdictStorage)
-class BaseNode(object):
+    OdictStorage,
+)
+class BaseNode:
     pass
 
 
 @implementer(IFactoryNode)
-@plumbing(
-    VolatileStorageInvalidate,
-    ChildFactory)
+@plumbing(VolatileStorageInvalidate, ChildFactory)
 class FactoryNode(BaseNode):
     pass
 
 
 class AppRoot(FactoryNode):
     """Application root."""
+
     # XXX: we always want AppSettings and AppResources in factories
     #      by default
     factories = odict()
@@ -234,6 +246,7 @@ class AppRoot(FactoryNode):
 
 class AppSettings(FactoryNode):
     """Applications Settings container."""
+
     __acl__ = [
         (Allow, 'system.Authenticated', ['view']),
         (Allow, Everyone, 'login'),
@@ -246,7 +259,7 @@ class AppSettings(FactoryNode):
         props = Properties()
         props.in_navtree = False
         props.skip_mainmenu = True
-        props.icon = 'ion-ios7-gear'
+        props.icon = 'bi-gear'
         return props
 
     @instance_property
@@ -261,8 +274,9 @@ NO_SETTINGS_CATEGORY = '__NO_SETTINGS_CATEGORY__'
 
 @implementer(ISettingsNode)
 @plumbing(LeafNode, NodeInit, Node, AppEnvironment)
-class SettingsNode(object):
+class SettingsNode:
     """Application node for managing plugin specific settings."""
+
     __acl__ = [
         (Allow, 'role:manager', ['view', 'manage']),
         (Allow, Everyone, 'login'),
@@ -286,7 +300,7 @@ class SettingsNode(object):
 
 
 @plumbing(AppNode, NodeInit, Node)
-class AppResources(object):
+class AppResources:
     """Traversal context for static resources."""
 
     @instance_property
@@ -299,14 +313,12 @@ class AppResources(object):
 
 @implementer(IAdapterNode)
 class AdapterNode(BaseNode):
-
     def __init__(self, model, name=None, parent=None):
         BaseNode.__init__(self, name=name, parent=parent)
         self.model = model
 
     def __iter__(self):
-        for key in self.model:
-            yield key
+        yield from self.model
 
     iterkeys = __iter__
 
@@ -317,8 +329,8 @@ class AdapterNode(BaseNode):
 
 @implementer(IUUID)
 class NamespaceUUID(Behavior):
-    """Behavior calculating ``uuid`` by node path and namespace.
-    """
+    """Behavior calculating ``uuid`` by node path and namespace."""
+
     uuid_namespace = default(uuid.UUID('83438507-fdff-45a2-af47-1e001884eab9'))
 
     @property
@@ -326,20 +338,24 @@ class NamespaceUUID(Behavior):
         if self.__name__ is None and self.__parent__ is None:
             return None
         return uuid.uuid5(
-            self.uuid_namespace,
-            '/'.join([_ for _ in self.path if _ is not None])
+            self.uuid_namespace, '/'.join([_ for _ in self.path if _ is not None])
         )
 
     @finalize
     @uuid.setter
     def uuid(self, uuid):
-        msg = 'Ignore attempt to set {}.uuid'.format(self.__class__.__name__)
+        msg = f'Ignore attempt to set {self.__class__.__name__}.uuid'
         raise NotImplementedError(msg)
 
 
+@implementer(ICategories)
+class Categories(Behavior):
+    categories = default([])
+
+
 class UUIDAttributeAware(UUIDAware):
-    """UUIDAware deriving behavior storing the uid on node attributes.
-    """
+    """UUIDAware deriving behavior storing the uid on node attributes."""
+
     uuid_attribute_name = default('uuid')
 
     @property
@@ -354,7 +370,6 @@ class UUIDAttributeAware(UUIDAware):
 
 @implementer(IUUIDAsName)
 class UUIDAsName(UUIDAware):
-
     @property
     def __name__(self):
         return str(self.uuid)
@@ -383,17 +398,17 @@ class UUIDAsName(UUIDAware):
 
 @implementer(ICopySupport)
 class CopySupport(Behavior):
-    """Plumbing behavior for copy support.
-    """
+    """Plumbing behavior for copy support."""
+
     supports_cut = default(True)
     supports_copy = default(True)
     supports_paste = default(True)
 
 
 class LanguageSchema:
-
     def __iter__(self):
         from cone.app import cfg
+
         return iter(cfg.available_languages)
 
     def __contains__(self, key):
@@ -447,7 +462,7 @@ o_setattr = object.__setattr__
 
 
 @implementer(IProperties)
-class Properties(object):
+class Properties:
     # XXX: extend by schema
 
     def __init__(self, data=None):
@@ -479,18 +494,13 @@ class Properties(object):
         return o_getattr(self, '_data').keys()
 
     def __copy__(self):
-        return self.__class__(
-            data=copy.copy(o_getattr(self, '_data'))
-        )
+        return self.__class__(data=copy.copy(o_getattr(self, '_data')))
 
     def __deepcopy__(self, memo):
-        return self.__class__(
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
-        )
+        return self.__class__(data=copy.deepcopy(o_getattr(self, '_data'), memo))
 
 
 class ProtectedProperties(Properties):
-
     def __init__(self, context, permissions, data=None):
         """
         >>> properties = ProtectedProperties(
@@ -518,7 +528,7 @@ class ProtectedProperties(Properties):
 
     def __getitem__(self, key):
         if not self._permits(key):
-            raise KeyError(u"No permission to access '%s'" % key)
+            raise KeyError("No permission to access '%s'" % key)
         return super(ProtectedProperties, self).__getitem__(key)
 
     def get(self, key, default=None):
@@ -547,20 +557,19 @@ class ProtectedProperties(Properties):
         return self.__class__(
             context=copy.copy(o_getattr(self, '_context')),
             permissions=copy.copy(o_getattr(self, '_permissions')),
-            data=copy.copy(o_getattr(self, '_data'))
+            data=copy.copy(o_getattr(self, '_data')),
         )
 
     def __deepcopy__(self, memo):
         return self.__class__(
             context=copy.copy(o_getattr(self, '_context')),
             permissions=copy.deepcopy(o_getattr(self, '_permissions'), memo),
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+            data=copy.deepcopy(o_getattr(self, '_data'), memo),
         )
 
 
 @implementer(ILayoutConfig)
 class LayoutConfig(Properties):
-
     def __init__(self, model=None, request=None):
         super(LayoutConfig, self).__init__(data=None)
         self.model = model
@@ -582,7 +591,6 @@ class NodeInfo(Properties):
 
 
 class XMLProperties(Properties):
-
     def __init__(self, path, data=None):
         o_setattr(self, '_path', path)
         o_setattr(self, '_data', odict())
@@ -600,14 +608,14 @@ class XMLProperties(Properties):
         if name in data:
             del data[name]
         else:
-            raise KeyError(u"property %s does not exist" % name)
+            raise KeyError('property %s does not exist' % name)
 
     def _init(self):
         dth = DatetimeHelper()
         path = o_getattr(self, '_path')
         if not path or not os.path.exists(path):
             return
-        file = open(path, 'r')
+        file = open(path)
         tree = etree.parse(file)
         file.close()
         root = tree.getroot()
@@ -644,7 +652,7 @@ class XMLProperties(Properties):
         data = o_getattr(self, '_data')
         for key, value in data.items():
             sub = etree.SubElement(root, key)
-            if type(value) in ITER_TYPES:
+            if type(value) in (list, tuple):
                 for item in value:
                     item_elem = etree.SubElement(sub, 'item')
                     item_elem.text = dth.w_value(item)
@@ -669,13 +677,13 @@ class XMLProperties(Properties):
     def __copy__(self):
         return self.__class__(
             path=copy.copy(o_getattr(self, '_path')),
-            data=copy.copy(o_getattr(self, '_data'))
+            data=copy.copy(o_getattr(self, '_data')),
         )
 
     def __deepcopy__(self, memo):
         return self.__class__(
             path=copy.deepcopy(o_getattr(self, '_path'), memo),
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+            data=copy.deepcopy(o_getattr(self, '_data'), memo),
         )
 
 
@@ -693,8 +701,7 @@ class ConfigProperties(Properties):
     def __call__(self):
         path = o_getattr(self, '_path')
         config = self.config()
-        mode = 'wb' if IS_PY2 else 'w'
-        with open(path, mode) as configfile:
+        with open(path, 'w') as configfile:
             config.write(configfile)
 
     def __getitem__(self, key):
@@ -728,7 +735,7 @@ class ConfigProperties(Properties):
             return None
 
     def __setattr__(self, name, value):
-        value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
+        value = str(value)
         self.config().set(self.properties_section, name, value)
 
     def __delitem__(self, name):
@@ -736,7 +743,7 @@ class ConfigProperties(Properties):
         try:
             config.get(self.properties_section, name)
         except configparser.NoOptionError:
-            raise KeyError(u"property %s does not exist" % name)
+            raise KeyError('property %s does not exist' % name)
         config.remove_option(self.properties_section, name)
 
     def config(self):
@@ -757,13 +764,13 @@ class ConfigProperties(Properties):
         data = o_getattr(self, '_data')
         config = self.config()
         for key, value in data.items():
-            value = safe_encode(value, encoding=self.encoding) if IS_PY2 else str(value)
+            value = str(value)
             config.set(self.properties_section, key, value)
 
     def __copy__(self):
         cpy = self.__class__(
             path=copy.copy(o_getattr(self, '_path')),
-            data=copy.copy(o_getattr(self, '_data'))
+            data=copy.copy(o_getattr(self, '_data')),
         )
         cfg = copy.copy(o_getattr(self, '_config'))
         o_setattr(cpy, '_config', cfg)
@@ -772,7 +779,7 @@ class ConfigProperties(Properties):
     def __deepcopy__(self, memo):
         cpy = self.__class__(
             path=copy.deepcopy(o_getattr(self, '_path'), memo),
-            data=copy.deepcopy(o_getattr(self, '_data'), memo)
+            data=copy.deepcopy(o_getattr(self, '_data'), memo),
         )
         cfg = copy.copy(o_getattr(self, '_config'))
         o_setattr(cpy, '_config', cfg)

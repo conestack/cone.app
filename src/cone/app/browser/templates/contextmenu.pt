@@ -2,20 +2,22 @@
            xmlns:ajax="http://namespaces.conestack.org/ajax"
            omit-tag="True">
 
-  <div id="contextmenu"
+  <nav id="contextmenu"
        role="contextmenu"
-       class="navbar navbar-default"
+       class="navbar mt-2 p-0 contextsensitiv navbar-expand rounded shadow-sm card"
        ajax:bind="contextactionschanged"
-       ajax:action="contextmenu:#contextmenu:replace">
+       ajax:action="contextmenu:#contextmenu:replace"
+       tal:define="toolbars context.rendered_toolbars"
+       tal:condition="toolbars">
 
-    <div class="container-fluid">
-
-      <tal:toolbars repeat="toolbar context.toolbars">
-        <tal:toolbar replace="structure toolbar(model, request)" />
-      </tal:toolbars>
-
+    <div class="container-fluid p-0">
+      <ul class="navbar-nav flex-wrap flex-column flex-sm-row">
+        <tal:toolbars repeat="toolbar toolbars">
+          <tal:toolbar replace="structure toolbar" />
+        </tal:toolbars>
+      </ul>
     </div>
 
-  </div>
+  </nav>
 
 </tal:block>

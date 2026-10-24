@@ -1,0 +1,30 @@
+// login view
+#form-loginform {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* Grow instead of ``height: 100%``: ``#content`` only has a
+       ``min-height`` (it must be able to outgrow the scroller), so a
+       percentage height resolves to ``auto`` and the form would shrink to
+       its fields at the top of the page. */
+    flex-grow: 1;
+
+    #field-loginform-user, #field-loginform-password {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        margin-bottom: 0.5rem;
+        gap: 1rem;
+
+        @media(max-width: 400px) {
+            grid-template-columns: auto;
+            gap: 0;
+        }
+    }
+
+    #input-loginform-login {
+        margin-top: 1.5rem;
+        width: 200px;
+    }
+}

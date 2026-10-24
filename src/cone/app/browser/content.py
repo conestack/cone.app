@@ -19,10 +19,9 @@ class content_view_tile(tile):
         def content_view(model, request):
             return render_main_template(model, request, contenttile=self.name)
 
-        view_name = '{}_content_view'.format(self.name)
+        view_name = f'{self.name}_content_view'
         content_view.__doc__ = (
-            'Dynamically created by '
-            'cone.app.browser.content.content_view_tile'
+            'Dynamically created by cone.app.browser.content.content_view_tile'
         )
         content_view.__name__ = view_name
         content_view.__qualname__ = view_name
@@ -36,15 +35,11 @@ class content_view_tile(tile):
                 view=ob_,
                 name=self_.name,
                 context=self_.interface,
-                permission=self_.permission
+                permission=self_.permission,
             )
+
         self_ = self
-        info = self.venusian.attach(
-            content_view,
-            callback,
-            category='pyramid',
-            depth=2
-        )
+        info = self.venusian.attach(content_view, callback, category='pyramid', depth=2)
 
     def __call__(self, ob):
         self.create_content_view(ob)
@@ -57,8 +52,9 @@ class content_view_tile(tile):
                 interface=self_.interface,
                 class_=ob_,
                 permission=self_.permission,
-                strict=self_.strict
+                strict=self_.strict,
             )
+
         self_ = self
         self.venusian.attach(ob, callback, category='pyramid', depth=1)
         return ob
@@ -70,13 +66,15 @@ class ContentViewAction(LinkAction):
     Gets created by ``content_view_action`` decorator.
     """
 
-    def __init__(self, name, interface=None,
-                 permission=None, text=None, icon=None):
+    def __init__(
+        self, name, interface=None, permission=None, text=None, icon=None, css=None
+    ):
         self.name = name
         self.interface = interface
         self.permission = permission
         self.text = text
         self.icon = icon
+        self.css = css
 
     @property
     def display(self):
@@ -98,19 +96,28 @@ class ContentViewAction(LinkAction):
         return make_url(self.request, node=self.model, resource=self.name)
 
 
-class content_view_action(object):
+class content_view_action:
     """Decorator providing a shortcut for creating a view action and
     registering in the contentviews group of the contextmenu.
     """
 
-    def __init__(self, name, tilename=None, interface=None,
-                 permission=None, text=None, icon=None):
+    def __init__(
+        self,
+        name,
+        tilename=None,
+        interface=None,
+        permission=None,
+        text=None,
+        icon=None,
+        css=None,
+    ):
         self.name = name
         self.tilename = tilename if tilename is not None else name
         self.interface = interface
         self.permission = permission
         self.text = text
         self.icon = icon
+        self.css = css
 
     def __call__(self, ob):
         context_menu['contentviews'][self.name] = ContentViewAction(
@@ -118,6 +125,7 @@ class content_view_action(object):
             interface=self.interface,
             permission=self.permission,
             text=self.text,
-            icon=self.icon
+            icon=self.icon,
+            css=self.css,
         )
         return ob

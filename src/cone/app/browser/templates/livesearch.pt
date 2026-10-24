@@ -3,24 +3,21 @@
             i18n:domain="cone.app"
             omit-tag="True">
 
-  <ul class="nav navbar-nav navbar-right">
+  <ul id="livesearch" class="list-unstyled mb-0 ps-5">
     <li id="search">
 
-      <form class="form-inline" role="search">
-        <div class="form-group">
-          <div class="input-group input-group-sm">
-            <div class="input-group-addon">
-              <span class="glyphicon glyphicon-search"></span>
-            </div>
-            <input type="text"
-                   class="form-control"
-                   id="search-text"
-                   placeholder="search database ..."
-                   name="term"
-                   i18n:attributes="placeholder search_database" />
-          </div>
-        </div>
-      </form>
+    <div class="input-group">
+      <span class="input-group-text" style="position: absolute; transform: translateX(-100%);">
+        <i class="bi-search"></i>
+      </span>
+      <input type="text"
+             class="form-control"
+             id="search-text"
+             placeholder="search database ..."
+             name="term"
+             data-search-target="${context.nodeurl}"
+             i18n:attributes="placeholder search_database" />
+    </div>
 
     </li>
   </ul>

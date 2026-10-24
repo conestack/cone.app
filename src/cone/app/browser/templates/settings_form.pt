@@ -1,9 +1,11 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:ajax="http://namespaces.conestack.org/ajax"
            omit-tag="True">
-  <div class="settings-form">
 
-    <h1 tal:content="context.form_heading">Title</h1>
+  <tal:contextmenu condition="context.show_contextmenu"
+                   replace="structure tile('contextmenu')" />
+
+  <div class="settings-form mt-3">
 
     <tal:form replace="structure context.rendered_form" />
 

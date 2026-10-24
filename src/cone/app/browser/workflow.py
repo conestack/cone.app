@@ -13,10 +13,12 @@ import logging
 logger = logging.getLogger('cone.app')
 
 
-@tile(name='wf_dropdown',
-      path='templates/wf_dropdown.pt',
-      permission='change_state',
-      strict=False)
+@tile(
+    name='wf_dropdown',
+    path='templates/wf_dropdown.pt',
+    permission='change_state',
+    strict=False,
+)
 class WfDropdown(Tile):
     """Transition dropdown.
 
@@ -57,9 +59,10 @@ class WfDropdown(Tile):
         try:
             workflow = self.workflow
             transitions = workflow.get_transitions(
-                self.model, self.request, from_state=self.model.state)
+                self.model, self.request, from_state=self.model.state
+            )
         except (WorkflowError, AttributeError) as e:
-            logger.error("transitions error: %s" % str(e))
+            logger.error('transitions error: %s' % str(e))
             return ret
         workflow_tsf = self.model.workflow_tsf
         for transition in transitions:

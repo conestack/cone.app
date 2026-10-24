@@ -198,6 +198,7 @@ a single or a list of continuation operation instances.
     from cone.app.browser.ajax import ajax_continue
     from cone.tile import Tile
     from cone.tile import tile
+    from cone.app.browser.utils import make_url
 
     @tile(name='exampleaction', permission='view')
     class ExampleAction(Tile):
@@ -215,7 +216,7 @@ a single or a list of continuation operation instances.
             )
 
             # queue continuation operations
-            ajax_continue(request, [overlay, event])
+            ajax_continue(self.request, [overlay, event])
             return u''
 
 A shortcut for continuation message operations is located at

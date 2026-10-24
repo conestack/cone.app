@@ -1,0 +1,15 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           omit-tag="True">
+
+  <div id="colortoggler"
+       class="nav-item dropdown d-flex align-items-center h-100 my-1 my-sm-0 form-check form-switch">
+
+    <i class="bi-sun-fill me-2"></i>
+    <div class="form-check form-switch m-0 d-inline-block">
+      <input class="form-check-input" type="checkbox" id="colortoggle-switch">
+    </div>
+    <i class="bi-moon-fill"></i>
+
+  </div>
+
+</tal:block>

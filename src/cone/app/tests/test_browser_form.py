@@ -24,18 +24,18 @@ class TestBrowserForm(TileTestCase):
 
     def test_FormTarget(self):
         @plumbing(FormTarget)
-        class TestForm(object):
+        class TestForm:
             pass
 
         form = TestForm()
-        self.assertEqual(form.action_resource, u'')
+        self.assertEqual(form.action_resource, '')
 
     def test_AddFormTarget(self):
         parent = BaseNode(name='parent')
         model = parent['model'] = BaseNode()
 
         @plumbing(AddFormTarget)
-        class TestAddForm(object):
+        class TestAddForm:
             action_resource = 'add'
 
             def __init__(self, model, request):
@@ -43,13 +43,13 @@ class TestBrowserForm(TileTestCase):
                 self.request = request
 
         form = TestAddForm(model, self.layer.new_request())
-        self.assertEqual(form.form_action, u'http://example.com/parent/add')
+        self.assertEqual(form.form_action, 'http://example.com/parent/add')
 
     def test_EditFormTarget(self):
         model = BaseNode(name='model')
 
         @plumbing(EditFormTarget)
-        class TestEditForm(object):
+        class TestEditForm:
             action_resource = 'edit'
 
             def __init__(self, model, request):
@@ -57,14 +57,14 @@ class TestBrowserForm(TileTestCase):
                 self.request = request
 
         form = TestEditForm(model, self.layer.new_request())
-        self.assertEqual(form.form_action, u'http://example.com/model/edit')
+        self.assertEqual(form.form_action, 'http://example.com/model/edit')
 
     def test_YAMLAddFormTarget(self):
         parent = BaseNode(name='parent')
         model = parent['model'] = BaseNode()
 
         @plumbing(YAMLAddFormTarget)
-        class TestYAMLAddForm(object):
+        class TestYAMLAddForm:
             action_resource = 'add'
 
             def __init__(self, model, request):
@@ -75,15 +75,14 @@ class TestBrowserForm(TileTestCase):
         data = object()
         form = TestYAMLAddForm(model, self.layer.new_request())
         self.assertEqual(
-            form.form_action(widget, data),
-            u'http://example.com/parent/add'
+            form.form_action(widget, data), 'http://example.com/parent/add'
         )
 
     def test_YAMLEditFormTarget(self):
         model = BaseNode(name='model')
 
         @plumbing(YAMLEditFormTarget)
-        class TestYAMLEditForm(object):
+        class TestYAMLEditForm:
             action_resource = 'edit'
 
             def __init__(self, model, request):
@@ -94,8 +93,7 @@ class TestBrowserForm(TileTestCase):
         data = object()
         form = TestYAMLEditForm(model, self.layer.new_request())
         self.assertEqual(
-            form.form_action(widget, data),
-            u'http://example.com/model/edit'
+            form.form_action(widget, data), 'http://example.com/model/edit'
         )
 
     def test_Form(self):
@@ -104,12 +102,13 @@ class TestBrowserForm(TileTestCase):
             formtile.prepare()
         self.assertEqual(
             str(arc.exception),
-            '``prepare`` function must be provided by deriving object.'
+            '``prepare`` function must be provided by deriving object.',
         )
 
         subscriptions = []
 
         with self.layer.hook_tile_reg():
+
             @tile(name='subscriptionform')
             class SubscriptionForm(Form):
                 ajax = False
@@ -120,19 +119,21 @@ class TestBrowserForm(TileTestCase):
 
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='subscriptionform',
                         props={
                             'action': self.nodeurl,
                             'class': 'foo',
-                            'class_add': 'bar'
-                        })
+                            'class_add': 'bar',
+                        },
+                    )
                     form['email'] = factory(
                         'field:label:error:text',
                         props={
                             'required': 'No email given',
                             'label': 'E-Mail',
-                        })
+                        },
+                    )
                     form['subscribe'] = factory(
                         'submit',
                         props={
@@ -141,7 +142,8 @@ class TestBrowserForm(TileTestCase):
                             'handler': self.subscribe,
                             'next': self.next,
                             'label': 'Subscribe',
-                        })
+                        },
+                    )
                     self.form = form
 
                 def subscribe(self, widget, data):
@@ -169,7 +171,7 @@ class TestBrowserForm(TileTestCase):
         # Render form. ``form.show`` returns false, render empty string
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'subscriptionform')
-            self.assertEqual(rendered, u'')
+            self.assertEqual(rendered, '')
 
         # Set show to True
         SubscriptionForm.show = True
@@ -290,10 +292,9 @@ class TestBrowserForm(TileTestCase):
         self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
         subscriptions = []
 
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxAction
-        ))
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][0], AjaxAction)
+        )
 
         # Ajax continuation may be returned as list
         SubscriptionForm.continuation_as_list = True
@@ -309,13 +310,13 @@ class TestBrowserForm(TileTestCase):
         self.assertEqual(subscriptions, ['subscribe on "dummymodel"'])
         subscriptions = []
 
-        self.assertTrue(isinstance(
-            request.environ['cone.app.continuation'][0],
-            AjaxAction
-        ))
+        self.assertTrue(
+            isinstance(request.environ['cone.app.continuation'][0], AjaxAction)
+        )
 
     def test_YAMLForm(self):
         with self.layer.hook_tile_reg():
+
             @tile(name='yamlsubscriptionform')
             @plumbing(YAMLForm)
             class YAMLSubscriptionForm(Form):
@@ -329,14 +330,13 @@ class TestBrowserForm(TileTestCase):
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'yamlsubscriptionform')
 
-        expected = (
-            'action="http://example.com/dummymodel/yamlsubscriptionform"'
-        )
+        expected = 'action="http://example.com/dummymodel/yamlsubscriptionform"'
         self.assertTrue(rendered.find(expected) > -1)
 
         # Instead of ``form_template`` attribute, ``form_template_path`` can be
         # used for backward compatibility
         with self.layer.hook_tile_reg():
+
             @tile(name='yamlsubscriptionform2')
             class YAMLSubscriptionForm2(YAMLSubscriptionForm):
                 action_resource = 'yamlsubscriptionform2'
@@ -346,9 +346,7 @@ class TestBrowserForm(TileTestCase):
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'yamlsubscriptionform2')
 
-        expected = (
-            'action="http://example.com/dummymodel/yamlsubscriptionform2"'
-        )
+        expected = 'action="http://example.com/dummymodel/yamlsubscriptionform2"'
         self.assertTrue(rendered.find(expected) > -1)
 
         # form flavor add renders form action URL on parent
@@ -358,32 +356,30 @@ class TestBrowserForm(TileTestCase):
         YAMLSubscriptionForm.form_flavor = 'add'
         with self.layer.authenticated('max'):
             rendered = render_tile(model, request, 'yamlsubscriptionform')
-        expected = (
-            'action="http://example.com/root/yamlsubscriptionform"'
-        )
+        expected = 'action="http://example.com/root/yamlsubscriptionform"'
         self.assertTrue(rendered.find(expected) > -1)
 
     def test_ProtectedAttributesForm(self):
         # ProtectedAttributesForm plumbing behavior
         with self.layer.hook_tile_reg():
+
             @tile(name='protectedattributesform')
             @plumbing(ProtectedAttributesForm)
             class MyProtectedAttributesForm(Form):
-                attribute_permissions = {
-                    'protectedfield': ('manage', 'edit')
-                }
+                attribute_permissions = {'protectedfield': ('manage', 'edit')}
 
                 def prepare(self):
                     form = factory(
-                        u'form',
+                        'form',
                         name='protectedattributesform',
                         props={
                             'action': self.nodeurl,
-                        })
+                        },
+                    )
                     form['protectedfield'] = factory(
-                        u'field:label:text',
-                        value=u'Protectedfield',
-                        mode=self.mode_for('protectedfield')
+                        'field:label:text',
+                        value='Protectedfield',
+                        mode=self.mode_for('protectedfield'),
                     )
                     self.form = form
 
@@ -396,7 +392,8 @@ class TestBrowserForm(TileTestCase):
             self.assertTrue(isinstance(rule, ACLDenied))
             rendered = render_tile(model, request, 'protectedattributesform')
 
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <form
         action="http://example.com/dummymodel"
         class="ajax"
@@ -404,35 +401,42 @@ class TestBrowserForm(TileTestCase):
         id="form-protectedattributesform"
         method="post"
         novalidate="novalidate"></form>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         with self.layer.authenticated('editor'):
             rule = request.has_permission('edit', model)
             self.assertTrue(isinstance(rule, ACLAllowed))
             rendered = render_tile(model, request, 'protectedattributesform')
 
-        self.checkOutput("""
-        <form ...<div class="display-text"
+        self.checkOutput(
+            """
+        <form ...<div class="form-control disabled text-muted display-form-control"
         id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         with self.layer.authenticated('manager'):
             rule = request.has_permission('manage', model)
             self.assertTrue(isinstance(rule, ACLAllowed))
             rendered = render_tile(model, request, 'protectedattributesform')
 
-        self.checkOutput("""
-        <form ...<input class="text"
+        self.checkOutput(
+            """
+        <form ...<input class="form-control"
         id="input-protectedattributesform-protectedfield"
         name="protectedattributesform.protectedfield"
         type="text" value="Protectedfield" /></div></form>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         # Test default attribute permissions
         MyProtectedAttributesForm.attribute_permissions = dict()
         self.assertEqual(
-            MyProtectedAttributesForm.attribute_default_permissions,
-            ('edit', 'view')
+            MyProtectedAttributesForm.attribute_default_permissions, ('edit', 'view')
         )
 
         with self.layer.authenticated('viewer'):
@@ -440,19 +444,25 @@ class TestBrowserForm(TileTestCase):
             self.assertTrue(isinstance(rule, ACLAllowed))
             rendered = render_tile(model, request, 'protectedattributesform')
 
-        self.checkOutput("""
-        <form ...<div class="display-text"
+        self.checkOutput(
+            """
+        <form ...<div class="form-control disabled text-muted display-form-control"
         id="display-protectedattributesform-protectedfield">Protectedfield</div></div></form>
-        """, rendered)
+        """,
+            rendered,
+        )
 
         with self.layer.authenticated('editor'):
             rule = request.has_permission('edit', model)
             self.assertTrue(isinstance(rule, ACLAllowed))
             rendered = render_tile(model, request, 'protectedattributesform')
 
-        self.checkOutput("""
-        <form ...<input class="text"
+        self.checkOutput(
+            """
+        <form ...<input class="form-control"
         id="input-protectedattributesform-protectedfield"
         name="protectedattributesform.protectedfield"
         type="text" value="Protectedfield" /></div></form>
-        """, rendered)
+        """,
+            rendered,
+        )

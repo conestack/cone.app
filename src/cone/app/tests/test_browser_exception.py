@@ -1,3 +1,4 @@
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser.exception import internal_server_error
 from cone.app.model import BaseNode
@@ -20,9 +21,10 @@ class TestBrowserException(TileTestCase):
         request = self.layer.new_request()
         try:
             raise Exception()
-        except:
+        except Exception:
             res = str(internal_server_error(request))
-        self.checkOutput("""
+        self.checkOutput(
+            """
         200 OK
         Content-Type: text/html; charset=UTF-8
         Content-Length: ...
@@ -34,12 +36,14 @@ class TestBrowserException(TileTestCase):
         <pre>Traceback (most recent call last):
           ...
         </pre>
-        """, res)
+        """,
+            res,
+        )
 
         request = self.layer.new_request(xhr=1)
         try:
             raise Exception()
-        except:
+        except Exception:
             res = str(internal_server_error(request))
         self.assertTrue(res.find('200 OK') > -1)
         self.assertTrue(res.find('Content-Type: application/json') > -1)
@@ -56,10 +60,11 @@ class TestBrowserException(TileTestCase):
             request = self.layer.new_request()
             try:
                 raise Exception()
-            except:
+            except Exception:
                 res = str(internal_server_error(request))
 
-            self.checkOutput("""
+            self.checkOutput(
+                """
             200 OK
             Content-Type: text/html; charset=UTF-8
             Content-Length: ...
@@ -71,12 +76,14 @@ class TestBrowserException(TileTestCase):
             <pre>Traceback (most recent call last):
               ...
             </pre>
-            """, res)
+            """,
+                res,
+            )
 
             request = self.layer.new_request(xhr=1)
             try:
                 raise Exception()
-            except:
+            except Exception:
                 res = str(internal_server_error(request))
 
         self.assertTrue(res.find('200 OK') > -1)
@@ -92,61 +99,67 @@ class TestBrowserException(TileTestCase):
 
     def test_forbidden(self):
         # Forbidden tile
-        root = BaseNode()
-        model = root['model'] = BaseNode()
+        root = get_root()
+        model = root['model'] = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
-        self.checkOutput("""
-        \n\n  <div>\n    <h1>Unauthorized</h1>\n
-        <p>You are not allowed to access this resource.</p>\n  </div>\n\n\n
-        """, render_tile(model, request, 'unauthorized'))
+        self.checkOutput(
+            """
+        ...<div class="card mt-3">...<h5 class="card-header">Unauthorized</h5>...
+        ...<p class="card-text">You are not allowed to access this resource.</p>...
+        """,
+            render_tile(model, request, 'unauthorized'),
+        )
 
         # Forbidden view. Unauthenticated renders login form.
         context = HTTPForbidden()
         request = self.layer.new_request()
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request).text
         self.assertTrue(res.find('id="input-loginform-login"') > -1)
 
         # Authenticated renders unauthorized as content tile.
         with self.layer.authenticated('admin'):
             res = render_view_to_response(context, request=request).text
-            self.assertTrue(res.find('<h1>Unauthorized</h1>') > -1)
+            self.assertTrue(res.find('<h5 class="card-header">Unauthorized</h5>') > -1)
 
     def test_json_forbidden(self):
         context = HTTPForbidden()
         request = self.layer.new_request(type='json')
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request)
         self.assertEqual(res.text, '{}')
         self.assertEqual(res.status, '403 Forbidden')
 
     def test_not_found(self):
         # Not Found tile
-        root = BaseNode()
-        model = root['model'] = BaseNode()
+        root = get_root()
+        model = root['model'] = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
-        self.checkOutput("""
-        \n\n  <div>\n    <h1>Not Found</h1>\n
-        <p>The requested resource cannot be found.</p>\n  </div>\n\n\n
-        """, render_tile(model, request, 'not_found'))
+        self.checkOutput(
+            """
+        ...<div class="card mt-3">...<h5 class="card-header">Not Found</h5>...
+        ...<p class="card-text">The requested resource cannot be found.</p>...
+        """,
+            render_tile(model, request, 'not_found'),
+        )
 
         # Not Found view. Always renders not found as content tile.
         context = HTTPNotFound()
         request = self.layer.new_request()
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request).text
-        self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
+        self.assertTrue(res.find('<h5 class="card-header">Not Found</h5>') > -1)
 
         with self.layer.authenticated('admin'):
             res = render_view_to_response(context, request=request).text
-            self.assertTrue(res.find('<h1>Not Found</h1>') > -1)
+            self.assertTrue(res.find('<h5 class="card-header">Not Found</h5>') > -1)
 
     def test_json_not_found(self):
         context = HTTPNotFound()
         request = self.layer.new_request(type='json')
-        request.context = BaseNode()
+        request.context = BaseNode(parent=get_root())
         res = render_view_to_response(context, request=request)
         self.assertEqual(res.text, '{}')
         self.assertEqual(res.status, '404 Not Found')

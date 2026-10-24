@@ -15,6 +15,7 @@
 #: js.scss
 #: js.wtr
 #: qa.coverage
+#: qa.ruff
 #: qa.test
 #
 # SETTINGS (ALL CHANGES MADE BELOW SETTINGS WILL BE LOST)
@@ -32,7 +33,7 @@ RUN_TARGET?=
 
 # Additional files and folders to remove when running clean target
 # No default value.
-CLEAN_FS?=
+CLEAN_FS?=pnpm-lock.yaml
 
 # Optional makefile to include before default targets. This can
 # be used to provide custom targets or hook up to existing targets.
@@ -45,6 +46,12 @@ INCLUDE_MAKEFILE?=include.mk
 # No default value.
 EXTRA_PATH?=
 
+## js.nodejs
+
+# The package manager to use. Defaults to `npm`. Possible values
+# are `npm` and `pnpm`
+# Default: npm
+NODEJS_PACKAGE_MANAGER?=pnpm
 # Path to Python project relative to Makefile (repository root).
 # Leave empty if Python project is in the same directory as Makefile.
 # For monorepo setups, set to subdirectory name (e.g., `backend`).
@@ -173,6 +180,12 @@ MXDEV?=mxdev
 # mxmake to install in virtual environment.
 # Default: mxmake
 MXMAKE?=mxmake
+
+## qa.ruff
+
+# Source folder to scan for Python files to run ruff on.
+# Default: src
+RUFF_SRC?=src
 
 ## docs.sphinx
 
@@ -383,7 +396,7 @@ rollup: $(NODEJS_TARGET)
 # mxenv
 ##############################################################################
 
-OS?=
+export OS:=$(OS)
 
 # Determine the executable path
 ifeq ("$(VENV_ENABLED)", "true")
@@ -497,6 +510,41 @@ endif
 INSTALL_TARGETS+=mxenv
 DIRTY_TARGETS+=mxenv-dirty
 CLEAN_TARGETS+=mxenv-clean
+
+##############################################################################
+# ruff
+##############################################################################
+
+RUFF_TARGET:=$(SENTINEL_FOLDER)/ruff.sentinel
+$(RUFF_TARGET): $(MXENV_TARGET)
+	@echo "Install Ruff"
+	@$(PYTHON_PACKAGE_COMMAND) install ruff
+	@touch $(RUFF_TARGET)
+
+.PHONY: ruff-check
+ruff-check: $(RUFF_TARGET)
+	@echo "Run ruff check"
+	@ruff check $(RUFF_SRC)
+
+.PHONY: ruff-format
+ruff-format: $(RUFF_TARGET)
+	@echo "Run ruff format"
+	@ruff format $(RUFF_SRC)
+
+.PHONY: ruff-dirty
+ruff-dirty:
+	@rm -f $(RUFF_TARGET)
+
+.PHONY: ruff-clean
+ruff-clean: ruff-dirty
+	@test -e $(MXENV_PYTHON) && $(MXENV_PYTHON) -m pip uninstall -y ruff || :
+	@rm -rf .ruff_cache
+
+INSTALL_TARGETS+=$(RUFF_TARGET)
+CHECK_TARGETS+=ruff-check
+FORMAT_TARGETS+=ruff-format
+DIRTY_TARGETS+=ruff-dirty
+CLEAN_TARGETS+=ruff-clean
 
 ##############################################################################
 # sphinx

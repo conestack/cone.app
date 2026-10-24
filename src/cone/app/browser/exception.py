@@ -26,8 +26,7 @@ ERROR_PAGE = """
 
 @view_config(context=Exception)
 def internal_server_error(request):
-    """Internal server error view.
-    """
+    """Internal server error view."""
     tb = format_traceback()
     if not request.is_xhr:
         # XXX: request.response.status = 500
@@ -39,6 +38,7 @@ def internal_server_error(request):
         AjaxContinue,
         AjaxMessage,
     )
+
     continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
     ret = {
         'mode': 'NONE',
@@ -55,26 +55,22 @@ def internal_server_error(request):
 # Unauthorized
 ###############################################################################
 
+
 @tile(name='unauthorized', path='templates/unauthorized.pt', permission='login')
 class UnauthorizedTile(Tile):
-    """Unauthorized tile.
-    """
+    """Unauthorized tile."""
 
 
 @view_config(context=HTTPForbidden, accept='text/html')
 def forbidden_view(request):
-    """Unauthorized view.
-    """
+    """Unauthorized view."""
     model = request.context
     if not request.authenticated_userid:
         return login_view(model, request)
     return render_main_template(model, request, contenttile='unauthorized')
 
 
-@view_config(
-    context=HTTPForbidden,
-    accept='application/json',
-    renderer='json')
+@view_config(context=HTTPForbidden, accept='application/json', renderer='json')
 def json_forbidden_view(request):
     request.response.status = 403
     return {}
@@ -84,24 +80,20 @@ def json_forbidden_view(request):
 # Not Found
 ###############################################################################
 
+
 @tile(name='not_found', path='templates/not_found.pt', permission='login')
 class NotFoundTile(Tile):
-    """Not Found tile.
-    """
+    """Not Found tile."""
 
 
 @view_config(context=HTTPNotFound, accept='text/html')
 def not_found_view(request):
-    """Not Found view.
-    """
+    """Not Found view."""
     model = request.context
     return render_main_template(model, request, contenttile='not_found')
 
 
-@view_config(
-    context=HTTPNotFound,
-    accept='application/json',
-    renderer='json')
+@view_config(context=HTTPNotFound, accept='application/json', renderer='json')
 def json_not_found_view(request):
     request.response.status = 404
     return {}

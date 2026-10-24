@@ -1,0 +1,86 @@
+#
+# SOME DESCRIPTIVE TITLE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE 1.0\n"
+"POT-Creation-Date: 2024-06-02 08:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Lingua 4.15.0\n"
+
+#. Default: Folder
+#: examples/cone.example/src/cone/example/model.py:118
+#: examples/cone.example/src/cone/example/model.py:136
+msgid "folder"
+msgstr "Ordner"
+
+#. Default: Item
+#: examples/cone.example/src/cone/example/model.py:150
+msgid "item"
+msgstr "Object"
+
+#: examples/cone.example/src/cone/example/publication.zcml:16
+msgid "private"
+msgstr "Privat"
+
+#: examples/cone.example/src/cone/example/publication.zcml:21
+msgid "Object is private"
+msgstr "Object ist privat"
+
+#: examples/cone.example/src/cone/example/publication.zcml:25
+msgid "public"
+msgstr "Öffentlich"
+
+#: examples/cone.example/src/cone/example/publication.zcml:30
+msgid "Object is public"
+msgstr "Objekt ist öffentlich"
+
+#: examples/cone.example/src/cone/example/publication.zcml:35
+msgid "private_to_public"
+msgstr "veröffentlichen"
+
+#: examples/cone.example/src/cone/example/publication.zcml:45
+msgid "public_to_private"
+msgstr "zurückziehen"
+
+#. Default: Title
+#: examples/cone.example/src/cone/example/browser/__init__.py:76
+msgid "title"
+msgstr "Titel"
+
+#. Default: Enter a title
+#: examples/cone.example/src/cone/example/browser/__init__.py:77
+msgid "title_description"
+msgstr "Geben Sie einen Titel ein"
+
+#. Default: Title is mandatory
+#: examples/cone.example/src/cone/example/browser/__init__.py:78
+msgid "title_required"
+msgstr "Titel ist erforderlich"
+
+#. Default: Description
+#: examples/cone.example/src/cone/example/browser/__init__.py:85
+msgid "description"
+msgstr "Beschreibung"
+
+#. Default: Enter a description
+#: examples/cone.example/src/cone/example/browser/__init__.py:86
+msgid "description_description"
+msgstr "Geben Sie eine Beschreibung ein"
+
+#. Default: Save
+#: examples/cone.example/src/cone/example/browser/__init__.py:99
+msgid "save"
+msgstr "Speichern"
+
+#. Default: Cancel
+#: examples/cone.example/src/cone/example/browser/__init__.py:108
+msgid "cancel"
+msgstr "Abbrechen"

@@ -19,26 +19,21 @@ logger = logging.getLogger('cone.app')
 _ = TranslationStringFactory('cone.app')
 
 
-@tile(name='sharing',
-      path='templates/sharing.pt',
-      permission='manage_permissions')
+@tile(name='sharing', path='templates/sharing.pt', permission='manage_permissions')
 @plumbing(RelatedViewProvider)
 class SharingTile(Tile):
-    """Tile rendering the sharing table.
-    """
+    """Tile rendering the sharing table."""
+
     related_view = 'sharing'
 
 
 @view_config(name='sharing', permission='manage_permissions')
 def sharing(model, request):
-    """Sharing view.
-    """
+    """Sharing view."""
     return render_main_template(model, request, 'sharing')
 
 
-@tile(name='local_acl',
-      path='templates/table.pt',
-      permission='manage_permissions')
+@tile(name='local_acl', path='templates/table.pt', permission='manage_permissions')
 class SharingTable(Table):
     table_id = 'localacltable'
     table_tile_name = 'local_acl'
@@ -48,53 +43,79 @@ class SharingTable(Table):
 
     @property
     def col_defs(self):
-        col_defs = [{
-            'id': 'principal',
-            'title': _('principal', default='Principal'),
-            'sort_key': 'principal',
-            'sort_title': _('sort_by_principal',
-                            default='Sort by principal'),
-            'content': 'string'
-        }]
+        col_defs = [
+            {
+                'id': 'principal',
+                'title': _('principal', default='Principal'),
+                'sort_key': 'principal',
+                'sort_title': _('sort_by_principal', default='Sort by principal'),
+                'content': 'string',
+            }
+        ]
         for role in security.DEFAULT_ROLES:
-            col_defs.append({
-                'id': role[0],
-                'title': role[1],
-                'sort_key': None,
-                'sort_title': None,
-                'content': 'structure',
-            })
+            col_defs.append(
+                {
+                    'id': role[0],
+                    'title': role[1],
+                    'sort_key': None,
+                    'sort_title': None,
+                    'content': 'structure',
+                }
+            )
         return col_defs
 
     @property
     def table_title(self):
         localizer = get_localizer(self.request)
         title = localizer.translate(self.model.metadata.title)
-        return _('sharing_table_title',
-                 default='Sharing: ${title}',
-                 mapping={'title': title})
+        return _(
+            'sharing_table_title', default='Sharing: ${title}', mapping={'title': title}
+        )
+
+    @property
+    def empty_state_message(self):
+        if self.filter_term:
+            return None
+        localizer = get_localizer(self.request)
+        main = localizer.translate(
+            _('sharing_empty_state', default=('No local access permissions assigned.'))
+        )
+        note = localizer.translate(
+            _(
+                'sharing_empty_state_hint',
+                default=('Use the search field above to find and add users.'),
+            )
+        )
+        return f'<p class="mb-1">{main}</p><p class="small mb-0">{note}</p>'
+
+    @property
+    def principal_ids(self):
+        """The principals the table lists: the search result, else those with
+        a role here - inherited ones included where the node inherits.
+
+        ``item_count`` and ``sorted_rows`` both read it. The count used to
+        know the local roles only: with inherited rows only, the empty state
+        "no local access permissions" stood next to them, the footer read
+        "0 to 0 of 0" and the pages were sliced by the wrong number.
+        """
+        term = self.filter_term
+        if term:
+            return security.search_for_principals('*%s*' % term)
+        model = self.model
+        if model.role_inheritance:
+            return list(model.aggregated_roles.keys())
+        return list(model.principal_roles.keys())
 
     @property
     def item_count(self):
-        term = self.filter_term
-        if term:
-            principals = security.search_for_principals('*%s*' % term)
-            return len(principals)
-        return len(self.model.principal_roles.keys())
+        return len(self.principal_ids)
 
     def sorted_rows(self, start, end, sort, order):
         rows = list()
-        term = self.filter_term
         model = self.model
         principal_roles = model.principal_roles
         inheritance = model.role_inheritance
-        if term:
-            principal_ids = security.search_for_principals('*%s*' % term)
-        else:
-            if inheritance:
-                principal_ids = model.aggregated_roles.keys()
-            else:
-                principal_ids = principal_roles.keys()
+        principal_ids = self.principal_ids
         # XXX: currently always sorted by principal id. Fix to sort by
         #      principal title, needs some refactoring though
         ids = sorted(principal_ids)
@@ -125,8 +146,9 @@ class SharingTable(Table):
             for role in security.DEFAULT_ROLES:
                 inherited = role[0] in ugm_roles
                 local = role[0] in local_roles
-                row_data[role[0]] = \
-                    self._role_column(principal_id, role[0], local, inherited)
+                row_data[role[0]] = self._role_column(
+                    principal_id, role[0], local, inherited
+                )
             rows.append(row_data)
         return rows
 
@@ -145,7 +167,6 @@ class SharingTable(Table):
 
 @tile(name='add_principal_role', permission='manage_permissions')
 class AddPrincipalRole(Tile):
-
     def render(self):
         model = self.model
         request = self.request
@@ -155,27 +176,26 @@ class AddPrincipalRole(Tile):
             roles = model.principal_roles
             if principal_id not in roles:
                 model.principal_roles[principal_id] = [role]
-                return u''
-            existing = set(model.principal_roles[principal_id])
-            existing.add(role)
-            model.principal_roles[principal_id] = list(existing)
+            else:
+                existing = set(model.principal_roles[principal_id])
+                existing.add(role)
+                model.principal_roles[principal_id] = list(existing)
         except Exception as e:
             logger.error(e)
             localizer = get_localizer(self.request)
             message = localizer.translate(
                 _(
                     'cannot_add_role_for_principal',
-                    default="Can not add role '${role}' for principal '${pid}'"
+                    default="Can not add role '${role}' for principal '${pid}'",
                 ),
-                mapping={'role': role, 'pid': principal_id}
+                mapping={'role': role, 'pid': principal_id},
             )
             ajax_message(self.request, message, 'error')
-        return u''
+        return ''
 
 
 @tile(name='remove_principal_role', permission='manage_permissions')
 class RemovePrincipalRole(Tile):
-
     def render(self):
         model = self.model
         request = self.request
@@ -184,7 +204,11 @@ class RemovePrincipalRole(Tile):
             role = request.params['role']
             roles = model.principal_roles
             if principal_id not in roles:
-                raise
+                # Not a bare ``raise``: no exception is active at this point,
+                # so python raised ``RuntimeError: No active exception to
+                # re-raise`` and that is what ended up in the log - while the
+                # reason, an unknown principal, was never written down.
+                raise ValueError(f'No roles for principal "{principal_id}"')
             existing = model.principal_roles[principal_id]
             existing.remove(role)
             if not existing:
@@ -197,12 +221,9 @@ class RemovePrincipalRole(Tile):
             message = localizer.translate(
                 _(
                     'cannot_remove_role_for_principal',
-                    default=(
-                        "Can not remove role '${role}' for "
-                        "principal '${pid}'"
-                    )
+                    default=("Can not remove role '${role}' for principal '${pid}'"),
                 ),
-                mapping={'role': role, 'pid': principal_id}
+                mapping={'role': role, 'pid': principal_id},
             )
             ajax_message(self.request, message, 'error')
-        return u''
+        return ''

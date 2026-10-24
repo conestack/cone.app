@@ -6,7 +6,7 @@
       ajax:bind="contextchanged"
       ajax:action="referencebrowser_pathbar:#referencebrowser_pathbar:inner">
 
-    <li class="pathbaritem"
+    <li class="breadcrumb-item"
         tal:repeat="item context.items">
 
       <a href="${item['url']}"

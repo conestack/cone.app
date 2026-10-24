@@ -30,7 +30,7 @@ def testing_node_available(model, node_info_name):
 
 @plumbing(WorkflowState, WorkflowACL)
 class WorkflowNode(BaseNode):
-    workflow_name = u'dummy'
+    workflow_name = 'dummy'
     workflow_tsf = None
 
     @property
@@ -44,7 +44,7 @@ class WorkflowNode(BaseNode):
 
 
 class InexistentWorkflowNode(WorkflowNode):
-    workflow_name = u'inexistent'
+    workflow_name = 'inexistent'
     workflow_tsf = None
 
 
@@ -69,7 +69,7 @@ class IWorkflowNode(Interface):
 @plumbing(WorkflowState)
 @implementer(IWorkflowNode)
 class InterfaceWorkflowNode(BaseNode):
-    workflow_name = u'dummy'
+    workflow_name = 'dummy'
     workflow_tsf = None
 
 
@@ -80,9 +80,9 @@ class InterfaceWorkflowNode(BaseNode):
     Attributes,
     DefaultInit,
     MappingNode,
-    OdictStorage)
-class SharingNode(object):
-
+    OdictStorage,
+)
+class SharingNode:
     @property
     def __acl__(self):
         return DEFAULT_ACL
@@ -94,37 +94,33 @@ class SharingNode(object):
 
 @plumbing(CopySupport)
 class CopySupportNode(BaseNode):
-
     def __init__(self, name=None, parent=None):
         super(CopySupportNode, self).__init__(name=name, parent=parent)
         self.messages = []
 
     def __call__(self):
-        self.messages.append('Called: {}'.format(self.name))
+        self.messages.append(f'Called: {self.name}')
 
 
 ###############################################################################
 # B/C
 ###############################################################################
 
+
 @implementer(ILayout)
 @adapter(Interface)
 def default_layout(context):
     config = Layout()
     config.mainmenu = True
-    config.mainmenu_fluid = False
     config.livesearch = True
     config.personaltools = True
-    config.columns_fluid = False
+    config.limit_content_width = False
     config.pathbar = True
     config.sidebar_left = ['navtree']
-    config.sidebar_left_grid_width = 3
-    config.content_grid_width = 9
     return config
 
 
 class LayoutConfigNode(BaseNode):
-
     @property
     def layout(self):
         return default_layout(self)

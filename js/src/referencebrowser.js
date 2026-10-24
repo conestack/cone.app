@@ -13,6 +13,11 @@ export class ReferenceHandle {
         }
         let ol = ol_elem.data('overlay'),
             target = ol.ref_target;
+        // Skip binding if no ref_target is set. This allows other components
+        // to reuse the referencebrowser overlay with custom selection handling.
+        if (!target) {
+            return;
+        }
         $('a.addreference', context).each(function() {
             new AddReferenceHandle($(this), target, ol);
         });
@@ -158,6 +163,8 @@ export class ReferenceBrowserLoader {
         evt.preventDefault();
         let ol = ts.ajax.overlay({
             action: 'referencebrowser',
+            title: 'Referencebrowser',
+            css: 'modal-lg',
             target: this.wrapper.attr('ajax:target'),
             on_complete: this.on_complete.bind(this)
         });

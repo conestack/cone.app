@@ -1,10 +1,174 @@
 Changes
 =======
 
-1.1.1 (unreleased)
+2.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Section card headers share one height and one title size: ``.card-header``
+  is as high as a header with small controls (table slice size and search)
+  and centers its content, its title is an ``h5`` without margin. Forms,
+  tables, settings and error pages stood at different heights before.
+  [rnix]
+
+- Fix the sharing table counting local roles only while listing inherited
+  ones too. With inherited roles only, the empty state "No local access
+  permissions assigned" stood next to their rows, the footer read "0 to 0 of
+  0" and the pages were sliced by the wrong number. ``SharingTable`` counts
+  and lists the same ``principal_ids`` now.
+  [rnix]
+
+- Show a pointer on dropdown entries that trigger an ajax action without an
+  url of their own. ``action_dropdown.pt`` renders them without ``href``, and
+  the browser gives such a link the default cursor.
+  [rnix]
+
+- Fix ``TypeError: can't access property "off", this.scrollbar is undefined``
+  after an ajax ``replace``. treibstoff binds the parent of a replaced element
+  again, so ``Scrollbar.initialize`` ran on scrollbars that were bound
+  already. The constructor refused the duplicate, but ``ResizeAware`` had
+  attached the half built instance, and destroying it on the next reload - or
+  a window resize - reached for what it never built. ``initialize`` now skips
+  an element that has its scrollbar, and a duplicate built directly is inert.
+  [rnix]
+
+- Render titles as card headers. A view now reads contextmenu, card header,
+  content:
+
+  - ``table.pt``: the table title is the first element of the table's own
+    header, beside slice size, search and ``head_additional``, instead of a
+    ``h4`` in the body between the header and the rows. The table stays one
+    card replaced as a whole on reload. The header renders as soon as
+    ``display_table_header`` or ``show_title`` is set; the controls only with
+    ``display_table_header``.
+  - ``content_form.pt``: ``form_heading`` is a ``h5.card-header`` above the
+    form's ``card-body`` (a ``h5.mb-3`` when ``is_card`` is false).
+  - ``settings.pt``: each category is a ``h5.card-header`` of its card.
+  - ``batched_items_header.pt``: the title is a ``h5.batched_items_title``.
+  - ``not_found.pt``, ``unauthorized.pt``, ``insufficient_privileges.pt``: a
+    card with a ``h5.card-header`` and the message in its body.
+
+  The ``label label-primary`` spans around titles are gone. Attributes and
+  translation ids are unchanged.
+  [rnix]
+
+- Mark a failed ajax tile or form in ``request.environ`` under
+  ``cone.app.browser.ajax.RENDER_ERROR``. Both show the error and answer 200,
+  so a transaction manager that commits on success committed whatever the
+  tile wrote before it failed. An application vetoes the commit on the key,
+  e.g. with a ``tm.commit_veto`` for ``pyramid_tm``.
+  [rnix]
+
+- Center the login form vertically again. Since ``#content`` sits in
+  ``#content_scroll`` it only has a ``min-height``, so the form's
+  ``height: 100%`` resolved to ``auto``; the form now grows with
+  ``flex-grow`` inside the ``#content`` flex column instead.
+  [rnix]
+
+- Make the language and user dropdowns usable in the mobile menu. On narrow
+  screens the personal tools move into the collapsed navbar, whose wrapper
+  clips its overflow for the custom scrollbar, so their absolutely positioned
+  menus were cut off right below the toggles. The header now reserves the
+  height of an open menu below the personal tools. In the mobile menu the
+  dropdowns span its full width with only top and bottom borders.
+  [rnix]
+
+- Pin the ruff rule selection in ``pyproject.toml``. Ruff 0.16 widened its
+  default rules, so ``make check`` depended on the installed ruff version.
+  [rnix]
+
+- Give every node type its own ``addables`` list. ``node_info`` took
+  ``addables=[]`` as a default argument, which is a single list built at import
+  time and then handed to every node type declaring no addables of its own -
+  appending to one node's addables added the entry to all the others.
+  [rnix]
+
+- Name the reason when a role cannot be removed from a principal.
+  ``RemovePrincipalRole`` signalled an unknown principal with a bare ``raise``,
+  but no exception is active at that point, so python raised ``RuntimeError:
+  No active exception to re-raise`` and that is what the log recorded. The
+  message shown to the user was right all along.
+  [rnix]
+
+- Drop the Python 2 compatibility layer. ``requires-python`` is ``>=3.10``, so
+  ``IS_PY2`` was constantly false and every branch behind it dead, while
+  ``STR_TYPE``, ``UNICODE_TYPE``, ``ITER_TYPES`` and ``NUMBER_TYPES`` were
+  aliases for builtins. ``cone.app.compat`` keeps only the stdlib re-exports
+  its import sites reference. ``cone.ugm`` used ``IS_PY2`` and
+  ``ITER_TYPES`` and needs its 2.0 version.
+  [rnix]
+
+- Modernise the code ruff flags as outdated: ``u''`` prefixes, ``class
+  X(object)``, ``# -*- coding: utf-8 -*-``, ``.format()`` over f-strings,
+  redundant ``open()`` mode, ``yield`` loops over ``yield from``.
+  Behaviour unchanged. ``super(Class, self)`` is deliberately **kept**: a
+  zero-argument ``super()`` binds the class the method was written in, which
+  for a ``@plumbing`` decorated class is not the class that ends up in the
+  mro - it raises ``TypeError`` at call time.
+  [rnix]
+
+- Scroll the content from anywhere in the content area. ``#content`` was the
+  scrolling box **and** carried the width limit of ``limit_content_width`` /
+  ``limit_page_width``, so the strip beside a limited content belonged to no
+  scrollable element at all - a wheel event there reached ``#content_area``
+  and ``body``, neither of which overflows, and nothing moved, although the
+  strip reads as part of the page. The scroller is now a ``#content_scroll``
+  wrapper spanning the whole row; ``#content`` keeps the limit, its id and its
+  ajax contract. Without a width limit the scrollbar sat there anyway - the
+  limit is what pulled it inwards.
+  [rnix]
+
+- Bind context menu actions and dropdowns on a **copy** instead of writing
+  ``model`` and ``request`` onto the registered instance. ``context_menu_item``
+  and ``personal_tools_action`` call ``factory()`` at import time and keep the
+  result, so one object served every request and every thread: a second request
+  overwrote what a first was still working with, and an action that read its
+  model, queried it and then used the result got a value from one node and
+  applied it to another. ``ContextMenuDropdown.display`` no longer assigns into
+  its children either - it was the widest part of that window, publishing one
+  request's node to a whole group. New ``Action.bound_to()``; not called
+  ``bind``, which is the ajax event.
+  [rnix]
+
+- Give a ``div.form-control`` the height of an input. Bootstrap sets no height
+  on ``.form-control``; an input gets it from its own content box, so a widget
+  rendered in display mode as an empty ``div`` collapsed to padding plus border
+  and stood lower than the fields around it. Same ``min-height`` Bootstrap
+  itself puts on ``textarea.form-control``, for the same reason.
+  [rnix]
+
+- Implement ``order`` property for Actions inside ContextMenuDropdown
+  (defaults to 0).
+  [lenadax]
+
+- Add ``center_content``, ``limit_page_width``, ``sidebar_left_static`` and
+  ``sidebar_right_static`` properties to ``ILayoutConfig``.
+  [lenadax]
+
+- Upgrade jquery to version 4.0.0.
+  [lenadax]
+
+- Add ``sidebar_left_min_width`` and ``sidebar_right_min_width`` properties
+  to ``ILayoutConfig`` (Integer / px value).
+  [lenadax]
+
+- Remove no longer used ``mainmenu_fluid``, ``columns_fluid``, ``content_grid_width``
+  and ``sidebar_left_grid_width`` properties from ``ILayoutConfig``.
+  Replace with ``limit_content_width`` property (Boolean).
+  [lenadax]
+
+- Add ``sidebar_left_mode`` and ``sidebar_right_mode`` properties
+  to ``ILayoutConfig`` ('toggle'/'stacked').
+  [lenadax]
+
+- Cleanup js widgets to prevent DOM memory leaks.
+  [lenadax]
+
+- Remove no longer used ``content_grid_width`` and ``sidebar_left_grid_width``
+  properties from ``ILayoutConfig``.
+  [rnix]
+
+- Run tests on bootstrap5 factory theme.
+  [lenadax]
 
 
 1.1.0 (2026-02-03)

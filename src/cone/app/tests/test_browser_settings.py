@@ -51,8 +51,7 @@ class TestBrowserSettings(TileTestCase):
         with self.assertRaises(ValueError) as arc:
             register_config('baz', OtherSettings)
         self.assertEqual(
-            str(arc.exception),
-            "Config with name 'baz' already registered."
+            str(arc.exception), "Config with name 'baz' already registered."
         )
 
     def test_SettingsLayoutConfig(self):
@@ -66,6 +65,7 @@ class TestBrowserSettings(TileTestCase):
         self.assertIsInstance(lc, SettingsLayoutConfig)
 
         self.assertEqual(lc.sidebar_left, ['settings_sidebar'])
+        self.assertEqual(lc.sidebar_right, [])
 
     def test_ViewSettingsAction(self):
         self.assertTrue('settings' in personal_tools)
@@ -80,7 +80,7 @@ class TestBrowserSettings(TileTestCase):
         action.request = self.layer.new_request()
 
         self.assertEqual(action.text, 'settings')
-        self.assertEqual(action.icon, 'ion-ios7-gear')
+        self.assertEqual(action.icon, 'bi-gear')
         self.assertEqual(action.event, 'contextchanged:#layout')
         self.assertEqual(action.path, 'href')
         self.assertEqual(action.target, 'http://example.com/settings')
@@ -113,17 +113,11 @@ class TestBrowserSettings(TileTestCase):
         settings.invalidate()
         settings.factories.clear()
 
-        @node_info(
-            name='no_cat_settings',
-            title='No Cat',
-            icon='nocat-icon')
+        @node_info(name='no_cat_settings', title='No Cat', icon='nocat-icon')
         class NoCatSettings(SettingsNode):
             pass
 
-        @node_info(
-            name='cat_settings',
-            title='Cat',
-            icon='cat-icon')
+        @node_info(name='cat_settings', title='Cat', icon='cat-icon')
         class CatSettings(SettingsNode):
             category = 'cat'
 
@@ -149,35 +143,55 @@ class TestBrowserSettings(TileTestCase):
         with self.layer.authenticated('manager'):
             cc = tile.categorized_children
         self.assertEqual(cc.keys(), [NO_SETTINGS_CATEGORY, 'cat'])
-        self.assertEqual(cc[NO_SETTINGS_CATEGORY], [{
-            'title': 'No Cat',
-            'icon': 'nocat-icon',
-            'target': 'http://example.com/settings/nocat',
-            'current': False
-        }, {
-            'title': 'Legacy',
-            'icon': 'glyphicon glyphicon-asterisk',
-            'target': 'http://example.com/settings/legacy',
-            'current': False
-        }])
-        self.assertEqual(cc['cat'], [{
-            'title': 'Cat',
-            'icon': 'cat-icon',
-            'target': 'http://example.com/settings/cat',
-            'current': False
-        }])
+        self.assertEqual(
+            cc[NO_SETTINGS_CATEGORY],
+            [
+                {
+                    'title': 'No Cat',
+                    'icon': 'nocat-icon',
+                    'description': None,
+                    'target': 'http://example.com/settings/nocat',
+                    'current': False,
+                },
+                {
+                    'title': 'Legacy',
+                    'icon': 'bi-asterisk',
+                    'description': None,
+                    'target': 'http://example.com/settings/legacy',
+                    'current': False,
+                },
+            ],
+        )
+        self.assertEqual(
+            cc['cat'],
+            [
+                {
+                    'title': 'Cat',
+                    'icon': 'cat-icon',
+                    'description': None,
+                    'target': 'http://example.com/settings/cat',
+                    'current': False,
+                }
+            ],
+        )
 
         tile = SettingsTile()
         tile.model = settings['cat']
         tile.request = self.layer.new_request()
         with self.layer.authenticated('manager'):
             cc = tile.categorized_children
-        self.assertEqual(cc['cat'], [{
-            'title': 'Cat',
-            'icon': 'cat-icon',
-            'target': 'http://example.com/settings/cat',
-            'current': True
-        }])
+        self.assertEqual(
+            cc['cat'],
+            [
+                {
+                    'title': 'Cat',
+                    'icon': 'cat-icon',
+                    'description': None,
+                    'target': 'http://example.com/settings/cat',
+                    'current': True,
+                }
+            ],
+        )
 
     @testing.reset_node_info_registry
     def test_SettingsSidebar(self):
@@ -187,9 +201,8 @@ class TestBrowserSettings(TileTestCase):
         settings.factories.clear()
 
         @node_info(
-            name='test_settings',
-            title='Test Settings',
-            icon='test-settings-icon')
+            name='test_settings', title='Test Settings', icon='test-settings-icon'
+        )
         class TestSettings(SettingsNode):
             pass
 
@@ -198,13 +211,13 @@ class TestBrowserSettings(TileTestCase):
         with self.layer.authenticated('manager'):
             res = render_tile(settings, request, 'settings_sidebar')
         self.assertTrue(res.find('id="settings_sidebar"') > -1)
-        self.assertTrue(res.find('class="list-group-item "') > -1)
+        self.assertTrue(res.find('class="list-group-item') > -1)
         self.assertTrue(res.find('http://example.com/settings/test_settings') > -1)
 
         test_settings = settings['test_settings']
         with self.layer.authenticated('manager'):
             res = render_tile(test_settings, request, 'settings_sidebar')
-        self.assertTrue(res.find('class="list-group-item selected"') > -1)
+        self.assertTrue(res.find('class="active list-group-item') > -1)
 
     @testing.reset_node_info_registry
     def test_SettingsContent(self):
@@ -214,9 +227,8 @@ class TestBrowserSettings(TileTestCase):
         settings.factories.clear()
 
         @node_info(
-            name='test_settings',
-            title='Test Settings',
-            icon='test-settings-icon')
+            name='test_settings', title='Test Settings', icon='test-settings-icon'
+        )
         class TestSettings(SettingsNode):
             pass
 
@@ -234,14 +246,14 @@ class TestBrowserSettings(TileTestCase):
         settings.factories.clear()
 
         @node_info(
-            name='test_settings',
-            title='Test Settings',
-            icon='test-settings-icon')
+            name='test_settings', title='Test Settings', icon='test-settings-icon'
+        )
         class TestSettings(SettingsNode):
             display = True
 
         register_config('test_settings', TestSettings)
         with self.layer.hook_tile_reg():
+
             @tile(name='editform', interface=TestSettings)
             class TestSettingsEditForm(Tile):
                 def render(self):
@@ -255,9 +267,7 @@ class TestBrowserSettings(TileTestCase):
 
         with self.layer.authenticated('manager'):
             res = render_view_to_response(
-                test_settings,
-                request=request,
-                name='edit'
+                test_settings, request=request, name='edit'
             ).text
         self.assertTrue(res.find('<form id="editform" />') > -1)
 
@@ -273,24 +283,21 @@ class TestBrowserSettings(TileTestCase):
         settings.factories.clear()
 
         @node_info(
-            name='test_settings',
-            title='Test Settings',
-            icon='test-settings-icon')
+            name='test_settings', title='Test Settings', icon='test-settings-icon'
+        )
         class TestSettings(SettingsNode):
             display = True
 
         register_config('test_settings', TestSettings)
         with self.layer.hook_tile_reg():
+
             @settings_form(interface=TestSettings)
             @plumbing(SettingsForm)
             class TestSettingsEditForm(Form):
                 def prepare(self):
                     self.form = factory(
-                        u'form',
-                        name='editform',
-                        props={
-                            'action': self.nodeurl
-                        })
+                        'form', name='editform', props={'action': self.nodeurl}
+                    )
                     self.form['save'] = factory(
                         'submit',
                         props={
@@ -299,14 +306,16 @@ class TestBrowserSettings(TileTestCase):
                             'handler': None,
                             'next': self.next,
                             'label': 'Save',
-                        })
+                        },
+                    )
 
         request = self.layer.new_request()
         test_settings = settings['test_settings']
         with self.layer.authenticated('manager'):
             res = render_tile(test_settings, request, 'editform')
-        self.assertTrue(res.find('<h1>Test Settings</h1>') > -1)
-        self.assertTrue(res.find('<form action="http://example.com/settings/test_settings"') > -1)
+        self.assertTrue(
+            res.find('<form action="http://example.com/settings/test_settings"') > -1
+        )
 
         request.params['action.editform.save'] = '1'
         request.params['ajax'] = '1'
@@ -332,16 +341,14 @@ class TestBrowserSettings(TileTestCase):
         register_config('foo', SomeSettings)
 
         with self.layer.hook_tile_reg():
+
             @tile(name='editform', interface=SomeSettings)
             @plumbing(SettingsBehavior)
             class SomeSettingsForm(Form):
                 def prepare(self):
                     form = factory(
-                        u'form',
-                        name='editform',
-                        props={
-                            'action': self.nodeurl
-                        })
+                        'form', name='editform', props={'action': self.nodeurl}
+                    )
                     form['save'] = factory(
                         'submit',
                         props={
@@ -350,7 +357,8 @@ class TestBrowserSettings(TileTestCase):
                             'handler': None,
                             'next': self.next,
                             'label': 'Save',
-                        })
+                        },
+                    )
                     self.form = form
 
         request = self.layer.new_request()
@@ -359,8 +367,32 @@ class TestBrowserSettings(TileTestCase):
 
         with self.layer.authenticated('manager'):
             res = render_tile(settings['foo'], request, 'editform')
-        self.assertEqual(res, u'')
+        self.assertEqual(res, '')
 
         action = request.environ['cone.app.continuation'][0]
         self.assertTrue(isinstance(action, AjaxAction))
         self.assertEqual(action.selector, '.foo')
+
+    def test_ViewSettingsAction_without_settings(self):
+        # A model whose root has no settings offers no settings action.
+        action = ViewSettingsAction()
+        action.model = BaseNode()
+        action.request = self.layer.new_request()
+        with self.layer.authenticated('manager'):
+            self.assertIsNone(action.settings)
+            self.assertFalse(action.display)
+
+    @testing.reset_node_info_registry
+    def test_SettingsForm_heading(self):
+        @node_info(name='heading_settings', title='Heading Settings')
+        class HeadingSettings(SettingsNode):
+            pass
+
+        @plumbing(SettingsForm)
+        class HeadingSettingsForm(Form):
+            pass
+
+        form = HeadingSettingsForm()
+        form.model = HeadingSettings()
+        form.request = self.layer.new_request()
+        self.assertEqual(form.form_heading, 'Heading Settings')

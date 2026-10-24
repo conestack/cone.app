@@ -44,7 +44,7 @@ def duplicate_widget(widget, keep):
         properties=widget.properties,
         custom=widget.custom,
         defaults=widget.defaults,
-        mode=widget.mode
+        mode=widget.mode,
     )
 
 
@@ -55,27 +55,28 @@ def translation_tabs_renderer(widget, data):
         has_errors = lang_data and lang_data.has_errors
         lang_text = lang.upper()
         if has_errors:
-            lang_text = u'* {}'.format(lang_text)
-        a = data.tag('a', lang_text, href=u'#translation-{}-{}'.format(
-            widget.dottedpath.replace(u'.', u'-'),
-            lang
-        ))
-        li_css = ['active'] if idx == 0 else []
+            lang_text = f'* {lang_text}'
+        a_css = ['nav-link', 'py-0']
+        if idx == 0:
+            a_css.append('active')
+        a = data.tag(
+            'a',
+            lang_text,
+            href='#translation-{}-{}'.format(widget.dottedpath.replace('.', '-'), lang),
+            class_=' '.join(a_css),
+        )
+        li_css = ['nav-item']
         if has_errors:
             li_css.append('error')
         li_css = ' '.join(li_css) if li_css else None
         li.append(data.tag('li', a, class_=li_css))
-    return data.tag('ul', *li, class_='nav nav-pills translation-nav')
+    return data.tag('ul', *li, class_='nav nav-pills mb-2 translation-nav')
 
 
 factory.register(
     'translationtabs',
-    edit_renderers=[
-        translation_tabs_renderer
-    ],
-    display_renderers=[
-        translation_tabs_renderer
-    ]
+    edit_renderers=[translation_tabs_renderer],
+    display_renderers=[translation_tabs_renderer],
 )
 
 
@@ -84,24 +85,21 @@ def translation_edit_renderer(widget, data):
         'translationtabs',
         props={
             'structural': True,
-        }
+        },
     )
     translations = widget['translations'] = factory(
-        'div',
-        props={
-            'class': 'translation-fields',
-            'structural': True
-        })
+        'div', props={'class': 'translation-fields', 'structural': True}
+    )
     for lang in cfg.available_languages:
-        translation = translations['translation_{}'.format(lang)] = factory(
+        translation = translations[f'translation_{lang}'] = factory(
             'div',
             props={
                 'id': 'translation-{}-{}'.format(
-                    widget.dottedpath.replace(u'.', u'-'),
-                    lang
+                    widget.dottedpath.replace('.', '-'), lang
                 ),
-                'structural': True
-            })
+                'structural': True,
+            },
+        )
         lang_widget = duplicate_widget(widget, widget.blueprints[-1])
         # prevent persiting on generated child widgets
         lang_widget.attrs['persist'] = False
@@ -112,23 +110,15 @@ def translation_display_renderer(widget, data):
     translation_edit_renderer(widget, data)
     translations = widget['translations']
     for lang in cfg.available_languages:
-        translation = translations['translation_{}'.format(lang)]
+        translation = translations[f'translation_{lang}']
         translation[lang].mode = 'display'
 
 
 factory.register(
     'translation',
-    extractors=[
-        translation_extractor
-    ],
-    edit_renderers=[
-        translation_edit_renderer,
-        compound_renderer
-    ],
-    display_renderers=[
-        translation_display_renderer,
-        compound_renderer
-    ]
+    extractors=[translation_extractor],
+    edit_renderers=[translation_edit_renderer, compound_renderer],
+    display_renderers=[translation_display_renderer, compound_renderer],
 )
 
 factory.doc['blueprint']['translation'] = """\

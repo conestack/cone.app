@@ -33,7 +33,7 @@ deployments.
 - **cone.admin_password**: Password of superuser.
 
 - **cone.authenticator**: Utility registration name of a
-  ``cone.app.interfaces.IAuthenticator`` impementation.
+  ``cone.app.interfaces.IAuthenticator`` implementation.
 
 
 Authentication Policy Configuration
@@ -89,7 +89,7 @@ If desired, the concrete UGM implementation is created on application startup.
 - **ugm.backend**: Registration name of UGM implementation.
 
 A default file based UGM factory is registered under name ``file``, which
-creates a ``cone.ugm.file.Ugm`` instance.
+creates a ``node.ext.ugm.file.Ugm`` instance.
 
 Configuration is done through the following parameters.
 
@@ -180,4 +180,4 @@ application config file:
 
 - **cone.root.node_available**: Callable returning whether the node is allowed
   to be used in this application. Gets passed the application model and a
-  node info instane as arguments.
+  node info instance as arguments.

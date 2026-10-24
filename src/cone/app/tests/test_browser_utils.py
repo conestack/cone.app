@@ -28,18 +28,15 @@ class TestBrowserUtils(TileTestCase):
         self.assertEqual(make_query(foo='123'), '?foo=123')
         self.assertEqual(make_query(foo=['456', '789']), '?foo=456&foo=789')
         self.assertEqual(make_query(foo=1), '?foo=1')
-        self.assertEqual(make_query(foo=1.), '?foo=1.0')
+        self.assertEqual(make_query(foo=1.0), '?foo=1.0')
         self.assertEqual(make_query(foo='foo', bar='bar'), '?bar=bar&foo=foo')
         self.assertEqual(
-            make_query(
-                quote_params=('foo',),
-                foo='http://example.com?param=value'
-            ),
-            '?foo=http%3A//example.com%3Fparam%3Dvalue'
+            make_query(quote_params=('foo',), foo='http://example.com?param=value'),
+            '?foo=http%3A//example.com%3Fparam%3Dvalue',
         )
         self.assertEqual(
             make_query(came_from='http://example.com?param=value'),
-            '?came_from=http%3A//example.com%3Fparam%3Dvalue'
+            '?came_from=http%3A//example.com%3Fparam%3Dvalue',
         )
 
     def test_make_url(self):
@@ -48,20 +45,18 @@ class TestBrowserUtils(TileTestCase):
         request = self.layer.new_request()
         self.assertEqual(make_url(request), 'http://example.com/')
         self.assertEqual(
-            make_url(request, path=['1', '2', '3']),
-            'http://example.com/1/2/3'
+            make_url(request, path=['1', '2', '3']), 'http://example.com/1/2/3'
         )
         self.assertEqual(
-            make_url(request, node=root['child']),
-            'http://example.com/child'
+            make_url(request, node=root['child']), 'http://example.com/child'
         )
         self.assertEqual(
             make_url(request, node=root['child'], resource='foo'),
-            'http://example.com/child/foo'
+            'http://example.com/child/foo',
         )
         self.assertEqual(
             make_url(request, node=root['child'], resource='foo', query='&a=1'),
-            'http://example.com/child/foo&a=1'
+            'http://example.com/child/foo&a=1',
         )
 
     def test_choose_name(self):
@@ -77,7 +72,7 @@ class TestBrowserUtils(TileTestCase):
         dt = datetime(2011, 3, 15)
         self.assertEqual(format_date(dt), '15.03.2011 00:00')
         self.assertEqual(format_date(dt, long=False), '15.03.2011')
-        self.assertEqual(format_date(object()), u'unknown')
+        self.assertEqual(format_date(object()), 'unknown')
 
     @testing.reset_node_info_registry
     def test_node_icon(self):
@@ -85,20 +80,14 @@ class TestBrowserUtils(TileTestCase):
         model.properties.icon = 'my-icon'
         self.assertEqual(node_icon(model), 'my-icon')
 
-        @node_info(
-            name='mynode')
+        @node_info(name='mynode')
         class MyNode(BaseNode):
             pass
 
         model = MyNode()
-        self.assertEqual(
-            node_icon(model),
-            'glyphicon glyphicon-asterisk'
-        )
+        self.assertEqual(node_icon(model), 'bi-asterisk')
 
-        @node_info(
-            name='othernode',
-            icon='other-icon')
+        @node_info(name='othernode', icon='other-icon')
         class OtherNode(BaseNode):
             pass
 
@@ -108,7 +97,7 @@ class TestBrowserUtils(TileTestCase):
     def test_request_property(self):
         counter = dict(computed=0)
 
-        class RequestPropertyUsingClass(object):
+        class RequestPropertyUsingClass:
             def __init__(self, request):
                 self.request = request
 
@@ -128,13 +117,17 @@ class TestBrowserUtils(TileTestCase):
     def test_format_traceback(self):
         class MyException(Exception):
             pass
+
         try:
             raise MyException('Error!')
         except MyException:
-            self.checkOutput("""
+            self.checkOutput(
+                """
             <pre>Traceback (most recent call last):
               File "...", line ..., in test_format_traceback
                 raise MyException('Error!')
               ...MyException: Error!
             </pre>
-            """, format_traceback())
+            """,
+                format_traceback(),
+            )

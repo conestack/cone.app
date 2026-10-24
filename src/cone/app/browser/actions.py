@@ -1,3 +1,4 @@
+import copy
 from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -18,7 +19,7 @@ def get_action_context(request):
     return request.environ['action_context']
 
 
-class ActionContext(object):
+class ActionContext:
     """The action context is used to determine action scopes. The action scope
     is used by browser actions to check it's own state, e.g. if action button
     is selected, disabled or displayed at all.
@@ -55,8 +56,8 @@ class ActionContext(object):
 
 
 class Toolbar(odict):
-    """A toolbar rendering actions.
-    """
+    """A toolbar rendering actions."""
+
     display = True
     css = None
 
@@ -65,7 +66,7 @@ class Toolbar(odict):
 
     def __call__(self, model, request):
         if not self.display:
-            return u''
+            return ''
         rendered_actions = list()
         for action in self.values():
             rendered = action(model, request)
@@ -73,24 +74,66 @@ class Toolbar(odict):
                 continue
             rendered_actions.append(rendered)
         if not rendered_actions:
-            return u''
-        rendered_actions = u'\n'.join(rendered_actions)
+            return ''
+        rendered_actions = '\n'.join(rendered_actions)
         if not self.css:
-            return u'<div>%s</div>' % rendered_actions
-        return u'<div class="%s">%s</div>' % (self.css, rendered_actions)
+            return f'<div>{rendered_actions}</div>'
+        return f'<div class="{self.css}">{rendered_actions}</div>'
+
+    def __repr__(self):
+        return (
+            f'<{self.__class__.__module__}.{self.__class__.__name__} '
+            f'({self.keys()}) at {id(self)}>'
+        )
+
+    __str__ = __repr__
 
 
-class Action(object):
-    """Abstract Action.
-    """
+class Action:
+    """Abstract Action."""
+
     display = True
 
+    def bound_to(self, model, request):
+        """A copy of this action bound to one model and request.
+
+        **The registered action is a singleton.** ``context_menu_item`` and
+        ``personal_tools_action`` call ``factory()`` at import time and keep
+        the instance, so one object serves every request and every thread.
+        Writing ``model`` and ``request`` onto it therefore published them to
+        everybody: a second request overwrote what a first was still working
+        with, and the first went on with a foreign node.
+
+        Measured in an application on 2026-09-23: an action read its container,
+        queried it, and indexed it with the result - by then ``self.model`` was
+        a different container, and a healthy record raised ``KeyError``. The
+        silent half is worse, because ``display`` and ``permitted`` also read
+        ``self.model``: an action then decides against a foreign node and
+        offers itself where it does not belong.
+
+        A shallow copy, because an action carries no instance state - the
+        registered ones have an empty ``__dict__``, everything else lives on
+        the class. It costs about a microsecond.
+
+        ⚠ **Not called ``bind``**: ``LinkAction.bind`` is the ajax event and
+        several actions set it to ``None``, so a method of that name would be
+        a string on half of them.
+
+        ⚠ Do not add a ``request_property`` to an action. Its cache key is
+        built from ``id(self)``, and two bound copies of one render can land on
+        the same address once the first is collected - the second would then
+        read the first's answer.
+        """
+        action = copy.copy(self)
+        action.model = model
+        action.request = request
+        return action
+
     def __call__(self, model, request):
-        self.model = model
-        self.request = request
-        if not self.display:
-            return u''
-        return self.render()
+        action = self.bound_to(model, request)
+        if not action.display:
+            return ''
+        return action.render()
 
     @property
     def action_scope(self):
@@ -103,37 +146,33 @@ class Action(object):
         return self.request.has_permission(permission, self.model)
 
     def render(self):
-        raise NotImplementedError(u"Abstract ``Action`` does not implement "
-                                  u"render.")
+        raise NotImplementedError('Abstract ``Action`` does not implement render.')
 
 
 class TileAction(Action):
-    """Action rendered by a tile.
-    """
-    tile = u''
+    """Action rendered by a tile."""
+
+    tile = ''
 
     def render(self):
         return render_tile(self.model, self.request, self.tile)
 
 
 class TemplateAction(Action):
-    """Action rendered by a template.
-    """
-    template = u''
+    """Action rendered by a template."""
+
+    template = ''
 
     def render(self):
         return render_template(
-            self.template,
-            request=self.request,
-            model=self.model,
-            context=self
+            self.template, request=self.request, model=self.model, context=self
         )
 
 
 class DropdownAction(TemplateAction):
-    """Action rendering a dropdown.
-    """
-    template = u'cone.app.browser:templates/action_dropdown.pt'
+    """Action rendering a dropdown."""
+
+    template = 'cone.app.browser:templates/action_dropdown.pt'
     href = None
     css = None
     title = None
@@ -143,13 +182,14 @@ class DropdownAction(TemplateAction):
         """Return list of ``cone.app.model.Properties`` instances providing
         attributes ``icon``, ``url``, ``target``, ``action`` and ``title``.
         """
-        raise NotImplementedError(u"Abstract ``DropdownAction`` does not "
-                                  u"implement  ``items``")
+        raise NotImplementedError(
+            'Abstract ``DropdownAction`` does not implement  ``items``'
+        )
 
 
 class LinkAction(TemplateAction):
-    """Action rendering a HTML link, optional with treibstoff ajax attributes.
-    """
+    """Action rendering a HTML link, optional with treibstoff ajax attributes."""
+
     template = 'cone.app.browser:templates/link_action.pt'
     bind = 'click'
     id = None
@@ -160,7 +200,7 @@ class LinkAction(TemplateAction):
     event = None
     confirm = None
     overlay = None
-    overlay_css = None
+    overlay_css = 'modal-xl'
     overlay_uid = None
     overlay_title = None
     path = None
@@ -172,9 +212,11 @@ class LinkAction(TemplateAction):
     path_overlay_uid = None
     path_overlay_title = None
     text = None
+    icon = None
     enabled = True
     selected = False
-    icon = None
+    selected_css = 'active'
+    disabled_css = 'disabled'
 
     def __init__(self, **kw):
         """Create link action.
@@ -200,20 +242,21 @@ class LinkAction(TemplateAction):
         :param path_overlay_uid: ajax:path-overlay-uid.
         :param path_overlay_title: ajax:path-overlay-title.
         :param text: link text.
-        :param enabled: if false, link gets 'disabled' css class.
-        :param selected: if true, link get 'selected' css class.
         :param icon: if set, add span tag with value as CSS class.
+        :param enabled: if false, link gets ``disabled_css`` CSS class.
+        :param selected: if true, link get ``selected_css`` CSS class.
+        :param selected_css: Selected CSS class. Defaults to 'active'.
+        :param disabled_css: Disabled CSS class. Defaults to 'disabled'.
         """
         self.__dict__.update(kw)
 
     @property
     def css_class(self):
-        css = not self.enabled and 'disabled' or ''
-        css = self.selected and '%s selected' % css or css
-        if self.css:
-            css = '%s %s' % (self.css, css)
+        css = '' if self.enabled else self.disabled_css
+        css = f'{css} {self.selected_css}' if self.selected else css
+        css = f'{self.css} {css}' if self.css else css
         css = css.strip()
-        return css and css or None
+        return css if css else None
 
     @property
     def target(self):
@@ -221,35 +264,35 @@ class LinkAction(TemplateAction):
 
 
 class ButtonAction(TemplateAction):
-    """Action rendering a HTML button, optional with bdajax attributes.
-    """
+    """Action rendering a HTML button, optional with bdajax attributes."""
+
     template = 'cone.app.browser:templates/button_action.pt'
-    bind = 'click'         # ajax:bind attribute
-    id = None              # id attribute
-    css = None             # in addition for computed class attribute
-    title = None           # title attribute
-    type = None            # type of button
-    name = None            # name for the button
-    value = None           # initial value for the button
-    autofocus = None       # button gets focus on page load
-    disabled = None        # button should be disabled
-    form = None            # form the button belongs to
-    formaction = None      # where to send the data when form is submitted
-    formenctype = None     # how form-data should be encoded before sending
-    formmethod = None      # specifies http method
+    bind = 'click'  # ajax:bind attribute
+    id = None  # id attribute
+    css = None  # in addition for computed class attribute
+    title = None  # title attribute
+    type = None  # type of button
+    name = None  # name for the button
+    value = None  # initial value for the button
+    autofocus = None  # button gets focus on page load
+    disabled = None  # button should be disabled
+    form = None  # form the button belongs to
+    formaction = None  # where to send the data when form is submitted
+    formenctype = None  # how form-data should be encoded before sending
+    formmethod = None  # specifies http method
     formnovalidate = None  # data should not be validated on submission
-    formtarget = None      # where to display response after form submission
-    action = None          # ajax:action attribute
-    event = None           # ajax:event attribute
-    confirm = None         # ajax:confirm attribute
-    overlay = None         # ajax:overlay attribute
-    path = None            # ajax:path attribute
-    path_target = None     # ajax:path-target attribute
-    path_action = None     # ajax:path-action attribute
-    path_event = None      # ajax:path-event attribute
-    path_overlay = None    # ajax:path-overlay attribute
-    text = None            # button text
-    icon = None            # if set, add i tag with value as CSS class
+    formtarget = None  # where to display response after form submission
+    action = None  # ajax:action attribute
+    event = None  # ajax:event attribute
+    confirm = None  # ajax:confirm attribute
+    overlay = None  # ajax:overlay attribute
+    path = None  # ajax:path attribute
+    path_target = None  # ajax:path-target attribute
+    path_action = None  # ajax:path-action attribute
+    path_event = None  # ajax:path-event attribute
+    path_overlay = None  # ajax:path-overlay attribute
+    text = None  # button text
+    icon = None  # if set, add i tag with value as CSS class
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
@@ -260,19 +303,21 @@ class ButtonAction(TemplateAction):
 
 
 class ActionUp(LinkAction):
-    """One level up action.
-    """
+    """One level up action."""
+
     id = 'toolbaraction-up'
-    icon = 'glyphicon glyphicon-arrow-up'
+    icon = 'bi-arrow-up'
     event = 'contextchanged:#layout'
     text = _('action_one_level_up', default='One level up')
     path = 'href'
 
     @property
     def display(self):
-        return self.model.properties.action_up \
-            and self.request.has_permission('view', self.model.parent) \
+        return (
+            self.model.properties.action_up
+            and self.request.has_permission('view', self.model.parent)
             and self.permitted('view')
+        )
 
     @property
     def href(self):
@@ -296,10 +341,10 @@ class ActionUp(LinkAction):
 
 
 class ActionView(LinkAction):
-    """View action.
-    """
+    """View action."""
+
     id = 'toolbaraction-view'
-    icon = 'glyphicon glyphicon-eye-open'
+    icon = 'bi-eye-fill'
     text = _('action_view', default='View')
     href = LinkAction.target
     path = 'href'
@@ -325,8 +370,8 @@ class ActionView(LinkAction):
 
 
 class ViewLink(ActionView):
-    """View link
-    """
+    """View link."""
+
     css = None
     icon = None
 
@@ -340,17 +385,17 @@ class ViewLink(ActionView):
 
 
 class ActionList(LinkAction):
-    """Contents listing action.
-    """
+    """Contents listing action."""
+
     id = 'toolbaraction-list'
-    icon = 'glyphicon glyphicon-th-list'
+    icon = 'bi-list-task'
     action = 'listing:#content:inner'
     path = 'href'
     text = _('action_listing', default='Listing')
 
     @property
     def href(self):
-        return '{}/listing'.format(make_url(self.request, node=self.model))
+        return f'{make_url(self.request, node=self.model)}/listing'
 
     @property
     def display(self):
@@ -362,22 +407,23 @@ class ActionList(LinkAction):
 
 
 class ActionSharing(LinkAction):
-    """Sharing action.
-    """
+    """Sharing action."""
+
     id = 'toolbaraction-share'
-    icon = 'glyphicon glyphicon-share'
+    icon = 'bi-share-fill'
     action = 'sharing:#content:inner'
     path = 'href'
     text = _('action_sharing', default='Sharing')
 
     @property
     def href(self):
-        return '{}/sharing'.format(make_url(self.request, node=self.model))
+        return f'{make_url(self.request, node=self.model)}/sharing'
 
     @property
     def display(self):
-        return IPrincipalACL.providedBy(self.model) \
-            and self.permitted('manage_permissions')
+        return IPrincipalACL.providedBy(self.model) and self.permitted(
+            'manage_permissions'
+        )
 
     @property
     def selected(self):
@@ -385,19 +431,18 @@ class ActionSharing(LinkAction):
 
 
 class ActionState(TileAction):
-    """Change state action.
-    """
+    """Change state action."""
+
     tile = 'wf_dropdown'
 
     @property
     def display(self):
-        return IWorkflowState.providedBy(self.model) \
-            and self.permitted('change_state')
+        return IWorkflowState.providedBy(self.model) and self.permitted('change_state')
 
 
 class ActionAdd(TileAction):
-    """Add dropdown action.
-    """
+    """Add dropdown action."""
+
     tile = 'add_dropdown'
 
     @property
@@ -406,17 +451,17 @@ class ActionAdd(TileAction):
 
 
 class ActionEdit(LinkAction):
-    """Edit action.
-    """
+    """Edit action."""
+
     id = 'toolbaraction-edit'
-    icon = 'glyphicon glyphicon-pencil'
+    icon = 'bi-pencil'
     action = 'edit:#content:inner'
     path = 'href'
     text = _('action_edit', default='Edit')
 
     @property
     def href(self):
-        return '{}/edit'.format(make_url(self.request, node=self.model))
+        return f'{make_url(self.request, node=self.model)}/edit'
 
     @property
     def display(self):
@@ -428,13 +473,14 @@ class ActionEdit(LinkAction):
 
 
 class ActionDelete(LinkAction):
-    """Delete action.
-    """
+    """Delete action."""
+
     id = 'toolbaraction-delete'
-    icon = 'ion-trash-a'
+    icon = 'bi-trash3'
     action = 'delete:NONE:NONE'
-    confirm = _('delete_item_confirm',
-                default='Do you really want to delete this Item?')
+    confirm = _(
+        'delete_item_confirm', default='Do you really want to delete this Item?'
+    )
     text = _('action_delete', default='Delete')
 
     @property
@@ -443,26 +489,25 @@ class ActionDelete(LinkAction):
         scope = self.action_scope == 'content'
         if self.model.properties.default_content_tile:
             scope = self.action_scope == 'view'
-        return self.model.properties.action_delete \
-            and self.permitted('delete') \
-            and scope
+        return (
+            self.model.properties.action_delete and self.permitted('delete') and scope
+        )
 
 
 class ActionDeleteChildren(LinkAction):
-    """Delete children action.
-    """
+    """Delete children action."""
+
     id = 'toolbaraction-delete-children'
-    icon = 'ion-trash-a'
+    icon = 'bi-trash3'
     action = 'delete_children:NONE:NONE'
-    confirm = _('delete_items_confirm',
-                default='Do you really want to delete selected Items?')
-    text = _('action_delete_selected_children',
-             default='Delete selected children')
+    confirm = _(
+        'delete_items_confirm', default='Do you really want to delete selected Items?'
+    )
+    text = _('action_delete_selected_children', default='Delete selected children')
 
     @property
     def display(self):
-        return self.model.properties.action_delete_children \
-            and self.permitted('delete')
+        return self.model.properties.action_delete_children and self.permitted('delete')
 
     @property
     def enabled(self):
@@ -470,86 +515,93 @@ class ActionDeleteChildren(LinkAction):
 
 
 class ActionCut(LinkAction):
-    """Cut children action.
-    """
+    """Cut children action."""
+
     id = 'toolbaraction-cut'
-    icon = 'ion-scissors'
+    icon = 'bi-scissors'
     text = _('action_cut', default='Cut')
     bind = None
 
     @property
     def display(self):
-        return ICopySupport.providedBy(self.model) \
-            and self.model.supports_cut \
-            and self.permitted('cut') \
+        return (
+            ICopySupport.providedBy(self.model)
+            and self.model.supports_cut
+            and self.permitted('cut')
             and self.action_scope == 'listing'
+        )
 
 
 class ActionCopy(LinkAction):
-    """Copy children action.
-    """
+    """Copy children action."""
+
     id = 'toolbaraction-copy'
-    icon = 'ion-ios7-copy-outline'
+    icon = 'bi-copy'
     text = _('action_copy', default='Copy')
     bind = None
 
     @property
     def display(self):
-        return ICopySupport.providedBy(self.model) \
-            and self.model.supports_copy \
-            and self.permitted('copy') \
+        return (
+            ICopySupport.providedBy(self.model)
+            and self.model.supports_copy
+            and self.permitted('copy')
             and self.action_scope == 'listing'
+        )
 
 
 class ActionPaste(LinkAction):
-    """Paste children action.
-    """
+    """Paste children action."""
+
     id = 'toolbaraction-paste'
-    icon = 'ion-clipboard'
+    icon = 'bi-clipboard'
     text = _('action_paste', default='Paste')
     bind = None
 
     @property
     def display(self):
-        return ICopySupport.providedBy(self.model) \
-            and self.model.supports_paste \
-            and self.permitted('paste') \
+        return (
+            ICopySupport.providedBy(self.model)
+            and self.model.supports_paste
+            and self.permitted('paste')
             and self.action_scope == 'listing'
+        )
 
     @property
     def enabled(self):
-        return self.request.cookies.get('cone.app.copysupport.cut') \
-            or self.request.cookies.get('cone.app.copysupport.copy')
+        return self.request.cookies.get(
+            'cone.app.copysupport.cut'
+        ) or self.request.cookies.get('cone.app.copysupport.copy')
 
 
 class _ActionMove(LinkAction):
-    """Basic move action.
-    """
+    """Basic move action."""
 
     @property
     def display(self):
         if self.request.params.get('sort'):
             return False
         parent = self.model.parent
-        return parent.properties.action_move \
-            and IMappingOrder.providedBy(parent) \
+        return (
+            parent.properties.action_move
+            and IMappingOrder.providedBy(parent)
             and self.request.has_permission('change_order', parent)
+        )
 
     @property
     def target(self):
         request = self.request
         query = make_query(
-            b_page=request.params.get('b_page'),
-            size=request.params.get('size')
+            b_page=request.params.get('b_page'), size=request.params.get('size')
         )
         return make_url(self.request, node=self.model, query=query)
 
 
 class ActionMoveUp(_ActionMove):
-    """Move up action.
-    """
+    """Move up action."""
+
     id = 'toolbaraction-move-up'
-    icon = 'glyphicon glyphicon-chevron-up'
+    icon = 'bi-chevron-up'
     action = 'move_up:NONE:NONE'
     text = _('move_up', default='Move up')
 
@@ -561,10 +613,10 @@ class ActionMoveUp(_ActionMove):
 
 
 class ActionMoveDown(_ActionMove):
-    """Move down action.
-    """
+    """Move down action."""
+
     id = 'toolbaraction-move-down'
-    icon = 'glyphicon glyphicon-chevron-down'
+    icon = 'bi-chevron-down'
     action = 'move_down:NONE:NONE'
     text = _('move_down', default='Move down')
 
@@ -573,3 +625,15 @@ class ActionMoveDown(_ActionMove):
         if not super(ActionMoveDown, self).display:
             return False
         return self.model.parent.last_key != self.model.name
+
+
+class ActionDownload(TemplateAction):
+    """Download action."""
+
+    template = 'cone.app.browser:templates/action_download.pt'
+    id = 'toolbaraction-download'
+    icon = 'bi-download'
+    action = None
+    bind = None
+    target = None
+    text = _('download', default='Download')

@@ -1,26 +1,36 @@
-<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
-           omit-tag="True">
+<tal:personaltools
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  omit-tag="True">
 
-  <li id="personaltools"
-      class="dropdown">
+  <div id="personaltools"
+       class="d-flex align-self-stretch flex-direction-row">
 
-    <a href="#"
-       class="dropdown-toggle"
-       data-toggle="dropdown">
-      <span tal:replace="context.user">Admin</span>
-      <span class="caret"></span>
-    </a>
+    <tal:colortoggler replace="structure tile('colortoggler')" />
 
-    <ul class="dropdown-menu" role="menu">
+    <tal:language replace="structure tile('language')" />
 
-      <tal:li repeat="item context.items">
-        <li>
+    <div id="personaltools-dropdown"
+         class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0">
+
+      <div class="h-100 dropdown-toggle d-flex justify-content-end
+                  justify-content-end-sm-center align-items-center"
+           data-bs-toggle="dropdown">
+        <a href="#"
+           class="nav-link d-inline-block px-0 px-md-2">
+          <span tal:content="context.user">Admin</span>
+          <span class="caret"></span>
+        </a>
+      </div>
+
+      <ul role="menu"
+          class="dropdown-menu rounded-0 rounded-bottom
+                 dropdown-menu-end mt-2 mt-sm-0">
+        <li tal:repeat="item context.items">
           <tal:action replace="structure item" />
         </li>
-      </tal:li>
+      </ul>
 
-    </ul>
+    </div>
+  </div>
 
-  </li>
-
-</tal:block>
+</tal:personaltools>

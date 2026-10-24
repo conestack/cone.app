@@ -4,16 +4,17 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <ul class="pagination pagination-sm"
+  <ul class="pagination pagination-sm my-0"
       tal:condition="context.display">
 
-    <tal:fistpage
+    <tal:firstpage
         define="firstpage context.firstpage;
                 invisible not firstpage['visible'] or firstpage['current']"
         condition="firstpage">
 
-      <li tal:condition="not invisible">
+      <li tal:condition="not invisible" class="page-item">
         <a href="${firstpage.get('href', firstpage.get('url'))}"
+           class="page-link"
            ajax:bind="click"
            ajax:target="${firstpage.get('target', firstpage.get('url'))}"
            ajax:event="${context.ajax_event}"
@@ -22,21 +23,23 @@
            i18n:translate="first">First</a>
       </li>
 
-      <li class="disabled"
+      <li class="page-item disabled"
           tal:condition="invisible">
         <a href="javascript:void(0)"
+           class="page-link"
            i18n:translate="first">First</a>
       </li>
 
-    </tal:fistpage>
+    </tal:firstpage>
 
     <tal:prevpage
         define="prevpage context.prevpage;
                 invisible not prevpage['visible'] or prevpage['current']"
         condition="prevpage">
 
-      <li tal:condition="not invisible">
+      <li tal:condition="not invisible" class="page-item">
         <a href="${prevpage.get('href', prevpage.get('url'))}"
+           class="page-link"
            ajax:bind="click"
            ajax:target="${prevpage.get('target', prevpage.get('url'))}"
            ajax:event="${context.ajax_event}"
@@ -45,9 +48,10 @@
            i18n:translate="previous">Previous</a>
       </li>
 
-      <li class="disabled"
+      <li class="page-item disabled"
           tal:condition="invisible">
         <a href="javascript:void(0)"
+           class="page-link"
            i18n:translate="previous">Previous</a>
       </li>
 
@@ -58,8 +62,9 @@
           define="invisible not page['visible'];
                   current page['current']">
 
-        <li tal:condition="not invisible and not current">
+        <li tal:condition="not invisible and not current" class="page-item">
           <a href="${page.get('href', page.get('url'))}"
+             class="page-link"
              ajax:bind="click"
              ajax:target="${page.get('target', page.get('url'))}"
              ajax:event="${context.ajax_event}"
@@ -68,11 +73,12 @@
              tal:content="page['page']">X</a>
         </li>
 
-        <li class="${css}"
+        <li class="${css} page-item"
             tal:define="css invisible and 'invisible' or '';
                         css current and 'active' or css;"
             tal:condition="invisible or current">
           <a href="javascript:void(0)"
+             class="page-link"
              tal:content="page['page']">X</a>
         </li>
 
@@ -84,8 +90,9 @@
                 invisible not nextpage['visible'] or nextpage['current']"
         condition="nextpage">
 
-      <li tal:condition="not invisible">
+      <li tal:condition="not invisible" class="page-item">
         <a href="${nextpage.get('href', nextpage.get('url'))}"
+           class="page-link"
            ajax:bind="click"
            ajax:target="${nextpage.get('target', nextpage.get('url'))}"
            ajax:event="${context.ajax_event}"
@@ -94,9 +101,10 @@
            i18n:translate="next">Next</a>
       </li>
 
-      <li class="disabled"
+      <li class="disabled page-item"
           tal:condition="invisible">
         <a href="javascript:void(0)"
+           class="page-link"
            i18n:translate="next">Next</a>
       </li>
 
@@ -107,8 +115,9 @@
                 invisible not lastpage['visible'] or lastpage['current']"
         condition="lastpage">
 
-      <li tal:condition="not invisible">
+      <li tal:condition="not invisible" class="page-item">
         <a href="${lastpage.get('href', lastpage.get('url'))}"
+           class="page-link"
            ajax:bind="click"
            ajax:target="${lastpage.get('target', lastpage.get('url'))}"
            ajax:event="${context.ajax_event}"
@@ -117,9 +126,10 @@
            i18n:translate="last">Last</a>
       </li>
 
-      <li class="disabled"
+      <li class="disabled page-item"
           tal:condition="invisible">
         <a href="javascript:void(0)"
+           class="page-link"
            i18n:translate="last">Last</a>
       </li>
 

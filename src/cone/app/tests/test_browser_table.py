@@ -52,42 +52,41 @@ class TestBrowserTable(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        table = DummyTable(
-            'cone.app:browser/templates/table.pt',
-            None,
-            'table'
-        )
+        table = DummyTable('cone.app:browser/templates/table.pt', None, 'table')
         table.request = request
         batch = TableBatch(table)
         batch.model = model
         batch.request = request
 
-        self.assertEqual(batch.vocab, [{
-            'current': True,
-            'visible': True,
-            'url': 'http://example.com/?b_page=0&size=10',
-            'page': '1'
-        }, {
-            'current': False,
-            'visible': True,
-            'url': 'http://example.com/?b_page=1&size=10',
-            'page': '2'
-        }, {
-            'current': False,
-            'visible': True,
-            'url': 'http://example.com/?b_page=2&size=10',
-            'page': '3'
-        }])
+        self.assertEqual(
+            batch.vocab,
+            [
+                {
+                    'current': True,
+                    'visible': True,
+                    'url': 'http://example.com/?b_page=0&size=10',
+                    'page': '1',
+                },
+                {
+                    'current': False,
+                    'visible': True,
+                    'url': 'http://example.com/?b_page=1&size=10',
+                    'page': '2',
+                },
+                {
+                    'current': False,
+                    'visible': True,
+                    'url': 'http://example.com/?b_page=2&size=10',
+                    'page': '3',
+                },
+            ],
+        )
 
     def test_TableSlice(self):
         model = BaseNode()
         request = self.layer.new_request()
 
-        table = DummyTable(
-            'cone.app:browser/templates/table.pt',
-            None,
-            'table'
-        )
+        table = DummyTable('cone.app:browser/templates/table.pt', None, 'table')
         table.request = request
         slice = TableSlice(table, model, request)
 
@@ -99,11 +98,7 @@ class TestBrowserTable(TileTestCase):
         model = BaseNode()
         request = self.layer.new_request()
 
-        table = DummyTable(
-            'cone.app:browser/templates/table.pt',
-            None,
-            'table'
-        )
+        table = DummyTable('cone.app:browser/templates/table.pt', None, 'table')
 
         # In order to get row_data rendered inside table, column definitions
         # must be defined
@@ -113,19 +108,22 @@ class TestBrowserTable(TileTestCase):
         self.assertFalse(res.find('Col 1 Value') > -1)
         self.assertFalse(res.find('Col 2 Value') > -1)
 
-        table.col_defs = [{
-            'id': 'col_1',
-            'title': 'Col 1',
-            'sort_key': 'col_1',
-            'sort_title': 'Sort by col 1',
-            'content': 'string'
-        }, {
-            'id': 'col_2',
-            'title': 'Col 2',
-            'sort_key': 'col_2',
-            'sort_title': 'Sort by col 2',
-            'content': 'string'
-        }]
+        table.col_defs = [
+            {
+                'id': 'col_1',
+                'title': 'Col 1',
+                'sort_key': 'col_1',
+                'sort_title': 'Sort by col 1',
+                'content': 'string',
+            },
+            {
+                'id': 'col_2',
+                'title': 'Col 2',
+                'sort_key': 'col_2',
+                'sort_title': 'Sort by col 2',
+                'content': 'string',
+            },
+        ]
 
         res = table(model, request)
         self.assertTrue(res.find('Col 1 Value') > -1)
@@ -133,32 +131,39 @@ class TestBrowserTable(TileTestCase):
 
     def test_table_tile(self):
         with self.layer.hook_tile_reg():
-            @tile(name='mytabletile',
-                  path='cone.app:browser/templates/table.pt',
-                  permission='view')
+
+            @tile(
+                name='mytabletile',
+                path='cone.app:browser/templates/table.pt',
+                permission='view',
+            )
             class MyTable(Table):
                 table_id = 'mytable'
                 table_css = 'mytable'
                 table_tile_name = 'mytabletile'
-                col_defs = [{
-                    'id': 'col_1',
-                    'title': 'Col 1',
-                    'sort_key': None,
-                    'sort_title': None,
-                    'content': 'structure'
-                }, {
-                    'id': 'col_2',
-                    'title': 'Col 2',
-                    'sort_key': 'col_2',
-                    'sort_title': 'Sort by col 2',
-                    'content': 'string'
-                }, {
-                    'id': 'col_3',
-                    'title': 'Col 3',
-                    'sort_key': 'col_3',
-                    'sort_title': 'Sort by col 3',
-                    'content': 'datetime'
-                }]
+                col_defs = [
+                    {
+                        'id': 'col_1',
+                        'title': 'Col 1',
+                        'sort_key': None,
+                        'sort_title': None,
+                        'content': 'structure',
+                    },
+                    {
+                        'id': 'col_2',
+                        'title': 'Col 2',
+                        'sort_key': 'col_2',
+                        'sort_title': 'Sort by col 2',
+                        'content': 'string',
+                    },
+                    {
+                        'id': 'col_3',
+                        'title': 'Col 3',
+                        'sort_key': 'col_3',
+                        'sort_title': 'Sort by col 3',
+                        'content': 'datetime',
+                    },
+                ]
                 default_sort = 'col_2'
                 default_order = 'desc'
                 default_slicesize = 10
@@ -191,9 +196,12 @@ class TestBrowserTable(TileTestCase):
         # Rendering fails unauthorized, 'view' permission is required
         with self.assertRaises(HTTPForbidden) as arc:
             render_tile(model, request, 'mytabletile')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         Unauthorized: tile <...MyTable object at ...> failed permission check
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         # Render authenticated
         request.params['foo'] = 'bar'
@@ -202,7 +210,7 @@ class TestBrowserTable(TileTestCase):
         expected = '<div id="mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
-        expected = 'panel-default mytable"'
+        expected = 'card mytable"'
         self.assertTrue(rendered.find(expected) > -1)
 
         # Sort header with query white list param
@@ -214,16 +222,20 @@ class TestBrowserTable(TileTestCase):
         self.assertTrue(rendered.find(expected) > -1)
 
         # Structure content
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a
         id="toolbaraction-view"
         href="http://example.com/"
         ajax:bind="click"
         ajax:target="http://example.com/"
         ajax:action="content:#content:inner"
+        ajax:overlay-css="modal-xl"
         ajax:path="href"
-        >&nbsp;Foo</a>...
-        """, rendered)
+        >&nbsp;<span>Foo</span></a>...
+        """,
+            rendered,
+        )
 
         # String
         expected = 'Col 2 -&gt; 1'
@@ -232,3 +244,123 @@ class TestBrowserTable(TileTestCase):
         # Datetime
         expected = '01.04.2011 00:00'
         self.assertTrue(rendered.find(expected) > -1)
+
+    def test_footer_pagination(self):
+        # The table footer displays "Showing X to Y of Z entries".
+        class MyTable(Table):
+            col_defs = [
+                {
+                    'id': 'col',
+                    'title': 'Col',
+                    'sort_key': None,
+                    'sort_title': None,
+                    'content': 'string',
+                }
+            ]
+            _count = 0
+
+            @property
+            def item_count(self):
+                return self._count
+
+            def sorted_rows(self, start, end, sort, order):
+                rows = []
+                for i in range(self._count):
+                    row_data = RowData()
+                    row_data['col'] = str(i)
+                    rows.append(row_data)
+                return rows[start:end]
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        model = BaseNode()
+        request = self.layer.new_request()
+
+        def footer_html(rendered):
+            start = rendered.find('table_info')
+            end = rendered.find('</div>', start)
+            return rendered[start:end]
+
+        # Empty table: from=0, to=0, total=0.
+        table = MyTable(tmpl, None, 'table')
+        table._count = 0
+        footer = footer_html(table(model, request))
+        self.assertIn('>0<', footer)
+
+        # Full first page: from=1, to=15, total=20.
+        table = MyTable(tmpl, None, 'table')
+        table._count = 20
+        footer = footer_html(table(model, request))
+        self.assertIn('>1<', footer)
+        self.assertIn('>15<', footer)
+        self.assertIn('>20<', footer)
+
+        # Partial last page: from=16, to=17, total=17.
+        table = MyTable(tmpl, None, 'table')
+        table._count = 17
+        request.params['b_page'] = '1'
+        footer = footer_html(table(model, request))
+        self.assertIn('>16<', footer)
+        self.assertIn('>17<', footer)
+
+    def test_title_in_header(self):
+        # The title is the first element of the table's own header, beside
+        # slice size, search and ``head_additional`` - not a heading inside
+        # the body, between the header and the rows. The table stays one card:
+        # header, rows and footer, replaced together on every reload.
+        class MyTable(DummyTable):
+            col_defs = [
+                {
+                    'id': 'col_1',
+                    'title': 'Col 1',
+                    'sort_key': None,
+                    'sort_title': None,
+                    'content': 'string',
+                }
+            ]
+            show_filter = True
+            head_additional = '<span class="extra">Extra</span>'
+
+        tmpl = 'cone.app:browser/templates/table.pt'
+        model = BaseNode()
+        model.metadata.title = 'Foo'
+        request = self.layer.new_request()
+
+        def header(rendered):
+            start = rendered.find('class="card-header"')
+            return rendered[start : rendered.find('class="card-body', start)]
+
+        rendered = MyTable(tmpl, None, 'table')(model, request)
+        head = header(rendered)
+        self.assertIn(
+            'class="table_title m-0 me-auto align-self-center">Foo</h5>', head
+        )
+        # Title first, then the controls.
+        self.assertLess(head.find('table_title'), head.find('table_length'))
+        self.assertLess(head.find('table_length'), head.find('table_filter'))
+        self.assertLess(head.find('table_filter'), head.find('class="extra"'))
+        self.assertNotIn('<h4', rendered)
+        # Rows and footer in the same card.
+        self.assertLess(rendered.find('card-header'), rendered.find('<table'))
+        self.assertLess(rendered.find('<table'), rendered.find('table_info'))
+
+        # Without a title the header holds the controls alone.
+        table = MyTable(tmpl, None, 'table')
+        table.show_title = False
+        head = header(table(model, request))
+        self.assertNotIn('table_title', head)
+        self.assertIn('table_filter', head)
+
+        # Without the controls the header keeps the title alone.
+        table = MyTable(tmpl, None, 'table')
+        table.display_table_header = False
+        head = header(table(model, request))
+        self.assertIn('table_title', head)
+        self.assertNotIn('table_length', head)
+        self.assertNotIn('table_filter', head)
+        self.assertNotIn('class="extra"', head)
+
+        # Neither: no header at all.
+        table = MyTable(tmpl, None, 'table')
+        table.display_table_header = False
+        table.show_title = False
+        self.assertNotIn('class="card-header"', table(model, request))

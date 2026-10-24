@@ -2,11 +2,14 @@
            xmlns:i18n="http://xml.zope.org/namespaces/i18n"
            i18n:domain="cone.app"
            omit-tag="True">
-  
-  <h3 i18n:translate="insufficient_privileges">Insufficient privileges</h3>
 
-  <p i18n:translate="insufficient_privileges_help">
-    You do not have the required permission to access this resource.
-  </p>
+  <div class="card mt-3">
+    <h5 class="card-header" i18n:translate="insufficient_privileges">Insufficient privileges</h5>
+    <div class="card-body">
+      <p class="card-text" i18n:translate="insufficient_privileges_help">
+        You do not have the required permission to access this resource.
+      </p>
+    </div>
+  </div>
 
 </tal:block>

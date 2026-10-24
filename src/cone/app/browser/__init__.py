@@ -17,25 +17,17 @@ def render_main_template(model, request, contenttile='content'):
     """
     ActionContext(model, request, contenttile)
     return render_template_to_response(
-        cone.app.cfg.main_template,
-        request=request,
-        model=model
+        cone.app.cfg.main_template, request=request, model=model
     )
 
 
 @view_config(permission='login')
 def main_view(model, request):
-    """Default view.
-    """
+    """Default view."""
     return render_main_template(model, request)
 
 
-FAVICON_FILE = os.path.join(
-    os.path.dirname(__file__),
-    'static',
-    'cone',
-    'favicon.ico'
-)
+FAVICON_FILE = os.path.join(os.path.dirname(__file__), 'static', 'cone', 'favicon.ico')
 
 
 @view_config(route_name='favicon')
@@ -50,6 +42,7 @@ def favicon_view(request):
 ###############################################################################
 # Related view support
 ###############################################################################
+
 
 def set_related_view(request, view_name):
     """Store related view name on request.
@@ -84,8 +77,7 @@ class RelatedViewProvider(Behavior):
 
     @plumb
     def __call__(_next, self, model, request):
-        """Set related view on request and call downstream function.
-        """
+        """Set related view on request and call downstream function."""
         set_related_view(request, self.related_view)
         return _next(self, model, request)
 
@@ -104,6 +96,5 @@ class RelatedViewConsumer(Behavior):
     @default
     @property
     def related_view(self):
-        """Return related view name from request.
-        """
+        """Return related view name from request."""
         return get_related_view(self.request)

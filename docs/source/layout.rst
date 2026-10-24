@@ -2,6 +2,14 @@
 Layout
 ======
 
+.. version-added:: 2.0
+
+    Version 2.0 introduces a new, more flexible layout system and the ``sidebar_right``
+    and ``personaltools`` elements.
+
+    There are new layout configuration settings available. See
+    :ref:`layout_configuration` for details.
+
 .. _layout_main_template:
 
 Main Template
@@ -25,6 +33,30 @@ file::
     cone.main_template = cone.example.browser:templates/main.pt
 
 
+Rendering the Main Template
+---------------------------
+
+To render a view using the main template, use ``render_main_template`` from
+``cone.app.browser``.
+
+.. code-block:: python
+
+    from cone.app.browser import render_main_template
+    from pyramid.view import view_config
+
+    @view_config(name='myview', permission='view')
+    def myview(model, request):
+        # Renders main template with 'mycontent' tile in content area
+        return render_main_template(model, request, 'mycontent')
+
+Parameters:
+
+- **model**: The application model node.
+- **request**: The current request object.
+- **contenttile**: Name of the tile to render in the content area. Defaults
+  to ``'content'``.
+
+
 Application Layout
 ------------------
 
@@ -35,6 +67,12 @@ is structured as follows.
 
 .. figure:: ../../artwork/layout.svg
     :width: 100%
+
+
+.. _layout_configuration:
+
+Layout Configuration
+--------------------
 
 The layout can be configured for each application node. Layout configuration
 is described in ``cone.app.interfaces.ILayoutConfig`` and is registered for
@@ -53,45 +91,79 @@ one or more model classes with ``cone.app.layout_config`` decorator.
         pass
 
     @layout_config(CustomNodeOne, CustomNodeTwo)
-    class CustomLayoutConfig(LayoutConfig)
+    class CustomLayoutConfig(LayoutConfig):
 
         def __init__(self, model, request):
-            super(ExampleNodeLayoutConfig, self).__init__(model, request)
+            super(CustomLayoutConfig, self).__init__(model, request)
             self.mainmenu = True
-            self.mainmenu_fluid = False
             self.livesearch = True
             self.personaltools = True
-            self.columns_fluid = False
+            self.limit_content_width = False
             self.pathbar = True
             self.sidebar_left = ['navtree']
-            self.sidebar_left_grid_width = 3
-            self.content_grid_width = 9
+            self.sidebar_right = ['my_tile']
+            self.sidebar_left_min_width = 250
+            self.sidebar_right_min_width = 250
 
-Provided layout settings:
 
-- **mainmenu**: Flag whether to display mainmenu.
+.. list-table:: Layout Configuration Settings
+  :widths: 20 60 20
+  :header-rows: 1
 
-- **mainmenu_fluid**: Flag whether mainmenu is fluid.
+  * - Setting
+    - Description
+    - Default
+  * - ``mainmenu``
+    - Flag whether to display mainmenu.
+    - True
+  * - ``livesearch``
+    - Flag whether to display livesearch.
+    - True
+  * - ``personaltools``
+    - Flag whether to display personaltools.
+    - True
+  * - ``limit_content_width``
+    - Flag whether content width should be limited on large screens.
+    - True
+  * - ``pathbar``
+    - Flag whether to display pathbar.
+    - True
+  * - ``sidebar_left``
+    - List of tiles by name which should be rendered in left sidebar.
+    - ['navtree']
+  * - ``sidebar_left_mode``
+    - The mode of the left sidebar (``'stacked'`` or ``'toggle'``).
+    - 'stacked'
+  * - ``sidebar_left_min_width``
+    - Minimum left sidebar width as integer (in px).
+    - 150
+  * - ``sidebar_right``
+    - List of tiles by name which should be rendered in right sidebar.
+    - []
+  * - ``sidebar_right_mode``
+    - The mode of the right sidebar (``'stacked'`` or ``'toggle'``).
+    - 'stacked'
+  * - ``sidebar_right_min_width``
+    - Minimum right sidebar width as integer (in px).
+    - 150
 
-- **livesearch**: Flag whether to display livesearch.
+.. version-added:: 2.0
 
-- **personaltools**: Flag whether to display personaltools.
+    - The ``sidebar_left_min_width`` and ``sidebar_right_min_width`` settings have been
+      added to specify minimum sidebar widths in px.
+    - The ``sidebar_left_mode`` and ``sidebar_right_mode`` settings have been
+      added to specify sidebar modes (either ``'stacked'`` or ``'toggle'``).
+    - The ``limit_content_width`` setting has been added to replace the former
+      ``columns_fluid`` setting.
+    - As of version 2.0, ``limit_content_width`` defaults to ``True``.
 
-- **columns_fluid**: Flag whether columns are fluid.
+.. version-removed:: 2.0
 
-- **pathbar**: Flag whether to display pathbar.
-
-- **sidebar_left**: List of tiles by name which should be rendered in sidebar.
-
-- **sidebar_left_grid_width**: Sidebar grid width as integer, total grid width
-  is 12.
-
-- **content_grid_width**: Content grid width as integer, total grid width
-  is 12.
-
-.. note::
-
-    As of version 1.1, ``mainmenu_fluid`` defaults to ``True``.
+    ``mainmenu_fluid``, ``columns_fluid``, ``sidebar_left_grid_width`` and 
+    ``content_grid_width`` have been removed in ``cone.app 2.0`` in favor of a
+    more flexible layout.
+    Use the ``limit_content_width`` setting instead to limit content width on
+    large screens.
 
 .. deprecated:: 1.1
 

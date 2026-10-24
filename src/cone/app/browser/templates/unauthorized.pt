@@ -3,11 +3,13 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <div>
-    <h1 i18n:translate="unauthorized_label">Unauthorized</h1>
-    <p i18n:translate="unauthorized_text">
+  <div class="card mt-3">
+    <h5 class="card-header" i18n:translate="unauthorized_label">Unauthorized</h5>
+    <div class="card-body">
+      <p class="card-text" i18n:translate="unauthorized_text">
       You are not allowed to access this resource.
-    </p>
+      </p>
+    </div>
   </div>
 
 </tal:block>

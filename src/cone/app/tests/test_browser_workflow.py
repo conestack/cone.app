@@ -13,39 +13,46 @@ class TestBrowserWorkflow(TileTestCase):
         request = self.layer.new_request()
         node = WorkflowNode()
 
-        self.assertEqual(node.state, u'initial')
+        self.assertEqual(node.state, 'initial')
 
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a href="#"
-              class="state-initial dropdown-toggle"
+              role="button"
+              class="nav-link dropdown-toggle py-2 px-3 state-initial"
               title="Change state"
-              data-toggle="dropdown">
+              data-bs-toggle="dropdown">
           <span>State</span>:
           <span>Initial State</span>
         </a>...
-        """, res)
+        """,
+            res,
+        )
 
         request.params['do_transition'] = 'initial_2_final'
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.checkOutput("""
-        ...<li class="dropdown">
-          <span class="no-transitions state-final">
+        self.checkOutput(
+            """
+        ...<li class="nav-item dropdown py-0">
+          <span class="nav-link py-2 no-transitions state-final">
             <span>State</span>:
             <span>Final State</span>
           </span>
         </li>...
-        """, res)
+        """,
+            res,
+        )
 
-        self.assertEqual(node.state, u'final')
+        self.assertEqual(node.state, 'final')
 
         node = InexistentWorkflowNode()
         request = self.layer.new_request()
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.assertEqual(res, u'\n\n  \n\n\n')
+        self.assertEqual(res, '\n\n  \n\n\n')
 
         tsf = TranslationStringFactory('cone.app.tests')
         node = WorkflowNode()
@@ -53,12 +60,16 @@ class TestBrowserWorkflow(TileTestCase):
 
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<a href="#"
-              class="state-initial dropdown-toggle"
+              role="button"
+              class="nav-link dropdown-toggle py-2 px-3 state-initial"
               title="Change state"
-              data-toggle="dropdown">
+              data-bs-toggle="dropdown">
           <span>State</span>:
           <span>initial</span>
         </a>...
-        """, res)
+        """,
+            res,
+        )

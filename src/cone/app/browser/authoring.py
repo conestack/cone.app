@@ -12,6 +12,7 @@ from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.form import FormTarget
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
+from cone.app.interfaces import ICategories
 from cone.app.model import AdapterNode
 from cone.app.model import BaseNode
 from cone.app.model import get_node_info
@@ -43,6 +44,7 @@ _ = TranslationStringFactory('cone.app')
 # general
 ###############################################################################
 
+
 def is_ajax(request):
     return bool(request.params.get('ajax'))
 
@@ -69,6 +71,7 @@ class _FormRenderingTile(Tile):
     needed for add forms to create the correct context (aka add model) for the
     add form tile, and useless for edit forms.
     """
+
     form_tile_name = ''
 
     def render(self):
@@ -76,7 +79,7 @@ class _FormRenderingTile(Tile):
             '``_FormRenderingTile`` is deprecated and will be removed as of '
             'cone.app 1.2. Please implement as regular tile if intermediate '
             'tile rendering is needed ``instead.',
-            DeprecationWarning
+            DeprecationWarning,
         )
         return render_tile(self.model, self.request, self.form_tile_name)
 
@@ -84,6 +87,7 @@ class _FormRenderingTile(Tile):
 ###############################################################################
 # form continuation control
 ###############################################################################
+
 
 class CameFromNext(Behavior):
     """Form behavior for form tiles considering ``came_from`` parameter on
@@ -150,36 +154,30 @@ class CameFromNext(Behavior):
         else:
             url = compat.unquote(came_from)
             parsed = compat.urlparse.urlparse(url)
-            app_loc = compat.urlparse.urlparse(
-                self.request.application_url
-            ).netloc
+            app_loc = compat.urlparse.urlparse(self.request.application_url).netloc
             # behave as if no came_from given if application location not
             # matches came_from location
             if app_loc != parsed.netloc:
-                logger.error((
-                    'CameFromNext.next(): Application location "{}" does not '
-                    'match came_from location "{}". Use model for URL '
+                logger.error(
+                    f'CameFromNext.next(): Application location "{app_loc}" does not '
+                    f'match came_from location "{parsed.netloc}". Use model for URL '
                     'computing instead'
-                ).format(app_loc, parsed.netloc))
+                )
                 url = make_url(request.request, node=self.model)
                 path = '/'.join(node_path(self.model))
             # include query to path
             elif parsed.query:
-                path = '{}?{}'.format(parsed.path, parsed.query)
+                path = f'{parsed.path}?{parsed.query}'
             # query without path
             else:
-                path = '{}'.format(parsed.path)
+                path = f'{parsed.path}'
         # ajax continuation operations if ajax request
         if self.ajax_request:
             event = AjaxEvent(url, 'contextchanged', '#layout')
             # return continuation path and event if browser history should be
             # written
             if self.write_history_on_next:
-                cpath = AjaxPath(
-                    path,
-                    target=url,
-                    event='contextchanged:#layout'
-                )
+                cpath = AjaxPath(path, target=url, event='contextchanged:#layout')
                 return [cpath, event]
             # return event only if writing browser history should be skipped
             return [event]
@@ -191,13 +189,13 @@ class CameFromNext(Behavior):
 # form heading
 ###############################################################################
 
-class FormHeading(Behavior):
 
+class FormHeading(Behavior):
     @default
     @property
     def form_heading(self):
         raise NotImplementedError(
-            u'Abstract ``FormHeading`` does not implement ``form_heading``'
+            'Abstract ``FormHeading`` does not implement ``form_heading``'
         )
 
 
@@ -205,10 +203,13 @@ class FormHeading(Behavior):
 # content area related forms
 ###############################################################################
 
+
 class ContentForm(FormHeading):
     """Form behavior rendering to content area."""
+
     show_heading = default(True)
     show_contextmenu = default(True)
+    is_card = default(True)
 
     @default
     @property
@@ -228,22 +229,18 @@ class ContentForm(FormHeading):
         ajax_form_fiddle(request, '#content', 'inner')
         form = _next(self, model, request)
         if not form:
-            form = u''
+            form = ''
         self.rendered_form = form
         path = self.path
         if not path:
             path = 'cone.app.browser:templates/content_form.pt'
-        return render_template(
-            path,
-            request=request,
-            model=model,
-            context=self
-        )
+        return render_template(path, request=request, model=model, context=self)
 
 
 ###############################################################################
 # overlay forms
 ###############################################################################
+
 
 @view_config(name='overlayform', permission='view')
 def overlayform(model, request):
@@ -253,6 +250,7 @@ def overlayform(model, request):
 
 class OverlayForm(FormTarget):
     """Form behavior rendering to overlay."""
+
     action_resource = override('overlayform')
     content_selector = default('.modal-body')
 
@@ -269,7 +267,7 @@ class OverlayForm(FormTarget):
     @plumb
     def __call__(_next, self, model, request):
         form = _next(self, model, request)
-        selector = '#{} {}'.format(self.overlay_uid, self.content_selector)
+        selector = f'#{self.overlay_uid} {self.content_selector}'
         ajax_form_fiddle(request, selector, 'inner')
         return form
 
@@ -286,6 +284,7 @@ OverlayBehavior = OverlayForm
 ###############################################################################
 # adding
 ###############################################################################
+
 
 def default_addmodel_factory(parent, nodeinfo):
     """Default addmodel factory.
@@ -306,10 +305,53 @@ def default_addmodel_factory(parent, nodeinfo):
     return addmodel
 
 
-@tile(name='add_dropdown',
-      path='templates/add_dropdown.pt',
-      permission='add', strict=False)
+@tile(
+    name='add_dropdown',
+    path='templates/add_dropdown.pt',
+    permission='add',
+    strict=False,
+)
 class AddDropdown(Tile):
+    def category_id(self, category):
+        return f'add-category-cat-{category}'
+
+    @property
+    def addables(self):
+        addables = list()
+        for addable in self.model.nodeinfo.addables:
+            if not security.node_available(self.model, addable):
+                continue
+            addables.append(addable)
+        return addables
+
+    @property
+    def categories(self):
+        # expects ``categories`` property on model class
+        ret = list()
+        addables = self.addables
+        if not addables:
+            return ret
+        node_infos = [get_node_info(addable) for addable in addables]
+        # lookup categories
+        categories = set()
+        for info in node_infos:
+            cls = info.node
+            for cat in cls.categories:
+                categories.add(cat)
+        # create items
+        for category in categories:
+            category_items = list()
+            for info in node_infos:
+                cls = info.node
+                if category in cls.categories:
+                    item = self.make_item(cls.node_info_name, info)
+                    category_items.append(item)
+            ret.append((category, category_items))
+        return sorted(ret, key=lambda x: x[0])
+
+    @property
+    def has_categories(self):
+        return ICategories.providedBy(self.model)
 
     def make_item(self, info_name, info):
         model = self.model
@@ -355,6 +397,7 @@ class AddTile(Tile):
     node to add. The add context gets created from factory provided on the
     ``NodeInfo`` instance.
     """
+
     form_tile_name = 'addform'
 
     def render(self):
@@ -392,28 +435,22 @@ class AddFactoryProxy(Behavior):
 
 
 class AddFormHeading(FormHeading):
-
     @default
     @property
     def form_heading(self):
         localizer = get_localizer(self.request)
-        title = localizer.translate(
-            get_node_info(self.model.node_info_name).title)
+        title = localizer.translate(get_node_info(self.model.node_info_name).title)
         heading = localizer.translate(
-            _('add_form_heading',
-              default='Add: ${title}',
-              mapping={'title': title}))
+            _('add_form_heading', default='Add: ${title}', mapping={'title': title})
+        )
         return heading
 
 
 class ContentAddForm(
-    FormTarget,
-    AddFactoryProxy,
-    AddFormHeading,
-    ContentForm,
-    CameFromNext
+    FormTarget, AddFactoryProxy, AddFormHeading, ContentForm, CameFromNext
 ):
     """Form behavior rendering add form to content area."""
+
     action_resource = override('add')
 
     @default
@@ -431,6 +468,7 @@ AddBehavior = ContentAddForm
 # overlay adding
 ###############################################################################
 
+
 @view_config(name='overlayadd', permission='add')
 def overlayadd(model, request):
     return render_form(model, request, 'overlayadd')
@@ -443,12 +481,14 @@ class OverlayAddTile(AddTile):
 
 class OverlayAddForm(OverlayForm, AddFactoryProxy, AddFormHeading):
     """Add form behavior rendering to overlay."""
+
     action_resource = override('overlayadd')
 
 
 ###############################################################################
 # editing
 ###############################################################################
+
 
 @view_config(name='edit', permission='edit')
 def edit(model, request):
@@ -458,19 +498,17 @@ def edit(model, request):
 # B/C
 @tile(name='edit', permission='edit')
 class EditTile(Tile):
-
     def render(self):
         warnings.warn(
             '``EditTile`` is deprecated and will be removed as of '
             'cone.app 1.2. Please adopt your code to use ``editform`` tile '
             'directly instead.',
-            DeprecationWarning
+            DeprecationWarning,
         )
         return render_tile(self.model, self.request, 'editform')
 
 
 class EditFormHeading(FormHeading):
-
     @default
     @property
     def form_heading(self):
@@ -479,19 +517,18 @@ class EditFormHeading(FormHeading):
             return _('edit', default='Edit')
         localizer = get_localizer(self.request)
         heading = localizer.translate(
-            _('edit_form_heading',
-              default='Edit: ${title}',
-              mapping={'title': localizer.translate(info.title)}))
+            _(
+                'edit_form_heading',
+                default='Edit: ${title}',
+                mapping={'title': localizer.translate(info.title)},
+            )
+        )
         return heading
 
 
-class ContentEditForm(
-    FormTarget,
-    EditFormHeading,
-    ContentForm,
-    CameFromNext
-):
+class ContentEditForm(FormTarget, EditFormHeading, ContentForm, CameFromNext):
     """Form behavior rendering edit form to content area."""
+
     action_resource = override('edit')
 
 
@@ -504,6 +541,7 @@ EditBehavior = ContentEditForm
 # overlay editing
 ###############################################################################
 
+
 @view_config(name='overlayedit', permission='edit')
 def overlayedit(model, request):
     return render_form(model, request, 'overlayeditform')
@@ -512,25 +550,26 @@ def overlayedit(model, request):
 # B/C
 @tile(name='overlayedit', permission='edit')
 class OverlayEditTile(Tile):
-
     def render(self):
         warnings.warn(
             '``OverlayEditTile`` is deprecated and will be removed as of '
             'cone.app 1.2. Please adopt your code to use ``overlayeditform`` '
             'tile directly instead.',
-            DeprecationWarning
+            DeprecationWarning,
         )
         return render_tile(self.model, self.request, 'overlayeditform')
 
 
 class OverlayEditForm(OverlayForm, EditFormHeading):
     """Edit form behavior rendering to overlay."""
+
     action_resource = override('overlayedit')
 
 
 ###############################################################################
 # deleting
 ###############################################################################
+
 
 @tile(name='delete', permission='delete')
 class DeleteAction(Tile):
@@ -543,13 +582,15 @@ class DeleteAction(Tile):
         model = self.model
         title = model.metadata.get('title', model.name)
         if not model.properties.action_delete:
-            ts = _('object_not_deletable',
-                   default='Object "${title}" not deletable',
-                   mapping={'title': title})
+            ts = _(
+                'object_not_deletable',
+                default='Object "${title}" not deletable',
+                mapping={'title': title},
+            )
             localizer = get_localizer(self.request)
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'error')
-            return u''
+            return ''
         content_tile = model.properties.action_delete_tile
         if not content_tile:
             content_tile = 'content'
@@ -561,10 +602,10 @@ class DeleteAction(Tile):
         url = make_url(self.request, node=parent, query=query)
         ajax_continue(self.request, self.continuation(url))
         if self.show_confirm_deleted:
-            ts = _('deleted_object',
-                   default='Deleted: ${title}',
-                   mapping={'title': title})
+            ts = _(
+                'deleted_object', default='Deleted: ${title}', mapping={'title': title}
+            )
             localizer = get_localizer(self.request)
             message = localizer.translate(ts)
             ajax_message(self.request, message, 'info')
-        return u''
+        return ''

@@ -11,11 +11,11 @@ from plumber import plumbing
 
 
 class RowData(dict):
-
     def __init__(self, selectable=False, target=None, css=''):
         self.selectable = selectable
         self.target = target
         self.css = css
+        self.cell_css = dict()
 
 
 @plumbing(RelatedViewConsumer)
@@ -26,6 +26,7 @@ class Table(Tile):
     at ``self.table_tile_name``, normally bound to template
     ``cone.app:browser/templates/table.pt``
     """
+
     wrapper_binding = 'batchclicked sortclicked'
     table_id = 'table'
     table_css = ''
@@ -44,8 +45,8 @@ class Table(Tile):
     ajax_path = None
     ajax_path_event = None
 
-    table_length_size = 'col-xs-4 col-sm3'
-    table_filter_size = 'col-xs-3'
+    table_length_size = None
+    table_filter_size = None
 
     @property
     def slice(self):
@@ -69,27 +70,29 @@ class Table(Tile):
 
     @property
     def slice_target(self):
-        return self.make_url({
-            'sort': self.sort_column,
-            'order': self.sort_order,
-            'term': self.filter_term,
-        })
+        return self.make_url(
+            {
+                'sort': self.sort_column,
+                'order': self.sort_order,
+                'term': self.filter_term,
+            }
+        )
 
     @property
     def filter_target(self):
-        return self.make_url({
-            'sort': self.sort_column,
-            'order': self.sort_order,
-            'size': self.slicesize,
-        })
+        return self.make_url(
+            {
+                'sort': self.sort_column,
+                'order': self.sort_order,
+                'size': self.slicesize,
+            }
+        )
 
     @property
     def filter_term(self):
         term = self.request.params.get('term')
         if term:
-            term = term.encode('utf-8') if compat.IS_PY2 else term
             term = compat.unquote(term)
-            term = term.decode('utf-8') if compat.IS_PY2 else term
         return term
 
     @property
@@ -102,8 +105,7 @@ class Table(Tile):
 
     @property
     def sort_index(self):
-        """Index of recent sort column.
-        """
+        """Index of recent sort column."""
         col = self.sort_column
         idx = 0
         for col_def in self.col_defs:
@@ -134,12 +136,15 @@ class Table(Tile):
             ``self.related_view`` to URL.
         :return: URL as string.
         """
-        return safe_decode(make_url(
-            self.request,
-            path=path,
-            node=None if path else self.model,
-            resource=self.related_view if include_view else None,
-            query=self.make_query(params)))
+        return safe_decode(
+            make_url(
+                self.request,
+                path=path,
+                node=None if path else self.model,
+                resource=self.related_view if include_view else None,
+                query=self.make_query(params),
+            )
+        )
 
     def format_date(self, dt):
         return format_date(dt)
@@ -162,17 +167,23 @@ class Table(Tile):
         return css, url
 
     @property
+    def empty_state_message(self):
+        """Optional message shown when the table has no rows.
+
+        Return a translated string or None to suppress the message.
+        Subclasses can override to provide context-specific guidance.
+        """
+        return None
+
+    @property
     def item_count(self):
-        raise NotImplementedError("Abstract table does not implement "
-                                  "``item_count``.")
+        raise NotImplementedError('Abstract table does not implement ``item_count``.')
 
     def sorted_rows(self, start, end, sort, order):
-        raise NotImplementedError("Abstract table does not implement "
-                                  "``sorted_rows``.")
+        raise NotImplementedError('Abstract table does not implement ``sorted_rows``.')
 
 
-class TableSlice(object):
-
+class TableSlice:
     def __init__(self, table_tile, model, request):
         self.table_tile = table_tile
         self.model = model
@@ -189,13 +200,11 @@ class TableSlice(object):
     def rows(self):
         start, end = self.slice
         return self.table_tile.sorted_rows(
-            start, end,
-            self.table_tile.sort_column,
-            self.table_tile.sort_order)
+            start, end, self.table_tile.sort_column, self.table_tile.sort_order
+        )
 
 
 class TableBatch(Batch):
-
     def __init__(self, table_tile):
         self.table_tile = table_tile
         self.name = table_tile.table_id + 'batch'
@@ -232,12 +241,14 @@ class TableBatch(Batch):
                 self.request,
                 path=path,
                 # resource=self.related_view,
-                query=query
+                query=query,
             )
-            ret.append({
-                'page': '%i' % (i + 1),
-                'current': current == str(i),
-                'visible': True,
-                'url': url,
-            })
+            ret.append(
+                {
+                    'page': '%i' % (i + 1),
+                    'current': current == str(i),
+                    'visible': True,
+                    'url': url,
+                }
+            )
         return ret

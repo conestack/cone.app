@@ -25,11 +25,11 @@ def tmp_root_node(fn):
             fn(*a)
         finally:
             cone.app.root = None
+
     return wrapper
 
 
 class TestApp(NodeTestCase):
-
     @tmp_root_node
     def test_get_root(self):
         root = cone.app.get_root()
@@ -40,12 +40,12 @@ class TestApp(NodeTestCase):
 
         # Settings contains metadata.title by default
         self.assertEqual(list(root['settings'].metadata.keys()), ['title'])
-        self.assertEqual(root['settings'].metadata.title, u'settings')
+        self.assertEqual(root['settings'].metadata.title, 'settings')
 
         # Settings is displayed in navtree by default
         self.assertEqual(
             sorted(root['settings'].properties.keys()),
-            ['icon', 'in_navtree', 'skip_mainmenu']
+            ['icon', 'in_navtree', 'skip_mainmenu'],
         )
         self.assertFalse(root['settings'].properties.in_navtree)
         self.assertTrue(root['settings'].properties.skip_mainmenu)
@@ -60,8 +60,7 @@ class TestApp(NodeTestCase):
         with self.assertRaises(ValueError) as arc:
             cone.app.register_entry('dummy', BaseNode)
         self.assertEqual(
-            str(arc.exception),
-            "Entry with name 'dummy' already registered."
+            str(arc.exception), "Entry with name 'dummy' already registered."
         )
 
     @tmp_root_node
@@ -74,8 +73,7 @@ class TestApp(NodeTestCase):
         with self.assertRaises(ValueError) as arc:
             cone.app.register_config('dummy', BaseNode)
         self.assertEqual(
-            str(arc.exception),
-            "Config with name 'dummy' already registered."
+            str(arc.exception), "Config with name 'dummy' already registered."
         )
 
     @testing.reset_node_available
@@ -116,7 +114,7 @@ class TestApp(NodeTestCase):
             # ensure custom node_available factory gets invoked
             'cone.root.node_available': 'cone.app.testing.mock.testing_node_available',
             # ensure dummy main hooks called
-            'cone.plugins': 'cone.app.tests'
+            'cone.plugins': 'cone.app.tests',
         }
 
         # main
@@ -125,9 +123,7 @@ class TestApp(NodeTestCase):
         self.assertEqual(hooks['called'], 2)
 
         # Check custom node_available
-        self.assertTrue(
-            security.node_available is testing.mock.testing_node_available
-        )
+        self.assertTrue(security.node_available is testing.mock.testing_node_available)
 
         # Remove custom main hook after testing
         cone.app.main_hooks.remove(custom_main_hook)
@@ -135,8 +131,7 @@ class TestApp(NodeTestCase):
 
         # Check main template was set properly
         self.assertEqual(
-            cone.app.cfg.main_template,
-            'package.browser:templates/main.pt'
+            cone.app.cfg.main_template, 'package.browser:templates/main.pt'
         )
 
         # reset main template
@@ -144,7 +139,7 @@ class TestApp(NodeTestCase):
 
     def test_remote_addr_middleware(self):
         # Remote address middleware
-        class DummyApp(object):
+        class DummyApp:
             remote_addr = None
 
             def __call__(self, environ, start_response):
@@ -165,14 +160,13 @@ class TestApp(NodeTestCase):
         self.assertTrue(ILayoutConfig.providedBy(config))
 
         self.assertTrue(config.mainmenu)
-        self.assertTrue(config.mainmenu_fluid)
         self.assertTrue(config.livesearch)
         self.assertTrue(config.personaltools)
-        self.assertTrue(config.columns_fluid)
+        self.assertTrue(config.limit_content_width)
+        self.assertFalse(config.limit_page_width)
         self.assertTrue(config.pathbar)
         self.assertEqual(config.sidebar_left, ['navtree'])
-        self.assertEqual(config.sidebar_left_grid_width, 3)
-        self.assertEqual(config.content_grid_width, 9)
+        self.assertEqual(config.sidebar_right, [])
 
         @layout_config(BaseNode)
         class BaseNodeLayout(LayoutConfig):
@@ -238,3 +232,9 @@ class TestTraversal(NodeTestCase):
         self.assertTrue(result['context'] is get_root())
         self.assertEqual(result['view_name'], '')
         self.assertEqual(result['traversed'], ())
+
+
+class TestTestingMock(NodeTestCase):
+    def test_testing_node_available(self):
+        # The ``cone.root.node_available`` hook the main test configures.
+        self.assertTrue(testing.mock.testing_node_available(BaseNode(), 'any'))

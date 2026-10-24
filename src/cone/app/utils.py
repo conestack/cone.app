@@ -1,4 +1,3 @@
-from cone.app import compat
 from datetime import datetime
 from node.utils import safe_decode as _safe_decode
 from node.utils import safe_encode as _safe_encode
@@ -12,6 +11,7 @@ logger = logging.getLogger('cone.app')
 
 def app_config():
     import cone.app
+
     return cone.app.cfg
 
 
@@ -41,8 +41,31 @@ def node_path(node):
     return [_safe_decode(p) for p in node.path if p is not None]
 
 
-class DatetimeHelper(object):
+def navigation_root(node):
+    """Node the navigation is rooted at.
 
+    The nearest ancestor of ``node`` - or ``node`` itself - flagged with
+    ``properties.is_navroot``. Falls back to the application root's
+    ``default_child`` if that one is flagged, and to the application root
+    otherwise.
+
+    :param node: Node to look up the navigation root for.
+    :return: The navigation root node.
+    """
+    root = node.root
+    while node is not root:
+        if node.properties.is_navroot:
+            return node
+        node = node.parent
+    default_child = root.properties.default_child
+    if default_child:
+        child = root.get(default_child)
+        if child is not None and child.properties.is_navroot:
+            return child
+    return root
+
+
+class DatetimeHelper:
     def w_value(self, val):
         if val is None:
             return 'None'
@@ -50,7 +73,7 @@ class DatetimeHelper(object):
             return self.dt_to_iso(val)
         if isinstance(val, bytes):
             return val.decode('utf-8')
-        return compat.UNICODE_TYPE(val)
+        return str(val)
 
     def r_value(self, val):
         try:
@@ -58,7 +81,7 @@ class DatetimeHelper(object):
         except (ValueError, TypeError):
             if isinstance(val, bytes):
                 return val.decode('utf-8')
-            return compat.UNICODE_TYPE(val)
+            return str(val)
 
     def dt_from_iso(self, str):
         return datetime.strptime(str, '%Y-%m-%dT%H:%M:%S')
@@ -66,7 +89,7 @@ class DatetimeHelper(object):
     def dt_to_iso(self, dt):
         iso = dt.isoformat()
         if iso.find('.') != -1:
-            iso = iso[:iso.rfind('.')]
+            iso = iso[: iso.rfind('.')]
         return iso
 
 

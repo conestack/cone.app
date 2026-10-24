@@ -150,7 +150,7 @@ Plugin root node factories are registered to the application via
 
     from cone.app import main_hook
     from cone.app import register_entry
-    import cone.example.model import ExamplePlugin
+    from cone.example.model import ExamplePlugin
 
     @main_hook
     def example_main_hook(config, global_config, settings):
@@ -180,7 +180,7 @@ and registered via ``cone.app.register_config``.
         name='example_settings',
         title='Example Settings',
         description='Settings for the example plugin',
-        icon='glyphicon glyphicon-cog')
+        icon='bi bi-gear')
     class ExampleSettings(SettingsNode):
         """Plugin settings node."""
         # Category for grouping in settings UI
@@ -223,7 +223,7 @@ settings should be editable by users without ``manage`` permission.
 
 .. note::
 
-    As of version 1.1, settings are accessible to authenticated users, not just
+    Since version 1.1, settings are accessible to authenticated users, not just
     managers. The ``display`` property on ``SettingsNode`` controls visibility
     per settings node.
 

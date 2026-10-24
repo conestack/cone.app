@@ -12,19 +12,92 @@ class TestBrowserSharing(TileTestCase):
     layer = testing.security
 
     def test_render_sharing_view(self):
-        model = SharingNode(name='root')
+        from cone.app import get_root
+
+        model = SharingNode(name='root', parent=get_root())
         request = self.layer.new_request()
 
         with self.assertRaises(HTTPForbidden) as arc:
             sharing(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...Unauthorized: tile <cone.app.browser.sharing.SharingTile object at ...>
         failed permission check...
-        """, str(arc.exception))
+        """,
+            str(arc.exception),
+        )
 
         with self.layer.authenticated('manager'):
             res = sharing(model, request)
         self.assertTrue(res.text.find('<!DOCTYPE html>') > -1)
+
+    def test_empty_state_message(self):
+        root = SharingNode(name='root')
+        request = self.layer.new_request()
+
+        # Without a filter term, empty_state_message returns HTML with
+        # both the main hint and the global-roles note.
+        with self.layer.authenticated('manager'):
+            from cone.app.browser.sharing import SharingTable
+
+            table = SharingTable(
+                'cone.app:browser/templates/table.pt', None, 'local_acl'
+            )
+            table.model = root
+            table.request = request
+
+        msg = table.empty_state_message
+        self.assertIn('mb-1', msg)
+        self.assertIn('No local access permissions assigned.', msg)
+
+        # With a filter term, empty_state_message returns None so the
+        # generic empty search result is not obscured by the hint.
+        request.params['term'] = 'someuser'
+        self.assertIsNone(table.empty_state_message)
+
+    def test_empty_state_rendered(self):
+        root = SharingNode(name='root')
+        request = self.layer.new_request()
+
+        # Empty table (no principal roles) renders the empty-state hint.
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'sharing')
+        self.assertIn('No local access permissions assigned.', res)
+
+        # Once a principal role exists the hint must not appear.
+        root.principal_roles['viewer'] = ['editor']
+        with self.layer.authenticated('manager'):
+            res = render_tile(root, request, 'sharing')
+        self.assertNotIn('No local access permissions assigned.', res)
+
+    def test_empty_state_only_for_an_empty_table(self):
+        # Inherited roles are rows of the table too. The hint stood next to
+        # them, as the count of the table knew the local roles only - and
+        # sliced the pages by them.
+        root = SharingNode(name='root')
+        root.principal_roles['viewer'] = ['editor']
+        child = root['child'] = SharingNode()
+        child.role_inheritance = True
+        request = self.layer.new_request()
+        with self.layer.authenticated('manager'):
+            res = render_tile(child, request, 'sharing')
+        self.assertIn('name="viewer"', res)
+        self.assertNotIn('No local access permissions assigned.', res)
+
+        from cone.app.browser.sharing import SharingTable
+
+        table = SharingTable('cone.app:browser/templates/table.pt', None, 'local_acl')
+        table.model = child
+        table.request = request
+        with self.layer.authenticated('manager'):
+            self.assertEqual(table.item_count, 1)
+
+        # Without inheritance the parent's roles are none of its business
+        child.role_inheritance = False
+        with self.layer.authenticated('manager'):
+            res = render_tile(child, request, 'sharing')
+            self.assertEqual(table.item_count, 0)
+        self.assertIn('No local access permissions assigned.', res)
 
     def test_render_sharing_tile(self):
         root = SharingNode(name='root')
@@ -33,10 +106,14 @@ class TestBrowserSharing(TileTestCase):
         # Render sharing tile
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'sharing')
-        self.checkOutput("""
-        ...<table class="table table-striped table-condensed"
+
+        self.checkOutput(
+            """
+        ...<table class="table table-striped mb-0 scrollable-content"
         id="localacltable_table">...
-        """, res)
+        """,
+            res,
+        )
 
     def test_search_principal(self):
         root = SharingNode(name='root')
@@ -164,19 +241,13 @@ class TestBrowserSharing(TileTestCase):
         # Nothing happens if success
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
-        self.assertEqual(res, {
-            'continuation': [],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res, {'continuation': [], 'payload': '', 'mode': 'NONE', 'selector': 'NONE'}
+        )
 
         # Principal roles have changed
         self.assertEqual(len(child.principal_roles), 2)
-        self.assertEqual(
-            sorted(child.principal_roles['viewer']),
-            ['admin', 'manager']
-        )
+        self.assertEqual(sorted(child.principal_roles['viewer']), ['admin', 'manager'])
         self.assertEqual(child.principal_roles['editor'], ['admin'])
 
         # Add role for user not added yet
@@ -184,18 +255,12 @@ class TestBrowserSharing(TileTestCase):
         request.params['role'] = 'manager'
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
-        self.assertEqual(res, {
-            'continuation': [],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res, {'continuation': [], 'payload': '', 'mode': 'NONE', 'selector': 'NONE'}
+        )
 
         self.assertEqual(len(child.principal_roles), 3)
-        self.assertEqual(
-            sorted(child.principal_roles['viewer']),
-            ['admin', 'manager']
-        )
+        self.assertEqual(sorted(child.principal_roles['viewer']), ['admin', 'manager'])
         self.assertEqual(child.principal_roles['editor'], ['admin'])
         self.assertEqual(child.principal_roles['otheruser'], ['manager'])
 
@@ -204,17 +269,24 @@ class TestBrowserSharing(TileTestCase):
         request.params['id'] = 'viewer'
         with self.layer.authenticated('manager'):
             res = ajax_tile(invalid_node, request)
-        self.assertEqual(res, {
-            'continuation': [{
-                'flavor': 'error',
-                'type': 'message',
-                'payload': u"Can not add role 'manager' for principal 'viewer'",
-                'selector': None
-            }],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res,
+            {
+                'continuation': [
+                    {
+                        'css': None,
+                        'flavor': 'error',
+                        'type': 'message',
+                        'payload': "Can not add role 'manager' for principal 'viewer'",
+                        'selector': None,
+                        'title': None,
+                    }
+                ],
+                'payload': '',
+                'mode': 'NONE',
+                'selector': 'NONE',
+            },
+        )
 
     def test_remove_role(self):
         root = SharingNode(name='root')
@@ -234,36 +306,28 @@ class TestBrowserSharing(TileTestCase):
         # Nothing happens if success
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
-        self.assertEqual(res, {
-            'continuation': [],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res, {'continuation': [], 'payload': '', 'mode': 'NONE', 'selector': 'NONE'}
+        )
 
         # Principal roles has changed
-        self.assertEqual(child.principal_roles, {
-            'viewer': ['admin'],
-            'editor': ['admin'],
-            'otheruser': ['manager']
-        })
+        self.assertEqual(
+            child.principal_roles,
+            {'viewer': ['admin'], 'editor': ['admin'], 'otheruser': ['manager']},
+        )
 
         # Principal id gets removed if no more roles left
         request.params['id'] = 'otheruser'
         request.params['role'] = 'manager'
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
-        self.assertEqual(res, {
-            'continuation': [],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res, {'continuation': [], 'payload': '', 'mode': 'NONE', 'selector': 'NONE'}
+        )
 
-        self.assertEqual(child.principal_roles, {
-            'viewer': ['admin'],
-            'editor': ['admin']
-        })
+        self.assertEqual(
+            child.principal_roles, {'viewer': ['admin'], 'editor': ['admin']}
+        )
 
         # If an error occurs, a message gets displayed.
         # Inexistent role
@@ -271,17 +335,24 @@ class TestBrowserSharing(TileTestCase):
         request.params['role'] = 'inexistent'
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
-        self.assertEqual(res, {
-            'continuation': [{
-                'flavor': 'error',
-                'type': 'message',
-                'payload': u"Can not remove role 'inexistent' for principal 'viewer'",
-                'selector': None
-            }],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res,
+            {
+                'continuation': [
+                    {
+                        'css': None,
+                        'flavor': 'error',
+                        'type': 'message',
+                        'payload': "Can not remove role 'inexistent' for principal 'viewer'",
+                        'selector': None,
+                        'title': None,
+                    }
+                ],
+                'payload': '',
+                'mode': 'NONE',
+                'selector': 'NONE',
+            },
+        )
 
         # Inexistent userid
         request = self.layer.new_request()
@@ -292,14 +363,39 @@ class TestBrowserSharing(TileTestCase):
         request.params['ajax.selector'] = 'NONE'
         with self.layer.authenticated('manager'):
             res = ajax_tile(child, request)
-        self.assertEqual(res, {
-            'continuation': [{
-                'flavor': 'error',
-                'type': 'message',
-                'payload': u"Can not remove role 'manager' for principal 'foo'",
-                'selector': None
-            }],
-            'payload': u'',
-            'mode': 'NONE',
-            'selector': 'NONE'
-        })
+        self.assertEqual(
+            res,
+            {
+                'continuation': [
+                    {
+                        'css': None,
+                        'flavor': 'error',
+                        'type': 'message',
+                        'payload': "Can not remove role 'manager' for principal 'foo'",
+                        'selector': None,
+                        'title': None,
+                    }
+                ],
+                'payload': '',
+                'mode': 'NONE',
+                'selector': 'NONE',
+            },
+        )
+
+        # ⛔ And the log has to name the reason. The principal is unknown,
+        # which the code signalled with a bare ``raise`` - but there was no
+        # active exception to re-raise, so python raised ``RuntimeError: No
+        # active exception to re-raise`` instead. The user got the right
+        # message while whoever read the log got a red herring.
+        request = self.layer.new_request()
+        request.params['id'] = 'foo'
+        request.params['role'] = 'manager'
+        request.params['ajax.action'] = 'remove_principal_role'
+        request.params['ajax.mode'] = 'NONE'
+        request.params['ajax.selector'] = 'NONE'
+        with self.layer.authenticated('manager'):
+            with self.assertLogs('cone.app', level='ERROR') as caught:
+                ajax_tile(child, request)
+        logged = caught.output[0]
+        self.assertNotIn('No active exception', logged)
+        self.assertIn('foo', logged)

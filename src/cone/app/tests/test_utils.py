@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 from cone.app import testing
 from cone.app.model import BaseNode
 from cone.app.model import Properties
 from cone.app.utils import add_creation_metadata
 from cone.app.utils import app_config
 from cone.app.utils import DatetimeHelper
+from cone.app.utils import navigation_root
 from cone.app.utils import node_path
 from cone.app.utils import safe_decode
 from cone.app.utils import safe_encode
@@ -23,17 +23,17 @@ class TestUtils(NodeTestCase):
         self.assertTrue(isinstance(cfg, Properties))
 
     def test_safe_encode(self):
-        self.assertEqual(safe_encode(u'äöü'), b'\xc3\xa4\xc3\xb6\xc3\xbc')
+        self.assertEqual(safe_encode('äöü'), b'\xc3\xa4\xc3\xb6\xc3\xbc')
         self.assertEqual(safe_encode(b'already_string'), b'already_string')
 
     def test_safe_decode(self):
-        self.assertEqual(safe_decode(b'\xc3\xa4\xc3\xb6\xc3\xbc'), u'äöü')
-        self.assertEqual(safe_decode(u'already_unicode'), u'already_unicode')
+        self.assertEqual(safe_decode(b'\xc3\xa4\xc3\xb6\xc3\xbc'), 'äöü')
+        self.assertEqual(safe_decode('already_unicode'), 'already_unicode')
 
     def test_node_path(self):
         root = BaseNode()
         root['child'] = BaseNode()
-        self.assertEqual(node_path(root['child']), [u'child'])
+        self.assertEqual(node_path(root['child']), ['child'])
 
     def test_DatetimeHelper(self):
         # Helper object for read/write operations with datetime values
@@ -48,35 +48,35 @@ class TestUtils(NodeTestCase):
         self.assertEqual(helper.dt_to_iso(dt), '2010-01-01T10:15:10')
 
         self.assertEqual(
-            helper.dt_from_iso('2010-01-01T10:15:00'),
-            datetime(2010, 1, 1, 10, 15)
+            helper.dt_from_iso('2010-01-01T10:15:00'), datetime(2010, 1, 1, 10, 15)
         )
         self.assertEqual(
-            helper.dt_from_iso(u'2010-01-01T10:15:00'),
-            datetime(2010, 1, 1, 10, 15)
+            helper.dt_from_iso('2010-01-01T10:15:00'), datetime(2010, 1, 1, 10, 15)
         )
 
-        self.assertEqual(helper.r_value(u'äöü'), u'äöü')
-        self.assertEqual(helper.r_value(b'\xc3\xa4\xc3\xb6\xc3\xbc'), u'äöü')
+        self.assertEqual(helper.r_value('äöü'), 'äöü')
+        self.assertEqual(helper.r_value(b'\xc3\xa4\xc3\xb6\xc3\xbc'), 'äöü')
         self.assertEqual(
-            helper.r_value('2010-01-01T10:15:00'),
-            datetime(2010, 1, 1, 10, 15)
+            helper.r_value('2010-01-01T10:15:00'), datetime(2010, 1, 1, 10, 15)
         )
 
-        self.assertEqual(helper.w_value(b'abc'), u'abc')
-        self.assertEqual(helper.w_value(u'abc'), u'abc')
-        self.assertEqual(helper.w_value(u'äöü'), u'äöü')
-        self.assertEqual(helper.w_value(dt), u'2010-01-01T10:15:10')
-        self.assertEqual(helper.w_value(0), u'0')
-        self.assertEqual(helper.w_value(0.0), u'0.0')
-        self.assertEqual(helper.w_value(None), u'None')
-        self.assertEqual(helper.w_value(True), u'True')
-        self.assertEqual(helper.w_value(False), u'False')
+        self.assertEqual(helper.w_value(b'abc'), 'abc')
+        self.assertEqual(helper.w_value('abc'), 'abc')
+        self.assertEqual(helper.w_value('äöü'), 'äöü')
+        self.assertEqual(helper.w_value(dt), '2010-01-01T10:15:10')
+        self.assertEqual(helper.w_value(0), '0')
+        self.assertEqual(helper.w_value(0.0), '0.0')
+        self.assertEqual(helper.w_value(None), 'None')
+        self.assertEqual(helper.w_value(True), 'True')
+        self.assertEqual(helper.w_value(False), 'False')
 
     def test_timestamp(self):
-        self.checkOutput("""
+        self.checkOutput(
+            """
         datetime.datetime(..., ..., ..., ..., ..., ..., ...)
-        """, repr(timestamp()))
+        """,
+            repr(timestamp()),
+        )
 
     def test_creation_metadata(self):
         # Creation metadata
@@ -106,3 +106,20 @@ class TestUtils(NodeTestCase):
             self.assertTrue(isinstance(node.attrs['modified'], datetime))
             self.assertTrue(created == node.attrs['created'])
             self.assertFalse(created == node.attrs['modified'])
+
+    def test_navigation_root(self):
+        root = BaseNode()
+        child = root['child'] = BaseNode()
+        leaf = child['leaf'] = BaseNode()
+        # No navroot: the application root.
+        self.assertIs(navigation_root(leaf), root)
+        # The application root's default child, when flagged.
+        root.properties.default_child = 'child'
+        self.assertIs(navigation_root(root), root)
+        child.properties.is_navroot = True
+        self.assertIs(navigation_root(root), child)
+        # The nearest flagged ancestor.
+        self.assertIs(navigation_root(leaf), child)
+        # A default child that does not exist falls back to the root.
+        root.properties.default_child = 'missing'
+        self.assertIs(navigation_root(root), root)

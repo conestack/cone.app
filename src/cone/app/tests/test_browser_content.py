@@ -1,3 +1,4 @@
+from cone.app import get_root
 from cone.app import testing
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.content import content_view_action
@@ -20,25 +21,24 @@ class TestBrowserLayout(TileTestCase):
             pass
 
         with self.layer.hook_tile_reg():
-            @content_view_tile(
-                name='model_tile',
-                interface=Model,
-                permission='view')
+
+            @content_view_tile(name='model_tile', interface=Model, permission='view')
             class ModelContentTile(Tile):
                 def render(self):
                     return '<div>Model Content</div>'
 
-        model = Model()
+        model = Model(parent=get_root())
         request = self.layer.new_request()
         with self.layer.authenticated('manager'):
             res = render_tile(model, request, 'model_tile')
         self.assertEqual(res, '<div>Model Content</div>')
 
         from cone.app.tests.test_browser_content import model_tile_content_view
-        self.assertEqual(model_tile_content_view.__doc__, (
-            'Dynamically created by '
-            'cone.app.browser.content.content_view_tile'
-        ))
+
+        self.assertEqual(
+            model_tile_content_view.__doc__,
+            ('Dynamically created by cone.app.browser.content.content_view_tile'),
+        )
 
         with self.layer.authenticated('manager'):
             res = model_tile_content_view(model, request)
@@ -55,7 +55,8 @@ class TestBrowserLayout(TileTestCase):
             interface=Model,
             permission='view',
             text='Model Action',
-            icon='glyphicon glyphicon-star')
+            icon='bi bi-star',
+        )
         class ModelContentTile(Tile):
             pass
 
@@ -67,7 +68,7 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(action.interface, Model)
         self.assertEqual(action.permission, 'view')
         self.assertEqual(action.text, 'Model Action')
-        self.assertEqual(action.icon, 'glyphicon glyphicon-star')
+        self.assertEqual(action.icon, 'bi bi-star')
 
         del context_menu['contentviews']['model_action']
 
@@ -99,13 +100,10 @@ class TestBrowserLayout(TileTestCase):
         action.request = request
         self.assertTrue(action.display)
 
-        class InvalidClassContext(object):
+        class InvalidClassContext:
             pass
 
-        action = ContentViewAction(
-            name='content_action',
-            interface=InvalidClassContext
-        )
+        action = ContentViewAction(name='content_action', interface=InvalidClassContext)
         action.model = model
         action.request = request
         self.assertFalse(action.display)
@@ -113,10 +111,7 @@ class TestBrowserLayout(TileTestCase):
         class IContextInterface(Interface):
             pass
 
-        action = ContentViewAction(
-            name='content_action',
-            interface=IContextInterface
-        )
+        action = ContentViewAction(name='content_action', interface=IContextInterface)
         action.model = model
         action.request = request
         self.assertFalse(action.display)

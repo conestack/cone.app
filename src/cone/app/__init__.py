@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from cone.app import browser
 from cone.app import security
 from cone.app.browser.resources import ResourceRegistry
@@ -40,10 +39,10 @@ cfg.available_languages = []
 cfg.main_template = 'cone.app.browser:templates/main.pt'
 
 # default node icon
-cfg.default_node_icon = 'glyphicon glyphicon-asterisk'
+cfg.default_node_icon = 'bi-asterisk'
 
 
-class layout_config(object):
+class layout_config:
     _registry = dict()
 
     def __init__(self, *for_):
@@ -64,18 +63,23 @@ class layout_config(object):
 
 @layout_config(object)
 class DefaultLayoutConfig(LayoutConfig):
-
     def __init__(self, model=None, request=None):
         super(DefaultLayoutConfig, self).__init__(model=model, request=request)
         self.mainmenu = True
-        self.mainmenu_fluid = True
         self.livesearch = True
         self.personaltools = True
-        self.columns_fluid = True
+        self.limit_content_width = True
+        self.limit_page_width = False
+        self.center_content = False
         self.pathbar = True
+        self.sidebar_left_mode = 'stacked'  # 'toggle' or 'stacked'
+        self.sidebar_left_min_width = 150
+        self.sidebar_left_static = False
         self.sidebar_left = ['navtree']
-        self.sidebar_left_grid_width = 3
-        self.content_grid_width = 9
+        self.sidebar_right = []
+        self.sidebar_right_mode = 'stacked'  # 'toggle' or 'stacked'
+        self.sidebar_right_min_width = 150
+        self.sidebar_right_static = False
 
 
 def import_from_string(path):
@@ -114,7 +118,7 @@ def register_config(key, factory):
     root = get_root()
     factories = root['settings'].factories
     if key in factories:
-        raise ValueError(u"Config with name '%s' already registered." % key)
+        raise ValueError("Config with name '%s' already registered." % key)
     factories[key] = factory
 
 
@@ -126,7 +130,7 @@ def register_entry(key, factory):
     root = get_root()
     factories = root.factories
     if key in factories:
-        raise ValueError(u"Entry with name '%s' already registered." % key)
+        raise ValueError("Entry with name '%s' already registered." % key)
     root.factories[key] = factory
 
 
@@ -148,8 +152,7 @@ def main_hook(func):
 
 # B/C
 def register_main_hook(callback):
-    """Register function to get called on application startup.
-    """
+    """Register function to get called on application startup."""
     main_hooks.append(callback)
 
 
@@ -177,7 +180,6 @@ def acl_factory(**kwargs):
 
 @adapter(IApplicationNode)
 class ApplicationNodeTraverser(ResourceTreeTraverser):
-
     def __call__(self, request):
         result = super(ApplicationNodeTraverser, self).__call__(request)
         context = result['context']
@@ -209,8 +211,7 @@ def start_thread_monitor():  # pragma: no cover
 
 
 def main(global_config, **settings):
-    """Returns WSGI application.
-    """
+    """Returns WSGI application."""
     # set authentication related application properties
     security.ADMIN_USER = settings.get('cone.admin_user')
     security.ADMIN_PASSWORD = settings.get('cone.admin_password')
@@ -233,7 +234,7 @@ def main(global_config, **settings):
     if auth_max_age is not None:
         auth_max_age = int(auth_max_age)
     auth_http_only = settings.pop('cone.auth_http_only', False)
-    auth_path = settings.pop('cone.auth_path', "/")
+    auth_path = settings.pop('cone.auth_path', '/')
     auth_wild_domain = settings.pop('cone.auth_wild_domain', True)
 
     auth_policy = auth_tkt_factory(
@@ -302,7 +303,7 @@ def main(global_config, **settings):
     #      all yafowil packages providing translations
 
     # static routes
-    config.add_route("favicon", "/favicon.ico")
+    config.add_route('favicon', '/favicon.ico')
     # XXX: robots.txt
     # XXX: humans.txt
 
@@ -312,7 +313,7 @@ def main(global_config, **settings):
     # blueprint rendering. in future versions, tests should be adopted to
     # run against adopted blueprint rendering
     if not os.environ.get('TESTRUN_MARKER'):  # pragma: no cover
-        configure_factory('bootstrap3')
+        configure_factory('bootstrap5')
     config.configure_default_resource_includes()
 
     # scan browser package
@@ -329,16 +330,13 @@ def main(global_config, **settings):
         try:
             importlib.import_module(plugin)
         except ImportError:
-            msg = 'Cannot import plugin {}\n{}'.format(
-                plugin,
-                format_traceback()
-            )
+            msg = f'Cannot import plugin {plugin}\n{format_traceback()}'
             logger.error(msg)
             continue
         try:
-            config.load_zcml('{}:configure.zcml'.format(plugin))
-        except IOError:  # pragma: no cover
-            msg = 'No configure.zcml in {}'.format(plugin)
+            config.load_zcml(f'{plugin}:configure.zcml')
+        except OSError:  # pragma: no cover
+            msg = f'No configure.zcml in {plugin}'
             logger.info(msg)
 
     # execute main hooks
@@ -360,7 +358,7 @@ def main(global_config, **settings):
             ugm_backend.load(backend_name, settings)
             ugm_backend.initialize()
         except Exception:  # pragma: no cover
-            msg = 'Failed to create UGM backend:\n{}'.format(format_traceback())
+            msg = f'Failed to create UGM backend:\n{format_traceback()}'
             logger.error(msg)
 
     user_display_attr = settings.get('ugm.user_display_attr')
@@ -390,7 +388,7 @@ def make_remote_addr_middleware(app, global_conf):
     return RemoteAddrFilter(app)
 
 
-class RemoteAddrFilter(object):
+class RemoteAddrFilter:
     """Use this middleware if nginx is used as proxy and IP address should be
     included in auth cookie. make sure nginx passes the right header:
 

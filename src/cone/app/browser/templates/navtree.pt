@@ -2,20 +2,28 @@
            xmlns:ajax="http://namespaces.conestack.org/ajax"
            omit-tag="True">
 
-  <div id="navtree"
-       class="contextsensitiv list-group"
-       ajax:bind="contextchanged"
-       ajax:action="navtree:#navtree:replace">
+  <li id="navtree"
+      class="contextsensitiv nav-item mb-1 text-white"
+      ajax:bind="contextchanged"
+      ajax:action="navtree:#navtree:replace"
+      tal:define="show_navroot context.show_navroot">
 
-    <div class="list-group-item active"
-         tal:content="context.title">
-      Navigation
+    <div tal:condition="show_navroot"
+         role="button"
+         class="nav-item nav-link text-light">
+      <i class="bi-star me-2"></i>
+      <span tal:content="context.title">Navigation</span>
+      <i class="bi-chevron-right"
+         data-bs-toggle="collapse"
+         data-bs-target="#navigation-collapse"></i>
     </div>
 
-    <ul class="nav list-group-item">
+    <div tal:define="css 'collapse' if show_navroot else 'no-collapse';
+                     id 'navigation-collapse'"
+         tal:attributes="class css"
+         id="navigation-collapse">
       <tal:tree replace="structure context.rendertree(context.navtree()['children'])" />
-    </ul>
-
-  </div>
+    </div>
+  </li>
 
 </tal:block>

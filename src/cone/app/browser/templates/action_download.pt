@@ -1,0 +1,16 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:ajax="http://namespaces.conestack.org/ajax"
+           omit-tag="True">
+
+  <div class="dropdown">
+
+    <a href="${context.download_url}"
+       class="nav-link ${context.css_class if hasattr(context, 'cssclass') else 'nav-link'}"
+       download="${context.model.metadata.title}">
+      <span class="${context.icon|nothing}"></span>
+      <span tal:content="context.title">Title</span>
+    </a>
+
+  </div>
+
+</tal:block>

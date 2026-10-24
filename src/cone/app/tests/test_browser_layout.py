@@ -7,7 +7,9 @@ from cone.app.browser import render_main_template
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import AjaxEvent
 from cone.app.browser.layout import LanguageTile
+from cone.app.browser.layout import Layout
 from cone.app.browser.layout import LayoutConfigTile
+from cone.app.browser.layout import PathBar
 from cone.app.browser.layout import NavTree
 from cone.app.browser.layout import ProtectedContentTile
 from cone.app.browser.layout import personal_tools
@@ -15,10 +17,8 @@ from cone.app.browser.layout import personal_tools_action
 from cone.app.interfaces import ILayoutConfig
 from cone.app.interfaces import INavigationLeaf
 from cone.app.model import AppRoot
-from cone.app.model import AppSettings
 from cone.app.model import BaseNode
 from cone.app.model import LayoutConfig
-from cone.app.model import SettingsNode
 from cone.app.security import DEFAULT_SETTINGS_ACL
 from cone.app.testing.mock import LayoutConfigNode
 from cone.app.testing.mock import WorkflowNode
@@ -36,6 +36,7 @@ from pyramid.security import Everyone
 from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
+import re
 
 
 class TestBrowserLayout(TileTestCase):
@@ -50,31 +51,39 @@ class TestBrowserLayout(TileTestCase):
 
         # An unprotected tile named 'content' registered for all sorts of node
         with self.layer.hook_tile_reg():
+
             @tile(name='content', permission='login')
             class ContentTile(Tile):
                 def render(self):
                     return '<div>Content</div>'
 
-        model = BaseNode()
+        model = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
         # Render main template. The function accepts an optional ``contenttile``
         # argument. if omitted, reserved name 'content' is used
         res = render_main_template(model, request)
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <!DOCTYPE html...<div>Content</div>...</html>
-        """, res.text)
+        """,
+            res.text,
+        )
 
         with self.layer.hook_tile_reg():
+
             @tile(name='othername', permission='login')
             class OtherContentTile(ContentTile):
                 def render(self):
                     return '<div>Content</div>'
 
         res = render_main_template(model, request, contenttile='othername')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <!DOCTYPE html...<div>Content</div>...</html>
-        """, res.text)
+        """,
+            res.text,
+        )
 
         # Switch back to default main template
         main = 'cone.app.browser:templates/main.pt'
@@ -97,6 +106,111 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.text.find('id="navtree"') > -1)
         self.assertTrue(res.text.find('id="personaltools"') > -1)
 
+    def test_content_area_css(self):
+        # The css classes of the content area are assembled conditionally. Each
+        # condition must contribute its class or nothing at all - never the
+        # accumulated string, which duplicates all previous classes and glues
+        # the copies together without a separator.
+        #
+        # ``overflow-auto`` is deliberately absent: the scrolling box is
+        # ``#content_scroll`` around it - see
+        # ``test_the_scroller_spans_the_whole_content_area``.
+        def content_classes(res):
+            match = re.search(r'id="content"[^>]*class="([^"]*)"', res.text)
+            self.assertIsNotNone(match)
+            return match.group(1).split()
+
+        model = BaseNode(parent=get_root())
+        request = self.layer.new_request()
+
+        # Anonymous. All conditions are bound to a user id, none contributes.
+        classes = content_classes(render_main_template(model, request))
+        self.assertEqual(classes, ['d-flex', 'flex-column', 'px-3', 'pb-4', 'py-2'])
+
+        # Authenticated. Defaults are limit_content_width=True,
+        # limit_page_width=False and center_content=False.
+        with self.layer.authenticated('max'):
+            classes = content_classes(render_main_template(model, request))
+        self.assertEqual(
+            classes,
+            ['d-flex', 'flex-column', 'px-3', 'pb-4', 'py-2', 'container-xxl', 'ms-0'],
+        )
+        self.assertEqual(len(classes), len(set(classes)))
+
+    def test_the_scroller_spans_the_whole_content_area(self):
+        """⛔ **The empty strip beside a width limited content scrolled
+        nothing.**
+
+        ``#content`` was the scrolling box **and** carried the width limit, so
+        the space left of the sidebars was outside any scrollable element: a
+        wheel event there bubbled to ``#content_area`` and ``body``, both
+        ``height: 100%`` without overflow, and nothing moved. It looks like
+        part of the content and behaves like the page margin.
+
+        The scroller is now a wrapper that fills the row; ``#content`` keeps
+        the limit, its id and its ajax contract. Without a width limit this is
+        exactly where the scrollbar sat anyway - the limit is what pulled it
+        inwards and left the dead strip behind.
+        """
+        model = BaseNode(parent=get_root())
+        request = self.layer.new_request()
+        with self.layer.authenticated('max'):
+            res = render_main_template(model, request).text
+
+        self.assertIn('id="content_scroll"', res)
+        # The wrapper scrolls, the content carries the limit - not both.
+        wrapper = re.search(r'id="content_scroll"[^>]*class="([^"]*)"', res)
+        self.assertIsNotNone(wrapper)
+        self.assertIn('overflow-auto', wrapper.group(1).split())
+
+        content = re.search(r'id="content"[^>]*class="([^"]*)"', res)
+        self.assertIsNotNone(content)
+        content_classes = content.group(1).split()
+        self.assertIn('container-xxl', content_classes)
+        self.assertNotIn('overflow-auto', content_classes)
+
+        # And the one is inside the other, in that order.
+        self.assertLess(res.index('id="content_scroll"'), res.index('id="content"'))
+
+    def test_pathbar_starts_at_navroot(self):
+        # The navigation root is the top of the navtree, so it must be the top
+        # of the pathbar as well - otherwise the breadcrumb still shows the
+        # levels the navroot removed.
+        root = get_root()
+        request = self.layer.new_request()
+
+        navroot = BaseNode(name='navroot', parent=root)
+        navroot.properties.is_navroot = True
+        child = BaseNode(name='child', parent=navroot)
+        leaf = BaseNode(name='leaf', parent=child)
+
+        tile = PathBar()
+        tile.model = leaf
+        tile.request = request
+        self.assertEqual([_['id'] for _ in tile.items], ['navroot', 'child', 'leaf'])
+        # 'Home' is the placeholder for the application root. With a navroot
+        # the first entry is a real node and keeps its own title.
+        self.assertNotEqual(tile.items[0]['title'], 'Home')
+
+        # Without a navroot nothing changes
+        plain = BaseNode(name='plain', parent=root)
+        tile = PathBar()
+        tile.model = plain
+        tile.request = request
+        self.assertEqual(tile.items[0]['title'], 'Home')
+
+    def test_root_content_no_self_recursion(self):
+        # ``default_content_tile`` defaults to 'content', and the content tile
+        # of the root *is* RootContent. Rendering it would recurse forever, so
+        # it must fall through to the default root template instead.
+        root = get_root()
+        request = self.layer.new_request()
+        self.assertIsNone(root.properties.default_child)
+        self.assertEqual(root.properties.default_content_tile, 'content')
+        with self.layer.authenticated('max'):
+            res = render_tile(root, request, 'content')
+        self.assertIsInstance(res, str)
+
     def test_ProtectedContentTile(self):
         # A login form should be rendered instead of the content for anonymous
         # users. Class ``cone.app.browser.layout.ProtectedContentTile``
@@ -105,6 +219,7 @@ class TestBrowserLayout(TileTestCase):
             pass
 
         with self.layer.hook_tile_reg():
+
             @tile(name='content', interface=ProtectedModel, permission='login')
             class ProtectedContent(ProtectedContentTile):
                 def render(self):
@@ -114,12 +229,15 @@ class TestBrowserLayout(TileTestCase):
         request = self.layer.new_request()
 
         # Render protected tile.
-        self.checkOutput("""
+        self.checkOutput(
+            """
         <form action="http://example.com/login"
         class="form-horizontal"
         enctype="multipart/form-data" id="form-loginform" method="post"
         novalidate="novalidate">...
-        """, render_tile(model, request, 'content'))
+        """,
+            render_tile(model, request, 'content'),
+        )
 
         with self.layer.authenticated('max'):
             result = render_tile(model, request, 'content')
@@ -133,7 +251,9 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             result = render_tile(model, request, 'content')
 
-        self.assertTrue(result.find('<h3>Insufficient privileges</h3>') > -1)
+        self.assertTrue(
+            result.find('<h5 class="card-header">Insufficient privileges</h5>') > -1
+        )
 
         with self.layer.authenticated('manager'):
             result = render_tile(model, request, 'content')
@@ -163,7 +283,7 @@ class TestBrowserLayout(TileTestCase):
         # Render main menu at child. Child is marked selected
         with self.layer.authenticated('max'):
             res = render_tile(root['1'], request, 'mainmenu')
-        self.assertTrue(res.find('<li class="active node-1">') > -1)
+        self.assertTrue(res.find('class="nav-item active node-1"') > -1)
 
         # Render main menu with default child
         model = BaseNode()
@@ -172,42 +292,42 @@ class TestBrowserLayout(TileTestCase):
         model.properties.default_child = '2'
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertTrue(res.find('<li class="active node-2">') > -1)
+        self.assertTrue(res.find('class="nav-item active node-2"') > -1)
 
         # Render main menu on child '1' and check if '2' is unselected now
         with self.layer.authenticated('max'):
             res = render_tile(model['1'], request, 'mainmenu')
-        self.assertFalse(res.find('<li class="active node-2">') > -1)
-        self.assertTrue(res.find('<li class="active node-1">') > -1)
+        self.assertFalse(res.find('class="nav-item active node-2"') > -1)
+        self.assertTrue(res.find('class="nav-item active node-1"') > -1)
 
         # Check rendering of main menu with empty title. This is needed if main
         # menu items are supposed to be displayed as icons via CSS
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        expected = '<span></span></a>'
+        expected = '></span>'
         self.assertFalse(res.find(expected) > -1)
 
         model.properties.mainmenu_empty_title = True
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        expected = '<span></span></a>'
+        expected = '></span>'
         self.assertTrue(res.find(expected) > -1)
 
         # Child nodes which do not grant permission 'view' are skipped
         class RestrictedViewNode(BaseNode):
             __acl__ = [
                 (Allow, 'role:manager', ['view']),
-                (Deny, Everyone, ALL_PERMISSIONS)
+                (Deny, Everyone, ALL_PERMISSIONS),
             ]
 
         model['3'] = RestrictedViewNode()
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertFalse(res.find('<li class=" node-3">') > -1)
+        self.assertFalse(res.find('class="nav-item node-3"') > -1)
 
         with self.layer.authenticated('manager'):
             res = render_tile(model, request, 'mainmenu')
-        self.assertTrue(res.find('<li class=" node-3">') > -1)
+        self.assertTrue(res.find('class="nav-item node-3"') > -1)
 
         # Check mainmenu displays children
         model = BaseNode()
@@ -220,7 +340,7 @@ class TestBrowserLayout(TileTestCase):
 
         with self.layer.authenticated('max'):
             res = render_tile(model, request, 'mainmenu')
-        expected = '<li class="dropdown node-child">'
+        expected = 'class="nav-item dropdown node-child">'
         self.assertTrue(res.find(expected) > -1)
         expected = 'href="http://example.com/child/1"'
         self.assertTrue(res.find(expected) > -1)
@@ -232,10 +352,13 @@ class TestBrowserLayout(TileTestCase):
         child['1']['1'] = BaseNode()
         with self.layer.authenticated('max'):
             res = render_tile(child['1']['1'], request, 'mainmenu')
-        self.checkOutput("""
+        self.checkOutput(
+            """
         ...<li class="active">
         <a href="http://example.com/child/1"...
-        """, res)
+        """,
+            res,
+        )
 
     def test_navtree(self):
         root = BaseNode()
@@ -251,10 +374,11 @@ class TestBrowserLayout(TileTestCase):
         self.assertTrue(res.find('id="navtree"') != -1)
         self.assertTrue(res.find('ajax:bind="contextchanged"') != -1)
         self.assertTrue(res.find('ajax:action="navtree:#navtree:replace"') != -1)
-        self.assertTrue(res.find('class="contextsensitiv list-group"') != -1)
+        self.assertTrue(
+            res.find('class="contextsensitiv nav-item mb-1 text-white"') != -1
+        )
 
-        # Node's which are in navtree
-        root = BaseNode()
+        # Nodes which are in navtree
         root.properties.in_navtree = True
         root['1'] = BaseNode()
         root['1'].properties.in_navtree = True
@@ -274,18 +398,24 @@ class TestBrowserLayout(TileTestCase):
         # Render navtree on ``root['1']``, must be selected
         with self.layer.authenticated('max'):
             res = render_tile(root['1'], request, 'navtree')
-        self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        self.checkOutput(
+            """
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1"...
-        """, res)
+        """,
+            res,
+        )
 
         # Render navtree on ``root['1']['11']``, must be selected
         with self.layer.authenticated('max'):
             res = render_tile(root['1']['11'], request, 'navtree')
-        self.checkOutput("""
-        ...<li class="active navtreelevel_2">
+        self.checkOutput(
+            """
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1/11"...
-        """, res)
+        """,
+            res,
+        )
 
         # Child nodes which not provide IApplicationNode are skipped
         root['3'] = NodeBaseNode()
@@ -326,27 +456,36 @@ class TestBrowserLayout(TileTestCase):
         root['4'] = WorkflowNode()
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'navtree')
-        self.checkOutput("""
-        ...<li class="state-initial navtreelevel_1">
+        self.checkOutput(
+            """
+        ...<li class="state-initial  list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/4"...
-        """, res)
+        """,
+            res,
+        )
 
         # Default child behavior of navtree. Default children objects are
         # displayed in navtree.
         root.properties.default_child = '1'
         with self.layer.authenticated('manager'):
             res = render_tile(root, request, 'navtree')
-        self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        self.checkOutput(
+            """
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1"...
-        """, res)
+        """,
+            res,
+        )
 
         with self.layer.authenticated('manager'):
             res = render_tile(root['1'], request, 'navtree')
-        self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        self.checkOutput(
+            """
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1"...
-        """, res)
+        """,
+            res,
+        )
 
         # If default child should not be displayed it navtree,
         # ``node.properties.hide_if_default`` must be set to 'True'
@@ -386,10 +525,13 @@ class TestBrowserLayout(TileTestCase):
         # Render navtree on ``root['1']['11']``, check selected
         with self.layer.authenticated('manager'):
             res = render_tile(root['1']['11'], request, 'navtree')
-        self.checkOutput("""
-        ...<li class="active navtreelevel_1">
+        self.checkOutput(
+            """
+        ...<li class="active list-group-item ps-4 p-0 border-0">
         <a href="http://example.com/1/11"...
-        """, res)
+        """,
+            res,
+        )
 
         # Nodes can be marked as navigation root
         class TestNavTree(NavTree):
@@ -425,6 +567,32 @@ class TestBrowserLayout(TileTestCase):
 
         del personal_tools['testaction']
 
+    def test_a_personal_tool_is_not_written_on_while_rendering(self):
+        """``personal_tools`` is the second registry of singletons: the
+        decorator calls ``factory()`` at import and keeps the instance, so one
+        object serves every request and every thread.
+
+        It renders through ``Action.__call__`` and is therefore covered by the
+        copy there - which is exactly why this asserts it. A second registry
+        that quietly grows its own binding would reopen the hole (see
+        ``Action.bound_to``).
+        """
+
+        @personal_tools_action(name='isolationtest')
+        class Recording(LinkAction):
+            def render(self):
+                return str(self.model.name)
+
+        try:
+            tool = personal_tools['isolationtest']
+            request = self.layer.new_request()
+            self.assertEqual(tool(BaseNode(name='one'), request), 'one')
+            self.assertEqual(tool(BaseNode(name='two'), request), 'two')
+            self.assertNotIn('model', tool.__dict__)
+            self.assertNotIn('request', tool.__dict__)
+        finally:
+            del personal_tools['isolationtest']
+
     def test_personaltools(self):
         root = get_root()
         request = self.layer.new_request()
@@ -446,7 +614,7 @@ class TestBrowserLayout(TileTestCase):
 
         # Unauthorized
         res = render_tile(root, request, 'pathbar')
-        self.assertFalse(res.find('pathbaritem') != -1)
+        self.assertFalse(res.find('breadcrumb-item') != -1)
 
         # Authorized
         with self.layer.authenticated('max'):
@@ -507,21 +675,32 @@ class TestBrowserLayout(TileTestCase):
 
         # Unauthenticated
         res = render_tile(root, request, 'byline')
-        self.assertEqual(res, u'')
+        self.assertEqual(res, '')
 
         # Authenticated
         with self.layer.authenticated('max'):
             res = render_tile(root, request, 'byline')
-        self.checkOutput("""
-        <p class="byline">
-          <span>Created by</span>:
-          <strong>max</strong>,
-          <span>on</span>
-          <strong>14.03.2011 00:00</strong>.
-          <span>Last modified</span>:
-          <strong>14.03.2011 00:00</strong>
-        </p>
-        """, res)
+        self.checkOutput(
+            """
+        <div class="byline mb-3">
+          <div class="d-flex flex-wrap gap-1 mb-1">
+            <div>
+              <span>Created by</span>:
+              <strong>max</strong>,
+            </div>
+            <div>
+              <span>on</span>
+              <strong>14.03.2011 00:00</strong>.
+            </div>
+          </div>
+          <div>
+            <span>Last modified</span>:
+            <strong>14.03.2011 00:00</strong>
+          </div>
+        </div>
+        """,
+            res,
+        )
 
     def test_default_root_content(self):
         # Default root
@@ -536,6 +715,7 @@ class TestBrowserLayout(TileTestCase):
             pass
 
         with self.layer.hook_tile_reg():
+
             @tile(name='content', interface=DefaultChild, permission='view')
             class DefaultChildContentTile(Tile):
                 def render(self):
@@ -551,6 +731,7 @@ class TestBrowserLayout(TileTestCase):
 
         # Default content tile
         with self.layer.hook_tile_reg():
+
             @tile(name='mycontent', interface=AppRoot, permission='view')
             class MyRootContentTile(Tile):
                 def render(self):
@@ -565,6 +746,7 @@ class TestBrowserLayout(TileTestCase):
 
         # Custom root content tile
         with self.layer.hook_tile_reg():
+
             @tile(name='content', interface=AppRoot, permission='view')
             class RootContentTile(Tile):
                 def render(self):
@@ -631,16 +813,19 @@ class TestBrowserLayout(TileTestCase):
     def test_LanguageTile(self):
         tile = LanguageTile()
         request = tile.request = self.layer.new_request()
-        self.assertEqual(tile.param_blacklist, [
-            '_',
-            '_LOCALE_',
-            'ajax.action',
-            'ajax.mode',
-            'ajax.selector',
-            'bdajax.action',
-            'bdajax.mode',
-            'bdajax.selector'
-        ])
+        self.assertEqual(
+            tile.param_blacklist,
+            [
+                '_',
+                '_LOCALE_',
+                'ajax.action',
+                'ajax.mode',
+                'ajax.selector',
+                'bdajax.action',
+                'bdajax.mode',
+                'bdajax.selector',
+            ],
+        )
         request.params['_'] = '123'
         request.params['existing'] = 'value'
         self.assertEqual(tile.make_query(), '?existing=value')
@@ -648,40 +833,54 @@ class TestBrowserLayout(TileTestCase):
 
     def test_language(self):
         self.assertEqual(cfg.available_languages, ['en', 'de'])
-        root = BaseNode()
+        root = BaseNode(parent=get_root())
         request = self.layer.new_request()
 
         res = render_tile(root, request, 'language')
-        self.checkOutput("""
-        <li class="dropdown">
-          <a href="#"
-             class="dropdown-toggle"
-             data-toggle="dropdown">
-             <span>Language</span>
-             <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="languagemenu">
+        self.checkOutput(
+            """
+        <div id="language-dropdown"
+             class="nav-item dropdown h-100 mx-0 mx-sm-3 my-1 my-sm-0">
+          <div class="h-100 dropdown-toggle d-flex justify-content-end
+                      justify-content-end-sm-center align-items-center"
+               data-bs-toggle="dropdown">
+            <a href="#"
+               class="nav-link d-inline-block px-0 px-md-2">
+              <img src="http://example.com/resources/cone/flags/en.svg"
+                   width="20"
+                   height="20"
+                   alt="Language" />
+              <span class="caret"></span>
+            </a>
+          </div>
+          <ul role="languagemenu"
+              class="dropdown-menu rounded-0 rounded-bottom
+                     dropdown-menu-end mt-2 mt-sm-0">
             <li>
               <a href="#"
+                 class="dropdown-item active"
                  ajax:bind="click"
                  ajax:target="http://example.com/?lang=en"
                  ajax:action="change_language:NONE:NONE">
-                 <span class="icon-lang-en"></span>
+                <span class="icon-lang-en"></span>
                 English
               </a>
             </li>
             <li>
               <a href="#"
+                 class="dropdown-item"
                  ajax:bind="click"
                  ajax:target="http://example.com/?lang=de"
                  ajax:action="change_language:NONE:NONE">
-                 <span class="icon-lang-de"></span>
+                <span class="icon-lang-de"></span>
                 German
               </a>
             </li>
           </ul>
-        </li>
-        """, res)
+        </div>
+        """,
+            res,
+        )
 
         cfg.available_languages = []
         res = render_tile(root, request, 'language')
@@ -707,3 +906,35 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(event.target, 'http://example.com/')
         self.assertEqual(event.name, 'contextchanged')
         self.assertEqual(event.selector, '#layout')
+
+    def test_layout_tileinfo(self):
+        layout = Layout()
+        self.assertEqual(
+            layout.tileinfo(('name', 'Title')), {'name': 'name', 'title': 'Title'}
+        )
+        self.assertEqual(layout.tileinfo('name'), {'name': 'name', 'title': 'name'})
+        self.assertIsNone(layout.tileinfo(None))
+
+    def test_mainmenu_ignores_non_application_nodes(self):
+        root = BaseNode()
+        root['app'] = BaseNode()
+        root['plain'] = NodeBaseNode()
+        with self.layer.authenticated('max'):
+            res = render_tile(root, self.layer.new_request(), 'mainmenu')
+        self.assertIn('href="http://example.com/app"', res)
+        self.assertNotIn('href="http://example.com/plain"', res)
+
+    def test_navtree_title_of_navroot(self):
+        # Rooted at a navroot below the application root, the navtree is
+        # titled with the navroot's title.
+        root = get_root()
+        navroot = BaseNode(name='navroot', parent=root)
+        navroot.properties.is_navroot = True
+        navroot.metadata.title = 'Organization'
+        leaf = BaseNode(name='leaf', parent=navroot)
+        tile = NavTree()
+        tile.model = leaf
+        tile.request = self.layer.new_request()
+        self.assertEqual(tile.title, 'Organization')
+        tile.model = BaseNode(name='plain', parent=root)
+        self.assertEqual(tile.title, 'navigation')
