@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "Chameleon",
-    "cone.tile>1.99",
+    "cone.tile>2.0.99",
     "node.ext.ugm>1.99",
     "node>1.99",
     "pyramid>=2.0",

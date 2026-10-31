@@ -4,6 +4,11 @@ Changes
 2.1.0 (unreleased)
 ------------------
 
+- Require ``cone.tile>2.0.99``. ``cone.tile`` 2.0 secures tiles only if an
+  authentication and an authorization policy are registered, so it does not
+  protect tiles with the security policy configured by ``cone.app.main``.
+  [rnix]
+
 - Remove ``MainMenu.on_sidebar_left_resize``, which rendered the main menu
   scrollbar again on each left sidebar resize. Both sidebars live inside the
   content area below the header, so resizing them does not change the width of
