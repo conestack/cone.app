@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.1.0 (unreleased)
+2.1.0 (2026-10-31)
 ------------------
 
 - Require ``cone.tile>2.0.99``. ``cone.tile`` 2.0 secures tiles only if an
