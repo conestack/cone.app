@@ -184,7 +184,7 @@ class ReferencableChildrenLink(LinkAction):
     def render(self):
         if INavigationLeaf.providedBy(self.model):
             return '{}&nbsp;{}'.format(
-                tag('span', class_=self.icon), tag('span', self.text)
+                tag('span', class_=self.icon), tag('span', tag.escape(self.text))
             )
         return LinkAction.render(self)
 

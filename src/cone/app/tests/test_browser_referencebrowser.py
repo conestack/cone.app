@@ -1015,6 +1015,14 @@ class TestBrowserReferenceBrowser(TileTestCase):
         expected = '<span class="bi-asterisk" />&nbsp;<span>leaf</span>'
         self.assertEqual(rendered, expected)
 
+        model = LeafNode(name='<b>leaf</b>&')
+        with self.layer.authenticated('manager'):
+            rendered = action(model, request)
+        expected = (
+            '<span class="bi-asterisk" />&nbsp;<span>&lt;b&gt;leaf&lt;/b&gt;&amp;</span>'
+        )
+        self.assertEqual(rendered, expected)
+
     def test_reference_pathbar(self):
         model = BaseNode()
         model['a'] = RefNode()

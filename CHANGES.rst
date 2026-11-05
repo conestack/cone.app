@@ -4,8 +4,9 @@ Changes
 2.1.1 (unreleased)
 ------------------
 
-- Encode the node title in reference actions and the label in display mode of
-  the ``reference`` blueprint. Requires ``yafowil`` 4.2.0.
+- Encode the node title in reference actions and in the link to leaf nodes, and
+  the label in display mode of the ``reference`` blueprint. Requires ``yafowil``
+  4.2.0.
   [rnix]
 
 
