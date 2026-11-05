@@ -77,8 +77,11 @@ values like ``true`` and ``false``.
 - **cone.auth_path**: Defaults to ``/``. The path for which the authentication
   cookie is valid.
 
-- **cone.auth_wild_domain**: Defaults to ``True``. An authentication cookie
-  will be generated for the wildcard domain.
+- **cone.auth_wild_domain**: Defaults to ``True``. The cookie also gets sent to
+  subdomains of the host, not to other hosts of the domain. Set this to ``false``
+  if others run subdomains of this host. Browsers keep a cookie set with the former
+  value and a logout does not remove it, users stay logged in. So change it together
+  with ``cone.auth_secret``, which invalidates all logins.
 
 
 Requests of Other Sites
@@ -101,6 +104,19 @@ since their origin differs per installation:
     cone.trusted_origins =
         https://other.example.com
         moz-extension://*
+
+
+Content Security Policy
+-----------------------
+
+The application sends no ``Content-Security-Policy`` header, this is up to the web
+server or proxy delivering it. A starting point, plugins and widgets may need more:
+
+.. code-block:: text
+
+    default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:
+
+Send it as ``Content-Security-Policy-Report-Only`` first to see what gets refused.
 
 
 Failed Logins
