@@ -24,8 +24,9 @@ def is_foreign_request(request, trusted_origins):
     :return: Whether the request is to be refused.
     """
     origin = request.headers.get('Origin')
+    # A bracket encloses an IPv6 address, for fnmatch it starts a character class.
     if origin is not None and any(
-        fnmatchcase(origin, trusted) for trusted in trusted_origins
+        fnmatchcase(origin, trusted.replace('[', '[[]')) for trusted in trusted_origins
     ):
         return False
     fetch_site = request.headers.get('Sec-Fetch-Site')

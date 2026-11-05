@@ -117,6 +117,7 @@ class TestApp(NodeTestCase):
             'cone.auth_reissue_time': '300',
             'cone.auth_max_age': '600',
             'cone.main_template': 'package.browser:templates/main.pt',
+            'cone.show_tracebacks': 'true',
             # ensure custom root node factory gets invoked
             'cone.root.node_factory': 'cone.app.default_root_node_factory',
             # ensure custom node_available factory gets invoked
@@ -142,6 +143,10 @@ class TestApp(NodeTestCase):
 
         # reset main template
         cone.app.cfg.main_template = main_template_orgin
+
+        # Check tracebacks are enabled by setting
+        self.assertTrue(cone.app.cfg.show_tracebacks)
+        cone.app.cfg.show_tracebacks = False
 
     def test_remote_addr_middleware(self):
         # Remote address middleware

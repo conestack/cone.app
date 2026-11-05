@@ -78,6 +78,16 @@ class TestIsForeignRequest(unittest.TestCase):
         self.assert_own({'Origin': 'moz-extension://1234-abcd'}, trusted)
         self.assert_foreign({'Origin': 'https://example.com'}, trusted)
 
+    def test_trusted_origin_with_brackets(self):
+        # Brackets enclose an IPv6 address, they are no character class
+        trusted = ['http://[::1]:8080']
+        self.assert_own(
+            {'Origin': 'http://[::1]:8080', 'Sec-Fetch-Site': 'cross-site'}, trusted
+        )
+        self.assert_foreign(
+            {'Origin': 'http://1:8080', 'Sec-Fetch-Site': 'cross-site'}, trusted
+        )
+
     def test_trusted_origin_needs_origin_header(self):
         self.assert_foreign({'Sec-Fetch-Site': 'cross-site'}, ['moz-extension://*'])
 
