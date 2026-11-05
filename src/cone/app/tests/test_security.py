@@ -36,9 +36,11 @@ from pyramid.authorization import Everyone
 from pyramid.interfaces import ISecurityPolicy
 from pyramid.testing import DummyRequest
 from pyramid.threadlocal import get_current_registry
+from unittest import mock
 from zope.component import adapter
 from zope.component.globalregistry import BaseGlobalComponents
 from zope.interface import implementer
+import hmac
 import logging
 
 
@@ -58,6 +60,20 @@ class SecurityTest(NodeTestCase):
         # 'superuser' values get set in test layer
         self.assertEqual(security.ADMIN_USER, 'superuser')
         self.assertEqual(security.ADMIN_PASSWORD, 'superuser')
+
+    def test_authenticate_admin(self):
+        request = self.layer.new_request()
+        with mock.patch.object(
+            security.hmac, 'compare_digest', wraps=hmac.compare_digest
+        ) as compare:
+            self.assertTrue(authenticate(request, 'superuser', 'superuser'))
+            self.assertEqual(compare.call_count, 2)
+            # both get compared, also if the first one differs
+            self.assertFalse(authenticate(request, 'other', 'superuser'))
+            self.assertEqual(compare.call_count, 4)
+        self.assertFalse(authenticate(request, 'superuser', 'wrong'))
+        self.assertFalse(authenticate(request, 'superuser', 'wröng'))
+        self.assertFalse(authenticate(request, 'süperuser', 'superuser'))
 
     def test_authenticated_user(self):
         self.layer.new_request()

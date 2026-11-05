@@ -32,6 +32,9 @@ Changes
   such a request now, before it committed.
   [rnix]
 
+- Compare the credentials of the admin user with ``hmac.compare_digest``.
+  [rnix]
+
 - ``logout_view`` follows ``came_from`` only to an HTTP URL on the host of the
   application. ``CameFromNext`` considers the scheme too. Add
   ``browser.utils.is_same_host_url``.

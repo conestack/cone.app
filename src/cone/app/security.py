@@ -20,6 +20,7 @@ from pyramid.interfaces import ISecurityPolicy
 from pyramid.security import remember
 from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
+import hmac
 import logging
 
 
@@ -115,10 +116,16 @@ ADMIN_PASSWORD = None
 AUTHENTICATOR = None
 
 
+def _is_admin(login, password):
+    # Both get compared in any case, the time must not tell which one differs.
+    same_login = hmac.compare_digest(str(login).encode(), ADMIN_USER.encode())
+    same_password = hmac.compare_digest(str(password).encode(), ADMIN_PASSWORD.encode())
+    return same_login and same_password
+
+
 def authenticate(request, login, password):
-    if ADMIN_USER and ADMIN_PASSWORD:
-        if login == ADMIN_USER and password == ADMIN_PASSWORD:
-            return remember(request, login)
+    if ADMIN_USER and ADMIN_PASSWORD and _is_admin(login, password):
+        return remember(request, login)
     if AUTHENTICATOR:
         authenticator = request.registry.queryUtility(IAuthenticator, name=AUTHENTICATOR)
         if authenticator:
