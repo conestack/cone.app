@@ -1,10 +1,13 @@
 from cone.app import get_root
 from cone.app import security
 from cone.app import testing
+from cone.app.browser import login as login_module
 from cone.app.browser.login import login_view
 from cone.app.browser.login import logout_view
 from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
+from pyramid.request import Request
+from unittest import mock
 from webob.exc import HTTPFound
 from webob.response import Response
 
@@ -41,6 +44,69 @@ class TestBrowserLogin(TileTestCase):
 
         request.params['came_from'] = 'http://example.org/'
         self.assertEqual(logout_view(root, request).location, 'http://example.com')
+
+    def login_params(self, user, password):
+        return {
+            'loginform.user': user,
+            'loginform.password': password,
+            'action.loginform.login': '1',
+        }
+
+    def test_login_view_tries_no_login_without_credentials(self):
+        with mock.patch.object(login_module, 'authenticate') as authenticate:
+            response = login_view(get_root(), self.layer.new_request())
+        self.assertEqual(response.status_int, 200)
+        authenticate.assert_not_called()
+
+    def test_login_view_tries_no_login_with_missing_credentials(self):
+        for user, password, message in (
+            ('', '', 'No username given'),
+            ('foo', '', 'No password given'),
+            ('', 'bar', 'No username given'),
+        ):
+            with self.subTest(user=user, password=password):
+                request = self.layer.new_request()
+                request.params.update(self.login_params(user, password))
+                with mock.patch.object(login_module, 'authenticate') as authenticate:
+                    response = login_view(get_root(), request)
+                self.assertEqual(response.status_int, 200)
+                self.assertIn(message, response.text)
+                authenticate.assert_not_called()
+
+    def test_failed_login_answers_unauthorized(self):
+        request = self.layer.new_request()
+        request.params.update(self.login_params('foo', 'bar'))
+        with self.assertLogs('cone.app', level='WARNING'):
+            response = login_view(get_root(), request)
+        self.assertEqual(response.status_int, 401)
+        self.assertIn('Invalid Credentials', response.text)
+
+    def test_failed_login_through_router(self):
+        request = Request.blank('/login', POST=self.login_params('foo', 'bar'))
+        with self.assertLogs('cone.app', level='WARNING'):
+            response = request.get_response(self.layer.app)
+        self.assertEqual(response.status_int, 401)
+        self.assertIn('Invalid Credentials', response.text)
+
+    def test_successful_login_through_router(self):
+        request = Request.blank(
+            '/login', POST=self.login_params(security.ADMIN_USER, security.ADMIN_PASSWORD)
+        )
+        response = request.get_response(self.layer.app)
+        self.assertEqual(response.status_int, 302)
+        self.assertIn('auth_tkt=', response.headers['Set-Cookie'])
+
+    def test_failed_login_through_ajaxaction(self):
+        params = self.login_params('foo', 'bar')
+        params.update(
+            {'ajax.action': 'loginform', 'ajax.mode': 'inner', 'ajax.selector': '#a'}
+        )
+        request = Request.blank(
+            '/ajaxaction', POST=params, headers={'Accept': 'application/json'}
+        )
+        with self.assertLogs('cone.app', level='WARNING'):
+            response = request.get_response(self.layer.app)
+        self.assertEqual(response.status_int, 401)
 
     def test_login_form(self):
         root = get_root()

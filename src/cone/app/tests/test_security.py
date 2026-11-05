@@ -75,6 +75,27 @@ class SecurityTest(NodeTestCase):
         self.assertFalse(authenticate(request, 'superuser', 'wröng'))
         self.assertFalse(authenticate(request, 'süperuser', 'superuser'))
 
+    def test_failed_login_is_logged(self):
+        request = self.layer.new_request()
+        request.environ['REMOTE_ADDR'] = '192.0.2.1'
+        with self.assertLogs('cone.app', level='WARNING') as logs:
+            self.assertIsNone(authenticate(request, 'foo', 'wrong'))
+        self.assertEqual(
+            logs.output, ["WARNING:cone.app:Failed login for 'foo' from 192.0.2.1"]
+        )
+
+    def test_failed_login_log_stays_on_one_line(self):
+        request = self.layer.new_request()
+        with self.assertLogs('cone.app', level='WARNING') as logs:
+            authenticate(request, 'foo\nbar', 'wrong')
+        self.assertIn("'foo\\nbar'", logs.output[0])
+        self.assertNotIn('\n', logs.output[0])
+
+    def test_successful_login_is_not_logged(self):
+        request = self.layer.new_request()
+        with self.assertNoLogs('cone.app', level='WARNING'):
+            self.assertTrue(authenticate(request, 'superuser', 'superuser'))
+
     def test_authenticated_user(self):
         self.layer.new_request()
         self.assertTrue(authenticated_user(self.layer.current_request) is None)

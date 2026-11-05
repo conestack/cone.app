@@ -142,6 +142,9 @@ def authenticate(request, login, password):
             f'Authentication plugin {ugm.__class__!s} raised an Exception while '
             f'trying to authenticate: {e}'
         )
+        return None
+    client = request.environ.get('REMOTE_ADDR')
+    logger.warning(f'Failed login for {login!r} from {client}')
 
 
 def authenticated_user(request):

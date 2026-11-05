@@ -35,6 +35,11 @@ Changes
 - Compare the credentials of the admin user with ``hmac.compare_digest``.
   [rnix]
 
+- A failed login in the login form answers with status 401 instead of 200, so a
+  throttle at the edge can recognize it. All failed logins log a warning with login
+  name and client address.
+  [rnix]
+
 - ``logout_view`` follows ``came_from`` only to an HTTP URL on the host of the
   application. ``CameFromNext`` considers the scheme too. Add
   ``browser.utils.is_same_host_url``.

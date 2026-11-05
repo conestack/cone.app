@@ -17,7 +17,11 @@ _ = TranslationStringFactory('cone.app')
 
 @view_config(name='login')
 def login_view(model, request):
-    return render_main_template(model, request, contenttile='loginform')
+    response = render_main_template(model, request, contenttile='loginform')
+    # The template rendering creates its own response.
+    if request.response.status_int == 401:
+        response.status_int = 401
+    return response
 
 
 @view_config(name='logout')
@@ -85,9 +89,14 @@ class LoginForm(Form):
     def login(self, widget, data):
         login = data.fetch('loginform.user').extracted
         password = data.fetch('loginform.password').extracted
+        # Forms extract on every rendering, this is no login attempt then.
+        if not login or not password:
+            return data.extracted
         webob_req = data.request.request
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:
+            # Lets the edge recognize failed logins, see configuration docs.
+            self.request.response.status_int = 401
             raise ExtractionError(_('invalid_credentials', default='Invalid Credentials'))
 
     def next(self, request):
