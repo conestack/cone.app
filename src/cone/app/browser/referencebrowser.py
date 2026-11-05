@@ -127,7 +127,7 @@ class ReferenceAction(LinkAction):
             'style': 'display:none;',
         }
         title = self.model.metadata.get('title', self.model.name)
-        return rendered + tag('span', title, **attrs)
+        return rendered + tag('span', tag.escape(title), **attrs)
 
 
 class ActionAddReference(ReferenceAction):
@@ -402,7 +402,7 @@ def reference_display_renderer(widget, data):
         'id': cssid(widget, 'display'),
         'class_': 'display-{}'.format(widget.attrs['class'] or 'generic'),
     }
-    return data.tag('div', label, **attrs)
+    return data.tag('div', data.tag.escape(label), **attrs)
 
 
 factory.register(

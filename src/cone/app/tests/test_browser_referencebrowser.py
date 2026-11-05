@@ -36,7 +36,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput(
             """
         <span
-          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
+          ajax:target="http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="
           class="input-group">
           <input class="form-control referencebrowser"
                  id="input-ref" name="ref" readonly="readonly"
@@ -55,7 +55,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
         self.checkOutput(
             """
         <span
-          ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="
+          ajax:target="http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="
           class="">
           <input id="exists-ref" name="ref-exists" type="hidden" value="exists" />
           <select class="form-control referencebrowser"
@@ -73,95 +73,95 @@ class TestBrowserReferenceBrowser(TileTestCase):
     def test_reference_root(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = 'http://example.com/?navigable=&referencable=&root=/&selected='
+        expected = (
+            'http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected='
+        )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['root'] = '/container'
-        expected = (
-            'http://example.com/?navigable=&referencable=&root=/container&selected='
-        )
+        expected = 'http://example.com/?navigable=&amp;referencable=&amp;root=/container&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
         def root_callable(widget, data):
             return '/computed_root'
 
         widget.attrs['root'] = root_callable
-        expected = (
-            'http://example.com/?navigable=&referencable=&root=/computed_root&selected='
-        )
+        expected = 'http://example.com/?navigable=&amp;referencable=&amp;root=/computed_root&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_referencable(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = 'http://example.com/?navigable=&referencable=&root=/&selected='
+        expected = (
+            'http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected='
+        )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = 'foo'
-        expected = 'http://example.com/?navigable=&referencable=foo&root=/&selected='
+        expected = (
+            'http://example.com/?navigable=&amp;referencable=foo&amp;root=/&amp;selected='
+        )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = ['foo', 'bar']
-        expected = 'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
+        expected = 'http://example.com/?navigable=&amp;referencable=foo,bar&amp;root=/&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['referencable'] = 'foo,bar'
-        expected = 'http://example.com/?navigable=&referencable=foo,bar&root=/&selected='
+        expected = 'http://example.com/?navigable=&amp;referencable=foo,bar&amp;root=/&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
         def referencable_callable(widget, data):
             return 'computed'
 
         widget.attrs['referencable'] = referencable_callable
-        expected = 'http://example.com/?navigable=&referencable=computed&root=/&selected='
+        expected = 'http://example.com/?navigable=&amp;referencable=computed&amp;root=/&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_navigable(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = 'http://example.com/?navigable=&referencable=&root=/&selected='
+        expected = (
+            'http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected='
+        )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = 'foo'
-        expected = 'http://example.com/?navigable=foo&referencable=&root=/&selected='
+        expected = (
+            'http://example.com/?navigable=foo&amp;referencable=&amp;root=/&amp;selected='
+        )
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = ['foo', 'bar']
-        expected = 'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
+        expected = 'http://example.com/?navigable=foo,bar&amp;referencable=&amp;root=/&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['navigable'] = 'foo,bar'
-        expected = 'http://example.com/?navigable=foo,bar&referencable=&root=/&selected='
+        expected = 'http://example.com/?navigable=foo,bar&amp;referencable=&amp;root=/&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
         def navigable_callable(widget, data):
             return 'computed'
 
         widget.attrs['navigable'] = navigable_callable
-        expected = 'http://example.com/?navigable=computed&referencable=&root=/&selected='
+        expected = 'http://example.com/?navigable=computed&amp;referencable=&amp;root=/&amp;selected='
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_target(self):
         self.layer.new_request()
         widget = factory('reference', name='ref')
-        expected = (
-            'ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="'
-        )
+        expected = 'ajax:target="http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="'
         self.assertTrue(widget().find(expected) > -1)
 
         widget.attrs['target'] = 'http://domain.com/'
-        expected = (
-            'ajax:target="http://domain.com/?navigable=&referencable=&root=/&selected="'
-        )
+        expected = 'ajax:target="http://domain.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="'
         self.assertTrue(widget().find(expected) > -1)
 
         def target_callable(widget, data):
             return 'http://computed.com/'
 
         widget.attrs['target'] = target_callable
-        expected = (
-            'ajax:target="http://computed.com/?navigable=&referencable=&root=/&selected="'
-        )
+        expected = 'ajax:target="http://computed.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="'
         self.assertTrue(widget().find(expected) > -1)
 
     def test_reference_selected(self):
@@ -169,17 +169,15 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget = factory('reference', name='ref')
         data = widget.extract(request)
-        expected = (
-            'ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="'
-        )
+        expected = 'ajax:target="http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="'
         self.assertTrue(widget(data=data).find(expected) > -1)
 
         widget.getter = ['3604702a-b177-42de-8694-d81e2d993633', 'Label']
         data = widget.extract(request)
         expected = (
             'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/'
-            '&selected=3604702a-b177-42de-8694-d81e2d993633"'
+            '?navigable=&amp;referencable=&amp;root=/'
+            '&amp;selected=3604702a-b177-42de-8694-d81e2d993633"'
         )
         self.assertTrue(widget(data=data).find(expected) > -1)
 
@@ -188,8 +186,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         expected = (
             'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/'
-            '&selected=745dd2ed-74ad-449b-b55b-b240709b2b0e"'
+            '?navigable=&amp;referencable=&amp;root=/'
+            '&amp;selected=745dd2ed-74ad-449b-b55b-b240709b2b0e"'
         )
         self.assertTrue(widget(data=data).find(expected) > -1)
 
@@ -197,9 +195,7 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         widget = factory('reference', name='ref', props={'multivalued': True})
         data = widget.extract(request)
-        expected = (
-            'ajax:target="http://example.com/?navigable=&referencable=&root=/&selected="'
-        )
+        expected = 'ajax:target="http://example.com/?navigable=&amp;referencable=&amp;root=/&amp;selected="'
         self.assertTrue(widget(data=data).find(expected) > -1)
         del widget.attrs['vocabulary']
 
@@ -207,8 +203,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         expected = (
             'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/'
-            '&selected=5f94f75c-4aea-4dc7-a31b-6152e8f89d00"'
+            '?navigable=&amp;referencable=&amp;root=/'
+            '&amp;selected=5f94f75c-4aea-4dc7-a31b-6152e8f89d00"'
         )
         self.assertTrue(widget(data=data).find(expected) > -1)
         del widget.attrs['vocabulary']
@@ -218,8 +214,8 @@ class TestBrowserReferenceBrowser(TileTestCase):
         data = widget.extract(request)
         expected = (
             'ajax:target="http://example.com/'
-            '?navigable=&referencable=&root=/'
-            '&selected=e2121521-60a9-4fe6-babf-0f86881c3d6a"'
+            '?navigable=&amp;referencable=&amp;root=/'
+            '&amp;selected=e2121521-60a9-4fe6-babf-0f86881c3d6a"'
         )
         self.assertTrue(widget(data=data).find(expected) > -1)
 
@@ -735,6 +731,20 @@ class TestBrowserReferenceBrowser(TileTestCase):
             ),
         )
 
+        widget = factory(
+            'reference',
+            name='ref',
+            value=('00c753e6-2284-4118-a286-b43d743f1259', '<b>x</b>&'),
+            mode='display',
+        )
+        self.assertEqual(
+            widget(),
+            (
+                '<div class="display-referencebrowser form-control" '
+                'id="display-ref">&lt;b&gt;x&lt;/b&gt;&amp;</div>'
+            ),
+        )
+
         # Multi value display renderer
         def lookup_label(uuid):
             return {
@@ -863,6 +873,21 @@ class TestBrowserReferenceBrowser(TileTestCase):
 
         action.model = model
         self.assertFalse(action.display)
+
+    def test_ReferenceAction_encodes_title(self):
+        request = self.layer.new_request()
+        request.params['referencable'] = 'ref_node'
+        request.params['selected'] = ''
+        request.params['root'] = '/'
+
+        action = ActionAddReference()
+        with self.layer.authenticated('manager'):
+            rendered = action(RefNode(name='<b>x</b>&'), request)
+        self.assertIn(
+            '<span class="reftitle" style="display:none;">'
+            '&lt;b&gt;x&lt;/b&gt;&amp;</span>',
+            rendered,
+        )
 
     def test_ActionAddReference(self):
         model = BaseNode()
