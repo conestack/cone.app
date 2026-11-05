@@ -31,7 +31,13 @@ class TestBrowserWorkflow(TileTestCase):
             res,
         )
 
+        # A transition needs a POST request
         request.params['do_transition'] = 'initial_2_final'
+        with self.layer.authenticated('manager'):
+            render_tile(node, request, 'wf_dropdown')
+        self.assertEqual(node.state, 'initial')
+
+        request.method = 'POST'
         with self.layer.authenticated('manager'):
             res = render_tile(node, request, 'wf_dropdown')
         self.checkOutput(

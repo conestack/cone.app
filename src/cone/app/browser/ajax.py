@@ -21,7 +21,12 @@ failed. An application vetoes the commit on this key, e.g. with a
 """
 
 
-@view_config(name='ajaxaction', accept='application/json', renderer='json')
+@view_config(
+    name='ajaxaction',
+    accept='application/json',
+    request_method='POST',
+    renderer='json',
+)
 def ajax_tile(model, request):
     """Treibstoff ajax ``ajaxaction`` implementation for cone.
 

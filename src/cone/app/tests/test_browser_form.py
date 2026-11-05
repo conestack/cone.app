@@ -193,6 +193,7 @@ class TestBrowserForm(TileTestCase):
         # Trigger subscribe action and set empty email value. Results in a form
         # with error message since email is required
         request = self.layer.new_request()
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = ''
 
@@ -205,6 +206,7 @@ class TestBrowserForm(TileTestCase):
         # Trigger subscribe action and set valid email value. Now the action
         # handler and next handler are triggered
         request = self.layer.new_request()
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
 
@@ -223,6 +225,7 @@ class TestBrowserForm(TileTestCase):
         # ajax flag is set to False (defaults to True)
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
@@ -239,6 +242,7 @@ class TestBrowserForm(TileTestCase):
         SubscriptionForm.next_as_redirect = False
 
         request = self.layer.new_request()
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
@@ -265,6 +269,7 @@ class TestBrowserForm(TileTestCase):
 
         # If submitted without ajax flag on request, still get HTTPFound
         request = self.layer.new_request()
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
@@ -279,6 +284,7 @@ class TestBrowserForm(TileTestCase):
         # Submit with ajax flag
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
@@ -297,6 +303,7 @@ class TestBrowserForm(TileTestCase):
 
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.method = 'POST'
         request.params['action.subscriptionform.subscribe'] = '1'
         request.params['subscriptionform.email'] = 'john.doe@example.com'
         with self.layer.authenticated('max'):
@@ -309,6 +316,41 @@ class TestBrowserForm(TileTestCase):
         self.assertTrue(
             isinstance(request.environ['cone.app.continuation'][0], AjaxAction)
         )
+
+    def test_Form_runs_actions_on_post_only(self):
+        handled = []
+
+        with self.layer.hook_tile_reg():
+
+            @tile(name='actionform')
+            class ActionForm(Form):
+                def prepare(self):
+                    form = factory('form', name='actionform', props={'action': 'target'})
+                    form['save'] = factory(
+                        'submit',
+                        props={
+                            'action': 'save',
+                            'expression': True,
+                            'handler': lambda widget, data: handled.append(True),
+                            'next': lambda request: '<div>next</div>',
+                            'label': 'Save',
+                        },
+                    )
+                    self.form = form
+
+        model = BaseNode()
+        request = self.layer.new_request()
+        request.params['action.actionform.save'] = '1'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'actionform')
+        self.assertEqual(handled, [])
+        self.assertIn('name="action.actionform.save"', rendered)
+
+        request.method = 'POST'
+        with self.layer.authenticated('max'):
+            rendered = render_tile(model, request, 'actionform')
+        self.assertEqual(handled, [True])
+        self.assertEqual(rendered, '<div>next</div>')
 
     def test_YAMLForm(self):
         with self.layer.hook_tile_reg():

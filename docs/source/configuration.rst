@@ -81,6 +81,28 @@ values like ``true`` and ``false``.
   will be generated for the wildcard domain.
 
 
+Requests of Other Sites
+-----------------------
+
+A request with a method other than ``GET``, ``HEAD`` or ``OPTIONS`` is answered with
+status ``403`` and a warning in the ``cone.app`` logger if a browser sends it for
+another site. The application recognizes this by the ``Sec-Fetch-Site`` header, and
+if a browser did not send it by comparing the ``Origin`` header with the host of the
+request. A proxy must therefore pass the host including its port, unless the
+application runs on HTTPS. Clients sending neither header pass, like scripts or
+applications without a browser.
+
+Browser clients of other origins need to be listed in ``cone.trusted_origins``,
+separated by whitespace. ``*`` matches any characters, which browser extensions need,
+since their origin differs per installation:
+
+.. code-block:: ini
+
+    cone.trusted_origins =
+        https://other.example.com
+        moz-extension://*
+
+
 Failed Logins
 -------------
 

@@ -307,6 +307,7 @@ class TestBrowserSettings(TileTestCase):
             res.find('<form action="http://example.com/settings/test_settings"') > -1
         )
 
+        request.method = 'POST'
         request.params['action.editform.save'] = '1'
         request.params['ajax'] = '1'
         with self.layer.authenticated('manager'):
@@ -352,6 +353,7 @@ class TestBrowserSettings(TileTestCase):
                     self.form = form
 
         request = self.layer.new_request()
+        request.method = 'POST'
         request.params['action.editform.save'] = '1'
         request.params['ajax'] = '1'
 

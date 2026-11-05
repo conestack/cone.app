@@ -66,6 +66,7 @@ class TestBrowserLogin(TileTestCase):
         ):
             with self.subTest(user=user, password=password):
                 request = self.layer.new_request()
+                request.method = 'POST'
                 request.params.update(self.login_params(user, password))
                 with mock.patch.object(login_module, 'authenticate') as authenticate:
                     response = login_view(get_root(), request)
@@ -75,6 +76,7 @@ class TestBrowserLogin(TileTestCase):
 
     def test_failed_login_answers_unauthorized(self):
         request = self.layer.new_request()
+        request.method = 'POST'
         request.params.update(self.login_params('foo', 'bar'))
         with self.assertLogs('cone.app', level='WARNING'):
             response = login_view(get_root(), request)
@@ -117,6 +119,7 @@ class TestBrowserLogin(TileTestCase):
         # Authenticate with wrong credentials
         request.params['loginform.user'] = 'foo'
         request.params['loginform.password'] = 'bar'
+        request.method = 'POST'
         request.params['action.loginform.login'] = '1'
         res = render_tile(root, request, 'loginform')
         self.assertTrue(res.find('class="invalid-feedback">Invalid Credentials') > -1)

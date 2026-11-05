@@ -174,6 +174,8 @@ class Form(Tile):
         self.prepare_ajax()
         if not self.show:
             return ''
+        if self.request.method != 'POST':
+            return self.form(request=self.request)
         controller = Controller(self.form, self.request)
         if not controller.next:
             return controller.rendered

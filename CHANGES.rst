@@ -4,6 +4,23 @@ Changes
 2.1.1 (unreleased)
 ------------------
 
+- The ``ajaxaction`` view only accepts ``POST`` requests. Requires ``treibstoff``
+  2.0.2.
+  [rnix]
+
+- The tile ``wf_dropdown`` only performs ``do_transition`` on ``POST`` requests.
+  [rnix]
+
+- ``Form`` only runs form actions on ``POST`` requests. On any other request it
+  renders the form. Tests calling a form action need ``request.method = 'POST'``.
+  [rnix]
+
+- Answer requests other than ``GET``, ``HEAD`` and ``OPTIONS`` with status ``403``
+  if a browser sends them for another site, recognized by the ``Sec-Fetch-Site``
+  and ``Origin`` headers. Clients sending neither pass. Add
+  ``cone.trusted_origins`` for browser clients of other origins.
+  [rnix]
+
 - Encode the node title in reference actions and in the link to leaf nodes, and
   the label in display mode of the ``reference`` blueprint. Requires ``yafowil``
   4.2.0.

@@ -17,6 +17,7 @@ from pyramid.config import Configurator
 from pyramid.interfaces import ISecurityPolicy
 from pyramid.settings import asbool
 from pyramid.traversal import ResourceTreeTraverser
+from pyramid.tweens import INGRESS
 from yafowil.bootstrap import configure_factory
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
@@ -328,6 +329,9 @@ def main(global_config, **settings):
     # XXX: register yafowil and all yafowil addon widget locales.
     #      provide locales either in yafowil resources or as entry points in
     #      all yafowil packages providing translations
+
+    # outermost, a refused request does not reach the transaction or the views
+    config.add_tween('cone.app.origin.origin_check_tween_factory', under=INGRESS)
 
     # static routes
     config.add_route('favicon', '/favicon.ico')

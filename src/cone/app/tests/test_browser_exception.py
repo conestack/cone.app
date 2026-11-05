@@ -86,7 +86,7 @@ class TestBrowserException(TileTestCase):
         # A failing ajax action through the router, without ``ajax.action``
         def request_ajaxaction(headers):
             headers = dict(headers, Accept='application/json')
-            request = Request.blank('/ajaxaction', headers=headers)
+            request = Request.blank('/ajaxaction', method='POST', headers=headers)
             with self.assertLogs(level='ERROR'):
                 return request.get_response(self.layer.app)
 

@@ -22,16 +22,17 @@ logger = logging.getLogger('cone.app')
 class WfDropdown(Tile):
     """Transition dropdown.
 
-    If ``do_transition`` is found in ``request.params``, perform given
-    transition on ``self.model`` immediately before dropdown gets rendered.
+    If ``do_transition`` is found in ``request.params`` of a ``POST`` request,
+    perform given transition on ``self.model`` immediately before dropdown gets
+    rendered.
     """
 
     def do_transition(self):
-        """if ``do_transition`` is found on request.params, perform
-        transition.
+        """if ``do_transition`` is found on request.params and it is a ``POST``
+        request, perform transition.
         """
         transition = self.request.params.get('do_transition')
-        if not transition:
+        if not transition or self.request.method != 'POST':
             return
         workflow = self.workflow
         workflow.transition(self.model, self.request, transition)

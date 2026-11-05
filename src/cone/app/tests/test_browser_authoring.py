@@ -150,6 +150,7 @@ class TestBrowserAuthoring(TileTestCase):
         # No ``came_from`` on request, no ``default_came_from``, no ajax request
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.camefromnextform.next'] = '1'
             res = render_tile(model, request, 'camefromnextform')
 
@@ -235,6 +236,7 @@ class TestBrowserAuthoring(TileTestCase):
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
             request.params['ajax'] = '1'
+            request.method = 'POST'
             request.params['action.camefromnextform.next'] = '1'
             request.params['came_from'] = ''
             res = render_tile(model, request, 'camefromnextform')
@@ -297,6 +299,7 @@ class TestBrowserAuthoring(TileTestCase):
             CameFromNextForm.write_history_on_next = True
             request = self.layer.new_request()
             request.params['ajax'] = '1'
+            request.method = 'POST'
             request.params['action.camefromnextform.next'] = '1'
             request.params['came_from'] = ''
             res = render_tile(model, request, 'camefromnextform')
@@ -579,6 +582,7 @@ class TestBrowserAuthoring(TileTestCase):
         with self.layer.authenticated('manager'):
             request = self.layer.current_request
             request.params['factory'] = 'mynode'
+            request.method = 'POST'
             request.params['action.addform.add'] = '1'
             request.params['addform.id'] = 'somechild'
             request.params['addform.title'] = 'Some Child'
@@ -632,6 +636,7 @@ class TestBrowserAuthoring(TileTestCase):
         with self.layer.authenticated('manager'):
             request = self.layer.new_request()
             request.params['factory'] = 'mynode'
+            request.method = 'POST'
             request.params['action.addform.add'] = '1'
             request.params['addform.id'] = 'somechild'
             request.params['addform.title'] = 'Some Child'
@@ -735,6 +740,7 @@ class TestBrowserAuthoring(TileTestCase):
         # edited node
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             res = render_tile(root['somechild'], request, 'editform')
@@ -746,6 +752,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Check next URL with ``parent`` as ``came_from`` value
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             request.params['came_from'] = 'parent'
@@ -756,6 +763,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Check next URL with URL as ``came_from`` value
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             came_from = compat.quote('http://example.com/other/node/in/tree')
@@ -770,6 +778,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Render with ajax flag
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             request.params['ajax'] = '1'
@@ -788,6 +797,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             came_from = compat.quote('http://example.com/other/node/in/tree')
@@ -805,6 +815,7 @@ class TestBrowserAuthoring(TileTestCase):
         # Edit view
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             root.attrs.title = 'Foo'
@@ -814,6 +825,7 @@ class TestBrowserAuthoring(TileTestCase):
 
         with self.layer.authenticated('editor'):
             request = self.layer.new_request()
+            request.method = 'POST'
             request.params['action.editform.update'] = '1'
             request.params['editform.title'] = 'Changed title'
             request.params['ajax'] = '1'
@@ -1051,6 +1063,7 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayform.title'] = ''
+        request.method = 'POST'
         request.params['action.overlayform.update'] = '1'
         with self.layer.authenticated('max'):
             res = overlayform(model, request)
@@ -1079,6 +1092,7 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayform.title'] = 'New Title'
+        request.method = 'POST'
         request.params['action.overlayform.update'] = '1'
         with self.layer.authenticated('max'):
             res = overlayform(model, request)
@@ -1166,6 +1180,7 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax.overlay-uid'] = '1234'
         request.params['factory'] = 'mynode'
         request.params['overlayaddform.title'] = ''
+        request.method = 'POST'
         request.params['action.overlayaddform.add'] = '1'
 
         with self.layer.authenticated('max'):
@@ -1197,6 +1212,7 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax.overlay-uid'] = '1234'
         request.params['factory'] = 'mynode'
         request.params['overlayaddform.title'] = 'Child'
+        request.method = 'POST'
         request.params['action.overlayaddform.add'] = '1'
 
         with self.layer.authenticated('max'):
@@ -1290,6 +1306,7 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayeditform.title'] = ''
+        request.method = 'POST'
         request.params['action.overlayeditform.update'] = '1'
 
         with self.layer.authenticated('max'):
@@ -1320,6 +1337,7 @@ class TestBrowserAuthoring(TileTestCase):
         request.params['ajax'] = '1'
         request.params['ajax.overlay-uid'] = '1234'
         request.params['overlayeditform.title'] = 'New Title'
+        request.method = 'POST'
         request.params['action.overlayeditform.update'] = '1'
 
         with self.layer.authenticated('max'):

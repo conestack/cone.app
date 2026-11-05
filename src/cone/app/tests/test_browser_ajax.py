@@ -17,12 +17,38 @@ from cone.app.browser.form import Form
 from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
+from pyramid.request import Request
+from urllib.parse import urlencode
 from yafowil.base import factory
 import json
 
 
 class TestBrowserAjax(TileTestCase):
     layer = testing.security
+
+    def test_ajax_tile_answers_post_only(self):
+        rendered = []
+        with self.layer.hook_tile_reg():
+
+            @tile(name='posttile', permission='login')
+            class PostTile(Tile):
+                def render(self):
+                    rendered.append(True)
+                    return 'rendered'
+
+        params = {'ajax.action': 'posttile', 'ajax.mode': 'inner', 'ajax.selector': '#a'}
+        headers = {'Accept': 'application/json'}
+
+        request = Request.blank(f'/ajaxaction?{urlencode(params)}', headers=headers)
+        response = request.get_response(self.layer.app)
+        self.assertEqual(response.status_int, 404)
+        self.assertEqual(rendered, [])
+
+        request = Request.blank('/ajaxaction', POST=params, headers=headers)
+        response = request.get_response(self.layer.app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(json.loads(response.text)['payload'], 'rendered')
+        self.assertEqual(rendered, [True])
 
     def test_ajax_tile(self):
         # ``ajax_tile`` is the server side treibstoff ajax implementation for
@@ -563,6 +589,7 @@ class TestBrowserAjax(TileTestCase):
         with self.layer.authenticated('max'):
             request.params['ajax'] = '1'
             request.params['ajaxtestform.foo'] = ''
+            request.method = 'POST'
             request.params['action.ajaxtestform.save'] = 1
             response = render_ajax_form(root, request, 'ajaxtestform')
             result = str(response)
@@ -574,6 +601,7 @@ class TestBrowserAjax(TileTestCase):
         # Test with form processing passing
         request = self.layer.new_request()
         request.params['ajax'] = '1'
+        request.method = 'POST'
         request.params['action.ajaxtestform.save'] = 1
         with self.layer.authenticated('max'):
             request.params['ajaxtestform.foo'] = 'foo'

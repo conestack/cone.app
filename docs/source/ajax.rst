@@ -118,7 +118,7 @@ Ajax Actions
 ~~~~~~~~~~~~
 
 Treibstoff expects a server side implemented JSON view for performing
-SSR Ajax actions by name ``ajaxaction``.
+SSR Ajax actions by name ``ajaxaction``. It only accepts ``POST`` requests.
 
 The implementation is located at ``cone.app.browser.ajax.ajax_tile``. It
 renders a tile registered by action name and returns a JSON reponse in the
