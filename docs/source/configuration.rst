@@ -42,21 +42,25 @@ Authentication Policy Configuration
 The application uses the
 `AuthTktAuthenticationPolicy <http://docs.pylonsproject.org/projects/pyramid/en/latest/api/authentication.html#pyramid.authentication.AuthTktAuthenticationPolicy>`_.
 
-The policy gets configured through the following parameters.
+The policy gets configured through the following parameters. Flags accept
+values like ``true`` and ``false``.
 
-- **cone.auth_secret**: Cookie encryption password.
+- **cone.auth_secret**: Required. Secret used to sign the authentication cookie.
+  The application refuses to start if it is missing or has the former default
+  value ``secret``.
 
 - **cone.auth_cookie_name**: Defaults to ``auth_tkt``. The name used for auth
   cookie.
 
 - **cone.auth_secure**: Defaults to ``False``. Only send the cookie back over a
-  secure connection.
+  secure connection. Set this to ``true`` in production.
 
 - **cone.auth_include_ip**: Defaults to ``False``. Make the requesting IP
   address part of the authentication data in the cookie.
 
 - **cone.auth_timeout**: Defaults to ``None``. Maximum number of seconds which
-  a newly issued ticket will be considered valid.
+  a newly issued ticket will be considered valid. Without it tickets never
+  expire, so set this and ``cone.auth_reissue_time`` in production.
 
 - **cone.auth_reissue_time**: Defaults to ``None``. If this parameter is set,
   it represents the number of seconds that must pass before an authentication
@@ -67,7 +71,7 @@ The policy gets configured through the following parameters.
   represents the lifetime of the ticket contained in the cookie, while this
   value represents the lifetime of the cookie itself.
 
-- **cone.auth_http_only**: Defaults to ``False``. Hide cookie from JavaScript
+- **cone.auth_http_only**: Defaults to ``True``. Hide cookie from JavaScript
   by setting the HttpOnly flag.
 
 - **cone.auth_path**: Defaults to ``/``. The path for which the authentication
@@ -75,6 +79,16 @@ The policy gets configured through the following parameters.
 
 - **cone.auth_wild_domain**: Defaults to ``True``. An authentication cookie
   will be generated for the wildcard domain.
+
+
+Error Reporting
+---------------
+
+Unexpected errors get logged with their traceback. The client gets a general
+message.
+
+- **cone.show_tracebacks**: Defaults to ``False``. Show the traceback to the
+  client as well. It discloses paths and code, so this is for development only.
 
 
 User and Group Management Backend Configuration

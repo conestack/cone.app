@@ -9,6 +9,34 @@ Changes
   4.2.0.
   [rnix]
 
+- ``main`` refuses to start if ``cone.auth_secret`` is missing or has the former
+  default value ``secret``.
+  [rnix]
+
+- Read ``cone.auth_secure``, ``cone.auth_include_ip``, ``cone.auth_http_only`` and
+  ``cone.auth_wild_domain`` as booleans. ``false`` in an ini file was considered
+  true before, applications with such a value change their behavior.
+  [rnix]
+
+- ``cone.auth_http_only`` defaults to ``True``.
+  [rnix]
+
+- Failures in ajax actions, ajax forms and the exception view answer with a
+  general message, the traceback goes to the log. Add setting
+  ``cone.show_tracebacks`` to show it to the client during development. Add
+  ``browser.utils.client_error_message``.
+  [rnix]
+
+- ``internal_server_error`` answers with status 500 instead of 200, also for
+  ajax requests. A ``default_commit_veto`` configured for ``pyramid_tm`` vetoes
+  such a request now, before it committed.
+  [rnix]
+
+- ``logout_view`` follows ``came_from`` only to an HTTP URL on the host of the
+  application. ``CameFromNext`` considers the scheme too. Add
+  ``browser.utils.is_same_host_url``.
+  [rnix]
+
 
 2.1.0 (2026-10-31)
 ------------------

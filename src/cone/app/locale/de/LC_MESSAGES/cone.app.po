@@ -506,3 +506,8 @@ msgstr "Sprache"
 #: src/cone/app/browser/templates/add_dropdown.pt:13
 msgid "add"
 msgstr "Hinzufügen"
+
+#. Default: An internal error occurred. Please try again later.
+#: src/cone/app/browser/utils.py:138
+msgid "internal_error"
+msgstr "Ein interner Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."

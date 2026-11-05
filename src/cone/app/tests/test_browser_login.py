@@ -33,6 +33,15 @@ class TestBrowserLogin(TileTestCase):
             str(response.headers),
         )
 
+    def test_logout_view_came_from(self):
+        root = get_root()
+        request = self.layer.new_request()
+        request.params['came_from'] = 'http://example.com/a?b=c'
+        self.assertEqual(logout_view(root, request).location, 'http://example.com/a?b=c')
+
+        request.params['came_from'] = 'http://example.org/'
+        self.assertEqual(logout_view(root, request).location, 'http://example.com')
+
     def test_login_form(self):
         root = get_root()
         request = self.layer.new_request()

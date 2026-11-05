@@ -6,26 +6,24 @@ from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.request import Request
 from pyramid.view import render_view_to_response
+import json
 
 
 class TestBrowserException(TileTestCase):
     layer = testing.security
 
-    def test_internal_server_error(self):
-        # When requests are performed, and an uncaught exception is raised,
-        # ``internal_server_error`` view is invoked. Response either represents
-        # an error page or a JSON response containing treibstoff ajax continuation
-        # operations which display the traceback in an error dialog if request
-        # was a treibstoff ajax action
-        request = self.layer.new_request()
+    def handle_error(self, request):
         try:
-            raise Exception()
+            raise Exception('Some detail')
         except Exception:
-            res = str(internal_server_error(request))
+            return internal_server_error(request)
+
+    def assert_page(self, response):
         self.checkOutput(
             """
-        200 OK
+        500 Internal Server Error
         Content-Type: text/html; charset=UTF-8
         Content-Length: ...
         <h1>An error occured</h1>
@@ -33,69 +31,77 @@ class TestBrowserException(TileTestCase):
           <a href="/">HOME</a>
           <hr />
         </p>
-        <pre>Traceback (most recent call last):
-          ...
-        </pre>
+        An internal error occurred. Please try again later.
         """,
-            res,
+            str(response),
         )
 
-        request = self.layer.new_request(xhr=1)
-        try:
-            raise Exception()
-        except Exception:
-            res = str(internal_server_error(request))
-        self.assertTrue(res.find('200 OK') > -1)
-        self.assertTrue(res.find('Content-Type: application/json') > -1)
-        self.assertTrue(res.find('"continuation"') > -1)
-        self.assertTrue(res.find('"type": "message"') > -1)
-        expected = '"payload": "<pre>Traceback (most recent call last):'
-        self.assertTrue(res.find(expected) > -1)
-        self.assertTrue(res.find('"selector": null') > -1)
-        self.assertTrue(res.find('"payload": ""') > -1)
-        self.assertTrue(res.find('"mode": "NONE"') > -1)
-        self.assertTrue(res.find('"selector": "NONE"') > -1)
+    def assert_json(self, response):
+        self.assertEqual(response.status_int, 500)
+        self.assertEqual(response.content_type, 'application/json')
+        result = json.loads(response.body)
+        self.assertEqual(result['mode'], 'NONE')
+        self.assertEqual(result['selector'], 'NONE')
+        self.assertEqual(result['payload'], '')
+        message = result['continuation'][0]
+        self.assertEqual(message['type'], 'message')
+        self.assertEqual(message['flavor'], 'error')
+        self.assertEqual(message['selector'], None)
+        self.assertEqual(
+            message['payload'], 'An internal error occurred. Please try again later.'
+        )
+
+    def test_internal_server_error(self):
+        # When requests are performed, and an uncaught exception is raised,
+        # ``internal_server_error`` view is invoked. Response either represents
+        # an error page or a JSON response containing treibstoff ajax
+        # continuation operations which display an error dialog if request was
+        # a treibstoff ajax action. The details go to the log.
+        with self.assertLogs('cone.app', level='ERROR') as logs:
+            self.assert_page(self.handle_error(self.layer.new_request()))
+        self.assertIn('Traceback', logs.output[0])
+        self.assertIn('Some detail', logs.output[0])
+
+        with self.assertLogs('cone.app', level='ERROR'):
+            self.assert_json(self.handle_error(self.layer.new_request(xhr=1)))
 
         with self.layer.authenticated('admin'):
-            request = self.layer.new_request()
-            try:
-                raise Exception()
-            except Exception:
-                res = str(internal_server_error(request))
+            with self.assertLogs('cone.app', level='ERROR'):
+                self.assert_page(self.handle_error(self.layer.new_request()))
+            with self.assertLogs('cone.app', level='ERROR'):
+                self.assert_json(self.handle_error(self.layer.new_request(xhr=1)))
 
-            self.checkOutput(
-                """
-            200 OK
-            Content-Type: text/html; charset=UTF-8
-            Content-Length: ...
-            <h1>An error occured</h1>
-            <p>
-              <a href="/">HOME</a>
-              <hr />
-            </p>
-            <pre>Traceback (most recent call last):
-              ...
-            </pre>
-            """,
-                res,
+    def test_internal_server_error_shows_traceback_on_demand(self):
+        with testing.tracebacks_shown():
+            for xhr in (False, True):
+                with self.subTest(xhr=xhr):
+                    request = self.layer.new_request(xhr=xhr)
+                    with self.assertLogs('cone.app', level='ERROR'):
+                        response = self.handle_error(request)
+                    self.assertEqual(response.status_int, 500)
+                    self.assertIn('Traceback', response.text)
+                    self.assertIn('Some detail', response.text)
+
+    def test_ajaxaction_answers_without_details(self):
+        # A failing ajax action through the router, without ``ajax.action``
+        def request_ajaxaction(headers):
+            headers = dict(headers, Accept='application/json')
+            request = Request.blank('/ajaxaction', headers=headers)
+            with self.assertLogs(level='ERROR'):
+                return request.get_response(self.layer.app)
+
+        anonymous = request_ajaxaction(dict())
+        self.layer.new_request()
+        with self.layer.authenticated('max'):
+            cookie = self.layer.current_request.environ['HTTP_COOKIE']
+            authenticated = request_ajaxaction(dict(Cookie=cookie))
+        for response in (anonymous, authenticated):
+            self.assertEqual(response.status_int, 200)
+            self.assertIn(
+                'An internal error occurred. Please try again later.', response.text
             )
-
-            request = self.layer.new_request(xhr=1)
-            try:
-                raise Exception()
-            except Exception:
-                res = str(internal_server_error(request))
-
-        self.assertTrue(res.find('200 OK') > -1)
-        self.assertTrue(res.find('Content-Type: application/json') > -1)
-        self.assertTrue(res.find('"continuation"') > -1)
-        self.assertTrue(res.find('"type": "message"') > -1)
-        expected = '"payload": "<pre>Traceback (most recent call last):'
-        self.assertTrue(res.find(expected) > -1)
-        self.assertTrue(res.find('"selector": null') > -1)
-        self.assertTrue(res.find('"payload": ""') > -1)
-        self.assertTrue(res.find('"mode": "NONE"') > -1)
-        self.assertTrue(res.find('"selector": "NONE"') > -1)
+            self.assertNotIn('Traceback', response.text)
+            self.assertNotIn('.py', response.text)
 
     def test_forbidden(self):
         # Forbidden tile

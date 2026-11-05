@@ -186,6 +186,14 @@ class TestBrowserAuthoring(TileTestCase):
         self.assertTrue(isinstance(request.environ['redirect'], HTTPFound))
         self.assertEqual(request.environ['redirect'].location, 'http://example.com/child')
 
+        # ``default_came_from`` on the right domain, but no HTTP URL, no ajax
+        # request
+        with self.layer.authenticated('manager'):
+            CameFromNextForm.default_came_from = 'ftp://example.com/foo'
+            res = render_tile(model, request, 'camefromnextform')
+
+        self.assertEqual(request.environ['redirect'].location, 'http://example.com/child')
+
         # ``came_from`` set to empty value on request, overrules
         # ``default_came_from``, no ajax request
         with self.layer.authenticated('manager'):

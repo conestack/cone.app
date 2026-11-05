@@ -3,6 +3,7 @@ from cone.app.utils import app_config
 from cone.app.utils import format_traceback as _format_traceback
 from cone.app.utils import node_path
 from node.utils import safe_encode
+from pyramid.i18n import get_localizer
 from pyramid.i18n import TranslationStringFactory
 import copy
 import datetime
@@ -120,6 +121,42 @@ def request_property(func):
 
 def format_traceback():
     return f'<pre>{_format_traceback()}</pre>'
+
+
+def client_error_message(request):
+    """Message telling the client about the exception being handled.
+
+    A traceback discloses paths and code, so it stays in the log unless the
+    ``cone.show_tracebacks`` setting is enabled.
+
+    :param request: The current request.
+    :return: The message, HTML if it contains the traceback.
+    """
+    if app_config().show_tracebacks:
+        return format_traceback()
+    return get_localizer(request).translate(
+        _('internal_error', default='An internal error occurred. Please try again later.')
+    )
+
+
+def is_same_host_url(request, url):
+    """Check whether URL is an absolute HTTP URL on the host of the application.
+
+    URLs which cannot be judged reliably are refused: ``urlparse`` drops line
+    breaks and raises on a malformed host.
+
+    :param request: The current request.
+    :param url: The URL to check.
+    :return: Whether redirecting to the URL stays on the host of the application.
+    """
+    if not url.isprintable():
+        return False
+    try:
+        parsed = compat.urlparse.urlparse(url)
+    except ValueError:
+        return False
+    app_host = compat.urlparse.urlparse(request.application_url).netloc
+    return parsed.scheme in ('http', 'https') and parsed.netloc == app_host
 
 
 def bdajax_warning(attr):

@@ -1,6 +1,6 @@
 from cone.app.browser.actions import ActionContext
 from cone.app.browser.utils import bdajax_warning
-from cone.app.browser.utils import format_traceback
+from cone.app.browser.utils import client_error_message
 from cone.tile import render_tile
 from node.utils import safe_encode
 from pyramid.exceptions import Forbidden
@@ -62,8 +62,8 @@ def ajax_tile(model, request):
     except Exception:
         logging.exception('Error within ajax tile')
         request.environ[RENDER_ERROR] = True
-        tb = format_traceback()
-        continuation = AjaxContinue([AjaxMessage(tb, 'error', None, 'modal-xl')])
+        message = client_error_message(request)
+        continuation = AjaxContinue([AjaxMessage(message, 'error', None)])
         return dict(
             mode='NONE',
             selector='NONE',
@@ -368,12 +368,12 @@ def render_ajax_form(model, request, name):
         request.response.body = safe_encode(rendered)
         return request.response
     except Exception:
+        logging.exception('Error within ajax form')
         request.environ[RENDER_ERROR] = True
         result = '<div>Form rendering error</div>'
         selector = request.environ.get('cone.app.form.selector', '#content')
         mode = request.environ.get('cone.app.form.mode', 'inner')
-        tb = format_traceback()
-        operations = AjaxMessage(tb, 'error', None)
+        operations = AjaxMessage(client_error_message(request), 'error', None)
         form_continue = AjaxFormContinue(result, [operations])
         rendered = ajax_form_template % dict(
             form=form_continue.form.replace('\n', ' '),

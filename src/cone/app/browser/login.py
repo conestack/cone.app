@@ -1,5 +1,6 @@
 from cone.app.browser import render_main_template
 from cone.app.browser.form import Form
+from cone.app.browser.utils import is_same_host_url
 from cone.app.browser.utils import make_url
 from cone.app.security import authenticate
 from cone.tile import tile
@@ -22,7 +23,9 @@ def login_view(model, request):
 @view_config(name='logout')
 def logout_view(model, request):
     headers = forget(request)
-    location = request.params.get('came_from', request.application_url)
+    location = request.params.get('came_from', '')
+    if not is_same_host_url(request, location):
+        location = request.application_url
     return HTTPFound(location=location, headers=headers)
 
 

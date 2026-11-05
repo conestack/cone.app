@@ -202,6 +202,48 @@ class TestApp(NodeTestCase):
         del layout_config._registry[CustomNode2]
 
 
+class TestAuthSettings(NodeTestCase):
+    def test_auth_secret_is_required(self):
+        for settings in (
+            dict(),
+            {'cone.auth_secret': ''},
+            {'cone.auth_secret': 'secret'},
+        ):
+            with self.subTest(settings=settings):
+                with self.assertRaises(ValueError) as arc:
+                    cone.app.create_security_policy(settings)
+                self.assertIn('cone.auth_secret', str(arc.exception))
+
+    def test_cookie_defaults(self):
+        cookie = cone.app.create_security_policy({'cone.auth_secret': '12345'}).cookie
+        self.assertTrue(cookie.cookie_profile.httponly)
+        self.assertFalse(cookie.secure)
+        self.assertFalse(cookie.include_ip)
+        self.assertTrue(cookie.wild_domain)
+
+    def test_boolean_settings_are_parsed(self):
+        for value, expected in (('true', True), ('false', False)):
+            with self.subTest(value=value):
+                cookie = cone.app.create_security_policy(
+                    {
+                        'cone.auth_secret': '12345',
+                        'cone.auth_secure': value,
+                        'cone.auth_include_ip': value,
+                        'cone.auth_http_only': value,
+                        'cone.auth_wild_domain': value,
+                    }
+                ).cookie
+                self.assertEqual(cookie.secure, expected)
+                self.assertEqual(cookie.include_ip, expected)
+                self.assertEqual(cookie.cookie_profile.httponly, expected)
+                self.assertEqual(cookie.wild_domain, expected)
+
+    def test_settings_get_consumed(self):
+        settings = {'cone.auth_secret': '12345', 'other': 'value'}
+        cone.app.create_security_policy(settings)
+        self.assertEqual(settings, {'other': 'value'})
+
+
 class TestTraversal(NodeTestCase):
     layer = testing.security
 

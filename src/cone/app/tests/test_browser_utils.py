@@ -1,8 +1,10 @@
 from cone.app import testing
 from cone.app.browser.utils import authenticated
 from cone.app.browser.utils import choose_name
+from cone.app.browser.utils import client_error_message
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import format_traceback
+from cone.app.browser.utils import is_same_host_url
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
@@ -113,6 +115,43 @@ class TestBrowserUtils(TileTestCase):
 
         self.assertEqual(rpuc.cached_attr, 'cached attribute')
         self.assertEqual(counter['computed'], 1)
+
+    def test_client_error_message(self):
+        request = self.layer.new_request()
+        try:
+            raise Exception('Some detail')
+        except Exception:
+            self.assertEqual(
+                client_error_message(request),
+                'An internal error occurred. Please try again later.',
+            )
+            with testing.tracebacks_shown():
+                message = client_error_message(request)
+        self.assertTrue(message.startswith('<pre>Traceback'))
+        self.assertIn('Some detail', message)
+
+    def test_is_same_host_url(self):
+        request = self.layer.new_request()
+        for url in (
+            'http://example.com',
+            'http://example.com/a?b=c',
+            'https://example.com/a',
+        ):
+            with self.subTest(url=url):
+                self.assertTrue(is_same_host_url(request, url))
+        for url in (
+            '',
+            '/a',
+            '//example.org/a',
+            'http://example.org/',
+            'http://example.com.example.org/',
+            'http://example.com:8080/',
+            'ftp://example.com/a',
+            'http://example.com/a\nb',
+            'http://[',
+        ):
+            with self.subTest(url=url):
+                self.assertFalse(is_same_host_url(request, url))
 
     def test_format_traceback(self):
         class MyException(Exception):

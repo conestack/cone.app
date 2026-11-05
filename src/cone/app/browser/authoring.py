@@ -10,6 +10,7 @@ from cone.app.browser.ajax import AjaxOverlay
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.form import FormTarget
+from cone.app.browser.utils import is_same_host_url
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.interfaces import ICategories
@@ -131,8 +132,8 @@ class CameFromNext(Behavior):
         computed.
 
         If ``came_from`` is set, it is considered as URL to use. The given URL
-        must match the basic application URL, otherwise an error gets logged
-        and URL of current model is computed.
+        must be an HTTP URL on the host of the application, otherwise an error
+        gets logged and URL of current model is computed.
 
         If ``came_from`` is set to empty value, URL of current model is
         computed.
@@ -153,24 +154,19 @@ class CameFromNext(Behavior):
         # consider came_from a URL
         else:
             url = compat.unquote(came_from)
-            parsed = compat.urlparse.urlparse(url)
-            app_loc = compat.urlparse.urlparse(self.request.application_url).netloc
-            # behave as if no came_from given if application location not
-            # matches came_from location
-            if app_loc != parsed.netloc:
+            # behave as if no came_from given if it leads off the application
+            # host
+            if not is_same_host_url(self.request, url):
                 logger.error(
-                    f'CameFromNext.next(): Application location "{app_loc}" does not '
-                    f'match came_from location "{parsed.netloc}". Use model for URL '
-                    'computing instead'
+                    f'CameFromNext.next(): came_from {url!r} is not an HTTP URL on '
+                    'the host of the application. Use model for URL computing instead'
                 )
                 url = make_url(request.request, node=self.model)
                 path = '/'.join(node_path(self.model))
-            # include query to path
-            elif parsed.query:
-                path = f'{parsed.path}?{parsed.query}'
-            # query without path
             else:
-                path = f'{parsed.path}'
+                parsed = compat.urlparse.urlparse(url)
+                # include query to path
+                path = f'{parsed.path}?{parsed.query}' if parsed.query else parsed.path
         # ajax continuation operations if ajax request
         if self.ajax_request:
             event = AjaxEvent(url, 'contextchanged', '#layout')

@@ -124,6 +124,16 @@ def reset_node_available(fn):
     return wrapper
 
 
+@contextmanager
+def tracebacks_shown():
+    """Context with ``cone.show_tracebacks`` enabled."""
+    cone.app.cfg.show_tracebacks = True
+    try:
+        yield
+    finally:
+        cone.app.cfg.show_tracebacks = False
+
+
 DATADIR = os.path.join(os.path.dirname(__file__), 'data', 'ugm')
 
 

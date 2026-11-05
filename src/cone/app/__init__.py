@@ -15,6 +15,7 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.interfaces import ISecurityPolicy
+from pyramid.settings import asbool
 from pyramid.traversal import ResourceTreeTraverser
 from yafowil.bootstrap import configure_factory
 from zope.component import adapter
@@ -32,6 +33,9 @@ logger = logging.getLogger('cone.app')
 
 # configuration
 cfg = Properties()
+
+# show tracebacks to clients
+cfg.show_tracebacks = False
 
 # available languages
 cfg.available_languages = []
@@ -223,6 +227,41 @@ def start_thread_monitor():  # pragma: no cover
     monitor.start()
 
 
+def create_security_policy(settings):
+    """Create the security policy from application settings.
+
+    The settings used for this get removed from ``settings``.
+
+    :param settings: The application settings.
+    :return: The security policy.
+    :raises ValueError: If ``cone.auth_secret`` is missing or the former default.
+    """
+    auth_secret = settings.pop('cone.auth_secret', None)
+    if not auth_secret or auth_secret == 'secret':
+        raise ValueError(
+            'cone.auth_secret signs the authentication cookie and must be set to a '
+            'secret value of your own.'
+        )
+    auth_reissue_time = settings.pop('cone.auth_reissue_time', None)
+    if auth_reissue_time is not None:
+        auth_reissue_time = int(auth_reissue_time)
+    auth_max_age = settings.pop('cone.auth_max_age', None)
+    if auth_max_age is not None:
+        auth_max_age = int(auth_max_age)
+    return security.SecurityPolicy(
+        secret=auth_secret,
+        cookie_name=settings.pop('cone.auth_cookie_name', 'auth_tkt'),
+        secure=asbool(settings.pop('cone.auth_secure', False)),
+        include_ip=asbool(settings.pop('cone.auth_include_ip', False)),
+        timeout=settings.pop('cone.auth_timeout', None),
+        reissue_time=auth_reissue_time,
+        max_age=auth_max_age,
+        http_only=asbool(settings.pop('cone.auth_http_only', True)),
+        path=settings.pop('cone.auth_path', '/'),
+        wild_domain=asbool(settings.pop('cone.auth_wild_domain', True)),
+    )
+
+
 def main(global_config, **settings):
     """Returns WSGI application."""
     # set authentication related application properties
@@ -235,33 +274,9 @@ def main(global_config, **settings):
     if node_available_callback:
         security.node_available = import_from_string(node_available_callback)
 
-    auth_secret = settings.pop('cone.auth_secret', 'secret')
-    auth_cookie_name = settings.pop('cone.auth_cookie_name', 'auth_tkt')
-    auth_secure = settings.pop('cone.auth_secure', False)
-    auth_include_ip = settings.pop('cone.auth_include_ip', False)
-    auth_timeout = settings.pop('cone.auth_timeout', None)
-    auth_reissue_time = settings.pop('cone.auth_reissue_time', None)
-    if auth_reissue_time is not None:
-        auth_reissue_time = int(auth_reissue_time)
-    auth_max_age = settings.pop('cone.auth_max_age', None)
-    if auth_max_age is not None:
-        auth_max_age = int(auth_max_age)
-    auth_http_only = settings.pop('cone.auth_http_only', False)
-    auth_path = settings.pop('cone.auth_path', '/')
-    auth_wild_domain = settings.pop('cone.auth_wild_domain', True)
+    security_policy = create_security_policy(settings)
 
-    security_policy = security.SecurityPolicy(
-        secret=auth_secret,
-        cookie_name=auth_cookie_name,
-        secure=auth_secure,
-        include_ip=auth_include_ip,
-        timeout=auth_timeout,
-        reissue_time=auth_reissue_time,
-        max_age=auth_max_age,
-        http_only=auth_http_only,
-        path=auth_path,
-        wild_domain=auth_wild_domain,
-    )
+    cfg.show_tracebacks = asbool(settings.pop('cone.show_tracebacks', False))
 
     # create root node
     global root

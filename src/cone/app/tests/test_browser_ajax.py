@@ -97,12 +97,23 @@ class TestBrowserAjax(TileTestCase):
         self.assertEqual(res['continuation'][0]['flavor'], 'error')
         self.assertEqual(res['continuation'][0]['type'], 'message')
         self.assertEqual(res['continuation'][0]['selector'], None)
-        expected = 'Exception: Error while rendering'
-        self.assertTrue(res['continuation'][0]['payload'].find(expected) > -1)
+        self.assertEqual(
+            res['continuation'][0]['payload'],
+            'An internal error occurred. Please try again later.',
+        )
         # The answer is 200 and shows the error. Whatever the tile wrote
         # before it failed must not be committed - the request says so, for
         # a transaction manager to veto on.
         self.assertTrue(request.environ[RENDER_ERROR])
+
+        # The traceback reaches the client on demand only, it is always logged
+        with self.layer.authenticated('max'):
+            with self.assertLogs(level='ERROR') as logs:
+                with testing.tracebacks_shown():
+                    res = ajax_tile(root, request)
+        expected = 'Exception: Error while rendering'
+        self.assertIn(expected, res['continuation'][0]['payload'])
+        self.assertIn(expected, logs.output[0])
 
     def test_AjaxAction(self):
         target = 'http://example.com'
@@ -533,12 +544,20 @@ class TestBrowserAjax(TileTestCase):
         <div id="ajaxform">
         </div>
         <script language="javascript"
-        ...HTTPForbidden: Unauthorized: tile <...AjaxTestForm object at ...>
-        failed permission check...
+        ...An internal error occurred. Please try again later...
         """,
             res.text,
         )
+        self.assertNotIn('Traceback', res.text)
         self.assertTrue(request.environ[RENDER_ERROR])
+
+        # The traceback reaches the client on demand only, it is always logged
+        with self.assertLogs(level='ERROR') as logs:
+            with testing.tracebacks_shown():
+                res = render_ajax_form(root, request, 'ajaxtestform')
+        expected = 'failed permission check'
+        self.assertIn(expected, res.text)
+        self.assertIn(expected, logs.output[0])
 
         # Test authorized with form extraction failure
         with self.layer.authenticated('max'):

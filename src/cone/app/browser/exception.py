@@ -1,6 +1,6 @@
 from cone.app.browser import render_main_template
 from cone.app.browser.login import login_view
-from cone.app.browser.utils import format_traceback
+from cone.app.browser.utils import client_error_message
 from cone.tile import Tile
 from cone.tile import tile
 from pyramid.httpexceptions import HTTPForbidden
@@ -8,6 +8,10 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.view import view_config
 import json
+import logging
+
+
+logger = logging.getLogger('cone.app')
 
 
 ###############################################################################
@@ -26,25 +30,28 @@ ERROR_PAGE = """
 
 @view_config(context=Exception)
 def internal_server_error(request):
-    """Internal server error view."""
-    tb = format_traceback()
+    """Internal server error view.
+
+    Answers with status 500, a commit veto of a transaction manager decides by
+    the status.
+    """
+    logger.exception('Error while processing request')
+    message = client_error_message(request)
     if not request.is_xhr:
-        # XXX: request.response.status = 500
-        #      return {'errors': error_dict}
-        return Response(ERROR_PAGE % {'error': tb})
+        return Response(ERROR_PAGE % {'error': message}, status=500)
     # XXX: Check request relates to ajax action
     #      Check if json request and modify response as needed
     from cone.app.browser.ajax import AjaxContinue
     from cone.app.browser.ajax import AjaxMessage
 
-    continuation = AjaxContinue([AjaxMessage(tb, 'error', None)])
+    continuation = AjaxContinue([AjaxMessage(message, 'error', None)])
     ret = {
         'mode': 'NONE',
         'selector': 'NONE',
         'payload': '',
         'continuation': continuation.operations,
     }
-    response = Response(json.dumps(ret))
+    response = Response(json.dumps(ret), status=500)
     response.content_type = 'application/json'
     return response
 
