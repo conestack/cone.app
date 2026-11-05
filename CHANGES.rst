@@ -1,11 +1,11 @@
 Changes
 =======
 
-2.1.1 (unreleased)
+2.2.0 (unreleased)
 ------------------
 
 - The ``ajaxaction`` view only accepts ``POST`` requests. Requires ``treibstoff``
-  2.0.2.
+  2.1.0.
   [rnix]
 
 - The tile ``wf_dropdown`` only performs ``do_transition`` on ``POST`` requests.

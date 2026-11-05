@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cone.app"
-version = "2.1.1.dev0"
+version = "2.2.0.dev0"
 description = "Web application stub"
 dynamic = ["readme"]
 requires-python = ">=3.10"
@@ -24,18 +24,18 @@ classifiers = [
 ]
 dependencies = [
     "Chameleon",
-    "cone.tile>2.0.99",
-    "node.ext.ugm>1.99",
+    "cone.tile>2.1.99",
+    "node.ext.ugm>2.0.99",
     "node>1.99",
     "pyramid>=2.0",
     "pyramid_chameleon",
     "pyramid_zcml",
     "repoze.workflow",
-    "treibstoff>1.99",
+    "treibstoff>2.0.99",
     "webresource>1.2.99",
     "yafowil.bootstrap>1.99",
     "yafowil.webob>1.99",
-    "yafowil>3.99",
+    "yafowil>4.1.99",
 ]
 
 [project.optional-dependencies]
