@@ -128,9 +128,9 @@ processes. A failed login gets recognizable for a throttle at the edge instead:
 - The login form answers with status ``401``. The JSON login views of applications
   keep their status, since their clients decide by the payload.
 
-- All failed logins log a warning to the ``cone.app`` logger, containing login name
-  and client address. Behind a proxy the address is the one of the proxy, unless
-  the application is set up to use the forwarded one.
+- All failed logins log a warning to the ``cone.app`` logger, containing the first
+  two characters of the login name and the client address. Behind a proxy the address
+  is the one of the proxy, unless the application is set up to use the forwarded one.
 
 
 Error Reporting

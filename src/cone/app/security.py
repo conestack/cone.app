@@ -123,6 +123,12 @@ def _is_admin(login, password):
     return same_login and same_password
 
 
+def _masked_login(login):
+    # A password typed into the name field must not end up in the log. The
+    # beginning is enough to tell attempts apart.
+    return f'{str(login)[:2]}***'
+
+
 def authenticate(request, login, password):
     if ADMIN_USER and ADMIN_PASSWORD and _is_admin(login, password):
         return remember(request, login)
@@ -144,7 +150,7 @@ def authenticate(request, login, password):
         )
         return None
     client = request.environ.get('REMOTE_ADDR')
-    logger.warning(f'Failed login for {login!r} from {client}')
+    logger.warning(f'Failed login for {_masked_login(login)!r} from {client}')
 
 
 def authenticated_user(request):

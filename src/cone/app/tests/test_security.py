@@ -81,14 +81,29 @@ class SecurityTest(NodeTestCase):
         with self.assertLogs('cone.app', level='WARNING') as logs:
             self.assertIsNone(authenticate(request, 'foo', 'wrong'))
         self.assertEqual(
-            logs.output, ["WARNING:cone.app:Failed login for 'foo' from 192.0.2.1"]
+            logs.output, ["WARNING:cone.app:Failed login for 'fo***' from 192.0.2.1"]
         )
+
+    def test_failed_login_log_masks_the_login(self):
+        # A password typed into the name field must not end up in the log,
+        # the mask does not tell the length either.
+        request = self.layer.new_request()
+        for login, masked in (
+            ('abcdef', "'ab***'"),
+            ('ab', "'ab***'"),
+            ('a', "'a***'"),
+            ('', "'***'"),
+        ):
+            with self.subTest(login=login):
+                with self.assertLogs('cone.app', level='WARNING') as logs:
+                    authenticate(request, login, 'wrong')
+                self.assertIn(f'Failed login for {masked} from', logs.output[0])
 
     def test_failed_login_log_stays_on_one_line(self):
         request = self.layer.new_request()
         with self.assertLogs('cone.app', level='WARNING') as logs:
-            authenticate(request, 'foo\nbar', 'wrong')
-        self.assertIn("'foo\\nbar'", logs.output[0])
+            authenticate(request, 'f\nbar', 'wrong')
+        self.assertIn("'f\\n***'", logs.output[0])
         self.assertNotIn('\n', logs.output[0])
 
     def test_successful_login_is_not_logged(self):
