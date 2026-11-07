@@ -8,6 +8,7 @@ from cone.tile import render_tile
 from cone.tile.tests import TileTestCase
 from pyramid.request import Request
 from unittest import mock
+from urllib.parse import urlencode
 from webob.exc import HTTPFound
 from webob.response import Response
 
@@ -114,6 +115,26 @@ class TestBrowserLogin(TileTestCase):
                     response = request.get_response(self.layer.app)
                 authenticate.assert_not_called()
                 self.assertNotIn('auth_tkt=', response.headers.get('Set-Cookie', ''))
+
+    def test_no_login_through_router_with_other_methods(self):
+        # A throttle at the edge matches POST only, see configuration docs.
+        params = self.login_params(security.ADMIN_USER, security.ADMIN_PASSWORD)
+        override = {'X-HTTP-Method-Override': 'POST'}
+        for method in ('GET', 'HEAD', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'):
+            for headers in ({}, override):
+                with self.subTest(method=method, headers=headers):
+                    if method in ('GET', 'HEAD', 'OPTIONS'):
+                        request = Request.blank(
+                            f'/login?{urlencode(params)}', method=method, headers=headers
+                        )
+                    else:
+                        request = Request.blank(
+                            '/login', method=method, POST=params, headers=headers
+                        )
+                    with mock.patch.object(login_module, 'authenticate') as authenticate:
+                        response = request.get_response(self.layer.app)
+                    authenticate.assert_not_called()
+                    self.assertNotIn('auth_tkt=', response.headers.get('Set-Cookie', ''))
 
     def test_login_form_outside_of_login_view_tries_no_login(self):
         # Pages show the form for anonymous users, it posts to the login view.
