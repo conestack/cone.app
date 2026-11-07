@@ -125,6 +125,10 @@ Failed Logins
 The application has no throttling of its own, it would need state shared across
 processes. A failed login gets recognizable for a throttle at the edge instead:
 
+- The login form checks the password in the ``login`` view only, so a rule on the
+  path ``.../login`` covers it, also with a subpath or the prefix ``@@``. JSON login
+  views of applications need to be part of that rule.
+
 - The login form answers with status ``401``. The JSON login views of applications
   keep their status, since their clients decide by the payload.
 

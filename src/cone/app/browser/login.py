@@ -92,6 +92,10 @@ class LoginForm(Form):
         # Forms extract on every rendering, this is no login attempt then.
         if not login or not password:
             return data.extracted
+        # The form posts to the login view. Pages showing it for anonymous users and
+        # ajaxaction render it too, a throttle at the edge would not see them.
+        if self.request.view_name != 'login':
+            raise ExtractionError(_('invalid_credentials', default='Invalid Credentials'))
         webob_req = data.request.request
         self.headers = authenticate(webob_req, login, password)
         if not self.headers:

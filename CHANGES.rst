@@ -54,7 +54,9 @@ Changes
 
 - A failed login in the login form answers with status 401 instead of 200, so a
   throttle at the edge can recognize it. All failed logins log a warning with the
-  first two characters of the login name and the client address.
+  first two characters of the login name and the client address. The login form only
+  checks the password in the ``login`` view, not on other pages showing the form or
+  through ``ajaxaction``.
   [rnix]
 
 - ``logout_view`` follows ``came_from`` only to an HTTP URL on the host of the

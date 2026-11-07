@@ -77,6 +77,7 @@ class TestBrowserLogin(TileTestCase):
     def test_failed_login_answers_unauthorized(self):
         request = self.layer.new_request()
         request.method = 'POST'
+        request.view_name = 'login'
         request.params.update(self.login_params('foo', 'bar'))
         with self.assertLogs('cone.app', level='WARNING'):
             response = login_view(get_root(), request)
@@ -98,17 +99,33 @@ class TestBrowserLogin(TileTestCase):
         self.assertEqual(response.status_int, 302)
         self.assertIn('auth_tkt=', response.headers['Set-Cookie'])
 
-    def test_failed_login_through_ajaxaction(self):
-        params = self.login_params('foo', 'bar')
+    def test_no_login_through_ajaxaction(self):
+        # A throttle at the edge recognizes logins by the path, see configuration docs.
+        params = self.login_params(security.ADMIN_USER, security.ADMIN_PASSWORD)
         params.update(
             {'ajax.action': 'loginform', 'ajax.mode': 'inner', 'ajax.selector': '#a'}
         )
-        request = Request.blank(
-            '/ajaxaction', POST=params, headers={'Accept': 'application/json'}
+        for accept in ('application/json', 'text/html'):
+            with self.subTest(accept=accept):
+                request = Request.blank(
+                    '/ajaxaction', POST=params, headers={'Accept': accept}
+                )
+                with mock.patch.object(login_module, 'authenticate') as authenticate:
+                    response = request.get_response(self.layer.app)
+                authenticate.assert_not_called()
+                self.assertNotIn('auth_tkt=', response.headers.get('Set-Cookie', ''))
+
+    def test_login_form_outside_of_login_view_tries_no_login(self):
+        # Pages show the form for anonymous users, it posts to the login view.
+        request = self.layer.new_request()
+        request.method = 'POST'
+        request.params.update(
+            self.login_params(security.ADMIN_USER, security.ADMIN_PASSWORD)
         )
-        with self.assertLogs('cone.app', level='WARNING'):
-            response = request.get_response(self.layer.app)
-        self.assertEqual(response.status_int, 401)
+        with mock.patch.object(login_module, 'authenticate') as authenticate:
+            result = render_tile(get_root(), request, 'loginform')
+        authenticate.assert_not_called()
+        self.assertIn('Invalid Credentials', result)
 
     def test_login_form(self):
         root = get_root()
@@ -117,6 +134,7 @@ class TestBrowserLogin(TileTestCase):
         self.assertTrue(res.find('<form action="http://example.com/login"') > -1)
 
         # Authenticate with wrong credentials
+        request.view_name = 'login'
         request.params['loginform.user'] = 'foo'
         request.params['loginform.password'] = 'bar'
         request.method = 'POST'
