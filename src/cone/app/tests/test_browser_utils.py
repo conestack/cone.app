@@ -116,6 +116,22 @@ class TestBrowserUtils(TileTestCase):
         self.assertEqual(rpuc.cached_attr, 'cached attribute')
         self.assertEqual(counter['computed'], 1)
 
+    def test_request_property_per_instance(self):
+        class RequestPropertyUsingClass:
+            def __init__(self, request, value):
+                self.request = request
+                self.value = value
+
+            @request_property
+            def cached_attr(self):
+                return self.value
+
+        request = self.layer.new_request()
+        # Each instance is collected right away, so the next one usually gets
+        # its address and thus its id.
+        for value in range(100):
+            self.assertEqual(RequestPropertyUsingClass(request, value).cached_attr, value)
+
     def test_client_error_message(self):
         request = self.layer.new_request()
         try:

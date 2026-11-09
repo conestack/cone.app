@@ -110,10 +110,13 @@ def request_property(func):
     def wrapper(self):
         cache_key = f'{id(self)!s}.{self.__class__.__name__}.{func.__name__}'
         try:
-            return self.request.environ[cache_key]
+            return self.request.environ[cache_key][1]
         except KeyError:
-            val = self.request.environ[cache_key] = func(self)
-            return val
+            # Holding the instance keeps its id, and so the cache key, from
+            # being reused by another object while the request lives.
+            value = func(self)
+            self.request.environ[cache_key] = (self, value)
+            return value
 
     wrapper.__doc__ = func.__doc__
     return property(wrapper)

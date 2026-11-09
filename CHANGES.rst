@@ -4,7 +4,11 @@ Changes
 2.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- ``request_property`` keeps the instance in its cache entry. The cache key is
+  built from ``id(self)``, and since ``cone.tile`` renders a copy of the tile on
+  every call, a tile rendered later in the same request could get the address
+  of a collected one and read its cached value.
+  [rnix]
 
 
 2.2.0 (2026-11-09)

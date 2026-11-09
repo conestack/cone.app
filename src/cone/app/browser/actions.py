@@ -118,11 +118,6 @@ class Action:
         ⚠ **Not called ``bind``**: ``LinkAction.bind`` is the ajax event and
         several actions set it to ``None``, so a method of that name would be
         a string on half of them.
-
-        ⚠ Do not add a ``request_property`` to an action. Its cache key is
-        built from ``id(self)``, and two bound copies of one render can land on
-        the same address once the first is collected - the second would then
-        read the first's answer.
         """
         action = copy.copy(self)
         action.model = model
