@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.2.1 (unreleased)
+2.2.1 (2026-11-09)
 ------------------
 
 - ``request_property`` keeps the instance in its cache entry. The cache key is
