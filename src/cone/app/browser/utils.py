@@ -64,6 +64,23 @@ def make_url(request, path=None, node=None, resource=None, query=None):
     return f'{url}{query}'
 
 
+def page_url(request, model):
+    """URL of the page a request shows of ``model`` - where to come back to.
+
+    A page load is a ``GET`` of the page itself, its URL keeps view name and
+    query. Everything else is no page of its own: an ajax action is posted to
+    ``ajaxaction`` and answers for the node, coming back there would be
+    refused.
+
+    :param request: The current request.
+    :param model: The node the request shows.
+    :return: The URL to come back to.
+    """
+    if request.method == 'GET':
+        return request.url
+    return make_url(request, node=model)
+
+
 def choose_name(container, name):
     name = (
         re.sub(

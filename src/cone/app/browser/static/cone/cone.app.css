@@ -207,6 +207,106 @@ tr.selectable td {
   max-width: 300px;
 }
 
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.error-state .error-code {
+  margin: 0;
+  font-size: 4rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--bs-primary);
+}
+.error-state h1 {
+  margin: 0.75rem 0 0.5rem;
+}
+.error-state .error-text {
+  max-width: 32rem;
+  text-wrap: balance;
+  margin-bottom: 1.5rem;
+  color: var(--bs-secondary-color);
+}
+
+#content:has(> .error-state) > #footer-spacer {
+  display: none;
+}
+
+#noscript {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  background-color: var(--bs-body-bg);
+}
+
+.error-illustration {
+  --error-illustration-primary: var(--bs-primary);
+  --error-illustration-soft: var(--primary-100);
+  --error-illustration-muted: var(--bs-secondary-color);
+  --error-illustration-backdrop: rgba(var(--bs-primary-rgb), .08);
+  width: 100%;
+  max-width: 18rem;
+  height: auto;
+  margin-bottom: 1rem;
+}
+.error-illustration .backdrop {
+  fill: var(--error-illustration-backdrop);
+}
+.error-illustration .edge {
+  fill: none;
+  stroke: var(--error-illustration-primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.error-illustration .edge.thin {
+  stroke-width: 1.5;
+}
+.error-illustration .node {
+  fill: var(--error-illustration-primary);
+}
+.error-illustration .node.soft {
+  fill: var(--error-illustration-soft);
+  stroke: var(--error-illustration-primary);
+  stroke-width: 2.5;
+}
+.error-illustration .edge.missing,
+.error-illustration .node.missing {
+  fill: none;
+  stroke: var(--error-illustration-muted);
+  stroke-dasharray: 4 5;
+}
+.error-illustration .node.missing {
+  stroke-width: 2.5;
+  stroke-dasharray: 1 1;
+}
+.error-illustration .glyph {
+  fill: var(--error-illustration-muted);
+  font-size: 14px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.error-illustration .mark {
+  fill: none;
+  stroke: var(--bs-white);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.error-illustration .mark-dot {
+  fill: var(--bs-white);
+}
+
+[data-bs-theme=dark] .error-illustration {
+  --error-illustration-soft: var(--primary-100-dark);
+  --error-illustration-backdrop: rgba(var(--bs-primary-rgb), .15);
+}
+
 #input-contentform-save {
   margin-right: 1rem;
 }

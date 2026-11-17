@@ -1,0 +1,48 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n:domain="cone.app"
+           omit-tag="True">
+
+  <div class="error-state" id="access-denied">
+
+    <tal:comment replace="None">
+      The node tree of the not found page, one node locked - and what hangs
+      below it out of sight.
+    </tal:comment>
+    <svg class="error-illustration"
+         viewBox="0 0 240 170"
+         xmlns="http://www.w3.org/2000/svg"
+         aria-hidden="true"
+         focusable="false">
+      <circle class="backdrop" cx="120" cy="92" r="76" />
+      <path class="edge" d="M120 46 C120 66 66 62 66 80" />
+      <path class="edge" d="M120 46 V80" />
+      <path class="edge" d="M120 46 C120 66 174 62 174 78" />
+      <path class="edge thin" d="M66 100 C66 114 46 112 46 126" />
+      <path class="edge thin" d="M66 100 C66 114 86 112 86 126" />
+      <path class="edge thin" d="M120 100 V126" />
+      <path class="edge thin missing" d="M174 104 V126" />
+      <circle class="node" cx="120" cy="34" r="12" />
+      <circle class="node soft" cx="66" cy="90" r="10" />
+      <circle class="node soft" cx="120" cy="90" r="10" />
+      <circle class="node soft" cx="46" cy="132" r="6" />
+      <circle class="node soft" cx="86" cy="132" r="6" />
+      <circle class="node soft" cx="120" cy="132" r="6" />
+      <circle class="node missing" cx="174" cy="132" r="6" pathLength="16" />
+      <path class="edge" d="M167 87 V82 A7 7 0 0 1 181 82 V87" />
+      <rect class="node" x="163" y="86" width="22" height="18" rx="3" />
+      <circle class="mark-dot" cx="174" cy="94" r="2.5" />
+      <path class="mark" d="M174 95 V99" />
+    </svg>
+
+    <p class="error-code">403</p>
+    <h1 class="h3" i18n:translate="access_denied_label">Access denied</h1>
+    <p class="error-text" i18n:translate="access_denied_text">You are logged in as <strong i18n:name="user" tal:content="context.user">user</strong> and do not have permission to access this page.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+      <a class="btn btn-primary" href="${context.home_url}" i18n:translate="go_to_start_page">Go to start page</a>
+      <a class="btn btn-outline-secondary" href="${context.relogin_url}" i18n:translate="access_denied_relogin">Log in as another user</a>
+    </div>
+
+  </div>
+
+</tal:block>

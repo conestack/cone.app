@@ -99,6 +99,53 @@ class TestBrowserLogin(TileTestCase):
         response = request.get_response(self.layer.app)
         self.assertEqual(response.status_int, 302)
         self.assertIn('auth_tkt=', response.headers['Set-Cookie'])
+        self.assertEqual(response.location, 'http://localhost')
+
+    def test_login_returns_to_came_from(self):
+        # Back to the page that showed the form - on this host only.
+        for came_from, location in (
+            ('http://localhost/a?b=c', 'http://localhost/a?b=c'),
+            ('http://example.org/', 'http://localhost'),
+        ):
+            with self.subTest(came_from=came_from):
+                params = self.login_params(security.ADMIN_USER, security.ADMIN_PASSWORD)
+                params['came_from'] = came_from
+                request = Request.blank('/login', POST=params)
+                response = request.get_response(self.layer.app)
+                self.assertEqual(response.status_int, 302)
+                self.assertEqual(response.location, location)
+
+    def test_login_form_came_from(self):
+        root = get_root()
+        # A page showing the form for an anonymous user: the page itself.
+        request = self.layer.new_request()
+        request.url = 'http://example.com/some/page?x=1'
+        self.assertIn(
+            '<input id="input-loginform-came_from" name="came_from" '
+            'type="hidden" value="http://example.com/some/page?x=1" />',
+            render_tile(root, request, 'loginform'),
+        )
+        # An ajax action is posted to ``ajaxaction``: the node it shows.
+        request = self.layer.new_request()
+        request.method = 'POST'
+        request.url = 'http://example.com/ajaxaction'
+        self.assertIn(
+            'name="came_from" type="hidden" value="http://example.com/" />',
+            render_tile(root, request, 'loginform'),
+        )
+        # The login view itself: where it was sent from, kept through a
+        # failed attempt.
+        request = self.layer.new_request()
+        request.view_name = 'login'
+        self.assertIn(
+            'name="came_from" type="hidden" value="" />',
+            render_tile(root, request, 'loginform'),
+        )
+        request.params['came_from'] = 'http://example.com/some/page'
+        self.assertIn(
+            'name="came_from" type="hidden" value="http://example.com/some/page" />',
+            render_tile(root, request, 'loginform'),
+        )
 
     def test_no_login_through_ajaxaction(self):
         # A throttle at the edge recognizes logins by the path, see configuration docs.

@@ -1,0 +1,116 @@
+// Error states - not found, access denied, the page without JavaScript.
+//
+// A centered column: illustration, status code, title, text, action. In the
+// content area it takes the space between header and footer; the footer
+// spacer steps aside, otherwise both would grow and the state would sit in
+// the upper half.
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1 0 auto;
+    padding: 2rem 1rem;
+    text-align: center;
+
+    .error-code {
+        margin: 0;
+        font-size: 4rem;
+        font-weight: 300;
+        line-height: 1;
+        letter-spacing: .1em;
+        color: var(--bs-primary);
+    }
+    h1 {
+        margin: .75rem 0 .5rem;
+    }
+    .error-text {
+        max-width: 32rem;
+        text-wrap: balance;
+        margin-bottom: 1.5rem;
+        color: var(--bs-secondary-color);
+    }
+}
+#content:has(> .error-state) > #footer-spacer {
+    display: none;
+}
+
+// Without JavaScript the layout is hidden (``main.pt``); the page covers the
+// viewport and scrolls itself - ``body`` does not.
+#noscript {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    background-color: var(--bs-body-bg);
+}
+
+// The illustration takes its colors from the theme. Shapes are classed, the
+// colors are set here - the same drawing in light and dark mode.
+.error-illustration {
+    --error-illustration-primary: var(--bs-primary);
+    --error-illustration-soft: var(--primary-100);
+    --error-illustration-muted: var(--bs-secondary-color);
+    --error-illustration-backdrop: rgba(var(--bs-primary-rgb), .08);
+
+    width: 100%;
+    max-width: 18rem;
+    height: auto;
+    margin-bottom: 1rem;
+
+    .backdrop {
+        fill: var(--error-illustration-backdrop);
+    }
+    .edge {
+        fill: none;
+        stroke: var(--error-illustration-primary);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+    }
+    .edge.thin {
+        stroke-width: 1.5;
+    }
+    .node {
+        fill: var(--error-illustration-primary);
+    }
+    .node.soft {
+        fill: var(--error-illustration-soft);
+        stroke: var(--error-illustration-primary);
+        stroke-width: 2.5;
+    }
+    .edge.missing,
+    .node.missing {
+        fill: none;
+        stroke: var(--error-illustration-muted);
+        stroke-dasharray: 4 5;
+    }
+    // Measured in ``pathLength`` (16): eight even dashes on every circle,
+    // whatever its size - absolute dashes fray on the small ones.
+    .node.missing {
+        stroke-width: 2.5;
+        stroke-dasharray: 1 1;
+    }
+    .glyph {
+        fill: var(--error-illustration-muted);
+        font-size: 14px;
+        font-weight: 700;
+        text-anchor: middle;
+        dominant-baseline: central;
+    }
+    // Drawn on a filled node: the power symbol, the keyhole.
+    .mark {
+        fill: none;
+        stroke: var(--bs-white);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+    }
+    .mark-dot {
+        fill: var(--bs-white);
+    }
+}
+
+@include color-mode(dark) {
+    .error-illustration {
+        --error-illustration-soft: var(--primary-100-dark);
+        --error-illustration-backdrop: rgba(var(--bs-primary-rgb), .15);
+    }
+}

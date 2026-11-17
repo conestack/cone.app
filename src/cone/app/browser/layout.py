@@ -8,6 +8,7 @@ from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
 from cone.app.browser.utils import node_icon
+from cone.app.browser.utils import page_url
 from cone.app.browser.utils import request_property
 from cone.app.interfaces import IApplicationNode
 from cone.app.interfaces import ILayout
@@ -50,13 +51,49 @@ class FooterTile(Tile):
     """Tile rendering the page footer."""
 
 
+def user_display_name(request):
+    """Display name of the authenticated user, the user id without one."""
+    userid = request.authenticated_userid
+    display_name = principal_data(userid).get(ugm_backend.user_display_attr)
+    return display_name if display_name else userid
+
+
+class ErrorStateTile(Tile):
+    """A page that could not be shown - not found, access denied."""
+
+    @property
+    def home_url(self):
+        return make_url(self.request, node=self.model.root)
+
+
+class AccessDeniedTile(ErrorStateTile):
+    """Logged in, and not allowed to see this.
+
+    Whether the page is refused as a whole (``unauthorized``) or its content
+    (``insufficient_privileges``) makes no difference to the user, both say
+    the same. Anonymous users get the login form in both cases.
+    """
+
+    @property
+    def user(self):
+        return user_display_name(self.request)
+
+    @property
+    def relogin_url(self):
+        """Log out and come back - logged in as someone who may."""
+        query = make_query(came_from=page_url(self.request, self.model))
+        return make_url(
+            self.request, node=self.model.root, resource='logout', query=query
+        )
+
+
 @tile(
     name='insufficient_privileges',
-    path='templates/insufficient_privileges.pt',
+    path='templates/access_denied.pt',
     permission='login',
 )
-class InsufficientPrivilegesTile(Tile):
-    """Tile rendering insufficient privileges message."""
+class InsufficientPrivilegesTile(AccessDeniedTile):
+    """The content of a page the user may not see, see ``ProtectedContentTile``."""
 
 
 class ProtectedContentTile(Tile):
@@ -162,10 +199,7 @@ class PersonalTools(Tile):
 
     @property
     def user(self):
-        userid = self.request.authenticated_userid
-        data = principal_data(userid)
-        display_name = data.get(ugm_backend.user_display_attr)
-        return display_name if display_name else userid
+        return user_display_name(self.request)
 
     @property
     def items(self):

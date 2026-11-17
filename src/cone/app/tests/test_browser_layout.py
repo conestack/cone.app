@@ -211,6 +211,48 @@ class TestBrowserLayout(TileTestCase):
             res = render_tile(root, request, 'content')
         self.assertIsInstance(res, str)
 
+    def test_header_and_footer_for_a_user_who_may_not_view(self):
+        # A logged in user keeps header and footer where the context is not
+        # visible to them - the access denied and not found pages. The tiles
+        # in the header check ``view`` themselves and stay empty, so nothing
+        # of the context shows. Anonymous users get neither, as on the login
+        # page.
+        class HiddenModel(BaseNode):
+            __acl__ = [(Allow, Everyone, ['login']), (Deny, Everyone, ALL_PERMISSIONS)]
+
+        model = HiddenModel(parent=get_root())
+        request = self.layer.new_request()
+        res = render_main_template(model, request, contenttile='loginform')
+        self.assertNotIn('id="header-main"', res.text)
+        self.assertNotIn('id="footer"', res.text)
+
+        with self.layer.authenticated('max'):
+            res = render_main_template(model, request, contenttile='unauthorized')
+        self.assertIn('id="header-main"', res.text)
+        self.assertIn('id="footer"', res.text)
+        self.assertNotIn('id="personaltools"', res.text)
+        self.assertNotIn('id="mainmenu"', res.text)
+        self.assertNotIn('id="sidebar_left"', res.text)
+
+    def test_content_area_makes_room_for_a_rendered_pathbar_only(self):
+        # The content area is shortened by the height of the pathbar. The
+        # pathbar checks ``view`` and stays empty where the user may not view
+        # the context - shortened anyway, a strip stood empty below it.
+        class HiddenModel(BaseNode):
+            __acl__ = [(Allow, Everyone, ['login']), (Deny, Everyone, ALL_PERMISSIONS)]
+
+        def content_area_classes(model):
+            request = self.layer.new_request()
+            with self.layer.authenticated('max'):
+                res = render_main_template(model, request, contenttile='unauthorized')
+            match = re.search(r'id="content_area"[^>]*class="([^"]*)"', res.text)
+            return match.group(1).split()
+
+        self.assertIn('has-pathbar', content_area_classes(BaseNode(parent=get_root())))
+        self.assertNotIn(
+            'has-pathbar', content_area_classes(HiddenModel(parent=get_root()))
+        )
+
     def test_ProtectedContentTile(self):
         # A login form should be rendered instead of the content for anonymous
         # users. Class ``cone.app.browser.layout.ProtectedContentTile``
@@ -251,9 +293,7 @@ class TestBrowserLayout(TileTestCase):
         with self.layer.authenticated('max'):
             result = render_tile(model, request, 'content')
 
-        self.assertTrue(
-            result.find('<h5 class="card-header">Insufficient privileges</h5>') > -1
-        )
+        self.assertIn('id="access-denied"', result)
 
         with self.layer.authenticated('manager'):
             result = render_tile(model, request, 'content')

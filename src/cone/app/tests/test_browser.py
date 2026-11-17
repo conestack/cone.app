@@ -24,6 +24,23 @@ class BrowserTest(TileTestCase):
         response = render_main_template(root, request)
         self.assertTrue(isinstance(response, Response))
 
+    def test_main_template_without_javascript(self):
+        # Without JavaScript the application does not work, the layout is
+        # hidden and a page says so - on every page, the login form included.
+        root = get_root()
+        request = self.layer.new_request()
+        self.checkOutput(
+            """
+        ...<head>...<noscript><style>#layout { display: none !important; }</style></noscript>...</head>...
+        ...<noscript>...<div class="error-state" id="noscript">...
+        ...<svg class="error-illustration"...aria-hidden="true"...
+        ...<h1 class="h3">JavaScript required</h1>...
+        ...<p class="error-text">This application only works with JavaScript enabled...
+        ...</noscript>...<div id="layout"...
+        """,
+            render_main_template(root, request).text,
+        )
+
     def test_main_view(self):
         root = get_root()
         request = self.layer.new_request()

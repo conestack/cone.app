@@ -408,24 +408,44 @@ msgstr ""
 msgid "of"
 msgstr ""
 
-#. Default: Not Found
-#: ./src/cone/app/browser/templates/not_found.pt:7
+#. Default: Page not found
+#: ./src/cone/app/browser/templates/not_found.pt:35
 msgid "not_found_label"
 msgstr ""
 
-#. Default: The requested resource cannot be found.
-#: ./src/cone/app/browser/templates/not_found.pt:8
+#. Default: The page you were looking for does not exist. Its address may have changed, or the content has been removed.
+#: ./src/cone/app/browser/templates/not_found.pt:36
 msgid "not_found_text"
 msgstr ""
 
-#. Default: Unauthorized
-#: ./src/cone/app/browser/templates/unauthorized.pt:7
-msgid "unauthorized_label"
+#. Default: Access denied
+#: ./src/cone/app/browser/templates/access_denied.pt:39
+msgid "access_denied_label"
 msgstr ""
 
-#. Default: You are not allowed to access this resource.
-#: ./src/cone/app/browser/templates/unauthorized.pt:8
-msgid "unauthorized_text"
+#. Default: You are logged in as ${user} and do not have permission to access this page.
+#: ./src/cone/app/browser/templates/access_denied.pt:40
+msgid "access_denied_text"
+msgstr ""
+
+#. Default: Log in as another user
+#: ./src/cone/app/browser/templates/access_denied.pt:43
+msgid "access_denied_relogin"
+msgstr ""
+
+#. Default: Go to start page
+#: ./src/cone/app/browser/templates/access_denied.pt:42 ./src/cone/app/browser/templates/not_found.pt:37
+msgid "go_to_start_page"
+msgstr ""
+
+#. Default: JavaScript required
+#: ./src/cone/app/browser/templates/main.pt:55
+msgid "noscript_label"
+msgstr ""
+
+#. Default: This application only works with JavaScript enabled. Please enable JavaScript in your browser and reload the page.
+#: ./src/cone/app/browser/templates/main.pt:56
+msgid "noscript_text"
 msgstr ""
 
 #. Default: Created by
@@ -457,16 +477,6 @@ msgstr ""
 #. Default: search database ...
 #: ./src/cone/app/browser/templates/livesearch.pt:16
 msgid "search_database"
-msgstr ""
-
-#. Default: Insufficient privileges
-#: ./src/cone/app/browser/templates/insufficient_privileges.pt:6
-msgid "insufficient_privileges"
-msgstr ""
-
-#. Default: You do not have the required permission to access this resource.
-#: ./src/cone/app/browser/templates/insufficient_privileges.pt:8
-msgid "insufficient_privileges_help"
 msgstr ""
 
 #. Default: First

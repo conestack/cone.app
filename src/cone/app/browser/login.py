@@ -2,6 +2,7 @@ from cone.app.browser import render_main_template
 from cone.app.browser.form import Form
 from cone.app.browser.utils import is_same_host_url
 from cone.app.browser.utils import make_url
+from cone.app.browser.utils import page_url
 from cone.app.security import authenticate
 from cone.tile import tile
 from pyramid.i18n import TranslationStringFactory
@@ -64,6 +65,8 @@ class LoginForm(Form):
                 'credentials': ([self.login], [], [], []),
             },
         )
+        # Bare name, the logout view takes the same parameter.
+        form['came_from'] = factory('proxy', value=self.came_from)
         actions = form['form_actions'] = factory(
             'field:div',
             props={
@@ -82,6 +85,21 @@ class LoginForm(Form):
             },
         )
         self.form = form
+
+    @property
+    def came_from(self):
+        """Where the login leads back to: the page that showed the form.
+
+        Pages refused to anonymous users render the form in place, the login
+        returns there instead of to the start page. On the login view itself
+        it is what the view was sent, kept through a failed attempt.
+
+        Not ``CameFromNext``: the login answers outside ajax, with the headers
+        of the ticket, and falls back to the start page, not to the node.
+        """
+        if self.request.view_name == 'login':
+            return self.request.params.get('came_from', '')
+        return page_url(self.request, self.model)
 
     def noop(self, widget, data):
         pass
@@ -104,4 +122,8 @@ class LoginForm(Form):
             raise ExtractionError(_('invalid_credentials', default='Invalid Credentials'))
 
     def next(self, request):
-        return HTTPFound(location=request.request.application_url, headers=self.headers)
+        location = self.request.params.get('came_from', '')
+        # A login form posted from elsewhere must not send the user away.
+        if not location or not is_same_host_url(self.request, location):
+            location = self.request.application_url
+        return HTTPFound(location=location, headers=self.headers)

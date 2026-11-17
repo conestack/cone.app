@@ -409,25 +409,45 @@ msgstr "to"
 msgid "of"
 msgstr "of"
 
-#. Default: Not Found
-#: src/cone/app/browser/templates/not_found.pt:7
+#. Default: Page not found
+#: src/cone/app/browser/templates/not_found.pt:35
 msgid "not_found_label"
-msgstr "Not Found"
+msgstr "Page not found"
 
-#. Default: The requested resource cannot be found.
-#: src/cone/app/browser/templates/not_found.pt:8
+#. Default: The page you were looking for does not exist. Its address may have changed, or the content has been removed.
+#: src/cone/app/browser/templates/not_found.pt:36
 msgid "not_found_text"
-msgstr "The requested resource cannot be found."
+msgstr "The page you were looking for does not exist. Its address may have changed, or the content has been removed."
 
-#. Default: Unauthorized
-#: src/cone/app/browser/templates/unauthorized.pt:7
-msgid "unauthorized_label"
-msgstr "Unauthorized"
+#. Default: Access denied
+#: src/cone/app/browser/templates/access_denied.pt:39
+msgid "access_denied_label"
+msgstr "Access denied"
 
-#. Default: You are not allowed to access this resource.
-#: src/cone/app/browser/templates/unauthorized.pt:8
-msgid "unauthorized_text"
-msgstr "You are not allowed to access this resource."
+#. Default: You are logged in as ${user} and do not have permission to access this page.
+#: src/cone/app/browser/templates/access_denied.pt:40
+msgid "access_denied_text"
+msgstr "You are logged in as ${user} and do not have permission to access this page."
+
+#. Default: Log in as another user
+#: src/cone/app/browser/templates/access_denied.pt:43
+msgid "access_denied_relogin"
+msgstr "Log in as another user"
+
+#. Default: Go to start page
+#: src/cone/app/browser/templates/access_denied.pt:42 src/cone/app/browser/templates/not_found.pt:37
+msgid "go_to_start_page"
+msgstr "Go to start page"
+
+#. Default: JavaScript required
+#: src/cone/app/browser/templates/main.pt:55
+msgid "noscript_label"
+msgstr "JavaScript required"
+
+#. Default: This application only works with JavaScript enabled. Please enable JavaScript in your browser and reload the page.
+#: src/cone/app/browser/templates/main.pt:56
+msgid "noscript_text"
+msgstr "This application only works with JavaScript enabled. Please enable JavaScript in your browser and reload the page."
 
 #. Default: Created by
 #: src/cone/app/browser/templates/byline.pt:9
@@ -459,16 +479,6 @@ msgstr "State"
 #: src/cone/app/browser/templates/livesearch.pt:16
 msgid "search_database"
 msgstr "search database ..."
-
-#. Default: Insufficient privileges
-#: src/cone/app/browser/templates/insufficient_privileges.pt:6
-msgid "insufficient_privileges"
-msgstr "Insufficient privileges"
-
-#. Default: You do not have the required permission to access this resource.
-#: src/cone/app/browser/templates/insufficient_privileges.pt:8
-msgid "insufficient_privileges_help"
-msgstr "You do not have the required permission to access this resource."
 
 #. Default: First
 #: src/cone/app/browser/templates/batch.pt:23

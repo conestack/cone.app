@@ -410,27 +410,45 @@ msgstr "bis"
 msgid "of"
 msgstr "von"
 
-#. Default: Not Found
-#: src/cone/app/browser/templates/not_found.pt:7
+#. Default: Page not found
+#: src/cone/app/browser/templates/not_found.pt:35
 msgid "not_found_label"
-msgstr "Nicht gefunden"
+msgstr "Seite nicht gefunden"
 
-#. Default: The requested resource cannot be found.
-#: src/cone/app/browser/templates/not_found.pt:8
+#. Default: The page you were looking for does not exist. Its address may have changed, or the content has been removed.
+#: src/cone/app/browser/templates/not_found.pt:36
 msgid "not_found_text"
-msgstr "Die angeforderte Ressource kann nicht gefunden werden."
+msgstr "Die Seite, die Sie aufrufen wollten, gibt es nicht. Vielleicht hat sich die Adresse geändert, oder der Inhalt wurde entfernt."
 
-#. Default: Unauthorized
-#: src/cone/app/browser/templates/unauthorized.pt:7
-msgid "unauthorized_label"
-msgstr "Keine Berechtigung"
+#. Default: Access denied
+#: src/cone/app/browser/templates/access_denied.pt:39
+msgid "access_denied_label"
+msgstr "Kein Zugriff"
 
-#. Default: You are not allowed to access this resource.
-#: src/cone/app/browser/templates/unauthorized.pt:8
-msgid "unauthorized_text"
-msgstr ""
-"Sie haben nicht die erforderlichen Berechtigungen, um auf diese Ressource "
-"zuzugreifen"
+#. Default: You are logged in as ${user} and do not have permission to access this page.
+#: src/cone/app/browser/templates/access_denied.pt:40
+msgid "access_denied_text"
+msgstr "Sie sind als ${user} angemeldet und haben keine Berechtigung für diese Seite."
+
+#. Default: Log in as another user
+#: src/cone/app/browser/templates/access_denied.pt:43
+msgid "access_denied_relogin"
+msgstr "Mit anderem Benutzer anmelden"
+
+#. Default: Go to start page
+#: src/cone/app/browser/templates/access_denied.pt:42 src/cone/app/browser/templates/not_found.pt:37
+msgid "go_to_start_page"
+msgstr "Zur Startseite"
+
+#. Default: JavaScript required
+#: src/cone/app/browser/templates/main.pt:55
+msgid "noscript_label"
+msgstr "JavaScript erforderlich"
+
+#. Default: This application only works with JavaScript enabled. Please enable JavaScript in your browser and reload the page.
+#: src/cone/app/browser/templates/main.pt:56
+msgid "noscript_text"
+msgstr "Diese Anwendung funktioniert nur mit aktiviertem JavaScript. Bitte aktivieren Sie JavaScript in Ihrem Browser und laden Sie die Seite neu."
 
 #. Default: Created by
 #: src/cone/app/browser/templates/byline.pt:9
@@ -462,17 +480,6 @@ msgstr "Status"
 #: src/cone/app/browser/templates/livesearch.pt:16
 msgid "search_database"
 msgstr "Datenbank durchsuchen ..."
-
-#. Default: Insufficient privileges
-#: src/cone/app/browser/templates/insufficient_privileges.pt:6
-msgid "insufficient_privileges"
-msgstr "Unzureichende Berechtigung"
-
-#. Default: You do not have the required permission to access this resource.
-#: src/cone/app/browser/templates/insufficient_privileges.pt:8
-msgid "insufficient_privileges_help"
-msgstr ""
-"Sie besitzen nicht die benötigte Berechtigung um auf das Objekt zuzugreifen"
 
 #. Default: First
 #: src/cone/app/browser/templates/batch.pt:23

@@ -3,13 +3,39 @@
            i18n:domain="cone.app"
            omit-tag="True">
 
-  <div class="card mt-3">
-    <h5 class="card-header" i18n:translate="not_found_label">Not Found</h5>
-    <div class="card-body">
-      <p class="card-text" i18n:translate="not_found_text">
-      The requested resource cannot be found.
-      </p>
-    </div>
+  <div class="error-state" id="not-found">
+
+    <tal:comment replace="None">
+      A node tree with one node missing. Colors come from the stylesheet
+      (``.error-illustration``), so the theme and the color mode apply.
+    </tal:comment>
+    <svg class="error-illustration"
+         viewBox="0 0 240 170"
+         xmlns="http://www.w3.org/2000/svg"
+         aria-hidden="true"
+         focusable="false">
+      <circle class="backdrop" cx="120" cy="92" r="76" />
+      <path class="edge" d="M120 46 C120 66 66 62 66 80" />
+      <path class="edge" d="M120 46 V80" />
+      <path class="edge missing" d="M120 46 C120 66 174 62 174 80" />
+      <path class="edge thin" d="M66 100 C66 114 46 112 46 126" />
+      <path class="edge thin" d="M66 100 C66 114 86 112 86 126" />
+      <path class="edge thin" d="M120 100 V126" />
+      <circle class="node" cx="120" cy="34" r="12" />
+      <circle class="node soft" cx="66" cy="90" r="10" />
+      <circle class="node soft" cx="120" cy="90" r="10" />
+      <circle class="node missing" cx="174" cy="90" r="11" pathLength="16" />
+      <text class="glyph" x="174" y="90">?</text>
+      <circle class="node soft" cx="46" cy="132" r="6" />
+      <circle class="node soft" cx="86" cy="132" r="6" />
+      <circle class="node soft" cx="120" cy="132" r="6" />
+    </svg>
+
+    <p class="error-code">404</p>
+    <h1 class="h3" i18n:translate="not_found_label">Page not found</h1>
+    <p class="error-text" i18n:translate="not_found_text">The page you were looking for does not exist. Its address may have changed, or the content has been removed.</p>
+    <a class="btn btn-primary" href="${context.home_url}" i18n:translate="go_to_start_page">Go to start page</a>
+
   </div>
 
 </tal:block>

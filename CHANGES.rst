@@ -4,7 +4,39 @@ Changes
 2.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- The not found page shows an illustration, the status code and a link to the
+  start page instead of a card, within the page of the nearest existing node.
+  The view answers with status 404 - the page was rendered into a response of
+  its own, which said 200.
+  [rnix]
+
+- An anonymous user who may not view the context of a not found page gets the
+  login form: not found may mean not visible before the login, an expired or
+  invalidated ticket, a traversal hiding what the user may not see.
+  [rnix]
+
+- The tiles ``unauthorized`` and ``insufficient_privileges`` render one access
+  denied page in the style of the not found page: who is logged in, a link to
+  the start page and one to log in as another user. Both say the same to the
+  user - logged in and not allowed to see this; anonymous users get the login
+  form. The forbidden view answers with status 403. The templates
+  ``unauthorized.pt`` and ``insufficient_privileges.pt`` are replaced by
+  ``access_denied.pt``.
+  [rnix]
+
+- Header and footer render for a logged in user also where the context is not
+  visible to them - the access denied and not found pages. The tiles in the
+  header check ``view`` themselves and stay empty. The content area makes room
+  for the pathbar only where it renders.
+  [rnix]
+
+- After the login the user returns to the page that showed the form
+  (``came_from``, on this host only) instead of the start page.
+  [rnix]
+
+- Without JavaScript the main template hides the layout and shows a page
+  saying the application requires JavaScript.
+  [rnix]
 
 
 2.2.1 (2026-11-09)

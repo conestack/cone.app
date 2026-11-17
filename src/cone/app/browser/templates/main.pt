@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:tal="http://xml.zope.org/namespaces/tal">
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
   <head>
     <title tal:content="model.root.metadata.title"></title>
@@ -12,9 +13,49 @@
     <meta name="description" content="" />
 
     <tal:resources replace="structure tile('resources')" />
+
+    <tal:comment replace="None">
+      Without JavaScript nothing in the layout works - links load by ajax,
+      forms submit by ajax. The layout is hidden and the page below says why.
+    </tal:comment>
+    <noscript><style>#layout { display: none !important; }</style></noscript>
   </head>
 
   <body role="document">
+
+    <noscript>
+      <div class="error-state"
+           id="noscript"
+           i18n:domain="cone.app">
+        <tal:comment replace="None">
+          The node tree of the not found page, switched off.
+        </tal:comment>
+        <svg class="error-illustration"
+             viewBox="0 0 240 170"
+             xmlns="http://www.w3.org/2000/svg"
+             aria-hidden="true"
+             focusable="false">
+          <circle class="backdrop" cx="120" cy="92" r="76" />
+          <path class="edge missing" d="M120 48 C120 66 66 62 66 80" />
+          <path class="edge missing" d="M120 48 V80" />
+          <path class="edge missing" d="M120 48 C120 66 174 62 174 80" />
+          <path class="edge thin missing" d="M66 100 C66 114 46 112 46 126" />
+          <path class="edge thin missing" d="M66 100 C66 114 86 112 86 126" />
+          <path class="edge thin missing" d="M174 100 V126" />
+          <circle class="node missing" cx="66" cy="90" r="10" pathLength="16" />
+          <circle class="node missing" cx="120" cy="90" r="10" pathLength="16" />
+          <circle class="node missing" cx="174" cy="90" r="10" pathLength="16" />
+          <circle class="node missing" cx="46" cy="132" r="6" pathLength="16" />
+          <circle class="node missing" cx="86" cy="132" r="6" pathLength="16" />
+          <circle class="node missing" cx="174" cy="132" r="6" pathLength="16" />
+          <circle class="node" cx="120" cy="34" r="14" />
+          <path class="mark" d="M114.5 29.5 A7.5 7.5 0 1 0 125.5 29.5" />
+          <path class="mark" d="M120 25 V33" />
+        </svg>
+        <h1 class="h3" i18n:translate="noscript_label">JavaScript required</h1>
+        <p class="error-text" i18n:translate="noscript_text">This application only works with JavaScript enabled. Please enable JavaScript in your browser and reload the page.</p>
+      </div>
+    </noscript>
 
     <tal:layout replace="structure tile('layout')" />
 

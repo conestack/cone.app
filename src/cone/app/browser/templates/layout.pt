@@ -19,8 +19,13 @@
              class="col h-100 p-0 ${'pb-5' if userid else 'pb-0'}">
 
           <!-- header -->
+          <tal:comment replace="None">
+            For a logged in user also where the context is not visible to
+            them - access denied, not found. The tiles inside check ``view``
+            themselves and stay empty, nothing of the context shows.
+          </tal:comment>
           <nav id="header-main"
-               tal:condition="request.has_permission('view', model)"
+               tal:condition="userid or request.has_permission('view', model)"
                class="position-relative p-0 navbar navbar-expand navbar-light shadow-sm border-bottom">
 
             <div id="header-content"
@@ -65,9 +70,14 @@
             condition="config.pathbar"
             replace="structure tile('pathbar')" />
 
+          <tal:comment replace="None">
+            Room for the pathbar only where it renders: it checks ``view``
+            and stays empty otherwise.
+          </tal:comment>
           <div id="content_area"
                tal:define="base 'd-flex';
-                           css base + ' has-pathbar' if config.pathbar else base"
+                           pathbar config.pathbar and request.has_permission('view', model);
+                           css base + ' has-pathbar' if pathbar else base"
                tal:attributes="class css">
             <!-- sidebar -->
             <div id="sidebar_left"
@@ -148,9 +158,9 @@
                    ajax:action="content:#content:inner">
                 <tal:content replace="structure tile(context.contenttile)" />
                 <!-- footer -->
-                <div tal:condition="request.has_permission('view', model)"
+                <div tal:condition="userid or request.has_permission('view', model)"
                      id="footer-spacer"></div>
-                <tal:footer condition="request.has_permission('view', model)" replace="structure tile('footer')" />
+                <tal:footer condition="userid or request.has_permission('view', model)" replace="structure tile('footer')" />
               </div>
             </div>
 

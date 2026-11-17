@@ -59,6 +59,12 @@ Login form
 
 Renders login form and performs authentication.
 
+After the login the user returns to the page that showed the form - pages
+refused to anonymous users render it in place. The form carries the page URL in
+a ``came_from`` field; on the ``login`` view itself the value is taken from the
+``came_from`` request parameter. URLs on other hosts are ignored, the login then
+leads to the start page.
+
 
 Main layout related
 ===================
@@ -365,7 +371,9 @@ class ``cone.app.browser.layout.ProtectedContentTile`` is available.
 Protected content tiles need to be registered for permission 'login'. The
 permission required to access the tile itself can be defined via
 ``content_permission`` and defaults to 'view'. If content permission not granted
-on node, a tile named ``insufficient_privileges`` is rendered.
+on node, a tile named ``insufficient_privileges`` is rendered. It shows the
+same access denied page as a forbidden view does for a logged in user, with a
+link to the start page and one to log in as another user.
 
 .. code-block:: python
 
