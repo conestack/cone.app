@@ -4,6 +4,7 @@ from cone.app.browser.actions import get_action_context
 from cone.app.browser.actions import LinkAction
 from cone.app.browser.ajax import ajax_continue
 from cone.app.browser.ajax import AjaxEvent
+from cone.app.browser.errorpage import error_page_tile
 from cone.app.browser.utils import format_date
 from cone.app.browser.utils import make_query
 from cone.app.browser.utils import make_url
@@ -26,6 +27,7 @@ from cone.tile import tile
 from node.utils import LocationIterator
 from node.utils import safe_decode
 from odict import odict
+from pyramid.httpexceptions import HTTPForbidden
 from pyramid.i18n import get_localizer
 from pyramid.i18n import negotiate_locale_name
 from pyramid.i18n import TranslationStringFactory
@@ -93,7 +95,11 @@ class AccessDeniedTile(ErrorStateTile):
     permission='login',
 )
 class InsufficientPrivilegesTile(AccessDeniedTile):
-    """The content of a page the user may not see, see ``ProtectedContentTile``."""
+    """The access denied page as a tile of its own name.
+
+    ``ProtectedContentTile`` raises ``HTTPForbidden`` instead of rendering it;
+    kept for applications rendering it by name.
+    """
 
 
 class ProtectedContentTile(Tile):
@@ -113,7 +119,11 @@ class ProtectedContentTile(Tile):
         if not request.authenticated_userid:
             return render_tile(model, request, 'loginform')
         if not request.has_permission(self.content_permission, model):
-            return render_tile(model, request, 'insufficient_privileges')
+            # The access denied page, with a layout of its own and status 403:
+            # rendered here, it would stand in the page of the context.
+            raise HTTPForbidden(
+                f'Insufficient privileges: {self.content_permission} on {model.path}'
+            )
         return Tile.__call__(self, model, request)
 
 
@@ -146,7 +156,18 @@ class Layout(LayoutConfigTile):
 
     @property
     def contenttile(self):
+        # An error page names its content tile itself: rendered for an ajax
+        # action, the action context answers with the action requested.
+        tile = error_page_tile(self.request)
+        if tile is not None:
+            return tile
         return get_action_context(self.request).scope
+
+    @property
+    def error_page(self):
+        """Whether the page of an error renders, not the page of the context -
+        without the sidebars and the content width of the context."""
+        return error_page_tile(self.request) is not None
 
     def tileinfo(self, val):
         if isinstance(val, tuple):

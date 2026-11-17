@@ -33,6 +33,7 @@ from pyramid.authorization import ALL_PERMISSIONS
 from pyramid.authorization import Allow
 from pyramid.authorization import Deny
 from pyramid.authorization import Everyone
+from pyramid.httpexceptions import HTTPForbidden
 from zope.interface import implementer
 import cone.app
 import cone.app.browser.login
@@ -290,10 +291,12 @@ class TestBrowserLayout(TileTestCase):
         self.assertEqual(ProtectedContent.content_permission, 'view')
         ProtectedContent.content_permission = 'manage'
 
+        # Logged in without the content permission: the access denied page,
+        # with a layout of its own and status 403 - raised, the exception view
+        # renders it (``cone.app.browser.exception.error_page_view``).
         with self.layer.authenticated('max'):
-            result = render_tile(model, request, 'content')
-
-        self.assertIn('id="access-denied"', result)
+            with self.assertRaises(HTTPForbidden):
+                render_tile(model, request, 'content')
 
         with self.layer.authenticated('manager'):
             result = render_tile(model, request, 'content')

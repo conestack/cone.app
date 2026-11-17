@@ -1,4 +1,7 @@
 from cone.app.browser import render_main_template
+from cone.app.browser.errorpage import error_page
+from cone.app.browser.errorpage import mark_error_page
+from cone.app.browser.errorpage import RenderErrorPage
 from cone.app.browser.layout import AccessDeniedTile
 from cone.app.browser.layout import ErrorStateTile
 from cone.app.browser.login import login_view
@@ -58,7 +61,7 @@ def internal_server_error(request):
 
 
 ###############################################################################
-# Unauthorized
+# Error pages
 ###############################################################################
 
 
@@ -67,19 +70,39 @@ class UnauthorizedTile(AccessDeniedTile):
     """The page of a forbidden view - despite the name, for a logged in user."""
 
 
-@view_config(context=HTTPForbidden, accept='text/html')
-def forbidden_view(request):
-    """Forbidden view.
+@tile(name='not_found', path='templates/not_found.pt', permission='login')
+class NotFoundTile(ErrorStateTile):
+    """Not Found tile."""
 
-    Anonymous users get the login form, logged in users the access denied page
-    with status 403 - rendered into a response of its own, it would say 200.
+
+def render_error_page(model, request, tile, status):
+    """Render the error page with content tile ``tile`` as response.
+
+    Within the page of ``model`` - the node the traversal ended at - with a
+    layout of its own (``error_page_tile``). The status is set on the
+    response: the page is rendered into a response of its own, which would
+    say 200 and tell crawlers and monitoring the address exists.
     """
-    model = request.context
-    if not request.authenticated_userid:
-        return login_view(model, request)
-    response = render_main_template(model, request, contenttile='unauthorized')
-    response.status_int = 403
+    mark_error_page(request, tile)
+    response = render_main_template(model, request, contenttile=tile)
+    response.status_int = status
     return response
+
+
+@view_config(context=HTTPForbidden, accept='text/html')
+@view_config(context=HTTPNotFound, accept='text/html')
+@view_config(context=RenderErrorPage, accept='text/html')
+def error_page_view(error, request):
+    """The error page of ``error`` (``errorpage.error_page``).
+
+    Anonymous users the login comes first for get the login form: refused, or
+    not found where they may not view the node the traversal ended at.
+    """
+    page = error_page(request, error)
+    if page is None:
+        return login_view(request.context, request)
+    tile, status = page
+    return render_error_page(request.context, request, tile, status)
 
 
 @view_config(context=HTTPForbidden, accept='application/json', renderer='json')
@@ -88,37 +111,13 @@ def json_forbidden_view(request):
     return {}
 
 
-###############################################################################
-# Not Found
-###############################################################################
-
-
-@tile(name='not_found', path='templates/not_found.pt', permission='login')
-class NotFoundTile(ErrorStateTile):
-    """Not Found tile."""
-
-
-@view_config(context=HTTPNotFound, accept='text/html')
-def not_found_view(request):
-    """Not Found view.
-
-    Rendered within the page of the nearest existing node, answered with
-    status 404 - the page is rendered into a response of its own, which
-    would say 200 and tell crawlers and monitoring the address exists. An
-    anonymous user who may not view that node gets the login form.
-    """
-    model = request.context
-    if not request.authenticated_userid and not request.has_permission('view', model):
-        # Not found may mean not visible before the login: an expired or
-        # invalidated ticket, a traversal that hides what the user may not
-        # see. Every such address answers the same, nothing is revealed.
-        return login_view(model, request)
-    response = render_main_template(model, request, contenttile='not_found')
-    response.status_int = 404
-    return response
-
-
 @view_config(context=HTTPNotFound, accept='application/json', renderer='json')
 def json_not_found_view(request):
     request.response.status = 404
+    return {}
+
+
+@view_config(context=RenderErrorPage, accept='application/json', renderer='json')
+def json_error_page_view(error, request):
+    request.response.status = error.code
     return {}

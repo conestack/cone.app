@@ -30,6 +30,24 @@ Changes
   for the pathbar only where it renders.
   [rnix]
 
+- Error pages are raised where they are known and rendered in one place.
+  ``HTTPNotFound``, ``HTTPForbidden`` and subclasses of the new
+  ``cone.app.browser.errorpage.RenderErrorPage`` - which name their content
+  tile and status - render as the page of the error: within the page of the
+  node the traversal ended at, without its sidebars and content width. One view
+  ``error_page_view`` replaces ``forbidden_view`` and ``not_found_view``.
+  ``ajax_tile`` answers an error page with a replacement of the whole
+  ``#layout`` and sets ``RENDER_ERROR``; before, a logged in user refused in an
+  ajax action was sent to the login form. ``error_page_tile`` tells whether a
+  request renders an error page.
+  [rnix]
+
+- ``ProtectedContentTile`` raises ``HTTPForbidden`` for a logged in user without
+  the content permission instead of rendering the tile
+  ``insufficient_privileges`` in the page of the context. The tile is kept for
+  applications rendering it by name.
+  [rnix]
+
 - After the login the user returns to the page that showed the form
   (``came_from``, on this host only) instead of the start page.
   [rnix]

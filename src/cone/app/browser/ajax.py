@@ -1,4 +1,6 @@
 from cone.app.browser.actions import ActionContext
+from cone.app.browser.errorpage import error_page
+from cone.app.browser.errorpage import mark_error_page
 from cone.app.browser.utils import bdajax_warning
 from cone.app.browser.utils import client_error_message
 from cone.tile import render_tile
@@ -11,13 +13,15 @@ import logging
 
 
 RENDER_ERROR = 'cone.app.render_error'
-"""Key in ``request.environ``, set when an ajax tile or form failed to render.
+"""Key in ``request.environ``, set when an ajax tile or form failed to render -
+with an error, or with an error page raised.
 
 The error is shown to the user and the response is a 200 - the client
 expects the continuation, not an error status. A transaction manager that
 commits on success would therefore commit whatever the tile wrote before it
 failed. An application vetoes the commit on this key, e.g. with a
-``tm.commit_veto`` for ``pyramid_tm`` that checks it first.
+``tm.commit_veto`` for ``pyramid_tm`` that checks it first. A full page error
+page answers with its status, which such a veto declines anyway.
 """
 
 
@@ -61,10 +65,14 @@ def ajax_tile(model, request):
             payload=rendered,
             continuation=continuation.operations,
         )
-    except Forbidden:
-        request.response.status = 403
-        return {}
-    except Exception:
+    except Exception as error:
+        page = error_page(request, error)
+        if page is not None:
+            return render_error_layout(model, request, page[0])
+        if isinstance(error, Forbidden):
+            # Anonymous: the client goes to the login.
+            request.response.status = 403
+            return {}
         logging.exception('Error within ajax tile')
         request.environ[RENDER_ERROR] = True
         message = client_error_message(request)
@@ -75,6 +83,28 @@ def ajax_tile(model, request):
             payload='',
             continuation=continuation.operations,
         )
+
+
+def render_error_layout(model, request, tile):
+    """Answer an ajax action with the error page of content tile ``tile``.
+
+    It replaces the whole layout, whatever the action targeted: the page has a
+    layout of its own (``error_page_tile``), a fragment could not carry it.
+    Continuations of the failed render are dropped - a path written on the
+    way would lead elsewhere. The status of the page stays with the full page,
+    the client expects a 200.
+    """
+    request.environ[RENDER_ERROR] = True
+    mark_error_page(request, tile)
+    request.environ['cone.app.continuation'] = []
+    payload = render_tile(model, request, 'layout')
+    operations = request.environ.get('cone.app.continuation', [])
+    return dict(
+        mode='replace',
+        selector='#layout',
+        payload=payload,
+        continuation=AjaxContinue(operations).operations,
+    )
 
 
 def ajax_continue(request, operations):

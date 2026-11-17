@@ -371,9 +371,8 @@ class ``cone.app.browser.layout.ProtectedContentTile`` is available.
 Protected content tiles need to be registered for permission 'login'. The
 permission required to access the tile itself can be defined via
 ``content_permission`` and defaults to 'view'. If content permission not granted
-on node, a tile named ``insufficient_privileges`` is rendered. It shows the
-same access denied page as a forbidden view does for a logged in user, with a
-link to the start page and one to log in as another user.
+on node, the tile raises ``HTTPForbidden``: the access denied page renders, see
+`Error pages`_.
 
 .. code-block:: python
 
@@ -387,6 +386,45 @@ link to the start page and one to log in as another user.
 
         def render(self):
             return '<div>Example Plugin Content</div>'
+
+Error pages
+-----------
+
+Instead of the page requested an error page is shown where something is not
+found, not permitted or not available in the state of the application. It is
+raised where this is known - in traversal, in a view, in a content tile - and
+rendered in one place:
+
+- ``HTTPNotFound`` renders the tile ``not_found`` (status 404), ``HTTPForbidden``
+  the tile ``unauthorized`` (status 403, access denied). Anonymous users get the
+  login form instead where a login could lift the refusal.
+
+- Subclasses of ``cone.app.browser.errorpage.RenderErrorPage`` name their content
+  tile and status. They render for anonymous users too.
+
+.. code-block:: python
+
+    from cone.app.browser.errorpage import RenderErrorPage
+
+    class MaintenanceRunning(RenderErrorPage):
+        code = 503
+        title = 'Service Unavailable'
+        tile = 'maintenance_running'
+
+    raise MaintenanceRunning()
+
+The page renders within the page of the node the traversal ended at, with
+header, pathbar and footer, but without the sidebars and the content width of
+that node - it is the page of the error. A full page answers with the status of
+the error page. An ajax action answers with the page as replacement of the whole
+``#layout``, whatever the action targeted, and status 200; it sets
+``RENDER_ERROR`` in the request environment, a transaction manager vetoes the
+commit on it. ``cone.app.browser.errorpage.error_page_tile`` tells whether a
+request renders an error page.
+
+The tiles ``not_found`` and ``unauthorized`` use the CSS classes
+``error-state`` (the centered column) and ``error-illustration`` (the drawing,
+colored from the theme); content tiles of own error pages may use them as well.
 
 Often it's desired to render different "Content views" on the same application
 node. Therefor an extended tile decorator exists at

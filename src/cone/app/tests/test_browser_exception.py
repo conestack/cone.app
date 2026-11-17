@@ -1,8 +1,12 @@
 from cone.app import get_root
 from cone.app import testing
+from cone.app.browser import render_main_template
+from cone.app.browser.errorpage import RenderErrorPage
 from cone.app.browser.exception import internal_server_error
 from cone.app.model import BaseNode
 from cone.tile import render_tile
+from cone.tile import Tile
+from cone.tile import tile
 from cone.tile.tests import TileTestCase
 from pyramid.authorization import ALL_PERMISSIONS
 from pyramid.authorization import Allow
@@ -13,6 +17,7 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.view import render_view_to_response
 import json
+import re
 
 
 class HiddenNode(BaseNode):
@@ -25,6 +30,16 @@ class PublicNode(BaseNode):
     """A node everyone may view."""
 
     __acl__ = [(Allow, Everyone, ['login', 'view']), (Deny, Everyone, ALL_PERMISSIONS)]
+
+
+class Gone(RenderErrorPage):
+    code = 410
+    title = 'Gone'
+    tile = 'gone'
+
+
+def content_classes(text):
+    return re.search(r'id="content"[^>]*class="([^"]*)"', text).group(1).split()
 
 
 class TestBrowserException(TileTestCase):
@@ -217,15 +232,62 @@ class TestBrowserException(TileTestCase):
         self.assertIn('id="input-loginform-login"', response.text)
         self.assertNotIn('id="not-found"', response.text)
 
+        # An error page has a layout of its own: none of the sidebars of the
+        # context, nor its content width - the page of the error, not of the
+        # context.
+        request = self.layer.new_request()
+        request.context = BaseNode(parent=get_root())
+        with self.layer.authenticated('max'):
+            response = render_view_to_response(context, request=request)
+        self.assertIn('id="not-found"', response.text)
+        self.assertNotIn('id="sidebar_left"', response.text)
+        self.assertNotIn('container-xxl', content_classes(response.text))
+        # The same context as a page of its own has both.
+        with self.layer.authenticated('max'):
+            page = render_main_template(request.context, self.layer.new_request())
+        self.assertIn('id="sidebar_left"', page.text)
+        self.assertIn('container-xxl', content_classes(page.text))
+
         # Logged in it is not found, whatever the user may view. Header and
         # footer stay - for a logged in user even where the context is not
         # visible to them.
+        request = self.layer.new_request()
+        request.context = HiddenNode(parent=get_root())
         with self.layer.authenticated('max'):
             response = render_view_to_response(context, request=request)
             self.assertEqual(response.status_int, 404)
             self.assertIn('id="not-found"', response.text)
             self.assertIn('id="header-main"', response.text)
             self.assertIn('id="footer"', response.text)
+
+    def test_render_error_page(self):
+        # Raised where the knowledge is - a view, a content tile - the error
+        # page names its content tile and its status. Rendered for everyone:
+        # it is no refusal that a login could lift.
+        with self.layer.hook_tile_reg():
+
+            @tile(name='gone', permission='login')
+            class GoneTile(Tile):
+                def render(self):
+                    return '<div class="error-state" id="gone">Gone</div>'
+
+        request = self.layer.new_request()
+        request.context = BaseNode(parent=get_root())
+        response = render_view_to_response(Gone(), request=request)
+        self.assertEqual(response.status_int, 410)
+        self.assertIn('id="gone"', response.text)
+
+        with self.layer.authenticated('max'):
+            response = render_view_to_response(Gone(), request=request)
+        self.assertEqual(response.status_int, 410)
+        self.assertIn('id="gone"', response.text)
+        self.assertNotIn('id="sidebar_left"', response.text)
+
+        request = self.layer.new_request(type='json')
+        request.context = BaseNode(parent=get_root())
+        response = render_view_to_response(Gone(), request=request)
+        self.assertEqual(response.status_int, 410)
+        self.assertEqual(response.text, '{}')
 
     def test_json_not_found(self):
         context = HTTPNotFound()

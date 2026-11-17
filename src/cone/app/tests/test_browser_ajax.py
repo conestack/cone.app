@@ -13,10 +13,13 @@ from cone.app.browser.ajax import AjaxOverlay
 from cone.app.browser.ajax import AjaxPath
 from cone.app.browser.ajax import render_ajax_form
 from cone.app.browser.ajax import RENDER_ERROR
+from cone.app.browser.errorpage import RenderErrorPage
 from cone.app.browser.form import Form
 from cone.tile import Tile
 from cone.tile import tile
 from cone.tile.tests import TileTestCase
+from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from urllib.parse import urlencode
 from yafowil.base import factory
@@ -140,6 +143,72 @@ class TestBrowserAjax(TileTestCase):
         expected = 'Exception: Error while rendering'
         self.assertIn(expected, res['continuation'][0]['payload'])
         self.assertIn(expected, logs.output[0])
+
+    def test_ajax_tile_error_page(self):
+        # An error page raised while rendering an action - navigation renders
+        # the layout - replaces the whole layout, whatever the action targeted:
+        # the page has a layout of its own, a fragment could not carry it.
+        class Gone(RenderErrorPage):
+            code = 410
+            title = 'Gone'
+            tile = 'gone'
+
+        with self.layer.hook_tile_reg():
+
+            @tile(name='gone', permission='login')
+            class GoneTile(Tile):
+                def render(self):
+                    return '<div class="error-state" id="gone">Gone</div>'
+
+            @tile(name='raises_gone', permission='login')
+            class RaisesGone(Tile):
+                def render(self):
+                    raise Gone()
+
+            @tile(name='raises_forbidden', permission='login')
+            class RaisesForbidden(Tile):
+                def render(self):
+                    raise HTTPForbidden()
+
+            @tile(name='raises_not_found', permission='login')
+            class RaisesNotFound(Tile):
+                def render(self):
+                    raise HTTPNotFound()
+
+        def run(action, userid=None):
+            request = self.layer.new_request()
+            request.params['ajax.action'] = action
+            request.params['ajax.mode'] = 'inner'
+            request.params['ajax.selector'] = '#content'
+            if userid:
+                with self.layer.authenticated(userid):
+                    return request, ajax_tile(get_root(), request)
+            return request, ajax_tile(get_root(), request)
+
+        for action, element in (
+            ('raises_gone', 'id="gone"'),
+            ('raises_forbidden', 'id="access-denied"'),
+            ('raises_not_found', 'id="not-found"'),
+        ):
+            with self.subTest(action=action):
+                request, res = run(action, 'max')
+                self.assertEqual(res['mode'], 'replace')
+                self.assertEqual(res['selector'], '#layout')
+                self.assertIn('id="layout"', res['payload'])
+                self.assertIn(element, res['payload'])
+                self.assertNotIn('id="sidebar_left"', res['payload'])
+                # 200 for the client, which shows the page; the failed render
+                # is not committed, as with the status of the full page.
+                self.assertEqual(request.response.status_int, 200)
+                self.assertTrue(request.environ[RENDER_ERROR])
+
+        # Anonymous: refused as before, the client goes to the login.
+        request, res = run('raises_forbidden')
+        self.assertEqual(res, {})
+        self.assertEqual(request.response.status, '403 Forbidden')
+        # A raised error page is no refusal a login could lift.
+        request, res = run('raises_gone')
+        self.assertIn('id="gone"', res['payload'])
 
     def test_AjaxAction(self):
         target = 'http://example.com'
