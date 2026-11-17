@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.3.0 (unreleased)
+2.3.0 (2026-11-17)
 ------------------
 
 - The not found page shows an illustration, the status code and a link to the
